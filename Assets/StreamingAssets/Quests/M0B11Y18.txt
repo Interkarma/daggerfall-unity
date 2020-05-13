@@ -91,7 +91,7 @@ Message:  1023
 %qdt:
  I showed _ruler_ the treasonous
  letter, but _traitor_ had
- already fled to %g3 fortress
+ already fled to his fortress
  of ___stronghold_.
  The Queen asked me to infiltrate
  the fortress and capture or kill
@@ -366,6 +366,7 @@ Foe _mtraitor_ is Ranger
 	log 1020 step 0 
 	place npc _enemy_ at _tavern_ 
 	place npc _traitor_ at _palace_ 
+	have _I.04_ set _deadbody_
 
 _S.00_ task:
 	have _amulet_ set _S.11_ 
@@ -382,7 +383,6 @@ _S.04_ task:
 	daily from 22:00 to 23:59 
 	start timer _S.05_ 
 	hide npc _enemy_ 
-	create npc at _targethouse_ 
 	place npc _target_ at _targethouse_ 
 
 _S.05_ task:
@@ -390,7 +390,6 @@ _S.05_ task:
 	hide npc _target_ 
 
 _deadbody_ task:
-	clicked item _I.04_
 	take _I.04_ from pc
 --added deadbody task. otherwise body would clog inventory
 
@@ -446,6 +445,7 @@ _S.15_ task:
 _S.16_ task:
 	toting _I.03_ and _ruler_ clicked 
 	prompt 1050 yes _S.18_ no _S.20_ 
+	stop timer _patsy_
 
 _S.17_ task:
 	start quest 500 500 

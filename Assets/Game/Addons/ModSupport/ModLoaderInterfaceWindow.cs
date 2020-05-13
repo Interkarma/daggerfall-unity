@@ -10,7 +10,7 @@
 //
 
 using UnityEngine;
-using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DaggerfallWorkshop.Game;
@@ -21,6 +21,14 @@ using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
 
 public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 {
+    private enum Stage
+    {
+        None,
+        Cleanup,
+        CheckDependencies,
+        Close
+    }
+
     struct ModSettings
     {
         public ModInfo modInfo;
@@ -62,10 +70,11 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
     readonly Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
     readonly Color textColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
 
-    int currentSelection = -1;
+    Stage currentStage = Stage.None;
+    bool moveNextStage = false;
 
+    int currentSelection = -1;
     ModSettings[] modSettings;
-    bool closeIfTopWindow;
 
     #endregion
 
@@ -291,8 +300,11 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             modListScrollBar.ScrollIndex = modList.ScrollIndex;
         }
 
-        if (closeIfTopWindow && uiManager.TopWindow == this)
-            uiManager.PopWindow();
+        if (moveNextStage)
+        {
+            moveNextStage = false;
+            MoveNextStage();
+        }
     }
 
     bool GetModSettings(ref ModSettings ms)
@@ -412,37 +424,107 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
                 }
 
                 messageBox.CancelWindow();
+                moveNextStage = true;
             };
             uiManager.PushWindow(cleanConfigMessageBox);
+        }
+        else
+        {
+            moveNextStage = true;
         }
     }
 
     private void CheckDependencies()
     {
+        bool hasSortIssues = false;
+        List<string> errorMessages = null;
+        var modErrorMessages = new List<string>();
+        
         foreach (Mod mod in ModManager.Instance.Mods.Where(x => x.Enabled))
         {
-            string errorMessage = ModManager.Instance.CheckModDependencies(mod);
-            if (errorMessage != null)
+            bool? isGameVersionSatisfied = mod.IsGameVersionSatisfied();
+            if (!isGameVersionSatisfied.HasValue)
+                Debug.LogErrorFormat("Mod {0} requires unknown game version ({1}).", mod.Title, mod.ModInfo.DFUnity_Version);
+            else if (!isGameVersionSatisfied.Value)
+                modErrorMessages.Add(string.Format(ModManager.GetText("gameVersionUnsatisfied"), mod.ModInfo.DFUnity_Version));
+
+            ModManager.Instance.CheckModDependencies(mod, modErrorMessages, ref hasSortIssues);
+            if (modErrorMessages.Count > 0)
             {
-                string message = string.Format(ModManager.GetText("dependencyErrorMessage"), mod.Title, errorMessage);
-                var messageBox = new DaggerfallMessageBox(uiManager, this, true);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.SetText(message);
-                messageBox.SetText(new[] { message, ModManager.GetText("sortModsQuestion") });
+                if (errorMessages == null)
+                {
+                    errorMessages = new List<string>();
+                    errorMessages.Add(ModManager.GetText("dependencyErrorMessage"));
+                    errorMessages.Add(string.Empty);
+                }
+
+                errorMessages.Add(string.Format("- {0}", mod.Title));
+                errorMessages.AddRange(modErrorMessages);
+                errorMessages.Add(string.Empty);
+                modErrorMessages.Clear();
+            }
+        }
+
+        if (errorMessages != null && errorMessages.Count > 0)
+        {
+            if (hasSortIssues)
+                errorMessages.Add(ModManager.GetText("sortModsQuestion"));
+
+            var messageBox = new DaggerfallMessageBox(uiManager, this);
+            messageBox.EnableVerticalScrolling(80);
+            messageBox.SetText(errorMessages.ToArray());
+            if (hasSortIssues)
+            {
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No, true);
-                messageBox.OnButtonClick += (_, button) =>
+                messageBox.OnButtonClick += (sender, button) =>
                 {
                     if (button == DaggerfallMessageBox.MessageBoxButtons.Yes)
                     {
                         ModManager.Instance.AutoSortMods();
-                        ModManager.WriteModSettings();
                         Debug.Log("Mods have been sorted automatically");
                     }
+
+                    sender.CancelWindow();
+                    moveNextStage = true;
                 };
-                uiManager.PushWindow(messageBox);
-                Debug.LogError(message);
             }
+            else
+            {
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.OK, true);
+                messageBox.OnButtonClick += (sender, button) =>
+                {
+                    sender.CancelWindow();
+                    moveNextStage = true;
+                };
+            }
+            messageBox.Show();
+        }
+        else
+        {
+            moveNextStage = true;
+        }
+    }
+
+    private void SaveAndClose()
+    {
+        ModManager.WriteModSettings();
+        CloseWindow();
+    }
+
+    private void MoveNextStage()
+    {
+        switch (currentStage = (Stage)((int)currentStage + 1))
+        {
+            case Stage.Cleanup:
+                CleanConfigurationDirectory();
+                break;
+            case Stage.CheckDependencies:
+                CheckDependencies();
+                break;
+            default:
+                SaveAndClose();
+                break;
         }
     }
 
@@ -509,14 +591,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             mod = null;
         }
 
-        //save current mod settings to file
-        ModManager.WriteModSettings();
         ModManager.Instance.SortMods();
-
-        // Show info popups and close
-        closeIfTopWindow = true;
-        CleanConfigurationDirectory();
-        CheckDependencies();
+        MoveNextStage();
     }
 
     void ExtractFilesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

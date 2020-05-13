@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Fields
 
         const string textDatabase = "DaggerfallUI";
+        const int sleepEventMinimumHours = 6;
 
         protected const string baseTextureName = "REST00I0.IMG";              // Rest type
         protected const string hoursPastTextureName = "REST01I0.IMG";         // "Hours past"
@@ -228,6 +229,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             GameManager.OnEncounter += GameManager_OnEncounter;
 
+            // Raise player resting flag when UI opens
+            // This is used for random enemy spawning and influences CastWhenHeld durability loss
+            playerEntity.IsResting = true;
         }
 
         public override void OnPop()
@@ -242,7 +246,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 interior.UpdateNpcPresence();
             }
 
-            Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
+            // Lower player resting flag when UI closes
+            GameManager.Instance.PlayerEntity.IsResting = false;
+
+            // Raise sleep ended event when popping UI and player has rested more than 6 hours
+            if (totalHours > sleepEventMinimumHours)
+                RaiseOnSleepEndEvent();
+
+            //Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
         }
 
         #endregion
@@ -312,9 +323,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // This will stop rest from progressing further until player dismisses top window
             if (uiManager.TopWindow != this)
                 return false;
-
-            // Set flag in playerEntity used for random enemy spawning
-            playerEntity.IsResting = true;
 
             // Loitering runs at a slower rate to rest
             float waitTimePerHour = (currentRestMode == RestModes.Loiter) ? loiterWaitTimePerHour : restWaitTimePerHour;
@@ -434,8 +442,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     currentRestMode = RestModes.Selection;
                 }
             }
-
-            GameManager.Instance.PlayerEntity.IsResting = false;
         }
 
         bool TickVitals()
@@ -719,6 +725,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (OnSleepTick != null)
                 OnSleepTick();
+        }
+
+        // OnSleepEnd
+        public delegate void OnSleepEndEventHandler();
+        public static event OnSleepEndEventHandler OnSleepEnd;
+        void RaiseOnSleepEndEvent()
+        {
+            if (OnSleepEnd != null)
+                OnSleepEnd();
         }
 
         #endregion

@@ -187,3 +187,4 @@ confirmOverwriteSave,   "Overwrite this save?";
 youMustEnterASaveName,  "You must enter a save name."
 youMustSelectASaveName, "You must select a save name."
 noSavesFound,           "No saves found. Load a Classic save?"
+cannotSaveNow,          "You cannot save now."

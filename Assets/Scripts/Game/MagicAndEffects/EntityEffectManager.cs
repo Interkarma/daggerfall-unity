@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         const string textDatabase = "ClassicEffects";
         const string youDontHaveTheSpellPointsMessageKey = "youDontHaveTheSpellPoints";
         const int minAcceptedSpellVersion = 1;
+        const int rerollMinimumHours = 6;
 
         const int magicCastSoundID = 349;
         const int poisonCastSoundID = 350;
@@ -66,6 +67,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         readonly List<LiveEffectBundle> instancedBundles = new List<LiveEffectBundle>();
         readonly List<LiveEffectBundle> bundlesToRemove = new List<LiveEffectBundle>();
         bool wipeAllBundles = false;
+        float timeLastCastSoundPlayed;
 
         int[] directStatMods = new int[DaggerfallStats.Count];
         int[] directSkillMods = new int[DaggerfallSkills.Count];
@@ -78,9 +80,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         RacialOverrideEffect racialOverrideEffect;
         PassiveSpecialsEffect passiveSpecialsEffect;
-
-        const int normalMagicItemDegradeRate = 4;
-        const int restingMagicItemDegradeRate = 60;
+        
+        Dictionary<ulong, DaggerfallUnityItem> activeMagicItemsInRound = new Dictionary<ulong, DaggerfallUnityItem>();
+        Dictionary<ulong, DaggerfallUnityItem> itemsPendingReroll = new Dictionary<ulong, DaggerfallUnityItem>();
 
         #endregion
 
@@ -164,6 +166,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             EntityEffectBroker.OnNewMagicRound += EntityEffectBroker_OnNewMagicRound;
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+            if (IsPlayerEntity)
+            {
+                DaggerfallRestWindow.OnSleepEnd += DaggerfallRestWindow_OnSleepEnd;
+                EntityEffectBroker.OnEndSyntheticTimeIncrease += EntityEffectBroker_OnEndSyntheticTimeIncrease;
+            }
         }
 
         private void Start()
@@ -178,6 +185,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void OnDestroy()
         {
             EntityEffectBroker.OnNewMagicRound -= EntityEffectBroker_OnNewMagicRound;
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+            if (IsPlayerEntity)
+            {
+                DaggerfallRestWindow.OnSleepEnd -= DaggerfallRestWindow_OnSleepEnd;
+                EntityEffectBroker.OnEndSyntheticTimeIncrease -= EntityEffectBroker_OnEndSyntheticTimeIncrease;
+            }
         }
 
         private void Update()
@@ -438,6 +452,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             instancedBundle.bundleType = sourceBundle.Settings.BundleType;
             instancedBundle.targetType = sourceBundle.Settings.TargetType;
             instancedBundle.elementType = sourceBundle.Settings.ElementType;
+            instancedBundle.runtimeFlags = sourceBundle.Settings.RuntimeFlags;
             instancedBundle.name = sourceBundle.Settings.Name;
             instancedBundle.iconIndex = sourceBundle.Settings.IconIndex;
             instancedBundle.icon = sourceBundle.Settings.Icon;
@@ -733,6 +748,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void WipeAllBundles()
         {
             instancedBundles.Clear();
+            itemsPendingReroll.Clear();
             RaiseOnRemoveBundle(null);
             racialOverrideEffect = null;
             passiveSpecialsEffect = null;
@@ -971,7 +987,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Breaks payload
                 if ((flags & EnchantmentPayloadFlags.Breaks) == EnchantmentPayloadFlags.Breaks && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Breaks))
                     BrokenItem(effectTemplate, sourceItem, settings);
-                    
+
+                // Do not call following payloads if item has broken
+                if (sourceItem.currentCondition > 0)
+                {
+                    // MagicRound payload
+                    if ((flags & EnchantmentPayloadFlags.MagicRound) == EnchantmentPayloadFlags.MagicRound && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.MagicRound))
+                        MagicRoundCallback(effectTemplate, sourceItem, settings);
+
+                    // RerollEffect payload
+                    if ((flags & EnchantmentPayloadFlags.RerollEffect) == EnchantmentPayloadFlags.RerollEffect && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.RerollEffect))
+                        RerollEffectCallback(effectTemplate, sourceItem, settings);
+                }
             }
 
             // Clamp damageOut to 0
@@ -1061,6 +1088,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Breaks payload callback
             EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
             effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Breaks, param, entityBehaviour, entityBehaviour, item);
+        }
+
+        void MagicRoundCallback(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
+        {
+            // MagicRound payload callback
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.MagicRound, param, entityBehaviour, entityBehaviour, item);
+        }
+
+        void RerollEffectCallback(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings)
+        {
+            // RerollEffect payload callback
+            EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
+            effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.RerollEffect, param, entityBehaviour, entityBehaviour, item);
         }
 
         #endregion
@@ -1640,6 +1681,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 return;
 
             // Run all bundles
+            activeMagicItemsInRound.Clear();
+            uint currentTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 // Run effects for this bundle
@@ -1657,21 +1700,35 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                 if (bundle.fromEquippedItem != null)
                 {
-                    hasRemainingEffectRounds = true; // If bundle has an item source keep it alive until item breaks or is unequipped
+                    // If bundle has an item source keep it alive until item breaks or is unequipped
+                    hasRemainingEffectRounds = true;
 
-                    // Degrade item at an average of 1 point per 4 rounds when awake and not travelling and 1 point hourly when resting/loitering
-                    if (!GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease)
+                    if (IsPlayerEntity)
                     {
-                        int degradeRate = GameManager.Instance.PlayerEntity.IsResting ? restingMagicItemDegradeRate : normalMagicItemDegradeRate;
+                        // Track individual held items for magic round callback
+                        if (!activeMagicItemsInRound.ContainsKey(bundle.fromEquippedItem.UID))
+                            activeMagicItemsInRound.Add(bundle.fromEquippedItem.UID, bundle.fromEquippedItem);
 
-                        if (UnityEngine.Random.Range(0, degradeRate) == 0)
-                            bundle.fromEquippedItem.LowerCondition(1, entityBehaviour.Entity, entityBehaviour.Entity.Items);
+                        // Schedule items pending reroll
+                        uint hoursSinceLastReroll = (currentTime - bundle.fromEquippedItem.timeEffectsLastRerolled) / DaggerfallDateTime.MinutesPerHour;
+                        if (hoursSinceLastReroll >= rerollMinimumHours && !itemsPendingReroll.ContainsKey(bundle.fromEquippedItem.UID))
+                            itemsPendingReroll.Add(bundle.fromEquippedItem.UID, bundle.fromEquippedItem);
                     }
                 }
 
                 // Expire this bundle once all effects have 0 rounds remaining
                 if (!hasRemainingEffectRounds)
                     bundlesToRemove.Add(bundle);
+            }
+
+            // Do MagicRound payload callback for each item
+            if (activeMagicItemsInRound.Count > 0)
+            {
+                foreach (DaggerfallUnityItem item in activeMagicItemsInRound.Values)
+                {
+                    DoItemEnchantmentPayloads(EnchantmentPayloadFlags.MagicRound, item);
+                }
+                activeMagicItemsInRound.Clear();
             }
 
             RemovePendingBundles();
@@ -1846,14 +1903,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return false;
         }
 
-        public void PlayCastSound(DaggerfallEntityBehaviour casterEntityBehaviour, int castSoundID)
+        public void PlayCastSound(DaggerfallEntityBehaviour casterEntityBehaviour, int castSoundID, bool throttle = false)
         {
+            // Throttle casting sound to once per 0.5f seconds to prevent playing overlapping effects on item equip/recast
+            if (throttle & Time.realtimeSinceStartup - timeLastCastSoundPlayed < 0.5f)
+                return;
+
             if (casterEntityBehaviour)
             {
                 DaggerfallAudioSource audioSource = casterEntityBehaviour.GetComponent<DaggerfallAudioSource>();
                 if (castSoundID != -1 && audioSource)
                     audioSource.PlayOneShot((uint)castSoundID);
             }
+
+            timeLastCastSoundPlayed = Time.realtimeSinceStartup;
         }
 
         void TallyPlayerReadySpellEffectSkills()
@@ -1891,6 +1954,39 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 Effects = new EffectEntry[] { new EffectEntry(PassiveSpecialsEffect.EffectKey) },
             };
             AssignBundle(new EntityEffectBundle(settings, entityBehaviour), AssignBundleFlags.BypassSavingThrows);
+        }
+
+        void RerollItemEffects()
+        {
+            // Must have at least one item pending reroll
+            if (itemsPendingReroll.Count == 0)
+                return;
+
+            // Recast enchantments in item flagged for reroll
+            foreach (DaggerfallUnityItem item in itemsPendingReroll.Values)
+            {
+                Debug.LogFormat("Rerolling flagged item effects on {0}", item.LongName);
+
+                // Schedule live bundles from this item to be removed
+                foreach (LiveEffectBundle bundle in instancedBundles)
+                {
+                    if (bundle.fromEquippedItem != null && bundle.fromEquippedItem.UID == item.UID &&
+                        (bundle.runtimeFlags & BundleRuntimeFlags.ItemRecastEnabled) == BundleRuntimeFlags.ItemRecastEnabled)
+                    {
+                        bundlesToRemove.Add(bundle);
+                    }
+                }
+                RemovePendingBundles();
+
+                // Execute reroll callbacks on item
+                DoItemEnchantmentPayloads(EnchantmentPayloadFlags.RerollEffect, item);
+
+                // Update recast time in item
+                item.timeEffectsLastRerolled = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            }
+
+            // Clean up
+            itemsPendingReroll.Clear();
         }
 
         #endregion
@@ -2017,6 +2113,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             //Debug.LogFormat("Cleared all effect bundles after death of {0}", entity.Name);
         }
 
+        private void DaggerfallRestWindow_OnSleepEnd()
+        {
+            RerollItemEffects();
+        }
+
+        private void EntityEffectBroker_OnEndSyntheticTimeIncrease()
+        {
+            RerollItemEffects();
+        }
+
         #endregion
 
         #region Serialization
@@ -2028,6 +2134,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public BundleTypes bundleType;
             public TargetTypes targetType;
             public ElementTypes elementType;
+            public BundleRuntimeFlags runtimeFlags;
             public string name;
             public int iconIndex;
             public SpellIcon icon;
@@ -2070,6 +2177,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 bundleData.bundleType = bundle.bundleType;
                 bundleData.targetType = bundle.targetType;
                 bundleData.elementType = bundle.elementType;
+                bundleData.runtimeFlags = bundle.runtimeFlags;
                 bundleData.name = bundle.name;
                 bundleData.iconIndex = bundle.iconIndex;
                 bundleData.icon = bundle.icon;
@@ -2132,6 +2240,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 instancedBundle.bundleType = bundleData.bundleType;
                 instancedBundle.targetType = bundleData.targetType;
                 instancedBundle.elementType = bundleData.elementType;
+                instancedBundle.runtimeFlags = bundleData.runtimeFlags;
                 instancedBundle.name = bundleData.name;
                 instancedBundle.iconIndex = bundleData.iconIndex;
                 instancedBundle.icon = bundleData.icon;

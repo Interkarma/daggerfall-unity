@@ -61,6 +61,9 @@ namespace DaggerfallWorkshop.Game
             climbingMotor = GetComponent<ClimbingMotor>();
             playerScanner = GetComponent<PlayerMoveScanner>();
             //hangingMotor = GetComponent<HangingMotor>();
+
+            // Prevent save while rappeling, erializing that case is not worth the trouble
+            GameManager.Instance.SaveLoadManager.RegisterPreventSaveCondition(() => rappelStage != RappelStage.Inactive);
         }
 
         public void InitialSetRappelType()

@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Interkarma
-// Contributors:    Hazelnut, Allofich, Meteoric Dragon
+// Contributors:    Hazelnut, Allofich, Meteoric Dragon, jefetienne
 // 
 // Notes:
 //
@@ -22,8 +22,8 @@ namespace DaggerfallWorkshop.Game
 
         // If checked, the run key toggles between running and walking. Otherwise player runs if the key is held down and walks otherwise
         // There must be a button set up in the Input Manager called "Run"
-        public bool toggleRun = false;
-        public bool toggleSneak = false;
+        public bool ToggleRun { get; set; }
+        public bool ToggleSneak { get; set; }
 
         // Daggerfall base speed constants. (courtesy Allofich)
         public const float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
@@ -60,12 +60,12 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void CaptureInputSpeedAdjustment()
         {
-            if (!toggleRun)
+            if (!ToggleRun)
                 runningMode = InputManager.Instance.HasAction(InputManager.Actions.Run);
             else
                 runningMode = runningMode ^ InputManager.Instance.ActionStarted(InputManager.Actions.Run);
 
-            if (!toggleSneak)
+            if (!ToggleSneak)
                 sneakingMode = InputManager.Instance.HasAction(InputManager.Actions.Sneak);
             else
                 sneakingMode = sneakingMode ^ InputManager.Instance.ActionStarted(InputManager.Actions.Sneak);
@@ -79,8 +79,8 @@ namespace DaggerfallWorkshop.Game
         {
             if (playerMotor.IsGrounded)
             {
-                isRunning = CanRun() && runningMode && !sneakingMode;
-                isSneaking = sneakingMode;
+                isRunning = CanRun() && runningMode;
+                isSneaking = !isRunning && sneakingMode;
             }
             else
             {
@@ -90,7 +90,12 @@ namespace DaggerfallWorkshop.Game
             }
 
             if (isRunning)
+            {
                 speed = GetRunSpeed(speed);
+
+                //switch sneaking off if was previously sneaking
+                sneakingMode = false;
+            }
             else if (isSneaking)
             {
                 // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units

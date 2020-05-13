@@ -114,11 +114,8 @@ _traveltime_ task:
 _questdone_ task:
 	toting _religitem_ and _priest_ clicked 
 	give pc nothing 
-	start timer _delay_ 
+	end quest 
 
 _S.02_ task:
 	injured _spellsword_ saying 1011 
 	injured _thief_ saying 1011 
-
-_delay_ task:
-	end quest 

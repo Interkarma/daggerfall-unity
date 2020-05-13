@@ -96,6 +96,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox spellLighting;
         Checkbox spellShadows;
         Checkbox bowDrawback;
+        Checkbox toggleSneak;
 
         // Interface
         Checkbox toolTips;
@@ -149,7 +150,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider terrainDistance;
         HorizontalSlider shadowResolutionMode;
         HorizontalSlider retroRenderingMode;
-        Checkbox usePostProcessingInRetroMode;
+        HorizontalSlider PostProcessingInRetroMode;
         Checkbox dungeonLightShadows;
         Checkbox interiorLightShadows;
         Checkbox exteriorLightShadows;
@@ -230,6 +231,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             movementAcceleration = AddSlider(leftPanel, "moveSpeedAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MoveSpeedAcceleration);
             weaponAttackThreshold = AddTextbox(leftPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
             bowDrawback = AddCheckbox(leftPanel, "bowDrawback", DaggerfallUnity.Settings.BowDrawback);
+            toggleSneak = AddCheckbox(leftPanel, "toggleSneak", DaggerfallUnity.Settings.ToggleSneak);
 
             y = 0;
 
@@ -354,7 +356,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
             retroRenderingMode = AddSlider(rightPanel, "retroRenderingMode",
                 DaggerfallUnity.Settings.RetroRenderingMode, "Off", "320x200", "640x400");
-            usePostProcessingInRetroMode = AddCheckbox(rightPanel, "usePostProcessingInRetroMode", DaggerfallUnity.Settings.UsePostProcessingInRetroMode);
+            PostProcessingInRetroMode = AddSlider(rightPanel, "postProcessingInRetroMode",
+                DaggerfallUnity.Settings.PostProcessingInRetroMode, "Off", "Posterization", "Palettization");
         }
 
         private void SaveSettings()
@@ -371,6 +374,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (float.TryParse(weaponAttackThreshold.Text, out weaponAttackThresholdValue))
                 DaggerfallUnity.Settings.WeaponAttackThreshold = Mathf.Clamp(weaponAttackThresholdValue, 0.001f, 1.0f);
             DaggerfallUnity.Settings.BowDrawback = bowDrawback.IsChecked;
+            DaggerfallUnity.Settings.ToggleSneak = toggleSneak.IsChecked;
 
             DaggerfallUnity.Settings.SoundVolume = soundVolume.GetValue();
             DaggerfallUnity.Settings.MusicVolume = musicVolume.GetValue();
@@ -464,7 +468,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.InteriorLightShadows = interiorLightShadows.IsChecked;
             DaggerfallUnity.Settings.ExteriorLightShadows = exteriorLightShadows.IsChecked;
             DaggerfallUnity.Settings.RetroRenderingMode = retroRenderingMode.ScrollIndex;
-            DaggerfallUnity.Settings.UsePostProcessingInRetroMode = usePostProcessingInRetroMode.IsChecked;
+            DaggerfallUnity.Settings.PostProcessingInRetroMode = PostProcessingInRetroMode.ScrollIndex;
 
             DaggerfallUnity.Settings.SaveSettings();
         }

@@ -262,7 +262,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Toggle Retro Renderer Postprocessing
             if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.ToggleRetroPP).IsDownWith(keyModifiers))
             {
-                RetroRenderer.postprocessing = !RetroRenderer.postprocessing;
+                RetroRenderer.enablePostprocessing = !RetroRenderer.enablePostprocessing;
             }
 
             flickerController.NextCycle();

@@ -311,12 +311,9 @@ namespace DaggerfallWorkshop.Game
 
         public void StopClimbing(bool fromHanging = false)
         {
-            if (isClimbing || fromHanging)
-            {
-                isClimbing = false;
-                showClimbingModeMessage = true;
-                climbingStartTimer = 0;
-            }
+            isClimbing = false;
+            showClimbingModeMessage = true;
+            climbingStartTimer = 0;
         }
 
         private void CalcFrequencyAndToleranceOfWallChecks(bool airborneGraspWall)

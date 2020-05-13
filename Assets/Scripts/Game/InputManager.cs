@@ -177,6 +177,11 @@ namespace DaggerfallWorkshop.Game
             get { return (vertical < -deadZone || vertical > deadZone) ? vertical : 0; }
         }
 
+        public bool UsingController
+        {
+            get { return usingControllerCursor; }
+        }
+
         public KeyCode LastKeyDown { get; private set; }
 
         public bool CursorVisible
@@ -460,7 +465,11 @@ namespace DaggerfallWorkshop.Game
             var horizj = Input.GetAxis(horizBinding);
             var vertj = Input.GetAxis(vertBinding);
 
-            if (!usingControllerCursor && (horizj != 0 || vertj != 0))
+            if (!usingControllerCursor &&
+                (horizj != 0
+                || vertj != 0
+                || Input.GetAxis(cameraAxisBindingCache[0]) != 0
+                || Input.GetAxis(cameraAxisBindingCache[1]) != 0))
             {
                 usingControllerCursor = true;
                 controllerCursorPosition = Input.mousePosition;

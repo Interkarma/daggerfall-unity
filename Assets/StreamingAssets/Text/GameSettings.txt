@@ -50,6 +50,8 @@ instantRepairs,                                     Instant repair services
 instantRepairsInfo,                                 Disables waiting for repairs and makes them instantaneous
 bowDrawback,                                        Bows - draw and release
 bowDrawbackInfo,                                    Enables bow drawback while holding RH mouse; release to fire
+toggleSneak,                                        Toggle Sneak
+toggleSneakInfo,                                    Allows the Sneak action to be toggled rather than held
 
 toolTips,                                           Tool Tips
 toolTipsInfo,                                       Shows information about GUI items
@@ -151,8 +153,8 @@ exteriorLightShadows,                               Exterior Light Shadows
 exteriorLightShadowsInfo,                           Exterior sunlight casts shadows
 retroRenderingMode,                                 Retro Rendering Mode
 retroRenderingModeInfo,                             3D world rendered at low resolution while UI remains at set resolution
-usePostProcessingInRetroMode,                       Retro Rendering Postprocessing
-usePostProcessingInRetroModeInfo,                   Shrink color palette in retro mode to emulate classic look
+postProcessingInRetroMode,                          Retro Rendering Postprocessing
+postProcessingInRetroModeInfo,                      Color palette emulation (Posterization=fast Palettization=accurate)
 
 - Options shared among sliders. Missing keys use default text.
 

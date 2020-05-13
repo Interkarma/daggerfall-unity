@@ -37,7 +37,7 @@ Message:  1021
  is hiding somewhere in the dungeons
  of the royal castle there.  I am
  to find him and bring him back to
- Sentinel for execution.
+ Sentinel for execution in =time2_ days.
 
 Message:  1022
 %qdt:
@@ -55,7 +55,7 @@ Dear %pcn,
  before he was to be hanged.
    I would be most grateful for your assistance
  in putting this matter to rest once and for all.
- Please come and see me at your earliest convenience.
+ Please come and see me within =patsy_ days.
  
 <ce>                             Your friend,
 <ce>                                    
@@ -80,6 +80,7 @@ Message:  1040
 <ce>            and I want you to find him and bring him back.
 <ce>             Alive if possible, but kill him if necessary.
 <ce>                     Do not let him escape again.
+<ce>               You have =time2_ days.
 
 Message:  1041
 <ce>                    You again! %oth, will you give
@@ -147,9 +148,10 @@ Person _traitor_ face 217 named Lord_K'avar
 Place _wayrest_ permanent WayrestCastle2
 Place aide remote dungeon
 
-Clock _S.00_ 31.06:00 93.18:00
+Clock _S.00_ 12.06:00 23.18:00
+--shortened timer drastically. getting attacked by Kavar minions for months is annoying
 Clock _patsy_ 30.00:00 0 flag 1 range 0 1
-Clock _time2_ 30.00:00 0 flag 1 range 0 1
+Clock _time2_ 00:00 0 flag 17 range 0 2
 
 Foe _F.00_ is 3 Archer
 Foe _mtraitor_ is Ranger
@@ -157,10 +159,13 @@ Foe _mtraitor_ is Ranger
 --	Quest start-up:
 	create foe _F.00_ every 2000 minutes 20 times with 100% success 
 	start timer _S.00_ 
+	have _letter_ set _startpatsy_
+
+_startpatsy_ task:
+	start timer _patsy_ 
 
 _S.00_ task:
 	_letter_ used do _readletter_ 
-	start timer _patsy_ 
 	give pc _letter_ notify 1031 
 	place npc _traitor_ at _wayrest_ 
 
@@ -189,16 +194,24 @@ _S.07_ task:
 
 _S.08_ task:
 	when _hittraitor_ and not _S.07_ 
-	prompt 1042 yes yes no _no_ 
+	prompt 1042 yes _yes_ no _no_ 
 
 _S.09_ task:
 	when _S.04_ and _S.00_ 
+	stop timer _patsy_
 	start timer _time2_ 
 	log 1021 step 1 
 	say 1040 
+	remove log step 0
+	start task _stagger_
+
+variable _stagger_
+_clearclick_ task:
+	when _stagger_ and _S.04_ and not _hittraitor_
+	clear _S.04_ _clearclick_
 
 _S.10_ task:
-	when yes and _S.04_ 
+	when _yes_ and _S.04_ 
 	say 1050 
 	drop _traitor_ face 
 
@@ -207,7 +220,7 @@ _traitordead_ task:
 	say 1051 
 	unset _S.04_ 
 
-yes task:
+_yes_ task:
 	log 1022 step 2 
 	say 1044 
 	add _traitor_ face 
@@ -218,7 +231,8 @@ _no_ task:
 
 _S.14_ task:
 	when _S.10_ or _traitordead_ 
-	give pc _reward1_ and _reward2_ 
+	give pc _reward1_
+	give pc _reward2_ 
 	end quest 
 
 _S.15_ task:
@@ -226,7 +240,7 @@ _S.15_ task:
 	end quest 
 
 _S.16_ task:
-	when yes and _time2_ 
+	when _yes_ and _time2_ 
 	say 1061 
 	end quest 
 

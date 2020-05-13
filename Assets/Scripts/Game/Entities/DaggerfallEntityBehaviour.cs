@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.Entity
@@ -231,6 +232,17 @@ namespace DaggerfallWorkshop.Game.Entity
                             // Disable when dead
                             mobileNpc.Motor.gameObject.SetActive(false);
                         }
+                    }
+                }
+
+                // Handle equipped Azura's Star trapping slain enemy monsters
+                // This is always successful if Azura's Star is empty and equipped
+                if (EntityType == EntityTypes.EnemyMonster && playerEntity.IsAzurasStarEquipped && entity.CurrentHealth <= 0)
+                {
+                    EnemyEntity enemyEntity = entity as EnemyEntity;
+                    if (SoulTrap.FillEmptyTrapItem((MobileTypes)enemyEntity.MobileEnemy.ID, true))
+                    {
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapSuccess"), 1.5f);
                     }
                 }
 

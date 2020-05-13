@@ -32,7 +32,7 @@ M0B00Y15, FightersGuild, M, 0, 0, Passed
 M0B00Y16, FightersGuild, M, 0, 0, Passed
 M0B00Y17, FightersGuild, M, 0, 0, Passed
 M0B1XY01, FightersGuild, M, 1, X, Passed
--M0B11Y18, FightersGuild, M, 1, 1, Passed. Not enabled until Lord K'avar followups are OK
+M0B11Y18, FightersGuild, M, 1, 1, Passed
 M0B20Y02, FightersGuild, M, 2, 0, Passed
 M0B21Y19, FightersGuild, M, 2, 1, Passed
 M0B30Y03, FightersGuild, M, 3, 0, Passed

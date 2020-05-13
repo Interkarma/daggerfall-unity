@@ -693,7 +693,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     return false;
             }
 
-            return false;
+            return true;
         }
 
         /// <summary>
