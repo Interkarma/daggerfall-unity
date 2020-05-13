@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
                         // Play cast sound on equip for player only
                         if (casterManager.IsPlayerEntity)
-                            casterManager.PlayCastSound(sourceEntity, casterManager.GetCastSoundID(bundle.Settings.ElementType));
+                            casterManager.PlayCastSound(sourceEntity, casterManager.GetCastSoundID(bundle.Settings.ElementType), true);
 
                         // TODO: Apply durability loss to equipped item on equip
                         // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items

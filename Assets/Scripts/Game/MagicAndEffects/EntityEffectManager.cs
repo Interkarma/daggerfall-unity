@@ -67,6 +67,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         readonly List<LiveEffectBundle> instancedBundles = new List<LiveEffectBundle>();
         readonly List<LiveEffectBundle> bundlesToRemove = new List<LiveEffectBundle>();
         bool wipeAllBundles = false;
+        float timeLastCastSoundPlayed;
 
         int[] directStatMods = new int[DaggerfallStats.Count];
         int[] directSkillMods = new int[DaggerfallSkills.Count];
@@ -1898,14 +1899,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return false;
         }
 
-        public void PlayCastSound(DaggerfallEntityBehaviour casterEntityBehaviour, int castSoundID)
+        public void PlayCastSound(DaggerfallEntityBehaviour casterEntityBehaviour, int castSoundID, bool throttle = false)
         {
+            // Throttle casting sound to once per 0.5f seconds to prevent playing overlapping effects on item equip/recast
+            if (throttle & Time.realtimeSinceStartup - timeLastCastSoundPlayed < 0.5f)
+                return;
+
             if (casterEntityBehaviour)
             {
                 DaggerfallAudioSource audioSource = casterEntityBehaviour.GetComponent<DaggerfallAudioSource>();
                 if (castSoundID != -1 && audioSource)
                     audioSource.PlayOneShot((uint)castSoundID);
             }
+
+            timeLastCastSoundPlayed = Time.realtimeSinceStartup;
         }
 
         void TallyPlayerReadySpellEffectSkills()
