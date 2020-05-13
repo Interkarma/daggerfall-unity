@@ -144,6 +144,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                             // TODO: Apply durability loss to equipped item on equip
                             // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
                         }
+
+                        // Store equip time as last reroll time
+                        sourceItem.timeEffectsLastRerolled = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
                     }
                 }
             }

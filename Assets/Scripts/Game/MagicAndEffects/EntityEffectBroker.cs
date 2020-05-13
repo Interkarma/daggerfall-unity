@@ -230,6 +230,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 //Debug.LogFormat("Time to run {0} magic rounds: {1}ms", catchupRounds, totalTime);
             }
 
+            // Raise event before ending synthetic time increase
+            if (SyntheticTimeIncrease == true)
+                RaiseOnEndSyntheticTimeIncreaseEvent();
+
             // Lower synthetic time increase flag
             SyntheticTimeIncrease = false;
         }
@@ -1060,6 +1064,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             if (OnRegisterCustomEffects != null)
                 OnRegisterCustomEffects();
+        }
+
+        // OnEndSyntheticTimeIncrease
+        public delegate void OnEndSyntheticTimeIncreaseEventHandler();
+        public static event OnEndSyntheticTimeIncreaseEventHandler OnEndSyntheticTimeIncrease;
+        protected virtual void RaiseOnEndSyntheticTimeIncreaseEvent()
+        {
+            if (OnEndSyntheticTimeIncrease != null)
+                OnEndSyntheticTimeIncrease();
         }
 
         #endregion

@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game.Items
         public int stackCount = 1;
         public Poisons poisonType = Poisons.None;
         public uint timeHealthLeechLastUsed;
+        public uint timeEffectsLastRerolled;
 
         // Private item fields
         int playerTextureArchive;

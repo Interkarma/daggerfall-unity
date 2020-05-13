@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         const string textDatabase = "ClassicEffects";
         const string youDontHaveTheSpellPointsMessageKey = "youDontHaveTheSpellPoints";
         const int minAcceptedSpellVersion = 1;
+        const int rerollMinimumHours = 6;
 
         const int magicCastSoundID = 349;
         const int poisonCastSoundID = 350;
@@ -80,6 +81,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         PassiveSpecialsEffect passiveSpecialsEffect;
         
         Dictionary<ulong, DaggerfallUnityItem> activeMagicItemsInRound = new Dictionary<ulong, DaggerfallUnityItem>();
+        Dictionary<ulong, DaggerfallUnityItem> itemsPendingReroll = new Dictionary<ulong, DaggerfallUnityItem>();
 
         #endregion
 
@@ -163,6 +165,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             EntityEffectBroker.OnNewMagicRound += EntityEffectBroker_OnNewMagicRound;
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+            if (IsPlayerEntity)
+            {
+                DaggerfallRestWindow.OnSleepEnd += DaggerfallRestWindow_OnSleepEnd;
+                EntityEffectBroker.OnEndSyntheticTimeIncrease += EntityEffectBroker_OnEndSyntheticTimeIncrease;
+            }
         }
 
         private void Start()
@@ -179,6 +186,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             EntityEffectBroker.OnNewMagicRound -= EntityEffectBroker_OnNewMagicRound;
             SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
             StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+            if (IsPlayerEntity)
+            {
+                DaggerfallRestWindow.OnSleepEnd -= DaggerfallRestWindow_OnSleepEnd;
+                EntityEffectBroker.OnEndSyntheticTimeIncrease -= EntityEffectBroker_OnEndSyntheticTimeIncrease;
+            }
         }
 
         private void Update()
@@ -735,6 +747,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         private void WipeAllBundles()
         {
             instancedBundles.Clear();
+            itemsPendingReroll.Clear();
             RaiseOnRemoveBundle(null);
             racialOverrideEffect = null;
             passiveSpecialsEffect = null;
@@ -1654,6 +1667,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Run all bundles
             activeMagicItemsInRound.Clear();
+            uint currentTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             foreach (LiveEffectBundle bundle in instancedBundles)
             {
                 // Run effects for this bundle
@@ -1674,9 +1688,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     // If bundle has an item source keep it alive until item breaks or is unequipped
                     hasRemainingEffectRounds = true;
 
-                    // Track individual held items for magic round callback
-                    if (!activeMagicItemsInRound.ContainsKey(bundle.fromEquippedItem.UID))
-                        activeMagicItemsInRound.Add(bundle.fromEquippedItem.UID, bundle.fromEquippedItem);
+                    if (IsPlayerEntity)
+                    {
+                        // Track individual held items for magic round callback
+                        if (!activeMagicItemsInRound.ContainsKey(bundle.fromEquippedItem.UID))
+                            activeMagicItemsInRound.Add(bundle.fromEquippedItem.UID, bundle.fromEquippedItem);
+
+                        // Schedule items pending reroll
+                        uint hoursSinceLastReroll = (currentTime - bundle.fromEquippedItem.timeEffectsLastRerolled) / DaggerfallDateTime.MinutesPerHour;
+                        if (hoursSinceLastReroll >= rerollMinimumHours && !itemsPendingReroll.ContainsKey(bundle.fromEquippedItem.UID))
+                            itemsPendingReroll.Add(bundle.fromEquippedItem.UID, bundle.fromEquippedItem);
+                    }
                 }
 
                 // Expire this bundle once all effects have 0 rounds remaining
@@ -1913,6 +1935,38 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             AssignBundle(new EntityEffectBundle(settings, entityBehaviour), AssignBundleFlags.BypassSavingThrows);
         }
 
+        void RerollItemEffects()
+        {
+            // Must have at least one item pending reroll
+            if (itemsPendingReroll.Count == 0)
+                return;
+
+            // Recast enchantments in item flagged for reroll
+            foreach (DaggerfallUnityItem item in itemsPendingReroll.Values)
+            {
+                Debug.LogFormat("Rerolling flagged item effects on {0}", item.LongName);
+
+                // TODO: Schedule live bundles from this item to be removed
+                foreach (LiveEffectBundle bundle in instancedBundles)
+                {
+                    if (bundle.fromEquippedItem != null && bundle.fromEquippedItem.UID == item.UID &&
+                        (bundle.runtimeFlags & BundleRuntimeFlags.ItemRecastEnabled) == BundleRuntimeFlags.ItemRecastEnabled)
+                    {
+                        //bundlesToRemove.Add(bundle);
+                    }
+                }
+
+                // TODO: Execute reroll callbacks on item
+
+                // Update recast time in item
+                item.timeEffectsLastRerolled = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+            }
+
+            // Clean up
+            RemovePendingBundles();
+            itemsPendingReroll.Clear();
+        }
+
         #endregion
 
         #region EnemyCasting
@@ -2035,6 +2089,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             wipeAllBundles = true;
             entityBehaviour.Entity.OnDeath -= Entity_OnDeath;
             //Debug.LogFormat("Cleared all effect bundles after death of {0}", entity.Name);
+        }
+
+        private void DaggerfallRestWindow_OnSleepEnd()
+        {
+            RerollItemEffects();
+        }
+
+        private void EntityEffectBroker_OnEndSyntheticTimeIncrease()
+        {
+            RerollItemEffects();
         }
 
         #endregion

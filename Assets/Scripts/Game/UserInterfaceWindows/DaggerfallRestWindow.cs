@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Fields
 
         const string textDatabase = "DaggerfallUI";
+        const int sleepEventMinimumHours = 6;
 
         protected const string baseTextureName = "REST00I0.IMG";              // Rest type
         protected const string hoursPastTextureName = "REST01I0.IMG";         // "Hours past"
@@ -248,8 +249,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Lower player resting flag when UI closes
             GameManager.Instance.PlayerEntity.IsResting = false;
 
-            // Raise sleep ended event when popping UI
-            RaiseOnSleepEndEvent();
+            // Raise sleep ended event when popping UI and player has rested more than 6 hours
+            if (totalHours > sleepEventMinimumHours)
+                RaiseOnSleepEndEvent();
 
             //Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
         }
