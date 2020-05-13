@@ -988,13 +988,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 if ((flags & EnchantmentPayloadFlags.Breaks) == EnchantmentPayloadFlags.Breaks && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.Breaks))
                     BrokenItem(effectTemplate, sourceItem, settings);
 
-                // MagicRound payload
-                if ((flags & EnchantmentPayloadFlags.MagicRound) == EnchantmentPayloadFlags.MagicRound && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.MagicRound))
-                    MagicRoundCallback(effectTemplate, sourceItem, settings);
+                // Do not call following payloads if item has broken
+                if (sourceItem.currentCondition > 0)
+                {
+                    // MagicRound payload
+                    if ((flags & EnchantmentPayloadFlags.MagicRound) == EnchantmentPayloadFlags.MagicRound && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.MagicRound))
+                        MagicRoundCallback(effectTemplate, sourceItem, settings);
 
-                // RerollEffect payload
-                if ((flags & EnchantmentPayloadFlags.RerollEffect) == EnchantmentPayloadFlags.RerollEffect && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.RerollEffect))
-                    RerollEffectCallback(effectTemplate, sourceItem, settings);
+                    // RerollEffect payload
+                    if ((flags & EnchantmentPayloadFlags.RerollEffect) == EnchantmentPayloadFlags.RerollEffect && effectTemplate.HasEnchantmentPayloadFlags(EnchantmentPayloadFlags.RerollEffect))
+                        RerollEffectCallback(effectTemplate, sourceItem, settings);
+                }
             }
 
             // Clamp damageOut to 0
