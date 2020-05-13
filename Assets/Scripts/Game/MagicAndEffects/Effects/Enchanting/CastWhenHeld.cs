@@ -134,6 +134,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                             // Assign bundle
                             EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, sourceEntity);
                             bundle.FromEquippedItem = sourceItem;
+                            bundle.AddRuntimeFlags(BundleRuntimeFlags.ItemRecastEnabled);
                             casterManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
 
                             // Play cast sound on equip for player only

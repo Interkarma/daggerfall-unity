@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public BundleTypes bundleType;
         public TargetTypes targetType;
         public ElementTypes elementType;
+        public BundleRuntimeFlags runtimeFlags;
         public string name;
         public int iconIndex;
         public SpellIcon icon;

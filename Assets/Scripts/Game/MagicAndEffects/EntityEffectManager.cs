@@ -439,6 +439,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             instancedBundle.bundleType = sourceBundle.Settings.BundleType;
             instancedBundle.targetType = sourceBundle.Settings.TargetType;
             instancedBundle.elementType = sourceBundle.Settings.ElementType;
+            instancedBundle.runtimeFlags = sourceBundle.Settings.RuntimeFlags;
             instancedBundle.name = sourceBundle.Settings.Name;
             instancedBundle.iconIndex = sourceBundle.Settings.IconIndex;
             instancedBundle.icon = sourceBundle.Settings.Icon;
@@ -2047,6 +2048,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             public BundleTypes bundleType;
             public TargetTypes targetType;
             public ElementTypes elementType;
+            public BundleRuntimeFlags runtimeFlags;
             public string name;
             public int iconIndex;
             public SpellIcon icon;
@@ -2089,6 +2091,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 bundleData.bundleType = bundle.bundleType;
                 bundleData.targetType = bundle.targetType;
                 bundleData.elementType = bundle.elementType;
+                bundleData.runtimeFlags = bundle.runtimeFlags;
                 bundleData.name = bundle.name;
                 bundleData.iconIndex = bundle.iconIndex;
                 bundleData.icon = bundle.icon;
@@ -2151,6 +2154,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 instancedBundle.bundleType = bundleData.bundleType;
                 instancedBundle.targetType = bundleData.targetType;
                 instancedBundle.elementType = bundleData.elementType;
+                instancedBundle.runtimeFlags = bundleData.runtimeFlags;
                 instancedBundle.name = bundleData.name;
                 instancedBundle.iconIndex = bundleData.iconIndex;
                 instancedBundle.icon = bundleData.icon;

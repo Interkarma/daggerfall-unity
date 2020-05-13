@@ -86,6 +86,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     }
 
     /// <summary>
+    /// Special bundle flags to control additional runtime behaviours.
+    /// </summary>
+    [Flags]
+    public enum BundleRuntimeFlags
+    {
+        /// <summary>No flags.</summary>
+        None = 0,
+        /// <summary>If bundle is from a held magic item, it will be removed at recast time and recast callbacks executed on item.</summary>
+        ItemRecastEnabled = 1,
+    }
+
+    /// <summary>
     /// Determines how effect chance will function.
     /// OnCast: is checked at cast time by EntityEffectManager receiving effect - effect is rejected on failure.
     /// Custom: is always allowed by EntityEffectManager, but still generates ChanceSuccess flag on Start().
