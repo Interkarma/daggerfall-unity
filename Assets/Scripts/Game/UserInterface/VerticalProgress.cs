@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -58,13 +58,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void SetColor(Color32 color)
         {
-            ColorTexture = new Texture2D(1, 1);
-            Color32[] colors = new Color32[1];
-            colors[0] = color;
-            ColorTexture.SetPixels32(colors);
-            ColorTexture.Apply(false, true);
-            ColorTexture.filterMode = FilterMode.Point;
-            this.color = color;
+            // Only create texture once
+            if (!ColorTexture)
+                ColorTexture = new Texture2D(1, 1);
+
+            // Only change color when not equal to current color
+            if (!this.color.Equals(color))
+            {
+                Color32[] colors = new Color32[1];
+                colors[0] = color;
+                ColorTexture.SetPixels32(colors);
+                ColorTexture.Apply(false, true);
+                ColorTexture.filterMode = FilterMode.Point;
+                this.color = color;
+            }
         }
 
         void DrawProgress()
