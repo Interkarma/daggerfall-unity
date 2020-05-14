@@ -308,10 +308,47 @@ namespace DaggerfallWorkshop.Utility
 
         Texture3D lut = null;
 
+        class Palette
+        {
+            private Color[] colors;
+
+            public Palette(Color[] colors)
+            {
+                this.colors = colors;
+            }
+
+            public Color GetNearestColor(Color targetColor)
+            {
+                int bestColorIndex = 0;
+                float bestFit = colorSqrDistance(targetColor, bestColorIndex);
+                for (int i = 1; i < art_pal.Length; i++)
+                {
+                    float fit = colorSqrDistance(targetColor, i);
+                    if (fit < bestFit)
+                    {
+                        bestColorIndex = i;
+                        bestFit = fit;
+                    }
+                }
+                return colors[bestColorIndex];
+            }
+
+            private float colorSqrDistance(Color targetColor, int i)
+            {
+                float diffr = (targetColor.r - colors[i].r);
+                float diffg = (targetColor.g - colors[i].g);
+                float diffb = (targetColor.b - colors[i].b);
+                return diffr * diffr + diffg * diffg + diffb * diffb;
+            }
+
+        }
+
         private void initLut()
         {
             if (lut)
                 return;
+
+            Palette palette = new Palette(art_pal);
 
             int size = 256 >> lutShift;
             lut = new Texture3D(size, size, size, TextureFormat.RGBA32, false);
@@ -329,32 +366,13 @@ namespace DaggerfallWorkshop.Utility
                     for (int r = 0; r < size; r++)
                     {
                         float rFrac = (float)r / (size - 1);
-                        int bestColorIndex = 0;
-                        float bestFit = colorSqrDistance(rFrac, gFrac, bFrac, bestColorIndex);
-                        for (int i = 1; i < art_pal.Length; i++)
-                        {
-                            float fit = colorSqrDistance(rFrac, gFrac, bFrac, i);
-                            if (fit < bestFit)
-                            {
-                                bestColorIndex = i;
-                                bestFit = fit;
-                            }
-                        }
-                        Debug.Log("RGB(" + r + "," + g + "," + b + ") => " + bestColorIndex);
-                        colors[r + gOffset + bOffset] = art_pal[bestColorIndex];
+                        Color targetColor = new Color(rFrac, gFrac, bFrac);
+                        colors[r + gOffset + bOffset] = palette.GetNearestColor(targetColor);
                     }
                 }
             }
             lut.SetPixels(colors);
             lut.Apply();
-        }
-
-        private float colorSqrDistance(float r, float g, float b, int i)
-        {
-            float diffr = (r - art_pal[i].r);
-            float diffg = (g - art_pal[i].g);
-            float diffb = (b - art_pal[i].b);
-            return diffr * diffr + diffg * diffg + diffb * diffb;
         }
 
         private void Start()
