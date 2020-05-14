@@ -308,11 +308,16 @@ namespace DaggerfallWorkshop.Utility
 
         Texture3D lut = null;
 
-        class Palette
+        interface IPalette
+        {
+            Color GetNearestColor(Color targetColor);
+        }
+
+        class LeafPalette : IPalette
         {
             private Color[] colors;
 
-            public Palette(Color[] colors)
+            public LeafPalette(Color[] colors)
             {
                 this.colors = colors;
             }
@@ -340,7 +345,11 @@ namespace DaggerfallWorkshop.Utility
                 float diffb = (targetColor.b - colors[i].b);
                 return diffr * diffr + diffg * diffg + diffb * diffb;
             }
+        }
 
+        private IPalette BuildPalette(Color[] colors)
+        {
+            return new LeafPalette(colors);
         }
 
         private void initLut()
@@ -348,7 +357,7 @@ namespace DaggerfallWorkshop.Utility
             if (lut)
                 return;
 
-            Palette palette = new Palette(art_pal);
+            IPalette palette = BuildPalette(art_pal);
 
             int size = 256 >> lutShift;
             lut = new Texture3D(size, size, size, TextureFormat.RGBA32, false);
