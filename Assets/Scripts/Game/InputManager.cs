@@ -60,7 +60,10 @@ namespace DaggerfallWorkshop.Game
 
         IList keyCodeList;
         KeyCode[] reservedKeys = new KeyCode[] { };
+
+        Dictionary<int, int> primarySecondaryKeybindDict = new Dictionary<int, int>();
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
+        Dictionary<KeyCode, Actions> secondaryActionKeyDict = new Dictionary<KeyCode, Actions>();
         Dictionary<String, AxisActions> axisActionKeyDict = new Dictionary<String, AxisActions>();
         Dictionary<KeyCode, string> unknownActions = new Dictionary<KeyCode, string>();
         //making keys 'int' instead of AxisActions because enum keys cause GC overhead in Unity
@@ -112,6 +115,7 @@ namespace DaggerfallWorkshop.Game
         public class KeyBindData_v1
         {
             public Dictionary<String, string> actionKeyBinds;
+            public Dictionary<String, String> secondaryActionKeyBinds;
             public Dictionary<String, AxisActions> axisActionKeyBinds;
             public Dictionary<String, String> axisActionInversions;
             public Dictionary<String, String> joystickUIKeyBinds;
@@ -671,20 +675,31 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Binds a KeyCode to an action
         /// </summary>
-        public void SetBinding(KeyCode code, Actions action)
+        public void SetBinding(KeyCode code, Actions action, bool primary = true)
         {
             // Not allowing multi-bind at this time as the front-end doesn't support it
-            ClearBinding(action);
+            //ClearBinding(action);
 
-            if (!actionKeyDict.ContainsKey(code))
+            if(actionKeyDict.ContainsKey(code) && secondaryActionKeyDict.ContainsKey(code))
             {
-                actionKeyDict.Add(code, action);
+               ClearBinding(code, false);
+               ClearBinding(code, true);
+            }
+            
+            var dict = primary ? actionKeyDict : secondaryActionKeyDict;
+            //var alt = primary ? secondaryActionKeyDict : actionKeyDict;
+
+            if (!dict.ContainsKey(code))
+            {
+                dict.Add(code, action);
             }
             else
             {
-                actionKeyDict.Remove(code);
-                actionKeyDict.Add(code, action);
+                dict.Remove(code);
+                dict.Add(code, action);
             }
+
+            FindSecondaryBindings(action);
         }
 
         /// <summary>
@@ -725,11 +740,13 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Unbinds a KeyCode to an action via KeyCode
         /// </summary>
-        public void ClearBinding(KeyCode code)
+        public void ClearBinding(KeyCode code, bool primary = true)
         {
-            if (actionKeyDict.ContainsKey(code))
+            var dict = primary ? actionKeyDict : secondaryActionKeyDict;
+
+            if (dict.ContainsKey(code))
             {
-                actionKeyDict.Remove(code);
+                dict.Remove(code);
             }
         }
 
@@ -765,6 +782,11 @@ namespace DaggerfallWorkshop.Game
             {
                 actionKeyDict.Remove(binding.Key);
             }
+
+            foreach (var binding in secondaryActionKeyDict.Where(kvp => kvp.Value == action).ToList())
+            {
+                secondaryActionKeyDict.Remove(binding.Key);
+            }
         }
 
         /// <summary>
@@ -799,10 +821,16 @@ namespace DaggerfallWorkshop.Game
             keyBindsData.actionKeyBinds = new Dictionary<string, string>();
             keyBindsData.axisActionInversions = new Dictionary<string, string>();
             keyBindsData.joystickUIKeyBinds = new Dictionary<string, string>();
+            keyBindsData.secondaryActionKeyBinds = new Dictionary<string, string>();
 
             foreach (var item in actionKeyDict)
             {
                 keyBindsData.actionKeyBinds.Add(GetKeyString(item.Key), item.Value.ToString());
+            }
+
+            foreach (var item in secondaryActionKeyDict)
+            {
+                keyBindsData.secondaryActionKeyBinds.Add(GetKeyString(item.Key), item.Value.ToString());
             }
 
             // If unknown actions were detected in this run, make sure we append them back to the settings file, so we won't break
@@ -901,6 +929,32 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.F9, Actions.QuickSave);
             SetBinding(KeyCode.F12, Actions.QuickLoad);
 
+            //default xbox controller
+            SetBinding(KeyCode.JoystickButton7, Actions.Escape, false);
+
+            SetBinding(KeyCode.JoystickButton3, Actions.Jump, false);
+            SetBinding(KeyCode.JoystickButton4, Actions.Run, false);
+
+            SetBinding(KeyCode.JoystickButton6, Actions.Rest, false);
+            SetBinding(KeyCode.JoystickButton10, Actions.Transport, false);
+
+            SetBinding((KeyCode)5004, Actions.RecastSpell, false);
+            SetBinding(KeyCode.JoystickButton1, Actions.UseMagicItem, false);
+
+            SetBinding(KeyCode.JoystickButton2, Actions.ReadyWeapon, false);
+            SetBinding((KeyCode)5010, Actions.SwingWeapon, false);
+            SetBinding(KeyCode.JoystickButton5, Actions.SwitchHand, false);
+
+            SetBinding((KeyCode)5014, Actions.Status, false);
+            SetBinding((KeyCode)5015, Actions.CharacterSheet, false);
+
+            SetBinding(KeyCode.JoystickButton0, Actions.ActivateCenterObject, false);
+
+            SetBinding(KeyCode.JoystickButton9, Actions.Sneak, false);
+
+            SetBinding((KeyCode)5013, Actions.AutoMap, false);
+            SetBinding((KeyCode)5012, Actions.TravelMap, false);
+
             SetAxisBinding("Axis1", AxisActions.MovementHorizontal);
             SetAxisBinding("Axis2", AxisActions.MovementVertical);
             SetAxisBinding("Axis4", AxisActions.CameraHorizontal);
@@ -931,26 +985,26 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetKey(KeyCode key)
         {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            var k = (((int)conv) < startingAxisKeyCode && Input.GetKey(conv)) || GetAxisKey((int)conv);
-            if (k)
-                LastKeyDown = conv;
-            return k;
+            if (GetSingleKey(key))
+                return true;
+
+            return GetSingleKey(GetSecondaryBinding(key));
         }
 
         public bool GetKeyDown(KeyCode key)
         {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            var kd = (((int)conv) < startingAxisKeyCode && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
-            if (kd)
-                LastKeyDown = conv;
-            return kd;
+            if (GetSingleKeyDown(key))
+                return true;
+
+            return GetSingleKeyDown(GetSecondaryBinding(key));
         }
 
         public bool GetKeyUp(KeyCode key)
         {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            return (((int)conv) < startingAxisKeyCode && Input.GetKeyUp(conv)) || GetAxisKeyUp((int)conv);
+            if (GetSingleKeyUp(key))
+                return true;
+
+            return GetSingleKeyUp(GetSecondaryBinding(key));
         }
 
         public bool AnyKeyDown
@@ -1027,16 +1081,45 @@ namespace DaggerfallWorkshop.Game
             cameraAxisBindingCache[1] = GetAxisBinding(AxisActions.CameraVertical);
             movementAxisBindingCache[0] = GetAxisBinding(AxisActions.MovementHorizontal);
             movementAxisBindingCache[1] = GetAxisBinding(AxisActions.MovementVertical);
+
+            foreach(Actions a in Enum.GetValues(typeof(Actions)))
+                FindSecondaryBindings(a);
+        }
+
+        KeyCode GetSecondaryBinding(KeyCode a)
+        {
+            if(primarySecondaryKeybindDict.ContainsKey((int)a))
+                return (KeyCode)primarySecondaryKeybindDict[(int)a];
+
+            return KeyCode.None;
+        }
+
+        void SetSecondaryBinding(KeyCode primary, KeyCode secondary)
+        {
+            primarySecondaryKeybindDict[(int)primary] = (int)secondary;
+            primarySecondaryKeybindDict[(int)secondary] = (int)primary;
+        }
+
+        void FindSecondaryBindings(Actions a)
+        {
+            KeyCode primKey = actionKeyDict.FirstOrDefault(x => x.Value == a).Key;
+            KeyCode secKey = secondaryActionKeyDict.FirstOrDefault(x => x.Value == a).Key;
+
+            if(primKey != KeyCode.None && secKey != KeyCode.None)
+            {
+                SetSecondaryBinding(primKey, secKey);
+            }
         }
 
         // Sets KeyCode binding only if action is missing
         // This is to ensure default actions are restored if missing
         // and to push out new actions to existing keybind files
-        private void TestSetBinding(KeyCode code, Actions action)
+        private void TestSetBinding(KeyCode code, Actions action, bool primary = true)
         {
-            if (!actionKeyDict.ContainsValue(action))
+            var dict = primary ? actionKeyDict : secondaryActionKeyDict;
+            if (!dict.ContainsValue(action))
             {
-                SetBinding(code, action);
+                SetBinding(code, action, primary);
             }
         }
 
@@ -1122,6 +1205,32 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.F8, Actions.PrintScreen);
             TestSetBinding(KeyCode.F9, Actions.QuickSave);
             TestSetBinding(KeyCode.F12, Actions.QuickLoad);
+
+            //default xbox controller
+            TestSetBinding(KeyCode.JoystickButton7, Actions.Escape, false);
+
+            TestSetBinding(KeyCode.JoystickButton3, Actions.Jump, false);
+            TestSetBinding(KeyCode.JoystickButton4, Actions.Run, false);
+
+            TestSetBinding(KeyCode.JoystickButton6, Actions.Rest, false);
+            TestSetBinding(KeyCode.JoystickButton10, Actions.Transport, false);
+
+            TestSetBinding((KeyCode)5004, Actions.RecastSpell, false);
+            TestSetBinding(KeyCode.JoystickButton1, Actions.UseMagicItem, false);
+
+            TestSetBinding(KeyCode.JoystickButton2, Actions.ReadyWeapon, false);
+            TestSetBinding((KeyCode)5010, Actions.SwingWeapon, false);
+            TestSetBinding(KeyCode.JoystickButton5, Actions.SwitchHand, false);
+
+            TestSetBinding((KeyCode)5014, Actions.Status, false);
+            TestSetBinding((KeyCode)5015, Actions.CharacterSheet, false);
+
+            TestSetBinding(KeyCode.JoystickButton0, Actions.ActivateCenterObject, false);
+
+            TestSetBinding(KeyCode.JoystickButton9, Actions.Sneak, false);
+
+            TestSetBinding((KeyCode)5013, Actions.AutoMap, false);
+            TestSetBinding((KeyCode)5012, Actions.TravelMap, false);
 
             TestSetAxisBinding("Axis1", AxisActions.MovementHorizontal);
             TestSetAxisBinding("Axis2", AxisActions.MovementVertical);
@@ -1226,6 +1335,30 @@ namespace DaggerfallWorkshop.Game
             keyCodeList = list;
 
             return keyCodeList;
+        }
+
+        bool GetSingleKey(KeyCode key)
+        {
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            var k = (((int)conv) < startingAxisKeyCode && Input.GetKey(conv)) || GetAxisKey((int)conv);
+            if (k)
+                LastKeyDown = conv;
+            return k;
+        }
+
+        bool GetSingleKeyDown(KeyCode key)
+        {
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            var kd = (((int)conv) < startingAxisKeyCode && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
+            if (kd)
+                LastKeyDown = conv;
+            return kd;
+        }
+
+        bool GetSingleKeyUp(KeyCode key)
+        {
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            return (((int)conv) < startingAxisKeyCode && Input.GetKeyUp(conv)) || GetAxisKeyUp((int)conv);
         }
 
         //Converts all joystick KeyCodes to be controller-agnostic (e.g. "Joystick3Button0" to "JoystickButton0")
@@ -1491,6 +1624,23 @@ namespace DaggerfallWorkshop.Game
                     // This action is unknown in this game, make sure we still keep it so once we save the settings, we
                     // won't discard them.
                     unknownActions.Add(key, item.Value);
+                }
+            }
+
+            if(keyBindsData.secondaryActionKeyBinds != null)
+            {
+                foreach(var item in keyBindsData.secondaryActionKeyBinds)
+                {
+                    KeyCode key = ParseKeyCodeString(item.Key);
+                    var actionVal = ActionNameToEnum(item.Value);
+                    if (!secondaryActionKeyDict.ContainsKey(key) && actionVal != Actions.Unknown)
+                        secondaryActionKeyDict.Add(key, actionVal);
+                    else
+                    {
+                        // This action is unknown in this game, make sure we still keep it so once we save the settings, we
+                        // won't discard them.
+                        unknownActions.Add(key, item.Value);
+                    }
                 }
             }
 
