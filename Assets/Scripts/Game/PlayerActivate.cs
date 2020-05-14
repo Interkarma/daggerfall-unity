@@ -392,37 +392,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void ActivateBulletinBoard(RaycastHit hit, DaggerfallBulletinBoard bulletinBoard)
-        {
-            if(currentMode == PlayerActivateModes.Info)
-            {
-                // Check if close enough to Activate
-                if(hit.distance > MobileNPCActivationDistance)
-                {
-                    DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
-                    return;
-                }
-
-                // Get news
-                var bulletinBoardMessage = GameManager.Instance.TalkManager.GetNewsOrRumorsForBulletinBoard();
-
-                // format message
-                var tokens =  new TextFile.Token[]
-                {
-                            new TextFile.Token(TextFile.Formatting.JustifyCenter, null),
-                            new TextFile.Token(TextFile.Formatting.Text, GameManager.Instance.PlayerGPS.CurrentLocation.Name),
-                            new TextFile.Token(TextFile.Formatting.JustifyCenter, null),
-                            new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
-                            new TextFile.Token(TextFile.Formatting.Text, string.Empty),
-                            new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
-                            new TextFile.Token(TextFile.Formatting.Text, bulletinBoardMessage),
-                };
-
-                // Display message
-                DaggerfallUI.MessageBox(tokens);
-            }
-        }
-
         #region Activation Logic
 
         void ActivateBuilding(
@@ -638,6 +607,34 @@ namespace DaggerfallWorkshop.Game
             }
             else
                 actionDoor.ToggleDoor(true);
+        }
+
+        void ActivateBulletinBoard(RaycastHit hit, DaggerfallBulletinBoard bulletinBoard)
+        {
+            // Check if close enough to Activate
+            if (hit.distance > MobileNPCActivationDistance)
+            {
+                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                return;
+            }
+
+            // Get news
+            var bulletinBoardMessage = GameManager.Instance.TalkManager.GetNewsOrRumorsForBulletinBoard();
+
+            // format message
+            var tokens = new TextFile.Token[]
+            {
+                            new TextFile.Token(TextFile.Formatting.JustifyCenter, null),
+                            new TextFile.Token(TextFile.Formatting.Text, GameManager.Instance.PlayerGPS.CurrentLocation.Name),
+                            new TextFile.Token(TextFile.Formatting.JustifyCenter, null),
+                            new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
+                            new TextFile.Token(TextFile.Formatting.Text, string.Empty),
+                            new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
+                            new TextFile.Token(TextFile.Formatting.Text, bulletinBoardMessage),
+            };
+
+            // Display message
+            DaggerfallUI.MessageBox(tokens);
         }
 
         void ActivateStaticNPC(RaycastHit hit, StaticNPC npc)
