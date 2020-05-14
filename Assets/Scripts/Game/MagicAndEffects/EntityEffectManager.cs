@@ -1698,7 +1698,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     }
                 }
 
-                if (bundle.fromEquippedItem != null)
+                if (bundle.fromEquippedItem != null && bundle.fromEquippedItem.IsEquipped)
                 {
                     // If bundle has an item source keep it alive until item breaks or is unequipped
                     hasRemainingEffectRounds = true;
@@ -1978,11 +1978,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
                 RemovePendingBundles();
 
-                // Execute reroll callbacks on item
-                DoItemEnchantmentPayloads(EnchantmentPayloadFlags.RerollEffect, item);
+                if (item.IsEquipped)
+                {
+                    // Execute reroll callbacks on item if still equipped
+                    DoItemEnchantmentPayloads(EnchantmentPayloadFlags.RerollEffect, item);
 
-                // Update recast time in item
-                item.timeEffectsLastRerolled = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                    // Update recast time in item
+                    item.timeEffectsLastRerolled = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                }
             }
 
             // Clean up
