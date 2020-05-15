@@ -1019,8 +1019,6 @@ namespace DaggerfallWorkshop.Game
                 else
                     SetWeapon(ScreenWeapon, currentLeftHandWeapon);
             }
-
-            ScreenWeapon.Reach = defaultWeaponReach;
         }
 
         void SetMelee(FPSWeapon target)
