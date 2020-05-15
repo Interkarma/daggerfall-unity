@@ -357,10 +357,12 @@ namespace DaggerfallWorkshop.Utility
             private IPalette belowPalette;
             private IPalette abovePalette;
 
-            public SplitPalette(Color[] colors, Func<Color, float> proj, float splitValue, int depth)
+            public SplitPalette(Color[] colors, Func<Color, float> proj, int depth)
             {
                 this.proj = proj;
-                this.splitValue = splitValue;
+                Array.Sort(colors, (Color a, Color b) => Math.Sign(proj(a) - proj(b)));
+                int middle = (colors.Length + 1) / 2;
+                splitValue = (proj(colors[middle - 1]) + proj(colors[middle])) / 2;
                 List<Color> belowColors = new List<Color>();
                 List<Color> aboveColors = new List<Color>();
                 for (int i = 0; i < colors.Length; i++)
@@ -379,8 +381,7 @@ namespace DaggerfallWorkshop.Utility
                 float diff = proj(targetColor) - splitValue;
                 IPalette majorPalette = (diff >= 0) ? abovePalette : belowPalette;
 
-                Color majorColor;
-                float majorSqrDistance = majorPalette.GetNearestColor(targetColor, out majorColor);
+                float majorSqrDistance = majorPalette.GetNearestColor(targetColor, out color);
                 if (majorSqrDistance >= diff * diff)
                 {
                     IPalette minorPalette = (diff >= 0) ? belowPalette : abovePalette;
@@ -393,13 +394,11 @@ namespace DaggerfallWorkshop.Utility
                         return minorSqrDistance;
                     }
                 }
-                color = majorColor;
                 return majorSqrDistance;
             }
         }
 
-        const int PaletteCutoff = 16;
-        const int ColorSampling = 5;
+        const int PaletteCutoff = 10;
 
         static System.Random rnd = new System.Random();
 
@@ -409,20 +408,14 @@ namespace DaggerfallWorkshop.Utility
                 return new LeafPalette(colors);
             else
             {
-                Color total = new Color(0, 0, 0);
-                for (int i = 0; i < ColorSampling; i++)
-                {
-                    total += colors[rnd.Next(colors.Length)];
-                }
-                Color average = total / ColorSampling;
                 switch (depth % 3)
                 {
                     case 0:
-                        return new SplitPalette(colors, (Color color) => color.r, average.r, depth + 1);
+                        return new SplitPalette(colors, (Color color) => color.r, depth + 1);
                     case 1:
-                        return new SplitPalette(colors, (Color color) => color.g, average.g, depth + 1);
+                        return new SplitPalette(colors, (Color color) => color.g, depth + 1);
                     case 2:
-                        return new SplitPalette(colors, (Color color) => color.b, average.b, depth + 1);
+                        return new SplitPalette(colors, (Color color) => color.b, depth + 1);
                     default:
                         return null;
                 }
