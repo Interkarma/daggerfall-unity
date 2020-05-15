@@ -19,6 +19,7 @@ namespace DaggerfallWorkshop.Game
     {
         private PlayerMotor playerMotor;
         private LevitateMotor levitateMotor;
+        private FPSConsoleCommands fpsconsole;
 
         // If checked, the run key toggles between running and walking. Otherwise player runs if the key is held down and walks otherwise
         // There must be a button set up in the Input Manager called "Run"
@@ -131,6 +132,24 @@ namespace DaggerfallWorkshop.Game
             }
             else
                 baseSpeed = GetWalkSpeed(player);
+
+            //COMBAT OVERHAUL\\
+            //Adds if then trigger for unsheathed mode and attack mode. Lowers player movement speed by multiplying end base spend by
+            //a set float value.default if .4 and .75f;
+            float Aspeedmodifider = FPSConsoleCommands.ChangeMovementMods.EAttackModifier;
+            float Sspeedmodifider = FPSConsoleCommands.ChangeMovementMods.ESheathedModifier;
+
+            if (Aspeedmodifider == 0)
+                Aspeedmodifider = .4f;
+
+            if (Sspeedmodifider == 0)
+                Sspeedmodifider = .85f;
+
+            if (GameManager.Instance.WeaponManager.Sheathed == false && GameManager.Instance.WeaponManager.IsAttacking == false)
+                baseSpeed = baseSpeed * Sspeedmodifider;
+            else if (GameManager.Instance.WeaponManager.IsAttacking == true)
+                baseSpeed = baseSpeed * Aspeedmodifider;
+
             return baseSpeed;
         }
 

@@ -266,6 +266,36 @@ namespace DaggerfallWorkshop.Game.Items
             return result;
         }
 
+        static public float getItemRange(DaggerfallUnityItem item)
+        {
+            // if there is no item, set to default range. Of there is item, get template range.
+            if (item == null)
+            {
+                return 2.25f;
+            }
+            else
+            {
+                // Get item template
+                ItemTemplate template = item.ItemTemplate;
+                return template.baseRange;
+            }
+        }
+
+        static public float getItemWeight(DaggerfallUnityItem item)
+        {
+            // Get item template
+            ItemTemplate template = item.ItemTemplate;
+            return template.baseWeight;
+        }
+
+        static public float getItemSpeed(DaggerfallUnityItem item)
+        {
+            // Get item template
+            ItemTemplate template = item.ItemTemplate;
+            float itemspeed = (template.baseWeight * template.baseRange);
+            return itemspeed;
+        }
+
         /// <summary>
         /// Resolves full item name using parameters like %it and material type.
         /// </summary>
@@ -320,7 +350,7 @@ namespace DaggerfallWorkshop.Game.Items
                         TextFile.Token[] tokens = msg.GetTextTokens();
                         string signoff = "";
                         int lines = 0;
-                        for (int i = tokens.Length-1; i >= 0; i--)
+                        for (int i = tokens.Length - 1; i >= 0; i--)
                         {
                             TextFile.Token token = tokens[i];
                             if (!string.IsNullOrEmpty(token.text))
@@ -632,7 +662,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 // Change dye
                 data = ChangeDye(data, (DyeColors)color, DyeTargets.Clothing);
-            }    
+            }
 
             return data;
         }
@@ -1269,9 +1299,9 @@ namespace DaggerfallWorkshop.Game.Items
             // Add some torches and candles if player torch is from items setting enabled
             if (DaggerfallUnity.Settings.PlayerTorchFromItems)
             {
-                for (int i=0; i < 5; i++)
+                for (int i = 0; i < 5; i++)
                     items.AddItem(ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Torch));
-                for (int i=0; i < 2; i++)
+                for (int i = 0; i < 2; i++)
                     items.AddItem(ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Candle));
             }
         }

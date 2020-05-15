@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Items
         public int nativeMaterialValue;
         public DyeColors dyeColor;
         public float weightInKg;
+        public float rangeInFt;
         public int drawOrder;
         public int value;
         public ushort unknown;
@@ -302,11 +303,14 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public bool IsLightSource
         {   // Torch, Lantern, Candle, Holy Candle.
-            get { return (itemGroup == ItemGroups.UselessItems2 && 
-                          (TemplateIndex == (int)UselessItems2.Torch ||
-                           TemplateIndex == (int)UselessItems2.Lantern ||
-                           TemplateIndex == (int)UselessItems2.Candle)) ||
-                          IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_candle); }
+            get
+            {
+                return (itemGroup == ItemGroups.UselessItems2 &&
+                        (TemplateIndex == (int)UselessItems2.Torch ||
+                         TemplateIndex == (int)UselessItems2.Lantern ||
+                         TemplateIndex == (int)UselessItems2.Candle)) ||
+                        IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_candle);
+            }
         }
 
         /// <summary>
@@ -366,7 +370,8 @@ namespace DaggerfallWorkshop.Game.Items
         public int PotionRecipeKey
         {
             get { return potionRecipeKey; }
-            set {
+            set
+            {
                 PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(value);
                 if (potionRecipe != null)
                 {
@@ -537,6 +542,7 @@ namespace DaggerfallWorkshop.Game.Items
             nativeMaterialValue = 0;
             dyeColor = DyeColors.Unchanged;
             weightInKg = itemTemplate.baseWeight;
+            rangeInFt = itemTemplate.baseRange;
             drawOrder = itemTemplate.drawOrderOrEffect;
             currentVariant = 0;
             value = itemTemplate.basePrice;
@@ -588,6 +594,7 @@ namespace DaggerfallWorkshop.Game.Items
             nativeMaterialValue = materialValue;
             dyeColor = DyeColors.Unchanged;
             weightInKg = itemTemplate.baseWeight;
+            rangeInFt = itemTemplate.baseRange;
             drawOrder = itemTemplate.drawOrderOrEffect;
             currentVariant = 0;
             value = magicItemTemplate.value;
@@ -674,7 +681,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// Determines if item is a stack.
         /// </summary>
         /// <returns><c>true</c> if item is a stack, <c>false</c> otherwise.</returns>
-        public bool IsAStack() 
+        public bool IsAStack()
         {
             return stackCount > 1;
         }
@@ -1474,6 +1481,7 @@ namespace DaggerfallWorkshop.Game.Items
             nativeMaterialValue = other.nativeMaterialValue;
             dyeColor = other.dyeColor;
             weightInKg = other.weightInKg;
+            rangeInFt = other.rangeInFt;
             drawOrder = other.drawOrder;
             currentVariant = other.currentVariant;
             value = other.value;
@@ -1530,6 +1538,7 @@ namespace DaggerfallWorkshop.Game.Items
             nativeMaterialValue = itemRecord.ParsedData.material;
             dyeColor = (DyeColors)itemRecord.ParsedData.color;
             weightInKg = (float)itemRecord.ParsedData.weight * 0.25f;
+            rangeInFt = (float)itemRecord.ParsedData.range;
             drawOrder = itemTemplate.drawOrderOrEffect;
             value = (int)itemRecord.ParsedData.value;
             unknown = itemRecord.ParsedData.unknown;
@@ -1596,6 +1605,7 @@ namespace DaggerfallWorkshop.Game.Items
             nativeMaterialValue = data.nativeMaterialValue;
             dyeColor = data.dyeColor;
             weightInKg = data.weightInKg;
+            rangeInFt = data.rangeInFt;
             drawOrder = data.drawOrder;
             value = data.value1;
             // These are being saved in DF Unity saves as one int32 value but are two 16-bit values in classic
