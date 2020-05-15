@@ -19,7 +19,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public class VerticalProgress : BaseScreenComponent
     {
         public Texture2D ProgressTexture;
-        public Texture2D ColorTexture;
+        Texture2D colorTexture;
 
         Color32 color;
         float amount = 1.0f;
@@ -49,6 +49,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public override void Draw()
         {
+            // Create texture once
+            if (!colorTexture)
+                colorTexture = DaggerfallUI.CreateSolidTexture(UnityEngine.Color.white, 8);
+
             if (Enabled)
             {
                 base.Draw();
@@ -58,20 +62,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void SetColor(Color32 color)
         {
-            // Only create texture once
-            if (!ColorTexture)
-                ColorTexture = new Texture2D(1, 1);
-
-            // Only change color when not equal to current color
-            if (!this.color.Equals(color))
-            {
-                Color32[] colors = new Color32[1];
-                colors[0] = color;
-                ColorTexture.SetPixels32(colors);
-                ColorTexture.Apply(false, true);
-                ColorTexture.filterMode = FilterMode.Point;
-                this.color = color;
-            }
+            this.color = color;
         }
 
         void DrawProgress()
@@ -83,9 +74,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (ProgressTexture)
                 GUI.DrawTextureWithTexCoords(dstRect, ProgressTexture, srcRect, false);
-            else if (ColorTexture)
+            else if (colorTexture)
             {
-                GUI.DrawTextureWithTexCoords(dstRect, ColorTexture, srcRect, false);
+                Color lastColor = GUI.color;
+                GUI.color = color;
+                GUI.DrawTextureWithTexCoords(dstRect, colorTexture, srcRect, false);
+                GUI.color = lastColor;
             }
         }
     }
