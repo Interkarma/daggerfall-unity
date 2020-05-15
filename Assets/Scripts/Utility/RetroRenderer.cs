@@ -306,6 +306,9 @@ namespace DaggerfallWorkshop.Utility
         };
 
         // LUT downsampling
+        // 0 - 16MB, 30s init (excellent, similar to k-d tree shader)
+        // 1 - 2MB, 2.4s init (good)
+        // 2 - 256KB, 0.3s init (average)
         const int lutShift = 1;
 
         Texture3D lut = null;
@@ -510,7 +513,7 @@ namespace DaggerfallWorkshop.Utility
                             shader = Shader.Find(MaterialReader._DaggerfallRetroPalettizationShaderName);
                             postprocessMaterial = new Material(shader);
                             postprocessMaterial.SetTexture("_Lut", lut);
-                            postprocessMaterial.SetInt("_LutQuantization", 256 >> lutShift);
+                            postprocessMaterial.SetInt("_LutQuantization", (256 >> lutShift) - 1);
                             break;
                     }
                     if (!postprocessMaterial)
