@@ -303,6 +303,39 @@ namespace DaggerfallWorkshop.Utility
             new Color(  65f/255,  41f/255,  33f/255),
             new Color(  57f/255,  43f/255,  39f/255),
             new Color(   0f/255,   0f/255,   0f/255),
+
+            // Sky deep blues. Can be removed when sky is no longer palettized
+            new Color(  28f/255,  28f/255,  71f/255),
+            new Color(  27f/255,  27f/255,  67f/255),
+            new Color(  27f/255,  27f/255,  64f/255),
+            new Color(  26f/255,  26f/255,  60f/255),
+            new Color(  26f/255,  26f/255,  56f/255),
+            new Color(  25f/255,  25f/255,  53f/255),
+            new Color(  25f/255,  25f/255,  49f/255),
+            new Color(  24f/255,  24f/255,  46f/255),
+            new Color(  23f/255,  23f/255,  42f/255),
+            new Color(  23f/255,  23f/255,  38f/255),
+            new Color(  22f/255,  22f/255,  35f/255),
+            new Color(  22f/255,  22f/255,  31f/255),
+            new Color(  21f/255,  21f/255,  27f/255),
+            new Color(  21f/255,  21f/255,  24f/255),
+            new Color(  20f/255,  20f/255,  20f/255),
+            new Color(   0f/255,   0f/255, 108f/255),
+            new Color(   0f/255,   0f/255, 103f/255),
+            new Color(   0f/255,   0f/255,  99f/255),
+            new Color(   0f/255,   0f/255,  94f/255),
+            new Color(   0f/255,   0f/255,  90f/255),
+            new Color(   0f/255,   0f/255,  85f/255),
+            new Color(   0f/255,   0f/255,  80f/255),
+            new Color(   0f/255,   0f/255,  76f/255),
+            new Color(   0f/255,   0f/255,  71f/255),
+            new Color(   0f/255,   0f/255,  67f/255),
+            new Color(   0f/255,   0f/255,  62f/255),
+            new Color(   0f/255,   0f/255,  57f/255),
+            new Color(   0f/255,   0f/255,  53f/255),
+            new Color(   0f/255,   0f/255,  48f/255),
+            new Color(   0f/255,   0f/255,  44f/255),
+            new Color(   0f/255,   0f/255,  39f/255),
         };
 
         // LUT downsampling
@@ -375,8 +408,15 @@ namespace DaggerfallWorkshop.Utility
                     else
                         belowColors.Add(colors[i]);
                 }
-                belowPalette = BuildPalette(belowColors.ToArray(), depth);
-                abovePalette = BuildPalette(aboveColors.ToArray(), depth);
+                if (belowColors.Count > 0)
+                    belowPalette = BuildPalette(belowColors.ToArray(), depth);
+                if (aboveColors.Count > 0)
+                    abovePalette = BuildPalette(aboveColors.ToArray(), depth);
+            }
+
+            public bool IsDegenerated()
+            {
+                return abovePalette == null || belowPalette == null;
             }
 
             public float GetNearestColor(Color targetColor, out Color color)
@@ -411,17 +451,25 @@ namespace DaggerfallWorkshop.Utility
                 return new LeafPalette(colors);
             else
             {
+                SplitPalette palette;
                 switch (depth % 3)
                 {
                     case 0:
-                        return new SplitPalette(colors, (Color color) => color.r, depth + 1);
+                        palette = new SplitPalette(colors, (Color color) => color.r, depth + 1);
+                        break;
                     case 1:
-                        return new SplitPalette(colors, (Color color) => color.g, depth + 1);
+                        palette = new SplitPalette(colors, (Color color) => color.g, depth + 1);
+                        break;
                     case 2:
-                        return new SplitPalette(colors, (Color color) => color.b, depth + 1);
+                        palette = new SplitPalette(colors, (Color color) => color.b, depth + 1);
+                        break;
                     default:
-                        return null;
+                        throw new NotSupportedException();
                 }
+                if (palette.IsDegenerated())
+                    // Split with a different projection
+                    return BuildPalette(colors, depth + 1);
+                return palette;
             }
         }
 
