@@ -11,6 +11,8 @@
 
 using DaggerfallWorkshop.Game;
 using UnityEngine;
+using System.Collections.Generic;
+using System;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -310,7 +312,7 @@ namespace DaggerfallWorkshop.Utility
 
         interface IPalette
         {
-            Color GetNearestColor(Color targetColor);
+            float GetNearestColor(Color targetColor, out Color color);
         }
 
         class LeafPalette : IPalette
@@ -322,11 +324,11 @@ namespace DaggerfallWorkshop.Utility
                 this.colors = colors;
             }
 
-            public Color GetNearestColor(Color targetColor)
+            public float GetNearestColor(Color targetColor, out Color color)
             {
                 int bestColorIndex = 0;
                 float bestFit = colorSqrDistance(targetColor, bestColorIndex);
-                for (int i = 1; i < art_pal.Length; i++)
+                for (int i = 1; i < colors.Length; i++)
                 {
                     float fit = colorSqrDistance(targetColor, i);
                     if (fit < bestFit)
@@ -335,7 +337,8 @@ namespace DaggerfallWorkshop.Utility
                         bestFit = fit;
                     }
                 }
-                return colors[bestColorIndex];
+                color = colors[bestColorIndex];
+                return bestFit;
             }
 
             private float colorSqrDistance(Color targetColor, int i)
@@ -347,9 +350,83 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        private IPalette BuildPalette(Color[] colors)
+        public class SplitPalette : IPalette
         {
-            return new LeafPalette(colors);
+            private Func<Color, float> proj;
+            private float splitValue;
+            private IPalette belowPalette;
+            private IPalette abovePalette;
+
+            public SplitPalette(Color[] colors, Func<Color, float> proj, float splitValue, int depth)
+            {
+                this.proj = proj;
+                this.splitValue = splitValue;
+                List<Color> belowColors = new List<Color>();
+                List<Color> aboveColors = new List<Color>();
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    if (proj(colors[i]) >= splitValue)
+                        aboveColors.Add(colors[i]);
+                    else
+                        belowColors.Add(colors[i]);
+                }
+                belowPalette = BuildPalette(belowColors.ToArray(), depth);
+                abovePalette = BuildPalette(aboveColors.ToArray(), depth);
+            }
+
+            public float GetNearestColor(Color targetColor, out Color color)
+            {
+                float diff = proj(targetColor) - splitValue;
+                IPalette majorPalette = (diff >= 0) ? abovePalette : belowPalette;
+
+                Color majorColor;
+                float majorSqrDistance = majorPalette.GetNearestColor(targetColor, out majorColor);
+                if (majorSqrDistance >= diff * diff)
+                {
+                    IPalette minorPalette = (diff >= 0) ? belowPalette : abovePalette;
+
+                    Color minorColor;
+                    float minorSqrDistance = minorPalette.GetNearestColor(targetColor, out minorColor);
+                    if (minorSqrDistance < majorSqrDistance)
+                    {
+                        color = minorColor;
+                        return minorSqrDistance;
+                    }
+                }
+                color = majorColor;
+                return majorSqrDistance;
+            }
+        }
+
+        const int PaletteCutoff = 16;
+        const int ColorSampling = 5;
+
+        static System.Random rnd = new System.Random();
+
+        static private IPalette BuildPalette(Color[] colors, int depth = 0)
+        {
+            if (colors.Length <= PaletteCutoff)
+                return new LeafPalette(colors);
+            else
+            {
+                Color total = new Color(0, 0, 0);
+                for (int i = 0; i < ColorSampling; i++)
+                {
+                    total += colors[rnd.Next(colors.Length)];
+                }
+                Color average = total / ColorSampling;
+                switch (depth % 3)
+                {
+                    case 0:
+                        return new SplitPalette(colors, (Color color) => color.r, average.r, depth + 1);
+                    case 1:
+                        return new SplitPalette(colors, (Color color) => color.g, average.g, depth + 1);
+                    case 2:
+                        return new SplitPalette(colors, (Color color) => color.b, average.b, depth + 1);
+                    default:
+                        return null;
+                }
+            }
         }
 
         private void initLut()
@@ -357,31 +434,39 @@ namespace DaggerfallWorkshop.Utility
             if (lut)
                 return;
 
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             IPalette palette = BuildPalette(art_pal);
+            watch.Stop();
+            Debug.Log("Time spent building palette = " + watch.ElapsedMilliseconds + "ms");
 
+            var watch2 = System.Diagnostics.Stopwatch.StartNew();
             int size = 256 >> lutShift;
             lut = new Texture3D(size, size, size, TextureFormat.RGBA32, false);
             lut.wrapMode = TextureWrapMode.Clamp;
 
             Color[] colors = new Color[size * size * size];
+            Color targetColor = new Color();
             for (int b = 0; b < size; b++)
             {
-                float bFrac = (float)b / (size - 1);
+                targetColor.b = (float)b / (size - 1);
                 int bOffset = b * size * size;
                 for (int g = 0; g < size; g++)
                 {
-                    float gFrac = (float)g / (size - 1);
+                    targetColor.g = (float)g / (size - 1);
                     int gOffset = g * size;
                     for (int r = 0; r < size; r++)
                     {
-                        float rFrac = (float)r / (size - 1);
-                        Color targetColor = new Color(rFrac, gFrac, bFrac);
-                        colors[r + gOffset + bOffset] = palette.GetNearestColor(targetColor);
+                        targetColor.r = (float)r / (size - 1);
+                        Color color;
+                        float sqrDistance = palette.GetNearestColor(targetColor, out color);
+                        colors[r + gOffset + bOffset] = color;
                     }
                 }
             }
             lut.SetPixels(colors);
             lut.Apply();
+            watch2.Stop();
+            Debug.Log("Time spent filling LUT = " + watch2.ElapsedMilliseconds + "ms");
         }
 
         private void Start()
