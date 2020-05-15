@@ -217,6 +217,8 @@ namespace DaggerfallWorkshop.Game.Utility
 
             InputManager.Instance.JoystickMovementThreshold = DaggerfallUnity.Settings.JoystickMovementThreshold;
 
+            InputManager.Instance.JoystickDeadzone = DaggerfallUnity.Settings.JoystickDeadzone;
+
             // Set shadow resolution
             GameManager.UpdateShadowResolution();
 

@@ -79,6 +79,7 @@ MouseLookSensitivity=1.0
 JoystickLookSensitivity=1.0
 JoystickCursorSensitivity=1.0
 JoystickMovementThreshold=0.9
+JoystickDeadzone=0.0
 HeadBobbing=True
 Handedness=0
 WeaponAttackThreshold=0.03

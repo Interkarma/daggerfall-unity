@@ -225,6 +225,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         public bool MaximizeJoystickMovement { get; set; }
+        public float JoystickDeadzone { get; set; }
 
         #endregion
 
@@ -434,20 +435,24 @@ namespace DaggerfallWorkshop.Game
 
             // Collect mouse axes
             mouseX = Input.GetAxisRaw("Mouse X");
-            if (mouseX == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[0]))
+            mouseY = Input.GetAxisRaw("Mouse Y");
+
+
+            if ((mouseX == 0F || mouseY == 0F) && !String.IsNullOrEmpty(cameraAxisBindingCache[0]))
             {
-                mouseX = Input.GetAxis(cameraAxisBindingCache[0]);
+                var h = Input.GetAxis(cameraAxisBindingCache[0]);
+                var v = Input.GetAxis(cameraAxisBindingCache[1]);
+
                 if (GetAxisActionInversion(AxisActions.CameraHorizontal))
                     mouseX *= -1;
-            }
-
-            mouseY = Input.GetAxisRaw("Mouse Y");
-            if (mouseY == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[1]))
-            {
-                mouseY = Input.GetAxis(cameraAxisBindingCache[1]);
-
                 if (GetAxisActionInversion(AxisActions.CameraVertical))
                     mouseY *= -1;
+
+                if(Mathf.Sqrt(h*h + v*v) > JoystickDeadzone)
+                {
+                    mouseX = h;
+                    mouseY = v;
+                }
             }
 
             if(ToggleAutorun)
@@ -476,15 +481,17 @@ namespace DaggerfallWorkshop.Game
 
             var horizj = Input.GetAxis(horizBinding);
             var vertj = Input.GetAxis(vertBinding);
+            var cameraHorizJ = Input.GetAxis(cameraAxisBindingCache[0]);
+            var cameraVertJ = Input.GetAxis(cameraAxisBindingCache[1]);
 
-            if (!usingControllerCursor &&
-                (horizj != 0
-                || vertj != 0
-                || Input.GetAxis(cameraAxisBindingCache[0]) != 0
-                || Input.GetAxis(cameraAxisBindingCache[1]) != 0))
+            float distMovement = Mathf.Sqrt(horizj * horizj + vertj * vertj);
+            float distCamera = Mathf.Sqrt(cameraHorizJ * cameraHorizJ + cameraVertJ * cameraVertJ);
+
+            if (!usingControllerCursor && (distMovement > JoystickDeadzone || distCamera > JoystickDeadzone))
             {
                 usingControllerCursor = true;
                 controllerCursorPosition = Input.mousePosition;
+                Debug.Log(distMovement+","+distCamera);
             }
             else if (usingControllerCursor && (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0))
             {
@@ -505,8 +512,11 @@ namespace DaggerfallWorkshop.Game
                     if (GetAxisActionInversion(AxisActions.MovementVertical))
                         vertj *= -1;
 
-                    controllerCursorPosition.x += JoystickCursorSensitivity * controllerCursorHorizontalSpeed * horizj * Time.fixedDeltaTime;
-                    controllerCursorPosition.y += JoystickCursorSensitivity * controllerCursorVerticalSpeed * vertj * Time.fixedDeltaTime;
+                    if (distMovement > JoystickDeadzone)
+                    {
+                        controllerCursorPosition.x += JoystickCursorSensitivity * controllerCursorHorizontalSpeed * horizj * Time.fixedDeltaTime;
+                        controllerCursorPosition.y += JoystickCursorSensitivity * controllerCursorVerticalSpeed * vertj * Time.fixedDeltaTime;
+                    }
 
                     controllerCursorPosition.x = Mathf.Clamp(controllerCursorPosition.x, 0, Screen.width);
                     controllerCursorPosition.y = Mathf.Clamp(controllerCursorPosition.y, 0, Screen.height);
@@ -1408,7 +1418,12 @@ namespace DaggerfallWorkshop.Game
                 if (GetAxisActionInversion(AxisActions.MovementVertical))
                     vert *= -1;
 
-                float dist = Mathf.Clamp(Mathf.Sqrt(horiz*horiz + vert*vert), controllerMinimumAxisFloat, 1.0F);
+                float jd = Mathf.Sqrt(horiz*horiz + vert*vert);
+
+                if (jd <= JoystickDeadzone)
+                    return;
+
+                float dist = Mathf.Clamp(jd, controllerMinimumAxisFloat, 1.0F);
 
                 if (MaximizeJoystickMovement || dist > JoystickMovementThreshold)
                     dist = 1.0F;
