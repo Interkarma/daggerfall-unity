@@ -34,6 +34,9 @@ namespace DaggerfallWorkshop.Game
         const float defaultBowReach = 50f;
         public const float defaultWeaponReach = 2.25f;
 
+        public bool hitobject = false;
+        float changeitemrange;
+
         // Equip delay times for weapons
         public static ushort[] EquipDelayTimes = { 500, 700, 1200, 900, 900, 1800, 1600, 1700, 1700, 3000, 3400, 2000, 2200, 2000, 2200, 2000, 4000, 5000 };
 
@@ -48,12 +51,13 @@ namespace DaggerfallWorkshop.Game
 
         public FPSWeapon ScreenWeapon;              // Weapon displayed in FPS view
         public bool Sheathed;                       // Weapon is sheathed
-        public float SphereCastRadius = 0.25f;      // Radius of SphereCast used to target attacks
+        public float SphereCastRadius = 0.05f;      // Radius of SphereCast used to target attacks
         int playerLayerMask = 0;
         [Range(0, 1)]
         public float AttackThreshold = 0.05f;       // Minimum mouse gesture travel distance for an attack. % of screen
         public float ChanceToBeParried = 0.1f;      // Example: Chance for player hit to be parried
         public DaggerfallMissile ArrowMissilePrefab;
+        public DaggerfallUnityItem strikingWeapon;
 
         float weaponSensitivity = 1.0f;             // Sensitivity of weapon swings to mouse movements
         private Gesture _gesture;
@@ -69,7 +73,8 @@ namespace DaggerfallWorkshop.Game
         bool isBowSoundFinished = false;
         Hand lastAttackHand = Hand.None;
         float cooldownTime = 0.0f;                  // Wait for weapon cooldown
-        int swingWeaponFatigueLoss = 11;            // According to DF Chronicles and verified in classic
+        int swingWeaponFatigueLoss = 11;            // According to DF Chronicles and verified in classic. Is dynamically set below based on on screen weapon.
+        float itemRange = 0;
 
         bool usingRightHand = true;
         bool holdingShield = false;
@@ -79,6 +84,25 @@ namespace DaggerfallWorkshop.Game
 
         public float EquipCountdownRightHand;
         public float EquipCountdownLeftHand;
+        public Vector3 attackPosition;
+
+        //COMBAT OVERHAUL\\
+        //Sets Vars and Objects for combat overhaul rayarc
+        //and FPSWeapon script animation system.
+        private PlayerSpeedChanger playerspeed;
+        FPSConsoleCommands fpsconsole;
+        float startpos;
+        float endpos;
+        int CurrentFrame = 0;
+        float timer = 0f;
+        float animetime = 0f;
+        Vector3 attackcast;
+
+        public bool IsAttacking
+        {
+            get { return isAttacking; }
+            set { isAttacking = value; }
+        }
 
         #region Properties
 
@@ -135,12 +159,12 @@ namespace DaggerfallWorkshop.Game
                 _points.Add(new TimestampedMotion
                 {
                     Time = Time.time,
-                    Delta = new Vector2 {x = dx, y = dy}
+                    Delta = new Vector2 { x = dx, y = dy }
                 });
                 _sum += _points.Last().Delta;
                 TravelDist += _points.Last().Delta.magnitude;
 
-                return new Vector2 {x = _sum.x, y = _sum.y};
+                return new Vector2 { x = _sum.x, y = _sum.y };
             }
 
             /// <summary>
@@ -191,8 +215,14 @@ namespace DaggerfallWorkshop.Game
             DownRight
         }
 
+        public enum test
+        {
+
+        }
+
         void Start()
         {
+            playerspeed = GetComponent<PlayerSpeedChanger>();
             weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             player = transform.gameObject;
@@ -218,6 +248,7 @@ namespace DaggerfallWorkshop.Game
                     cooldownTime = Time.time + FormulaHelper.GetBowCooldownTime(playerEntity);
 
                 isAttacking = false;
+                hitobject = false;
                 isDamageFinished = false;
                 isBowSoundFinished = false;
             }
@@ -304,11 +335,36 @@ namespace DaggerfallWorkshop.Game
             var attackDirection = MouseDirections.None;
             if (!isAttacking)
             {
+                //COMBAT OVERHAUL\\
+                //Start of movement based attack system. Checks players movement input and picks corresponding mouse attack direction.
+                //if no attack is selected, it randomly selects from the mouse attacks. attacks are limited to the down,left,right,up directions
+                //in the FPSWeapon scrip; there is no smooth animations yet for down-right and down-left. Preserves original bow triggers.
+
                 if (bowEquipped)
                 {
                     // Ensure attack button was released before starting the next attack
                     if (lastAttackHand == Hand.None)
                         attackDirection = DaggerfallUnity.Settings.BowDrawback ? MouseDirections.Up : MouseDirections.Down; // Force attack without tracking a swing for Bow
+                }
+                else if (isClickAttack && InputManager.Instance.HasAction(InputManager.Actions.MoveLeft))
+                {
+                    attackDirection = MouseDirections.Left;
+                    isClickAttack = false;
+                }
+                else if (isClickAttack && InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
+                {
+                    attackDirection = MouseDirections.Right;
+                    isClickAttack = false;
+                }
+                else if (isClickAttack && InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
+                {
+                    attackDirection = MouseDirections.Up;
+                    isClickAttack = false;
+                }
+                else if (isClickAttack && InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
+                {
+                    attackDirection = MouseDirections.Down;
+                    isClickAttack = false;
                 }
                 else if (isClickAttack)
                 {
@@ -335,13 +391,241 @@ namespace DaggerfallWorkshop.Game
             // Start attack if one has been initiated
             if (attackDirection != MouseDirections.None)
             {
+                //gets current attacking weapon, checks if its fists, and then assigns weapon stats for the attack.
+                strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
+
+                //*COMBAT OVERHAUL ADDITION*//
+                //checks screen weapon, and if it isn't fists/melee, assigns custom, dynamic range, fatigue, and attack speed cost.
+                //else default to classic engine range and fatigue cost for fists, and any other bug issues non-default numbers can cause.
+                if (ScreenWeapon.WeaponType != WeaponTypes.Melee)
+                {
+                    float itemWeight = ItemHelper.getItemWeight(strikingWeapon);
+                    float itemRange = ItemHelper.getItemRange(strikingWeapon);
+
+                    //pulls weapons range from template using itemhelper script as passthrough
+                    ScreenWeapon.Reach = ItemHelper.getItemRange(strikingWeapon);
+                    ScreenWeapon.AttackSpeed = ItemHelper.getItemSpeed(strikingWeapon);
+                    swingWeaponFatigueLoss = (((int)itemWeight + (int)itemRange) * 2);
+                }
+                else
+                {
+                    //sets default classic DF values for range and fatigue cost.
+                    ScreenWeapon.Reach = 2.25f;
+                    swingWeaponFatigueLoss = 11;
+                    ScreenWeapon.AttackSpeed = 0;
+                }
+
+                //prints out weapon range and stamina fatigue on swing.
+                //DaggerfallUI.Instance.PopupMessage("Weapon Range: " + ScreenWeapon.Reach.ToString() + "f");
+                //DaggerfallUI.Instance.PopupMessage("Weapon Fatigue: " + swingWeaponFatigueLoss.ToString());
+                //DaggerfallUI.Instance.PopupMessage("Weapon Speed: " + (ScreenWeapon.AttackSpeed * 3).ToString());
+
+                //*COMBAT OVERHAUL ADDITION*//
+                //resets values for hit arc code below.
+                hitobject = false;
+                itemRange = 0;
+                itemRange = ItemHelper.getItemRange(strikingWeapon);
+                timer = 0;
+                animetime = ScreenWeapon.animTickTime;
+
+                //executes screen animation code.
                 ExecuteAttacks(attackDirection);
+
                 isAttacking = true;
             }
 
             // Stop here if no attack is happening
             if (!isAttacking)
+            {
                 return;
+            }
+            else
+            {
+                float startframe;
+                float lerptimer;
+                PlayerEntity player = GameManager.Instance.PlayerEntity;
+
+                if (!mainCamera || !ScreenWeapon)
+                    return;
+
+                //*COMBAT OVERHAUL ADDITION*//
+                //start of raycast arc code. This runs the hit detection arc for weapons and communicates with
+                //FPSWeapon script to ensure animations and hit detections line up with one another.
+                //wait timer. gets the difference between the original timer start and time passed since then and assigns it to timer.
+                //used to ensure raycast is only done once a frame.
+                timer += Time.deltaTime;
+
+                //insures calculation only happens every frame.
+                if (timer > 1f)
+                {
+                    timer = 1f;
+                }
+
+                //checks of console value has been set and defaults it if not to 5th of a second.
+                if ((lerptimer = FPSConsoleCommands.ChangeRaycastLerp.changeRaycastLerp) == 0)
+                    lerptimer = .2f;
+
+                //calculates the float timer for the below lerp. it divides the animation time by a 5th of a second to get
+                //how much time has passed in the current frame (which there are 5 of) and move  below lerp.
+                float perc = timer / (animetime / lerptimer);
+
+                //grabs current attack frame from fpsweapon script.
+                //This is used to set the frames raycasts will shoot out through.
+                CurrentFrame = ScreenWeapon.GetCurrentFrame();
+
+                //sets starting frame for raycasting. ensures all weapons align hit rays properly.
+                if (ScreenWeapon.WeaponType != WeaponTypes.Flail)
+                    startframe = 0;
+                else
+                    startframe = 25;
+
+                //starts raycasts loop to send out raycasts based on attack direction. Aligns with the attack direction
+                //then starts to offset the raycast one increment at a time to follow animation. When hits object, marks
+                // hitobject as true and ends raycasts. Also, tells fpsweapon script to start collision animation.
+                //calculates only once every frame.
+                if ((CurrentFrame > 0 && CurrentFrame <= 5) && ScreenWeapon.WeaponType != WeaponTypes.Bow && !hitobject)
+                {
+                    //if then loop to select the specific raycast offset transformation based on the choosen attack animation.
+                    if (ScreenWeapon.WeaponState == WeaponStates.StrikeUp)
+                    {
+                        if (ScreenWeapon.WeaponType == WeaponTypes.Melee)
+                        {
+                            if ((startpos = FPSConsoleCommands.ChangeHorPos.SchangeHorPos) == 0)
+                                startpos = 25;
+
+                            if ((endpos = FPSConsoleCommands.ChangeHorPos.EchangeHorPos) == 0)
+                                endpos = 0;
+
+                            //sets up starting and ending quaternion angles for the vector3 offset/raycast.
+                            Quaternion startq = Quaternion.AngleAxis(startpos, transform.right);
+                            Quaternion endq = Quaternion.AngleAxis(endpos, transform.right);
+                            //computes rotation for each raycast using a lerp. The time percentage is modified above using the animation time.
+                            Quaternion slerpq = Quaternion.Slerp(startq, endq, perc);
+                            //computes rotation for each raycast. First angle sets permanent left/right offset. Second runs ray down cast for each tick.
+                            attackcast = Quaternion.AngleAxis(5, transform.up) * (slerpq * (mainCamera.transform.forward * (itemRange - SphereCastRadius)));
+                            FireRayArc();
+
+                        }
+                        else if (ScreenWeapon.GetCurrentFrame() > 2)
+                        {
+                            //sets start range at negative the itemrange to deal with raycasting starting on the third frame in.
+                            changeitemrange = Mathf.Lerp(0, itemRange, perc);
+
+                            //computes rotation for each raycast.
+                            attackcast = (mainCamera.transform.forward * (changeitemrange - SphereCastRadius));
+                            FireRayArc();
+                        }
+                    }
+                    else if (ScreenWeapon.WeaponState == WeaponStates.StrikeDown)
+                    {
+                        if (ScreenWeapon.WeaponType == WeaponTypes.Melee && ScreenWeapon.GetCurrentFrame() > 2)
+                        {
+                            if ((startpos = FPSConsoleCommands.ChangeHorPos.SchangeHorPos) == 0)
+                                startpos = 25;
+
+                            if ((endpos = FPSConsoleCommands.ChangeHorPos.EchangeHorPos) == 0)
+                                endpos = 0;
+
+                            //sets up starting and ending quaternion angles for the vector3 offset/raycast.
+                            Quaternion startq = Quaternion.AngleAxis(startpos, transform.right);
+                            Quaternion endq = Quaternion.AngleAxis(endpos, transform.right);
+                            //computes rotation for each raycast using a lerp. The time percentage is modified above using the animation time.
+                            Quaternion slerpq = Quaternion.Slerp(startq, endq, perc);
+                            //sets start range at negative the itemrange to deal with raycasting starting on the third frame in.
+                            changeitemrange = Mathf.Lerp(itemRange * -1, itemRange, perc);
+
+                            //computes rotation for each raycast.
+                            attackcast = slerpq * (mainCamera.transform.forward * (changeitemrange - SphereCastRadius));
+                            FireRayArc();
+                        }
+                        else if (ScreenWeapon.WeaponType != WeaponTypes.Melee)
+                        {
+                            if ((startpos = FPSConsoleCommands.ChangeHorPos.SchangeHorPos) == 0)
+                                startpos = -35;
+
+                            if ((endpos = FPSConsoleCommands.ChangeHorPos.EchangeHorPos) == 0)
+                                endpos = 30;
+
+                            //sets up starting and ending quaternion angles for the vector3 offset/raycast.
+                            Quaternion startq = Quaternion.AngleAxis(startpos, transform.right);
+                            Quaternion endq = Quaternion.AngleAxis(endpos, transform.right);
+                            //computes rotation for each raycast using a lerp. The time percentage is modified above using the animation time.
+                            Quaternion slerpq = Quaternion.Slerp(startq, endq, perc);
+                            //computes rotation for each raycast. First angle sets permanent left/right offset. Second runs ray down cast for each tick.
+                            attackcast = Quaternion.AngleAxis(startframe, transform.up) * (slerpq * (mainCamera.transform.forward * (itemRange - SphereCastRadius)));
+                            FireRayArc();
+                        }
+                    }
+                    else if (ScreenWeapon.WeaponState == WeaponStates.StrikeRight)
+                    {
+                        if (ScreenWeapon.WeaponType == WeaponTypes.Melee && ScreenWeapon.GetCurrentFrame() > 1)
+                        {
+                            if ((startpos = FPSConsoleCommands.ChangeHorPos.SchangeHorPos) == 0)
+                                startpos = 15;
+
+                            if ((endpos = FPSConsoleCommands.ChangeHorPos.EchangeHorPos) == 0)
+                                endpos = -5;
+
+                            //sets up starting and ending quaternion angles for the vector3 offset/raycast.
+                            Quaternion startq = Quaternion.AngleAxis(startpos, transform.up);
+                            Quaternion endq = Quaternion.AngleAxis(endpos, transform.up);
+                            //computes rotation for each raycast using a lerp. The time percentage is modified above using the animation time.
+                            Quaternion slerpq = Quaternion.Slerp(startq, endq, perc);
+
+                            //sets start range at negative the itemrange to deal with raycasting starting on the third frame in.
+                            changeitemrange = Mathf.Lerp(itemRange * -1, itemRange, perc);
+
+                            //computes rotation for each raycast.
+                            attackcast = Quaternion.AngleAxis(10, transform.right) * (slerpq * (mainCamera.transform.forward * (changeitemrange - SphereCastRadius)));
+                            FireRayArc();
+                        }
+                        else if (ScreenWeapon.WeaponType != WeaponTypes.Melee)
+                        {
+                            if ((startpos = FPSConsoleCommands.ChangeHorPos.SchangeHorPos) == 0)
+                                startpos = -35;
+
+                            if ((endpos = FPSConsoleCommands.ChangeHorPos.EchangeHorPos) == 0)
+                                endpos = 45;
+
+                            //sets up starting and ending quaternion angles for the vector3 offset/raycast.
+                            Quaternion startq = Quaternion.AngleAxis(startpos, transform.up);
+                            Quaternion endq = Quaternion.AngleAxis(endpos, transform.up);
+                            //computes rotation for each raycast using a lerp. The time percentage is modified above using the animation time.
+                            Quaternion slerpq = Quaternion.Slerp(startq, endq, perc);
+                            attackcast = slerpq * (mainCamera.transform.forward * (itemRange - SphereCastRadius));
+                            FireRayArc();
+                        }
+                    }
+                    else if (ScreenWeapon.WeaponState == WeaponStates.StrikeLeft)
+                    {
+                        if (ScreenWeapon.WeaponType == WeaponTypes.Melee)
+                        {
+                            //sets start range at negative the itemrange to deal with raycasting starting on the third frame in.
+                            changeitemrange = Mathf.Lerp(itemRange * -1, itemRange, perc);
+
+                            //computes rotation for each raycast.
+                            attackcast = Quaternion.AngleAxis(10, transform.right) * (Quaternion.AngleAxis(15, transform.up) * (mainCamera.transform.forward * (changeitemrange - SphereCastRadius)));
+                            FireRayArc();
+                        }
+                        else
+                        {
+                            if ((startpos = FPSConsoleCommands.ChangeHorPos.SchangeHorPos) == 0)
+                                startpos = 45;
+
+                            if ((endpos = FPSConsoleCommands.ChangeHorPos.EchangeHorPos) == 0)
+                                endpos = -45;
+
+                            //sets up starting and ending quaternion angles for the vector3 offset/raycast.
+                            Quaternion startq = Quaternion.AngleAxis(startpos, transform.up);
+                            Quaternion endq = Quaternion.AngleAxis(endpos, transform.up);
+                            //computes rotation for each raycast using a lerp. The time percentage is modified above using the animation time.
+                            Quaternion slerpq = Quaternion.Slerp(startq, endq, perc);
+                            attackcast = slerpq * (mainCamera.transform.forward * (itemRange - SphereCastRadius));
+                            FireRayArc();
+                        }
+                    }
+                }
+            }
 
             if (!isBowSoundFinished && ScreenWeapon.WeaponType == WeaponTypes.Bow && ScreenWeapon.GetCurrentFrame() == 4)
             {
@@ -364,12 +648,13 @@ namespace DaggerfallWorkshop.Game
                     ScreenWeapon.PlayAttackVoice();
 
                 // Transfer damage.
-                bool hitEnemy = false;
+                //bool hitEnemy = false;
 
                 // Non-bow weapons
                 if (ScreenWeapon.WeaponType != WeaponTypes.Bow)
-                    MeleeDamage(ScreenWeapon, out hitEnemy);
-                // Bow weapons
+                {
+                    //MeleeDamage(ScreenWeapon, out hitEnemy); // Bow weapons
+                }
                 else
                 {
                     DaggerfallMissile missile = Instantiate(ArrowMissilePrefab);
@@ -388,7 +673,7 @@ namespace DaggerfallWorkshop.Game
                 playerEntity.DecreaseFatigue(swingWeaponFatigueLoss);
 
                 // Play swing sound if attack didn't hit an enemy.
-                if (!hitEnemy && ScreenWeapon.WeaponType != WeaponTypes.Bow)
+                if (!hitobject && ScreenWeapon.WeaponType != WeaponTypes.Bow)
                     ScreenWeapon.PlaySwingSound();
                 else
                 {
@@ -403,6 +688,31 @@ namespace DaggerfallWorkshop.Game
                     playerEntity.TallySkill(DFCareer.Skills.CriticalStrike, 1);
                 }
                 isDamageFinished = true;
+            }
+        }
+
+        
+
+        void FireRayArc()
+        {
+            if (changeitemrange == 0)
+                changeitemrange = itemRange;
+
+            //assigns the above triggered attackcast to the debug ray for easy debugging in unity.
+            Debug.DrawRay(mainCamera.transform.position + -mainCamera.transform.forward * 0.1f, attackcast, Color.red, 5);
+            //creates engine raycast, assigns current player camera position as starting vector and attackcast vector as the direction.
+            RaycastHit hit;
+            Ray ray = new Ray(mainCamera.transform.position + -mainCamera.transform.forward * 0.1f, attackcast);
+            //attaches the ray to a physics spherecast, shoots it out, and triggers true when any object is hit.           
+            if (Physics.SphereCast(ray, SphereCastRadius, out hit, changeitemrange))
+            {
+                //assigns hit object to true so fpsweapon will start collision animation loop and raycast loop will stop shooting raycasts.
+                hitobject = true;
+                changeitemrange = 0;
+                //sets frame back to the current frame, as recoil system moves to next frame before starting recoil causing an frame skip.
+                ScreenWeapon.SetCurrentFrame(CurrentFrame);
+                //checks what entity is hit, if it is a valid enemy, it checks for successful hit and assigns out damage. Returns true when hits enemy.
+                WeaponDamage(strikingWeapon, false, hit.transform, hit.point, mainCamera.transform.forward);
             }
         }
 
