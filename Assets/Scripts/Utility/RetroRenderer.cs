@@ -425,7 +425,7 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        private void initLut()
+        private void initLut(int size)
         {
             if (lut)
                 return;
@@ -436,7 +436,6 @@ namespace DaggerfallWorkshop.Utility
             Debug.Log("Time spent building palette = " + watch.ElapsedMilliseconds + "ms");
 
             var watch2 = System.Diagnostics.Stopwatch.StartNew();
-            int size = 256 >> lutShift;
             lut = new Texture3D(size, size, size, TextureFormat.RGBA32, false);
             lut.wrapMode = TextureWrapMode.Clamp;
 
@@ -444,15 +443,15 @@ namespace DaggerfallWorkshop.Utility
             Color targetColor = new Color();
             for (int b = 0; b < size; b++)
             {
-                targetColor.b = (float)b / (size - 1);
+                targetColor.b = (b + 0.5f) / size;
                 int bOffset = b * size * size;
                 for (int g = 0; g < size; g++)
                 {
-                    targetColor.g = (float)g / (size - 1);
+                    targetColor.g = (g + 0.5f) / size;
                     int gOffset = g * size;
                     for (int r = 0; r < size; r++)
                     {
-                        targetColor.r = (float)r / (size - 1);
+                        targetColor.r = (r + 0.5f) / size;
                         Color color;
                         float sqrDistance = palette.GetNearestColor(targetColor, out color);
                         colors[r + gOffset + bOffset] = color;
@@ -509,11 +508,13 @@ namespace DaggerfallWorkshop.Utility
                             postprocessMaterial = new Material(shader);
                             break;
                         case 2:
-                            initLut();
+                            int size = 256 >> lutShift;
+                            initLut(size);
                             shader = Shader.Find(MaterialReader._DaggerfallRetroPalettizationShaderName);
                             postprocessMaterial = new Material(shader);
                             postprocessMaterial.SetTexture("_Lut", lut);
-                            postprocessMaterial.SetInt("_LutQuantization", (256 >> lutShift) - 1);
+                            postprocessMaterial.SetFloat("_LutSize", (float)size);
+                            postprocessMaterial.SetFloat("_LutTexelSize", (float)1/size);
                             break;
                     }
                     if (!postprocessMaterial)
