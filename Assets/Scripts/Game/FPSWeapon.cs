@@ -1061,7 +1061,6 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUI.Instance.PopupMessage("MaxFrames: " + maxframeseconds.ToString());
 
                 DaggerfallUI.Instance.PopupMessage("Total Offsets: " + totalOffsets.ToString());
-                DaggerfallUI.Instance.PopupMessage("Current Offsets: " + Offset.ToString());
 
                 DaggerfallUI.Instance.PopupMessage("WeaponState: " + action);
 
