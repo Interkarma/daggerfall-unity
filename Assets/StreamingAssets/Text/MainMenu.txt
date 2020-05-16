@@ -31,6 +31,8 @@ clickToAttack,              Click to attack
 clickToAttackInfo,          Enable a simple click to trigger attacks
 sdfFontRendering,           SDF Font Rendering
 sdfFontRenderingInfo,       Enable for smooth fonts at high resolutions
+enableController,           Enable Controller
+enableControllerInfo,       Allow joysticks or other controllers to be detected and used in-game
 
 findArena2Tip,              Tip: Daggerfall contains a folder called 'arena2'
 foundArena2But,             Found 'arena2' but

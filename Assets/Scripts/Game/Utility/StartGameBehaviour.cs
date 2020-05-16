@@ -219,6 +219,8 @@ namespace DaggerfallWorkshop.Game.Utility
 
             InputManager.Instance.JoystickDeadzone = DaggerfallUnity.Settings.JoystickDeadzone;
 
+            InputManager.Instance.EnableController = DaggerfallUnity.Settings.EnableController;
+
             // Set shadow resolution
             GameManager.UpdateShadowResolution();
 

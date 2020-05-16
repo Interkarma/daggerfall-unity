@@ -184,7 +184,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool UsingController
         {
-            get { return usingControllerCursor; }
+            get { return usingControllerCursor && EnableController; }
         }
 
         public KeyCode LastKeyDown { get; private set; }
@@ -197,7 +197,7 @@ namespace DaggerfallWorkshop.Game
 
         public Vector3 MousePosition {
             get {
-                if (usingControllerCursor)
+                if (UsingController)
                     return controllerCursorPosition;
                 else
                     return Input.mousePosition;
@@ -226,6 +226,8 @@ namespace DaggerfallWorkshop.Game
 
         public bool MaximizeJoystickMovement { get; set; }
         public float JoystickDeadzone { get; set; }
+
+        public bool EnableController { get; set; }
 
         #endregion
 
@@ -438,7 +440,7 @@ namespace DaggerfallWorkshop.Game
             mouseY = Input.GetAxisRaw("Mouse Y");
 
 
-            if ((mouseX == 0F || mouseY == 0F) && !String.IsNullOrEmpty(cameraAxisBindingCache[0]))
+            if (EnableController && (mouseX == 0F || mouseY == 0F) && !String.IsNullOrEmpty(cameraAxisBindingCache[0]))
             {
                 var h = Input.GetAxis(cameraAxisBindingCache[0]);
                 var v = Input.GetAxis(cameraAxisBindingCache[1]);
@@ -487,20 +489,19 @@ namespace DaggerfallWorkshop.Game
             float distMovement = Mathf.Sqrt(horizj * horizj + vertj * vertj);
             float distCamera = Mathf.Sqrt(cameraHorizJ * cameraHorizJ + cameraVertJ * cameraVertJ);
 
-            if (!usingControllerCursor && (distMovement > JoystickDeadzone || distCamera > JoystickDeadzone))
+            if (!UsingController && (distMovement > JoystickDeadzone || distCamera > JoystickDeadzone))
             {
                 usingControllerCursor = true;
                 controllerCursorPosition = Input.mousePosition;
-                Debug.Log(distMovement+","+distCamera);
             }
-            else if (usingControllerCursor && (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0))
+            else if (UsingController && (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0))
             {
                 usingControllerCursor = false;
             }
 
             if (CursorVisible)
             {
-                if (usingControllerCursor)
+                if (UsingController)
                 {
                     Cursor.visible = false;
                     //Cursor.lockState = CursorLockMode.Locked;
@@ -906,7 +907,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetMouseButtonDown(int button)
         {
-            if (usingControllerCursor)
+            if (UsingController)
                 return GetKeyDown(joystickUICache[button]);
 
             return Input.GetMouseButtonDown(button);
@@ -914,7 +915,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetMouseButtonUp(int button)
         {
-            if (usingControllerCursor)
+            if (UsingController)
                 return GetKeyUp(joystickUICache[button]);
 
             return Input.GetMouseButtonUp(button);
@@ -922,7 +923,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetMouseButton(int button)
         {
-            if (usingControllerCursor)
+            if (UsingController)
                 return GetKey(joystickUICache[button]);
 
             return Input.GetMouseButton(button);
@@ -1316,7 +1317,7 @@ namespace DaggerfallWorkshop.Game
         // Also updates upAxisRaw and downAxisRaw dictionaries to process GetAxisKeyDown and GetAxisKeyUp events
         float GetAxisRaw(int keyCode, int signage)
         {
-            if (keyCode < startingAxisKeyCode || !axisKeyCodeToInputAxis.ContainsKey(keyCode))
+            if (!EnableController || keyCode < startingAxisKeyCode || !axisKeyCodeToInputAxis.ContainsKey(keyCode))
                 return 0;
 
             String unityInputAxisString = axisKeyCodeToInputAxis[keyCode];
@@ -1404,7 +1405,7 @@ namespace DaggerfallWorkshop.Game
         void FindInputAxisActions()
         {
 
-            if (String.IsNullOrEmpty(movementAxisBindingCache[0]) || String.IsNullOrEmpty(movementAxisBindingCache[1]))
+            if (!EnableController || String.IsNullOrEmpty(movementAxisBindingCache[0]) || String.IsNullOrEmpty(movementAxisBindingCache[1]))
                 return;
 
             float horiz = Input.GetAxis(movementAxisBindingCache[0]);

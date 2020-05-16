@@ -67,6 +67,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox playerNudity;
         Checkbox clickToAttack;
         Checkbox sdfFontRendering;
+        Checkbox enableController;
         Checkbox retro320x200WorldRendering;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
@@ -478,6 +479,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             sdfFontRendering.OnToggleState += SDFFontRendering_OnToggleState;
             //bool exampleModCheckbox = AddOption(x, "Example", "Example built-in mod", DaggerfallUnity.Settings.ExampleModOption);
 
+            enableController = AddOption(x, "enableController", DaggerfallUnity.Settings.EnableController);
+
             // Add mod note
             TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 125), GetText("modNote"), optionsPanel);
             modNoteLabel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -761,6 +764,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
             DaggerfallUnity.Settings.ClickToAttack = clickToAttack.IsChecked;
+            DaggerfallUnity.Settings.EnableController = enableController.IsChecked;
             DaggerfallUnity.Settings.SaveSettings();
 
             if (ModManager.Instance)
