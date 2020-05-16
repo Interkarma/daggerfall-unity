@@ -10,25 +10,25 @@ namespace DaggerfallWorkshop.Utility
     {
         public interface IPalette
         {
-            float GetNearestColor(Color targetColor, out Color color);
+            int GetNearestColor(Color32 targetColor, out Color32 color);
         }
 
         class LeafPalette : IPalette
         {
-            private Color[] colors;
+            private Color32[] colors;
 
-            public LeafPalette(Color[] colors)
+            public LeafPalette(Color32[] colors)
             {
                 this.colors = colors;
             }
 
-            public float GetNearestColor(Color targetColor, out Color color)
+            public int GetNearestColor(Color32 targetColor, out Color32 color)
             {
                 int bestColorIndex = 0;
-                float bestFit = colorSqrDistance(targetColor, bestColorIndex);
+                int bestFit = colorSqrDistance(targetColor, bestColorIndex);
                 for (int i = 1; i < colors.Length; i++)
                 {
-                    float fit = colorSqrDistance(targetColor, i);
+                    int fit = colorSqrDistance(targetColor, i);
                     if (fit < bestFit)
                     {
                         bestColorIndex = i;
@@ -39,30 +39,30 @@ namespace DaggerfallWorkshop.Utility
                 return bestFit;
             }
 
-            private float colorSqrDistance(Color targetColor, int i)
+            private int colorSqrDistance(Color32 targetColor, int i)
             {
-                float diffr = (targetColor.r - colors[i].r);
-                float diffg = (targetColor.g - colors[i].g);
-                float diffb = (targetColor.b - colors[i].b);
+                int diffr = (targetColor.r - colors[i].r);
+                int diffg = (targetColor.g - colors[i].g);
+                int diffb = (targetColor.b - colors[i].b);
                 return diffr * diffr + diffg * diffg + diffb * diffb;
             }
         }
 
         class SplitPalette : IPalette
         {
-            private Func<Color, float> proj;
-            private float splitValue;
+            private Func<Color32, int> proj;
+            private int splitValue;
             private IPalette belowPalette;
             private IPalette abovePalette;
 
-            public SplitPalette(Color[] colors, Func<Color, float> proj, int depth)
+            public SplitPalette(Color32[] colors, Func<Color32, int> proj, int depth)
             {
                 this.proj = proj;
-                Array.Sort(colors, (Color a, Color b) => Math.Sign(proj(a) - proj(b)));
+                Array.Sort(colors, (Color32 a, Color32 b) => Math.Sign(proj(a) - proj(b)));
                 int middle = (colors.Length + 1) / 2;
                 splitValue = (proj(colors[middle - 1]) + proj(colors[middle])) / 2;
-                List<Color> belowColors = new List<Color>();
-                List<Color> aboveColors = new List<Color>();
+                List<Color32> belowColors = new List<Color32>();
+                List<Color32> aboveColors = new List<Color32>();
                 for (int i = 0; i < colors.Length; i++)
                 {
                     if (proj(colors[i]) >= splitValue)
@@ -81,18 +81,18 @@ namespace DaggerfallWorkshop.Utility
                 return abovePalette == null || belowPalette == null;
             }
 
-            public float GetNearestColor(Color targetColor, out Color color)
+            public int GetNearestColor(Color32 targetColor, out Color32 color)
             {
-                float diff = proj(targetColor) - splitValue;
+                int diff = proj(targetColor) - splitValue;
                 IPalette majorPalette = (diff >= 0) ? abovePalette : belowPalette;
 
-                float majorSqrDistance = majorPalette.GetNearestColor(targetColor, out color);
+                int majorSqrDistance = majorPalette.GetNearestColor(targetColor, out color);
                 if (majorSqrDistance >= diff * diff)
                 {
                     IPalette minorPalette = (diff >= 0) ? belowPalette : abovePalette;
 
-                    Color minorColor;
-                    float minorSqrDistance = minorPalette.GetNearestColor(targetColor, out minorColor);
+                    Color32 minorColor;
+                    int minorSqrDistance = minorPalette.GetNearestColor(targetColor, out minorColor);
                     if (minorSqrDistance < majorSqrDistance)
                     {
                         color = minorColor;
@@ -105,7 +105,7 @@ namespace DaggerfallWorkshop.Utility
 
         const int PaletteCutoff = 10;
 
-        static public IPalette BuildPalette(Color[] colors, int depth = 0)
+        static public IPalette BuildPalette(Color32[] colors, int depth = 0)
         {
             if (colors.Length <= PaletteCutoff)
                 return new LeafPalette(colors);
@@ -115,13 +115,13 @@ namespace DaggerfallWorkshop.Utility
                 switch (depth % 3)
                 {
                     case 0:
-                        palette = new SplitPalette(colors, (Color color) => color.r, depth + 1);
+                        palette = new SplitPalette(colors, (Color32 color) => color.r, depth + 1);
                         break;
                     case 1:
-                        palette = new SplitPalette(colors, (Color color) => color.g, depth + 1);
+                        palette = new SplitPalette(colors, (Color32 color) => color.g, depth + 1);
                         break;
                     case 2:
-                        palette = new SplitPalette(colors, (Color color) => color.b, depth + 1);
+                        palette = new SplitPalette(colors, (Color32 color) => color.b, depth + 1);
                         break;
                     default:
                         throw new NotSupportedException();
@@ -132,7 +132,6 @@ namespace DaggerfallWorkshop.Utility
                 return palette;
             }
         }
-
     }
 
 }
