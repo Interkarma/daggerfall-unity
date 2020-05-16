@@ -337,9 +337,11 @@ namespace DaggerfallWorkshop.Utility
         };
 
         // LUT downsampling
-        // 0 - 16MB, 30s init (excellent, similar to k-d tree shader)
-        // 1 - 2MB, 2.4s init (good)
-        // 2 - 256KB, 0.3s init (average)
+        // 0 - 64MB, 7s init (excellent, similar to k-d tree shader)
+        // 1 - 8MB, 850ms init (very good, hard to tell from 0 visually, probably less cache misses too)
+        // 2 - 1MB (good, slightly less crisp looking)
+        // quality goes downhill from here, as some classic colors get conflated together in the LUT
+        // 6 - EGA with bad color choice
         const int lutShift = 1;
 
         Texture3D lut = null;
@@ -363,15 +365,16 @@ namespace DaggerfallWorkshop.Utility
             targetColor.a = 255;
             int colorsIndex = 0;
             Color32 color;
+            const int rounding = lutShift >= 1 ? 1 << (lutShift - 1) : 0;
             for (int b = 0; b < size; b++)
             {
-                targetColor.b = (byte)(b << lutShift);
+                targetColor.b = (byte)((b << lutShift) + rounding);
                 for (int g = 0; g < size; g++)
                 {
-                    targetColor.g = (byte)(g << lutShift);
+                    targetColor.g = (byte)((g << lutShift) + rounding);
                     for (int r = 0; r < size; r++)
                     {
-                        targetColor.r = (byte)(r << lutShift);
+                        targetColor.r = (byte)((r << lutShift) + rounding);
                         palette.GetNearestColor(targetColor, out color);
                         colors[colorsIndex++] = color;
                     }
