@@ -308,10 +308,11 @@ Foe _murder_ is Nightblade
 	start timer _1stparton_ 
 	log 1020 step 0 
 	say AcceptQuest 
-	create npc at _hookerhouse_ 
 	place npc _contact_ at _bookstore_ 
 	place npc _rippername_ at _ripperhouse_ 
 	place npc _hooker_ at _hookerhouse_ 
+	have _I.04_ set _deadbody_
+	have _I.05_ set _deadbody2_
 
 _S.00_ task:
 	killed 1 _murder_ 
@@ -343,13 +344,10 @@ _S.07_ task:
 	hide npc _hooker_ 
 
 _deadbody_ task:
-	clicked item _I.04_
 	take _I.04_ from pc
 --added deadbody task. otherwise body would clog inventory
 
-
 _deadbody2_ task:
-	clicked item _I.05_
 	take _I.05_ from pc
 --added deadbody task. otherwise body would clog inventory
 

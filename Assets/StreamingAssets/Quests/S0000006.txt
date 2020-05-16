@@ -167,6 +167,7 @@ Foe _F.05_ is Daedroth
 
 --	Quest start-up:
 	prompt QuestorOffer yes yes no _no_ 
+	have _I.04_ set _deadbody_
 
 _pcgetsgold_ task:
 	when _S.01_ and _S.03_ 
@@ -182,8 +183,7 @@ variable _S.02_
 _S.03_ task:
 	toting _I.00_ and Castellian clicked saying 1022 
 	pc at _casfort_ set _S.12_ 
--	place item _I.04_ at _casfort_
---edited prior to my revision. removes dead Castellian body.
+	place item _I.04_ at _casfort_
 	start timer _S.04_ 
 	hide npc Castellian 
 
@@ -194,6 +194,10 @@ _queston_ task:
 	when _S.15_ and _S.02_ 
 	drop _elysana_ as questor 
 	end quest 
+
+_deadbody_ task:
+	take _I.04_ from pc
+--added deadbody task. otherwise body would clog inventory
 
 UnknownElysanna _S.06_
 ElysannaSatisfied _S.07_

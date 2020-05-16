@@ -220,9 +220,9 @@ Foe _tiger_ is Sabretooth_tiger
 	pick one of _S.10_ _S.10_ _S.11_ _S.11_ 
 	place foe _tiger_ at _mondung_ 
 	create npc _dummy_ 
+	have _I.01_ set _deadbody_
 
 _deadbody_ task:
-	clicked item _I.01_
 	take _I.01_ from pc
 --added deadbody task. otherwise body would clog inventory
 
