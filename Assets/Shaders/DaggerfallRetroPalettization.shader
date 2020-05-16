@@ -4,8 +4,6 @@
 	{
 		_MainTex ("Texture", 2D) = "white" {}
         _Lut ("Texture", 3D) = "white" {}
-        _LutSize ("Lut Size", float) = 1
-        _LutTexelSize ("Lut TexelSize", float) = 1
 	}
 	SubShader
 	{
@@ -45,8 +43,6 @@
 			
 			sampler2D _MainTex;
             sampler3D _Lut;
-            float _LutSize;
-            float _LutTexelSize;
             
 	        fixed4 frag (v2f i) : SV_Target
 	        {
@@ -54,9 +50,8 @@
                 //float3 target = float3(i.uv, frac(_Time.x));
                 
                 float3 target = tex2D(_MainTex, i.uv);
-                float3 quantized = floor(target * _LutSize) * _LutTexelSize;
                 
-                fixed4 col = tex3D(_Lut, quantized);
+                fixed4 col = tex3D(_Lut, target);
                 return col;
             }
 			ENDCG

@@ -358,6 +358,7 @@ namespace DaggerfallWorkshop.Utility
 
             var watch2 = System.Diagnostics.Stopwatch.StartNew();
             lut = new Texture3D(size, size, size, TextureFormat.RGBA32, false);
+            lut.filterMode = FilterMode.Point;
             lut.wrapMode = TextureWrapMode.Clamp;
 
             Color32[] colors = new Color32[size * size * size];
@@ -438,8 +439,6 @@ namespace DaggerfallWorkshop.Utility
                             shader = Shader.Find(MaterialReader._DaggerfallRetroPalettizationShaderName);
                             postprocessMaterial = new Material(shader);
                             postprocessMaterial.SetTexture("_Lut", lut);
-                            postprocessMaterial.SetFloat("_LutSize", (float)size);
-                            postprocessMaterial.SetFloat("_LutTexelSize", (float)1/size);
                             break;
                     }
                     if (!postprocessMaterial)
