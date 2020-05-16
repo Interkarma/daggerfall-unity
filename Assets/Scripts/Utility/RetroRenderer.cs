@@ -366,16 +366,15 @@ namespace DaggerfallWorkshop.Utility
             targetColor.a = 255;
             int colorsIndex = 0;
             Color32 color;
-            const int rounding = lutShift >= 1 ? 1 << (lutShift - 1) : 0;
             for (int b = 0; b < size; b++)
             {
-                targetColor.b = (byte)((b << lutShift) + rounding);
+                targetColor.b = (byte)((b << lutShift));
                 for (int g = 0; g < size; g++)
                 {
-                    targetColor.g = (byte)((g << lutShift) + rounding);
+                    targetColor.g = (byte)((g << lutShift));
                     for (int r = 0; r < size; r++)
                     {
-                        targetColor.r = (byte)((r << lutShift) + rounding);
+                        targetColor.r = (byte)((r << lutShift));
                         palette.GetNearestColor(targetColor, out color);
                         colors[colorsIndex++] = color;
                     }
