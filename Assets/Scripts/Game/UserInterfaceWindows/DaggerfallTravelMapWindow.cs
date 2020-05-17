@@ -676,7 +676,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 for (int x = 0; x < width; x++)
                 {
-                    int offset = GetOffset(width, height, x, y);
+                    int offset = (int)((((height - y - 1) * width) + x) * scale);
                     if (offset >= (width * height))
                         continue;
                     int sampleRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(originX + x, originY + y) - 128;
@@ -718,11 +718,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 for (int i = 0; i < outlineDisplacements.Length; i++)
                     regionLocationDotsOutlinesOverlayPanel[i].BackgroundTexture = locationDotsOutlineTexture;
             regionLocationDotsOverlayPanel.BackgroundTexture = locationDotsTexture;
-        }
-
-        private int GetOffset(int width, int height, int x, int y)
-        {
-            return (int)((((height - y - 1) * width) + x) * scale);
         }
 
         // Zoom and pan region texture
