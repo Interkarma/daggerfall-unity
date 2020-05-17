@@ -71,7 +71,6 @@ namespace DaggerfallWorkshop
         int lastSkyFrame = -1;
         bool lastNightFlag = false;
         Rect westRect, eastRect;
-        CameraClearFlags initialClearFlags;
         System.Random random = new System.Random(0);
         bool showNightSky = true;
 
@@ -123,9 +122,6 @@ namespace DaggerfallWorkshop
                 return;
             }
 
-            // Save starting clear flags
-            initialClearFlags = mainCamera.clearFlags;
-
             // Get my camera
             myCamera = GetComponent<Camera>();
             if (!myCamera)
@@ -150,13 +146,6 @@ namespace DaggerfallWorkshop
         void OnEnable()
         {
             SetupCameras();
-        }
-
-        void OnDisable()
-        {
-            // Restore main camera clear flags so we left it how we found it
-            if (mainCamera)
-                mainCamera.clearFlags = initialClearFlags;
         }
 
         void Update()
@@ -491,7 +480,6 @@ namespace DaggerfallWorkshop
             if (AutoCameraSetup)
             {
                 myCamera.depth = mainCamera.depth + myCameraDepth;
-                mainCamera.clearFlags = CameraClearFlags.Nothing;
             }
         }
 
