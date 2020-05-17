@@ -285,7 +285,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             regionTextureOverlayPanel.Enabled = false;
 
             // Location dots overlay panel
-            if (dotsOutlineThickness > 0)
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
             {
                 regionLocationDotsOutlinesOverlayPanel = new Panel[outlineDisplacements.Length];
                 for (int i = 0; i < outlineDisplacements.Length; i++)
@@ -695,7 +695,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                                 continue;
                             else
                             {
-                                if (dotsOutlineThickness > 0)
+                                if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
                                     locationDotsOutlinePixelBuffer[offset] = dotOutlineColor;
                                 locationDotsPixelBuffer[offset] = locationPixelColors[index];
                             }
@@ -705,7 +705,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Apply updated color array to texture
-            if (dotsOutlineThickness > 0)
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
             {
                 locationDotsOutlineTexture.SetPixels32(locationDotsOutlinePixelBuffer);
                 locationDotsOutlineTexture.Apply();
@@ -714,7 +714,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             locationDotsTexture.Apply();
 
             // Present texture
-            if (dotsOutlineThickness > 0)
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
                 for (int i = 0; i < outlineDisplacements.Length; i++)
                     regionLocationDotsOutlinesOverlayPanel[i].BackgroundTexture = locationDotsOutlineTexture;
             regionLocationDotsOverlayPanel.BackgroundTexture = locationDotsTexture;
@@ -727,7 +727,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!RegionSelected || !zoom)
             {
                 regionTextureOverlayPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
-                if (dotsOutlineThickness > 0)
+                if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
                     for (int i = 0; i < outlineDisplacements.Length; i++)
                         regionLocationDotsOutlinesOverlayPanel[i].BackgroundTextureLayout = BackgroundLayout.StretchToFill;
                 regionLocationDotsOverlayPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
@@ -769,7 +769,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Set cropped area in location dots panel - always at classic dimensions            
             Rect locationDotsNewRect = new Rect(startX, startY, width / zoomfactor, height / zoomfactor);
-            if (dotsOutlineThickness > 0)
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
                 for (int i = 0; i < outlineDisplacements.Length; i++)
                 {
                     Rect modifiedRect = locationDotsNewRect;
@@ -1069,7 +1069,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedRegion = region;
             selectedRegionMapNames = mapNames;
             regionTextureOverlayPanel.Enabled = true;
-            if (dotsOutlineThickness > 0)
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
                 for (int i = 0; i < outlineDisplacements.Length; i++)
                     regionLocationDotsOutlinesOverlayPanel[i].Enabled = true;
             regionLocationDotsOverlayPanel.Enabled = true;
@@ -1091,7 +1091,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             locationSelected = false;
             mapIndex = 0;
             regionTextureOverlayPanel.Enabled = false;
-            if (dotsOutlineThickness > 0)
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
                 for (int i = 0; i < outlineDisplacements.Length; i++)
                     regionLocationDotsOutlinesOverlayPanel[i].Enabled = false;
             regionLocationDotsOverlayPanel.Enabled = false;

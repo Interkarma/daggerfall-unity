@@ -61,6 +61,8 @@ AccelerateUICopyTexture=False
 SDFFontRendering=True
 EnableGeographicBackgrounds=False
 DungeonExitWagonPrompt=True
+TravelMapLocationsOutline=True
+
 IllegalRestWarning=True
 LargeHUD=false
 LargeHUDScale=1.0

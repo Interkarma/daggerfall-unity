@@ -87,6 +87,8 @@ geographicBackgrounds,                              Geographic backgrounds
 geographicBackgroundsInfo,                          Contextual character backgrounds based on geographic location
 dungeonExitWagonPrompt,                             Dungeon wagon access prompt
 dungeonExitWagonPromptInfo,                         Prompt for wagon access on dungeon exit. (Wagon is always accessible within 5m of exit)
+travelMapLocationsOutline,                          Outline regional map locations
+travelMapLocationsOutlineInfo,                      Draw an outline around locations on regional maps to improve visibility
 guildQuestListBox,                                  Guild quest player selection
 guildQuestListBoxInfo,                              Presents eligible guild quests in a list box
 bowLeftHandWithSwitching,                           Equip bows in left hand only

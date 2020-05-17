@@ -123,6 +123,7 @@ namespace DaggerfallWorkshop
         public bool EnableGeographicBackgrounds { get; set; }
         public bool EnableArrowCounter { get; set; }
         public bool DungeonExitWagonPrompt { get; set; }
+        public bool TravelMapLocationsOutline { get; set; }
         public bool IllegalRestWarning { get; set; }
         public bool LargeHUD { get; set; }
         public float LargeHUDScale { get; set; }
@@ -258,6 +259,7 @@ namespace DaggerfallWorkshop
             EnableGeographicBackgrounds = GetBool(sectionGUI, "EnableGeographicBackgrounds");
             EnableArrowCounter = GetBool(sectionGUI, "EnableArrowCounter");
             DungeonExitWagonPrompt = GetBool(sectionGUI, "DungeonExitWagonPrompt");
+            TravelMapLocationsOutline = GetBool(sectionGUI, "TravelMapLocationsOutline");
             IllegalRestWarning = GetBool(sectionGUI, "IllegalRestWarning");
             LargeHUD = GetBool(sectionGUI, "LargeHUD");
             LargeHUDScale = GetFloat(sectionGUI, "LargeHUDScale", 0.25f, 2.0f);
@@ -382,6 +384,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "EnableGeographicBackgrounds", EnableGeographicBackgrounds);
             SetBool(sectionGUI, "EnableArrowCounter", EnableArrowCounter);
             SetBool(sectionGUI, "DungeonExitWagonPrompt", DungeonExitWagonPrompt);
+            SetBool(sectionGUI, "TravelMapLocationsOutline", TravelMapLocationsOutline);
             SetBool(sectionGUI, "IllegalRestWarning", IllegalRestWarning);
             SetBool(sectionGUI, "LargeHUD", LargeHUD);
             SetFloat(sectionGUI, "LargeHUDScale", LargeHUDScale);

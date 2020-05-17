@@ -116,6 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider helmAndShieldMaterialDisplay;
         Checkbox geographicBackgrounds;
         Checkbox dungeonExitWagonPrompt;
+        Checkbox travelMapLocationsOutline;
 
         // Enhancements
         Checkbox modSystem;
@@ -282,6 +283,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
             geographicBackgrounds = AddCheckbox(rightPanel, "geographicBackgrounds", DaggerfallUnity.Settings.EnableGeographicBackgrounds);
             dungeonExitWagonPrompt = AddCheckbox(rightPanel, "dungeonExitWagonPrompt", DaggerfallUnity.Settings.DungeonExitWagonPrompt);
+            travelMapLocationsOutline = AddCheckbox(rightPanel, "travelMapLocationsOutline", DaggerfallUnity.Settings.TravelMapLocationsOutline);
         }
 
         private void Enhancements(Panel leftPanel, Panel rightPanel)
@@ -422,6 +424,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.InstantRepairs = instantRepairs.IsChecked;
             DaggerfallUnity.Settings.GuildQuestListBox = guildQuestListBox.IsChecked;
             DaggerfallUnity.Settings.BowLeftHandWithSwitching = bowLeftHandWithSwitching.IsChecked;
+            DaggerfallUnity.Settings.TravelMapLocationsOutline = travelMapLocationsOutline.IsChecked;
 
             DaggerfallUnity.Settings.DungeonAmbientLightScale = dungeonAmbientLightScale.GetValue();
             DaggerfallUnity.Settings.NightAmbientLightScale = nightAmbientLightScale.GetValue();
