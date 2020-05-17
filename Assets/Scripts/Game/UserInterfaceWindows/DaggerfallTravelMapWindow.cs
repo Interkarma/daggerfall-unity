@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int identifyFlashCount                        = 4;
         const int identifyFlashCountSelected                = 2;
         const float identifyFlashInterval                   = 0.5f;
+        const int dotsOutline                               = 1;
 
         DaggerfallTravelPopUp popUp;
 
@@ -648,7 +649,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 for (int x = 0; x < width; x++)
                 {
-                    int offset = (int)((((height - y - 1) * width) + x) * scale);
+                    int offset = GetOffset(width, height, x, y);
                     if (offset >= (width * height))
                         continue;
                     int sampleRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(originX + x, originY + y) - 128;
@@ -666,7 +667,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             if (index == -1)
                                 continue;
                             else
+                            {
+                                if (dotsOutline > 0)
+                                    for (int y1 = Math.Max(0, y - dotsOutline); y1 < Math.Min(height, y + dotsOutline + 1); y1++)
+                                        for (int x1 = Math.Max(0, x - dotsOutline); x1 < Math.Min(width, x + dotsOutline + 1); x1++)
+                                        {
+                                            int offset1 = GetOffset(width, height, x1, y1);
+                                            if (locationDotsPixelBuffer[offset1].a == (byte)0)
+                                                locationDotsPixelBuffer[offset1] = Color.black;
+                                        }
                                 locationDotsPixelBuffer[offset] = locationPixelColors[index];
+                            }
                         }
                     }
                 }
@@ -678,6 +689,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Present texture
             regionLocationDotsOverlayPanel.BackgroundTexture = locationDotsTexture;
+        }
+
+        private int GetOffset(int width, int height, int x, int y)
+        {
+            return (int)((((height - y - 1) * width) + x) * scale);
         }
 
         // Zoom and pan region texture
