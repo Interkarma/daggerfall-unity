@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int identifyFlashCountSelected                = 2;
         const float identifyFlashInterval                   = 0.5f;
         const int dotsOutlineThickness                      = 1;
-        Color32 dotOutlineColor                             = new Color32(0, 0, 0, 64);
+        Color32 dotOutlineColor                             = new Color32(0, 0, 0, 128);
         Vector2[] outlineDisplacements =
         {
             new Vector2(-0.5f, -0f),
