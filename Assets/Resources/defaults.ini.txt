@@ -62,7 +62,6 @@ SDFFontRendering=True
 EnableGeographicBackgrounds=False
 DungeonExitWagonPrompt=True
 IllegalRestWarning=True
-LoiterLimitInHours=3
 LargeHUD=false
 LargeHUDScale=1.0
 
@@ -125,3 +124,4 @@ EnemyInfighting=True
 EnhancedCombatAI=True
 GuildQuestListBox=False
 BowLeftHandWithSwitching=False
+LoiterLimitInHours=3

@@ -124,7 +124,6 @@ namespace DaggerfallWorkshop
         public bool EnableArrowCounter { get; set; }
         public bool DungeonExitWagonPrompt { get; set; }
         public bool IllegalRestWarning { get; set; }
-        public int LoiterLimitInHours { get; set; }
         public bool LargeHUD { get; set; }
         public float LargeHUDScale { get; set; }
 
@@ -186,6 +185,7 @@ namespace DaggerfallWorkshop
         public bool EnhancedCombatAI { get; set; }
         public bool GuildQuestListBox { get; set; }
         public bool BowLeftHandWithSwitching { get; set; }
+        public int LoiterLimitInHours { get; set; }
 
         #endregion
 
@@ -259,7 +259,6 @@ namespace DaggerfallWorkshop
             EnableArrowCounter = GetBool(sectionGUI, "EnableArrowCounter");
             DungeonExitWagonPrompt = GetBool(sectionGUI, "DungeonExitWagonPrompt");
             IllegalRestWarning = GetBool(sectionGUI, "IllegalRestWarning");
-            LoiterLimitInHours = GetInt(sectionGUI, "LoiterLimitInHours");
             LargeHUD = GetBool(sectionGUI, "LargeHUD");
             LargeHUDScale = GetFloat(sectionGUI, "LargeHUDScale", 0.25f, 2.0f);
 
@@ -315,6 +314,7 @@ namespace DaggerfallWorkshop
             EnhancedCombatAI = GetBool(sectionEnhancements, "EnhancedCombatAI");
             GuildQuestListBox = GetBool(sectionEnhancements, "GuildQuestListBox");
             BowLeftHandWithSwitching = GetBool(sectionEnhancements, "BowLeftHandWithSwitching");
+            LoiterLimitInHours = GetInt(sectionEnhancements, "LoiterLimitInHours");
         }
 
         /// <summary>
@@ -383,7 +383,6 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "EnableArrowCounter", EnableArrowCounter);
             SetBool(sectionGUI, "DungeonExitWagonPrompt", DungeonExitWagonPrompt);
             SetBool(sectionGUI, "IllegalRestWarning", IllegalRestWarning);
-            SetInt(sectionGUI, "LoiterLimitInHours", LoiterLimitInHours);
             SetBool(sectionGUI, "LargeHUD", LargeHUD);
             SetFloat(sectionGUI, "LargeHUDScale", LargeHUDScale);
 
@@ -432,6 +431,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "EnhancedCombatAI", EnhancedCombatAI);
             SetBool(sectionEnhancements, "GuildQuestListBox", GuildQuestListBox);
             SetBool(sectionEnhancements, "BowLeftHandWithSwitching", BowLeftHandWithSwitching);
+            SetInt(sectionEnhancements, "LoiterLimitInHours", LoiterLimitInHours);
 
             // Write settings to persistent file
             WriteSettingsFile();
