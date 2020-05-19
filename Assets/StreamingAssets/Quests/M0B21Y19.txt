@@ -243,11 +243,15 @@ _S.04_ task:
 _S.05_ task:
 	place item _I.02_ at _victimhouse_ 
 	place item _note_ at _victimhouse_ 
-	create foe _enemy_ every 0 minutes 4 times with 100% success 
+	start task _insidespawn_
 	--sped up spawn rate. very slow for an ambush 
 	log 1021 step 1 
 	rumor mill 1040 
 	hide npc _victim_ 
+
+_insidespawn_ task:
+	create foe _enemy_ every 0 minutes 4 times with 100% success 
+--user reports repeated spawns upon entering house, should not be so
 
 _deadbody_ task:
 	take _I.02_ from pc
