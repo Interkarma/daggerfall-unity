@@ -142,7 +142,6 @@ Person _npc2_ face 248 group Shopkeeper
 
 Clock _1stparton_ 00:00 0 flag 1 range 1 4
 Clock _2ndparton_ 00:00 0 flag 1 range 1 4
-Clock _delay_ 00:15 0 flag 1 range 0 1
 
 Foe _thief_ is Thief
 
@@ -169,7 +168,8 @@ until _S.03_ performed:
 _S.04_ task:
 	toting _item2_ and _npc2_ clicked 
 	give pc _reward_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 _queston_ task:
 	when _1stparton_ and not _S.03_ 
@@ -193,9 +193,6 @@ _S.11_ task:
 	give item _item1_ to _thief_ 
 	say 1021 
 	restrain foe _thief_ 
-
-_delay_ task:
-	end quest 
 
 _S.13_ task:
 	when _queston_ or _2ndparton_ 

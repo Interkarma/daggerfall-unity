@@ -119,7 +119,6 @@ Place _itemdung_ remote dungeon13
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 --changed flags on timer, was giving very short time limits before
 Clock _2ndparton_ 00:00 0 flag 2 range 1 2
-Clock _delay_ 00:30 0 flag 1 range 0 1
 
 Foe _giant_ is Giant
 
@@ -133,7 +132,8 @@ Foe _giant_ is Giant
 _pcgetsgold_ task:
 	toting _item_ and _qgfriend_ clicked 
 	give pc _reward_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 variable _queston_
 _pchasitem_ task:
@@ -147,5 +147,3 @@ _1stparton_ task:
 	end quest 
 
 variable _2ndparton_
-_delay_ task:
-	end quest 

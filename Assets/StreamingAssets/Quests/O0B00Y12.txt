@@ -130,7 +130,6 @@ Person _contact2_ group Local_3.0 female
 
 Clock _qtime_ 00:00 0 flag 1 range 3 5
 Clock _S.01_ 1.00:00 2.18:40
-Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _enemy_ is Assassin
 
@@ -139,7 +138,6 @@ Foe _enemy_ is Assassin
 	start timer _qtime_ 
 	log 1020 step 0 
 	get item _drugs_ 
-	create npc _contact1_ 
 
 _qtime_ task:
 	end quest 
@@ -153,7 +151,6 @@ _S.01_ task:
 	create foe _enemy_ every 10 minutes 10 times with 10% success 
 	hide npc _contact1_ 
 	give pc _note_ notify 1031 
-	create npc _contact2_ 
 
 _readnote_ task:
 	log 1021 step 1 
@@ -163,10 +160,8 @@ _success_ task:
 	toting _drugs_ and _contact1_ clicked 
 	toting _drugs_ and _contact2_ clicked 
 	give pc _gold_ 
-	start timer _delay_ 
-
-_delay_ task:
 	end quest 
+--removed unnecessary delay
 
 _S.06_ task:
 	injured _enemy_ 

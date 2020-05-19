@@ -175,7 +175,6 @@ Person _questgiver_ face 137 group Questor
 Person _pickuplocal_ face 232 group Local_3.0
 
 Clock _oneday_ 1.00:00
-Clock _delay_ 01:00
 --added precise timers due to short time limit
 
 Foe _thief_ is Burglar
@@ -231,7 +230,8 @@ _S.11_ task:
 	toting _ingredient_ and _pickuplocal_ clicked 
 	toting _womensclothing_ and _pickuplocal_ clicked 
 	give pc _gold_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 _S.12_ task:
 	clicked npc _pickuplocal_ 
@@ -293,6 +293,3 @@ _poet_ task:
 	when _yes_ and _S.09_ 
 	take _womensclothing_ from pc
 	give item _womensclothing_ to _thief_ 
-
-_delay_ task:
-	end quest 

@@ -127,7 +127,6 @@ Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
 Place _mondung_ remote dungeon
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
-Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _monster_ is Sorceror
 Foe _daedra1_ is Fire_daedra
@@ -148,7 +147,8 @@ variable _2ndparton_
 _pcgetsgold_ task:
 	when _npcclicked_ and _mondead_ 
 	give pc _artifact_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 _mondead_ task:
 	killed 1 _monster_ 
@@ -162,9 +162,6 @@ _clearclick_ task:
 	when _npcclicked_ and not _mondead_ 
 	say 1003
 	clear _npcclicked_ _clearclick_ 
-
-_delay_ task:
-	end quest 
 
 _S.07_ task:
 	injured _monster_ 

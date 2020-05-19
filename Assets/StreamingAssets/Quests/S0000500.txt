@@ -157,7 +157,6 @@ Clock _S.00_ 31.06:00 93.18:00
 Clock _firsttimer_ 7.00:00 14.00:00
 --varied timer, to prevent same number on all timers
 Clock _executiondelay_ 00:00 0 flag 17 range 0 2
-Clock _delay_ 01:00 0 flag 1 range 0 1
 Clock _escapetime_ 00:00 0 flag 17 range 0 2
 
 Foe _guards_ is Spellsword
@@ -209,12 +208,9 @@ _S.05_ task:
 _S.06_ task:
 	when _S.03_ and _S.05_ 
 	give pc _gold_ 
-	start timer _delay_ 
 	drop _traitor_ face 
-	unset _S.05_ 
-
-_delay_ task:
 	end quest 
+--removed unnecessary delay
 
 _S.08_ task:
 	when _executiondelay_ and not _S.03_ 

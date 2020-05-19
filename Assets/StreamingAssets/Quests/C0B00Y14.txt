@@ -148,7 +148,6 @@ Person _priest_ group Cleric female
 
 Place _mondung_ remote dungeon4
 
-Clock _delay_ 01:00 0 flag 1 range 0 1
 Clock _qtime_ 00:00 0 flag 17 range 1 5
 
 Foe _monster1_ is Zombie
@@ -208,8 +207,6 @@ _clickqgiver_ task:
 _success_ task:
 	when _clickqgiver_ and _S.07_ 
 	give pc nothing 
-	unset _clickqgiver_ 
---no idea why to unset clickqgiver. the quest is ending.
 	end quest 
 
 _clearclick_ task:

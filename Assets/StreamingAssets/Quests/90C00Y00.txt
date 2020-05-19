@@ -141,7 +141,6 @@ Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
 Place _mondung_ remote dungeon
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
-Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _monster_ is Lich
 --fixed msg 1020 to not share qdt line
@@ -160,7 +159,8 @@ variable _2ndparton_
 _pcgetsgold_ task:
 	when _npcclicked_ and _mondead_ 
 	give pc _artifact_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 variable _queston_
 --unused variable
@@ -175,6 +175,3 @@ _clearclick_ task:
 	when _npcclicked_ and not _mondead_ 
 	say 1003
 	clear _npcclicked_ 
-
-_delay_ task:
-	end quest 

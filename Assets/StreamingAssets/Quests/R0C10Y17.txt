@@ -146,8 +146,6 @@ Person _npc2_ face 248 group Local_3.0
 
 Clock _1stparton_ 00:00 0 flag 1 range 1 4
 Clock _2ndparton_ 00:00 0 flag 1 range 1 4
-Clock _delay_ 00:10 00:30
-
 
 --	Quest start-up:
 	start timer _1stparton_ 
@@ -157,7 +155,8 @@ Clock _delay_ 00:10 00:30
 _pcgetsgold_ task:
 	toting _item2_ and _npc2_ clicked 
 	give pc _reward_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 variable _pchasitem1_
 variable _pchasitem2_
@@ -167,7 +166,6 @@ _S.03_ task:
 	log 1011 step 1 
 	get item _item2_ 
 	say 1012 
-	create npc _npc2_ 
 
 variable _S.04_
 _queston_ task:
@@ -180,7 +178,4 @@ variable _1stparton_
 _2ndparton_ task:
 	make _item2_ permanent 
 	change repute with _questgiver_ by -2 
-	end quest 
-
-_delay_ task:
 	end quest 
