@@ -241,16 +241,17 @@ _S.04_ task:
 	end quest 
 
 _S.05_ task:
+	start task _insidespawn_
+--more repairs to prevent duplicate effects. now only one time per quest
+
+_insidespawn_ task:
+	create foe _enemy_ every 0 minutes 4 times with 100% success 
 	place item _I.02_ at _victimhouse_ 
 	place item _note_ at _victimhouse_ 
-	start task _insidespawn_
 	--sped up spawn rate. very slow for an ambush 
 	log 1021 step 1 
 	rumor mill 1040 
 	hide npc _victim_ 
-
-_insidespawn_ task:
-	create foe _enemy_ every 0 minutes 4 times with 100% success 
 --user reports repeated spawns upon entering house, should not be so
 
 _deadbody_ task:
