@@ -101,6 +101,8 @@ namespace DaggerfallWorkshop.Game
         float controllerCursorHorizontalSpeed = 300.0F;
         float controllerCursorVerticalSpeed = 300.0F;
 
+        bool pauseController = false;
+
         #endregion
 
         #region Structures
@@ -184,7 +186,7 @@ namespace DaggerfallWorkshop.Game
 
         public bool UsingController
         {
-            get { return usingControllerCursor && EnableController; }
+            get { return usingControllerCursor && EnableController && !pauseController; }
         }
 
         public KeyCode LastKeyDown { get; private set; }
@@ -489,15 +491,17 @@ namespace DaggerfallWorkshop.Game
             float distMovement = Mathf.Sqrt(horizj * horizj + vertj * vertj);
             float distCamera = Mathf.Sqrt(cameraHorizJ * cameraHorizJ + cameraVertJ * cameraVertJ);
 
+            bool movingMouse = (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0);
+            pauseController = movingMouse;
+
             if (!UsingController && (distMovement > JoystickDeadzone || distCamera > JoystickDeadzone))
             {
                 usingControllerCursor = true;
                 controllerCursorPosition = Input.mousePosition;
             }
-            else if (UsingController && (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0))
-            {
+
+            if (movingMouse)
                 usingControllerCursor = false;
-            }
 
             if (CursorVisible)
             {
@@ -907,26 +911,17 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetMouseButtonDown(int button)
         {
-            if (UsingController)
-                return GetKeyDown(joystickUICache[button]);
-
-            return Input.GetMouseButtonDown(button);
+            return Input.GetMouseButtonDown(button) || GetKeyDown(joystickUICache[button]);
         }
 
         public bool GetMouseButtonUp(int button)
         {
-            if (UsingController)
-                return GetKeyUp(joystickUICache[button]);
-
-            return Input.GetMouseButtonUp(button);
+            return Input.GetMouseButtonUp(button) || GetKeyUp(joystickUICache[button]);
         }
 
         public bool GetMouseButton(int button)
         {
-            if (UsingController)
-                return GetKey(joystickUICache[button]);
-
-            return Input.GetMouseButton(button);
+            return Input.GetMouseButton(button) || GetKey(joystickUICache[button]);
         }
 
         public bool GetKey(KeyCode key)
