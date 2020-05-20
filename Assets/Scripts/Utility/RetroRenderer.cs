@@ -15,96 +15,70 @@ using DaggerfallWorkshop.Game;
 namespace DaggerfallWorkshop.Utility
 {
     /// <summary>
-    /// Simple behaviour just to blit a render texture into an empty viewport camera.
-    /// Does all the setup required or disables self when retro mode not enabled.
-    /// Retro 320x200 rendering works as follows when enabled:
-    /// - Main camera and SkyRig camera are set to use RetroTarget 320x200 render texture.
-    /// - RetroCamera is a stationary viewport camera with culling mask of nothing.
-    /// - RetroTarget output is set as the SourceRenderTexture on this behaviour.
-    /// - OnRenderImage will blit 320x200 output to RetroCamera.
+    /// Manages settings for retro mode rendering.
     /// </summary>
     public class RetroRenderer : MonoBehaviour
     {
         public RenderTexture RetroTexture320x200;
         public RenderTexture RetroTexture640x400;
+        public RenderTexture RetroPresentationTarget;
 
         DaggerfallSky sky;
         RenderTexture retroTexture;
+        int retroMode;
 
-        public static bool enablePostprocessing = false;
-        private Material postprocessMaterial = null;
+        Material depthProcessMaterial;
 
         public RenderTexture RetroTexture
         {
             get { return retroTexture; }
         }
 
-        public Material PostprocessMaterial
-        {
-            get { return postprocessMaterial; }
-        }
-
         private void Start()
         {
-            // 0 = retro rendering off
-            // 1 = retro 320x200 rendering on
-            // 2 = retro 640x400 rendering on
+            // Get retro mode and do nothing further if disabled
+            retroMode = DaggerfallUnity.Settings.RetroRenderingMode;
+            if (retroMode == 0)
+                return;
+
+            // Get sky reference
             sky = GameManager.Instance.SkyRig.GetComponent<DaggerfallSky>();
 
-
-            if (DaggerfallUnity.Settings.RetroRenderingMode == 1 && RetroTexture320x200)
+            // Get reference to retro rendertexture
+            //  0 = retro rendering off
+            //  1 = retro 320x200 rendering on
+            //  2 = retro 640x400 rendering on
+            if (retroMode == 1 && RetroTexture320x200)
                 retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture320x200;
-            else if (DaggerfallUnity.Settings.RetroRenderingMode == 2 && RetroTexture640x400)
+            else if (retroMode == 2 && RetroTexture640x400)
                 retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture640x400;
-            else
-                gameObject.SetActive(false);
 
-            enablePostprocessing = DaggerfallUnity.Settings.PostProcessingInRetroMode > 0;
+            // Get depth process material
+            Shader depthProcessShader = Shader.Find("Daggerfall/DepthProcessShader");
+            depthProcessMaterial = new Material(depthProcessShader);
         }
 
         private void Update()
         {
+            // Do nothing if retro mode disabled
+            if (retroMode == 0)
+                return;
+
             // Conditionally handle classic sky camera
             // Sky may not be enabled at startup (e.g starting in dungeon) so need to check
             // Does nothing when retro world setting disabled as this behaviour is also disabled
-            if (sky && sky.SkyCamera && sky.SkyCamera.targetTexture != retroTexture)
+            if (sky && sky.SkyCamera && retroTexture && sky.SkyCamera.targetTexture != retroTexture)
                 sky.SkyCamera.targetTexture = retroTexture;
         }
 
-        private void OnRenderImage(RenderTexture source, RenderTexture destination)
+        private void OnPostRender()
         {
-            if (!retroTexture)
+            // Do nothing if retro mode disabled or texture not set
+            if (retroMode == 0 || !retroTexture || !RetroPresentationTarget || !depthProcessMaterial)
                 return;
 
-            if (enablePostprocessing)
-            {
-                if (!postprocessMaterial)
-                {
-                    Shader shader = null;
-                    switch(DaggerfallUnity.Settings.PostProcessingInRetroMode)
-                    {
-                        case 1:
-                            shader = Shader.Find(MaterialReader._DaggerfallRetroPosterizationShaderName);
-                            break;
-                        case 2:
-                            shader = Shader.Find(MaterialReader._DaggerfallRetroPalettizationShaderName);
-                            break;
-                    }
-                    if (shader)
-                        postprocessMaterial = new Material(shader);
-                    else
-                    {
-                        Debug.Log("Couldn't find retro shader " + DaggerfallUnity.Settings.PostProcessingInRetroMode);
-                        enablePostprocessing = false;
-                    }
-                }
-                if (enablePostprocessing && postprocessMaterial)
-                {
-                    Graphics.Blit(retroTexture, null as RenderTexture, postprocessMaterial);
-                    return;
-                }
-            }
-            Graphics.Blit(retroTexture, null as RenderTexture);
+            // Blit to presentation rendertexture with postprocess material
+            Graphics.Blit(retroTexture, RetroPresentationTarget, depthProcessMaterial);
         }
     }
 }

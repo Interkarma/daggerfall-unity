@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2016 Gavin Clayton
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Web Site:        http://www.dfworkshop.net
@@ -20,7 +20,7 @@ Shader "Daggerfall/BillboardBatch" {
 		_UpVector ("Up Vector (XYZ)", Vector) = (0,1,0,0)
 	}
 	SubShader {
-		Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags { /*"Queue" = "Transparent"*/ "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		LOD 200
 		
 		CGPROGRAM

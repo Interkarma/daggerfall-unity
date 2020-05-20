@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
 
 /// <summary>
@@ -24,6 +25,7 @@ public class CameraClearManager : MonoBehaviour
     public Color cameraClearColor = Color.black;
 
     bool lastInside = false;
+    bool retroModeEnabled = false;
 
     void Start()
     {
@@ -31,10 +33,19 @@ public class CameraClearManager : MonoBehaviour
             playerEnterExit = GameManager.Instance.PlayerEnterExit;
         if (mainCamera == null)
             mainCamera = GameManager.Instance.MainCamera;
+
+        retroModeEnabled = DaggerfallUnity.Settings.RetroRenderingMode > 0;
+        if (retroModeEnabled)
+        {
+            mainCamera.clearFlags = CameraClearFlags.Depth;
+        }
     }
 
     void Update()
     {
+        if (retroModeEnabled)
+            return;
+
         if (playerEnterExit && mainCamera)
         {
             bool isInside = playerEnterExit.IsPlayerInside;
