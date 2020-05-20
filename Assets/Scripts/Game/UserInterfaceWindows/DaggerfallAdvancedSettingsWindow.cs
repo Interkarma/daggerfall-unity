@@ -150,7 +150,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider terrainDistance;
         HorizontalSlider shadowResolutionMode;
         HorizontalSlider retroRenderingMode;
-        HorizontalSlider PostProcessingInRetroMode;
+        HorizontalSlider postProcessingInRetroMode;
         Checkbox dungeonLightShadows;
         Checkbox interiorLightShadows;
         Checkbox exteriorLightShadows;
@@ -356,7 +356,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
             retroRenderingMode = AddSlider(rightPanel, "retroRenderingMode",
                 DaggerfallUnity.Settings.RetroRenderingMode, "Off", "320x200", "640x400");
-            PostProcessingInRetroMode = AddSlider(rightPanel, "postProcessingInRetroMode",
+            postProcessingInRetroMode = AddSlider(rightPanel, "postProcessingInRetroMode",
                 DaggerfallUnity.Settings.PostProcessingInRetroMode, "Off", "Posterization", "Palettization");
         }
 
@@ -468,7 +468,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.InteriorLightShadows = interiorLightShadows.IsChecked;
             DaggerfallUnity.Settings.ExteriorLightShadows = exteriorLightShadows.IsChecked;
             DaggerfallUnity.Settings.RetroRenderingMode = retroRenderingMode.ScrollIndex;
-            DaggerfallUnity.Settings.PostProcessingInRetroMode = PostProcessingInRetroMode.ScrollIndex;
+            DaggerfallUnity.Settings.PostProcessingInRetroMode = postProcessingInRetroMode.ScrollIndex;
 
             DaggerfallUnity.Settings.SaveSettings();
         }

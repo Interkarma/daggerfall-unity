@@ -320,7 +320,7 @@ namespace DaggerfallWorkshop.Game.Items
                         TextFile.Token[] tokens = msg.GetTextTokens();
                         string signoff = "";
                         int lines = 0;
-                        for (int i = tokens.Length - 1; i >= 0; i--)
+                        for (int i = tokens.Length-1; i >= 0; i--)
                         {
                             TextFile.Token token = tokens[i];
                             if (!string.IsNullOrEmpty(token.text))
@@ -632,7 +632,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 // Change dye
                 data = ChangeDye(data, (DyeColors)color, DyeTargets.Clothing);
-            }
+            }    
 
             return data;
         }
@@ -1269,9 +1269,9 @@ namespace DaggerfallWorkshop.Game.Items
             // Add some torches and candles if player torch is from items setting enabled
             if (DaggerfallUnity.Settings.PlayerTorchFromItems)
             {
-                for (int i = 0; i < 5; i++)
+                for (int i=0; i < 5; i++)
                     items.AddItem(ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Torch));
-                for (int i = 0; i < 2; i++)
+                for (int i=0; i < 2; i++)
                     items.AddItem(ItemBuilder.CreateItem(ItemGroups.UselessItems2, (int)UselessItems2.Candle));
             }
         }

@@ -135,6 +135,11 @@ namespace DaggerfallWorkshop.Game.Items
                 return String.Format(weight % 1 == 0 ? "{0:F0}" : "{0:F2}", weight);
             }
 
+            public override string Range()
+            {   // %ft
+                float range = parent.rangeInFt;
+                return String.Format(range % 1 == 0 ? "{0:F0}" : "{0:F2}", range);            }
+
             public override string WeaponDamage()
             {   // %wdm
                 int matMod = parent.GetWeaponMaterialModifier();

@@ -135,12 +135,12 @@ namespace DaggerfallWorkshop.Game
                 _points.Add(new TimestampedMotion
                 {
                     Time = Time.time,
-                    Delta = new Vector2 { x = dx, y = dy }
+                    Delta = new Vector2 {x = dx, y = dy}
                 });
                 _sum += _points.Last().Delta;
                 TravelDist += _points.Last().Delta.magnitude;
 
-                return new Vector2 { x = _sum.x, y = _sum.y };
+                return new Vector2 {x = _sum.x, y = _sum.y};
             }
 
             /// <summary>
@@ -189,11 +189,6 @@ namespace DaggerfallWorkshop.Game
             DownLeft,
             Down,
             DownRight
-        }
-
-        public enum test
-        {
-
         }
 
         void Start()
@@ -714,6 +709,8 @@ namespace DaggerfallWorkshop.Game
                 else
                     SetWeapon(ScreenWeapon, currentLeftHandWeapon);
             }
+
+            ScreenWeapon.Reach = defaultWeaponReach;
         }
 
         void SetMelee(FPSWeapon target)

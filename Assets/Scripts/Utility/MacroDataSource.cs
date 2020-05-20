@@ -16,7 +16,7 @@ namespace DaggerfallWorkshop.Utility
     /// This abstract class provides default implementations so that only applicable
     /// handlers need to be implemented.
     /// </summary>
-    public abstract class MacroDataSource
+    public abstract class MacroDataSource   
     // TODO: extract interface when complete set of handlers done? : IMacroDataSource
     {
         public virtual string Name()

@@ -302,14 +302,11 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public bool IsLightSource
         {   // Torch, Lantern, Candle, Holy Candle.
-            get
-            {
-                return (itemGroup == ItemGroups.UselessItems2 &&
-                        (TemplateIndex == (int)UselessItems2.Torch ||
-                         TemplateIndex == (int)UselessItems2.Lantern ||
-                         TemplateIndex == (int)UselessItems2.Candle)) ||
-                        IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_candle);
-            }
+            get { return (itemGroup == ItemGroups.UselessItems2 && 
+                          (TemplateIndex == (int)UselessItems2.Torch ||
+                           TemplateIndex == (int)UselessItems2.Lantern ||
+                           TemplateIndex == (int)UselessItems2.Candle)) ||
+                          IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_candle); }
         }
 
         /// <summary>
@@ -369,8 +366,7 @@ namespace DaggerfallWorkshop.Game.Items
         public int PotionRecipeKey
         {
             get { return potionRecipeKey; }
-            set
-            {
+            set {
                 PotionRecipe potionRecipe = GameManager.Instance.EntityEffectBroker.GetPotionRecipe(value);
                 if (potionRecipe != null)
                 {
@@ -678,7 +674,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// Determines if item is a stack.
         /// </summary>
         /// <returns><c>true</c> if item is a stack, <c>false</c> otherwise.</returns>
-        public bool IsAStack()
+        public bool IsAStack() 
         {
             return stackCount > 1;
         }
