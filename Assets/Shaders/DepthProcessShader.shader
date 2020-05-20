@@ -42,15 +42,10 @@ Shader "Daggerfall/DepthProcessShader"
             half4 frag(v2f i) : SV_Target
             {
                 float4 color = tex2D(_MainTex, i.texcoord);
-                float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.texcoord);
-                depth = Linear01Depth(depth);
+                //float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.texcoord);
+                //depth = Linear01Depth(depth);
 
-                // Tint sky green
-                if (depth == 1)
-                    return color * float4(0, 1, 0, 1);
-
-                // Tint world red
-                return color * float4(1, 0, 0, 1);
+                return color;
             }
 
             ENDCG

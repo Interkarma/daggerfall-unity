@@ -211,10 +211,6 @@ namespace DaggerfallWorkshop
             Material atlasMaterial = new Material(shader);
             atlasMaterial.mainTexture = albedoMap;
 
-            // Clear billboard batch transparent queue when retro mode enabled
-            if (DaggerfallUnity.Settings.RetroRenderingMode > 0)
-                atlasMaterial.renderQueue = (int)RenderQueue.Geometry;
-
             // Assign other maps
             if (normalMap != null)
             {
@@ -271,10 +267,6 @@ namespace DaggerfallWorkshop
             Shader shader = Shader.Find(MaterialReader._DaggerfallBillboardBatchShaderName);
             Material atlasMaterial = new Material(shader);
             atlasMaterial.mainTexture = customMaterial.mainTexture;
-
-            // Clear billboard batch transparent queue when retro mode enabled
-            if (DaggerfallUnity.Settings.RetroRenderingMode > 0)
-                atlasMaterial.renderQueue = (int)RenderQueue.Geometry;
 
             // Assign renderer properties
             meshRenderer.sharedMaterial = atlasMaterial;
