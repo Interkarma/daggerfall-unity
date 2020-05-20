@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 114397629012878356}
   - component: {fileID: 114025923971531530}
   - component: {fileID: 114374011142275900}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PlayerAdvanced
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -65,7 +65,8 @@ GameObject:
   - component: {fileID: 8100000}
   - component: {fileID: 11400000}
   - component: {fileID: 114619655177981728}
-  - component: {fileID: 114583161180529142}
+  - component: {fileID: 114256515049101184}
+  - component: {fileID: 114064879103926240}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -159,7 +160,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.4, z: 0.1}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4832112164805246}
@@ -225,7 +226,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
-  m_AllowMSAA: 1
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -558,7 +559,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 31543
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -578,6 +579,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 282c8741e3cc25a4c9f8ec1006e2f15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cursorActive: 0
   invertMouseY: 0
   lockCursor: 1
   sensitivity: {x: 1, y: 1}
@@ -635,7 +637,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2c69e8292036a13498bf8d5749391b75, type: 3}
   m_Name: 
@@ -730,6 +732,7 @@ MonoBehaviour:
   FlipHorizontal: 0
   WeaponType: -1
   MetalType: 0
+  WeaponHands: 0
   Reach: 2.5
   AttackSpeedScale: 1
   Cooldown: 0
@@ -766,6 +769,7 @@ MonoBehaviour:
   FlipHorizontal: 0
   WeaponType: -1
   MetalType: 0
+  WeaponHands: 0
   Reach: 2.5
   AttackSpeedScale: 1
   Cooldown: 0
@@ -1075,6 +1079,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e13b282693fb9b46bf1262c8c84685e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114064879103926240
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d157b32025f5dd4ea977a0dc9d9a353, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RetroTexture320x200: {fileID: 8400000, guid: b7d08ce484b8fb54886d32a392814971, type: 2}
+  RetroTexture640x400: {fileID: 8400000, guid: 5e6db3b61ca69e848afa2ff94164313b, type: 2}
+  RetroPresentationTarget: {fileID: 8400000, guid: 570bcf8f70408ce44be2d1357054b448,
+    type: 2}
 --- !u!114 &114097946917833764
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1159,11 +1178,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 923e44bd2b461494586a0930c79739f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggleRun: 0
   walkSpeedOverride: 6
   useWalkSpeedOverride: 0
   runSpeedOverride: 11
   useRunSpeedOverride: 0
+  runningMode: 0
+  sneakingMode: 0
+  isRunning: 0
+  isSneaking: 0
+--- !u!114 &114256515049101184
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  profile: {fileID: 11400000, guid: dafc2272a80c9d64d85bfff96a16ab7a, type: 2}
 --- !u!114 &114305462486005928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1281,25 +1315,6 @@ MonoBehaviour:
   slideWhenOverSlopeLimit: 0
   slideOnTaggedObjects: 0
   slideSpeed: 12
---- !u!114 &114583161180529142
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76b5ec6153a1d55438228df10fe66844, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  distanceFog: 1
-  excludeFarPixels: 1
-  useRadialDistance: 0
-  heightFog: 0
-  height: 1
-  heightDensity: 2
-  startDistance: 0
-  fogShader: {fileID: 4800000, guid: 70d8568987ac0499f952b54c7c13e265, type: 3}
 --- !u!114 &114607307154016044
 MonoBehaviour:
   m_ObjectHideFlags: 1

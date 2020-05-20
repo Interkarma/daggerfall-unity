@@ -748,66 +748,9 @@ Prefab:
       propertyPath: DungeonParent
       value: 
       objectReference: {fileID: 620133648}
-    - target: {fileID: 100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400010, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400004, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 2000000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_AllowMSAA
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2000000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_TargetTexture
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 10800000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_CullingMask.m_Bits
-      value: 31543
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114583161180529142, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
   m_IsPrefabAsset: 0
---- !u!1 &334547543 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 100002, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-    type: 2}
-  m_PrefabInternal: {fileID: 334547542}
---- !u!114 &334547544
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 334547543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  profile: {fileID: 11400000, guid: dafc2272a80c9d64d85bfff96a16ab7a, type: 2}
---- !u!114 &334547552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 334547543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d157b32025f5dd4ea977a0dc9d9a353, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RetroTexture320x200: {fileID: 8400000, guid: b7d08ce484b8fb54886d32a392814971, type: 2}
-  RetroTexture640x400: {fileID: 8400000, guid: 5e6db3b61ca69e848afa2ff94164313b, type: 2}
-  RetroPresentationTarget: {fileID: 8400000, guid: 570bcf8f70408ce44be2d1357054b448,
-    type: 2}
 --- !u!1 &348738038
 GameObject:
   m_ObjectHideFlags: 0
