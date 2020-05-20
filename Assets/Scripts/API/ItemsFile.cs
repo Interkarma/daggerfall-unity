@@ -26,6 +26,7 @@ namespace DaggerfallConnect.FallExe
         public long position;                       // Position record was read from FALL.EXE
         public Byte[] name;                         // Display name
         public Int32 baseWeightUnits;               // Base weight in 0.25kg units
+        public Int32 baseRangeUnits;
         public UInt16 hitPoints;                    // Hit points
         public Int32 capacityOrTarget;              // Capacity of container or target of effect
         public Int32 basePrice;                     // Base price before material, mercantile, etc. modify value
@@ -48,6 +49,7 @@ namespace DaggerfallConnect.FallExe
         public int index;                           // Index of this item in list
         public string name;                         // Display name
         public float baseWeight;                    // Base weight in kilograms before material, etc.
+        public float baseRange;
         public int hitPoints;                       // Hit points
         public int capacityOrTarget;                // Capacity of container or target of effect
         public int basePrice;                       // Base price before material, mercantile, etc. modify value
@@ -326,6 +328,7 @@ namespace DaggerfallConnect.FallExe
                 desc.index = index;
                 desc.name = Encoding.UTF8.GetString(item.name).TrimEnd('\0');
                 desc.baseWeight = (float)item.baseWeightUnits * 0.25f;
+                desc.baseRange = (float)item.baseRangeUnits;
                 desc.hitPoints = item.hitPoints;
                 desc.capacityOrTarget = item.capacityOrTarget;
                 desc.basePrice = item.basePrice;
@@ -363,6 +366,7 @@ namespace DaggerfallConnect.FallExe
                 writer.BaseStream.Position = item.position;
                 writer.Write(item.name);
                 writer.Write(item.baseWeightUnits);
+                writer.Write(item.baseRangeUnits);
                 writer.Write(item.hitPoints);
                 writer.Write(item.capacityOrTarget);
                 writer.Write(item.basePrice);
@@ -434,6 +438,7 @@ namespace DaggerfallConnect.FallExe
             item.position = reader.BaseStream.Position;
             item.name = reader.ReadBytes(nameLength);
             item.baseWeightUnits = reader.ReadInt32();
+            item.baseRangeUnits = reader.ReadInt32();
             item.hitPoints = reader.ReadUInt16();
             item.capacityOrTarget = reader.ReadInt32();
             item.basePrice = reader.ReadInt32();

@@ -132,6 +132,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected readonly string kgSrc = TextManager.Instance.GetText(textDatabase, "kgSrc");
         protected readonly string kgRep = TextManager.Instance.GetText(textDatabase, "kgRep");
+        protected readonly string ftSrc = TextManager.Instance.GetText(textDatabase, "ftSrc");
+        protected readonly string ftRep = TextManager.Instance.GetText(textDatabase, "ftRep");
         protected readonly string damSrc = TextManager.Instance.GetText(textDatabase, "damSrc");
         protected readonly string damRep = TextManager.Instance.GetText(textDatabase, "damRep");
         protected readonly string arSrc = TextManager.Instance.GetText(textDatabase, "arSrc");
@@ -1117,6 +1119,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Only keep the title part for paintings
             if (item.ItemGroup == ItemGroups.Paintings)
                 tokens = new TextFile.Token[] { new TextFile.Token() { formatting = TextFile.Formatting.Text, text = tokens[tokens.Length - 1].text.Trim() } };
+
+            //checks to see if item has a range value. If it does, it grabs text token array, resizes it to add two blank tokens at the end,
+            //assigns a range string for the ui display, and then adds a formatting token to first blank
+            //and adds text strong to the second blank token. Ensures 0 range outputs are ignored in ui.
+            if (item.rangeInFt != 0)
+            {
+                Array.Resize(ref tokens, tokens.Length + 2);
+                int addToken = tokens.Length;
+                string rangetxt = string.Format("Range: {0} ft", item.rangeInFt);
+                tokens[addToken - 1] = TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter);
+                tokens[addToken - 2] = TextFile.CreateTextToken(rangetxt);
+            }
 
             UpdateItemInfoPanel(tokens);
         }

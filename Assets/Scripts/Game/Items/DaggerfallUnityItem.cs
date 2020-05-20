@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.Items
         public int nativeMaterialValue;
         public DyeColors dyeColor;
         public float weightInKg;
+        public float rangeInFt;
         public int drawOrder;
         public int value;
         public ushort unknown;
@@ -537,6 +538,7 @@ namespace DaggerfallWorkshop.Game.Items
             nativeMaterialValue = 0;
             dyeColor = DyeColors.Unchanged;
             weightInKg = itemTemplate.baseWeight;
+            rangeInFt = itemTemplate.baseRange;
             drawOrder = itemTemplate.drawOrderOrEffect;
             currentVariant = 0;
             value = itemTemplate.basePrice;
@@ -588,6 +590,7 @@ namespace DaggerfallWorkshop.Game.Items
             nativeMaterialValue = materialValue;
             dyeColor = DyeColors.Unchanged;
             weightInKg = itemTemplate.baseWeight;
+            rangeInFt = itemTemplate.baseRange;
             drawOrder = itemTemplate.drawOrderOrEffect;
             currentVariant = 0;
             value = magicItemTemplate.value;
@@ -1474,6 +1477,7 @@ namespace DaggerfallWorkshop.Game.Items
             nativeMaterialValue = other.nativeMaterialValue;
             dyeColor = other.dyeColor;
             weightInKg = other.weightInKg;
+            rangeInFt = other.rangeInFt;
             drawOrder = other.drawOrder;
             currentVariant = other.currentVariant;
             value = other.value;
@@ -1530,6 +1534,7 @@ namespace DaggerfallWorkshop.Game.Items
             nativeMaterialValue = itemRecord.ParsedData.material;
             dyeColor = (DyeColors)itemRecord.ParsedData.color;
             weightInKg = (float)itemRecord.ParsedData.weight * 0.25f;
+            rangeInFt = (float)itemRecord.ParsedData.range;
             drawOrder = itemTemplate.drawOrderOrEffect;
             value = (int)itemRecord.ParsedData.value;
             unknown = itemRecord.ParsedData.unknown;
@@ -1596,6 +1601,7 @@ namespace DaggerfallWorkshop.Game.Items
             nativeMaterialValue = data.nativeMaterialValue;
             dyeColor = data.dyeColor;
             weightInKg = data.weightInKg;
+            rangeInFt = data.rangeInFt;
             drawOrder = data.drawOrder;
             value = data.value1;
             // These are being saved in DF Unity saves as one int32 value but are two 16-bit values in classic

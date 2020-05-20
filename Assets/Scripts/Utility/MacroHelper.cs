@@ -120,6 +120,7 @@ namespace DaggerfallWorkshop.Utility
             { "%key", DialogKeySubject }, // A location (?) (comment Nystul: it is the topic you are asking about (e.g. building, work, etc.) how it seems)
             { "%key2", null },// Another location
             { "%kg", Weight },  //  Weight of items
+            { "%ft", Range },  //  Range of items
             { "%kno", FactionOrderName }, // A knightly guild name
             { "%lev", GuildTitle }, // Rank in guild that you are in.
             { "%lp", LocalPalace },  //  Local / palace (?) dungeon
@@ -1166,6 +1167,12 @@ namespace DaggerfallWorkshop.Utility
         {   // %kg
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().Weight();
+        }
+
+        public static string Range(IMacroContextProvider mcp)
+        {   // %ft
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Range();
         }
 
         public static string WeaponDamage(IMacroContextProvider mcp)

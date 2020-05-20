@@ -266,6 +266,36 @@ namespace DaggerfallWorkshop.Game.Items
             return result;
         }
 
+        static public float getItemRange(DaggerfallUnityItem item)
+        {
+            // if there is no item, set to default range. Of there is item, get template range.
+            if (item == null)
+            {
+                return 2.25f;
+            }
+            else
+            {
+                // Get item template
+                ItemTemplate template = item.ItemTemplate;
+                return template.baseRange;
+            }
+        }
+
+        static public float getItemWeight(DaggerfallUnityItem item)
+        {
+            // Get item template
+            ItemTemplate template = item.ItemTemplate;
+            return template.baseWeight;
+        }
+
+        static public float getItemSpeed(DaggerfallUnityItem item)
+        {
+            // Get item template
+            ItemTemplate template = item.ItemTemplate;
+            float itemspeed = (template.baseWeight * template.baseRange);
+            return itemspeed;
+        }
+
         /// <summary>
         /// Resolves full item name using parameters like %it and material type.
         /// </summary>
