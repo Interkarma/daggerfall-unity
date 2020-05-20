@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -211,6 +211,10 @@ namespace DaggerfallWorkshop
             Material atlasMaterial = new Material(shader);
             atlasMaterial.mainTexture = albedoMap;
 
+            // Clear billboard batch transparent queue when retro mode enabled
+            if (DaggerfallUnity.Settings.RetroRenderingMode > 0)
+                atlasMaterial.renderQueue = (int)RenderQueue.Geometry;
+
             // Assign other maps
             if (normalMap != null)
             {
@@ -267,6 +271,10 @@ namespace DaggerfallWorkshop
             Shader shader = Shader.Find(MaterialReader._DaggerfallBillboardBatchShaderName);
             Material atlasMaterial = new Material(shader);
             atlasMaterial.mainTexture = customMaterial.mainTexture;
+
+            // Clear billboard batch transparent queue when retro mode enabled
+            if (DaggerfallUnity.Settings.RetroRenderingMode > 0)
+                atlasMaterial.renderQueue = (int)RenderQueue.Geometry;
 
             // Assign renderer properties
             meshRenderer.sharedMaterial = atlasMaterial;
