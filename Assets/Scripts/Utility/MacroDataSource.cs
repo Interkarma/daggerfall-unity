@@ -130,11 +130,6 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
-        public virtual string Range()
-        {   // %ft
-            throw new NotImplementedException();
-        }
-
         public virtual string WeaponDamage()
         {   // %wdm
             throw new NotImplementedException();

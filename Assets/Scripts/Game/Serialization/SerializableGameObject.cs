@@ -264,7 +264,6 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int nativeMaterialValue;
         public DyeColors dyeColor;
         public float weightInKg;
-        public float rangeInFt;
         public int drawOrder;
         public int value1;
         public int value2;

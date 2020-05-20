@@ -60,7 +60,6 @@ namespace DaggerfallConnect.Save
             public UInt16 material;
             public Byte color;
             public UInt32 weight;
-            public UInt32 range;
             public UInt16 enchantmentPoints;
             public UInt16 message;
             public Byte variants;
