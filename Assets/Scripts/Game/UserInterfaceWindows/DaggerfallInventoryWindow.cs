@@ -835,17 +835,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual float GetCarriedWeight()
+        protected virtual int GetCarriedWeightInGoldPieceUnits()
         {
-            return playerEntity.CarriedWeight;
+            return playerEntity.CarriedWeightInGoldPieceUnits;
         }
 
         protected virtual void UpdateLocalTargetIcon()
         {
             // Never changes on inventory window.
             localTargetIconPanel.BackgroundTexture = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Backpack).texture;
-            float weight = GetCarriedWeight();
-            localTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, PlayerEntity.MaxEncumbrance);
+            int weight = GetCarriedWeightInGoldPieceUnits();
+            localTargetIconLabel.Text = String.Format(weight % DaggerfallUnityItem.goldPiecesPerKg == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", (float)weight / DaggerfallUnityItem.goldPiecesPerKg, PlayerEntity.MaxEncumbrance);
         }
 
         protected virtual void UpdateRemoteTargetIcon()
@@ -855,8 +855,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (remoteTargetType == RemoteTargetTypes.Wagon)
             {
                 containerImage = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon);
-                float weight = PlayerEntity.WagonWeight;
-                remoteTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, ItemHelper.WagonKgLimit);
+                int weight = PlayerEntity.WagonWeightInGoldPieceUnites;
+                remoteTargetIconLabel.Text = String.Format(weight % DaggerfallUnityItem.goldPiecesPerKg == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", (float)weight / DaggerfallUnityItem.goldPiecesPerKg, ItemHelper.WagonKgLimit);
             }
             else if (dropIconTexture > -1)
             {
@@ -1278,7 +1278,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (usingWagon)
             {
                 // Check wagon weight limit
-                int wagonCanHold = ComputeCanHoldAmount(playerGold, DaggerfallBankManager.goldUnitWeightInKg, ItemHelper.WagonKgLimit - remoteItems.GetWeight());
+                int wagonCanHold = ComputeCanHoldAmount(playerGold, 1, ItemHelper.WagonKgLimit * DaggerfallUnityItem.goldPiecesPerKg - remoteItems.GetWeightInGoldPieceUnits());
                 if (goldToDrop > wagonCanHold)
                 {
                     goldToDrop = wagonCanHold;
@@ -1396,7 +1396,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected int CanCarryAmount(DaggerfallUnityItem item)
         {
             // Check weight limit
-            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), playerEntity.MaxEncumbrance - GetCarriedWeight());
+            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInGoldPieceUnits(), playerEntity.MaxEncumbrance * DaggerfallUnityItem.goldPiecesPerKg - GetCarriedWeightInGoldPieceUnits());
             if (canCarry <= 0)
             {
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotCarryAnymore"));
@@ -1407,7 +1407,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected int WagonCanHoldAmount(DaggerfallUnityItem item)
         {
             // Check cart weight limit
-            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.WagonKgLimit - remoteItems.GetWeight());
+            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInGoldPieceUnits(), ItemHelper.WagonKgLimit * DaggerfallUnityItem.goldPiecesPerKg - remoteItems.GetWeightInGoldPieceUnits());
             if (canCarry <= 0)
             {
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotHoldAnymore"));
@@ -1415,11 +1415,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return canCarry;
         }
 
-        private int ComputeCanHoldAmount(int unitsAvailable, float unitWeightInKg, float capacityLeftInKg)
+        private int ComputeCanHoldAmount(int unitsAvailable, int unitWeightInGoldPieceUnits, int capacityLeftInGoldPieceUnits)
         {
             int canHold = unitsAvailable;
-            if (unitWeightInKg > 0f)
-                canHold = Math.Min(canHold, (int)(capacityLeftInKg / unitWeightInKg));
+            if (unitWeightInGoldPieceUnits > 0)
+                canHold = Math.Min(canHold, capacityLeftInGoldPieceUnits / unitWeightInGoldPieceUnits);
             return canHold;
         }
 
@@ -1806,7 +1806,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             GameManager.Instance.PlayerEntity.TallyCrimeGuildRequirements(true, 1);
             PlayerGPS.DiscoveredBuilding buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
-            int weightAndNumItems = (int)theftBasket.GetWeight() + theftBasket.Count;
+            int weightAndNumItems = theftBasket.GetWeightInGoldPieceUnits() / DaggerfallUnityItem.goldPiecesPerKg + theftBasket.Count;
             int chanceBeingDetected = FormulaHelper.CalculateShopliftingChance(playerEntity, buildingDiscoveryData.quality, weightAndNumItems);
             // Send the guards if detected
             if (!Dice100.FailedRoll(chanceBeingDetected))
@@ -2116,11 +2116,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void UpdateItemInfoPanelGold()
         {
             int gold = GameManager.Instance.PlayerEntity.GoldPieces;
-            float weight = gold * DaggerfallBankManager.goldUnitWeightInKg;
             TextFile.Token[] tokens = {
                 TextFile.CreateTextToken(string.Format(goldAmount, gold)),
                 TextFile.NewLineToken,
-                TextFile.CreateTextToken(string.Format(goldWeight, weight.ToString(weight % 1 == 0 ? "F0" : "F2")))
+                TextFile.CreateTextToken(string.Format(goldWeight, ((float)gold / DaggerfallUnityItem.goldPiecesPerKg).ToString(gold % DaggerfallUnityItem.goldPiecesPerKg == 0 ? "F0" : "F2")))
             };
             UpdateItemInfoPanel(tokens);
         }

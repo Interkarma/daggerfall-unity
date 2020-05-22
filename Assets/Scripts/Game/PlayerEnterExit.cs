@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -350,7 +351,7 @@ namespace DaggerfallWorkshop.Game
                     levitateMotor.IsSwimming = true;
                 }
 
-                bool overEncumbered = (GameManager.Instance.PlayerEntity.CarriedWeight * 4 > 250);
+                bool overEncumbered = (GameManager.Instance.PlayerEntity.CarriedWeightInGoldPieceUnits * 4 > 250 * DaggerfallUnityItem.goldPiecesPerKg);
                 if ((overEncumbered && levitateMotor.IsSwimming) && !displayAfloatMessage && !GameManager.Instance.PlayerEntity.IsWaterWalking)
                 {
                     DaggerfallUI.AddHUDText(HardStrings.cannotFloat, 1.75f);

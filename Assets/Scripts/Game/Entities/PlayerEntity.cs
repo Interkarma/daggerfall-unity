@@ -177,8 +177,11 @@ namespace DaggerfallWorkshop.Game.Entity
         public int DarkBrotherhoodRequirementTally { get { return darkBrotherhoodRequirementTally; } set { darkBrotherhoodRequirementTally = value; } }
         public uint TimeToBecomeVampireOrWerebeast { get { return timeToBecomeVampireOrWerebeast; } set { timeToBecomeVampireOrWerebeast = value; } }
         public uint LastTimePlayerAteOrDrankAtTavern { get { return lastTimePlayerAteOrDrankAtTavern; } set { lastTimePlayerAteOrDrankAtTavern = value; } }
-        public float CarriedWeight { get { return Items.GetWeight() + (goldPieces * DaggerfallBankManager.goldUnitWeightInKg); } }
-        public float WagonWeight { get { return WagonItems.GetWeight(); } }
+        public float CarriedWeight { get { return (float)CarriedWeightInGoldPieceUnits / DaggerfallUnityItem.goldPiecesPerKg; } }
+        public float WagonWeight { get { return (float)WagonWeightInGoldPieceUnites / DaggerfallUnityItem.goldPiecesPerKg; } }
+        // Use the next two accessors to avoid rounding errors
+        public int CarriedWeightInGoldPieceUnits { get { return Items.GetWeightInGoldPieceUnits() + goldPieces; } }
+        public int WagonWeightInGoldPieceUnites { get { return WagonItems.GetWeightInGoldPieceUnits(); } }
         public RegionDataRecord[] RegionData { get { return regionData; } set { regionData = value; } }
         public uint LastGameMinutes { get { return lastGameMinutes; } set { lastGameMinutes = value; } }
         public List<RoomRental_v1> RentedRooms { get { return rentedRooms; } set { rentedRooms = value; } }

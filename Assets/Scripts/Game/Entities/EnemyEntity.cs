@@ -532,7 +532,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int GetWeightInClassicUnits()
         {
-            int itemWeightsClassic = (int)(Items.GetWeight() * 4);
+            int itemWeightsClassic = Items.GetWeightInGoldPieceUnits() * 4 / DaggerfallUnityItem.goldPiecesPerKg;
             int baseWeight;
 
             if (entityType == EntityTypes.EnemyMonster)

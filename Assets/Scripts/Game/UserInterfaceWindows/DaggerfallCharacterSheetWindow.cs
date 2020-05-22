@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -447,7 +448,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             goldLabel.Text = PlayerEntity.GetGoldAmount().ToString();
             fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / DaggerfallEntity.FatigueMultiplier, PlayerEntity.MaxFatigue / DaggerfallEntity.FatigueMultiplier);
             healthLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentHealth, PlayerEntity.MaxHealth);
-            encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, PlayerEntity.MaxEncumbrance);
+            int weight = PlayerEntity.CarriedWeightInGoldPieceUnits;
+            encumbranceLabel.Text = string.Format(weight % DaggerfallUnityItem.goldPiecesPerKg == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", (float)weight / DaggerfallUnityItem.goldPiecesPerKg, PlayerEntity.MaxEncumbrance);
 
             // Update stat labels
             for (int i = 0; i < DaggerfallStats.Count; i++)
@@ -943,7 +945,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallStats workingStats = statsRollout.WorkingStats;
             fatigueLabel.Text = string.Format("{0}/{1}", PlayerEntity.CurrentFatigue / DaggerfallEntity.FatigueMultiplier, workingStats.LiveStrength + workingStats.LiveEndurance);
-            encumbranceLabel.Text = string.Format("{0}/{1}", (int)PlayerEntity.CarriedWeight, FormulaHelper.MaxEncumbrance(workingStats.LiveStrength));
+            int weight = PlayerEntity.CarriedWeightInGoldPieceUnits;
+            encumbranceLabel.Text = string.Format(weight % DaggerfallUnityItem.goldPiecesPerKg == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", (float)weight / DaggerfallUnityItem.goldPiecesPerKg, FormulaHelper.MaxEncumbrance(workingStats.LiveStrength));
         }
 
         #endregion

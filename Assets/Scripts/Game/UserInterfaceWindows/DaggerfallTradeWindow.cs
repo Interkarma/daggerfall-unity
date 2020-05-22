@@ -614,9 +614,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected override float GetCarriedWeight()
+        protected override int GetCarriedWeightInGoldPieceUnits()
         {
-            return PlayerEntity.CarriedWeight + basketItems.GetWeight();
+            return PlayerEntity.CarriedWeightInGoldPieceUnits + basketItems.GetWeightInGoldPieceUnits();
         }
 
         protected override void UpdateLocalTargetIcon()
@@ -624,8 +624,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (UsingWagon)
             {
                 localTargetIconPanel.BackgroundTexture = DaggerfallUnity.ItemHelper.GetContainerImage(InventoryContainerImages.Wagon).texture;
-                float weight = PlayerEntity.WagonWeight;
-                localTargetIconLabel.Text = String.Format(weight % 1 == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", weight, ItemHelper.WagonKgLimit);
+                int weight = PlayerEntity.WagonWeightInGoldPieceUnites;
+                localTargetIconLabel.Text = String.Format(weight % DaggerfallUnityItem.goldPiecesPerKg == 0 ? "{0:F0} / {1}" : "{0:F2} / {1}", (float)weight / DaggerfallUnityItem.goldPiecesPerKg, ItemHelper.WagonKgLimit);
             }
             else
             {
@@ -895,7 +895,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (WindowMode == WindowModes.Buy && cost > 0)
             {
                 // Calculate the weight of all items picked from shelves, then get chance of shoplifting success.
-                int weightAndNumItems = (int) basketItems.GetWeight() + basketItems.Count;
+                int weightAndNumItems = basketItems.GetWeightInGoldPieceUnits() / DaggerfallUnityItem.goldPiecesPerKg + basketItems.Count;
                 int chanceBeingDetected = FormulaHelper.CalculateShopliftingChance(PlayerEntity, buildingDiscoveryData.quality, weightAndNumItems);
                 PlayerEntity.TallySkill(DFCareer.Skills.Pickpocket, 1);
 
@@ -948,8 +948,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     case WindowModes.Sell:
                     case WindowModes.SellMagic:
-                        float goldWeight = tradePrice * DaggerfallBankManager.goldUnitWeightInKg;
-                        if (PlayerEntity.CarriedWeight + goldWeight <= PlayerEntity.MaxEncumbrance)
+                        if (PlayerEntity.CarriedWeightInGoldPieceUnits + tradePrice <= PlayerEntity.MaxEncumbrance * DaggerfallUnityItem.goldPiecesPerKg)
                         {
                             PlayerEntity.GoldPieces += tradePrice;
                         }

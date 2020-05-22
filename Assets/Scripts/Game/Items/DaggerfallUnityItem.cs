@@ -31,6 +31,8 @@ namespace DaggerfallWorkshop.Game.Items
     {
         #region Fields
 
+        public const int goldPiecesPerKg = 400;
+
         // Public item values
         public string shortName;
         public int nativeMaterialValue;
@@ -643,9 +645,14 @@ namespace DaggerfallWorkshop.Game.Items
         // Horses, carts and arrows are not counted against encumbrance.
         public float EffectiveUnitWeightInKg()
         {
+            return (float)EffectiveUnitWeightInGoldPieceUnits() / goldPiecesPerKg;
+        }
+
+        public int EffectiveUnitWeightInGoldPieceUnits()
+        {
             if (ItemGroup == ItemGroups.Transportation || TemplateIndex == (int)Weapons.Arrow)
-                return 0f;
-            return weightInKg;
+                return 0;
+            return (int)Math.Round(weightInKg * DaggerfallUnityItem.goldPiecesPerKg);
         }
 
         /// <summary>
