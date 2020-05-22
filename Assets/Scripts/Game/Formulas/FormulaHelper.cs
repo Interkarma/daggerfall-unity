@@ -1883,8 +1883,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("CalculateDaedraSummoningChance", out del))
                 return del(daedraRep, bonus);
 
-            int chance = 30 + daedraRep + bonus;
-            return Mathf.Clamp(chance, 5, 95);
+            return 30 + daedraRep + bonus;
         }
 
         public static int CalculateTradePrice(int cost, int shopQuality, bool selling)

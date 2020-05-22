@@ -180,7 +180,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Select appropriate Daedra for summoning attempt.
             int dayOfYear = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.DayOfYear;
             if (summonerFactionData.id == (int) FactionFile.FactionIDs.The_Glenmoril_Witches)
-            {   // Always Hircine at Glenmoril witches. (wonder if this was just a bug in classic, or actually intentional)
+            {   // Always Hircine at Glenmoril witches (reversed from classic: this is intentional)
                 daedraToSummon = daedraData[0];
             }
             else if ((FactionFile.FactionTypes) summonerFactionData.type == FactionFile.FactionTypes.WitchesCoven)
@@ -233,33 +233,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     playerEntity.DeductGoldAmount(summonCost);
 
-                    // Default 30% bonus is only applicable to some Daedra in specific weather conditions.
                     WeatherManager weatherManager = GameManager.Instance.WeatherManager;
+
+                    // Sheogorath has a 5% (15% if stormy) chance to replace selected daedra.
+                    int sheoChance = (weatherManager.IsStorming) ? 15 : 5;
+                    if (Dice100.Roll() <= sheoChance)
+                    {
+                        daedraToSummon = daedraData[8];
+                    }
+
+                    // Default 30% bonus is only applicable to some Daedra in specific weather conditions.
                     int bonus = 0;
                     if (daedraToSummon.bonusCond == Weather.WeatherType.Rain && weatherManager.IsRaining ||
                         daedraToSummon.bonusCond == Weather.WeatherType.Thunder && weatherManager.IsStorming ||
                         daedraToSummon.bonusCond == Weather.WeatherType.None)
                         bonus = 30;
 
-                    // Sheogorath has a 5% (15% if stormy) chance to replace selected daedra.
-                    int sheoChance = (weatherManager.IsStorming) ? 15 : 5;
                     // Get summoning chance for selected daedra and roll.
                     int chance = FormulaHelper.CalculateDaedraSummoningChance(playerEntity.FactionData.GetReputation(daedraToSummon.factionId), bonus);
                     int roll = Dice100.Roll();
                     Debug.LogFormat("Summoning {0} with chance = {1}%, Sheogorath chance = {2}%, roll = {3}, summoner rep = {4}, cost: {5}",
                         daedraToSummon.vidFile.Substring(0, daedraToSummon.vidFile.Length-4), chance, sheoChance, roll, summonerFactionData.rep, summonCost);
 
-                    if (roll > chance + sheoChance)
+                    if (roll > chance)
                     {   // Daedra stood you up!
                         DaggerfallUI.MessageBox(SummonFailed, this);
                         // Spawn daedric foes if failed at a witches coven.
                         if (summonerFactionData.ggroup == (int) FactionFile.GuildGroups.Witches)
                             GameObjectHelper.CreateFoeSpawner(true, daedricFoes[Random.Range(0, 5)], Random.Range(1, 4), 4, 64);
                         return;
-                    }
-                    else if (roll > chance)
-                    {   // Sheogorath appears instead.
-                        daedraToSummon = daedraData[8];
                     }
 
                     // Has this Daedra already been summoned by the player?
