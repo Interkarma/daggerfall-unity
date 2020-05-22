@@ -1446,10 +1446,6 @@ namespace DaggerfallWorkshop.Game.Questing
                     return;
                 }
 
-                // Do nothing if old Place same as new Place
-                if (place.Symbol.Equals(newPlace))
-                    continue;
-
                 // Modify selected spawn QuestMarker for this Place
                 QuestMarker selectedMarker = place.SiteDetails.selectedMarker;
                 if (selectedMarker.targetResources != null)
