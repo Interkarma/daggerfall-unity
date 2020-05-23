@@ -352,34 +352,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.Ignite);
         }
 
+        /// <summary>
+        /// Determines the class file header offset to the class index that corresponds to the questionnaire results.
+        /// </summary>
+        /// <param name="classData">A buffer containing the CLASSES.DAT file data.</param>
+        /// <returns>The offset to the class file header byte that specifies which class corresponds to the questionnaire results.</returns>
         private int GetHeaderIndex(byte[] classData)
         {
-            byte resultsOffset = 18; // starting offset of results table in CLASSES.DAT
-            for (byte headerOffset = 0; headerOffset < 48; headerOffset++)
+            const byte resultsOffsetStart = 18; // starting offset of results table in CLASSES.DAT
+            const byte maxHeaderOffset = 48;
+            const byte weightSetsPerClass = 4;
+            const byte weightSetLength = 3;
+            byte resultsOffset = resultsOffsetStart;
+
+            for (byte i = 0; i < resultsOffsetStart + maxHeaderOffset; i++)
             {
                 // Check for results match
                 if (WeightsToUint(classData[resultsOffset], classData[resultsOffset + 1], classData[resultsOffset + 2])
                     == WeightsToUint(weights[0], weights[1], weights[2]))
                 {
-                    return headerOffset / 4;
+                    return i / weightSetsPerClass;
                 }
-                resultsOffset += 3;
+
+                resultsOffset += weightSetLength;
             }
 
-            for (byte headerOffset = 0; headerOffset < 18; headerOffset++)
-            {
-                // Check for results match
-                if (WeightsToUint(classData[resultsOffset], classData[resultsOffset + 1], classData[resultsOffset + 2])
-                    == WeightsToUint(weights[0], weights[1], weights[2]))
-                {
-                    return headerOffset / 4 + 12;
-                }
-                resultsOffset += 3;
-            }
-
-            return -1; // Should never reach this point
+            return -1; // Failed to find a match - shouldn't be possible unless the file is corrupted
         }
 
+        /// <summary>
+        /// Formats the CLASSES.DAT class index so that it maps to an actual class index.
+        /// </summary>
+        /// <param name="index">Raw index from classes file.</param>
+        /// <param name="data">Classes file buffer.</param>
+        /// <returns></returns>
         private byte GetClassIndex(int index, byte[] data)
         {
             // Array used by FALL.EXE is the same as in CLASSES.DAT except bytes 0x04 through 0x11 have their left nibbles zeroed out
