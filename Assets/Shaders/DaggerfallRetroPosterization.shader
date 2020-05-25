@@ -19,6 +19,8 @@
             
 			#pragma vertex vert
 			#pragma fragment frag
+            #pragma multi_compile __ EXCLUDE_SKY
+
 			
 			#include "UnityCG.cginc"
             
@@ -50,12 +52,14 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 color = tex2D(_MainTex, i.texcoord);
+#ifdef EXCLUDE_SKY
               float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.texcoord);
               depth = Linear01Depth(depth);
               
               // Sky untouched
               if (depth == 1)
                 return color;
+#endif
                 
               // Decrease color depth to 4 bits per component
               return fixed4(pow(round(pow(color.rgb, 1/gamma) * 16.0) / 16.0, gamma), color.a);

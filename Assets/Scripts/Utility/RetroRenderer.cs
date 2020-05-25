@@ -23,6 +23,8 @@ namespace DaggerfallWorkshop.Utility
         public RenderTexture RetroTexture640x400;
         public RenderTexture RetroPresentationTarget;
 
+        private const string ExcludeSkyKeyboard = "EXCLUDE_SKY";
+
         DaggerfallSky sky;
         RenderTexture retroTexture;
         int retroMode;
@@ -305,7 +307,6 @@ namespace DaggerfallWorkshop.Utility
         // quality goes downhill from here, as some classic colors get conflated together in the LUT
         // 6 - EGA with bad color choice
         const int lutShift = 1;
-
         Texture3D lut = null;
 
         private void initLut(int size)
@@ -375,19 +376,20 @@ namespace DaggerfallWorkshop.Utility
             switch (DaggerfallUnity.Settings.PostProcessingInRetroMode)
             {
                 case 0:
-                    shader = Shader.Find("Daggerfall/DepthProcessShader");
+                    shader = Shader.Find(MaterialReader._DaggerfallRetroDepthShaderName);
                     postprocessMaterial = new Material(shader);
                     break;
                 case 1:
-                    shader = Shader.Find(MaterialReader._DaggerfallRetroPosterizationShaderName);
-                    postprocessMaterial = new Material(shader);
+                    postprocessMaterial = GetPosterizationMaterial(false);
                     break;
                 case 2:
-                    int size = 256 >> lutShift;
-                    initLut(size);
-                    shader = Shader.Find(MaterialReader._DaggerfallRetroPalettizationShaderName);
-                    postprocessMaterial = new Material(shader);
-                    postprocessMaterial.SetTexture("_Lut", lut);
+                    postprocessMaterial = GetPosterizationMaterial(true);
+                    break;
+                case 3:
+                    postprocessMaterial = GetPalettizationMaerial(false);
+                    break;
+                case 4:
+                    postprocessMaterial = GetPalettizationMaerial(true);
                     break;
             }
             if (!postprocessMaterial)
@@ -395,6 +397,38 @@ namespace DaggerfallWorkshop.Utility
                 Debug.Log("Couldn't find retro shader " + DaggerfallUnity.Settings.PostProcessingInRetroMode);
                 retroMode = 0;
             }
+        }
+
+        private Material GetPosterizationMaterial(bool excludeSky)
+        {
+            Shader shader = Shader.Find(MaterialReader._DaggerfallRetroPosterizationShaderName);
+            if (!shader)
+                return null;
+
+            Material material = new Material(shader);
+            if (excludeSky)
+                material.EnableKeyword(ExcludeSkyKeyboard);
+            else
+                material.DisableKeyword(ExcludeSkyKeyboard);
+            return material;
+        }
+
+        private Material GetPalettizationMaerial(bool excludeSky)
+        {
+            Shader shader = Shader.Find(MaterialReader._DaggerfallRetroPalettizationShaderName);
+            if (!shader)
+                return null;
+
+            int size = 256 >> lutShift;
+            initLut(size);
+
+            Material material = new Material(shader);
+            material.SetTexture("_Lut", lut);
+            if (excludeSky)
+                material.EnableKeyword(ExcludeSkyKeyboard);
+            else
+                material.DisableKeyword(ExcludeSkyKeyboard);
+            return material;
         }
 
         private void Update()
