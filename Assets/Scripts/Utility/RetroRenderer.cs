@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Utility
         public RenderTexture RetroTexture640x400;
         public RenderTexture RetroPresentationTarget;
 
-        private const string ExcludeSkyKeyboard = "EXCLUDE_SKY";
+        private const string ExcludeSkyKeyword = "EXCLUDE_SKY";
 
         DaggerfallSky sky;
         RenderTexture retroTexture;
@@ -412,9 +412,9 @@ namespace DaggerfallWorkshop.Utility
 
             Material material = new Material(shader);
             if (excludeSky)
-                material.EnableKeyword(ExcludeSkyKeyboard);
+                material.EnableKeyword(ExcludeSkyKeyword);
             else
-                material.DisableKeyword(ExcludeSkyKeyboard);
+                material.DisableKeyword(ExcludeSkyKeyword);
             return material;
         }
 
@@ -431,9 +431,9 @@ namespace DaggerfallWorkshop.Utility
             Material material = new Material(shader);
             material.SetTexture("_Lut", lut);
             if (excludeSky)
-                material.EnableKeyword(ExcludeSkyKeyboard);
+                material.EnableKeyword(ExcludeSkyKeyword);
             else
-                material.DisableKeyword(ExcludeSkyKeyboard);
+                material.DisableKeyword(ExcludeSkyKeyword);
             return material;
         }
 
