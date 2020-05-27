@@ -241,6 +241,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         // Used to store indexes of copied talk fragments so they can be entered into Notebook in chronological order
         List<int> copyIndexes;
 
+        bool isCloseWindowDeferred = false;
+
         public DaggerfallTalkWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
@@ -714,6 +716,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonGoodbye.Name = "button_goodbye";
             buttonGoodbye.OnMouseClick += ButtonGoodbye_OnMouseClick;
             buttonGoodbye.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkExit);
+            buttonGoodbye.OnKeyboardEvent += ButtonGoodbye_OnKeyboardEvent;
+
             mainPanel.Components.Add(buttonGoodbye);
 
             buttonLogbook = new Button {
@@ -1590,6 +1594,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
+        }
+
+        protected void ButtonGoodbye_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
         }
 
         #endregion

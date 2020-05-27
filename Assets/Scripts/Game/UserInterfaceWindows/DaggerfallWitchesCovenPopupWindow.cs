@@ -45,6 +45,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         StaticNPC witchNPC;
 
+        bool isCloseWindowDeferred = false;
+        bool isTalkWindowDeferred = false;
+        bool isSummonDeferred = false;
+        bool isGetQuestDeferred = false;
+
         #endregion
 
         #region Constructors
@@ -77,21 +82,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.OnMouseClick += TalkButton_OnMouseClick;
             talkButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesTalk);
+            talkButton.OnKeyboardEvent += TalkButton_OnKeyboardEvent;
 
             // Summon button
             summonButton = DaggerfallUI.AddButton(summonButtonRect, mainPanel);
             summonButton.OnMouseClick += SummonButton_OnMouseClick;
             summonButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesDaedraSummon);
+            summonButton.OnKeyboardEvent += SummonButton_OnKeyboardEvent;
 
             // Quest button
             questButton = DaggerfallUI.AddButton(questButtonRect, mainPanel);
             questButton.OnMouseClick += QuestButton_OnMouseClick;
             questButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesQuest);
+            questButton.OnKeyboardEvent += QuestButton_OnKeyboardEvent;
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             NativePanel.Components.Add(mainPanel);
         }
@@ -151,23 +160,84 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             GameManager.Instance.TalkManager.TalkToStaticNPC(witchNPC);
         }
 
+        void TalkButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isTalkWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isTalkWindowDeferred)
+            {
+                isTalkWindowDeferred = false;
+                CloseWindow();
+                GameManager.Instance.TalkManager.TalkToStaticNPC(witchNPC);
+            }
+        }
+
         private void SummonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaedraSummoningService(witchNPC.Data.factionID);
+        }
+
+        void SummonButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isSummonDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isSummonDeferred)
+            {
+                isSummonDeferred = false;
+                DaedraSummoningService(witchNPC.Data.factionID);
+            }
         }
 
         private void QuestButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             GetQuest();
+        }
+
+        void QuestButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isGetQuestDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isGetQuestDeferred)
+            {
+                isGetQuestDeferred = false;
+                GetQuest();
+            }
         }
 
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
+        }
+
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
         }
 
         #endregion

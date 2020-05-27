@@ -377,6 +377,7 @@ namespace DaggerfallWorkshop.Game
             // Possible to get multiple keydown events per frame, one with character, one with keycode
             // Only accept character or keycode if valid
             lastKeyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
+            hotkeySequenceProcessed = false;
 
             if (Event.current.type == EventType.KeyDown)
             {
@@ -388,9 +389,10 @@ namespace DaggerfallWorkshop.Game
 
                 if (lastCharacterTyped > 255)
                     lastCharacterTyped = (char)0;
+
+                hotkeySequenceProcessed = ProcessHotKeySequences();
             }
 
-            hotkeySequenceProcessed = false;
             if (Event.current.type == EventType.KeyUp)
             {
                 hotkeySequenceProcessed = ProcessHotKeySequences();

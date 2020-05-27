@@ -24,6 +24,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture;
 
+        private Button loadGameButton;
+        private Button newGameButton;
+        private Button exitButton;
+
+        bool isLoadGameDeferred = false;
+        bool isNewGameDeferred = false;
+        bool isExitGameDeferred = false;
+
         public DaggerfallStartWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
@@ -40,24 +48,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.BackgroundTexture = nativeTexture;
 
             // Setup buttons
-            DaggerfallUI.AddButton(new Vector2(72, 45), new Vector2(147, 15), DaggerfallUIMessages.dfuiOpenLoadSavedGameWindow, NativePanel);
-            DaggerfallUI.AddButton(new Vector2(72, 99), new Vector2(147, 15), DaggerfallUIMessages.dfuiStartNewGame, NativePanel);
-            DaggerfallUI.AddButton(new Vector2(125, 145), new Vector2(41, 15), DaggerfallUIMessages.dfuiExitGame, NativePanel);
+            loadGameButton = DaggerfallUI.AddButton(new Vector2(72, 45), new Vector2(147, 15), DaggerfallUIMessages.dfuiOpenLoadSavedGameWindow, NativePanel);
+            loadGameButton.OnMouseClick += LoadGameButton_OnMouseClick;
+            loadGameButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MainMenuLoad);
+            loadGameButton.OnKeyboardEvent += LoadGameButton_OnKeyboardEvent;
+
+            newGameButton = DaggerfallUI.AddButton(new Vector2(72, 99), new Vector2(147, 15), DaggerfallUIMessages.dfuiStartNewGame, NativePanel);
+            newGameButton.OnMouseClick += NewGameButton_OnMouseClick;
+            newGameButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MainMenuStart);
+            newGameButton.OnKeyboardEvent += NewGameButton_OnKeyboardEvent;
+
+            exitButton = DaggerfallUI.AddButton(new Vector2(125, 145), new Vector2(41, 15), DaggerfallUIMessages.dfuiExitGame, NativePanel);
+            exitButton.OnMouseClick += ExitButton_OnMouseClick;
+            exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MainMenuExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
         }
 
         public override void Update()
         {
             base.Update();
             InputManager.Instance.CursorVisible = true;
-
-            HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
-            // Shortcuts for options
-            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MainMenuLoad).IsUpWith(keyModifiers))
-                LoadGame();
-            else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MainMenuStart).IsUpWith(keyModifiers))
-                StartNewGame();
-            else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.MainMenuExit).IsUpWith(keyModifiers))
-                ExitGame();
         }
 
         void LoadGame()
@@ -92,5 +102,54 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
             }
         }
+
+        void LoadGameButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            LoadGame();
+        }
+
+        void LoadGameButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+                isLoadGameDeferred = true;
+            else if (keyboardEvent.type == EventType.KeyUp && isLoadGameDeferred)
+            {
+                isLoadGameDeferred = false;
+                LoadGame();
+            }
+        }
+
+        void NewGameButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            StartNewGame();
+        }
+
+        void NewGameButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+                isNewGameDeferred = true;
+            else if (keyboardEvent.type == EventType.KeyUp && isNewGameDeferred)
+            {
+                isNewGameDeferred = false;
+                StartNewGame();
+            }
+        }
+
+        void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            ExitGame();
+        }
+
+        void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+                isExitGameDeferred = true;
+            else if (keyboardEvent.type == EventType.KeyUp && isExitGameDeferred)
+            {
+                isExitGameDeferred = false;
+                ExitGame();
+            }
+        }
+
     }
 }
