@@ -312,10 +312,9 @@ namespace DaggerfallWorkshop.Utility
         // 2 - 1MB (good, slightly less crisp looking)
         // quality goes downhill from here, as some classic colors get conflated together in the LUT
         // 6 - EGA with bad color choice
-        const int lutShift = 1;
         Texture3D lut = null;
 
-        private void initLut(int size)
+        private void InitLut(int lutShift, int size)
         {
             if (lut)
                 return;
@@ -425,8 +424,9 @@ namespace DaggerfallWorkshop.Utility
             if (!shader)
                 return null;
 
+            int lutShift = DaggerfallUnity.Settings.PalettizationLUTShift;
             int size = 256 >> lutShift;
-            initLut(size);
+            InitLut(lutShift, size);
 
             Material material = new Material(shader);
             material.SetTexture("_Lut", lut);
