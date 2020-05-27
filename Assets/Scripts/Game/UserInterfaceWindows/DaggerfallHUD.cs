@@ -259,11 +259,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 renderHUD = !renderHUD;
             }
 
-            //// Toggle Retro Renderer Postprocessing
-            //if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.ToggleRetroPP).IsDownWith(keyModifiers))
-            //{
-            //    RetroRenderer.enablePostprocessing = !RetroRenderer.enablePostprocessing;
-            //}
+            // Toggle Retro Renderer Postprocessing
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.ToggleRetroPP).IsDownWith(keyModifiers))
+            {
+                RetroRenderer retrorenderer = GameManager.Instance.RetroRenderer;
+                if (retrorenderer)
+                    retrorenderer.Toggle();
+            }
 
             flickerController.NextCycle();
 

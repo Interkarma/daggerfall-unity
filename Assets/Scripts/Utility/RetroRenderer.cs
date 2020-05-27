@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Utility
         DaggerfallSky sky;
         RenderTexture retroTexture;
         int retroMode;
+        private bool enablePostprocessing = true;
 
         Material postprocessMaterial;
 
@@ -39,6 +40,11 @@ namespace DaggerfallWorkshop.Utility
         public Material PostprocessMaterial
         {
             get { return postprocessMaterial; }
+        }
+
+        public void Toggle()
+        {
+            enablePostprocessing = !enablePostprocessing;
         }
 
         static Color32[] art_pal =
@@ -451,7 +457,10 @@ namespace DaggerfallWorkshop.Utility
                 return;
 
             // Blit to presentation rendertexture with postprocess material
-            Graphics.Blit(retroTexture, RetroPresentationTarget, postprocessMaterial);
+            if (enablePostprocessing)
+                Graphics.Blit(retroTexture, RetroPresentationTarget, postprocessMaterial);
+            else
+                Graphics.Blit(retroTexture, RetroPresentationTarget);
         }
     }
 }
