@@ -250,7 +250,7 @@ namespace DaggerfallWorkshop.Game
         public PlayerGPS.DiscoveredBuilding BuildingDiscoveryData
         {
             get { return buildingDiscoveryData; }
-            internal set { buildingDiscoveryData = value; }
+            set { buildingDiscoveryData = value; }
         }
 
         /// <summary>
