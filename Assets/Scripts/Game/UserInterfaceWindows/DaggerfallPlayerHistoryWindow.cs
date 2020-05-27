@@ -32,6 +32,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int pageLines;
         int pageStartLine = 0;
 
+        bool isCloseWindowDeferred = false;
+
         public int ClassId { get; protected set; }
 
         public DaggerfallPlayerHistoryWindow(IUserInterfaceManager uiManager)
@@ -64,6 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(new Rect(277, 187, 32, 10), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.HistoryExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             LayoutPage();
             DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
@@ -111,6 +114,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             pageStartLine = 0; // Go back to the first page
             CloseWindow();
+        }
+
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                pageStartLine = 0; // Go back to the first page
+                CloseWindow();
+            }
         }
 
         public override void OnPush()

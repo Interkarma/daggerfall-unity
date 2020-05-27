@@ -80,6 +80,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool doFastTravel = false; // flag used to indicate Update() function that fast travel should happen
         float waitTimer = 0;
 
+        bool isCloseWindowDeferred = false;
+
         bool speedCautious  = true;
         bool travelShip     = true;
         bool sleepModeInn   = true;
@@ -167,10 +169,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButtonOnClickHandler;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             cautiousToggleButton = DaggerfallUI.AddButton(cautiousButtonRect, NativePanel);
             cautiousToggleButton.OnMouseClick += SpeedButtonOnClickHandler;
             cautiousToggleButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelSpeedToggle);
+            cautiousToggleButton.OnKeyboardEvent += SpeedButton_OnKeyboardEvent;
             cautiousToggleButton.OnMouseScrollUp += ToggleSpeedButtonOnScrollHandler;
             cautiousToggleButton.OnMouseScrollDown += ToggleSpeedButtonOnScrollHandler;
 
@@ -182,6 +186,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             footHorseToggleButton = DaggerfallUI.AddButton(footHorseButtonRect, NativePanel);
             footHorseToggleButton.OnMouseClick += TransportModeButtonOnClickHandler;
             footHorseToggleButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelTransportModeToggle);
+            footHorseToggleButton.OnKeyboardEvent += TransportModeButtonOnKeyboardHandler;
             footHorseToggleButton.OnMouseScrollUp += ToggleTransportModeButtonOnScrollHandler;
             footHorseToggleButton.OnMouseScrollDown += ToggleTransportModeButtonOnScrollHandler;
 
@@ -193,6 +198,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             innToggleButton = DaggerfallUI.AddButton(innsButtonRect, NativePanel);
             innToggleButton.OnMouseClick += SleepModeButtonOnClickHandler;
             innToggleButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelInnCampOutToggle);
+            innToggleButton.OnKeyboardEvent += SleepModeButtonOnKeyboardandler;
             innToggleButton.OnMouseScrollUp += ToggleSleepModeButtonOnScrollHandler;
             innToggleButton.OnMouseScrollDown += ToggleSleepModeButtonOnScrollHandler;
 
@@ -469,16 +475,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
         }
 
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                doFastTravel = false;
+                DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
+            }
+        }
+
         public void SpeedButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
-            if (position == Vector2.zero)
-                // Hotkey
-                speedCautious = !speedCautious;
-            else
-                speedCautious = (sender == cautiousToggleButton);
+            speedCautious = (sender == cautiousToggleButton);
             Refresh();
+        }
+
+        public void SpeedButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+                ToggleSpeedButtonOnScrollHandler(sender);
         }
 
         public void ToggleSpeedButtonOnScrollHandler(BaseScreenComponent sender)
@@ -491,13 +514,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void TransportModeButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-            
-            if (position == Vector2.zero)
-                // Hotkey
-                travelShip = !travelShip;
-            else
-                travelShip = (sender == shipToggleButton);
+            travelShip = (sender == shipToggleButton);
             Refresh();
+        }
+
+        public void TransportModeButtonOnKeyboardHandler(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+                ToggleTransportModeButtonOnScrollHandler(sender);
         }
 
         public void ToggleTransportModeButtonOnScrollHandler(BaseScreenComponent sender)
@@ -510,13 +534,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void SleepModeButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-
-            if (position == Vector2.zero)
-                // Hotkey
-                sleepModeInn = !sleepModeInn;
-            else
-                sleepModeInn = (sender == innToggleButton);
+            sleepModeInn = (sender == innToggleButton);
             Refresh();
+        }
+
+        public void SleepModeButtonOnKeyboardandler(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+                ToggleSleepModeButtonOnScrollHandler(sender);
         }
 
         public void ToggleSleepModeButtonOnScrollHandler(BaseScreenComponent sender)

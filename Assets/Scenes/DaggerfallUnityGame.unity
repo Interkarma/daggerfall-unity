@@ -748,51 +748,9 @@ Prefab:
       propertyPath: DungeonParent
       value: 
       objectReference: {fileID: 620133648}
-    - target: {fileID: 100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400010, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400004, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 2000000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_AllowMSAA
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2000000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_TargetTexture
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 10800000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
-      propertyPath: m_CullingMask.m_Bits
-      value: 31543
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114583161180529142, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 2}
   m_IsPrefabAsset: 0
---- !u!1 &334547543 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 100002, guid: 53a45b46ca97a974f8e677f68c2a85e6,
-    type: 2}
-  m_PrefabInternal: {fileID: 334547542}
---- !u!114 &334547544
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 334547543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  profile: {fileID: 11400000, guid: dafc2272a80c9d64d85bfff96a16ab7a, type: 2}
 --- !u!1 &348738038
 GameObject:
   m_ObjectHideFlags: 0
@@ -1404,32 +1362,58 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!1 &1011598717
+--- !u!1 &1102152086
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1011598719}
-  - component: {fileID: 1011598718}
-  - component: {fileID: 1011598720}
+  - component: {fileID: 1102152088}
+  - component: {fileID: 1102152089}
+  - component: {fileID: 1102152087}
   m_Layer: 0
-  m_Name: RetroCamera
+  m_Name: RetroPresentation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!20 &1011598718
+--- !u!114 &1102152087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1102152086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e16f1db1eb5f244abac87ff25c5cdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RetroPresentationSource: {fileID: 8400000, guid: 570bcf8f70408ce44be2d1357054b448,
+    type: 2}
+--- !u!4 &1102152088
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1102152086}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!20 &1102152089
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1011598717}
+  m_GameObject: {fileID: 1102152086}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 3
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
@@ -1461,32 +1445,6 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &1011598719
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1011598717}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1011598720
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1011598717}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d157b32025f5dd4ea977a0dc9d9a353, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RetroTexture320x200: {fileID: 8400000, guid: b7d08ce484b8fb54886d32a392814971, type: 2}
-  RetroTexture640x400: {fileID: 8400000, guid: 5e6db3b61ca69e848afa2ff94164313b, type: 2}
 --- !u!224 &1168575604 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 22400006, guid: 312abd0527754e047a6bfbc424f09ace,

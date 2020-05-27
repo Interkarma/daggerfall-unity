@@ -112,6 +112,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<EffectBundleSettings> offeredSpells = new List<EffectBundleSettings>();
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         int presentedCost;
+        bool isCloseWindowDeferred = false;
 
         #endregion
 
@@ -411,6 +412,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.SpellbookExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             // Scroller buttons
             upArrowButton = DaggerfallUI.AddButton(upArrowButtonRect, mainPanel);
@@ -838,6 +840,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
+        }
+
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
         }
 
         void SwapButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

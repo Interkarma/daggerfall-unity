@@ -357,7 +357,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             retroRenderingMode = AddSlider(rightPanel, "retroRenderingMode",
                 DaggerfallUnity.Settings.RetroRenderingMode, "Off", "320x200", "640x400");
             postProcessingInRetroMode = AddSlider(rightPanel, "postProcessingInRetroMode",
-                DaggerfallUnity.Settings.PostProcessingInRetroMode, "Off", "Posterization", "Palettization");
+                DaggerfallUnity.Settings.PostProcessingInRetroMode, "Off", "Posterization (full)", "Posterization (-sky)", "Palettization (full)", "Palettization (-sky)");
         }
 
         private void SaveSettings()

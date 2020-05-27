@@ -66,6 +66,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button downArrowButton;
         Button exitButton;
 
+        bool isCloseWindowDeferred = false;
+
         public JournalDisplay DisplayMode { get; set; }
 
         public enum JournalDisplay
@@ -143,6 +145,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.Size                 = new Vector2(30, 9);
             exitButton.OnMouseClick         += ExitButton_OnMouseClick;
             exitButton.Hotkey               = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.JournalExit);
+            exitButton.OnKeyboardEvent      += ExitButton_OnKeyboardEvent;
             exitButton.Name                 = "exit_button";
             mainPanel.Components.Add(exitButton);
 
@@ -301,6 +304,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
+        }
+
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
         }
 
         void QuestLogLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)

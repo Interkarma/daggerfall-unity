@@ -80,6 +80,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         int curingCost = 0;
 
+        bool isCloseWindowDeferred = false;
+        bool isTalkWindowDeferred = false;
+        bool isServiceWindowDeferred = false;
+
         List<QuestData> questPool;
 
         #endregion
@@ -139,6 +143,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.OnMouseClick += TalkButton_OnMouseClick;
             talkButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GuildsTalk);
+            talkButton.OnKeyboardEvent += TalkButton_OnKeyboardEvent;
 
             // Service button
             serviceLabel.Position = new Vector2(0, 1);
@@ -149,11 +154,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             serviceButton.Components.Add(serviceLabel);
             serviceButton.OnMouseClick += ServiceButton_OnMouseClick;
             serviceButton.Hotkey = DaggerfallShortcut.GetBinding(Services.GetServiceShortcutButton(service));
+            serviceButton.OnKeyboardEvent += ServiceButton_OnKeyboardEvent;
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GuildsExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             NativePanel.Components.Add(mainPanel);
         }
@@ -294,7 +301,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameManager.Instance.TalkManager.TalkToStaticNPC(serviceNPC);
         }
 
-        private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void TalkButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isTalkWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isTalkWindowDeferred)
+            {
+                isTalkWindowDeferred = false;
+                GameManager.Instance.TalkManager.TalkToStaticNPC(serviceNPC);
+            }
+        }
+
+        private void DoGuildService()
         {
             // Check access to service
             if (!guild.CanAccessService(service))
@@ -317,12 +338,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             switch (service)
             {
                 case GuildServices.Quests:
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     GetQuest();
                     break;
 
                 case GuildServices.Identify:
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Identify, guild }));
                     break;
@@ -333,12 +352,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.Training:
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     TrainingService();
                     break;
 
                 case GuildServices.Donate:
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     DonationService();
                     break;
 
@@ -347,7 +364,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.BuyPotions:
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Buy, guild });
                     tradeWindow.MerchantItems = GetMerchantPotions();
@@ -355,7 +371,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.MakePotions:
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     MakePotionService();
                     break;
 
@@ -366,7 +381,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.MakeSpells:
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     if (GameManager.Instance.PlayerEntity.Items.Contains(ItemGroups.MiscItems, (int)MiscItems.Spellbook))
                         uiManager.PushWindow(DaggerfallUI.Instance.DfSpellMakerWindow);
@@ -375,7 +389,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Buy, guild });
                     tradeWindow.MerchantItems = GetMerchantMagicItems();
@@ -383,7 +396,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.MakeMagicItems:
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     uiManager.PushWindow(DaggerfallUI.Instance.DfItemMakerWindow);
                     break;
@@ -394,14 +406,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
 
                 case GuildServices.Teleport:
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     DaggerfallUI.Instance.DfTravelMapWindow.ActivateTeleportationTravel();
                     uiManager.PushWindow(DaggerfallUI.Instance.DfTravelMapWindow);
                     break;
 
                 case GuildServices.DaedraSummoning:
-                    DaedraSummoningService((int) npcService);
+                    DaedraSummoningService((int)npcService);
                     break;
 
                 case GuildServices.ReceiveArmor:
@@ -418,11 +429,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     msgBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(spyMasterGreetingTextId));
                     msgBox.ClickAnywhereToClose = true;
                     msgBox.OnClose += SpyMasterGreetingPopUp_OnClose;
-                    msgBox.Show();                    
+                    msgBox.Show();
                     break;
 
                 case GuildServices.BuySoulgems:
-                    DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                     CloseWindow();
                     tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Buy, guild });
                     tradeWindow.MerchantItems = GetMerchantMagicItems(true);
@@ -440,10 +450,44 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            DoGuildService();
+        }
+
+        void ServiceButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isServiceWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isServiceWindowDeferred)
+            {
+                isServiceWindowDeferred = false;
+                DoGuildService();
+            }
+        }
+
         private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
+        }
+
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
         }
 
         #endregion

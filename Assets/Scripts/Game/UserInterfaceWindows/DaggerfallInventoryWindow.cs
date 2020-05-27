@@ -194,6 +194,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ItemCollection.AddPosition preferredOrder = ItemCollection.AddPosition.DontCare;
 
         KeyCode toggleClosedBinding;
+        bool isCloseWindowDeferred = false;
         private int maxAmount;
 
         bool suppressInventory = false;
@@ -315,6 +316,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.InventoryExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             // Setup initial state
             SelectTabPage(TabPages.WeaponsAndArmor);
@@ -1993,7 +1995,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
+        }
 
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
         }
 
         #endregion
