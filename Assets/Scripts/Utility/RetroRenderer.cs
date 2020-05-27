@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Utility
             get { return postprocessMaterial; }
         }
 
-        public void Toggle()
+        public void TogglePostprocessing()
         {
             enablePostprocessing = !enablePostprocessing;
         }

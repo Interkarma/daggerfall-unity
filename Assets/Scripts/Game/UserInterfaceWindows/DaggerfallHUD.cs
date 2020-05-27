@@ -264,7 +264,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 RetroRenderer retrorenderer = GameManager.Instance.RetroRenderer;
                 if (retrorenderer)
-                    retrorenderer.Toggle();
+                    retrorenderer.TogglePostprocessing();
             }
 
             flickerController.NextCycle();
