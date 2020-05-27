@@ -232,7 +232,7 @@ namespace DaggerfallWorkshop.Game
         {
             const int doYouSurrenderToGuardsTextID = 15;
 
-            EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+            EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;            
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
             // Calculate damage

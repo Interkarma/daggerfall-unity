@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 3735529302
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: shield module.dfmod
+      Dependencies: {}
