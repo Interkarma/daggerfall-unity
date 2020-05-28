@@ -140,9 +140,7 @@ Item _gems_ gem
 Person _questgiver_ face 72 group Questor
 Person _contact_ face 80 group Innkeeper
 
-
 Clock _1stparton_ 00:00 0 flag 18 range 1 4
-Clock _delay_ 00:05 00:05
 
 Foe _guards_ is Knight
 
@@ -172,22 +170,21 @@ _clearclick_ task:
 --added _qgtalk_ and _clearclick_
 
 _1stparton_ task:
-	start timer _delay_ 
 	have _metal_ set _keptmetal_ 
 	have _gems_ set _keptgems_ 
-
-_delay_ task:
 	end quest 
+--removed unnecessary delay
 
 _greklith_ task:
 	injured _guards_ 
 	prompt 1020 yes _S.05_ no _S.06_ 
 
 _S.05_ task:
-	start timer _delay_ 
 	take _gems_ from pc 
 	change repute with _questgiver_ by -40 
 	restrain foe _guards_ 
+	end quest 
+--removed unnecessary delay
 
 variable _S.06_
 _keptmetal_ task:

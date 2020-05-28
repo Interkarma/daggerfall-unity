@@ -68,7 +68,7 @@ Message:  1043
 <ce>                         Yes, this is the map!
 
 Message:  1044
-<ce>                       _rebel_ raises %g3 staff.
+<ce>                       _rebel_ raises his staff.
 <ce>           "Ladies, gentlemen, we really must be going now."
 <ce>               A sphere of light bursts from the staff,
 <ce>                     blinding you for an instant.
@@ -170,7 +170,7 @@ Person _rebel_ face 1 named Baltham_Greyman
 Person _dummy_ face 249 group Spellcaster
 
 Place _tavern_ remote tavern
-Place aide remote dungeon
+--Place aide remote dungeon
 Place _magesguild_ remote magery
 Place _itemdung_ remote dungeon
 Place _keydung_ remote dungeon
@@ -179,7 +179,7 @@ Place _L.05_ remote dungeon
 Clock _S.00_ 62.12:00 97.05:20
 Clock _S.02_ 30.00:00 0 flag 1 range 0 1
 Clock _S.10_ 00:00 0 flag 1 range 0 2
-Clock _S.11_ 00:04 0 flag 1 range 0 1
+Clock _S.11_ 00:01
 Clock _keytime_ 00:00 0 flag 1 range 0 5
 Clock _S.21_ 6.22:40 0 flag 1 range 0 1
 Clock _S.31_ 00:00 0 flag 17 range 0 2
@@ -206,7 +206,7 @@ _S.00_ task:
 	give pc _letter_ notify 1070 
 
 _S.01_ task:
-	place item _letter_ at aide 
+	take _letter_ from pc 
 	log 1020 step 0 
 	place npc _rebel_ at _tavern_ 
 
@@ -229,10 +229,13 @@ _S.08_ task:
 	log 1021 step 1 
 	say 1042 
 	add _rebel_ face 
-	place npc _rebel_ at aide 
+	hide npc _rebel_
+	stop timer _S.02_
 
 _target_ task:
 	say 1041 
+	remove log step 0
+--log message would stay in journal without this
 
 variable _S.10_
 _S.11_ task:
@@ -245,27 +248,32 @@ _S.12_ task:
 	prompt 1045 yes _spouse_ no _S.14_ 
 	drop _rebel_ face 
 	change repute with _dummy_ by -15 
+	stop timer _S.10_
 
 _spouse_ task:
 	place item _key_ at _keydung_ 
 	reveal _keydung_ 
 	log 1023 step 2 
 	say 1046 
+	restore _rebel_
 
 _S.14_ task:
 	log 1022 step 2 
 	say 1047 
+	clear _S.03_
 
 _house1_ task:
 	clicked item _key_ 
 	say 1050 
+	clear _S.03_
 
 _S.16_ task:
 	have _key_ set _S.25_ 
 
 _keytime_ task:
 	start timer _S.21_ 
-	place npc _rebel_ at _tavern_ 
+	place npc _rebel_ at _tavern_
+	restore _rebel_
 
 _S.18_ task:
 	prompt 1040 yes _S.08_ no _target_ 
@@ -273,11 +281,13 @@ _S.18_ task:
 _S.19_ task:
 	when _S.03_ and _house1_ and _spouse_ 
 	when _S.14_ and _S.03_ 
-	start timer _S.31_ 
+	start timer _S.31_
+	stop timer _keytime_ 
 	say 1051 
+	hide npc _rebel_ 
 	add _rebel_ face 
-	place npc _rebel_ at aide 
-	unset _S.03_ 
+--there's still a lingering bug here that I can't figure out. If you do the S.14 route, Baltham's sprite will remain visible at this point. I don't know why.
+
 
 variable _S.20_
 variable _S.21_
@@ -309,7 +319,7 @@ _S.28_ task:
 	say 1055 
 
 _S.29_ task:
-	create foe _F.03_ every 1 minutes 1 times with 100% success 
+	create foe _F.03_ every 0 minutes 1 times with 100% success 
 	say 1056 
 	make _item_ permanent 
 
@@ -321,7 +331,8 @@ _S.30_ task:
 variable _S.31_
 _S.32_ task:
 	clicked item _map_ 
-	create foe _guards_ every 2 minutes 1 times with 100% success 
+	create foe _guards_ every 0 minutes 1 times with 100% success 
+--sometimes this would delay much, and spawn after fast travel + pacify message
 	start timer _S.11_ 
 	say 1043 
 
@@ -335,3 +346,11 @@ _S.33_ task:
 _S.34_ task:
 	when _S.19_ and _S.14_ 
 	get item _key_ 
+
+_S.35_ task:
+	killed _F.03_
+	make _I.05_ permanent 
+	make _I.04_ permanent 
+	make _I.03_ permanent 
+	end quest
+--otherwise quest would hang on until end of final timer

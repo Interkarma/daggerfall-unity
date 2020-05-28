@@ -206,7 +206,6 @@ Place _newdung_ remote dungeon
 Place _lovehouse_ local house2
 
 Clock _qtime_ 00:00 0 flag 17 range 0 2
-Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _tiger_ is Sabretooth_tiger
 
@@ -220,9 +219,9 @@ Foe _tiger_ is Sabretooth_tiger
 	pick one of _S.10_ _S.10_ _S.11_ _S.11_ 
 	place foe _tiger_ at _mondung_ 
 	create npc _dummy_ 
+	have _I.01_ set _deadbody_
 
 _deadbody_ task:
-	clicked item _I.01_
 	take _I.01_ from pc
 --added deadbody task. otherwise body would clog inventory
 
@@ -258,12 +257,10 @@ _S.06_ task:
 
 _pcgetsgold_ task:
 	when _S.06_ and _S.05_ 
-	give pc _gold_ 
-	start timer _delay_ 
+	give pc _gold_  
 	take _I.00_ from pc
-	remove log step 0
-	remove log step 1
---added take bell and remove log actions. they'd linger until quest end
+	end quest 
+--removed unnecessary delay
 
 _S.08_ task:
 	when _S.06_ and _S.03_ 
@@ -275,7 +272,6 @@ variable _duelist_
 _S.10_ task:
 	_letter_ used do _readletter_ 
 	place item _letter_ at _mondung_ 
-	create npc at _lovehouse_ 
 	place npc _love_ at _lovehouse_ 
 
 variable _S.11_
@@ -287,9 +283,6 @@ _S.12_ task:
 
 _readletter_ task:
 	add dialog for location _lovehouse_ person _love_ 
-
-_delay_ task:
-	end quest 
 
 _qgclicked_ task:
 	clicked npc _questgiver_

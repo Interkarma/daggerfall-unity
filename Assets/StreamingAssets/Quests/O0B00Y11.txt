@@ -167,8 +167,7 @@ Place _safehouse_ remote house3
 
 Clock _time_ 00:00 0 flag 1 range 0 2
 Clock _S.01_ 2.00:00 0 flag 1 range 0 1
-Clock _delay_ 01:00
---made delay exact by removing flags "0 flag 1 range 0 1". Flags can make it last a day or longer, which is not the intended purpose. quest should end soon after it expires.
+--removed unnecessary delay timer
 
 Foe _guard_ is Rogue
 Foe _posse_ is 3 Archer
@@ -180,7 +179,6 @@ Foe _posse_ is 3 Archer
 	start timer _time_ 
 	log 1020 step 0 
 	pc at _target_ set _S.02_ 
-	create npc at _safehouse_ 
 	place npc _contact_ at _safehouse_ 
 
 _time_ task:
@@ -217,7 +215,8 @@ _S.08_ task:
 _S.09_ task:
 	when not _greklith_ and _S.07_ and not _S.01_ 
 	give pc _reward_ 
-	start timer _delay_ 
+	end quest
+--removed unnecessary delay ending
 
 _qgtalk_ task:
 	clicked npc _questgiver_
@@ -230,20 +229,24 @@ _clearclick_ task:
 
 _S.10_ task:
 	when _greklith_ and _S.07_ 
-	when _S.07_ and _S.01_ 
 	create foe _posse_ every 60 minutes 20 times with 50% success 
 	log 1021 step 1 
 	get item _heist_ 
 	say 1050 
 
-_delay_ task:
-	end quest 
+_S.10a_ task:
+	when _S.07_ and _S.01_ 
+	create foe _posse_ every 60 minutes 20 times with 50% success 
+	log 1021 step 1 
+	get item _heist_ 
+	say 1050 
+--recent troubles with multiple conditions on a single task, this is better layout
 
 _S.12_ task:
 	toting _heist_ and _contact_ clicked 
-	start timer _delay_ 
 	say 1051 
 	change repute with _questgiver_ by +2 
+	end quest
 
 _S.13_ task:
 	injured _posse_ 

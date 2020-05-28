@@ -216,7 +216,6 @@ Place _childlocale_ local house2
 
 Clock _queston_ 00:00 0 flag 17 range 0 5
 Clock _S.04_ 01:40 06:40
-Clock _delay_ 00:05 0 flag 1 range 0 1
 
 Foe _warrior_ is Knight
 
@@ -229,7 +228,8 @@ Foe _warrior_ is Knight
 	pick one of _metal_ _S.01_ 
 
 _queston_ task:
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay 
 
 _S.01_ task:
 	place npc _child_ at _mondung_ 
@@ -285,12 +285,10 @@ _qgclicked_ task:
 _reward_ task:
 	when _qgclicked_ and _S.09_ 
 	give pc _gold_ 
-	start timer _delay_ 
 	drop _child_ face
-	-added drop child face. child would remain on HUD until delay finished.
-
-_delay_ task:
 	end quest 
+--removed unnecessary delay
+-added drop child face. child would remain on HUD until delay finished.
 
 _S.13_ task:
 	when _S.01_ and _reward_ 

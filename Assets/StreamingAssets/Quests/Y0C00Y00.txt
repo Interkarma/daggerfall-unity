@@ -126,7 +126,6 @@ Place _mondung_ remote dungeon
 Place _tavern_ remote tavern
 
 Clock _1stparton_ 00:00 0 flag 1 range 0 5
-Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _monster_ is Frost_daedra
 
@@ -140,7 +139,8 @@ Foe _monster_ is Frost_daedra
 _pcgetsgold_ task:
 	when _qgclicked_ and _mondead_ 
 	give pc _artifact_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 variable _queston_
 _mondead_ task:
@@ -158,6 +158,3 @@ _clearclick_ task:
 	when _qgclicked_ and not _mondead_ 
 	say 1003
 	clear _qgclicked_ _clearclick_ 
-
-_delay_ task:
-	end quest 

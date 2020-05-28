@@ -126,7 +126,6 @@ Person _contact_ face 238 faction The_Cabal
 Place _mondung_ remote dungeon
 
 Clock _1stparton_ 00:00 0 flag 17 range 0 2
-Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _monster_ is Wereboar
 
@@ -139,7 +138,8 @@ Foe _monster_ is Wereboar
 _pcgetsgold_ task:
 	when _mondead_ and _qgclicked_
 	give pc _artifact_
-	start timer _delay_
+	end quest 
+--removed unnecessary delay
 
 _mondead_ task:
 	killed 1 _monster_
@@ -157,6 +157,3 @@ _clearclick_ task:
 	when not _mondead_ and _qgclicked_
 	say 1003
 	clear _qgclicked_ _clearclick_
-
-_delay_ task:
-	end quest

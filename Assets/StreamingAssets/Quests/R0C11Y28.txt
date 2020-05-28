@@ -421,10 +421,10 @@ Foe _murder_ is Vampire
 	start timer _total_ 
 	start timer _1stparton_ 
 	log 1020 step 0 
-	create npc at _ripperhouse_ 
 	place npc _contact_ at _bookstore_ 
 	place npc _vamp_ at _hookerhouse_ 
 	place npc _widow_ at _widowhouse_ 
+	have _I.04_ set _deadbody_
 
 _S.00_ task:
 	killed 1 _murder_ 
@@ -455,7 +455,6 @@ _pcgetsgold_ task:
 	end quest 
 
 _deadbody_ task:
-	clicked item _I.04_
 	take _I.04_ from pc
 --added deadbody task. otherwise body would clog inventory
 
@@ -480,7 +479,7 @@ _S.10_ task:
 	clicked npc _contact_ 
 	add dialog for person _vamp_ 
 	log 1021 step 1 
-	get item _I.03_ from _vamp_ 
+	get item _I.03_
 	say 1010 
 
 _S.11_ task:

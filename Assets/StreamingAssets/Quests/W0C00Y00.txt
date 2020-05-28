@@ -149,7 +149,6 @@ Place _palace_ remote palace
 Place _L.01_ remote dungeon
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
-Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _monster_ is Spellsword
 Foe _guard1_ is Barbarian
@@ -169,7 +168,8 @@ _pcgetsgold_ task:
 	when _npcclicked_ and _mondead_ 
 	when _S.10_ and _mondead_ 
 	give pc _artifact_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 _mondead_ task:
 	killed 1 _monster_ 
@@ -207,6 +207,3 @@ _S.10_ task:
 _S.11_ task:
 	when _S.10_ and not _mondead_ 
 	say 1045 
-
-_delay_ task:
-	end quest 

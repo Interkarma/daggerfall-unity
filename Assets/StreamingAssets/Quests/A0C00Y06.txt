@@ -97,7 +97,6 @@ Place _hidingplace_ local random
 
 Clock _escapetime_ 00:00 0 flag 1 range 0 5
 Clock _shortdelay_ 00:01 0 flag 1 range 0 1
-Clock _delay_ 00:10 00:30
 
 Foe _mtraitor_ is Mage
 
@@ -119,7 +118,8 @@ _clickonenemy_ task:
 
 _traitordead_ task:
 	killed 1 _mtraitor_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 _teleportpc_ task:
 	pc at _hidingplace_ set _revenge_ 
@@ -149,6 +149,3 @@ _findtraitor_ task:
 _clearclick_ task:
 	when _clickqgiver_ and not _teleportpc_ 
 	clear _clickqgiver_ 
-
-_delay_ task:
-	end quest 

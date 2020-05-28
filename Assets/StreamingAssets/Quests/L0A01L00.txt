@@ -153,8 +153,6 @@ Place _apo_ remote apothecary
 Clock _traveltime_ 0:00 0 flag 1 range 2 5
 --changed 14.00:00 to 0:00. specified time limit was too short for some cases.
 Clock _S.01_ 30.00:00 0 flag 1 range 1 4
-Clock _delay_ 0:00
---removed flags from delay and changed it to 0:00. Initiation should be immediate
 
 Foe _F.00_ is 2 Assassin
 Foe _guards_ is Spellsword
@@ -208,7 +206,8 @@ _S.06_ task:
 	when _S.11_ and _S.05_ 
 --removed " and _S.03_." superfluous when decanter has been dropped
 	give pc _gold_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 _S.07_ task:
 	when _S.01_ and not _S.02_ 
@@ -230,6 +229,3 @@ variable _S.10_
 _S.11_ task:
 	dropped _decanter_ at _mansion_ 
 	clear _S.04_
-
-_delay_ task:
-	end quest 

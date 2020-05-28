@@ -6,6 +6,7 @@
 -- QuestId: 6
 Messages: 101
 Quest: K0C00Y06
+DisplayName: A Mix-Up
 -- Message panels
 QRC:
 

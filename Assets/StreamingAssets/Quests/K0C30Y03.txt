@@ -76,12 +76,12 @@ QuestLogEntry:  [1010]
  I have thirty days
  to find the deed that _qgiver_,
  of __qgiver_, in ___qgiver_ was
- given as collaterial on a loan to a noble
+ given as collateral on a loan to a noble
  named _patsy_, or to find the gold
  _qgiver_ gave _patsy_,
  or, if all else fails, to find the
  nowhere-to-be-found _patsy_.
- The collaterial was in _bank_ in
+ The collateral was in _bank_ in
  __bank_, before the bank was robbed.
  The only other place I've been told
  of is _house2_,
@@ -299,8 +299,6 @@ Message:  1033
  
  
 <ce>                              The Guild
-                                     <--->
-                           
 
 Message:  1034
 <ce>            Ah, %pcf, my friend. Again, I have been seduced
@@ -457,7 +455,8 @@ Person _victin_ face 81 faction The_Thieves_Guild
 Place _bank_ remote bank
 Place _house1_ remote house2
 Place _house2_ remote house1
-Place _mondung_ remote dungeon2
+Place _mondung_ remote dungeon
+--changed from dungeon2 which is very restricted; in DF region it's only Privateer's Hold
 Place _mondung2_ remote dungeon
 Place _tavern_ remote tavern
 Place _house3_ local house2
@@ -491,14 +490,21 @@ Foe _F.04_ is Rogue
 	pc at _mondung2_ set _S.16_ 
 	_letter30_ used do _S.35_ 
 	_rock_ used do _S.19_ 
-	create npc at _house1_ 
 	place npc _hooker_ at _house1_ 
 	place npc _gaffer_ at _tavern_ 
 	place npc _banker_ at _bank_ 
 
-_pcgetsgold_ task:
+_pcgetsgold1_ task:
 	toting _deed3_ and _qgiver_ clicked 
+	give pc _reward_
+	end quest 
+
+_pcgetsgold2_ task:
 	toting _deed_ and _qgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_pcgetsgold3_ task:
 	when _qgclicked_ and _S.18_ 
 	give pc _reward_ 
 	end quest 
