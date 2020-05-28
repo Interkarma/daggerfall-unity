@@ -147,10 +147,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         // Refresh armour value labels
         void RefreshArmourValues(PlayerEntity playerEntity, bool suppress = false)
-        {
+        { 
             for (int bpIdx = 0; bpIdx < DaggerfallEntity.NumberBodyParts; bpIdx++)
             {
-                int armorMod = playerEntity.IncreasedArmorValueModifier + playerEntity.DecreasedArmorValueModifier;
+                int armorMod = playerEntity.DecreasedArmorValueModifier - playerEntity.IncreasedArmorValueModifier;
 
                 sbyte av = playerEntity.ArmorValues[bpIdx];
                 int bpAv = (100 - av) / 5 + armorMod;

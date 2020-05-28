@@ -1839,7 +1839,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (selectedActionMode == ActionModes.Equip ||
                 selectedActionMode == ActionModes.Select)
             {
-                UnequipItem(item, false);
+                UnequipItem(item);
             }
             else if (selectedActionMode == ActionModes.Info)
             {
