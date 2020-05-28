@@ -60,7 +60,6 @@ namespace DaggerfallWorkshop.Game
         private int _longestDim;                    // Longest screen dimension, used to compare gestures for attack
 
         PlayerEntity playerEntity;
-        EntityEffectManager entityEffectManager;
         GameObject player;
         GameObject mainCamera;
         bool joystickSwungOnce = false;
@@ -194,7 +193,6 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            entityEffectManager = GetComponent<EntityEffectManager>();
             weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             player = transform.gameObject;
@@ -244,9 +242,9 @@ namespace DaggerfallWorkshop.Game
             {
                 if (GameManager.Instance.PlayerEffectManager.HasReadySpell || GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
                 {
-                    if (!isAttacking && InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon) && entityEffectManager)
+                    if (!isAttacking && InputManager.Instance.ActionStarted(InputManager.Actions.ReadyWeapon))
                     {
-                        entityEffectManager.AbortReadySpell();
+                        GameManager.Instance.PlayerEffectManager.AbortReadySpell();
 
                         //if currently unsheathed, then sheath it, so we can give the effect of unsheathing it again
                         if (!Sheathed)
