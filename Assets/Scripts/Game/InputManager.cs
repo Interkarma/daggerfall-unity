@@ -199,23 +199,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        //TODO: have this value be adjustable and serializable for the future joystick window
-        public float JoystickCameraSensitivity
-        {
-            get
-            {
-                return joystickCameraSensitivity;
-            }
-            set
-            {
-                if (value < 0.0f)
-                    value = 0.0f;
-                joystickCameraSensitivity = value;
-            }
-        }
-
-        //TODO: have this value be adjustable and serializable for the future joystick window
-        public float JoystickUIMouseSensitivity
+        public float JoystickCursorSensitivity
         {
             get
             {
@@ -229,7 +213,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        //TODO: have this value be adjustable and serializable for the future joystick window
         public float JoystickMovementThreshold
         {
             get { return joystickMovementThreshold; }
@@ -437,11 +420,11 @@ namespace DaggerfallWorkshop.Game
             // Collect mouse axes
             mouseX = Input.GetAxisRaw("Mouse X");
             if (mouseX == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[0]))
-                mouseX = Input.GetAxis(cameraAxisBindingCache[0]) * JoystickCameraSensitivity;
+                mouseX = Input.GetAxis(cameraAxisBindingCache[0]);
 
             mouseY = Input.GetAxisRaw("Mouse Y");
             if (mouseY == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[1]))
-                mouseY = Input.GetAxis(cameraAxisBindingCache[1]) * JoystickCameraSensitivity;
+                mouseY = Input.GetAxis(cameraAxisBindingCache[1]);
 
             // Process actions from input sources
             FindKeyboardActions();
@@ -488,8 +471,8 @@ namespace DaggerfallWorkshop.Game
 
                     GUI.depth = 0;
 
-                    controllerCursorPosition.x += JoystickUIMouseSensitivity * controllerCursorHorizontalSpeed * horizj * Time.fixedDeltaTime;
-                    controllerCursorPosition.y += JoystickUIMouseSensitivity * controllerCursorVerticalSpeed * vertj * Time.fixedDeltaTime;
+                    controllerCursorPosition.x += JoystickCursorSensitivity * controllerCursorHorizontalSpeed * horizj * Time.fixedDeltaTime;
+                    controllerCursorPosition.y += JoystickCursorSensitivity * controllerCursorVerticalSpeed * vertj * Time.fixedDeltaTime;
 
                     controllerCursorPosition.x = Mathf.Clamp(controllerCursorPosition.x, 0, Screen.width);
                     controllerCursorPosition.y = Mathf.Clamp(controllerCursorPosition.y, 0, Screen.height);

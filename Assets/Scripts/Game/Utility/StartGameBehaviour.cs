@@ -202,16 +202,20 @@ namespace DaggerfallWorkshop.Game.Utility
                 // Set mouse look
                 PlayerMouseLook mouseLook = cameraObject.GetComponent<PlayerMouseLook>();
                 if (mouseLook)
+                {
                     mouseLook.invertMouseY = DaggerfallUnity.Settings.InvertMouseVertical;
-
-                // Set mouse look smoothing
-                if (mouseLook)
+                    // Set mouse look smoothing
                     mouseLook.enableSmoothing = DaggerfallUnity.Settings.MouseLookSmoothing;
-
-                // Set mouse look sensitivity
-                if (mouseLook)
+                    // Set mouse look sensitivity
                     mouseLook.sensitivityScale = DaggerfallUnity.Settings.MouseLookSensitivity;
+
+                    mouseLook.joystickSensitivityScale = DaggerfallUnity.Settings.JoystickLookSensitivity;
+                }
             }
+
+            InputManager.Instance.JoystickCursorSensitivity = DaggerfallUnity.Settings.JoystickCursorSensitivity;
+
+            InputManager.Instance.JoystickMovementThreshold = DaggerfallUnity.Settings.JoystickMovementThreshold;
 
             // Set shadow resolution
             GameManager.UpdateShadowResolution();
