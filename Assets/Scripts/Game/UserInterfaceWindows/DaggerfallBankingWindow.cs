@@ -22,28 +22,28 @@ namespace DaggerfallWorkshop.Game.UserInterface
 {
     public class DaggerfallBankingWindow : DaggerfallPopupWindow, IMacroContextProvider
     {
-        protected const string IMGNAME    = "BANK00I0.IMG";
+        const string IMGNAME    = "BANK00I0.IMG";
 
-        protected Panel mainPanel;
+        Panel mainPanel;
 
-        protected TextLabel accountAmount;
-        protected TextLabel inventoryAmount;
-        protected TextLabel loanAmountDue;
-        protected TextLabel loanDueBy;
+        TextLabel accountAmount;
+        TextLabel inventoryAmount;
+        TextLabel loanAmountDue;
+        TextLabel loanDueBy;
 
-        protected Button depoGoldButton;
-        protected Button drawGoldButton;
-        protected Button depoLOCButton;
-        protected Button drawLOCButton;
-        protected Button loanRepayButton;
-        protected Button loanBorrowButton;
-        protected Button buyHouseButton;
-        protected Button sellHouseButton;
-        protected Button buyShipButton;
-        protected Button sellShipButton;
-        protected Button exitButton;
+        Button depoGoldButton;
+        Button drawGoldButton;
+        Button depoLOCButton;
+        Button drawLOCButton;
+        Button loanRepayButton;
+        Button loanBorrowButton;
+        Button buyHouseButton;
+        Button sellHouseButton;
+        Button buyShipButton;
+        Button sellShipButton;
+        Button exitButton;
 
-        protected TextBox transactionInput;
+        TextBox transactionInput;
 
         PlayerEntity playerEntity;
         TransactionType transactionType = TransactionType.None;
@@ -235,7 +235,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             GeneratePopup(DaggerfallBankManager.PurchaseHouse(house, regionIndex));
         }
 
-        protected virtual void UpdateLabels()
+        void UpdateLabels()
         {
             inventoryAmount.Text    = playerEntity.GetGoldAmount().ToString();
             if (playerEntity.WagonItems.Contains(ItemGroups.Currency, (int)Currency.Gold_pieces))
@@ -248,7 +248,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             loanDueBy.Text          = DaggerfallBankManager.GetLoanDueDateString(regionIndex);
         }
 
-        protected virtual void UpdateButtons()
+        void UpdateButtons()
         {
             depoGoldButton.Enabled  = transactionType == TransactionType.None;
             drawGoldButton.Enabled  = transactionType == TransactionType.None;
@@ -264,7 +264,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
 
-        protected virtual void ToggleTransactionInput(TransactionType newType)
+        void ToggleTransactionInput(TransactionType newType)
         {
             if (transactionType == newType)
                 return;
@@ -276,7 +276,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             transactionInput.Enabled = (transactionType != TransactionType.None);
         }
 
-        protected virtual void HandleTransactionInput()
+        void HandleTransactionInput()
         {
             int amount = 0;
 
@@ -295,7 +295,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         //generates pop-ups, either to indicate failed transaction
         //or to prompt with yes / no option
-        protected virtual void GeneratePopup(TransactionResult result, int amount = 0)
+        void GeneratePopup(TransactionResult result, int amount = 0)
         {
             if (result == TransactionResult.NONE)
                 return;
@@ -339,7 +339,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #region event handlers
 
         //handles button clicks from Deposit LOC message box
-        protected virtual void DepositLOC_messageBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        void DepositLOC_messageBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
                 DaggerfallBankManager.MakeTransaction(TransactionType.Depositing_LOC, 0, regionIndex);
@@ -348,7 +348,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         //handles button clicks from Sell house message box
-        protected virtual void SellHouse_messageBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        void SellHouse_messageBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
                 DaggerfallBankManager.MakeTransaction(TransactionType.Sell_house, 0, regionIndex);
@@ -357,7 +357,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         //handles button clicks from Sell ship message box
-        protected virtual void SellShip_messageBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        void SellShip_messageBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
                 DaggerfallBankManager.MakeTransaction(TransactionType.Sell_ship, 0, regionIndex);
@@ -365,37 +365,37 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         //bank window button handlers
-        protected virtual void DepoGoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void DepoGoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ToggleTransactionInput(TransactionType.Depositing_gold);
         }
 
-        protected virtual void DrawGoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void DrawGoldButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ToggleTransactionInput(TransactionType.Withdrawing_gold);
         }
 
-        protected virtual void DepoLOCButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void DepoLOCButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             GeneratePopup(TransactionResult.DEPOSIT_LOC);
         }
 
-        protected virtual void DrawLOCButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void DrawLOCButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ToggleTransactionInput(TransactionType.Withdrawing_Letter);
         }
 
-        protected virtual void LoanRepayButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void LoanRepayButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ToggleTransactionInput(TransactionType.Repaying_loan);
         }
 
-        protected virtual void LoanBorrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void LoanBorrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallBankManager.HasDefaulted(regionIndex))
@@ -414,7 +414,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        protected virtual void BuyHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void BuyHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallBankManager.OwnsHouse)
@@ -436,7 +436,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        protected virtual void SellHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void SellHouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallBankManager.OwnsHouse)
@@ -451,7 +451,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        protected virtual void BuyShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void BuyShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallBankManager.OwnsShip)
@@ -462,14 +462,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.BankPurchasePopup, new object[] { uiManager, this, null }));
         }
 
-        protected virtual void SellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void SellShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (DaggerfallBankManager.OwnsShip)
                 GeneratePopup(TransactionResult.SELL_SHIP_OFFER, DaggerfallBankManager.GetShipSellPrice(DaggerfallBankManager.OwnedShip));
         }
 
-        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (!transactionInput.Enabled)

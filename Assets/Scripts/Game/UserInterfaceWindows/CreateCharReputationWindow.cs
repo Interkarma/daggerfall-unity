@@ -30,57 +30,57 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class CreateCharReputationWindow : DaggerfallPopupWindow
     {
-        protected const string nativeImgName = "CUST03I0.IMG";
-        protected const float barTopY = 24f;
-        protected const float barBottomY = 128f;
-        protected const float barMiddleY = 76f;
-        protected const float barLength = 50f;
-        protected const int strBalanceMustEqualZero = 303;
+        const string nativeImgName = "CUST03I0.IMG";
+        const float barTopY = 24f;
+        const float barBottomY = 128f;
+        const float barMiddleY = 76f;
+        const float barLength = 50f;
+        const int strBalanceMustEqualZero = 303;
 
-        protected Color greenBarColor = new Color(.388f, .549f, .223f);
-        protected Color redBarColor = new Color(.580f, .031f, 0f);
-        protected Vector2 repBarSize = new Vector2(5f, 0f);
-        protected Texture2D nativeTexture;
+        Color greenBarColor = new Color(.388f, .549f, .223f);
+        Color redBarColor = new Color(.580f, .031f, 0f);
+        Vector2 repBarSize = new Vector2(5f, 0f);
+        Texture2D nativeTexture;
         DaggerfallFont font;
-        protected Panel repPanel = new Panel();
+        Panel repPanel = new Panel();
         short pointsToDistribute = 0;
         CreateCharCustomClass prevWindow;
 
         #region UI Rects
 
-        protected Rect exitButtonRect = new Rect(129, 165, 33, 14);
+        Rect exitButtonRect = new Rect(129, 165, 33, 14);
 
         #endregion
 
         #region UI Panels
 
-        protected Panel merchantsGreenPanel = new Panel();
-        protected Panel merchantsRedPanel = new Panel();
-        protected Panel peasantsGreenPanel = new Panel();
-        protected Panel peasantsRedPanel = new Panel();
-        protected Panel scholarsGreenPanel = new Panel();
-        protected Panel scholarsRedPanel = new Panel();
-        protected Panel nobilityGreenPanel = new Panel();
-        protected Panel nobilityRedPanel = new Panel();
-        protected Panel underworldGreenPanel = new Panel();
-        protected Panel underworldRedPanel = new Panel();
+        Panel merchantsGreenPanel = new Panel();
+        Panel merchantsRedPanel = new Panel();
+        Panel peasantsGreenPanel = new Panel();
+        Panel peasantsRedPanel = new Panel();
+        Panel scholarsGreenPanel = new Panel();
+        Panel scholarsRedPanel = new Panel();
+        Panel nobilityGreenPanel = new Panel();
+        Panel nobilityRedPanel = new Panel();
+        Panel underworldGreenPanel = new Panel();
+        Panel underworldRedPanel = new Panel();
 
         #endregion
 
         #region Buttons
 
-        protected Button exitButton;
+        Button exitButton;
 
         #endregion
 
         #region Text Labels
 
-        protected TextLabel merchantsPtsLabel;
-        protected TextLabel peasantsPtsLabel;
-        protected TextLabel scholarsPtsLabel;
-        protected TextLabel nobilityPtsLabel;
-        protected TextLabel underworldPtsLabel;
-        protected TextLabel distributePtsLabel;
+        TextLabel merchantsPtsLabel;
+        TextLabel peasantsPtsLabel;
+        TextLabel scholarsPtsLabel;
+        TextLabel nobilityPtsLabel;
+        TextLabel underworldPtsLabel;
+        TextLabel distributePtsLabel;
 
         #endregion
 
@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        protected virtual void RepPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void RepPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (position.y >= barTopY && position.y <= barBottomY)
             {
@@ -181,7 +181,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             if (pointsToDistribute != 0) 
             {
@@ -200,7 +200,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Helper methods
 
-        protected virtual void SetupRepBars(Panel greenBar, Panel redBar, Vector2 greenBarPos, Vector2 redBarPos, short val)
+        void SetupRepBars(Panel greenBar, Panel redBar, Vector2 greenBarPos, Vector2 redBarPos, short val)
         {
             // Positive rep
             greenBar.Position = greenBarPos;
@@ -230,7 +230,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual int RoundNearestBarHeight(int number)
+        int RoundNearestBarHeight(int number)
         {
             const int increment = 5;
             const int maxHeight = 50;
@@ -248,7 +248,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return ret > maxHeight ? maxHeight : ret; // don't go over the top or bottom
         }
 
-        protected virtual short UpdateRep(Vector2 mousePos, Panel greenBar, Panel redBar, TextLabel label)
+        short UpdateRep(Vector2 mousePos, Panel greenBar, Panel redBar, TextLabel label)
         {
             float clickedHeight = ((float)Math.Abs(barMiddleY - mousePos.y) / barLength) * barLength;
             int nearestHeight = RoundNearestBarHeight((int)clickedHeight);
@@ -277,7 +277,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return repVal;
         }
 
-        protected virtual void UpdatePointsToDistribute()
+        void UpdatePointsToDistribute()
         {
             pointsToDistribute = (short)(-prevWindow.MerchantsRep - prevWindow.PeasantsRep - prevWindow.ScholarsRep - prevWindow.NobilityRep - prevWindow.UnderworldRep);
             distributePtsLabel.Text = pointsToDistribute.ToString();

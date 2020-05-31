@@ -20,20 +20,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        protected Rect roomButtonRect = new Rect(5, 5, 120, 7);
-        protected Rect talkButtonRect = new Rect(5, 14, 120, 7);
-        protected Rect foodButtonRect = new Rect(5, 23, 120, 7);
-        protected Rect exitButtonRect = new Rect(5, 32, 120, 7);
+        Rect roomButtonRect = new Rect(5, 5, 120, 7);
+        Rect talkButtonRect = new Rect(5, 14, 120, 7);
+        Rect foodButtonRect = new Rect(5, 23, 120, 7);
+        Rect exitButtonRect = new Rect(5, 32, 120, 7);
 
         #endregion
 
         #region UI Controls
 
-        protected Panel mainPanel = new Panel();
-        protected Button roomButton;
-        protected Button talkButton;
-        protected Button foodButton;
-        protected Button exitButton;
+        Panel mainPanel = new Panel();
+        Button roomButton;
+        Button talkButton;
+        Button foodButton;
+        Button exitButton;
 
         #endregion
 
@@ -45,24 +45,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        protected const string baseTextureName = "TVRN00I0.IMG";
-        protected const int tooManyDaysFutureId = 16;
-        protected const int offerPriceId = 262;
-        protected const int notEnoughGoldId = 454;
-        protected const int howManyAdditionalDaysId = 5100;
-        protected const int howManyDaysId = 5102;
+        const string baseTextureName = "TVRN00I0.IMG";
+        const int tooManyDaysFutureId = 16;
+        const int offerPriceId = 262;
+        const int notEnoughGoldId = 454;
+        const int howManyAdditionalDaysId = 5100;
+        const int howManyDaysId = 5102;
 
-        protected static readonly string[] tavernMenu =  {
+        static readonly string[] tavernMenu =  {
             HardStrings.tavernAle, HardStrings.tavernBeer, HardStrings.tavernMead, HardStrings.tavernWine,
             HardStrings.tavernBread, HardStrings.tavernBroth, HardStrings.tavernCheese, HardStrings.tavernFowl,
             HardStrings.tavernGruel, HardStrings.tavernPie, HardStrings.tavernStew };
         byte[] tavernFoodAndDrinkPrices = { 1, 1, 2, 3, 1, 1, 2, 3, 2, 2, 3 };
 
-        protected StaticNPC merchantNPC;
+        StaticNPC merchantNPC;
         PlayerGPS.DiscoveredBuilding buildingData;
         RoomRental_v1 rentedRoom;
         int daysToRent = 0;
         int tradePrice = 0;
+
+        bool isCloseWindowDeferred = false;
+        bool isTalkWindowDeferred = false;
+        bool isFoodAndDrinkDeferred = false;
 
         #endregion
 
@@ -102,16 +106,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.OnMouseClick += TalkButton_OnMouseClick;
             talkButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernTalk);
+            talkButton.OnKeyboardEvent += TalkButton_OnKeyboardEvent;
 
             // Food button
             foodButton = DaggerfallUI.AddButton(foodButtonRect, mainPanel);
             foodButton.OnMouseClick += FoodButton_OnMouseClick;
             foodButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernFood);
+            foodButton.OnKeyboardEvent += FoodButton_OnKeyboardEvent;
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             NativePanel.Components.Add(mainPanel);
         }
@@ -120,13 +127,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
-        protected virtual void RoomButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
+        }
+
+        private void RoomButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             int mapId = GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId;
@@ -146,7 +167,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             inputMessageBox.Show();
         }
 
-        protected virtual void InputMessageBox_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        private void InputMessageBox_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
         {
             daysToRent = 0;
             bool result = int.TryParse(input, out daysToRent);
@@ -185,7 +206,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void ConfirmRenting_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        private void ConfirmRenting_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
@@ -201,7 +222,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void RentRoom()
+        private void RentRoom()
         {
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
@@ -235,16 +256,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
         }
 
-        protected virtual void FoodButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void TalkButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isTalkWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isTalkWindowDeferred)
+            {
+                isTalkWindowDeferred = false;
+                CloseWindow();
+                GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
+            }
+        }
+
+        private void DoFoodAndDrink()
+        {
             CloseWindow();
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
 
@@ -296,6 +331,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        private void FoodButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            DoFoodAndDrink();
+        }
+
+        void FoodButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isFoodAndDrinkDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isFoodAndDrinkDeferred)
+            {
+                isFoodAndDrinkDeferred = false;
+                DoFoodAndDrink();
+            }
+        }
+
         #endregion
 
         #region Macro handling
@@ -308,7 +363,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// MacroDataSource context sensitive methods for tavern window.
         /// </summary>
-        protected class TavernMacroDataSource : MacroDataSource
+        private class TavernMacroDataSource : MacroDataSource
         {
             private DaggerfallTavernWindow parent;
             public TavernMacroDataSource(DaggerfallTavernWindow tavernWindow)

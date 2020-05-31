@@ -19,21 +19,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     public class DaggerfallBookReaderWindow : DaggerfallBaseWindow
     {
-        protected const float scrollAmount = 24;
-        protected const string nativeImgName = "BOOK00I0.IMG";
+        const float scrollAmount = 24;
+        const string nativeImgName = "BOOK00I0.IMG";
 
-        protected Vector2 pagePanelPosition = new Vector2(55, 21);
-        protected Vector2 pagePanelSize = new Vector2(210, 159);
+        Vector2 pagePanelPosition = new Vector2(55, 21);
+        Vector2 pagePanelSize = new Vector2(210, 159);
 
-        protected Texture2D nativeTexture;
+        Texture2D nativeTexture;
         LabelFormatter labelFormatter = new LabelFormatter();
         List<TextLabel> bookLabels = new List<TextLabel>();
-        protected Panel pagePanel = new Panel();
+        Panel pagePanel = new Panel();
         float maxHeight = 0;
         float scrollPosition = 0;
         int currentPage = 0; // Used for page turn sounds only
 
-        protected const SoundClips openBook = SoundClips.OpenBook;
+        const SoundClips openBook = SoundClips.OpenBook;
 
         public DaggerfallBookReaderWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -75,28 +75,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(openBook);
         }
 
-        protected virtual void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void NextPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             ScrollBook(-scrollAmount);
         }
 
-        protected virtual void PreviousPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void PreviousPageButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             ScrollBook(scrollAmount);
         }
 
-        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
-        protected virtual void Panel_OnMouseScrollDown(BaseScreenComponent sender)
+        private void Panel_OnMouseScrollDown(BaseScreenComponent sender)
         {
             NextPageButton_OnMouseClick(sender, Vector2.zero);
         }
 
-        protected virtual void Panel_OnMouseScrollUp(BaseScreenComponent sender)
+        private void Panel_OnMouseScrollUp(BaseScreenComponent sender)
         {
             PreviousPageButton_OnMouseClick(sender, Vector2.zero);
         }
@@ -134,7 +134,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 bookLabels = labelFormatter.CreateLabels();
         }
 
-        protected virtual void LayoutBook()
+        void LayoutBook()
         {
             if (!IsBookOpen)
                 return;
@@ -155,7 +155,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void ScrollBook(float amount)
+        void ScrollBook(float amount)
         {
             if (!IsBookOpen)
                 return;

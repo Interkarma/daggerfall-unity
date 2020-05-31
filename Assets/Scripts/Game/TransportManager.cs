@@ -135,32 +135,32 @@ namespace DaggerfallWorkshop.Game
         private PlayerPositionData_v1 boardShipPosition;    // Holds the player position from before boarding a ship.
 
 
-        protected const string horseTextureName = "MRED00I0.CFA";
-        protected const string cartTextureName = "MRED01I0.CFA";
-        protected const float animFrameTime = 0.125f;  // Time between animation frames in seconds.
+        const string horseTextureName = "MRED00I0.CFA";
+        const string cartTextureName = "MRED01I0.CFA";
+        const float animFrameTime = 0.125f;  // Time between animation frames in seconds.
 
-        protected const SoundClips horseSound = SoundClips.AnimalHorse;
-        protected const SoundClips horseRidingSound1 = SoundClips.HorseClop;
-        protected const SoundClips horseRidingSound2 = SoundClips.HorseClop2;
-        protected const SoundClips cartRidingSound = SoundClips.HorseAndCart;
+        const SoundClips horseSound = SoundClips.AnimalHorse;
+        const SoundClips horseRidingSound1 = SoundClips.HorseClop;
+        const SoundClips horseRidingSound2 = SoundClips.HorseClop2;
+        const SoundClips cartRidingSound = SoundClips.HorseAndCart;
 
         // TODO: Move into ImageHelper? (duplicated in FPSWeapon & DaggerfallVidPlayerWindow)
-        protected const int nativeScreenHeight = 200;
+        const int nativeScreenHeight = 200;
 
         PlayerMotor playerMotor;
         DaggerfallAudioSource dfAudioSource;
         AudioSource ridingAudioSource;
 
-        protected bool stoppedRidingAudio;
+        private bool stoppedRidingAudio;
 
         ImageData ridingTexture;
-        protected ImageData[] ridingTexures = new ImageData[4];
+        ImageData[] ridingTexures = new ImageData[4];
         float lastFrameTime = 0;
         int frameIndex = 0;
 
         AudioClip neighClip;
         float neighTime = 0;
-        protected bool wasMovingLessThanHalfSpeed = true;
+        bool wasMovingLessThanHalfSpeed = true;
 
         #endregion
 
@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Use this for initialization
-        protected virtual void Start()
+        void Start()
         {
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
             playerMotor = GetComponent<PlayerMotor>();
@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Handle interior/exterior transition events by setting transport mode to Foot.
-        protected virtual void HandleTransition(PlayerEnterExit.TransitionEventArgs args)
+        void HandleTransition(PlayerEnterExit.TransitionEventArgs args)
         {
             if (args.TransitionType == PlayerEnterExit.TransitionType.ToBuildingInterior ||
                 args.TransitionType == PlayerEnterExit.TransitionType.ToDungeonInterior)
@@ -202,7 +202,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        protected virtual IEnumerator StopRidingAudio()
+        IEnumerator StopRidingAudio()
         {
             stoppedRidingAudio = true;
             yield return new WaitForSecondsRealtime(0.2f);
@@ -210,7 +210,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Update is called once per frame
-        protected virtual void Update()
+        void Update()
         {
             // Handle horse & cart riding animation & sounds.
             if (mode == TransportModes.Horse || mode == TransportModes.Cart)
@@ -274,7 +274,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        protected virtual void OnGUI()
+        void OnGUI()
         {
             if (Event.current.type.Equals(EventType.Repaint) && !GameManager.IsGamePaused && DrawHorse)
             {
@@ -301,7 +301,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        protected virtual void UpdateMode(TransportModes transportMode)
+        private void UpdateMode(TransportModes transportMode)
         {
             // Update the transport mode and stop any riding sounds playing.
             mode = transportMode;

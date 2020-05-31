@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class CreateCharFaceSelect : DaggerfallPopupWindow
     {
-        protected const string nativeImgName = "CHAR01I0.IMG";
+        const string nativeImgName = "CHAR01I0.IMG";
 
         Texture2D nativeTexture;
         Button okButton;
@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             facePicker.SetFaceTextures(raceTemplate, raceGender);
         }
 
-        protected virtual void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
         }

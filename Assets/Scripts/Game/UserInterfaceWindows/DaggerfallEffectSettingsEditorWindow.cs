@@ -23,64 +23,64 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        protected const int spinnerWidth = 24;
-        protected const int spinnerHeight = 16;
+        const int spinnerWidth = 24;
+        const int spinnerHeight = 16;
 
-        protected Rect spinnerUpButtonRect = new Rect(0, 0, spinnerWidth, 5);
-        protected Rect spinnerDownButtonRect = new Rect(0, 11, spinnerWidth, 5);
-        protected Rect spinnerValueLabelRect = new Rect(0, 5, spinnerWidth, 6);
-        protected Rect durationBaseSpinnerRect = new Rect(64, 94, spinnerWidth, spinnerHeight);
-        protected Rect durationPlusSpinnerRect = new Rect(104, 94, spinnerWidth, spinnerHeight);
-        protected Rect durationPerLevelSpinnerRect = new Rect(160, 94, spinnerWidth, spinnerHeight);
-        protected Rect chanceBaseSpinnerRect = new Rect(64, 114, spinnerWidth, spinnerHeight);
-        protected Rect chancePlusSpinnerRect = new Rect(104, 114, spinnerWidth, spinnerHeight);
-        protected Rect chancePerLevelSpinnerRect = new Rect(160, 114, spinnerWidth, spinnerHeight);
-        protected Rect magnitudeBaseMinSpinnerRect = new Rect(64, 134, spinnerWidth, spinnerHeight);
-        protected Rect magnitudeBaseMaxSpinnerRect = new Rect(104, 134, spinnerWidth, spinnerHeight);
-        protected Rect magnitudePlusMinSpinnerRect = new Rect(144, 134, spinnerWidth, spinnerHeight);
-        protected Rect magnitudePlusMaxSpinnerRect = new Rect(184, 134, spinnerWidth, spinnerHeight);
-        protected Rect magnitudePerLevelSpinnerRect = new Rect(235, 134, spinnerWidth, spinnerHeight);
+        Rect spinnerUpButtonRect = new Rect(0, 0, spinnerWidth, 5);
+        Rect spinnerDownButtonRect = new Rect(0, 11, spinnerWidth, 5);
+        Rect spinnerValueLabelRect = new Rect(0, 5, spinnerWidth, 6);
+        Rect durationBaseSpinnerRect = new Rect(64, 94, spinnerWidth, spinnerHeight);
+        Rect durationPlusSpinnerRect = new Rect(104, 94, spinnerWidth, spinnerHeight);
+        Rect durationPerLevelSpinnerRect = new Rect(160, 94, spinnerWidth, spinnerHeight);
+        Rect chanceBaseSpinnerRect = new Rect(64, 114, spinnerWidth, spinnerHeight);
+        Rect chancePlusSpinnerRect = new Rect(104, 114, spinnerWidth, spinnerHeight);
+        Rect chancePerLevelSpinnerRect = new Rect(160, 114, spinnerWidth, spinnerHeight);
+        Rect magnitudeBaseMinSpinnerRect = new Rect(64, 134, spinnerWidth, spinnerHeight);
+        Rect magnitudeBaseMaxSpinnerRect = new Rect(104, 134, spinnerWidth, spinnerHeight);
+        Rect magnitudePlusMinSpinnerRect = new Rect(144, 134, spinnerWidth, spinnerHeight);
+        Rect magnitudePlusMaxSpinnerRect = new Rect(184, 134, spinnerWidth, spinnerHeight);
+        Rect magnitudePerLevelSpinnerRect = new Rect(235, 134, spinnerWidth, spinnerHeight);
 
-        protected Rect exitButtonRect = new Rect(281, 94, 24, 16);
+        Rect exitButtonRect = new Rect(281, 94, 24, 16);
 
         #endregion
 
         #region UI Controls
 
-        protected Panel descriptionPanel;
-        protected MultiFormatTextLabel descriptionLabel;
+        Panel descriptionPanel;
+        MultiFormatTextLabel descriptionLabel;
 
-        protected UpDownSpinner durationBaseSpinner;
-        protected UpDownSpinner durationPlusSpinner;
-        protected UpDownSpinner durationPerLevelSpinner;
-        protected UpDownSpinner chanceBaseSpinner;
-        protected UpDownSpinner chancePlusSpinner;
-        protected UpDownSpinner chancePerLevelSpinner;
-        protected UpDownSpinner magnitudeBaseMinSpinner;
-        protected UpDownSpinner magnitudeBaseMaxSpinner;
-        protected UpDownSpinner magnitudePlusMinSpinner;
-        protected UpDownSpinner magnitudePlusMaxSpinner;
-        protected UpDownSpinner magnitudePerLevelSpinner;
+        UpDownSpinner durationBaseSpinner;
+        UpDownSpinner durationPlusSpinner;
+        UpDownSpinner durationPerLevelSpinner;
+        UpDownSpinner chanceBaseSpinner;
+        UpDownSpinner chancePlusSpinner;
+        UpDownSpinner chancePerLevelSpinner;
+        UpDownSpinner magnitudeBaseMinSpinner;
+        UpDownSpinner magnitudeBaseMaxSpinner;
+        UpDownSpinner magnitudePlusMinSpinner;
+        UpDownSpinner magnitudePlusMaxSpinner;
+        UpDownSpinner magnitudePerLevelSpinner;
 
-        protected TextLabel spellCostLabel;
-        protected Button exitButton;
+        TextLabel spellCostLabel;
+        Button exitButton;
 
         #endregion
 
         #region UI Textures
 
-        protected Texture2D baseTexture;
+        Texture2D baseTexture;
 
         #endregion
 
         #region Fields
 
-        protected const string baseTextureFilename = "MASK05I0.IMG";
-        protected const string noEffectTemplateError = "DaggerfallEffectSettingsEditorWindow does not have an EffectTemplate set.";
+        const string baseTextureFilename = "MASK05I0.IMG";
+        const string noEffectTemplateError = "DaggerfallEffectSettingsEditorWindow does not have an EffectTemplate set.";
 
-        protected const int alternateAlphaIndex = 12;
+        const int alternateAlphaIndex = 12;
 
-        protected Color hotButtonColor = new Color32(200, 200, 200, 100);
+        Color hotButtonColor = new Color32(200, 200, 200, 100);
 
         IEntityEffect effectTemplate = null;
 
@@ -161,13 +161,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        protected virtual void LoadTextures()
+        void LoadTextures()
         {
             // Load source textures
             baseTexture = ImageReader.GetTexture(baseTextureFilename, 0, 0, true, alternateAlphaIndex);
         }
 
-        protected virtual void SetupEffectDescriptionPanels()
+        void SetupEffectDescriptionPanels()
         {
             // Create parent panel to house effect description
             Panel descriptionParentPanel = DaggerfallUI.AddPanel(new Rect(5, 19, 312, 69), NativePanel);
@@ -187,7 +187,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             descriptionPanel.Components.Add(descriptionLabel);
         }
 
-        protected virtual void SetupSpinners()
+        void SetupSpinners()
         {
             // Add spinner controls
             durationBaseSpinner = new UpDownSpinner(durationBaseSpinnerRect, spinnerUpButtonRect, spinnerDownButtonRect, spinnerValueLabelRect, 0, null, NativePanel);
@@ -242,14 +242,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             magnitudePerLevelSpinner.OnValueChanged += MagnitudePerLevelSpinner_OnValueChanged;
         }
 
-        protected virtual void SetupButtons()
+        void SetupButtons()
         {
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
         }
 
-        protected virtual void InitControlState()
+        void InitControlState()
         {
             // Must have an effect template set
             if (EffectTemplate == null)
@@ -341,7 +341,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return effectEntry;
         }
 
-        protected virtual void SetEffectEntry(EffectEntry entry)
+        void SetEffectEntry(EffectEntry entry)
         {
             if (!IsSetup)
                 return;
@@ -365,7 +365,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             magnitudePerLevelSpinner.Value = entry.Settings.MagnitudePerLevel;
         }
 
-        protected virtual void SetSpinners(EffectSettings settings)
+        void SetSpinners(EffectSettings settings)
         {
             if (!IsSetup)
                 return;
@@ -383,13 +383,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             magnitudePerLevelSpinner.Value = settings.MagnitudePerLevel;
         }
 
-        protected virtual void SetEffectTemplate(IEntityEffect effectTemplate)
+        void SetEffectTemplate(IEntityEffect effectTemplate)
         {
             this.effectTemplate = effectTemplate;
             SetSpinners(new EffectSettings());
         }
 
-        protected virtual void UpdateCosts()
+        void UpdateCosts()
         {
             if (OnSettingsChanged != null)
                 OnSettingsChanged();
@@ -404,37 +404,37 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        protected virtual void DurationBaseSpinner_OnValueChanged()
+        private void DurationBaseSpinner_OnValueChanged()
         {
             UpdateCosts();
         }
 
-        protected virtual void DurationPlusSpinner_OnValueChanged()
+        private void DurationPlusSpinner_OnValueChanged()
         {
             UpdateCosts();
         }
 
-        protected virtual void DurationPerLevelSpinner_OnValueChanged()
+        private void DurationPerLevelSpinner_OnValueChanged()
         {
             UpdateCosts();
         }
 
-        protected virtual void ChanceBaseSpinner_OnValueChanged()
+        private void ChanceBaseSpinner_OnValueChanged()
         {
             UpdateCosts();
         }
 
-        protected virtual void ChancePlusSpinner_OnValueChanged()
+        private void ChancePlusSpinner_OnValueChanged()
         {
             UpdateCosts();
         }
 
-        protected virtual void ChancePerLevelSpinner_OnValueChanged()
+        private void ChancePerLevelSpinner_OnValueChanged()
         {
             UpdateCosts();
         }
 
-        protected virtual void MagnitudeBaseMinSpinner_OnValueChanged()
+        private void MagnitudeBaseMinSpinner_OnValueChanged()
         {
             if (magnitudeBaseMinSpinner.Value > magnitudeBaseMaxSpinner.Value)
                 magnitudeBaseMaxSpinner.Value = magnitudeBaseMinSpinner.Value;
@@ -442,7 +442,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateCosts();
         }
 
-        protected virtual void MagnitudeBaseMaxSpinner_OnValueChanged()
+        private void MagnitudeBaseMaxSpinner_OnValueChanged()
         {
             if (magnitudeBaseMaxSpinner.Value < magnitudeBaseMinSpinner.Value)
                 magnitudeBaseMinSpinner.Value = magnitudeBaseMaxSpinner.Value;
@@ -450,7 +450,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateCosts();
         }
 
-        protected virtual void MagnitudePlusMinSpinner_OnValueChanged()
+        private void MagnitudePlusMinSpinner_OnValueChanged()
         {
             if (magnitudePlusMinSpinner.Value > magnitudePlusMaxSpinner.Value)
                 magnitudePlusMaxSpinner.Value = magnitudePlusMinSpinner.Value;
@@ -458,7 +458,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateCosts();
         }
 
-        protected virtual void MagnitudePlusMaxSpinner_OnValueChanged()
+        private void MagnitudePlusMaxSpinner_OnValueChanged()
         {
             if (magnitudePlusMaxSpinner.Value < magnitudePlusMinSpinner.Value)
                 magnitudePlusMinSpinner.Value = magnitudePlusMaxSpinner.Value;
@@ -466,12 +466,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateCosts();
         }
 
-        protected virtual void MagnitudePerLevelSpinner_OnValueChanged()
+        private void MagnitudePerLevelSpinner_OnValueChanged()
         {
             UpdateCosts();
         }
 
-        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
         }

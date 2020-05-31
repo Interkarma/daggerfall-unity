@@ -17,45 +17,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        protected Rect footButtonRect = new Rect(5, 5, 120, 7);
-        protected Rect horseButtonRect = new Rect(5, 14, 120, 7);
-        protected Rect cartButtonRect = new Rect(5, 23, 120, 7);
-        protected Rect shipButtonRect = new Rect(5, 32, 120, 7);
-        protected Rect exitButtonRect = new Rect(44, 42, 43, 15);
+        Rect footButtonRect = new Rect(5, 5, 120, 7);
+        Rect horseButtonRect = new Rect(5, 14, 120, 7);
+        Rect cartButtonRect = new Rect(5, 23, 120, 7);
+        Rect shipButtonRect = new Rect(5, 32, 120, 7);
+        Rect exitButtonRect = new Rect(44, 42, 43, 15);
 
 //		Rect footDisabledRect = new Rect(1, 1, 120, 7);     // Can foot option ever be disabled?
-        protected Rect horseDisabledRect = new Rect(1, 10, 120, 7);
-        protected Rect cartDisabledRect = new Rect(1, 19, 120, 7);
-        protected Rect shipDisabledRect = new Rect(1, 28, 120, 7);
+        Rect horseDisabledRect = new Rect(1, 10, 120, 7);
+        Rect cartDisabledRect = new Rect(1, 19, 120, 7);
+        Rect shipDisabledRect = new Rect(1, 28, 120, 7);
 
         #endregion
 
         #region UI Controls
 
-        protected Panel mainPanel = new Panel();
-        protected Button footButton;
-        protected Button horseButton;
-        protected Button cartButton;
-        protected Button shipButton;
-        protected Button exitButton;
+        Panel mainPanel = new Panel();
+        Button footButton;
+        Button horseButton;
+        Button cartButton;
+        Button shipButton;
+        Button exitButton;
 
         #endregion
 
         #region UI Textures
 
-        protected Texture2D baseTexture;
-        protected Texture2D disabledTexture;
+        Texture2D baseTexture;
+        Texture2D disabledTexture;
 
         #endregion
 
         #region Fields
 
-        protected const string baseTextureName = "MOVE00I0.IMG";
-        protected const string disabledTextureName = "MOVE01I0.IMG";
+        const string baseTextureName = "MOVE00I0.IMG";
+        const string disabledTextureName = "MOVE01I0.IMG";
 
-        protected Vector2 baseSize;
+        Vector2 baseSize;
 
         KeyCode toggleClosedBinding;
+        bool isCloseWindowDeferred = false;
 
         #endregion
 
@@ -95,12 +96,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             footButton = DaggerfallUI.AddButton(footButtonRect, mainPanel);
             footButton.OnMouseClick += FootButton_OnMouseClick;
             footButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TransportFoot);
+            footButton.OnKeyboardEvent += FootButton_OnKeyboardEvent;
 
             // Horse button
             horseButton = DaggerfallUI.AddButton(horseButtonRect, mainPanel);
             if (hasHorse) {
                 horseButton.OnMouseClick += HorseButton_OnMouseClick;
                 horseButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TransportHorse);
+                horseButton.OnKeyboardEvent += HorseButton_OnKeyboardEvent;
             }
             else {
                 horseButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, horseDisabledRect, disabledTextureSize);
@@ -110,6 +113,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (hasCart) {
                 cartButton.OnMouseClick += CartButton_OnMouseClick;
                 cartButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TransportCart);
+                cartButton.OnKeyboardEvent += CartButton_OnKeyboardEvent;
             }
             else {
                 cartButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, cartDisabledRect, disabledTextureSize);
@@ -119,6 +123,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (hasShip) {
                 shipButton.OnMouseClick += ShipButton_OnMouseClick;
                 shipButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TransportShip);
+                shipButton.OnKeyboardEvent += ShipButton_OnKeyboardEvent;
             }
             else {
                 shipButton.BackgroundTexture = ImageReader.GetSubTexture(disabledTexture, shipDisabledRect, disabledTextureSize);
@@ -128,6 +133,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TransportExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             NativePanel.Components.Add(mainPanel);
 
@@ -155,7 +161,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        protected virtual void LoadTextures()
+        void LoadTextures()
         {
             ImageData baseData = ImageReader.GetImageData(baseTextureName);
             baseTexture = baseData.texture;
@@ -167,35 +173,89 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
         }
 
-        protected virtual void FootButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
+        }
+
+        private void FootButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Reset to normal on foot walking.
             GameManager.Instance.TransportManager.TransportMode = TransportModes.Foot;
             CloseWindow();
         }
 
-        protected virtual void HorseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void FootButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyUp)
+            {
+                // Reset to normal on foot walking.
+                GameManager.Instance.TransportManager.TransportMode = TransportModes.Foot;
+                CloseWindow();
+            }
+        }
+
+        private void HorseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Change to riding a horse.
             GameManager.Instance.TransportManager.TransportMode = TransportModes.Horse;
             CloseWindow();
         }
 
-        protected virtual void CartButton_OnMouseClick(BaseScreenComponent sender, Vector2 position) {
+        private void HorseButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyUp)
+            {
+                // Change to riding a horse.
+                GameManager.Instance.TransportManager.TransportMode = TransportModes.Horse;
+                CloseWindow();
+            }
+        }
+
+        private void CartButton_OnMouseClick(BaseScreenComponent sender, Vector2 position) {
             // Change to riding a cart.
             GameManager.Instance.TransportManager.TransportMode = TransportModes.Cart;
             CloseWindow();
         }
 
-        protected virtual void ShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position) {
+        private void CartButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyUp)
+            {
+                // Change to riding a cart.
+                GameManager.Instance.TransportManager.TransportMode = TransportModes.Cart;
+                CloseWindow();
+            }
+        }
+
+        private void ShipButton_OnMouseClick(BaseScreenComponent sender, Vector2 position) {
             // Teleport to your ship, or back.
             GameManager.Instance.TransportManager.TransportMode = TransportModes.Ship;
             CloseWindow();
+        }
+
+        private void ShipButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyUp)
+            {
+                // Teleport to your ship, or back.
+                GameManager.Instance.TransportManager.TransportMode = TransportModes.Ship;
+                CloseWindow();
+            }
         }
 
         #endregion

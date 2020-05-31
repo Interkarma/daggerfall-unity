@@ -18,27 +18,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        protected Rect mainPanelRect = new Rect(0, 50, 171, 57);
-        protected Rect destinationPanelRect = new Rect(5, 15, 161, 8);
-        protected Rect yesButtonRect = new Rect(4, 38, 52, 15);
-        protected Rect noButtonRect = new Rect(115, 38, 52, 15);
+        Rect mainPanelRect = new Rect(0, 50, 171, 57);
+        Rect destinationPanelRect = new Rect(5, 15, 161, 8);
+        Rect yesButtonRect = new Rect(4, 38, 52, 15);
+        Rect noButtonRect = new Rect(115, 38, 52, 15);
 
         #endregion
 
         #region UI Controls
 
-        protected Panel mainPanel = new Panel();
-        protected Panel destinationPanel = new Panel();
-        protected TextLabel destinationLabel;
-        protected Button yesButton;
-        protected Button noButton;
+        Panel mainPanel = new Panel();
+        Panel destinationPanel = new Panel();
+        TextLabel destinationLabel;
+        Button yesButton;
+        Button noButton;
 
         #endregion
 
         #region UI Textures
 
-        protected Texture2D baseTexture;
-        protected const string baseTextureName = "TELE00I0.IMG";
+        Texture2D baseTexture;
+        const string baseTextureName = "TELE00I0.IMG";
 
         #endregion
 
@@ -47,6 +47,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallTravelMapWindow travelWindow = null;
         DFPosition destinationPos;
         string destinationName;
+        bool isCloseWindowDeferred = false;
+        bool isTeleportAwayDeferred = false;
 
         public DFPosition DestinationPos { get { return destinationPos; } set { destinationPos = value; } }
         public string DestinationName { get { return destinationName; } set { destinationName = value; } }
@@ -87,11 +89,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             yesButton = DaggerfallUI.AddButton(yesButtonRect, mainPanel);
             yesButton.OnMouseClick += YesButton_OnMouseClick;
             yesButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.Yes);
+            yesButton.OnKeyboardEvent += YesButton_OnKeyboardEvent;
 
             // No button
             noButton = DaggerfallUI.AddButton(noButtonRect, mainPanel);
             noButton.OnMouseClick += NoButton_OnMouseClick;
             noButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.No);
+            noButton.OnKeyboardEvent += NoButton_OnKeyboardEvent;
 
             NativePanel.Components.Add(mainPanel);
         }
@@ -100,7 +104,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        protected virtual void LoadTextures()
+        void LoadTextures()
         {
             baseTexture = ImageReader.GetTexture(baseTextureName);
         }
@@ -109,12 +113,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        protected virtual void NoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void NoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
         }
 
-        protected virtual void YesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void NoButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
+        }
+
+
+        private void TeleportAway()
         {
             DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();
 
@@ -132,6 +150,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
         }
 
+        private void YesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            TeleportAway();
+        }
+
+        void YesButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+                isTeleportAwayDeferred = true;
+            else if (keyboardEvent.type == EventType.KeyUp && isTeleportAwayDeferred)
+            {
+                isTeleportAwayDeferred = false;
+                TeleportAway();
+            }
+        }
+
         #endregion
+
     }
 }
