@@ -21,34 +21,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect talkButtonRect = new Rect(5, 5, 120, 7);
-        Rect summonButtonRect = new Rect(5, 14, 120, 7);
-        Rect questButtonRect = new Rect(5, 23, 120, 7);
-        Rect exitButtonRect = new Rect(44, 33, 43, 15);
+        protected Rect talkButtonRect = new Rect(5, 5, 120, 7);
+        protected Rect summonButtonRect = new Rect(5, 14, 120, 7);
+        protected Rect questButtonRect = new Rect(5, 23, 120, 7);
+        protected Rect exitButtonRect = new Rect(44, 33, 43, 15);
 
         #endregion
 
         #region UI Controls
 
-        Panel mainPanel = new Panel();
-        Button talkButton = new Button();
-        Button summonButton = new Button();
-        Button questButton = new Button();
-        Button exitButton = new Button();
+        protected Panel mainPanel = new Panel();
+        protected Button talkButton = new Button();
+        protected Button summonButton = new Button();
+        protected Button questButton = new Button();
+        protected Button exitButton = new Button();
 
         #endregion
 
         #region Fields
 
-        const string baseTextureName = "DAED00I0.IMG";      // Talk / Daedra Summoning / Quest
-        Texture2D baseTexture;
+        protected const string baseTextureName = "DAED00I0.IMG";      // Talk / Daedra Summoning / Quest
+        protected Texture2D baseTexture;
 
-        StaticNPC witchNPC;
-
-        bool isCloseWindowDeferred = false;
-        bool isTalkWindowDeferred = false;
-        bool isSummonDeferred = false;
-        bool isGetQuestDeferred = false;
+        protected StaticNPC witchNPC;
 
         #endregion
 
@@ -82,25 +77,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
             talkButton.OnMouseClick += TalkButton_OnMouseClick;
             talkButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesTalk);
-            talkButton.OnKeyboardEvent += TalkButton_OnKeyboardEvent;
 
             // Summon button
             summonButton = DaggerfallUI.AddButton(summonButtonRect, mainPanel);
             summonButton.OnMouseClick += SummonButton_OnMouseClick;
             summonButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesDaedraSummon);
-            summonButton.OnKeyboardEvent += SummonButton_OnKeyboardEvent;
 
             // Quest button
             questButton = DaggerfallUI.AddButton(questButtonRect, mainPanel);
             questButton.OnMouseClick += QuestButton_OnMouseClick;
             questButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesQuest);
-            questButton.OnKeyboardEvent += QuestButton_OnKeyboardEvent;
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, mainPanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.WitchesExit);
-            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             NativePanel.Components.Add(mainPanel);
         }
@@ -109,7 +100,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        void LoadTextures()
+        protected virtual void LoadTextures()
         {
             baseTexture = ImageReader.GetTexture(baseTextureName);
         }
@@ -158,86 +149,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             GameManager.Instance.TalkManager.TalkToStaticNPC(witchNPC);
         }
 
-        void TalkButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        protected virtual void SummonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (keyboardEvent.type == EventType.KeyDown)
-            {
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-                isTalkWindowDeferred = true;
-            }
-            else if (keyboardEvent.type == EventType.KeyUp && isTalkWindowDeferred)
-            {
-                isTalkWindowDeferred = false;
-                CloseWindow();
-                GameManager.Instance.TalkManager.TalkToStaticNPC(witchNPC);
-            }
-        }
-
-        private void SummonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaedraSummoningService(witchNPC.Data.factionID);
         }
 
-        void SummonButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        protected virtual void QuestButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (keyboardEvent.type == EventType.KeyDown)
-            {
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-                isSummonDeferred = true;
-            }
-            else if (keyboardEvent.type == EventType.KeyUp && isSummonDeferred)
-            {
-                isSummonDeferred = false;
-                DaedraSummoningService(witchNPC.Data.factionID);
-            }
-        }
-
-        private void QuestButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             GetQuest();
         }
 
-        void QuestButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (keyboardEvent.type == EventType.KeyDown)
-            {
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-                isGetQuestDeferred = true;
-            }
-            else if (keyboardEvent.type == EventType.KeyUp && isGetQuestDeferred)
-            {
-                isGetQuestDeferred = false;
-                GetQuest();
-            }
-        }
-
-        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
-        }
-
-        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
-        {
-            if (keyboardEvent.type == EventType.KeyDown)
-            {
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-                isCloseWindowDeferred = true;
-            }
-            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
-            {
-                isCloseWindowDeferred = false;
-                CloseWindow();
-            }
         }
 
         #endregion
@@ -252,7 +182,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// MacroDataSource context sensitive methods for guild services window.
         /// </summary>
-        private class WitchCovenMacroDataSource : MacroDataSource
+        protected class WitchCovenMacroDataSource : MacroDataSource
         {
             private DaggerfallWitchesCovenPopupWindow parent;
             public WitchCovenMacroDataSource(DaggerfallWitchesCovenPopupWindow witchCovenWindow)

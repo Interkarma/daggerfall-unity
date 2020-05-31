@@ -21,9 +21,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
 
         KeyCode toggleClosedBinding;
-        bool isCloseWindowDeferred = false;
 
-        List<DaggerfallUnityItem> magicUseItems = new List<DaggerfallUnityItem>();
+        protected List<DaggerfallUnityItem> magicUseItems = new List<DaggerfallUnityItem>();
 
         #region Constructors
 
@@ -65,19 +64,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void Update()
         {
-            base.Update();
-
             // Toggle window closed with same hotkey used to open it
-            if (InputManager.Instance.GetKeyDown(toggleClosedBinding))
-                isCloseWindowDeferred = true;
-            else if (InputManager.Instance.GetKeyUp(toggleClosedBinding) && isCloseWindowDeferred)
-            {
-                isCloseWindowDeferred = false;
+            if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
                 CloseWindow();
-            }
+            else
+                base.Update();
         }
 
-        void Refresh()
+        protected virtual void Refresh()
         {
             ListBox.ClearItems();
             foreach (DaggerfallUnityItem magicUseItem in magicUseItems)

@@ -32,76 +32,73 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect costPanelRect = new Rect(49, 13, 111, 9);
+        protected Rect costPanelRect = new Rect(49, 13, 111, 9);
 
-        Rect actionButtonsPanelRect = new Rect(222, 10, 39, 190);
-        new Rect wagonButtonRect = new Rect(4, 4, 31, 14);
-        new Rect infoButtonRect = new Rect(4, 26, 31, 14);
-        Rect selectButtonRect = new Rect(4, 48, 31, 14);
-        Rect stealButtonRect = new Rect(4, 102, 31, 14);
-        Rect modeActionButtonRect = new Rect(4, 124, 31, 14);
-        Rect clearButtonRect = new Rect(4, 146, 31, 14);
+        protected Rect actionButtonsPanelRect = new Rect(222, 10, 39, 190);
+        protected new Rect wagonButtonRect = new Rect(4, 4, 31, 14);
+        protected new Rect infoButtonRect = new Rect(4, 26, 31, 14);
+        protected Rect selectButtonRect = new Rect(4, 48, 31, 14);
+        protected Rect stealButtonRect = new Rect(4, 102, 31, 14);
+        protected Rect modeActionButtonRect = new Rect(4, 124, 31, 14);
+        protected Rect clearButtonRect = new Rect(4, 146, 31, 14);
 
-        new Rect itemInfoPanelRect = new Rect(223, 87, 37, 32);
-        Rect itemBuyInfoPanelRect = new Rect(223, 76, 37, 32);
+        protected new Rect itemInfoPanelRect = new Rect(223, 87, 37, 32);
+        protected Rect itemBuyInfoPanelRect = new Rect(223, 76, 37, 32);
 
         #endregion
 
         #region UI Controls
 
-        Panel costPanel;
-        TextLabel costLabel;
-        TextLabel goldLabel;
+        protected Panel costPanel;
+        protected TextLabel costLabel;
+        protected TextLabel goldLabel;
 
-        Panel actionButtonsPanel;
-        Button selectButton;
-        Button stealButton;
-        Button modeActionButton;
-        Button clearButton;
+        protected Panel actionButtonsPanel;
+        protected Button selectButton;
+        protected Button stealButton;
+        protected Button modeActionButton;
+        protected Button clearButton;
 
         #endregion
 
         #region UI Textures
 
-        Texture2D costPanelTexture;
-        Texture2D actionButtonsTexture;
-        Texture2D actionButtonsGoldTexture;
-        Texture2D selectSelected;
-        Texture2D selectNotSelected;
+        protected Texture2D costPanelTexture;
+        protected Texture2D actionButtonsTexture;
+        protected Texture2D actionButtonsGoldTexture;
+        protected Texture2D selectSelected;
+        protected Texture2D selectNotSelected;
 
         #endregion
 
         #region Fields
 
-        const string buyButtonsTextureName = "INVE08I0.IMG";
-        const string sellButtonsTextureName = "INVE10I0.IMG";
-        const string sellButtonsGoldTextureName = "INVE11I0.IMG";
-        const string repairButtonsTextureName = "INVE12I0.IMG";
-        const string identifyButtonsTextureName = "INVE14I0.IMG";
-        const string costPanelTextureName = "SHOP00I0.IMG";
+        protected const string buyButtonsTextureName = "INVE08I0.IMG";
+        protected const string sellButtonsTextureName = "INVE10I0.IMG";
+        protected const string sellButtonsGoldTextureName = "INVE11I0.IMG";
+        protected const string repairButtonsTextureName = "INVE12I0.IMG";
+        protected const string identifyButtonsTextureName = "INVE14I0.IMG";
+        protected const string costPanelTextureName = "SHOP00I0.IMG";
 
         const int doesNotNeedToBeRepairedTextId = 24;
         const int magicItemsCannotBeRepairedTextId = 33;
 
-        Color repairItemBackgroundColor = new Color(0.17f, 0.32f, 0.7f, 0.6f);
+        protected Color repairItemBackgroundColor = new Color(0.17f, 0.32f, 0.7f, 0.6f);
 
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
-        List<ItemGroups> itemTypesAccepted = storeBuysItemType[DFLocation.BuildingTypes.GeneralStore];
+        protected List<ItemGroups> itemTypesAccepted = storeBuysItemType[DFLocation.BuildingTypes.GeneralStore];
 
-        ItemCollection merchantItems = new ItemCollection();
-        ItemCollection basketItems = new ItemCollection();
+        protected ItemCollection merchantItems = new ItemCollection();
+        protected ItemCollection basketItems = new ItemCollection();
 
-        int cost = 0;
+        protected int cost = 0;
         bool usingIdentifySpell = false;
         DaggerfallUnityItem itemBeingRepaired;
 
         bool suppressInventory = false;
         string suppressInventoryMessage = string.Empty;
 
-        bool isStealDeferred = false;
-        bool isModeActionDeferred = false;
-
-        static Dictionary<DFLocation.BuildingTypes, List<ItemGroups>> storeBuysItemType = new Dictionary<DFLocation.BuildingTypes, List<ItemGroups>>()
+        protected static Dictionary<DFLocation.BuildingTypes, List<ItemGroups>> storeBuysItemType = new Dictionary<DFLocation.BuildingTypes, List<ItemGroups>>()
         {
             { DFLocation.BuildingTypes.Alchemist, new List<ItemGroups>()
                 { ItemGroups.Gems, ItemGroups.CreatureIngredients1, ItemGroups.CreatureIngredients2, ItemGroups.CreatureIngredients3, ItemGroups.PlantIngredients1, ItemGroups.PlantIngredients2, ItemGroups.MiscellaneousIngredients1, ItemGroups.MiscellaneousIngredients2, ItemGroups.MetalIngredients } },
@@ -240,7 +237,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeExit);
-            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             // Setup initial state
             SelectTabPage((WindowMode == WindowModes.Identify) ? TabPages.MagicItems : TabPages.WeaponsAndArmor);
@@ -259,7 +255,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SelectWagon(false);
         }
 
-        Color RepairItemBackgroundColourHandler(DaggerfallUnityItem item)
+        protected virtual Color RepairItemBackgroundColourHandler(DaggerfallUnityItem item)
         {
             if (DaggerfallUnity.Settings.InstantRepairs)
                 return (item.currentCondition == item.maxCondition) ? repairItemBackgroundColor : Color.clear;
@@ -267,12 +263,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return (item.RepairData.IsBeingRepaired()) ? repairItemBackgroundColor : Color.clear;
         }
 
-        Texture2D[] BuyItemBackgroundAnimationHandler(DaggerfallUnityItem item)
+        protected virtual Texture2D[] BuyItemBackgroundAnimationHandler(DaggerfallUnityItem item)
         {
             return (basketItems.Contains(item) || remoteItems.Contains(item)) ? coinsAnimation.animatedTextures : null;
         }
 
-        string RepairItemLabelTextHandler(DaggerfallUnityItem item)
+        protected virtual string RepairItemLabelTextHandler(DaggerfallUnityItem item)
         {
             bool repairDone = item.RepairData.IsBeingRepaired() ? item.RepairData.IsRepairFinished() : item.currentCondition == item.maxCondition;
             return repairDone ? 
@@ -280,7 +276,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     TextManager.Instance.GetText(textDatabase, "repairDays").Replace("%d", item.RepairData.EstimatedDaysUntilRepaired().ToString());
         }
 
-        void SetupCostAndGold()
+        protected virtual void SetupCostAndGold()
         {
             costPanel = DaggerfallUI.AddPanel(costPanelRect, NativePanel);
             costPanel.BackgroundTexture = costPanelTexture;
@@ -311,7 +307,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 stealButton = DaggerfallUI.AddButton(stealButtonRect, actionButtonsPanel);
                 stealButton.OnMouseClick += StealButton_OnMouseClick;
                 stealButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeSteal);
-                stealButton.OnKeyboardEvent += StealButton_OnKeyboardEvent;
             }
             modeActionButton = DaggerfallUI.AddButton(modeActionButtonRect, actionButtonsPanel);
             modeActionButton.OnMouseClick += ModeActionButton_OnMouseClick;
@@ -334,7 +329,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     modeActionButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeSell);
                     break;
             }
-            modeActionButton.OnKeyboardEvent += ModeActionButton_OnKeyboardEvent;
 
             clearButton = DaggerfallUI.AddButton(clearButtonRect, actionButtonsPanel);
             clearButton.OnMouseClick += ClearButton_OnMouseClick;
@@ -415,7 +409,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Pricing
 
-        private void UpdateCostAndGold()
+        protected virtual void UpdateCostAndGold()
         {
             bool modeActionEnabled = false;
             cost = 0;
@@ -482,7 +476,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             modeActionButton.Enabled = modeActionEnabled;
         }
 
-        private int GetTradePrice()
+        protected virtual int GetTradePrice()
         {
             switch (WindowMode)
             {
@@ -504,7 +498,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Repairs
 
-        protected void UpdateRepairTimes(bool commit)
+        protected virtual void UpdateRepairTimes(bool commit)
         {
             if (WindowMode != WindowModes.Repair || DaggerfallUnity.Settings.InstantRepairs)
                 return;
@@ -564,7 +558,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Helper Methods
 
-        protected void SelectActionMode(ActionModes mode)
+        protected virtual void SelectActionMode(ActionModes mode)
         {
             selectedActionMode = mode;
             if (mode == ActionModes.Info)
@@ -579,7 +573,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected void ClearSelectedItems()
+        protected virtual void ClearSelectedItems()
         {
             if (WindowMode == WindowModes.Buy)
             {   // Return all basket items to merchant, unequipping if necessary.
@@ -720,7 +714,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 base.FilterRemoteItems();
         }
 
-        protected void SelectWagon(bool show)
+        protected virtual void SelectWagon(bool show)
         {
             if (wagonButton == null)
                 return;
@@ -853,7 +847,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void ConfirmInterruptRepairBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void ConfirmInterruptRepairBox_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
@@ -862,7 +856,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void TakeItemFromRepair(DaggerfallUnityItem item)
+        protected virtual void TakeItemFromRepair(DaggerfallUnityItem item)
         {
             TransferItem(item, remoteItems, localItems, UsingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item));
             item.RepairData.Collect();
@@ -873,7 +867,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Action Button Event Handlers
 
-        private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (PlayerEntity.Items.Contains(ItemGroups.Transportation, (int) Transportation.Small_cart))
@@ -883,24 +877,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void InfoButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             SelectActionMode(ActionModes.Info);
         }
 
-        private void SelectButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void SelectButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             SelectActionMode(ActionModes.Select);
         }
 
-        private void DoSteal()
+        protected virtual void StealButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (WindowMode == WindowModes.Buy && cost > 0)
             {
                 // Calculate the weight of all items picked from shelves, then get chance of shoplifting success.
-                int weightAndNumItems = (int)basketItems.GetWeight() + basketItems.Count;
+                int weightAndNumItems = (int) basketItems.GetWeight() + basketItems.Count;
                 int chanceBeingDetected = FormulaHelper.CalculateShopliftingChance(PlayerEntity, buildingDiscoveryData.quality, weightAndNumItems);
                 PlayerEntity.TallySkill(DFCareer.Skills.Pickpocket, 1);
 
@@ -922,28 +917,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void StealButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-            DoSteal();
-        }
-
-        void StealButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
-        {
-            if (keyboardEvent.type == EventType.KeyDown)
-            {
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-                isStealDeferred = true;
-            }
-            else if (keyboardEvent.type == EventType.KeyUp && isStealDeferred)
-            {
-                isStealDeferred = false;
-                DoSteal();
-            }
-        }
-
-        private void DoModeAction()
-        {
             if (usingIdentifySpell)
             {   // No trade when using a spell, just identify immediately
                 for (int i = 0; i < remoteItems.Count; i++)
@@ -954,34 +930,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 ShowTradePopup();
         }
 
-        private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-            DoModeAction();
-        }
-
-        void ModeActionButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
-        {
-            if (keyboardEvent.type == EventType.KeyDown)
-            {
-                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-                isModeActionDeferred = true;
-            }
-            else if (keyboardEvent.type == EventType.KeyUp && isModeActionDeferred)
-            {
-                isModeActionDeferred = false;
-                DoModeAction();
-            }
-        }
-
-        private void ClearButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ClearButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ClearSelectedItems();
             Refresh();
         }
 
-        private void ConfirmTrade_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void ConfirmTrade_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             bool receivedLetterOfCredit = false;
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
@@ -1054,7 +1010,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Misc Events & Helpers
 
-        void ShowTradePopup()
+        protected virtual void ShowTradePopup()
         {
             const int tradeMessageBaseId = 260;
             const int notEnoughGoldId = 454;
@@ -1113,7 +1069,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// MacroDataSource context sensitive methods for trade window.
         /// </summary>
-        private class TradeMacroDataSource : MacroDataSource
+        protected class TradeMacroDataSource : MacroDataSource
         {
             private DaggerfallTradeWindow parent;
             public TradeMacroDataSource(DaggerfallTradeWindow tradeWindow)

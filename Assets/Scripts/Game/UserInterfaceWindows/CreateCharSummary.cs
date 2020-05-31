@@ -29,11 +29,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class CreateCharSummary : DaggerfallPopupWindow
     {
-        const string nativeImgName = "CHAR04I0.IMG";
-        const int strYouMustDistributeYourBonusPoints = 14;
+        protected const string nativeImgName = "CHAR04I0.IMG";
+        protected const int strYouMustDistributeYourBonusPoints = 14;
 
-        Texture2D nativeTexture;
-        TextBox textBox = new TextBox();
+        protected Texture2D nativeTexture;
+        protected TextBox textBox = new TextBox();
         StatsRollout statsRollout = new StatsRollout();
         SkillsRollout skillsRollout = new SkillsRollout();
         ReflexPicker reflexPicker = new ReflexPicker();
@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        void SetCharacterSheet(CharacterDocument characterDocument)
+        protected virtual void SetCharacterSheet(CharacterDocument characterDocument)
         {
             this.characterDocument = characterDocument;
             this.textBox.Text = characterDocument.name;
@@ -136,13 +136,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        void RestartButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void RestartButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             PopWindow();
             RaiseOnRestartEvent();
         }
 
-        void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (statsRollout.BonusPool > 0 || 
                 skillsRollout.PrimarySkillBonusPoints > 0 ||

@@ -23,26 +23,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class CreateCharCustomClass : DaggerfallPopupWindow
     {
-        const string nativeImgName = "CUST00I0.IMG";
-        const string nativeDaggerImgName = "CUST08I0.IMG";
+        protected const string nativeImgName = "CUST00I0.IMG";
+        protected const string nativeDaggerImgName = "CUST08I0.IMG";
 
-        const int maxHpPerLevel = 30;
-        const int minHpPerLevel = 4;
-        const int defaultHpPerLevel = 8;
-        const int minDifficultyPoints = -12;
-        const int maxDifficultyPoints = 40;
+        protected const int maxHpPerLevel = 30;
+        protected const int minHpPerLevel = 4;
+        protected const int defaultHpPerLevel = 8;
+        protected const int minDifficultyPoints = -12;
+        protected const int maxDifficultyPoints = 40;
 
-        const float daggerTrailLingerTime = 1.0f;
+        protected const float daggerTrailLingerTime = 1.0f;
 
         const int strNameYourClass = 301;
         const int strSetSkills = 300;
-        const int strDistributeStats = 302;
+        protected const int strDistributeStats = 302;
         const int strAdvancingDaggerInRed = 306;
-        Texture2D nativeTexture;
-        Texture2D nativeDaggerTexture;
+        protected Texture2D nativeTexture;
+        protected Texture2D nativeDaggerTexture;
         DaggerfallFont font;
         StatsRollout statsRollout;
-        TextBox nameTextBox = new TextBox();
+        protected TextBox nameTextBox = new TextBox();
         DFCareer createdClass;
         int lastSkillButtonId;
         Dictionary<string, DFCareer.Skills> skillsDict;
@@ -61,23 +61,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Windows
 
-        CreateCharReputationWindow createCharReputationWindow;
-        CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow;
-        CreateCharSpecialAdvantageWindow createCharSpecialDisadvantageWindow;
-        DaggerfallListPickerWindow helpPicker;
-        DaggerfallListPickerWindow skillPicker;
+        protected CreateCharReputationWindow createCharReputationWindow;
+        protected CreateCharSpecialAdvantageWindow createCharSpecialAdvantageWindow;
+        protected CreateCharSpecialAdvantageWindow createCharSpecialDisadvantageWindow;
+        protected DaggerfallListPickerWindow helpPicker;
+        protected DaggerfallListPickerWindow skillPicker;
 
         #endregion
 
         #region UI Panels
 
-        Panel daggerPanel = new Panel();
+        protected Panel daggerPanel = new Panel();
 
         #endregion
 
         #region UI Rects
 
-        Rect[] skillButtonRects = new Rect[]
+        protected Rect[] skillButtonRects = new Rect[]
         {
             new Rect(66, 31, 108, 8),
             new Rect(66, 41, 108, 8),
@@ -92,33 +92,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new Rect(66, 169, 108, 8),
             new Rect(66, 179, 108, 8)
         };
-        Rect hitPointsUpButtonRect = new Rect(252, 46, 8, 10);
-        Rect hitPointsDownButtonRect = new Rect(252, 57, 8, 10);
-        Rect helpButtonRect = new Rect(249, 74, 66, 22);
-        Rect specialAdvantageButtonRect = new Rect(249, 98, 66, 22);
-        Rect specialDisadvantageButtonRect = new Rect(249, 122, 66, 22);
-        Rect reputationButtonRect = new Rect(249, 146, 66, 22);
-        Rect exitButtonRect = new Rect(263, 172, 38, 21);
+        protected Rect hitPointsUpButtonRect = new Rect(252, 46, 8, 10);
+        protected Rect hitPointsDownButtonRect = new Rect(252, 57, 8, 10);
+        protected Rect helpButtonRect = new Rect(249, 74, 66, 22);
+        protected Rect specialAdvantageButtonRect = new Rect(249, 98, 66, 22);
+        protected Rect specialDisadvantageButtonRect = new Rect(249, 122, 66, 22);
+        protected Rect reputationButtonRect = new Rect(249, 146, 66, 22);
+        protected Rect exitButtonRect = new Rect(263, 172, 38, 21);
 
         #endregion
 
         #region Buttons
 
-        Button[] skillButtons = new Button[12];
-        Button hitPointsUpButton;
-        Button hitPointsDownButton;
-        Button helpButton;
-        Button specialAdvantageButton;
-        Button specialDisadvantageButton;
-        Button reputationButton;
-        Button exitButton;
+        protected Button[] skillButtons = new Button[12];
+        protected Button hitPointsUpButton;
+        protected Button hitPointsDownButton;
+        protected Button helpButton;
+        protected Button specialAdvantageButton;
+        protected Button specialDisadvantageButton;
+        protected Button reputationButton;
+        protected Button exitButton;
 
         #endregion
 
         #region Text Labels
 
-        TextLabel[] skillLabels = new TextLabel[12];
-        TextLabel hpLabel;
+        protected TextLabel[] skillLabels = new TextLabel[12];
+        protected TextLabel hpLabel;
 
         #endregion
 
@@ -251,7 +251,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        void skillButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        protected virtual void skillButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             skillPicker = new DaggerfallListPickerWindow(uiManager, this);
             skillPicker.OnItemPicked += SkillPicker_OnItemPicked;
@@ -263,7 +263,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(skillPicker);
         }
 
-        void SkillPicker_OnItemPicked(int index, string skillName)
+        protected virtual void SkillPicker_OnItemPicked(int index, string skillName)
         {
             skillPicker.CloseWindow();
             switch (lastSkillButtonId)
@@ -336,7 +336,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void HelpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void HelpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             helpPicker = new DaggerfallListPickerWindow(uiManager, this);
             foreach (string str in helpDict.Keys)
@@ -347,7 +347,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(helpPicker);
         }
 
-        void HelpPicker_OnItemPicked(int index, string itemString)
+        protected virtual void HelpPicker_OnItemPicked(int index, string itemString)
         {
             helpPicker.CloseWindow();
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
@@ -368,13 +368,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(createCharSpecialDisadvantageWindow);
         }
 
-        void ReputationButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ReputationButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             createCharReputationWindow = new CreateCharReputationWindow(uiManager, this);
             uiManager.PushWindow(createCharReputationWindow);
         }
 
-        void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallMessageBox messageBox;
 
@@ -438,7 +438,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private methods
 
-        private void UpdateDifficulty()
+        protected virtual void UpdateDifficulty()
         {
             const int defaultDaggerX = 220;
             const int defaultDaggerY = 115;
@@ -476,7 +476,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             daggerPanel.Position = new Vector2(defaultDaggerX, daggerY);
         }
 
-        IEnumerator AnimateDagger()
+        protected virtual IEnumerator AnimateDagger()
         {
             Panel daggerTrailPanel = new Panel();
             daggerTrailPanel.Position = daggerPanel.Position;

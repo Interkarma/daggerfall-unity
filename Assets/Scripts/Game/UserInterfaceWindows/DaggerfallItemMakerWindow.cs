@@ -27,21 +27,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect weaponsAndArmorRect = new Rect(175, 6, 81, 9);
-        Rect magicItemsRect = new Rect(175, 15, 81, 9);
-        Rect clothingAndMiscRect = new Rect(175, 24, 81, 9);
-        Rect ingredientsRect = new Rect(175, 33, 81, 9);
+        protected Rect weaponsAndArmorRect = new Rect(175, 6, 81, 9);
+        protected Rect magicItemsRect = new Rect(175, 15, 81, 9);
+        protected Rect clothingAndMiscRect = new Rect(175, 24, 81, 9);
+        protected Rect ingredientsRect = new Rect(175, 33, 81, 9);
 
-        Rect powersButtonRect = new Rect(8, 183, 77, 10);
-        Rect sideEffectsButtonRect = new Rect(106, 183, 77, 10);
-        Rect exitButtonRect = new Rect(202, 176, 39, 22);
+        protected Rect powersButtonRect = new Rect(8, 183, 77, 10);
+        protected Rect sideEffectsButtonRect = new Rect(106, 183, 77, 10);
+        protected Rect exitButtonRect = new Rect(202, 176, 39, 22);
 
-        Rect enchantButtonRect = new Rect(200, 115, 43, 15);
-        Rect selectedItemRect = new Rect(196, 68, 50, 37);
+        protected Rect enchantButtonRect = new Rect(200, 115, 43, 15);
+        protected Rect selectedItemRect = new Rect(196, 68, 50, 37);
 
-        Rect itemListScrollerRect = new Rect(253, 49, 60, 148);
-        Rect itemListPanelRect = new Rect(10, 0, 50, 148);
-        readonly Rect[] itemButtonRects = new Rect[]
+        protected Rect itemListScrollerRect = new Rect(253, 49, 60, 148);
+        protected Rect itemListPanelRect = new Rect(10, 0, 50, 148);
+        protected readonly Rect[] itemButtonRects = new Rect[]
         {
             new Rect(0, 0, 50, 37),
             new Rect(0, 37, 50, 37),
@@ -49,80 +49,80 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new Rect(0, 111, 50, 37)
         };
 
-        Rect powersListRect = new Rect(10, 58, 75, 120);
-        Rect sideEffectsListRect = new Rect(108, 58, 75, 120);
-        Rect nameItemButtonRect = new Rect(4, 2, 157, 7);
+        protected Rect powersListRect = new Rect(10, 58, 75, 120);
+        protected Rect sideEffectsListRect = new Rect(108, 58, 75, 120);
+        protected Rect nameItemButtonRect = new Rect(4, 2, 157, 7);
 
         #endregion
 
         #region UI Controls
 
-        TextLabel itemNameLabel = new TextLabel();
-        TextLabel availableGoldLabel = new TextLabel();
-        TextLabel goldCostLabel = new TextLabel();
-        TextLabel enchantmentCostLabel = new TextLabel();
+        protected TextLabel itemNameLabel = new TextLabel();
+        protected TextLabel availableGoldLabel = new TextLabel();
+        protected TextLabel goldCostLabel = new TextLabel();
+        protected TextLabel enchantmentCostLabel = new TextLabel();
 
-        Button weaponsAndArmorButton;
-        Button magicItemsButton;
-        Button clothingAndMiscButton;
-        Button ingredientsButton;
+        protected Button weaponsAndArmorButton;
+        protected Button magicItemsButton;
+        protected Button clothingAndMiscButton;
+        protected Button ingredientsButton;
 
-        Button powersButton;
-        Button sideEffectsButton;
-        Button exitButton;
+        protected Button powersButton;
+        protected Button sideEffectsButton;
+        protected Button exitButton;
 
-        Button enchantButton;
-        Button selectedItemButton;
-        Panel selectedItemPanel;
+        protected Button enchantButton;
+        protected Button selectedItemButton;
+        protected Panel selectedItemPanel;
 
-        ItemListScroller itemsListScroller;
-        EnchantmentListPicker powersList;
-        EnchantmentListPicker sideEffectsList;
+        protected ItemListScroller itemsListScroller;
+        protected EnchantmentListPicker powersList;
+        protected EnchantmentListPicker sideEffectsList;
 
-        DaggerfallListPickerWindow enchantmentPrimaryPicker;
-        DaggerfallListPickerWindow enchantmentSecondaryPicker;
+        protected DaggerfallListPickerWindow enchantmentPrimaryPicker;
+        protected DaggerfallListPickerWindow enchantmentSecondaryPicker;
 
         #endregion
 
         #region UI Textures
 
-        Texture2D baseTexture;
-        Texture2D goldTexture;
+        protected Texture2D baseTexture;
+        protected Texture2D goldTexture;
 
-        Texture2D weaponsAndArmorNotSelected;
-        Texture2D magicItemsNotSelected;
-        Texture2D clothingAndMiscNotSelected;
-        Texture2D ingredientsNotSelected;
-        Texture2D weaponsAndArmorSelected;
-        Texture2D magicItemsSelected;
-        Texture2D clothingAndMiscSelected;
-        Texture2D ingredientsSelected;
+        protected Texture2D weaponsAndArmorNotSelected;
+        protected Texture2D magicItemsNotSelected;
+        protected Texture2D clothingAndMiscNotSelected;
+        protected Texture2D ingredientsNotSelected;
+        protected Texture2D weaponsAndArmorSelected;
+        protected Texture2D magicItemsSelected;
+        protected Texture2D clothingAndMiscSelected;
+        protected Texture2D ingredientsSelected;
 
         #endregion
 
         #region Fields
 
-        const MagicCraftingStations thisMagicStation = MagicCraftingStations.ItemMaker;
+        protected const MagicCraftingStations thisMagicStation = MagicCraftingStations.ItemMaker;
 
-        const string textDatabase = "ClassicEffects";
-        const string baseTextureName = "ITEM00I0.IMG";
-        const string goldTextureName = "ITEM01I0.IMG";
-        const int alternateAlphaIndex = 12;
-        const int maxEnchantSlots = 10;
+        protected const string textDatabase = "ClassicEffects";
+        protected const string baseTextureName = "ITEM00I0.IMG";
+        protected const string goldTextureName = "ITEM01I0.IMG";
+        protected const int alternateAlphaIndex = 12;
+        protected const int maxEnchantSlots = 10;
 
         PlayerEntity playerEntity;
         DaggerfallInventoryWindow.TabPages selectedTabPage = DaggerfallInventoryWindow.TabPages.WeaponsAndArmor;
-        List<DaggerfallUnityItem> itemsFiltered = new List<DaggerfallUnityItem>();
+        protected List<DaggerfallUnityItem> itemsFiltered = new List<DaggerfallUnityItem>();
         DaggerfallUnityItem selectedItem;
 
-        Dictionary<string, IEntityEffect> groupedPowerTemplates = new Dictionary<string, IEntityEffect>();
-        Dictionary<string, IEntityEffect> groupedSideEffectTemplates = new Dictionary<string, IEntityEffect>();
-        List<EnchantmentSettings> enumeratedPowerEnchantments = new List<EnchantmentSettings>();
-        List<EnchantmentSettings> enumeratedSideEffectEnchantments = new List<EnchantmentSettings>();
+        protected Dictionary<string, IEntityEffect> groupedPowerTemplates = new Dictionary<string, IEntityEffect>();
+        protected Dictionary<string, IEntityEffect> groupedSideEffectTemplates = new Dictionary<string, IEntityEffect>();
+        protected List<EnchantmentSettings> enumeratedPowerEnchantments = new List<EnchantmentSettings>();
+        protected List<EnchantmentSettings> enumeratedSideEffectEnchantments = new List<EnchantmentSettings>();
 
         bool selectingPowers;
-        List<EnchantmentSettings> itemPowers = new List<EnchantmentSettings>();
-        List<EnchantmentSettings> itemSideEffects = new List<EnchantmentSettings>();
+        protected List<EnchantmentSettings> itemPowers = new List<EnchantmentSettings>();
+        protected List<EnchantmentSettings> itemSideEffects = new List<EnchantmentSettings>();
 
         #endregion
 
@@ -184,7 +184,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
         }
 
-        void Refresh()
+        protected virtual void Refresh()
         {
             // Update labels and lists
             availableGoldLabel.Text = PlayerEntity.GetGoldAmount().ToString();
@@ -223,17 +223,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        int GetTotalEnchantmentCost()
+        protected virtual int GetTotalEnchantmentCost()
         {
             return powersList.GetTotalEnchantmentCost(false) + sideEffectsList.GetTotalEnchantmentCost(false);
         }
 
-        int GetTotalGoldCost()
+        protected virtual int GetTotalGoldCost()
         {
             return powersList.GetTotalEnchantmentCost(true) * 10;
         }
 
-        void EnumerateEnchantments()
+        protected virtual void EnumerateEnchantments()
         {
             // Clear existing enchantments
             groupedPowerTemplates.Clear();
@@ -279,7 +279,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        void LoadTextures()
+        protected virtual void LoadTextures()
         {
             baseTexture = ImageReader.GetTexture(baseTextureName, 0, 0, true, alternateAlphaIndex);
             goldTexture = ImageReader.GetTexture(goldTextureName);
@@ -299,7 +299,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ingredientsSelected = ImageReader.GetSubTexture(goldTexture, new Rect(0, 27, 81, 9), goldSize);
         }
 
-        void SetupLabels()
+        protected virtual void SetupLabels()
         {
             itemNameLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(52, 3), NativePanel);
             availableGoldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(71, 15), NativePanel);
@@ -307,7 +307,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enchantmentCostLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(98, 39), NativePanel);
         }
 
-        void SetupButtons()
+        protected virtual void SetupButtons()
         {
             // Tab page buttons
             weaponsAndArmorButton = DaggerfallUI.AddButton(weaponsAndArmorRect, NativePanel);
@@ -348,7 +348,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             nameItemButon.OnMouseClick += NameItemButon_OnMouseClick;
         }
 
-        void SetupListBoxes()
+        protected virtual void SetupListBoxes()
         {
             powersList = new EnchantmentListPicker();
             powersList.Position = new Vector2(powersListRect.x, powersListRect.y);
@@ -365,7 +365,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(sideEffectsList);
         }
 
-        void SetupPickers()
+        protected virtual void SetupPickers()
         {
             // Use a picker for power/side-effect primary selection
             enchantmentPrimaryPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, 12);
@@ -376,7 +376,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enchantmentSecondaryPicker.ListBox.OnUseSelectedItem += EnchantmentSecondaryPicker_OnUseSelectedItem;
         }
 
-        void SetupItemListScrollers()
+        protected virtual void SetupItemListScrollers()
         {
             itemsListScroller = new ItemListScroller(4, 1, itemListPanelRect, itemButtonRects, new TextLabel(), defaultToolTip)
             {
@@ -387,7 +387,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             itemsListScroller.OnItemClick += ItemListScroller_OnItemClick;
         }
 
-        void SelectTabPage(DaggerfallInventoryWindow.TabPages tabPage)
+        protected virtual void SelectTabPage(DaggerfallInventoryWindow.TabPages tabPage)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
@@ -405,7 +405,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Add item to filtered items based on selected tab
-        void AddFilteredItem(DaggerfallUnityItem item)
+        protected virtual void AddFilteredItem(DaggerfallUnityItem item)
         {
             if (item == selectedItem || item.IsEnchanted || item.IsPotion)
                 return;
@@ -439,13 +439,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        bool IsEnchantableIngredient(DaggerfallUnityItem item)
+        protected virtual bool IsEnchantableIngredient(DaggerfallUnityItem item)
         {
             // Gem ingredients like amber/jade/ruby are listed under ingredients
             return item.IsIngredient && item.ItemGroup == ItemGroups.Gems;
         }
 
-        bool IsEnchantableMiscItem(DaggerfallUnityItem item)
+        protected virtual bool IsEnchantableMiscItem(DaggerfallUnityItem item)
         {
             // Clothing and jewellery are listed under misc ingredients
             // Classic will list potions here as simple "glass bottles", not replicating this here
@@ -466,7 +466,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region List Management
 
-        void AddEnchantmentSettings(EnchantmentSettings enchantment)
+        protected virtual void AddEnchantmentSettings(EnchantmentSettings enchantment)
         {
             if (selectingPowers)
             {
@@ -481,7 +481,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void AddForcedPowers(EnchantmentSettings[] powerEnchantments)
+        protected virtual void AddForcedPowers(EnchantmentSettings[] powerEnchantments)
         {
             if (powerEnchantments == null || powerEnchantments.Length == 0)
                 return;
@@ -493,7 +493,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void AddForcedSideEffects(EnchantmentSettings[] sideEffectEnchantments)
+        protected virtual void AddForcedSideEffects(EnchantmentSettings[] sideEffectEnchantments)
         {
             if (sideEffectEnchantments == null || sideEffectEnchantments.Length == 0)
                 return;
@@ -505,7 +505,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        bool ContainsEnchantmentKey(string effectKey)
+        protected virtual bool ContainsEnchantmentKey(string effectKey)
         {
             if (selectingPowers)
             {
@@ -517,7 +517,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        bool ContainsEnchantmentSettings(EnchantmentSettings enchantment)
+        protected virtual bool ContainsEnchantmentSettings(EnchantmentSettings enchantment)
         {
             if (selectingPowers)
             {
@@ -529,7 +529,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        EnchantmentSettings[] GetFilteredEnchantments(IEntityEffect effect)
+        protected virtual EnchantmentSettings[] GetFilteredEnchantments(IEntityEffect effect)
         {
             EnchantmentSettings[] filteredEnchantments = null;
             if (selectingPowers)
@@ -548,7 +548,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return filteredEnchantments;
         }
 
-        void SortForcedEnchantments(EnchantmentSettings parentEnchantment, ForcedEnchantmentSet set, out EnchantmentSettings[] forcedPowersOut, out EnchantmentSettings[] forcedSideEffectsOut)
+        protected virtual void SortForcedEnchantments(EnchantmentSettings parentEnchantment, ForcedEnchantmentSet set, out EnchantmentSettings[] forcedPowersOut, out EnchantmentSettings[] forcedSideEffectsOut)
         {
             List<EnchantmentSettings> forcedPowers = new List<EnchantmentSettings>();
             List<EnchantmentSettings> forcedSideEffects = new List<EnchantmentSettings>();
@@ -579,7 +579,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        private void ItemListScroller_OnItemClick(DaggerfallUnityItem item)
+        protected virtual void ItemListScroller_OnItemClick(DaggerfallUnityItem item)
         {
             selectedItem = item;
             powersList.ClearEnchantments();
@@ -591,7 +591,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             itemNameLabel.Text = (selectedItem != null) ? selectedItem.shortName : string.Empty;
         }
 
-        private void SelectedItemButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void SelectedItemButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             selectedItem = null;
             powersList.ClearEnchantments();
@@ -600,7 +600,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
         }
 
-        private void PowersButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void PowersButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
@@ -646,7 +646,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(enchantmentPrimaryPicker);
         }
 
-        private void SideEffectsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void SideEffectsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
@@ -691,7 +691,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(enchantmentPrimaryPicker);
         }
 
-        private void EnchantButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void EnchantButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             const int notEnoughGold = 1650;
             const int notEnoughEnchantmentPower = 1651;
@@ -759,33 +759,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
         }
 
-        private void WeaponsAndArmor_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void WeaponsAndArmor_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectTabPage(DaggerfallInventoryWindow.TabPages.WeaponsAndArmor);
         }
 
-        private void MagicItems_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void MagicItems_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectTabPage(DaggerfallInventoryWindow.TabPages.MagicItems);
         }
 
-        private void ClothingAndMisc_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ClothingAndMisc_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectTabPage(DaggerfallInventoryWindow.TabPages.ClothingAndMisc);
         }
 
-        private void Ingredients_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void Ingredients_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectTabPage(DaggerfallInventoryWindow.TabPages.Ingredients);
         }
 
-        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
-        private void NameItemButon_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void NameItemButon_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
@@ -795,7 +795,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mb.Show();
         }
 
-        private void EnterName_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        protected virtual void EnterName_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
         {
             itemNameLabel.Text = input;
         }
@@ -804,7 +804,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Effect Picker Events
 
-        private void EnchantmentPrimaryPicker_OnUseSelectedItem()
+        protected virtual void EnchantmentPrimaryPicker_OnUseSelectedItem()
     {
             // Clear existing
             enchantmentSecondaryPicker.ListBox.ClearItems();
@@ -854,7 +854,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(enchantmentSecondaryPicker);
         }
 
-        private void EnchantmentSecondaryPicker_OnUseSelectedItem()
+        protected virtual void EnchantmentSecondaryPicker_OnUseSelectedItem()
         {
             // Get enchantment tagged to selected item
             ListBox.ListItem listItem = enchantmentSecondaryPicker.ListBox.SelectedValue;
@@ -894,12 +894,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enchantmentSecondaryPicker.CloseWindow();
         }
 
-        private void EnchantmentList_OnRefreshList(EnchantmentListPicker sender)
+        protected virtual void EnchantmentList_OnRefreshList(EnchantmentListPicker sender)
         {
             Refresh();
         }
 
-        private void EnchantmentList_OnRemoveItem(EnchantmentListPicker.EnchantmentPanel panel)
+        protected virtual void EnchantmentList_OnRemoveItem(EnchantmentListPicker.EnchantmentPanel panel)
         {
             powersList.RemoveForcedEnchantments(panel.Enchantment.GetHashCode());
             sideEffectsList.RemoveForcedEnchantments(panel.Enchantment.GetHashCode());

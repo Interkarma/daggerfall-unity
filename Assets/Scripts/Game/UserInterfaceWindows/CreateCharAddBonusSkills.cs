@@ -29,12 +29,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class CreateCharAddBonusSkills : DaggerfallPopupWindow
     {
-        const string nativeImgName = "CHAR03I0.IMG";
-        const int strYouMustDistributeYourBonusPoints = 14;
+        protected const string nativeImgName = "CHAR03I0.IMG";
+        protected const int strYouMustDistributeYourBonusPoints = 14;
 
-        Texture2D nativeTexture;
-        DFCareer dfClass;
-        SkillsRollout skillsRollout;
+        protected Texture2D nativeTexture;
+        protected DFCareer dfClass;
+        protected SkillsRollout skillsRollout;
 
         public DFCareer DFClass
         {
@@ -105,7 +105,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (skillsRollout.PrimarySkillBonusPoints > 0 ||
                 skillsRollout.MajorSkillBonusPoints > 0 ||
