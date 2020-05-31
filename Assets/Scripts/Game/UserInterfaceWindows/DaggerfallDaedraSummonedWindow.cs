@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void HandleAnswer(QuestMachine.QuestMessages qMessage)
+        protected virtual void HandleAnswer(QuestMachine.QuestMessages qMessage)
         {
             lastChunk = false;
             textCursor.Enabled = false;
@@ -139,7 +139,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DisplayNextTextChunk();
         }
 
-        private void DisplayNextTextChunk()
+        protected virtual void DisplayNextTextChunk()
         {
             TextFile.Token[] chunk = new TextFile.Token[TokensPerChunk];
             int len = Math.Min(TokensPerChunk, messageTokens.Length - idx);
@@ -160,7 +160,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             idx += TokensPerChunk;
         }
 
-        private void PlayerPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void PlayerPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // If done, close window on click after last chunk, else display next chunk of text.
             if (lastChunk && answerGiven)

@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         KeyCode toggleClosedBinding;
         bool isCloseWindowDeferred = false;
 
-        List<DaggerfallUnityItem> magicUseItems = new List<DaggerfallUnityItem>();
+        protected List<DaggerfallUnityItem> magicUseItems = new List<DaggerfallUnityItem>();
 
         #region Constructors
 
@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void Refresh()
+        protected virtual void Refresh()
         {
             ListBox.ClearItems();
             foreach (DaggerfallUnityItem magicUseItem in magicUseItems)
@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        public void MagicItemPicker_OnItemPicked(int index, string itemName)
+        public virtual void MagicItemPicker_OnItemPicked(int index, string itemName)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallUnityItem itemToUse = magicUseItems[index];

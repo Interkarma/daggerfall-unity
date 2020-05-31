@@ -29,12 +29,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class CreateCharReflexSelect : DaggerfallPopupWindow
     {
-        const string nativeImgName = "CHAR05I0.IMG";
-        const int strPlayerReflexesDetermine = 307;
+        protected const string nativeImgName = "CHAR05I0.IMG";
+        protected const int strPlayerReflexesDetermine = 307;
 
-        Texture2D nativeTexture;
+        protected Texture2D nativeTexture;
 
-        ReflexPicker reflexPicker;
+        protected ReflexPicker reflexPicker;
 
         public CreateCharReflexSelect(IUserInterfaceManager uiManager)
             : base(uiManager)

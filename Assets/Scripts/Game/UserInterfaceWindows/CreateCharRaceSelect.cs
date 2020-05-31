@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 promptLabel.Enabled = true;
         }
 
-        void ClickHandler(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             int offset = (int)position.y * racePickerBitmap.Width + (int)position.x;
             if (offset < 0 || offset >= racePickerBitmap.Data.Length)
@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void ConfirmRacePopup_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void ConfirmRacePopup_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {

@@ -37,29 +37,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             public int difficulty;
         };
 
-        const string nativeImgName = "CUST01I0.IMG";
-        const string nativeImgOverlayName = "CUST02I0.IMG";
-        const int maxItems = 7;
-        const int maxLabels = maxItems * 2;
-        const int labelSpacing = 8;
-        const int tandemLabelSpacing = 6;
-        const int advPickerItemCount = 12;
-        const float defaultSpellPointMod = .5f;
+        protected const string nativeImgName = "CUST01I0.IMG";
+        protected const string nativeImgOverlayName = "CUST02I0.IMG";
+        protected const int maxItems = 7;
+        protected const int maxLabels = maxItems * 2;
+        protected const int labelSpacing = 8;
+        protected const int tandemLabelSpacing = 6;
+        protected const int advPickerItemCount = 12;
+        protected const float defaultSpellPointMod = .5f;
 
         DFCareer advantageData;
         List<SpecialAdvDis> advDisList;
         List<SpecialAdvDis> otherList;
 
-        Texture2D nativeTexture;
-        Texture2D nativeOverlayTexture;
+        protected Texture2D nativeTexture;
+        protected Texture2D nativeOverlayTexture;
         DaggerfallFont font;
-        Panel advantagePanel = new Panel();
-        Panel overlayPanel = new Panel();
+        protected Panel advantagePanel = new Panel();
+        protected Panel overlayPanel = new Panel();
         bool isDisadvantages;
 
         #region List picker strings
 
-        string[] advantageStrings = new string[]
+        protected string[] advantageStrings = new string[]
         {
             HardStrings.acuteHearing,
             HardStrings.adrenalineRush,
@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.resistance,
             HardStrings.spellAbsorption
         };
-        string[] disadvantageStrings = new string[]
+        protected string[] disadvantageStrings = new string[]
         {
             HardStrings.criticalWeakness,
             HardStrings.damage,
@@ -87,14 +87,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.lowTolerance,
             HardStrings.phobia
         };
-        string[] enemyTypeStrings = new string[]
+        protected string[] enemyTypeStrings = new string[]
         {
             HardStrings.animals,
             HardStrings.daedra,
             HardStrings.humanoid,
             HardStrings.undead
         };
-        string[] weaponTypeStrings = new string[]
+        protected string[] weaponTypeStrings = new string[]
         {
             HardStrings.axe,
             HardStrings.bluntWeapon,
@@ -103,7 +103,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.missileWeapon,
             HardStrings.shortBlade
         };
-        string[] effectTypeStrings = new string[]
+        protected string[] effectTypeStrings = new string[]
         {
             HardStrings.toDisease,
             HardStrings.toFire,
@@ -113,7 +113,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.toPoison,
             HardStrings.toShock
         };
-        string[] increasedMageryStrings = new string[]
+        protected string[] increasedMageryStrings = new string[]
         {
             HardStrings.intInSpellPoints15,
             HardStrings.intInSpellPoints175,
@@ -121,41 +121,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.intInSpellPoints3,
             HardStrings.intInSpellPoints
         };
-        string[] effectEnvStrings = new string[]
+        protected string[] effectEnvStrings = new string[]
         {
             HardStrings.general,
             HardStrings.inDarkness,
             HardStrings.inLight
         };
-        string[] regenHealthStrings = new string[]
+        protected string[] regenHealthStrings = new string[]
         {
             HardStrings.general,
             HardStrings.inDarkness,
             HardStrings.inLight,
             HardStrings.whileImmersed
         };
-        string[] damageEnvStrings = new string[]
+        protected string[] damageEnvStrings = new string[]
         {
             HardStrings.fromHolyPlaces,
             HardStrings.fromSunlight
         };
-        string[] darknessPoweredStrings = new string[]
+        protected string[] darknessPoweredStrings = new string[]
         {
             HardStrings.lowerMagicAbilityDaylight,
             HardStrings.unableToUseMagicInDaylight
         };
-        string[] lightPoweredStrings = new string[]
+        protected string[] lightPoweredStrings = new string[]
         {
             HardStrings.lowerMagicAbilityDarkness,
             HardStrings.unableToUseMagicInDarkness
         };
-        string[] armorTypeStrings = new string[]
+        protected string[] armorTypeStrings = new string[]
         {
             HardStrings.chain,
             HardStrings.leather,
             HardStrings.plate
         };
-        string[] materialStrings = new string[]
+        protected string[] materialStrings = new string[]
         {
             HardStrings.adamantium,
             HardStrings.daedric,
@@ -168,7 +168,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.silver,
             HardStrings.steel
         };
-        string[] shieldTypeStrings = new string[]
+        protected string[] shieldTypeStrings = new string[]
         {
             HardStrings.buckler,
             HardStrings.kiteShield,
@@ -186,21 +186,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Rects
 
-        Rect addAdvantageButtonRect = new Rect(80, 4, 72, 22);
-        Rect exitButtonRect = new Rect(6, 179, 155, 13);
+        protected Rect addAdvantageButtonRect = new Rect(80, 4, 72, 22);
+        protected Rect exitButtonRect = new Rect(6, 179, 155, 13);
 
         #endregion
 
         #region Buttons
 
-        Button addAdvantageButton;
-        Button exitButton;
+        protected Button addAdvantageButton;
+        protected Button exitButton;
 
         #endregion
 
         #region Text Labels
 
-        TextLabel[] advantageLabels = new TextLabel[maxLabels];
+        protected TextLabel[] advantageLabels = new TextLabel[maxLabels];
 
         #endregion
 
@@ -281,7 +281,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        void AddAdvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        protected virtual void AddAdvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             string[] items;
 
@@ -302,7 +302,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(advantagePicker);
         }
 
-        void AdvantagePicker_OnItemPicked(int index, string advantageName)
+        protected virtual void AdvantagePicker_OnItemPicked(int index, string advantageName)
         {
             CloseWindow();
 
@@ -406,7 +406,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SecondaryPicker_OnItemPicked(int index, string itemString)
+        protected virtual void SecondaryPicker_OnItemPicked(int index, string itemString)
         {
             CloseWindow();
             string primary = advDisList[advDisList.Count - 1].primaryString;
@@ -421,12 +421,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateDifficultyAdjustment();
         }
 
-        void SecondaryPicker_OnCancel(DaggerfallPopupWindow sender)
+        protected virtual void SecondaryPicker_OnCancel(DaggerfallPopupWindow sender)
         {
             advDisList.RemoveAt(advDisList.Count - 1);
         }
 
-        void AdvantageLabel_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        protected virtual void AdvantageLabel_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             for (int i = 0; i < advDisList.Count; i++)
             {
@@ -447,7 +447,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             CloseWindow();
         }
@@ -456,7 +456,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Helper methods
 
-        int GetAdvDisAdjustment(string primary, string secondary)
+        protected virtual int GetAdvDisAdjustment(string primary, string secondary)
         {
             switch (primary)
             {
@@ -475,7 +475,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void UpdateLabels()
+        protected virtual void UpdateLabels()
         {
             // Clear all labels
             for (int i = 0; i < maxLabels; i++)
@@ -514,7 +514,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void UpdateDifficultyAdjustment()
+        protected virtual void UpdateDifficultyAdjustment()
         {
             int total = 0;
 
@@ -534,7 +534,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        bool CannotAddAdvantage(SpecialAdvDis advDis)
+        protected virtual bool CannotAddAdvantage(SpecialAdvDis advDis)
         {
             // Combine advantage and disadvantage lists
             List<SpecialAdvDis> adList = new List<SpecialAdvDis>();
@@ -568,7 +568,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return false;
         }
 
-        bool IsMatchingAdvPair(string str1, string str2, SpecialAdvDis candidate, SpecialAdvDis incumbent)
+        protected virtual bool IsMatchingAdvPair(string str1, string str2, SpecialAdvDis candidate, SpecialAdvDis incumbent)
         {
             if ((candidate.primaryString == str1 && incumbent.primaryString == str2
                 || candidate.primaryString == str2 && incumbent.primaryString == str1)
@@ -580,7 +580,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return false;
         }
 
-        void SetAttackModifier(DFCareer.AttackModifier mod, string secondary)
+        protected virtual void SetAttackModifier(DFCareer.AttackModifier mod, string secondary)
         {
             switch (secondary)
             {
@@ -601,7 +601,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetProficiency(DFCareer.Proficiency mod, string secondary)
+        protected virtual void SetProficiency(DFCareer.Proficiency mod, string secondary)
         {
             switch (secondary)
             {
@@ -694,7 +694,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetTolerance(DFCareer.Tolerance mod, string secondary)
+        protected virtual void SetTolerance(DFCareer.Tolerance mod, string secondary)
         {
             switch (secondary)
             {
@@ -724,7 +724,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetMagery(string secondary)
+        protected virtual void SetMagery(string secondary)
         {
             switch (secondary)
             {
@@ -753,7 +753,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetRapidHealing(string secondary)
+        protected virtual void SetRapidHealing(string secondary)
         {
             switch (secondary)
             {
@@ -771,7 +771,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetAbsorption(string secondary)
+        protected virtual void SetAbsorption(string secondary)
         {
             switch (secondary)
             {
@@ -789,7 +789,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetRegeneration(string secondary)
+        protected virtual void SetRegeneration(string secondary)
         {
             switch (secondary)
             {
@@ -810,7 +810,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetDarknessMagery(string secondary)
+        protected virtual void SetDarknessMagery(string secondary)
         {
             switch(secondary)
             {
@@ -825,7 +825,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetForbiddenArmor(string secondary)
+        protected virtual void SetForbiddenArmor(string secondary)
         {
             switch (secondary)
             {
@@ -843,7 +843,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetForbiddenMaterial(string secondary)
+        protected virtual void SetForbiddenMaterial(string secondary)
         {
             switch (secondary)
             {
@@ -882,7 +882,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetForbiddenShields(string secondary)
+        protected virtual void SetForbiddenShields(string secondary)
         {
             switch (secondary)
             {
@@ -903,7 +903,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetLightMagery(string secondary)
+        protected virtual void SetLightMagery(string secondary)
         {
             switch (secondary)
             {
@@ -918,7 +918,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetDamage(string secondary)
+        protected virtual void SetDamage(string secondary)
         {
             switch (secondary)
             {
@@ -1011,7 +1011,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void InitializeAdjustmentDict()
+        protected virtual void InitializeAdjustmentDict()
         {
             difficultyDict = new Dictionary<string, int> {
                 { HardStrings.acuteHearing, 1 },

@@ -20,53 +20,53 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect displayPanelRect = new Rect(117, 12, 104, 91);
-        Rect buyButtonRect = new Rect(38, 106, 40, 19);
-        Rect exitButtonRect = new Rect(150, 106, 40, 19);
-        Rect upArrowRect = new Rect(0, 0, 9, 16);
-        Rect downArrowRect = new Rect(0, 64, 9, 16);
-        DFSize arrowsFullSize = new DFSize(9, 80);
+        protected Rect displayPanelRect = new Rect(117, 12, 104, 91);
+        protected Rect buyButtonRect = new Rect(38, 106, 40, 19);
+        protected Rect exitButtonRect = new Rect(150, 106, 40, 19);
+        protected Rect upArrowRect = new Rect(0, 0, 9, 16);
+        protected Rect downArrowRect = new Rect(0, 64, 9, 16);
+        protected DFSize arrowsFullSize = new DFSize(9, 80);
 
         #endregion
 
         #region UI Controls
 
-        Panel mainPanel = new Panel();
+        protected Panel mainPanel = new Panel();
 
-        ListBox priceListBox;
-        Button priceListUpButton;
-        Button priceListDownButton;
-        VerticalScrollBar priceListScrollBar;
+        protected ListBox priceListBox;
+        protected Button priceListUpButton;
+        protected Button priceListDownButton;
+        protected VerticalScrollBar priceListScrollBar;
 
-        Panel displayPanel;
-        Button buyButton;
-        Button exitButton;
+        protected Panel displayPanel;
+        protected Button buyButton;
+        protected Button exitButton;
 
         #endregion
 
         #region UI Textures
 
-        const string baseTextureName = "BANK01I0.IMG";
-        Texture2D baseTexture;
-        const string greenArrowsTextureName = "BANK01I1.IMG";   // Green up/down arrows when more items available
-        const string redArrowsTextureName = "BANK01I2.IMG";     // Red up/down arrows when no more items available
-        Texture2D redUpArrow;
-        Texture2D greenUpArrow;
-        Texture2D redDownArrow;
-        Texture2D greenDownArrow;
+        protected const string baseTextureName = "BANK01I0.IMG";
+        protected Texture2D baseTexture;
+        protected const string greenArrowsTextureName = "BANK01I1.IMG";   // Green up/down arrows when more items available
+        protected const string redArrowsTextureName = "BANK01I2.IMG";     // Red up/down arrows when no more items available
+        protected Texture2D redUpArrow;
+        protected Texture2D greenUpArrow;
+        protected Texture2D redDownArrow;
+        protected Texture2D greenDownArrow;
 
-        Texture2D displayTexture;
-        Vector2 displayResolution;
+        protected Texture2D displayTexture;
+        protected Vector2 displayResolution;
 
         #endregion
 
         #region Constants
 
-        private const int listDisplayUnits = 10;  // Number of items displayed in scrolling area
-        private const int scrollNum = 1;          // Number of items on each scroll tick
-        private const string goName = "BankPurchase";
-        private const float rotSpeed = 0.02f;
-        private const float brightness = 0.4f;
+        protected const int listDisplayUnits = 10;  // Number of items displayed in scrolling area
+        protected const int scrollNum = 1;          // Number of items on each scroll tick
+        protected const string goName = "BankPurchase";
+        protected const float rotSpeed = 0.02f;
+        protected const float brightness = 0.4f;
 
         #endregion
 
@@ -181,7 +181,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private, Setup methods
 
-        private void PopulatePriceList()
+        protected virtual void PopulatePriceList()
         {
             if (housesForSale == null)
             {
@@ -197,7 +197,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void SetupDisplayPanel()
+        protected virtual void SetupDisplayPanel()
         {
             displayPanel = DaggerfallUI.AddPanel(displayPanelRect, mainPanel);
             displayResolution = new Vector2(displayPanelRect.width * NativePanel.LocalScale.x, displayPanelRect.height * NativePanel.LocalScale.y);
@@ -231,7 +231,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             camera.targetTexture = renderTexture;
         }
 
-        private void Display3dModelSelection(int selectedIdx)
+        protected virtual void Display3dModelSelection(int selectedIdx)
         {
             if (goModel)
             {
@@ -267,7 +267,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dfMesh.SetClimate(climateBase, season, WindowStyle.Day);
         }
 
-        private void RenderModel()
+        protected virtual void RenderModel()
         {
             camera.Render();
 
@@ -279,7 +279,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         }
 
-        private void SetupPriceList()
+        protected virtual void SetupPriceList()
         {
             priceListBox = new ListBox()
             {
@@ -300,7 +300,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateListScrollerButtons(priceListBox.ScrollIndex, priceListBox.Count);
         }
 
-        void SetupScrollBar()
+        protected virtual void SetupScrollBar()
         {
             // Price list scroll bar
             priceListScrollBar = new VerticalScrollBar
@@ -313,7 +313,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             priceListScrollBar.OnScroll += PriceScrollBar_OnScroll;
         }
 
-        void SetupScrollButtons()
+        protected virtual void SetupScrollButtons()
         {
             // Item list scroll buttons
             priceListUpButton = new Button
@@ -336,7 +336,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Updates red/green state of scroller buttons
-        void UpdateListScrollerButtons(int index, int count)
+        protected virtual void UpdateListScrollerButtons(int index, int count)
         {
             // Update up button
             priceListUpButton.BackgroundTexture = (index > 0) ? greenUpArrow : redUpArrow;
@@ -352,7 +352,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void LoadTextures()
+        protected virtual void LoadTextures()
         {
             baseTexture = ImageReader.GetTexture(baseTextureName);
 
@@ -371,13 +371,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
-        private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (priceListBox.SelectedIndex < 0)
@@ -390,43 +390,43 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 bankingWindow.GeneratePurchaseHousePopup(housesForSale[priceListBox.SelectedIndex]);
         }
 
-        void PriceListBox_OnSelectItem()
+        protected virtual void PriceListBox_OnSelectItem()
         {
             Debug.Log("Selected " + priceListBox.SelectedIndex);
             Display3dModelSelection(priceListBox.SelectedIndex);
         }
 
 
-        void PriceListBox_OnScroll()
+        protected virtual void PriceListBox_OnScroll()
         {
             UpdateListScrollerButtons(priceListBox.ScrollIndex, priceListBox.Count);
             priceListScrollBar.ScrollIndex = priceListBox.ScrollIndex;
             priceListScrollBar.Update();
         }
 
-        void PriceScrollBar_OnScroll()
+        protected virtual void PriceScrollBar_OnScroll()
         {
             priceListBox.ScrollIndex = priceListScrollBar.ScrollIndex;
         }
 
-        void PriceUpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void PriceUpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             priceListBox.ScrollUp();
         }
 
-        void PriceDownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void PriceDownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             priceListBox.ScrollDown();
         }
 
-        void PriceListPanel_OnMouseScrollUp(BaseScreenComponent sender)
+        protected virtual void PriceListPanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
             priceListBox.ScrollUp();
         }
 
-        void PriceListPanel_OnMouseScrollDown(BaseScreenComponent sender)
+        protected virtual void PriceListPanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
             priceListBox.ScrollDown();
         }
