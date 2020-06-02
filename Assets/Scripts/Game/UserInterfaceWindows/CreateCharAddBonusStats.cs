@@ -29,19 +29,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class CreateCharAddBonusStats : DaggerfallPopupWindow
     {
-        protected const string nativeImgName = "CHAR02I0.IMG";
-        protected const int strYouMustDistributeYourBonusPoints = 14;
+        const string nativeImgName = "CHAR02I0.IMG";
+        const int strYouMustDistributeYourBonusPoints = 14;
 
-        protected Texture2D nativeTexture;
-        protected DaggerfallFont font;
-        protected TextLabel damageModifierLabel;
-        protected TextLabel maxEncumbranceLabel;
-        protected TextLabel spellPointsLabel;
-        protected TextLabel magicResistLabel;
-        protected TextLabel toHitModifierLabel;
-        protected TextLabel hitPointsModifierLabel;
-        protected TextLabel healingRateModifierLabel;
-        protected StatsRollout statsRollout;
+        Texture2D nativeTexture;
+        DaggerfallFont font;
+        TextLabel damageModifierLabel;
+        TextLabel maxEncumbranceLabel;
+        TextLabel spellPointsLabel;
+        TextLabel magicResistLabel;
+        TextLabel toHitModifierLabel;
+        TextLabel hitPointsModifierLabel;
+        TextLabel healingRateModifierLabel;
+        StatsRollout statsRollout;
 
         DFCareer dfClass;
         bool rollSaved = false;
@@ -148,9 +148,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
-        #region Virtual Methods
+        #region Private Methods
 
-        protected virtual void UpdateSecondaryStatLabels()
+        void UpdateSecondaryStatLabels()
         {
             DaggerfallStats workingStats = statsRollout.WorkingStats;
             damageModifierLabel.Text = FormulaHelper.DamageModifier(workingStats.LiveStrength).ToString("+0;-0;0");
@@ -162,12 +162,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             healingRateModifierLabel.Text = FormulaHelper.HealingRateModifier(workingStats.LiveEndurance).ToString("+0;-0;0");
         }
 
-        protected virtual void RerollButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void RerollButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             Reroll();
         }
 
-        protected virtual void SaveRoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void SaveRoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             savedRolledStats.Copy(statsRollout.StartingStats);
             savedWorkingStats.Copy(statsRollout.WorkingStats);
@@ -175,7 +175,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rollSaved = true;
         }
 
-        protected virtual void LoadRoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void LoadRoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (rollSaved)
             {
@@ -184,7 +184,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (statsRollout.BonusPool > 0)
             {
@@ -199,7 +199,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void StatsRollout_OnStatChanged()
+        void StatsRollout_OnStatChanged()
         {
             UpdateSecondaryStatLabels();
         }

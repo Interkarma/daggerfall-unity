@@ -22,14 +22,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        protected Rect recipesButtonRect = new Rect(169, 26, 36, 16);
-        protected Rect mixButtonRect = new Rect(169, 42, 36, 16);
-        protected Rect exitButtonRect = new Rect(290, 178, 24, 16);
+        Rect recipesButtonRect = new Rect(169, 26, 36, 16);
+        Rect mixButtonRect = new Rect(169, 42, 36, 16);
+        Rect exitButtonRect = new Rect(290, 178, 24, 16);
 
-        protected Rect ingredientsListScrollerRect = new Rect(5, 30, 151, 142);
-        protected Rect ingredientsListRect = new Rect(11, 0, 140, 142);
+        Rect ingredientsListScrollerRect = new Rect(5, 30, 151, 142);
+        Rect ingredientsListRect = new Rect(11, 0, 140, 142);
 
-        protected static readonly Rect[] ingredientButtonRects = new Rect[]
+        static readonly Rect[] ingredientButtonRects = new Rect[]
         {
             new Rect(0, 0, 28, 28),     new Rect(56, 0, 28, 28),    new Rect(112, 0, 28, 28),
             new Rect(0, 38, 28, 28),    new Rect(56, 38, 28, 28),   new Rect(112, 38, 28, 28),
@@ -37,10 +37,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new Rect(0, 114, 28, 28),   new Rect(56, 114, 28, 28),  new Rect(112, 114, 28, 28)
         };
 
-        protected Rect cauldronListScrollerRect = new Rect(221, 30, 84, 142);
-        protected Rect cauldronListRect = new Rect(0, 0, 84, 142);
+        Rect cauldronListScrollerRect = new Rect(221, 30, 84, 142);
+        Rect cauldronListRect = new Rect(0, 0, 84, 142);
 
-        protected static readonly Rect[] cauldronButtonRects = new Rect[]
+        static readonly Rect[] cauldronButtonRects = new Rect[]
         {
             new Rect(0, 0, 28, 28),     new Rect(56, 0, 28, 28),
             new Rect(0, 38, 28, 28),    new Rect(56, 38, 28, 28),
@@ -53,33 +53,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        protected TextLabel nameLabel = new TextLabel();
+        TextLabel nameLabel = new TextLabel();
         //TextLabel costLabel = new TextLabel();
-        protected TextLabel goldLabel = new TextLabel();
+        TextLabel goldLabel = new TextLabel();
 
-        protected Button recipesButton;
-        protected Button mixButton;
-        protected Button exitButton;
+        Button recipesButton;
+        Button mixButton;
+        Button exitButton;
 
-        protected ItemListScroller ingredientsListScroller;
-        protected ItemListScroller cauldronListScroller;
+        ItemListScroller ingredientsListScroller;
+        ItemListScroller cauldronListScroller;
 
-        protected DaggerfallListPickerWindow recipePicker;
+        DaggerfallListPickerWindow recipePicker;
 
         #endregion
 
         #region UI Textures
 
-        protected Texture2D baseTexture;
-        protected const string baseTextureName = "MASK00I0.IMG";
-        protected const int alternateAlphaIndex = 12;
-        protected const string textDatabase = "DaggerfallUI";
+        Texture2D baseTexture;
+        const string baseTextureName = "MASK00I0.IMG";
+        const int alternateAlphaIndex = 12;
+        const string textDatabase = "DaggerfallUI";
 
         #endregion
 
-        protected List<DaggerfallUnityItem> ingredients = new List<DaggerfallUnityItem>();
-        protected List<DaggerfallUnityItem> cauldron = new List<DaggerfallUnityItem>();
-        protected List<PotionRecipe> recipes = new List<PotionRecipe>();
+        List<DaggerfallUnityItem> ingredients = new List<DaggerfallUnityItem>();
+        List<DaggerfallUnityItem> cauldron = new List<DaggerfallUnityItem>();
+        List<PotionRecipe> recipes = new List<PotionRecipe>();
 
         #region Constructors
 
@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ClearCauldron();
         }
 
-        protected virtual void Refresh()
+        void Refresh()
         {
             // Update labels
             goldLabel.Text = GameManager.Instance.PlayerEntity.GetGoldAmount().ToString();
@@ -171,12 +171,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        protected virtual void LoadTextures()
+        void LoadTextures()
         {
             baseTexture = ImageReader.GetTexture(baseTextureName, 0, 0, true, alternateAlphaIndex);
         }
 
-        protected virtual void SetupButtons()
+        void SetupButtons()
         {
             // Recipes button
             recipesButton = DaggerfallUI.AddButton(recipesButtonRect, NativePanel);
@@ -191,14 +191,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
         }
 
-        protected virtual void SetupLabels()
+        void SetupLabels()
         {
             nameLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(33, 185), NativePanel);
             //costLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(174, 185), NativePanel);
             goldLabel = DaggerfallUI.AddDefaultShadowedTextLabel(new Vector2(237, 185), NativePanel);
         }
 
-        protected virtual void SetupItemListScrollers()
+        void SetupItemListScrollers()
         {
             // Create misc text label template
             TextLabel miscLabelTemplate = new TextLabel(DaggerfallUI.Instance.Font3)
@@ -229,12 +229,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cauldronListScroller.OnItemClick += CauldronListScroller_OnItemClick;
         }
 
-        protected virtual string ItemLabelTextHandler(DaggerfallUnityItem item)
+        string ItemLabelTextHandler(DaggerfallUnityItem item)
         {
             return item.ItemName.ToUpper();
         }
 
-        protected virtual void AddToCauldron(DaggerfallUnityItem item)
+        void AddToCauldron(DaggerfallUnityItem item)
         {
             if (cauldron.Count < 8)
             {
@@ -256,7 +256,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void RemoveFromCauldron(DaggerfallUnityItem item)
+        void RemoveFromCauldron(DaggerfallUnityItem item)
         {
             nameLabel.Text = "";
             cauldron.Remove(item);
@@ -277,14 +277,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             cauldronListScroller.Items = cauldron;
         }
 
-        protected virtual void ClearCauldron()
+        void ClearCauldron()
         {
             // Remove all ingredients from cauldron to restore correct stack sizes
             while (cauldron.Count > 0)
                 RemoveFromCauldron(cauldron[0]);
         }
 
-        protected virtual void AddRecipeToCauldron(int index, string recipeName)
+        void AddRecipeToCauldron(int index, string recipeName)
         {
             PotionRecipe recipe = recipes[index];
             Dictionary<int, DaggerfallUnityItem> recipeIngreds = new Dictionary<int, DaggerfallUnityItem>();
@@ -315,7 +315,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void MixCauldron()
+        void MixCauldron()
         {
             // Check recipes and create appropriate potion in player inventory if a match found
             List<int> cauldronIngredients = new List<int>(cauldron.Count);
@@ -377,7 +377,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             RemoveFromCauldron(item);
         }
 
-        protected virtual void RecipesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void RecipesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (recipes.Count > 0)
                 uiManager.PushWindow(recipePicker);
@@ -394,14 +394,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 AddRecipeToCauldron(index, recipeName);
         }
 
-        protected virtual void MixButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void MixButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (cauldron.Count > 0)
                 MixCauldron();
         }
 
-        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();

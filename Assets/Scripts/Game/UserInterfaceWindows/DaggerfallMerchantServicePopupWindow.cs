@@ -19,29 +19,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        protected Rect talkButtonRect = new Rect(5, 5, 120, 7);
-        protected Rect serviceButtonRect = new Rect(5, 14, 120, 7);
-        protected Rect exitButtonRect = new Rect(44, 24, 43, 15);
+        Rect talkButtonRect = new Rect(5, 5, 120, 7);
+        Rect serviceButtonRect = new Rect(5, 14, 120, 7);
+        Rect exitButtonRect = new Rect(44, 24, 43, 15);
 
         #endregion
 
         #region UI Controls
 
-        protected Panel mainPanel = new Panel();
-        protected Button talkButton = new Button();
-        protected Button serviceButton = new Button();
-        protected Button exitButton = new Button();
-        protected TextLabel serviceLabel = new TextLabel();
+        Panel mainPanel = new Panel();
+        Button talkButton = new Button();
+        Button serviceButton = new Button();
+        Button exitButton = new Button();
+        TextLabel serviceLabel = new TextLabel();
 
         #endregion
 
         #region Fields
 
-        protected const string baseTextureName = "GNRC01I0.IMG";      // Talk / Sell
-        protected Texture2D baseTexture;
+        const string baseTextureName = "GNRC01I0.IMG";      // Talk / Sell
+        Texture2D baseTexture;
 
-        protected Services currentService;
-        protected StaticNPC merchantNPC;
+        Services currentService;
+        StaticNPC merchantNPC;
 
         #endregion
 
@@ -109,7 +109,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        protected virtual string GetServiceLabelText()
+        string GetServiceLabelText()
         {
             if (Guilds.Services.HasCustomMerchantService(merchantNPC.Data.factionID))
                 return Guilds.Services.GetCustomMerchantServiceLabel(merchantNPC.Data.factionID);
@@ -124,7 +124,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void LoadTextures()
+        void LoadTextures()
         {
             baseTexture = ImageReader.GetTexture(baseTextureName);
         }
@@ -133,14 +133,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        protected virtual void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             GameManager.Instance.TalkManager.TalkToStaticNPC(merchantNPC);
         }
 
-        protected virtual void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ServiceButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
@@ -164,7 +164,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();

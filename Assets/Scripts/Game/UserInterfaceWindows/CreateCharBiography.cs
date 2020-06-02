@@ -28,26 +28,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class CreateCharBiography : DaggerfallPopupWindow
     {
-        protected const string nativeImgName = "BIOG00I0.IMG";
-        protected const int questionLines = 2;
-        protected const int questionLineSpace = 11;
-        protected const int questionLeft = 30;
-        protected const int questionTop = 23;
-        protected const int questionWidth = 156;
-        protected const int questionHeight = 45;
-        protected const int buttonCount = 10;
-        protected const int buttonsLeft = 10;
-        protected const int buttonsTop = 71;
-        protected const int buttonWidth = 149;
-        protected const int buttonHeight = 24;
+        const string nativeImgName = "BIOG00I0.IMG";
+        const int questionLines = 2;
+        const int questionLineSpace = 11;
+        const int questionLeft = 30;
+        const int questionTop = 23;
+        const int questionWidth = 156;
+        const int questionHeight = 45;
+        const int buttonCount = 10;
+        const int buttonsLeft = 10;
+        const int buttonsTop = 71;
+        const int buttonWidth = 149;
+        const int buttonHeight = 24;
         public const int reputationToken = 35;
 
         int questionIndex = 0;
-        protected Texture2D nativeTexture;
-        protected TextLabel[] questionLabels = new TextLabel[questionLines];
-        protected Button[] answerButtons = new Button[buttonCount];
-        protected TextLabel[] answerLabels = new TextLabel[buttonCount];
-        protected BiogFile biogFile;
+        Texture2D nativeTexture;
+        TextLabel[] questionLabels = new TextLabel[questionLines];
+        Button[] answerButtons = new Button[buttonCount];
+        TextLabel[] answerLabels = new TextLabel[buttonCount];
+        BiogFile biogFile;
 
         public CreateCharBiography(IUserInterfaceManager uiManager, CharacterDocument document)
             : base(uiManager)
@@ -102,7 +102,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             IsSetup = true;
         }
 
-        protected virtual void PopulateControls(BiogFile.Question question)
+        private void PopulateControls(BiogFile.Question question)
         {
             questionLabels[0].Text = question.Text[0];
             questionLabels[1].Text = question.Text[1];
@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void AnswerButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
+        void AnswerButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             int answerIndex = (int)sender.Tag;
             List<BiogFile.Answer> curAnswers = biogFile.Questions[questionIndex].Answers;
@@ -156,7 +156,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void MessageBox_OnClose()
+        void MessageBox_OnClose()
         {
             CloseWindow();
         }

@@ -26,21 +26,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallCourtWindow : DaggerfallPopupWindow
     {
-        protected const string nativeImgName = "CORT01I0.IMG";
-        protected const string nativeImgName2 = "PRIS00I0.IMG";
-        protected const int courtTextTG = 550;
-        protected const int courtTextDB = 551;
-        protected const int courtTextStart = 8050;
-        protected const int courtTextFoundGuilty = 8055;
-        protected const int courtTextExecuted = 8060;
-        protected const int courtTextFreeToGo = 8062;
-        protected const int courtTextBanished = 8063;
-        protected const int courtTextHowConvince = 8064;
+        const string nativeImgName = "CORT01I0.IMG";
+        const string nativeImgName2 = "PRIS00I0.IMG";
+        const int courtTextTG = 550;
+        const int courtTextDB = 551;
+        const int courtTextStart = 8050;
+        const int courtTextFoundGuilty = 8055;
+        const int courtTextExecuted = 8060;
+        const int courtTextFreeToGo = 8062;
+        const int courtTextBanished = 8063;
+        const int courtTextHowConvince = 8064;
 
-        protected Texture2D nativeTexture;
-        protected Panel courtPanel = new Panel();
+        Texture2D nativeTexture;
+        Panel courtPanel = new Panel();
         Entity.PlayerEntity playerEntity;
-        protected TextLabel daysUntilFreedomLabel;
+        TextLabel daysUntilFreedomLabel;
         int regionIndex;
         int punishmentType;
         int fine;
@@ -310,7 +310,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void GuiltyNotGuilty_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        private void GuiltyNotGuilty_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Guilty)
@@ -358,7 +358,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Update();
         }
 
-        protected virtual void DebateLie_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        private void DebateLie_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             sender.CloseWindow();
             int playerSkill = 0;
@@ -499,7 +499,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 OnEndPrisonTime();
         }
 
-        protected virtual void SwitchToPrisonScreen()
+        private void SwitchToPrisonScreen()
         {
             // Load native texture
             nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName2);

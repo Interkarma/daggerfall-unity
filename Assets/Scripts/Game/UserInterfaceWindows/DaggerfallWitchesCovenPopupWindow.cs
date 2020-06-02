@@ -21,29 +21,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        protected Rect talkButtonRect = new Rect(5, 5, 120, 7);
-        protected Rect summonButtonRect = new Rect(5, 14, 120, 7);
-        protected Rect questButtonRect = new Rect(5, 23, 120, 7);
-        protected Rect exitButtonRect = new Rect(44, 33, 43, 15);
+        Rect talkButtonRect = new Rect(5, 5, 120, 7);
+        Rect summonButtonRect = new Rect(5, 14, 120, 7);
+        Rect questButtonRect = new Rect(5, 23, 120, 7);
+        Rect exitButtonRect = new Rect(44, 33, 43, 15);
 
         #endregion
 
         #region UI Controls
 
-        protected Panel mainPanel = new Panel();
-        protected Button talkButton = new Button();
-        protected Button summonButton = new Button();
-        protected Button questButton = new Button();
-        protected Button exitButton = new Button();
+        Panel mainPanel = new Panel();
+        Button talkButton = new Button();
+        Button summonButton = new Button();
+        Button questButton = new Button();
+        Button exitButton = new Button();
 
         #endregion
 
         #region Fields
 
-        protected const string baseTextureName = "DAED00I0.IMG";      // Talk / Daedra Summoning / Quest
-        protected Texture2D baseTexture;
+        const string baseTextureName = "DAED00I0.IMG";      // Talk / Daedra Summoning / Quest
+        Texture2D baseTexture;
 
-        protected StaticNPC witchNPC;
+        StaticNPC witchNPC;
 
         bool isCloseWindowDeferred = false;
         bool isTalkWindowDeferred = false;
@@ -109,7 +109,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        protected virtual void LoadTextures()
+        void LoadTextures()
         {
             baseTexture = ImageReader.GetTexture(baseTextureName);
         }
@@ -158,14 +158,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        protected virtual void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
             GameManager.Instance.TalkManager.TalkToStaticNPC(witchNPC);
         }
 
-        protected virtual void TalkButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        void TalkButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
             if (keyboardEvent.type == EventType.KeyDown)
             {
@@ -180,13 +180,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void SummonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void SummonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaedraSummoningService(witchNPC.Data.factionID);
         }
 
-        protected virtual void SummonButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        void SummonButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
             if (keyboardEvent.type == EventType.KeyDown)
             {
@@ -200,13 +200,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void QuestButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void QuestButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             GetQuest();
         }
 
-        protected virtual void QuestButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        void QuestButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
             if (keyboardEvent.type == EventType.KeyDown)
             {
@@ -220,13 +220,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
-        protected virtual void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
             if (keyboardEvent.type == EventType.KeyDown)
             {
@@ -252,7 +252,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// MacroDataSource context sensitive methods for guild services window.
         /// </summary>
-        protected class WitchCovenMacroDataSource : MacroDataSource
+        private class WitchCovenMacroDataSource : MacroDataSource
         {
             private DaggerfallWitchesCovenPopupWindow parent;
             public WitchCovenMacroDataSource(DaggerfallWitchesCovenPopupWindow witchCovenWindow)
