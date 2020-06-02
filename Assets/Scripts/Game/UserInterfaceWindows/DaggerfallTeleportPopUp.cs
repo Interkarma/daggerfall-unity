@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void TeleportAway()
+        protected virtual void YesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();
 
