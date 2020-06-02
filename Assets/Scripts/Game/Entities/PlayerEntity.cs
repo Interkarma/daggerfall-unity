@@ -1046,7 +1046,6 @@ namespace DaggerfallWorkshop.Game.Entity
             int calmHumanoidID = 91;
             int nimblenessID = 85;
             int paralysisID = 50;
-            int freeActionID = 10;
             int healID = 64;
             int shieldID = 17;
             int resistColdID = 11;
@@ -1056,6 +1055,7 @@ namespace DaggerfallWorkshop.Game.Entity
             int invisibilityID = 6;
             int iceStormID = 20;
             int wildfireID = 33;
+            int recallID = 94;
 
             // Common spells
             AssignVampireSpell(levitateID);
@@ -1072,7 +1072,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     AssignVampireSpell(paralysisID);
                     break;
                 case VampireClans.Montalion:
-                    AssignVampireSpell(freeActionID);
+                    AssignVampireSpell(recallID);
                     break;
                 case VampireClans.Thrafey:
                     AssignVampireSpell(healID);
