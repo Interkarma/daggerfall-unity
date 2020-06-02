@@ -30,20 +30,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        Panel mainPanel = new Panel();
-        Button repairButton = new Button();
-        Button talkButton = new Button();
-        Button sellButton = new Button();
-        Button exitButton = new Button();
+        protected Panel mainPanel = new Panel();
+        protected Button repairButton = new Button();
+        protected Button talkButton = new Button();
+        protected Button sellButton = new Button();
+        protected Button exitButton = new Button();
 
         #endregion
 
         #region Fields
 
         const string baseTextureName = "REPR01I0.IMG";      // Repair / Talk / Sell
-        Texture2D baseTexture;
+        protected Texture2D baseTexture;
 
-        StaticNPC merchantNPC;
+        readonly StaticNPC merchantNPC;
 
         bool isCloseWindowDeferred = false;
         bool isRepairWindowDeferred = false;
@@ -109,7 +109,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        void LoadTextures()
+        protected virtual void LoadTextures()
         {
             baseTexture = ImageReader.GetTexture(baseTextureName);
         }
@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Event Handlers
 
-        private void RepairButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void RepairButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
@@ -140,7 +140,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
@@ -184,7 +184,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
