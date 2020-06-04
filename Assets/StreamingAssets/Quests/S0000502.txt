@@ -14,14 +14,14 @@ Message:  1020
 %qdt:
  _rebel_, the rebel mage
  who was once my quarry, has
- asked me to meet %g3 messenger
+ asked me to meet his messenger
  in _tavern_ in __tavern_.
 
 Message:  1021
 %qdt:
  An atronach sent by _rebel_
- informed me that %g would like me
- to help %g2 explore Direnni Tower
+ informed me that he would like me
+ to help him explore Direnni Tower
  on the Isle of Balfiera.
  _rebel_ will meet me there,
  somewhere.
@@ -51,9 +51,9 @@ Message:  1032
 <ce>                                    
 <ce>                    "Hello %pcn.  I am =atronach_,
 <ce>                      humble servant of _rebel_.
-<ce>                 %g asks if you would like to explore
+<ce>                 He asks if you would like to explore
 <ce>                 Direnni Tower on the Isle of Balfiera
-<ce>                  with %g2.  A magical place full of
+<ce>                  with him.  A magical place full of
 <ce>                 wonders beyond imagining.  My master
 <ce>               will meet you there in =towertime_ days."
 <ce>                                    

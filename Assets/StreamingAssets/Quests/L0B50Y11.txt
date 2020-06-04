@@ -94,7 +94,7 @@ Message:  1022
 <ce>                         tell them who did it.
 
 Message:  1023
-<ce>                     _marknpc_ comes here everday
+<ce>                     _marknpc_ comes here every day
 <ce>                   at around 6 o'clock. %g sends %g3
 <ce>                   bodyguards away. %g is only here
 <ce>                          for an hour or so.

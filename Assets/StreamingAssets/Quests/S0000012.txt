@@ -31,12 +31,12 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>               Good. I have long had my suspicions about
 <ce>               Aubk-i's loyalty to the emperor. She is a
-<ce>             daughter of the late King Cameron, who ruled
-<ce>               Hammerfell from his citidel in Sentinel.
+<ce>             daughter of the late King Camaron, who ruled
+<ce>               Hammerfell from his citadel in Sentinel.
 <ce>                                    
 <ce>                My husband King Lysandus, %god rest his
-<ce>             soul, died at Cryngaine, as did King Cameron.
-<ce>              Lysandus body was not recovered, so he has
+<ce>             soul, died at Cryngaine, as did King Camaron.
+<ce>              Lysandus' body was not recovered, so he has
 <ce>              a monument erected there rather than a true
 <ce>                      tomb. Ah...my mind wanders.
 <ce>                                    
@@ -94,7 +94,7 @@ Message:  1015
 <ce>              this is rather embarrassing. The letter was
 <ce>             stolen from me the same day I received it. I
 <ce>              never did read it. I have been hoping that
-<ce>             the letter would turn up, or the the Emperor
+<ce>             the letter would turn up, or the Emperor
 <ce>              would send another letter. If you find the
 <ce>             letter, I would be most grateful if you would
 <ce>               let me personally deliver it to Mynisera.

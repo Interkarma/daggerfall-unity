@@ -12,7 +12,7 @@ DisplayName: Former Student Part I
 QRC:
 
 QuestorOffer:  [1000]
-<ce>               You are loyal member of the Mages Guild,
+<ce>               You are a loyal member of the Mages Guild,
 <ce>                 are you not, %pct?  I have some guild
 <ce>                  business of the gravest import that
 <ce>                      I would like you to handle.
@@ -21,7 +21,7 @@ RefuseQuest:  [1001]
 <ce>              Perhaps you are not as loyal as I thought.
 
 AcceptQuest:  [1002]
-<ce>               Very good.  There is a rebel mage that we
+<ce>               Very good. There is a rebel mage that we
 <ce>                need eliminated, by the name of _rebel_.
 <ce>              A former pupil of mine, showed some promise
 <ce>            but lacked the loyalty to the ancient principles

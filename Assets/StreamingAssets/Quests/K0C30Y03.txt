@@ -252,7 +252,7 @@ That _rock_ must have been mined years ago when ___mondung_ was a mine.
 
 Message:  1029
 <ce>                   This looks like the deed _patsy_
-<ce>                     gave _qgiver_ as collaterial.
+<ce>                     gave _qgiver_ as collateral.
 
 Message:  1030
 <ce>                   This appears to be the gold that

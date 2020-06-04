@@ -50,7 +50,7 @@ QuestComplete:  [1004]
 <ce>               of Tiber Septim from the Underking. King
 <ce>                 Lysandus did not die in the battle of
 <ce>              Cryngaine. He was slain by treachery before
-<ce>              it. The monument to him in Hammerfell is an
+<ce>              it. The monument to him in High Rock is an
 <ce>                 empty tomb. His remains were secretly
 <ce>              taken to an ancient tomb in Menevia, which
 <ce>                I will now reveal to you. I do not know

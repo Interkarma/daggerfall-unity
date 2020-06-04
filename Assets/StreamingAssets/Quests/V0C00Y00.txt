@@ -11,7 +11,7 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                My needs are rather ... modest, but my
-<ce>             offer, I think you will agree, is altruistism
+<ce>             offer, I think you will agree, is altruism
 <ce>               and generosity indissoluble. In return for
 <ce>                        _artifact_, an artifact
 <ce>            of great power, I only ask that you exterminate
@@ -97,7 +97,8 @@ Message:  1020
  located in the dungeon ___mondung_.
  A =contact_ named _contact_ will
  wait for =1stparton_ days for me at __contact_
- in ___contact_ to give me the _artifact_.
+ in ___contact_ to give me the Masque
+ of Clavicus Vile.
 
 Message:  1030
 <ce>                     You have slain the werewolf,

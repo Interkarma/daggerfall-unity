@@ -10,8 +10,8 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                    %pcf, I do not know even how to
 <ce>               broach this subject. I need you to promise
-<ce>               me on your ancestor's honor that you will
-<ce>              do what you can to help me and never breath
+<ce>               me on your ancestors' honor that you will
+<ce>              do what you can to help me and never breathe
 <ce>                of what I say or what you see to anyone
 <ce>                   else anywhere. Will you so swear?
 
@@ -95,9 +95,9 @@ QuestLogEntry:  [1010]
 <ce>      after all the stallion orcs had been killed and the stro ...
 <ce>     (for mare orcs are seldom weaker than stallion orcs in an ...
 <ce>        only old and sick remained in the rude cam ... who could
-<ce>        speak base Cyrodil ... ied and begged for mercy for the
+<ce>        speak base Cyrodilic ... ied and begged for mercy for the
 <ce>        children, but Prince Klaius said that the children would
-<ce>       grow strong and hearty and and only an unwise leader would
+<ce>       grow strong and hearty and only an unwise leader would
 <ce>       show mercy to the subhumans. He gave his men leave to make
 <ce>      sport with killing the children, and they were all murdered
 <ce>        in ways that I cannot pen. I witnessed it, my lady, and

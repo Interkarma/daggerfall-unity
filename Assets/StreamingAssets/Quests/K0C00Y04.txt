@@ -11,7 +11,7 @@ DisplayName: Two Cowards
 QRC:
 
 QuestorOffer:  [1000]
-<ce>                 I'm in an embarassing predicament, I
+<ce>                 I'm in an embarrassing predicament, I
 <ce>                       fear. _lover_ and I have
 <ce>                had ... an understanding, but %g3 lover
 <ce>                 is being distressingly old-fashioned

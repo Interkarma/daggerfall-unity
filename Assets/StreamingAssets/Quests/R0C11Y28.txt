@@ -106,7 +106,7 @@ QuestLogEntry:  [1010]
 <ce>                       these notes to a _vamp_,
 <ce>                       a =vamp_ you will find at
 <ce>                      _hookerhouse_. If anything
-<ce>               should happen to me, I want somone to be
+<ce>               should happen to me, I want someone to be
 <ce>              able to continue on in the investigations.
 <ce>                        That will be _vamp_ and
 <ce>                   you, %pcf. So don't get yourself
@@ -143,7 +143,7 @@ _contact_,
  I would very much like to meet with you
  about your fascinating mortuary studies of
  the Slayer victims. As you know, I have
- done similiar investigations and would be
+ done similar investigations and would be
  happy to share my knowledge and experience
  with a distinguished colleague.
  
@@ -152,7 +152,7 @@ _contact_,
  staying at _hookerhouse_,
  but perhaps you would rather meet at
  _bookstore_ so I might
- see the corpses in question. In either,
+ see the corpses in question. In either
  case I look forward to receiving your
  courier and note.
  
