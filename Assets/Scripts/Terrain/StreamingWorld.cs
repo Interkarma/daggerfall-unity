@@ -861,6 +861,9 @@ namespace DaggerfallWorkshop
                     terrainArray[index].active = true;
                     terrainArray[index].terrainObject.SetActive(true);
                     terrainArray[index].billboardBatchObject.SetActive(true);
+                    // also set flag for updating locations if this terrain contains a location - so building data gets created again
+                    // this fixes the missing buildings bug - see this forum-thread: https://forums.dfworkshop.net/viewtopic.php?f=4&t=3391&start=10)
+                    terrainArray[index].updateLocation = terrainArray[index].hasLocation;
                 }
                 // If any nature model replacements are used then do extra nature updates for any terrains moving into or out of distance 1 or less.
                 if (TerrainHelper.NatureMeshUsed)
