@@ -2039,6 +2039,10 @@ namespace DaggerfallWorkshop.Game.Formulas
             totalGoldCostOut = 0;
             totalSpellPointCostOut = 0;
 
+            // Must have effect entries
+            if (effectEntries == null || effectEntries.Length == 0)
+                return;
+
             // Add costs for each active effect slot
             for (int i = 0; i < effectEntries.Length; i++)
             {

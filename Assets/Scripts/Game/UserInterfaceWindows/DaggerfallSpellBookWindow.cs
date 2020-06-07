@@ -544,12 +544,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellNameLabel.Text = spellSettings.Name;
 
             // Update effect labels
-            for (int i = 0; i < 3; i++)
+            if (spellSettings.Effects != null && spellSettings.Effects.Length > 0)
             {
-                if (i < spellSettings.Effects.Length)
-                    SetEffectLabels(spellSettings.Effects[i].Key, i);
-                else
-                    SetEffectLabels(string.Empty, i);
+                for (int i = 0; i < 3; i++)
+                {
+                    if (i < spellSettings.Effects.Length)
+                        SetEffectLabels(spellSettings.Effects[i].Key, i);
+                    else
+                        SetEffectLabels(string.Empty, i);
+                }
+            }
+            else
+            {
+                SetEffectLabels(string.Empty, 0);
+                SetEffectLabels(string.Empty, 1);
+                SetEffectLabels(string.Empty, 1);
             }
 
             // Update spell icons
