@@ -558,7 +558,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 SetEffectLabels(string.Empty, 0);
                 SetEffectLabels(string.Empty, 1);
-                SetEffectLabels(string.Empty, 1);
+                SetEffectLabels(string.Empty, 2);
             }
 
             // Update spell icons
