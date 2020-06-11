@@ -550,7 +550,10 @@ namespace DaggerfallWorkshop.Game
             {
                 if (SaveLoadManager.Instance.HasQuickSave(GameManager.Instance.PlayerEntity.Name))
                 {
-                    SaveLoadManager.Instance.QuickLoad();
+                    GameManager.Instance.SaveLoadManager.PromptQuickLoadGame(GameManager.Instance.PlayerEntity.Name, () =>
+                    {
+                        SaveLoadManager.Instance.QuickLoad();
+                    });
                 }
             }
         }

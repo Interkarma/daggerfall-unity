@@ -94,6 +94,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public SceneCache_v1 sceneCache;
         public TravelMapSaveData travelMapData;
         public AdvancedClimbingData_v1 advancedClimbingState;
+        public ModInfo_v1[] modInfoData;
     }
 
     #endregion
@@ -447,6 +448,16 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string characterName;
         public DateAndTime_v1 dateAndTime;
         public string dfuVersion;
+    }
+
+    [fsObject("v1")]
+    public class ModInfo_v1
+    {
+        public string fileName;
+        public string title;
+        public string guid;
+        public string version;
+        public int loadPriority;
     }
 
     #endregion

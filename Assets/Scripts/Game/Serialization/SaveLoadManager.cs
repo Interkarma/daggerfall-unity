@@ -12,6 +12,8 @@
 using UnityEngine;
 using System;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using FullSerializer;
@@ -448,6 +450,42 @@ namespace DaggerfallWorkshop.Game.Serialization
             return key != -1;
         }
 
+        public void PromptQuickLoadGame(string characterName, Action loadGameAction)
+        {
+            PromptLoadGame(characterName, quickSaveName, loadGameAction);
+        }
+
+        public void PromptLoadGame(string characterName, string saveName, Action loadGameAction)
+        {
+            string[] modMessage = SaveModConflictMessage(characterName, saveName);
+
+            if (modMessage != null)
+            {
+                DaggerfallMessageBox modBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow);
+
+                modBox.EnableVerticalScrolling(80);
+                modBox.SetText(modMessage);
+                modBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                modBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No, true);
+                modBox.PauseWhileOpen = true;
+
+                modBox.OnButtonClick += ((s, messageBoxButton) =>
+                {
+                    s.CloseWindow();
+                    if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+                    {
+                        loadGameAction();
+                    }
+                });
+
+                modBox.Show();
+            }
+            else
+            {
+                loadGameAction();
+            }
+        }
+
         public void Rename(int key, string newSaveName)
         {
             if (!enumeratedSaveFolders.ContainsKey(key))
@@ -754,8 +792,29 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveData.sceneCache = stateManager.GetSceneCache();
             saveData.travelMapData = DaggerfallUI.Instance.DfTravelMapWindow.GetTravelMapSaveData();
             saveData.advancedClimbingState = GameManager.Instance.ClimbingMotor.GetSaveData();
+            saveData.modInfoData = GetModInfoData();
 
             return saveData;
+        }
+
+        ModInfo_v1[] GetModInfoData()
+        {
+            List<ModInfo_v1> records = new List<ModInfo_v1>();
+            foreach (var mod in ModManager.Instance.GetAllMods())
+            {
+                if (mod.Enabled)
+                {
+                    var record = new ModInfo_v1();
+                    record.fileName = mod.FileName;
+                    record.title = mod.Title;
+                    record.guid = mod.GUID;
+                    record.version = mod.ModInfo.ModVersion;
+                    record.loadPriority = mod.LoadPriority;
+
+                    records.Add(record);
+                }
+            }
+            return records.ToArray();
         }
 
         DateAndTime_v1 GetDateTimeData()
@@ -1091,6 +1150,72 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Reload this save instantly if requested
             if (instantReload)
                 Load(saveData.playerData.playerEntity.name, saveName);
+        }
+
+        string[] SaveModConflictMessage(string characterName, string saveName)
+        {
+            int key = FindSaveFolderByNames(characterName, saveName);
+
+            // Must be ready
+            if (!IsReady())
+                throw new Exception(notReadyExceptionText);
+
+            // Load must not be in progress
+            if (loadInProgress)
+                return null;
+
+            // Get folder
+            string path;
+            if (key == -1)
+                return null;
+            else
+                path = GetSaveFolder(key);
+
+            //read save game data
+            string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
+            SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
+
+            //use dictionary for faster indexing
+            Dictionary<string, Mod> dict = ModManager.Instance.GetAllMods().ToDictionary(m => m.GUID);
+            //need to use a string collection because of MessageBox's SetText method
+            List<string> message = new List<string>();
+
+            if (saveData.modInfoData != null && saveData.modInfoData.Length > 0)
+            {
+                foreach (ModInfo_v1 record in saveData.modInfoData)
+                {
+                    if (dict.ContainsKey(record.guid))
+                    {
+                        Mod mod = dict[record.guid];
+
+                        if (mod.ModInfo.ModVersion != record.version)
+                        {
+                            message.Add("- " + record.title + " (v. " + record.version + ")");
+                            message.Add("Incoming version: '" + mod.Title + " (v. " + mod.ModInfo.ModVersion + ")'");
+                            message.Add(String.Empty);
+                        }
+                    }
+                    else
+                    {
+                        message.Add("- " + record.title + " (v. " + record.version + ")");
+                        message.Add("Mod is either not loaded or has been altered");
+                        message.Add(String.Empty);
+                    }
+                }
+
+                if(message.Count > 0)
+                {
+                    message.Insert(0, "The currently used mods do not match the ones used by this save:");
+                    message.Insert(1, String.Empty);
+
+                    message.Add("Errors may occur during gameplay. Proceed?");
+                    message.Add(String.Empty);
+
+                    return message.ToArray();
+                }
+            }
+
+            return null;
         }
 
         IEnumerator LoadGame(string path)
