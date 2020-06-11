@@ -1190,9 +1190,20 @@ namespace DaggerfallWorkshop.Game.Serialization
 
                         if (mod.ModInfo.ModVersion != record.version)
                         {
-                            message.Add("- " + record.title + " (v. " + record.version + ")");
-                            message.Add("Incoming version: '" + mod.Title + " (v. " + mod.ModInfo.ModVersion + ")'");
-                            message.Add(String.Empty);
+                            bool? comp = ModManager.IsVersionLowerOrEqual(record.version, mod.ModInfo.ModVersion);
+
+                            if (comp == false)
+                            {
+                                message.Add("- " + record.title + " (v. " + record.version + ")");
+                                message.Add("Incoming version is older: '" + mod.Title + " (v. " + mod.ModInfo.ModVersion + ")'");
+                                message.Add(String.Empty);
+                            }
+                            else if (comp == null)
+                            {
+                                message.Add("- " + record.title + " (v. " + record.version + ")");
+                                message.Add("Incoming version is different: '" + mod.Title + " (v. " + mod.ModInfo.ModVersion + ")'");
+                                message.Add(String.Empty);
+                            }
                         }
                     }
                     else
