@@ -450,11 +450,22 @@ namespace DaggerfallWorkshop.Game.Serialization
             return key != -1;
         }
 
+        /// <summary>
+        /// Checks for a mod mismatch in the QuickSave, and displays a warning message before proceeding
+        /// </summary>
+        /// <param name="characterName">Character's name in the save</param>
+        /// <param name="loadGameAction">The steps taken to load a save after finding no mismatches, or after user proceeds to load anyway</param>
         public void PromptQuickLoadGame(string characterName, Action loadGameAction)
         {
             PromptLoadGame(characterName, quickSaveName, loadGameAction);
         }
 
+        /// <summary>
+        /// Checks for a mod mismatch in a save, and displays a warning message before proceeding
+        /// </summary>
+        /// <param name="characterName">Character's name in the save</param>
+        /// <param name="saveName">Name of the save to be loaded</param>
+        /// <param name="loadGameAction">The steps taken to load a save after finding no mismatches, or after user proceeds to load anyway</param>
         public void PromptLoadGame(string characterName, string saveName, Action loadGameAction)
         {
             string[] modMessage = SaveModConflictMessage(characterName, saveName);
@@ -1171,17 +1182,19 @@ namespace DaggerfallWorkshop.Game.Serialization
             else
                 path = GetSaveFolder(key);
 
-            //read save game data
+            // Read save game data
             string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
 
-            //use dictionary for faster indexing
+            // Use dictionary for faster indexing
             Dictionary<string, Mod> dict = ModManager.Instance.GetAllMods().ToDictionary(m => m.GUID);
-            //need to use a string collection because of MessageBox's SetText method
+            // Need to use a string collection because of MessageBox's SetText method
             List<string> message = new List<string>();
 
             if (saveData.modInfoData != null && saveData.modInfoData.Length > 0)
             {
+                // Verify that every mod recorded in the save is included in the current mod list, or has a newer version loaded
+                // Otherwise add a warning for each missing mod or version conflict
                 foreach (ModInfo_v1 record in saveData.modInfoData)
                 {
                     if (dict.ContainsKey(record.guid))
@@ -1214,7 +1227,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                     }
                 }
 
-                if(message.Count > 0)
+                if (message.Count > 0)
                 {
                     message.Insert(0, "The currently used mods do not match the ones used by this save:");
                     message.Insert(1, String.Empty);
