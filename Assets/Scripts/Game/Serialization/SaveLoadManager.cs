@@ -811,7 +811,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         ModInfo_v1[] GetModInfoData()
         {
             List<ModInfo_v1> records = new List<ModInfo_v1>();
-            foreach (var mod in ModManager.Instance.GetAllMods())
+            foreach (var mod in ModManager.Instance.Mods)
             {
                 if (mod.Enabled)
                 {
@@ -1187,20 +1187,20 @@ namespace DaggerfallWorkshop.Game.Serialization
             SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
 
             // Use dictionary for faster indexing
-            Dictionary<string, Mod> dict = ModManager.Instance.GetAllMods().ToDictionary(m => m.GUID);
+            Dictionary<string, Mod> dict = ModManager.Instance.Mods.ToDictionary(m => m.GUID);
             // Need to use a string collection because of MessageBox's SetText method
             List<string> message = new List<string>();
 
             if (saveData.modInfoData != null && saveData.modInfoData.Length > 0)
             {
+                Mod mod;
+
                 // Verify that every mod recorded in the save is included in the current mod list, or has a newer version loaded
                 // Otherwise add a warning for each missing mod or version conflict
                 foreach (ModInfo_v1 record in saveData.modInfoData)
                 {
-                    if (dict.ContainsKey(record.guid))
+                    if (dict.TryGetValue(record.guid, out mod))
                     {
-                        Mod mod = dict[record.guid];
-
                         if (mod.ModInfo.ModVersion != record.version)
                         {
                             bool? comp = ModManager.IsVersionLowerOrEqual(record.version, mod.ModInfo.ModVersion);
