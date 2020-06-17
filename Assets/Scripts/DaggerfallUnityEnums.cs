@@ -749,4 +749,14 @@ namespace DaggerfallWorkshop
         IlessanHills = 60,
         Cybiades = 61,
     }
+
+    /// <summary>
+    /// State of smaller dungeons setting to be serialized with quest data.
+    /// </summary>
+    public enum QuestSmallerDungeonsState
+    {
+        NotSet,
+        Disabled,
+        Enabled,
+    }
 }

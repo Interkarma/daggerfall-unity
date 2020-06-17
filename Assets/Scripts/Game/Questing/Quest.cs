@@ -60,6 +60,8 @@ namespace DaggerfallWorkshop.Game.Questing
         bool questTombstoned = false;
         DaggerfallDateTime questTombstoneTime;
 
+        QuestSmallerDungeonsState smallerDungeonsState = QuestSmallerDungeonsState.NotSet;
+
         Place lastPlaceReferenced = null;
         QuestResource lastResourceReferenced = null;
         bool questBreak = false;
@@ -243,6 +245,15 @@ namespace DaggerfallWorkshop.Game.Questing
             set { currentLogMessageId = value; }
         }
 
+        /// <summary>
+        /// State of smaller dungeons setting at time quest started.
+        /// Persists through quest lifetime to inform smaller dungeon usage for dungeon sitelinks related to this quest.
+        /// </summary>
+        public QuestSmallerDungeonsState SmallerDungeonsState
+        {
+            get { return smallerDungeonsState; }
+        }
+
         #endregion
 
         #region Constructors
@@ -266,6 +277,7 @@ namespace DaggerfallWorkshop.Game.Questing
         public void Start()
         {
             questStartTime = new DaggerfallDateTime(DaggerfallUnity.Instance.WorldTime.Now);
+            smallerDungeonsState = (DaggerfallUnity.Settings.SmallerDungeons) ? QuestSmallerDungeonsState.Enabled : QuestSmallerDungeonsState.Disabled;
         }
 
         /// <summary>
@@ -872,6 +884,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public DaggerfallDateTime questStartTime;
             public bool questTombstoned;
             public DaggerfallDateTime questTombstoneTime;
+            public QuestSmallerDungeonsState smallerDungeonsState;
             public LogEntry[] activeLogMessages;
             public Message.MessageSaveData_v1[] messages;
             public QuestResource.ResourceSaveData_v1[] resources;
@@ -892,6 +905,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.questStartTime = questStartTime;
             data.questTombstoned = questTombstoned;
             data.questTombstoneTime = questTombstoneTime;
+            data.smallerDungeonsState = smallerDungeonsState;
 
             // Save active log messages
             List<LogEntry> activeLogMessagesSaveDataList = new List<LogEntry>();
@@ -944,6 +958,7 @@ namespace DaggerfallWorkshop.Game.Questing
             questStartTime = data.questStartTime;
             questTombstoned = data.questTombstoned;
             questTombstoneTime = data.questTombstoneTime;
+            smallerDungeonsState = data.smallerDungeonsState;
 
             // Restore active log messages
             activeLogMessages.Clear();
