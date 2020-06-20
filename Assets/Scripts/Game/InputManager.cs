@@ -28,9 +28,6 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
-        public const float minAcceleration = 1.0f;
-        public const float maxAcceleration = 10.0f;
-
         //there are only 16 recognized axes
         const int numAxes = 16;
         const int startingAxisKeyCode = 5000;
@@ -58,6 +55,7 @@ namespace DaggerfallWorkshop.Game
 
         const float deadZone = 0.05f;
         const float inputWaitTotal = 0.0833f;
+        const float moveAccelerationConst = 9.8f;
 
         IList keyCodeList;
         KeyCode[] reservedKeys = new KeyCode[] { };
@@ -87,8 +85,7 @@ namespace DaggerfallWorkshop.Game
         bool negHorizontalImpulse;
         bool posVerticalImpulse;
         bool negVerticalImpulse;
-        float acceleration = 5.0f;
-
+        bool moveAcceleration;
 
         float joystickCameraSensitivity = 1.0f;
         float joystickUIMouseSensitivity = 1.0f;
@@ -331,8 +328,8 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            // Read acceleration/deceleration setting
-            acceleration = DaggerfallUnity.Settings.MoveSpeedAcceleration;
+            // Read acceleration setting
+            moveAcceleration = DaggerfallUnity.Settings.MovementAcceleration;
 
             //memoization for 'axis keycodes'
             for (int i = startingAxisKeyCode; i < startingAxisKeyCode + numAxes * 2; i++)
@@ -997,9 +994,9 @@ namespace DaggerfallWorkshop.Game
         // Apply force to horizontal axis
         void ApplyHorizontalForce(float scale)
         {
-            // Use acceleration setting or "just go" at max value
-            if (acceleration < maxAcceleration)
-                horizontal = Mathf.Clamp(horizontal + (acceleration * scale) * Time.deltaTime, -1, 1);
+            // Use acceleration setting or "just go"
+            if (moveAcceleration)
+                horizontal = Mathf.Clamp(horizontal + (moveAccelerationConst * scale) * Time.deltaTime, -1, 1);
             else
                 horizontal = scale;
 
@@ -1012,9 +1009,9 @@ namespace DaggerfallWorkshop.Game
         // Apply force to vertical axis
         void ApplyVerticalForce(float scale)
         {
-            // Use acceleration setting or "just go" at max value
-            if (acceleration < maxAcceleration)
-                vertical = Mathf.Clamp(vertical + (acceleration * scale) * Time.deltaTime, -1, 1);
+            // Use acceleration setting or "just go"
+            if (moveAcceleration)
+                vertical = Mathf.Clamp(vertical + (moveAccelerationConst * scale) * Time.deltaTime, -1, 1);
             else
                 vertical = scale;
 
@@ -1027,18 +1024,18 @@ namespace DaggerfallWorkshop.Game
         // Apply friction to decelerate inactive movement impulses towards 0
         void ApplyFriction()
         {
-            // Use acceleration setting or "just stop" at max value
-            if (acceleration < maxAcceleration)
+            // Use acceleration setting or "just stop"
+            if (moveAcceleration)
             {
                 if (!posVerticalImpulse && vertical > 0)
-                    vertical = Mathf.Clamp(vertical - acceleration * Time.deltaTime, 0, vertical);
+                    vertical = Mathf.Clamp(vertical - moveAccelerationConst * Time.deltaTime, 0, vertical);
                 if (!negVerticalImpulse && vertical < 0)
-                    vertical = Mathf.Clamp(vertical + acceleration * Time.deltaTime, vertical, 0);
+                    vertical = Mathf.Clamp(vertical + moveAccelerationConst * Time.deltaTime, vertical, 0);
 
                 if (!posHorizontalImpulse && horizontal > 0)
-                    horizontal = Mathf.Clamp(horizontal - acceleration * Time.deltaTime, 0, horizontal);
+                    horizontal = Mathf.Clamp(horizontal - moveAccelerationConst * Time.deltaTime, 0, horizontal);
                 if (!negHorizontalImpulse && horizontal < 0)
-                    horizontal = Mathf.Clamp(horizontal + acceleration * Time.deltaTime, horizontal, 0);
+                    horizontal = Mathf.Clamp(horizontal + moveAccelerationConst * Time.deltaTime, horizontal, 0);
             }
             else
             {

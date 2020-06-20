@@ -1,10 +1,10 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors: jefetienne
+// Original Author: jefetienne
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 //
 // Notes:
 //
@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button quickLoadKeybindButton = new Button();
         HorizontalSlider mouseSensitivitySlider;
         HorizontalSlider weaponSensitivitySlider;
-        HorizontalSlider moveSpeedAccelerationSlider;
+        Checkbox moveSpeedCheckbox;
         Checkbox invertMouseVerticalCheckbox;
         Checkbox mouseSmoothingCheckbox;
         Checkbox clickToAttackCheckbox;
@@ -122,7 +122,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             weaponSensitivitySlider = CreateSlider("Mouse Weapon Sensitivity", 115, 80, 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
 
-            moveSpeedAccelerationSlider = CreateSlider("Movement Acceleration", 215, 80, InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MoveSpeedAcceleration);
+            moveSpeedCheckbox = AddOption(215, 80, "Movement Acceleration", DaggerfallUnity.Settings.MovementAcceleration);
 
             invertMouseVerticalCheckbox = AddOption(20, 100, "Invert Mouse", DaggerfallUnity.Settings.InvertMouseVertical);
 
@@ -338,7 +338,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivitySlider.GetValue();
             DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivitySlider.GetValue();
-            DaggerfallUnity.Settings.MoveSpeedAcceleration = moveSpeedAccelerationSlider.GetValue();
+            DaggerfallUnity.Settings.MovementAcceleration = moveSpeedCheckbox.IsChecked;
             DaggerfallUnity.Settings.InvertMouseVertical = invertMouseVerticalCheckbox.IsChecked;
             DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothingCheckbox.IsChecked;
             DaggerfallUnity.Settings.ClickToAttack = clickToAttackCheckbox.IsChecked;

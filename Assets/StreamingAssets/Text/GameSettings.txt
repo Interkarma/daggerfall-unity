@@ -32,8 +32,8 @@ mouseSensitivity,                                   Mouse Sensitivity
 mouseSensitivityInfo,                               Mouse look sensitivity.
 weaponSensitivity,                                  Weapon Sensitivity
 weaponSensitivityInfo,                              Sensitivity of weapon swings to mouse movements
-moveSpeedAcceleration,                              Movement Acceleration
-moveSpeedAccelerationInfo,                          Movement acceleration/deceleration rate (max=instant)
+movementAcceleration,                               Movement Acceleration
+movementAccelerationInfo,                           Adds a small amount of acceleration/deceleration during movement
 weaponAttackThreshold,                              WeaponAttackThreshold
 weaponAttackThresholdInfo,                          Minimum mouse gesture travel distance for an attack
 soundFont,                                          SoundFont
