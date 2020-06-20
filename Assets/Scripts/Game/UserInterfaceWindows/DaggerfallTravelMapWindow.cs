@@ -51,6 +51,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int identifyFlashCount                        = 4;
         const int identifyFlashCountSelected                = 2;
         const float identifyFlashInterval                   = 0.5f;
+        const int dotsOutlineThickness                      = 1;
+        Color32 dotOutlineColor                             = new Color32(0, 0, 0, 128);
+        Vector2[] outlineDisplacements =
+        {
+            new Vector2(-0.5f, -0f),
+            new Vector2(0f, -0.5f),
+            new Vector2(0f, 0.5f),
+            new Vector2(0.5f, 0f)
+        };
 
         DaggerfallTravelPopUp popUp;
 
@@ -68,6 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Panel borderPanel;
         Panel regionTextureOverlayPanel;
+        Panel[] regionLocationDotsOutlinesOverlayPanel;
         Panel regionLocationDotsOverlayPanel;
         Panel playerRegionOverlayPanel;
         Panel identifyOverlayPanel;
@@ -78,6 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D identifyTexture;
         Texture2D customRegionOverlayTexture;
         Texture2D locationDotsTexture;
+        Texture2D locationDotsOutlineTexture;
         Texture2D findButtonTexture;
         Texture2D atButtonTexture;
         Texture2D dungeonFilterButtonEnabled;
@@ -115,6 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Color32[] identifyPixelBuffer;
         Color32[] locationDotsPixelBuffer;
+        Color32[] locationDotsOutlinePixelBuffer;
         Color32[] locationPixelColors;              // Pixel colors for different location types
         Color identifyFlashColor;
 
@@ -273,6 +285,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             regionTextureOverlayPanel.Enabled = false;
 
             // Location dots overlay panel
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
+            {
+                regionLocationDotsOutlinesOverlayPanel = new Panel[outlineDisplacements.Length];
+                for (int i = 0; i < outlineDisplacements.Length; i++)
+                {
+                    Rect modifedPanelRect = regionTextureOverlayPanelRect;
+                    modifedPanelRect.x += outlineDisplacements[i].x * dotsOutlineThickness / NativePanel.LocalScale.x;
+                    modifedPanelRect.y += outlineDisplacements[i].y * dotsOutlineThickness / NativePanel.LocalScale.y;
+                    regionLocationDotsOutlinesOverlayPanel[i] = DaggerfallUI.AddPanel(modifedPanelRect, NativePanel);
+                    regionLocationDotsOutlinesOverlayPanel[i].Enabled = false;
+                }
+            }
             regionLocationDotsOverlayPanel = DaggerfallUI.AddPanel(regionTextureOverlayPanelRect, NativePanel);
             regionLocationDotsOverlayPanel.Enabled = false;
 
@@ -300,7 +324,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             identifyTexture.filterMode = FilterMode.Point;
 
             // Setup pixel buffer and texture for location dots overlay
+            locationDotsOutlinePixelBuffer = new Color32[(int)regionTextureOverlayPanelRect.width * (int)regionTextureOverlayPanelRect.height];
             locationDotsPixelBuffer = new Color32[(int)regionTextureOverlayPanelRect.width * (int)regionTextureOverlayPanelRect.height];
+            locationDotsOutlineTexture = new Texture2D((int)regionTextureOverlayPanelRect.width, (int)regionTextureOverlayPanelRect.height, TextureFormat.ARGB32, false);
+            locationDotsOutlineTexture.filterMode = FilterMode.Point;
             locationDotsTexture = new Texture2D((int)regionTextureOverlayPanelRect.width, (int)regionTextureOverlayPanelRect.height, TextureFormat.ARGB32, false);
             locationDotsTexture.filterMode = FilterMode.Point;
 
@@ -644,6 +671,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Plot locations to color array
             scale = GetRegionMapScale(selectedRegion);
             Array.Clear(locationDotsPixelBuffer, 0, locationDotsPixelBuffer.Length);
+            Array.Clear(locationDotsOutlinePixelBuffer, 0, locationDotsOutlinePixelBuffer.Length);
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
@@ -666,17 +694,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             if (index == -1)
                                 continue;
                             else
+                            {
+                                if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
+                                    locationDotsOutlinePixelBuffer[offset] = dotOutlineColor;
                                 locationDotsPixelBuffer[offset] = locationPixelColors[index];
+                            }
                         }
                     }
                 }
             }
 
             // Apply updated color array to texture
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
+            {
+                locationDotsOutlineTexture.SetPixels32(locationDotsOutlinePixelBuffer);
+                locationDotsOutlineTexture.Apply();
+            }
             locationDotsTexture.SetPixels32(locationDotsPixelBuffer);
             locationDotsTexture.Apply();
 
             // Present texture
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
+                for (int i = 0; i < outlineDisplacements.Length; i++)
+                    regionLocationDotsOutlinesOverlayPanel[i].BackgroundTexture = locationDotsOutlineTexture;
             regionLocationDotsOverlayPanel.BackgroundTexture = locationDotsTexture;
         }
 
@@ -687,6 +727,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!RegionSelected || !zoom)
             {
                 regionTextureOverlayPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+                if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
+                    for (int i = 0; i < outlineDisplacements.Length; i++)
+                        regionLocationDotsOutlinesOverlayPanel[i].BackgroundTextureLayout = BackgroundLayout.StretchToFill;
                 regionLocationDotsOverlayPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
                 identifyOverlayPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
                 UpdateBorder();
@@ -725,8 +768,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             regionTextureOverlayPanel.BackgroundCroppedRect = new Rect(startX * ratioX, startY * ratioY, width / zoomfactor * ratioX, height / zoomfactor * ratioY);
 
             // Set cropped area in location dots panel - always at classic dimensions            
+            Rect locationDotsNewRect = new Rect(startX, startY, width / zoomfactor, height / zoomfactor);
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
+                for (int i = 0; i < outlineDisplacements.Length; i++)
+                {
+                    Rect modifiedRect = locationDotsNewRect;
+                    modifiedRect.x += outlineDisplacements[i].x * dotsOutlineThickness / NativePanel.LocalScale.x;
+                    modifiedRect.y += outlineDisplacements[i].y * dotsOutlineThickness / NativePanel.LocalScale.y;
+                    regionLocationDotsOutlinesOverlayPanel[i].BackgroundTextureLayout = BackgroundLayout.Cropped;
+                    regionLocationDotsOutlinesOverlayPanel[i].BackgroundCroppedRect = modifiedRect;
+                }
             regionLocationDotsOverlayPanel.BackgroundTextureLayout = BackgroundLayout.Cropped;
-            regionLocationDotsOverlayPanel.BackgroundCroppedRect = new Rect(startX, startY, width / zoomfactor, height / zoomfactor);
+            regionLocationDotsOverlayPanel.BackgroundCroppedRect = locationDotsNewRect;
 
             // Set cropped area in identify panel - always at classic dimensions
             // This ensures zoomed crosshair pans with location dots panel
@@ -1016,6 +1069,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedRegion = region;
             selectedRegionMapNames = mapNames;
             regionTextureOverlayPanel.Enabled = true;
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
+                for (int i = 0; i < outlineDisplacements.Length; i++)
+                    regionLocationDotsOutlinesOverlayPanel[i].Enabled = true;
             regionLocationDotsOverlayPanel.Enabled = true;
             findButton.Enabled = true;
             findingLocation = false;
@@ -1035,6 +1091,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             locationSelected = false;
             mapIndex = 0;
             regionTextureOverlayPanel.Enabled = false;
+            if (DaggerfallUnity.Settings.TravelMapLocationsOutline)
+                for (int i = 0; i < outlineDisplacements.Length; i++)
+                    regionLocationDotsOutlinesOverlayPanel[i].Enabled = false;
             regionLocationDotsOverlayPanel.Enabled = false;
             horizontalArrowButton.Enabled = false;
             verticalArrowButton.Enabled = false;

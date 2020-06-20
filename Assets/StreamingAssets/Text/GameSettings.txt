@@ -87,12 +87,14 @@ geographicBackgrounds,                              Geographic backgrounds
 geographicBackgroundsInfo,                          Contextual character backgrounds based on geographic location
 dungeonExitWagonPrompt,                             Dungeon wagon access prompt
 dungeonExitWagonPromptInfo,                         Prompt for wagon access on dungeon exit. (Wagon is always accessible within 5m of exit)
-loiterLimitInHours,                                 Maximum loiter time in hours
-loiterLimitInHoursInfo,                             Change default loiter time limit in hours
+travelMapLocationsOutline,                          Outline regional map locations
+travelMapLocationsOutlineInfo,                      Draw an outline around locations on regional maps to improve visibility
 guildQuestListBox,                                  Guild quest player selection
 guildQuestListBoxInfo,                              Presents eligible guild quests in a list box
 bowLeftHandWithSwitching,                           Equip bows in left hand only
 bowLeftHandWithSwitchingInfo,                       Equip bows in left hand and allow 1H weapon switching - switching has a short delay
+loiterLimitInHours,                                 Maximum loiter time in hours
+loiterLimitInHoursInfo,                             Change default loiter time limit in hours
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.
