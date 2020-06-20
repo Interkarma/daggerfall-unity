@@ -174,6 +174,8 @@ namespace DaggerfallWorkshop.Game
             get { return (vertical < -deadZone || vertical > deadZone) ? vertical : 0; }
         }
 
+        public bool ToggleAutorun { get; set; }
+
         public bool UsingController
         {
             get { return usingControllerCursor; }
@@ -215,6 +217,8 @@ namespace DaggerfallWorkshop.Game
             get { return joystickMovementThreshold; }
             set { joystickMovementThreshold = value; }
         }
+
+        public bool MaximizeJoystickMovement { get; set; }
 
         #endregion
 
@@ -283,6 +287,8 @@ namespace DaggerfallWorkshop.Game
             QuickLoad,
 
             PrintScreen,
+
+            AutoRun,
             
             Unknown,
         }
@@ -422,6 +428,12 @@ namespace DaggerfallWorkshop.Game
             mouseY = Input.GetAxisRaw("Mouse Y");
             if (mouseY == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[1]))
                 mouseY = Input.GetAxis(cameraAxisBindingCache[1]);
+
+
+            if(ToggleAutorun)
+            {
+                ApplyVerticalForce(1);
+            }
 
             // Process actions from input sources
             FindKeyboardActions();
@@ -730,6 +742,7 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.RightControl, Actions.Slide);
             SetBinding(KeyCode.LeftShift, Actions.Run);
             SetBinding(KeyCode.RightShift, Actions.Run);
+            SetBinding(KeyCode.Mouse2, Actions.AutoRun);
 
             SetBinding(KeyCode.R, Actions.Rest);
             SetBinding(KeyCode.T, Actions.Transport);
@@ -942,6 +955,7 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.RightControl, Actions.Slide);
             TestSetBinding(KeyCode.LeftShift, Actions.Run);
             TestSetBinding(KeyCode.RightShift, Actions.Run);
+            TestSetBinding(KeyCode.Mouse2, Actions.AutoRun);
 
             TestSetBinding(KeyCode.R, Actions.Rest);
             TestSetBinding(KeyCode.T, Actions.Transport);
@@ -1234,6 +1248,7 @@ namespace DaggerfallWorkshop.Game
                             ApplyVerticalForce(1);
                             break;
                         case Actions.MoveBackwards:
+                            ToggleAutorun = false;
                             ApplyVerticalForce(-1);
                             break;
                         case Actions.TurnLeft:
@@ -1267,7 +1282,7 @@ namespace DaggerfallWorkshop.Game
             {
                 float dist = Mathf.Clamp(Mathf.Sqrt(horiz*horiz + vert*vert), controllerMinimumAxisFloat, 1.0F);
 
-                if (dist > JoystickMovementThreshold)
+                if (MaximizeJoystickMovement || dist > JoystickMovementThreshold)
                     dist = 1.0F;
 
                 if (horiz > 0)
@@ -1288,6 +1303,7 @@ namespace DaggerfallWorkshop.Game
                 }
                 else if (vert < 0)
                 {
+                    ToggleAutorun = false;
                     currentActions.Add(Actions.MoveBackwards);
                     vert = -dist;
                 }
