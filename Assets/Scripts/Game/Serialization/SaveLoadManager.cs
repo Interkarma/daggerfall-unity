@@ -69,6 +69,9 @@ namespace DaggerfallWorkshop.Game.Serialization
         string daggerfallSavePath = string.Empty;
         bool loadInProgress = false;
 
+        string saveDataJsonCache;
+        SaveData_v1 saveDataCache;
+
         #endregion
 
         #region Properties
@@ -468,7 +471,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         /// <param name="loadGameAction">The steps taken to load a save after finding no mismatches, or after user proceeds to load anyway</param>
         public void PromptLoadGame(string characterName, string saveName, Action loadGameAction)
         {
-            string[] modMessage = SaveModConflictMessage(characterName, saveName);
+            string[] modMessage = SaveModConflictMessage(characterName, saveName, out saveDataJsonCache, out saveDataCache);
 
             if (modMessage != null)
             {
@@ -1163,8 +1166,12 @@ namespace DaggerfallWorkshop.Game.Serialization
                 Load(saveData.playerData.playerEntity.name, saveName);
         }
 
-        string[] SaveModConflictMessage(string characterName, string saveName)
+        string[] SaveModConflictMessage(string characterName, string saveName, out string saveDataJson, out SaveData_v1 saveData)
         {
+            // Init 'out' params as null so they don't carry over into LoadGame() if there is an error (!isReady, loadInProgress, key is -1)
+            saveDataJson = null;
+            saveData = null;
+
             int key = FindSaveFolderByNames(characterName, saveName);
 
             // Must be ready
@@ -1182,9 +1189,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             else
                 path = GetSaveFolder(key);
 
-            // Read save game data
-            string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
-            SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
+            // Set 'out' params and read save game data
+            saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
+            saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
 
             // Use dictionary for faster indexing
             Dictionary<string, Mod> dict = ModManager.Instance.Mods.ToDictionary(m => m.GUID);
@@ -1253,7 +1260,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerEntity.Reset();
 
             // Read save data from files
-            string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
+            string saveDataJson = saveDataJsonCache ?? ReadSaveFile(Path.Combine(path, saveDataFilename));
             string factionDataJson = ReadSaveFile(Path.Combine(path, factionDataFilename));
             string questDataJson = ReadSaveFile(Path.Combine(path, questDataFilename));
             string discoveryDataJson = ReadSaveFile(Path.Combine(path, discoveryDataFilename));
@@ -1283,7 +1290,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             // Deserialize JSON strings
-            SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
+            SaveData_v1 saveData = saveDataCache ?? Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
 
             // Must have a serializable player
             if (!stateManager.SerializablePlayer)
