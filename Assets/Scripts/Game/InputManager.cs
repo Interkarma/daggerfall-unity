@@ -447,16 +447,16 @@ namespace DaggerfallWorkshop.Game
                 var h = Input.GetAxis(cameraAxisBindingCache[0]);
                 var v = Input.GetAxis(cameraAxisBindingCache[1]);
 
-                if (GetAxisActionInversion(AxisActions.CameraHorizontal))
-                    mouseX *= -1;
-                if (GetAxisActionInversion(AxisActions.CameraVertical))
-                    mouseY *= -1;
-
                 if(Mathf.Sqrt(h*h + v*v) > JoystickDeadzone)
                 {
                     mouseX = h;
                     mouseY = v;
                 }
+
+                if (GetAxisActionInversion(AxisActions.CameraHorizontal))
+                    mouseX *= -1;
+                if (GetAxisActionInversion(AxisActions.CameraVertical))
+                    mouseY *= -1;
             }
 
             if(ToggleAutorun)
