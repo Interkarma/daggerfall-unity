@@ -911,17 +911,17 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetMouseButtonDown(int button)
         {
-            return Input.GetMouseButtonDown(button) || GetKeyDown(joystickUICache[button]);
+            return Input.GetMouseButtonDown(button) || (EnableController && GetKeyDown(joystickUICache[button]));
         }
 
         public bool GetMouseButtonUp(int button)
         {
-            return Input.GetMouseButtonUp(button) || GetKeyUp(joystickUICache[button]);
+            return Input.GetMouseButtonUp(button) || (EnableController && GetKeyUp(joystickUICache[button]));
         }
 
         public bool GetMouseButton(int button)
         {
-            return Input.GetMouseButton(button) || GetKey(joystickUICache[button]);
+            return Input.GetMouseButton(button) || (EnableController && GetKey(joystickUICache[button]));
         }
 
         public bool GetKey(KeyCode key)
