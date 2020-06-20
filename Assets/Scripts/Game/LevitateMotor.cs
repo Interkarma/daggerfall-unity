@@ -16,12 +16,10 @@ namespace DaggerfallWorkshop.Game
 {
     /// <summary>
     /// A temporary replacement motor for player levitation and swimming.
-    /// This is just so player can navigate Mantellan Crux and other places where levitation useful, and to allow for work on swimming mechanics.
-    /// Will be removed after PlayerMotor refactor and magic system able to perform job properly.
     /// </summary>
     public class LevitateMotor : MonoBehaviour
     {
-        const float levitateMoveSpeed = 4.0f;
+        const float standardLevitateMoveSpeed = 4.0f;
 
         bool playerLevitating = false;
         bool playerSwimming = false;
@@ -30,7 +28,8 @@ namespace DaggerfallWorkshop.Game
         PlayerGroundMotor groundMotor;
         ClimbingMotor climbingMotor;
         Camera playerCamera;
-        float moveSpeed = levitateMoveSpeed;
+        float levitateMoveSpeed = standardLevitateMoveSpeed;
+        float moveSpeed = standardLevitateMoveSpeed;
         Vector3 moveDirection = Vector3.zero;
 
         public bool IsLevitating
@@ -43,6 +42,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return playerSwimming; }
             set { SetSwimming(value); }
+        }
+
+        public float LevitateMoveSpeed
+        {
+            get { return levitateMoveSpeed; }
+            set { levitateMoveSpeed = value; }
         }
 
         private void Start()

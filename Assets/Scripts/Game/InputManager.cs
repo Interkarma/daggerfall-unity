@@ -28,9 +28,6 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
-        public const float minAcceleration = 1.0f;
-        public const float maxAcceleration = 10.0f;
-
         //there are only 16 recognized axes
         const int numAxes = 16;
         const int startingAxisKeyCode = 5000;
@@ -58,6 +55,7 @@ namespace DaggerfallWorkshop.Game
 
         const float deadZone = 0.05f;
         const float inputWaitTotal = 0.0833f;
+        const float moveAccelerationConst = 9.8f;
 
         IList keyCodeList;
         KeyCode[] reservedKeys = new KeyCode[] { };
@@ -91,8 +89,7 @@ namespace DaggerfallWorkshop.Game
         bool negHorizontalImpulse;
         bool posVerticalImpulse;
         bool negVerticalImpulse;
-        float acceleration = 5.0f;
-
+        bool moveAcceleration;
 
         float joystickCameraSensitivity = 1.0f;
         float joystickUIMouseSensitivity = 1.0f;
@@ -183,6 +180,8 @@ namespace DaggerfallWorkshop.Game
             get { return (vertical < -deadZone || vertical > deadZone) ? vertical : 0; }
         }
 
+        public bool ToggleAutorun { get; set; }
+
         public bool UsingController
         {
             get { return usingControllerCursor; }
@@ -224,6 +223,8 @@ namespace DaggerfallWorkshop.Game
             get { return joystickMovementThreshold; }
             set { joystickMovementThreshold = value; }
         }
+
+        public bool MaximizeJoystickMovement { get; set; }
 
         #endregion
 
@@ -298,6 +299,8 @@ namespace DaggerfallWorkshop.Game
             QuickLoad,
 
             PrintScreen,
+
+            AutoRun,
             
             Unknown,
         }
@@ -343,8 +346,8 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            // Read acceleration/deceleration setting
-            acceleration = DaggerfallUnity.Settings.MoveSpeedAcceleration;
+            // Read acceleration setting
+            moveAcceleration = DaggerfallUnity.Settings.MovementAcceleration;
 
             //memoization for 'axis keycodes'
             for (int i = startingAxisKeyCode; i < startingAxisKeyCode + numAxes * 2; i++)
@@ -445,6 +448,11 @@ namespace DaggerfallWorkshop.Game
 
                 if (GetAxisActionInversion(AxisActions.CameraVertical))
                     mouseY *= -1;
+            }
+
+            if(ToggleAutorun)
+            {
+                ApplyVerticalForce(1);
             }
 
             // Process actions from input sources
@@ -833,6 +841,7 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.RightControl, Actions.Slide);
             SetBinding(KeyCode.LeftShift, Actions.Run);
             SetBinding(KeyCode.RightShift, Actions.Run);
+            SetBinding(KeyCode.Mouse2, Actions.AutoRun);
 
             SetBinding(KeyCode.R, Actions.Rest);
             SetBinding(KeyCode.T, Actions.Transport);
@@ -1063,6 +1072,7 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.RightControl, Actions.Slide);
             TestSetBinding(KeyCode.LeftShift, Actions.Run);
             TestSetBinding(KeyCode.RightShift, Actions.Run);
+            TestSetBinding(KeyCode.Mouse2, Actions.AutoRun);
 
             TestSetBinding(KeyCode.R, Actions.Rest);
             TestSetBinding(KeyCode.T, Actions.Transport);
@@ -1119,9 +1129,9 @@ namespace DaggerfallWorkshop.Game
         // Apply force to horizontal axis
         void ApplyHorizontalForce(float scale)
         {
-            // Use acceleration setting or "just go" at max value
-            if (acceleration < maxAcceleration)
-                horizontal = Mathf.Clamp(horizontal + (acceleration * scale) * Time.deltaTime, -1, 1);
+            // Use acceleration setting or "just go"
+            if (moveAcceleration)
+                horizontal = Mathf.Clamp(horizontal + (moveAccelerationConst * scale) * Time.deltaTime, -1, 1);
             else
                 horizontal = scale;
 
@@ -1134,9 +1144,9 @@ namespace DaggerfallWorkshop.Game
         // Apply force to vertical axis
         void ApplyVerticalForce(float scale)
         {
-            // Use acceleration setting or "just go" at max value
-            if (acceleration < maxAcceleration)
-                vertical = Mathf.Clamp(vertical + (acceleration * scale) * Time.deltaTime, -1, 1);
+            // Use acceleration setting or "just go"
+            if (moveAcceleration)
+                vertical = Mathf.Clamp(vertical + (moveAccelerationConst * scale) * Time.deltaTime, -1, 1);
             else
                 vertical = scale;
 
@@ -1149,18 +1159,18 @@ namespace DaggerfallWorkshop.Game
         // Apply friction to decelerate inactive movement impulses towards 0
         void ApplyFriction()
         {
-            // Use acceleration setting or "just stop" at max value
-            if (acceleration < maxAcceleration)
+            // Use acceleration setting or "just stop"
+            if (moveAcceleration)
             {
                 if (!posVerticalImpulse && vertical > 0)
-                    vertical = Mathf.Clamp(vertical - acceleration * Time.deltaTime, 0, vertical);
+                    vertical = Mathf.Clamp(vertical - moveAccelerationConst * Time.deltaTime, 0, vertical);
                 if (!negVerticalImpulse && vertical < 0)
-                    vertical = Mathf.Clamp(vertical + acceleration * Time.deltaTime, vertical, 0);
+                    vertical = Mathf.Clamp(vertical + moveAccelerationConst * Time.deltaTime, vertical, 0);
 
                 if (!posHorizontalImpulse && horizontal > 0)
-                    horizontal = Mathf.Clamp(horizontal - acceleration * Time.deltaTime, 0, horizontal);
+                    horizontal = Mathf.Clamp(horizontal - moveAccelerationConst * Time.deltaTime, 0, horizontal);
                 if (!negHorizontalImpulse && horizontal < 0)
-                    horizontal = Mathf.Clamp(horizontal + acceleration * Time.deltaTime, horizontal, 0);
+                    horizontal = Mathf.Clamp(horizontal + moveAccelerationConst * Time.deltaTime, horizontal, 0);
             }
             else
             {
@@ -1360,6 +1370,7 @@ namespace DaggerfallWorkshop.Game
                             ApplyVerticalForce(1);
                             break;
                         case Actions.MoveBackwards:
+                            ToggleAutorun = false;
                             ApplyVerticalForce(-1);
                             break;
                         case Actions.TurnLeft:
@@ -1399,7 +1410,7 @@ namespace DaggerfallWorkshop.Game
 
                 float dist = Mathf.Clamp(Mathf.Sqrt(horiz*horiz + vert*vert), controllerMinimumAxisFloat, 1.0F);
 
-                if (dist > JoystickMovementThreshold)
+                if (MaximizeJoystickMovement || dist > JoystickMovementThreshold)
                     dist = 1.0F;
 
                 if (horiz > 0)
@@ -1420,6 +1431,7 @@ namespace DaggerfallWorkshop.Game
                 }
                 else if (vert < 0)
                 {
+                    ToggleAutorun = false;
                     currentActions.Add(Actions.MoveBackwards);
                     vert = -dist;
                 }

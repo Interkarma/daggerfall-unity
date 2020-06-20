@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// True when player owns a ship
+        /// True when player owns a cart
         /// </summary>
         /// <returns></returns>
         public bool HasCart()

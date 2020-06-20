@@ -31,6 +31,7 @@ namespace Wenzil.Console
 
         void Start()
         {
+            DaggerfallWorkshop.Game.InputManager.OnSavedKeyBinds += GetConsoleKeyBind;
         }
 
         void OnEnable()
@@ -52,7 +53,7 @@ namespace Wenzil.Console
 
         void Update()
         {
-            if (Input.GetKeyDown(toggleKey))
+            if (DaggerfallWorkshop.Game.InputManager.Instance.GetKeyDown(toggleKey))
                 ui.ToggleConsole();
             else if (Input.GetKeyDown(KeyCode.Escape) && closeOnEscape)
                 ui.CloseConsole();

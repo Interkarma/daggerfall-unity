@@ -1883,8 +1883,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("CalculateDaedraSummoningChance", out del))
                 return del(daedraRep, bonus);
 
-            int chance = 30 + daedraRep + bonus;
-            return Mathf.Clamp(chance, 5, 95);
+            return 30 + daedraRep + bonus;
         }
 
         public static int CalculateTradePrice(int cost, int shopQuality, bool selling)
@@ -2038,6 +2037,10 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             totalGoldCostOut = 0;
             totalSpellPointCostOut = 0;
+
+            // Must have effect entries
+            if (effectEntries == null || effectEntries.Length == 0)
+                return;
 
             // Add costs for each active effect slot
             for (int i = 0; i < effectEntries.Length; i++)
@@ -2223,11 +2226,13 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         /// <summary>
-        /// Reversed from classic. Calculates cost of casting a spell.
+        /// Reversed from classic. Calculates cost of casting a spell. This cost is also used
+        /// to lower item condition when equipping an item whith a "Cast when held" effect.
         /// For now this is only being used for enchanted items, because there is other code for entity-cast spells.
         /// </summary>
         /// <param name="spell">Spell record read from SPELLS.STD.</param>
-        public static int CalculateCastingCost(SpellRecord.SpellRecordData spell)
+        /// <param name="enchantingItem">True if the method is used from the magic item maker.</param>
+        public static int CalculateCastingCost(SpellRecord.SpellRecordData spell, bool enchantingItem= true)
         {
             // Indices into effect settings array for each effect and its subtypes
             byte[] effectIndices = {    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Paralysis
@@ -2330,21 +2335,39 @@ namespace DaggerfallWorkshop.Game.Formulas
                                         0x0F, 0x11, 0x0A, 0x11, // Comprehend Languages
                                         0x0F, 0x0F, 0x05, 0x05 }; // Intensify Fire / Diminish Fire / Wall of --
 
+            // Used to know which Magic School an effect belongs to
+            byte[] effectMagicSchools = { 0, 2, 3, 1, 2, 2, 3, 2, 0, 1,
+                                          1, 2, 3, 5, 4, 5, 3, 3, 1, 3,
+                                          1, 4, 4, 5, 5, 0, 1, 0, 0, 5,
+                                          0, 4, 0, 4, 4, 0, 3, 3, 0, 4,
+                                          4, 4, 5, 3, 3, 0, 0, 4, 4, 4,
+                                          4 };
+
+            // Used to get the skill corresponding to each of the above magic school
+            DFCareer.Skills[] magicSkills = { DFCareer.Skills.Alteration,
+                                              DFCareer.Skills.Restoration,
+                                              DFCareer.Skills.Destruction,
+                                              DFCareer.Skills.Mysticism,
+                                              DFCareer.Skills.Thaumaturgy,
+                                              DFCareer.Skills.Illusion };
+
             // All effects have one of 6 types for their settings depending on which settings (duration, chance, magnitude)
             // they use, which determine how the coefficient values are used with their data to determine spell casting
             // cost /magic item value/enchantment point cost.
             // There is also a 7th type that is supported in classic (see below) but no effect is defined to use it.
-            byte[] settingsTypes = { 1, 2, 3, 4, 5, 4, 4, 2, 1, 6, 5, 6, 1, 3, 3, 3, 1, 4, 2, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 3, 3, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 3, 4, 1, 2, 2, 2, 2, 2, 2, 2 };
+            byte[] settingsTypes = { 1, 2, 3, 4, 5, 4, 4, 2, 1, 6,
+                                     5, 6, 1, 3, 3, 3, 1, 4, 2, 1,
+                                     1, 1, 1, 3, 3, 3, 3, 3, 3, 1,
+                                     3, 3, 1, 1, 1, 2, 2, 1, 1, 1,
+                                     1, 1, 3, 4, 1, 2, 2, 2, 2, 2,
+                                     2 };
 
             // Modifiers for casting ranges
             byte[] rangeTypeModifiers = { 2, 2, 3, 4, 5 };
 
             int cost = 0;
-            int skill = 50;  // 50 is used for item enchantments, which is all this spell is used for now.
-                             // This function could be used as in classic to get casting costs for spells
-                             // cast by entities by replacing skillUsedForEnchantedItemCost with the skill
-                             // of the caster in the effect's spell school.
-
+            int skill = 50; // 50 is used for item enchantments
+            
             for (int i = 0; i < 3; ++i)
             {
                 if (spell.effects[i].type != -1)
@@ -2359,6 +2382,12 @@ namespace DaggerfallWorkshop.Game.Formulas
                     else // Subtype exists
                     {
                         Array.Copy(effectCoefficients, 4 * effectIndices[12 * spell.effects[i].type + spell.effects[i].subType], coefficientsForThisEffect, 0, 4);
+                    }
+
+                    if (!enchantingItem)
+                    {
+                        // If not using the item maker, then player skill corresponding to the effect magic school must be used
+                        skill = GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue(magicSkills[effectMagicSchools[spell.effects[i].type]]);
                     }
 
                     // Add to the cost based on this effect's settings

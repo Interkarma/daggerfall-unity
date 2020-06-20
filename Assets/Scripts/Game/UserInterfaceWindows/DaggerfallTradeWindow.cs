@@ -88,10 +88,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         List<ItemGroups> itemTypesAccepted = storeBuysItemType[DFLocation.BuildingTypes.GeneralStore];
 
-        ItemCollection merchantItems = new ItemCollection();
-        ItemCollection basketItems = new ItemCollection();
+        protected ItemCollection merchantItems = new ItemCollection();
+        protected ItemCollection basketItems = new ItemCollection();
 
-        int cost = 0;
+        protected int cost = 0;
         bool usingIdentifySpell = false;
         DaggerfallUnityItem itemBeingRepaired;
 
@@ -240,7 +240,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeExit);
-            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
+            //exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             // Setup initial state
             SelectTabPage((WindowMode == WindowModes.Identify) ? TabPages.MagicItems : TabPages.WeaponsAndArmor);
@@ -482,7 +482,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             modeActionButton.Enabled = modeActionEnabled;
         }
 
-        private int GetTradePrice()
+        protected int GetTradePrice()
         {
             switch (WindowMode)
             {
@@ -981,7 +981,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
         }
 
-        private void ConfirmTrade_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void ConfirmTrade_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             bool receivedLetterOfCredit = false;
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
@@ -1054,7 +1054,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Misc Events & Helpers
 
-        void ShowTradePopup()
+        protected virtual void ShowTradePopup()
         {
             const int tradeMessageBaseId = 260;
             const int notEnoughGoldId = 454;

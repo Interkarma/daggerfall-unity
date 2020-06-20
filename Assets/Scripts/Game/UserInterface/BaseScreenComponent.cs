@@ -212,7 +212,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public virtual Vector2 Position
         {
             get { return position; }
-            internal set { position = value; }
+            set { position = value; }
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public virtual Vector2 Size
         {
             get { return size; }
-            internal set { size = value; }
+            set { size = value; }
         }
 
         /// <summary>

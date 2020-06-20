@@ -1280,7 +1280,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (usingWagon)
             {
                 // Check wagon weight limit
-                int wagonCanHold = ComputeCanHoldAmount(playerGold, DaggerfallBankManager.goldUnitWeightInKg, ItemHelper.WagonKgLimit - remoteItems.GetWeight());
+                int wagonCanHold = ComputeCanHoldAmount(playerGold, DaggerfallBankManager.goldUnitWeightInKg, ItemHelper.WagonKgLimit, remoteItems.GetWeight());
                 if (goldToDrop > wagonCanHold)
                 {
                     goldToDrop = wagonCanHold;
@@ -1398,7 +1398,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected int CanCarryAmount(DaggerfallUnityItem item)
         {
             // Check weight limit
-            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), playerEntity.MaxEncumbrance - GetCarriedWeight());
+            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), playerEntity.MaxEncumbrance, GetCarriedWeight());
             if (canCarry <= 0)
             {
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotCarryAnymore"));
@@ -1409,7 +1409,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected int WagonCanHoldAmount(DaggerfallUnityItem item)
         {
             // Check cart weight limit
-            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.WagonKgLimit - remoteItems.GetWeight());
+            int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.WagonKgLimit, remoteItems.GetWeight());
             if (canCarry <= 0)
             {
                 DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotHoldAnymore"));
@@ -1417,11 +1417,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return canCarry;
         }
 
-        private int ComputeCanHoldAmount(int unitsAvailable, float unitWeightInKg, float capacityLeftInKg)
+        // This assumes all weights are multiple of a gold piece weight (2.5g, or 1/400 kg)
+        // This is true in classic because, beside gold pieces, all weights are multiple of
+        // "classic unit" (250g or 1.4 kg)
+        private int WeightInGPUnits(float weight)
+        {
+            return Mathf.RoundToInt(weight * 400f);
+        }
+
+        private int ComputeCanHoldAmount(int unitsAvailable, float unitWeightInKg, float capacityInKg, float loadInKg)
         {
             int canHold = unitsAvailable;
-            if (unitWeightInKg > 0f)
-                canHold = Math.Min(canHold, (int)(capacityLeftInKg / unitWeightInKg));
+            int roundUnitWeight = WeightInGPUnits(unitWeightInKg);
+            if (roundUnitWeight > 0)
+            {
+                int roundCapacity = WeightInGPUnits(capacityInKg);
+                int roundLoad = WeightInGPUnits(loadInKg);
+                canHold = Math.Min(canHold, (roundCapacity - roundLoad) / roundUnitWeight);
+            }
             return canHold;
         }
 

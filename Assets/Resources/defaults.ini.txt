@@ -62,8 +62,9 @@ AccelerateUICopyTexture=False
 SDFFontRendering=True
 EnableGeographicBackgrounds=False
 DungeonExitWagonPrompt=True
+TravelMapLocationsOutline=False
+
 IllegalRestWarning=True
-LoiterLimitInHours=3
 LargeHUD=false
 LargeHUDScale=1.0
 
@@ -82,7 +83,7 @@ HeadBobbing=True
 Handedness=0
 WeaponAttackThreshold=0.03
 WeaponSensitivity=1.0
-MoveSpeedAcceleration=10.0
+MovementAcceleration=False
 ToggleSneak=False
 ClickToAttack = False
 CameraRecoilStrength = 3
@@ -129,3 +130,4 @@ EnemyInfighting=True
 EnhancedCombatAI=True
 GuildQuestListBox=False
 BowLeftHandWithSwitching=False
+LoiterLimitInHours=3

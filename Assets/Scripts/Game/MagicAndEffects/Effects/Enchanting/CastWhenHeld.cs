@@ -15,6 +15,7 @@ using DaggerfallConnect.Save;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -174,8 +175,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                         if (casterManager.IsPlayerEntity)
                             casterManager.PlayCastSound(sourceEntity, casterManager.GetCastSoundID(bundle.Settings.ElementType), true);
 
-                        // TODO: Apply durability loss to equipped item on equip
-                        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
+                        // Classic uses an item last "cast when held" effect spell cost to determine its durability loss on equip
+                        // Here, all effects are considered, as it seems more coherent to do so
+                        sourceItem.LowerCondition(FormulaHelper.CalculateCastingCost(spell, false), sourceEntity.Entity, sourceEntity.Entity.Items);
                     }
 
                     // Store equip time as last reroll time
