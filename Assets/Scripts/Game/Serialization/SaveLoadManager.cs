@@ -158,6 +158,11 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Update save game enumerations
             GameManager.Instance.SaveLoadManager.EnumerateSaves();
+
+            OnLoad += (_ => {
+                saveDataJsonCache = null;
+                saveDataCache = null;
+            });
         }
 
         static bool sceneUnloaded = false;
