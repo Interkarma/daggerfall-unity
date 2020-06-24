@@ -447,7 +447,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else if (currentRestMode == RestModes.FullRest)
                 {
-                    DaggerfallMessageBox mb = DaggerfallUI.MessageBox(youAreHealedTextId);
+                    int message = IsPlayerFullyHealed() ? youAreHealedTextId : youWakeUpTextId;
+                    DaggerfallMessageBox mb =  DaggerfallUI.MessageBox(message);
                     mb.OnClose += RestFinishedPopup_OnClose;
                     currentRestMode = RestModes.Selection;
                 }
