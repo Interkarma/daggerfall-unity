@@ -818,6 +818,9 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         ModInfo_v1[] GetModInfoData()
         {
+            if (ModManager.Instance == null)
+                return null;
+
             List<ModInfo_v1> records = new List<ModInfo_v1>();
             foreach (var mod in ModManager.Instance.Mods)
             {
