@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             moveSpeedCheckbox = AddOption(215, 80, "Movement Acceleration", DaggerfallUnity.Settings.MovementAcceleration);
 
-            invertMouseVerticalCheckbox = AddOption(20, 100, "Invert Mouse", DaggerfallUnity.Settings.InvertMouseVertical);
+            invertMouseVerticalCheckbox = AddOption(20, 100, "Invert Look-Y", DaggerfallUnity.Settings.InvertMouseVertical);
 
             mouseSmoothingCheckbox = AddOption(20, 110, "Mouse Smoothing", DaggerfallUnity.Settings.MouseLookSmoothing);
 
