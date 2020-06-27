@@ -12,6 +12,8 @@
 using UnityEngine;
 using System;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using FullSerializer;
@@ -66,6 +68,9 @@ namespace DaggerfallWorkshop.Game.Serialization
         string unitySavePath = string.Empty;
         string daggerfallSavePath = string.Empty;
         bool loadInProgress = false;
+
+        string saveDataJsonCache;
+        SaveData_v1 saveDataCache;
 
         #endregion
 
@@ -153,6 +158,11 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Update save game enumerations
             GameManager.Instance.SaveLoadManager.EnumerateSaves();
+
+            OnLoad += (_ => {
+                saveDataJsonCache = null;
+                saveDataCache = null;
+            });
         }
 
         static bool sceneUnloaded = false;
@@ -446,6 +456,53 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Get folder
             return key != -1;
+        }
+
+        /// <summary>
+        /// Checks for a mod mismatch in the QuickSave, and displays a warning message before proceeding
+        /// </summary>
+        /// <param name="characterName">Character's name in the save</param>
+        /// <param name="loadGameAction">The steps taken to load a save after finding no mismatches, or after user proceeds to load anyway</param>
+        public void PromptQuickLoadGame(string characterName, Action loadGameAction)
+        {
+            PromptLoadGame(characterName, quickSaveName, loadGameAction);
+        }
+
+        /// <summary>
+        /// Checks for a mod mismatch in a save, and displays a warning message before proceeding
+        /// </summary>
+        /// <param name="characterName">Character's name in the save</param>
+        /// <param name="saveName">Name of the save to be loaded</param>
+        /// <param name="loadGameAction">The steps taken to load a save after finding no mismatches, or after user proceeds to load anyway</param>
+        public void PromptLoadGame(string characterName, string saveName, Action loadGameAction)
+        {
+            string[] modMessage = SaveModConflictMessage(characterName, saveName, out saveDataJsonCache, out saveDataCache);
+
+            if (modMessage != null)
+            {
+                DaggerfallMessageBox modBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow);
+
+                modBox.EnableVerticalScrolling(80);
+                modBox.SetText(modMessage);
+                modBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                modBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No, true);
+                modBox.PauseWhileOpen = true;
+
+                modBox.OnButtonClick += ((s, messageBoxButton) =>
+                {
+                    s.CloseWindow();
+                    if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+                    {
+                        loadGameAction();
+                    }
+                });
+
+                modBox.Show();
+            }
+            else
+            {
+                loadGameAction();
+            }
         }
 
         public void Rename(int key, string newSaveName)
@@ -754,8 +811,29 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveData.sceneCache = stateManager.GetSceneCache();
             saveData.travelMapData = DaggerfallUI.Instance.DfTravelMapWindow.GetTravelMapSaveData();
             saveData.advancedClimbingState = GameManager.Instance.ClimbingMotor.GetSaveData();
+            saveData.modInfoData = GetModInfoData();
 
             return saveData;
+        }
+
+        ModInfo_v1[] GetModInfoData()
+        {
+            List<ModInfo_v1> records = new List<ModInfo_v1>();
+            foreach (var mod in ModManager.Instance.Mods)
+            {
+                if (mod.Enabled)
+                {
+                    var record = new ModInfo_v1();
+                    record.fileName = mod.FileName;
+                    record.title = mod.Title;
+                    record.guid = mod.GUID;
+                    record.version = mod.ModInfo.ModVersion;
+                    record.loadPriority = mod.LoadPriority;
+
+                    records.Add(record);
+                }
+            }
+            return records.ToArray();
         }
 
         DateAndTime_v1 GetDateTimeData()
@@ -1093,6 +1171,89 @@ namespace DaggerfallWorkshop.Game.Serialization
                 Load(saveData.playerData.playerEntity.name, saveName);
         }
 
+        string[] SaveModConflictMessage(string characterName, string saveName, out string saveDataJson, out SaveData_v1 saveData)
+        {
+            // Init 'out' params as null so they don't carry over into LoadGame() if there is an error (!isReady, loadInProgress, key is -1)
+            saveDataJson = null;
+            saveData = null;
+
+            int key = FindSaveFolderByNames(characterName, saveName);
+
+            // Must be ready
+            if (!IsReady())
+                throw new Exception(notReadyExceptionText);
+
+            // Load must not be in progress
+            if (loadInProgress)
+                return null;
+
+            // Get folder
+            string path;
+            if (key == -1)
+                return null;
+            else
+                path = GetSaveFolder(key);
+
+            // Set 'out' params and read save game data
+            saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
+            saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
+
+            // Use dictionary for faster indexing
+            Dictionary<string, Mod> dict = ModManager.Instance.Mods.ToDictionary(m => m.GUID);
+            // Need to use a string collection because of MessageBox's SetText method
+            List<string> message = new List<string>();
+
+            if (saveData.modInfoData != null && saveData.modInfoData.Length > 0)
+            {
+                Mod mod;
+
+                // Verify that every mod recorded in the save is included in the current mod list, or has a newer version loaded
+                // Otherwise add a warning for each missing mod or version conflict
+                foreach (ModInfo_v1 record in saveData.modInfoData)
+                {
+                    if (dict.TryGetValue(record.guid, out mod))
+                    {
+                        if (mod.ModInfo.ModVersion != record.version)
+                        {
+                            bool? comp = ModManager.IsVersionLowerOrEqual(record.version, mod.ModInfo.ModVersion);
+
+                            if (comp == false)
+                            {
+                                message.Add("- " + record.title + " (v. " + record.version + ")");
+                                message.Add("Incoming version is older: '" + mod.Title + " (v. " + mod.ModInfo.ModVersion + ")'");
+                                message.Add(String.Empty);
+                            }
+                            else if (comp == null)
+                            {
+                                message.Add("- " + record.title + " (v. " + record.version + ")");
+                                message.Add("Incoming version is different: '" + mod.Title + " (v. " + mod.ModInfo.ModVersion + ")'");
+                                message.Add(String.Empty);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        message.Add("- " + record.title + " (v. " + record.version + ")");
+                        message.Add("Mod is either not loaded or has been altered");
+                        message.Add(String.Empty);
+                    }
+                }
+
+                if (message.Count > 0)
+                {
+                    message.Insert(0, "The currently used mods do not match the ones used by this save:");
+                    message.Insert(1, String.Empty);
+
+                    message.Add("Errors may occur during gameplay. Proceed?");
+                    message.Add(String.Empty);
+
+                    return message.ToArray();
+                }
+            }
+
+            return null;
+        }
+
         IEnumerator LoadGame(string path)
         {
             GameManager.Instance.PlayerDeath.ClearDeathAnimation();
@@ -1104,7 +1265,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerEntity.Reset();
 
             // Read save data from files
-            string saveDataJson = ReadSaveFile(Path.Combine(path, saveDataFilename));
+            string saveDataJson = saveDataJsonCache ?? ReadSaveFile(Path.Combine(path, saveDataFilename));
             string factionDataJson = ReadSaveFile(Path.Combine(path, factionDataFilename));
             string questDataJson = ReadSaveFile(Path.Combine(path, questDataFilename));
             string discoveryDataJson = ReadSaveFile(Path.Combine(path, discoveryDataFilename));
@@ -1134,7 +1295,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             // Deserialize JSON strings
-            SaveData_v1 saveData = Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
+            SaveData_v1 saveData = saveDataCache ?? Deserialize(typeof(SaveData_v1), saveDataJson) as SaveData_v1;
 
             // Must have a serializable player
             if (!stateManager.SerializablePlayer)

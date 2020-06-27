@@ -499,8 +499,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return;
                 }
 
-                loadingLabel.Text = TextManager.Instance.GetText("DaggerfallUI", "loading");
-                loading = true;
+                GameManager.Instance.SaveLoadManager.PromptLoadGame(currentPlayerName, saveNameTextBox.Text, () =>
+                {
+                    loadingLabel.Text = TextManager.Instance.GetText("DaggerfallUI", "loading");
+                    loading = true;
+                });
             }
         }
 
