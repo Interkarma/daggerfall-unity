@@ -263,7 +263,7 @@ namespace DaggerfallWorkshop.Game.Player
         public void GetRegionFaction(int regionIndex, out FactionFile.FactionData factionData, bool duplicateException = true)
         {
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
-                (int)FactionFile.FactionTypes.Province, -1, (int)FactionFile.GuildGroups.Region, regionIndex);
+                (int)FactionFile.FactionTypes.Province, -1, -1, regionIndex);
 
             // Should always find a single region
             if (factions == null || factions.Length != 1)
