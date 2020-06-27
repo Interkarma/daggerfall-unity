@@ -67,6 +67,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox playerNudity;
         Checkbox clickToAttack;
         Checkbox sdfFontRendering;
+        Checkbox enableController;
         Checkbox retro320x200WorldRendering;
 
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
@@ -156,6 +157,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             moveNextStage = true;
 
+            // Apply joystick settings to input manager to keep consistency between the setup wizard and the game
+            InputManager.Instance.JoystickCursorSensitivity = DaggerfallUnity.Settings.JoystickCursorSensitivity;
+            InputManager.Instance.JoystickDeadzone = DaggerfallUnity.Settings.JoystickDeadzone;
+
             // Override cursor
             Texture2D tex;
             if (TextureReplacement.TryImportTexture("Cursor", true, out tex))
@@ -179,6 +184,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // This is a special realtime setting as font rendering can change at any time, even during the setup process itself
             if (sdfFontRendering != null)
                 sdfFontRendering.IsChecked = DaggerfallUnity.Settings.SDFFontRendering;
+
+            // Sync controller enabling to current setting
+            // This is a special realtime setting as controller enabling can change at any time, even during the setup process itself
+            if (enableController != null)
+            {
+                enableController.IsChecked = DaggerfallUnity.Settings.EnableController;
+                InputManager.Instance.EnableController = DaggerfallUnity.Settings.EnableController;
+            }
 
             // Move to next setup stage
             if (moveNextStage)
@@ -478,6 +491,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             sdfFontRendering.OnToggleState += SDFFontRendering_OnToggleState;
             //bool exampleModCheckbox = AddOption(x, "Example", "Example built-in mod", DaggerfallUnity.Settings.ExampleModOption);
 
+            enableController = AddOption(x, "enableController", DaggerfallUnity.Settings.EnableController);
+            enableController.OnToggleState += EnableController_OnToggleState;
+
             // Add mod note
             TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 125), GetText("modNote"), optionsPanel);
             modNoteLabel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -542,6 +558,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Immediately switch font rendering
             DaggerfallUnity.Settings.SDFFontRendering = sdfFontRendering.IsChecked;
+        }
+
+        private void EnableController_OnToggleState()
+        {
+            // Immediately toggle controller
+            DaggerfallUnity.Settings.EnableController = enableController.IsChecked;
         }
 
         //void ShowSummaryPanel()
@@ -761,6 +783,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
             DaggerfallUnity.Settings.ClickToAttack = clickToAttack.IsChecked;
+            DaggerfallUnity.Settings.EnableController = enableController.IsChecked;
             DaggerfallUnity.Settings.SaveSettings();
 
             if (ModManager.Instance)
