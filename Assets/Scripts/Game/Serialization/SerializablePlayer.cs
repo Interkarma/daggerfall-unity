@@ -186,6 +186,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
             // Store guild memberships
             data.guildMemberships = GameManager.Instance.GuildManager.GetMembershipData();
+            data.vampireMemberships = GameManager.Instance.GuildManager.GetMembershipData(true);
             // Store one time quest acceptances
             data.oneTimeQuestsAccepted = GameManager.Instance.QuestListsManager.oneTimeQuestsAccepted;
 
@@ -412,6 +413,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore guild memberships, also done early in SaveLoadManager for interiors
             GameManager.Instance.GuildManager.RestoreMembershipData(data.guildMemberships);
+            GameManager.Instance.GuildManager.RestoreMembershipData(data.vampireMemberships, true);
             // Restore one time quest acceptances
             GameManager.Instance.QuestListsManager.oneTimeQuestsAccepted = data.oneTimeQuestsAccepted;
 

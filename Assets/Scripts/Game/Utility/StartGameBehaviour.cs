@@ -584,7 +584,7 @@ namespace DaggerfallWorkshop.Game.Utility
             playerEntity.AssignItemsAndSpells(saveTree);
 
             // Assign guild memberships
-            playerEntity.AssignGuildMemberships(saveTree);
+            playerEntity.AssignGuildMemberships(saveTree, characterDocument.classicTransformedRace == Races.Vampire);
 
             // Assign gold pieces
             playerEntity.GoldPieces = (int)characterRecord.ParsedData.physicalGold;

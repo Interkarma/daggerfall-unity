@@ -147,6 +147,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public TransportModes transportMode;
         public PlayerPositionData_v1 boardShipPosition;  // Holds the player position from before boarding a ship.
         public Dictionary<int, GuildMembership_v1> guildMemberships;
+        public Dictionary<int, GuildMembership_v1> vampireMemberships;
         public List<string> oneTimeQuestsAccepted;
     }
 
