@@ -158,9 +158,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             joystickUIMouseSensitivitySlider = CreateSlider("UI Mouse Sensitivity", 115, 120, 0.1f, 5.0f, DaggerfallUnity.Settings.JoystickCursorSensitivity);
 
-            joystickMovementThresholdSlider = CreateSlider("Joystick Movement Threshold", 215, 120, 0.0f, 1.0f, DaggerfallUnity.Settings.JoystickMovementThreshold);
+            joystickMovementThresholdSlider = CreateSlider("Maximum Movement Threshold", 215, 120, 0.0f, 1.0f, DaggerfallUnity.Settings.JoystickMovementThreshold);
 
-            joystickDeadzoneSlider = CreateSlider("Joystick Deadzone", 15, 140, 0.0f, 0.9f, DaggerfallUnity.Settings.JoystickDeadzone);
+            joystickDeadzoneSlider = CreateSlider("Deadzone", 15, 140, 0.0f, 0.9f, DaggerfallUnity.Settings.JoystickDeadzone);
 
             continueButton.OnMouseClick += ContinueButton_OnMouseClick;
         }
