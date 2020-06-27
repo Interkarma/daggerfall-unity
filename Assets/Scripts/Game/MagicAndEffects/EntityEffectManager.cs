@@ -1588,6 +1588,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return racialOverrideEffect is LycanthropyEffect;
         }
 
+        public LycanthropyTypes LycanthropyType()
+        {
+            if (HasLycanthropy())
+                return (racialOverrideEffect as LycanthropyEffect).InfectionType;
+            else
+                return LycanthropyTypes.None;
+        }
+
         public bool IsTransformedLycanthrope()
         {
             if (HasLycanthropy())
