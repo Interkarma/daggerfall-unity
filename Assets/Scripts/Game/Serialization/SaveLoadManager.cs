@@ -1177,6 +1177,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             saveDataJson = null;
             saveData = null;
 
+            if (ModManager.Instance == null)
+                return null;
+
             int key = FindSaveFolderByNames(characterName, saveName);
 
             // Must be ready
