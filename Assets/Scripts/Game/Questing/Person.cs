@@ -1025,13 +1025,25 @@ namespace DaggerfallWorkshop.Game.Questing
                 return -1;
             }
 
+            // Initial handling for Local_X.X career groups pending further review and information
+            // These appear to use P3 for career association and will all resolve to Merchants for now
+            // P3=0 (Apothecary), P3=1 (Town1), P3=2 (Armory), P3=3 (Bank), P3=10000 (unused in any quests)
+            if (careerID < 0)
+                careerID = Parser.ParseInt(factionsTable.GetValue("p3", careerAllianceName));
+
+            // Handle Local_4.10k - unused in any quests and will default to Merchants for now
+            if (careerID == 10000)
+                careerID = 0;
+
             // Assign factionID based on careerID
             // How Daggerfall links these is not 100% confirmed, some guesses below
             // Most of these NPC careers seem to be aligned with faction #510 Merchants
             switch (careerID)
             {
                 case 0:
+                case 1:
                 case 2:
+                case 3:
                 case 5:
                 case 6:
                 case 7:
