@@ -630,12 +630,17 @@ namespace DaggerfallConnect.Arena2
         /// <param name="frame">Frame index.</param>
         private void SetSpectral(int record, int frame)
         {
-            // Just set spectral enemies to dark gray for now
+            // Isolate spectral eyes and accentuate bones and other features
             for (int i = 0; i < records[record].Frames[frame].Data.Length; i++)
             {
-                int index = records[record].Frames[frame].Data[i];
-                if (index > 0)
-                    records[record].Frames[frame].Data[i] = 93;
+                byte index = records[record].Frames[frame].Data[i];
+
+                // Index 14 is reserved for eyes
+                // TODO: Make emissive in material setup
+                if (index == 14)
+                    records[record].Frames[frame].Data[i] = 247;
+                else if (index > 0 && index < 128)
+                    records[record].Frames[frame].Data[i] = (byte)(96 - index);
             }
         }
 
