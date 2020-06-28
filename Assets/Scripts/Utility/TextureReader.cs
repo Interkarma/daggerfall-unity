@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Utility
     public class TextureReader
     {
         const int spectralEyesReserved = 14;
-        const int spectralEyesPatched = 112;
+        const int spectralEyesPatched = 247;
         const int spectralGrayStart = 96;
 
         bool mipMaps = true;
