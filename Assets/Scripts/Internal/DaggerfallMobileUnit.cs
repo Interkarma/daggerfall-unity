@@ -218,7 +218,9 @@ namespace DaggerfallWorkshop
                 summary.EnemyState == MobileStates.PrimaryAttack ||
                 summary.EnemyState == MobileStates.RangedAttack1 ||
                 summary.EnemyState == MobileStates.RangedAttack2 ||
-                summary.EnemyState == MobileStates.Spell)
+                summary.EnemyState == MobileStates.Spell ||
+                summary.EnemyState == MobileStates.SeducerTransform1 ||
+                summary.EnemyState == MobileStates.SeducerTransform2)
             {
                 return true;
             }

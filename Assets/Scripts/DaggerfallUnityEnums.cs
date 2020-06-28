@@ -216,14 +216,17 @@ namespace DaggerfallWorkshop
     /// </summary>
     public enum MobileStates
     {
-        Move,               // Records 0-4      (Flying and swimming mobs also uses this animation set for idle)
-        PrimaryAttack,      // Records 5-9      (Usually a melee attack animation)
-        Hurt,               // Records 10-14    (Mob has been struck)
-        Idle,               // Records 15-19    (Frost and ice Daedra have animated idle states)
-        RangedAttack1,      // Records 20-24    (Bow attack)
-        Spell,              // Records 20-24 or, if absent, copy of PrimaryAttack
-        RangedAttack2,      // Records 25-29    (Bow attack on 475, 489, 490 only, absent on other humanoids)
-        // TODO: Seducer transform special
+        Move,                   // Records 0-4      (Flying and swimming mobs also uses this animation set for idle)
+        PrimaryAttack,          // Records 5-9      (Usually a melee attack animation)
+        Hurt,                   // Records 10-14    (Mob has been struck)
+        Idle,                   // Records 15-19    (Frost and ice Daedra have animated idle states)
+        RangedAttack1,          // Records 20-24    (Bow attack)
+        Spell,                  // Records 20-24 or, if absent, copy of PrimaryAttack
+        RangedAttack2,          // Records 25-29    (Bow attack on 475, 489, 490 only, absent on other humanoids)
+        SeducerTransform1,      // Record 23        (Crouch and grow wings)
+        SeducerTransform2,      // Record 22        (Stand and spread wings)
+        SeducerWingedIdle,      // Record 21        (Transformed idle/move anims, seducer gains flight)
+        SeducerWingedAttack,    // Record 20        (Transformed casting/attack anims)
     }
 
     /// <summary>

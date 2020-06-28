@@ -171,6 +171,12 @@ namespace DaggerfallWorkshop.Game
                         entityBehaviour.EntityType = EntityTypes.None;
                     }
                 }
+
+                // Add special behaviour for Daedra Seducer mobiles
+                if (dfMobile.Summary.Enemy.ID == (int)MobileTypes.DaedraSeducer)
+                {
+                    dfMobile.gameObject.AddComponent<DaedraSeducerMobileBehaviour>();
+                }
             }
         }
 
