@@ -299,7 +299,10 @@ namespace DaggerfallConnect.Arena2
                 solidType = SolidTypes.None;
 
             // Handle spectral types
-            if (fn == "TEXTURE.273" || fn == "TEXTURE.278")
+            // 273 = Ghost
+            // 278 = Wraith
+            // 473 = Lysandus
+            if (fn == "TEXTURE.273" || fn == "TEXTURE.278" || fn == "TEXTURE.473")
                 spectralType = SpectralTypes.Spectral;
             else
                 spectralType = SpectralTypes.None;

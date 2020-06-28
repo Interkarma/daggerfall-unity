@@ -969,6 +969,40 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 253, record = 75 },
             new DaggerfallTextureIndex() { archive = 253, record = 77 },
 
+            // Ghost
+            new DaggerfallTextureIndex() { archive = 273, record = 0 },
+            new DaggerfallTextureIndex() { archive = 273, record = 1 },
+            new DaggerfallTextureIndex() { archive = 273, record = 2 },
+            new DaggerfallTextureIndex() { archive = 273, record = 3 },
+            new DaggerfallTextureIndex() { archive = 273, record = 4 },
+            new DaggerfallTextureIndex() { archive = 273, record = 5 },
+            new DaggerfallTextureIndex() { archive = 273, record = 6 },
+            new DaggerfallTextureIndex() { archive = 273, record = 7 },
+            new DaggerfallTextureIndex() { archive = 273, record = 8 },
+            new DaggerfallTextureIndex() { archive = 273, record = 9 },
+            new DaggerfallTextureIndex() { archive = 273, record = 10 },
+            new DaggerfallTextureIndex() { archive = 273, record = 11 },
+            new DaggerfallTextureIndex() { archive = 273, record = 12 },
+            new DaggerfallTextureIndex() { archive = 273, record = 13 },
+            new DaggerfallTextureIndex() { archive = 273, record = 14 },
+
+            // Wraith
+            new DaggerfallTextureIndex() { archive = 278, record = 0 },
+            new DaggerfallTextureIndex() { archive = 278, record = 1 },
+            new DaggerfallTextureIndex() { archive = 278, record = 2 },
+            new DaggerfallTextureIndex() { archive = 278, record = 3 },
+            new DaggerfallTextureIndex() { archive = 278, record = 4 },
+            new DaggerfallTextureIndex() { archive = 278, record = 5 },
+            new DaggerfallTextureIndex() { archive = 278, record = 6 },
+            new DaggerfallTextureIndex() { archive = 278, record = 7 },
+            new DaggerfallTextureIndex() { archive = 278, record = 8 },
+            new DaggerfallTextureIndex() { archive = 278, record = 9 },
+            new DaggerfallTextureIndex() { archive = 278, record = 10 },
+            new DaggerfallTextureIndex() { archive = 278, record = 11 },
+            new DaggerfallTextureIndex() { archive = 278, record = 12 },
+            new DaggerfallTextureIndex() { archive = 278, record = 13 },
+            new DaggerfallTextureIndex() { archive = 278, record = 14 },
+
             // Frost daedra
             new DaggerfallTextureIndex() { archive = 280, record = 0 },
             new DaggerfallTextureIndex() { archive = 280, record = 1 },
@@ -1060,6 +1094,23 @@ namespace DaggerfallWorkshop.Utility
             // new DaggerfallTextureIndex() { archive = 380, record = 5 }, // UI
             new DaggerfallTextureIndex() { archive = 434, record = 3 },
             // new DaggerfallTextureIndex() { archive = 434, record = 5 }, // UI
+
+            // Lysandus
+            new DaggerfallTextureIndex() { archive = 473, record = 0 },
+            new DaggerfallTextureIndex() { archive = 473, record = 1 },
+            new DaggerfallTextureIndex() { archive = 473, record = 2 },
+            new DaggerfallTextureIndex() { archive = 473, record = 3 },
+            new DaggerfallTextureIndex() { archive = 473, record = 4 },
+            new DaggerfallTextureIndex() { archive = 473, record = 5 },
+            new DaggerfallTextureIndex() { archive = 473, record = 6 },
+            new DaggerfallTextureIndex() { archive = 473, record = 7 },
+            new DaggerfallTextureIndex() { archive = 473, record = 8 },
+            new DaggerfallTextureIndex() { archive = 473, record = 9 },
+            new DaggerfallTextureIndex() { archive = 473, record = 10 },
+            new DaggerfallTextureIndex() { archive = 473, record = 11 },
+            new DaggerfallTextureIndex() { archive = 473, record = 12 },
+            new DaggerfallTextureIndex() { archive = 473, record = 13 },
+            new DaggerfallTextureIndex() { archive = 473, record = 14 },
         };
 
         static Dictionary<int, List<int>> fastEmissiveTextures = null;
