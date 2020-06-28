@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     if (dfMobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral)
                     {
-                        meshRenderer.material.shader = Shader.Find("Daggerfall/GhostShader");
+                        meshRenderer.material.shader = Shader.Find(MaterialReader._DaggerfallGhostShaderName);
                         meshRenderer.material.SetFloat("_Cutoff", 0.1f);
                     }
                     if (dfMobile.Summary.Enemy.NoShadow)
