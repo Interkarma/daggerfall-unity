@@ -4,9 +4,9 @@
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
         _BumpMap ("Bumpmap", 2D) = "bump" {}
         _EmissionMap("Emission Map", 2D) = "white" {}
-        _EmissionColor("Emission Color", Color) = (0,0,0)
+        _EmissionColor("Emission Color", Color) = (1,1,1)
         _Cutoff ("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
-        _Transparency ("Transparency", Range(0.0, 1.0)) = 0.5
+        //_Transparency ("Transparency", Range(0.0, 1.0)) = 0.5
 		_Glossiness ("Smoothness", Range(0.0, 1.0)) = 0.0
 		_Metallic ("Metallic", Range(0.0, 1.0)) = 0.0
 	}
@@ -42,9 +42,13 @@
 			// Albedo comes from a texture tinted by color
 			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             clip (c.a - _Cutoff);
+
+            // Transparency from albedo alpha
+            // Allows parts some parts of image to be transparent (e.g. body) and other parts opaque (e.g. eyes)
+            _Transparency = c.a;
             
             half3 emission = tex2D(_EmissionMap, IN.uv_EmissionMap).rgb * _EmissionColor;
-			o.Albedo = c.rgb - emission; // Emission cancels out other lights
+			o.Albedo = (c.rgb * 0.5) - emission; // Lower brightness spectral colors to get darker look, emission cancels out other lights
             o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
             o.Emission = emission;
 			// Metallic and smoothness come from slider variables

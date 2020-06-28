@@ -24,6 +24,10 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public class TextureReader
     {
+        const int spectralEyesReserved = 14;
+        const int spectralEyesPatched = 112;
+        const int spectralGrayStart = 96;
+
         bool mipMaps = true;
 
         // Special texture indices
@@ -187,8 +191,9 @@ namespace DaggerfallWorkshop.Utility
         {
             GetTextureResults results = new GetTextureResults();
 
-            // Check if window or auto-emissive
+            // Check if window, spectral, or auto-emissive
             bool isWindow = ClimateSwaps.IsExteriorWindow(settings.archive, settings.record);
+            bool isSpectral = TextureFile.IsSpectralArchive(settings.archive);
             bool isEmissive = (settings.autoEmission) ? IsEmissive(settings.archive, settings.record) : false;
 
             // Override readable flag when user has set preference in material reader
@@ -208,10 +213,24 @@ namespace DaggerfallWorkshop.Utility
             else
                 textureFile = settings.textureFile;
 
-            // Get starting DFBitmap and albedo Color32 array
+            // Get starting DFBitmap
             DFSize sz;
             DFBitmap srcBitmap = textureFile.GetDFBitmap(settings.record, settings.frame);
-            Color32[] albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz);
+
+            // Get albedo Color32 array
+            Color32[] albedoColors;
+            if (isSpectral)
+            {
+                // Adjust source bitmap to set spectral grays
+                // 180 = transparency amount (70% visible)
+                SetSpectral(ref srcBitmap);
+                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz, spectralEyesPatched, 180);
+            }
+            else
+            {
+                // Read direct from source bitmap
+                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz);
+            }
 
             // Sharpen source image
             if (settings.sharpen)
@@ -296,6 +315,18 @@ namespace DaggerfallWorkshop.Utility
                     resultEmissive = true;
                 }
 
+                // Spectral need special handling as only eye parts are emissive
+                if ((settings.createEmissionMap || settings.autoEmission) && isSpectral)
+                {
+                    Color eyeEmission = Color.red;
+                    Color bodyEmission = new Color(0.1f, 0.1f, 0.1f);
+                    Color32[] emissionColors = textureFile.GetSpectralEmissionColors32(srcBitmap, settings.borderSize, spectralEyesPatched, eyeEmission, bodyEmission);
+                    emissionMap = new Texture2D(albedoMap.width, albedoMap.height, ParseTextureFormat(alphaTextureFormat), MipMaps);
+                    emissionMap.SetPixels32(emissionColors);
+                    emissionMap.Apply(true, !settings.stayReadable);
+                    resultEmissive = true;
+                }
+
                 // Some archives need special handling as they contains a mix of emissive and non-emissive flats
                 // This can cause problems with atlas packing due to mismatch between albedo and emissive texture counts
                 if ((settings.createEmissionMap || settings.autoEmission) && IsEmissiveArchive(settings.archive))
@@ -330,6 +361,25 @@ namespace DaggerfallWorkshop.Utility
             results.textureFile = textureFile;
 
             return results;
+        }
+
+        /// <summary>
+        /// Updates spectral color indices to set eyes red and accentuate other features
+        /// </summary>
+        /// <param name="srcBitmap"></param>
+        public void SetSpectral(ref DFBitmap srcBitmap)
+        {
+            for (int i = 0; i < srcBitmap.Data.Length; i++)
+            {
+                byte index = srcBitmap.Data[i];
+
+                // Index 14 is reserved for emissive eyes, patching this to 112 (white color index) for best interaction with shader
+                // Other colours are reindexed to a grey gradiant area of palette so that bones are brighter than shroud
+                if (index == spectralEyesReserved)
+                    srcBitmap.Data[i] = spectralEyesPatched;
+                else if (index > 0)
+                    srcBitmap.Data[i] = (byte)(spectralGrayStart - index);
+            }
         }
 
         /// <summary>
