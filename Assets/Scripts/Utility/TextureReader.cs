@@ -222,9 +222,9 @@ namespace DaggerfallWorkshop.Utility
             if (isSpectral)
             {
                 // Adjust source bitmap to set spectral grays
-                // 180 = transparency amount (70% visible)
+                // 204 = transparency amount (80% visible)
                 SetSpectral(ref srcBitmap);
-                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz, spectralEyesPatched, 180);
+                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz, spectralEyesPatched, 204);
             }
             else
             {
@@ -319,8 +319,8 @@ namespace DaggerfallWorkshop.Utility
                 if ((settings.createEmissionMap || settings.autoEmission) && isSpectral)
                 {
                     Color eyeEmission = Color.red;
-                    Color bodyEmission = new Color(0.1f, 0.1f, 0.1f);
-                    Color32[] emissionColors = textureFile.GetSpectralEmissionColors32(srcBitmap, settings.borderSize, spectralEyesPatched, eyeEmission, bodyEmission);
+                    Color bodyEmission = Color.black;// new Color(0.1f, 0.1f, 0.1f);
+                    Color32[] emissionColors = textureFile.GetSpectralEmissionColors32(srcBitmap, albedoColors, settings.borderSize, spectralEyesPatched, eyeEmission, bodyEmission);
                     emissionMap = new Texture2D(albedoMap.width, albedoMap.height, ParseTextureFormat(alphaTextureFormat), MipMaps);
                     emissionMap.SetPixels32(emissionColors);
                     emissionMap.Apply(true, !settings.stayReadable);

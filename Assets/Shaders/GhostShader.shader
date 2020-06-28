@@ -1,4 +1,4 @@
-﻿Shader "Daggerfall/GhostShader" {
+Shader "Daggerfall/GhostShader" {
 	Properties {
         _Color("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
@@ -48,7 +48,7 @@
             _Transparency = c.a;
             
             half3 emission = tex2D(_EmissionMap, IN.uv_EmissionMap).rgb * _EmissionColor;
-			o.Albedo = (c.rgb * 0.5) - emission; // Lower brightness spectral colors to get darker look, emission cancels out other lights
+			o.Albedo = c.rgb - emission; // Emission cancels out other lights
             o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
             o.Emission = emission;
 			// Metallic and smoothness come from slider variables

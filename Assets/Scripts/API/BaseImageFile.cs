@@ -310,7 +310,7 @@ namespace DaggerfallConnect.Arena2
         /// <param name="eyeEmission">Amount of emission to apply to other parts of body (black=none, white=full).</param>
         /// <param name="otherEmission">Amount of emission to apply to other parts of body (black=none, white=full).</param>
         /// <returns>Color32 array.</returns>
-        public Color32[] GetSpectralEmissionColors32(DFBitmap srcBitmap, int borderSize, int eyesEmissionIndex, Color eyeEmission, Color otherEmission)
+        public Color32[] GetSpectralEmissionColors32(DFBitmap srcBitmap, Color32[] albedoColors, int borderSize, int eyesEmissionIndex, Color eyeEmission, Color otherEmission)
         {
             // Create target array
             DFSize sz = new DFSize(srcBitmap.Width + borderSize * 2, srcBitmap.Height + borderSize * 2);
@@ -331,7 +331,12 @@ namespace DaggerfallConnect.Arena2
                     if (index == eyesEmissionIndex)
                         emissionColors[dstRow + borderSize + x] = eyeEmission;
                     else
+                    {
+                        // Feed albedoColors into emission to really pop lighter features like ribs and skulls
+                        // Use otherEmission (with Color.black) for flatter more stealthy ghost
+                        //emissionColors[dstRow + borderSize + x] = albedoColors[dstRow + borderSize + x];
                         emissionColors[dstRow + borderSize + x] = otherEmission;
+                    }
                 }
             }
 
