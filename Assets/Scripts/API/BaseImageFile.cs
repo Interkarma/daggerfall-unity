@@ -12,8 +12,8 @@
 #region Using Statements
 using System;
 using System.IO;
-using UnityEngine;
 using DaggerfallConnect.Utility;
+using UnityEngine;
 #endregion
 
 namespace DaggerfallConnect.Arena2
@@ -334,8 +334,12 @@ namespace DaggerfallConnect.Arena2
                     {
                         // Feed albedoColors into emission to really pop lighter features like ribs and skulls
                         // Use otherEmission (with Color.black) for flatter more stealthy ghost
-                        //emissionColors[dstRow + borderSize + x] = albedoColors[dstRow + borderSize + x];
-                        emissionColors[dstRow + borderSize + x] = otherEmission;
+                        float H;
+                        float S;
+                        float V;
+                        Color.RGBToHSV(albedoColors[dstRow + borderSize + x], out H, out S, out V);
+                        float emission = Mathf.Pow(V, 1.9f);
+                        emissionColors[dstRow + borderSize + x] = Color.Lerp(otherEmission, albedoColors[dstRow + borderSize + x], Mathf.Clamp01(emission));
                     }
                 }
             }
