@@ -222,9 +222,9 @@ namespace DaggerfallWorkshop.Utility
             if (isSpectral)
             {
                 // Adjust source bitmap to set spectral grays
-                // 204 = transparency amount (80% visible)
+                // 180 = transparency amount (~70% visible)
                 SetSpectral(ref srcBitmap);
-                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz, spectralEyesPatched, 204);
+                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz, spectralEyesPatched, 180);
             }
             else
             {
