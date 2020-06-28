@@ -125,6 +125,11 @@ namespace DaggerfallWorkshop.Game
                 MeshRenderer meshRenderer = dfMobile.GetComponent<MeshRenderer>();
                 if (meshRenderer)
                 {
+                    if (dfMobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral)
+                    {
+                        meshRenderer.material.shader = Shader.Find("Daggerfall/GhostShader");
+                        meshRenderer.material.SetFloat("_Cutoff", 0.5f);
+                    }
                     if (dfMobile.Summary.Enemy.NoShadow)
                     {
                         meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
