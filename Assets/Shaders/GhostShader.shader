@@ -16,7 +16,7 @@
 
 		CGPROGRAM
 		// Physically based Standard lighting model
-		#pragma surface surf Standard alpha:blend vertex:vert
+		#pragma surface surf Standard alpha:blend
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -37,13 +37,6 @@
         half _Transparency;
 		half _Glossiness;
 		half _Metallic;
-		
-        void vert (inout appdata_full v)
-        {
-            // Transform billboard normal for lighting support
-            // Comment out this line to stop light changing as billboards rotate
-            v.normal = mul((float3x3)UNITY_MATRIX_V, v.normal);
-        }
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			// Albedo comes from a texture tinted by color
@@ -57,7 +50,7 @@
 			// Metallic and smoothness come from slider variables
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
-			o.Alpha = lerp(c.a * _Transparency, 1.0, saturate(dot(10.0 * half3(0.2126, 0.7152, 0.0722), emission)));
+			o.Alpha = lerp(c.a * _Transparency, 1.0, saturate(dot(2.0 * half3(0.2126, 0.7152, 0.0722), emission)));
 		}
 		ENDCG
 	}
