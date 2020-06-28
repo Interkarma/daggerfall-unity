@@ -49,7 +49,7 @@ Shader "Daggerfall/GhostShader" {
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
             // Transparency comes from albedo alpha - allows parts some parts of image to be transparent (e.g. body) and other parts opaque (e.g. eyes)
-			o.Alpha = lerp(c.a, 1.0, saturate(dot(2.0 * half3(0.2126, 0.7152, 0.0722), emission)));
+			o.Alpha = c.a;
 		}
 		ENDCG
 	}
