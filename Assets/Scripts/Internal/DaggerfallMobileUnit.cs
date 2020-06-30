@@ -345,6 +345,8 @@ namespace DaggerfallWorkshop
 
             if (summary.EnemyState == MobileStates.SeducerTransform1)
             {
+                // Switch to flying sprite alignment while crouched and growing wings
+                summary.Enemy.Behaviour = MobileBehaviour.Flying;
                 summary.StateAnimFrames = summary.Enemy.SeducerTransform1Frames;
 
                 // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
@@ -354,6 +356,8 @@ namespace DaggerfallWorkshop
 
             if (summary.EnemyState == MobileStates.SeducerTransform2)
             {
+                // Switch to grounded sprite alignment while standing and spreading wings
+                summary.Enemy.Behaviour = MobileBehaviour.General;
                 summary.StateAnimFrames = summary.Enemy.SeducerTransform2Frames;
 
                 // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
