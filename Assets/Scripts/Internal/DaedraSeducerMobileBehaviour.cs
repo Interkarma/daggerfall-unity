@@ -9,8 +9,6 @@
 // Notes:
 //
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
@@ -66,7 +64,6 @@ namespace DaggerfallWorkshop
             // Start transformation to winged form
             if (startTransform && enemyMobile)
             {
-                //Debug.Log("Setting Daedra Seducer anim state to SeducerTransform1");
                 enemyMobile.ChangeEnemyState(MobileStates.SeducerTransform1);
                 startTransform = false;
             }

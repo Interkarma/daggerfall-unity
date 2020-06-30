@@ -103,6 +103,7 @@ namespace DaggerfallWorkshop
             public int AnimStateRecord;                                 // Record number of animation state
             public int[] StateAnimFrames;                               // Sequence of frames to play for this animation. Used for attacks
             public byte ClassicSpawnDistanceType;                       // 0 through 6 value read from spawn marker that determines distance at which enemy spawns/despawns in classic.
+            public bool transformedSpecial;                             // Mobile has completed special transform (e.g. Daedra Seducer)
         }
 
         void Start()
@@ -567,9 +568,25 @@ namespace DaggerfallWorkshop
             {
                 case MobileStates.SeducerTransform1:
                     return MobileStates.SeducerTransform2;
+                case MobileStates.SeducerTransform2:
+                    SetTransformedSeducer();
+                    return MobileStates.Idle;
                 default:
                     return MobileStates.Idle;
             }
+        }
+
+        /// <summary>
+        /// Configures mobile unit changes for transformed seducer.
+        /// </summary>
+        void SetTransformedSeducer()
+        {
+            summary.transformedSpecial = true;
+            summary.Enemy.Behaviour = MobileBehaviour.Flying;
+            summary.Enemy.CorpseTexture = EnemyBasics.CorpseTexture(400, 5);
+            summary.Enemy.HasIdle = false;
+            summary.Enemy.HasSpellAnimation = true;
+            summary.Enemy.SpellAnimFrames = new int[] { 0, 1, 2, 3 };
         }
 
         #endregion
@@ -722,6 +739,8 @@ namespace DaggerfallWorkshop
                     if ((MobileTypes)summary.Enemy.ID == MobileTypes.Ghost ||
                         (MobileTypes)summary.Enemy.ID == MobileTypes.Wraith)
                         anims = (MobileAnimation[])EnemyBasics.GhostWraithMoveAnims.Clone();
+                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.DaedraSeducer && summary.transformedSpecial)
+                        anims = (MobileAnimation[])EnemyBasics.SeducerIdleMoveAnims.Clone();
                     else
                         anims = (MobileAnimation[])EnemyBasics.MoveAnims.Clone();
                     break;
@@ -729,6 +748,8 @@ namespace DaggerfallWorkshop
                     if ((MobileTypes)summary.Enemy.ID == MobileTypes.Ghost ||
                         (MobileTypes)summary.Enemy.ID == MobileTypes.Wraith)
                         anims = (MobileAnimation[])EnemyBasics.GhostWraithAttackAnims.Clone();
+                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.DaedraSeducer && summary.transformedSpecial)
+                        anims = (MobileAnimation[])EnemyBasics.SeducerAttackAnims.Clone();
                     else
                         anims = (MobileAnimation[])EnemyBasics.PrimaryAttackAnims.Clone();
                     break;
@@ -739,6 +760,8 @@ namespace DaggerfallWorkshop
                     if ((MobileTypes)summary.Enemy.ID == MobileTypes.Ghost ||
                         (MobileTypes)summary.Enemy.ID == MobileTypes.Wraith)
                         anims = (MobileAnimation[])EnemyBasics.GhostWraithMoveAnims.Clone();
+                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.DaedraSeducer && summary.transformedSpecial)
+                        anims = (MobileAnimation[])EnemyBasics.SeducerIdleMoveAnims.Clone();
                     else if (summary.Enemy.FemaleTexture == 483 &&
                         summary.Enemy.Gender == MobileGender.Female)
                         anims = (MobileAnimation[])EnemyBasics.FemaleThiefIdleAnims.Clone();
@@ -756,7 +779,10 @@ namespace DaggerfallWorkshop
                     anims = (summary.Enemy.HasRangedAttack2) ? (MobileAnimation[])EnemyBasics.RangedAttack2Anims.Clone() : null;
                     break;
                 case MobileStates.Spell:
-                    anims = (summary.Enemy.HasSpellAnimation) ? (MobileAnimation[])EnemyBasics.RangedAttack1Anims.Clone() : (MobileAnimation[])EnemyBasics.PrimaryAttackAnims.Clone();
+                    if ((MobileTypes)summary.Enemy.ID == MobileTypes.DaedraSeducer && summary.transformedSpecial)
+                        anims = (MobileAnimation[])EnemyBasics.SeducerAttackAnims.Clone();
+                    else
+                        anims = (summary.Enemy.HasSpellAnimation) ? (MobileAnimation[])EnemyBasics.RangedAttack1Anims.Clone() : (MobileAnimation[])EnemyBasics.PrimaryAttackAnims.Clone();
                     break;
                 case MobileStates.SeducerTransform1:
                     anims = (summary.Enemy.HasSeducerTransform1) ? (MobileAnimation[])EnemyBasics.SeducerTransform1Anims.Clone() : null;
@@ -768,7 +794,7 @@ namespace DaggerfallWorkshop
                     return null;
             }
 
-            // Assign number number of frames per anim
+            // Assign number of frames per anim
             for (int i = 0; i < anims.Length; i++)
                 anims[i].NumFrames = summary.RecordFrames[anims[i].Record];
 
