@@ -568,7 +568,18 @@ namespace DaggerfallWorkshop.Game
                     }
                     else
                     {
-                        if (!GiveOffer())
+                        var preventedRestMessage = GameManager.Instance.GetPreventedRestMessage();
+                        if (preventedRestMessage != null)
+                        {
+                            if (preventedRestMessage != "")
+                                MessageBox(preventedRestMessage);
+                            else
+                            {
+                                const int cannotRestNow = 355;
+                                MessageBox(cannotRestNow);
+                            }
+                        }
+                        else if (!GiveOffer())
                         {
                             racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect(); // Allow custom race to block rest (e.g. vampire not sated)
                             if (racialOverride != null && !racialOverride.CheckStartRest(GameManager.Instance.PlayerEntity))
