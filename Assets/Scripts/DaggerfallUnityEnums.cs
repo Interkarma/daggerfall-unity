@@ -225,8 +225,6 @@ namespace DaggerfallWorkshop
         RangedAttack2,          // Records 25-29    (Bow attack on 475, 489, 490 only, absent on other humanoids)
         SeducerTransform1,      // Record 23        (Crouch and grow wings)
         SeducerTransform2,      // Record 22        (Stand and spread wings)
-        SeducerWingedIdle,      // Record 21        (Transformed idle/move anims, seducer gains flight)
-        SeducerWingedAttack,    // Record 20        (Transformed casting/attack anims)
     }
 
     /// <summary>
