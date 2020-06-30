@@ -95,7 +95,6 @@ namespace DaggerfallWorkshop.Game
         bool negVerticalImpulse;
         bool moveAcceleration;
 
-        float joystickCameraSensitivity = 1.0f;
         float joystickUIMouseSensitivity = 1.0f;
         bool cursorVisible = true;
         bool usingControllerCursor;
@@ -933,7 +932,7 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.JoystickButton7, Actions.Escape, false);
 
             SetBinding(KeyCode.JoystickButton3, Actions.Jump, false);
-            SetBinding(KeyCode.JoystickButton4, Actions.Run, false);
+            SetBinding(KeyCode.JoystickButton4, Actions.AutoRun, false);
 
             SetBinding(KeyCode.JoystickButton6, Actions.Rest, false);
             SetBinding(KeyCode.JoystickButton10, Actions.Transport, false);
@@ -1210,7 +1209,7 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.JoystickButton7, Actions.Escape, false);
 
             TestSetBinding(KeyCode.JoystickButton3, Actions.Jump, false);
-            TestSetBinding(KeyCode.JoystickButton4, Actions.Run, false);
+            TestSetBinding(KeyCode.JoystickButton4, Actions.AutoRun, false);
 
             TestSetBinding(KeyCode.JoystickButton6, Actions.Rest, false);
             TestSetBinding(KeyCode.JoystickButton10, Actions.Transport, false);
