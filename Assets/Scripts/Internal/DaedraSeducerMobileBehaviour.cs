@@ -20,7 +20,7 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class DaedraSeducerMobileBehaviour : MonoBehaviour
     {
-        const float secondsToTransform = 0.0f;      // 0.0 will disable transform for now
+        const float secondsToTransform = 8.0f;      // 0.0 will disable transform completely
 
         DaggerfallMobileUnit enemyMobile;
         DaggerfallEntityBehaviour enemyEntityBehaviour;
@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop
         EnemySenses enemySenses;
 
         float transformCountdown = secondsToTransform;
-        bool startTransform = false;
+        bool transformStarted = false;
 
         private void Start()
         {
@@ -48,29 +48,47 @@ namespace DaggerfallWorkshop
             if (!enemySenses || !enemyMobile || enemyEntity == null)
                 return;
 
-            // Do nothing if special transformation already completed
+            // Exit if special transformation already completed
+            // Raise suppress infighting flag in case player has loaded game after transform
             if (enemyMobile.Summary.specialTransformationCompleted)
+            {
+                enemyEntity.SuppressInfighting = true;
                 return;
+            }
 
-            // If targeting player always transform after a few seconds
-            // This allows winged form to reach player even when humanoid form cannot (e.g. stuck on pillar in Direnni Tower)
+            // Keep trying to raise transform state if wants to start and currently in another state
+            // This prevents some other state (e.g. hurt) breaking switch to transformation
+            if (transformStarted &&
+                enemyMobile.Summary.EnemyState != MobileStates.SeducerTransform1 &&
+                enemyMobile.Summary.EnemyState != MobileStates.SeducerTransform2)
+            {
+                StartTransformation();
+                return;
+            }
+
+            // Only transform when targeting player and hurt or after timer elapsed
+            // This improves chance player is close enough to witness transformation
+            // A transformed Seducer is excluded from infighting due to sprite limitations (has player facing sprites only)
             if (enemySenses.Target == GameManager.Instance.PlayerEntityBehaviour && transformCountdown > 0)
             {
-                transformCountdown -= Time.deltaTime;
-                if (transformCountdown <= 0)
-                {
-                    transformCountdown = 0;
-                    startTransform = true;
-                    enemyEntity.SuppressInfighting = true;
-                }
-            }
+                // Check if  if hurt
+                bool isHurt = enemyEntity.CurrentHealth < enemyEntity.MaxHealth;
 
-            // Start transformation to winged form
-            if (startTransform && enemyMobile)
-            {
-                enemyMobile.ChangeEnemyState(MobileStates.SeducerTransform1);
-                startTransform = false;
+                // Progress countdown
+                transformCountdown -= Time.deltaTime;
+
+                // Transform when hurt or countdown ended while player is targeted
+                // Countdown allows winged form to reach player even when humanoid form cannot (e.g. stuck on pillar in Direnni Tower)
+                if (isHurt || transformCountdown <= 0)
+                    StartTransformation();
             }
+        }
+
+        void StartTransformation()
+        {
+            transformCountdown = 0;
+            enemyMobile.ChangeEnemyState(MobileStates.SeducerTransform1);
+            transformStarted = true;
         }
     }
 }
