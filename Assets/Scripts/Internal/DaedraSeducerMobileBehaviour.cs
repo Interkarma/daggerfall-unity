@@ -12,6 +12,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop
 {
@@ -20,11 +21,19 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class DaedraSeducerMobileBehaviour : MonoBehaviour
     {
-        DaggerfallMobileUnit mobile;
+        DaggerfallMobileUnit enemyMobile;
+        DaggerfallEntityBehaviour enemyEntityBehaviour;
+        EnemyEntity enemyEntity;
 
         private void Start()
         {
-            mobile = GetComponent<DaggerfallMobileUnit>();
+            enemyMobile = GetComponent<DaggerfallMobileUnit>();
+            enemyEntityBehaviour = GetComponentInParent<DaggerfallEntityBehaviour>();
+            if (enemyEntityBehaviour && enemyEntityBehaviour.EntityType == EntityTypes.EnemyMonster)
+            {
+                enemyEntity = (EnemyEntity)enemyEntityBehaviour.Entity;
+                //enemyEntity.SuppressInfighting = true; // testing on startup
+            }
         }
     }
 }

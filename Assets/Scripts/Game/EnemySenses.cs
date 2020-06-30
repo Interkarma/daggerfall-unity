@@ -715,9 +715,9 @@ namespace DaggerfallWorkshop.Game
                     // Can't target ally
                     if (targetBehaviour == player && enemyEntity.Team == MobileTeams.PlayerAlly)
                         continue;
-                    else if (DaggerfallUnity.Settings.EnemyInfighting)
+                    else if (DaggerfallUnity.Settings.EnemyInfighting && !enemyEntity.SuppressInfighting && targetEntity != null && !targetEntity.SuppressInfighting)
                     {
-                        if (targetEntity != null && targetEntity.Team == enemyEntity.Team)
+                        if (targetEntity.Team == enemyEntity.Team)
                             continue;
                     }
                     else
