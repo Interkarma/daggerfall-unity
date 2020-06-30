@@ -12,6 +12,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop
@@ -21,18 +22,53 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class DaedraSeducerMobileBehaviour : MonoBehaviour
     {
+        const float secondsToTransform = 0.0f;      // 0.0 will disable transform for now
+
         DaggerfallMobileUnit enemyMobile;
         DaggerfallEntityBehaviour enemyEntityBehaviour;
         EnemyEntity enemyEntity;
+        EnemySenses enemySenses;
+
+        float transformCountdown = secondsToTransform;
+        bool startTransform = false;
 
         private void Start()
         {
+            // Get references
             enemyMobile = GetComponent<DaggerfallMobileUnit>();
             enemyEntityBehaviour = GetComponentInParent<DaggerfallEntityBehaviour>();
             if (enemyEntityBehaviour && enemyEntityBehaviour.EntityType == EntityTypes.EnemyMonster)
             {
                 enemyEntity = (EnemyEntity)enemyEntityBehaviour.Entity;
-                //enemyEntity.SuppressInfighting = true; // testing on startup
+                enemySenses = enemyEntityBehaviour.GetComponent<EnemySenses>();
+            }
+        }
+
+        private void Update()
+        {
+            // Validate references
+            if (!enemySenses || enemyEntity == null)
+                return;
+
+            // If targeting player always transform after a few seconds
+            // This allows winged form to reach player even when humanoid form cannot (e.g. stuck on pillar in Direnni Tower)
+            if (enemySenses.Target == GameManager.Instance.PlayerEntityBehaviour && transformCountdown > 0)
+            {
+                transformCountdown -= Time.deltaTime;
+                if (transformCountdown <= 0)
+                {
+                    transformCountdown = 0;
+                    startTransform = true;
+                    enemyEntity.SuppressInfighting = true;
+                }
+            }
+
+            // Start transformation to winged form
+            if (startTransform && enemyMobile)
+            {
+                //Debug.Log("Setting Daedra Seducer anim state to SeducerTransform1");
+                enemyMobile.ChangeEnemyState(MobileStates.SeducerTransform1);
+                startTransform = false;
             }
         }
     }

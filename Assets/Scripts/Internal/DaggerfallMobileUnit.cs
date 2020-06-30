@@ -205,7 +205,7 @@ namespace DaggerfallWorkshop
             if (!summary.IsSetup)
                 return 0;
 
-            return summary.StateAnims[(int)summary.EnemyState].FramePerSecond;
+            return summary.StateAnims[lastOrientation].FramePerSecond;
         }
 
         /// <summary>
@@ -226,6 +226,22 @@ namespace DaggerfallWorkshop
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Gets true if motor should prevent action state changes while playing current oneshot anim.
+        /// </summary>
+        /// <returns>True if motor should pause state changes while playing.</returns>
+        public bool OneShotPauseActionsWhilePlaying()
+        {
+            switch (summary.EnemyState)
+            {
+                case MobileStates.SeducerTransform1:        // Seducer should not move and attack while transforming
+                case MobileStates.SeducerTransform2:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         /// <summary>
@@ -299,6 +315,24 @@ namespace DaggerfallWorkshop
             if (summary.EnemyState == MobileStates.Spell)
             {
                 summary.StateAnimFrames = summary.Enemy.SpellAnimFrames;
+
+                // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
+                currentFrame = summary.StateAnimFrames[0];
+                frameIterator = 1;
+            }
+
+            if (summary.EnemyState == MobileStates.SeducerTransform1)
+            {
+                summary.StateAnimFrames = summary.Enemy.SeducerTransform1Frames;
+
+                // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
+                currentFrame = summary.StateAnimFrames[0];
+                frameIterator = 1;
+            }
+
+            if (summary.EnemyState == MobileStates.SeducerTransform2)
+            {
+                summary.StateAnimFrames = summary.Enemy.SeducerTransform2Frames;
 
                 // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
                 currentFrame = summary.StateAnimFrames[0];
@@ -513,13 +547,28 @@ namespace DaggerfallWorkshop
                     if (currentFrame >= summary.StateAnims[lastOrientation].NumFrames)
                     {
                         if (IsPlayingOneShot())
-                            ChangeEnemyState(MobileStates.Idle);    // If this is a one-shot anim, revert back to idle state at end
+                            ChangeEnemyState(NextStateAfterCurrentOneShot());   // If this is a one-shot anim, revert to next state (usually idle)
                         else
-                            currentFrame = 0;                       // Otherwise keep looping frames
+                            currentFrame = 0;                                   // Otherwise keep looping frames
                     }
                 }
 
                 yield return new WaitForSeconds(1f / fps);
+            }
+        }
+
+        /// <summary>
+        /// Gets the next state after finished playing current oneshot state
+        /// </summary>
+        /// <returns>Next state.</returns>
+        MobileStates NextStateAfterCurrentOneShot()
+        {
+            switch(summary.EnemyState)
+            {
+                case MobileStates.SeducerTransform1:
+                    return MobileStates.SeducerTransform2;
+                default:
+                    return MobileStates.Idle;
             }
         }
 
@@ -708,6 +757,12 @@ namespace DaggerfallWorkshop
                     break;
                 case MobileStates.Spell:
                     anims = (summary.Enemy.HasSpellAnimation) ? (MobileAnimation[])EnemyBasics.RangedAttack1Anims.Clone() : (MobileAnimation[])EnemyBasics.PrimaryAttackAnims.Clone();
+                    break;
+                case MobileStates.SeducerTransform1:
+                    anims = (summary.Enemy.HasSeducerTransform1) ? (MobileAnimation[])EnemyBasics.SeducerTransform1Anims.Clone() : null;
+                    break;
+                case MobileStates.SeducerTransform2:
+                    anims = (summary.Enemy.HasSeducerTransform2) ? (MobileAnimation[])EnemyBasics.SeducerTransform2Anims.Clone() : null;
                     break;
                 default:
                     return null;

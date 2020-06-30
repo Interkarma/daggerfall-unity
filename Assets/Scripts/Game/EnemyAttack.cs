@@ -54,6 +54,10 @@ namespace DaggerfallWorkshop.Game
             if (GameManager.Instance.DisableAI || entityBehaviour.Entity.IsParalyzed)
                 return;
 
+            // Unable to attack when playing certain oneshot anims
+            if (mobile && mobile.IsPlayingOneShot() && mobile.OneShotPauseActionsWhilePlaying())
+                return;
+
             // Countdown to next melee attack
             MeleeTimer -= Time.deltaTime;
 

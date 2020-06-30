@@ -411,6 +411,10 @@ namespace DaggerfallWorkshop.Game
             else
                 distance = (destination - transform.position).magnitude;
 
+            // Do not change action if currently playing oneshot wants to stop actions
+            if (isPlayingOneShot && mobile.OneShotPauseActionsWhilePlaying())
+                return;
+
             // Ranged attacks
             if (DoRangedAttack(direction, moveSpeed, distance, isPlayingOneShot))
                 return;
