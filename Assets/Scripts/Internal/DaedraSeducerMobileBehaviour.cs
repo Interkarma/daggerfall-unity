@@ -45,7 +45,11 @@ namespace DaggerfallWorkshop
         private void Update()
         {
             // Validate references
-            if (!enemySenses || enemyEntity == null)
+            if (!enemySenses || !enemyMobile || enemyEntity == null)
+                return;
+
+            // Do nothing if special transformation already completed
+            if (enemyMobile.Summary.specialTransformationCompleted)
                 return;
 
             // If targeting player always transform after a few seconds

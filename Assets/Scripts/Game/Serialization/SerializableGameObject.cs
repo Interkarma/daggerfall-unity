@@ -378,6 +378,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int questFoeItemQueueIndex;
         public bool wabbajackActive;
         public int team;
+        public bool specialTransformationCompleted;
     }
 
     #endregion
