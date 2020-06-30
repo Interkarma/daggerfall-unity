@@ -762,7 +762,10 @@ namespace DaggerfallWorkshop
                         anims = (MobileAnimation[])EnemyBasics.PrimaryAttackAnims.Clone();
                     break;
                 case MobileStates.Hurt:
-                    anims = (MobileAnimation[])EnemyBasics.HurtAnims.Clone();
+                    if ((MobileTypes)summary.Enemy.ID == MobileTypes.DaedraSeducer && summary.specialTransformationCompleted)
+                        anims = (MobileAnimation[])EnemyBasics.SeducerIdleMoveAnims.Clone();
+                    else
+                        anims = (MobileAnimation[])EnemyBasics.HurtAnims.Clone();
                     break;
                 case MobileStates.Idle:
                     if ((MobileTypes)summary.Enemy.ID == MobileTypes.Ghost ||
