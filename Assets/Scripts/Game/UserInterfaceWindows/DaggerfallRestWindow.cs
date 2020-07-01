@@ -75,6 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected int totalHours = 0;
         protected float waitTimer = 0;
         protected bool enemyBrokeRest = false;
+        protected string preventedRestMessage = null;
         protected int remainingHoursRented = -1;
         protected Vector3 allocatedBed;
         protected bool ignoreAllocatedBed = false;
@@ -235,6 +236,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             totalHours = 0;
             waitTimer = 0;
             enemyBrokeRest = false;
+            preventedRestMessage = null;
             abortRestForEnemySpawn = false;
 
             // Get references
@@ -333,6 +335,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return true;
             }
 
+            preventedRestMessage = GameManager.Instance.GetPreventedRestMessage();
+
+            if (preventedRestMessage != null)
+                return true;
+
             // Do nothing if another window has taken over UI
             // This will stop rest from progressing further until player dismisses top window
             if (uiManager.TopWindow != this)
@@ -379,6 +386,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 enemyBrokeRest = true;
                 return true;
             }
+
+            preventedRestMessage = GameManager.Instance.GetPreventedRestMessage();
+
+            if (preventedRestMessage != null)
+                return true;
 
             // Tick vitals to end
             if (currentRestMode == RestModes.TimedRest)
@@ -429,6 +441,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 DaggerfallMessageBox mb = DaggerfallUI.MessageBox(enemiesNearby);
                 mb.OnClose += RestFinishedPopup_OnClose;
+            }
+            else if (preventedRestMessage != null)
+            {
+                if (preventedRestMessage != "")
+                {
+                    DaggerfallMessageBox mb = DaggerfallUI.MessageBox(preventedRestMessage);
+                    mb.OnClose += RestFinishedPopup_OnClose;
+                }
+                else
+                {
+                    const int cannotRestNow = 355;
+                    DaggerfallMessageBox mb = DaggerfallUI.MessageBox(cannotRestNow);
+                    mb.OnClose += RestFinishedPopup_OnClose;
+                }
             }
             else
             {
