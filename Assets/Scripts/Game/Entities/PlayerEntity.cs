@@ -979,7 +979,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Assigns guild memberships to player from classic save tree.
         /// </summary>
-        public void AssignGuildMemberships(SaveTree saveTree)
+        public void AssignGuildMemberships(SaveTree saveTree, bool vampire = false)
         {
             // Find character record, should always be a singleton
             CharacterRecord characterRecord = (CharacterRecord)saveTree.FindRecord(RecordTypes.Character);
@@ -988,7 +988,18 @@ namespace DaggerfallWorkshop.Game.Entity
 
             // Find all guild memberships, and add Daggerfall Unity guild memberships
             List<SaveTreeBaseRecord> guildMembershipRecords = saveTree.FindRecords(RecordTypes.GuildMembership, characterRecord);
-            GameManager.Instance.GuildManager.ImportMembershipData(guildMembershipRecords);
+            List<SaveTreeBaseRecord> oldMembershipRecords = saveTree.FindRecords(RecordTypes.OldGuild, characterRecord);
+
+            if (vampire)
+            {
+                GameManager.Instance.GuildManager.ImportMembershipData(guildMembershipRecords, true);
+                GameManager.Instance.GuildManager.ImportMembershipData(oldMembershipRecords);
+            }
+            else
+            {
+                GameManager.Instance.GuildManager.ImportMembershipData(guildMembershipRecords);
+                GameManager.Instance.GuildManager.ImportMembershipData(oldMembershipRecords, true);
+            }
         }
 
         /// <summary>

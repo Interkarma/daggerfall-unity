@@ -1339,6 +1339,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 if (saveData.bankDeeds != null)
                     RestoreHousesData(saveData.bankDeeds.houses);
                 GameManager.Instance.GuildManager.RestoreMembershipData(saveData.playerData.guildMemberships);
+                GameManager.Instance.GuildManager.RestoreMembershipData(saveData.playerData.vampireMemberships, true);
             }
 
             // Restore faction data to player entity
