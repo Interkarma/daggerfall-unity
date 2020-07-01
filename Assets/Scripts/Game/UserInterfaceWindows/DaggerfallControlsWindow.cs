@@ -114,7 +114,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Joystick
             Button joystickButton = DaggerfallUI.AddButton(new Rect(0, 190, 80, 10), controlsPanel);
-            joystickButton.BackgroundColor = new Color(1, 0, 0, 0.5f);
             joystickButton.OnMouseClick += JoystickButton_OnMouseClick;
 
             // Mouse
@@ -142,6 +141,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             #region Keybind Buttons
 
             ResetUnsavedDictionary();
+            DaggerfallJoystickControlsWindow.ResetUnsavedSettings();
 
             SetupKeybindButtons(moveKeysOne, 2, 8, 57, 13, true);
             SetupKeybindButtons(moveKeysTwo, 8, 14, 164, 13, true);
@@ -166,6 +166,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SaveAllKeyBindValues();
             InputManager.Instance.SaveKeyBinds();
             ResetUnsavedDictionary();
+
+            DaggerfallJoystickControlsWindow.SaveSettings();
         }
 
         public override void OnReturn()
@@ -272,7 +274,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SetDefaults()
         {
             InputManager.Instance.ResetDefaults();
+
             ResetUnsavedDictionary();
+            DaggerfallJoystickControlsWindow.ResetUnsavedSettings();
+
             UpdateKeybindButtons();
             AllowCancel = true;
         }
@@ -319,7 +324,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (waitingForInput)
                 return;
 
-            // uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenJoystickControlsWindow);
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            uiManager.PostMessage(DaggerfallUIMessages.dfuiOpenJoystickControlsWindow);
         }
 
         private void MouseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
