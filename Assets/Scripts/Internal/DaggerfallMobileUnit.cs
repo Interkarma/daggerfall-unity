@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop
         bool shootArrow = false;
         bool restartAnims = true;
         bool freezeAnims = false;
+        bool animReversed = false;
 
         public MobileUnitSummary Summary
         {
@@ -198,7 +199,10 @@ namespace DaggerfallWorkshop
             {
                 summary.EnemyState = state;
                 if (resetFrame)
+                {
                     currentFrame = 0;
+                    animReversed = false;
+                }
                 ApplyEnemyState();
             }
 
@@ -552,7 +556,7 @@ namespace DaggerfallWorkshop
 
                     // Step frame
                     if (!doingAttackAnimation)
-                        currentFrame++;
+                        currentFrame = (animReversed) ? currentFrame - 1 : currentFrame + 1;
                     else // Attack animation
                     {
                         currentFrame = summary.StateAnimFrames[frameIterator++];
@@ -570,12 +574,26 @@ namespace DaggerfallWorkshop
                         }
                     }
 
-                    if (currentFrame >= summary.StateAnims[lastOrientation].NumFrames)
+                    if (currentFrame >= summary.StateAnims[lastOrientation].NumFrames ||
+                        animReversed && currentFrame <= 0)
                     {
                         if (IsPlayingOneShot())
                             ChangeEnemyState(NextStateAfterCurrentOneShot());   // If this is a one-shot anim, revert to next state (usually idle)
                         else
-                            currentFrame = 0;                                   // Otherwise keep looping frames
+                        {
+                            // Otherwise keep looping frames
+                            bool bounceAnim = summary.StateAnims[lastOrientation].BounceAnim;
+                            if (bounceAnim && !animReversed)
+                            {
+                                currentFrame = summary.StateAnims[lastOrientation].NumFrames - 2;
+                                animReversed = true;
+                            }
+                            else
+                            {
+                                currentFrame = 0;
+                                animReversed = false;
+                            }
+                        }
                     }
                 }
 
@@ -753,6 +771,8 @@ namespace DaggerfallWorkshop
                         anims = (MobileAnimation[])EnemyBasics.GhostWraithMoveAnims.Clone();
                     else if ((MobileTypes)summary.Enemy.ID == MobileTypes.DaedraSeducer && summary.specialTransformationCompleted)
                         anims = (MobileAnimation[])EnemyBasics.SeducerIdleMoveAnims.Clone();
+                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.Slaughterfish)
+                        anims = (MobileAnimation[])EnemyBasics.SlaughterfishMoveAnims.Clone();
                     else
                         anims = (MobileAnimation[])EnemyBasics.MoveAnims.Clone();
                     break;
@@ -782,6 +802,8 @@ namespace DaggerfallWorkshop
                         anims = (MobileAnimation[])EnemyBasics.FemaleThiefIdleAnims.Clone();
                     else if ((MobileTypes)summary.Enemy.ID == MobileTypes.Rat)
                         anims = (MobileAnimation[])EnemyBasics.RatIdleAnims.Clone();
+                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.Slaughterfish)
+                        anims = (MobileAnimation[])EnemyBasics.SlaughterfishMoveAnims.Clone();
                     else if (!summary.Enemy.HasIdle)
                         anims = (MobileAnimation[])EnemyBasics.MoveAnims.Clone();
                     else

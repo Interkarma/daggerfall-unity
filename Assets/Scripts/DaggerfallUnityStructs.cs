@@ -164,6 +164,7 @@ namespace DaggerfallWorkshop
         public int NumFrames;                       // Number of frames in this animation
         public int FramePerSecond;                  // Speed at which this animation plays
         public bool FlipLeftRight;                  // True if animation flipped left-to-right
+        public bool BounceAnim;                     // Plays anim forwards then backwards - only works on move/idle looping anims
     }
 
     /// <summary>
