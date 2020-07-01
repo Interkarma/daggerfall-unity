@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game
         //These three dictionaries are built for InputManager.GetAxisRaw(...), specifically to
         //deal with raising KeyUp events, since Unity does not provide an "OnAxisValueChange" event
         Dictionary<int, float> previousAxisRaw = new Dictionary<int, float>();
+        List<KeyValuePair<int, float>> previousAxisRawQueue = new List<KeyValuePair<int, float>>();
         Dictionary<int, bool> upAxisRaw = new Dictionary<int, bool>();
         Dictionary<int, bool> downAxisRaw = new Dictionary<int, bool>();
 
@@ -389,6 +390,10 @@ namespace DaggerfallWorkshop.Game
 
             // Clear current actions
             currentActions.Clear();
+
+            foreach (var kv in previousAxisRawQueue)
+                previousAxisRaw[kv.Key] = kv.Value;
+            previousAxisRawQueue.Clear();
 
             // Clear look and mouse axes
             mouseX = 0;
@@ -1345,7 +1350,7 @@ namespace DaggerfallWorkshop.Game
                     LastKeyDown = (KeyCode)keyCode;
             }
 
-            previousAxisRaw[keyCode] = ret;
+            previousAxisRawQueue.Add(new KeyValuePair<int, float>(keyCode, ret));
 
             return ret;
         }
