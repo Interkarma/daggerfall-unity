@@ -676,29 +676,30 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void SetBinding(KeyCode code, Actions action, bool primary = true)
         {
-            // Not allowing multi-bind at this time as the front-end doesn't support it
-            //ClearBinding(action);
-
-            if(actionKeyDict.ContainsKey(code) && secondaryActionKeyDict.ContainsKey(code))
-            {
-               ClearBinding(code, false);
-               ClearBinding(code, true);
-            }
-            
             var dict = primary ? actionKeyDict : secondaryActionKeyDict;
-            //var alt = primary ? secondaryActionKeyDict : actionKeyDict;
+            var alt = primary ? secondaryActionKeyDict : actionKeyDict;
 
-            if (!dict.ContainsKey(code))
+            if (alt.ContainsKey(code))
             {
-                dict.Add(code, action);
+                //error
+                Debug.Log(code+","+alt[code]);
             }
             else
             {
-                dict.Remove(code);
-                dict.Add(code, action);
-            }
+               ClearBinding(code, primary);
 
-            FindSecondaryBindings(action);
+                if (!dict.ContainsKey(code))
+                {
+                    dict.Add(code, action);
+                }
+                else
+                {
+                    dict.Remove(code);
+                    dict.Add(code, action);
+                }
+
+                FindSecondaryBindings(action);
+            }
         }
 
         /// <summary>
