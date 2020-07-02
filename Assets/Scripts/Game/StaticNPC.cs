@@ -66,7 +66,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public bool IsChildNPC
         {
-            get { return CheckChildNPC(); }
+            get { return IsChildNPCData(Data); }
         }
 
         #endregion
@@ -297,12 +297,12 @@ namespace DaggerfallWorkshop.Game
         /// Check if a known child NPC.
         /// </summary>
         /// <returns>True if NPC data matches known children textures or faction.</returns>
-        bool CheckChildNPC()
+        public static bool IsChildNPCData(NPCData data)
         {
             const int childrenFactionID = 514;
 
-            bool isChildNPCTexture = DaggerfallWorkshop.Utility.TextureReader.IsChildNPCTexture(Data.billboardArchiveIndex, Data.billboardRecordIndex);
-            bool isChildrenFaction = Data.factionID == childrenFactionID;
+            bool isChildNPCTexture = DaggerfallWorkshop.Utility.TextureReader.IsChildNPCTexture(data.billboardArchiveIndex, data.billboardRecordIndex);
+            bool isChildrenFaction = data.factionID == childrenFactionID;
 
             return isChildNPCTexture || isChildrenFaction;
         }

@@ -2735,6 +2735,10 @@ namespace DaggerfallWorkshop.Game
                                                             buildingNpcs[p].Position,
                                                             buildingSummary.buildingKey);
 
+                                    // Exclude children from NPCs with work
+                                    if (StaticNPC.IsChildNPCData(npcData2))
+                                        continue;
+
                                     if (!npcsWithWork.ContainsKey(npcData2.nameSeed))
                                     {
                                         npcData2.buildingKey = buildingSummary.buildingKey;
