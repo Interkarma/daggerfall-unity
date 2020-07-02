@@ -1208,6 +1208,69 @@ namespace DaggerfallWorkshop.Utility
         }
 #endif
 
+        /// <summary>
+        /// Checks if sprite is a child NPC sprite texture.
+        /// </summary>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Texture record.</param>
+        /// <returns>True if a child NPC sprite texture.</returns>
+        public static bool IsChildNPCTexture(int archive, int record)
+        {
+            // Archives known to store child NPC textures
+            // Records are checked for each individually for a match
+            const int templePeople = 181;
+            const int mediumCommonPeople = 182;
+            const int flatPeople2 = 184;
+            const int testBigFlats = 186;
+            const int kludgeTown = 197;
+            const int wayrestPeople = 346;
+            const int sentinelPeople = 357;
+
+            if (archive == templePeople)
+            {
+                if (record == 3)
+                    return true;
+            }
+
+            if (archive == mediumCommonPeople)
+            {
+                if (record == 4 || record == 18 || record == 38 || record == 42 || record == 43 || record == 52 || record == 53)
+                    return true;
+            }
+
+            if (archive == flatPeople2)
+            {
+                if (record == 15)
+                    return true;
+            }
+
+            if (archive == testBigFlats)
+            {
+                if (record == 5 || record == 19 || record == 39 || record == 43 || record == 44 || record == 53 || record == 54)
+                    return true;
+            }
+
+            if (archive == kludgeTown)
+            {
+                if (record == 3)
+                    return true;
+            }
+
+            if (archive == wayrestPeople)
+            {
+                if (record == 2 || record == 15 || record == 16 || record == 18)
+                    return true;
+            }
+
+            if (archive == sentinelPeople)
+            {
+                if (record == 5 || record == 6 || record == 7)
+                    return true;
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region Private Methods

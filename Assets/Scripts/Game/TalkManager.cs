@@ -642,9 +642,12 @@ namespace DaggerfallWorkshop.Game
             FactionFile.FactionData npcFactionData;
             GetStaticNPCFactionData(targetNPC.Data.factionID, GameManager.Instance.PlayerEnterExit.BuildingType, out npcFactionData);
 
+            // Check if this is a child NPC
+            bool isChildNPC = targetNPC.IsChildNPC;
+
             IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
 
-            if (IsNpcOfferingQuest(targetNPC.Data.nameSeed))
+            if (!isChildNPC && IsNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
                 uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer,
                     new object[]
@@ -654,7 +657,7 @@ namespace DaggerfallWorkshop.Game
                     }));
                 return;
             }
-            else if (IsCastleNpcOfferingQuest(targetNPC.Data.nameSeed))
+            else if (!isChildNPC && IsCastleNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
                 uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer,
                     new object[] {uiManager, targetNPC.Data, (FactionFile.SocialGroups)npcFactionData.sgroup, menu}));

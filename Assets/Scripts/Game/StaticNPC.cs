@@ -61,6 +61,14 @@ namespace DaggerfallWorkshop.Game
             get { return GetDisplayName(); }
         }
 
+        /// <summary>
+        /// Checks if this is a child NPC using texture or faction.
+        /// </summary>
+        public bool IsChildNPC
+        {
+            get { return CheckChildNPC(); }
+        }
+
         #endregion
 
         #region Structs & Enums
@@ -283,6 +291,20 @@ namespace DaggerfallWorkshop.Game
         public static int GetPositionHash(int x, int y, int z)
         {
             return x ^ y << 2 ^ z >> 2;
+        }
+
+        /// <summary>
+        /// Check if a known child NPC.
+        /// </summary>
+        /// <returns>True if NPC data matches known children textures or faction.</returns>
+        bool CheckChildNPC()
+        {
+            const int childrenFactionID = 514;
+
+            bool isChildNPCTexture = DaggerfallWorkshop.Utility.TextureReader.IsChildNPCTexture(Data.billboardArchiveIndex, Data.billboardRecordIndex);
+            bool isChildrenFaction = Data.factionID == childrenFactionID;
+
+            return isChildNPCTexture || isChildrenFaction;
         }
 
         #endregion
