@@ -328,22 +328,22 @@ namespace DaggerfallWorkshop.Game.Guilds
         public void ImportMembershipData(List<SaveTreeBaseRecord> guildMembershipRecords, bool vampire = false)
         {
             ClearMembershipData(vampire);
-            try
+            foreach (GuildMembershipRecord record in guildMembershipRecords)
             {
-                foreach (GuildMembershipRecord record in guildMembershipRecords)
-                {
-                    FactionFile.GuildGroups guildGroup = GetGuildGroup(record.ParsedData.factionID);
-                    IGuild guild = CreateGuildObj(guildGroup, record.ParsedData.factionID);
-                    AddMembership(guildGroup, guild);
+                FactionFile.GuildGroups guildGroup = GetGuildGroup(record.ParsedData.factionID);
+                IGuild guild = CreateGuildObj(guildGroup, record.ParsedData.factionID);
+                if (vampire)
+                    vampMemberships[guildGroup] = guild;
+                else
+                    memberships[guildGroup] = guild;
 
-                    // Set rank and time from parsed data.
-                    guild.Rank = record.ParsedData.rank;
-                    guild.ImportLastRankChange(record.ParsedData.timeOfLastRankChange);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogErrorFormat("ImportMembershipData() encountered exception {0}", ex.Message);
+                if (vampire == GameManager.Instance.PlayerEffectManager.HasVampirism())
+                    // Player should only join guilds from either his standard or vampire membership lists, not both
+                    guild.Join();
+
+                // Set rank and time from parsed data.
+                guild.Rank = record.ParsedData.rank;
+                guild.ImportLastRankChange(record.ParsedData.timeOfLastRankChange);
             }
         }
 
