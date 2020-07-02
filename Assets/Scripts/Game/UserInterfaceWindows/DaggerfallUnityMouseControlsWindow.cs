@@ -50,6 +50,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox invertMouseVerticalCheckbox;
         Checkbox mouseSmoothingCheckbox;
         Checkbox clickToAttackCheckbox;
+        Checkbox bowDrawbackCheckbox;
+        Checkbox toggleSneakCheckbox;
         TextBox weaponAttackThresholdTextbox;
 
         List<Button> buttonGroup = new List<Button>();
@@ -121,18 +123,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupKeybindButton(quickLoadKeybindButton, InputManager.Actions.QuickLoad, 210, 40);
 
             mouseSensitivitySlider = CreateSlider("Mouse Look Sensitivity", 15, 80, 0.1f, 8.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
+            invertMouseVerticalCheckbox = AddOption(20, 100, "Invert Look-Y", DaggerfallUnity.Settings.InvertMouseVertical);
+            mouseSmoothingCheckbox = AddOption(20, 110, "Mouse Smoothing", DaggerfallUnity.Settings.MouseLookSmoothing);
+            moveSpeedCheckbox = AddOption(20, 120, "Movement Acceleration", DaggerfallUnity.Settings.MovementAcceleration);
 
             weaponSensitivitySlider = CreateSlider("Mouse Weapon Sensitivity", 115, 80, 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
+            clickToAttackCheckbox = AddOption(115, 100, "Click to Attack", DaggerfallUnity.Settings.ClickToAttack);
+            bowDrawbackCheckbox = AddOption(115, 110, "Bows - draw and release", DaggerfallUnity.Settings.BowDrawback);
+            toggleSneakCheckbox = AddOption(115, 120, "Toggle Sneak", DaggerfallUnity.Settings.ToggleSneak);
 
-            moveSpeedCheckbox = AddOption(215, 80, "Movement Acceleration", DaggerfallUnity.Settings.MovementAcceleration);
-
-            invertMouseVerticalCheckbox = AddOption(20, 100, "Invert Look-Y", DaggerfallUnity.Settings.InvertMouseVertical);
-
-            mouseSmoothingCheckbox = AddOption(20, 110, "Mouse Smoothing", DaggerfallUnity.Settings.MouseLookSmoothing);
-
-            clickToAttackCheckbox = AddOption(20, 120, "Click to Attack", DaggerfallUnity.Settings.ClickToAttack);
-
-            weaponAttackThresholdTextbox = AddTextbox("Mouse Weapon Attack Threshold", 115, 100, DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
+            weaponAttackThresholdTextbox = AddTextbox("Mouse Weapon Attack Threshold", 215, 80, DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
 
 
             continueButton.OnMouseClick += ContinueButton_OnMouseClick;
@@ -345,6 +345,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.InvertMouseVertical = invertMouseVerticalCheckbox.IsChecked;
             DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothingCheckbox.IsChecked;
             DaggerfallUnity.Settings.ClickToAttack = clickToAttackCheckbox.IsChecked;
+            DaggerfallUnity.Settings.BowDrawback = bowDrawbackCheckbox.IsChecked;
+            DaggerfallUnity.Settings.ToggleSneak = toggleSneakCheckbox.IsChecked;
 
             float weaponAttackThresholdValue;
             if (float.TryParse(weaponAttackThresholdTextbox.Text, out weaponAttackThresholdValue))
