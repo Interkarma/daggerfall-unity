@@ -60,7 +60,7 @@ QuestorPostsuccess:  [1008]
 
 QuestorPostfailure:  [1009]
 <ce>                  Get outta here. You're so pathetic.
-<ce>                   You couldn't even handle werewolf.
+<ce>                   You couldn't even handle a werewolf.
 
 Message:  1020
 <ce>                   The lycanthrope threat is ended.

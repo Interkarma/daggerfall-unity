@@ -39,7 +39,7 @@ QuestComplete:  [1004]
 <ce>                            for such a deed.
 
 RumorsDuringQuest:  [1005]
-<ce>                  The mages guild has refused to kill
+<ce>                  The Mages Guild has refused to kill
 <ce>                that rampaging gargoyle. They claim its
 <ce>                    not their fault. Lazy bastards.
 
