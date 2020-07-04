@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game
         const string parchmentBorderRCIFile = "SPOP.RCI";
         const string splashVideo = "ANIM0001.VID";
         const string deathVideo = "ANIM0012.VID";
+        const string textDatabase = "ClassicEffects";
 
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
         public static Color DaggerfallDefaultInputTextColor = new Color32(227, 223, 0, 255);
@@ -523,6 +524,16 @@ namespace DaggerfallWorkshop.Game
                         {
                             if (!GiveOffer())
                             {
+                                if (GameManager.Instance.PlayerEntity.Career.DamageFromSunlight && DaggerfallUnity.Instance.WorldTime.Now.IsDay)
+                                {
+                                    DaggerfallMessageBox mb = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager);
+                                    mb.PreviousWindow = DaggerfallUI.Instance.UserInterfaceManager.TopWindow;
+                                    mb.ClickAnywhereToClose = true;
+                                    mb.SetText(TextManager.Instance.GetText(textDatabase, "sunlightDamageFastTravelDay"));
+                                    mb.Show();
+                                    return;
+                                }
+
                                 racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect(); // Allow custom race to block fast travel (e.g. vampire during day)
                                 if (racialOverride != null && !racialOverride.CheckFastTravel(GameManager.Instance.PlayerEntity))
                                     return;

@@ -185,7 +185,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 DaggerfallMessageBox mb = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager);
                 mb.PreviousWindow = DaggerfallUI.Instance.UserInterfaceManager.TopWindow;
                 mb.ClickAnywhereToClose = true;
-                mb.SetText(TextManager.Instance.GetText(textDatabase, "vampireFastTravelDay"));
+                mb.SetText(TextManager.Instance.GetText(textDatabase, "sunlightDamageFastTravelDay"));
                 mb.Show();
                 return false;
             }
