@@ -1223,6 +1223,7 @@ namespace DaggerfallWorkshop.Utility
             const int flatPeople2 = 184;
             const int testBigFlats = 186;
             const int kludgeTown = 197;
+            const int daggerfallPeople = 334;
             const int wayrestPeople = 346;
             const int sentinelPeople = 357;
 
@@ -1234,7 +1235,7 @@ namespace DaggerfallWorkshop.Utility
 
             if (archive == mediumCommonPeople)
             {
-                if (record == 4 || record == 18 || record == 38 || record == 42 || record == 43 || record == 52 || record == 53)
+                if (record == 4 || record == 5 || record == 6 || record == 18 || record == 36 || record == 37 || record == 38 || record == 42 || record == 43 || record == 52 || record == 53)
                     return true;
             }
 
@@ -1246,7 +1247,7 @@ namespace DaggerfallWorkshop.Utility
 
             if (archive == testBigFlats)
             {
-                if (record == 5 || record == 19 || record == 39 || record == 43 || record == 44 || record == 53 || record == 54)
+                if (record == 4 || record == 5 || record == 6 || record == 7 || record == 19 || record == 37 || record == 38 || record == 39 || record == 43 || record == 44 || record == 53 || record == 54)
                     return true;
             }
 
@@ -1256,15 +1257,21 @@ namespace DaggerfallWorkshop.Utility
                     return true;
             }
 
+            if (archive == daggerfallPeople)
+            {
+                if (record == 2 || record == 3 || record == 6 || record == 9 || record == 12)
+                    return true;
+            }
+
             if (archive == wayrestPeople)
             {
-                if (record == 2 || record == 15 || record == 16 || record == 18)
+                if (record == 2 || record == 3 || record == 12 || record == 15 || record == 16 || record == 18)
                     return true;
             }
 
             if (archive == sentinelPeople)
             {
-                if (record == 5 || record == 6 || record == 7)
+                if (record == 5 || record == 6 || record == 7 || record == 8)
                     return true;
             }
 
