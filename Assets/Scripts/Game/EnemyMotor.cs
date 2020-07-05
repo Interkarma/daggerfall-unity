@@ -1070,7 +1070,8 @@ namespace DaggerfallWorkshop.Game
         void ObstacleCheck(Vector3 direction)
         {
             obstacleDetected = false;
-            const float checkDistance = 0.8f;
+            // Rationale: follow walls at 45° incidence; is that optimal? At least it seems very good
+            float checkDistance = controller.radius / Mathf.Sqrt(2f);
             foundUpwardSlope = false;
             foundDoor = false;
 
