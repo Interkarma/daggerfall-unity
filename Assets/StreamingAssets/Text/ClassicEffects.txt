@@ -100,7 +100,7 @@ doorLocked,                 Door is now locked.
 doorAlreadyLocked,          Door already locked.
 openFailed,                 Lock is too powerful.
 noSpellbook,                You have no spellbook!
-vampireFastTravelDay,       You cannot initiate fast travel during the day.
+sunlightDamageFastTravelDay, You cannot initiate fast travel during the day.
 trapActive,                 Trap active.
 trapHumanoid,               Trap will not work on humanoids.
 trapSuccess,                Trapped soul.
