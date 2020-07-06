@@ -552,7 +552,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
     /// <summary>
     /// Holds two int values.
     /// </summary>
-    public class TupleIntKey : Key<Tuple<int, int>>
+    public class TupleIntKey : Key<DaggerfallWorkshop.Utility.Tuple<int, int>>
     {
         public override KeyType KeyType { get { return KeyType.TupleInt; } }
 
@@ -574,7 +574,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 #if UNITY_EDITOR
         public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
         {
-            if (Value == null) Value = Tuple<int, int>.Make(0, 100);
+            if (Value == null) Value = DaggerfallWorkshop.Utility.Tuple<int, int>.Make(0, 100);
             horizontal(rect, "Value",
                 (r) => Value.First = EditorGUI.IntField(r, "First", Value.First),
                 (r) => Value.Second = EditorGUI.IntField(r, "Second", Value.Second));
@@ -582,7 +582,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 #endif
 
-        protected override bool IsValueEqual(Tuple<int, int> value)
+        protected override bool IsValueEqual(DaggerfallWorkshop.Utility.Tuple<int, int> value)
         {
             return Value.First == value.First && Value.Second == value.Second;
         }
@@ -596,14 +596,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             int[] args;
             if (TrySplit(textValue, 2, out args))
-                Value = new Tuple<int, int>(args[0], args[1]);
+                Value = new DaggerfallWorkshop.Utility.Tuple<int, int>(args[0], args[1]);
         }
     }
 
     /// <summary>
     /// Holds two float values.
     /// </summary>
-    public class TupleFloatKey : Key<Tuple<float, float>>
+    public class TupleFloatKey : Key<DaggerfallWorkshop.Utility.Tuple<float, float>>
     {
         public override KeyType KeyType { get { return KeyType.TupleFloat; } }
 
@@ -625,7 +625,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 #if UNITY_EDITOR
         public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
         {
-            if (Value == null) Value = Tuple<float, float>.Make(0, 100);
+            if (Value == null) Value = DaggerfallWorkshop.Utility.Tuple<float, float>.Make(0, 100);
             horizontal(rect, "Value",
                 (r) => Value.First = EditorGUI.FloatField(r, "First", Value.First),
                 (r) => Value.Second = EditorGUI.FloatField(r, "Second", Value.Second));
@@ -633,7 +633,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         }
 #endif
 
-        protected override bool IsValueEqual(Tuple<float, float> value)
+        protected override bool IsValueEqual(DaggerfallWorkshop.Utility.Tuple<float, float> value)
         {
             return Value.First == value.First && Value.Second == value.Second;
         }
@@ -647,7 +647,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         {
             float[] args;
             if (TrySplit(textValue, 2, out args))
-                Value = new Tuple<float, float>(args[0], args[1]);
+                Value = new DaggerfallWorkshop.Utility.Tuple<float, float>(args[0], args[1]);
         }
     }
 
