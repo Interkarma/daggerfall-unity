@@ -122,7 +122,7 @@ namespace DaggerfallWorkshop.Utility
             { "%kg", Weight },  //  Weight of items
             { "%kno", FactionOrderName }, // A knightly guild name
             { "%lev", GuildTitle }, // Rank in guild that you are in.
-            { "%lp", LocalPalace },  //  Local / palace (?) dungeon
+            { "%lp", LocalProvince },  //  Local province
             { "%ln", LastName },  //  Random lastname
             { "%loc", MarkLocationOnMap }, // Location marked on map (comment Nystul: this seems to be context dependent - it is used both in direction dialogs (7333) and map reveal dialogs (7332) - it seems to return the name of the building and reveal the map only if a 7332 dialog was chosen
             { "%lt1", TitleOfLordOfFaction1 }, // Title of _fl1
@@ -570,21 +570,13 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
-        private static string LocalPalace(IMacroContextProvider mcp)
-        {   // %lp - kinda guessing for this one
-            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
-            if (buildingDirectory && buildingDirectory.BuildingCount > 0)
-            {
-                List<BuildingSummary> palaces = buildingDirectory.GetBuildingsOfType(DFLocation.BuildingTypes.Palace);
-                if (palaces.Count >= 1)
-                {
-                    Debug.LogFormat("Location {1} has a palace with buildingKey: {0}", palaces[0].buildingKey, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
-                    PlayerGPS.DiscoveredBuilding palace;
-                    if (GameManager.Instance.PlayerGPS.GetAnyBuilding(palaces[0].buildingKey, out palace))
-                        return palace.displayName.TrimEnd('.');
-                }
-            }
-            return HardStrings.local;
+        private static string LocalProvince(IMacroContextProvider mcp)
+        {   // %lp
+            Races race = GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
+            if (race == Races.Breton)
+                return HardStrings.highRock;
+            else
+                return HardStrings.hammerfell;
         }
 
         private static string NearbyTavern(IMacroContextProvider mcp)
