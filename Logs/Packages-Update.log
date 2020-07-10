@@ -1,0 +1,22 @@
+
+=== Tue Jul  7 08:35:28 2020
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were added:
+  com.unity.2d.sprite@1.0.0
+  com.unity.2d.tilemap@1.0.0
+  com.unity.collab-proxy@1.2.16
+  com.unity.ide.rider@1.1.4
+  com.unity.ide.vscode@1.2.1
+  com.unity.modules.androidjni@1.0.0
+  com.unity.multiplayer-hlapi@1.0.6
+  com.unity.test-framework@1.1.14
+  com.unity.timeline@1.2.6
+  com.unity.ugui@1.0.0
+  com.unity.xr.legacyinputhelpers@2.1.4
+The following packages were updated:
+  com.unity.textmeshpro from version 1.3.0 to 2.0.1
+The following packages were removed:
+  com.unity.package-manager-ui@1.9.11
