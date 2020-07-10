@@ -41,8 +41,8 @@
 
 ## Versions
 + *Daggerfall Unity* - v0.10.x
-+ *Daggerfall Tools for Unity* - v1.8.7
-+ *Minimum Unity3D version* - 2018.2.21f1
++ *Daggerfall Tools for Unity* - v1.8.x
++ *Required Unity3D version* - 2019.4.2f1 LTS
 
 ## License
 
