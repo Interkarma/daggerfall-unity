@@ -97,7 +97,7 @@ _questgiver_? Why, %g's a noble. Involved in some daedric activity lately.
 <--->
 _questgiver_'s a noble, %di of here.
 <--->
-like so many other nobles, _questgiver_ has about a dozen projects brewing.
+Like so many other nobles, _questgiver_ has about a dozen projects brewing.
 <--->
 _questgiver_ has a lot of faith in alchemistry, like a lot of nobles do.
 

@@ -385,7 +385,7 @@ This document bears witness to the ownership
  of _house3_ of __house3_ in %reg.
  Let all who read this know that _patsy_
  is the sole and rightful owner of the
- afore mentioned property.
+ aforementioned property.
 
 
 -- Symbols used in the QRC file:

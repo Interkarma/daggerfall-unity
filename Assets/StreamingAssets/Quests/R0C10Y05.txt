@@ -15,7 +15,7 @@ QuestorOffer:  [1000]
 <ce>                       _qgfriend_. To cement our
 <ce>                       friendship, I have agreed
 <ce>                        to arrange the death of
-<ce>                         a consistant threat to
+<ce>                         a consistent threat to
 <ce>                          %g2 -- some sort of
 <ce>                      monster. This foul parasite
 <ce>                        lives in a decrepit old

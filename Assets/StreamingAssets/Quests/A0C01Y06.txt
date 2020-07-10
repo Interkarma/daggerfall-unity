@@ -69,7 +69,7 @@ QuestLogEntry:  [1010]
  who told me %g3 master,
  _master_, would pay _gold_ gold
  pieces for an unknown but certainly
- dangerous task. He is staying in
+ dangerous task. %g1 is staying in
  _meetingplace_ in __meetingplace_.
 
 Message:  1011

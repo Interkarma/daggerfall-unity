@@ -73,7 +73,7 @@ RumorsPostsuccess:  [1007]
 <ce>                               Well done!
                                      <--->
 <ce>                        I heard the _giver_ was
-<ce>                    publically embarrassed when some
+<ce>                    publicly embarrassed when some
 <ce>       wandering adventurer beat %g3 champion. Serves %g2 right.
 
 QuestorPostsuccess:  [1008]

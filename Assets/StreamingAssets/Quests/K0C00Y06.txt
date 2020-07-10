@@ -242,7 +242,7 @@ Message:  1022
  nothing, you unnderstand? I used to work for
  this =merchant_ by a name
  of _merchant_. Now %g was a
- crazy one, %g was. Allways trying to find a
+ crazy one, %g was. Always trying to find a
  way to get rich. And always quick to blame
  someone else when %g got caught with %g3
  hands in the cookie jar. That's how I got
@@ -267,7 +267,7 @@ Dear %pcn,
      There is a =noble_
  of my acquaintance who I believe knows more
  about the affair than most. It may be that
- %g even arranged or even commited the
+ %g even arranged or even committed the
  crime. I can say no more, except that %g3
  name is _noble_ and %g lives
  in __noblehome_.
@@ -572,9 +572,9 @@ Message:  1044
 QuestTimeLapse:  [1045]
 %qdt:
  _witness_
- confessed that %g knew who commited the
+ confessed that %g knew who committed the
  burglary and it isn't me. On the other
- hands, _priest_, the true
+ hand, _priest_, the true
  engineer behind it, will be difficult to
  convict. The two places where I might find
  evidence, _witness_ says,

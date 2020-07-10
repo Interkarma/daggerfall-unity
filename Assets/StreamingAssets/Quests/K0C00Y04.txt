@@ -60,7 +60,7 @@ QuestComplete:  [1004]
 RumorsDuringQuest:  [1005]
 _lover_, they say, has caused more deaths than any plague.
 <--->
-_lover_'s last lover died in %g2 arms, trying to satisfy %g3 ... appetite.
+_lover_'s last lover died in %g3 arms, trying to satisfy %g3 ... appetite.
 <--->
 If _lover_ finds out they're finding a duel over %g2 ... %oth, that'll be it.
 

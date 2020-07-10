@@ -30,7 +30,7 @@ AcceptQuest:  [1002]
 <ce>                The only person who might help you find
 <ce>                         _hermit_ is _spouse_.
 <ce>                     %g can be found in ___spouse_.
-<ce>              Take these flowers. They are %g2 favorites.
+<ce>              Take these flowers. They are %g3 favorites.
 <ce>                 They may gain you some favor with %g2.
 <ce>                    Here is a letter with _hermit_'s
 <ce>               riddle inscribed upon it. If you have not
