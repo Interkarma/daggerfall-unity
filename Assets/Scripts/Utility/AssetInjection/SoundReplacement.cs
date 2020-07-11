@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 string path = Path.Combine(soundPath, name + extension);
                 if (File.Exists(path))
                 {
-                    WWW www = new WWW("file://" + path);
+                    WWW www = new WWW("file://" + path); // TODO: Replace with UnityWebRequest
                     if (streaming) {
                         audioClip = www.GetAudioClip(true, true);
                     }
@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Load audio data from WWW in background.
         /// </summary>
-        private static IEnumerator LoadAudioData(WWW www, AudioClip clip)
+        private static IEnumerator LoadAudioData(WWW www, AudioClip clip) // TODO: Replace with UnityWebRequest
         {
             yield return www;
 
