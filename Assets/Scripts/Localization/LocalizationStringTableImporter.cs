@@ -10,8 +10,10 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
+using UnityEditor.Localization;
 using UnityEngine.Localization.Tables;
 using UnityEditor;
 
@@ -37,13 +39,15 @@ namespace DaggerfallWorkshop.Localization
 
         /// <summary>
         /// Helper to import TEXT.RSC from classic game data into specified StringTable.
-        /// Existing entries will be replaced.
+        /// WARNING: Named StringTable collection will be cleared and replaced with data from game files.
         /// </summary>
-        /// <param name="db">StringTable to receive TEXT.RSC data.</param>
-        public static void ImportTextRSC(StringTable target)
+        /// <param name="name">StringTable collection name to receive TEXT.RSC data.</param>
+        public static void ImportTextRSCToStringTables(string name)
         {
-            // Validate
-            if (!target)
+            ClearStringTables(name);
+
+            var collection = LocalizationEditorSettings.GetStringTableCollection(name);
+            if (collection == null)
                 return;
 
             // Load TEXT.RSC file
@@ -52,41 +56,43 @@ namespace DaggerfallWorkshop.Localization
                 throw new Exception("Could not load TEXT.RSC");
 
             // Iterate records
-            int overwriteCount = 0;
             for (int i = 0; i < rsc.RecordCount; i++)
             {
                 // Extract this record to tokens
                 byte[] buffer = rsc.GetBytesByIndex(i);
                 TextFile.Token[] tokens = TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
 
-                // Get key and remove duplicate if one exists
+                // Add text to each table
                 string key = MakeTextRSCKey(rsc.IndexToId(i));
-                StringTableEntry currentEntry = target.GetEntry(key);
-                if (currentEntry != null)
-                {
-                    //target.RemoveEntry(key);
-                    overwriteCount++;
-                }
-
                 string text = ConvertRSCTokensToString(tokens);
-                target.AddEntry(key, text);
+                foreach (StringTable table in collection.StringTables)
+                {
+                    //table.AddEntry(key, text);
+                }
             }
 
-            EditorUtility.SetDirty(target);
-
-            UnityEngine.Debug.LogFormat("Added {0} TEXT.RSC entries to table with {1} overwrites.", rsc.RecordCount, overwriteCount);
+            // Set each table dirty
+            foreach (StringTable table in collection.StringTables)
+            {
+                EditorUtility.SetDirty(table);
+                UnityEngine.Debug.LogFormat("Added {0} TEXT.RSC entries to table {1}", rsc.RecordCount, table.LocaleIdentifier.Code);
+            }
         }
 
         /// <summary>
-        /// Clear a StringTable.
+        /// Clear a named StringTable collection.
         /// </summary>
-        /// <param name="target">StringTable to clear.</param>
-        public static void ClearTable(StringTable target)
+        /// <param name="name">StringTable collection to clear.</param>
+        public static void ClearStringTables(string name)
         {
-            if (target)
+            var collection = LocalizationEditorSettings.GetStringTableCollection(name);
+            if (collection == null)
+                return;
+
+            foreach (StringTable table in collection.StringTables)
             {
-                target.Clear();
-                EditorUtility.SetDirty(target);
+                table.Clear();
+                EditorUtility.SetDirty(table);
             }
         }
 

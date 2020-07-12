@@ -22,15 +22,11 @@ namespace DaggerfallWorkshop
     [CustomEditor(typeof(TextManager))]
     public class TextManagerEditor : Editor
     {
-        public StringTable textRSCTable;
+        public string textRSCStringTableName = "TextRSC";
 
         SerializedProperty Prop(string name)
         {
             return serializedObject.FindProperty(name);
-        }
-
-        private void OnEnable()
-        {
         }
 
         public override void OnInspectorGUI()
@@ -49,19 +45,21 @@ namespace DaggerfallWorkshop
         void DisplayGUI()
         {
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField(new GUIContent("StringTable Importers", "Helpers to import classic text data into StringTables."), EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(new GUIContent("StringTable Importer", "Import classic text data into named table assets.\nNOTE: You must create table assets manually.\nWARNING: Existing tables will be cleared."), EditorStyles.boldLabel);
 
-            // TEXT.RSC importer
+            EditorGUILayout.Space();
+            textRSCStringTableName = EditorGUILayout.TextField(new GUIContent("TEXT.RSC StringTable Name", "Name of table collection holding TEXT.RSC data."), textRSCStringTableName);
+
+            EditorGUILayout.Space();
             GUILayoutHelper.Horizontal(() =>
             {
-                textRSCTable = (StringTable)EditorGUILayout.ObjectField(new GUIContent("Text RSC Table", "StringTable target to receive TEXT.RSC strings."), textRSCTable, typeof(StringTable), false);
                 if (GUILayout.Button("Import"))
                 {
-                    DaggerfallStringTableImporter.ImportTextRSC(textRSCTable);
+                    DaggerfallStringTableImporter.ImportTextRSCToStringTables(textRSCStringTableName);
                 }
                 if (GUILayout.Button("Clear"))
                 {
-                    DaggerfallStringTableImporter.ClearTable(textRSCTable);
+                    DaggerfallStringTableImporter.ClearStringTables(textRSCStringTableName);
                 }
             });
         }
