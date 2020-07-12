@@ -10,11 +10,14 @@
 //
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using UnityEditor.Localization;
 using UnityEngine.Localization.Tables;
 using UnityEditor;
+using UnityEngine;
+using Mono.CSharp;
 
 namespace DaggerfallWorkshop.Localization
 {
@@ -49,10 +52,10 @@ namespace DaggerfallWorkshop.Localization
             // Clear all tables
             ClearStringTables(name);
 
-            // Load TEXT.RSC file
-            TextFile rsc = new TextFile(DaggerfallUnity.Instance.Arena2Path, TextFile.Filename);
-            if (rsc == null || rsc.IsLoaded == false)
-                throw new Exception("Could not load TEXT.RSC");
+            // Load default TEXT.RSC file
+            TextFile defaultRSC = new TextFile(DaggerfallUnity.Instance.Arena2Path, TextFile.Filename);
+            if (defaultRSC == null || defaultRSC.IsLoaded == false)
+                throw new Exception("Could not load default TEXT.RSC");
 
             // Get string tables collection
             var collection = LocalizationEditorSettings.GetStringTableCollection(name);
@@ -63,7 +66,13 @@ namespace DaggerfallWorkshop.Localization
             foreach (StringTable table in collection.StringTables)
             {
                 bool en = table.LocaleIdentifier.Code == enLocaleCode;
-                for (int i = 0; i < rsc.RecordCount; i++)
+
+                TextFile rsc = defaultRSC;
+                TextFile localeRSC = LoadCustomLocaleTextRSC(table.LocaleIdentifier.Code);
+                if (localeRSC != null)
+                    rsc = localeRSC;
+
+                for (int i = 0; i < defaultRSC.RecordCount; i++)
                 {
                     // Extract this record to tokens
                     byte[] buffer = rsc.GetBytesByIndex(i);
@@ -79,13 +88,10 @@ namespace DaggerfallWorkshop.Localization
                     if (en)
                         collection.SharedData.AddKey(key);
                 }
-            }
 
-            // Set each table dirty
-            foreach (StringTable table in collection.StringTables)
-            {
+                // Set table dirty
                 EditorUtility.SetDirty(table);
-                UnityEngine.Debug.LogFormat("Added {0} TEXT.RSC entries to table {1}", rsc.RecordCount, table.LocaleIdentifier.Code);
+                Debug.LogFormat("Added {0} TEXT.RSC entries to table {1}", rsc.RecordCount, table.LocaleIdentifier.Code);
             }
 
             // Set shared data dirty
@@ -167,7 +173,8 @@ namespace DaggerfallWorkshop.Localization
                         text += markupInputCursor;
                         break;
                     default:
-                        throw new Exception(string.Format("Unexpected RSC formatting token encountered {0}", tokens[i].formatting.ToString()));
+                        Debug.LogErrorFormat("Unexpected RSC formatting token encountered {0}. Ignoring.", tokens[i].formatting.ToString());
+                        break;
                 }
             }
 
@@ -199,6 +206,32 @@ namespace DaggerfallWorkshop.Localization
         public static TextFile.Token[] ConvertTextElementsToRSCTokens(List<TextElement> textElements)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Attempt to load a custom TEXT.RSC binary file for a locale.
+        /// To make available - append matching locale code and .bytes to end of file then drop into a Resources folder
+        /// e.g. French TEXT.RSC filename becomes "TEXT-fr.RSC.bytes" before adding to a Resources folder
+        /// </summary>
+        /// <param name="code">Locale code.</param>
+        /// <returns>TextFile or null.</returns>
+        static TextFile LoadCustomLocaleTextRSC(string code)
+        {
+            TextFile localeRSC = null;
+            if (code != enLocaleCode)
+            {
+                string localeFilename = string.Format("TEXT-{0}.RSC", code);
+                TextAsset binaryFile = Resources.Load<TextAsset>(localeFilename);
+                if (binaryFile)
+                {
+                    localeRSC = new TextFile();
+                    localeRSC.Load(binaryFile.bytes, localeFilename);
+                    if (!localeRSC.IsLoaded)
+                        localeRSC = null;
+                }
+            }
+
+            return localeRSC;
         }
 
         #endregion
