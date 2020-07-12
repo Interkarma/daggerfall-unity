@@ -67,8 +67,11 @@ namespace DaggerfallWorkshop.Localization
                 string text = ConvertRSCTokensToString(tokens);
                 foreach (StringTable table in collection.StringTables)
                 {
-                    //table.AddEntry(key, text);
+                    table.AddEntry(key, text);
                 }
+
+                // Add key to shared data
+                collection.SharedData.AddKey(key);
             }
 
             // Set each table dirty
@@ -77,6 +80,9 @@ namespace DaggerfallWorkshop.Localization
                 EditorUtility.SetDirty(table);
                 UnityEngine.Debug.LogFormat("Added {0} TEXT.RSC entries to table {1}", rsc.RecordCount, table.LocaleIdentifier.Code);
             }
+
+            // Set shared data dirty
+            EditorUtility.SetDirty(collection.SharedData);
         }
 
         /// <summary>
@@ -89,11 +95,16 @@ namespace DaggerfallWorkshop.Localization
             if (collection == null)
                 return;
 
+            // Clear tables in collection
             foreach (StringTable table in collection.StringTables)
             {
                 table.Clear();
                 EditorUtility.SetDirty(table);
             }
+
+            // Clear shared data entries
+            collection.SharedData.Entries.Clear();
+            EditorUtility.SetDirty(collection.SharedData);
         }
 
         #region Importer Helpers
