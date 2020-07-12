@@ -17,53 +17,8 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 807d8709a6932f14cb6475413bf3e04a
   m_SerializeEntries:
-  - m_GUID: 51df84142bab8c647aec09e27f7dd812
-    m_Address: Spanish (es)
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale
-    m_mainAssetType: UnityEngine.Localization.Locale, Unity.Localization, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
   - m_GUID: 6198c0b12813e4f43b6063ad38ec4a20
     m_Address: English (en)
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale
-    m_mainAssetType: UnityEngine.Localization.Locale, Unity.Localization, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
-  - m_GUID: 624be60af4ec2294183698a8ed02b4eb
-    m_Address: German (de)
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale
-    m_mainAssetType: UnityEngine.Localization.Locale, Unity.Localization, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
-  - m_GUID: 93510f90f9c53e94dba08c719d7dfdb9
-    m_Address: Polish (pl)
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale
-    m_mainAssetType: UnityEngine.Localization.Locale, Unity.Localization, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
-  - m_GUID: 9960429b1ca3e3a41987ea64e8f958a6
-    m_Address: Italian (it)
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale
-    m_mainAssetType: UnityEngine.Localization.Locale, Unity.Localization, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
-  - m_GUID: df5542f5f88b3904aa85f3c316dfc2c7
-    m_Address: French (fr)
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale

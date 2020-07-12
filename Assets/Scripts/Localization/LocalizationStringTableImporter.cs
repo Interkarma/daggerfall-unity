@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using UnityEngine.Localization.Tables;
+using UnityEditor;
 
 namespace DaggerfallWorkshop.Localization
 {
@@ -63,13 +64,15 @@ namespace DaggerfallWorkshop.Localization
                 StringTableEntry currentEntry = target.GetEntry(key);
                 if (currentEntry != null)
                 {
-                    target.RemoveEntry(key);
+                    //target.RemoveEntry(key);
                     overwriteCount++;
                 }
 
                 string text = ConvertRSCTokensToString(tokens);
                 target.AddEntry(key, text);
             }
+
+            EditorUtility.SetDirty(target);
 
             UnityEngine.Debug.LogFormat("Added {0} TEXT.RSC entries to table with {1} overwrites.", rsc.RecordCount, overwriteCount);
         }
@@ -81,7 +84,10 @@ namespace DaggerfallWorkshop.Localization
         public static void ClearTable(StringTable target)
         {
             if (target)
+            {
                 target.Clear();
+                EditorUtility.SetDirty(target);
+            }
         }
 
         #region Importer Helpers

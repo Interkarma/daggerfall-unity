@@ -57,20 +57,12 @@ namespace DaggerfallWorkshop
                 textRSCTable = (StringTable)EditorGUILayout.ObjectField(new GUIContent("Text RSC Table", "StringTable target to receive TEXT.RSC strings."), textRSCTable, typeof(StringTable), false);
                 if (GUILayout.Button("Import"))
                 {
-                    if (textRSCTable)
-                    {
-                        DaggerfallStringTableImporter.ImportTextRSC(textRSCTable);
-                        EditorUtility.SetDirty(textRSCTable);
-                    }
+                    DaggerfallStringTableImporter.ImportTextRSC(textRSCTable);
                 }
-                //if (GUILayout.Button("Clear"))
-                //{
-                //    if (textRSCTable)
-                //    {
-                //        DaggerfallStringTableImporter.ClearTable(textRSCTable);
-                //        EditorUtility.SetDirty(textRSCTable);
-                //    }
-                //}
+                if (GUILayout.Button("Clear"))
+                {
+                    DaggerfallStringTableImporter.ClearTable(textRSCTable);
+                }
             });
         }
     }
