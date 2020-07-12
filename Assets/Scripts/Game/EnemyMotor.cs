@@ -77,6 +77,7 @@ namespace DaggerfallWorkshop.Game
         Vector3 detourDestination;
         CharacterController controller;
         DaggerfallMobileUnit mobile;
+        Collider myCollider;
         DaggerfallEntityBehaviour entityBehaviour;
         EnemyBlood entityBlood;
         EntityEffectManager entityEffectManager;
@@ -102,6 +103,7 @@ namespace DaggerfallWorkshop.Game
             senses = GetComponent<EnemySenses>();
             controller = GetComponent<CharacterController>();
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
+            myCollider = gameObject.GetComponent<Collider>();
             IsHostile = mobile.Summary.Enemy.Reactions == MobileReactions.Hostile;
             flies = CanFly();
             swims = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Aquatic;
@@ -648,6 +650,22 @@ namespace DaggerfallWorkshop.Game
             // Check that there is a clear path to shoot projectile
             Vector3 sphereCastDir = senses.PredictNextTargetPos(speed);
             if (sphereCastDir == EnemySenses.ResetPlayerPos)
+                return false;
+
+            // No point blank shooting special handling here, makes enemies favor other attack types (melee, touch spells,...)
+
+            bool myColliderWasEnabled = false;
+            if (myCollider)
+            {
+                myColliderWasEnabled = myCollider.enabled;
+                // Exclude enemy collider from CheckSphere test
+                myCollider.enabled = false;
+            }
+            bool isSpaceInsufficient = Physics.CheckSphere(transform.position, radius, ignoreMaskForShooting);
+            if (myCollider)
+                myCollider.enabled = myColliderWasEnabled;
+
+            if (isSpaceInsufficient)
                 return false;
 
             float sphereCastDist = (sphereCastDir - transform.position).magnitude;
