@@ -9,27 +9,10 @@
 // Notes:
 //
 
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace DaggerfallWorkshop.Game.Localization
+namespace DaggerfallWorkshop.Localization
 {
-    //  Note: Will expand and change over time until text database is complete.
-
-    /// <summary>
-    /// Each TextGroup stores one or more TextElements.
-    /// </summary>
-    public struct TextGroup
-    {
-        public string DisplayName;
-        public LegacySources LegacySource;
-        public string PrimaryKey;
-        public string SecondaryKey;
-        public string TertiaryKey;
-        public List<TextElement> Elements;
-    }
-
     public struct TextElement
     {
         public string Text;

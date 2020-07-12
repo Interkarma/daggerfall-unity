@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: TextRSC Shared Data
+  m_EditorClassIdentifier: 
+  m_NextAvailableId: 1
+  m_TableCollectionName: TextRSC
+  m_TableCollectionNameGuidString: 2fc3d2431cc25534caf971ef281d6185
+  m_Entries: []
+  m_Metadata:
+    m_Items: []
+  references:
+    version: 1
