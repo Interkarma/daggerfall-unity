@@ -10,14 +10,13 @@
 //
 
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using DaggerfallConnect.Arena2;
 using UnityEditor.Localization;
 using UnityEngine.Localization.Tables;
 using UnityEditor;
 using UnityEngine;
-using Mono.CSharp;
 
 namespace DaggerfallWorkshop.Localization
 {
@@ -29,7 +28,7 @@ namespace DaggerfallWorkshop.Localization
         const string enLocaleCode = "en";
         const string newline = "\n";
 
-        // Markup for token conversion
+        // Markup for RSC token conversion
         // Markup format is designed with the following requirements:
         //  1. Don't overcomplicate - must be simple to understand and edit using plain text
         //  2. Support all classic Daggerfall text data (excluding books which already have custom format)
@@ -39,8 +38,10 @@ namespace DaggerfallWorkshop.Localization
         const string markupJustifyCenter = "[/center]";
         const string markupNewLine = "[/newline]";
         const string markupTextPosition = "[/pos:x={0},y={1}]";
+        const string markupTextPositionPrefix = "[/pos";
         const string markupInputCursor = "[/input]";
         const string markupSubrecordSeparator = "[/record]";
+        const string markupEndRecord = "[/end]";
 
         /// <summary>
         /// Helper to import TEXT.RSC from classic game data into specified StringTable.
@@ -133,18 +134,16 @@ namespace DaggerfallWorkshop.Localization
         }
 
         /// <summary>
-        /// UNDER ACTIVE DEVELOPMENT
         /// Converts RSC tokens into a string. Tokens will be converted into simple markup.
-        /// This TextElement list can be converted back into the original RSC token stream.
+        /// This string can be converted back into the original RSC token stream.
         /// </summary>
         /// <param name="tokens">RSC token input.</param>
-        /// <returns>List of TextElement markup converted from RSC tokens.</returns>
+        /// <returns>String with markup converted from RSC tokens.</returns>
         public static string ConvertRSCTokensToString(TextFile.Token[] tokens)
         {
             string recordsText = string.Empty;
 
             // Convert RSC formatting tokens into markup text for easier human editing
-            // Expect significant evolution of this before editor is completed
             string text = string.Empty;
             for (int i = 0; i < tokens.Length; i++)
             {
@@ -173,14 +172,14 @@ namespace DaggerfallWorkshop.Localization
                         text += markupInputCursor;
                         break;
                     default:
-                        Debug.LogErrorFormat("Unexpected RSC formatting token encountered {0}. Ignoring.", tokens[i].formatting.ToString());
+                        Debug.LogErrorFormat("Ignoring unexpected RSC formatting token {0}.", tokens[i].formatting.ToString());
                         break;
                 }
             }
 
-            // Add pending text (if any)
+            // Add any pending text
             if (!string.IsNullOrEmpty(text))
-                recordsText = AppendSubrecord(recordsText, text);
+                recordsText = AppendSubrecord(recordsText, text, true);
 
             return recordsText;
         }
@@ -191,21 +190,106 @@ namespace DaggerfallWorkshop.Localization
         /// </summary>
         /// <param name="current">Current combined text.</param>
         /// <param name="add">Incoming subrecord text to add.</param>
+        /// <param name="end">True if last record.</param>
         /// <returns>Combined string.</returns>
-        static string AppendSubrecord(string current, string add)
+        static string AppendSubrecord(string current, string add, bool end = false)
         {
-            return string.Format("{0}{1}{2}", current, add, markupSubrecordSeparator);
+            return string.Format("{0}{1}{2}", current, add, (end) ? markupEndRecord : markupSubrecordSeparator);
         }
 
         /// <summary>
-        /// UNDER ACTIVE DEVELOPMENT
-        /// Converts TextElement list back into RSC tokens.
+        /// Converts string back into RSC tokens.
         /// </summary>
-        /// <param name="textElements">TextElements input.</param>
+        /// <param name="input">Input string formatted with RSC markup.</param>
         /// <returns>Array of RSC tokens converted from TextElements.</returns>
-        public static TextFile.Token[] ConvertTextElementsToRSCTokens(List<TextElement> textElements)
+        public static TextFile.Token[] ConvertStringToRSCTokens(string input)
         {
-            throw new NotImplementedException();
+            List<TextFile.Token> tokens = new List<TextFile.Token>();
+
+            char[] chars = input.ToCharArray();
+            if (chars == null || chars.Length == 0)
+                return null;
+
+            string text = string.Empty;
+            for (int i = 0; i < chars.Length; i++)
+            {
+                string markup;
+                if (PeekMarkup(ref chars, i, out markup))
+                {
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        tokens.Add(new TextFile.Token(TextFile.Formatting.Text, text));
+                        text = string.Empty;
+                    }
+                    AddToken(tokens, markup);
+                    i += markup.Length;
+                }
+                else
+                {
+                    text += chars[i];
+                }
+            }
+
+            if (!string.IsNullOrEmpty(text))
+                tokens.Add(new TextFile.Token(TextFile.Formatting.Text, text));
+
+            return tokens.ToArray();
+        }
+
+        /// <summary>
+        /// Adds supported RSC markup tokens to list.
+        /// Unhandled markup is added as a text token.
+        /// </summary>
+        static void AddToken(List<TextFile.Token> tokens, string markup)
+        {
+            if (markup == markupJustifyLeft)
+                tokens.Add(new TextFile.Token(TextFile.Formatting.JustifyLeft));
+            else if (markup == markupJustifyCenter)
+                tokens.Add(new TextFile.Token(TextFile.Formatting.JustifyCenter));
+            else if (markup == markupNewLine)
+                tokens.Add(new TextFile.Token(TextFile.Formatting.NewLine));
+            else if (markup.StartsWith(markupTextPositionPrefix))
+                tokens.Add(new TextFile.Token(TextFile.Formatting.PositionPrefix, string.Empty, 0, 0)); // TODO: Set prefix values
+            else if (markup == markupSubrecordSeparator)
+                tokens.Add(new TextFile.Token(TextFile.Formatting.SubrecordSeparator));
+            else if (markup == markupInputCursor)
+                tokens.Add(new TextFile.Token(TextFile.Formatting.InputCursorPositioner));
+            else if (markup == markupEndRecord)
+                tokens.Add(new TextFile.Token(TextFile.Formatting.EndOfRecord));
+            else
+                tokens.Add(new TextFile.Token(TextFile.Formatting.Text, markup)); // Unhandled markup
+        }
+
+        /// <summary>
+        /// Peeks a markup token from current position in stream.
+        /// </summary>
+        static bool PeekMarkup(ref char[] chars, int pos, out string markup)
+        {
+            markup = string.Empty;
+
+            if (chars == null || pos > chars.Length - 2)
+                return false;
+
+            if (chars[pos] == '[' && chars[pos + 1] == '/')
+            {
+                int endpos = pos;
+                for (int i = pos + 2; i < chars.Length; i++)
+                {
+                    if (chars[i] == ']')
+                    {
+                        endpos = i + 1;
+                        break;
+                    }
+                }
+
+                if (endpos > pos)
+                {
+                    markup = new string(chars, pos, endpos - pos);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
