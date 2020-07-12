@@ -10,7 +10,6 @@
 //
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using DaggerfallConnect.Arena2;
 using UnityEditor.Localization;
@@ -24,6 +23,9 @@ namespace DaggerfallWorkshop.Localization
     /// </summary>
     public static class DaggerfallStringTableImporter
     {
+        const string enLocaleCode = "en";
+        const string newline = "\n";
+
         // Markup for token conversion
         // Markup format is designed with the following requirements:
         //  1. Don't overcomplicate - must be simple to understand and edit using plain text
@@ -32,7 +34,7 @@ namespace DaggerfallWorkshop.Localization
         //  4. Formatting must not conflict with regular text entry in any language
         const string markupJustifyLeft = "[/left]";
         const string markupJustifyCenter = "[/center]";
-        const string markupNewLine = "\\n";
+        const string markupNewLine = "[/newline]";
         const string markupTextPosition = "[/pos:x={0},y={1}]";
         const string markupInputCursor = "[/input]";
         const string markupSubrecordSeparator = "[/record]";
@@ -44,34 +46,39 @@ namespace DaggerfallWorkshop.Localization
         /// <param name="name">StringTable collection name to receive TEXT.RSC data.</param>
         public static void ImportTextRSCToStringTables(string name)
         {
+            // Clear all tables
             ClearStringTables(name);
-
-            var collection = LocalizationEditorSettings.GetStringTableCollection(name);
-            if (collection == null)
-                return;
 
             // Load TEXT.RSC file
             TextFile rsc = new TextFile(DaggerfallUnity.Instance.Arena2Path, TextFile.Filename);
             if (rsc == null || rsc.IsLoaded == false)
                 throw new Exception("Could not load TEXT.RSC");
 
-            // Iterate records
-            for (int i = 0; i < rsc.RecordCount; i++)
+            // Get string tables collection
+            var collection = LocalizationEditorSettings.GetStringTableCollection(name);
+            if (collection == null)
+                return;
+
+            // Add all text records to each table
+            foreach (StringTable table in collection.StringTables)
             {
-                // Extract this record to tokens
-                byte[] buffer = rsc.GetBytesByIndex(i);
-                TextFile.Token[] tokens = TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
-
-                // Add text to each table
-                string key = MakeTextRSCKey(rsc.IndexToId(i));
-                string text = ConvertRSCTokensToString(tokens);
-                foreach (StringTable table in collection.StringTables)
+                bool en = table.LocaleIdentifier.Code == enLocaleCode;
+                for (int i = 0; i < rsc.RecordCount; i++)
                 {
-                    table.AddEntry(key, text);
-                }
+                    // Extract this record to tokens
+                    byte[] buffer = rsc.GetBytesByIndex(i);
+                    TextFile.Token[] tokens = TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
 
-                // Add key to shared data
-                collection.SharedData.AddKey(key);
+                    // Add text to table
+                    string key = MakeTextRSCKey(rsc.IndexToId(i));
+                    string text = ConvertRSCTokensToString(tokens);
+                    table.AddEntry(key, text);
+
+                    // Add shared keys only when reading en table
+                    // These keys match across entire collection
+                    if (en)
+                        collection.SharedData.AddKey(key);
+                }
             }
 
             // Set each table dirty
@@ -141,19 +148,19 @@ namespace DaggerfallWorkshop.Localization
                         text += tokens[i].text;
                         break;
                     case TextFile.Formatting.JustifyLeft:
-                        text += markupJustifyLeft;
+                        text += markupJustifyLeft + newline;
                         break;
                     case TextFile.Formatting.JustifyCenter:
-                        text += markupJustifyCenter;
+                        text += markupJustifyCenter + newline;
                         break;
                     case TextFile.Formatting.NewLine:
-                        text += markupNewLine;
+                        text += markupNewLine + newline;
                         break;
                     case TextFile.Formatting.PositionPrefix:
                         text += string.Format(markupTextPosition, tokens[i].x, tokens[i].y);
                         break;
                     case TextFile.Formatting.SubrecordSeparator:
-                        recordsText = AppendSubrecord(recordsText, text);
+                        recordsText = AppendSubrecord(recordsText, text) + newline;
                         text = string.Empty;
                         break;
                     case TextFile.Formatting.InputCursorPositioner:
