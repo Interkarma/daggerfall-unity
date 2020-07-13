@@ -14,7 +14,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Questing;
+#if UNITY_EDITOR
 using UnityEditor.Localization;
+#endif
 using UnityEngine.Localization.Tables;
 using UnityEditor;
 using UnityEngine;
@@ -48,6 +50,10 @@ namespace DaggerfallWorkshop.Localization
         const string markupSubrecordSeparator = "[/record]";
         const string markupEndRecord = "[/end]";
 
+
+        #region Editor Only Methods
+
+#if UNITY_EDITOR
         /// <summary>
         /// Helper to import TEXT.RSC from classic game data into specified StringTable.
         /// WARNING: Named StringTable collection will be cleared and replaced with data from game files.
@@ -137,6 +143,10 @@ namespace DaggerfallWorkshop.Localization
             collection.SharedData.Entries.Clear();
             EditorUtility.SetDirty(collection.SharedData);
         }
+
+#endif
+
+        #endregion
 
         #region Importer Helpers
 
