@@ -14,6 +14,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Localization;
+using DaggerfallWorkshop.Utility;
 using UnityEditor.Localization;
 using UnityEngine.Localization.Tables;
 
@@ -22,7 +23,7 @@ namespace DaggerfallWorkshop
     [CustomEditor(typeof(TextManager))]
     public class TextManagerEditor : Editor
     {
-        public string textRSCStringTableName = "TextRSC";
+        public string textRSCStringTableName = TextProvider.textRSCCollectionName;
 
         SerializedProperty Prop(string name)
         {

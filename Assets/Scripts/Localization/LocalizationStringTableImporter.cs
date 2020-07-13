@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Localization
     public static class DaggerfallStringTableImporter
     {
         const string enLocaleCode = "en";
-        const string newline = "\n";
+        const char newline = '\n';
 
         // Markup for RSC token conversion
         // Markup format is designed with the following requirements:
@@ -144,22 +144,40 @@ namespace DaggerfallWorkshop.Localization
             string recordsText = string.Empty;
 
             // Convert RSC formatting tokens into markup text for easier human editing
+            // Intentionally adding newlines so that text wraps nicely at justify tokens similar to in-game
+            // Unity's StringTable editor does not at this time wrap text (this is being added as an option)
+            // But even if it did, layout would not be as nice to read as it is with this method
+            // - These newlines are trimmed back out again when reading markup back in later
+            // - It's necessary to trim spaces from start of line after newline or Unity's JSON serialization will trim incorrectly
+            // - This leads to unusual line-breaking layout in JSON files, but is character accurate and reads correctly in editor and runtime
             string text = string.Empty;
+            bool trimStartSpaces = false;
             for (int i = 0; i < tokens.Length; i++)
             {
                 switch (tokens[i].formatting)
                 {
                     case TextFile.Formatting.Text:
-                        text += tokens[i].text;
+                        if (trimStartSpaces)
+                        {
+                            text += tokens[i].text.TrimStart(' ');
+                            trimStartSpaces = false;
+                        }
+                        else
+                        {
+                            text += tokens[i].text;
+                        }
                         break;
                     case TextFile.Formatting.JustifyLeft:
                         text += markupJustifyLeft + newline;
+                        trimStartSpaces = true;
                         break;
                     case TextFile.Formatting.JustifyCenter:
                         text += markupJustifyCenter + newline;
+                        trimStartSpaces = true;
                         break;
                     case TextFile.Formatting.NewLine:
                         text += markupNewLine + newline;
+                        trimStartSpaces = true;
                         break;
                     case TextFile.Formatting.PositionPrefix:
                         text += string.Format(markupTextPosition, tokens[i].x, tokens[i].y);
@@ -167,6 +185,7 @@ namespace DaggerfallWorkshop.Localization
                     case TextFile.Formatting.SubrecordSeparator:
                         recordsText = AppendSubrecord(recordsText, text) + newline;
                         text = string.Empty;
+                        trimStartSpaces = true;
                         break;
                     case TextFile.Formatting.InputCursorPositioner:
                         text += markupInputCursor;
@@ -213,6 +232,11 @@ namespace DaggerfallWorkshop.Localization
             string text = string.Empty;
             for (int i = 0; i < chars.Length; i++)
             {
+                // Strip out newline chars from text input
+                // TEXT.RSC does not use newline, this is only added to string output so text more readable in editor
+                if (chars[i] == newline)
+                    continue;
+
                 string markup;
                 if (PeekMarkup(ref chars, i, out markup))
                 {
@@ -222,7 +246,7 @@ namespace DaggerfallWorkshop.Localization
                         text = string.Empty;
                     }
                     AddToken(tokens, markup);
-                    i += markup.Length;
+                    i += markup.Length - 1;
                 }
                 else
                 {
