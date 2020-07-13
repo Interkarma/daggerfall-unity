@@ -23,8 +23,6 @@ namespace DaggerfallWorkshop
     [CustomEditor(typeof(TextManager))]
     public class TextManagerEditor : Editor
     {
-        public string textRSCStringTableName = TextProvider.textRSCCollectionName;
-
         SerializedProperty Prop(string name)
         {
             return serializedObject.FindProperty(name);
@@ -45,22 +43,20 @@ namespace DaggerfallWorkshop
 
         void DisplayGUI()
         {
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField(new GUIContent("StringTable Importer", "Import classic text data into named table assets.\nNOTE: You must create table assets manually.\nWARNING: Existing tables will be cleared."), EditorStyles.boldLabel);
+            DrawDefaultInspector();
 
             EditorGUILayout.Space();
-            textRSCStringTableName = EditorGUILayout.TextField(new GUIContent("TEXT.RSC StringTable Name", "Name of table collection holding TEXT.RSC data."), textRSCStringTableName);
-
-            EditorGUILayout.Space();
+            EditorGUILayout.LabelField(new GUIContent("String Importer", "Import classic text data into named String Table Collections.\nNOTE: You must create collections manually.\nWARNING: Existing collections will be cleared."), EditorStyles.boldLabel);
             GUILayoutHelper.Horizontal(() =>
             {
-                if (GUILayout.Button("Import"))
+                var rscCollectionName = Prop("textRSCCollection");
+                if (GUILayout.Button("Import All"))
                 {
-                    DaggerfallStringTableImporter.ImportTextRSCToStringTables(textRSCStringTableName);
+                    DaggerfallStringTableImporter.ImportTextRSCToStringTables(rscCollectionName.stringValue);
                 }
-                if (GUILayout.Button("Clear"))
+                if (GUILayout.Button("Clear All"))
                 {
-                    DaggerfallStringTableImporter.ClearStringTables(textRSCStringTableName);
+                    DaggerfallStringTableImporter.ClearStringTables(rscCollectionName.stringValue);
                 }
             });
         }

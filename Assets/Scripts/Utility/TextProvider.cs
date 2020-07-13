@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public abstract class TextProvider : ITextProvider
     {
-        public static string textRSCCollectionName = "TextRSC";
+        public static string defaultTextRSCCollectionName = "TextRSC";
 
         TextFile rscFile = new TextFile();
 
