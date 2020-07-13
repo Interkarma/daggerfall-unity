@@ -13,10 +13,12 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Questing;
 using UnityEditor.Localization;
 using UnityEngine.Localization.Tables;
 using UnityEditor;
 using UnityEngine;
+using UnityScript.Steps;
 
 namespace DaggerfallWorkshop.Localization
 {
@@ -273,7 +275,7 @@ namespace DaggerfallWorkshop.Localization
             else if (markup == markupNewLine)
                 tokens.Add(new TextFile.Token(TextFile.Formatting.NewLine));
             else if (markup.StartsWith(markupTextPositionPrefix))
-                tokens.Add(new TextFile.Token(TextFile.Formatting.PositionPrefix, string.Empty, 0, 0)); // TODO: Set prefix values
+                tokens.Add(ParsePositionMarkup(markup));
             else if (markup == markupSubrecordSeparator)
                 tokens.Add(new TextFile.Token(TextFile.Formatting.SubrecordSeparator));
             else if (markup == markupInputCursor)
@@ -282,6 +284,24 @@ namespace DaggerfallWorkshop.Localization
                 tokens.Add(new TextFile.Token(TextFile.Formatting.EndOfRecord));
             else
                 tokens.Add(new TextFile.Token(TextFile.Formatting.Text, markup)); // Unhandled markup
+        }
+
+        /// <summary>
+        /// Reads position markup using regex.
+        /// If markup pattern not matched then returned as a string token.
+        /// </summary>
+        static TextFile.Token ParsePositionMarkup(string markup)
+        {
+            const string pattern = @"pos:x=(?<x>\d+),y=(?<y>\d+)";
+
+            Match match = Regex.Match(markup, pattern);
+            if (!match.Success)
+                return new TextFile.Token(TextFile.Formatting.Text, markup);
+
+            int x = Parser.ParseInt(match.Groups["x"].Value);
+            int y = Parser.ParseInt(match.Groups["y"].Value);
+
+            return new TextFile.Token(TextFile.Formatting.PositionPrefix, string.Empty, x, y);
         }
 
         /// <summary>
