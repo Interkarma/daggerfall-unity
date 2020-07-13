@@ -19,6 +19,8 @@ using UnityEngine.Localization.Tables;
 using UnityEditor;
 using UnityEngine;
 using UnityScript.Steps;
+using DaggerfallWorkshop.Utility;
+using UnityEngine.UI;
 
 namespace DaggerfallWorkshop.Localization
 {
@@ -27,6 +29,7 @@ namespace DaggerfallWorkshop.Localization
     /// </summary>
     public static class DaggerfallStringTableImporter
     {
+        const string textMappingTableFilename = "TextMappingTable";
         const string enLocaleCode = "en";
         const char newline = '\n';
 
@@ -55,6 +58,12 @@ namespace DaggerfallWorkshop.Localization
             // Clear all tables
             ClearStringTables(name);
 
+            // Load character mapping table
+            Table charMappingTable = null;
+            TextAsset mappingTableText = Resources.Load<TextAsset>(textMappingTableFilename);
+            if (mappingTableText)
+                charMappingTable = new Table(mappingTableText.text);
+
             // Load default TEXT.RSC file
             TextFile defaultRSC = new TextFile(DaggerfallUnity.Instance.Arena2Path, TextFile.Filename);
             if (defaultRSC == null || defaultRSC.IsLoaded == false)
@@ -81,9 +90,15 @@ namespace DaggerfallWorkshop.Localization
                     byte[] buffer = rsc.GetBytesByIndex(i);
                     TextFile.Token[] tokens = TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
 
-                    // Add text to table
+                    // Gey token key and text
                     string key = MakeTextRSCKey(rsc.IndexToId(i));
                     string text = ConvertRSCTokensToString(tokens);
+
+                    // Remap characters when mapping table present
+                    if (charMappingTable != null)
+                        text = RemapCharacters(table.LocaleIdentifier.Code, text, charMappingTable);
+
+                    // Add text to table
                     table.AddEntry(key, text);
 
                     // Add shared keys only when reading en table
@@ -360,6 +375,27 @@ namespace DaggerfallWorkshop.Localization
             }
 
             return localeRSC;
+        }
+
+        /// <summary>
+        /// Remaps characters from character mapping table.
+        /// </summary>
+        static string RemapCharacters(string locale, string input, Table charMappingTable)
+        {
+            string result = input;
+
+            for (int i = 0; i < charMappingTable.RowCount; i++)
+            {
+                // 0 = key
+                // 1 = locale
+                // 2 = source
+                // 3 = replacement
+                string[] row = charMappingTable.GetRow(i);
+                if (row[1] == locale)
+                    result = result.Replace(row[2], row[3]);
+            }
+
+            return result;
         }
 
         #endregion
