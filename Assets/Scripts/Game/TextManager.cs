@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game
         {
             ConsoleCommandsDatabase.RegisterCommand(Locale_Print.name, Locale_Print.description, Locale_Print.usage, Locale_Print.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Locale_Set.name, Locale_Set.description, Locale_Set.usage, Locale_Set.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(Locale_Debug.name, Locale_Debug.description, Locale_Debug.usage, Locale_Debug.Execute);
         }
 
         #endregion
@@ -221,6 +222,34 @@ namespace DaggerfallWorkshop.Game
 
                 // TODO: Set locale
                 //return string.Format("Set locale to '{0}'", locale.name);
+            }
+        }
+
+        private static class Locale_Debug
+        {
+            public static readonly string name = "locale_debug";
+            public static readonly string description = "Enables verbose localization debug to player log.";
+            public static readonly string usage = "locale_debug on|off";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length < 1)
+                    return string.Format("Usage: {0}", usage);
+
+                if (args[0] == "on")
+                {
+                    DaggerfallUnity.Instance.TextProvider.EnableLocalizedStringDebug(true);
+                    return "Localization debug enabled";
+                }
+                else if (args[0] == "off")
+                {
+                    DaggerfallUnity.Instance.TextProvider.EnableLocalizedStringDebug(false);
+                    return "Localization debug disabled";
+                }
+                else
+                {
+                    return usage;
+                }
             }
         }
 

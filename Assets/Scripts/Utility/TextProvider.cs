@@ -124,6 +124,12 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="result">Localized string result or null/empty.</param>
         /// <returns>True if string found, otherwise false.</returns>
         bool GetLocalizedString(string collection, string id, out string result);
+
+        /// <summary>
+        /// Enable or disable verbose localized string debug in player log.
+        /// </summary>
+        /// <param name="enable">True to enable, false to disable.</param>
+        void EnableLocalizedStringDebug(bool enable);
     }
 
     /// <summary>
@@ -134,6 +140,8 @@ namespace DaggerfallWorkshop.Utility
     {
         public static string defaultTextRSCCollectionName = "TextRSC";
 
+        public bool localizedStringDebug = false;
+
         TextFile rscFile = new TextFile();
 
         public TextProvider()
@@ -142,10 +150,16 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual TextFile.Token[] GetRSCTokens(int id)
         {
+            if (localizedStringDebug && !string.IsNullOrEmpty(TextManager.Instance.textRSCCollection))
+                Debug.LogFormat("Trying localized string using RSC collection '{0}'", TextManager.Instance.textRSCCollection);
+
             // First attempt to get string from localization
             string localizedString;
             if (GetLocalizedString(TextManager.Instance.textRSCCollection, id.ToString(), out localizedString))
                 return DaggerfallStringTableImporter.ConvertStringToRSCTokens(localizedString);
+
+            if (localizedStringDebug)
+                Debug.Log("Failed to get localized string. Fallback to TEXT.RSC");
 
             if (!rscFile.IsLoaded)
                 OpenTextRSCFile();
@@ -267,11 +281,22 @@ namespace DaggerfallWorkshop.Utility
                 if (entry != null)
                 {
                     result = entry.GetLocalizedString();
+                    if (localizedStringDebug)
+                        Debug.LogFormat("Found localized string for locale {0}\n{1}", LocalizationSettings.SelectedLocale.name, result);
                     return true;
                 }
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Enable or disable verbose localized string debug in player log.
+        /// </summary>
+        /// <param name="enable">True to enable, false to disable.</param>
+        public void EnableLocalizedStringDebug(bool enable)
+        {
+            localizedStringDebug = enable;
         }
 
         public string GetWeaponMaterialName(WeaponMaterialTypes material)
