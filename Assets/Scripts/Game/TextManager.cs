@@ -189,6 +189,9 @@ namespace DaggerfallWorkshop.Game
                 int index = 0;
                 string output = string.Empty;
                 var locales = LocalizationSettings.AvailableLocales.Locales;
+                if (locales == null || locales.Count == 0)
+                    return "No available locales.";
+
                 foreach (var locale in locales)
                 {
                     output += string.Format("{0}. {1}\n", index++, locale.name);
@@ -215,6 +218,9 @@ namespace DaggerfallWorkshop.Game
                     return usage;
 
                 var locales = LocalizationSettings.AvailableLocales.Locales;
+                if (locales == null || locales.Count == 0)
+                    return "No available locales.";
+
                 if (index < 0 || index > locales.Count - 1)
                     return "Locale index out of range.";
 
