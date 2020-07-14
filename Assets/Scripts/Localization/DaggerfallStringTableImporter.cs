@@ -14,13 +14,13 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Utility;
+using UnityEngine;
+using UnityEngine.Localization.Tables;
 #if UNITY_EDITOR
+using UnityEditor;
 using UnityEditor.Localization;
 #endif
-using UnityEngine.Localization.Tables;
-using UnityEditor;
-using UnityEngine;
-using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Localization
 {

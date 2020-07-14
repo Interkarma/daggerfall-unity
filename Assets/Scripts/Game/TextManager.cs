@@ -14,6 +14,9 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
+using Wenzil.Console;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -38,6 +41,12 @@ namespace DaggerfallWorkshop.Game
         private void Awake()
         {
             EnumerateTextDatabases();    
+        }
+
+        private void Start()
+        {
+            ConsoleCommandsDatabase.RegisterCommand(Locale_Print.name, Locale_Print.description, Locale_Print.usage, Locale_Print.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(Locale_Set.name, Locale_Set.description, Locale_Set.usage, Locale_Set.Execute);
         }
 
         #endregion
@@ -162,6 +171,57 @@ namespace DaggerfallWorkshop.Game
             }
 
             return true;
+        }
+
+        #endregion
+
+        #region Console Commands
+
+        private static class Locale_Print
+        {
+            public static readonly string name = "locale_print";
+            public static readonly string description = "Output available locales.";
+            public static readonly string usage = "locale_print";
+
+            public static string Execute(params string[] args)
+            {
+                int index = 0;
+                string output = string.Empty;
+                var locales = LocalizationSettings.AvailableLocales.Locales;
+                foreach (var locale in locales)
+                {
+                    output += string.Format("{0}. {1}\n", index++, locale.name);
+                }
+                output += string.Format("Current locale: {0}", LocalizationSettings.SelectedLocale.name);
+
+                return output;
+            }
+        }
+
+        private static class Locale_Set
+        {
+            public static readonly string name = "locale_set";
+            public static readonly string description = "Sets current locale. Use local_print to list avilable locales.";
+            public static readonly string usage = "locale_set <index>";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length < 1)
+                    return string.Format("Usage: {0}", usage);
+
+                int index;
+                if (!int.TryParse(args[0], out index))
+                    return usage;
+
+                var locales = LocalizationSettings.AvailableLocales.Locales;
+                if (index < 0 || index > locales.Count - 1)
+                    return "Locale index out of range.";
+
+                return "Not Implemented.";
+
+                // TODO: Set locale
+                //return string.Format("Set locale to '{0}'", locale.name);
+            }
         }
 
         #endregion
