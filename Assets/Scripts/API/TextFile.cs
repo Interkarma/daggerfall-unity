@@ -226,6 +226,31 @@ namespace DaggerfallConnect.Arena2
         }
 
         /// <summary>
+        /// Loads a text resource file from raw bytes.
+        /// Binary data must still match expected format.
+        /// </summary>
+        /// <param name="data">Binary data of RSC file.</param>
+        /// <param name="filename">Custom filename. Does not have to match standard TEXT.RSC filename.</param>
+        public void Load(byte[] data, string filename)
+        {
+            // Setup new file
+            header = new TextRecordDatabaseHeader();
+            recordIdToIndexDict.Clear();
+            isLoaded = false;
+
+            // Load file from bytes
+            fileProxy = new FileProxy(data, filename);
+
+            // Read file
+            BinaryReader reader = fileProxy.GetReader();
+            ReadHeader(reader);
+            ReadTextRecordHeaders(reader);
+
+            // Raise loaded flag
+            isLoaded = true;
+        }
+
+        /// <summary>
         /// Converts index to id. Invalid index returns -1.
         /// </summary>
         public int IndexToId(int index)

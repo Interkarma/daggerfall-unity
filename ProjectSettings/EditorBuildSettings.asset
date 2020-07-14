@@ -7,5 +7,12 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/DaggerfallUnityStartup.unity
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/DaggerfallUnityGame.unity
+    guid: 00000000000000000000000000000000
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 1ffabd7befd3d634b8ad85e8ceb61436,
+      type: 2}
+    com.unity.localization.settings: {fileID: 11400000, guid: b7df2f040b496394c82fa580d167aeb2,
+      type: 2}

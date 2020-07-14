@@ -11,9 +11,9 @@
 
 using System;
 
-namespace DaggerfallWorkshop.Game.Localization
+namespace DaggerfallWorkshop.Localization
 {
-    //  Note: Will expand and change over time until text database is complete.
+    //  Note: Will expand and change over time until localization is complete.
     
     /// <summary>
     /// Legacy text sources from classic Daggerfall.

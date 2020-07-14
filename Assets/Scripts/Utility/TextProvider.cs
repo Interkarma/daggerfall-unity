@@ -10,6 +10,8 @@
 //
 
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 using System;
 using System.IO;
 using System.Text;
@@ -21,6 +23,10 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Localization;
+using UnityEngine.SocialPlatforms;
+using UnityEngine.Localization.Tables;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -109,6 +115,15 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="stat">Stat.</param>
         /// <returns>Text resource ID.</returns>
         int GetStatDescriptionTextID(DFCareer.Stats stat);
+
+        /// <summary>
+        /// Attempts to read a localized string from a named table collection.
+        /// </summary>
+        /// <param name="collection">Name of table collection.</param>
+        /// <param name="id">ID of string to get.</param>
+        /// <param name="result">Localized string result or null/empty.</param>
+        /// <returns>True if string found, otherwise false.</returns>
+        bool GetLocalizedString(string collection, string id, out string result);
     }
 
     /// <summary>
@@ -117,6 +132,8 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public abstract class TextProvider : ITextProvider
     {
+        public static string defaultTextRSCCollectionName = "TextRSC";
+
         TextFile rscFile = new TextFile();
 
         public TextProvider()
@@ -125,6 +142,11 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual TextFile.Token[] GetRSCTokens(int id)
         {
+            // First attempt to get string from localization
+            string localizedString;
+            if (GetLocalizedString(TextManager.Instance.textRSCCollection, id.ToString(), out localizedString))
+                return DaggerfallStringTableImporter.ConvertStringToRSCTokens(localizedString);
+
             if (!rscFile.IsLoaded)
                 OpenTextRSCFile();
 
@@ -216,6 +238,40 @@ namespace DaggerfallWorkshop.Utility
             tokens.Add(new TextFile.Token(TextFile.Formatting.EndOfRecord));
 
             return tokens.ToArray();
+        }
+
+        /// <summary>
+        /// Attempts to read a localized string from a named table collection.
+        /// </summary>
+        /// <param name="collection">Name of table collection.</param>
+        /// <param name="id">ID of string to get.</param>
+        /// <param name="result">Localized string result or null/empty.</param>
+        /// <returns>True if string found, otherwise false.</returns>
+        public virtual bool GetLocalizedString(string collection, string id, out string result)
+        {
+            result = string.Empty;
+            if (string.IsNullOrEmpty(collection))
+                return false;
+
+            StringTable table = null;
+            var sd = LocalizationSettings.StringDatabase;
+            var op = sd.GetTableAsync(collection);
+            if (op.IsDone)
+                table = op.Result;
+            else
+                op.Completed += (o) => table = o.Result;
+
+            if (table != null)
+            {
+                var entry = table.GetEntry(id);
+                if (entry != null)
+                {
+                    result = entry.GetLocalizedString();
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public string GetWeaponMaterialName(WeaponMaterialTypes material)

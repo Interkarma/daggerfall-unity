@@ -367,6 +367,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         break;
                     case TextFile.Formatting.InputCursorPositioner:
                         break;
+                    case TextFile.Formatting.EndOfRecord:
+                        break;
                     default:
                         Debug.Log("MultilineTextLabel: Unknown formatting token: " + (int)token.formatting);
                         break;

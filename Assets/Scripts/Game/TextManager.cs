@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -18,8 +18,7 @@ using DaggerfallWorkshop.Utility;
 namespace DaggerfallWorkshop.Game
 {
     /// <summary>
-    /// Text manager singleton class. Provides common text services to game systems.
-    /// This is likely to replace most or all functionality currently in TextProvider.
+    /// Text manager singleton class.
     /// </summary>
     public class TextManager : MonoBehaviour
     {
@@ -27,6 +26,8 @@ namespace DaggerfallWorkshop.Game
 
         const string textFolderName = "Text";
         const string textColumn = "text";
+
+        public string textRSCCollection = string.Empty;
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
 
