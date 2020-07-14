@@ -20,9 +20,7 @@ using UnityEditor.Localization;
 using UnityEngine.Localization.Tables;
 using UnityEditor;
 using UnityEngine;
-using UnityScript.Steps;
 using DaggerfallWorkshop.Utility;
-using UnityEngine.UI;
 
 namespace DaggerfallWorkshop.Localization
 {
@@ -49,104 +47,6 @@ namespace DaggerfallWorkshop.Localization
         const string markupInputCursor = "[/input]";
         const string markupSubrecordSeparator = "[/record]";
         const string markupEndRecord = "[/end]";
-
-
-        #region Editor Only Methods
-
-#if UNITY_EDITOR
-        /// <summary>
-        /// Helper to import TEXT.RSC from classic game data into specified StringTable.
-        /// WARNING: Named StringTable collection will be cleared and replaced with data from game files.
-        /// </summary>
-        /// <param name="name">StringTable collection name to receive TEXT.RSC data.</param>
-        public static void ImportTextRSCToStringTables(string name)
-        {
-            // Clear all tables
-            ClearStringTables(name);
-
-            // Load character mapping table
-            Table charMappingTable = null;
-            TextAsset mappingTableText = Resources.Load<TextAsset>(textMappingTableFilename);
-            if (mappingTableText)
-                charMappingTable = new Table(mappingTableText.text);
-
-            // Load default TEXT.RSC file
-            TextFile defaultRSC = new TextFile(DaggerfallUnity.Instance.Arena2Path, TextFile.Filename);
-            if (defaultRSC == null || defaultRSC.IsLoaded == false)
-                throw new Exception("Could not load default TEXT.RSC");
-
-            // Get string tables collection
-            var collection = LocalizationEditorSettings.GetStringTableCollection(name);
-            if (collection == null)
-                return;
-
-            // Add all text records to each table
-            foreach (StringTable table in collection.StringTables)
-            {
-                bool en = table.LocaleIdentifier.Code == enLocaleCode;
-
-                TextFile rsc = defaultRSC;
-                TextFile localeRSC = LoadCustomLocaleTextRSC(table.LocaleIdentifier.Code);
-                if (localeRSC != null)
-                    rsc = localeRSC;
-
-                for (int i = 0; i < defaultRSC.RecordCount; i++)
-                {
-                    // Extract this record to tokens
-                    byte[] buffer = rsc.GetBytesByIndex(i);
-                    TextFile.Token[] tokens = TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
-
-                    // Gey token key and text
-                    string key = MakeTextRSCKey(rsc.IndexToId(i));
-                    string text = ConvertRSCTokensToString(tokens);
-
-                    // Remap characters when mapping table present
-                    if (charMappingTable != null)
-                        text = RemapCharacters(table.LocaleIdentifier.Code, text, charMappingTable);
-
-                    // Add text to table
-                    table.AddEntry(key, text);
-
-                    // Add shared keys only when reading en table
-                    // These keys match across entire collection
-                    if (en)
-                        collection.SharedData.AddKey(key);
-                }
-
-                // Set table dirty
-                EditorUtility.SetDirty(table);
-                Debug.LogFormat("Added {0} TEXT.RSC entries to table {1}", rsc.RecordCount, table.LocaleIdentifier.Code);
-            }
-
-            // Set shared data dirty
-            EditorUtility.SetDirty(collection.SharedData);
-        }
-
-        /// <summary>
-        /// Clear a named StringTable collection.
-        /// </summary>
-        /// <param name="name">StringTable collection to clear.</param>
-        public static void ClearStringTables(string name)
-        {
-            var collection = LocalizationEditorSettings.GetStringTableCollection(name);
-            if (collection == null)
-                return;
-
-            // Clear tables in collection
-            foreach (StringTable table in collection.StringTables)
-            {
-                table.Clear();
-                EditorUtility.SetDirty(table);
-            }
-
-            // Clear shared data entries
-            collection.SharedData.Entries.Clear();
-            EditorUtility.SetDirty(collection.SharedData);
-        }
-
-#endif
-
-        #endregion
 
         #region Importer Helpers
 
@@ -407,6 +307,103 @@ namespace DaggerfallWorkshop.Localization
 
             return result;
         }
+
+        #endregion
+
+        #region Editor Only Methods
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Helper to import TEXT.RSC from classic game data into specified StringTable.
+        /// WARNING: Named StringTable collection will be cleared and replaced with data from game files.
+        /// </summary>
+        /// <param name="name">StringTable collection name to receive TEXT.RSC data.</param>
+        public static void ImportTextRSCToStringTables(string name)
+        {
+            // Clear all tables
+            ClearStringTables(name);
+
+            // Load character mapping table
+            Table charMappingTable = null;
+            TextAsset mappingTableText = Resources.Load<TextAsset>(textMappingTableFilename);
+            if (mappingTableText)
+                charMappingTable = new Table(mappingTableText.text);
+
+            // Load default TEXT.RSC file
+            TextFile defaultRSC = new TextFile(DaggerfallUnity.Instance.Arena2Path, TextFile.Filename);
+            if (defaultRSC == null || defaultRSC.IsLoaded == false)
+                throw new Exception("Could not load default TEXT.RSC");
+
+            // Get string tables collection
+            var collection = LocalizationEditorSettings.GetStringTableCollection(name);
+            if (collection == null)
+                return;
+
+            // Add all text records to each table
+            foreach (StringTable table in collection.StringTables)
+            {
+                bool en = table.LocaleIdentifier.Code == enLocaleCode;
+
+                TextFile rsc = defaultRSC;
+                TextFile localeRSC = LoadCustomLocaleTextRSC(table.LocaleIdentifier.Code);
+                if (localeRSC != null)
+                    rsc = localeRSC;
+
+                for (int i = 0; i < defaultRSC.RecordCount; i++)
+                {
+                    // Extract this record to tokens
+                    byte[] buffer = rsc.GetBytesByIndex(i);
+                    TextFile.Token[] tokens = TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
+
+                    // Gey token key and text
+                    string key = MakeTextRSCKey(rsc.IndexToId(i));
+                    string text = ConvertRSCTokensToString(tokens);
+
+                    // Remap characters when mapping table present
+                    if (charMappingTable != null)
+                        text = RemapCharacters(table.LocaleIdentifier.Code, text, charMappingTable);
+
+                    // Add text to table
+                    table.AddEntry(key, text);
+
+                    // Add shared keys only when reading en table
+                    // These keys match across entire collection
+                    if (en)
+                        collection.SharedData.AddKey(key);
+                }
+
+                // Set table dirty
+                EditorUtility.SetDirty(table);
+                Debug.LogFormat("Added {0} TEXT.RSC entries to table {1}", rsc.RecordCount, table.LocaleIdentifier.Code);
+            }
+
+            // Set shared data dirty
+            EditorUtility.SetDirty(collection.SharedData);
+        }
+
+        /// <summary>
+        /// Clear a named StringTable collection.
+        /// </summary>
+        /// <param name="name">StringTable collection to clear.</param>
+        public static void ClearStringTables(string name)
+        {
+            var collection = LocalizationEditorSettings.GetStringTableCollection(name);
+            if (collection == null)
+                return;
+
+            // Clear tables in collection
+            foreach (StringTable table in collection.StringTables)
+            {
+                table.Clear();
+                EditorUtility.SetDirty(table);
+            }
+
+            // Clear shared data entries
+            collection.SharedData.Entries.Clear();
+            EditorUtility.SetDirty(collection.SharedData);
+        }
+
+#endif
 
         #endregion
     }

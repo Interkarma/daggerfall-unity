@@ -272,15 +272,6 @@ namespace DaggerfallWorkshop.Utility
             }
 
             return false;
-
-            //string localizedString = string.Empty;
-            //var op = LocalizationSettings.StringDatabase.GetLocalizedStringAsync(collection, id);
-            //if (op.IsDone)
-            //    localizedString = op.Result;
-            //else
-            //    op.Completed += (o) => localizedString = o.Result;
-
-            //return localizedString;
         }
 
         public string GetWeaponMaterialName(WeaponMaterialTypes material)
