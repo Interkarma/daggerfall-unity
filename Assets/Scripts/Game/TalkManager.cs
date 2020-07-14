@@ -1122,7 +1122,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         int index = currentDFRegion.MapNameLookup[location];
                         DFRegion.RegionMapTable locationInfo = currentDFRegion.MapTable[index];
-                        position = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
+                        position = MapsFile.LongitudeLatitudeToMapPixel(locationInfo.Longitude, locationInfo.Latitude);
                         positionLocation = new Vector2(position.X, position.Y);
                     }
                 }
@@ -2152,7 +2152,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             if (questResourceInfo.resourceType != QuestInfoResourceType.Person)
-                throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be"));
+                throw new Exception("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be");
 
             person = (Person)questResourceInfo.questResource;
         }
@@ -2175,7 +2175,7 @@ namespace DaggerfallWorkshop.Game
 
             Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
             if (assignedPlaceSymbol == null)
-                throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be"));
+                throw new Exception("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be");
 
             Place assignedPlace = person.ParentQuest.GetPlace(assignedPlaceSymbol);
 
@@ -2186,7 +2186,7 @@ namespace DaggerfallWorkshop.Game
         {
             Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
             if (assignedPlaceSymbol == null)
-                throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be"));
+                throw new Exception("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be");
 
             Place assignedPlace = person.ParentQuest.GetPlace(assignedPlaceSymbol);
 
@@ -2200,9 +2200,9 @@ namespace DaggerfallWorkshop.Game
                 GetBuildingList();
             List<BuildingInfo> matchingBuildings = listBuildings.FindAll(x => x.buildingKey == buildingKey);
             if (matchingBuildings.Count == 0)
-                throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): No building with the queried key found"));
+                throw new Exception("GetBuildingTypeForBuildingKey(): No building with the queried key found");
             if (matchingBuildings.Count > 1)
-                throw new Exception(String.Format("GetBuildingTypeForBuildingKey(): More than one building with the queried key found"));
+                throw new Exception("GetBuildingTypeForBuildingKey(): More than one building with the queried key found");
             return matchingBuildings[0].buildingType;
         }
 
@@ -2212,9 +2212,9 @@ namespace DaggerfallWorkshop.Game
                 GetBuildingList();
             List<BuildingInfo> matchingBuildings = listBuildings.FindAll(x => x.buildingKey == buildingKey);
             if (matchingBuildings.Count == 0)
-                throw new Exception(String.Format("GetBuildingNameForBuildingKey(): No building with the queried key found"));
+                throw new Exception("GetBuildingNameForBuildingKey(): No building with the queried key found");
             if (matchingBuildings.Count > 1)
-                throw new Exception(String.Format("GetBuildingNameForBuildingKey(): M<ore than one building with the queried key found"));
+                throw new Exception("GetBuildingNameForBuildingKey(): M<ore than one building with the queried key found");
             return matchingBuildings[0].name;
         }
 
