@@ -245,7 +245,7 @@ namespace DaggerfallWorkshop.Game
                 if (args[0] == "on")
                 {
                     DaggerfallUnity.Instance.TextProvider.EnableLocalizedStringDebug(true);
-                    return "Localization debug enabled";
+                    return string.Format("Localization debug enabled.\nRuntimePath='{0}'", UnityEngine.AddressableAssets.Addressables.RuntimePath);
                 }
                 else if (args[0] == "off")
                 {
