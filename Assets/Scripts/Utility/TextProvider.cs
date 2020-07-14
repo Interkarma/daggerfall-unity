@@ -250,6 +250,9 @@ namespace DaggerfallWorkshop.Utility
         public virtual bool GetLocalizedString(string collection, string id, out string result)
         {
             result = string.Empty;
+            if (string.IsNullOrEmpty(collection))
+                return false;
+
             StringTable table = null;
             var sd = LocalizationSettings.StringDatabase;
             var op = sd.GetTableAsync(collection);

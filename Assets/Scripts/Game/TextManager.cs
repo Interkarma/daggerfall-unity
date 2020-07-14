@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game
         const string textFolderName = "Text";
         const string textColumn = "text";
 
-        public string textRSCCollection = TextProvider.defaultTextRSCCollectionName;
+        public string textRSCCollection = string.Empty;
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
 
