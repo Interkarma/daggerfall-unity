@@ -26,6 +26,7 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Localization;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.Localization.Tables;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -143,7 +144,7 @@ namespace DaggerfallWorkshop.Utility
         {
             // First attempt to get string from localization
             string localizedString;
-            if (GetLocalizedString("TextRSC", id.ToString(), out localizedString))
+            if (GetLocalizedString(TextManager.Instance.textRSCCollection, id.ToString(), out localizedString))
                 return DaggerfallStringTableImporter.ConvertStringToRSCTokens(localizedString);
 
             if (!rscFile.IsLoaded)
