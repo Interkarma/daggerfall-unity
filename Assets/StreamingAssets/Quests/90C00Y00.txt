@@ -58,7 +58,7 @@ QuestComplete:  [1004]
 <ce>                   pleased with the news. I hope you
 <ce>                   won't mind if I embellish a little
 <ce>                  about some horrible outrageous sins
-<ce>                   you commited in your journey. Here
+<ce>                   you committed in your journey. Here
 <ce>                   is _artifact_. Use it whenever you
 <ce>                  want a target to be faced with their
 <ce>                     darkest side. Farewell, %pcf,
@@ -82,7 +82,7 @@ We may never know who destroyed that lich in ___mondung_, but he's in our prayer
 Message:  1011
 _qgfriend_ is that creepy =qgfriend_ over at __qgfriend_ to the %di.
 <--->
-_qgfriend_ is the foul-smelling =qgfriend_ I saw at _qgfriend_.
+_qgfriend_ is the foul-smelling =qgfriend_ I saw at __qgfriend_.
 
 Message:  1012
 _qgfriend_ is one of Vaernima's agents of corruption in %reg.

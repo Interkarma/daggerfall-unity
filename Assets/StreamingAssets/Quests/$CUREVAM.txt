@@ -153,7 +153,7 @@ Message:  1025
 <ce>                    will not need to hunt you down.
 
 Message:  1030
-<ce>               Stripling, do not disturb my mediations!
+<ce>               Stripling, do not disturb my meditations!
 <ce>                    Begone, or my hunger will force
 <ce>                            me to slay you!
 

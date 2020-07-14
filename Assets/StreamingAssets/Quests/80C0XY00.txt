@@ -112,7 +112,7 @@ Message:  1030
  our plans for %reg are ruined.  You will
  find %g2 in the Palace of ___ruler_.  Make
  sure %g3 death cannot be traced back to us.
-     Once you have carried out the assasination,
+     Once you have carried out the assassination,
  wait for me in ___mondung_.  I will bring
  your reward and your next assignment from
  Malacath.

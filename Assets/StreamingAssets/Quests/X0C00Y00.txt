@@ -26,7 +26,7 @@ RefuseQuest:  [1001]
                                      <--->
 <ce>                 Seldom am I summoned, even rarer are
 <ce>                    the occasions when I am free to
-<ce>                 answer a summonings. To be perfectly
+<ce>                 answer a summoning. To be perfectly
 <ce>                  blunt, this was a waste of my very
 <ce>                            precious time.
 

@@ -127,7 +127,7 @@ Message:  1016
 Message:  1017
 <ce>                     A pale young boy hands you a
 <ce>                      letter before scurrying away
-<ce>                        with suprising agility.
+<ce>                        with surprising agility.
 
 
 -- Symbols used in the QRC file:
