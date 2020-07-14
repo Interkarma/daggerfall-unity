@@ -224,10 +224,10 @@ namespace DaggerfallWorkshop.Game
                 if (index < 0 || index > locales.Count - 1)
                     return "Locale index out of range.";
 
-                return "Not Implemented.";
-
-                // TODO: Set locale
-                //return string.Format("Set locale to '{0}'", locale.name);
+                // Set locale
+                Locale locale = LocalizationSettings.AvailableLocales.Locales[index];
+                LocalizationSettings.SelectedLocale = locale;
+                return string.Format("Set locale to '{0}'", locale.name);
             }
         }
 
