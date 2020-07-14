@@ -2214,7 +2214,7 @@ namespace DaggerfallWorkshop.Game
             if (matchingBuildings.Count == 0)
                 throw new Exception("GetBuildingNameForBuildingKey(): No building with the queried key found");
             if (matchingBuildings.Count > 1)
-                throw new Exception("GetBuildingNameForBuildingKey(): M<ore than one building with the queried key found");
+                throw new Exception("GetBuildingNameForBuildingKey(): More than one building with the queried key found");
             return matchingBuildings[0].name;
         }
 
