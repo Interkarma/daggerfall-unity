@@ -70,6 +70,9 @@ namespace DaggerfallWorkshop.Localization
         {
             string recordsText = string.Empty;
 
+            if (tokens == null || tokens.Length == 0)
+                return recordsText;
+
             // Convert RSC formatting tokens into markup text for easier human editing
             // Intentionally adding newlines so that text wraps nicely at justify tokens similar to in-game
             // Unity's StringTable editor does not at this time wrap text (this is being added as an option)
@@ -118,7 +121,10 @@ namespace DaggerfallWorkshop.Localization
                         text += markupInputCursor;
                         break;
                     default:
-                        Debug.LogErrorFormat("Ignoring unexpected RSC formatting token {0}.", tokens[i].formatting.ToString());
+                        // Only the above tokens are found in classic TEXT.RSC
+                        // If other tokens appear in translations, they are not supported and will be ignored
+                        // Enable the below comment to discover any unhandled tokens during import
+                        //Debug.LogErrorFormat("Ignoring unexpected RSC formatting token {0}.", tokens[i].formatting.ToString());
                         break;
                 }
             }
@@ -355,8 +361,11 @@ namespace DaggerfallWorkshop.Localization
                     byte[] buffer = rsc.GetBytesByIndex(i);
                     TextFile.Token[] tokens = TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
 
-                    // Gey token key and text
-                    string key = MakeTextRSCKey(rsc.IndexToId(i));
+                    // Get token key and text
+                    int id = rsc.IndexToId(i);
+                    if (id == -1)
+                        continue;
+                    string key = MakeTextRSCKey(id);
                     string text = ConvertRSCTokensToString(tokens);
 
                     // Remap characters when mapping table present
