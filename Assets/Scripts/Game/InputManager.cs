@@ -608,13 +608,14 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Finds first keycode bound to a specific action.
         /// </summary>
-        public KeyCode GetBinding(Actions action)
+        public KeyCode GetBinding(Actions action, bool primary = true)
         {
-            if (actionKeyDict.ContainsValue(action))
+            var dict = primary ? actionKeyDict : secondaryActionKeyDict;
+            if (dict.ContainsValue(action))
             {
-                foreach (var k in actionKeyDict.Keys)
+                foreach (var k in dict.Keys)
                 {
-                    if (actionKeyDict[k] == action)
+                    if (dict[k] == action)
                         return k;
                 }
             }
