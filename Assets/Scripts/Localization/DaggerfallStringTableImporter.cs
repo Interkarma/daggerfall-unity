@@ -273,7 +273,7 @@ namespace DaggerfallWorkshop.Localization
             TextFile localeRSC = null;
             if (code != enLocaleCode)
             {
-                string localeFilename = string.Format("TEXT-{0}.RSC", code);
+                string localeFilename = string.Format("TEXT_{0}.RSC", code);
                 TextAsset binaryFile = Resources.Load<TextAsset>(localeFilename);
                 if (binaryFile)
                 {
