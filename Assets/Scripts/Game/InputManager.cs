@@ -66,6 +66,7 @@ namespace DaggerfallWorkshop.Game
         Dictionary<KeyCode, Actions> secondaryActionKeyDict = new Dictionary<KeyCode, Actions>();
         Dictionary<String, AxisActions> axisActionKeyDict = new Dictionary<String, AxisActions>();
         Dictionary<KeyCode, string> unknownActions = new Dictionary<KeyCode, string>();
+        Dictionary<KeyCode, string> secondaryUnknownActions = new Dictionary<KeyCode, string>();
         //making keys 'int' instead of AxisActions because enum keys cause GC overhead in Unity
         Dictionary<int, bool> axisActionInvertDict = new Dictionary<int, bool>();
         Dictionary<KeyCode, JoystickUIActions> joystickUIDict = new Dictionary<KeyCode, JoystickUIActions>();
@@ -836,6 +837,11 @@ namespace DaggerfallWorkshop.Game
                 keyBindsData.actionKeyBinds.Add(GetKeyString(item.Key), item.Value);
             }
 
+            foreach (var item in secondaryUnknownActions)
+            {
+                keyBindsData.secondaryActionKeyBinds.Add(GetKeyString(item.Key), item.Value);
+            }
+
             foreach (var item in joystickUIDict)
             {
                 keyBindsData.joystickUIKeyBinds.Add(GetKeyString(item.Key), item.Value.ToString());
@@ -1603,42 +1609,38 @@ namespace DaggerfallWorkshop.Game
             return false;
         }
 
+        void LoadActionKeybinds(bool primary, KeyBindData_v1 keyBindsData)
+        {
+            var saved = primary ? keyBindsData.actionKeyBinds : keyBindsData.secondaryActionKeyBinds;
+            var dict = primary ? actionKeyDict : secondaryActionKeyDict;
+            var unknown = primary ? unknownActions : secondaryUnknownActions;
+
+            foreach(var item in saved)
+            {
+                KeyCode key = ParseKeyCodeString(item.Key);
+                var actionVal = ActionNameToEnum(item.Value);
+                if (!dict.ContainsKey(key) && actionVal != Actions.Unknown)
+                    dict.Add(key, actionVal);
+                else
+                {
+                    // This action is unknown in this game, make sure we still keep it so once we save the settings, we
+                    // won't discard them.
+                    unknown.Add(key, item.Value);
+                }
+            }
+        }
+
         void LoadKeyBinds()
         {
             string path = GetKeyBindsSavePath();
 
             string json = File.ReadAllText(path);
             KeyBindData_v1 keyBindsData = SaveLoadManager.Deserialize(typeof(KeyBindData_v1), json) as KeyBindData_v1;
-            foreach(var item in keyBindsData.actionKeyBinds)
-            {
-                KeyCode key = ParseKeyCodeString(item.Key);
-                var actionVal = ActionNameToEnum(item.Value);
-                if (!actionKeyDict.ContainsKey(key) && actionVal != Actions.Unknown)
-                    actionKeyDict.Add(key, actionVal);
-                else
-                {
-                    // This action is unknown in this game, make sure we still keep it so once we save the settings, we
-                    // won't discard them.
-                    unknownActions.Add(key, item.Value);
-                }
-            }
+
+            LoadActionKeybinds(true, keyBindsData);
 
             if(keyBindsData.secondaryActionKeyBinds != null)
-            {
-                foreach(var item in keyBindsData.secondaryActionKeyBinds)
-                {
-                    KeyCode key = ParseKeyCodeString(item.Key);
-                    var actionVal = ActionNameToEnum(item.Value);
-                    if (!secondaryActionKeyDict.ContainsKey(key) && actionVal != Actions.Unknown)
-                        secondaryActionKeyDict.Add(key, actionVal);
-                    else
-                    {
-                        // This action is unknown in this game, make sure we still keep it so once we save the settings, we
-                        // won't discard them.
-                        unknownActions.Add(key, item.Value);
-                    }
-                }
-            }
+                LoadActionKeybinds(false, keyBindsData);
 
             if (keyBindsData.axisActionKeyBinds != null)
             {

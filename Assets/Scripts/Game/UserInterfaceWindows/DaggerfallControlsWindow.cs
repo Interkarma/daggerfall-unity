@@ -204,7 +204,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             foreach (InputManager.Actions a in Enum.GetValues(typeof(InputManager.Actions)))
             {
                 UnsavedKeybindDict[a] = InputManager.Instance.GetKeyString(InputManager.Instance.GetBinding(a));
-                Debug.Log(a.ToString()+": "+UnsavedKeybindDict[a]+","+((int)InputManager.Instance.GetBinding(a)));
             }
         }
 
