@@ -686,7 +686,7 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-               ClearBinding(code, primary);
+               ClearBinding(action, primary);
 
                 if (!dict.ContainsKey(code))
                 {
@@ -698,7 +698,7 @@ namespace DaggerfallWorkshop.Game
                     dict.Add(code, action);
                 }
 
-                FindSecondaryBindings(action);
+                MapSecondaryBindings(action);
             }
         }
 
@@ -776,16 +776,12 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Unbinds a KeyCode to an action via Action
         /// </summary>
-        public void ClearBinding(Actions action)
+        public void ClearBinding(Actions action, bool removePrimary)
         {
-            foreach (var binding in actionKeyDict.Where(kvp => kvp.Value == action).ToList())
+            var dict = removePrimary ? actionKeyDict : secondaryActionKeyDict;
+            foreach (var binding in dict.Where(kvp => kvp.Value == action).ToList())
             {
-                actionKeyDict.Remove(binding.Key);
-            }
-
-            foreach (var binding in secondaryActionKeyDict.Where(kvp => kvp.Value == action).ToList())
-            {
-                secondaryActionKeyDict.Remove(binding.Key);
+                dict.Remove(binding.Key);
             }
         }
 
@@ -1083,7 +1079,7 @@ namespace DaggerfallWorkshop.Game
             movementAxisBindingCache[1] = GetAxisBinding(AxisActions.MovementVertical);
 
             foreach(Actions a in Enum.GetValues(typeof(Actions)))
-                FindSecondaryBindings(a);
+                MapSecondaryBindings(a);
         }
 
         KeyCode GetSecondaryBinding(KeyCode a)
@@ -1100,7 +1096,7 @@ namespace DaggerfallWorkshop.Game
             primarySecondaryKeybindDict[(int)secondary] = (int)primary;
         }
 
-        void FindSecondaryBindings(Actions a)
+        void MapSecondaryBindings(Actions a)
         {
             KeyCode primKey = actionKeyDict.FirstOrDefault(x => x.Value == a).Key;
             KeyCode secKey = secondaryActionKeyDict.FirstOrDefault(x => x.Value == a).Key;
