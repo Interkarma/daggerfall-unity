@@ -177,6 +177,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupKeybindButtons(lookKeys, 32, 36, 270, 103, true);
             SetupKeybindButtons(uiKeys, 36, 40, 270, 148, true);
 
+            InstanceCheckDuplicates();
+
             #endregion
         }
 
@@ -276,16 +278,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void SaveAllKeyBindValues()
         {
-            foreach(var action in CurrentUnsavedKeybindDict.Keys)
+            SaveKeyBindValues(true);
+            SaveKeyBindValues(false);
+        }
+
+        private void SaveKeyBindValues(bool primary)
+        {
+            var dict = primary ? PrimaryUnsavedKeybindDict : SecondaryUnsavedKeybindDict;
+            foreach(var action in dict.Keys)
             {
-                KeyCode code = InputManager.Instance.ParseKeyCodeString(CurrentUnsavedKeybindDict[action]);
+                KeyCode code = InputManager.Instance.ParseKeyCodeString(dict[action]);
 
                 // Rebind only if new code is different
-                KeyCode curCode = InputManager.Instance.GetBinding(action, UsingPrimary);
+                KeyCode curCode = InputManager.Instance.GetBinding(action, primary);
                 if (curCode != code)
                 {
-                    InputManager.Instance.SetBinding(code, action, UsingPrimary);
-                    Debug.LogFormat("Bound Action {0} with Code {1}", action, code.ToString());
+                    InputManager.Instance.SetBinding(code, action, primary);
+                    Debug.LogFormat("({0}) Bound Action {1} with Code {2}", primary ? "Primary" : "Secondary", action, code.ToString());
                 }
             }
         }

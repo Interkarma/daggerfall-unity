@@ -830,14 +830,19 @@ namespace DaggerfallWorkshop.Game
 
             // If unknown actions were detected in this run, make sure we append them back to the settings file, so we won't break
             // the newer builds potentially using them.
+            // If the key has been rebinded, then ignore the unknown action, as it should be repopulated in a newer build
             foreach (var item in unknownActions)
             {
-                keyBindsData.actionKeyBinds.Add(GetKeyString(item.Key), item.Value);
+                var key = GetKeyString(item.Key);
+                if (!keyBindsData.actionKeyBinds.ContainsKey(key))
+                    keyBindsData.actionKeyBinds.Add(key, item.Value);
             }
 
             foreach (var item in secondaryUnknownActions)
             {
-                keyBindsData.secondaryActionKeyBinds.Add(GetKeyString(item.Key), item.Value);
+                var key = GetKeyString(item.Key);
+                if (!keyBindsData.secondaryActionKeyBinds.ContainsKey(key))
+                    keyBindsData.secondaryActionKeyBinds.Add(key, item.Value);
             }
 
             foreach (var item in joystickUIDict)
