@@ -683,25 +683,22 @@ namespace DaggerfallWorkshop.Game
 
             if (alt.ContainsKey(code))
             {
-                //error
-                Debug.Log(code+","+alt[code]);
+                alt.Remove(code);
+            }
+
+            ClearBinding(action, primary);
+
+            if (!dict.ContainsKey(code))
+            {
+                dict.Add(code, action);
             }
             else
             {
-               ClearBinding(action, primary);
-
-                if (!dict.ContainsKey(code))
-                {
-                    dict.Add(code, action);
-                }
-                else
-                {
-                    dict.Remove(code);
-                    dict.Add(code, action);
-                }
-
-                MapSecondaryBindings(action);
+                dict.Remove(code);
+                dict.Add(code, action);
             }
+
+            MapSecondaryBindings(action);
         }
 
         /// <summary>
@@ -778,7 +775,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Unbinds a KeyCode to an action via Action
         /// </summary>
-        public void ClearBinding(Actions action, bool removePrimary)
+        public void ClearBinding(Actions action, bool removePrimary = true)
         {
             var dict = removePrimary ? actionKeyDict : secondaryActionKeyDict;
             foreach (var binding in dict.Where(kvp => kvp.Value == action).ToList())
@@ -988,26 +985,17 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetKey(KeyCode key)
         {
-            if (GetSingleKey(key))
-                return true;
-
-            return GetSingleKey(GetSecondaryBinding(key));
+            return GetSingleKey(key) || GetSingleKey(GetSecondaryBinding(key));
         }
 
         public bool GetKeyDown(KeyCode key)
         {
-            if (GetSingleKeyDown(key))
-                return true;
-
-            return GetSingleKeyDown(GetSecondaryBinding(key));
+            return GetSingleKeyDown(key) || GetSingleKeyDown(GetSecondaryBinding(key));
         }
 
         public bool GetKeyUp(KeyCode key)
         {
-            if (GetSingleKeyUp(key))
-                return true;
-
-            return GetSingleKeyUp(GetSecondaryBinding(key));
+            return GetSingleKeyUp(key) || GetSingleKeyUp(GetSecondaryBinding(key));
         }
 
         public bool AnyKeyDown
@@ -1091,8 +1079,9 @@ namespace DaggerfallWorkshop.Game
 
         KeyCode GetSecondaryBinding(KeyCode a)
         {
-            if(primarySecondaryKeybindDict.ContainsKey((int)a))
-                return (KeyCode)primarySecondaryKeybindDict[(int)a];
+            int ret;
+            if(primarySecondaryKeybindDict.TryGetValue((int)a, out ret))
+                return (KeyCode)ret;
 
             return KeyCode.None;
         }
