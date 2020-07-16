@@ -134,8 +134,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             weaponAttackThresholdTextbox = AddTextbox("Mouse Weapon Attack Threshold", 215, 80, DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
 
-
             continueButton.OnMouseClick += ContinueButton_OnMouseClick;
+
+            CheckDuplicates();
         }
 
         #endregion
