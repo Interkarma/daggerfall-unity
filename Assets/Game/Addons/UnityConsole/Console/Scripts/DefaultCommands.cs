@@ -2270,7 +2270,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "diseaseplayer";
             public static readonly string description = "Infect player with a classic disease.";
-            public static readonly string usage = "diseaseplayer index (a number 0-16) OR diseaseplayer vampire|werewolf|wereboar (Note: only vampire currently implemented)";
+            public static readonly string usage = "diseaseplayer index (a number 0-16) OR diseaseplayer vampire|werewolf|wereboar";
 
             enum CommandDiseaseTypes
             {
