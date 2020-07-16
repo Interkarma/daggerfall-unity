@@ -3303,10 +3303,14 @@ namespace DaggerfallWorkshop.Game
         {
             ListItem item;
 
+            string[] buildingNames = TextManager.Instance.GetLocalizedTextList(TextManager.Instance.GetCollectionName(TextCollections.Internal), "buildingNames");
+            if (buildingNames == null || index < 0 || index > buildingNames.Length - 1)
+                throw new Exception("buildingNames array text not found or idex out of range.");
+
             item = new ListItem();
             item.type = ListItemType.Item;
             item.questionType = QuestionType.Regional;
-            item.caption = TextManager.Instance.GetLocalizedText("any").Replace(" % s", UserInterfaceWindows.HardStrings.buildingNames[index]);
+            item.caption = TextManager.Instance.GetLocalizedText("any").Replace(" % s", buildingNames[index]);
             item.index = index;
             itemBuildingTypeGroup.listChildItems.Add(item);
         }

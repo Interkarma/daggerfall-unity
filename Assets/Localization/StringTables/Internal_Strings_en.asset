@@ -268,5 +268,72 @@ MonoBehaviour:
     m_Localized: This lock looks to be beyond your skills...
     m_Metadata:
       m_Items: []
+  - m_Id: 63
+    m_Localized: 'Temple of Akatosh
+
+      Temple of Arkay
+
+      Temple of Dibella
+
+      Temple
+      of Julianos
+
+      Temple of Kynareth
+
+      Temple of Mara
+
+      Temple of
+      Stendarr
+
+      Temple of Zen
+
+      Order of the Raven
+
+      Knights of the
+      Dragon
+
+      Knights of the Owl
+
+      Order of the Candle
+
+      Knights
+      of the Flame
+
+      Host of the Horn
+
+      Knights of the Rose
+
+      Knights
+      of the Wheel
+
+      Order of the Scarab
+
+      Knights of the Hawk
+
+      Mages
+      Guild
+
+      Fighters Guild
+
+      Tavern
+
+      Library
+
+      Weapon Smith
+
+      Armorer
+
+      Alchemist
+
+      Bank
+
+      Bookstore
+
+      Clothing
+      store
+
+      Gem store'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
