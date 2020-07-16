@@ -246,13 +246,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Remove any duplicates from inside each list, to find the duplicates between the two lists
             var list = new HashSet<string>(pkeyList).Concat(new HashSet<String>(skeyList));
 
-            // Get duplicates between primary and secondary key lists (orange text color)
+            // Get duplicates between primary and secondary key lists
             dupes = GetDuplicates(list);
 
             foreach (Button keybindButton in totalButtons)
             {
-                // Orange overrides red
-                if (dupes.Contains(keybindButton.Label.Text))
+                if (dupes.Contains(keybindButton.Label.Text) && keybindButton.Label.TextColor != internalDupeColor)
                     keybindButton.Label.TextColor = crossDupeColor;
             }
 
