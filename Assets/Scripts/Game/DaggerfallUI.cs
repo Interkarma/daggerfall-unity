@@ -512,13 +512,13 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiOpenTravelMapWindow:
                     if (GameManager.Instance.IsPlayerInside)
                     {
-                        AddHUDText(HardStrings.cannotTravelIndoors);
+                        AddHUDText(TextManager.Instance.GetLocalizedText("cannotTravelIndoors"));
                     }
                     else
                     {
                         if (GameManager.Instance.AreEnemiesNearby())
                         {
-                            MessageBox(HardStrings.cannotTravelWithEnemiesNearby);
+                            MessageBox(TextManager.Instance.GetLocalizedText("cannotTravelWithEnemiesNearby"));
                         }
                         else
                         {
@@ -603,7 +603,7 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiOpenTransportWindow:
                     if (GameManager.Instance.IsPlayerInside)
                     {
-                        AddHUDText(HardStrings.cannotChangeTransportationIndoors);
+                        AddHUDText(TextManager.Instance.GetLocalizedText("cannotChangeTransportationIndoors"));
                     }
                     else
                     {

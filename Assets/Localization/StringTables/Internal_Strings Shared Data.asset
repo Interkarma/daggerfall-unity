@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 107
+  m_NextAvailableId: 182
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -438,6 +438,306 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 106
     m_Key: avoidDeath
+    m_Metadata:
+      m_Items: []
+  - m_Id: 107
+    m_Key: pronounHe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 108
+    m_Key: pronounShe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 109
+    m_Key: pronounHim
+    m_Metadata:
+      m_Items: []
+  - m_Id: 110
+    m_Key: pronounHer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 111
+    m_Key: pronounHis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 112
+    m_Key: pronounHers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 113
+    m_Key: pronounHimself
+    m_Metadata:
+      m_Items: []
+  - m_Id: 114
+    m_Key: pronounHerself
+    m_Metadata:
+      m_Items: []
+  - m_Id: 115
+    m_Key: city
+    m_Metadata:
+      m_Items: []
+  - m_Id: 116
+    m_Key: village
+    m_Metadata:
+      m_Items: []
+  - m_Id: 117
+    m_Key: hamlet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 118
+    m_Key: farm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 119
+    m_Key: shack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 120
+    m_Key: manor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 121
+    m_Key: community
+    m_Metadata:
+      m_Items: []
+  - m_Id: 122
+    m_Key: shrine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 123
+    m_Key: King
+    m_Metadata:
+      m_Items: []
+  - m_Id: 124
+    m_Key: Queen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 125
+    m_Key: Duke
+    m_Metadata:
+      m_Items: []
+  - m_Id: 126
+    m_Key: Duchess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 127
+    m_Key: Marquis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 128
+    m_Key: Marquise
+    m_Metadata:
+      m_Items: []
+  - m_Id: 129
+    m_Key: Count
+    m_Metadata:
+      m_Items: []
+  - m_Id: 130
+    m_Key: Countess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 131
+    m_Key: Baron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132
+    m_Key: Baroness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 133
+    m_Key: Lord
+    m_Metadata:
+      m_Items: []
+  - m_Id: 134
+    m_Key: Lady
+    m_Metadata:
+      m_Items: []
+  - m_Id: 135
+    m_Key: revered
+    m_Metadata:
+      m_Items: []
+  - m_Id: 136
+    m_Key: esteemed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 137
+    m_Key: honored
+    m_Metadata:
+      m_Items: []
+  - m_Id: 138
+    m_Key: admired
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139
+    m_Key: respected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140
+    m_Key: dependable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 141
+    m_Key: aCommonCitizen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 142
+    m_Key: hated
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143
+    m_Key: pondScum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 144
+    m_Key: aVillain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145
+    m_Key: aCriminal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146
+    m_Key: aScoundrel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 147
+    m_Key: undependable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 148
+    m_Key: unknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149
+    m_Key: Broken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 150
+    m_Key: Useless
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151
+    m_Key: Battered
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152
+    m_Key: Worn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153
+    m_Key: Used
+    m_Metadata:
+      m_Items: []
+  - m_Id: 154
+    m_Key: SlightlyUsed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 155
+    m_Key: AlmostNew
+    m_Metadata:
+      m_Items: []
+  - m_Id: 156
+    m_Key: New
+    m_Metadata:
+      m_Items: []
+  - m_Id: 157
+    m_Key: Nothing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 158
+    m_Key: local
+    m_Metadata:
+      m_Items: []
+  - m_Id: 159
+    m_Key: tavern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 160
+    m_Key: Attempted_Breaking_And_Entering
+    m_Metadata:
+      m_Items: []
+  - m_Id: 161
+    m_Key: Trespassing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 162
+    m_Key: Breaking_And_Entering
+    m_Metadata:
+      m_Items: []
+  - m_Id: 163
+    m_Key: Assault
+    m_Metadata:
+      m_Items: []
+  - m_Id: 164
+    m_Key: Murder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 165
+    m_Key: Tax_Evasion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 166
+    m_Key: Criminal_Conspiracy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 167
+    m_Key: Vagrancy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 168
+    m_Key: Smuggling
+    m_Metadata:
+      m_Items: []
+  - m_Id: 169
+    m_Key: Piracy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 170
+    m_Key: High_Treason
+    m_Metadata:
+      m_Items: []
+  - m_Id: 171
+    m_Key: Pickpocketing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 172
+    m_Key: Theft
+    m_Metadata:
+      m_Items: []
+  - m_Id: 173
+    m_Key: Treason
+    m_Metadata:
+      m_Items: []
+  - m_Id: 174
+    m_Key: Loan_Default
+    m_Metadata:
+      m_Items: []
+  - m_Id: 175
+    m_Key: Regular_Punishment_String
+    m_Metadata:
+      m_Items: []
+  - m_Id: 176
+    m_Key: Banishment
+    m_Metadata:
+      m_Items: []
+  - m_Id: 177
+    m_Key: Execution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 178
+    m_Key: cannotChangeTransportationIndoors
+    m_Metadata:
+      m_Items: []
+  - m_Id: 179
+    m_Key: cannotTravelWithEnemiesNearby
+    m_Metadata:
+      m_Items: []
+  - m_Id: 180
+    m_Key: cannotTravelIndoors
+    m_Metadata:
+      m_Items: []
+  - m_Id: 181
+    m_Key: powersUnknown
     m_Metadata:
       m_Items: []
   m_Metadata:

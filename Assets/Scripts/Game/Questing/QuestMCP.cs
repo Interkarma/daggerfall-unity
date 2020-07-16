@@ -54,30 +54,30 @@ namespace DaggerfallWorkshop.Game.Questing
             public override string Pronoun()
             {
                 if (parent.LastResourceReferenced == null)
-                    return HardStrings.pronounHe;
+                    return TextManager.Instance.GetLocalizedText("pronounHe");
 
                 switch (parent.LastResourceReferenced.Gender)
                 {
                     default:
                     case Game.Entity.Genders.Male:
-                        return HardStrings.pronounHe;
+                        return TextManager.Instance.GetLocalizedText("pronounHe");
                     case Game.Entity.Genders.Female:
-                        return HardStrings.pronounShe;
+                        return TextManager.Instance.GetLocalizedText("pronounShe");
                 }
             }
             // Him/Her
             public override string Pronoun2()
             {
                 if (parent.LastResourceReferenced == null)
-                    return HardStrings.pronounHim;
+                    return TextManager.Instance.GetLocalizedText("pronounHim");
 
                 switch (parent.LastResourceReferenced.Gender)
                 {
                     default:
                     case Game.Entity.Genders.Male:
-                        return HardStrings.pronounHim;
+                        return TextManager.Instance.GetLocalizedText("pronounHim");
                     case Game.Entity.Genders.Female:
-                        return HardStrings.pronounHer;
+                        return TextManager.Instance.GetLocalizedText("pronounHer");
                 }
             }
 
@@ -85,15 +85,15 @@ namespace DaggerfallWorkshop.Game.Questing
             public override string Pronoun2self()
             {
                 if (parent.LastResourceReferenced == null)
-                    return HardStrings.pronounHimself;
+                    return TextManager.Instance.GetLocalizedText("pronounHimself");
 
                 switch (parent.LastResourceReferenced.Gender)
                 {
                     default:
                     case Game.Entity.Genders.Male:
-                        return HardStrings.pronounHimself;
+                        return TextManager.Instance.GetLocalizedText("pronounHimself");
                     case Game.Entity.Genders.Female:
-                        return HardStrings.pronounHerself;
+                        return TextManager.Instance.GetLocalizedText("pronounHerself");
                 }
             }
 
@@ -101,15 +101,15 @@ namespace DaggerfallWorkshop.Game.Questing
             public override string Pronoun3()
             {
                 if (parent.LastResourceReferenced == null)
-                    return HardStrings.pronounHis;
+                    return TextManager.Instance.GetLocalizedText("pronounHis");
 
                 switch (parent.LastResourceReferenced.Gender)
                 {
                     default:
                     case Game.Entity.Genders.Male:
-                        return HardStrings.pronounHis;
+                        return TextManager.Instance.GetLocalizedText("pronounHis");
                     case Game.Entity.Genders.Female:
-                        return HardStrings.pronounHer;
+                        return TextManager.Instance.GetLocalizedText("pronounHer");
                 }
             }
 

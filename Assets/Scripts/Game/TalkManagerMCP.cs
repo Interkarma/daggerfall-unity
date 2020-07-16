@@ -163,9 +163,9 @@ namespace DaggerfallWorkshop.Game
                 {
                 default:
                 case Game.Entity.Genders.Male:
-                    return HardStrings.pronounHe;
+                    return TextManager.Instance.GetLocalizedText("pronounHe");
                 case Game.Entity.Genders.Female:
-                    return HardStrings.pronounShe;
+                    return TextManager.Instance.GetLocalizedText("pronounShe");
                 }
             }
 
@@ -176,9 +176,9 @@ namespace DaggerfallWorkshop.Game
                 {
                 default:
                 case Game.Entity.Genders.Male:
-                    return HardStrings.pronounHim;
+                    return TextManager.Instance.GetLocalizedText("pronounHim");
                 case Game.Entity.Genders.Female:
-                    return HardStrings.pronounHer;
+                    return TextManager.Instance.GetLocalizedText("pronounHer");
                 }
             }
 
@@ -189,9 +189,9 @@ namespace DaggerfallWorkshop.Game
                 {
                     default:
                     case Game.Entity.Genders.Male:
-                        return HardStrings.pronounHis;
+                        return TextManager.Instance.GetLocalizedText("pronounHis");
                     case Game.Entity.Genders.Female:
-                        return HardStrings.pronounHer;
+                        return TextManager.Instance.GetLocalizedText("pronounHer");
                 }
             }
 

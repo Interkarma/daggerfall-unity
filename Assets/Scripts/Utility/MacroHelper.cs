@@ -333,31 +333,31 @@ namespace DaggerfallWorkshop.Utility
             switch (factionRuler)
             {
                 case 1:
-                    return HardStrings.King;
+                    return TextManager.Instance.GetLocalizedText("King");
                 case 2:
-                    return HardStrings.Queen;
+                    return TextManager.Instance.GetLocalizedText("Queen");
                 case 3:
-                    return HardStrings.Duke;
+                    return TextManager.Instance.GetLocalizedText("Duke");
                 case 4:
-                    return HardStrings.Duchess;
+                    return TextManager.Instance.GetLocalizedText("Duchess");
                 case 5:
-                    return HardStrings.Marquis;
+                    return TextManager.Instance.GetLocalizedText("Marquis");
                 case 6:
-                    return HardStrings.Marquise;
+                    return TextManager.Instance.GetLocalizedText("Marquise");
                 case 7:
-                    return HardStrings.Count;
+                    return TextManager.Instance.GetLocalizedText("Count");
                 case 8:
-                    return HardStrings.Countess;
+                    return TextManager.Instance.GetLocalizedText("Countess");
                 case 9:
-                    return HardStrings.Baron;
+                    return TextManager.Instance.GetLocalizedText("Baron");
                 case 10:
-                    return HardStrings.Baroness;
+                    return TextManager.Instance.GetLocalizedText("Baroness");
                 case 11:
-                    return HardStrings.Lord;
+                    return TextManager.Instance.GetLocalizedText("Lord");
                 case 12:
-                    return HardStrings.Lady;
+                    return TextManager.Instance.GetLocalizedText("Lady");
                 default:
-                    return HardStrings.Lord;
+                    return TextManager.Instance.GetLocalizedText("Lord");
             }
         }
 
@@ -550,21 +550,21 @@ namespace DaggerfallWorkshop.Utility
             switch (gps.CurrentLocationType)
             {
                 case DFRegion.LocationTypes.TownCity:
-                    return HardStrings.city;
+                    return TextManager.Instance.GetLocalizedText("city");
                 case DFRegion.LocationTypes.TownVillage:
-                    return HardStrings.village;
+                    return TextManager.Instance.GetLocalizedText("village");
                 case DFRegion.LocationTypes.TownHamlet:
-                    return HardStrings.hamlet;
+                    return TextManager.Instance.GetLocalizedText("hamlet");
                 case DFRegion.LocationTypes.HomeFarms:
-                    return HardStrings.farm;
+                    return TextManager.Instance.GetLocalizedText("farm");
                 case DFRegion.LocationTypes.HomePoor:
-                    return HardStrings.shack;
+                    return TextManager.Instance.GetLocalizedText("shack");
                 case DFRegion.LocationTypes.HomeWealthy:
-                    return HardStrings.manor;
+                    return TextManager.Instance.GetLocalizedText("manor");
                 case DFRegion.LocationTypes.Tavern:
-                    return HardStrings.community;
+                    return TextManager.Instance.GetLocalizedText("community");
                 case DFRegion.LocationTypes.ReligionTemple:
-                    return HardStrings.shrine;
+                    return TextManager.Instance.GetLocalizedText("shrine");
                 default:
                     return gps.CurrentLocationType.ToString();
             }
@@ -584,7 +584,7 @@ namespace DaggerfallWorkshop.Utility
                         return palace.displayName.TrimEnd('.');
                 }
             }
-            return HardStrings.local;
+            return TextManager.Instance.GetLocalizedText("local");
         }
 
         private static string NearbyTavern(IMacroContextProvider mcp)
@@ -598,7 +598,7 @@ namespace DaggerfallWorkshop.Utility
                 if (GameManager.Instance.PlayerGPS.GetAnyBuilding(taverns[i].buildingKey, out tavern))
                     return tavern.displayName;
             }
-            return HardStrings.tavern;
+            return TextManager.Instance.GetLocalizedText("tavern");
         }
 
         public static string RegentTitle(IMacroContextProvider mcp)
@@ -631,35 +631,35 @@ namespace DaggerfallWorkshop.Utility
             switch ((int)GameManager.Instance.PlayerEntity.CrimeCommitted)
             {
                 case 1:
-                    return HardStrings.Attempted_Breaking_And_Entering;
+                    return TextManager.Instance.GetLocalizedText("Attempted_Breaking_And_Entering");
                 case 2:
-                    return HardStrings.Trespassing;
+                    return TextManager.Instance.GetLocalizedText("Trespassing");
                 case 3:
-                    return HardStrings.Breaking_And_Entering;
+                    return TextManager.Instance.GetLocalizedText("Breaking_And_Entering");
                 case 4:
-                    return HardStrings.Assault;
+                    return TextManager.Instance.GetLocalizedText("Assault");
                 case 5:
-                    return HardStrings.Murder;
+                    return TextManager.Instance.GetLocalizedText("Murder");
                 case 6:
-                    return HardStrings.Tax_Evasion;
+                    return TextManager.Instance.GetLocalizedText("Tax_Evasion");
                 case 7:
-                    return HardStrings.Criminal_Conspiracy;
+                    return TextManager.Instance.GetLocalizedText("Criminal_Conspiracy");
                 case 8:
-                    return HardStrings.Vagrancy;
+                    return TextManager.Instance.GetLocalizedText("Vagrancy");
                 case 9:
-                    return HardStrings.Smuggling;
+                    return TextManager.Instance.GetLocalizedText("Smuggling");
                 case 10:
-                    return HardStrings.Piracy;
+                    return TextManager.Instance.GetLocalizedText("Piracy");
                 case 11:
-                    return HardStrings.High_Treason;
+                    return TextManager.Instance.GetLocalizedText("High_Treason");
                 case 12:
-                    return HardStrings.Pickpocketing;
+                    return TextManager.Instance.GetLocalizedText("Pickpocketing");
                 case 13:
-                    return HardStrings.Theft;
+                    return TextManager.Instance.GetLocalizedText("Theft");
                 case 14:
-                    return HardStrings.Treason;
+                    return TextManager.Instance.GetLocalizedText("Treason");
                 case 15:
-                    return HardStrings.Loan_Default;
+                    return TextManager.Instance.GetLocalizedText("Loan_Default");
                 default:
                     return "None";
             }
@@ -671,13 +671,13 @@ namespace DaggerfallWorkshop.Utility
 
             if (punishmentType == 2)
             {
-                TextFile.Token[] tokens = { TextFile.CreateTextToken(HardStrings.Regular_Punishment_String) };
+                TextFile.Token[] tokens = { TextFile.CreateTextToken(TextManager.Instance.GetLocalizedText("Regular_Punishment_String")) };
                 ExpandMacros(ref tokens);
                 return tokens[0].text;
             }
             else if (punishmentType == 1)
-                return HardStrings.Execution;
-            else return HardStrings.Banishment;
+                return TextManager.Instance.GetLocalizedText("Execution");
+            else return TextManager.Instance.GetLocalizedText("Banishment");
 
         }
 
@@ -697,33 +697,33 @@ namespace DaggerfallWorkshop.Utility
             int rep = GameManager.Instance.PlayerEntity.RegionData[gps.CurrentRegionIndex].LegalRep;
 
             if (rep > 80)
-                return HardStrings.revered;
+                return TextManager.Instance.GetLocalizedText("revered");
             else if (rep > 60)
-                return HardStrings.esteemed;
+                return TextManager.Instance.GetLocalizedText("esteemed");
             else if (rep > 40)
-                return HardStrings.honored;
+                return TextManager.Instance.GetLocalizedText("honored");
             else if (rep > 20)
-                return HardStrings.admired;
+                return TextManager.Instance.GetLocalizedText("admired");
             else if (rep > 10)
-                return HardStrings.respected;
+                return TextManager.Instance.GetLocalizedText("respected");
             else if (rep > 0)
-                return HardStrings.dependable;
+                return TextManager.Instance.GetLocalizedText("dependable");
             else if (rep == 0)
-                return HardStrings.aCommonCitizen;
+                return TextManager.Instance.GetLocalizedText("aCommonCitizen");
             else if (rep < -80)
-                return HardStrings.hated;
+                return TextManager.Instance.GetLocalizedText("hated");
             else if (rep < -60)
-                return HardStrings.pondScum;
+                return TextManager.Instance.GetLocalizedText("pondScum");
             else if (rep < -40)
-                return HardStrings.aVillain;
+                return TextManager.Instance.GetLocalizedText("aVillain");
             else if (rep < -20)
-                return HardStrings.aCriminal;
+                return TextManager.Instance.GetLocalizedText("aCriminal");
             else if (rep < -10)
-                return HardStrings.aScoundrel;
+                return TextManager.Instance.GetLocalizedText("aScoundrel");
             else if (rep < 0)
-                return HardStrings.undependable;
+                return TextManager.Instance.GetLocalizedText("undependable");
 
-            return HardStrings.unknown;
+            return TextManager.Instance.GetLocalizedText("unknown");
         }
 
         private static string Time(IMacroContextProvider mcp)
@@ -753,23 +753,23 @@ namespace DaggerfallWorkshop.Utility
 
         private static string PlayerPronoun(IMacroContextProvider mcp)
         {   // %pg
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounShe : HardStrings.pronounHe;
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounShe") : TextManager.Instance.GetLocalizedText("pronounHe");
         }
         private static string PlayerPronoun1(IMacroContextProvider mcp)
         {   // %pg1
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHer : HardStrings.pronounHis;
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHis");
         }
         private static string PlayerPronoun2(IMacroContextProvider mcp)
         {   // %pg2
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHer : HardStrings.pronounHim;
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHim");
         }
         private static string PlayerPronoun2self(IMacroContextProvider mcp)
         {   // %pg2self
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHerself : HardStrings.pronounHimself;
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHerself") : TextManager.Instance.GetLocalizedText("pronounHimself");
         }
         private static string PlayerPronoun3(IMacroContextProvider mcp)
         {   // %pg3
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? HardStrings.pronounHer : HardStrings.pronounHis;
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHis");
         }
 
         private static string Honorific(IMacroContextProvider mcp)

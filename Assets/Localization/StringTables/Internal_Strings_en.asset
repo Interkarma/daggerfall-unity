@@ -530,5 +530,305 @@ MonoBehaviour:
     m_Localized: By the mercy of Stendarr, you survive certain death!
     m_Metadata:
       m_Items: []
+  - m_Id: 107
+    m_Localized: he
+    m_Metadata:
+      m_Items: []
+  - m_Id: 108
+    m_Localized: she
+    m_Metadata:
+      m_Items: []
+  - m_Id: 109
+    m_Localized: him
+    m_Metadata:
+      m_Items: []
+  - m_Id: 110
+    m_Localized: her
+    m_Metadata:
+      m_Items: []
+  - m_Id: 111
+    m_Localized: his
+    m_Metadata:
+      m_Items: []
+  - m_Id: 112
+    m_Localized: hers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 113
+    m_Localized: himself
+    m_Metadata:
+      m_Items: []
+  - m_Id: 114
+    m_Localized: herself
+    m_Metadata:
+      m_Items: []
+  - m_Id: 115
+    m_Localized: city
+    m_Metadata:
+      m_Items: []
+  - m_Id: 116
+    m_Localized: village
+    m_Metadata:
+      m_Items: []
+  - m_Id: 117
+    m_Localized: hamlet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 118
+    m_Localized: farm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 119
+    m_Localized: shack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 120
+    m_Localized: manor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 121
+    m_Localized: community
+    m_Metadata:
+      m_Items: []
+  - m_Id: 122
+    m_Localized: shrine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 123
+    m_Localized: King
+    m_Metadata:
+      m_Items: []
+  - m_Id: 124
+    m_Localized: Queen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 125
+    m_Localized: Duke
+    m_Metadata:
+      m_Items: []
+  - m_Id: 126
+    m_Localized: Duchess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 127
+    m_Localized: Marquis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 128
+    m_Localized: Marquise
+    m_Metadata:
+      m_Items: []
+  - m_Id: 129
+    m_Localized: Count
+    m_Metadata:
+      m_Items: []
+  - m_Id: 130
+    m_Localized: Countess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 131
+    m_Localized: Baron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132
+    m_Localized: Baroness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 133
+    m_Localized: Lord
+    m_Metadata:
+      m_Items: []
+  - m_Id: 134
+    m_Localized: Lady
+    m_Metadata:
+      m_Items: []
+  - m_Id: 135
+    m_Localized: revered
+    m_Metadata:
+      m_Items: []
+  - m_Id: 136
+    m_Localized: esteemed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 137
+    m_Localized: honored
+    m_Metadata:
+      m_Items: []
+  - m_Id: 138
+    m_Localized: admired
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139
+    m_Localized: respected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140
+    m_Localized: dependable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 141
+    m_Localized: a common citizen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 142
+    m_Localized: hated
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143
+    m_Localized: pond scum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 144
+    m_Localized: a villain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145
+    m_Localized: a criminal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146
+    m_Localized: a scoundrel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 147
+    m_Localized: undependable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 148
+    m_Localized: unknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149
+    m_Localized: Broken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 150
+    m_Localized: Useless
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151
+    m_Localized: Battered
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152
+    m_Localized: Worn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153
+    m_Localized: Used
+    m_Metadata:
+      m_Items: []
+  - m_Id: 154
+    m_Localized: Slightly Used
+    m_Metadata:
+      m_Items: []
+  - m_Id: 155
+    m_Localized: Almost New
+    m_Metadata:
+      m_Items: []
+  - m_Id: 156
+    m_Localized: New
+    m_Metadata:
+      m_Items: []
+  - m_Id: 157
+    m_Localized: Nothing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 158
+    m_Localized: local
+    m_Metadata:
+      m_Items: []
+  - m_Id: 159
+    m_Localized: tavern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 160
+    m_Localized: Attempted Breaking and Entering
+    m_Metadata:
+      m_Items: []
+  - m_Id: 161
+    m_Localized: Trespassing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 162
+    m_Localized: Breaking and Entering
+    m_Metadata:
+      m_Items: []
+  - m_Id: 163
+    m_Localized: Assault
+    m_Metadata:
+      m_Items: []
+  - m_Id: 164
+    m_Localized: Murder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 165
+    m_Localized: Tax Evasion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 166
+    m_Localized: Criminal Conspiracy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 167
+    m_Localized: Vagrancy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 168
+    m_Localized: Smuggling
+    m_Metadata:
+      m_Items: []
+  - m_Id: 169
+    m_Localized: Piracy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 170
+    m_Localized: High Treason
+    m_Metadata:
+      m_Items: []
+  - m_Id: 171
+    m_Localized: Pickpocketing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 172
+    m_Localized: Theft
+    m_Metadata:
+      m_Items: []
+  - m_Id: 173
+    m_Localized: Treason
+    m_Metadata:
+      m_Items: []
+  - m_Id: 174
+    m_Localized: Loan Default
+    m_Metadata:
+      m_Items: []
+  - m_Id: 175
+    m_Localized: '%gtp gold pieces in fines and %dip days in prison'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 176
+    m_Localized: Banishment
+    m_Metadata:
+      m_Items: []
+  - m_Id: 177
+    m_Localized: Execution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 178
+    m_Localized: You cannot change transportation indoors.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 179
+    m_Localized: You cannot travel with enemies nearby.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 180
+    m_Localized: You cannot travel while indoors.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 181
+    m_Localized: Powers unknown.
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

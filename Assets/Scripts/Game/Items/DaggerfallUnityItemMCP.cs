@@ -73,7 +73,11 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         private class ItemMacroDataSource : MacroDataSource
         {
-            private readonly string[] conditions = { HardStrings.Broken, HardStrings.Useless, HardStrings.Battered, HardStrings.Worn, HardStrings.Used, HardStrings.SlightlyUsed, HardStrings.AlmostNew, HardStrings.New };
+            private readonly string[] conditions = {
+                TextManager.Instance.GetLocalizedText("Broken"), TextManager.Instance.GetLocalizedText("Useless"),
+                TextManager.Instance.GetLocalizedText("Battered"), TextManager.Instance.GetLocalizedText("Worn"),
+                TextManager.Instance.GetLocalizedText("Used"), TextManager.Instance.GetLocalizedText("SlightlyUsed"),
+                TextManager.Instance.GetLocalizedText("AlmostNew"), TextManager.Instance.GetLocalizedText("New") };
             private readonly int[] conditionThresholds = { 1, 5, 15, 40, 60, 75, 91, 101 };
 
             private Recipe[] recipeArray;
@@ -203,7 +207,7 @@ namespace DaggerfallWorkshop.Game.Items
             public override string HeldSoul()
             {   // %hs
                 if (parent.trappedSoulType == MobileTypes.None)
-                    return HardStrings.Nothing;
+                    return TextManager.Instance.GetLocalizedText("Nothing");
                 MobileEnemy soul;
                 EnemyBasics.GetEnemy(parent.trappedSoulType, out soul);
                 return soul.Name;
@@ -256,7 +260,7 @@ namespace DaggerfallWorkshop.Game.Items
                 else if (!parent.IsIdentified)
                 {
                     // Powers unknown.
-                    TextFile.Token nopowersToken = TextFile.CreateTextToken(HardStrings.powersUnknown);
+                    TextFile.Token nopowersToken = TextFile.CreateTextToken(TextManager.Instance.GetLocalizedText("powersUnknown"));
                     return new TextFile.Token[] { nopowersToken };
                 }
                 else
