@@ -128,8 +128,18 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Gets an array of text where each line is considered an item in array.
+        /// Entry will be read from table and split by newline '\n' character into array.
+        /// </summary>
+        /// <param name="key">Key of text in table.</param>
+        /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
+        public string[] GetLocalizedTextList(string key, TextCollections collection = TextCollections.Internal)
+        {
+            return GetLocalizedTextList(GetCollectionName(collection), key);
+        }
+
+        /// <summary>
         /// Gets text value from localization in TextProvider.
-        /// Internal strings are selected by default.
         /// </summary>
         /// <param name="key">Key of text in table.</param>
         /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
@@ -139,6 +149,11 @@ namespace DaggerfallWorkshop.Game
             return GetLocalizedText(GetCollectionName(collection), key);
         }
 
+        /// <summary>
+        /// Gets live collection name from TextManager based on collection enum value.
+        /// </summary>
+        /// <param name="collection">Collection enum value.</param>
+        /// <returns>Name of collection set to specified collection value.</returns>
         public string GetCollectionName(TextCollections collection)
         {
             string collectionName;

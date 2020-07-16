@@ -835,6 +835,10 @@ namespace DaggerfallWorkshop.Game
         {
             if (lockValue < 20)
             {
+                string[] lockpickChance = TextManager.Instance.GetLocalizedTextList("lockpickChance");
+                if (lockpickChance == null)
+                    throw new System.Exception("lockpickChance array text not found");
+
                 PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
                 // There seems to be an oversight in classic. It uses two separate lockpicking functions (seems to be one for animated doors in interiors and one for exterior doors)
                 // but the difficulty text is always based on the exterior function.
@@ -845,9 +849,9 @@ namespace DaggerfallWorkshop.Game
                 if (chance >= 30)
                     if (chance >= 35)
                         if (chance >= 95)
-                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[9]);
+                            Game.DaggerfallUI.SetMidScreenText(lockpickChance[9]);
                         else if (chance >= 45)
-                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[(chance - 45) / 5]);
+                            Game.DaggerfallUI.SetMidScreenText(lockpickChance[(chance - 45) / 5]);
                         else
                             Game.DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("lockpickChance3"));
                     else

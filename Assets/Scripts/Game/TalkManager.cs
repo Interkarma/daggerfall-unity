@@ -3303,7 +3303,7 @@ namespace DaggerfallWorkshop.Game
         {
             ListItem item;
 
-            string[] buildingNames = TextManager.Instance.GetLocalizedTextList(TextManager.Instance.GetCollectionName(TextCollections.Internal), "buildingNames");
+            string[] buildingNames = TextManager.Instance.GetLocalizedTextList("buildingNames");
             if (buildingNames == null || index < 0 || index > buildingNames.Length - 1)
                 throw new Exception("buildingNames array text not found or idex out of range.");
 

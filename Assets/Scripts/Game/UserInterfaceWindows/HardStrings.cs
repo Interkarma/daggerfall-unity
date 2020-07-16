@@ -23,17 +23,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // TODO: Note that buildingNames string key array temple names are not consistent with 4055-4062!
         // This note has been preserved from prior to localization
 
-        public static readonly string[] lockpickChance =  {"You doubt your ability to open this lock...",
-                                                    "This lock looks difficult...",
-                                                    "You would be challenged by this lock...",
-                                                    "This lock would prove a good challenge...",
-                                                    "You think you should be able to pick this lock...",
-                                                    "This lock seems relatively easy...",
-                                                    "You are amused by this lock...",
-                                                    "You laugh at the amateur quality of this lock...",
-                                                    "You see a pathetic excuse for a lock...",
-                                                    "This lock is an insult to your abilities..."};
-
         public const string youPinchedGoldPiece = "You pinched 1 gold piece."; // Not in classic.
         public const string youPinchedGoldPieces = "You pinched %d gold pieces.";
         public const string youAreNotSuccessful = "You are not successful...";

@@ -335,5 +335,33 @@ MonoBehaviour:
       Gem store'
     m_Metadata:
       m_Items: []
+  - m_Id: 64
+    m_Localized: 'You doubt your ability to open this lock...
+
+      This lock looks
+      difficult...
+
+      You would be challenged by this lock...
+
+      This lock
+      would prove a good challenge...
+
+      You think you should be able to pick
+      this lock...
+
+      This lock seems relatively easy...
+
+      You are amused
+      by this lock...
+
+      You laugh at the amateur quality of this lock...
+
+      You
+      see a pathetic excuse for a lock...
+
+      This lock is an insult to your
+      abilities...'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
