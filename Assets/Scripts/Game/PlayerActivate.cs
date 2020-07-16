@@ -1454,11 +1454,11 @@ namespace DaggerfallWorkshop.Game
                     if (pinchedGoldPieces == 1)
                     {
                         // Classic doesn't have this string, it only has the plural one
-                        gotGold = HardStrings.youPinchedGoldPiece;
+                        gotGold = TextManager.Instance.GetLocalizedText("youPinchedGoldPiece");
                     }
                     else
                     {
-                        gotGold = HardStrings.youPinchedGoldPieces;
+                        gotGold = TextManager.Instance.GetLocalizedText("youPinchedGoldPieces");
                         gotGold = gotGold.Replace("%d", pinchedGoldPieces.ToString());
                     }
                     DaggerfallUI.MessageBox(gotGold);
@@ -1472,7 +1472,7 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                string notSuccessfulMessage = HardStrings.youAreNotSuccessful;
+                string notSuccessfulMessage = TextManager.Instance.GetLocalizedText("youAreNotSuccessful");
                 DaggerfallUI.Instance.PopupMessage(notSuccessfulMessage);
 
                 // Register crime and start spawning guards.

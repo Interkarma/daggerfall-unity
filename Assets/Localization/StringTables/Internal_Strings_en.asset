@@ -359,8 +359,175 @@ MonoBehaviour:
       You
       see a pathetic excuse for a lock...
 
-      This lock is an insult to your
-      abilities...'
+      This lock is an insult to your abilities...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 65
+    m_Localized: You pinched 1 gold piece.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 66
+    m_Localized: You pinched %d gold pieces.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 67
+    m_Localized: You are not successful...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 68
+    m_Localized: '%d days until freedom.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69
+    m_Localized: Your %s skill has improved.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 70
+    m_Localized: You must distribute all bonus points.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 71
+    m_Localized: 'Enter new name : '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72
+    m_Localized: Affiliation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73
+    m_Localized: Rank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74
+    m_Localized: Get Quest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75
+    m_Localized: Sell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76
+    m_Localized: Banking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 77
+    m_Localized: Identify
+    m_Metadata:
+      m_Items: []
+  - m_Id: 78
+    m_Localized: Buy Spells
+    m_Metadata:
+      m_Items: []
+  - m_Id: 79
+    m_Localized: Training
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80
+    m_Localized: Teleportation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81
+    m_Localized: Make Spells
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82
+    m_Localized: Buy Magic Items
+    m_Metadata:
+      m_Items: []
+  - m_Id: 83
+    m_Localized: Sell Magic Items
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84
+    m_Localized: Daedra Summoning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85
+    m_Localized: Make Magic Items
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86
+    m_Localized: Repairs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87
+    m_Localized: Make Donation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 88
+    m_Localized: Cure Disease
+    m_Metadata:
+      m_Items: []
+  - m_Id: 89
+    m_Localized: Spymaster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 90
+    m_Localized: Make Potions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91
+    m_Localized: Buy Potions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92
+    m_Localized: Buy Soulgems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 93
+    m_Localized: Receive Armor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 94
+    m_Localized: Receive House
+    m_Metadata:
+      m_Items: []
+  - m_Id: 95
+    m_Localized: You have already received your house.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 96
+    m_Localized: You need to be a member of sufficient rank to access this.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 97
+    m_Localized: You are cured.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 98
+    m_Localized: '%pcn, the cost for me to attempt a'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 99
+    m_Localized: 'summoning of %dae is '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 100
+    m_Localized: ' gold.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 101
+    m_Localized: The room is free for a knight such as you.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 102
+    m_Localized: Room is free due to Heart's Day.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 103
+    m_Localized: You are not hungry.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 104
+    m_Localized: Fatigue overcomes you and sends you to a watery grave....
+    m_Metadata:
+      m_Items: []
+  - m_Id: 105
+    m_Localized: You feel somewhat bad.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 106
+    m_Localized: By the mercy of Stendarr, you survive certain death!
     m_Metadata:
       m_Items: []
   references:

@@ -391,13 +391,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 TextFile.Token tab = TextFile.TabToken;
                 tab.x = 125;
                 tokens.Add(new TextFile.Token() {
-                    text = HardStrings.affiliation,
+                    text = TextManager.Instance.GetLocalizedText("affiliation"),
                     formatting = TextFile.Formatting.TextHighlight
                 });
                 tokens.Add(tab);
                 tokens.Add(new TextFile.Token()
                 {
-                    text = HardStrings.rank,
+                    text = TextManager.Instance.GetLocalizedText("rank"),
                     formatting = TextFile.Formatting.TextHighlight
                 });
                 tokens.Add(TextFile.NewLineToken);
@@ -493,7 +493,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (statsRollout.BonusPool > 0 && !statsRollout.WorkingStats.IsAllMax())
                 {
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                    messageBox.SetText(HardStrings.mustDistributeBonusPoints);
+                    messageBox.SetText(TextManager.Instance.GetLocalizedText("mustDistributeBonusPoints"));
                     messageBox.ClickAnywhereToClose = true;
                     messageBox.Show();
                     return false;
@@ -827,7 +827,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             mb.TextBox.Text = nameLabel.Text;
-            mb.SetTextBoxLabel(HardStrings.enterNewName);
+            mb.SetTextBoxLabel(TextManager.Instance.GetLocalizedText("enterNewName"));
             mb.OnGotUserInput += EnterName_OnGotUserInput;
             mb.Show();
         }

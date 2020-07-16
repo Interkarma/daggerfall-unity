@@ -1790,7 +1790,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 cost = 7 * daysToRent;
 
             if (cost == 0) // Only renting for Heart's Day
-                DaggerfallUI.MessageBox(UserInterfaceWindows.HardStrings.roomFreeDueToHeartsDay);
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("roomFreeDueToHeartsDay"));
 
             return cost;
         }

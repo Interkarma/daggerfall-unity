@@ -23,54 +23,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // TODO: Note that buildingNames string key array temple names are not consistent with 4055-4062!
         // This note has been preserved from prior to localization
 
-        public const string youPinchedGoldPiece = "You pinched 1 gold piece."; // Not in classic.
-        public const string youPinchedGoldPieces = "You pinched %d gold pieces.";
-        public const string youAreNotSuccessful = "You are not successful...";
-
-        public const string daysUntilFreedom = "%d days until freedom.";
-
-        public const string skillImprove = "Your %s skill has improved.";
-        public const string mustDistributeBonusPoints = "You must distribute all bonus points.";
-        public const string enterNewName = "Enter new name : ";
-        public const string affiliation = "Affiliation";
-        public const string rank = "Rank";
-
-        public const string serviceQuests = "Get Quest";
-        public const string serviceSell = "Sell";
-        public const string serviceBanking = "Banking";
-        public const string serviceIdentify = "Identify";
-        public const string serviceBuySpells = "Buy Spells";
-        public const string serviceTraining = "Training";
-        public const string serviceTeleport = "Teleportation";
-        public const string serviceMakeSpells = "Make Spells";
-        public const string serviceBuyMagicItems = "Buy Magic Items";
-        public const string serviceSellMagicItems = "Sell Magic Items";
-        public const string serviceDaedraSummon = "Daedra Summoning";
-        public const string serviceMakeMagicItems = "Make Magic Items";
-        public const string serviceRepairs = "Repairs";
-        public const string serviceDonate = "Make Donation";
-        public const string serviceCure = "Cure Disease";
-        public const string serviceSpymaster = "Spymaster";
-        public const string serviceMakePotions = "Make Potions";
-        public const string serviceBuyPotions = "Buy Potions";
-        public const string serviceBuySoulgems = "Buy Soulgems";
-        public const string serviceReceiveArmor = "Receive Armor";
-        public const string serviceReceiveHouse = "Receive House";
-        public const string serviceReceiveHouseAlready = "You have already received your house.";
-        public const string accessMembersOnly = "You need to be a member of sufficient rank to access this.";
-        public const string serviceCured = "You are cured.";
-        public const string serviceSummonCost1 = "%pcn, the cost for me to attempt a";
-        public const string serviceSummonCost2 = "summoning of %dae is ";
-        public const string serviceSummonCost3 = " gold.";
-
-        public const string roomFreeForKnightSuchAsYou = "The room is free for a knight such as you.";
-        public const string roomFreeDueToHeartsDay = "Room is free due to Heart's Day.";
-        public const string youAreNotHungry = "You are not hungry.";
-
-        public const string exhaustedInWater = "Fatigue overcomes you and sends you to a watery grave...."; // Not in classic. Borrowed from Arena.
-        public const string youFeelSomewhatBad = "You feel somewhat bad.";
-        public const string avoidDeath = "By the mercy of Stendarr, you survive certain death!";
-
         // Words used by macro handlers:
 
         public const string pronounHe = "he";

@@ -188,7 +188,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (GameManager.Instance.GuildManager.GetGuild(FactionFile.GuildGroups.KnightlyOrder).FreeTavernRooms())
             {
-                DaggerfallUI.MessageBox(HardStrings.roomFreeForKnightSuchAsYou);
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("roomFreeForKnightSuchAsYou"));
                 RentRoom();
             }
             else
@@ -295,7 +295,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
-                DaggerfallUI.MessageBox(HardStrings.youAreNotHungry);
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("youAreNotHungry"));
             }
         }
 

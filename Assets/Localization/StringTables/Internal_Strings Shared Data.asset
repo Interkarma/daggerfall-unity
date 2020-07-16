@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 65
+  m_NextAvailableId: 107
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -270,6 +270,174 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 64
     m_Key: lockpickChance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 65
+    m_Key: youPinchedGoldPiece
+    m_Metadata:
+      m_Items: []
+  - m_Id: 66
+    m_Key: youPinchedGoldPieces
+    m_Metadata:
+      m_Items: []
+  - m_Id: 67
+    m_Key: youAreNotSuccessful
+    m_Metadata:
+      m_Items: []
+  - m_Id: 68
+    m_Key: daysUntilFreedom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69
+    m_Key: skillImprove
+    m_Metadata:
+      m_Items: []
+  - m_Id: 70
+    m_Key: mustDistributeBonusPoints
+    m_Metadata:
+      m_Items: []
+  - m_Id: 71
+    m_Key: enterNewName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72
+    m_Key: affiliation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73
+    m_Key: rank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74
+    m_Key: serviceQuests
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75
+    m_Key: serviceSell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76
+    m_Key: serviceBanking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 77
+    m_Key: serviceIdentify
+    m_Metadata:
+      m_Items: []
+  - m_Id: 78
+    m_Key: serviceBuySpells
+    m_Metadata:
+      m_Items: []
+  - m_Id: 79
+    m_Key: serviceTraining
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80
+    m_Key: serviceTeleport
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81
+    m_Key: serviceMakeSpells
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82
+    m_Key: serviceBuyMagicItems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 83
+    m_Key: serviceSellMagicItems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84
+    m_Key: serviceDaedraSummon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85
+    m_Key: serviceMakeMagicItems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86
+    m_Key: serviceRepairs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87
+    m_Key: serviceDonate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 88
+    m_Key: serviceCure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 89
+    m_Key: serviceSpymaster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 90
+    m_Key: serviceMakePotions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91
+    m_Key: serviceBuyPotions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92
+    m_Key: serviceBuySoulgems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 93
+    m_Key: serviceReceiveArmor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 94
+    m_Key: serviceReceiveHouse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 95
+    m_Key: serviceReceiveHouseAlready
+    m_Metadata:
+      m_Items: []
+  - m_Id: 96
+    m_Key: accessMembersOnly
+    m_Metadata:
+      m_Items: []
+  - m_Id: 97
+    m_Key: serviceCured
+    m_Metadata:
+      m_Items: []
+  - m_Id: 98
+    m_Key: serviceSummonCost1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 99
+    m_Key: serviceSummonCost2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 100
+    m_Key: serviceSummonCost3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 101
+    m_Key: roomFreeForKnightSuchAsYou
+    m_Metadata:
+      m_Items: []
+  - m_Id: 102
+    m_Key: roomFreeDueToHeartsDay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 103
+    m_Key: youAreNotHungry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 104
+    m_Key: exhaustedInWater
+    m_Metadata:
+      m_Items: []
+  - m_Id: 105
+    m_Key: youFeelSomewhatBad
+    m_Metadata:
+      m_Items: []
+  - m_Id: 106
+    m_Key: avoidDeath
     m_Metadata:
       m_Items: []
   m_Metadata:

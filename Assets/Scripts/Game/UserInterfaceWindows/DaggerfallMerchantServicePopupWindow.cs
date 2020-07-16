@@ -118,9 +118,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 default:
                 case Services.Sell:
-                    return HardStrings.serviceSell;
+                    return TextManager.Instance.GetLocalizedText("serviceSell");
                 case Services.Banking:
-                    return HardStrings.serviceBanking;
+                    return TextManager.Instance.GetLocalizedText("serviceBanking");
             }
         }
 

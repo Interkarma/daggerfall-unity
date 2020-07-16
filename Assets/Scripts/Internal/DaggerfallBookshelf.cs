@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop
                  buildingData.buildingType == DFLocation.BuildingTypes.Temple) &&
                  !guild.CanAccessLibrary())
             {
-                DaggerfallUI.MessageBox(HardStrings.accessMembersOnly);
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("accessMembersOnly"));
             }
             else
             {
