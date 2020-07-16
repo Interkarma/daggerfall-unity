@@ -138,7 +138,7 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public abstract class TextProvider : ITextProvider
     {
-        public static string defaultTextRSCCollectionName = "TextRSC";
+        public static string defaultInternalStringsCollectionName = "Internal_Strings";
 
         public bool localizedStringDebug = false;
 

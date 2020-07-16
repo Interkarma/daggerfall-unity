@@ -407,7 +407,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             StartCoroutine(LoadGame(path));
 
             // Notify
-            DaggerfallUI.Instance.PopupMessage(HardStrings.gameLoaded);
+            DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("gameLoaded"));
         }
 
         public void Load(string characterName, string saveName)
@@ -1167,7 +1167,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 EnumerateSaves();
 
             // Notify
-            DaggerfallUI.Instance.PopupMessage(HardStrings.gameSaved);
+            DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("gameSaved"));
 
             // Reload this save instantly if requested
             if (instantReload)

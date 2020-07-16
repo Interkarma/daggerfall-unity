@@ -594,7 +594,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (CanRest(alreadyWarned))
             {
                 DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
-                mb.SetTextBoxLabel(HardStrings.restHowManyHours);
+                mb.SetTextBoxLabel(TextManager.Instance.GetLocalizedText("restHowManyHours"));
                 mb.TextPanelDistanceX = 9;
                 mb.TextPanelDistanceY = 8;
                 mb.TextBox.Text = "0";
@@ -675,7 +675,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
-            mb.SetTextBoxLabel(HardStrings.loiterHowManyHours);
+            mb.SetTextBoxLabel(TextManager.Instance.GetLocalizedText("loiterHowManyHours"));
             mb.TextPanelDistanceX = 5;
             mb.TextPanelDistanceY = 8;
             mb.TextBox.Text = "0";

@@ -302,7 +302,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             doUpdateKeybinds = false;
 
             DaggerfallMessageBox multipleAssignmentsBox = new DaggerfallMessageBox(uiManager, this);
-            multipleAssignmentsBox.SetText(HardStrings.multipleAssignments);
+            multipleAssignmentsBox.SetText(TextManager.Instance.GetLocalizedText("multipleAssignments"));
             multipleAssignmentsBox.ClickAnywhereToClose = true;
             multipleAssignmentsBox.Show();
         }

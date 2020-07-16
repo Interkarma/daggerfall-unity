@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -419,7 +419,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ShowMultipleAssignmentsMessage()
         {
             DaggerfallMessageBox multipleAssignmentsBox = new DaggerfallMessageBox(uiManager, this);
-            multipleAssignmentsBox.SetText(HardStrings.multipleAssignments);
+            multipleAssignmentsBox.SetText(TextManager.Instance.GetLocalizedText("multipleAssignments"));
             multipleAssignmentsBox.ClickAnywhereToClose = true;
             multipleAssignmentsBox.Show();
         }

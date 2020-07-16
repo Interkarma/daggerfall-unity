@@ -329,7 +329,7 @@ namespace DaggerfallWorkshop.Game.Items
                                 lines++;
                             }
                             if (lines >= 2)
-                                return HardStrings.letterPrefix + signoff;
+                                return TextManager.Instance.GetLocalizedText("letterPrefix") + signoff;
                         }
                     }
                 }
@@ -761,7 +761,7 @@ namespace DaggerfallWorkshop.Game.Items
         private static TextFile.Token[] GetPotionRecipeTokens()
         {
             TextFile.Token[] tokens = new TextFile.Token[4];
-            tokens[0] = TextFile.CreateTextToken(HardStrings.potionRecipeFor);
+            tokens[0] = TextFile.CreateTextToken(TextManager.Instance.GetLocalizedText("potionRecipeFor"));
             tokens[1] = TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter);
             tokens[2] = TextFile.CreateTextToken("Weight: %kg kilograms");
             tokens[3] = TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter);

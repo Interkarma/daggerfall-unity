@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Utility;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using Wenzil.Console;
+using UnityEngine.SocialPlatforms;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -30,6 +31,7 @@ namespace DaggerfallWorkshop.Game
         const string textFolderName = "Text";
         const string textColumn = "text";
 
+        public string internalStringsCollection = TextProvider.defaultInternalStringsCollectionName;
         public string textRSCCollection = string.Empty;
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
@@ -91,6 +93,47 @@ namespace DaggerfallWorkshop.Game
                 return "<TextError-NotFound>";
 
             return textDatabases[databaseName].GetValue(textColumn, key);
+        }
+
+        /// <summary>
+        /// Gets text value from localization in TextProvider.
+        /// Will use current locale if available in collection.
+        /// </summary>
+        /// <param name="collectionName">Name of table collection.</param>
+        /// <param name="key">Key of text in table.</param>
+        /// <returns>Text if found, otherwise returns an error string instead.</returns>
+        public string GetLocalizedText(string collectionName, string key)
+        {
+            string localizedString;
+            if (!DaggerfallUnity.Instance.TextProvider.GetLocalizedString(collectionName, key, out localizedString))
+                return string.Format("Text not found for collection:{0},key:{1},locale{2}", collectionName, key, LocalizationSettings.SelectedLocale.name);
+
+            return localizedString;
+        }
+
+        /// <summary>
+        /// Gets text value from localization in TextProvider.
+        /// Internal strings are selected by default.
+        /// </summary>
+        /// <param name="key">Key of text in table.</param>
+        /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
+        /// <returns>Text if found, otherwise returns an error string instead.</returns>
+        public string GetLocalizedText(string key, TextCollections collection = TextCollections.Internal)
+        {
+            string collectionName;
+            switch (collection)
+            {
+                default:
+                case TextCollections.Internal:
+                    collectionName = internalStringsCollection;
+                    break;
+
+                case TextCollections.TextRSC:
+                    collectionName = textRSCCollection;
+                    break;
+            }
+
+            return GetLocalizedText(collectionName, key);
         }
 
         #endregion

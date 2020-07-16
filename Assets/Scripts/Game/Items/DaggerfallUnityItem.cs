@@ -1175,9 +1175,9 @@ namespace DaggerfallWorkshop.Game.Items
             // Also the classic string says "is" instead of "has"
             string itemBroke = "";
             if (TemplateIndex == (int)Armor.Boots || TemplateIndex == (int)Armor.Gauntlets || TemplateIndex == (int)Armor.Greaves)
-                itemBroke = UserInterfaceWindows.HardStrings.itemHasBrokenPlural;
+                itemBroke = TextManager.Instance.GetLocalizedText("itemHasBrokenPlural");
             else
-                itemBroke = UserInterfaceWindows.HardStrings.itemHasBroken;
+                itemBroke = TextManager.Instance.GetLocalizedText("itemHasBroken");
             itemBroke = itemBroke.Replace("%s", LongName);
             DaggerfallUI.Instance.PopupMessage(itemBroke);
 

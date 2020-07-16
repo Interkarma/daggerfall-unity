@@ -1567,7 +1567,7 @@ namespace DaggerfallWorkshop.Game
                 currentKeySubject = siteDetails.buildingName;
             }
 
-            if (string.IsNullOrEmpty(currentKeySubject) || currentKeySubject == HardStrings.residence)
+            if (string.IsNullOrEmpty(currentKeySubject) || currentKeySubject == TextManager.Instance.GetLocalizedText("residence"))
                 // Default to person home
                 currentKeySubject = person.HomeBuildingName;
 
@@ -1716,7 +1716,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // in case building name could not be resolved correctly
-                if (string.IsNullOrEmpty(buildingName) || buildingName == HardStrings.residence)
+                if (string.IsNullOrEmpty(buildingName) || buildingName == TextManager.Instance.GetLocalizedText("residence"))
                     // Default to person home
                     buildingName = person.HomeBuildingName;
 
@@ -3306,7 +3306,7 @@ namespace DaggerfallWorkshop.Game
             item = new ListItem();
             item.type = ListItemType.Item;
             item.questionType = QuestionType.Regional;
-            item.caption = UserInterfaceWindows.HardStrings.any.Replace("%s", UserInterfaceWindows.HardStrings.buildingNames[index]);
+            item.caption = TextManager.Instance.GetLocalizedText("any").Replace(" % s", UserInterfaceWindows.HardStrings.buildingNames[index]);
             item.index = index;
             itemBuildingTypeGroup.listChildItems.Add(item);
         }

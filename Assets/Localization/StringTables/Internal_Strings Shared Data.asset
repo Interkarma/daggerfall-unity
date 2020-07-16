@@ -1,0 +1,270 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Internal_Strings Shared Data
+  m_EditorClassIdentifier: 
+  m_NextAvailableId: 63
+  m_TableCollectionName: Internal_Strings
+  m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
+  m_Entries:
+  - m_Id: 1
+    m_Key: about_internal_strings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2
+    m_Key: pleaseSelectYourHomeProvince
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Key: saveGame
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Key: loadGame
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Key: thingJustDied
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Key: gameSaved
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Key: gameLoaded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Key: thisHouseHasNothingOfValue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Key: findLocationPrompt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Key: rightHandEquipped
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Key: leftHandEquipped
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Key: usingRightHand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Key: usingLeftHand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Key: itemHasBroken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Key: itemHasBrokenPlural
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Key: cannotCarryGold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17
+    m_Key: cannotFloat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18
+    m_Key: youHaveNoArrows
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19
+    m_Key: oldSaveNoTrade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20
+    m_Key: theBodyHasNoTreasure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21
+    m_Key: youAreTooFarAway
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22
+    m_Key: youSeeAn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23
+    m_Key: youSeeA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 24
+    m_Key: youSeeADeadPerson
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25
+    m_Key: youSeeADead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26
+    m_Key: youCollectArrows
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27
+    m_Key: loiterHowManyHours
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28
+    m_Key: restHowManyHours
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29
+    m_Key: potionRecipeFor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30
+    m_Key: potionOf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 31
+    m_Key: letterPrefix
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32
+    m_Key: multipleAssignments
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33
+    m_Key: youAreEntering
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34
+    m_Key: storeClosed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35
+    m_Key: guildClosed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36
+    m_Key: any
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37
+    m_Key: arkayDesc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38
+    m_Key: zenDesc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39
+    m_Key: maraDesc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 40
+    m_Key: akatoshDesc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41
+    m_Key: julianosDesc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42
+    m_Key: dibellaDesc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43
+    m_Key: stendarDesc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 44
+    m_Key: kynarethDesc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45
+    m_Key: interactionIsNowInMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 46
+    m_Key: steal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 47
+    m_Key: grab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 48
+    m_Key: info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 49
+    m_Key: dialogue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 50
+    m_Key: residence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 51
+    m_Key: youSee
+    m_Metadata:
+      m_Items: []
+  - m_Id: 52
+    m_Key: theNamedResidence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 53
+    m_Key: playerResidence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 54
+    m_Key: materialIneffective
+    m_Metadata:
+      m_Items: []
+  - m_Id: 55
+    m_Key: successfulBackstab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56
+    m_Key: languagePacified
+    m_Metadata:
+      m_Items: []
+  - m_Id: 57
+    m_Key: lockpickingSuccess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 58
+    m_Key: lockpickingFailure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59
+    m_Key: magicLock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60
+    m_Key: lockpickChance1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 61
+    m_Key: lockpickChance2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 62
+    m_Key: lockpickChance3
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  references:
+    version: 1

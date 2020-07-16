@@ -422,7 +422,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
             // Ensure building is discovered
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            GameManager.Instance.PlayerGPS.DiscoverBuilding(house.buildingKey, HardStrings.playerResidence.Replace("%s", playerEntity.Name));
+            GameManager.Instance.PlayerGPS.DiscoverBuilding(house.buildingKey, TextManager.Instance.GetLocalizedText("playerResidence").Replace(" % s", playerEntity.Name));
 
             // Add interior scene to permanent list
             SaveLoadManager.StateManager.AddPermanentScene(DaggerfallInterior.GetSceneName(mapID, house.buildingKey));

@@ -1,0 +1,272 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Internal_Strings_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 3bc310f2421c1a740ae0f7372d787911, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1
+    m_Localized: This string table collection stores text that was hard-coded in
+      FALL.EXE and text unique to Daggerfall Unity.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2
+    m_Localized: Please select your home province...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Localized: Save Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Load Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: '%s just died.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Game saved.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Game loaded.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: This house has nothing of value.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: 'Enter name of place : '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: Right hand equipped.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: Left hand equipped.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: Using weapon in right hand.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Localized: Using weapon in left hand.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Localized: '%s has broken.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Localized: '%s have broken.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Localized: You cannot carry that much gold.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17
+    m_Localized: You are carrying too much to stay afloat.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18
+    m_Localized: You have no arrows.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19
+    m_Localized: Old indoor save loaded, trade window will not work please exit and
+      re-enter building.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20
+    m_Localized: The body has no treasure.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21
+    m_Localized: You are too far away...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22
+    m_Localized: You see an %s.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23
+    m_Localized: You see a %s.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 24
+    m_Localized: You see a dead person.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25
+    m_Localized: You see a dead %s.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26
+    m_Localized: You pluck your arrows out of the corpse.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27
+    m_Localized: 'Loiter how many hours : '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28
+    m_Localized: 'Rest how many hours : '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29
+    m_Localized: Recipe for Potion of %po
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30
+    m_Localized: Potion of %po
+    m_Metadata:
+      m_Items: []
+  - m_Id: 31
+    m_Localized: 'Letter: '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32
+    m_Localized: You have multiple assignments...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33
+    m_Localized: You are entering %s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34
+    m_Localized: Store is closed. Open from %d1:00 to %d2:00.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35
+    m_Localized: Guild is closed. Open from %d1:00 to %d2:00.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36
+    m_Localized: Any %s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37
+    m_Localized: God of Birth and Death
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38
+    m_Localized: God of Work and Commerce
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39
+    m_Localized: Goddess of Love
+    m_Metadata:
+      m_Items: []
+  - m_Id: 40
+    m_Localized: God of Time
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41
+    m_Localized: God of Logic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42
+    m_Localized: Goddess of Beauty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43
+    m_Localized: God of Mercy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 44
+    m_Localized: Goddess of Air
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45
+    m_Localized: Interaction is now in %s mode.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 46
+    m_Localized: steal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 47
+    m_Localized: grab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 48
+    m_Localized: info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 49
+    m_Localized: dialogue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 50
+    m_Localized: Residence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 51
+    m_Localized: You see %s.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 52
+    m_Localized: The %s Residence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 53
+    m_Localized: '%s''s house'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 54
+    m_Localized: The material of the weapon you are using is ineffective.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 55
+    m_Localized: Successful backstab!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56
+    m_Localized: Pacified %e using %s skill.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 57
+    m_Localized: The lock clicks open.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 58
+    m_Localized: It does not unlock.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59
+    m_Localized: This is a magically held lock...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60
+    m_Localized: This lock has nothing to fear from you...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 61
+    m_Localized: It'd be a miracle if you picked this lock...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 62
+    m_Localized: This lock looks to be beyond your skills...
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1
