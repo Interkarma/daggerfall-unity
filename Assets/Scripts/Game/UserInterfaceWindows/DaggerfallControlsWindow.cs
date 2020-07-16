@@ -47,6 +47,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         List<Button> uiKeys = new List<Button>();
         List<List<Button>> allKeys = new List<List<Button>>();
 
+        Button currentBindingsButton = new Button();
+
         string[] actions = Enum.GetNames(typeof(InputManager.Actions));
         const string nativeTextureName = "CNFG00I0.IMG";
         const string mLookAltTextureName = "CNFG00I1.IMG";
@@ -58,11 +60,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Static Fields
 
-        private static Color orangeColor = new Color(1, 0.56f, 0);
-        private static Color redColor = new Color(1, 0, 0);
+        private static Color crossDupeColor = new Color(0, 0.58f, 1);
+        private static Color internalDupeColor = new Color(1, 0, 0);
 
         private static Dictionary<InputManager.Actions, string> PrimaryUnsavedKeybindDict = new Dictionary<InputManager.Actions, string>();
         private static Dictionary<InputManager.Actions, string> SecondaryUnsavedKeybindDict = new Dictionary<InputManager.Actions, string>();
+
+        private static bool internalDuplicates = false;
 
         #endregion
 
@@ -154,6 +158,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             #region Keybind Buttons
 
+            currentBindingsButton = DaggerfallUI.AddButton(new Rect(268, 0, 50, 8), controlsPanel);
+            currentBindingsButton.Label.ShadowPosition = Vector2.zero;
+            currentBindingsButton.Outline.Enabled = true;
+            currentBindingsButton.OnMouseClick += CurrentBindingsButton_OnMouseClick;
+            currentBindingsButton.Label.Text = UsingPrimary ? "Primary" : "Secondary";
+
             ResetUnsavedDictionary();
             DaggerfallJoystickControlsWindow.ResetUnsavedSettings();
 
@@ -222,12 +232,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             foreach (Button keybindButton in totalButtons)
             {
                 if (dupes.Contains(keybindButton.Label.Text))
-                    keybindButton.Label.TextColor = redColor;
+                    keybindButton.Label.TextColor = internalDupeColor;
                 else
                     keybindButton.Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
             }
 
             noRedDupes = dupes.Count == 0;
+            internalDuplicates = !noRedDupes;
 
             // Concat both lists together
             // Remove any duplicates from inside each list, to find the duplicates between the two lists
@@ -240,7 +251,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Orange overrides red
                 if (dupes.Contains(keybindButton.Label.Text))
-                    keybindButton.Label.TextColor = orangeColor;
+                    keybindButton.Label.TextColor = crossDupeColor;
             }
 
             return noRedDupes && dupes.Count == 0;
@@ -341,6 +352,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupKeybindButtons(lookKeys, 32, 36, 269, 102, false);
             SetupKeybindButtons(uiKeys, 36, 40, 269, 147, false);
 
+            currentBindingsButton.Label.Text = UsingPrimary ? "Primary" : "Secondary";
+
             InstanceCheckDuplicates();
         }
 
@@ -419,6 +432,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 CancelWindow();
+            }
+        }
+
+        private void CurrentBindingsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (waitingForInput)
+                return;
+
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+
+            if (internalDuplicates)
+            {
+                ShowMultipleAssignmentsMessage();
+            }
+            else
+            {
+                UsingPrimary = !UsingPrimary;
+
+                UpdateKeybindButtons();
             }
         }
 
