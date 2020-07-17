@@ -203,12 +203,6 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        private IEnumerable<string> GetValues(UnaryBindings binding)
-        {
-            var dict = GetUnsavedBindingDictionary(binding);
-            return dict.Select(kv => kv.Value);
-        }
-
         private Dictionary<InputManager.Actions, string> GetUnsavedBindingDictionary(UnaryBindings ub)
         {
             switch(ub)

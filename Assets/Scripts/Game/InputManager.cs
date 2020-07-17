@@ -934,32 +934,6 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.F9, Actions.QuickSave);
             SetBinding(KeyCode.F12, Actions.QuickLoad);
 
-            //default xbox controller, windows 10
-            SetBinding(KeyCode.JoystickButton7, Actions.Escape, false);
-
-            SetBinding(KeyCode.JoystickButton3, Actions.Jump, false);
-            SetBinding(KeyCode.JoystickButton4, Actions.AutoRun, false);
-
-            SetBinding(KeyCode.JoystickButton6, Actions.Rest, false);
-            SetBinding(KeyCode.JoystickButton9, Actions.Transport, false);
-
-            SetBinding((KeyCode)5005, Actions.RecastSpell, false);
-            SetBinding(KeyCode.JoystickButton1, Actions.UseMagicItem, false);
-
-            SetBinding(KeyCode.JoystickButton2, Actions.ReadyWeapon, false);
-            SetBinding((KeyCode)5004, Actions.SwingWeapon, false);
-            SetBinding(KeyCode.JoystickButton5, Actions.SwitchHand, false);
-
-            SetBinding((KeyCode)5013, Actions.Status, false);
-            SetBinding((KeyCode)5012, Actions.CharacterSheet, false);
-
-            SetBinding(KeyCode.JoystickButton0, Actions.ActivateCenterObject, false);
-
-            SetBinding(KeyCode.JoystickButton8, Actions.Sneak, false);
-
-            SetBinding((KeyCode)5011, Actions.AutoMap, false);
-            SetBinding((KeyCode)5010, Actions.TravelMap, false);
-
             SetAxisBinding("Axis1", AxisActions.MovementHorizontal);
             SetAxisBinding("Axis2", AxisActions.MovementVertical);
             SetAxisBinding("Axis4", AxisActions.CameraHorizontal);
@@ -1202,32 +1176,6 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.F8, Actions.PrintScreen);
             TestSetBinding(KeyCode.F9, Actions.QuickSave);
             TestSetBinding(KeyCode.F12, Actions.QuickLoad);
-
-            //default xbox controller, windows 10
-            TestSetBinding(KeyCode.JoystickButton7, Actions.Escape, false);
-
-            TestSetBinding(KeyCode.JoystickButton3, Actions.Jump, false);
-            TestSetBinding(KeyCode.JoystickButton4, Actions.AutoRun, false);
-
-            TestSetBinding(KeyCode.JoystickButton6, Actions.Rest, false);
-            TestSetBinding(KeyCode.JoystickButton9, Actions.Transport, false);
-
-            TestSetBinding((KeyCode)5005, Actions.RecastSpell, false);
-            TestSetBinding(KeyCode.JoystickButton1, Actions.UseMagicItem, false);
-
-            TestSetBinding(KeyCode.JoystickButton2, Actions.ReadyWeapon, false);
-            TestSetBinding((KeyCode)5004, Actions.SwingWeapon, false);
-            TestSetBinding(KeyCode.JoystickButton5, Actions.SwitchHand, false);
-
-            TestSetBinding((KeyCode)5013, Actions.Status, false);
-            TestSetBinding((KeyCode)5012, Actions.CharacterSheet, false);
-
-            TestSetBinding(KeyCode.JoystickButton0, Actions.ActivateCenterObject, false);
-
-            TestSetBinding(KeyCode.JoystickButton8, Actions.Sneak, false);
-
-            TestSetBinding((KeyCode)5011, Actions.AutoMap, false);
-            TestSetBinding((KeyCode)5010, Actions.TravelMap, false);
 
             TestSetAxisBinding("Axis1", AxisActions.MovementHorizontal);
             TestSetAxisBinding("Axis2", AxisActions.MovementVertical);
