@@ -3310,7 +3310,7 @@ namespace DaggerfallWorkshop.Game
             item = new ListItem();
             item.type = ListItemType.Item;
             item.questionType = QuestionType.Regional;
-            item.caption = TextManager.Instance.GetLocalizedText("any").Replace(" % s", buildingNames[index]);
+            item.caption = TextManager.Instance.GetLocalizedText("any").Replace("%s", buildingNames[index]);
             item.index = index;
             itemBuildingTypeGroup.listChildItems.Add(item);
         }

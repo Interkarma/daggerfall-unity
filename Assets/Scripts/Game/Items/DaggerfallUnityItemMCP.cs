@@ -223,7 +223,7 @@ namespace DaggerfallWorkshop.Game.Items
                 if (parent.IsPotionRecipe)
                     return potionName;                                          // "Potion recipe for %po"
                 else if (parent.IsPotion)
-                    return TextManager.Instance.GetLocalizedText("potionOf").Replace(" % po", potionName);     // "Potion of %po" (255=Unknown Powers)
+                    return TextManager.Instance.GetLocalizedText("potionOf").Replace("%po", potionName);     // "Potion of %po" (255=Unknown Powers)
 
                 throw new NotImplementedException();
             }

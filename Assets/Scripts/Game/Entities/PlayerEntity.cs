@@ -1368,7 +1368,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         skills.SetPermanentSkillValue(i, (short)(skills.GetPermanentSkillValue(i) + 1));
                         SetSkillRecentlyIncreased(i);
                         SetCurrentLevelUpSkillSum();
-                        DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("skillImprove").Replace(" % s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DFCareer.Skills)i)));
+                        DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("skillImprove").Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DFCareer.Skills)i)));
                         if (skills.GetPermanentSkillValue(i) == 100)
                         {
                             List<DFCareer.Skills> primarySkills = GetPrimarySkills();
