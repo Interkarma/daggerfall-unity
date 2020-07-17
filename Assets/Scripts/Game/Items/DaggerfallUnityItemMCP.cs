@@ -210,7 +210,7 @@ namespace DaggerfallWorkshop.Game.Items
                     return TextManager.Instance.GetLocalizedText("Nothing");
                 MobileEnemy soul;
                 EnemyBasics.GetEnemy(parent.trappedSoulType, out soul);
-                return soul.Name;
+                return TextManager.Instance.GetLocalizedEnemyName(soul.ID);
             }
 
             public override string Potion()

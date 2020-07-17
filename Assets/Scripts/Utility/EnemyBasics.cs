@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Items;
 using UnityEngine;
 
@@ -236,7 +237,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 0,
-                Name = "Rat",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Animal,
                 MaleTexture = 255,
@@ -266,7 +266,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 1,
-                Name = "Imp",
                 Behaviour = MobileBehaviour.Flying,
                 Affinity = MobileAffinity.Darkness,
                 MaleTexture = 256,
@@ -301,7 +300,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 2,
-                Name = "Spriggan",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Daylight,
                 MaleTexture = 257,
@@ -338,7 +336,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 3,
-                Name = "Giant Bat",
                 Behaviour = MobileBehaviour.Flying,
                 Affinity = MobileAffinity.Animal,
                 MaleTexture = 258,
@@ -368,7 +365,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 4,
-                Name = "Grizzly Bear",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Animal,
                 MaleTexture = 259,
@@ -402,7 +398,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 5,
-                Name = "Sabertooth Tiger",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Animal,
                 MaleTexture = 260,
@@ -436,7 +431,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 6,
-                Name = "Spider",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Animal,
                 MaleTexture = 261,
@@ -466,7 +460,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 7,
-                Name = "Orc",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Darkness,
                 MaleTexture = 262,
@@ -501,7 +494,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 8,
-                Name = "Centaur",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Daylight,
                 MaleTexture = 263,
@@ -536,7 +528,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 9,
-                Name = "Werewolf",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Darkness,
                 MaleTexture = 264,
@@ -572,7 +563,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 10,
-                Name = "Nymph",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Daylight,
                 MaleTexture = 265,
@@ -605,7 +595,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 11,
-                Name = "Slaughterfish",
                 Behaviour = MobileBehaviour.Aquatic,
                 Affinity = MobileAffinity.Water,
                 MaleTexture = 266,
@@ -639,7 +628,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 12,
-                Name = "Orc Sergeant",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Darkness,
                 MaleTexture = 267,
@@ -674,7 +662,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 13,
-                Name = "Harpy",
                 Behaviour = MobileBehaviour.Flying,
                 Affinity = MobileAffinity.Daylight,
                 MaleTexture = 268,
@@ -707,7 +694,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 14,
-                Name = "Wereboar",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Darkness,
                 MaleTexture = 269,
@@ -743,7 +729,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 15,
-                Name = "Skeletal Warrior",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Undead,
                 MaleTexture = 270,
@@ -777,7 +762,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 16,
-                Name = "Giant",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Daylight,
                 MaleTexture = 271,
@@ -810,7 +794,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 17,
-                Name = "Zombie",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Undead,
                 MaleTexture = 272,
@@ -844,7 +827,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 18,
-                Name = "Ghost",
                 Behaviour = MobileBehaviour.Spectral,
                 Affinity = MobileAffinity.Undead,
                 MaleTexture = 273,
@@ -881,7 +863,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 19,
-                Name = "Mummy",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Undead,
                 MaleTexture = 274,
@@ -916,7 +897,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 20,
-                Name = "Giant Scorpion",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Animal,
                 MaleTexture = 275,
@@ -946,7 +926,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 21,
-                Name = "Orc Shaman",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Darkness,
                 MaleTexture = 276,
@@ -989,7 +968,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 22,
-                Name = "Gargoyle",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Darkness,
                 MaleTexture = 277,
@@ -1021,7 +999,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 23,
-                Name = "Wraith",
                 Behaviour = MobileBehaviour.Spectral,
                 Affinity = MobileAffinity.Undead,
                 MaleTexture = 278,
@@ -1058,7 +1035,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 24,
-                Name = "Orc Warlord",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Darkness,
                 MaleTexture = 279,
@@ -1095,7 +1071,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 25,
-                Name = "Frost Daedra",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Daedra,
                 MaleTexture = 280,
@@ -1134,7 +1109,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 26,
-                Name = "Fire Daedra",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Daedra,
                 MaleTexture = 281,
@@ -1173,7 +1147,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 27,
-                Name = "Daedroth",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Daedra,
                 MaleTexture = 282,
@@ -1212,7 +1185,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 28,
-                Name = "Vampire",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Darkness,
                 MaleTexture = 283,
@@ -1248,7 +1220,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 29,
-                Name = "Daedra Seducer",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Daedra,
                 MaleTexture = 284,
@@ -1287,7 +1258,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 30,
-                Name = "Vampire Ancient",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Darkness,
                 MaleTexture = 285,
@@ -1323,7 +1293,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 31,
-                Name = "Daedra Lord",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Daedra,
                 MaleTexture = 286,
@@ -1362,7 +1331,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 32,
-                Name = "Lich",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Undead,
                 MaleTexture = 287,
@@ -1398,7 +1366,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 33,
-                Name = "Ancient Lich",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Undead,
                 MaleTexture = 288,
@@ -1433,7 +1400,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 34,
-                Name = "Dragonling",
                 Behaviour = MobileBehaviour.Flying,
                 Affinity = MobileAffinity.Daylight,
                 MaleTexture = 289,
@@ -1463,7 +1429,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 35,
-                Name = "Fire Atronach",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Golem,
                 MaleTexture = 290,
@@ -1497,7 +1462,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 36,
-                Name = "Iron Atronach",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Golem,
                 MaleTexture = 291,
@@ -1529,7 +1493,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 37,
-                Name = "Flesh Atronach",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Golem,
                 MaleTexture = 292,
@@ -1561,7 +1524,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 38,
-                Name = "Ice Atronach",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Golem,
                 MaleTexture = 293,
@@ -1600,14 +1562,12 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 39,
-                Name = "Horse",
             },
 
             // Dragonling
             new MobileEnemy()
             {
                 ID = 40,
-                Name = "Dragonling",
                 Behaviour = MobileBehaviour.Flying,
                 Affinity = MobileAffinity.Daylight,
                 MaleTexture = 295,
@@ -1638,7 +1598,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 41,
-                Name = "Dreugh",
                 Behaviour = MobileBehaviour.Aquatic,
                 Affinity = MobileAffinity.Water,
                 MaleTexture = 296,
@@ -1675,7 +1634,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 42,
-                Name = "Lamia",
                 Behaviour = MobileBehaviour.Aquatic,
                 Affinity = MobileAffinity.Water,
                 MaleTexture = 297,
@@ -1712,7 +1670,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 128,
-                Name = "Mage",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 486,
@@ -1743,7 +1700,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 129,
-                Name = "Spellsword",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 476,
@@ -1775,7 +1731,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 130,
-                Name = "Battlemage",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 490,
@@ -1807,7 +1762,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 131,
-                Name = "Sorcerer",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 478,
@@ -1835,7 +1789,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 132,
-                Name = "Healer",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 486,
@@ -1866,7 +1819,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 133,
-                Name = "Nightblade",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 490,
@@ -1898,7 +1850,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 134,
-                Name = "Bard",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 484,
@@ -1928,7 +1879,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 135,
-                Name = "Burglar",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 484,
@@ -1958,7 +1908,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 136,
-                Name = "Rogue",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 480,
@@ -1988,7 +1937,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 137,
-                Name = "Acrobat",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 484,
@@ -2018,7 +1966,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 138,
-                Name = "Thief",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 484,
@@ -2048,7 +1995,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 139,
-                Name = "Assassin",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 480,
@@ -2078,7 +2024,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 140,
-                Name = "Monk",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 488,
@@ -2108,7 +2053,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 141,
-                Name = "Archer",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 482,
@@ -2137,7 +2081,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 142,
-                Name = "Ranger",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 482,
@@ -2165,7 +2108,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 143,
-                Name = "Barbarian",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 488,
@@ -2195,7 +2137,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 144,
-                Name = "Warrior",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 488,
@@ -2225,7 +2166,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 145,
-                Name = "Knight",
                 Behaviour = MobileBehaviour.General,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 488,
@@ -2255,7 +2195,6 @@ namespace DaggerfallWorkshop.Utility
             new MobileEnemy()
             {
                 ID = 146,
-                Name = "City Watch",
                 Behaviour = MobileBehaviour.Guard,
                 Affinity = MobileAffinity.Human,
                 MaleTexture = 399,
@@ -2348,7 +2287,7 @@ namespace DaggerfallWorkshop.Utility
         {
             for (int i = 0; i < Enemies.Length; i++)
             {
-                if (0 == string.Compare(Enemies[i].Name, name, StringComparison.InvariantCultureIgnoreCase))
+                if (0 == string.Compare(TextManager.Instance.GetLocalizedEnemyName(Enemies[i].ID), name, StringComparison.InvariantCultureIgnoreCase))
                 {
                     mobileEnemyOut = Enemies[i];
                     return true;

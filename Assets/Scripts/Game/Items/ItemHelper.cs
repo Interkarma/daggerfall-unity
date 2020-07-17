@@ -344,7 +344,7 @@ namespace DaggerfallWorkshop.Game.Items
                     if (EnemyBasics.GetEnemy(item.TrappedSoulType, out soul))
                     {
                         MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[(int)item.TrappedSoulType];
-                        result += string.Format(" ({0})", soul.Name);
+                        result += string.Format(" ({0})", TextManager.Instance.GetLocalizedEnemyName(soul.ID));
                     }
                 }
                 //else

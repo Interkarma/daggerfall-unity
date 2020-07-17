@@ -647,7 +647,7 @@ namespace DaggerfallWorkshop.Utility
                 loot.TextureRecord = textureRecord;
                 if (enemyEntity != null)
                 {
-                    loot.entityName = enemyEntity.MobileEnemy.Name;
+                    loot.entityName = TextManager.Instance.GetLocalizedEnemyName(enemyEntity.MobileEnemy.ID);
                     loot.isEnemyClass = (enemyEntity.EntityType == EntityTypes.EnemyClass);
                 }
             }

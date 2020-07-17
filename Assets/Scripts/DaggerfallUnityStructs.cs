@@ -174,7 +174,6 @@ namespace DaggerfallWorkshop
     public struct MobileEnemy
     {
         public int ID;                              // ID of this mobile
-        public string Name;                         // In-game name of this mobile
         public MobileBehaviour Behaviour;           // Behaviour of mobile
         public MobileAffinity Affinity;             // Affinity of mobile
         public MobileGender Gender;                 // Gender of mobile

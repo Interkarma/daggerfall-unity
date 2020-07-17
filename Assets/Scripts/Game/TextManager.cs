@@ -17,7 +17,6 @@ using DaggerfallWorkshop.Utility;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using Wenzil.Console;
-using UnityEngine.SocialPlatforms;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -35,6 +34,8 @@ namespace DaggerfallWorkshop.Game
         public string textRSCCollection = string.Empty;
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
+
+        string[] cachedEnemyNames = null;
 
         #endregion
 
@@ -170,6 +171,26 @@ namespace DaggerfallWorkshop.Game
             }
 
             return collectionName;
+        }
+
+        /// <summary>
+        /// Gets display name of an enemy from their ID.
+        /// </summary>
+        /// <param name="enemyID">ID of enemy. Valid IDs are 0-42 and 128-146.</param>
+        /// <returns>Name of enemy from localization.</returns>
+        public string GetLocalizedEnemyName(int enemyID)
+        {
+            if (cachedEnemyNames == null)
+            {
+                cachedEnemyNames = TextManager.Instance.GetLocalizedTextList("enemyNames");
+                if (cachedEnemyNames == null)
+                    throw new System.Exception("enemyNames array text not found");
+            }
+
+            if (enemyID < 128)
+                return cachedEnemyNames[enemyID];
+            else
+                return cachedEnemyNames[enemyID - 128];
         }
 
         #endregion

@@ -673,13 +673,14 @@ namespace DaggerfallWorkshop.Game
                     if (enemyEntity != null)
                     {
                         MobileEnemy mobileEnemy = enemyEntity.MobileEnemy;
-                        bool startsWithVowel = "aeiouAEIOU".Contains(mobileEnemy.Name[0].ToString());
+                        string enemyName = TextManager.Instance.GetLocalizedEnemyName(mobileEnemy.ID);
+                        bool startsWithVowel = "aeiouAEIOU".Contains(enemyName[0].ToString());
                         string message;
                         if (startsWithVowel)
                             message = TextManager.Instance.GetLocalizedText("youSeeAn");
                         else
                             message = TextManager.Instance.GetLocalizedText("youSeeA");
-                        message = message.Replace("%s", mobileEnemy.Name);
+                        message = message.Replace("%s", enemyName);
                         DaggerfallUI.Instance.PopupMessage(message);
                     }
                     break;
@@ -786,7 +787,9 @@ namespace DaggerfallWorkshop.Game
                     if (currentMode == PlayerActivateModes.Info)
                     {   // Corpse info mode
                         if (!string.IsNullOrEmpty(loot.entityName))
-                            DaggerfallUI.AddHUDText((loot.isEnemyClass) ? TextManager.Instance.GetLocalizedText("youSeeADeadPerson") : TextManager.Instance.GetLocalizedText("youSeeADead").Replace(" % s", loot.entityName));
+                            DaggerfallUI.AddHUDText((loot.isEnemyClass) ?
+                                TextManager.Instance.GetLocalizedText("youSeeADeadPerson") :
+                                TextManager.Instance.GetLocalizedText("youSeeADead").Replace("%s", loot.entityName));
                         return;
                     }
                     else
