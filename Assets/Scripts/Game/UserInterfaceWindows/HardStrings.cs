@@ -93,15 +93,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string lowerMagicAbilityDarkness = "lowerMagicAbilityDarkness";
         public const string unableToUseMagicInDarkness = "unableToUseMagicInDarkness";
 
-        public const string helpAttributes = "Attributes";
-        public const string helpClassName = "Class Name";
-        public const string helpGeneral = "General";
-        public const string helpReputations = "Reputations";
-        public const string helpSkillAdvancement = "Skill Advancement";
-        public const string helpSkills = "Skills";
-        public const string helpSpecialAdvantages = "Special Advantages";
-        public const string helpSpecialDisadvantages = "Special Disadvantages";
-
         public const string lower = "Lower";
         public const string higher = "Higher";
         public const string unchanged = "Unchanged";
