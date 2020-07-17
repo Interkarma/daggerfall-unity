@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 // Give player gold equal to stack size and notify
                 int amount = item.DaggerfallUnityItem.stackCount;
                 GameManager.Instance.PlayerEntity.GoldPieces += amount;
-                DaggerfallUI.AddHUDText(HardStrings.youReceiveGoldPieces.Replace("%s", amount.ToString()));
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youReceiveGoldPieces").Replace("%s", amount.ToString()));
             }
             else
             {

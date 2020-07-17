@@ -345,7 +345,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             if (IsPlayerEntity && !instantCast)
             {
-                DaggerfallUI.AddHUDText(HardStrings.pressButtonToFireSpell, 0.4f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("pressButtonToFireSpell"), 0.4f);
             }
 
             return true;

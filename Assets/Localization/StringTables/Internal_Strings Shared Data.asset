@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 195
+  m_NextAvailableId: 252
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -790,6 +790,234 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 194
     m_Key: repWithGroups
+    m_Metadata:
+      m_Items: []
+  - m_Id: 195
+    m_Key: youReceiveGoldPieces
+    m_Metadata:
+      m_Items: []
+  - m_Id: 196
+    m_Key: bankPurchasePrice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 197
+    m_Key: youHaveRentedRoom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 198
+    m_Key: haveNotRentedRoom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 199
+    m_Key: expiredRentedRoom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 200
+    m_Key: tavernAle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 201
+    m_Key: tavernBeer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 202
+    m_Key: tavernMead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 203
+    m_Key: tavernWine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 204
+    m_Key: tavernBread
+    m_Metadata:
+      m_Items: []
+  - m_Id: 205
+    m_Key: tavernBroth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 206
+    m_Key: tavernCheese
+    m_Metadata:
+      m_Items: []
+  - m_Id: 207
+    m_Key: tavernFowl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 208
+    m_Key: tavernGruel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 209
+    m_Key: tavernPie
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210
+    m_Key: tavernStew
+    m_Metadata:
+      m_Items: []
+  - m_Id: 211
+    m_Key: pressButtonToFireSpell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 212
+    m_Key: climbingMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 213
+    m_Key: rappelMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 214
+    m_Key: hangingMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 215
+    m_Key: acuteHearing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 216
+    m_Key: adrenalineRush
+    m_Metadata:
+      m_Items: []
+  - m_Id: 217
+    m_Key: athleticism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 218
+    m_Key: bonusToHit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219
+    m_Key: expertiseIn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 220
+    m_Key: immunity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 221
+    m_Key: increasedMagery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 222
+    m_Key: rapidHealing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 223
+    m_Key: regenerateHealth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 224
+    m_Key: resistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 225
+    m_Key: spellAbsorption
+    m_Metadata:
+      m_Items: []
+  - m_Id: 226
+    m_Key: animals
+    m_Metadata:
+      m_Items: []
+  - m_Id: 227
+    m_Key: daedra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 228
+    m_Key: humanoid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 229
+    m_Key: undead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 230
+    m_Key: axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 231
+    m_Key: bluntWeapon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 232
+    m_Key: handToHand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 233
+    m_Key: longBlade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 234
+    m_Key: missileWeapon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 235
+    m_Key: shortBlade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 236
+    m_Key: toDisease
+    m_Metadata:
+      m_Items: []
+  - m_Id: 237
+    m_Key: toFire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 238
+    m_Key: toFrost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 239
+    m_Key: toMagic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240
+    m_Key: toParalysis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 241
+    m_Key: toPoison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 242
+    m_Key: toShock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 243
+    m_Key: intInSpellPoints15
+    m_Metadata:
+      m_Items: []
+  - m_Id: 244
+    m_Key: intInSpellPoints175
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245
+    m_Key: intInSpellPoints2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246
+    m_Key: intInSpellPoints3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247
+    m_Key: intInSpellPoints
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248
+    m_Key: general
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249
+    m_Key: inDarkness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250
+    m_Key: inLight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251
+    m_Key: whileImmersed
     m_Metadata:
       m_Items: []
   m_Metadata:

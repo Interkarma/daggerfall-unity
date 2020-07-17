@@ -53,9 +53,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int howManyDaysId = 5102;
 
         static readonly string[] tavernMenu =  {
-            HardStrings.tavernAle, HardStrings.tavernBeer, HardStrings.tavernMead, HardStrings.tavernWine,
-            HardStrings.tavernBread, HardStrings.tavernBroth, HardStrings.tavernCheese, HardStrings.tavernFowl,
-            HardStrings.tavernGruel, HardStrings.tavernPie, HardStrings.tavernStew };
+            TextManager.Instance.GetLocalizedText("tavernAle"), TextManager.Instance.GetLocalizedText("tavernBeer"),
+            TextManager.Instance.GetLocalizedText("tavernMead"), TextManager.Instance.GetLocalizedText("tavernWine"),
+            TextManager.Instance.GetLocalizedText("tavernBread"), TextManager.Instance.GetLocalizedText("tavernBroth"),
+            TextManager.Instance.GetLocalizedText("tavernCheese"), TextManager.Instance.GetLocalizedText("tavernFowl"),
+            TextManager.Instance.GetLocalizedText("tavernGruel"), TextManager.Instance.GetLocalizedText("tavernPie"),
+            TextManager.Instance.GetLocalizedText("tavernStew") };
         byte[] tavernFoodAndDrinkPrices = { 1, 1, 2, 3, 1, 1, 2, 3, 2, 2, 3 };
 
         StaticNPC merchantNPC;

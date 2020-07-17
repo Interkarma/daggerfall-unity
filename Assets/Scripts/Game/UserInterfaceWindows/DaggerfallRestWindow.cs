@@ -460,7 +460,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (remainingHoursRented == 0)
                 {
-                    DaggerfallMessageBox mb = DaggerfallUI.MessageBox(HardStrings.expiredRentedRoom);
+                    DaggerfallMessageBox mb = DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("expiredRentedRoom"));
                     mb.OnClose += RestFinishedPopup_OnClose;
                     currentRestMode = RestModes.Selection;
                     playerEntity.RemoveExpiredRentedRooms();
@@ -573,7 +573,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return true;
                 }
                 CloseWindow();
-                DaggerfallUI.MessageBox(HardStrings.haveNotRentedRoom);
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("haveNotRentedRoom"));
                 return false;
             }
             return true;

@@ -1330,7 +1330,7 @@ namespace DaggerfallWorkshop.Game
                         foreach (RoomRental_v1 room in rooms)
                         {
                             string remainingHours = PlayerEntity.GetRemainingHours(room).ToString();
-                            DaggerfallUI.AddHUDText(HardStrings.youHaveRentedRoom.Replace("%s", room.name).Replace("%d", remainingHours), 6);
+                            DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youHaveRentedRoom").Replace("%s", room.name).Replace("%d", remainingHours), 6);
                         }
                     }
 

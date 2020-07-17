@@ -1131,5 +1131,233 @@ MonoBehaviour:
       All'
     m_Metadata:
       m_Items: []
+  - m_Id: 195
+    m_Localized: You receive %s gold pieces.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 196
+    m_Localized: 'Price : %s gold'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 197
+    m_Localized: You have a room at %s for %d hours.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 198
+    m_Localized: You have not rented a room here.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 199
+    m_Localized: Your time for this room has expired.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 200
+    m_Localized: Ale (1 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 201
+    m_Localized: Beer (1 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 202
+    m_Localized: Mead (2 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 203
+    m_Localized: Wine (3 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 204
+    m_Localized: Bread (1 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 205
+    m_Localized: Broth (1 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 206
+    m_Localized: Cheese (2 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 207
+    m_Localized: Fowl (3 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 208
+    m_Localized: Gruel (2 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 209
+    m_Localized: Pie (2 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210
+    m_Localized: Stew (3 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 211
+    m_Localized: Press button to fire spell.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 212
+    m_Localized: Climbing mode.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 213
+    m_Localized: Rappel mode.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 214
+    m_Localized: Hanging Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 215
+    m_Localized: Acute Hearing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 216
+    m_Localized: Adrenaline Rush
+    m_Metadata:
+      m_Items: []
+  - m_Id: 217
+    m_Localized: Athleticism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 218
+    m_Localized: Bonus to hit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219
+    m_Localized: Expertise in
+    m_Metadata:
+      m_Items: []
+  - m_Id: 220
+    m_Localized: Immunity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 221
+    m_Localized: Increased Magery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 222
+    m_Localized: Rapid Healing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 223
+    m_Localized: Regenerate Health
+    m_Metadata:
+      m_Items: []
+  - m_Id: 224
+    m_Localized: Resistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 225
+    m_Localized: Spell Absorption
+    m_Metadata:
+      m_Items: []
+  - m_Id: 226
+    m_Localized: Animals
+    m_Metadata:
+      m_Items: []
+  - m_Id: 227
+    m_Localized: Daedra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 228
+    m_Localized: Humanoid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 229
+    m_Localized: Undead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 230
+    m_Localized: Axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 231
+    m_Localized: Blunt Weapon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 232
+    m_Localized: Hand-to-Hand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 233
+    m_Localized: Long Blade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 234
+    m_Localized: Missile Weapon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 235
+    m_Localized: Short Blade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 236
+    m_Localized: To Disease
+    m_Metadata:
+      m_Items: []
+  - m_Id: 237
+    m_Localized: To Fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 238
+    m_Localized: To Frost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 239
+    m_Localized: To Magic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240
+    m_Localized: To Paralysis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 241
+    m_Localized: To Poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 242
+    m_Localized: To Shock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 243
+    m_Localized: 1.5X INT In Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 244
+    m_Localized: 1.75X INT In Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245
+    m_Localized: 2X INT In Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246
+    m_Localized: 3X INT In Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247
+    m_Localized: INT In Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248
+    m_Localized: General
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249
+    m_Localized: In Darkness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250
+    m_Localized: In Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251
+    m_Localized: While Immersed In Water
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

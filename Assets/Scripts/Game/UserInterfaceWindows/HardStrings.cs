@@ -23,32 +23,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // TODO: Note that buildingNames string key array temple names are not consistent with 4055-4062!
         // This note has been preserved from prior to localization
 
-        public const string youReceiveGoldPieces = "You receive %s gold pieces.";     // Custom message for "get item" gold assignment
-
-        public const string bankPurchasePrice = "Price : %s gold";
-
-        public const string youHaveRentedRoom = "You have a room at %s for %d hours.";
-        public const string haveNotRentedRoom = "You have not rented a room here.";
-        public const string expiredRentedRoom = "Your time for this room has expired.";
-        public const string tavernAle = "Ale (1 gold)";
-        public const string tavernBeer = "Beer (1 gold)";
-        public const string tavernMead = "Mead (2 gold)";
-        public const string tavernWine = "Wine (3 gold)";
-        public const string tavernBread = "Bread (1 gold)";
-        public const string tavernBroth = "Broth (1 gold)";
-        public const string tavernCheese = "Cheese (2 gold)";
-        public const string tavernFowl = "Fowl (3 gold)";
-        public const string tavernGruel = "Gruel (2 gold)";
-        public const string tavernPie = "Pie (2 gold)";
-        public const string tavernStew = "Stew (3 gold)";
-
-
-        public const string pressButtonToFireSpell = "Press button to fire spell.";
-
-        public const string climbingMode = "Climbing mode.";
-        public const string rappelMode = "Rappel mode.";
-        public const string hangingMode = "Hanging Mode";
-
+        // ADDED TO STRING TABLE - NEED TO REFACTOR SOME CODE TO REMOVE THIS BLOCK
         public const string acuteHearing = "Acute Hearing";
         public const string adrenalineRush = "Adrenaline Rush";
         public const string athleticism = "Athleticism";
@@ -86,6 +61,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string inDarkness = "In Darkness";
         public const string inLight = "In Light";
         public const string whileImmersed = "While Immersed In Water";
+        // ADDED TO STRING TABLE - NEED TO REFACTOR SOME CODE TO REMOVE THIS BLOCK
 
         public const string criticalWeakness = "Critical Weakness";
         public const string damage = "Damage";
