@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //**might delete this, since reset defaults is in the main controls window
         private void SetupKeybindButton(Button button, InputManager.Actions action)
         {
-            button.Label.Text = DaggerfallControlsWindow.CurrentUnsavedKeybindDict[action];
+            button.Label.Text = ControlsConfigManager.Instance.GetUnsavedBinding(action);
             button.Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
         }
 
@@ -313,7 +313,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void CheckDuplicates()
         {
-            DaggerfallControlsWindow.CheckDuplicates(buttonGroup);
+            ControlsConfigManager.Instance.CheckDuplicateKeyCodes(buttonGroup);
         }
 
         //a workaround solution to setting the 'waitingForInput' instance variable in a
