@@ -190,7 +190,7 @@ namespace DaggerfallWorkshop.Game
             if (enemyID < 128)
                 return cachedEnemyNames[enemyID];
             else
-                return cachedEnemyNames[enemyID - 128];
+                return cachedEnemyNames[43 + enemyID - 128];
         }
 
         #endregion
