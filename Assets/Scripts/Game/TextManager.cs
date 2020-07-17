@@ -34,8 +34,7 @@ namespace DaggerfallWorkshop.Game
         public string textRSCCollection = string.Empty;
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
-
-        string[] cachedEnemyNames = null;
+        Dictionary<string, string[]> cachedLocalizedTextLists = new Dictionary<string, string[]>();
 
         #endregion
 
@@ -118,14 +117,28 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         /// <param name="collectionName">Name of table collection.</param>
         /// <param name="key">Key of text in table.</param>
-        /// <returns>Text array if found, otherwise returns null.</returns>
-        public string[] GetLocalizedTextList(string collectionName, string key)
+        /// <param name="exception">True to throw exception if text not found. False to just return null.</param>
+        /// <returns>Text array if found, otherwise returns null or throws exception.</returns>
+        public string[] GetLocalizedTextList(string collectionName, string key, bool exception = true)
         {
+            string cacheKey = collectionName + key;
+            string[] cachedList = null;
+            if (cachedLocalizedTextLists.TryGetValue(cacheKey, out cachedList))
+                return cachedList;
+
             string localizedString;
             if (!DaggerfallUnity.Instance.TextProvider.GetLocalizedString(collectionName, key, out localizedString))
-                return null;
+            {
+                if (exception)
+                    throw new Exception(string.Format("{0} array text not found", cacheKey));
+                else
+                    return null;
+            }
 
-            return localizedString.Split('\n');
+            cachedList = localizedString.Split('\n');
+            cachedLocalizedTextLists.Add(cacheKey, cachedList);
+
+            return cachedList;
         }
 
         /// <summary>
@@ -134,9 +147,11 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         /// <param name="key">Key of text in table.</param>
         /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
-        public string[] GetLocalizedTextList(string key, TextCollections collection = TextCollections.Internal)
+        /// <param name="exception">True to throw exception if text not found. False to just return null.</param>
+        /// <returns>Text array if found, otherwise returns null or throws exception.</returns>
+        public string[] GetLocalizedTextList(string key, TextCollections collection = TextCollections.Internal, bool exception = true)
         {
-            return GetLocalizedTextList(GetCollectionName(collection), key);
+            return GetLocalizedTextList(GetCollectionName(collection), key, exception);
         }
 
         /// <summary>
@@ -180,17 +195,11 @@ namespace DaggerfallWorkshop.Game
         /// <returns>Name of enemy from localization.</returns>
         public string GetLocalizedEnemyName(int enemyID)
         {
-            if (cachedEnemyNames == null)
-            {
-                cachedEnemyNames = TextManager.Instance.GetLocalizedTextList("enemyNames");
-                if (cachedEnemyNames == null)
-                    throw new System.Exception("enemyNames array text not found");
-            }
-
+            string[] enemyNames = TextManager.Instance.GetLocalizedTextList("enemyNames", exception:true);
             if (enemyID < 128)
-                return cachedEnemyNames[enemyID];
+                return enemyNames[enemyID];
             else
-                return cachedEnemyNames[43 + enemyID - 128];
+                return enemyNames[43 + enemyID - 128];
         }
 
         #endregion

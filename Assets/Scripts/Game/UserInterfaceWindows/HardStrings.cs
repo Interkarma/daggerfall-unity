@@ -23,18 +23,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // TODO: Note that buildingNames string key array temple names are not consistent with 4055-4062!
         // This note has been preserved from prior to localization
 
-        public static readonly string[] extraSpellPtsTimes = { "during Winter", "during Spring", "during Summer", "during Fall", "during Full Moon", "during Half Moon", "during New Moon", "near undead", "near daedra", "near humanoids", "near animals" };
-        public static readonly string[] regensHealthTimes = { "all the time", "in sunlight", "in darkness" };
-        public static readonly string[] vampiricEffectRanges = { "at range", "when strikes" };
-        public static readonly string[] increasedWeightAllowances = { "25% additional", "50% additional" };
-        public static readonly string[] improvedTalents = { "hearing", "athleticism", "adrenaline rush" };
-        public static readonly string[] itemDeteriorateLocations = { "all the time", "in sunlight", "in holy places" };
-        public static readonly string[] userTakesDamageLocations = { "in sunlight", "in holy places" };
-        public static readonly string[] enemyGroupNames =  { "undead", "Daedra", "humanoids", "animals" };
-        public static readonly string[] healthLeechStopConditions = { "whenever used", "unless used daily", "unless used weekly" };
-        public static readonly string[] badReactionFromEnemyGroups = { "humanoids", "animals", "Daedra" };
-        public static readonly string[] repWithGroups = { "Commoners", "Merchants", "Scholars", "Nobility", "Underworld", "All" };
-
         public const string youReceiveGoldPieces = "You receive %s gold pieces.";     // Custom message for "get item" gold assignment
 
         public const string bankPurchasePrice = "Price : %s gold";

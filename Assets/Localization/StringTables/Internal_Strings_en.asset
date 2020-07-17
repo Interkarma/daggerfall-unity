@@ -1023,5 +1023,113 @@ MonoBehaviour:
       Watch'
     m_Metadata:
       m_Items: []
+  - m_Id: 184
+    m_Localized: 'during Winter
+
+      during Spring
+
+      during Summer
+
+      during
+      Fall
+
+      during Full Moon
+
+      during Half Moon
+
+      during New Moon
+
+      near
+      undead
+
+      near daedra
+
+      near humanoids
+
+      near animals'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 185
+    m_Localized: 'all the time
+
+      in sunlight
+
+      in darkness'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 186
+    m_Localized: 'at range
+
+      when strikes'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 187
+    m_Localized: '25% additional
+
+      50% additional'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 188
+    m_Localized: 'hearing
+
+      athleticism
+
+      adrenaline rush'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 189
+    m_Localized: 'all the time
+
+      in sunlight
+
+      in holy places'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 190
+    m_Localized: 'in sunlight
+
+      in holy places'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 191
+    m_Localized: 'undead
+
+      Daedra
+
+      humanoids
+
+      animals'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 192
+    m_Localized: 'whenever used
+
+      unless used daily
+
+      unless used weekly'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 193
+    m_Localized: 'humanoids
+
+      animals
+
+      Daedra'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 194
+    m_Localized: 'Commoners
+
+      Merchants
+
+      Scholars
+
+      Nobility
+
+      Underworld
+
+      All'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

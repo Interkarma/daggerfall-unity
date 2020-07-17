@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 184
+  m_NextAvailableId: 195
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -746,6 +746,50 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 183
     m_Key: enemyNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 184
+    m_Key: extraSpellPtsTimes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 185
+    m_Key: regensHealthTimes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 186
+    m_Key: vampiricEffectRanges
+    m_Metadata:
+      m_Items: []
+  - m_Id: 187
+    m_Key: increasedWeightAllowances
+    m_Metadata:
+      m_Items: []
+  - m_Id: 188
+    m_Key: improvedTalents
+    m_Metadata:
+      m_Items: []
+  - m_Id: 189
+    m_Key: itemDeteriorateLocations
+    m_Metadata:
+      m_Items: []
+  - m_Id: 190
+    m_Key: userTakesDamageLocations
+    m_Metadata:
+      m_Items: []
+  - m_Id: 191
+    m_Key: enemyGroupNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 192
+    m_Key: healthLeechStopConditions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 193
+    m_Key: badReactionFromEnemyGroups
+    m_Metadata:
+      m_Items: []
+  - m_Id: 194
+    m_Key: repWithGroups
     m_Metadata:
       m_Items: []
   m_Metadata:

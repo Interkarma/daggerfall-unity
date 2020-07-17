@@ -265,14 +265,6 @@ namespace DaggerfallWorkshop.Game.Items
                 }
                 else
                 {
-                    string[] itemPowers = TextManager.Instance.GetLocalizedTextList("itemPowers");
-                    if (itemPowers == null)
-                        throw new System.Exception("itemPowers array text not found");
-
-                    string[] enemyNames = TextManager.Instance.GetLocalizedTextList("enemyNames");
-                    if (enemyNames == null)
-                        throw new System.Exception("enemyNames array text not found");
-
                     // List item powers. 
                     List<TextFile.Token> magicPowersTokens = new List<TextFile.Token>();
                     for (int i = 0; i < parent.legacyMagic.Length; i++)
@@ -281,31 +273,31 @@ namespace DaggerfallWorkshop.Game.Items
                         if (parent.legacyMagic[i].type == EnchantmentTypes.None || (int)parent.legacyMagic[i].type == 65535)
                             break;
 
-                        string firstPart = itemPowers[(int)parent.legacyMagic[i].type] + " ";
+                        string firstPart = TextManager.Instance.GetLocalizedTextList("itemPowers")[(int)parent.legacyMagic[i].type] + " ";
 
                         if (parent.legacyMagic[i].type == EnchantmentTypes.SoulBound && parent.legacyMagic[i].param != -1)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + enemyNames[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("enemyNames")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.ExtraSpellPts)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.extraSpellPtsTimes[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("extraSpellPtsTimes")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.PotentVs || parent.legacyMagic[i].type == EnchantmentTypes.LowDamageVs)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.enemyGroupNames[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("enemyGroupNames")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.RegensHealth)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.regensHealthTimes[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("regensHealthTimes")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.VampiricEffect)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.vampiricEffectRanges[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("vampiricEffectRanges")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.IncreasedWeightAllowance)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.increasedWeightAllowances[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("increasedWeightAllowances")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.EnhancesSkill)
                         {
@@ -313,27 +305,27 @@ namespace DaggerfallWorkshop.Game.Items
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.ImprovesTalents)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.improvedTalents[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("improvedTalents")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.GoodRepWith || parent.legacyMagic[i].type == EnchantmentTypes.BadRepWith)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.repWithGroups[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("repWithGroups")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.ItemDeteriorates)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.itemDeteriorateLocations[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("itemDeteriorateLocations")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.UserTakesDamage)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.userTakesDamageLocations[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("userTakesDamageLocations")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.HealthLeech)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.healthLeechStopConditions[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("healthLeechStopConditions")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.BadReactionsFrom)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.badReactionFromEnemyGroups[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + TextManager.Instance.GetLocalizedTextList("badReactionFromEnemyGroups")[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type <= EnchantmentTypes.CastWhenStrikes)
                         {
