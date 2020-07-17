@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 182
+  m_NextAvailableId: 184
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -738,6 +738,14 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 181
     m_Key: powersUnknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182
+    m_Key: itemPowers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 183
+    m_Key: enemyNames
     m_Metadata:
       m_Items: []
   m_Metadata:

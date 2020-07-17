@@ -830,5 +830,160 @@ MonoBehaviour:
     m_Localized: Powers unknown.
     m_Metadata:
       m_Items: []
+  - m_Id: 182
+    m_Localized: 'Cast when used:
+
+      Cast when held:
+
+      Cast when strikes:
+
+      Extra
+      spell pts
+
+      Potent vs
+
+      Regens health
+
+      Vampiric effect
+
+      Increased
+      weight allowance
+
+      Repairs objects
+
+      Absorbs spells
+
+      Enhances
+      skill
+
+      Feather weight
+
+      Strengthens armor
+
+      Improves talents
+
+      Good
+      rep with
+
+      Soul bound
+
+      Item deteriorates
+
+      User takes damage
+
+      Vision
+      problems
+
+      Walking problems
+
+      Low damage vs
+
+      Health leech
+
+      Bad
+      reactions from
+
+      Extra weight
+
+      Weakens armor
+
+      Bad rep with'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 183
+    m_Localized: 'Rat
+
+      Imp
+
+      Spriggan
+
+      Giant bat
+
+      Grizzly
+      bear
+
+      Sabretooth tiger
+
+      Spider
+
+      Orc
+
+      Centaur
+
+      Werewolf
+
+      Nymph
+
+      Slaughterfish
+
+      Orc
+      sergeant
+
+      Harpy
+
+      Wereboar
+
+      Skeletal warrior
+
+      Giant
+
+      Zombie
+
+      Ghost
+
+      Mummy
+
+      Giant
+      scorpion
+
+      Orc shaman
+
+      Gargoyle
+
+      Wraith
+
+      Orc warlord
+
+      Frost
+      daedra
+
+      Fire daedra
+
+      Daedroth
+
+      Vampire
+
+      Daedra
+      seducer
+
+      Ancient vampire
+
+      Daedra lord
+
+      Lich
+
+      Ancient
+      lich
+
+      Dragonling
+
+      Fire Atronach
+
+      Iron Atronach
+
+      Flesh
+      Atronach
+
+      Ice Atronach
+
+      Horse
+
+      Dragonling
+
+      Dreugh
+
+      Lamia'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

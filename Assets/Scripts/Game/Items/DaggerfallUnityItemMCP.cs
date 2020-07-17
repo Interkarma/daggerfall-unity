@@ -265,6 +265,14 @@ namespace DaggerfallWorkshop.Game.Items
                 }
                 else
                 {
+                    string[] itemPowers = TextManager.Instance.GetLocalizedTextList("itemPowers");
+                    if (itemPowers == null)
+                        throw new System.Exception("itemPowers array text not found");
+
+                    string[] enemyNames = TextManager.Instance.GetLocalizedTextList("enemyNames");
+                    if (enemyNames == null)
+                        throw new System.Exception("enemyNames array text not found");
+
                     // List item powers. 
                     List<TextFile.Token> magicPowersTokens = new List<TextFile.Token>();
                     for (int i = 0; i < parent.legacyMagic.Length; i++)
@@ -273,11 +281,11 @@ namespace DaggerfallWorkshop.Game.Items
                         if (parent.legacyMagic[i].type == EnchantmentTypes.None || (int)parent.legacyMagic[i].type == 65535)
                             break;
 
-                        string firstPart = HardStrings.itemPowers[(int)parent.legacyMagic[i].type] + " ";
+                        string firstPart = itemPowers[(int)parent.legacyMagic[i].type] + " ";
 
                         if (parent.legacyMagic[i].type == EnchantmentTypes.SoulBound && parent.legacyMagic[i].param != -1)
                         {
-                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + HardStrings.enemyNames[parent.legacyMagic[i].param]));
+                            magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + enemyNames[parent.legacyMagic[i].param]));
                         }
                         else if (parent.legacyMagic[i].type == EnchantmentTypes.ExtraSpellPts)
                         {
