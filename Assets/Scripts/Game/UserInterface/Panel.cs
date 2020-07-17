@@ -268,56 +268,56 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Top-left
             topLeftBorderRect.x = drawRect.x;
             topLeftBorderRect.y = drawRect.y;
-            topLeftBorderRect.width = virtualSizes.TopLeft.x * LocalScale.x;
-            topLeftBorderRect.height = virtualSizes.TopLeft.y * LocalScale.y;
+            topLeftBorderRect.xMax = Mathf.Round(drawRect.x + virtualSizes.TopLeft.x * LocalScale.x);
+            topLeftBorderRect.yMax = Mathf.Round(drawRect.y + virtualSizes.TopLeft.y * LocalScale.y);
 
             // Top-right
-            topRightBorderRect.x = drawRect.xMax - virtualSizes.TopRight.x * LocalScale.x;
+            topRightBorderRect.x = Mathf.Round(drawRect.xMax - virtualSizes.TopRight.x * LocalScale.x);
             topRightBorderRect.y = drawRect.y;
-            topRightBorderRect.width = virtualSizes.TopRight.x * LocalScale.x;
-            topRightBorderRect.height = virtualSizes.TopRight.y * LocalScale.y;
+            topRightBorderRect.xMax = drawRect.xMax;
+            topRightBorderRect.yMax = Mathf.Round(drawRect.y + virtualSizes.TopRight.y * LocalScale.y);
 
             // Bottom-left
             bottomLeftBorderRect.x = drawRect.x;
-            bottomLeftBorderRect.y = drawRect.yMax - virtualSizes.BottomLeft.x * LocalScale.y;
-            bottomLeftBorderRect.width = virtualSizes.BottomLeft.x * LocalScale.x;
-            bottomLeftBorderRect.height = virtualSizes.BottomLeft.y * LocalScale.y;
+            bottomLeftBorderRect.y = Mathf.Round(drawRect.yMax - virtualSizes.BottomLeft.x * LocalScale.y);
+            bottomLeftBorderRect.xMax = Mathf.Round(drawRect.x + virtualSizes.BottomLeft.x * LocalScale.x);
+            bottomLeftBorderRect.yMax = drawRect.yMax;
 
             // Bottom-right
-            bottomRightBorderRect.x = drawRect.xMax - virtualSizes.BottomRight.x * LocalScale.x;
-            bottomRightBorderRect.y = drawRect.yMax - virtualSizes.BottomRight.y * LocalScale.y;
-            bottomRightBorderRect.width = virtualSizes.BottomRight.x * LocalScale.x;
-            bottomRightBorderRect.height = virtualSizes.BottomRight.y * LocalScale.y;
+            bottomRightBorderRect.x = Mathf.Round(drawRect.xMax - virtualSizes.BottomRight.x * LocalScale.x);
+            bottomRightBorderRect.y = Mathf.Round(drawRect.yMax - virtualSizes.BottomRight.y * LocalScale.y);
+            bottomRightBorderRect.xMax = drawRect.xMax;
+            bottomRightBorderRect.yMax = drawRect.yMax;
 
             // Top
-            topBorderRect.x = drawRect.x + virtualSizes.TopLeft.x * LocalScale.x;
+            topBorderRect.x = Mathf.Round(drawRect.x + virtualSizes.TopLeft.x * LocalScale.x);
             topBorderRect.y = drawRect.y;
-            topBorderRect.width = drawRect.width - virtualSizes.TopLeft.x * LocalScale.x - virtualSizes.TopRight.x * LocalScale.x;
-            topBorderRect.height = virtualSizes.Top.y * LocalScale.y;
+            topBorderRect.xMax = Mathf.Round(drawRect.xMax - virtualSizes.TopRight.x * LocalScale.x);
+            topBorderRect.yMax = Mathf.Round(drawRect.y + virtualSizes.Top.y * LocalScale.y);
 
             // Left
             leftBorderRect.x = drawRect.x;
-            leftBorderRect.y = drawRect.y + virtualSizes.TopLeft.y * LocalScale.y;
-            leftBorderRect.width = virtualSizes.Left.x * LocalScale.x;
-            leftBorderRect.height = drawRect.height - virtualSizes.TopLeft.y * LocalScale.y - virtualSizes.BottomLeft.y * LocalScale.y;
+            leftBorderRect.y = Mathf.Round(drawRect.y + virtualSizes.TopLeft.y * LocalScale.y);
+            leftBorderRect.xMax = Mathf.Round(drawRect.x + virtualSizes.Left.x * LocalScale.x);
+            leftBorderRect.yMax = Mathf.Round(drawRect.yMax - virtualSizes.BottomLeft.y * LocalScale.y);
 
             // Right
-            rightBorderRect.x = drawRect.xMax - virtualSizes.Right.x * LocalScale.x;
-            rightBorderRect.y = drawRect.y + virtualSizes.TopRight.y * LocalScale.y;
-            rightBorderRect.width = virtualSizes.Right.x * LocalScale.x;
-            rightBorderRect.height = drawRect.height - virtualSizes.TopRight.y * LocalScale.y - virtualSizes.BottomRight.y * LocalScale.y;
+            rightBorderRect.x = Mathf.Round(drawRect.xMax - virtualSizes.Right.x * LocalScale.x);
+            rightBorderRect.y = Mathf.Round(drawRect.y + virtualSizes.TopRight.y * LocalScale.y);
+            rightBorderRect.xMax = drawRect.xMax;
+            rightBorderRect.yMax = Mathf.Round(drawRect.yMax - virtualSizes.BottomRight.y * LocalScale.y);
 
             // Bottom
-            bottomBorderRect.x = drawRect.x + virtualSizes.BottomLeft.x * LocalScale.x;
-            bottomBorderRect.y = drawRect.yMax - virtualSizes.Bottom.y * LocalScale.y;
-            bottomBorderRect.width = drawRect.width - virtualSizes.BottomLeft.x * LocalScale.x - virtualSizes.BottomRight.x * LocalScale.x;
-            bottomBorderRect.height = virtualSizes.Bottom.y * LocalScale.y;
+            bottomBorderRect.x = Mathf.Round(drawRect.x + virtualSizes.BottomLeft.x * LocalScale.x);
+            bottomBorderRect.y = Mathf.Round(drawRect.yMax - virtualSizes.Bottom.y * LocalScale.y);
+            bottomBorderRect.xMax = Mathf.Round(drawRect.xMax - virtualSizes.BottomRight.x * LocalScale.x);
+            bottomBorderRect.yMax = drawRect.yMax;
 
             // Fill
-            fillBordersRect.xMin = drawRect.xMin + virtualSizes.Left.x * LocalScale.x;
-            fillBordersRect.yMin = drawRect.yMin + virtualSizes.Top.y * LocalScale.y;
-            fillBordersRect.xMax = drawRect.xMax - virtualSizes.Right.x * LocalScale.x;
-            fillBordersRect.yMax = drawRect.yMax - virtualSizes.Bottom.y * LocalScale.y;
+            fillBordersRect.xMin = Mathf.Round(drawRect.xMin + virtualSizes.Left.x * LocalScale.x);
+            fillBordersRect.yMin = Mathf.Round(drawRect.yMin + virtualSizes.Top.y * LocalScale.y);
+            fillBordersRect.xMax = Mathf.Round(drawRect.xMax - virtualSizes.Right.x * LocalScale.x);
+            fillBordersRect.yMax = Mathf.Round(drawRect.yMax - virtualSizes.Bottom.y * LocalScale.y);
         }
 
         #endregion
