@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 252
+  m_NextAvailableId: 294
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -1018,6 +1018,174 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 251
     m_Key: whileImmersed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252
+    m_Key: criticalWeakness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253
+    m_Key: damage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 254
+    m_Key: darknessPoweredMagery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 255
+    m_Key: forbiddenArmorType
+    m_Metadata:
+      m_Items: []
+  - m_Id: 256
+    m_Key: forbiddenMaterial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257
+    m_Key: forbiddenShieldTypes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 258
+    m_Key: forbiddenWeaponry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259
+    m_Key: inabilityToRegen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 260
+    m_Key: lightPoweredMagery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 261
+    m_Key: lowTolerance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262
+    m_Key: phobia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 263
+    m_Key: fromHolyPlaces
+    m_Metadata:
+      m_Items: []
+  - m_Id: 264
+    m_Key: fromSunlight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 265
+    m_Key: lowerMagicAbilityDaylight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 266
+    m_Key: unableToUseMagicInDaylight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 267
+    m_Key: chain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 268
+    m_Key: leather
+    m_Metadata:
+      m_Items: []
+  - m_Id: 269
+    m_Key: plate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270
+    m_Key: adamantium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 271
+    m_Key: daedric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 272
+    m_Key: dwarven
+    m_Metadata:
+      m_Items: []
+  - m_Id: 273
+    m_Key: ebony
+    m_Metadata:
+      m_Items: []
+  - m_Id: 274
+    m_Key: elven
+    m_Metadata:
+      m_Items: []
+  - m_Id: 275
+    m_Key: iron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 276
+    m_Key: mithril
+    m_Metadata:
+      m_Items: []
+  - m_Id: 277
+    m_Key: orcish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 278
+    m_Key: silver
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279
+    m_Key: steel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 280
+    m_Key: buckler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 281
+    m_Key: kiteShield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282
+    m_Key: roundShield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 283
+    m_Key: towerShield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284
+    m_Key: lowerMagicAbilityDarkness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285
+    m_Key: unableToUseMagicInDarkness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286
+    m_Key: helpAttributes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287
+    m_Key: helpClassName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288
+    m_Key: helpGeneral
+    m_Metadata:
+      m_Items: []
+  - m_Id: 289
+    m_Key: helpReputations
+    m_Metadata:
+      m_Items: []
+  - m_Id: 290
+    m_Key: helpSkillAdvancement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 291
+    m_Key: helpSkills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292
+    m_Key: helpSpecialAdvantages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293
+    m_Key: helpSpecialDisadvantages
     m_Metadata:
       m_Items: []
   m_Metadata:

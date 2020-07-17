@@ -521,92 +521,92 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Tolerances
             Dictionary<DFCareer.Tolerance, string> tolerances = new Dictionary<DFCareer.Tolerance, string>
             {
-                { DFCareer.Tolerance.CriticalWeakness, HardStrings.criticalWeakness },
-                { DFCareer.Tolerance.Immune, HardStrings.immunity },
-                { DFCareer.Tolerance.LowTolerance, HardStrings.lowTolerance },
-                { DFCareer.Tolerance.Resistant, HardStrings.resistance }
+                { DFCareer.Tolerance.CriticalWeakness, TextManager.Instance.GetLocalizedText(HardStrings.criticalWeakness) },
+                { DFCareer.Tolerance.Immune, TextManager.Instance.GetLocalizedText(HardStrings.immunity) },
+                { DFCareer.Tolerance.LowTolerance, TextManager.Instance.GetLocalizedText(HardStrings.lowTolerance) },
+                { DFCareer.Tolerance.Resistant, TextManager.Instance.GetLocalizedText(HardStrings.resistance) }
             };
 
             if (career.Paralysis != DFCareer.Tolerance.Normal)
-                specials.Add(tolerances[career.Paralysis] + " " + HardStrings.toParalysis);
+                specials.Add(tolerances[career.Paralysis] + " " + TextManager.Instance.GetLocalizedText(HardStrings.toParalysis));
 
             if (career.Magic != DFCareer.Tolerance.Normal)
-                specials.Add(tolerances[career.Magic] + " " + HardStrings.toMagic);
+                specials.Add(tolerances[career.Magic] + " " + TextManager.Instance.GetLocalizedText(HardStrings.toMagic));
 
             if (career.Poison != DFCareer.Tolerance.Normal)
-                specials.Add(tolerances[career.Poison] + " " + HardStrings.toPoison);
+                specials.Add(tolerances[career.Poison] + " " + TextManager.Instance.GetLocalizedText(HardStrings.toPoison));
 
             if (career.Fire != DFCareer.Tolerance.Normal)
-                specials.Add(tolerances[career.Fire] + " " + HardStrings.toFire);
+                specials.Add(tolerances[career.Fire] + " " + TextManager.Instance.GetLocalizedText(HardStrings.toFire));
 
             if (career.Frost != DFCareer.Tolerance.Normal)
-                specials.Add(tolerances[career.Frost] + " " + HardStrings.toFrost);
+                specials.Add(tolerances[career.Frost] + " " + TextManager.Instance.GetLocalizedText(HardStrings.toFrost));
 
             if (career.Shock != DFCareer.Tolerance.Normal)
-                specials.Add(tolerances[career.Shock] + " " + HardStrings.toShock);
+                specials.Add(tolerances[career.Shock] + " " + TextManager.Instance.GetLocalizedText(HardStrings.toShock));
 
             if (career.Disease != DFCareer.Tolerance.Normal)
-                specials.Add(tolerances[career.Disease] + " " + HardStrings.toDisease);
+                specials.Add(tolerances[career.Disease] + " " + TextManager.Instance.GetLocalizedText(HardStrings.toDisease));
 
             // Weapon Proficiencies
             Dictionary<DFCareer.Proficiency, string> profs = new Dictionary<DFCareer.Proficiency, string>
             {
-                { DFCareer.Proficiency.Expert, HardStrings.expertiseIn },
-                { DFCareer.Proficiency.Forbidden, HardStrings.forbiddenWeaponry }
+                { DFCareer.Proficiency.Expert, TextManager.Instance.GetLocalizedText(HardStrings.expertiseIn) },
+                { DFCareer.Proficiency.Forbidden, TextManager.Instance.GetLocalizedText(HardStrings.forbiddenWeaponry) }
             };
 
             if (career.ShortBlades != DFCareer.Proficiency.Normal)
-                specials.Add(profs[career.ShortBlades] + " " + HardStrings.shortBlade);
+                specials.Add(profs[career.ShortBlades] + " " + TextManager.Instance.GetLocalizedText(HardStrings.shortBlade));
 
             if (career.LongBlades != DFCareer.Proficiency.Normal)
-                specials.Add(profs[career.LongBlades] + " " + HardStrings.longBlade);
+                specials.Add(profs[career.LongBlades] + " " + TextManager.Instance.GetLocalizedText(HardStrings.longBlade));
 
             if (career.HandToHand != DFCareer.Proficiency.Normal)
-                specials.Add(profs[career.HandToHand] + " " + HardStrings.handToHand);
+                specials.Add(profs[career.HandToHand] + " " + TextManager.Instance.GetLocalizedText(HardStrings.handToHand));
 
             if (career.Axes != DFCareer.Proficiency.Normal)
-                specials.Add(profs[career.Axes] + " " + HardStrings.axe);
+                specials.Add(profs[career.Axes] + " " + TextManager.Instance.GetLocalizedText(HardStrings.axe));
 
             if (career.BluntWeapons != DFCareer.Proficiency.Normal)
-                specials.Add(profs[career.BluntWeapons] + " " + HardStrings.bluntWeapon);
+                specials.Add(profs[career.BluntWeapons] + " " + TextManager.Instance.GetLocalizedText(HardStrings.bluntWeapon));
 
             if (career.MissileWeapons != DFCareer.Proficiency.Normal)
-                specials.Add(profs[career.MissileWeapons] + " " + HardStrings.missileWeapon);
+                specials.Add(profs[career.MissileWeapons] + " " + TextManager.Instance.GetLocalizedText(HardStrings.missileWeapon));
 
             // Attack modifiers
             Dictionary<DFCareer.AttackModifier, string> atkMods = new Dictionary<DFCareer.AttackModifier, string>
             {
-                { DFCareer.AttackModifier.Bonus, HardStrings.bonusToHit },
-                { DFCareer.AttackModifier.Phobia, HardStrings.phobia }
+                { DFCareer.AttackModifier.Bonus, TextManager.Instance.GetLocalizedText(HardStrings.bonusToHit) },
+                { DFCareer.AttackModifier.Phobia, TextManager.Instance.GetLocalizedText(HardStrings.phobia) }
             };
 
             if (career.UndeadAttackModifier != DFCareer.AttackModifier.Normal)
-                specials.Add(atkMods[career.UndeadAttackModifier] + " " + HardStrings.undead);
+                specials.Add(atkMods[career.UndeadAttackModifier] + " " + TextManager.Instance.GetLocalizedText(HardStrings.undead));
 
             if (career.DaedraAttackModifier != DFCareer.AttackModifier.Normal)
-                specials.Add(atkMods[career.DaedraAttackModifier] + " " + HardStrings.daedra);
+                specials.Add(atkMods[career.DaedraAttackModifier] + " " + TextManager.Instance.GetLocalizedText(HardStrings.daedra));
 
             if (career.HumanoidAttackModifier != DFCareer.AttackModifier.Normal)
-                specials.Add(atkMods[career.HumanoidAttackModifier] + " " + HardStrings.humanoid);
+                specials.Add(atkMods[career.HumanoidAttackModifier] + " " + TextManager.Instance.GetLocalizedText(HardStrings.humanoid));
 
             if (career.AnimalsAttackModifier != DFCareer.AttackModifier.Normal)
-                specials.Add(atkMods[career.AnimalsAttackModifier] + " " + HardStrings.animals);
+                specials.Add(atkMods[career.AnimalsAttackModifier] + " " + TextManager.Instance.GetLocalizedText(HardStrings.animals));
 
             // Darkness/light powered magery
             if (career.DarknessPoweredMagery != DFCareer.DarknessMageryFlags.Normal)
             {
                 if ((career.DarknessPoweredMagery & DFCareer.DarknessMageryFlags.ReducedPowerInLight) == DFCareer.DarknessMageryFlags.ReducedPowerInLight)
-                    specials.Add(HardStrings.darknessPoweredMagery + " " + HardStrings.lowerMagicAbilityDaylight);
+                    specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.darknessPoweredMagery) + " " + TextManager.Instance.GetLocalizedText(HardStrings.lowerMagicAbilityDaylight));
                 if ((career.DarknessPoweredMagery & DFCareer.DarknessMageryFlags.UnableToCastInLight) == DFCareer.DarknessMageryFlags.UnableToCastInLight)
-                    specials.Add(HardStrings.darknessPoweredMagery + " " + HardStrings.unableToUseMagicInDaylight);
+                    specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.darknessPoweredMagery) + " " + TextManager.Instance.GetLocalizedText(HardStrings.unableToUseMagicInDaylight));
             }
 
             if (career.LightPoweredMagery != DFCareer.LightMageryFlags.Normal)
             {
                 if ((career.LightPoweredMagery & DFCareer.LightMageryFlags.ReducedPowerInDarkness) == DFCareer.LightMageryFlags.ReducedPowerInDarkness)
-                    specials.Add(HardStrings.lightPoweredMagery + " " + HardStrings.lowerMagicAbilityDarkness);
+                    specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.lightPoweredMagery) + " " + TextManager.Instance.GetLocalizedText(HardStrings.lowerMagicAbilityDarkness));
                 if ((career.LightPoweredMagery & DFCareer.LightMageryFlags.UnableToCastInDarkness) == DFCareer.LightMageryFlags.UnableToCastInDarkness)
-                    specials.Add(HardStrings.lightPoweredMagery + " " + HardStrings.unableToUseMagicInDarkness);
+                    specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.lightPoweredMagery) + " " + TextManager.Instance.GetLocalizedText(HardStrings.unableToUseMagicInDarkness));
             }
 
             // Forbidden materials (multiple)
@@ -614,21 +614,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Dictionary<DFCareer.MaterialFlags, string> forbMaterials = new Dictionary<DFCareer.MaterialFlags, string>
                 {
-                    { DFCareer.MaterialFlags.Adamantium, HardStrings.adamantium },
-                    { DFCareer.MaterialFlags.Daedric, HardStrings.daedric },
-                    { DFCareer.MaterialFlags.Dwarven, HardStrings.dwarven },
-                    { DFCareer.MaterialFlags.Ebony, HardStrings.ebony },
-                    { DFCareer.MaterialFlags.Elven, HardStrings.elven },
-                    { DFCareer.MaterialFlags.Iron, HardStrings.iron },
-                    { DFCareer.MaterialFlags.Mithril, HardStrings.mithril },
-                    { DFCareer.MaterialFlags.Orcish, HardStrings.orcish },
-                    { DFCareer.MaterialFlags.Silver, HardStrings.silver },
-                    { DFCareer.MaterialFlags.Steel, HardStrings.steel }
+                    { DFCareer.MaterialFlags.Adamantium, TextManager.Instance.GetLocalizedText(HardStrings.adamantium) },
+                    { DFCareer.MaterialFlags.Daedric, TextManager.Instance.GetLocalizedText(HardStrings.daedric) },
+                    { DFCareer.MaterialFlags.Dwarven, TextManager.Instance.GetLocalizedText(HardStrings.dwarven) },
+                    { DFCareer.MaterialFlags.Ebony, TextManager.Instance.GetLocalizedText(HardStrings.ebony) },
+                    { DFCareer.MaterialFlags.Elven, TextManager.Instance.GetLocalizedText(HardStrings.elven) },
+                    { DFCareer.MaterialFlags.Iron, TextManager.Instance.GetLocalizedText(HardStrings.iron) },
+                    { DFCareer.MaterialFlags.Mithril, TextManager.Instance.GetLocalizedText(HardStrings.mithril) },
+                    { DFCareer.MaterialFlags.Orcish, TextManager.Instance.GetLocalizedText(HardStrings.orcish) },
+                    { DFCareer.MaterialFlags.Silver, TextManager.Instance.GetLocalizedText(HardStrings.silver) },
+                    { DFCareer.MaterialFlags.Steel, TextManager.Instance.GetLocalizedText(HardStrings.steel) }
                 };
                 foreach (DFCareer.MaterialFlags flag in Enum.GetValues(typeof(DFCareer.MaterialFlags)))
                 {
                     if ((career.ForbiddenMaterials & flag) == flag)
-                        specials.Add(HardStrings.forbiddenMaterial + " " + forbMaterials[flag]);
+                        specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.forbiddenMaterial) + " " + forbMaterials[flag]);
                 }
             }
 
@@ -637,15 +637,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Dictionary<DFCareer.ShieldFlags, string> forbShields = new Dictionary<DFCareer.ShieldFlags, string>
                 {
-                    { DFCareer.ShieldFlags.Buckler, HardStrings.buckler },
-                    { DFCareer.ShieldFlags.KiteShield, HardStrings.kiteShield },
-                    { DFCareer.ShieldFlags.RoundShield, HardStrings.roundShield },
-                    { DFCareer.ShieldFlags.TowerShield, HardStrings.towerShield }
+                    { DFCareer.ShieldFlags.Buckler, TextManager.Instance.GetLocalizedText(HardStrings.buckler) },
+                    { DFCareer.ShieldFlags.KiteShield, TextManager.Instance.GetLocalizedText(HardStrings.kiteShield) },
+                    { DFCareer.ShieldFlags.RoundShield, TextManager.Instance.GetLocalizedText(HardStrings.roundShield) },
+                    { DFCareer.ShieldFlags.TowerShield, TextManager.Instance.GetLocalizedText(HardStrings.towerShield) }
                 };
                 foreach (DFCareer.ShieldFlags flag in Enum.GetValues(typeof(DFCareer.ShieldFlags)))
                 {
                     if ((career.ForbiddenShields & flag) == flag)
-                        specials.Add(HardStrings.forbiddenShieldTypes + " " + forbShields[flag]);
+                        specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.forbiddenShieldTypes) + " " + forbShields[flag]);
                 }
             }
 
@@ -654,14 +654,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Dictionary<DFCareer.ArmorFlags, string> forbArmors = new Dictionary<DFCareer.ArmorFlags, string>
                 {
-                    { DFCareer.ArmorFlags.Chain, HardStrings.chain },
-                    { DFCareer.ArmorFlags.Leather, HardStrings.leather },
-                    { DFCareer.ArmorFlags.Plate, HardStrings.plate }
+                    { DFCareer.ArmorFlags.Chain, TextManager.Instance.GetLocalizedText(HardStrings.chain) },
+                    { DFCareer.ArmorFlags.Leather, TextManager.Instance.GetLocalizedText(HardStrings.leather) },
+                    { DFCareer.ArmorFlags.Plate, TextManager.Instance.GetLocalizedText(HardStrings.plate) }
                 };
                 foreach (DFCareer.ArmorFlags flag in Enum.GetValues(typeof(DFCareer.ArmorFlags)))
                 {
                     if ((career.ForbiddenArmors & flag) == flag)
-                        specials.Add(HardStrings.forbiddenArmorType + " " + forbArmors[flag]);
+                        specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.forbiddenArmorType) + " " + forbArmors[flag]);
                 }
             }
 
@@ -674,13 +674,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Dictionary<DFCareer.SpellPointMultipliers, string> spellPtMults = new Dictionary<DFCareer.SpellPointMultipliers, string>
                 {
-                    { DFCareer.SpellPointMultipliers.Times_1_00, HardStrings.intInSpellPoints },
-                    { DFCareer.SpellPointMultipliers.Times_1_50, HardStrings.intInSpellPoints15 },
-                    { DFCareer.SpellPointMultipliers.Times_1_75, HardStrings.intInSpellPoints175 },
-                    { DFCareer.SpellPointMultipliers.Times_2_00, HardStrings.intInSpellPoints2 },
-                    { DFCareer.SpellPointMultipliers.Times_3_00, HardStrings.intInSpellPoints3 },
+                    { DFCareer.SpellPointMultipliers.Times_1_00, TextManager.Instance.GetLocalizedText(HardStrings.intInSpellPoints) },
+                    { DFCareer.SpellPointMultipliers.Times_1_50, TextManager.Instance.GetLocalizedText(HardStrings.intInSpellPoints15) },
+                    { DFCareer.SpellPointMultipliers.Times_1_75, TextManager.Instance.GetLocalizedText(HardStrings.intInSpellPoints175) },
+                    { DFCareer.SpellPointMultipliers.Times_2_00, TextManager.Instance.GetLocalizedText(HardStrings.intInSpellPoints2) },
+                    { DFCareer.SpellPointMultipliers.Times_3_00, TextManager.Instance.GetLocalizedText(HardStrings.intInSpellPoints3) },
                 };
-                specials.Add(HardStrings.increasedMagery + " " + spellPtMults[career.SpellPointMultiplier]);
+                specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.increasedMagery) + " " + spellPtMults[career.SpellPointMultiplier]);
             }
 
             // Spell absorption
@@ -688,68 +688,68 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Dictionary<DFCareer.SpellAbsorptionFlags, string> absorbConds = new Dictionary<DFCareer.SpellAbsorptionFlags, string>
                 {
-                    { DFCareer.SpellAbsorptionFlags.Always, HardStrings.general },
-                    { DFCareer.SpellAbsorptionFlags.InDarkness, HardStrings.inDarkness },
-                    { DFCareer.SpellAbsorptionFlags.InLight, HardStrings.inLight }
+                    { DFCareer.SpellAbsorptionFlags.Always, TextManager.Instance.GetLocalizedText(HardStrings.general) },
+                    { DFCareer.SpellAbsorptionFlags.InDarkness, TextManager.Instance.GetLocalizedText(HardStrings.inDarkness) },
+                    { DFCareer.SpellAbsorptionFlags.InLight, TextManager.Instance.GetLocalizedText(HardStrings.inLight) }
                 };
-                specials.Add(HardStrings.spellAbsorption + " " + absorbConds[career.SpellAbsorption]);
+                specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.spellAbsorption) + " " + absorbConds[career.SpellAbsorption]);
             }
 
             // Spell point regeneration
             if (career.NoRegenSpellPoints)
-                specials.Add(HardStrings.inabilityToRegen);
+                specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.inabilityToRegen));
 
             // Talents
             if (career.AcuteHearing)
-                specials.Add(HardStrings.acuteHearing);
+                specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.acuteHearing));
 
             if (career.Athleticism)
-                specials.Add(HardStrings.athleticism);
+                specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.athleticism));
 
             if (career.AdrenalineRush)
-                specials.Add(HardStrings.adrenalineRush);
+                specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.adrenalineRush));
 
             // Regeneration and rapid healing
             if (career.Regeneration != DFCareer.RegenerationFlags.None)
             {
                 Dictionary<DFCareer.RegenerationFlags, string> regenConds = new Dictionary<DFCareer.RegenerationFlags, string>
                 {
-                    { DFCareer.RegenerationFlags.Always, HardStrings.general },
-                    { DFCareer.RegenerationFlags.InDarkness, HardStrings.inDarkness },
-                    { DFCareer.RegenerationFlags.InLight, HardStrings.inLight },
-                    { DFCareer.RegenerationFlags.InWater, HardStrings.whileImmersed }
+                    { DFCareer.RegenerationFlags.Always, TextManager.Instance.GetLocalizedText(HardStrings.general) },
+                    { DFCareer.RegenerationFlags.InDarkness, TextManager.Instance.GetLocalizedText(HardStrings.inDarkness) },
+                    { DFCareer.RegenerationFlags.InLight, TextManager.Instance.GetLocalizedText(HardStrings.inLight) },
+                    { DFCareer.RegenerationFlags.InWater, TextManager.Instance.GetLocalizedText(HardStrings.whileImmersed) }
                 };
-                specials.Add(HardStrings.regenerateHealth + " " + regenConds[career.Regeneration]);
+                specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.regenerateHealth) + " " + regenConds[career.Regeneration]);
             }
 
             if (career.RapidHealing != DFCareer.RapidHealingFlags.None)
             {
                 Dictionary<DFCareer.RapidHealingFlags, string> rapidHealingConds = new Dictionary<DFCareer.RapidHealingFlags, string>
                 {
-                    { DFCareer.RapidHealingFlags.Always, HardStrings.general },
-                    { DFCareer.RapidHealingFlags.InDarkness, HardStrings.inDarkness },
-                    { DFCareer.RapidHealingFlags.InLight, HardStrings.inLight }
+                    { DFCareer.RapidHealingFlags.Always, TextManager.Instance.GetLocalizedText(HardStrings.general) },
+                    { DFCareer.RapidHealingFlags.InDarkness, TextManager.Instance.GetLocalizedText(HardStrings.inDarkness) },
+                    { DFCareer.RapidHealingFlags.InLight, TextManager.Instance.GetLocalizedText(HardStrings.inLight) }
                 };
-                specials.Add(HardStrings.rapidHealing + " " + rapidHealingConds[career.RapidHealing]);
+                specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.rapidHealing) + " " + rapidHealingConds[career.RapidHealing]);
             }
 
             // Damage
             if (career.DamageFromSunlight)
-                specials.Add(HardStrings.damage + " " + HardStrings.fromSunlight);
+                specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.damage) + " " + TextManager.Instance.GetLocalizedText(HardStrings.fromSunlight));
 
             if (career.DamageFromHolyPlaces)
-                specials.Add(HardStrings.damage + " " + HardStrings.fromHolyPlaces);
+                specials.Add(TextManager.Instance.GetLocalizedText(HardStrings.damage) + " " + TextManager.Instance.GetLocalizedText(HardStrings.fromHolyPlaces));
 
             // Add racial tolerances and abilities
             Dictionary<DFCareer.EffectFlags, string> raceEffectMods = new Dictionary<DFCareer.EffectFlags, string>
             {
-                { DFCareer.EffectFlags.Paralysis, HardStrings.toParalysis },
-                { DFCareer.EffectFlags.Magic, HardStrings.toMagic },
-                { DFCareer.EffectFlags.Poison, HardStrings.toPoison },
-                { DFCareer.EffectFlags.Fire, HardStrings.toFire },
-                { DFCareer.EffectFlags.Frost, HardStrings.toFrost },
-                { DFCareer.EffectFlags.Shock, HardStrings.toShock },
-                { DFCareer.EffectFlags.Disease, HardStrings.toDisease },
+                { DFCareer.EffectFlags.Paralysis, TextManager.Instance.GetLocalizedText(HardStrings.toParalysis) },
+                { DFCareer.EffectFlags.Magic, TextManager.Instance.GetLocalizedText(HardStrings.toMagic) },
+                { DFCareer.EffectFlags.Poison, TextManager.Instance.GetLocalizedText(HardStrings.toPoison) },
+                { DFCareer.EffectFlags.Fire, TextManager.Instance.GetLocalizedText(HardStrings.toFire) },
+                { DFCareer.EffectFlags.Frost, TextManager.Instance.GetLocalizedText(HardStrings.toFrost) },
+                { DFCareer.EffectFlags.Shock, TextManager.Instance.GetLocalizedText(HardStrings.toShock) },
+                { DFCareer.EffectFlags.Disease, TextManager.Instance.GetLocalizedText(HardStrings.toDisease) },
             };
             foreach (DFCareer.EffectFlags effectFlag in Enum.GetValues(typeof(DFCareer.EffectFlags)))
             {
@@ -758,7 +758,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // Resistances
                     if ((race.ResistanceFlags & effectFlag) == effectFlag)
                     { 
-                        string toAdd = HardStrings.resistance + " " + raceEffectMods[effectFlag];
+                        string toAdd = TextManager.Instance.GetLocalizedText(HardStrings.resistance) + " " + raceEffectMods[effectFlag];
                         if (!specials.Contains(toAdd)) // prevent duplicates from career
                         {
                             specials.Add(toAdd);
@@ -767,7 +767,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // Immunities
                     if ((race.ImmunityFlags & effectFlag) == effectFlag)
                     {
-                        string toAdd = HardStrings.immunity + " " + raceEffectMods[effectFlag];
+                        string toAdd = TextManager.Instance.GetLocalizedText(HardStrings.immunity) + " " + raceEffectMods[effectFlag];
                         if (!specials.Contains(toAdd))
                         {
                             specials.Add(toAdd);
@@ -776,7 +776,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // Low tolerances
                     if ((race.LowToleranceFlags & effectFlag) == effectFlag)
                     {
-                        string toAdd = HardStrings.lowTolerance + " " + raceEffectMods[effectFlag];
+                        string toAdd = TextManager.Instance.GetLocalizedText(HardStrings.lowTolerance) + " " + raceEffectMods[effectFlag];
                         if (!specials.Contains(toAdd))
                         {
                             specials.Add(toAdd);
@@ -785,7 +785,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // Critical weaknesses
                     if ((race.CriticalWeaknessFlags & effectFlag) == effectFlag)
                     {
-                        string toAdd = HardStrings.criticalWeakness + " " + raceEffectMods[effectFlag];
+                        string toAdd = TextManager.Instance.GetLocalizedText(HardStrings.criticalWeakness) + " " + raceEffectMods[effectFlag];
                         if (!specials.Contains(toAdd))
                         {
                             specials.Add(toAdd);
@@ -796,12 +796,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             Dictionary<DFCareer.SpecialAbilityFlags, string> raceAbilities = new Dictionary<DFCareer.SpecialAbilityFlags, string>
             {
-                { DFCareer.SpecialAbilityFlags.AcuteHearing, HardStrings.acuteHearing },
-                { DFCareer.SpecialAbilityFlags.Athleticism, HardStrings.acuteHearing },
-                { DFCareer.SpecialAbilityFlags.AdrenalineRush, HardStrings.adrenalineRush },
-                { DFCareer.SpecialAbilityFlags.NoRegenSpellPoints, HardStrings.inabilityToRegen },
-                { DFCareer.SpecialAbilityFlags.SunDamage, HardStrings.damage + " " + HardStrings.fromSunlight },
-                { DFCareer.SpecialAbilityFlags.HolyDamage, HardStrings.damage + " " + HardStrings.fromHolyPlaces }
+                { DFCareer.SpecialAbilityFlags.AcuteHearing, TextManager.Instance.GetLocalizedText(HardStrings.acuteHearing) },
+                { DFCareer.SpecialAbilityFlags.Athleticism, TextManager.Instance.GetLocalizedText(HardStrings.acuteHearing) },
+                { DFCareer.SpecialAbilityFlags.AdrenalineRush, TextManager.Instance.GetLocalizedText(HardStrings.adrenalineRush) },
+                { DFCareer.SpecialAbilityFlags.NoRegenSpellPoints, TextManager.Instance.GetLocalizedText(HardStrings.inabilityToRegen) },
+                { DFCareer.SpecialAbilityFlags.SunDamage, TextManager.Instance.GetLocalizedText(HardStrings.damage) + " " + TextManager.Instance.GetLocalizedText(HardStrings.fromSunlight) },
+                { DFCareer.SpecialAbilityFlags.HolyDamage, TextManager.Instance.GetLocalizedText(HardStrings.damage) + " " + TextManager.Instance.GetLocalizedText(HardStrings.fromHolyPlaces) }
             };
             foreach (DFCareer.SpecialAbilityFlags abilityFlag in Enum.GetValues(typeof(DFCareer.SpecialAbilityFlags)))
             {

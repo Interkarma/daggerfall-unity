@@ -112,6 +112,22 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Tries to gets text value from localization in TextProvider.
+        /// Will use current locale if available in collection.
+        /// </summary>
+        /// <param name="collectionName">Name of table collection.</param>
+        /// <param name="key">Key of text in table.</param>
+        /// <param name="localizedString">Result of lookup if found.</param>
+        /// <returns>True if text found, otherwise false.</returns>
+        public bool TryGetLocalizedText(string collectionName, string key, out string localizedString)
+        {
+            if (!DaggerfallUnity.Instance.TextProvider.GetLocalizedString(collectionName, key, out localizedString))
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
         /// Gets an array of text where each line is considered an item in array.
         /// Entry will be read from table and split by newline '\n' character into array.
         /// </summary>
@@ -139,6 +155,52 @@ namespace DaggerfallWorkshop.Game
             cachedLocalizedTextLists.Add(cacheKey, cachedList);
 
             return cachedList;
+        }
+
+        /// <summary>
+        /// Gets array of text from discrete items using a key array.
+        /// </summary>
+        /// <param name="collectionName">Name of table collection.</param>
+        /// <param name="keyArray">Array of keys to resolve back to text in list.</param>
+        /// <param name="exception">True to throw exception if text not found. False to just return null.</param>
+        /// <returns>Text array if all keys found, otherwise returns null or throws exception.</returns>
+        public string[] GetLocalizedTextListFromKeyArray(string collectionName, string[] keyArray, bool exception = true)
+        {
+            if (keyArray == null || keyArray.Length == 0)
+            {
+                if (exception)
+                    throw new Exception("keyArray is null or empty");
+                else
+                    return null;
+            }
+
+            List<string> results = new List<string>();
+            foreach(string key in keyArray)
+            {
+                string localizedString;
+                if (!TryGetLocalizedText(collectionName, key, out localizedString))
+                {
+                    if (exception)
+                        throw new Exception(string.Format("Text for key {0} not found", key));
+                    else
+                        return null;
+                }
+                results.Add(localizedString);
+            }
+
+            return results.ToArray();
+        }
+
+        /// <summary>
+        /// Gets array of text from discrete items using a key array.
+        /// </summary>
+        /// <param name="keyArray">Array of keys to resolve back to text in list.</param>
+        /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
+        /// <param name="exception">True to throw exception if text not found. False to just return null.</param>
+        /// <returns>Text array if all keys found, otherwise returns null or throws exception.</returns>
+        public string[] GetLocalizedTextListFromKeyArray(string[] keyArray, TextCollections collection = TextCollections.Internal, bool exception = true)
+        {
+            return GetLocalizedTextListFromKeyArray(GetCollectionName(collection), keyArray, exception);
         }
 
         /// <summary>

@@ -1359,5 +1359,173 @@ MonoBehaviour:
     m_Localized: While Immersed In Water
     m_Metadata:
       m_Items: []
+  - m_Id: 252
+    m_Localized: Critical Weakness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253
+    m_Localized: Damage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 254
+    m_Localized: Darkness-Powered Magery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 255
+    m_Localized: Forbidden Armor Type
+    m_Metadata:
+      m_Items: []
+  - m_Id: 256
+    m_Localized: Forbidden Material
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257
+    m_Localized: Forbidden Shield Types
+    m_Metadata:
+      m_Items: []
+  - m_Id: 258
+    m_Localized: Forbidden Weaponry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259
+    m_Localized: Inability To Regen Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 260
+    m_Localized: Light-Powered Magery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 261
+    m_Localized: Low Tolerance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262
+    m_Localized: Phobia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 263
+    m_Localized: From Holy Places
+    m_Metadata:
+      m_Items: []
+  - m_Id: 264
+    m_Localized: From Sunlight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 265
+    m_Localized: Lower Magic Ability In Daylight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 266
+    m_Localized: Unable To Use Magic In Daylight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 267
+    m_Localized: Chain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 268
+    m_Localized: Leather
+    m_Metadata:
+      m_Items: []
+  - m_Id: 269
+    m_Localized: Plate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270
+    m_Localized: Adamantium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 271
+    m_Localized: Daedric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 272
+    m_Localized: Dwarven
+    m_Metadata:
+      m_Items: []
+  - m_Id: 273
+    m_Localized: Ebony
+    m_Metadata:
+      m_Items: []
+  - m_Id: 274
+    m_Localized: Elven
+    m_Metadata:
+      m_Items: []
+  - m_Id: 275
+    m_Localized: Iron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 276
+    m_Localized: Mithril
+    m_Metadata:
+      m_Items: []
+  - m_Id: 277
+    m_Localized: Orcish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 278
+    m_Localized: Silver
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279
+    m_Localized: Steel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 280
+    m_Localized: Buckler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 281
+    m_Localized: Kite Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282
+    m_Localized: Round Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 283
+    m_Localized: Tower Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284
+    m_Localized: Lower Magic Ability In Darkness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285
+    m_Localized: Unable To Use Magic In Darkness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286
+    m_Localized: Attributes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287
+    m_Localized: Class Name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288
+    m_Localized: General
+    m_Metadata:
+      m_Items: []
+  - m_Id: 289
+    m_Localized: Reputations
+    m_Metadata:
+      m_Items: []
+  - m_Id: 290
+    m_Localized: Skill Advancement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 291
+    m_Localized: Skills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292
+    m_Localized: Special Advantages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293
+    m_Localized: Special Disadvantages
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

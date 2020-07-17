@@ -14,89 +14,85 @@ using System;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /// <summary>
-    /// These strings are hard-coded into FALL.EXE.
-    /// They are replicated here temporarily during development.
-    /// This will eventually be moved to an improved text handler so strings are never hard-coded.
+    /// Collection of hardcoded string constants.
+    /// No in-game text is to be stored here, only strings for keys and similar.
     /// </summary>
     public class HardStrings
     {
-        // TODO: Note that buildingNames string key array temple names are not consistent with 4055-4062!
-        // This note has been preserved from prior to localization
+        // Keys for localized advantage/disadvantage string lookup
+        // These keys are referenced extensively by character creator and character sheet UIs
+        public const string acuteHearing = "acuteHearing";
+        public const string adrenalineRush = "adrenalineRush";
+        public const string athleticism = "athleticism";
+        public const string bonusToHit = "bonusToHit";
+        public const string expertiseIn = "expertiseIn";
+        public const string immunity = "immunity";
+        public const string increasedMagery = "increasedMagery";
+        public const string rapidHealing = "rapidHealing";
+        public const string regenerateHealth = "regenerateHealth";
+        public const string resistance = "resistance";
+        public const string spellAbsorption = "spellAbsorption";
+        public const string animals = "animals";
+        public const string daedra = "daedra";
+        public const string humanoid = "humanoid";
+        public const string undead = "undead";
+        public const string axe = "axe";
+        public const string bluntWeapon = "bluntWeapon";
+        public const string handToHand = "handToHand";
+        public const string longBlade = "longBlade";
+        public const string missileWeapon = "missileWeapon";
+        public const string shortBlade = "shortBlade";
+        public const string toDisease = "toDisease";
+        public const string toFire = "toFire";
+        public const string toFrost = "toFrost";
+        public const string toMagic = "toMagic";
+        public const string toParalysis = "toParalysis";
+        public const string toPoison = "toPoison";
+        public const string toShock = "toShock";
+        public const string intInSpellPoints15 = "intInSpellPoints15";
+        public const string intInSpellPoints175 = "intInSpellPoints175";
+        public const string intInSpellPoints2 = "intInSpellPoints2";
+        public const string intInSpellPoints3 = "intInSpellPoints3";
+        public const string intInSpellPoints = "intInSpellPoints";
+        public const string general = "general";
+        public const string inDarkness = "inDarkness";
+        public const string inLight = "inLight";
+        public const string whileImmersed = "whileImmersed";
+        public const string criticalWeakness = "criticalWeakness";
+        public const string damage = "damage";
+        public const string darknessPoweredMagery = "darknessPoweredMagery";
+        public const string forbiddenArmorType = "forbiddenArmorType";
+        public const string forbiddenMaterial = "forbiddenMaterial";
+        public const string forbiddenShieldTypes = "forbiddenShieldTypes";
+        public const string forbiddenWeaponry = "forbiddenWeaponry";
+        public const string inabilityToRegen = "inabilityToRegen";
+        public const string lightPoweredMagery = "lightPoweredMagery";
+        public const string lowTolerance = "lowTolerance";
+        public const string phobia = "phobia";
+        public const string fromHolyPlaces = "fromHolyPlaces";
+        public const string fromSunlight = "fromSunlight";
+        public const string lowerMagicAbilityDaylight = "lowerMagicAbilityDaylight";
+        public const string unableToUseMagicInDaylight = "unableToUseMagicInDaylight";
+        public const string chain = "chain";
+        public const string leather = "leather";
+        public const string plate = "plate";
+        public const string adamantium = "adamantium";
+        public const string daedric = "daedric";
+        public const string dwarven = "dwarven";
+        public const string ebony = "ebony";
+        public const string elven = "elven";
+        public const string iron = "iron";
+        public const string mithril = "mithril";
+        public const string orcish = "orcish";
+        public const string silver = "silver";
+        public const string steel = "steel";
+        public const string buckler = "buckler";
+        public const string kiteShield = "kiteShield";
+        public const string roundShield = "roundShield";
+        public const string towerShield = "towerShield";
+        public const string lowerMagicAbilityDarkness = "lowerMagicAbilityDarkness";
+        public const string unableToUseMagicInDarkness = "unableToUseMagicInDarkness";
 
-        // ADDED TO STRING TABLE - NEED TO REFACTOR SOME CODE TO REMOVE THIS BLOCK
-        public const string acuteHearing = "Acute Hearing";
-        public const string adrenalineRush = "Adrenaline Rush";
-        public const string athleticism = "Athleticism";
-        public const string bonusToHit = "Bonus to hit";
-        public const string expertiseIn = "Expertise in";
-        public const string immunity = "Immunity";
-        public const string increasedMagery = "Increased Magery";
-        public const string rapidHealing = "Rapid Healing";
-        public const string regenerateHealth = "Regenerate Health";
-        public const string resistance = "Resistance";
-        public const string spellAbsorption = "Spell Absorption";
-        public const string animals = "Animals";
-        public const string daedra = "Daedra";
-        public const string humanoid = "Humanoid";
-        public const string undead = "Undead";
-        public const string axe = "Axe";
-        public const string bluntWeapon = "Blunt Weapon";
-        public const string handToHand = "Hand_To_Hand";
-        public const string longBlade = "Long Blade";
-        public const string missileWeapon = "Missile Weapon";
-        public const string shortBlade = "Short Blade";
-        public const string toDisease = "To Disease";
-        public const string toFire = "To Fire";
-        public const string toFrost = "To Frost";
-        public const string toMagic = "To Magic";
-        public const string toParalysis = "To Paralysis";
-        public const string toPoison = "To Poison";
-        public const string toShock = "To Shock";
-        public const string intInSpellPoints15 = "1.5X INT In Spell Points";
-        public const string intInSpellPoints175 = "1.75X INT In Spell Points";
-        public const string intInSpellPoints2 = "2X INT In Spell Points";
-        public const string intInSpellPoints3 = "3X INT In Spell Points";
-        public const string intInSpellPoints = "INT In Spell Points";
-        public const string general = "General";
-        public const string inDarkness = "In Darkness";
-        public const string inLight = "In Light";
-        public const string whileImmersed = "While Immersed In Water";
-        // ADDED TO STRING TABLE - NEED TO REFACTOR SOME CODE TO REMOVE THIS BLOCK
-
-        public const string criticalWeakness = "Critical Weakness";
-        public const string damage = "Damage";
-        public const string darknessPoweredMagery = "Darkness_Powered Magery";
-        public const string forbiddenArmorType = "Forbidden Armor Type";
-        public const string forbiddenMaterial = "Forbidden Material";
-        public const string forbiddenShieldTypes = "Forbidden Shield Types";
-        public const string forbiddenWeaponry = "Forbidden Weaponry";
-        public const string inabilityToRegen = "Inability To Regen Spell Points";
-        public const string lightPoweredMagery = "Light_Powered Magery";
-        public const string lowTolerance = "Low Tolerance";
-        public const string phobia = "Phobia";
-        public const string fromHolyPlaces = "From Holy Places";
-        public const string fromSunlight = "From Sunlight";
-        public const string lowerMagicAbilityDaylight = "Lower Magic Ability In Daylight";
-        public const string unableToUseMagicInDaylight = "Unable To Use Magic In Daylight";
-        public const string chain = "Chain";
-        public const string leather = "Leather";
-        public const string plate = "Plate";
-        public const string adamantium = "Adamantium";
-        public const string daedric = "Daedric";
-        public const string dwarven = "Dwarven";
-        public const string ebony = "Ebony";
-        public const string elven = "Elven";
-        public const string iron = "Iron";
-        public const string mithril = "Mithril";
-        public const string orcish = "Orcish";
-        public const string silver = "Silver";
-        public const string steel = "Steel";
-        public const string buckler = "Buckler";
-        public const string kiteShield = "Kite Shield";
-        public const string roundShield = "Round Shield";
-        public const string towerShield = "Tower Shield";
-        public const string lowerMagicAbilityDarkness = "Lower Magic Ability In Darkness";
-        public const string unableToUseMagicInDarkness = "Unable To Use Magic In Darkness";
         public const string helpAttributes = "Attributes";
         public const string helpClassName = "Class Name";
         public const string helpGeneral = "General";
@@ -105,6 +101,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string helpSkills = "Skills";
         public const string helpSpecialAdvantages = "Special Advantages";
         public const string helpSpecialDisadvantages = "Special Disadvantages";
+
         public const string lower = "Lower";
         public const string higher = "Higher";
         public const string unchanged = "Unchanged";
