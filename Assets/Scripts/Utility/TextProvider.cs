@@ -304,25 +304,25 @@ namespace DaggerfallWorkshop.Utility
             switch(material)
             {
                 case WeaponMaterialTypes.Iron:
-                    return "Iron";
+                    return TextManager.Instance.GetLocalizedText("iron");
                 case WeaponMaterialTypes.Steel:
-                    return "Steel";
+                    return TextManager.Instance.GetLocalizedText("steel");
                 case WeaponMaterialTypes.Silver:
-                    return "Silver";
+                    return TextManager.Instance.GetLocalizedText("silver");
                 case WeaponMaterialTypes.Elven:
-                    return "Elven";
+                    return TextManager.Instance.GetLocalizedText("elven");
                 case WeaponMaterialTypes.Dwarven:
-                    return "Dwarven";
+                    return TextManager.Instance.GetLocalizedText("dwarven");
                 case WeaponMaterialTypes.Mithril:
-                    return "Mithril";
+                    return TextManager.Instance.GetLocalizedText("mithril");
                 case WeaponMaterialTypes.Adamantium:
-                    return "Adamantium";
+                    return TextManager.Instance.GetLocalizedText("adamantium");
                 case WeaponMaterialTypes.Ebony:
-                    return "Ebony";
+                    return TextManager.Instance.GetLocalizedText("ebony");
                 case WeaponMaterialTypes.Orcish:
-                    return "Orcish";
+                    return TextManager.Instance.GetLocalizedText("orcish");
                 case WeaponMaterialTypes.Daedric:
-                    return "Daedric";
+                    return TextManager.Instance.GetLocalizedText("daedric");
                 default:
                     return string.Empty;
             }
@@ -333,30 +333,30 @@ namespace DaggerfallWorkshop.Utility
             switch (material)
             {
                 case ArmorMaterialTypes.Leather:
-                    return "Leather";
+                    return TextManager.Instance.GetLocalizedText("leather");
                 case ArmorMaterialTypes.Chain:
                 case ArmorMaterialTypes.Chain2:
-                    return "Chain";
+                    return TextManager.Instance.GetLocalizedText("chain");
                 case ArmorMaterialTypes.Iron:
-                    return "Iron";
+                    return TextManager.Instance.GetLocalizedText("iron");
                 case ArmorMaterialTypes.Steel:
-                    return "Steel";
+                    return TextManager.Instance.GetLocalizedText("steel");
                 case ArmorMaterialTypes.Silver:
-                    return "Silver";
+                    return TextManager.Instance.GetLocalizedText("silver");
                 case ArmorMaterialTypes.Elven:
-                    return "Elven";
+                    return TextManager.Instance.GetLocalizedText("elven");
                 case ArmorMaterialTypes.Dwarven:
-                    return "Dwarven";
+                    return TextManager.Instance.GetLocalizedText("dwarven");
                 case ArmorMaterialTypes.Mithril:
-                    return "Mithril";
+                    return TextManager.Instance.GetLocalizedText("mithril");
                 case ArmorMaterialTypes.Adamantium:
-                    return "Adamantium";
+                    return TextManager.Instance.GetLocalizedText("adamantium");
                 case ArmorMaterialTypes.Ebony:
-                    return "Ebony";
+                    return TextManager.Instance.GetLocalizedText("ebony");
                 case ArmorMaterialTypes.Orcish:
-                    return "Orcish";
+                    return TextManager.Instance.GetLocalizedText("orcish");
                 case ArmorMaterialTypes.Daedric:
-                    return "Daedric";
+                    return TextManager.Instance.GetLocalizedText("daedric");
             }
 
             // Standard material type value not found.
