@@ -373,75 +373,75 @@ namespace DaggerfallWorkshop.Utility
             switch (skill)
             {
                 case DFCareer.Skills.Medical:
-                    return "Medical";
+                    return TextManager.Instance.GetLocalizedText("medical");
                 case DFCareer.Skills.Etiquette:
-                    return "Etiquette";
+                    return TextManager.Instance.GetLocalizedText("etiquette");
                 case DFCareer.Skills.Streetwise:
-                    return "Streetwise";
+                    return TextManager.Instance.GetLocalizedText("streetwise");
                 case DFCareer.Skills.Jumping:
-                    return "Jumping";
+                    return TextManager.Instance.GetLocalizedText("jumping");
                 case DFCareer.Skills.Orcish:
-                    return "Orcish";
+                    return TextManager.Instance.GetLocalizedText("orcish");
                 case DFCareer.Skills.Harpy:
-                    return "Harpy";
+                    return TextManager.Instance.GetLocalizedText("harpy");
                 case DFCareer.Skills.Giantish:
-                    return "Giantish";
+                    return TextManager.Instance.GetLocalizedText("giantish");
                 case DFCareer.Skills.Dragonish:
-                    return "Dragonish";
+                    return TextManager.Instance.GetLocalizedText("dragonish");
                 case DFCareer.Skills.Nymph:
-                    return "Nymph";
+                    return TextManager.Instance.GetLocalizedText("nymph");
                 case DFCareer.Skills.Daedric:
-                    return "Daedric";
+                    return TextManager.Instance.GetLocalizedText("daedric");
                 case DFCareer.Skills.Spriggan:
-                    return "Spriggan";
+                    return TextManager.Instance.GetLocalizedText("spriggan");
                 case DFCareer.Skills.Centaurian:
-                    return "Centaurian";
+                    return TextManager.Instance.GetLocalizedText("centaurian");
                 case DFCareer.Skills.Impish:
-                    return "Impish";
+                    return TextManager.Instance.GetLocalizedText("impish");
                 case DFCareer.Skills.Lockpicking:
-                    return "Lockpicking";
+                    return TextManager.Instance.GetLocalizedText("lockpicking");
                 case DFCareer.Skills.Mercantile:
-                    return "Mercantile";
+                    return TextManager.Instance.GetLocalizedText("mercantile");
                 case DFCareer.Skills.Pickpocket:
-                    return "Pickpocket";
+                    return TextManager.Instance.GetLocalizedText("pickpocket");
                 case DFCareer.Skills.Stealth:
-                    return "Stealth";
+                    return TextManager.Instance.GetLocalizedText("stealth");
                 case DFCareer.Skills.Swimming:
-                    return "Swimming";
+                    return TextManager.Instance.GetLocalizedText("swimming");
                 case DFCareer.Skills.Climbing:
-                    return "Climbing";
+                    return TextManager.Instance.GetLocalizedText("climbing");
                 case DFCareer.Skills.Backstabbing:
-                    return "Backstabbing";
+                    return TextManager.Instance.GetLocalizedText("backstabbing");
                 case DFCareer.Skills.Dodging:
-                    return "Dodging";
+                    return TextManager.Instance.GetLocalizedText("dodging");
                 case DFCareer.Skills.Running:
-                    return "Running";
+                    return TextManager.Instance.GetLocalizedText("running");
                 case DFCareer.Skills.Destruction:
-                    return "Destruction";
+                    return TextManager.Instance.GetLocalizedText("destruction");
                 case DFCareer.Skills.Restoration:
-                    return "Restoration";
+                    return TextManager.Instance.GetLocalizedText("restoration");
                 case DFCareer.Skills.Illusion:
-                    return "Illusion";
+                    return TextManager.Instance.GetLocalizedText("illusion");
                 case DFCareer.Skills.Alteration:
-                    return "Alteration";
+                    return TextManager.Instance.GetLocalizedText("alteration");
                 case DFCareer.Skills.Thaumaturgy:
-                    return "Thaumaturgy";
+                    return TextManager.Instance.GetLocalizedText("thaumaturgy");
                 case DFCareer.Skills.Mysticism:
-                    return "Mysticism";
+                    return TextManager.Instance.GetLocalizedText("mysticism");
                 case DFCareer.Skills.ShortBlade:
-                    return "Short Blade";
+                    return TextManager.Instance.GetLocalizedText("shortBlade");
                 case DFCareer.Skills.LongBlade:
-                    return "Long Blade";
+                    return TextManager.Instance.GetLocalizedText("longBlade");
                 case DFCareer.Skills.HandToHand:
-                    return "Hand-to-Hand";
+                    return TextManager.Instance.GetLocalizedText("handToHand");
                 case DFCareer.Skills.Axe:
-                    return "Axe";
+                    return TextManager.Instance.GetLocalizedText("axe");
                 case DFCareer.Skills.BluntWeapon:
-                    return "Blunt Weapon";
+                    return TextManager.Instance.GetLocalizedText("bluntWeapon");
                 case DFCareer.Skills.Archery:
-                    return "Archery";
+                    return TextManager.Instance.GetLocalizedText("archery");
                 case DFCareer.Skills.CriticalStrike:
-                    return "Critical Strike";
+                    return TextManager.Instance.GetLocalizedText("criticalStrike");
                 default:
                     return string.Empty;
             }

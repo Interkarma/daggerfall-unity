@@ -1595,5 +1595,121 @@ MonoBehaviour:
     m_Localized: shores
     m_Metadata:
       m_Items: []
+  - m_Id: 311
+    m_Localized: Medical
+    m_Metadata:
+      m_Items: []
+  - m_Id: 312
+    m_Localized: Etiquette
+    m_Metadata:
+      m_Items: []
+  - m_Id: 313
+    m_Localized: Streetwise
+    m_Metadata:
+      m_Items: []
+  - m_Id: 314
+    m_Localized: Jumping
+    m_Metadata:
+      m_Items: []
+  - m_Id: 315
+    m_Localized: Harpy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 316
+    m_Localized: Giantish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 317
+    m_Localized: Dragonish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318
+    m_Localized: Nymph
+    m_Metadata:
+      m_Items: []
+  - m_Id: 319
+    m_Localized: Daedric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 320
+    m_Localized: Spriggan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 321
+    m_Localized: Centaurian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 322
+    m_Localized: Impish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 323
+    m_Localized: Lockpicking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 324
+    m_Localized: Mercantile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 325
+    m_Localized: Pickpocket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 326
+    m_Localized: Stealth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 327
+    m_Localized: Swimming
+    m_Metadata:
+      m_Items: []
+  - m_Id: 328
+    m_Localized: Climbing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 329
+    m_Localized: Backstabbing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 330
+    m_Localized: Dodging
+    m_Metadata:
+      m_Items: []
+  - m_Id: 331
+    m_Localized: Running
+    m_Metadata:
+      m_Items: []
+  - m_Id: 332
+    m_Localized: Destruction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 333
+    m_Localized: Restoration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 334
+    m_Localized: Illusion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 335
+    m_Localized: Alteration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 336
+    m_Localized: Thaumaturgy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 337
+    m_Localized: Mysticism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338
+    m_Localized: Archery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340
+    m_Localized: Critical Strike
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

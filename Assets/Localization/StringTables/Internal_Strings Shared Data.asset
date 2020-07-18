@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 311
+  m_NextAvailableId: 341
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -1254,6 +1254,122 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 310
     m_Key: shores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 311
+    m_Key: medical
+    m_Metadata:
+      m_Items: []
+  - m_Id: 312
+    m_Key: etiquette
+    m_Metadata:
+      m_Items: []
+  - m_Id: 313
+    m_Key: streetwise
+    m_Metadata:
+      m_Items: []
+  - m_Id: 314
+    m_Key: jumping
+    m_Metadata:
+      m_Items: []
+  - m_Id: 315
+    m_Key: harpy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 316
+    m_Key: giantish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 317
+    m_Key: dragonish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318
+    m_Key: nymph
+    m_Metadata:
+      m_Items: []
+  - m_Id: 319
+    m_Key: aedric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 320
+    m_Key: spriggan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 321
+    m_Key: centaurian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 322
+    m_Key: impish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 323
+    m_Key: lockpicking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 324
+    m_Key: mercantile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 325
+    m_Key: pickpocket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 326
+    m_Key: stealth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 327
+    m_Key: swimming
+    m_Metadata:
+      m_Items: []
+  - m_Id: 328
+    m_Key: climbing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 329
+    m_Key: backstabbing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 330
+    m_Key: dodging
+    m_Metadata:
+      m_Items: []
+  - m_Id: 331
+    m_Key: running
+    m_Metadata:
+      m_Items: []
+  - m_Id: 332
+    m_Key: destruction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 333
+    m_Key: restoration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 334
+    m_Key: illusion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 335
+    m_Key: alteration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 336
+    m_Key: thaumaturgy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 337
+    m_Key: mysticism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338
+    m_Key: archery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340
+    m_Key: criticalStrike
     m_Metadata:
       m_Items: []
   m_Metadata:
