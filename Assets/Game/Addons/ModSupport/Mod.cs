@@ -239,9 +239,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             IsVirtual = true;
             ModInfo = modInfo;
-            types = modInfo.Files.Where(x => x.EndsWith(".cs"))
-                .Select(x => AssetDatabase.LoadAssetAtPath<MonoScript>(x))
-                .Where(x => x != null).Select(x => x.GetClass()).Where(x => x != null).ToArray();
+            types = GetTypesInEditor();
             FileName = Path.GetFileName(manifestPath.Remove(manifestPath.IndexOf(ModManager.MODINFOEXTENSION))).ToLower();
             DirPath = ModManager.Instance.ModDirectory;
             HasSettings = ModSettings.ModSettingsData.HasSettings(this);
@@ -849,25 +847,34 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 if (sources == null)
                     sources = new List<Source>();
 
-                string[] assetNames = AssetBundle.GetAllAssetNames();
-
-                string name = null;
-                foreach (string assetName in assetNames)
+                foreach (string assetName in AssetBundle.GetAllAssetNames())
                 {
-                    name = assetName.ToLower();
+                    bool isSource = false;
+                    bool isPrecompiled = false;
 
-                    if (name.EndsWith(".cs.txt") || name.EndsWith(".cs"))// || name.EndsWith(".byte")) //.byte is for .dll - not tested yet
+                    if (assetName.EndsWith(".cs", StringComparison.Ordinal))
                     {
-                        Source newUncompiledSource;
-                        TextAsset newSource = GetAsset<TextAsset>(assetName);
-
-                        if (newSource != null)
-                        {
-                            newUncompiledSource.sourceTxt = newSource;
-                            newUncompiledSource.isPreCompiled = name.EndsWith(".dll");
-                            sources.Add(newUncompiledSource);
-                        }
+                        isSource = true;
+                        isPrecompiled = false;
                     }
+                    else if (assetName.EndsWith(".dll.bytes", StringComparison.Ordinal))
+                    {
+                        isSource = true;
+                        isPrecompiled = true;    
+                    }
+
+                    if (isSource)
+                    {
+                        var newSource = GetAsset<TextAsset>(assetName);
+                        if (newSource)
+                        {
+                            sources.Add(new Source()
+                            {
+                                sourceTxt = newSource,
+                                isPreCompiled = isPrecompiled
+                            });
+                        }
+                    }  
                 }
 
                 return true;
@@ -891,7 +898,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 #endif
 
             List<string> stringSource = new List<string>(sources.Count);
-            Assembly assembly = null;
+            Assembly assembly;
 
             try
             {
@@ -908,16 +915,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         stringSource.Add(sources[i].sourceTxt.ToString());
                     }
                 }
+
                 if (stringSource.Count > 0)
                 {
                     assembly = ModManager.CompileFromSourceAssets(stringSource.ToArray());
-
                     if (assembly != null)
                         assemblies.Add(assembly);
                 }
 
-                stringSource = null;
-                sources = null;
                 return assemblies;
             }
             catch (Exception ex)
@@ -926,6 +931,36 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return null;
             }
         }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Gets types that are available in editor when loading mod in virtual mode.
+        /// Only classes that inherit from MonoBehaviour are available from raw .cs files.
+        /// </summary>
+        /// <returns>Array with available types.</returns>
+        private Type[] GetTypesInEditor()
+        {
+            var types = new List<Type>();
+
+            foreach (string fileName in ModInfo.Files)
+            {
+                if (fileName.EndsWith(".cs", StringComparison.Ordinal))
+                {
+                    var monoScript = AssetDatabase.LoadAssetAtPath<MonoScript>(fileName);
+                    if (monoScript)
+                        types.Add(monoScript.GetClass());
+                }
+                else if (fileName.EndsWith(".dll.bytes", StringComparison.Ordinal))
+                {
+                    var textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(fileName);
+                    if (textAsset)
+                        types.AddRange(Assembly.Load(textAsset.bytes).GetTypes());
+                }
+            }
+
+            return types.ToArray();
+        }
+#endif
 
         /// <summary>
         /// Returns a list of any valid mod setup functions.

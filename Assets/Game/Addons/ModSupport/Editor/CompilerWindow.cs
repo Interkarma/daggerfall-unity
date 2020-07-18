@@ -1,10 +1,10 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyl@dfworkshop.net)
-// Contributors:    
+// Contributors:    TheLacus
 // 
 // Notes:
 //
@@ -13,9 +13,8 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using DaggerfallWorkshop;
+using System.Reflection;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -29,6 +28,10 @@ namespace DaggerfallWorkshop.Game.Utility
         Vector2 scrollPos = Vector2.zero;
         [SerializeField]
         bool showFilesFoldout = true;
+
+        readonly string[] compilers = new string[] { "Portable Compiler", "Internal Compiler (experimental)" };
+        int selectedCompiler;
+        string outputPath;
 
         private void OnEnable()
         {
@@ -50,11 +53,15 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void OnGUI()
         {
+            bool outputPathIsSet = !string.IsNullOrEmpty(outputPath);
+
+            selectedCompiler = GUILayout.SelectionGrid(selectedCompiler, compilers, 2);
+
             GUILayout.Label("Select source files to compile");
 
             string path = "";
 
-            if (GUILayout.Button("Add File", GUILayout.Width(500)))
+            if (GUILayout.Button("Add File"))
             {
                 path = EditorUtility.OpenFilePanelWithFilters("", Application.dataPath, new string[] { "CSharp", "cs" });
                 if (filesToCompile.Contains(path))
@@ -71,22 +78,39 @@ namespace DaggerfallWorkshop.Game.Utility
 
             EditorGUILayout.Space();
 
-
-            if (filesToCompile != null && filesToCompile.Count > 0)
+            if (selectedCompiler == 1)
             {
-                if (GUILayout.Button("Compile"))
+                EditorGUILayout.LabelField("Output Path:");
+                if (GUILayout.Button(outputPathIsSet ? outputPath : "<select>"))
+                    outputPath = EditorUtility.SaveFilePanel("Output Path", Application.dataPath, "Assembly", "dll");
+
+                EditorGUILayout.Space();
+            }
+
+            bool enabled = filesToCompile != null && filesToCompile.Count > 0 && (selectedCompiler == 0 || outputPathIsSet);
+            EditorGUI.BeginDisabledGroup(!enabled);
+
+            if (GUILayout.Button("Compile"))
+            {
+                try
                 {
-                    try
+                    if (selectedCompiler == 0)
                     {
-                        System.Reflection.Assembly assembly = Compiler.CompileSource(filesToCompile.ToArray(), false, false);
+                        Assembly assembly = Compiler.CompileSource(filesToCompile.ToArray(), false, false);
                         Debug.Log(string.Format("Assembly {0} created", assembly.GetName().Name));
                     }
-                    catch(Exception ex)
+                    else
                     {
-                        Debug.LogError(ex.Message);
+                        ModAssemblyBuilder.Compile(outputPath, filesToCompile.ToArray());
                     }
                 }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
             }
+
+            EditorGUI.EndDisabledGroup();
 
             EditorGUILayout.Space();
 

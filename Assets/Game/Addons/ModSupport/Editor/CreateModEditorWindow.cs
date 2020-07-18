@@ -46,6 +46,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         int assetSelection = -1;
         ModInfo modInfo;
 
+        bool precompiledMod;
+
         //asset bundles will be created for any targets here
         readonly BuildTarget[] buildTargets = new BuildTarget[]
         {
@@ -378,6 +380,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             EditorGUILayout.Space();
             EditorGUILayout.TextArea("", GUI.skin.horizontalSlider);
 
+            EditorGUILayout.Space();
+            precompiledMod = EditorGUILayout.ToggleLeft(new GUIContent("Precompiled (experimental)", "Compile C# files into a .dll."), precompiledMod);
+
             GUILayoutHelper.Horizontal(() =>
             {
 
@@ -523,11 +528,44 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            AssetBundleBuild[] buildMap = new AssetBundleBuild[1];
-            buildMap[0].assetBundleName = modFilePath.Substring(modFilePath.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
-            buildMap[0].assetBundleVariant = "";       //TODO
+            string fileName = modFilePath.Substring(modFilePath.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
             AddAssetToMod(GetAssetPathFromFilePath(currentFilePath));
-            var tempAssetPaths = new List<string>(Assets);
+            List<string> assets = Assets;
+
+            if (precompiledMod)
+            {
+                string dataPath = Application.dataPath;
+                var scriptPaths = new List<string>();
+                var otherAssets = new List<string>();
+
+                foreach (string assetPath in assets)
+                {
+                    if (assetPath.EndsWith(".cs", StringComparison.Ordinal))
+                        scriptPaths.Add(Path.Combine(dataPath, assetPath.Substring("Assets/".Length)));
+                    else
+                        otherAssets.Add(assetPath);
+                }
+
+                assets = otherAssets;
+
+                if (scriptPaths.Count > 0)
+                {
+                    string assemblyPath = Path.Combine(GetTempModDirPath(), fileName.Replace("dfmod", "dll.bytes"));
+
+                    if (!ModAssemblyBuilder.Compile(assemblyPath, scriptPaths.ToArray()))
+                        return false;
+
+                    string outputAssetPath = assemblyPath.Substring(assemblyPath.LastIndexOf("Assets"));
+                    AssetDatabase.ImportAsset(outputAssetPath);
+                    assets.Add(outputAssetPath);
+                }
+            }
+
+            AssetBundleBuild[] buildMap = new AssetBundleBuild[1];
+            buildMap[0].assetBundleName = fileName;
+            buildMap[0].assetBundleVariant = "";       //TODO
+
+            var tempAssetPaths = new List<string>(assets);
 
 #if LOG_BUILD_TIME
             var stopWatch = new System.Diagnostics.Stopwatch();
