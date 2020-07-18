@@ -228,7 +228,7 @@ R0C11Y03, Nobility, N, 1, 1, Passed
 R0C11Y16, Nobility, N, 1, 1, Passed
 R0C11Y19, Nobility, N, 1, 1, Passed
 R0C11Y26, Nobility, M, 1, 1, Passed
-R0C11Y27, Nobility, N, 1, 1, Passed
+-R0C11Y27, Nobility, N, 1, 1, duplicate of r0c10y17
 R0C11Y28, Nobility, M, 1, 1, Needs %vcn macro implementation to get vamp clan of _vamp_ npc to be tested
 R0C20Y07, Nobility, N, 2, 0, Passed
 R0C20Y22, Nobility, M, 2, 0, Passed

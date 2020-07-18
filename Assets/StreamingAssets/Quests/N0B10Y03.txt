@@ -131,6 +131,8 @@ Foe _F.01_ is 4 Knight
 	log 1010 step 0
 	create npc at _magesguild_ 
 
+variable _oneday_
+
 _timeout_ task:
 	when _oneday_ and not _S.07_ 
 	end quest 
