@@ -6,6 +6,7 @@
 -- QuestId: 26
 Messages: 51
 Quest: R0C11Y26
+DisplayName: The Mad Ripper
 -- Message panels
 QRC:
 

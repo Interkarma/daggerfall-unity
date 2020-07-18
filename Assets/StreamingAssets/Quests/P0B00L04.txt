@@ -6,6 +6,7 @@
 -- QuestId: 4
 Messages: 17
 Quest: P0B00L04
+DisplayName: An Old Enemy
 -- Message panels
 QRC:
 

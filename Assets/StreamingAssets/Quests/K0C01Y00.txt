@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 21
 Quest: K0C01Y00
+DisplayName: To Assist the Fate
 -- Message panels
 QRC:
 

@@ -6,6 +6,7 @@
 -- QuestId: 2
 Messages: 16
 Quest: K0C00Y02
+DisplayName: Counterfeit Gold
 -- Message panels
 QRC:
 

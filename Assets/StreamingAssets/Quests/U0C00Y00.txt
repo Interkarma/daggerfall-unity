@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 43
 Quest: U0C00Y00
+DisplayName: Beothiah's Quest
 -- Message panels
 QRC:
 

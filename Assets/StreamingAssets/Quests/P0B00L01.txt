@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 27
 Quest: P0B00L01
+DisplayName: The Vampire's Letter
 -- Message panels
 QRC:
 

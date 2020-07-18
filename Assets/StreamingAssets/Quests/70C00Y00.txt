@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 21
 Quest: 70C00Y00
+DisplayName: Sanguine's Quest
 -- Message panels
 QRC:
 

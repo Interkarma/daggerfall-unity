@@ -6,6 +6,7 @@
 -- QuestId: 3
 Messages: 27
 Quest: P0B00L03
+DisplayName: Territorial Battles
 -- Message panels
 QRC:
 

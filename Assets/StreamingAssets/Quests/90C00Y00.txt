@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 21
 Quest: 90C00Y00
+DisplayName: Vaernima's Quest
 -- Message panels
 QRC:
 

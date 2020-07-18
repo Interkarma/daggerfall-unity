@@ -6,6 +6,7 @@
 -- QuestId: 10
 Messages: 18
 Quest: P0B10L10
+DisplayName: The Chaperone
 -- Message panels
 QRC:
 

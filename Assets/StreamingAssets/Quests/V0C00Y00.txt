@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 31
 Quest: V0C00Y00
+DisplayName: Clavicus Vile's Quest
 -- Message panels
 QRC:
 

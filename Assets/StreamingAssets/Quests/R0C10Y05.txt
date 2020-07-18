@@ -6,6 +6,7 @@
 -- QuestId: 5
 Messages: 31
 Quest: R0C10Y05
+DisplayName: Deadly Diplomacy
 -- Message panels
 QRC:
 

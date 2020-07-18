@@ -6,6 +6,7 @@
 -- QuestId: 6
 Messages: 15
 Quest: A0C00Y06
+DisplayName: An Unexpected Journey
 -- Message panels
 QRC:
 

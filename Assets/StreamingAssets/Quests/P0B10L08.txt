@@ -6,6 +6,7 @@
 -- QuestId: 8
 Messages: 22
 Quest: P0B10L08
+DisplayName: A Test of Determination
 -- Message panels
 QRC:
 

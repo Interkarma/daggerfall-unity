@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 42
 Quest: Z0C00Y00
+DisplayName: Mephala's Quest
 -- Message panels
 QRC:
 

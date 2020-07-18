@@ -6,6 +6,7 @@
 -- QuestId: 8
 Messages: 21
 Quest: R0C10Y08
+DisplayName: Theft from a Temple
 -- Message panels
 QRC:
 

@@ -6,6 +6,7 @@
 -- QuestId: 3
 Messages: 21
 Quest: R0C11Y03
+DisplayName: The Heartless Daedra
 -- Message panels
 QRC:
 

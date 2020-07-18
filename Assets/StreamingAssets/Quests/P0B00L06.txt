@@ -6,6 +6,7 @@
 -- QuestId: 6
 Messages: 24
 Quest: P0B00L06
+DisplayName: Deadly Knowledge
 -- Message panels
 QRC:
 

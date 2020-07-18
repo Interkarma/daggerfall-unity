@@ -6,6 +6,7 @@
 -- QuestId: 28
 Messages: 51
 Quest: R0C11Y28
+DisplayName: The Mad Slayer
 -- Message panels
 QRC:
 

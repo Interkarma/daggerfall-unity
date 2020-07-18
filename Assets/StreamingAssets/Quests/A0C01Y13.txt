@@ -4,8 +4,8 @@
 -- Questor: peasant
 -- Repute: 01
 -- QuestId: 13
-Messages: 1006
 Quest: A0C01Y13
+DisplayName: Defamation
 -- Message panels
 QRC:
 

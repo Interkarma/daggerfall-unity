@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 36
 Quest: A0C01Y06
+DisplayName: An Unexpected Journey Part II
 -- Message panels
 QRC:
 

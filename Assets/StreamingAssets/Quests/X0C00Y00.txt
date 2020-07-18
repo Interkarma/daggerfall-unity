@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 31
 Quest: X0C00Y00
+DisplayName: Hircine's Quest
 -- Message panels
 QRC:
 

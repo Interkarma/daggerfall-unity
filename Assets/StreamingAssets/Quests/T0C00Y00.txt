@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 31
 Quest: T0C00Y00
+DisplayName: Lady Azura's Quest
 -- Message panels
 QRC:
 

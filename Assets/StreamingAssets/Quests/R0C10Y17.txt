@@ -6,6 +6,7 @@
 -- QuestId: 17
 Messages: 13
 Quest: R0C10Y17
+DisplayName: A Special Substance
 -- Message panels
 QRC:
 

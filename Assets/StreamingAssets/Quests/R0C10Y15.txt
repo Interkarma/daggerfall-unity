@@ -6,6 +6,7 @@
 -- QuestId: 15
 Messages: 17
 Quest: R0C10Y15
+DisplayName: The Fourth Man
 -- Message panels
 QRC:
 

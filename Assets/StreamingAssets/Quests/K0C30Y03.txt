@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 56
 Quest: K0C30Y03
+DisplayName: A Noble's Debts
 -- Message panels
 QRC:
 

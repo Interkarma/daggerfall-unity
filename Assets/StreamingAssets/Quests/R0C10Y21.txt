@@ -6,6 +6,7 @@
 -- QuestId: 21
 Messages: 16
 Quest: R0C10Y21
+DisplayName: The Temple of the Orcs
 -- Message panels
 QRC:
 

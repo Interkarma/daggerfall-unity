@@ -6,6 +6,7 @@
 -- QuestId: 3
 Messages: 18
 Quest: A0C01Y03
+DisplayName: The Riddle
 -- Message panels
 QRC:
 

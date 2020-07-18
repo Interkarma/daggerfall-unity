@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 46
 Quest: W0C00Y00
+DisplayName: Hermaeus Mora's Quest
 -- Message panels
 QRC:
 

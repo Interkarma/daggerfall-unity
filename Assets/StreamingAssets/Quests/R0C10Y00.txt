@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 22
 Quest: R0C10Y00
+DisplayName: Jewel Smuggling
 -- Message panels
 QRC:
 
