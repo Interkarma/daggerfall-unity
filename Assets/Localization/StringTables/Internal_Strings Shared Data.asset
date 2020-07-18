@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 294
+  m_NextAvailableId: 311
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -1186,6 +1186,74 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 293
     m_Key: helpSpecialDisadvantages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 294
+    m_Key: lower
+    m_Metadata:
+      m_Items: []
+  - m_Id: 295
+    m_Key: higher
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296
+    m_Key: unchanged
+    m_Metadata:
+      m_Items: []
+  - m_Id: 297
+    m_Key: elsweyr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 298
+    m_Key: blackMarsh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 299
+    m_Key: hammerfell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300
+    m_Key: highRock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 301
+    m_Key: morrowind
+    m_Metadata:
+      m_Items: []
+  - m_Id: 302
+    m_Key: skyrim
+    m_Metadata:
+      m_Items: []
+  - m_Id: 303
+    m_Key: sumurset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 304
+    m_Key: valenwood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305
+    m_Key: rollingHills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 306
+    m_Key: desertLand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 307
+    m_Key: mountains
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308
+    m_Key: swamps
+    m_Metadata:
+      m_Items: []
+  - m_Id: 309
+    m_Key: forests
+    m_Metadata:
+      m_Items: []
+  - m_Id: 310
+    m_Key: shores
     m_Metadata:
       m_Items: []
   m_Metadata:

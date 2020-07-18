@@ -92,23 +92,5 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public const string towerShield = "towerShield";
         public const string lowerMagicAbilityDarkness = "lowerMagicAbilityDarkness";
         public const string unableToUseMagicInDarkness = "unableToUseMagicInDarkness";
-
-        public const string lower = "Lower";
-        public const string higher = "Higher";
-        public const string unchanged = "Unchanged";
-        public const string elsweyr = "Elsweyr";
-        public const string blackMarsh = "Black Marsh";
-        public const string hammerfell = "Hammerfell";
-        public const string highRock = "High Rock";
-        public const string morrowind = "Morrowind";
-        public const string skyrim = "Skyrim";
-        public const string sumurset = "Sumurset";
-        public const string valenwood = "Valenwood";
-        public const string rollingHills = "rolling hills";
-        public const string desertLand = "desertland";
-        public const string mountains = "mountains";
-        public const string swamps = "swamps";
-        public const string forests = "forests";
-        public const string shores = "shores";
     }
 }

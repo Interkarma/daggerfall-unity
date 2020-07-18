@@ -1527,5 +1527,73 @@ MonoBehaviour:
     m_Localized: Special Disadvantages
     m_Metadata:
       m_Items: []
+  - m_Id: 294
+    m_Localized: Lower
+    m_Metadata:
+      m_Items: []
+  - m_Id: 295
+    m_Localized: Higher
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296
+    m_Localized: Unchanged
+    m_Metadata:
+      m_Items: []
+  - m_Id: 297
+    m_Localized: Elsweyr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 298
+    m_Localized: Black Marsh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 299
+    m_Localized: Hammerfell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300
+    m_Localized: High Rock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 301
+    m_Localized: Morrowind
+    m_Metadata:
+      m_Items: []
+  - m_Id: 302
+    m_Localized: Skyrim
+    m_Metadata:
+      m_Items: []
+  - m_Id: 303
+    m_Localized: Sumurset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 304
+    m_Localized: Valenwood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305
+    m_Localized: rolling hills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 306
+    m_Localized: desertland
+    m_Metadata:
+      m_Items: []
+  - m_Id: 307
+    m_Localized: mountains
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308
+    m_Localized: swamps
+    m_Metadata:
+      m_Items: []
+  - m_Id: 309
+    m_Localized: forests
+    m_Metadata:
+      m_Items: []
+  - m_Id: 310
+    m_Localized: shores
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
