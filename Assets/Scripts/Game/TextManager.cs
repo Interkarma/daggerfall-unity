@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Utility;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using Wenzil.Console;
+using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -39,6 +40,7 @@ namespace DaggerfallWorkshop.Game
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
         Dictionary<string, string[]> cachedLocalizedTextLists = new Dictionary<string, string[]>();
+        Dictionary<string, DaggerfallFont> localizedFonts = new Dictionary<string, DaggerfallFont>();
 
         #endregion
 
@@ -54,6 +56,102 @@ namespace DaggerfallWorkshop.Game
             ConsoleCommandsDatabase.RegisterCommand(Locale_Print.name, Locale_Print.description, Locale_Print.usage, Locale_Print.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Locale_Set.name, Locale_Set.description, Locale_Set.usage, Locale_Set.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Locale_Debug.name, Locale_Debug.description, Locale_Debug.usage, Locale_Debug.Execute);
+        }
+
+        #endregion
+
+        #region Localized Fonts
+
+        /// <summary>
+        /// Register a DaggerfallFont replacement to be used for specified locale.
+        /// If this font name and locale replacement has already been registered, it will be replaced by this font.
+        /// Note: Localized fonts can only be SDF capable. SDF font setting will be forced on by registering any custom font.
+        /// </summary>
+        /// <param name="locale">Locale of font.</param>
+        /// <param name="fontName">Name of font, which must be one of the 5 Daggerfall fonts.</param>
+        /// <param name="font">DaggerfallFont object to use for this font name and locale.</param>
+        public void RegisterLocalizedFont(Locale locale, DaggerfallFont.FontName fontName, DaggerfallFont font)
+        {
+            if (locale == null || font == null)
+                Debug.LogError("RegisterLocalizedFont() locale and font cannot be null.");
+
+            string key = GetLocaleFontKey(locale, fontName);
+            if (localizedFonts.ContainsKey(key))
+                localizedFonts.Remove(key);
+
+            localizedFonts.Add(key, font);
+            DaggerfallUnity.Settings.SDFFontRendering = true;
+        }
+
+        /// <summary>
+        /// Check if font of specified name and locale have been registered.
+        /// </summary>
+        /// <param name="locale">Locale of font.</param>
+        /// <param name="fontName">Name of font, which must be one of the 5 Daggerfall fonts.</param>
+        /// <returns>True if font of this name and locale has been registered.</returns>
+        public bool HasLocalizedFont(Locale locale, DaggerfallFont.FontName fontName)
+        {
+            if (locale == null)
+                return false;
+
+            return localizedFonts.ContainsKey(GetLocaleFontKey(locale, fontName));
+        }
+
+        /// <summary>
+        /// Check if font of specified name is available in current locale.
+        /// </summary>
+        /// <param name="fontName">Name of font, which must be one of the 5 Daggerfall fonts.</param>
+        /// <returns>True if font of this name has been registered in current locale.</returns>
+        public bool HasLocalizedFont(DaggerfallFont.FontName fontName)
+        {
+            Locale selectedLocale;
+            var op = LocalizationSettings.SelectedLocaleAsync;
+            if (op.IsDone)
+                selectedLocale = op.Result;
+            else
+                return false;
+
+            return localizedFonts.ContainsKey(GetLocaleFontKey(selectedLocale, fontName));
+        }
+
+        /// <summary>
+        /// Gets a registered Daggerfall replacement for specified name and locale.
+        /// </summary>
+        /// <param name="locale">Locale of font.</param>
+        /// <param name="fontName">Name of font, which must be one of the 5 Daggerfall fonts.</param>
+        /// <returns>DaggerfallFont object if registered, otherwise null.</returns>
+        public DaggerfallFont GetLocalizedFont(Locale locale, DaggerfallFont.FontName fontName)
+        {
+            if (locale == null)
+                return null;
+
+            DaggerfallFont font;
+            if (localizedFonts.TryGetValue(GetLocaleFontKey(locale, fontName), out font))
+                return font;
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets a registered DaggerfallFont replacement for current locale.
+        /// </summary>
+        /// <param name="fontName"></param>
+        /// <returns></returns>
+        public DaggerfallFont GetLocalizedFont(DaggerfallFont.FontName fontName)
+        {
+            Locale selectedLocale;
+            var op = LocalizationSettings.SelectedLocaleAsync;
+            if (op.IsDone)
+                selectedLocale = op.Result;
+            else
+                return null;
+
+            return GetLocalizedFont(selectedLocale, fontName);
+        }
+
+        private string GetLocaleFontKey(Locale locale, DaggerfallFont.FontName fontName)
+        {
+            return string.Format("{0}_{1}", fontName, locale.name);
         }
 
         #endregion

@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.BackgroundTexture = nativeTexture;
 
             // Load default pixel font
-            ChangeFont(4);
+            ChangeFont(DaggerfallFont.FontName.FONT0003);
 
             // Add buttons
             Button nextPageButton = DaggerfallUI.AddButton(new Rect(208, 188, 14, 8), NativePanel);
@@ -174,9 +174,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             pageLabels.Clear();
         }
 
-        void ChangeFont(int index)
+        void ChangeFont(DaggerfallFont.FontName fontName)
         {
-            currentFont = DaggerfallUI.Instance.GetFont(index);
+            currentFont = DaggerfallUI.Instance.GetFont(fontName);
         }
 
         bool MoveNextPage()

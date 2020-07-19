@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// Supports classic FONT0000-0004 with an SDF variant.
     /// Classic font has the same limitations of 256 characters starting from ASCII 33.
     /// SDF font uses a keyed dictionary so can support any number of glyph codes.
-    /// Current implementation will load a TextMeshPro 1.3.x font asset directly for SDF variant.
+    /// Current implementation will load a TextMeshPro 2.0.x font asset directly for SDF variant.
     /// </summary>
     public class DaggerfallFont
     {
@@ -60,11 +60,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public enum FontName
         {
-            FONT0000,
-            FONT0001,
-            FONT0002,
-            FONT0003,
-            FONT0004,
+            FONT0000, // Large Font
+            FONT0001, // Title Font
+            FONT0002, // Small Font
+            FONT0003, // Default Font
+            FONT0004, // Unused
         }
 
         public struct GlyphInfo
@@ -454,8 +454,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Load a TextMeshPro 1.3.x asset used for this to use for SDF rendering.
-        /// Mods can use DaggerfallUI.Instance.Font1 through Font4 to access the instances used by other game windows.
+        /// Load a TextMeshPro 2.0.x asset used for this to use for SDF rendering.
+        /// Mods can use DaggerfallUI.Instance.Font0 through Font4 to access the instances used by other game windows.
         /// Custom font should be set only during startup.
         /// </summary>
         /// <param name="path">Path to a TextMeshPro 1.3.x font asset.</param>

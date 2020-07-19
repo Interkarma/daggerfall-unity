@@ -24,6 +24,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using UnityEngine.Localization.Settings;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -114,18 +115,18 @@ namespace DaggerfallWorkshop.Game
 
         Questing.Actions.GivePc lastPendingOfferSender = null;
 
-        public DaggerfallFont Font1 { get { return GetFont(1); } }
-        public DaggerfallFont Font2 { get { return GetFont(2); } }
-        public DaggerfallFont Font3 { get { return GetFont(3); } }
-        public DaggerfallFont Font4 { get { return GetFont(4); } }
-        public DaggerfallFont Font5 { get { return GetFont(5); } }
+        public DaggerfallFont Font1 { get { return GetFont(DaggerfallFont.FontName.FONT0000); } }
+        public DaggerfallFont Font2 { get { return GetFont(DaggerfallFont.FontName.FONT0001); } }
+        public DaggerfallFont Font3 { get { return GetFont(DaggerfallFont.FontName.FONT0002); } }
+        public DaggerfallFont Font4 { get { return GetFont(DaggerfallFont.FontName.FONT0003); } }
+        public DaggerfallFont Font5 { get { return GetFont(DaggerfallFont.FontName.FONT0004); } }
 
         public UserInterfaceManager UserInterfaceManager { get { return uiManager; } }
 
-        public static DaggerfallFont LargeFont { get { return Instance.GetFont(1); } }
-        public static DaggerfallFont TitleFont { get { return Instance.GetFont(2); } }
-        public static DaggerfallFont SmallFont { get { return Instance.GetFont(3); } }
-        public static DaggerfallFont DefaultFont { get { return Instance.GetFont(4); } }
+        public static DaggerfallFont LargeFont { get { return Instance.GetFont(DaggerfallFont.FontName.FONT0000); } }
+        public static DaggerfallFont TitleFont { get { return Instance.GetFont(DaggerfallFont.FontName.FONT0001); } }
+        public static DaggerfallFont SmallFont { get { return Instance.GetFont(DaggerfallFont.FontName.FONT0002); } }
+        public static DaggerfallFont DefaultFont { get { return Instance.GetFont(DaggerfallFont.FontName.FONT0003); } }
         
         public static IUserInterfaceManager UIManager { get { return Instance.uiManager; } }
 
@@ -280,11 +281,6 @@ namespace DaggerfallWorkshop.Game
         public enum PopupStyle
         {
             Parchment,
-        }
-
-        public enum HQPixelFonts
-        {
-            Petrock_32,
         }
 
         public bool ShowVersionText { get; set; }
@@ -719,12 +715,27 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Gets a new DaggerfallFont.
+        /// Sets internal fonts used by game. Useful for standalone font mods.
+        /// Locale mods can still override this by registering a new font for current locale.
         /// </summary>
-        /// <param name="index">Index of font between 1-5 (default is 4).</param>
-        /// <returns>DaggerfallFont</returns>
-        public DaggerfallFont GetFont(int index = 4)
+        /// <param name="fontName">Name of font to set.</param>
+        /// <param name="font">Font object.</param>
+        public void SetFont(DaggerfallFont.FontName fontName, DaggerfallFont font)
         {
+            daggerfallFonts[(int)fontName] = font;
+        }
+
+        /// <summary>
+        /// Gets a DaggerfallFont.
+        /// </summary>
+        /// <param name="index">Name of font, which must be one of the 5 Daggerfall fonts..</param>
+        /// <returns>DaggerfallFont</returns>
+        public DaggerfallFont GetFont(DaggerfallFont.FontName fontName)
+        {
+            // If current locale has a custom font registered this will always have priority over any other font
+            if (TextManager.Instance.HasLocalizedFont(fontName))
+                return TextManager.Instance.GetLocalizedFont(fontName);
+
             // Attempt to use StreamingAssets for FNT files
             string path = FontsFolder;
             if (!Directory.Exists(path))
@@ -744,26 +755,26 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Try to load font from target path
-            switch (index)
+            switch (fontName)
             {
-                case 1:
+                case DaggerfallFont.FontName.FONT0000:
                     if (daggerfallFonts[0] == null) daggerfallFonts[0] = new DaggerfallFont(path, DaggerfallFont.FontName.FONT0000);
                     daggerfallFonts[0].FilterMode = globalFilterMode;
                     return daggerfallFonts[0];
-                case 2:
+                case DaggerfallFont.FontName.FONT0001:
                     if (daggerfallFonts[1] == null) daggerfallFonts[1] = new DaggerfallFont(path, DaggerfallFont.FontName.FONT0001);
                     daggerfallFonts[1].FilterMode = globalFilterMode;
                     return daggerfallFonts[1];
-                case 3:
+                case DaggerfallFont.FontName.FONT0002:
                     if (daggerfallFonts[2] == null) daggerfallFonts[2] = new DaggerfallFont(path, DaggerfallFont.FontName.FONT0002);
                     daggerfallFonts[2].FilterMode = globalFilterMode;
                     return daggerfallFonts[2];
-                case 4:
+                case DaggerfallFont.FontName.FONT0003:
                 default:
                     if (daggerfallFonts[3] == null) daggerfallFonts[3] = new DaggerfallFont(path, DaggerfallFont.FontName.FONT0003);
                     daggerfallFonts[3].FilterMode = globalFilterMode;
                     return daggerfallFonts[3];
-                case 5:
+                case DaggerfallFont.FontName.FONT0004:
                     if (daggerfallFonts[4] == null) daggerfallFonts[4] = new DaggerfallFont(path, DaggerfallFont.FontName.FONT0004);
                     daggerfallFonts[4].FilterMode = globalFilterMode;
                     return daggerfallFonts[4];
