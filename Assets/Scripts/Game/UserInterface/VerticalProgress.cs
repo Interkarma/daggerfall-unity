@@ -69,8 +69,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             Rect srcRect = new Rect(0, 0, 1, 1 * amount);
             Rect dstRect = Rectangle;
-            dstRect.y += dstRect.height - dstRect.height * amount;
-            dstRect.height *= amount;
+            float scaledAmount = Mathf.Round(dstRect.height * amount);
+            dstRect.y += dstRect.height - scaledAmount;
+            dstRect.height = scaledAmount;
 
             if (ProgressTexture)
                 GUI.DrawTextureWithTexCoords(dstRect, ProgressTexture, srcRect, false);

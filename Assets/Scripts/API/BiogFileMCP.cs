@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -12,6 +12,7 @@
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
 
@@ -35,15 +36,15 @@ namespace DaggerfallConnect.Arena2
             {
                 if (val == 0)
                 {
-                    return HardStrings.unchanged;
+                    return TextManager.Instance.GetLocalizedText("unchanged");
                 }
                 else if (val < 0)
                 {
-                    return HardStrings.lower;
+                    return TextManager.Instance.GetLocalizedText("lower");
                 }
                 else
                 {
-                    return HardStrings.higher;
+                    return TextManager.Instance.GetLocalizedText("higher");
                 }
             }
 
@@ -93,21 +94,21 @@ namespace DaggerfallConnect.Arena2
                 switch ((Races)parent.characterDocument.raceTemplate.ID)
                 {
                     case Races.Argonian:
-                        return HardStrings.blackMarsh;
+                        return TextManager.Instance.GetLocalizedText("blackMarsh");
                     case Races.Breton:
-                        return HardStrings.highRock;
+                        return TextManager.Instance.GetLocalizedText("highRock");
                     case Races.DarkElf:
-                        return HardStrings.morrowind;
+                        return TextManager.Instance.GetLocalizedText("morrowind");
                     case Races.HighElf:
-                        return HardStrings.sumurset;
+                        return TextManager.Instance.GetLocalizedText("sumurset");
                     case Races.Khajiit:
-                        return HardStrings.elsweyr;
+                        return TextManager.Instance.GetLocalizedText("elsweyr");
                     case Races.Nord:
-                        return HardStrings.skyrim;
+                        return TextManager.Instance.GetLocalizedText("skyrim");
                     case Races.Redguard:
-                        return HardStrings.hammerfell;
+                        return TextManager.Instance.GetLocalizedText("hammerfell");
                     case Races.WoodElf:
-                        return HardStrings.valenwood;
+                        return TextManager.Instance.GetLocalizedText("valenwood");
                     default:
                         return null;
                 }
@@ -119,21 +120,21 @@ namespace DaggerfallConnect.Arena2
                 switch ((Races)parent.characterDocument.raceTemplate.ID) // Note: These are educated guesses based on lore.
                 {
                     case Races.Argonian:
-                        return HardStrings.swamps;
+                        return TextManager.Instance.GetLocalizedText("swamps");
                     case Races.Breton:
-                        return HardStrings.rollingHills;
+                        return TextManager.Instance.GetLocalizedText("rollingHills");
                     case Races.DarkElf:
-                        return HardStrings.rollingHills;
+                        return TextManager.Instance.GetLocalizedText("rollingHills");
                     case Races.HighElf:
-                        return HardStrings.shores;
+                        return TextManager.Instance.GetLocalizedText("shores");
                     case Races.Khajiit:
-                        return HardStrings.desertLand;
+                        return TextManager.Instance.GetLocalizedText("desertLand");
                     case Races.Nord:
-                        return HardStrings.mountains;
+                        return TextManager.Instance.GetLocalizedText("mountains");
                     case Races.Redguard:
-                        return HardStrings.desertLand;
+                        return TextManager.Instance.GetLocalizedText("desertLand");
                     case Races.WoodElf:
-                        return HardStrings.forests;
+                        return TextManager.Instance.GetLocalizedText("forests");
                     default:
                         return null;
                 }

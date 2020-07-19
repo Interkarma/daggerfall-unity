@@ -60,7 +60,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     ClassicType = EnchantmentTypes.SoulBound,
                     ClassicParam = (short)i,
                     PrimaryDisplayName = properties.GroupName,
-                    SecondaryDisplayName = EnemyBasics.Enemies[i].Name,
+                    SecondaryDisplayName = TextManager.Instance.GetLocalizedEnemyName(EnemyBasics.Enemies[i].ID),
                     EnchantCost = classicParamCosts[i],
                 };
 

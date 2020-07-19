@@ -291,7 +291,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// </summary>
         public string GetClanName()
         {
-            return TextManager.Instance.GetText(racesTextDatabase, vampireClan.ToString().ToLower());
+            return TextManager.Instance.GetLocalizedText(vampireClan.ToString().ToLower());
         }
 
         #endregion
@@ -303,7 +303,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Clone birth race and assign custom settings
             // New compound races will retain almost everything from birth race
             compoundRace = GameManager.Instance.PlayerEntity.BirthRaceTemplate.Clone();
-            compoundRace.Name = TextManager.Instance.GetText(racesTextDatabase, "vampire");
+            compoundRace.Name = TextManager.Instance.GetLocalizedText("vampire");
 
             // Set special vampire flags
             compoundRace.ImmunityFlags |= DFCareer.EffectFlags.Paralysis;

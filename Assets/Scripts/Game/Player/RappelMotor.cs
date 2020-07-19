@@ -177,7 +177,7 @@ namespace DaggerfallWorkshop.Game
 
             if (rappelStage == RappelStage.Activated)
             {
-                DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.rappelMode);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("rappelMode"));
                 rappelStage = RappelStage.Swooping;
                 InitialSetGrappleDirection();
 

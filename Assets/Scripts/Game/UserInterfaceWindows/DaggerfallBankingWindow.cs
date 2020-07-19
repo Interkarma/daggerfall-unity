@@ -305,7 +305,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             this.amount = amount;
 
             if (result == TransactionResult.TOO_HEAVY)
-                messageBox.SetText(HardStrings.cannotCarryGold);
+                messageBox.SetText(TextManager.Instance.GetLocalizedText("cannotCarryGold"));
             else
                 messageBox.SetTextTokens((int)result, this);
 

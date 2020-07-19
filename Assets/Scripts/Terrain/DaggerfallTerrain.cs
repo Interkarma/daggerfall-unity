@@ -336,7 +336,7 @@ namespace DaggerfallWorkshop
 
             // Promote material
             terrain.materialTemplate = terrainMaterial;
-            terrain.materialType = Terrain.MaterialType.Custom;
+            terrain.materialType = Terrain.MaterialType.Custom; // TODO: Terrain.MaterialType is now obsolete
 
             // Promote heights
             Vector3 size = terrain.terrainData.size;

@@ -1172,7 +1172,7 @@ namespace DaggerfallWorkshop
             if (RMBLayout.IsResidence(buildingSummary.BuildingType))
             {
                 // Residence                
-                buildingDiscoveryData.displayName = HardStrings.residence;
+                buildingDiscoveryData.displayName = TextManager.Instance.GetLocalizedText("residence");
             }
             else
             {
@@ -1205,7 +1205,7 @@ namespace DaggerfallWorkshop
                 if (discoveredLocation.Value.discoveredBuildings != null)
                 {
                     foreach (var discoveredBuilding in discoveredLocation.Value.discoveredBuildings)
-                        if (discoveredBuilding.Value.displayName == HardStrings.residence)
+                        if (discoveredBuilding.Value.displayName == TextManager.Instance.GetLocalizedText("residence"))
                             keysToRemove.Add(discoveredBuilding.Key);
 
                     foreach (int key in keysToRemove)

@@ -186,13 +186,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (housesForSale == null)
             {
                 for (int i = 0; i < 2; i++)
-                    priceListBox.AddItem(HardStrings.bankPurchasePrice.Replace("%s", DaggerfallBankManager.GetShipPrice((ShipType) i).ToString()), i);
+                    priceListBox.AddItem(TextManager.Instance.GetLocalizedText("bankPurchasePrice").Replace("%s", DaggerfallBankManager.GetShipPrice((ShipType) i).ToString()), i);
             }
             else
             {   // List all the houses for sale in this location
                 foreach (BuildingSummary house in housesForSale)
                 {
-                    priceListBox.AddItem(HardStrings.bankPurchasePrice.Replace("%s", DaggerfallBankManager.GetHousePrice(house).ToString()));
+                    priceListBox.AddItem(TextManager.Instance.GetLocalizedText("bankPurchasePrice").Replace("%s", DaggerfallBankManager.GetHousePrice(house).ToString()));
                 }
             }
         }

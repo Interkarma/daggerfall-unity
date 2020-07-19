@@ -345,44 +345,44 @@ namespace DaggerfallWorkshop.Game.Guilds
             switch (service)
             {
                 case GuildServices.Training:
-                    return HardStrings.serviceTraining;
+                    return TextManager.Instance.GetLocalizedText("serviceTraining");
                 case GuildServices.Quests:
-                    return HardStrings.serviceQuests;
+                    return TextManager.Instance.GetLocalizedText("serviceQuests");
                 case GuildServices.Repair:
-                    return HardStrings.serviceRepairs;
+                    return TextManager.Instance.GetLocalizedText("serviceRepairs");
                 case GuildServices.Identify:
-                    return HardStrings.serviceIdentify;
+                    return TextManager.Instance.GetLocalizedText("serviceIdentify");
                 case GuildServices.Donate:
-                    return HardStrings.serviceDonate;
+                    return TextManager.Instance.GetLocalizedText("serviceDonate");
                 case GuildServices.CureDisease:
-                    return HardStrings.serviceCure;
+                    return TextManager.Instance.GetLocalizedText("serviceCure");
                 case GuildServices.BuyPotions:
-                    return HardStrings.serviceBuyPotions;
+                    return TextManager.Instance.GetLocalizedText("serviceBuyPotions");
                 case GuildServices.MakePotions:
-                    return HardStrings.serviceMakePotions;
+                    return TextManager.Instance.GetLocalizedText("serviceMakePotions");
                 case GuildServices.BuySpells:
                 case GuildServices.BuySpellsMages:
-                    return HardStrings.serviceBuySpells;
+                    return TextManager.Instance.GetLocalizedText("serviceBuySpells");
                 case GuildServices.MakeSpells:
-                    return HardStrings.serviceMakeSpells;
+                    return TextManager.Instance.GetLocalizedText("serviceMakeSpells");
                 case GuildServices.BuyMagicItems:
-                    return HardStrings.serviceBuyMagicItems;
+                    return TextManager.Instance.GetLocalizedText("serviceBuyMagicItems");
                 case GuildServices.MakeMagicItems:
-                    return HardStrings.serviceMakeMagicItems;
+                    return TextManager.Instance.GetLocalizedText("serviceMakeMagicItems");
                 case GuildServices.SellMagicItems:
-                    return HardStrings.serviceSellMagicItems;
+                    return TextManager.Instance.GetLocalizedText("serviceSellMagicItems");
                 case GuildServices.Teleport:
-                    return HardStrings.serviceTeleport;
+                    return TextManager.Instance.GetLocalizedText("serviceTeleport");
                 case GuildServices.DaedraSummoning:
-                    return HardStrings.serviceDaedraSummon;
+                    return TextManager.Instance.GetLocalizedText("serviceDaedraSummon");
                 case GuildServices.Spymaster:
-                    return HardStrings.serviceSpymaster;
+                    return TextManager.Instance.GetLocalizedText("serviceSpymaster");
                 case GuildServices.BuySoulgems:
-                    return HardStrings.serviceBuySoulgems;
+                    return TextManager.Instance.GetLocalizedText("serviceBuySoulgems");
                 case GuildServices.ReceiveArmor:
-                    return HardStrings.serviceReceiveArmor;
+                    return TextManager.Instance.GetLocalizedText("serviceReceiveArmor");
                 case GuildServices.ReceiveHouse:
-                    return HardStrings.serviceReceiveHouse;
+                    return TextManager.Instance.GetLocalizedText("serviceReceiveHouse");
 
                 default:
                     string serviceName;

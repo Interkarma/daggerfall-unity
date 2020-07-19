@@ -345,7 +345,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             if (IsPlayerEntity && !instantCast)
             {
-                DaggerfallUI.AddHUDText(HardStrings.pressButtonToFireSpell, 0.4f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("pressButtonToFireSpell"), 0.4f);
             }
 
             return true;
@@ -1825,10 +1825,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             entityBehaviour.Entity.Skills.AssignMods(combinedSkillMods);
             entityBehaviour.Entity.Resistances.AssignMods(combinedResistanceMods);
 
-            // Kill host if any stat is reduced to 1
+            // Kill host if any stat is reduced to 0 live total
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
-                if (entityBehaviour.Entity.Stats.GetLiveStatValue(i) == 1)
+                if (entityBehaviour.Entity.Stats.GetLiveStatValue(i) == 0)
                 {
                     entityBehaviour.Entity.CurrentHealth = 0;
                     return;

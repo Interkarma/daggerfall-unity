@@ -559,7 +559,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 {
                     if (attacker == player)
                     {
-                        DaggerfallUI.Instance.PopupMessage(UserInterfaceWindows.HardStrings.materialIneffective);
+                        DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("materialIneffective"));
                     }
                     return 0;
                 }
@@ -952,7 +952,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (backstabbingLevel > 1 && Dice100.SuccessRoll(backstabbingLevel))
             {
                 damage *= 3;
-                string backstabMessage = UserInterfaceWindows.HardStrings.successfulBackstab;
+                string backstabMessage = TextManager.Instance.GetLocalizedText("successfulBackstab");
                 DaggerfallUI.Instance.PopupMessage(backstabMessage);
             }
             return damage;
@@ -1790,7 +1790,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 cost = 7 * daysToRent;
 
             if (cost == 0) // Only renting for Heart's Day
-                DaggerfallUI.MessageBox(UserInterfaceWindows.HardStrings.roomFreeDueToHeartsDay);
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("roomFreeDueToHeartsDay"));
 
             return cost;
         }

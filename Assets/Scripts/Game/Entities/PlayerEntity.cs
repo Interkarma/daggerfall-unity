@@ -1368,7 +1368,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         skills.SetPermanentSkillValue(i, (short)(skills.GetPermanentSkillValue(i) + 1));
                         SetSkillRecentlyIncreased(i);
                         SetCurrentLevelUpSkillSum();
-                        DaggerfallUI.Instance.PopupMessage(HardStrings.skillImprove.Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DFCareer.Skills)i)));
+                        DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("skillImprove").Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DFCareer.Skills)i)));
                         if (skills.GetPermanentSkillValue(i) == 100)
                         {
                             List<DFCareer.Skills> primarySkills = GetPrimarySkills();
@@ -2370,7 +2370,7 @@ namespace DaggerfallWorkshop.Game.Entity
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
 
             if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
-                messageBox.SetText(HardStrings.exhaustedInWater);
+                messageBox.SetText(TextManager.Instance.GetLocalizedText("exhaustedInWater"));
             else
             {
                 if (!enemiesNearby)

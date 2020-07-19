@@ -17,12 +17,9 @@ namespace DaggerfallWorkshop.Game.Entity
 {
     /// <summary>
     /// Every race is defined by a common template.
-    /// This will likely be changed to a text file system later.
     /// </summary>
     public class RaceTemplate
     {
-        protected const string textDatabase = "Races";
-
         public int ID;                                          // A unique id for this race. Default race IDs match colour picker index on TAMRIEL2.IMG
         public string Name;                                     // Name of this race in singular, e.g. "Dark Elf"
         public int DescriptionID;                               // TEXT.RSC ID text to display on race selection
@@ -138,7 +135,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public Breton()
         {
             ID = (int)Races.Breton;
-            Name = TextManager.Instance.GetText(textDatabase, "breton");
+            Name = TextManager.Instance.GetLocalizedText("breton");
             DescriptionID = 2003;
             ClipID = 209;
 
@@ -159,7 +156,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public Redguard()
         {
             ID = (int)Races.Redguard;
-            Name = TextManager.Instance.GetText(textDatabase, "redguard");
+            Name = TextManager.Instance.GetLocalizedText("redguard");
             DescriptionID = 2002;
             ClipID = 210;
 
@@ -180,7 +177,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public Nord()
         {
             ID = (int)Races.Nord;
-            Name = TextManager.Instance.GetText(textDatabase, "nord");
+            Name = TextManager.Instance.GetLocalizedText("nord");
             DescriptionID = 2000;
             ClipID = 211;
 
@@ -203,7 +200,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public DarkElf()
         {
             ID = (int)Races.DarkElf;
-            Name = TextManager.Instance.GetText(textDatabase, "darkElf");
+            Name = TextManager.Instance.GetLocalizedText("darkElf");
             DescriptionID = 2007;
             ClipID = 212;
 
@@ -224,7 +221,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public HighElf()
         {
             ID = (int)Races.HighElf;
-            Name = TextManager.Instance.GetText(textDatabase, "highElf");
+            Name = TextManager.Instance.GetLocalizedText("highElf");
             DescriptionID = 2006;
             ClipID = 213;
 
@@ -247,7 +244,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public WoodElf()
         {
             ID = (int)Races.WoodElf;
-            Name = TextManager.Instance.GetText(textDatabase, "woodElf");
+            Name = TextManager.Instance.GetLocalizedText("woodElf");
             DescriptionID = 2005;
             ClipID = 214;
 
@@ -268,7 +265,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public Khajiit()
         {
             ID = (int)Races.Khajiit;
-            Name = TextManager.Instance.GetText(textDatabase, "khajiit");
+            Name = TextManager.Instance.GetLocalizedText("khajiit");
             DescriptionID = 2001;
             ClipID = 215;
 
@@ -289,7 +286,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public Argonian()
         {
             ID = (int)Races.Argonian;
-            Name = TextManager.Instance.GetText(textDatabase, "argonian");
+            Name = TextManager.Instance.GetLocalizedText("argonian");
             DescriptionID = 2004;
             ClipID = 216;
 

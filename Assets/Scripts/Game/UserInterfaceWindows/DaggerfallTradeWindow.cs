@@ -373,7 +373,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Get building info, message if invalid, otherwise setup acccepted item list
                 buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
                 if (buildingDiscoveryData.buildingKey <= 0)
-                    DaggerfallUI.MessageBox(HardStrings.oldSaveNoTrade, true);
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("oldSaveNoTrade"), true);
                 else if (WindowMode == WindowModes.Sell)
                     itemTypesAccepted = storeBuysItemType[buildingDiscoveryData.buildingType];
             }

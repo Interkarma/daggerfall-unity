@@ -32,8 +32,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         public struct SpecialAdvDis 
         {
-            public string primaryString;
-            public string secondaryString;
+            public string primaryStringKey;
+            public string secondaryStringKey;
             public int difficulty;
         };
 
@@ -57,9 +57,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel overlayPanel = new Panel();
         bool isDisadvantages;
 
+        DaggerfallListPickerWindow primaryPicker;
+        DaggerfallListPickerWindow secondaryPicker;
+
         #region List picker strings
 
-        string[] advantageStrings = new string[]
+        string[] advantageStringKeys = new string[]
         {
             HardStrings.acuteHearing,
             HardStrings.adrenalineRush,
@@ -73,7 +76,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.resistance,
             HardStrings.spellAbsorption
         };
-        string[] disadvantageStrings = new string[]
+        string[] disadvantageStringKeys = new string[]
         {
             HardStrings.criticalWeakness,
             HardStrings.damage,
@@ -87,14 +90,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.lowTolerance,
             HardStrings.phobia
         };
-        string[] enemyTypeStrings = new string[]
+        string[] enemyTypeStringKeys = new string[]
         {
             HardStrings.animals,
             HardStrings.daedra,
             HardStrings.humanoid,
             HardStrings.undead
         };
-        string[] weaponTypeStrings = new string[]
+        string[] weaponTypeStringKeys = new string[]
         {
             HardStrings.axe,
             HardStrings.bluntWeapon,
@@ -103,7 +106,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.missileWeapon,
             HardStrings.shortBlade
         };
-        string[] effectTypeStrings = new string[]
+        string[] effectTypeStringKeys = new string[]
         {
             HardStrings.toDisease,
             HardStrings.toFire,
@@ -113,7 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.toPoison,
             HardStrings.toShock
         };
-        string[] increasedMageryStrings = new string[]
+        string[] increasedMageryStringKeys = new string[]
         {
             HardStrings.intInSpellPoints15,
             HardStrings.intInSpellPoints175,
@@ -121,41 +124,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.intInSpellPoints3,
             HardStrings.intInSpellPoints
         };
-        string[] effectEnvStrings = new string[]
+        string[] effectEnvStringKeys = new string[]
         {
             HardStrings.general,
             HardStrings.inDarkness,
             HardStrings.inLight
         };
-        string[] regenHealthStrings = new string[]
+        string[] regenHealthStringKeys = new string[]
         {
             HardStrings.general,
             HardStrings.inDarkness,
             HardStrings.inLight,
             HardStrings.whileImmersed
         };
-        string[] damageEnvStrings = new string[]
+        string[] damageEnvStringKeys = new string[]
         {
             HardStrings.fromHolyPlaces,
             HardStrings.fromSunlight
         };
-        string[] darknessPoweredStrings = new string[]
+        string[] darknessPoweredStringKeys = new string[]
         {
             HardStrings.lowerMagicAbilityDaylight,
             HardStrings.unableToUseMagicInDaylight
         };
-        string[] lightPoweredStrings = new string[]
+        string[] lightPoweredStringKeys = new string[]
         {
             HardStrings.lowerMagicAbilityDarkness,
             HardStrings.unableToUseMagicInDarkness
         };
-        string[] armorTypeStrings = new string[]
+        string[] armorTypeStringKeys = new string[]
         {
             HardStrings.chain,
             HardStrings.leather,
             HardStrings.plate
         };
-        string[] materialStrings = new string[]
+        string[] materialStringKeys = new string[]
         {
             HardStrings.adamantium,
             HardStrings.daedric,
@@ -168,7 +171,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             HardStrings.silver,
             HardStrings.steel
         };
-        string[] shieldTypeStrings = new string[]
+        string[] shieldTypeStringKeys = new string[]
         {
             HardStrings.buckler,
             HardStrings.kiteShield,
@@ -264,6 +267,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateLabels();
             InitializeAdjustmentDict();
 
+            primaryPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, advPickerItemCount);
+            primaryPicker.OnItemPicked += PrimaryPicker_OnItemPicked;
+
+            secondaryPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, advPickerItemCount);
+            secondaryPicker.ListBox.Font = DaggerfallUI.SmallFont;
+            secondaryPicker.OnItemPicked += SecondaryPicker_OnItemPicked;
+            secondaryPicker.OnCancel += SecondaryPicker_OnCancel;
+
             IsSetup = true;
         }
 
@@ -283,57 +294,54 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void AddAdvantageButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
-            string[] items;
-
             if (advDisList.Count == maxItems)
             {
                 return;
             }
 
-            DaggerfallListPickerWindow advantagePicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, advPickerItemCount);
-            advantagePicker.OnItemPicked += AdvantagePicker_OnItemPicked;
-
-            items = isDisadvantages ? disadvantageStrings : advantageStrings;
-            foreach (string s in items)
+            primaryPicker.ListBox.ClearItems();
+            string[] itemKeys = isDisadvantages ? disadvantageStringKeys : advantageStringKeys;
+            foreach(string key in itemKeys)
             {
-                advantagePicker.ListBox.AddItem(s);
+                primaryPicker.ListBox.AddItem(TextManager.Instance.GetLocalizedText(key), -1, key);
             }
 
-            uiManager.PushWindow(advantagePicker);
+            uiManager.PushWindow(primaryPicker);
         }
 
-        void AdvantagePicker_OnItemPicked(int index, string advantageName)
+        void PrimaryPicker_OnItemPicked(int index, string advantageName)
         {
             CloseWindow();
 
+            string primaryKey = primaryPicker.ListBox.GetItem(index).tag as string;
             SpecialAdvDis s = new SpecialAdvDis 
             {
-                primaryString = advantageName
-                , secondaryString = string.Empty
+                primaryStringKey = primaryKey,
+                secondaryStringKey = string.Empty
             };
             string[] secondaryList = null;
             // advantages/disadvantages with secondary options
-            switch (advantageName)
+            switch (primaryKey)
             {
                 case HardStrings.bonusToHit:
                 case HardStrings.phobia:
-                    secondaryList = enemyTypeStrings;
+                    secondaryList = enemyTypeStringKeys;
                     break;
                 case HardStrings.expertiseIn:
                 case HardStrings.forbiddenWeaponry:
-                    secondaryList = weaponTypeStrings;
+                    secondaryList = weaponTypeStringKeys;
                     break;
                 case HardStrings.immunity:
                 case HardStrings.resistance:
                 case HardStrings.criticalWeakness:
-                    secondaryList = effectTypeStrings;
+                    secondaryList = effectTypeStringKeys;
                     break;
                 case HardStrings.increasedMagery:
                     // limit to 1 magery increase advantage for the character
                     bool alreadyAdded = false;
                     foreach (SpecialAdvDis item in advDisList)
                     {
-                        if (item.primaryString == HardStrings.increasedMagery)
+                        if (item.primaryStringKey == HardStrings.increasedMagery)
                         {
                             alreadyAdded = true;
                         }
@@ -342,35 +350,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     {
                         return;
                     }
-                    secondaryList = increasedMageryStrings;
+                    secondaryList = increasedMageryStringKeys;
                     break;
                 case HardStrings.rapidHealing:
                 case HardStrings.spellAbsorption:
-                    secondaryList = effectEnvStrings;
+                    secondaryList = effectEnvStringKeys;
                     break;
                 case HardStrings.regenerateHealth:
-                    secondaryList = regenHealthStrings;
+                    secondaryList = regenHealthStringKeys;
                     break;
                 case HardStrings.damage:
-                    secondaryList = damageEnvStrings;
+                    secondaryList = damageEnvStringKeys;
                     break;
                 case HardStrings.darknessPoweredMagery:
-                    secondaryList = darknessPoweredStrings;
+                    secondaryList = darknessPoweredStringKeys;
                     break;
                 case HardStrings.forbiddenArmorType:
-                    secondaryList = armorTypeStrings;
+                    secondaryList = armorTypeStringKeys;
                     break;
                 case HardStrings.forbiddenMaterial:
-                    secondaryList = materialStrings;
+                    secondaryList = materialStringKeys;
                     break;
                 case HardStrings.forbiddenShieldTypes:
-                    secondaryList = shieldTypeStrings;
+                    secondaryList = shieldTypeStringKeys;
                     break;
                 case HardStrings.lightPoweredMagery:
-                    secondaryList = lightPoweredStrings;
+                    secondaryList = lightPoweredStringKeys;
                     break;
                 case HardStrings.lowTolerance:
-                    secondaryList = effectTypeStrings;
+                    secondaryList = effectTypeStringKeys;
                     break;
                 default:
                     break;
@@ -383,9 +391,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 s = new SpecialAdvDis 
                 {
-                    primaryString = advantageName
-                    , secondaryString = string.Empty
-                    , difficulty = GetAdvDisAdjustment(advantageName, string.Empty)
+                    primaryStringKey = primaryKey,
+                    secondaryStringKey = string.Empty,
+                    difficulty = GetAdvDisAdjustment(primaryKey, string.Empty)
                 };
                 advDisList.Add(s);
                 UpdateLabels();
@@ -393,13 +401,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             } 
             else
             {
-                DaggerfallListPickerWindow secondaryPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, advPickerItemCount);
-                secondaryPicker.ListBox.Font = DaggerfallUI.SmallFont;
-                secondaryPicker.OnItemPicked += SecondaryPicker_OnItemPicked;
-                secondaryPicker.OnCancel += SecondaryPicker_OnCancel;
-                foreach (string secondaryString in secondaryList)
+                secondaryPicker.ListBox.ClearItems();
+                foreach (string secondaryKey in secondaryList)
                 {
-                    secondaryPicker.ListBox.AddItem(secondaryString);
+                    secondaryPicker.ListBox.AddItem(TextManager.Instance.GetLocalizedText(secondaryKey), -1, secondaryKey);
                 }
                 uiManager.PushWindow(secondaryPicker);
                 advDisList.Add(s);
@@ -409,8 +414,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void SecondaryPicker_OnItemPicked(int index, string itemString)
         {
             CloseWindow();
-            string primary = advDisList[advDisList.Count - 1].primaryString;
-            SpecialAdvDis item = new SpecialAdvDis { primaryString = primary, secondaryString = itemString, difficulty = GetAdvDisAdjustment(primary, itemString) };
+            string primary = advDisList[advDisList.Count - 1].primaryStringKey;
+            string secondaryKey = secondaryPicker.ListBox.GetItem(index).tag as string;
+            SpecialAdvDis item = new SpecialAdvDis { primaryStringKey = primary, secondaryStringKey = secondaryKey, difficulty = GetAdvDisAdjustment(primary, secondaryKey) };
             if (CannotAddAdvantage(item))
             {
                 advDisList.RemoveAt(advDisList.Count - 1);
@@ -433,7 +439,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (i == (int)sender.Tag)
                 {
                     // set spell point modifier back to default if user removes magery advantage
-                    if (advDisList[i].primaryString == HardStrings.increasedMagery)
+                    if (advDisList[i].primaryStringKey == HardStrings.increasedMagery)
                     {
                         advantageData.SpellPointMultiplier = DFCareer.SpellPointMultipliers.Times_0_50;
                         advantageData.SpellPointMultiplierValue = defaultSpellPointMod;
@@ -489,11 +495,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 int j = -1;
                 while (advantageLabels[++j].Text != string.Empty)
                     ;
-                advantageLabels[j].Text = advDisList[i].primaryString;
+                advantageLabels[j].Text = TextManager.Instance.GetLocalizedText(advDisList[i].primaryStringKey);
                 advantageLabels[j].Tag = i;
-                if (advDisList[i].secondaryString != string.Empty)
+                if (advDisList[i].secondaryStringKey != string.Empty)
                 {
-                    advantageLabels[j + 1].Text = advDisList[i].secondaryString;
+                    advantageLabels[j + 1].Text = TextManager.Instance.GetLocalizedText(advDisList[i].secondaryStringKey);
                     advantageLabels[j + 1].Tag = i;
                     // squish labels together if they represent the same item
                     advantageLabels[j + 1].Position = new Vector2(advantageLabels[j + 1].Position.x, advantageLabels[j].Position.y + tandemLabelSpacing);
@@ -543,7 +549,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             for (int i = 0; i < adList.Count; i++)
             {
                 // Duplicate
-                if (advDis.primaryString == adList[i].primaryString && advDis.secondaryString == adList[i].secondaryString)
+                if (advDis.primaryStringKey == adList[i].primaryStringKey && advDis.secondaryStringKey == adList[i].secondaryStringKey)
                     return true;
                 // Incompatible advantage/disadvantage pairs
                 if (IsMatchingAdvPair(HardStrings.bonusToHit, HardStrings.phobia, advDis, adList[i]))
@@ -570,9 +576,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool IsMatchingAdvPair(string str1, string str2, SpecialAdvDis candidate, SpecialAdvDis incumbent)
         {
-            if ((candidate.primaryString == str1 && incumbent.primaryString == str2
-                || candidate.primaryString == str2 && incumbent.primaryString == str1)
-                && candidate.secondaryString == incumbent.secondaryString)
+            if ((candidate.primaryStringKey == str1 && incumbent.primaryStringKey == str2
+                || candidate.primaryStringKey == str2 && incumbent.primaryStringKey == str1)
+                && candidate.secondaryStringKey == incumbent.secondaryStringKey)
             {
                 return true;
             }
@@ -937,61 +943,61 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             foreach (SpecialAdvDis advDis in advDisList)
             {
-                switch (advDis.primaryString)
+                switch (advDis.primaryStringKey)
                 {
                     case HardStrings.bonusToHit:
-                        SetAttackModifier(DFCareer.AttackModifier.Bonus, advDis.secondaryString);
+                        SetAttackModifier(DFCareer.AttackModifier.Bonus, advDis.secondaryStringKey);
                         break;
                     case HardStrings.phobia:
-                        SetAttackModifier(DFCareer.AttackModifier.Phobia, advDis.secondaryString);
+                        SetAttackModifier(DFCareer.AttackModifier.Phobia, advDis.secondaryStringKey);
                         break;
                     case HardStrings.expertiseIn:
-                        SetProficiency(DFCareer.Proficiency.Expert, advDis.secondaryString);
+                        SetProficiency(DFCareer.Proficiency.Expert, advDis.secondaryStringKey);
                         break;
                     case HardStrings.forbiddenWeaponry:
-                        SetProficiency(DFCareer.Proficiency.Forbidden, advDis.secondaryString);
+                        SetProficiency(DFCareer.Proficiency.Forbidden, advDis.secondaryStringKey);
                         break;
                     case HardStrings.immunity:
-                        SetTolerance(DFCareer.Tolerance.Immune, advDis.secondaryString);
+                        SetTolerance(DFCareer.Tolerance.Immune, advDis.secondaryStringKey);
                         break;
                     case HardStrings.resistance:
-                        SetTolerance(DFCareer.Tolerance.Resistant, advDis.secondaryString);
+                        SetTolerance(DFCareer.Tolerance.Resistant, advDis.secondaryStringKey);
                         break;
                     case HardStrings.criticalWeakness:
-                        SetTolerance(DFCareer.Tolerance.CriticalWeakness, advDis.secondaryString);
+                        SetTolerance(DFCareer.Tolerance.CriticalWeakness, advDis.secondaryStringKey);
                         break;
                     case HardStrings.increasedMagery:
-                        SetMagery(advDis.secondaryString);
+                        SetMagery(advDis.secondaryStringKey);
                         break;
                     case HardStrings.rapidHealing:
-                        SetRapidHealing(advDis.secondaryString);
+                        SetRapidHealing(advDis.secondaryStringKey);
                         break;
                     case HardStrings.spellAbsorption:
-                        SetAbsorption(advDis.secondaryString);
+                        SetAbsorption(advDis.secondaryStringKey);
                         break;
                     case HardStrings.regenerateHealth:
-                        SetRegeneration(advDis.secondaryString);
+                        SetRegeneration(advDis.secondaryStringKey);
                         break;
                     case HardStrings.damage:
-                        SetDamage(advDis.secondaryString);
+                        SetDamage(advDis.secondaryStringKey);
                         break;
                     case HardStrings.darknessPoweredMagery:
-                        SetDarknessMagery(advDis.secondaryString);
+                        SetDarknessMagery(advDis.secondaryStringKey);
                         break;
                     case HardStrings.forbiddenArmorType:
-                        SetForbiddenArmor(advDis.secondaryString);
+                        SetForbiddenArmor(advDis.secondaryStringKey);
                         break;
                     case HardStrings.forbiddenMaterial:
-                        SetForbiddenMaterial(advDis.secondaryString);
+                        SetForbiddenMaterial(advDis.secondaryStringKey);
                         break;
                     case HardStrings.forbiddenShieldTypes:
-                        SetForbiddenShields(advDis.secondaryString);
+                        SetForbiddenShields(advDis.secondaryStringKey);
                         break;
                     case HardStrings.lightPoweredMagery:
-                        SetLightMagery(advDis.secondaryString);
+                        SetLightMagery(advDis.secondaryStringKey);
                         break;
                     case HardStrings.lowTolerance:
-                        SetTolerance(DFCareer.Tolerance.LowTolerance, advDis.secondaryString);
+                        SetTolerance(DFCareer.Tolerance.LowTolerance, advDis.secondaryStringKey);
                         break;
                     case HardStrings.inabilityToRegen:
                         advantageData.NoRegenSpellPoints = true;

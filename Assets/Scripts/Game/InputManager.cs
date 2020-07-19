@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game
 
         //this arbitrary float value seems to be the minimum force that can be given without unnecessarily
         //triggering FrictionMotor's UnstickHandling() method, which can create jagged movement at lower force
-        const float controllerMinimumAxisFloat = 0.1f;
+        const float controllerMinimumAxisFloat = 0.68f;
 
         public Texture2D controllerCursorImage;
 

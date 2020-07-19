@@ -1,0 +1,2372 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Internal_Strings_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 3bc310f2421c1a740ae0f7372d787911, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1
+    m_Localized: This string table collection stores text that was hard-coded in
+      FALL.EXE and text unique to Daggerfall Unity.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2
+    m_Localized: Please select your home province...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Localized: Save Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Load Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: '%s just died.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Game saved.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Game loaded.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: This house has nothing of value.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: 'Enter name of place : '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: Right hand equipped.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: Left hand equipped.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: Using weapon in right hand.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Localized: Using weapon in left hand.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Localized: '%s has broken.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Localized: '%s have broken.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Localized: You cannot carry that much gold.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17
+    m_Localized: You are carrying too much to stay afloat.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18
+    m_Localized: You have no arrows.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19
+    m_Localized: Old indoor save loaded, trade window will not work please exit and
+      re-enter building.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20
+    m_Localized: The body has no treasure.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21
+    m_Localized: You are too far away...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22
+    m_Localized: You see an %s.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23
+    m_Localized: You see a %s.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 24
+    m_Localized: You see a dead person.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25
+    m_Localized: You see a dead %s.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26
+    m_Localized: You pluck your arrows out of the corpse.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27
+    m_Localized: 'Loiter how many hours : '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28
+    m_Localized: 'Rest how many hours : '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29
+    m_Localized: Recipe for Potion of %po
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30
+    m_Localized: Potion of %po
+    m_Metadata:
+      m_Items: []
+  - m_Id: 31
+    m_Localized: 'Letter: '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32
+    m_Localized: You have multiple assignments...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33
+    m_Localized: You are entering %s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34
+    m_Localized: Store is closed. Open from %d1:00 to %d2:00.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35
+    m_Localized: Guild is closed. Open from %d1:00 to %d2:00.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36
+    m_Localized: Any %s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37
+    m_Localized: God of Birth and Death
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38
+    m_Localized: God of Work and Commerce
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39
+    m_Localized: Goddess of Love
+    m_Metadata:
+      m_Items: []
+  - m_Id: 40
+    m_Localized: God of Time
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41
+    m_Localized: God of Logic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42
+    m_Localized: Goddess of Beauty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43
+    m_Localized: God of Mercy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 44
+    m_Localized: Goddess of Air
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45
+    m_Localized: Interaction is now in %s mode.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 46
+    m_Localized: steal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 47
+    m_Localized: grab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 48
+    m_Localized: info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 49
+    m_Localized: dialogue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 50
+    m_Localized: Residence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 51
+    m_Localized: You see %s.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 52
+    m_Localized: The %s Residence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 53
+    m_Localized: '%s''s house'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 54
+    m_Localized: The material of the weapon you are using is ineffective.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 55
+    m_Localized: Successful backstab!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56
+    m_Localized: Pacified %e using %s skill.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 57
+    m_Localized: The lock clicks open.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 58
+    m_Localized: It does not unlock.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59
+    m_Localized: This is a magically held lock...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60
+    m_Localized: This lock has nothing to fear from you...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 61
+    m_Localized: It'd be a miracle if you picked this lock...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 62
+    m_Localized: This lock looks to be beyond your skills...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 63
+    m_Localized: 'Temple of Akatosh
+
+      Temple of Arkay
+
+      Temple of Dibella
+
+      Temple
+      of Julianos
+
+      Temple of Kynareth
+
+      Temple of Mara
+
+      Temple of
+      Stendarr
+
+      Temple of Zen
+
+      Order of the Raven
+
+      Knights of the
+      Dragon
+
+      Knights of the Owl
+
+      Order of the Candle
+
+      Knights
+      of the Flame
+
+      Host of the Horn
+
+      Knights of the Rose
+
+      Knights
+      of the Wheel
+
+      Order of the Scarab
+
+      Knights of the Hawk
+
+      Mages
+      Guild
+
+      Fighters Guild
+
+      Tavern
+
+      Library
+
+      Weapon Smith
+
+      Armorer
+
+      Alchemist
+
+      Bank
+
+      Bookstore
+
+      Clothing
+      store
+
+      Gem store'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 64
+    m_Localized: 'You doubt your ability to open this lock...
+
+      This lock looks
+      difficult...
+
+      You would be challenged by this lock...
+
+      This lock
+      would prove a good challenge...
+
+      You think you should be able to pick
+      this lock...
+
+      This lock seems relatively easy...
+
+      You are amused
+      by this lock...
+
+      You laugh at the amateur quality of this lock...
+
+      You
+      see a pathetic excuse for a lock...
+
+      This lock is an insult to your abilities...'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 65
+    m_Localized: You pinched 1 gold piece.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 66
+    m_Localized: You pinched %d gold pieces.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 67
+    m_Localized: You are not successful...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 68
+    m_Localized: '%d days until freedom.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69
+    m_Localized: Your %s skill has improved.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 70
+    m_Localized: You must distribute all bonus points.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 71
+    m_Localized: 'Enter new name : '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72
+    m_Localized: Affiliation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73
+    m_Localized: Rank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74
+    m_Localized: Get Quest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75
+    m_Localized: Sell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76
+    m_Localized: Banking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 77
+    m_Localized: Identify
+    m_Metadata:
+      m_Items: []
+  - m_Id: 78
+    m_Localized: Buy Spells
+    m_Metadata:
+      m_Items: []
+  - m_Id: 79
+    m_Localized: Training
+    m_Metadata:
+      m_Items: []
+  - m_Id: 80
+    m_Localized: Teleportation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81
+    m_Localized: Make Spells
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82
+    m_Localized: Buy Magic Items
+    m_Metadata:
+      m_Items: []
+  - m_Id: 83
+    m_Localized: Sell Magic Items
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84
+    m_Localized: Daedra Summoning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 85
+    m_Localized: Make Magic Items
+    m_Metadata:
+      m_Items: []
+  - m_Id: 86
+    m_Localized: Repairs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 87
+    m_Localized: Make Donation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 88
+    m_Localized: Cure Disease
+    m_Metadata:
+      m_Items: []
+  - m_Id: 89
+    m_Localized: Spymaster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 90
+    m_Localized: Make Potions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91
+    m_Localized: Buy Potions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92
+    m_Localized: Buy Soulgems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 93
+    m_Localized: Receive Armor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 94
+    m_Localized: Receive House
+    m_Metadata:
+      m_Items: []
+  - m_Id: 95
+    m_Localized: You have already received your house.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 96
+    m_Localized: You need to be a member of sufficient rank to access this.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 97
+    m_Localized: You are cured.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 98
+    m_Localized: '%pcn, the cost for me to attempt a'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 99
+    m_Localized: 'summoning of %dae is '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 100
+    m_Localized: ' gold.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 101
+    m_Localized: The room is free for a knight such as you.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 102
+    m_Localized: Room is free due to Heart's Day.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 103
+    m_Localized: You are not hungry.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 104
+    m_Localized: Fatigue overcomes you and sends you to a watery grave....
+    m_Metadata:
+      m_Items: []
+  - m_Id: 105
+    m_Localized: You feel somewhat bad.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 106
+    m_Localized: By the mercy of Stendarr, you survive certain death!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 107
+    m_Localized: he
+    m_Metadata:
+      m_Items: []
+  - m_Id: 108
+    m_Localized: she
+    m_Metadata:
+      m_Items: []
+  - m_Id: 109
+    m_Localized: him
+    m_Metadata:
+      m_Items: []
+  - m_Id: 110
+    m_Localized: her
+    m_Metadata:
+      m_Items: []
+  - m_Id: 111
+    m_Localized: his
+    m_Metadata:
+      m_Items: []
+  - m_Id: 112
+    m_Localized: hers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 113
+    m_Localized: himself
+    m_Metadata:
+      m_Items: []
+  - m_Id: 114
+    m_Localized: herself
+    m_Metadata:
+      m_Items: []
+  - m_Id: 115
+    m_Localized: city
+    m_Metadata:
+      m_Items: []
+  - m_Id: 116
+    m_Localized: village
+    m_Metadata:
+      m_Items: []
+  - m_Id: 117
+    m_Localized: hamlet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 118
+    m_Localized: farm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 119
+    m_Localized: shack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 120
+    m_Localized: manor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 121
+    m_Localized: community
+    m_Metadata:
+      m_Items: []
+  - m_Id: 122
+    m_Localized: shrine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 123
+    m_Localized: King
+    m_Metadata:
+      m_Items: []
+  - m_Id: 124
+    m_Localized: Queen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 125
+    m_Localized: Duke
+    m_Metadata:
+      m_Items: []
+  - m_Id: 126
+    m_Localized: Duchess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 127
+    m_Localized: Marquis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 128
+    m_Localized: Marquise
+    m_Metadata:
+      m_Items: []
+  - m_Id: 129
+    m_Localized: Count
+    m_Metadata:
+      m_Items: []
+  - m_Id: 130
+    m_Localized: Countess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 131
+    m_Localized: Baron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132
+    m_Localized: Baroness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 133
+    m_Localized: Lord
+    m_Metadata:
+      m_Items: []
+  - m_Id: 134
+    m_Localized: Lady
+    m_Metadata:
+      m_Items: []
+  - m_Id: 135
+    m_Localized: revered
+    m_Metadata:
+      m_Items: []
+  - m_Id: 136
+    m_Localized: esteemed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 137
+    m_Localized: honored
+    m_Metadata:
+      m_Items: []
+  - m_Id: 138
+    m_Localized: admired
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139
+    m_Localized: respected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140
+    m_Localized: dependable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 141
+    m_Localized: a common citizen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 142
+    m_Localized: hated
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143
+    m_Localized: pond scum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 144
+    m_Localized: a villain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145
+    m_Localized: a criminal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146
+    m_Localized: a scoundrel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 147
+    m_Localized: undependable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 148
+    m_Localized: unknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149
+    m_Localized: Broken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 150
+    m_Localized: Useless
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151
+    m_Localized: Battered
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152
+    m_Localized: Worn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 153
+    m_Localized: Used
+    m_Metadata:
+      m_Items: []
+  - m_Id: 154
+    m_Localized: Slightly Used
+    m_Metadata:
+      m_Items: []
+  - m_Id: 155
+    m_Localized: Almost New
+    m_Metadata:
+      m_Items: []
+  - m_Id: 156
+    m_Localized: New
+    m_Metadata:
+      m_Items: []
+  - m_Id: 157
+    m_Localized: Nothing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 158
+    m_Localized: local
+    m_Metadata:
+      m_Items: []
+  - m_Id: 159
+    m_Localized: tavern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 160
+    m_Localized: Attempted Breaking and Entering
+    m_Metadata:
+      m_Items: []
+  - m_Id: 161
+    m_Localized: Trespassing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 162
+    m_Localized: Breaking and Entering
+    m_Metadata:
+      m_Items: []
+  - m_Id: 163
+    m_Localized: Assault
+    m_Metadata:
+      m_Items: []
+  - m_Id: 164
+    m_Localized: Murder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 165
+    m_Localized: Tax Evasion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 166
+    m_Localized: Criminal Conspiracy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 167
+    m_Localized: Vagrancy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 168
+    m_Localized: Smuggling
+    m_Metadata:
+      m_Items: []
+  - m_Id: 169
+    m_Localized: Piracy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 170
+    m_Localized: High Treason
+    m_Metadata:
+      m_Items: []
+  - m_Id: 171
+    m_Localized: Pickpocketing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 172
+    m_Localized: Theft
+    m_Metadata:
+      m_Items: []
+  - m_Id: 173
+    m_Localized: Treason
+    m_Metadata:
+      m_Items: []
+  - m_Id: 174
+    m_Localized: Loan Default
+    m_Metadata:
+      m_Items: []
+  - m_Id: 175
+    m_Localized: '%gtp gold pieces in fines and %dip days in prison'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 176
+    m_Localized: Banishment
+    m_Metadata:
+      m_Items: []
+  - m_Id: 177
+    m_Localized: Execution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 178
+    m_Localized: You cannot change transportation indoors.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 179
+    m_Localized: You cannot travel with enemies nearby.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 180
+    m_Localized: You cannot travel while indoors.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 181
+    m_Localized: Powers unknown.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 182
+    m_Localized: 'Cast when used:
+
+      Cast when held:
+
+      Cast when strikes:
+
+      Extra
+      spell pts
+
+      Potent vs
+
+      Regens health
+
+      Vampiric effect
+
+      Increased
+      weight allowance
+
+      Repairs objects
+
+      Absorbs spells
+
+      Enhances
+      skill
+
+      Feather weight
+
+      Strengthens armor
+
+      Improves talents
+
+      Good
+      rep with
+
+      Soul bound
+
+      Item deteriorates
+
+      User takes damage
+
+      Vision
+      problems
+
+      Walking problems
+
+      Low damage vs
+
+      Health leech
+
+      Bad
+      reactions from
+
+      Extra weight
+
+      Weakens armor
+
+      Bad rep with'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 183
+    m_Localized: 'Rat
+
+      Imp
+
+      Spriggan
+
+      Giant Bat
+
+      Grizzly
+      Bear
+
+      Sabretooth Tiger
+
+      Spider
+
+      Orc
+
+      Centaur
+
+      Werewolf
+
+      Nymph
+
+      Slaughterfish
+
+      Orc
+      Sergeant
+
+      Harpy
+
+      Wereboar
+
+      Skeletal Warrior
+
+      Giant
+
+      Zombie
+
+      Ghost
+
+      Mummy
+
+      Giant
+      Scorpion
+
+      Orc Shaman
+
+      Gargoyle
+
+      Wraith
+
+      Orc Warlord
+
+      Frost
+      Daedra
+
+      Fire Daedra
+
+      Daedroth
+
+      Vampire
+
+      Daedra Seducer
+
+      Ancient
+      Vampire
+
+      Daedra Lord
+
+      Lich
+
+      Ancient Lich
+
+      Dragonling
+
+      Fire
+      Atronach
+
+      Iron Atronach
+
+      Flesh Atronach
+
+      Ice Atronach
+
+      Horse
+
+      Dragonling
+
+      Dreugh
+
+      Lamia
+
+      Mage
+
+      Spellsword
+
+      Battlemage
+
+      Sorcerer
+
+      Healer
+
+      Nightblade
+
+      Bard
+
+      Burglar
+
+      Rogue
+
+      Acrobat
+
+      Thief
+
+      Assassin
+
+      Monk
+
+      Archer
+
+      Ranger
+
+      Barbarian
+
+      Warrior
+
+      Knight
+
+      City
+      Watch'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 184
+    m_Localized: 'during Winter
+
+      during Spring
+
+      during Summer
+
+      during
+      Fall
+
+      during Full Moon
+
+      during Half Moon
+
+      during New Moon
+
+      near
+      undead
+
+      near daedra
+
+      near humanoids
+
+      near animals'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 185
+    m_Localized: 'all the time
+
+      in sunlight
+
+      in darkness'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 186
+    m_Localized: 'at range
+
+      when strikes'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 187
+    m_Localized: '25% additional
+
+      50% additional'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 188
+    m_Localized: 'hearing
+
+      athleticism
+
+      adrenaline rush'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 189
+    m_Localized: 'all the time
+
+      in sunlight
+
+      in holy places'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 190
+    m_Localized: 'in sunlight
+
+      in holy places'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 191
+    m_Localized: 'undead
+
+      Daedra
+
+      humanoids
+
+      animals'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 192
+    m_Localized: 'whenever used
+
+      unless used daily
+
+      unless used weekly'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 193
+    m_Localized: 'humanoids
+
+      animals
+
+      Daedra'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 194
+    m_Localized: 'Commoners
+
+      Merchants
+
+      Scholars
+
+      Nobility
+
+      Underworld
+
+      All'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 195
+    m_Localized: You receive %s gold pieces.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 196
+    m_Localized: 'Price : %s gold'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 197
+    m_Localized: You have a room at %s for %d hours.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 198
+    m_Localized: You have not rented a room here.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 199
+    m_Localized: Your time for this room has expired.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 200
+    m_Localized: Ale (1 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 201
+    m_Localized: Beer (1 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 202
+    m_Localized: Mead (2 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 203
+    m_Localized: Wine (3 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 204
+    m_Localized: Bread (1 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 205
+    m_Localized: Broth (1 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 206
+    m_Localized: Cheese (2 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 207
+    m_Localized: Fowl (3 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 208
+    m_Localized: Gruel (2 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 209
+    m_Localized: Pie (2 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210
+    m_Localized: Stew (3 gold)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 211
+    m_Localized: Press button to fire spell.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 212
+    m_Localized: Climbing mode.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 213
+    m_Localized: Rappel mode.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 214
+    m_Localized: Hanging Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 215
+    m_Localized: Acute Hearing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 216
+    m_Localized: Adrenaline Rush
+    m_Metadata:
+      m_Items: []
+  - m_Id: 217
+    m_Localized: Athleticism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 218
+    m_Localized: Bonus to hit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219
+    m_Localized: Expertise in
+    m_Metadata:
+      m_Items: []
+  - m_Id: 220
+    m_Localized: Immunity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 221
+    m_Localized: Increased Magery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 222
+    m_Localized: Rapid Healing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 223
+    m_Localized: Regenerate Health
+    m_Metadata:
+      m_Items: []
+  - m_Id: 224
+    m_Localized: Resistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 225
+    m_Localized: Spell Absorption
+    m_Metadata:
+      m_Items: []
+  - m_Id: 226
+    m_Localized: Animals
+    m_Metadata:
+      m_Items: []
+  - m_Id: 227
+    m_Localized: Daedra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 228
+    m_Localized: Humanoid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 229
+    m_Localized: Undead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 230
+    m_Localized: Axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 231
+    m_Localized: Blunt Weapon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 232
+    m_Localized: Hand-to-Hand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 233
+    m_Localized: Long Blade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 234
+    m_Localized: Missile Weapon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 235
+    m_Localized: Short Blade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 236
+    m_Localized: To Disease
+    m_Metadata:
+      m_Items: []
+  - m_Id: 237
+    m_Localized: To Fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 238
+    m_Localized: To Frost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 239
+    m_Localized: To Magic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240
+    m_Localized: To Paralysis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 241
+    m_Localized: To Poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 242
+    m_Localized: To Shock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 243
+    m_Localized: 1.5X INT In Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 244
+    m_Localized: 1.75X INT In Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245
+    m_Localized: 2X INT In Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246
+    m_Localized: 3X INT In Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247
+    m_Localized: INT In Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248
+    m_Localized: General
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249
+    m_Localized: In Darkness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250
+    m_Localized: In Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251
+    m_Localized: While Immersed In Water
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252
+    m_Localized: Critical Weakness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253
+    m_Localized: Damage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 254
+    m_Localized: Darkness-Powered Magery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 255
+    m_Localized: Forbidden Armor Type
+    m_Metadata:
+      m_Items: []
+  - m_Id: 256
+    m_Localized: Forbidden Material
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257
+    m_Localized: Forbidden Shield Types
+    m_Metadata:
+      m_Items: []
+  - m_Id: 258
+    m_Localized: Forbidden Weaponry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259
+    m_Localized: Inability To Regen Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 260
+    m_Localized: Light-Powered Magery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 261
+    m_Localized: Low Tolerance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262
+    m_Localized: Phobia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 263
+    m_Localized: From Holy Places
+    m_Metadata:
+      m_Items: []
+  - m_Id: 264
+    m_Localized: From Sunlight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 265
+    m_Localized: Lower Magic Ability In Daylight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 266
+    m_Localized: Unable To Use Magic In Daylight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 267
+    m_Localized: Chain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 268
+    m_Localized: Leather
+    m_Metadata:
+      m_Items: []
+  - m_Id: 269
+    m_Localized: Plate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270
+    m_Localized: Adamantium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 271
+    m_Localized: Daedric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 272
+    m_Localized: Dwarven
+    m_Metadata:
+      m_Items: []
+  - m_Id: 273
+    m_Localized: Ebony
+    m_Metadata:
+      m_Items: []
+  - m_Id: 274
+    m_Localized: Elven
+    m_Metadata:
+      m_Items: []
+  - m_Id: 275
+    m_Localized: Iron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 276
+    m_Localized: Mithril
+    m_Metadata:
+      m_Items: []
+  - m_Id: 277
+    m_Localized: Orcish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 278
+    m_Localized: Silver
+    m_Metadata:
+      m_Items: []
+  - m_Id: 279
+    m_Localized: Steel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 280
+    m_Localized: Buckler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 281
+    m_Localized: Kite Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 282
+    m_Localized: Round Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 283
+    m_Localized: Tower Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 284
+    m_Localized: Lower Magic Ability In Darkness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285
+    m_Localized: Unable To Use Magic In Darkness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286
+    m_Localized: Attributes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287
+    m_Localized: Class Name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288
+    m_Localized: General
+    m_Metadata:
+      m_Items: []
+  - m_Id: 289
+    m_Localized: Reputations
+    m_Metadata:
+      m_Items: []
+  - m_Id: 290
+    m_Localized: Skill Advancement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 291
+    m_Localized: Skills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292
+    m_Localized: Special Advantages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293
+    m_Localized: Special Disadvantages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 294
+    m_Localized: Lower
+    m_Metadata:
+      m_Items: []
+  - m_Id: 295
+    m_Localized: Higher
+    m_Metadata:
+      m_Items: []
+  - m_Id: 296
+    m_Localized: Unchanged
+    m_Metadata:
+      m_Items: []
+  - m_Id: 297
+    m_Localized: Elsweyr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 298
+    m_Localized: Black Marsh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 299
+    m_Localized: Hammerfell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 300
+    m_Localized: High Rock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 301
+    m_Localized: Morrowind
+    m_Metadata:
+      m_Items: []
+  - m_Id: 302
+    m_Localized: Skyrim
+    m_Metadata:
+      m_Items: []
+  - m_Id: 303
+    m_Localized: Sumurset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 304
+    m_Localized: Valenwood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305
+    m_Localized: rolling hills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 306
+    m_Localized: desertland
+    m_Metadata:
+      m_Items: []
+  - m_Id: 307
+    m_Localized: mountains
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308
+    m_Localized: swamps
+    m_Metadata:
+      m_Items: []
+  - m_Id: 309
+    m_Localized: forests
+    m_Metadata:
+      m_Items: []
+  - m_Id: 310
+    m_Localized: shores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 311
+    m_Localized: Medical
+    m_Metadata:
+      m_Items: []
+  - m_Id: 312
+    m_Localized: Etiquette
+    m_Metadata:
+      m_Items: []
+  - m_Id: 313
+    m_Localized: Streetwise
+    m_Metadata:
+      m_Items: []
+  - m_Id: 314
+    m_Localized: Jumping
+    m_Metadata:
+      m_Items: []
+  - m_Id: 315
+    m_Localized: Harpy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 316
+    m_Localized: Giantish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 317
+    m_Localized: Dragonish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318
+    m_Localized: Nymph
+    m_Metadata:
+      m_Items: []
+  - m_Id: 319
+    m_Localized: Daedric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 320
+    m_Localized: Spriggan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 321
+    m_Localized: Centaurian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 322
+    m_Localized: Impish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 323
+    m_Localized: Lockpicking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 324
+    m_Localized: Mercantile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 325
+    m_Localized: Pickpocket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 326
+    m_Localized: Stealth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 327
+    m_Localized: Swimming
+    m_Metadata:
+      m_Items: []
+  - m_Id: 328
+    m_Localized: Climbing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 329
+    m_Localized: Backstabbing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 330
+    m_Localized: Dodging
+    m_Metadata:
+      m_Items: []
+  - m_Id: 331
+    m_Localized: Running
+    m_Metadata:
+      m_Items: []
+  - m_Id: 332
+    m_Localized: Destruction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 333
+    m_Localized: Restoration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 334
+    m_Localized: Illusion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 335
+    m_Localized: Alteration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 336
+    m_Localized: Thaumaturgy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 337
+    m_Localized: Mysticism
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338
+    m_Localized: Archery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340
+    m_Localized: Critical Strike
+    m_Metadata:
+      m_Items: []
+  - m_Id: 341
+    m_Localized: Strength
+    m_Metadata:
+      m_Items: []
+  - m_Id: 342
+    m_Localized: Intelligence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 343
+    m_Localized: Willpower
+    m_Metadata:
+      m_Items: []
+  - m_Id: 344
+    m_Localized: Agility
+    m_Metadata:
+      m_Items: []
+  - m_Id: 345
+    m_Localized: Endurance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 346
+    m_Localized: Personality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 347
+    m_Localized: Speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 348
+    m_Localized: Luck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 349
+    m_Localized: STR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350
+    m_Localized: INT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 351
+    m_Localized: WIL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 352
+    m_Localized: AGI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 353
+    m_Localized: END
+    m_Metadata:
+      m_Items: []
+  - m_Id: 354
+    m_Localized: PER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 355
+    m_Localized: SPD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 356
+    m_Localized: LUC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 357
+    m_Localized: Breton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 358
+    m_Localized: Redguard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 359
+    m_Localized: Dark Elf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360
+    m_Localized: High Elf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 361
+    m_Localized: Wood Elf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 362
+    m_Localized: Khajiit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 363
+    m_Localized: Argonian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 364
+    m_Localized: Vampire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 365
+    m_Localized: Werewolf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366
+    m_Localized: Wereboar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367
+    m_Localized: Vraseth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 368
+    m_Localized: Haarvenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 369
+    m_Localized: Thrafey
+    m_Metadata:
+      m_Items: []
+  - m_Id: 370
+    m_Localized: Lyrezi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 371
+    m_Localized: Montalion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 372
+    m_Localized: Khulari
+    m_Metadata:
+      m_Items: []
+  - m_Id: 373
+    m_Localized: Garlythi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 374
+    m_Localized: Anthotis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 375
+    m_Localized: Selenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 376
+    m_Localized: Locked.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 377
+    m_Localized: Can only be cast once per day...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 378
+    m_Localized: You feel the need to hunt the innocent...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 379
+    m_Localized: You dream, once again, of the moon...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 380
+    m_Localized: You cannot access the inventory while shapechanged...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 381
+    m_Localized: You get no response.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 382
+    m_Localized: 'Left-click: toggle copy of selected text. Right-click: copy whole
+      current conversation.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 383
+    m_Localized: east
+    m_Metadata:
+      m_Items: []
+  - m_Id: 384
+    m_Localized: northeast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 385
+    m_Localized: north
+    m_Metadata:
+      m_Items: []
+  - m_Id: 386
+    m_Localized: northwest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 387
+    m_Localized: west
+    m_Metadata:
+      m_Items: []
+  - m_Id: 388
+    m_Localized: southwest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389
+    m_Localized: south
+    m_Metadata:
+      m_Items: []
+  - m_Id: 390
+    m_Localized: southeast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 391
+    m_Localized: this place
+    m_Metadata:
+      m_Items: []
+  - m_Id: 392
+    m_Localized: Any news?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 393
+    m_Localized: Where am I?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 394
+    m_Localized: You are in {0} in {1}.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 395
+    m_Localized: You have found {0}. You are in it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396
+    m_Localized: '{0} is around here in {1}.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 397
+    m_Localized: Previous List
+    m_Metadata:
+      m_Items: []
+  - m_Id: 398
+    m_Localized: General
+    m_Metadata:
+      m_Items: []
+  - m_Id: 400
+    m_Localized: Regional
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401
+    m_Localized: Alchemists
+    m_Metadata:
+      m_Items: []
+  - m_Id: 402
+    m_Localized: Armorers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 403
+    m_Localized: Banks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 404
+    m_Localized: Bookstores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 405
+    m_Localized: Clothing stores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406
+    m_Localized: Gem stores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 407
+    m_Localized: General stores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 408
+    m_Localized: Guilds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 409
+    m_Localized: Libraries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 410
+    m_Localized: Pawn shops
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411
+    m_Localized: Taverns
+    m_Metadata:
+      m_Items: []
+  - m_Id: 412
+    m_Localized: Weapon smiths
+    m_Metadata:
+      m_Items: []
+  - m_Id: 413
+    m_Localized: Local temples
+    m_Metadata:
+      m_Items: []
+  - m_Id: 414
+    m_Localized: Sir
+    m_Metadata:
+      m_Items: []
+  - m_Id: 415
+    m_Localized: Ma'am
+    m_Metadata:
+      m_Items: []
+  - m_Id: 416
+    m_Localized: died of heart failure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 417
+    m_Localized: fell and struck his head
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418
+    m_Localized: died of the plague
+    m_Metadata:
+      m_Items: []
+  - m_Id: 419
+    m_Localized: stepped down under pressure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 420
+    m_Localized: was overthrown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 421
+    m_Localized: was found murdered in his bed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422
+    m_Localized: Any
+    m_Metadata:
+      m_Items: []
+  - m_Id: 423
+    m_Localized: any
+    m_Metadata:
+      m_Items: []
+  - m_Id: 424
+    m_Localized: ',  '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 425
+    m_Localized: ...never mind...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 426
+    m_Localized: Chameleon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 427
+    m_Localized: Charm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 428
+    m_Localized: Comprehend Languages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 429
+    m_Localized: Continuous Damage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430
+    m_Localized: Create Item
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431
+    m_Localized: Cure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 432
+    m_Localized: Detect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 433
+    m_Localized: Disintegrate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 434
+    m_Localized: Dispel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 435
+    m_Localized: Drain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 436
+    m_Localized: Elemental Resistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 437
+    m_Localized: Fortify Attribute
+    m_Metadata:
+      m_Items: []
+  - m_Id: 438
+    m_Localized: Free Action
+    m_Metadata:
+      m_Items: []
+  - m_Id: 439
+    m_Localized: Heal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 440
+    m_Localized: Identify
+    m_Metadata:
+      m_Items: []
+  - m_Id: 441
+    m_Localized: Invisibility
+    m_Metadata:
+      m_Items: []
+  - m_Id: 442
+    m_Localized: Levitate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 443
+    m_Localized: Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 444
+    m_Localized: Lock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 445
+    m_Localized: Morph Self
+    m_Metadata:
+      m_Items: []
+  - m_Id: 446
+    m_Localized: Open
+    m_Metadata:
+      m_Items: []
+  - m_Id: 447
+    m_Localized: Pacify
+    m_Metadata:
+      m_Items: []
+  - m_Id: 448
+    m_Localized: Paralyze
+    m_Metadata:
+      m_Items: []
+  - m_Id: 449
+    m_Localized: Regenerate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 450
+    m_Localized: Shadow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 451
+    m_Localized: Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 452
+    m_Localized: Silence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 453
+    m_Localized: Slowfall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 454
+    m_Localized: Soul Trap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455
+    m_Localized: Spell Reflection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 456
+    m_Localized: Spell Resistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 457
+    m_Localized: Teleport
+    m_Metadata:
+      m_Items: []
+  - m_Id: 458
+    m_Localized: Transfer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 459
+    m_Localized: Water Breathing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 460
+    m_Localized: Water Walking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 461
+    m_Localized: Fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 462
+    m_Localized: Frost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 463
+    m_Localized: Magicka
+    m_Metadata:
+      m_Items: []
+  - m_Id: 464
+    m_Localized: Poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465
+    m_Localized: Shock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 466
+    m_Localized: Enemy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 467
+    m_Localized: Magic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 468
+    m_Localized: Treasure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 469
+    m_Localized: Fatigue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 470
+    m_Localized: Health
+    m_Metadata:
+      m_Items: []
+  - m_Id: 471
+    m_Localized: Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 472
+    m_Localized: Disease
+    m_Metadata:
+      m_Items: []
+  - m_Id: 473
+    m_Localized: Paralyzation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 474
+    m_Localized: Animal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 475
+    m_Localized: Normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 476
+    m_Localized: True
+    m_Metadata:
+      m_Items: []
+  - m_Id: 477
+    m_Localized: <no-name>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 478
+    m_Localized: You don't have the spell points.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 479
+    m_Localized: You are silenced.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 480
+    m_Localized: You are paralyzed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481
+    m_Localized: You feel drained.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 482
+    m_Localized: You are fortified.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 483
+    m_Localized: You are invisible.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 484
+    m_Localized: You are levitating.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 485
+    m_Localized: You are regenerating.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 486
+    m_Localized: You are blending.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 487
+    m_Localized: You are a shade.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 488
+    m_Localized: Slow fall active.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 489
+    m_Localized: Save versus spell made.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 490
+    m_Localized: Spell effect failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 491
+    m_Localized: Spell was absorbed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 492
+    m_Localized: Spell was reflected.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 493
+    m_Localized: Spell was resisted.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 494
+    m_Localized: Ready to lock.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 495
+    m_Localized: Ready to open.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 496
+    m_Localized: Door is now locked.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 497
+    m_Localized: Door already locked.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 498
+    m_Localized: Lock is too powerful.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 499
+    m_Localized: You have no spellbook!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 500
+    m_Localized: You cannot initiate fast travel during the day.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 501
+    m_Localized: Trap active.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 502
+    m_Localized: Trap will not work on humanoids.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 503
+    m_Localized: Trapped soul.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 504
+    m_Localized: Trap failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 505
+    m_Localized: You have no empty soul traps!
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

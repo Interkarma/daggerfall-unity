@@ -760,4 +760,14 @@ namespace DaggerfallWorkshop
         Disabled,
         Enabled,
     }
+
+    /// <summary>
+    /// Quick way to reference a text collection.
+    /// The current value of collection name is read from appropriate field in scene TextManager singleton.
+    /// </summary>
+    public enum TextCollections
+    {
+        Internal,
+        TextRSC,
+    }
 }

@@ -115,9 +115,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         /// <param name="section">Name of section.</param>
         /// <param name="name">Name of key.</param>
-        public Tuple<int, int> GetTupleInt(string section, string name)
+        public DaggerfallWorkshop.Utility.Tuple<int, int> GetTupleInt(string section, string name)
         {
-            return GetValue<Tuple<int, int>>(section, name);
+            return GetValue<DaggerfallWorkshop.Utility.Tuple<int, int>>(section, name);
         }
 
         /// <summary>
@@ -125,9 +125,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         /// <param name="section">Name of section.</param>
         /// <param name="name">Name of key.</param>
-        public Tuple<float, float> GetTupleFloat(string section, string name)
+        public DaggerfallWorkshop.Utility.Tuple<float, float> GetTupleFloat(string section, string name)
         {
-            return GetValue<Tuple<float, float>>(section, name);
+            return GetValue<DaggerfallWorkshop.Utility.Tuple<float, float>>(section, name);
         }
 
         /// <summary>

@@ -166,7 +166,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             // Output alert text
-            DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.youFeelSomewhatBad, 2.5f);
+            DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youFeelSomewhatBad"), 2.5f);
         }
 
         /// <summary>

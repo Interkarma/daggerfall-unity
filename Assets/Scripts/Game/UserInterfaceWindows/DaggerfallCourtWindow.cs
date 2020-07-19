@@ -456,7 +456,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void UpdatePrisonScreen()
         {
             daysInPrisonLeft--;
-            daysUntilFreedomLabel.Text = HardStrings.daysUntilFreedom;
+            daysUntilFreedomLabel.Text = TextManager.Instance.GetLocalizedText("daysUntilFreedom");
             daysUntilFreedomLabel.Text = daysUntilFreedomLabel.Text.Replace("%d", daysInPrisonLeft.ToString());
 
             if (daysInPrisonLeft == 0)
@@ -510,7 +510,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             courtPanel.Size = TextureReplacement.GetSize(nativeTexture, nativeImgName2);
             courtPanel.BackgroundTexture = nativeTexture;
 
-            daysUntilFreedomLabel.Text = HardStrings.daysUntilFreedom;
+            daysUntilFreedomLabel.Text = TextManager.Instance.GetLocalizedText("daysUntilFreedom");
             daysUntilFreedomLabel.Text = daysUntilFreedomLabel.Text.Replace("%d", daysInPrison.ToString());
         }
     }

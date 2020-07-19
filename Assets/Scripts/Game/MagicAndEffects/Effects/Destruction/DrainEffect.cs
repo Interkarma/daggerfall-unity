@@ -111,7 +111,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             DaggerfallEntityBehaviour host = GetPeeredEntityBehaviour(manager);
 
             // Do not allow magnitude to reduce stat below 1 relative to permanent value
-            // Stats are clamped 1-100 and this prevents drain magnitude from going into invisible "healing debt"
+            // This prevents drain magnitude from going into invisible "healing debt"
+            // DrainEffect alone does not reduce attribute to 0 and does not kill player/enemies
             int permanentValue = host.Entity.Stats.GetPermanentStatValue(drainStat);
             if (permanentValue - (magnitude + amount) < 1)
                 magnitude = permanentValue - 1;

@@ -651,7 +651,7 @@ namespace DaggerfallWorkshop.Game
                 if (EquipCountdownRightHand <= 0)
                 {
                     EquipCountdownRightHand = 0;
-                    string message = HardStrings.rightHandEquipped;
+                    string message = TextManager.Instance.GetLocalizedText("rightHandEquipped");
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
             }
@@ -661,7 +661,7 @@ namespace DaggerfallWorkshop.Game
                 if (EquipCountdownLeftHand <= 0)
                 {
                     EquipCountdownLeftHand = 0;
-                    string message = HardStrings.leftHandEquipped;
+                    string message = TextManager.Instance.GetLocalizedText("leftHandEquipped");
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
             }
@@ -677,9 +677,9 @@ namespace DaggerfallWorkshop.Game
 
             usingRightHand = !usingRightHand;
             if (usingRightHand)
-                DaggerfallUI.Instance.PopupMessage(HardStrings.usingRightHand);
+                DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("usingRightHand"));
             else
-                DaggerfallUI.Instance.PopupMessage(HardStrings.usingLeftHand);
+                DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("usingLeftHand"));
 
             if (DaggerfallUnity.Settings.BowLeftHandWithSwitching)
             {

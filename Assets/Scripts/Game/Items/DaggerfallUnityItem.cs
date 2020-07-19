@@ -527,7 +527,7 @@ namespace DaggerfallWorkshop.Game.Items
             ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, groupIndex);
 
             // Assign new data
-            shortName = itemTemplate.name;
+            shortName = itemTemplate.name; // LOCALIZATION_TODO: Lookup item template name from localization
             this.itemGroup = itemGroup;
             this.groupIndex = groupIndex;
             playerTextureArchive = itemTemplate.playerTextureArchive;
@@ -578,7 +578,7 @@ namespace DaggerfallWorkshop.Game.Items
                 materialValue = 0x200 + materialValue;
 
             // Assign new data
-            shortName = magicItemTemplate.name;
+            shortName = magicItemTemplate.name; // LOCALIZATION_TODO: Lookup magic item template name from localization
             this.itemGroup = (ItemGroups)magicItemTemplate.group;
             this.groupIndex = magicItemTemplate.groupIndex;
             playerTextureArchive = archive;
@@ -1175,9 +1175,9 @@ namespace DaggerfallWorkshop.Game.Items
             // Also the classic string says "is" instead of "has"
             string itemBroke = "";
             if (TemplateIndex == (int)Armor.Boots || TemplateIndex == (int)Armor.Gauntlets || TemplateIndex == (int)Armor.Greaves)
-                itemBroke = UserInterfaceWindows.HardStrings.itemHasBrokenPlural;
+                itemBroke = TextManager.Instance.GetLocalizedText("itemHasBrokenPlural");
             else
-                itemBroke = UserInterfaceWindows.HardStrings.itemHasBroken;
+                itemBroke = TextManager.Instance.GetLocalizedText("itemHasBroken");
             itemBroke = itemBroke.Replace("%s", LongName);
             DaggerfallUI.Instance.PopupMessage(itemBroke);
 
@@ -1520,7 +1520,7 @@ namespace DaggerfallWorkshop.Game.Items
             int worldRecord = (worldBitfield & 0x7f);
 
             // Assign new data
-            shortName = itemRecord.ParsedData.name;
+            shortName = itemRecord.ParsedData.name; // LOCALIZATION_TODO: Lookup item template name from localizations
             itemGroup = group;
             groupIndex = index;
             playerTextureArchive = playerArchive;

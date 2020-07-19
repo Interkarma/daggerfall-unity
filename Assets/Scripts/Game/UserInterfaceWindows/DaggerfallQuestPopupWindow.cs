@@ -289,9 +289,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {   // Display customised not enough gold message so players don't need to guess the cost.
                     TextFile.Token[] notEnoughGold = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(NotEnoughGoldId);
                     TextFile.Token[] msg = new TextFile.Token[] {
-                        new TextFile.Token() { formatting = TextFile.Formatting.Text, text = HardStrings.serviceSummonCost1 },
+                        new TextFile.Token() { formatting = TextFile.Formatting.Text, text = TextManager.Instance.GetLocalizedText("serviceSummonCost1") },
                         new TextFile.Token() { formatting = TextFile.Formatting.JustifyCenter },
-                        new TextFile.Token() { formatting = TextFile.Formatting.Text, text = HardStrings.serviceSummonCost2 + summonCost + HardStrings.serviceSummonCost3 },
+                        new TextFile.Token() { formatting = TextFile.Formatting.Text, text = TextManager.Instance.GetLocalizedText("serviceSummonCost2") + summonCost + TextManager.Instance.GetLocalizedText("serviceSummonCost3") },
                         new TextFile.Token() { formatting = TextFile.Formatting.JustifyCenter },
                         new TextFile.Token() { formatting = TextFile.Formatting.NewLine },
                         notEnoughGold[0],

@@ -2270,7 +2270,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "diseaseplayer";
             public static readonly string description = "Infect player with a classic disease.";
-            public static readonly string usage = "diseaseplayer index (a number 0-16) OR diseaseplayer vampire|werewolf|wereboar (Note: only vampire currently implemented)";
+            public static readonly string usage = "diseaseplayer index (a number 0-16) OR diseaseplayer vampire|werewolf|wereboar";
 
             enum CommandDiseaseTypes
             {
@@ -2508,31 +2508,31 @@ namespace Wenzil.Console
                         string reputationString = string.Empty;
                         int rep = GameManager.Instance.PlayerEntity.RegionData[region].LegalRep;
                         if (rep > 80)
-                            reputationString = HardStrings.revered;
+                            reputationString = TextManager.Instance.GetLocalizedText("revered");
                         else if (rep > 60)
-                            reputationString = HardStrings.esteemed;
+                            reputationString = TextManager.Instance.GetLocalizedText("esteemed");
                         else if (rep > 40)
-                            reputationString = HardStrings.honored;
+                            reputationString = TextManager.Instance.GetLocalizedText("honored");
                         else if (rep > 20)
-                            reputationString = HardStrings.admired;
+                            reputationString = TextManager.Instance.GetLocalizedText("admired");
                         else if (rep > 10)
-                            reputationString = HardStrings.respected;
+                            reputationString = TextManager.Instance.GetLocalizedText("respected");
                         else if (rep > 0)
-                            reputationString = HardStrings.dependable;
+                            reputationString = TextManager.Instance.GetLocalizedText("dependable");
                         else if (rep == 0)
-                            reputationString = HardStrings.aCommonCitizen;
+                            reputationString = TextManager.Instance.GetLocalizedText("aCommonCitizen");
                         else if (rep < -80)
-                            reputationString = HardStrings.hated;
+                            reputationString = TextManager.Instance.GetLocalizedText("hated");
                         else if (rep < -60)
-                            reputationString = HardStrings.pondScum;
+                            reputationString = TextManager.Instance.GetLocalizedText("pondScum");
                         else if (rep < -40)
-                            reputationString = HardStrings.aVillain;
+                            reputationString = TextManager.Instance.GetLocalizedText("aVillain");
                         else if (rep < -20)
-                            reputationString = HardStrings.aCriminal;
+                            reputationString = TextManager.Instance.GetLocalizedText("aCriminal");
                         else if (rep < -10)
-                            reputationString = HardStrings.aScoundrel;
+                            reputationString = TextManager.Instance.GetLocalizedText("aScoundrel");
                         else if (rep < 0)
-                            reputationString = HardStrings.undependable;
+                            reputationString = TextManager.Instance.GetLocalizedText("undependable");
 
                         output += string.Format("In '{0}' you are {1} [{2}]\n", regionName, reputationString, rep);
                     }

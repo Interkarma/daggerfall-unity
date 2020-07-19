@@ -157,8 +157,8 @@ namespace DaggerfallWorkshop.Game.Entity
             int value = GetPermanentStatValue(stat) + mods[(int)stat];
             int maxValue = FormulaHelper.MaxStatValue() + maxMods[(int)stat];
 
-            // Clamp live stat to 1-maxValue (accounting for any max value mods)
-            value = Mathf.Clamp(value, 1, maxValue);
+            // Clamp live stat to 0-maxValue (accounting for any max value mods)
+            value = Mathf.Clamp(value, 0, maxValue);
 
             return (short)value;
         }

@@ -299,7 +299,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             if (host.Entity == GameManager.Instance.PlayerEntity)
-                DaggerfallUI.AddHUDText(HardStrings.youFeelSomewhatBad);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youFeelSomewhatBad"));
 
             if (--minutesRemaining <= 0)
                 currentState = PoisonStates.Complete;
