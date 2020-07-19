@@ -385,27 +385,10 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// Gets the dominant race in player's current region.
-        /// This seems to be based on subclimate rather than FACTION.TXT.
-        /// The faction data has very little diversity and does not match observed race in many regions.
         /// </summary>
         public Races GetRaceOfCurrentRegion()
         {
-            // Racial distribution in Daggerfall:
-            //  * Desert, Desert2, Rainforest = Redguard
-            //  * Mountain, MountainWoods = Nord
-            //  * Swamp, Subtropical, Woodlands, Default = Breton
-
-            DFLocation.ClimateSettings settings = MapsFile.GetWorldClimateSettings(climateSettings.WorldClimate);
-            switch(settings.People)
-            {
-                case FactionFile.FactionRaces.Redguard:
-                    return Races.Redguard;
-                case FactionFile.FactionRaces.Nord:
-                    return Races.Nord;
-                case FactionFile.FactionRaces.Breton:
-                default:
-                    return Races.Breton;
-            }
+            return (Races) MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex] + 1;
         }
 
         /// <summary>
