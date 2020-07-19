@@ -12,19 +12,11 @@
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
-using System;
-using System.IO;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Localization;
-using UnityEngine.SocialPlatforms;
 using UnityEngine.Localization.Tables;
 using DaggerfallWorkshop.Game;
 
@@ -138,8 +130,6 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public abstract class TextProvider : ITextProvider
     {
-        public static string defaultInternalStringsCollectionName = "Internal_Strings";
-
         public bool localizedStringDebug = false;
 
         TextFile rscFile = new TextFile();
@@ -285,6 +275,11 @@ namespace DaggerfallWorkshop.Utility
                         Debug.LogFormat("Found localized string for locale {0}\n{1}", LocalizationSettings.SelectedLocale.name, result);
                     return true;
                 }
+            }
+            else
+            {
+                if (localizedStringDebug)
+                    Debug.LogFormat("StringTable collection '{0}' not found", collection);
             }
 
             return false;
