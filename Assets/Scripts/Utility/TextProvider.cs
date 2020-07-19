@@ -255,7 +255,11 @@ namespace DaggerfallWorkshop.Utility
         {
             result = string.Empty;
             if (string.IsNullOrEmpty(collection))
+            {
+                if (localizedStringDebug)
+                    Debug.Log("Collection name is null or empty.");
                 return false;
+            }
 
             StringTable table = null;
             var sd = LocalizationSettings.StringDatabase;
