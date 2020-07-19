@@ -34,7 +34,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public const string LycanthropyCurseKey = "Lycanthropy-Curse";
 
-        const string generalTextDatabase = "GeneralText";
         const string cureQuestName = "$CUREWER";
         const int paperDollWidth = 110;
         const int paperDollHeight = 184;
@@ -364,7 +363,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             if (isTransformed)
             {
-                suppressInventoryMessage = TextManager.Instance.GetText(generalTextDatabase, "inventoryWhileShapechanged");
+                suppressInventoryMessage = TextManager.Instance.GetLocalizedText("inventoryWhileShapechanged");
                 return true;
             }
             else
@@ -378,7 +377,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             if (isTransformed)
             {
-                suppressTalkMessage = TextManager.Instance.GetText(generalTextDatabase, "youGetNoResponse");
+                suppressTalkMessage = TextManager.Instance.GetLocalizedText("youGetNoResponse");
                 return true;
             }
             else
@@ -452,7 +451,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 // Player can always cast to exit beast form or with no restrictions while wearing Hircine's Ring
                 if (!CanCastMorphSelf() && !forceMorph)
                 {
-                    string canOnlyCastOncePerDay = TextManager.Instance.GetText(generalTextDatabase, "canOnlyCastOncePerDay");
+                    string canOnlyCastOncePerDay = TextManager.Instance.GetLocalizedText("canOnlyCastOncePerDay");
                     DaggerfallUI.MessageBox(canOnlyCastOncePerDay);
                     return;
                 }
@@ -569,7 +568,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Ultimately the player has their own choice to do this or not. They can run free in the wilderness for 24 hours if they prefer.
             if (isFullMoon && !isTransformed)
             {
-                string youDreamOfTheMoon = TextManager.Instance.GetText(generalTextDatabase, "youDreamOfTheMoon");
+                string youDreamOfTheMoon = TextManager.Instance.GetLocalizedText("youDreamOfTheMoon");
                 DaggerfallUI.AddHUDText(youDreamOfTheMoon, 2);
                 MorphSelf(true);
             }
@@ -587,7 +586,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         void NotifyNeedToKill()
         {
-            string youNeedToKill = TextManager.Instance.GetText(generalTextDatabase, "youNeedToHuntTheInnocent");
+            string youNeedToKill = TextManager.Instance.GetLocalizedText("youNeedToHuntTheInnocent");
             DaggerfallUI.AddHUDText(youNeedToKill, 2);
         }
 

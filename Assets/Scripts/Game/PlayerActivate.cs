@@ -447,13 +447,12 @@ namespace DaggerfallWorkshop.Game
                     if (HandleOpenEffectOnExteriorDoor(buildingLockValue))
                         buildingUnlocked = true;
 
-                    // TODO: Implement lockpicking and door bashing for exterior doors
-                    // For now, any locked building door can be entered by using steal mode
+                    // Handle locked buildings
                     if (!buildingUnlocked)
                     {
                         if (currentMode != PlayerActivateModes.Steal)
                         {
-                            DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetText("GeneralText", "lockedExteriorDoor"));
+                            DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockedExteriorDoor"));
                             LookAtInteriorLock(buildingLockValue);
                             return;
                         }

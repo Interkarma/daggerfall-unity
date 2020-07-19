@@ -1851,5 +1851,29 @@ MonoBehaviour:
     m_Localized: Selenu
     m_Metadata:
       m_Items: []
+  - m_Id: 376
+    m_Localized: Locked.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 377
+    m_Localized: Can only be cast once per day...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 378
+    m_Localized: You feel the need to hunt the innocent...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 379
+    m_Localized: You dream, once again, of the moon...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 380
+    m_Localized: You cannot access the inventory while shapechanged...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 381
+    m_Localized: You get no response.
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

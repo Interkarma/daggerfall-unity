@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 376
+  m_NextAvailableId: 382
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -1510,6 +1510,30 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 375
     m_Key: selenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 376
+    m_Key: lockedExteriorDoor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 377
+    m_Key: canOnlyCastOncePerDay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 378
+    m_Key: youNeedToHuntTheInnocent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 379
+    m_Key: youDreamOfTheMoon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 380
+    m_Key: inventoryWhileShapechanged
+    m_Metadata:
+      m_Items: []
+  - m_Id: 381
+    m_Key: youGetNoResponse
     m_Metadata:
       m_Items: []
   m_Metadata:
