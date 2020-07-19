@@ -1875,5 +1875,178 @@ MonoBehaviour:
     m_Localized: You get no response.
     m_Metadata:
       m_Items: []
+  - m_Id: 382
+    m_Localized: 'Left-click: toggle copy of selected text. Right-click: copy whole
+      current conversation.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 383
+    m_Localized: east
+    m_Metadata:
+      m_Items: []
+  - m_Id: 384
+    m_Localized: northeast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 385
+    m_Localized: north
+    m_Metadata:
+      m_Items: []
+  - m_Id: 386
+    m_Localized: northwest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 387
+    m_Localized: west
+    m_Metadata:
+      m_Items: []
+  - m_Id: 388
+    m_Localized: southwest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389
+    m_Localized: south
+    m_Metadata:
+      m_Items: []
+  - m_Id: 390
+    m_Localized: southeast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 391
+    m_Localized: this place
+    m_Metadata:
+      m_Items: []
+  - m_Id: 392
+    m_Localized: Any news?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 393
+    m_Localized: Where am I?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 394
+    m_Localized: You are in {0} in {1}.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 395
+    m_Localized: You have found {0}. You are in it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396
+    m_Localized: '{0} is around here in {1}.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 397
+    m_Localized: Previous List
+    m_Metadata:
+      m_Items: []
+  - m_Id: 398
+    m_Localized: General
+    m_Metadata:
+      m_Items: []
+  - m_Id: 400
+    m_Localized: Regional
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401
+    m_Localized: Alchemists
+    m_Metadata:
+      m_Items: []
+  - m_Id: 402
+    m_Localized: Armorers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 403
+    m_Localized: Banks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 404
+    m_Localized: Bookstores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 405
+    m_Localized: Clothing stores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406
+    m_Localized: Gem stores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 407
+    m_Localized: General stores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 408
+    m_Localized: Guilds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 409
+    m_Localized: Libraries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 410
+    m_Localized: Pawn shops
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411
+    m_Localized: Taverns
+    m_Metadata:
+      m_Items: []
+  - m_Id: 412
+    m_Localized: Weapon smiths
+    m_Metadata:
+      m_Items: []
+  - m_Id: 413
+    m_Localized: Local temples
+    m_Metadata:
+      m_Items: []
+  - m_Id: 414
+    m_Localized: Sir
+    m_Metadata:
+      m_Items: []
+  - m_Id: 415
+    m_Localized: Ma'am
+    m_Metadata:
+      m_Items: []
+  - m_Id: 416
+    m_Localized: died of heart failure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 417
+    m_Localized: fell and struck his head
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418
+    m_Localized: died of the plague
+    m_Metadata:
+      m_Items: []
+  - m_Id: 419
+    m_Localized: stepped down under pressure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 420
+    m_Localized: was overthrown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 421
+    m_Localized: was found murdered in his bed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422
+    m_Localized: Any
+    m_Metadata:
+      m_Items: []
+  - m_Id: 423
+    m_Localized: any
+    m_Metadata:
+      m_Items: []
+  - m_Id: 424
+    m_Localized: ',  '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 425
+    m_Localized: ...never mind...
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

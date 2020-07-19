@@ -216,7 +216,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (questLastPlaceReferenced == null)
                     {
                         QuestMachine.Log(parent, "Trying to get direction to quest location when no location has been referenced in the quest.");
-                        return TextManager.Instance.GetText("ConversationText", "resolvingError");
+                        return TextManager.Instance.GetLocalizedText("resolvingError");
                     }
 
                     return GameManager.Instance.TalkManager.GetLocationCompassDirection(questLastPlaceReferenced);
@@ -230,13 +230,13 @@ namespace DaggerfallWorkshop.Game.Questing
                     else
                     {
                         string result = questLastPlaceReferenced.SiteDetails.locationName;
-                        result += TextManager.Instance.GetText(TalkManager.TextDatabase, "comma");                        
+                        result += TextManager.Instance.GetLocalizedText("comma");
                         result += GameManager.Instance.TalkManager.GetLocationCompassDirection(questLastPlaceReferenced);
                         return result;
                     }
                 }
 
-                return TextManager.Instance.GetText(TalkManager.TextDatabase, "resolvingError");
+                return TextManager.Instance.GetLocalizedText("resolvingError");
             }
         }
     }

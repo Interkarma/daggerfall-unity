@@ -88,8 +88,6 @@ namespace DaggerfallWorkshop.Game
 
         #region Fields
 
-        const string textDatabase = "ConversationText";
-
         const int minNeutralReaction = 0;
         const int minLikeReaction = 10;
         const int minVeryLikeReaction = 30;
@@ -439,11 +437,6 @@ namespace DaggerfallWorkshop.Game
         public List<ListItem> ListTopicThings
         {
             get { return listTopicThing; }
-        }
-
-        public static string TextDatabase
-        {
-            get { return textDatabase; }
         }
 
         public bool ConsoleCommandFlag_npcsKnowEverything
@@ -1055,23 +1048,23 @@ namespace DaggerfallWorkshop.Game
                 angle = 180.0f + (180.0f - angle);
 
             if ((angle >= 0.0f && angle < 22.5f) || (angle >= 337.5f && angle <= 360.0f))
-                return TextManager.Instance.GetText(textDatabase, "east");
+                return TextManager.Instance.GetLocalizedText("east");
             else if (angle >= 22.5f && angle < 67.5f)
-                return TextManager.Instance.GetText(textDatabase, "northeast");
+                return TextManager.Instance.GetLocalizedText("northeast");
             else if (angle >= 67.5f && angle < 112.5f)
-                return TextManager.Instance.GetText(textDatabase, "north");
+                return TextManager.Instance.GetLocalizedText("north");
             else if (angle >= 112.5f && angle < 157.5f)
-                return TextManager.Instance.GetText(textDatabase, "northwest");
+                return TextManager.Instance.GetLocalizedText("northwest");
             else if (angle >= 157.5f && angle < 202.5f)
-                return TextManager.Instance.GetText(textDatabase, "west");
+                return TextManager.Instance.GetLocalizedText("west");
             else if (angle >= 202.5f && angle < 247.5f)
-                return TextManager.Instance.GetText(textDatabase, "southwest");
+                return TextManager.Instance.GetLocalizedText("southwest");
             else if (angle >= 247.5f && angle < 292.5f)
-                return TextManager.Instance.GetText(textDatabase, "south");
+                return TextManager.Instance.GetLocalizedText("south");
             else if (angle >= 292.5f && angle < 337.5f)
-                return TextManager.Instance.GetText(textDatabase, "southeast");
+                return TextManager.Instance.GetLocalizedText("southeast");
             else
-                return TextManager.Instance.GetText(textDatabase, "resolvingError");
+                return TextManager.Instance.GetLocalizedText("resolvingError");
         }
 
         public string GetKeySubjectLocationCompassDirection()
@@ -1116,7 +1109,7 @@ namespace DaggerfallWorkshop.Game
                 playerPos = new Vector2(buildingInfoCurrentBuilding.position.x, buildingInfoCurrentBuilding.position.y);
 
                 if (buildingInfoCurrentBuilding.buildingKey == buildingInfoTargetBuilding.buildingKey)
-                    return TextManager.Instance.GetText(textDatabase, "thisPlace");       
+                    return TextManager.Instance.GetLocalizedText("thisPlace");       
             }
            
             Vector2 vecDirectionToTarget = buildingInfoTargetBuilding.position - playerPos;
@@ -1165,7 +1158,7 @@ namespace DaggerfallWorkshop.Game
                 return GameManager.Instance.TalkManager.DirectionVector2DirectionHintString(vecDirectionToTarget);
             }
 
-            return TextManager.Instance.GetText(TalkManager.TextDatabase, "resolvingError");
+            return TextManager.Instance.GetLocalizedText("resolvingError");
         }
 
         public void MarkKeySubjectLocationOnMap()
@@ -1200,7 +1193,7 @@ namespace DaggerfallWorkshop.Game
                     question = ExpandRandomTextRecord(7231 + toneIndex);
                     break;
                 case QuestionType.WhereAmI:
-                    question = TextManager.Instance.GetText(textDatabase, "WhereAmI");
+                    question = TextManager.Instance.GetLocalizedText("WhereAmI");
                     break;
                 case QuestionType.OrganizationInfo:
                     currentKeySubjectType = KeySubjectType.Organization;
@@ -1222,7 +1215,7 @@ namespace DaggerfallWorkshop.Game
                     currentKeySubjectType = KeySubjectType.Building;
 
                     // Improvement over classic. Make "Any" lower-case since it will be in the middle of a sentence.
-                    currentKeySubject = currentKeySubject.Replace(TextManager.Instance.GetText(textDatabase, "toBeReplacedStringRegional"), TextManager.Instance.GetText(textDatabase, "replacementStringRegional"));
+                    currentKeySubject = currentKeySubject.Replace(TextManager.Instance.GetLocalizedText("toBeReplacedStringRegional"), TextManager.Instance.GetLocalizedText("replacementStringRegional"));
 
                     question = ExpandRandomTextRecord(7225 + toneIndex);
                     break;
@@ -1245,7 +1238,7 @@ namespace DaggerfallWorkshop.Game
             const int outOfNewsRecordIndex = 1457;
             if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
             {
-                string news = TextManager.Instance.GetText(textDatabase, "resolvingError");
+                string news = TextManager.Instance.GetLocalizedText("resolvingError");
                 List<RumorMillEntry> validRumors = GetValidRumors();
 
                 if (validRumors.Count == 0)
@@ -1345,25 +1338,25 @@ namespace DaggerfallWorkshop.Game
                     PlayerGPS.DiscoveredBuilding discoveredBuilding;
                     if (GameManager.Instance.PlayerGPS.GetAnyBuilding(GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey, out discoveredBuilding))
                     {
-                        return String.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), discoveredBuilding.displayName, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
+                        return String.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), discoveredBuilding.displayName, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
                     }
                     // Fallback if no discovery info was found
                     BuildingInfo currentBuilding = listBuildings.Find(x => x.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey);
 
-                    return string.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), currentBuilding.name, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
+                    return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), currentBuilding.name, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
                 }
 
                 if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // In dungeon
                 {
                     string dungeonName = GameManager.Instance.PlayerEnterExit.Dungeon.GetSpecialDungeonName();
-                    return string.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), dungeonName, GameManager.Instance.PlayerEnterExit.Dungeon.Summary.RegionName);
+                    return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), dungeonName, GameManager.Instance.PlayerEnterExit.Dungeon.Summary.RegionName);
                 }
             }
             else
             {
-                return string.Format(TextManager.Instance.GetText(textDatabase, "AnswerTextWhereAmI"), GameManager.Instance.PlayerGPS.CurrentLocation.Name, GameManager.Instance.PlayerGPS.CurrentRegionName);
+                return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), GameManager.Instance.PlayerGPS.CurrentLocation.Name, GameManager.Instance.PlayerGPS.CurrentRegionName);
             }
-            return TextManager.Instance.GetText(textDatabase, "resolvingError");
+            return TextManager.Instance.GetLocalizedText("resolvingError");
         }
 
         public string GetOrganizationInfo(ListItem listItem)
@@ -1589,7 +1582,7 @@ namespace DaggerfallWorkshop.Game
                 List<TextFile.Token[]> answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
                 return GetAnswerFromTokensArray(listItem.questID, answers);
             }
-            return TextManager.Instance.GetText(textDatabase, "resolvingError"); // Error case - should never ever occur
+            return TextManager.Instance.GetLocalizedText("resolvingError"); // Error case - should never ever occur
         }
 
         public string GetDialogHint2(ListItem listItem)
@@ -1606,7 +1599,7 @@ namespace DaggerfallWorkshop.Game
                     answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
                 return GetAnswerFromTokensArray(listItem.questID, answers);
             }
-            return TextManager.Instance.GetText(textDatabase, "resolvingError"); // error case - should never ever occur
+            return TextManager.Instance.GetLocalizedText("resolvingError"); // error case - should never ever occur
         }
 
         public string GetFactionNPCAlly()
@@ -1643,14 +1636,14 @@ namespace DaggerfallWorkshop.Game
         public string GetHonoric()
         {
             if (GameManager.Instance.PlayerEntity.Gender == Genders.Male)
-                return TextManager.Instance.GetText(textDatabase, "Sir");
+                return TextManager.Instance.GetLocalizedText("Sir");
             else
-                return TextManager.Instance.GetText(textDatabase, "Ma'am");
+                return TextManager.Instance.GetLocalizedText("Ma'am");
         }
 
         public string GetOldLeaderFateString(int index)
         {
-            return TextManager.Instance.GetText(textDatabase, string.Format("oldLeaderFate{0}", index));
+            return TextManager.Instance.GetLocalizedText(string.Format("oldLeaderFate{0}", index));
         }
 
         public string GetAnswerWhereIs(ListItem listItem)
@@ -1691,7 +1684,7 @@ namespace DaggerfallWorkshop.Game
 
             // Check if npc is in same building if topic is building
             if (currentQuestionListItem.questionType == QuestionType.LocalBuilding && currentQuestionListItem.npcInSameBuildingAsTopic)
-                return string.Format(TextManager.Instance.GetText(textDatabase, "YouAreInSameBuilding"), currentQuestionListItem.caption);
+                return string.Format(TextManager.Instance.GetLocalizedText("YouAreInSameBuilding"), currentQuestionListItem.caption);
 
             // Check if npc is in same building as quest person when asking about quest person via "Where is"->"Person"
             if (currentQuestionListItem.questionType == QuestionType.Person)
@@ -1727,9 +1720,9 @@ namespace DaggerfallWorkshop.Game
                     currentQuestionListItem.npcInSameBuildingAsTopic = true;
 
                     if (buildingName != string.Empty)
-                        return string.Format(TextManager.Instance.GetText(textDatabase, "NpcInSameBuilding"), currentQuestionListItem.caption, buildingName);
+                        return string.Format(TextManager.Instance.GetLocalizedText("NpcInSameBuilding"), currentQuestionListItem.caption, buildingName);
 
-                    return TextManager.Instance.GetText(textDatabase, "resolvingError");
+                    return TextManager.Instance.GetLocalizedText("resolvingError");
                 }
             }
 
@@ -2778,31 +2771,31 @@ namespace DaggerfallWorkshop.Game
             switch (buildingType)
             {
                 case DFLocation.BuildingTypes.Alchemist:
-                    return TextManager.Instance.GetText(textDatabase, "Alchemists");
+                    return TextManager.Instance.GetLocalizedText("Alchemists");
                 case DFLocation.BuildingTypes.Armorer:
-                    return TextManager.Instance.GetText(textDatabase, "Armorers");
+                    return TextManager.Instance.GetLocalizedText("Armorers");
                 case DFLocation.BuildingTypes.Bank:
-                    return TextManager.Instance.GetText(textDatabase, "Banks");
+                    return TextManager.Instance.GetLocalizedText("Banks");
                 case DFLocation.BuildingTypes.Bookseller:
-                    return TextManager.Instance.GetText(textDatabase, "Bookstores");
+                    return TextManager.Instance.GetLocalizedText("Bookstores");
                 case DFLocation.BuildingTypes.ClothingStore:
-                    return TextManager.Instance.GetText(textDatabase, "Clothingstores");
+                    return TextManager.Instance.GetLocalizedText("Clothingstores");
                 case DFLocation.BuildingTypes.GemStore:
-                    return TextManager.Instance.GetText(textDatabase, "Gemstores");
+                    return TextManager.Instance.GetLocalizedText("Gemstores");
                 case DFLocation.BuildingTypes.GeneralStore:
-                    return TextManager.Instance.GetText(textDatabase, "Generalstores");
+                    return TextManager.Instance.GetLocalizedText("Generalstores");
                 case DFLocation.BuildingTypes.GuildHall:
-                    return TextManager.Instance.GetText(textDatabase, "Guilds");
+                    return TextManager.Instance.GetLocalizedText("Guilds");
                 case DFLocation.BuildingTypes.Library:
-                    return TextManager.Instance.GetText(textDatabase, "Libraries");
+                    return TextManager.Instance.GetLocalizedText("Libraries");
                 case DFLocation.BuildingTypes.PawnShop:
-                    return TextManager.Instance.GetText(textDatabase, "Pawnshops");
+                    return TextManager.Instance.GetLocalizedText("Pawnshops");
                 case DFLocation.BuildingTypes.Tavern:
-                    return TextManager.Instance.GetText(textDatabase, "Taverns");
+                    return TextManager.Instance.GetLocalizedText("Taverns");
                 case DFLocation.BuildingTypes.WeaponSmith:
-                    return TextManager.Instance.GetText(textDatabase, "Weaponsmiths");
+                    return TextManager.Instance.GetLocalizedText("Weaponsmiths");
                 case DFLocation.BuildingTypes.Temple:
-                    return TextManager.Instance.GetText(textDatabase, "Localtemples");
+                    return TextManager.Instance.GetLocalizedText("Localtemples");
                 default:
                     return "";
             }
@@ -2989,13 +2982,13 @@ namespace DaggerfallWorkshop.Game
             ListItem itemAnyNews = new ListItem();
             itemAnyNews.type = ListItemType.Item;
             itemAnyNews.questionType = QuestionType.News;
-            itemAnyNews.caption = (TextManager.Instance.GetText(textDatabase, "AnyNews"));
+            itemAnyNews.caption = (TextManager.Instance.GetLocalizedText("AnyNews"));
             listTopicTellMeAbout.Add(itemAnyNews);
 
             ListItem itemWhereAmI = new ListItem();
             itemWhereAmI.type = ListItemType.Item;
             itemWhereAmI.questionType = QuestionType.WhereAmI;
-            itemWhereAmI.caption = (TextManager.Instance.GetText(textDatabase, "WhereAmI"));
+            itemWhereAmI.caption = (TextManager.Instance.GetLocalizedText("WhereAmI"));
             listTopicTellMeAbout.Add(itemWhereAmI);
 
             foreach (KeyValuePair<ulong, QuestResources> questInfo in dictQuestInfo)
@@ -3112,7 +3105,7 @@ namespace DaggerfallWorkshop.Game
 
                     ListItem itemPreviousList = new ListItem();
                     itemPreviousList.type = ListItemType.NavigationBack;
-                    itemPreviousList.caption = (TextManager.Instance.GetText(textDatabase, "PreviousList"));
+                    itemPreviousList.caption = (TextManager.Instance.GetLocalizedText("PreviousList"));
                     itemPreviousList.listParentItems = listTopicLocation;
                     itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
 
@@ -3174,7 +3167,7 @@ namespace DaggerfallWorkshop.Game
                                 {
                                     itemBuildingTypeGroup = new ListItem();
                                     itemBuildingTypeGroup.type = ListItemType.ItemGroup;
-                                    itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "General"));
+                                    itemBuildingTypeGroup.caption = (TextManager.Instance.GetLocalizedText("General"));
                                     listTopicLocation.Add(itemBuildingTypeGroup);
                                     alreadyCreatedGeneralSubSection = true;
                                 }
@@ -3183,7 +3176,7 @@ namespace DaggerfallWorkshop.Game
                                 {
                                     ListItem itemPreviousList = new ListItem();
                                     itemPreviousList.type = ListItemType.NavigationBack;
-                                    itemPreviousList.caption = (TextManager.Instance.GetText(textDatabase, "PreviousList"));
+                                    itemPreviousList.caption = (TextManager.Instance.GetLocalizedText("PreviousList"));
                                     itemPreviousList.listParentItems = listTopicLocation;
                                     itemBuildingTypeGroup.listChildItems = new List<ListItem>();
                                     itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
@@ -3202,7 +3195,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     itemBuildingTypeGroup = new ListItem();
                     itemBuildingTypeGroup.type = ListItemType.ItemGroup;
-                    itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "General"));
+                    itemBuildingTypeGroup.caption = (TextManager.Instance.GetLocalizedText("General"));
                     listTopicLocation.Add(itemBuildingTypeGroup);
                 }
 
@@ -3210,7 +3203,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     ListItem itemPreviousList = new ListItem();
                     itemPreviousList.type = ListItemType.NavigationBack;
-                    itemPreviousList.caption = (TextManager.Instance.GetText(textDatabase, "PreviousList"));
+                    itemPreviousList.caption = (TextManager.Instance.GetLocalizedText("PreviousList"));
                     itemPreviousList.listParentItems = listTopicLocation;
                     itemBuildingTypeGroup.listChildItems = new List<ListItem>();
                     itemBuildingTypeGroup.listChildItems.Add(itemPreviousList);
@@ -3229,12 +3222,12 @@ namespace DaggerfallWorkshop.Game
 
             itemBuildingTypeGroup = new ListItem();
             itemBuildingTypeGroup.type = ListItemType.ItemGroup;
-            itemBuildingTypeGroup.caption = (TextManager.Instance.GetText(textDatabase, "Regional"));
+            itemBuildingTypeGroup.caption = (TextManager.Instance.GetLocalizedText("Regional"));
             itemBuildingTypeGroup.listChildItems = new List<ListItem>();
 
             ListItem prevListItem = new ListItem();
             prevListItem.type = ListItemType.NavigationBack;
-            prevListItem.caption = (TextManager.Instance.GetText(textDatabase, "PreviousList"));
+            prevListItem.caption = (TextManager.Instance.GetLocalizedText("PreviousList"));
             prevListItem.listParentItems = listTopicLocation;
             itemBuildingTypeGroup.listChildItems.Add(prevListItem);
 

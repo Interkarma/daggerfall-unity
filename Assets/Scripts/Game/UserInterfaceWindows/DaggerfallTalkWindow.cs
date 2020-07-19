@@ -724,7 +724,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Position = new Vector2(118, 158),
                 Size = new Vector2(67, 18),
                 ToolTip = defaultToolTip,
-                ToolTipText = TextManager.Instance.GetText(TalkManager.TextDatabase, "copyLogbookInfo"),
+                ToolTipText = TextManager.Instance.GetLocalizedText("copyLogbookInfo"),
             };
             if (defaultToolTip != null)
                 buttonLogbook.ToolTip.ToolTipDelay = 1;
@@ -862,11 +862,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     item.caption = item.key; //  just try to take key as caption then (answers might still be broken)
                     if (item.caption == String.Empty)
-                        item.caption = TextManager.Instance.GetText(TalkManager.TextDatabase, "resolvingError");
+                        item.caption = TextManager.Instance.GetLocalizedText("resolvingError");
                 }
                 else if (item.caption == String.Empty)
                 {
-                    item.caption = TextManager.Instance.GetText(TalkManager.TextDatabase, "resolvingError");
+                    item.caption = TextManager.Instance.GetLocalizedText("resolvingError");
                 }
                 listboxTopic.AddItem(item.caption, out listboxItem);
                 if (item.type == TalkManager.ListItemType.NavigationBack)

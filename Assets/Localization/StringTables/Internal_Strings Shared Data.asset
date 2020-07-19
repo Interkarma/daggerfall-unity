@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 382
+  m_NextAvailableId: 426
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -1534,6 +1534,178 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 381
     m_Key: youGetNoResponse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 382
+    m_Key: copyLogbookInfo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 383
+    m_Key: east
+    m_Metadata:
+      m_Items: []
+  - m_Id: 384
+    m_Key: northeast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 385
+    m_Key: north
+    m_Metadata:
+      m_Items: []
+  - m_Id: 386
+    m_Key: northwest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 387
+    m_Key: west
+    m_Metadata:
+      m_Items: []
+  - m_Id: 388
+    m_Key: southwest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 389
+    m_Key: south
+    m_Metadata:
+      m_Items: []
+  - m_Id: 390
+    m_Key: southeast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 391
+    m_Key: thisPlace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 392
+    m_Key: AnyNews
+    m_Metadata:
+      m_Items: []
+  - m_Id: 393
+    m_Key: WhereAmI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 394
+    m_Key: AnswerTextWhereAmI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 395
+    m_Key: YouAreInSameBuilding
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396
+    m_Key: NpcInSameBuilding
+    m_Metadata:
+      m_Items: []
+  - m_Id: 397
+    m_Key: PreviousList
+    m_Metadata:
+      m_Items: []
+  - m_Id: 398
+    m_Key: General
+    m_Metadata:
+      m_Items: []
+  - m_Id: 400
+    m_Key: Regional
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401
+    m_Key: Alchemists
+    m_Metadata:
+      m_Items: []
+  - m_Id: 402
+    m_Key: Armorers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 403
+    m_Key: Banks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 404
+    m_Key: Bookstores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 405
+    m_Key: Clothingstores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406
+    m_Key: Gemstores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 407
+    m_Key: Generalstores
+    m_Metadata:
+      m_Items: []
+  - m_Id: 408
+    m_Key: Guilds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 409
+    m_Key: Libraries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 410
+    m_Key: Pawnshops
+    m_Metadata:
+      m_Items: []
+  - m_Id: 411
+    m_Key: Taverns
+    m_Metadata:
+      m_Items: []
+  - m_Id: 412
+    m_Key: Weaponsmiths
+    m_Metadata:
+      m_Items: []
+  - m_Id: 413
+    m_Key: Localtemples
+    m_Metadata:
+      m_Items: []
+  - m_Id: 414
+    m_Key: Sir
+    m_Metadata:
+      m_Items: []
+  - m_Id: 415
+    m_Key: Ma'am
+    m_Metadata:
+      m_Items: []
+  - m_Id: 416
+    m_Key: oldLeaderFate0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 417
+    m_Key: oldLeaderFate1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 418
+    m_Key: oldLeaderFate2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 419
+    m_Key: oldLeaderFate3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 420
+    m_Key: oldLeaderFate4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 421
+    m_Key: oldLeaderFate5
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422
+    m_Key: toBeReplacedStringRegional
+    m_Metadata:
+      m_Items: []
+  - m_Id: 423
+    m_Key: replacementStringRegional
+    m_Metadata:
+      m_Items: []
+  - m_Id: 424
+    m_Key: comma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 425
+    m_Key: resolvingError
     m_Metadata:
       m_Items: []
   m_Metadata:
