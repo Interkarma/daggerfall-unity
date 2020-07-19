@@ -527,7 +527,7 @@ namespace DaggerfallWorkshop.Game.Items
             ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, groupIndex);
 
             // Assign new data
-            shortName = itemTemplate.name;
+            shortName = itemTemplate.name; // LOCALIZATION_TODO: Lookup item template name from localization
             this.itemGroup = itemGroup;
             this.groupIndex = groupIndex;
             playerTextureArchive = itemTemplate.playerTextureArchive;
@@ -578,7 +578,7 @@ namespace DaggerfallWorkshop.Game.Items
                 materialValue = 0x200 + materialValue;
 
             // Assign new data
-            shortName = magicItemTemplate.name;
+            shortName = magicItemTemplate.name; // LOCALIZATION_TODO: Lookup magic item template name from localization
             this.itemGroup = (ItemGroups)magicItemTemplate.group;
             this.groupIndex = magicItemTemplate.groupIndex;
             playerTextureArchive = archive;
@@ -1520,7 +1520,7 @@ namespace DaggerfallWorkshop.Game.Items
             int worldRecord = (worldBitfield & 0x7f);
 
             // Assign new data
-            shortName = itemRecord.ParsedData.name;
+            shortName = itemRecord.ParsedData.name; // LOCALIZATION_TODO: Lookup item template name from localizations
             itemGroup = group;
             groupIndex = index;
             playerTextureArchive = playerArchive;
