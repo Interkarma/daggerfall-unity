@@ -447,21 +447,21 @@ namespace DaggerfallWorkshop.Utility
             switch (stat)
             {
                 case DFCareer.Stats.Strength:
-                    return "Strength";
+                    return TextManager.Instance.GetLocalizedText("strength");
                 case DFCareer.Stats.Intelligence:
-                    return "Intelligence";
+                    return TextManager.Instance.GetLocalizedText("intelligence");
                 case DFCareer.Stats.Willpower:
-                    return "Willpower";
+                    return TextManager.Instance.GetLocalizedText("willpower");
                 case DFCareer.Stats.Agility:
-                    return "Agility";
+                    return TextManager.Instance.GetLocalizedText("agility");
                 case DFCareer.Stats.Endurance:
-                    return "Endurance";
+                    return TextManager.Instance.GetLocalizedText("endurance");
                 case DFCareer.Stats.Personality:
-                    return "Personality";
+                    return TextManager.Instance.GetLocalizedText("personality");
                 case DFCareer.Stats.Speed:
-                    return "Speed";
+                    return TextManager.Instance.GetLocalizedText("speed");
                 case DFCareer.Stats.Luck:
-                    return "Luck";
+                    return TextManager.Instance.GetLocalizedText("luck");
                 default:
                     return string.Empty;
             }
@@ -472,21 +472,21 @@ namespace DaggerfallWorkshop.Utility
             switch (stat)
             {
                 case DFCareer.Stats.Strength:
-                    return "STR";
+                    return TextManager.Instance.GetLocalizedText("STR");
                 case DFCareer.Stats.Intelligence:
-                    return "INT";
+                    return TextManager.Instance.GetLocalizedText("INT");
                 case DFCareer.Stats.Willpower:
-                    return "WIL";
+                    return TextManager.Instance.GetLocalizedText("WIL");
                 case DFCareer.Stats.Agility:
-                    return "AGI";
+                    return TextManager.Instance.GetLocalizedText("AGI");
                 case DFCareer.Stats.Endurance:
-                    return "END";
+                    return TextManager.Instance.GetLocalizedText("END");
                 case DFCareer.Stats.Personality:
-                    return "PER";
+                    return TextManager.Instance.GetLocalizedText("PER");
                 case DFCareer.Stats.Speed:
-                    return "SPD";
+                    return TextManager.Instance.GetLocalizedText("SPD");
                 case DFCareer.Stats.Luck:
-                    return "LUC";
+                    return TextManager.Instance.GetLocalizedText("LUC");
                 default:
                     return string.Empty;
             }

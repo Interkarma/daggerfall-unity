@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 341
+  m_NextAvailableId: 357
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -1370,6 +1370,70 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 340
     m_Key: criticalStrike
+    m_Metadata:
+      m_Items: []
+  - m_Id: 341
+    m_Key: strength
+    m_Metadata:
+      m_Items: []
+  - m_Id: 342
+    m_Key: intelligence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 343
+    m_Key: willpower
+    m_Metadata:
+      m_Items: []
+  - m_Id: 344
+    m_Key: agility
+    m_Metadata:
+      m_Items: []
+  - m_Id: 345
+    m_Key: endurance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 346
+    m_Key: personality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 347
+    m_Key: speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 348
+    m_Key: luck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 349
+    m_Key: STR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350
+    m_Key: INT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 351
+    m_Key: WIL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 352
+    m_Key: AGI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 353
+    m_Key: END
+    m_Metadata:
+      m_Items: []
+  - m_Id: 354
+    m_Key: PER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 355
+    m_Key: SPD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 356
+    m_Key: LUC
     m_Metadata:
       m_Items: []
   m_Metadata:

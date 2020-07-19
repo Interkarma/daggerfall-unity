@@ -1711,5 +1711,69 @@ MonoBehaviour:
     m_Localized: Critical Strike
     m_Metadata:
       m_Items: []
+  - m_Id: 341
+    m_Localized: Strength
+    m_Metadata:
+      m_Items: []
+  - m_Id: 342
+    m_Localized: Intelligence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 343
+    m_Localized: Willpower
+    m_Metadata:
+      m_Items: []
+  - m_Id: 344
+    m_Localized: Agility
+    m_Metadata:
+      m_Items: []
+  - m_Id: 345
+    m_Localized: Endurance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 346
+    m_Localized: Personality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 347
+    m_Localized: Speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 348
+    m_Localized: Luck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 349
+    m_Localized: STR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350
+    m_Localized: INT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 351
+    m_Localized: WIL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 352
+    m_Localized: AGI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 353
+    m_Localized: END
+    m_Metadata:
+      m_Items: []
+  - m_Id: 354
+    m_Localized: PER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 355
+    m_Localized: SPD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 356
+    m_Localized: LUC
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
