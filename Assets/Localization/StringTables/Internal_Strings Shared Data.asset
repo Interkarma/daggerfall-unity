@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 426
+  m_NextAvailableId: 506
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -1706,6 +1706,326 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 425
     m_Key: resolvingError
+    m_Metadata:
+      m_Items: []
+  - m_Id: 426
+    m_Key: chameleon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 427
+    m_Key: charm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 428
+    m_Key: comprehendLanguages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 429
+    m_Key: continuousDamage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430
+    m_Key: createItem
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431
+    m_Key: cure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 432
+    m_Key: detect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 433
+    m_Key: disintegrate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 434
+    m_Key: dispel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 435
+    m_Key: drain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 436
+    m_Key: elementalResistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 437
+    m_Key: fortifyAttribute
+    m_Metadata:
+      m_Items: []
+  - m_Id: 438
+    m_Key: freeAction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 439
+    m_Key: heal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 440
+    m_Key: identify
+    m_Metadata:
+      m_Items: []
+  - m_Id: 441
+    m_Key: invisibility
+    m_Metadata:
+      m_Items: []
+  - m_Id: 442
+    m_Key: levitate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 443
+    m_Key: light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 444
+    m_Key: lock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 445
+    m_Key: morphSelf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 446
+    m_Key: open
+    m_Metadata:
+      m_Items: []
+  - m_Id: 447
+    m_Key: pacify
+    m_Metadata:
+      m_Items: []
+  - m_Id: 448
+    m_Key: paralyze
+    m_Metadata:
+      m_Items: []
+  - m_Id: 449
+    m_Key: regenerate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 450
+    m_Key: shadow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 451
+    m_Key: shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 452
+    m_Key: silence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 453
+    m_Key: slowfall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 454
+    m_Key: soulTrap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455
+    m_Key: spellReflection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 456
+    m_Key: spellResistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 457
+    m_Key: teleport
+    m_Metadata:
+      m_Items: []
+  - m_Id: 458
+    m_Key: transfer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 459
+    m_Key: waterBreathing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 460
+    m_Key: waterWalking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 461
+    m_Key: fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 462
+    m_Key: frost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 463
+    m_Key: magicka
+    m_Metadata:
+      m_Items: []
+  - m_Id: 464
+    m_Key: poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465
+    m_Key: shock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 466
+    m_Key: enemy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 467
+    m_Key: magic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 468
+    m_Key: treasure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 469
+    m_Key: fatigue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 470
+    m_Key: health
+    m_Metadata:
+      m_Items: []
+  - m_Id: 471
+    m_Key: spellPoints
+    m_Metadata:
+      m_Items: []
+  - m_Id: 472
+    m_Key: disease
+    m_Metadata:
+      m_Items: []
+  - m_Id: 473
+    m_Key: paralyzation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 474
+    m_Key: animal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 475
+    m_Key: normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 476
+    m_Key: true
+    m_Metadata:
+      m_Items: []
+  - m_Id: 477
+    m_Key: noName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 478
+    m_Key: youDontHaveTheSpellPoints
+    m_Metadata:
+      m_Items: []
+  - m_Id: 479
+    m_Key: youAreSilenced
+    m_Metadata:
+      m_Items: []
+  - m_Id: 480
+    m_Key: youAreParalyzed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481
+    m_Key: youFeelDrained
+    m_Metadata:
+      m_Items: []
+  - m_Id: 482
+    m_Key: youAreFortified
+    m_Metadata:
+      m_Items: []
+  - m_Id: 483
+    m_Key: youAreInvisible
+    m_Metadata:
+      m_Items: []
+  - m_Id: 484
+    m_Key: youAreLevitating
+    m_Metadata:
+      m_Items: []
+  - m_Id: 485
+    m_Key: youAreRegenerating
+    m_Metadata:
+      m_Items: []
+  - m_Id: 486
+    m_Key: youAreBlending
+    m_Metadata:
+      m_Items: []
+  - m_Id: 487
+    m_Key: youAreAShade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 488
+    m_Key: slowFallActive
+    m_Metadata:
+      m_Items: []
+  - m_Id: 489
+    m_Key: saveVersusSpellMade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 490
+    m_Key: spellEffectFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 491
+    m_Key: spellAbsorbed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 492
+    m_Key: spellReflected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 493
+    m_Key: spellResisted
+    m_Metadata:
+      m_Items: []
+  - m_Id: 494
+    m_Key: readyToLock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 495
+    m_Key: readyToOpen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 496
+    m_Key: doorLocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 497
+    m_Key: doorAlreadyLocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 498
+    m_Key: openFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 499
+    m_Key: noSpellbook
+    m_Metadata:
+      m_Items: []
+  - m_Id: 500
+    m_Key: sunlightDamageFastTravelDay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 501
+    m_Key: trapActive
+    m_Metadata:
+      m_Items: []
+  - m_Id: 502
+    m_Key: trapHumanoid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 503
+    m_Key: trapSuccess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 504
+    m_Key: trapFail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 505
+    m_Key: trapNoneEmpty
     m_Metadata:
       m_Items: []
   m_Metadata:

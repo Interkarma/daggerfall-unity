@@ -2048,5 +2048,325 @@ MonoBehaviour:
     m_Localized: ...never mind...
     m_Metadata:
       m_Items: []
+  - m_Id: 426
+    m_Localized: Chameleon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 427
+    m_Localized: Charm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 428
+    m_Localized: Comprehend Languages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 429
+    m_Localized: Continuous Damage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430
+    m_Localized: Create Item
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431
+    m_Localized: Cure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 432
+    m_Localized: Detect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 433
+    m_Localized: Disintegrate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 434
+    m_Localized: Dispel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 435
+    m_Localized: Drain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 436
+    m_Localized: Elemental Resistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 437
+    m_Localized: Fortify Attribute
+    m_Metadata:
+      m_Items: []
+  - m_Id: 438
+    m_Localized: Free Action
+    m_Metadata:
+      m_Items: []
+  - m_Id: 439
+    m_Localized: Heal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 440
+    m_Localized: Identify
+    m_Metadata:
+      m_Items: []
+  - m_Id: 441
+    m_Localized: Invisibility
+    m_Metadata:
+      m_Items: []
+  - m_Id: 442
+    m_Localized: Levitate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 443
+    m_Localized: Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 444
+    m_Localized: Lock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 445
+    m_Localized: Morph Self
+    m_Metadata:
+      m_Items: []
+  - m_Id: 446
+    m_Localized: Open
+    m_Metadata:
+      m_Items: []
+  - m_Id: 447
+    m_Localized: Pacify
+    m_Metadata:
+      m_Items: []
+  - m_Id: 448
+    m_Localized: Paralyze
+    m_Metadata:
+      m_Items: []
+  - m_Id: 449
+    m_Localized: Regenerate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 450
+    m_Localized: Shadow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 451
+    m_Localized: Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 452
+    m_Localized: Silence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 453
+    m_Localized: Slowfall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 454
+    m_Localized: Soul Trap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455
+    m_Localized: Spell Reflection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 456
+    m_Localized: Spell Resistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 457
+    m_Localized: Teleport
+    m_Metadata:
+      m_Items: []
+  - m_Id: 458
+    m_Localized: Transfer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 459
+    m_Localized: Water Breathing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 460
+    m_Localized: Water Walking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 461
+    m_Localized: Fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 462
+    m_Localized: Frost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 463
+    m_Localized: Magicka
+    m_Metadata:
+      m_Items: []
+  - m_Id: 464
+    m_Localized: Poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 465
+    m_Localized: Shock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 466
+    m_Localized: Enemy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 467
+    m_Localized: Magic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 468
+    m_Localized: Treasure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 469
+    m_Localized: Fatigue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 470
+    m_Localized: Health
+    m_Metadata:
+      m_Items: []
+  - m_Id: 471
+    m_Localized: Spell Points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 472
+    m_Localized: Disease
+    m_Metadata:
+      m_Items: []
+  - m_Id: 473
+    m_Localized: Paralyzation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 474
+    m_Localized: Animal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 475
+    m_Localized: Normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 476
+    m_Localized: True
+    m_Metadata:
+      m_Items: []
+  - m_Id: 477
+    m_Localized: <no-name>
+    m_Metadata:
+      m_Items: []
+  - m_Id: 478
+    m_Localized: You don't have the spell points.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 479
+    m_Localized: You are silenced.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 480
+    m_Localized: You are paralyzed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481
+    m_Localized: You feel drained.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 482
+    m_Localized: You are fortified.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 483
+    m_Localized: You are invisible.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 484
+    m_Localized: You are levitating.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 485
+    m_Localized: You are regenerating.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 486
+    m_Localized: You are blending.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 487
+    m_Localized: You are a shade.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 488
+    m_Localized: Slow fall active.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 489
+    m_Localized: Save versus spell made.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 490
+    m_Localized: Spell effect failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 491
+    m_Localized: Spell was absorbed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 492
+    m_Localized: Spell was reflected.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 493
+    m_Localized: Spell was resisted.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 494
+    m_Localized: Ready to lock.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 495
+    m_Localized: Ready to open.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 496
+    m_Localized: Door is now locked.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 497
+    m_Localized: Door already locked.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 498
+    m_Localized: Lock is too powerful.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 499
+    m_Localized: You have no spellbook!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 500
+    m_Localized: You cannot initiate fast travel during the day.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 501
+    m_Localized: Trap active.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 502
+    m_Localized: Trap will not work on humanoids.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 503
+    m_Localized: Trapped soul.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 504
+    m_Localized: Trap failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 505
+    m_Localized: You have no empty soul traps!
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
