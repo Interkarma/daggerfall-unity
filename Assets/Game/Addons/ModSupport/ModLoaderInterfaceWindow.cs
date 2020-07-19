@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -608,27 +609,37 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         }
 
         string[] assets = mod.AssetNames;
-        string path = Path.Combine(mod.DirPath, mod.Title + "_ExtractedFiles");
+        if (assets == null)
+            return;
 
-        if (!Directory.Exists(path))
-        {
-            Directory.CreateDirectory(path);
-        }
+        string path = Path.Combine(Application.persistentDataPath, "Mods", "ExtractedFiles", mod.FileName);
+        Directory.CreateDirectory(path);
 
         for (int i = 0; i < assets.Length; i++)
         {
-            string extension = assets[i].Substring(assets[i].LastIndexOf('.'));
-
+            string extension = Path.GetExtension(assets[i]);
             if (!ModManager.textExtensions.Contains(extension))
                 continue;
 
-            TextAsset asset = mod.GetAsset<TextAsset>(assets[i]);
-
+            var asset = mod.GetAsset<TextAsset>(assets[i]);
             if (asset == null)
                 continue;
-            File.WriteAllText(Path.Combine(path, asset.name + ".txt"), asset.ToString()); //append .txt at end of asset name so mod info file will never end in .dfmod
-                                                                                                               //which would cause it to be tried to load by mod manager as an asset bundle if in mod directory
-            Debug.Log(string.Format("asset type for asset : {0} {1}", asset.name, asset.GetType().Name));
+
+            if (assets[i].EndsWith(".bytes", StringComparison.Ordinal))
+            {
+                // Export binary asset without .bytes extension
+                File.WriteAllBytes(Path.Combine(path, asset.name), asset.bytes);
+            }
+            else if (assets[i].EndsWith(".cs.txt", StringComparison.Ordinal))
+            {
+                // Export C# script without .txt extension
+                File.WriteAllText(Path.Combine(path, asset.name), asset.text);
+            }
+            else
+            {
+                // Export text asset with original extension
+                File.WriteAllText(Path.Combine(path, asset.name + extension), asset.text);
+            }
         }
 
         var messageBox = new DaggerfallMessageBox(uiManager, this, true);
