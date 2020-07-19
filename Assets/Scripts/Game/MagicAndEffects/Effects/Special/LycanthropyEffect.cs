@@ -465,9 +465,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
                 // Set race name based on infection type
                 if (infectionType == LycanthropyTypes.Werewolf)
-                    compoundRace.Name = TextManager.Instance.GetText(racesTextDatabase, "werewolf");
+                    compoundRace.Name = TextManager.Instance.GetLocalizedText("werewolf");
                 else if (infectionType == LycanthropyTypes.Wereboar)
-                    compoundRace.Name = TextManager.Instance.GetText(racesTextDatabase, "wereboar");
+                    compoundRace.Name = TextManager.Instance.GetLocalizedText("wereboar");
                 else
                     compoundRace.Name = GameManager.Instance.PlayerEntity.BirthRaceTemplate.Name;
 

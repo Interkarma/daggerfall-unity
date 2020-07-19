@@ -1775,5 +1775,81 @@ MonoBehaviour:
     m_Localized: LUC
     m_Metadata:
       m_Items: []
+  - m_Id: 357
+    m_Localized: Breton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 358
+    m_Localized: Redguard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 359
+    m_Localized: Dark Elf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360
+    m_Localized: High Elf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 361
+    m_Localized: Wood Elf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 362
+    m_Localized: Khajiit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 363
+    m_Localized: Argonian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 364
+    m_Localized: Vampire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 365
+    m_Localized: Werewolf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366
+    m_Localized: Wereboar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367
+    m_Localized: Vraseth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 368
+    m_Localized: Haarvenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 369
+    m_Localized: Thrafey
+    m_Metadata:
+      m_Items: []
+  - m_Id: 370
+    m_Localized: Lyrezi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 371
+    m_Localized: Montalion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 372
+    m_Localized: Khulari
+    m_Metadata:
+      m_Items: []
+  - m_Id: 373
+    m_Localized: Garlythi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 374
+    m_Localized: Anthotis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 375
+    m_Localized: Selenu
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

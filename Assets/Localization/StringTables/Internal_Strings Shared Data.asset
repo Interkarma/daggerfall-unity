@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 357
+  m_NextAvailableId: 376
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -1434,6 +1434,82 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 356
     m_Key: LUC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 357
+    m_Key: breton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 358
+    m_Key: redguard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 359
+    m_Key: darkElf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360
+    m_Key: highElf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 361
+    m_Key: woodElf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 362
+    m_Key: khajiit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 363
+    m_Key: argonian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 364
+    m_Key: vampire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 365
+    m_Key: werewolf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366
+    m_Key: wereboar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367
+    m_Key: vraseth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 368
+    m_Key: haarvenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 369
+    m_Key: thrafey
+    m_Metadata:
+      m_Items: []
+  - m_Id: 370
+    m_Key: lyrezi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 371
+    m_Key: montalion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 372
+    m_Key: khulari
+    m_Metadata:
+      m_Items: []
+  - m_Id: 373
+    m_Key: garlythi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 374
+    m_Key: anthotis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 375
+    m_Key: selenu
     m_Metadata:
       m_Items: []
   m_Metadata:
