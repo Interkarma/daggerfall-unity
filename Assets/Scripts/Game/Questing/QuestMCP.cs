@@ -5,13 +5,11 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
 
-using UnityEngine;
 using DaggerfallConnect;
-using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -185,26 +183,31 @@ namespace DaggerfallWorkshop.Game.Questing
 
             public override string God()
             {
-                // Get god of last Person referenced by dialog stream
-                if (parent.lastResourceReferenced is Person)
+                int factionId = 0;
+
+                // Get the temple faction ID if player is inside a temple
+                if (GameManager.Instance.IsPlayerInsideBuilding &&
+                    GameManager.Instance.PlayerEnterExit.BuildingType == DFLocation.BuildingTypes.Temple)
                 {
-                    if (parent.lastResourceReferenced != null)
-                        return (parent.lastResourceReferenced as Person).GodName;
+                    factionId = (int)GameManager.Instance.PlayerEnterExit.FactionID;
+                }
+                else
+                { 
+                    factionId = GameManager.Instance.PlayerGPS.GetTempleOfCurrentRegion();
                 }
 
-                // Attempt to get god of questor Person
-                // This fixes a crash when handing in quest and expanding questor dialog without a previous Person reference
-                Symbol[] questors = parent.GetQuestors();
-                if (questors != null && questors.Length > 0)
-                    return parent.GetPerson(questors[0]).GodName;
+                if (factionId == 0)
+                {
+                    // Classic returns "BLANK" if no temple is found, here we return a random deity name
+                    const int minGodID = 21;
+                    const int maxGodID = 35;
 
-                // Otherwise just provide a random god name for whomever is speaking to player
-                // Better just to provide something than let let game loop crash
-                return Person.GetRandomGodName();
+                    FactionFile.FactionIDs god = (FactionFile.FactionIDs)UnityEngine.Random.Range(minGodID, maxGodID + 1);
+                    return god.ToString();
+                }
 
-                // Fall-through to non-quest macro handling
-                // Disabling this at it causes exception stream from null MCP
-                //return "%god";
+                Temple temple = (Temple)GameManager.Instance.GuildManager.GetGuild(factionId);
+                return temple.Deity.ToString();
             }
 
             public override string Direction()

@@ -1607,10 +1607,6 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public void RegionPowerAndConditionsUpdate(bool updateConditions)
         {
-            int[] TemplesAssociatedWithRegions =    { 106, 82, 0, 0, 0, 98, 0, 0, 0, 92, 0, 106, 0, 0, 0, 84, 36, 8, 84, 88, 82, 88, 98, 92, 0, 0, 82, 0,
-                                                        0, 0, 0, 0, 88, 94, 36, 94, 106, 84, 106, 106, 88, 98, 82, 98, 84, 94, 36, 88, 94, 36, 98, 84, 106,
-                                                       88, 106, 88, 92, 84, 98, 88, 82, 94};
-
             // Note: For some reason rumor updating is disabled in classic while the player is serving jail time. There's no clear reason for this,
             // so not replicating that here.
             GameManager.Instance.TalkManager.RefreshRumorMill();
@@ -1957,7 +1953,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
                             // Plague
                             FactionFile.FactionData temple;
-                            FactionData.GetFactionData(TemplesAssociatedWithRegions[factionData.FactionDict[key].region], out temple);
+                            FactionData.GetFactionData(MapsFile.RegionTemples[factionData.FactionDict[key].region], out temple);
 
                             if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.PlagueEnding])
                                 TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PlagueEnding);
@@ -1990,7 +1986,7 @@ namespace DaggerfallWorkshop.Game.Entity
                             }
 
                             // Persecuted temple
-                            if (TemplesAssociatedWithRegions[factionData.FactionDict[key].region] != 0)
+                            if (MapsFile.RegionTemples[factionData.FactionDict[key].region] != 0)
                             {
                                 if (Dice100.FailedRoll((temple.power - factionData.FactionDict[key].power + 5) / 5))
                                     TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PersecutedTemple);
