@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game
         #region Fields
 
         public static string defaultInternalStringsCollectionName = "Internal_Strings";
-        public static string defaultTextRSCCollectionName = "TextRSC";
+        public static string defaultInternalRSCCollectionName = "Internal_RSC"; // Not in use at this time, reserving name to exclude from importer
 
         const string localizedTextLookupError = "<LocaleText-NotFound>";
         const string textFolderName = "Text";
@@ -236,7 +236,7 @@ namespace DaggerfallWorkshop.Game
                     break;
 
                 case TextCollections.TextRSC:
-                    collectionName = defaultTextRSCCollectionName;
+                    collectionName = defaultInternalRSCCollectionName;
                     break;
             }
 
