@@ -2816,5 +2816,41 @@ MonoBehaviour:
     m_Localized: There are no monsters nearby.
     m_Metadata:
       m_Items: []
+  - m_Id: 618
+    m_Localized: Fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 619
+    m_Localized: Frost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 620
+    m_Localized: Poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 621
+    m_Localized: Shock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 622
+    m_Localized: Magicka
+    m_Metadata:
+      m_Items: []
+  - m_Id: 623
+    m_Localized: Animal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 624
+    m_Localized: Undead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 625
+    m_Localized: Humanoid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 626
+    m_Localized: Daedra
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

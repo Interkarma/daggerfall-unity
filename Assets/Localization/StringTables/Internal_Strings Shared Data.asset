@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 618
+  m_NextAvailableId: 627
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -2474,6 +2474,42 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 617
     m_Key: noMonstersNearby
+    m_Metadata:
+      m_Items: []
+  - m_Id: 618
+    m_Key: Fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 619
+    m_Key: Frost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 620
+    m_Key: Poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 621
+    m_Key: Shock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 622
+    m_Key: Magicka
+    m_Metadata:
+      m_Items: []
+  - m_Id: 623
+    m_Key: Animal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 624
+    m_Key: Undead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 625
+    m_Key: Humanoid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 626
+    m_Key: Daedra
     m_Metadata:
       m_Items: []
   m_Metadata:

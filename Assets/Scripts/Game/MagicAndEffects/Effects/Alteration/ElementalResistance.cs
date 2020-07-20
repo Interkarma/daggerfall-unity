@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         const int totalVariants = 5;
         //const int savingThrowModifier = 75;
-        readonly string[] subGroupTextKeys = { "fire", "frost", "poison", "shock", "magicka" };
+        readonly string[] subGroupTextKeys = { "Fire", "Frost", "Poison", "Shock", "Magicka" };
         readonly VariantProperties[] variantProperties = new VariantProperties[totalVariants];
 
         #endregion
@@ -186,7 +186,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             VariantProperties vp = new VariantProperties();
             vp.effectProperties = properties;
-            vp.effectProperties.Key = string.Format("ElementalResistance-{0}", name);
+            vp.effectProperties.Key = string.Format("ElementalResistance-{0}", subGroupTextKeys[variantIndex]);
             vp.effectProperties.ClassicKey = MakeClassicKey(8, (byte)variantIndex);
             vp.effectProperties.SubGroupName = name;
             vp.effectProperties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1527 + variantIndex);

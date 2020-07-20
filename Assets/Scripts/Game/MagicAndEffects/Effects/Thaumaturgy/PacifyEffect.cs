@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         #region Fields
 
         const int totalVariants = 4;
-        readonly string[] subGroupTextKeys = { "animal", "undead", "humanoid", "daedra" };
+        readonly string[] subGroupTextKeys = { "Animal", "Undead", "Humanoid", "Daedra" };
 
         readonly VariantProperties[] variantProperties = new VariantProperties[totalVariants];
 
@@ -104,7 +104,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             VariantProperties vp = new VariantProperties();
             vp.effectProperties = properties;
-            vp.effectProperties.Key = string.Format("Pacify-{0}", name);
+            vp.effectProperties.Key = string.Format("Pacify-{0}", subGroupTextKeys[variantIndex]);
             vp.effectProperties.ClassicKey = MakeClassicKey(33, (byte)variantIndex);
             vp.effectProperties.SubGroupName = name;
             vp.effectProperties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1585 + variantIndex);
