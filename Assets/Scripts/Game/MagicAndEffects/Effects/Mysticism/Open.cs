@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(17, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "open");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("open");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1565);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1265);
             properties.ShowSpellIcon = false;
@@ -82,7 +82,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Do nothing if failed - Skeleton's Key always works
             if (!castBySkeletonKey && !RollChance())
             {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellEffectFailed"));
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("spellEffectFailed"));
                 CancelEffect();
                 return;
             }
@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Output "Ready to open." if the host manager is player
             if (awakeAlert && manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
             {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "readyToOpen"), 1.5f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("readyToOpen"), 1.5f);
                 awakeAlert = false;
             }
         }
@@ -119,7 +119,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 }
                 else if (activatedByPlayer)
                 {
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "openFailed"), 1.5f);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("openFailed"), 1.5f);
                 }
             }
 

@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(13, 1);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "invisibility");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "true");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("invisibility");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("true");
             properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1561);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1261);

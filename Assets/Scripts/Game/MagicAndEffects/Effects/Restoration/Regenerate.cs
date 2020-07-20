@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(18, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "regenerate");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("regenerate");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1566);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1266);
@@ -46,7 +46,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Output "You are regenerating." if the host manager is player
             if (manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
             {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreRegenerating"), 1.5f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youAreRegenerating"), 1.5f);
             }
         }
 

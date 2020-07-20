@@ -24,8 +24,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(9, 6);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "fortifyAttribute");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "speed");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("fortifyAttribute");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("speed");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1538);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1238);
             properties.SupportDuration = true;

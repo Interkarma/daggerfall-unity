@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(16, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "lock");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("lock");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1564);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1264);
             properties.ShowSpellIcon = false;
@@ -83,7 +83,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Output "Ready to lock." if the host manager is player
             if (awakeAlert && manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
             {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "readyToLock"), 1.5f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("readyToLock"), 1.5f);
                 awakeAlert = false;
             }
         }
@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 // Door already locked
                 if (activatedByPlayer)
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "doorAlreadyLocked"), 1.5f);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("doorAlreadyLocked"), 1.5f);
             }
             else
             {
@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 actionDoor.CurrentLockValue = manager.EntityBehaviour.Entity.Level;
 
                 if (activatedByPlayer)
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "doorLocked"), 1.5f);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("doorLocked"), 1.5f);
             }
 
             if (actionDoor.IsOpen)

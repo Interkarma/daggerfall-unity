@@ -24,8 +24,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(10, 3);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "heal");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "agility");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("heal");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("agility");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1543);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1243);
             properties.SupportMagnitude = true;

@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(39, 1);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "detect");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "enemy");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("detect");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("enemy");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1597);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1297);
             properties.SupportDuration = true;

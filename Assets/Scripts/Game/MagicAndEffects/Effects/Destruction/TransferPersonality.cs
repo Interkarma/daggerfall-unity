@@ -24,8 +24,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(11, 5);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "transfer");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "personality");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("transfer");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("personality");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1555);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1255);
             properties.SupportMagnitude = true;

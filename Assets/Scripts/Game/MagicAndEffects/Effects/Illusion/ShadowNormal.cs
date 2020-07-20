@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(24, 0);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "shadow");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "normal");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("shadow");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("normal");
             properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1573);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1273);
@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe shadowForm = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "shadowForm"),
+                TextManager.Instance.GetLocalizedText("shadowForm"),
                 200,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Rain_water,

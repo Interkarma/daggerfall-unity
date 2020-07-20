@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(35, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "shield");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("shield");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1590);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1290);
             properties.SupportDuration = true;

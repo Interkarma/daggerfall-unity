@@ -26,8 +26,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(1, 2);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "continuousDamage");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "spellPoints");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("continuousDamage");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("spellPoints");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1506);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1206);
             properties.SupportDuration = true;

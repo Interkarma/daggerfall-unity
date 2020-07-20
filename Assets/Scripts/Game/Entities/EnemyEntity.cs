@@ -179,21 +179,21 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (SoulTrap.FillEmptyTrapItem((MobileTypes)mobileEnemy.ID))
                 {
                     // Trap filled, allow entity to die normally
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapSuccess"), 1.5f);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("trapSuccess"), 1.5f);
                     return true;
                 }
                 else
                 {
                     // No empty gems, keep entity tethered to life - player is alerted so they know what's happening
                     currentHealth = 1;
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapNoneEmpty"));
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("trapNoneEmpty"));
                     return false;
                 }
             }
             else
             {
                 // Trap failed
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapFail"), 1.5f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("trapFail"), 1.5f);
                 return true;
             }
         }

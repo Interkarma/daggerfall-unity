@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             properties.Key = EffectKey;
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
+            properties.GroupName = TextManager.Instance.GetLocalizedText(EffectKey);
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances | ItemMakerFlags.WeaponOnly;
@@ -53,7 +53,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     ClassicType = EnchantmentTypes.LowDamageVs,
                     ClassicParam = (short)i,
                     PrimaryDisplayName = properties.GroupName,
-                    SecondaryDisplayName = TextManager.Instance.GetText(textDatabase, classicTextKeys[i]),
+                    SecondaryDisplayName = TextManager.Instance.GetLocalizedText(classicTextKeys[i]),
                     EnchantCost = classicParamCosts[i],
                 };
 

@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(25, 255);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "slowfall");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("slowfall");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1575);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1275);
@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe slowFalling = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "slowFalling"),
+                TextManager.Instance.GetLocalizedText("slowFalling"),
                 100,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Pure_water,
@@ -93,7 +93,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Output "Slow fall active." if the host manager is player
             if (awakeAlert && manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
             {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "slowFallActive"), 1.5f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("slowFallActive"), 1.5f);
                 awakeAlert = false;
             }
         }

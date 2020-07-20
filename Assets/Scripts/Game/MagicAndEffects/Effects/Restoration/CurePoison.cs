@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(3, 1);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "cure");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "poison");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("cure");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("poison");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1510);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1210);
             properties.SupportChance = true;
@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             EffectSettings cureSettings = SetEffectChance(DefaultEffectSettings(), 5, 19, 1);
             PotionRecipe curePoison = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "curePoison"),
+                TextManager.Instance.GetLocalizedText("curePoison"),
                 200,
                 cureSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,

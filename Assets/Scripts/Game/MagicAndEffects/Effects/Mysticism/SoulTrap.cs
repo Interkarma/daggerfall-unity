@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(12, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "soulTrap");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("soulTrap");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1603);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1303);
             properties.ShowSpellIcon = false;
@@ -81,7 +81,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     End();
                     return;
             }
-            DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, messageID));
+            DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText(messageID));
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)

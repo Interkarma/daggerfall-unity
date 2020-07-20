@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(0, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "paralyze");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("paralyze");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1502);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1202);
@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Output "You are paralyzed." if the host manager is player
             if (awakeAlert && manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
             {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreParalyzed"), 1.5f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youAreParalyzed"), 1.5f);
                 awakeAlert = false;
             }
         }

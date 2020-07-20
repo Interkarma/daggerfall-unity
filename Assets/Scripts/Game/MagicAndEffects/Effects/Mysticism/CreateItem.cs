@@ -68,7 +68,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             itemPicker.AllowCancel = false;
             foreach (CreateItemSelection item in Enum.GetValues(typeof(CreateItemSelection)))
             {
-                itemPicker.ListBox.AddItem(TextManager.Instance.GetText(textDatabase, item.ToString()));
+                itemPicker.ListBox.AddItem(TextManager.Instance.GetLocalizedText(item.ToString()));
             }
         }
 
@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(2, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "createItem");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("createItem");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1507);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1207);

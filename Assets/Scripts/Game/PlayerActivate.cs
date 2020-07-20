@@ -904,7 +904,7 @@ namespace DaggerfallWorkshop.Game
             // Player level must meet or exceed lock level for success
             if (GameManager.Instance.PlayerEntity.Level < buildingLockValue)
             {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "openFailed"), 1.5f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("openFailed"), 1.5f);
                 return false;
             }
 

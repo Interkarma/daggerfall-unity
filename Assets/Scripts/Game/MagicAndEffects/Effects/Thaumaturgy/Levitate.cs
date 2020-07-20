@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(14, 255);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "levitate");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("levitate");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1562);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1262);
@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe levitation = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "levitation"),
+                TextManager.Instance.GetLocalizedText("levitation"),
                 125,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Pure_water,

@@ -385,7 +385,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (GameManager.Instance.PlayerEntity.Items.Contains(ItemGroups.MiscItems, (int)MiscItems.Spellbook))
                         uiManager.PushWindow(DaggerfallUI.Instance.DfSpellMakerWindow);
                     else
-                        DaggerfallUI.MessageBox(TextManager.Instance.GetText("ClassicEffects", "noSpellbook"));
+                        DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("noSpellbook"));
                     break;
 
                 case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?

@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(5, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "disintegrate");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("disintegrate");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1515);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1215);
             properties.SupportChance = true;

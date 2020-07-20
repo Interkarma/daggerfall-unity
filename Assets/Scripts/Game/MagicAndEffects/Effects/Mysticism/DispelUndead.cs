@@ -27,8 +27,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(6, 1);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "dispel");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "undead");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("dispel");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("undead");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1517);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1217);
             properties.SupportChance = true;

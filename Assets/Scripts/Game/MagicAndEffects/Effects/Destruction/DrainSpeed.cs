@@ -24,8 +24,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(7, 6);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "drain");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "speed");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("drain");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("speed");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1525);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1224);
             properties.SupportMagnitude = true;

@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(13, 0);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "invisibility");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "normal");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("invisibility");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("normal");
             properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1560);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1260);
@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe invisibility = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "invisibility"),
+                TextManager.Instance.GetLocalizedText("invisibility"),
                 250,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Rain_water,

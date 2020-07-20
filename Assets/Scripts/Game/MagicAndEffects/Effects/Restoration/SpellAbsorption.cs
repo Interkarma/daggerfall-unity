@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(20, 255);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "spellAbsorption");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("spellAbsorption");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1568);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1268);
             properties.SupportDuration = true;

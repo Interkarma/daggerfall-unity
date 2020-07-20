@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(11, 9);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "transfer");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "fatigue");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("transfer");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("fatigue");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1559);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1259);
             properties.SupportMagnitude = true;

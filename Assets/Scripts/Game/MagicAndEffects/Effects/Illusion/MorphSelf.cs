@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(29, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "morphSelf");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("morphSelf");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1579);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1279);

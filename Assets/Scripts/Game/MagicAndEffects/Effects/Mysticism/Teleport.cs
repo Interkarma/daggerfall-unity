@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(43, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "teleport");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("teleport");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1602);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1302);
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;

@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(23, 0);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "chameleon");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "normal");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("chameleon");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("normal");
             properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1571);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1271);
@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe chameleonForm = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "chameleonForm"),
+                TextManager.Instance.GetLocalizedText("chameleonForm"),
                 200,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Rain_water,

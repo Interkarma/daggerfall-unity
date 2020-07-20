@@ -24,8 +24,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(9, 0);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "fortifyAttribute");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "strength");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("fortifyAttribute");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("strength");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1532);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1232);
             properties.SupportDuration = true;
@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Magnitude 1-1 + 14-14 per 1 levels
             EffectSettings orcStrengthSettings = SetEffectMagnitude(DefaultEffectSettings(), 1, 1, 14, 14, 1);
             PotionRecipe orcStrength = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "orcStrength"),
+                TextManager.Instance.GetLocalizedText("orcStrength"),
                 50,
                 orcStrengthSettings,
                 (int)Items.CreatureIngredients1.Orcs_blood,

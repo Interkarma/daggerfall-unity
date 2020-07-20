@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(30, 255);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "waterBreathing");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("waterBreathing");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1582);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1282);
@@ -40,7 +40,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe waterBreathing = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "waterBreathing"),
+                TextManager.Instance.GetLocalizedText("waterBreathing"),
                 100,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Rain_water,

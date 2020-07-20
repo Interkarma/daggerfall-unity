@@ -103,7 +103,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             // Output "you feel drained." if the host manager is player
             if (manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youFeelDrained"));
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youFeelDrained"));
         }
 
         public void IncreaseMagnitude(int amount)

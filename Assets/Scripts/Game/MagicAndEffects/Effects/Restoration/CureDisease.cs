@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(3, 0);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "cure");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "disease");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("cure");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("disease");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1509);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1209);
             properties.SupportChance = true;
@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             EffectSettings cureSettings = SetEffectChance(DefaultEffectSettings(), 1, 10, 1);
             PotionRecipe cureDisease = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "cureDisease"),
+                TextManager.Instance.GetLocalizedText("cureDisease"),
                 100,
                 cureSettings,
                 (int)Items.MiscellaneousIngredients1.Elixir_vitae,
@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             EffectSettings purificationSettings = SetEffectChance(DefaultEffectSettings(), 1, 10, 1);
             purificationSettings = SetEffectMagnitude(purificationSettings, 5, 5, 19, 19, 1);
             PotionRecipe purification = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "purification"),
+                TextManager.Instance.GetLocalizedText("purification"),
                 500,
                 purificationSettings,
                 (int)Items.MiscellaneousIngredients1.Elixir_vitae,

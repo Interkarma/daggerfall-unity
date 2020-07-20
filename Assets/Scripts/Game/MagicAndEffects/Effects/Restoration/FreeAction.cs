@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(26, 255);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "freeAction");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("freeAction");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1576);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1276);
@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             EffectSettings cureSettings = SetEffectChance(DefaultEffectSettings(), 5, 19, 1);
             PotionRecipe freeAction = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "freeAction"),
+                TextManager.Instance.GetLocalizedText("freeAction"),
                 125,
                 cureSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,

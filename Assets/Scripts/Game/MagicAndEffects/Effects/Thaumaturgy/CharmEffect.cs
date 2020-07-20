@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(34, 255);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "charm");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("charm");
             properties.SubGroupName = string.Empty;
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1589);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1289);

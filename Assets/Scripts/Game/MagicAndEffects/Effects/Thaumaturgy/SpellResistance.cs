@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(22, 255);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "spellResistance");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("spellResistance");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1570);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1270);
             properties.SupportDuration = true;

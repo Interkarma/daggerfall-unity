@@ -23,8 +23,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             properties.Key = EffectKey;
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "heal");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "spellPoints");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("heal");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("spellPoints");
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Magnitude 5-5 + 4-4 per 1 levels
             EffectSettings restorePowerSettings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 4, 4, 1);
             PotionRecipe restorePower = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "restorePower"),
+                TextManager.Instance.GetLocalizedText("restorePower"),
                 75,
                 restorePowerSettings,
                 (int)Items.MiscellaneousIngredients1.Nectar,

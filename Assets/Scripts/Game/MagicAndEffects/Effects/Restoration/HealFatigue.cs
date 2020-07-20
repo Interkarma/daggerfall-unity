@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(10, 9);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "heal");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "fatigue");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("heal");
+            properties.SubGroupName = TextManager.Instance.GetLocalizedText("fatigue");
             properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1549);
             properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1249);
             properties.SupportMagnitude = true;
@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Magnitude 5-5 + 4-4 per 1 levels
             EffectSettings staminaSettings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 4, 4, 1);
             PotionRecipe stamina = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "stamina"),
+                TextManager.Instance.GetLocalizedText("stamina"),
                 25,
                 staminaSettings,
                 (int)Items.MiscellaneousIngredients1.Pure_water,

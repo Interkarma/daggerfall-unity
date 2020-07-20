@@ -58,7 +58,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             // Set properties shared by all variants
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "pacify");
+            properties.GroupName = TextManager.Instance.GetLocalizedText("pacify");
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         void SetVariantProperties(DFCareer.EnemyGroups targetGroup, int variantIndex)
         {
-            string name = TextManager.Instance.GetText("ClassicEffects", subGroupTextKeys[variantIndex]);
+            string name = TextManager.Instance.GetLocalizedText(subGroupTextKeys[variantIndex]);
 
             VariantProperties vp = new VariantProperties();
             vp.effectProperties = properties;
