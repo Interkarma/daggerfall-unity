@@ -20,13 +20,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallAutomapWindow : DaggerfallPopupWindow
     {
-        const string textDatabase = "DaggerfallUI";
-
-        public static string TextDatabase
-        {
-            get { return textDatabase; }
-        }
-
         const int toolTipDelay = 1; // delay in seconds before button tooltips are shown
 
         const float scrollLeftRightSpeed = 50.0f; // left mouse on button arrow left/right makes geometry move with this speed
@@ -264,16 +257,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void UpdateButtonToolTipsText()
         {
-            gridButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipTextGridButton"), HotkeySequence_SwitchAutomapGridMode, HotkeySequence_ResetRotationPivotAxisView);
-            forwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipForwardButton"), HotkeySequence_MoveForward, HotkeySequence_MoveRotationPivotAxisForward);
-            backwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipBackwardButton"), HotkeySequence_MoveBackward, HotkeySequence_MoveRotationPivotAxisBackward);
-            leftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipLeftButton"), HotkeySequence_MoveLeft, HotkeySequence_MoveRotationPivotAxisLeft);
-            rightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRightButton"), HotkeySequence_MoveRight, HotkeySequence_MoveRotationPivotAxisRight);
-            rotateLeftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRotateLeftButton"), HotkeySequence_RotateLeft, HotkeySequence_RotateCameraLeft);
-            rotateRightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipRotateRightButton"), HotkeySequence_RotateRight, HotkeySequence_RotateCameraRight);
-            upstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipUpstairsButton"), HotkeySequence_Upstairs, HotkeySequence_IncreaseSliceLevel, HotkeySequence_SwitchToAutomapRenderModeCutout, HotkeySequence_SwitchToAutomapRenderModeWireframe, HotkeySequence_SwitchToAutomapRenderModeTransparent);
-            downstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipDownstairsButton"), HotkeySequence_Downstairs, HotkeySequence_DecreaseSliceLevel, HotkeySequence_SwitchToAutomapRenderModeCutout, HotkeySequence_SwitchToAutomapRenderModeWireframe, HotkeySequence_SwitchToAutomapRenderModeTransparent);
-            dummyPanelCompass.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "automapToolTipPanelCompass"), HotkeySequence_SwitchFocusToNextBeaconObject, HotkeySequence_ResetView);
+            gridButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("automapToolTipTextGridButton"), HotkeySequence_SwitchAutomapGridMode, HotkeySequence_ResetRotationPivotAxisView);
+            forwardButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("automapToolTipForwardButton"), HotkeySequence_MoveForward, HotkeySequence_MoveRotationPivotAxisForward);
+            backwardButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("automapToolTipBackwardButton"), HotkeySequence_MoveBackward, HotkeySequence_MoveRotationPivotAxisBackward);
+            leftButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("automapToolTipLeftButton"), HotkeySequence_MoveLeft, HotkeySequence_MoveRotationPivotAxisLeft);
+            rightButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("automapToolTipRightButton"), HotkeySequence_MoveRight, HotkeySequence_MoveRotationPivotAxisRight);
+            rotateLeftButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("automapToolTipRotateLeftButton"), HotkeySequence_RotateLeft, HotkeySequence_RotateCameraLeft);
+            rotateRightButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("automapToolTipRotateRightButton"), HotkeySequence_RotateRight, HotkeySequence_RotateCameraRight);
+            upstairsButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("automapToolTipUpstairsButton"), HotkeySequence_Upstairs, HotkeySequence_IncreaseSliceLevel, HotkeySequence_SwitchToAutomapRenderModeCutout, HotkeySequence_SwitchToAutomapRenderModeWireframe, HotkeySequence_SwitchToAutomapRenderModeTransparent);
+            downstairsButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("automapToolTipDownstairsButton"), HotkeySequence_Downstairs, HotkeySequence_DecreaseSliceLevel, HotkeySequence_SwitchToAutomapRenderModeCutout, HotkeySequence_SwitchToAutomapRenderModeWireframe, HotkeySequence_SwitchToAutomapRenderModeTransparent);
+            dummyPanelCompass.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("automapToolTipPanelCompass"), HotkeySequence_SwitchFocusToNextBeaconObject, HotkeySequence_ResetView);
         }
 
         /// <summary>

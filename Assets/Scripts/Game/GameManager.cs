@@ -544,7 +544,7 @@ namespace DaggerfallWorkshop.Game
             if (InputManager.Instance.ActionStarted(InputManager.Actions.QuickSave))
             {
                 if (SaveLoadManager.IsSavingPrevented)
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotSaveNow"));
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotSaveNow"));
                 else
                     SaveLoadManager.Instance.QuickSave();
             }

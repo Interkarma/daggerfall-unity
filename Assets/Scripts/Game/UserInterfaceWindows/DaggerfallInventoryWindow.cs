@@ -128,17 +128,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        protected const string textDatabase = "DaggerfallUI";
-
-        protected readonly string kgSrc = TextManager.Instance.GetText(textDatabase, "kgSrc");
-        protected readonly string kgRep = TextManager.Instance.GetText(textDatabase, "kgRep");
-        protected readonly string damSrc = TextManager.Instance.GetText(textDatabase, "damSrc");
-        protected readonly string damRep = TextManager.Instance.GetText(textDatabase, "damRep");
-        protected readonly string arSrc = TextManager.Instance.GetText(textDatabase, "arSrc");
-        protected readonly string arRep = TextManager.Instance.GetText(textDatabase, "arRep");
-        protected readonly string goldAmount = TextManager.Instance.GetText(textDatabase, "goldAmount");
-        protected readonly string goldWeight = TextManager.Instance.GetText(textDatabase, "goldWeight");
-        protected readonly string wagonFullGold = TextManager.Instance.GetText(textDatabase, "wagonFullGold");
+        protected readonly string kgSrc = TextManager.Instance.GetLocalizedText("kgSrc");
+        protected readonly string kgRep = TextManager.Instance.GetLocalizedText("kgRep");
+        protected readonly string damSrc = TextManager.Instance.GetLocalizedText("damSrc");
+        protected readonly string damRep = TextManager.Instance.GetLocalizedText("damRep");
+        protected readonly string arSrc = TextManager.Instance.GetLocalizedText("arSrc");
+        protected readonly string arRep = TextManager.Instance.GetLocalizedText("arRep");
+        protected readonly string goldAmount = TextManager.Instance.GetLocalizedText("goldAmount");
+        protected readonly string goldWeight = TextManager.Instance.GetLocalizedText("goldWeight");
+        protected readonly string wagonFullGold = TextManager.Instance.GetLocalizedText("wagonFullGold");
 
         protected const string baseTextureName = "INVE00I0.IMG";
         protected const string goldTextureName = "INVE01I0.IMG";
@@ -725,7 +723,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem currentRightHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.RightHand);
                 if (currentRightHandWeapon != null)
                 {
-                    string message = TextManager.Instance.GetText(textDatabase, "equippingWeapon");
+                    string message = TextManager.Instance.GetLocalizedText("equippingWeapon");
                     message = message.Replace("%s", currentRightHandWeapon.ItemTemplate.name);
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
@@ -736,7 +734,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem currentLeftHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.LeftHand);
                 if (currentLeftHandWeapon != null)
                 {
-                    string message = TextManager.Instance.GetText(textDatabase, "equippingWeapon");
+                    string message = TextManager.Instance.GetLocalizedText("equippingWeapon");
                     message = message.Replace("%s", currentLeftHandWeapon.ItemTemplate.name);
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
@@ -1218,9 +1216,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void WagonButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             if (!PlayerEntity.Items.Contains(ItemGroups.Transportation, (int)Transportation.Small_cart))
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noWagon"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("noWagon"));
             else if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && !allowDungeonWagonAccess)
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "exitTooFar"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("exitTooFar"));
             else
                 ShowWagon(!usingWagon);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
@@ -1401,7 +1399,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), playerEntity.MaxEncumbrance, GetCarriedWeight());
             if (canCarry <= 0)
             {
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotCarryAnymore"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotCarryAnymore"));
             }
             return canCarry;
         }
@@ -1412,7 +1410,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int canCarry = ComputeCanHoldAmount(item.stackCount, item.EffectiveUnitWeightInKg(), ItemHelper.WagonKgLimit, remoteItems.GetWeight());
             if (canCarry <= 0)
             {
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotHoldAnymore"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotHoldAnymore"));
             }
             return canCarry;
         }
@@ -1448,7 +1446,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Block transfer of summoned items
             if (item.IsSummoned)
             {
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotRemoveItem"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotRemoveItem"));
                 return;
             }
 
@@ -1470,7 +1468,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Player cannot drop most quest items
                 if (questItem == null || (!questItem.AllowDrop && from == localItems))
                 {
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "cannotRemoveItem"));
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotRemoveItem"));
                     return;
                 }
 
@@ -1503,7 +1501,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     // Show message box
                     DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
-                    mb.SetTextBoxLabel(String.Format(TextManager.Instance.GetText(textDatabase, "howManyItems"), this.maxAmount));
+                    mb.SetTextBoxLabel(String.Format(TextManager.Instance.GetLocalizedText("howManyItems"), this.maxAmount));
                     mb.TextPanelDistanceY = 0;
                     mb.InputDistanceX = 15;
                     mb.TextBox.Numeric = true;
@@ -1692,7 +1690,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                 {
                     var messageBox = new DaggerfallMessageBox(uiManager, this);
-                    messageBox.SetText(TextManager.Instance.GetText(textDatabase, "bookUnavailable"));
+                    messageBox.SetText(TextManager.Instance.GetLocalizedText("bookUnavailable"));
                     messageBox.ClickAnywhereToClose = true;
                     uiManager.PushWindow(messageBox);
                 }
@@ -1707,7 +1705,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // TODO: There may be other objects that result in this dialog box, but for now I'm sure this one says it.
                 // -IC122016
                 DaggerfallMessageBox cannotUse = new DaggerfallMessageBox(uiManager, this);
-                cannotUse.SetText(TextManager.Instance.GetText(textDatabase, "cannotUseThis"));
+                cannotUse.SetText(TextManager.Instance.GetLocalizedText("cannotUseThis"));
                 cannotUse.ClickAnywhereToClose = true;
                 cannotUse.Show();
             }
@@ -1747,17 +1745,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     if (playerEntity.LightSource == item)
                     {
-                        DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightDouse"), false, item);
+                        DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("lightDouse"), false, item);
                         playerEntity.LightSource = null;
                     }
                     else
                     {
-                        DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightLight"), false, item);
+                        DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("lightLight"), false, item);
                         playerEntity.LightSource = item;
                     }
                 }
                 else
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightEmpty"), false, item);
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("lightEmpty"), false, item);
             }
             else if (item.ItemGroup == ItemGroups.UselessItems2 && item.TemplateIndex == (int)UselessItems2.Oil && collection != null)
             {
@@ -1766,11 +1764,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {   // Re-fuel lantern with the oil.
                     lantern.currentCondition += item.currentCondition;
                     collection.RemoveItem(item.IsAStack() ? collection.SplitStack(item, 1) : item);
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightRefuel"), false, lantern);
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("lightRefuel"), false, lantern);
                     Refresh(false);
                 }
                 else
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightFull"), false, lantern);
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("lightFull"), false, lantern);
             }
             else
             {
@@ -1803,7 +1801,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 playerGPS.LocationRevealedByMapItem = revealedLocation.Name;
                 GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                    TextManager.Instance.GetText(textDatabase, "readMap").Replace("%map", revealedLocation.Name));
+                    TextManager.Instance.GetLocalizedText("readMap").Replace("%map", revealedLocation.Name));
 
                 DaggerfallMessageBox mapText = new DaggerfallMessageBox(uiManager, this);
                 mapText.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId));
@@ -1813,7 +1811,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             catch (Exception)
             {
                 // Player has already descovered all valid locations in this region!
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "readMapFail"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("readMapFail"));
             }
         }
 

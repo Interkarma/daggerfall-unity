@@ -60,7 +60,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             if (readMap)
                 GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                    TextManager.Instance.GetText("DaggerfallUI", "readMap").Replace("%map", place.SiteDetails.locationName));
+                    TextManager.Instance.GetLocalizedText("readMap").Replace("%map", place.SiteDetails.locationName));
 
             SetComplete();
         }

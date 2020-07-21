@@ -165,7 +165,7 @@ namespace DaggerfallWorkshop.Game.Items
                         return bookFile.Author;
                 }
 
-                return TextManager.Instance.GetText("DaggerfallUI", "unknownAuthor");
+                return TextManager.Instance.GetLocalizedText("unknownAuthor");
             }
 
             public override string PaintingSubject()

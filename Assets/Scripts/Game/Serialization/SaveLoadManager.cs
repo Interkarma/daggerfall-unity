@@ -378,7 +378,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (!LoadInProgress)
             {
                 if (GameManager.Instance.SaveLoadManager.IsSavingPrevented)
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotSaveNow"));
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotSaveNow"));
                 else
                     Save(GameManager.Instance.PlayerEntity.Name, quickSaveName, instantReload);
             }

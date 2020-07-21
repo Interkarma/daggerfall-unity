@@ -518,17 +518,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public static DaggerfallMessageBox CreateBankingStatusBox(IUserInterfaceWindow previous = null)
         {
-            const string textDatabase = "DaggerfallUI";
-
             DaggerfallMessageBox bankingBox = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager, previous);
             bankingBox.SetHighlightColor(DaggerfallUI.DaggerfallUnityStatDrainedTextColor);
             List<TextFile.Token> messages = new List<TextFile.Token>();
             bool found = false;
             messages.AddRange(GetLoansLine(
-                TextManager.Instance.GetText(textDatabase, "region"),
-                TextManager.Instance.GetText(textDatabase, "account"),
-                TextManager.Instance.GetText(textDatabase, "loan"),
-                TextManager.Instance.GetText(textDatabase, "dueDate")));
+                TextManager.Instance.GetLocalizedText("region"),
+                TextManager.Instance.GetLocalizedText("account"),
+                TextManager.Instance.GetLocalizedText("loan"),
+                TextManager.Instance.GetLocalizedText("dueDate")));
             messages.Add(TextFile.NewLineToken);
             for (int regionIndex = 0; regionIndex < DaggerfallBankManager.BankAccounts.Length; regionIndex++)
             {
@@ -541,7 +539,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             if (!found)
             {
-                TextFile.Token noneToken = TextFile.CreateTextToken(TextManager.Instance.GetText(textDatabase, "noAccount"));
+                TextFile.Token noneToken = TextFile.CreateTextToken(TextManager.Instance.GetLocalizedText("noAccount"));
                 messages.Add(noneToken);
                 messages.Add(TextFile.NewLineToken);
             }

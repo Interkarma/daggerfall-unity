@@ -51,8 +51,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        protected const string textDatabase = "DaggerfallUI";
-
         const string baseTextureName = "GILD00I0.IMG";      // Join Guild / Talk / Service
         const string memberTextureName = "GILD01I0.IMG";      // Join Guild / Talk / Service
 
@@ -329,7 +327,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else
                 {
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "serviceMembersOnly"));
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("serviceMembersOnly"));
                 }
                 return;
             }
@@ -568,8 +566,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.CreateTokens(
                     TextFile.Formatting.JustifyCenter,
-                    TextManager.Instance.GetText(textDatabase, "gettingQuests1"),
-                    TextManager.Instance.GetText(textDatabase, "gettingQuests2"));
+                    TextManager.Instance.GetLocalizedText("gettingQuests1"),
+                    TextManager.Instance.GetLocalizedText("gettingQuests2"));
 
                 DaggerfallMessageBox gettingQuestsBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, this);
                 gettingQuestsBox.ClickAnywhereToClose = true;
@@ -765,7 +763,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             CloseWindow();
             DaggerfallInputMessageBox donationMsgBox = new DaggerfallInputMessageBox(uiManager, this);
-            donationMsgBox.SetTextBoxLabel(TextManager.Instance.GetText(textDatabase, "serviceDonateHowMuch"));
+            donationMsgBox.SetTextBoxLabel(TextManager.Instance.GetLocalizedText("serviceDonateHowMuch"));
             donationMsgBox.TextPanelDistanceX = 6;
             donationMsgBox.TextPanelDistanceY = 6;
             donationMsgBox.TextBox.Numeric = true;
@@ -831,7 +829,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 GameManager.Instance.PlayerEffectManager.CureAllDiseases();
                 playerEntity.TimeToBecomeVampireOrWerebeast = 0;
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "freeHolidayCuring"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("freeHolidayCuring"));
             }
             else if (numberOfDiseases > 0)
             {
@@ -886,7 +884,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     playerEntity.DeductGoldAmount(curingCost);
                     GameManager.Instance.PlayerEffectManager.CureAllDiseases();
                     playerEntity.TimeToBecomeVampireOrWerebeast = 0;
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "curedDisease"));
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("curedDisease"));
                 }
                 else
                     DaggerfallUI.MessageBox(NotEnoughGoldId);

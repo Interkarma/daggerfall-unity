@@ -12,7 +12,6 @@ namespace DaggerfallWorkshop.Game
     {
         const int MinutesPerMonth = DaggerfallDateTime.MinutesPerDay * DaggerfallDateTime.DaysPerMonth;
 
-        const string textDatabase = "DaggerfallUI";
         const float loanReminderHUDDelay = 3;
 
         public static void CheckOverdueLoans(uint lastGameMinutes)
@@ -40,9 +39,9 @@ namespace DaggerfallWorkshop.Game
                             if (Array.Exists(sendReminderMonths, month => lastRemainingMonths >= month && remainingMonths < month))
                             {
                                 // Send letters before due date instead?
-                                DaggerfallUI.AddHUDText(String.Format(TextManager.Instance.GetText(textDatabase, "loanReminder"),
+                                DaggerfallUI.AddHUDText(String.Format(TextManager.Instance.GetLocalizedText("loanReminder"),
                                     DaggerfallBankManager.GetLoanedTotal(regionIndex)), loanReminderHUDDelay);
-                                DaggerfallUI.AddHUDText(String.Format(TextManager.Instance.GetText(textDatabase, "loanReminder2"),
+                                DaggerfallUI.AddHUDText(String.Format(TextManager.Instance.GetLocalizedText("loanReminder2"),
                                     remainingMonths + 1, MapsFile.RegionNames[regionIndex]), loanReminderHUDDelay);
                             }
                         }

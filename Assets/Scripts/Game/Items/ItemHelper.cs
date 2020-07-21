@@ -36,8 +36,6 @@ namespace DaggerfallWorkshop.Game.Items
     {
         #region Fields
 
-        const string textDatabase = "DaggerfallUI";
-
         // This array is in order of ItemEnums.ArtifactsSubTypes
         // Each element in array is the texture record index to use for that artifact in TEXTURE.432, TEXTURE.433
         // The actual equip placement and whether a left and right hand image exist is derived from item group/groupIndex from usual template data
@@ -281,9 +279,9 @@ namespace DaggerfallWorkshop.Game.Items
             if (differentiatePlantIngredients)
             {
                 if (item.ItemGroup == ItemGroups.PlantIngredients1 && item.TemplateIndex < 18)
-                    return string.Format("{0} {1}", result, TextManager.Instance.GetText(textDatabase, "northern"));
+                    return string.Format("{0} {1}", result, TextManager.Instance.GetLocalizedText("northern"));
                 if (item.ItemGroup == ItemGroups.PlantIngredients2 && item.TemplateIndex < 18)
-                    return string.Format("{0} {1}", result, TextManager.Instance.GetText(textDatabase, "southern"));
+                    return string.Format("{0} {1}", result, TextManager.Instance.GetLocalizedText("southern"));
             }
 
             // Resolve weapon material

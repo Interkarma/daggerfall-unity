@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             if (!string.IsNullOrEmpty(revealedDungeon.Name))
             {
                 GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                    TextManager.Instance.GetText("DaggerfallUI", "readMapTG").Replace("%map", revealedDungeon.Name));
+                    TextManager.Instance.GetLocalizedText("readMapTG").Replace("%map", revealedDungeon.Name));
                 return true;
             }
             return false;

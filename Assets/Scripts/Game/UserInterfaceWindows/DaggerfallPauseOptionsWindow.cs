@@ -286,7 +286,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (GameManager.Instance.SaveLoadManager.IsSavingPrevented)
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotSaveNow"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotSaveNow"));
             else
                 uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.UnitySaveGame, new object[] { uiManager, DaggerfallUnitySaveGameWindow.Modes.SaveGame, this, false }));
         }

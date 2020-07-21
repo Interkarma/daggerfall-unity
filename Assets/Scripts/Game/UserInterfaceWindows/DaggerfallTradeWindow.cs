@@ -276,8 +276,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             bool repairDone = item.RepairData.IsBeingRepaired() ? item.RepairData.IsRepairFinished() : item.currentCondition == item.maxCondition;
             return repairDone ? 
-                    TextManager.Instance.GetText(textDatabase, "repairDone") : 
-                    TextManager.Instance.GetText(textDatabase, "repairDays").Replace("%d", item.RepairData.EstimatedDaysUntilRepaired().ToString());
+                    TextManager.Instance.GetLocalizedText("repairDone") : 
+                    TextManager.Instance.GetLocalizedText("repairDays").Replace("%d", item.RepairData.EstimatedDaysUntilRepaired().ToString());
         }
 
         void SetupCostAndGold()
@@ -526,7 +526,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (commit && !item.RepairData.IsBeingRepaired())
                 {
                     item.RepairData.LeaveForRepair(repairTime);
-                    string note = string.Format(TextManager.Instance.GetText(textDatabase, "repairNote"), item.LongName, buildingDiscoveryData.displayName);
+                    string note = string.Format(TextManager.Instance.GetLocalizedText("repairNote"), item.LongName, buildingDiscoveryData.displayName);
                     GameManager.Instance.PlayerEntity.Notebook.AddNote(note);
                 }
                 totalRepairTime += repairTime;
@@ -814,7 +814,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         if (!item.IsIdentified)
                             TransferItem(item, localItems, remoteItems);
                         else
-                            DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "doesntNeedIdentify"));
+                            DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("doesntNeedIdentify"));
                         break;
                 }
             }
@@ -836,7 +836,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (item.RepairData.IsBeingRepaired() && !item.RepairData.IsRepairFinished())
                     {
                         itemBeingRepaired = item;
-                        string strInterruptRepair = TextManager.Instance.GetText(textDatabase, "interruptRepair");
+                        string strInterruptRepair = TextManager.Instance.GetLocalizedText("interruptRepair");
                         DaggerfallMessageBox confirmInterruptRepairBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, strInterruptRepair, this);
                         confirmInterruptRepairBox.OnButtonClick += ConfirmInterruptRepairBox_OnButtonClick;
                         confirmInterruptRepairBox.Show();
@@ -906,14 +906,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 if (Dice100.FailedRoll(chanceBeingDetected))
                 {
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "stealSuccess"), 2);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("stealSuccess"), 2);
                     RaiseOnTradeHandler(basketItems.GetNumItems(), 0);
                     PlayerEntity.Items.TransferAll(basketItems);
                     PlayerEntity.TallyCrimeGuildRequirements(true, 1);
                 }
                 else
                 {   // Register crime and start spawning guards.
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "stealFailure"), 2);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("stealFailure"), 2);
                     RaiseOnTradeHandler(0, 0);
                     PlayerEntity.CrimeCommitted = PlayerEntity.Crimes.Theft;
                     PlayerEntity.SpawnCityGuards(true);
@@ -948,7 +948,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {   // No trade when using a spell, just identify immediately
                 for (int i = 0; i < remoteItems.Count; i++)
                     remoteItems.GetItem(i).IdentifyItem();
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "itemsIdentified"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("itemsIdentified"));
             }
             else
                 ShowTradePopup();
@@ -1047,7 +1047,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             CloseWindow();
             if (receivedLetterOfCredit)
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "letterOfCredit"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("letterOfCredit"));
         }
 
         #endregion

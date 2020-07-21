@@ -34,8 +34,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        const string textDatabase = "DaggerfallUI";
-
         Panel mainPanel = new Panel();
         ScrollingPanel scrollingPanel = new ScrollingPanel();
         VerticalScrollBar scroller = new VerticalScrollBar();
@@ -159,7 +157,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Add classic icons
-            AddHeaderLabel(parent, ref xpos, ref ypos, TextManager.Instance.GetText(textDatabase, "classicIcons"));
+            AddHeaderLabel(parent, ref xpos, ref ypos, TextManager.Instance.GetLocalizedText("classicIcons"));
             rowCount = 0;
             for (int i = 0; i < iconCollection.SpellIconCount; i++)
             {

@@ -815,12 +815,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (spell.Tag == PlayerEntity.vampireSpellTag)
                 {
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotDeleteVamp"));
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotDeleteVamp"));
                     return;
                 }
                 else if (spell.Tag == PlayerEntity.lycanthropySpellTag)
                 {
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotDeleteWere"));
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotDeleteWere"));
                     return;
                 }
             }
