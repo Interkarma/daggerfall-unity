@@ -19,7 +19,6 @@ using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
-using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
@@ -58,8 +57,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         readonly Dictionary<int, BaseEntityEffect> potionEffectTemplates = new Dictionary<int, BaseEntityEffect>();
         readonly Dictionary<int, SpellRecord.SpellRecordData> classicSpells = new Dictionary<int, SpellRecord.SpellRecordData>();
         readonly Dictionary<string, CustomSpellBundleOffer> customSpellBundleOffers = new Dictionary<string, CustomSpellBundleOffer>();
-
-        bool effectsEnumerated = false;
 
         #endregion
 
@@ -101,6 +98,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         void Start()
         {
+            // Create a dictionary of classic spells
+            RebuildClassicSpellsDict();
+
+            // Enumerate classes implementing an effect and create an instance to use as factory
+            magicEffectTemplates.Clear();
+            IEnumerable<BaseEntityEffect> effectTemplates = ReflectiveEnumerator.GetEnumerableOfType<BaseEntityEffect>();
+            foreach (BaseEntityEffect effect in effectTemplates)
+            {
+                // Effect must present a key and be discoverable via reflective enumeration
+                if (string.IsNullOrEmpty(effect.Key) || effect.Properties.DisableReflectiveEnumeration)
+                    continue;
+
+                // Register template
+                RegisterEffectTemplate(effect);
+            }
+
+            // Below is an example of how to register a fully custom effect and spell bundle
+            // This call should remain commented out except for testing and example purposes
+            // Mods would do this kind of work after capturing OnRegisterCustomEffects event
+            RegisterCustomEffectDemo();
+
+            // Raise event for custom effects to register
+            RaiseOnRegisterCustomEffectsEvent();
         }
 
         void RegisterCustomEffectDemo()
@@ -170,11 +190,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         void Update()
         {
-            // Do effect registration on first update
-            // Done here so that localization is ready in time to lookup effect names when template instantiated
-            if (!effectsEnumerated)
-                EnumerateEffectTemplates();
-
             // Don't tick if lastGameMinute not set (pre-init) or game loading
             // Note: Effect system must be able to update while game is paused but game time still passes, e.g. rest or fast travel
             if (lastGameMinute == 0 || SaveLoadManager.Instance.LoadInProgress)
@@ -495,8 +510,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
 
                 // Ignore duplicate groups
-                if (!groupNames.Contains(effect.Properties.GroupName))
-                    groupNames.Add(effect.Properties.GroupName);
+                if (!groupNames.Contains(effect.GroupName))
+                    groupNames.Add(effect.GroupName);
             }
 
             // Sort if required
@@ -517,13 +532,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             List<string> subGroupNames = new List<string>();
 
-            foreach (BaseEntityEffect effect in magicEffectTemplates.Values.Where(effect => effect.Properties.GroupName == groupName))
+            foreach (BaseEntityEffect effect in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
             {
                 // Skip effects not fitting at least one station requirement
                 if ((craftingStations & effect.Properties.AllowedCraftingStations) == 0)
                     continue;
 
-                subGroupNames.Add(effect.Properties.SubGroupName);
+                subGroupNames.Add(effect.SubGroupName);
             }
 
             // Sort if required
@@ -543,7 +558,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             List<IEntityEffect> effectTemplates = new List<IEntityEffect>();
 
-            foreach (IEntityEffect effectTemplate in magicEffectTemplates.Values.Where(effect => effect.Properties.GroupName == groupName))
+            foreach (IEntityEffect effectTemplate in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
             {
                 // Skip effects not fitting at least one station requirement
                 if ((craftingStations & effectTemplate.Properties.AllowedCraftingStations) == 0)
@@ -573,7 +588,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             if (sortAlpha)
-                return enchantmentTemplates.OrderBy(o => o.Properties.GroupName).ToList();
+                return enchantmentTemplates.OrderBy(o => o.GroupName).ToList();
             else
                 return enchantmentTemplates;
         }
@@ -690,38 +705,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #endregion
 
         #region Private Methods
-
-        /// <summary>
-        /// Enumerate available effects through reflection and register to broker.
-        /// </summary>
-        void EnumerateEffectTemplates()
-        {
-            // Create a dictionary of classic spells
-            RebuildClassicSpellsDict();
-
-            // Enumerate classes implementing an effect and create an instance to use as factory
-            magicEffectTemplates.Clear();
-            IEnumerable<BaseEntityEffect> effectTemplates = ReflectiveEnumerator.GetEnumerableOfType<BaseEntityEffect>();
-            foreach (BaseEntityEffect effect in effectTemplates)
-            {
-                // Effect must present a key and be discoverable via reflective enumeration
-                if (string.IsNullOrEmpty(effect.Key) || effect.Properties.DisableReflectiveEnumeration)
-                    continue;
-
-                // Register template
-                RegisterEffectTemplate(effect);
-            }
-
-            // Below is an example of how to register a fully custom effect and spell bundle
-            // This call should remain commented out except for testing and example purposes
-            // Mods would do this kind of work after capturing OnRegisterCustomEffects event
-            RegisterCustomEffectDemo();
-
-            // Raise event for custom effects to register
-            RaiseOnRegisterCustomEffectsEvent();
-
-            effectsEnumerated = true;
-        }
 
         /// <summary>
         /// Rebuilds dictionary of classic spells by re-reading SPELLS.STD.

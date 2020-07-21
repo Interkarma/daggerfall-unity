@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -25,10 +26,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(10, 9);
-            properties.GroupName = TextManager.Instance.GetLocalizedText("heal");
-            properties.SubGroupName = TextManager.Instance.GetLocalizedText("fatigue");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1549);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1249);
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
@@ -36,6 +33,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.MagicSkill = DFCareer.MagicSkills.Restoration;
             properties.MagnitudeCosts = MakeEffectCosts(8, 28);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("heal");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("fatigue");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1549);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1249);
 
         public override void SetPotionProperties()
         {

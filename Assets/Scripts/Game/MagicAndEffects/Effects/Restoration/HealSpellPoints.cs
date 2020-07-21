@@ -23,13 +23,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             properties.Key = EffectKey;
-            properties.GroupName = TextManager.Instance.GetLocalizedText("heal");
-            properties.SubGroupName = TextManager.Instance.GetLocalizedText("spellPoints");
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.PotionMaker;
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("heal");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("spellPoints");
 
         public override void SetPotionProperties()
         {

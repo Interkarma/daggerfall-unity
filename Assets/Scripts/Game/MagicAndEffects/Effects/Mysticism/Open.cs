@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
@@ -31,9 +32,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(17, 255);
-            properties.GroupName = TextManager.Instance.GetLocalizedText("open");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1565);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1265);
             properties.ShowSpellIcon = false;
             properties.SupportChance = true;
             properties.ChanceFunction = ChanceFunction.Custom;
@@ -43,6 +41,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.MagicSkill = DFCareer.MagicSkills.Mysticism;
             properties.ChanceCosts = MakeEffectCosts(20, 100);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("open");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1565);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1265);
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {

@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -26,10 +27,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(1, 1);
-            properties.GroupName = TextManager.Instance.GetLocalizedText("continuousDamage");
-            properties.SubGroupName = TextManager.Instance.GetLocalizedText("fatigue");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1505);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1205);
             properties.SupportDuration = true;
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
@@ -39,6 +36,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.DurationCosts = MakeEffectCosts(20, 8);
             properties.MagnitudeCosts = MakeEffectCosts(40, 28);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("continuousDamage");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("fatigue");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1505);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1205);
 
         public override void MagicRound()
         {

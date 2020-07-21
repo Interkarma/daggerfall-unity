@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -25,11 +26,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(23, 1);
-            properties.GroupName = TextManager.Instance.GetLocalizedText("chameleon");
-            properties.SubGroupName = TextManager.Instance.GetLocalizedText("true");
-            properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1572);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1272);
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
@@ -39,6 +35,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             concealmentFlag = MagicalConcealmentFlags.BlendingTrue;
             startConcealmentMessageKey = "youAreBlending";
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("chameleon");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("true");
+        public override string DisplayName => string.Format("{0} ({1})", GroupName, SubGroupName);
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1572);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1272);
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {

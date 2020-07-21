@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -58,7 +59,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             // Set properties shared by all variants
-            properties.GroupName = TextManager.Instance.GetLocalizedText("pacify");
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
@@ -72,6 +72,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             SetVariantProperties(DFCareer.EnemyGroups.Humanoid, 2);
             SetVariantProperties(DFCareer.EnemyGroups.Daedra, 3);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("pacify");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText(subGroupTextKeys[currentVariant]);
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1585 + currentVariant);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1285 + currentVariant);
 
         public override void MagicRound()
         {
@@ -100,15 +105,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         void SetVariantProperties(DFCareer.EnemyGroups targetGroup, int variantIndex)
         {
-            string name = TextManager.Instance.GetLocalizedText(subGroupTextKeys[variantIndex]);
-
             VariantProperties vp = new VariantProperties();
             vp.effectProperties = properties;
             vp.effectProperties.Key = string.Format("Pacify-{0}", subGroupTextKeys[variantIndex]);
             vp.effectProperties.ClassicKey = MakeClassicKey(33, (byte)variantIndex);
-            vp.effectProperties.SubGroupName = name;
-            vp.effectProperties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1585 + variantIndex);
-            vp.effectProperties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1285 + variantIndex);
             vp.targetGroup = targetGroup;
 
             if (targetGroup == DFCareer.EnemyGroups.Animals)

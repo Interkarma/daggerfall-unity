@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -27,10 +28,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(6, 2);
-            properties.GroupName = TextManager.Instance.GetLocalizedText("dispel");
-            properties.SubGroupName = TextManager.Instance.GetLocalizedText("daedra");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1518);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1218);
             properties.SupportChance = true;
             properties.ChanceFunction = ChanceFunction.Custom;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
@@ -39,6 +36,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.MagicSkill = DFCareer.MagicSkills.Mysticism;
             properties.ChanceCosts = MakeEffectCosts(120, 180);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("dispel");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("daedra");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1518);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1218);
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {

@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -69,7 +70,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             // Set properties shared by all variants
-            properties.GroupName = TextManager.Instance.GetLocalizedText("elementalResistance");
             properties.SupportDuration = true;
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
@@ -87,6 +87,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             SetVariantProperties(DFCareer.Elements.Shock);
             SetVariantProperties(DFCareer.Elements.Magic);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("elementalResistance");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText(subGroupTextKeys[currentVariant]);
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1527 + currentVariant);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1227 + currentVariant);
 
         public override void SetPotionProperties()
         {
@@ -182,15 +187,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         void SetVariantProperties(DFCareer.Elements element)
         {
             int variantIndex = (int)element;
-            string name = TextManager.Instance.GetLocalizedText(subGroupTextKeys[variantIndex]);
 
             VariantProperties vp = new VariantProperties();
             vp.effectProperties = properties;
             vp.effectProperties.Key = string.Format("ElementalResistance-{0}", subGroupTextKeys[variantIndex]);
             vp.effectProperties.ClassicKey = MakeClassicKey(8, (byte)variantIndex);
-            vp.effectProperties.SubGroupName = name;
-            vp.effectProperties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1527 + variantIndex);
-            vp.effectProperties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1227 + variantIndex);
             vp.elementResisted = element;
             variantProperties[variantIndex] = vp;
         }

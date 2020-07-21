@@ -11,6 +11,7 @@
 
 using System;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using FullSerializer;
 
@@ -30,9 +31,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(35, 255);
-            properties.GroupName = TextManager.Instance.GetLocalizedText("shield");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1590);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1290);
             properties.SupportDuration = true;
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
@@ -42,6 +40,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.DurationCosts = MakeEffectCosts(28, 8);
             properties.MagnitudeCosts = MakeEffectCosts(80, 60);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("shield");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1590);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1290);
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {

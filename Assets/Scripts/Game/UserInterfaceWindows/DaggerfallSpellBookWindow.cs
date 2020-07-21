@@ -639,8 +639,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Update labels
-            spellEffectLabels[labelIndex].Text = effect.Properties.GroupName;
-            spellEffectLabels[labelIndex + 1].Text = effect.Properties.SubGroupName;
+            spellEffectLabels[labelIndex].Text = effect.GroupName;
+            spellEffectLabels[labelIndex + 1].Text = effect.SubGroupName;
         }
 
         void ShowEffectPopup(IEntityEffect effect)
@@ -650,7 +650,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallMessageBox spellEffectPopup = new DaggerfallMessageBox(uiManager, this);
             spellEffectPopup.ClickAnywhereToClose = true;
-            spellEffectPopup.SetTextTokens(effect.Properties.SpellBookDescription, effect);
+            spellEffectPopup.SetTextTokens(effect.SpellBookDescription, effect);
             spellEffectPopup.Show();
         }
 

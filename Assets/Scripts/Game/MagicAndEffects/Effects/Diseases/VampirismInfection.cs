@@ -50,6 +50,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             bypassSavingThrows = true;
         }
 
+        public override TextFile.Token[] ContractedMessageTokens => null;
+
         public int InfectionRegionIndex
         {
             get { return infectionRegionIndex; }

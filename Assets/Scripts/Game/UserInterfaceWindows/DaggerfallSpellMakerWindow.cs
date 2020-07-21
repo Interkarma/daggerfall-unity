@@ -923,7 +923,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception(string.Format("Could not find any effect templates for group {0}", effectGroupPicker.ListBox.SelectedItem));
 
             // If this is a solo effect without any subgroups names defined (e.g. "Regenerate") then go straight to effect editor
-            if (enumeratedEffectTemplates.Count == 1 && string.IsNullOrEmpty(enumeratedEffectTemplates[0].Properties.SubGroupName))
+            if (enumeratedEffectTemplates.Count == 1 && string.IsNullOrEmpty(enumeratedEffectTemplates[0].SubGroupName))
             {
                 effectGroupPicker.CloseWindow();
                 AddAndEditSlot(enumeratedEffectTemplates[0]);
@@ -932,12 +932,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Sort list by subgroup name
-            enumeratedEffectTemplates.Sort((s1, s2) => s1.Properties.SubGroupName.CompareTo(s2.Properties.SubGroupName));
+            enumeratedEffectTemplates.Sort((s1, s2) => s1.SubGroupName.CompareTo(s2.SubGroupName));
 
             // Populate subgroup names in list box
             foreach (IEntityEffect effect in enumeratedEffectTemplates)
             {
-                effectSubGroupPicker.ListBox.AddItem(effect.Properties.SubGroupName);
+                effectSubGroupPicker.ListBox.AddItem(effect.SubGroupName);
             }
             effectSubGroupPicker.ListBox.SelectedIndex = 0;
 

@@ -29,12 +29,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             properties.Key = EffectKey;
-            properties.GroupName = TextManager.Instance.GetLocalizedText(EffectKey);
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held;
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText(EffectKey);
 
         public override EnchantmentSettings[] GetEnchantmentSettings()
         {
@@ -45,7 +46,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 EffectKey = EffectKey,
                 ClassicType = EnchantmentTypes.RepairsObjects,
                 ClassicParam = -1,
-                PrimaryDisplayName = properties.GroupName,
+                PrimaryDisplayName = GroupName,
                 EnchantCost = enchantCost,
             };
 

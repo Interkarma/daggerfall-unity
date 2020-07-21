@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -32,10 +33,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(34, 255);
-            properties.GroupName = TextManager.Instance.GetLocalizedText("charm");
-            properties.SubGroupName = string.Empty;
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1589);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1289);
             //properties.SupportDuration = true;
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
@@ -45,6 +42,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             //properties.DurationCosts = MakeEffectCosts(20, 8);
             properties.ChanceCosts = MakeEffectCosts(40, 60);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("charm");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1589);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1289);
 
         public override void MagicRound()
         {

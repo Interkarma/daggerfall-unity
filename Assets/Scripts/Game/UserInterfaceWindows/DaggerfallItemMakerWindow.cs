@@ -640,7 +640,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (effect.IsEnchantmentExclusiveTo(currentPowers) || effect.IsEnchantmentExclusiveTo(currentSideEffects))
                     continue;
 
-                enchantmentPrimaryPicker.ListBox.AddItem(effect.Properties.GroupName, -1, effect);
+                enchantmentPrimaryPicker.ListBox.AddItem(effect.GroupName, -1, effect);
             }
             uiManager.PushWindow(enchantmentPrimaryPicker);
         }
@@ -685,7 +685,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (effect.IsEnchantmentExclusiveTo(currentPowers) || effect.IsEnchantmentExclusiveTo(currentSideEffects))
                     continue;
 
-                enchantmentPrimaryPicker.ListBox.AddItem(effect.Properties.GroupName, -1, effect);
+                enchantmentPrimaryPicker.ListBox.AddItem(effect.GroupName, -1, effect);
             }
             uiManager.PushWindow(enchantmentPrimaryPicker);
         }

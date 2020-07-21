@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -256,7 +256,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception(noEffectTemplateError);
 
             // Get description text
-            TextFile.Token[] descriptionTokens = EffectTemplate.Properties.SpellMakerDescription;
+            TextFile.Token[] descriptionTokens = EffectTemplate.SpellMakerDescription;
             if (descriptionTokens == null || descriptionTokens.Length == 0)
                 throw new Exception(string.Format("DaggerfallEffectSettingsEditorWindow: EffectTemplate {0} does not present any spellmaker description text.", EffectTemplate.Key));
             else
