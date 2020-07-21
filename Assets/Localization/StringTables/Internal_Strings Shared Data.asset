@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 627
+  m_NextAvailableId: 779
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -2510,6 +2510,614 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 626
     m_Key: Daedra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 627
+    m_Key: dialogButtonInfo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 628
+    m_Key: activeQuests
+    m_Metadata:
+      m_Items: []
+  - m_Id: 629
+    m_Key: activeQuestsInfo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 630
+    m_Key: finishedQuests
+    m_Metadata:
+      m_Items: []
+  - m_Id: 631
+    m_Key: finishedQuestsInfo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 632
+    m_Key: notebook
+    m_Metadata:
+      m_Items: []
+  - m_Id: 633
+    m_Key: notebookInfo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 634
+    m_Key: messages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 635
+    m_Key: messagesInfo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 636
+    m_Key: confirmMoveHead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 637
+    m_Key: confirmMove
+    m_Metadata:
+      m_Items: []
+  - m_Id: 638
+    m_Key: confirmMove2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 639
+    m_Key: confirmRemoveHead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 640
+    m_Key: confirmRemove
+    m_Metadata:
+      m_Items: []
+  - m_Id: 641
+    m_Key: confirmRemove2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 642
+    m_Key: confirmFindHead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 643
+    m_Key: confirmFind
+    m_Metadata:
+      m_Items: []
+  - m_Id: 644
+    m_Key: confirmFind2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 645
+    m_Key: enterNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 646
+    m_Key: completedQuest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 647
+    m_Key: endedQuest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 648
+    m_Key: finishQuestHeader
+    m_Metadata:
+      m_Items: []
+  - m_Id: 649
+    m_Key: quest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 650
+    m_Key: noteHeader
+    m_Metadata:
+      m_Items: []
+  - m_Id: 651
+    m_Key: houseDeed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 652
+    m_Key: levelProgress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 653
+    m_Key: readMap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 654
+    m_Key: readMapTG
+    m_Metadata:
+      m_Items: []
+  - m_Id: 655
+    m_Key: readMapDB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 656
+    m_Key: readMapFail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 657
+    m_Key: howManyItems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658
+    m_Key: wagonFullGold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 659
+    m_Key: itemsIdentified
+    m_Metadata:
+      m_Items: []
+  - m_Id: 660
+    m_Key: repairDone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 661
+    m_Key: repairDays
+    m_Metadata:
+      m_Items: []
+  - m_Id: 662
+    m_Key: interruptRepair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 663
+    m_Key: repairNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 664
+    m_Key: doesntNeedIdentify
+    m_Metadata:
+      m_Items: []
+  - m_Id: 665
+    m_Key: goldAmount
+    m_Metadata:
+      m_Items: []
+  - m_Id: 666
+    m_Key: goldWeight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 667
+    m_Key: letterOfCredit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 668
+    m_Key: stealSuccess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 669
+    m_Key: stealFailure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 670
+    m_Key: cannotRemoveItem
+    m_Metadata:
+      m_Items: []
+  - m_Id: 671
+    m_Key: cannotCarryAnymore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 672
+    m_Key: cannotHoldAnymore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 673
+    m_Key: cannotUseThis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 674
+    m_Key: equippingWeapon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 675
+    m_Key: lightDouse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 676
+    m_Key: lightLight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 677
+    m_Key: lightDies
+    m_Metadata:
+      m_Items: []
+  - m_Id: 678
+    m_Key: lightEmpty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 679
+    m_Key: lightRefuel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 680
+    m_Key: lightFull
+    m_Metadata:
+      m_Items: []
+  - m_Id: 681
+    m_Key: kgSrc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 682
+    m_Key: kgRep
+    m_Metadata:
+      m_Items: []
+  - m_Id: 683
+    m_Key: damSrc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 684
+    m_Key: damRep
+    m_Metadata:
+      m_Items: []
+  - m_Id: 685
+    m_Key: arSrc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686
+    m_Key: arRep
+    m_Metadata:
+      m_Items: []
+  - m_Id: 687
+    m_Key: northern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 688
+    m_Key: southern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 689
+    m_Key: noWagon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 690
+    m_Key: exitTooFar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 691
+    m_Key: bookUnavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 692
+    m_Key: unknownAuthor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 693
+    m_Key: cannotDeleteVamp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 694
+    m_Key: cannotDeleteWere
+    m_Metadata:
+      m_Items: []
+  - m_Id: 695
+    m_Key: noRecipes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 696
+    m_Key: potionMixed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 697
+    m_Key: potionFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 698
+    m_Key: reqIngredients
+    m_Metadata:
+      m_Items: []
+  - m_Id: 699
+    m_Key: region
+    m_Metadata:
+      m_Items: []
+  - m_Id: 700
+    m_Key: account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 701
+    m_Key: loan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 702
+    m_Key: dueDate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 703
+    m_Key: noAccount
+    m_Metadata:
+      m_Items: []
+  - m_Id: 704
+    m_Key: loanReminder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 705
+    m_Key: loanReminder2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 706
+    m_Key: classicIcons
+    m_Metadata:
+      m_Items: []
+  - m_Id: 707
+    m_Key: suggestedIcons
+    m_Metadata:
+      m_Items: []
+  - m_Id: 708
+    m_Key: serviceMembersOnly
+    m_Metadata:
+      m_Items: []
+  - m_Id: 709
+    m_Key: serviceDonateHowMuch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 710
+    m_Key: curedDisease
+    m_Metadata:
+      m_Items: []
+  - m_Id: 711
+    m_Key: freeHolidayCuring
+    m_Metadata:
+      m_Items: []
+  - m_Id: 712
+    m_Key: gettingQuests1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 713
+    m_Key: gettingQuests2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 714
+    m_Key: illegalRestWarning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 715
+    m_Key: cannotLoiterMoreThanXHours1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 716
+    m_Key: cannotLoiterMoreThanXHours2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 717
+    m_Key: automapToolTipTextGridButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 718
+    m_Key: automapToolTipForwardButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 719
+    m_Key: automapToolTipBackwardButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 720
+    m_Key: automapToolTipLeftButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 721
+    m_Key: automapToolTipRightButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 722
+    m_Key: automapToolTipRotateLeftButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 723
+    m_Key: automapToolTipRotateRightButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 724
+    m_Key: automapToolTipUpstairsButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 725
+    m_Key: automapToolTipDownstairsButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 726
+    m_Key: automapToolTipPanelCompass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 727
+    m_Key: automapPlayerPositionBeacon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 728
+    m_Key: automapRotationPivotAxis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 729
+    m_Key: automapEntranceExitPositionBeacon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730
+    m_Key: automapEntranceExit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 731
+    m_Key: automapPlayerMarker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 732
+    m_Key: automapTeleporterEntrance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 733
+    m_Key: automapTeleporterExit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 734
+    m_Key: exteriorAutomapBuildingTypeAlchemist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 735
+    m_Key: exteriorAutomapBuildingTypeArmorer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 736
+    m_Key: exteriorAutomapBuildingTypeBank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 737
+    m_Key: exteriorAutomapBuildingTypeBookseller
+    m_Metadata:
+      m_Items: []
+  - m_Id: 738
+    m_Key: exteriorAutomapBuildingTypeClothingStore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 739
+    m_Key: exteriorAutomapBuildingTypeFurnitureStore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 740
+    m_Key: exteriorAutomapBuildingTypeGemStore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 741
+    m_Key: exteriorAutomapBuildingTypeGeneralStore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 742
+    m_Key: exteriorAutomapBuildingTypeGuildHall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 743
+    m_Key: exteriorAutomapBuildingTypeHouseForSale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 744
+    m_Key: exteriorAutomapBuildingTypeLibrary
+    m_Metadata:
+      m_Items: []
+  - m_Id: 745
+    m_Key: exteriorAutomapBuildingTypePalace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 746
+    m_Key: exteriorAutomapBuildingTypePawnShop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 747
+    m_Key: exteriorAutomapBuildingTypeTavern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 748
+    m_Key: exteriorAutomapBuildingTypeTemple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 749
+    m_Key: exteriorAutomapBuildingTypeWeaponSmith
+    m_Metadata:
+      m_Items: []
+  - m_Id: 750
+    m_Key: exteriorAutomapBuildingTypeUnknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 751
+    m_Key: exteriorAutomapToolTipTextGridButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 752
+    m_Key: exteriorAutomapToolTipForwardButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 753
+    m_Key: exteriorAutomapToolTipBackwardButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 754
+    m_Key: exteriorAutomapToolTipLeftButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 755
+    m_Key: exteriorAutomapToolTipRightButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 756
+    m_Key: exteriorAutomapToolTipRotateLeftButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 757
+    m_Key: exteriorAutomapToolTipRotateRightButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 758
+    m_Key: exteriorAutomapToolTipUpstairsButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 759
+    m_Key: exteriorAutomapToolTipDownstairsButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 760
+    m_Key: exteriorAutomapToolTipPanelCompass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 761
+    m_Key: loading
+    m_Metadata:
+      m_Items: []
+  - m_Id: 762
+    m_Key: classicSave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 763
+    m_Key: cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 764
+    m_Key: renameSave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 765
+    m_Key: deleteSave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 766
+    m_Key: switchChar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 767
+    m_Key: savePrompt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 768
+    m_Key: loadPrompt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 769
+    m_Key: saveButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 770
+    m_Key: loadButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 771
+    m_Key: enterSaveName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 772
+    m_Key: selectSaveName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 773
+    m_Key: confirmDeleteSave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 774
+    m_Key: confirmOverwriteSave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 775
+    m_Key: youMustEnterASaveName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 776
+    m_Key: youMustSelectASaveName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 777
+    m_Key: noSavesFound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 778
+    m_Key: cannotSaveNow
     m_Metadata:
       m_Items: []
   m_Metadata:

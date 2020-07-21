@@ -2852,5 +2852,651 @@ MonoBehaviour:
     m_Localized: Daedra
     m_Metadata:
       m_Items: []
+  - m_Id: 627
+    m_Localized: 'Switch between: Active Quests; Finished Quests; Notebook; Messages'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 628
+    m_Localized: Active Quests
+    m_Metadata:
+      m_Items: []
+  - m_Id: 629
+    m_Localized: Click on an active quest that has a target location to initiate
+      travel.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 630
+    m_Localized: Finished Quests
+    m_Metadata:
+      m_Items: []
+  - m_Id: 631
+    m_Localized: Click on an entry to move it. Right click to delete.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 632
+    m_Localized: Notebook
+    m_Metadata:
+      m_Items: []
+  - m_Id: 633
+    m_Localized: Click a note to move. Right click to delete. Click in-between to
+      add a new note.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 634
+    m_Localized: Messages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 635
+    m_Localized: History of messages recently shown on screen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 636
+    m_Localized: Move entry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 637
+    m_Localized: Do you want to change the position of this entry?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 638
+    m_Localized: (It will be moved to before the next entry clicked)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 639
+    m_Localized: Delete entry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 640
+    m_Localized: Are you sure you want to remove this entry?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 641
+    m_Localized: (It will be deleted permanently and cannot be restored)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 642
+    m_Localized: Travel to location
+    m_Metadata:
+      m_Items: []
+  - m_Id: 643
+    m_Localized: 'Do you want to open the world map to travel to:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 644
+    m_Localized: '(Note: you can cancel travel from the world map)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 645
+    m_Localized: 'Enter your note:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 646
+    m_Localized: completed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 647
+    m_Localized: ended
+    m_Metadata:
+      m_Items: []
+  - m_Id: 648
+    m_Localized: '{0} {1} at {2}:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 649
+    m_Localized: Quest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 650
+    m_Localized: '{0} in {1}:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 651
+    m_Localized: You obtained the deeds and now own a house in %town of %region.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 652
+    m_Localized: 'Progress made to the next level: {0}%'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 653
+    m_Localized: Discovered the location of %map after studying a map.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 654
+    m_Localized: The Thieves Guild have revealed the closely guarded where-abouts
+      of a treasure trove called %map.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 655
+    m_Localized: The Dark Brotherhood revealed the secret of some treasure-laden
+      crypts located at somewhere called %map.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 656
+    m_Localized: You have already discovered the location shown by this map.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 657
+    m_Localized: Pick how many items (max {0})?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658
+    m_Localized: Your wagon could only hold {0} gold pieces.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 659
+    m_Localized: Items identified.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 660
+    m_Localized: DONE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 661
+    m_Localized: '%d days'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 662
+    m_Localized: Take back that item before it's repaired?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 663
+    m_Localized: Left my {0} for repair at {1}.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 664
+    m_Localized: This does not need to be identified.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 665
+    m_Localized: '{0} gold pieces'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 666
+    m_Localized: 'Weight: {0} kg'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 667
+    m_Localized: You are paid with a letter of credit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 668
+    m_Localized: You are successful.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 669
+    m_Localized: You are not successful...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 670
+    m_Localized: You cannot remove this item.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 671
+    m_Localized: You cannot carry anymore stuff.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 672
+    m_Localized: Your cart cannot hold anymore stuff.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 673
+    m_Localized: You cannot use this.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 674
+    m_Localized: Equipping %s
+    m_Metadata:
+      m_Items: []
+  - m_Id: 675
+    m_Localized: You douse the %it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 676
+    m_Localized: You light the %it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 677
+    m_Localized: Your %it flickers and dies.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 678
+    m_Localized: Your %it has no fuel left.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 679
+    m_Localized: You refuel your %it with a bottle of oil.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 680
+    m_Localized: Your %it is full.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 681
+    m_Localized: kilograms
+    m_Metadata:
+      m_Items: []
+  - m_Id: 682
+    m_Localized: kg
+    m_Metadata:
+      m_Items: []
+  - m_Id: 683
+    m_Localized: points of damage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 684
+    m_Localized: damage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 685
+    m_Localized: armor rating
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686
+    m_Localized: armor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 687
+    m_Localized: (northern)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 688
+    m_Localized: (southern)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 689
+    m_Localized: You don't own a wagon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 690
+    m_Localized: The exit is too far away for you to access your wagon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 691
+    m_Localized: The book is ruined and is now unreadable.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 692
+    m_Localized: unknown author
+    m_Metadata:
+      m_Items: []
+  - m_Id: 693
+    m_Localized: Cannot delete special vampire spells.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 694
+    m_Localized: Cannot delete special lycanthropy spell.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 695
+    m_Localized: You have no recipes.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 696
+    m_Localized: Your potion has been mixed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 697
+    m_Localized: Those ingredients did not concoct an effective potion.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 698
+    m_Localized: You do not have the ingredients required.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 699
+    m_Localized: Region
+    m_Metadata:
+      m_Items: []
+  - m_Id: 700
+    m_Localized: Account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 701
+    m_Localized: Loan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 702
+    m_Localized: Loan Due Date
+    m_Metadata:
+      m_Items: []
+  - m_Id: 703
+    m_Localized: None
+    m_Metadata:
+      m_Items: []
+  - m_Id: 704
+    m_Localized: You have a loan of {0} gold pieces due in
+    m_Metadata:
+      m_Items: []
+  - m_Id: 705
+    m_Localized: less than {0} months in {1}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 706
+    m_Localized: Classic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 707
+    m_Localized: Suggested
+    m_Metadata:
+      m_Items: []
+  - m_Id: 708
+    m_Localized: My services are reserved for members only.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 709
+    m_Localized: 'Donate how much money : '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 710
+    m_Localized: You are cured.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 711
+    m_Localized: You are cured free from cost due to todays' holiday.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 712
+    m_Localized: Hmm, let me see what tasks we have available.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 713
+    m_Localized: Please have patience and wait here a moment, %pcf.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 714
+    m_Localized: It is illegal to camp in or near a city. Continue?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 715
+    m_Localized: You cannot loiter more
+    m_Metadata:
+      m_Items: []
+  - m_Id: 716
+    m_Localized: than {0} hours at a time.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 717
+    m_Localized: 'left click: switch between 2D top view and 3D view (hotkey: {0})\rright
+      click: reset rot. axis to player pos (hotkey: {1})\rmouse wheel up while over
+      btn: inc. perspective (only 3D mode)\rmouse wheel down while over btn: dec.
+      perspective (only 3D mode)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 718
+    m_Localized: 'left click: move viewpoint forward (hotkey: {0})\rright click:
+      move rotation axis forward (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 719
+    m_Localized: 'left click: move viewpoint backwards (hotkey: {0})\rright click:
+      move rotation axis backwards (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 720
+    m_Localized: 'left click: move viewpoint to the left (hotkey: {0})\rright click:
+      move rotation axis to the left (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 721
+    m_Localized: 'left click: move viewpoint to the right (hotkey: {0})\rright click:
+      move rotation axis to the right (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 722
+    m_Localized: 'left click: rotate dungeon to the left (hotkey: {0})\rright click:
+      rotate camera to the left (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 723
+    m_Localized: 'left click: rotate dungeon to the right (hotkey: {0})\rright click:
+      rotate camera to the right (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 724
+    m_Localized: 'left click: increase viewpoint (hotkey: {0})\rright click: increase
+      slice level (hotkey: {1})\rslice level can also be adjusted by holding down
+      middle mouse btn\r\rhint: different render modes may show hidden geometry:\rhotkey
+      {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch
+      between modes with return key\r'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 725
+    m_Localized: 'left click: decrease viewpoint (hotkey: {0})\rright click: decrease
+      slice level (hotkey: {1})\rslice level can also be adjusted by holding down
+      middle mouse btn\r\rhint: different render modes may show hidden geometry:\rhotkey
+      {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch
+      between modes with return key\r'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 726
+    m_Localized: 'left click: toggle focus (hotkey: {0})\rbeacons: red ... player,
+      green ... entrance, blue ... rotation axis\r\rright click: reset view (hotkey:
+      {1})\r\rdouble-click left mouse btn in window to create+edit marker note\rdouble-click
+      left mouse btn (+Ctrl key) in window to create marker\rdouble-click left mouse
+      btn on a marker to add/edit a note\rdouble-click right mouse btn on a marker
+      to delete it\rdouble-click right mouse btn in window to position rotation axis\rdouble-click
+      middle mouse btn in window to center view\rdouble-click left mouse btn on discovered
+      portal marker to jump\rto connected teleporter portal'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 727
+    m_Localized: player position beacon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 728
+    m_Localized: rotation pivot axis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 729
+    m_Localized: entrance/exit position beacon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730
+    m_Localized: entrance/exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 731
+    m_Localized: player marker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 732
+    m_Localized: teleporter (entrance)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 733
+    m_Localized: teleporter (exit)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 734
+    m_Localized: Alchemist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 735
+    m_Localized: Armorer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 736
+    m_Localized: Bank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 737
+    m_Localized: Bookseller
+    m_Metadata:
+      m_Items: []
+  - m_Id: 738
+    m_Localized: Clothing Store
+    m_Metadata:
+      m_Items: []
+  - m_Id: 739
+    m_Localized: Furniture Store
+    m_Metadata:
+      m_Items: []
+  - m_Id: 740
+    m_Localized: Gem Store
+    m_Metadata:
+      m_Items: []
+  - m_Id: 741
+    m_Localized: General Store
+    m_Metadata:
+      m_Items: []
+  - m_Id: 742
+    m_Localized: Guild Hall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 743
+    m_Localized: HouseForSale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 744
+    m_Localized: Library
+    m_Metadata:
+      m_Items: []
+  - m_Id: 745
+    m_Localized: Palace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 746
+    m_Localized: Pawn Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 747
+    m_Localized: Tavern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 748
+    m_Localized: Temple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 749
+    m_Localized: Weapon Smith
+    m_Metadata:
+      m_Items: []
+  - m_Id: 750
+    m_Localized: Unknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 751
+    m_Localized: 'left click: switch to next view mode (hotkey: {0})\ravailable view
+      modes are:\r- original (hotkey {1})\r- extra: includes extra buildings (hotkey
+      {2})\r- all: includes extra buildings, ground flats (hotkey {3})\rswitch background
+      texture with {4}, {5}, {6}, {7}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 752
+    m_Localized: 'left click: move up (hotkey: {0})\rright click: move to north location
+      border (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 753
+    m_Localized: 'left click: move down (hotkey: {0})\rright click: move to south
+      location border (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 754
+    m_Localized: 'left click: move to the left (hotkey: {0})\rright click: move to
+      west location border (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 755
+    m_Localized: 'left click: move to the right (hotkey: {0})\rright click: move
+      to east location border (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 756
+    m_Localized: 'left click: rotate map to the left (hotkey: {0})\rright click:
+      rotate map around the player position\rto the left  (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 757
+    m_Localized: 'left click: rotate map to the right (hotkey: {0})\rright click:
+      rotate map around the player position\rto the right (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 758
+    m_Localized: 'left click: zoom in (hotkey: {0})\rright click: apply maximum zoom)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 759
+    m_Localized: 'left click: zoom out (hotkey: {0}\rright click: apply minimum zoom)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 760
+    m_Localized: 'left click: focus player position (hotkey: {0})\rright click: reset
+      view (hotkey: {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 761
+    m_Localized: Please wait...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 762
+    m_Localized: Classic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 763
+    m_Localized: Cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 764
+    m_Localized: Rename
+    m_Metadata:
+      m_Items: []
+  - m_Id: 765
+    m_Localized: Delete
+    m_Metadata:
+      m_Items: []
+  - m_Id: 766
+    m_Localized: Switch Char
+    m_Metadata:
+      m_Items: []
+  - m_Id: 767
+    m_Localized: Save Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 768
+    m_Localized: Load Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 769
+    m_Localized: Save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 770
+    m_Localized: Load
+    m_Metadata:
+      m_Items: []
+  - m_Id: 771
+    m_Localized: Enter save name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 772
+    m_Localized: Select a save
+    m_Metadata:
+      m_Items: []
+  - m_Id: 773
+    m_Localized: Are you sure you want to delete save?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 774
+    m_Localized: Overwrite this save?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 775
+    m_Localized: You must enter a save name.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 776
+    m_Localized: You must select a save name.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 777
+    m_Localized: No saves found. Load a Classic save?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 778
+    m_Localized: You cannot save now.
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
