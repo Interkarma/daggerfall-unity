@@ -123,7 +123,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const MagicCraftingStations thisMagicStation = MagicCraftingStations.SpellMaker;
 
-        const string textDatabase = "SpellmakerUI";
         const string baseTextureFilename = "INFO01I0.IMG";
         const string goldSelectIconsFilename = "MASK01I0.IMG";
         const string colorSelectIconsFilename = "MASK04I0.IMG";
@@ -750,7 +749,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             List<EffectEntry> effects = GetEffectEntries();
             if (effects.Count == 0)
             {
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noEffectsError"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("noEffectsError"));
                 return;
             }
 
@@ -906,7 +905,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
             mb.TextBox.Text = spellNameLabel.Text;
-            mb.SetTextBoxLabel(TextManager.Instance.GetText("SpellmakerUI", "enterSpellName") + " ");
+            mb.SetTextBoxLabel(TextManager.Instance.GetLocalizedText("enterSpellName") + " ");
             mb.OnGotUserInput += EnterName_OnGotUserInput;
             mb.Show();
         }
@@ -1041,7 +1040,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!string.IsNullOrEmpty(tipLabel.Text))
                 lockTip = true;
 
-            tipLabel.Text = TextManager.Instance.GetText(textDatabase, sender.Tag as string);
+            tipLabel.Text = TextManager.Instance.GetLocalizedText(sender.Tag as string);
             if (sender is Button)
             {
                 Button buttonSender = (Button)sender;

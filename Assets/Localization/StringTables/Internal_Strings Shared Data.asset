@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 779
+  m_NextAvailableId: 803
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -3118,6 +3118,102 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 778
     m_Key: cannotSaveNow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 779
+    m_Key: addEffect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 780
+    m_Key: buySpell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 781
+    m_Key: newSpell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 782
+    m_Key: exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 783
+    m_Key: casterOnly
+    m_Metadata:
+      m_Items: []
+  - m_Id: 784
+    m_Key: byTouch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 785
+    m_Key: singleTargetAtRange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 786
+    m_Key: areaAroundCaster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 787
+    m_Key: areaAtRange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 788
+    m_Key: fireBased
+    m_Metadata:
+      m_Items: []
+  - m_Id: 789
+    m_Key: coldBased
+    m_Metadata:
+      m_Items: []
+  - m_Id: 790
+    m_Key: poisonBased
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791
+    m_Key: shockBased
+    m_Metadata:
+      m_Items: []
+  - m_Id: 792
+    m_Key: magicBased
+    m_Metadata:
+      m_Items: []
+  - m_Id: 793
+    m_Key: selectIcon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 794
+    m_Key: nextIcon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 795
+    m_Key: previousIcon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 796
+    m_Key: nameSpell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 797
+    m_Key: enterSpellName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 798
+    m_Key: noEffectsError
+    m_Metadata:
+      m_Items: []
+  - m_Id: 799
+    m_Key: deleteSpell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 800
+    m_Key: sortSpells
+    m_Metadata:
+      m_Items: []
+  - m_Id: 801
+    m_Key: effectNotFoundError
+    m_Metadata:
+      m_Items: []
+  - m_Id: 802
+    m_Key: noItemToActivate
     m_Metadata:
       m_Items: []
   m_Metadata:
