@@ -11,7 +11,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
@@ -19,6 +18,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallConnect.Arena2;
 using FullSerializer;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -320,12 +320,19 @@ namespace DaggerfallWorkshop.Game.Questing
                     break;
 
                 case MacroTypes.FactionMacro:           // Faction macro
-                    // Want name of guild, not the person
-                    FactionFile.FactionData guildData;
-                    if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(ParentQuest.FactionId, out guildData))
-                        textOut = guildData.name;
+                    if (isQuestor)
+                    { 
+                        // Want name of guild, not the person
+                        FactionFile.FactionData guildData;
+                        if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(ParentQuest.FactionId, out guildData))
+                            textOut = guildData.name;
+                        else
+                            result = false;
+                    }
                     else
-                        result = false;
+                    {
+                        textOut = factionData.name;
+                    }
                     break;
 
                 default:                                // Macro not supported
@@ -954,12 +961,19 @@ namespace DaggerfallWorkshop.Game.Questing
                 case FactionFile.FactionTypes.Individual:
                     return GetRandomFactionOfType(factionType);
 
-                // Not sure how to use vampire clans yet
-                // These are *mostly* used by vampire quests where its assumed the player's vampire faction will be used
-                // It wouldn't make sense for player to gain reputation with another vampire clan after all
-                // As vampire factions not in game yet, just select one at random to ensure NPC is created
+                // Classic is bugged there as it always selects a random vampire clan.
+                // Here we fix it by using player vampire clan for vampire and cure vampirism quests
+                // and by using the vampire clan affiliated to the current region otherwise.
                 case FactionFile.FactionTypes.VampireClan:
-                    return GetRandomFactionOfType(factionType);
+                    if (ParentQuest.QuestName.StartsWith("P0") || ParentQuest.QuestName.StartsWith("$CUREVAM"))
+                    {
+                        RacialOverrideEffect racialEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+                        return (int)(racialEffect as VampirismEffect).VampireClan;
+                    }
+                    else
+                    { 
+                        return GameManager.Instance.PlayerGPS.GetCurrentRegionVampireClan();
+                    }
 
                 // Assign an NPC from current player region
                 case FactionFile.FactionTypes.Province:
