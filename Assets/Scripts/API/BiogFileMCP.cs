@@ -615,6 +615,15 @@ namespace DaggerfallConnect.Arena2
 
                 return tokens[0].text;
             }
+
+            public override string ImperialName()
+            {   // %imp
+                string[] names = { "Pelagius", "Cephorus", "Uriel", "Cassynder", "Voragiel", "Trabbatus" };
+                System.Random random = new System.Random();
+                DFRandom.Seed = (uint)random.Next();
+                uint rand = DFRandom.rand() % 6;
+                return names[rand];
+            }
         }
     }
 }

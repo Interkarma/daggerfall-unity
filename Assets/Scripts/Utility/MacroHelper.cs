@@ -31,6 +31,8 @@ namespace DaggerfallWorkshop.Utility
 
         public delegate TextFile.Token[] MultilineMacroHandler(IMacroContextProvider mcp, TextFile.Formatting format);
 
+        public static System.Random random = new System.Random();
+
         #region macro definitions and handler mappings
 
         static Dictionary<string, MacroHandler> macroHandlers = new Dictionary<string, MacroHandler>()
@@ -85,8 +87,8 @@ namespace DaggerfallWorkshop.Utility
             { "%fea", FactionEnemyAlly }, // faction which is PC enemy and NPC ally (used for greetings)
             { "%fl1", LordOfFaction1 }, // Lord of _fx1
             { "%fl2", LordOfFaction2 }, // Lord of _fx2
-            { "%fn", FemaleName },  // Random first name (Female)
-            { "%fn2", FemaleFullname }, // Random full name (Female)
+            { "%fn", FemaleName },  // Random female name
+            { "%fn2", FemaleName }, // Random female name, differs from the previous in classic by using a different seed
             { "%fnpc", FactionNPC }, // faction of npc that is dialog partner
             { "%fon", FactionOrderName }, // Faction order name
             { "%fpa", FactionName }, // faction name? of dialog partner - should return "Kynareth" for npc that are members of "Temple of Kynareth"
@@ -113,7 +115,7 @@ namespace DaggerfallWorkshop.Utility
             { "%hrg", null }, // House region
             { "%hs", HeldSoul },  //  Holding Soul type
             { "%htwn", null },// House town
-            { "%imp", MaleFullname }, // Emperor's son's name
+            { "%imp", ImperialName }, // Emperor's son's name, using a specific name bank
             { "%int", Int }, // Amount of Intelligence
             { "%it", ItemName },  //  Item
             { "%jok", Joke }, // A joke
@@ -133,8 +135,8 @@ namespace DaggerfallWorkshop.Utility
             { "%mat", Material }, // Material
             { "%mit", null }, // Item
             { "%ml", MaxLoan },  // Max loan amount
-            { "%mn", MaleName },  // Random First name (Male)
-            { "%mn2", MaleFullname }, // Random Full name (Male)
+            { "%mn", MaleName },  // Random male name
+            { "%mn2", MaleName }, // Random male name, differs from the previous in classic by using a different seed
             { "%mod", ArmourMod }, // Modification
             { "%n", Name },   // A random name (comment Nystul: I think it is just a random name - or maybe this is the reason that in vanilla all male mobile npcs have female names...)
             { "%nam", Name }, // A random full name
@@ -275,8 +277,7 @@ namespace DaggerfallWorkshop.Utility
 
         public static NameHelper.BankTypes GetRandomNameBank()
         {
-            // TODO: How should bank type be randomised? This line results in blank names sometimes, so using race instead.
-            //return (NameHelper.BankTypes) DFRandom.random_range_inclusive(0, 8);
+            DFRandom.Seed = (uint)random.Next();
             Races race = (Races) DFRandom.random_range_inclusive(1, 8);
             return GetNameBank(race);
         }
@@ -989,19 +990,11 @@ namespace DaggerfallWorkshop.Utility
 
         private static string FemaleName(IMacroContextProvider mcp)
         {   // %fn
-            return DaggerfallUnity.Instance.NameHelper.FirstName(GetRandomNameBank(), Genders.Female);
-        }
-        private static string FemaleFullname(IMacroContextProvider mcp)
-        {   // %fn2
             return DaggerfallUnity.Instance.NameHelper.FullName(GetRandomNameBank(), Genders.Female);
         }
 
         private static string MaleName(IMacroContextProvider mcp)
         {   // %mn
-            return DaggerfallUnity.Instance.NameHelper.FirstName(GetRandomNameBank(), Genders.Male);
-        }
-        private static string MaleFullname(IMacroContextProvider mcp)
-        {   // %mn2
             return DaggerfallUnity.Instance.NameHelper.FullName(GetRandomNameBank(), Genders.Male);
         }
 
@@ -1666,6 +1659,13 @@ namespace DaggerfallWorkshop.Utility
             // %q12b
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().Q12b();
+        }
+
+        public static string ImperialName(IMacroContextProvider mcp)
+        {
+            // %imp
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().ImperialName();
         }
 
         #endregion
