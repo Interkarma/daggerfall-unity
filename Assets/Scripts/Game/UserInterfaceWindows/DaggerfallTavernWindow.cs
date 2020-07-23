@@ -30,16 +30,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Controls
 
         Panel mainPanel = new Panel();
-        Button roomButton;
-        Button talkButton;
-        Button foodButton;
-        Button exitButton;
+        protected Button roomButton;
+        protected Button talkButton;
+        protected Button foodButton;
+        protected Button exitButton;
 
         #endregion
 
         #region UI Textures
 
-        Texture2D baseTexture;
+        protected Texture2D baseTexture;
 
         #endregion
 
@@ -61,11 +61,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TextManager.Instance.GetLocalizedText("tavernStew") };
         byte[] tavernFoodAndDrinkPrices = { 1, 1, 2, 3, 1, 1, 2, 3, 2, 2, 3 };
 
-        StaticNPC merchantNPC;
-        PlayerGPS.DiscoveredBuilding buildingData;
-        RoomRental_v1 rentedRoom;
-        int daysToRent = 0;
-        int tradePrice = 0;
+        protected StaticNPC merchantNPC;
+        protected PlayerGPS.DiscoveredBuilding buildingData;
+        protected RoomRental_v1 rentedRoom;
+        protected int daysToRent = 0;
+        protected int tradePrice = 0;
 
         bool isCloseWindowDeferred = false;
         bool isTalkWindowDeferred = false;
@@ -170,7 +170,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             inputMessageBox.Show();
         }
 
-        private void InputMessageBox_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        protected virtual void InputMessageBox_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
         {
             daysToRent = 0;
             bool result = int.TryParse(input, out daysToRent);
@@ -209,7 +209,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void ConfirmRenting_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void ConfirmRenting_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
@@ -225,7 +225,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void RentRoom()
+        protected virtual void RentRoom()
         {
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
@@ -281,7 +281,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void DoFoodAndDrink()
+        protected virtual void DoFoodAndDrink()
         {
             CloseWindow();
             uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
@@ -302,7 +302,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        public void FoodAndDrink_OnItemPicked(int index, string foodOrDrinkName)
+        protected virtual void FoodAndDrink_OnItemPicked(int index, string foodOrDrinkName)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
