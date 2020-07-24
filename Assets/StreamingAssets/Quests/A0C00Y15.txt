@@ -113,10 +113,9 @@ Message:  1014
 <ce>                  _pickupregion_ for the celebration.
 
 Message:  1015
-<ce>                   _pickupregion_ commissioned this
-<ce>                          _painting_ painting.
-<ce>                  It needs to be there in time for %g3
-<ce>                               gathering.
+<ce>                    _pickupregion_ commissioned this
+<ce>                          _painting_. It needs to be there
+<ce>                          for %g3 gathering tomorrow.
 
 Message:  1016
 <ce>                       _pickupregion_ needs this

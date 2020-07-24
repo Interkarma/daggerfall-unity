@@ -106,9 +106,8 @@ Message:  1014
 
 Message:  1015
 <ce>                    _pickuplocal_ commissioned this
-<ce>                          _painting_ painting.
-<ce>                      It needs to be there for %g3
-<ce>                          gathering tomorrow.
+<ce>                          _painting_. It needs to be there
+<ce>                          for %g3 gathering tomorrow.
 
 Message:  1016
 <ce>                       _pickuplocal_ needs this
