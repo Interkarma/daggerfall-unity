@@ -75,14 +75,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         KeyCode toggleClosedBinding;
 
-        Panel borderPanel;
-        Panel regionTextureOverlayPanel;
-        Panel[] regionLocationDotsOutlinesOverlayPanel;
-        Panel regionLocationDotsOverlayPanel;
-        Panel playerRegionOverlayPanel;
-        Panel identifyOverlayPanel;
+        protected Panel borderPanel;
+        protected Panel regionTextureOverlayPanel;
+        protected Panel[] regionLocationDotsOutlinesOverlayPanel;
+        protected Panel regionLocationDotsOverlayPanel;
+        protected Panel playerRegionOverlayPanel;
+        protected Panel identifyOverlayPanel;
 
-        TextLabel regionLabel;
+        protected TextLabel regionLabel;
 
         Texture2D overworldTexture;
         Texture2D identifyTexture;
@@ -105,15 +105,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D rightArrowTexture;
         Texture2D borderTexture;
 
-        Button findButton;
-        Button atButton;
-        Button exitButton;
-        Button horizontalArrowButton    = new Button();
-        Button verticalArrowButton      = new Button();
-        Button dungeonsFilterButton     = new Button();
-        Button templesFilterButton      = new Button();
-        Button homesFilterButton        = new Button();
-        Button townsFilterButton        = new Button();
+        protected Button findButton;
+        protected Button atButton;
+        protected Button exitButton;
+        protected Button horizontalArrowButton    = new Button();
+        protected Button verticalArrowButton      = new Button();
+        protected Button dungeonsFilterButton     = new Button();
+        protected Button templesFilterButton      = new Button();
+        protected Button homesFilterButton        = new Button();
+        protected Button townsFilterButton        = new Button();
 
         Rect playerRegionOverlayPanelRect   = new Rect(0, 0, 320, 200);
         Rect regionTextureOverlayPanelRect  = new Rect(0, regionPanelOffset, 320, 160);
@@ -516,7 +516,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         }
 
-        void SetupArrowButtons()
+        protected virtual void SetupArrowButtons()
         {
             // Vertical arrow
             if (selectedRegionMapNames.Length > 2)
@@ -660,7 +660,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Updates location dots
-        void UpdateMapLocationDotsTexture()
+        protected virtual void UpdateMapLocationDotsTexture()
         {
             // Get map and dimensions
             string mapName = selectedRegionMapNames[mapIndex];
@@ -1107,7 +1107,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Check if location with MapSummary summary is already discovered
-        bool checkLocationDiscovered(ContentReader.MapSummary summary)
+        protected virtual bool checkLocationDiscovered(ContentReader.MapSummary summary)
         {
             if (GameManager.Instance.PlayerGPS.HasDiscoveredLocation(summary.ID) ||
                 summary.Discovered ||

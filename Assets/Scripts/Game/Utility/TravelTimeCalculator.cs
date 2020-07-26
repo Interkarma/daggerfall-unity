@@ -174,6 +174,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
         public int PiecesCost { get { return piecesCost; } }
         public int TotalCost { get { return totalCost; } }
+        public int OceanPixels { get { return pixelsTraveledOnOcean; } }
         #endregion
     }
 }
