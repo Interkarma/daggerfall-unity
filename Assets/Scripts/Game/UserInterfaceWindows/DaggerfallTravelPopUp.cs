@@ -39,14 +39,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel transportToggleColorPanel;
         Panel sleepToggleColorPanel;
 
-        Button beginButton;
-        Button exitButton;
-        Button cautiousToggleButton;
-        Button recklessToggleButton;
-        Button footHorseToggleButton;
-        Button shipToggleButton;
-        Button campOutToggleButton;
-        Button innToggleButton;
+        protected Button beginButton;
+        protected Button exitButton;
+        protected Button cautiousToggleButton;
+        protected Button recklessToggleButton;
+        protected Button footHorseToggleButton;
+        protected Button shipToggleButton;
+        protected Button campOutToggleButton;
+        protected Button innToggleButton;
         Texture2D nativeTexture;
         Texture2D greenCheckboxTexture;
 
