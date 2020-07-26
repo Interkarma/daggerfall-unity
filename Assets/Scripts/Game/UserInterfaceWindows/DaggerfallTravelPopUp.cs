@@ -407,7 +407,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region events
 
-        public void BeginButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
+        public virtual void BeginButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             Refresh();
 
@@ -468,14 +468,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             doFastTravel = true; // initiate fast travel (Update() function will perform fast travel when this flag is true)
         }
 
-        public void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
+        public virtual void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             doFastTravel = false;
             DaggerfallUI.Instance.UserInterfaceManager.PopWindow();
         }
 
-        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        protected virtual void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
             if (keyboardEvent.type == EventType.KeyDown)
             {
@@ -490,7 +490,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        public void SpeedButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
+        public virtual void SpeedButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
 
@@ -498,53 +498,53 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
         }
 
-        public void SpeedButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        public virtual void SpeedButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
             if (keyboardEvent.type == EventType.KeyDown)
                 ToggleSpeedButtonOnScrollHandler(sender);
         }
 
-        public void ToggleSpeedButtonOnScrollHandler(BaseScreenComponent sender)
+        public virtual void ToggleSpeedButtonOnScrollHandler(BaseScreenComponent sender)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             speedCautious = !speedCautious;
             Refresh();
         }
 
-        public void TransportModeButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
+        public virtual void TransportModeButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             travelShip = (sender == shipToggleButton);
             Refresh();
         }
 
-        public void TransportModeButtonOnKeyboardHandler(BaseScreenComponent sender, Event keyboardEvent)
+        public virtual void TransportModeButtonOnKeyboardHandler(BaseScreenComponent sender, Event keyboardEvent)
         {
             if (keyboardEvent.type == EventType.KeyDown)
                 ToggleTransportModeButtonOnScrollHandler(sender);
         }
 
-        public void ToggleTransportModeButtonOnScrollHandler(BaseScreenComponent sender)
+        public virtual void ToggleTransportModeButtonOnScrollHandler(BaseScreenComponent sender)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             travelShip = !travelShip;
             Refresh();
         }
 
-        public void SleepModeButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
+        public virtual void SleepModeButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             sleepModeInn = (sender == innToggleButton);
             Refresh();
         }
 
-        public void SleepModeButtonOnKeyboardandler(BaseScreenComponent sender, Event keyboardEvent)
+        public virtual void SleepModeButtonOnKeyboardandler(BaseScreenComponent sender, Event keyboardEvent)
         {
             if (keyboardEvent.type == EventType.KeyDown)
                 ToggleSleepModeButtonOnScrollHandler(sender);
         }
 
-        public void ToggleSleepModeButtonOnScrollHandler(BaseScreenComponent sender)
+        public virtual void ToggleSleepModeButtonOnScrollHandler(BaseScreenComponent sender)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             sleepModeInn = !sleepModeInn;
