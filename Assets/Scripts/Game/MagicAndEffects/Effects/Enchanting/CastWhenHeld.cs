@@ -29,13 +29,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public static readonly string EffectKey = EnchantmentTypes.CastWhenHeld.ToString();
 
-        // UESP states CastWhenHeld magic items lose 105 durability points on equip and 1 point every minute
-        // This means most CastWhenHeld items would degrade very quickly, and I'm unable to reproduce this in classic
-        // Whether standing around, equipping/unequipping, fast travelling, or resting, held items do not degrade from "new"
-        // Only normal wear and tear during combat seems to lower condition
-        // TODO: Determine correct durability loss for CastWhenHeld items.
-        // http://en.uesp.net/wiki/Daggerfall:Magical_Items#Durability_of_Magical_Items
-
         public override void SetProperties()
         {
             properties.Key = EffectKey;
