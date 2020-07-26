@@ -254,6 +254,11 @@ namespace DaggerfallWorkshop.Utility
 
         #region Public Utility Functions
 
+        public static string LocationTypeName()
+        {
+            return CityType(null);
+        }
+
         public static void SetFactionIdsAndRegionID(int faction1, int faction2, int region)
         {
             idFaction1 = faction1;
