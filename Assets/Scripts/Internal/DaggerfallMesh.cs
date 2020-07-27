@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -160,36 +160,12 @@ namespace DaggerfallWorkshop
                 return;
 
             // Get new material array
-            int archive, record, frame;
             Material[] materials = new Material[defaultTextures.Count];
-            int climateIndex = (int)Game.GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType;
+            DFLocation.ClimateBaseType climateIndex = Game.GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType;
             for (int i = 0; i < defaultTextures.Count; i++)
             {
-                MaterialReader.ReverseTextureKey(defaultTextures[i], out archive, out record, out frame);
-                switch (archive)
-                {
-                    case 119:
-                        archive = dungeonTextureTable[0];
-                        break;
-                    case 120:
-                        archive = dungeonTextureTable[1];
-                        break;
-                    case 122:
-                        archive = dungeonTextureTable[2];
-                        break;
-                    case 123:
-                        archive = dungeonTextureTable[3];
-                        break;
-                    case 124:
-                        archive = dungeonTextureTable[4];
-                        break;
-                    case 168:
-                        archive = dungeonTextureTable[5];
-                        break;
-                    case 74:
-                        archive += climateIndex;
-                        break;
-                }
+                MaterialReader.ReverseTextureKey(defaultTextures[i], out int archive, out int record, out _);
+                archive = DungeonTextureTables.ApplyTextureTable(archive, dungeonTextureTable, climateIndex);
                 materials[i] = dfUnity.MaterialReader.GetMaterial(archive, record);
             }
 

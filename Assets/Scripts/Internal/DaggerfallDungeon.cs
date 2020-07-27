@@ -117,6 +117,7 @@ namespace DaggerfallWorkshop
 
             // Seal location
             isSet = true;
+            RaiseOnSetDungeonEvent();
         }
 
         public void ResetDungeonTextureTable()
@@ -479,5 +480,15 @@ namespace DaggerfallWorkshop
         }
 
         #endregion
+
+        /// <summary>
+        /// An event raised after a dungeon has been set and its layout has been performed.
+        /// </summary>
+        public static event Action<DaggerfallDungeon> OnSetDungeon;
+        private void RaiseOnSetDungeonEvent()
+        {
+            if (OnSetDungeon != null)
+                OnSetDungeon(this);
+        }
     }
 }
