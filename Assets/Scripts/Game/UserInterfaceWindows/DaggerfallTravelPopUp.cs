@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Properties
 
         public DFPosition EndPos { get { return endPos; } internal set { endPos = value;} }
-        internal DaggerfallTravelMapWindow TravelWindow { get { return travelWindow; } set { travelWindow = value; } }
+        public DaggerfallTravelMapWindow TravelWindow { get { return travelWindow; } internal set { travelWindow = value; } }
         public bool SpeedCautious { get { return speedCautious;} set {speedCautious = value; } }
         public bool TravelShip { get { return travelShip;} set { travelShip = value;} }
         public bool SleepModeInn { get { return sleepModeInn; } set { sleepModeInn = value; } }
