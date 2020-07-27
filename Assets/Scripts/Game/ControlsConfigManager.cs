@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: jefetienne
-// Contributors:    
+// Contributors:    Gavin Clayton (interkarma@dfworkshop.net)
 // 
 // Notes:
 //
@@ -39,11 +39,13 @@ namespace DaggerfallWorkshop.Game
 
         #region Fields
 
-        private Color crossDupeColor = new Color(0, 0.58f, 1);
-        private Color internalDupeColor = new Color(1, 0, 0);
+        private readonly Color crossDupeColor = new Color(0, 0.58f, 1);
+        private readonly Color internalDupeColor = new Color(1, 0, 0);
 
-        private Dictionary<InputManager.Actions, string> PrimaryUnsavedKeybindDict = new Dictionary<InputManager.Actions, string>();
-        private Dictionary<InputManager.Actions, string> SecondaryUnsavedKeybindDict = new Dictionary<InputManager.Actions, string>();
+        private readonly Dictionary<InputManager.Actions, string> PrimaryUnsavedKeybindDict 
+            = new Dictionary<InputManager.Actions, string>();
+        private readonly Dictionary<InputManager.Actions, string> SecondaryUnsavedKeybindDict
+            = new Dictionary<InputManager.Actions, string>();
 
         #endregion
 
@@ -130,11 +132,13 @@ namespace DaggerfallWorkshop.Game
         {
             HashSet<String> recorded = new HashSet<String>();
             HashSet<String> dupes = new HashSet<String>();
+            String none = KeyCode.None.ToString();
+
             foreach (String str in texts)
             {
-                if(!recorded.Contains(str))
+                if (!recorded.Contains(str))
                     recorded.Add(str);
-                else if (str != KeyCode.None.ToString())
+                else if (str != none)
                     dupes.Add(str);
             }
             return dupes;
@@ -144,13 +148,13 @@ namespace DaggerfallWorkshop.Game
         {
             var dict = GetUnsavedBindingDictionary(binding);
 
-            return GetDuplicates(dict.Select(kv => kv.Value)).Count > 0;
+            return GetDuplicates(dict.Values).Count > 0;
         }
 
         public bool CheckDuplicateKeyCodes(IEnumerable<Button> totalButtons)
         {
-            IEnumerable<String> pkeyList = PrimaryUnsavedKeybindDict.Select(kv => kv.Value);
-            IEnumerable<String> skeyList = SecondaryUnsavedKeybindDict.Select(kv => kv.Value);
+            IEnumerable<String> pkeyList = PrimaryUnsavedKeybindDict.Values;
+            IEnumerable<String> skeyList = SecondaryUnsavedKeybindDict.Values;
 
             var dupes = GetDuplicates(UsingPrimary ? pkeyList : skeyList);
 
@@ -219,7 +223,7 @@ namespace DaggerfallWorkshop.Game
         private void SetKeyBindValues(bool primary)
         {
             var dict = primary ? PrimaryUnsavedKeybindDict : SecondaryUnsavedKeybindDict;
-            foreach(var action in dict.Keys)
+            foreach (var action in dict.Keys)
             {
                 KeyCode code = InputManager.Instance.ParseKeyCodeString(dict[action]);
 
