@@ -2019,6 +2019,7 @@ namespace DaggerfallWorkshop.Game
                         gameobjectBlock.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
                         gameobjectBlock.transform.SetParent(gameobjectDungeon.transform);
+                        AddWater(gameobjectBlock, gameobjectBlock.transform.position, block.WaterLevel);
                     }
 
                     gameobjectDungeon.transform.SetParent(gameobjectGeometry.transform);
@@ -2045,6 +2046,37 @@ namespace DaggerfallWorkshop.Game
             InjectMeshAndMaterialProperties();
 
             //oldGeometryName = newGeometryName;
+        }
+
+        private void AddWater(GameObject parent, Vector3 position, short nativeBlockWaterLevel)
+        {
+            // Exit if no water present or prefab not set
+            if (nativeBlockWaterLevel == 10000 || DaggerfallUnity.Instance.Option_DungeonWaterPrefab.gameObject == null)
+                return;
+
+            // Instantiate water prefab to block parent
+            GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_DungeonWaterPrefab.gameObject, "AutomapDungeonWater", parent.transform, position);
+            MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
+            if (meshRenderer)
+            {
+                meshRenderer.material = new Material(Shader.Find("Daggerfall/Automap"));
+                meshRenderer.material.color = Color.blue;
+                meshRenderer.enabled = true;
+            }
+
+            // Scale water plane to RDB dimensions
+            Vector3 prefabScale = DaggerfallUnity.Instance.Option_DungeonWaterPlaneSize;
+            go.transform.localScale = new Vector3(
+                1f / prefabScale.x * RDBLayout.RDBSide,
+                1f,
+                1f / prefabScale.z * RDBLayout.RDBSide);
+
+            // Align water plane to RDB origin
+            Vector3 prefabOffset = DaggerfallUnity.Instance.Option_DungeonWaterPlaneOffset;
+            go.transform.localPosition += new Vector3(
+                prefabOffset.x * (1f / prefabScale.x) * RDBLayout.RDBSide,
+                nativeBlockWaterLevel * -1 * MeshReader.GlobalScale,
+                prefabOffset.z * (1f / prefabScale.x) * RDBLayout.RDBSide);
         }
 
         /// <summary>
