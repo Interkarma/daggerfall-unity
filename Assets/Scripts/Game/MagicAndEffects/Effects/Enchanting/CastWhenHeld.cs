@@ -122,7 +122,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             else if (context == EnchantmentPayloadFlags.RerollEffect)
             {
                 // Recast spell bundle - previous instance has already been removed by EntityEffectManager prior to callback
-                InstantiateSpellBundle(param.Value, sourceEntity, sourceItem, casterManager);
+                InstantiateSpellBundle(param.Value, sourceEntity, sourceItem, casterManager, true);
             }
 
             return null;
@@ -136,12 +136,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % degradeRate == 0)
                 {
                     item.LowerCondition(1, entity.Entity, entity.Entity.Items);
-                    //UnityEngine.Debug.LogFormat("CastWhenHeld degraded '{0}' by 1 durability point", item.LongName);
+                    //UnityEngine.Debug.LogFormat("CastWhenHeld degraded '{0}' by 1 durability point. {1}/{2} remaining.", item.LongName, item.currentCondition, item.maxCondition);
                 }
             }
         }
 
-        void InstantiateSpellBundle(EnchantmentParam param, DaggerfallEntityBehaviour sourceEntity, DaggerfallUnityItem sourceItem, EntityEffectManager casterManager)
+        void InstantiateSpellBundle(EnchantmentParam param, DaggerfallEntityBehaviour sourceEntity, DaggerfallUnityItem sourceItem, EntityEffectManager casterManager, bool recast = false)
         {
             if (!string.IsNullOrEmpty(param.CustomParam))
             {
@@ -171,7 +171,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
                         // Classic uses an item last "cast when held" effect spell cost to determine its durability loss on equip
                         // Here, all effects are considered, as it seems more coherent to do so
-                        sourceItem.LowerCondition(FormulaHelper.CalculateCastingCost(spell, false), sourceEntity.Entity, sourceEntity.Entity.Items);
+                        if (!recast)
+                        {
+                            int amount = FormulaHelper.CalculateCastingCost(spell, false);
+                            sourceItem.LowerCondition(amount, sourceEntity.Entity, sourceEntity.Entity.Items);
+                            //UnityEngine.Debug.LogFormat("CastWhenHeld degraded '{0}' by {1} durability points on equip. {2}/{3} remaining.", sourceItem.LongName, amount, sourceItem.currentCondition, sourceItem.maxCondition);
+                        }
                     }
 
                     // Store equip time as last reroll time
