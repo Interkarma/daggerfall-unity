@@ -101,9 +101,8 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
-        /// Get the entity race corresponding to that read from FACTION.TXT.
-        /// Only Breton, Redguard, Nord, Dark Elf and Wood Elf are supported.
-        /// Any other faction race will default to Breton.
+        /// Get the entity race corresponding to that read from FACTION.TXT. Only
+        /// default races are supported.
         /// </summary>
         /// <param name="factionRace">The faction race</param>
         /// <returns>The corresponding entity race.</returns>
@@ -113,18 +112,58 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 case FactionFile.FactionRaces.None:
                     return Races.None;
-                case FactionFile.FactionRaces.Redguard:
-                    return Races.Redguard;
                 case FactionFile.FactionRaces.Nord:
                     return Races.Nord;
-                case FactionFile.FactionRaces.DarkElf:
-                    return Races.DarkElf;
+                case FactionFile.FactionRaces.Khajiit:
+                    return Races.Khajiit;
+                case FactionFile.FactionRaces.Redguard:
+                    return Races.Redguard;
+                case FactionFile.FactionRaces.Breton:
+                    return Races.Breton;
+                case FactionFile.FactionRaces.Argonian:
+                    return Races.Argonian;
                 case FactionFile.FactionRaces.WoodElf:
                     return Races.WoodElf;
-                case FactionFile.FactionRaces.Breton:
-                default:
-                    return Races.Breton;
+                case FactionFile.FactionRaces.HighElf:
+                    return Races.HighElf;
+                case FactionFile.FactionRaces.DarkElf:
+                    return Races.DarkElf;
             }
+
+            return Races.None;
+        }
+
+        /// <summary>
+        /// Get the FACTION.TXT race ID corresponding to an entity race. Only
+        /// default races are supported.
+        /// </summary>
+        /// <param name="race">The entity race</param>
+        /// <returns>The corresponding faction race.</returns>
+        public static FactionFile.FactionRaces GetFactionRaceFromRace(Races race)
+        {
+            switch (race)
+            {
+                case Races.None:
+                    return FactionFile.FactionRaces.None;
+                case Races.Nord:
+                    return FactionFile.FactionRaces.Nord;
+                case Races.Khajiit:
+                    return FactionFile.FactionRaces.Khajiit;
+                case Races.Redguard:
+                    return FactionFile.FactionRaces.Redguard;
+                case Races.Breton:
+                    return FactionFile.FactionRaces.Breton;
+                case Races.Argonian:
+                    return FactionFile.FactionRaces.Argonian;
+                case Races.WoodElf:
+                    return FactionFile.FactionRaces.WoodElf;
+                case Races.HighElf:
+                    return FactionFile.FactionRaces.HighElf;
+                case Races.DarkElf:
+                    return FactionFile.FactionRaces.DarkElf;
+            }
+
+            return FactionFile.FactionRaces.None;
         }
     }
 

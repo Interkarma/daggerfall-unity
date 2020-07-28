@@ -14,21 +14,6 @@ namespace DaggerfallWorkshop.Game
 {
     public partial class TalkManager : IMacroContextProvider
     {
-        /// <summary>
-        /// Oaths by race.
-        /// </summary>
-        enum RacialOaths
-        {
-            None = 0,
-            Nord = 201,
-            Khajiit = 202,
-            Redguard = 203,
-            Breton = 204,
-            Argonian = 205,
-            Bosmer = 206,
-            Altmer = 207,
-            Dunmer = 208,
-        }
 
         public class TalkManagerContext
         {
@@ -120,40 +105,18 @@ namespace DaggerfallWorkshop.Game
                 }
                 return TextManager.Instance.GetLocalizedText("resolvingError");
             }
+
+            // Oaths are declared by NPC race according to the race index used in FACTION.TXT.
+            // Unfortunately, classic never uses this faction race ID but, instead, uses the
+            // hardcoded index race of each region, which is not the same. In classic, this
+            // results in all NPCs from High Rock saying Nord oaths, while all NPCs in Hammerfell
+            // will say Khajiit oaths.
+            // Instead, DFU uses the faction race ID to return the correct oath.
+            // For the list of oaths, see https://www.imperial-library.info/content/daggerfall-oaths-and-expletives
             public override string Oath()
             {
-                RacialOaths whichOath = RacialOaths.None;
-                switch (parent.npcRace)
-                {
-                    case Races.Argonian:
-                        whichOath = RacialOaths.Argonian;
-                        break;
-                    case Races.Breton:
-                        whichOath = RacialOaths.Breton;
-                        break;
-                    case Races.DarkElf:
-                        whichOath = RacialOaths.Dunmer;
-                        break;
-                    case Races.HighElf:
-                        whichOath = RacialOaths.Altmer;
-                        break;
-                    case Races.Khajiit:
-                        whichOath = RacialOaths.Khajiit;
-                        break;
-                    case Races.Nord:
-                        whichOath = RacialOaths.Nord;
-                        break;
-                    case Races.Redguard:
-                        whichOath = RacialOaths.Redguard;
-                        break;
-                    //case Races.Vampire:                       // TODO: Restore this via racial override effect
-                    //    whichOath = RacialOaths.Dunmer;
-                    //    break;
-                    case Races.WoodElf:
-                        whichOath = RacialOaths.Bosmer;
-                        break;
-                }
-                return DaggerfallUnity.Instance.TextProvider.GetRandomText((int)whichOath);
+                int oathId = (int)RaceTemplate.GetFactionRaceFromRace(parent.npcRace);
+                return DaggerfallUnity.Instance.TextProvider.GetRandomText(201 + oathId);
             }
 
             // He/She
