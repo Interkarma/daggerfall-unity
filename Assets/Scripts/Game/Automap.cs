@@ -2051,23 +2051,6 @@ namespace DaggerfallWorkshop.Game
             //oldGeometryName = newGeometryName;
         }
 
-        public class CustomUpdate : MonoBehaviour {
-            public event System.Action OnUpdate;
-            
-            public static CustomUpdate AddCustomUpdate(GameObject updateObject, System.Action functionToAdd) {
-                CustomUpdate updateComponent = updateObject.GetComponent<CustomUpdate>() as CustomUpdate;
-                if (updateComponent == null) {
-                    updateComponent = updateObject.AddComponent<CustomUpdate>() as CustomUpdate;
-                }
-                updateComponent.OnUpdate += functionToAdd;
-                return updateComponent;
-            }
-            
-            void Update() {
-                if (OnUpdate != null) { OnUpdate(); }
-            }
-        }
-
         private void AddWater(GameObject parent, short nativeBlockWaterLevel)
         {
             // Exit if no water present
@@ -2079,18 +2062,13 @@ namespace DaggerfallWorkshop.Game
 
             if (renderers != null)
             {
-                // Inject water level in shader for the dungeon block
-                CustomUpdate.AddCustomUpdate(parent, () => {
-                        // float transformedWaterLevel = waterLevel + Camera.main.transform.localPosition.y + slicingBiasY;
-                        // Debug.Log("waterLevel = " + waterLevel + " (" + transformedWaterLevel + ") on " + renderers.Length + " renderers");
-                        MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
-                        foreach (MeshRenderer renderer in renderers)
-                        {
-                            renderer.GetPropertyBlock(propertyBlock);
-                            propertyBlock.SetFloat("_WaterLevel", waterLevel);
-                            renderer.SetPropertyBlock(propertyBlock);
-                        }
-                });
+                MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+                foreach (MeshRenderer renderer in renderers)
+                {
+                    renderer.GetPropertyBlock(propertyBlock);
+                    propertyBlock.SetFloat("_WaterLevel", waterLevel);
+                    renderer.SetPropertyBlock(propertyBlock);
+                }
             }
         }
 
