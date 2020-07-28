@@ -1293,7 +1293,6 @@ namespace DaggerfallWorkshop.Game
                 slicingPositionY = gameObjectPlayerAdvanced.transform.position.y + Camera.main.transform.localPosition.y + slicingBiasY;
             else
                 slicingPositionY = float.MaxValue;
-            // Debug.Log("slicingPositionY = " + slicingPositionY);
             Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
         }
 
@@ -1977,7 +1976,7 @@ namespace DaggerfallWorkshop.Game
 
             //oldGeometryName = newGeometryName;
         }
-        
+
         /// <summary>
         /// creates the dungeon geometry used for automap rendering
         /// </summary>
@@ -2021,7 +2020,6 @@ namespace DaggerfallWorkshop.Game
                         gameobjectBlock.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
                         gameobjectBlock.transform.SetParent(gameobjectDungeon.transform);
-                        Debug.Log("block.WaterLevel = " + block.WaterLevel);
                         AddWater(gameobjectBlock, block.WaterLevel);
                     }
 
