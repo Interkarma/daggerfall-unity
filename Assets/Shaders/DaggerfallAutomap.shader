@@ -23,6 +23,8 @@ Shader "Daggerfall/Automap"
 		_EmissionMap("Emission Map", 2D) = "white" {}
 		_EmissionColor("Emission Color", Color) = (0,0,0)
 		_PlayerPosition("player position", Vector) = (0,0,0,1)
+		_WaterLevel("Height of water in the dungeon block", Float) = -10000.0
+		_WaterColor("Color and transparency of color", Color) = (0.0,0.3,0.5,0.4)
 	}	
 
 	SubShader // shader for target 4.0
@@ -55,6 +57,8 @@ Shader "Daggerfall/Automap"
 			half4 _EmissionColor;
 			uniform float4 _PlayerPosition;
 			uniform float _SclicingPositionY;
+			uniform float _WaterLevel;
+			uniform half4 _WaterColor;
 		
 			struct v2f
 			{
@@ -77,6 +81,11 @@ Shader "Daggerfall/Automap"
 
 			half4 frag(v2f IN) : COLOR
 			{
+				if (IN.worldPos.y > _SclicingPositionY)
+				{
+					discard;
+				}
+
 				float4 outColor;
                 half4 albedo = tex2D(_MainTex, IN.uv) *_Color;
 				//half4 albedo = tex2Dlod(_MainTex, float4(0.0f, 0.0f, 0.0f, 7.0f));
@@ -85,9 +94,9 @@ Shader "Daggerfall/Automap"
 				//half3 emission = tex2D(_EmissionMap, IN.uv).rgb * _EmissionColor;
                 outColor.rgb = albedo.rgb; // -emission; // Emission cancels out other lights
 				outColor.a = albedo.a;
-				if (IN.worldPos.y > _SclicingPositionY)
-				{				
-					discard;				
+				if (IN.worldPos.y <= _WaterLevel)
+				{
+					outColor.rgb = lerp(outColor.rgb, _WaterColor.rgb, _WaterColor.a);
 				}
 
 			    float dist = distance(IN.worldPos.y, _SclicingPositionY);
@@ -170,6 +179,8 @@ Shader "Daggerfall/Automap"
 			half4 _EmissionColor;
 			uniform float4 _PlayerPosition;
 			uniform float _SclicingPositionY;
+			uniform float _WaterLevel;
+			uniform half4 _WaterColor;
 
 			struct v2g
 			{
@@ -247,6 +258,10 @@ Shader "Daggerfall/Automap"
 				outColor.a = albedo.a;
 				if (IN.worldPos.y > _SclicingPositionY)
 				{
+					if (IN.worldPos.y <= _WaterLevel)
+					{
+						outColor.rgb = lerp(outColor.rgb, _WaterColor.rgb, _WaterColor.a);
+					}
 					#if defined(AUTOMAP_RENDER_MODE_WIREFRAME)
 						//distance of frag from triangles center
 						float d = min(IN.dist.x, min(IN.dist.y, IN.dist.z));
@@ -332,6 +347,8 @@ Shader "Daggerfall/Automap"
 			half4 _EmissionColor;
 			uniform float4 _PlayerPosition;
 			uniform float _SclicingPositionY;
+			uniform float _WaterLevel;
+			uniform half4 _WaterColor;
 
 			struct v2f
 			{
@@ -358,6 +375,10 @@ Shader "Daggerfall/Automap"
 			if (IN.worldPos.y > _SclicingPositionY)
 			{
 				discard;
+			}
+			if (IN.worldPos.y <= _WaterLevel)
+			{
+				outColor.rgb = lerp(outColor.rgb, _WaterColor.rgb, _WaterColor.a);
 			}
 
 			float dist = distance(IN.worldPos.y, _SclicingPositionY);
@@ -405,6 +426,8 @@ Shader "Daggerfall/Automap"
 			half4 _EmissionColor;
 			uniform float4 _PlayerPosition;
 			uniform float _SclicingPositionY;
+			uniform float _WaterLevel;
+			uniform half4 _WaterColor;
 
 			struct v2f
 			{
@@ -430,6 +453,10 @@ Shader "Daggerfall/Automap"
 				outColor.a = albedo.a;
 				if (IN.worldPos.y > _SclicingPositionY)
 				{
+					if (IN.worldPos.y <= _WaterLevel)
+					{
+						outColor.rgb = lerp(outColor.rgb, _WaterColor.rgb, _WaterColor.a);
+					}
 					#if defined(AUTOMAP_RENDER_MODE_TRANSPARENT)
 						outColor.a = 0.65;
 					#else //#elif defined(AUTOMAP_RENDER_MODE_CUTOUT)

@@ -1293,6 +1293,7 @@ namespace DaggerfallWorkshop.Game
                 slicingPositionY = gameObjectPlayerAdvanced.transform.position.y + Camera.main.transform.localPosition.y + slicingBiasY;
             else
                 slicingPositionY = float.MaxValue;
+            // Debug.Log("slicingPositionY = " + slicingPositionY);
             Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
         }
 
@@ -1976,7 +1977,7 @@ namespace DaggerfallWorkshop.Game
 
             //oldGeometryName = newGeometryName;
         }
-
+        
         /// <summary>
         /// creates the dungeon geometry used for automap rendering
         /// </summary>
@@ -2002,10 +2003,11 @@ namespace DaggerfallWorkshop.Game
             {
                 if (elem.name.Contains("DaggerfallDungeon"))
                 {
+                    DFLocation.DungeonBlock[] blocks = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationData.Dungeon.Blocks;
                     GameObject gameobjectDungeon = new GameObject(newGeometryName);
 
                     // Create dungeon layout
-                    foreach (DFLocation.DungeonBlock block in location.Dungeon.Blocks)
+                    foreach (DFLocation.DungeonBlock block in blocks)
                     {
                         if (location.Name == "Orsinium")
                         {
@@ -2019,7 +2021,8 @@ namespace DaggerfallWorkshop.Game
                         gameobjectBlock.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
                         gameobjectBlock.transform.SetParent(gameobjectDungeon.transform);
-                        AddWater(gameobjectBlock, gameobjectBlock.transform.position, block.WaterLevel);
+                        Debug.Log("block.WaterLevel = " + block.WaterLevel);
+                        AddWater(gameobjectBlock, block.WaterLevel);
                     }
 
                     gameobjectDungeon.transform.SetParent(gameobjectGeometry.transform);
@@ -2048,35 +2051,47 @@ namespace DaggerfallWorkshop.Game
             //oldGeometryName = newGeometryName;
         }
 
-        private void AddWater(GameObject parent, Vector3 position, short nativeBlockWaterLevel)
+        public class CustomUpdate : MonoBehaviour {
+            public event System.Action OnUpdate;
+            
+            public static CustomUpdate AddCustomUpdate(GameObject updateObject, System.Action functionToAdd) {
+                CustomUpdate updateComponent = updateObject.GetComponent<CustomUpdate>() as CustomUpdate;
+                if (updateComponent == null) {
+                    updateComponent = updateObject.AddComponent<CustomUpdate>() as CustomUpdate;
+                }
+                updateComponent.OnUpdate += functionToAdd;
+                return updateComponent;
+            }
+            
+            void Update() {
+                if (OnUpdate != null) { OnUpdate(); }
+            }
+        }
+
+        private void AddWater(GameObject parent, short nativeBlockWaterLevel)
         {
-            // Exit if no water present or prefab not set
-            if (nativeBlockWaterLevel == 10000 || DaggerfallUnity.Instance.Option_DungeonWaterPrefab.gameObject == null)
+            // Exit if no water present
+            if (nativeBlockWaterLevel == 10000)
                 return;
 
-            // Instantiate water prefab to block parent
-            GameObject go = GameObjectHelper.InstantiatePrefab(DaggerfallUnity.Instance.Option_DungeonWaterPrefab.gameObject, "AutomapDungeonWater", parent.transform, position);
-            MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
-            if (meshRenderer)
+            float waterLevel = nativeBlockWaterLevel * -1 * MeshReader.GlobalScale;
+            MeshRenderer[] renderers = parent.GetComponentsInChildren<MeshRenderer>();
+
+            if (renderers != null)
             {
-                meshRenderer.material = new Material(Shader.Find("Daggerfall/Automap"));
-                meshRenderer.material.color = Color.blue;
-                meshRenderer.enabled = true;
+                // Inject water level in shader for the dungeon block
+                CustomUpdate.AddCustomUpdate(parent, () => {
+                        // float transformedWaterLevel = waterLevel + Camera.main.transform.localPosition.y + slicingBiasY;
+                        // Debug.Log("waterLevel = " + waterLevel + " (" + transformedWaterLevel + ") on " + renderers.Length + " renderers");
+                        MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+                        foreach (MeshRenderer renderer in renderers)
+                        {
+                            renderer.GetPropertyBlock(propertyBlock);
+                            propertyBlock.SetFloat("_WaterLevel", waterLevel);
+                            renderer.SetPropertyBlock(propertyBlock);
+                        }
+                });
             }
-
-            // Scale water plane to RDB dimensions
-            Vector3 prefabScale = DaggerfallUnity.Instance.Option_DungeonWaterPlaneSize;
-            go.transform.localScale = new Vector3(
-                1f / prefabScale.x * RDBLayout.RDBSide,
-                1f,
-                1f / prefabScale.z * RDBLayout.RDBSide);
-
-            // Align water plane to RDB origin
-            Vector3 prefabOffset = DaggerfallUnity.Instance.Option_DungeonWaterPlaneOffset;
-            go.transform.localPosition += new Vector3(
-                prefabOffset.x * (1f / prefabScale.x) * RDBLayout.RDBSide,
-                nativeBlockWaterLevel * -1 * MeshReader.GlobalScale,
-                prefabOffset.z * (1f / prefabScale.x) * RDBLayout.RDBSide);
         }
 
         /// <summary>
