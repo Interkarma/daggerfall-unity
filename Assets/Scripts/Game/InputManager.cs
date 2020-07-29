@@ -78,6 +78,10 @@ namespace DaggerfallWorkshop.Game
         float inputWaitTimer;
         float horizontal;
         float vertical;
+        float negHorizontalLimit = 1f;
+        float posHorizontalLimit = 1f;
+        float negVerticalLimit = 1f;
+        float posVerticalLimit = 1f;
         float lookX;
         float lookY;
         float keyboardLookX;
@@ -175,15 +179,41 @@ namespace DaggerfallWorkshop.Game
 
         public float Horizontal
         {
-            get { return (horizontal < -deadZone || horizontal > deadZone) ? horizontal : 0; }
+            get { return Mathf.Clamp((horizontal < -deadZone || horizontal > deadZone) ? horizontal : 0, -negHorizontalLimit, posHorizontalLimit); }
+            //get { return (horizontal < -deadZone) ? horizontal * negHorizontalLimit : (horizontal > deadZone) ? horizontal * posHorizontalLimit : 0; }
         }
 
         public float Vertical
         {
-            get { return (vertical < -deadZone || vertical > deadZone) ? vertical : 0; }
+            get { return Mathf.Clamp((vertical < -deadZone || vertical > deadZone) ? vertical : 0, -negVerticalLimit, posVerticalLimit); }
+            //get { return (vertical < -deadZone) ? vertical * negVerticalLimit : (vertical > deadZone) ? vertical * posVerticalLimit : 0; }
         }
 
         public bool ToggleAutorun { get; set; }
+
+        public float NegHorizontalLimit
+        {
+            get { return negHorizontalLimit; }
+            set { negHorizontalLimit = Mathf.Clamp(value, 0f, 1f); }
+        }
+
+        public float PosHorizontalLimit
+        {
+            get { return posHorizontalLimit; }
+            set { posHorizontalLimit = Mathf.Clamp(value, 0f, 1f); }
+        }
+
+        public float NegVerticalLimit
+        {
+            get { return negVerticalLimit; }
+            set { negVerticalLimit = Mathf.Clamp(value, 0f, 1f); }
+        }
+
+        public float PosVerticalLimit
+        {
+            get { return posVerticalLimit; }
+            set { posVerticalLimit = Mathf.Clamp(value, 0f, 1f); }
+        }
 
         public bool UsingController
         {
@@ -1138,7 +1168,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Apply force to horizontal axis
-        void ApplyHorizontalForce(float scale)
+        public void ApplyHorizontalForce(float scale)
         {
             // Use acceleration setting or "just go"
             if (moveAcceleration)
@@ -1153,7 +1183,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Apply force to vertical axis
-        void ApplyVerticalForce(float scale)
+        public void ApplyVerticalForce(float scale)
         {
             // Use acceleration setting or "just go"
             if (moveAcceleration)
