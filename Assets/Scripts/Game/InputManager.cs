@@ -180,13 +180,11 @@ namespace DaggerfallWorkshop.Game
         public float Horizontal
         {
             get { return Mathf.Clamp((horizontal < -deadZone || horizontal > deadZone) ? horizontal : 0, -negHorizontalLimit, posHorizontalLimit); }
-            //get { return (horizontal < -deadZone) ? horizontal * negHorizontalLimit : (horizontal > deadZone) ? horizontal * posHorizontalLimit : 0; }
         }
 
         public float Vertical
         {
             get { return Mathf.Clamp((vertical < -deadZone || vertical > deadZone) ? vertical : 0, -negVerticalLimit, posVerticalLimit); }
-            //get { return (vertical < -deadZone) ? vertical * negVerticalLimit : (vertical > deadZone) ? vertical * posVerticalLimit : 0; }
         }
 
         public bool ToggleAutorun { get; set; }
