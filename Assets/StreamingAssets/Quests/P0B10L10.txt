@@ -94,7 +94,7 @@ Message:  1013
 <ce>                           more interesting!
 
 Message:  1014
-%dat:
+%qdt:
  I am escorting _vamp_
  to _vamp2_ in ___vamp2_.
  I must make it to __vamp2_

@@ -178,7 +178,7 @@ Message:  1020
 <ce>                             answer, %pct.
 
 Message:  1021
-%dat:
+%qdt:
  _noble_ refuses to go
  into hiding until %g knows
  that %g3 love, _love_,

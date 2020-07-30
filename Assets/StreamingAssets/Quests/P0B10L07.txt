@@ -91,7 +91,7 @@ Message:  1012
  as soon as possible.
 
 Message:  1013
-%dat: _vamp_
+%qdt: _vamp_
  wants me to go to ___mondung_
  and throttle _knight_,
  a knight who refuses to bend to the

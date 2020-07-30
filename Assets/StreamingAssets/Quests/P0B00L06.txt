@@ -164,7 +164,7 @@ Message:  1018
 <ce>                       vampires could be anyone.
 
 Message:  1019
-%dat: _mg_ of
+%qdt: _mg_ of
  __mg_ in ___mg_
  wants me to go to ___mondung_
  to take _mage_'s
@@ -206,7 +206,7 @@ Message:  1020
  about increasing funding. Going nowhere.
 
 Message:  1021
-%dat: A sorceror named
+%qdt: A sorceror named
  _mage_ has come close
  to major discoveries about %vam
  and _vamp_ has sent me
