@@ -88,6 +88,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D baseTexture;
         Texture2D goldTexture;
+        readonly DFSize baseSize = new DFSize(320, 200);
+        readonly DFSize goldSize = new DFSize(81, 36);
 
         Texture2D weaponsAndArmorNotSelected;
         Texture2D magicItemsNotSelected;
@@ -97,6 +99,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D magicItemsSelected;
         Texture2D clothingAndMiscSelected;
         Texture2D ingredientsSelected;
+        Texture2D smoothEnhancedScrollbar;
 
         #endregion
 
@@ -282,8 +285,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             baseTexture = ImageReader.GetTexture(baseTextureName, 0, 0, true, alternateAlphaIndex);
             goldTexture = ImageReader.GetTexture(goldTextureName);
-            DFSize baseSize = new DFSize(320, 200);
-            DFSize goldSize = new DFSize(81, 36);
 
             // Cut out tab page not selected button textures
             weaponsAndArmorNotSelected = ImageReader.GetSubTexture(baseTexture, weaponsAndArmorRect, baseSize);
@@ -377,11 +378,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetupItemListScrollers()
         {
-            itemsListScroller = new ItemListScroller(4, 1, itemListPanelRect, itemButtonRects, new TextLabel(), defaultToolTip)
+            if (DaggerfallUnity.Settings.EnableEnhancedItemLists)
             {
-                Position = new Vector2(itemListScrollerRect.x, itemListScrollerRect.y),
-                Size = new Vector2(itemListScrollerRect.width, itemListScrollerRect.height),
-            };
+                // Clean UI background with 2 panels, and initialise a standard enhanced inventory list.
+                Panel panel1 = DaggerfallUI.AddPanel(new Rect(253, 179, 9, 5), NativePanel);
+                panel1.BackgroundTexture = ImageReader.GetSubTexture(baseTexture, new Rect(253, 175, 9, 5), baseSize);
+                Panel panel2 = DaggerfallUI.AddPanel(new Rect(312, 49, 1, 149), NativePanel);
+                panel2.BackgroundColor = Color.black;
+                itemsListScroller = new ItemListScroller(defaultToolTip);
+            }
+            else
+            {
+                itemsListScroller = new ItemListScroller(4, 1, itemListPanelRect, itemButtonRects, new TextLabel(), defaultToolTip);
+            }
+            itemsListScroller.Position = new Vector2(itemListScrollerRect.x, itemListScrollerRect.y);
+            itemsListScroller.Size = new Vector2(itemListScrollerRect.width, itemListScrollerRect.height);
             NativePanel.Components.Add(itemsListScroller);
             itemsListScroller.OnItemClick += ItemListScroller_OnItemClick;
         }
