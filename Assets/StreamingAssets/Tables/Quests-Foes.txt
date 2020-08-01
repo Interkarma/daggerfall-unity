@@ -58,6 +58,7 @@ schema: id,*name
 129, Spellsword
 130, Battle_mage
 131, Sorceror
+131, Sorcerer
 132, Healer
 133, Nightblade
 134, Bard
