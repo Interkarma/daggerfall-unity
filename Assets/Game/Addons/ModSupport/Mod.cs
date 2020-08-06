@@ -1000,7 +1000,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError(ex.Message);
+                    Debug.LogError($"Failed to seek mod loader on {Title}: {ex.Message}");
+                    CheckMissingReferences(assemblies[i]);
                     continue;
                 }
             }
@@ -1133,6 +1134,21 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             Debug.Log(string.Format("Loaded asset bundle for mod: {0}", Title));
 #endif
             yield return request.assetBundle;
+        }
+
+        private void CheckMissingReferences(Assembly assembly)
+        {
+            var missingReferences = new List<string>();
+
+            Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (AssemblyName assemblyName in assembly.GetReferencedAssemblies())
+            {
+                if (loadedAssemblies.FirstOrDefault(x => x.GetName().FullName.Equals(assemblyName.FullName)) == null)
+                    missingReferences.Add(assemblyName.FullName);
+            }
+
+            if (missingReferences.Count > 0)
+                Debug.LogError($"{Title} requires the following missing assemblies:\n{string.Join("\n", missingReferences)}.");
         }
 
         #endregion
