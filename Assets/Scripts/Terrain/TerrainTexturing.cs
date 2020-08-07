@@ -39,18 +39,18 @@ namespace DaggerfallWorkshop
         const byte grass = 2;
         const byte stone = 3;
 
-        static readonly int tileDataDim = MapsFile.WorldMapTileDim + 1;
+        protected static readonly int tileDataDim = MapsFile.WorldMapTileDim + 1;
 
-        static readonly int assignTilesDim = MapsFile.WorldMapTileDim;
+        protected static readonly int assignTilesDim = MapsFile.WorldMapTileDim;
 
-        byte[] lookupTable;
+        protected byte[] lookupTable;
 
         public DefaultTerrainTexturing()
         {
             CreateLookupTable();
         }
 
-        public JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true)
+        public virtual JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true)
         {
             // Cache tile data to minimise noise sampling during march.
             NativeArray<byte> tileData = new NativeArray<byte>(tileDataDim * tileDataDim, Allocator.TempJob);
