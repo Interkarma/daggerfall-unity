@@ -63,8 +63,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         DaggerfallTravelPopUp popUp;
 
-        Dictionary<string, Vector2> offsetLookup    = new Dictionary<string, Vector2>();
-        string[] selectedRegionMapNames;
+        protected Dictionary<string, Vector2> offsetLookup = new Dictionary<string, Vector2>();
+        protected string[] selectedRegionMapNames;
 
         string gotoLocation = null;
         int gotoRegion;
@@ -84,26 +84,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected TextLabel regionLabel;
 
-        Texture2D overworldTexture;
-        Texture2D identifyTexture;
-        Texture2D customRegionOverlayTexture;
-        Texture2D locationDotsTexture;
-        Texture2D locationDotsOutlineTexture;
-        Texture2D findButtonTexture;
-        Texture2D atButtonTexture;
-        Texture2D dungeonFilterButtonEnabled;
-        Texture2D dungeonFilterButtonDisabled;
-        Texture2D templesFilterButtonEnabled;
-        Texture2D templesFilterButtonDisabled;
-        Texture2D homesFilterButtonEnabled;
-        Texture2D homesFilterButtonDisabled;
-        Texture2D townsFilterButtonEnabled;
-        Texture2D townsFilterButtonDisabled;
-        Texture2D upArrowTexture;
-        Texture2D downArrowTexture;
-        Texture2D leftArrowTexture;
-        Texture2D rightArrowTexture;
-        Texture2D borderTexture;
+        protected Texture2D overworldTexture;
+        protected Texture2D identifyTexture;
+        protected Texture2D customRegionOverlayTexture;
+        protected Texture2D locationDotsTexture;
+        protected Texture2D locationDotsOutlineTexture;
+        protected Texture2D findButtonTexture;
+        protected Texture2D atButtonTexture;
+        protected Texture2D dungeonFilterButtonEnabled;
+        protected Texture2D dungeonFilterButtonDisabled;
         protected Texture2D templesFilterButtonEnabled;
         protected Texture2D templesFilterButtonDisabled;
         protected Texture2D homesFilterButtonEnabled;
