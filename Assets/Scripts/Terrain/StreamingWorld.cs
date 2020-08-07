@@ -22,7 +22,6 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
-using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.Serialization;
 using Unity.Jobs;
 
@@ -95,7 +94,6 @@ namespace DaggerfallWorkshop
         DaggerfallUnity dfUnity;
         DFPosition mapOrigin;
         double worldX, worldZ;
-        readonly TerrainTexturing terrainTexturing = new TerrainTexturing();
         bool isReady = false;
 
         Vector3 autoRepositionOffset = Vector3.zero;
@@ -158,11 +156,6 @@ namespace DaggerfallWorkshop
         public Transform StreamingTarget
         {
             get { return (streamingTarget != null) ? streamingTarget.transform : this.transform; }
-        }
-
-        public TerrainTexturing TerrainTexturing
-        {
-            get { return terrainTexturing; }
         }
 
         /// <summary>
@@ -1195,7 +1188,7 @@ namespace DaggerfallWorkshop
             }
 
             // Update data for terrain
-            JobHandle updateTerrainDataJobHandle = dfTerrain.BeginMapPixelDataUpdate(terrainTexturing);
+            JobHandle updateTerrainDataJobHandle = dfTerrain.BeginMapPixelDataUpdate(dfUnity.TerrainTexturing);
 
             CompleteUpdateTerrainDataJobs(terrainDesc, dfTerrain, updateTerrainDataJobHandle);
         }
@@ -1204,7 +1197,7 @@ namespace DaggerfallWorkshop
         {
             // Ensure jobs have completed.
             updateTerrainDataJobHandle.Complete();
-            dfTerrain.CompleteMapPixelDataUpdate(terrainTexturing);
+            dfTerrain.CompleteMapPixelDataUpdate(dfUnity.TerrainTexturing);
 
             // Promote data to live terrain
             dfTerrain.UpdateClimateMaterial(init);
@@ -1228,7 +1221,7 @@ namespace DaggerfallWorkshop
                 dfTerrain.InstantiateTerrain();
             }
 
-            JobHandle updateTerrainDataJobHandle = dfTerrain.BeginMapPixelDataUpdate(terrainTexturing);
+            JobHandle updateTerrainDataJobHandle = dfTerrain.BeginMapPixelDataUpdate(dfUnity.TerrainTexturing);
             yield return new WaitUntil(() => updateTerrainDataJobHandle.IsCompleted);
 
             CompleteUpdateTerrainDataJobs(terrainDesc, dfTerrain, updateTerrainDataJobHandle);
