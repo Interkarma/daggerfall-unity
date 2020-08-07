@@ -104,6 +104,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D leftArrowTexture;
         Texture2D rightArrowTexture;
         Texture2D borderTexture;
+        protected Texture2D templesFilterButtonEnabled;
+        protected Texture2D templesFilterButtonDisabled;
+        protected Texture2D homesFilterButtonEnabled;
+        protected Texture2D homesFilterButtonDisabled;
+        protected Texture2D townsFilterButtonEnabled;
+        protected Texture2D townsFilterButtonDisabled;
+        protected Texture2D upArrowTexture;
+        protected Texture2D downArrowTexture;
+        protected Texture2D leftArrowTexture;
+        protected Texture2D rightArrowTexture;
+        protected Texture2D borderTexture;
 
         protected Button findButton;
         protected Button atButton;
@@ -115,49 +126,48 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Button homesFilterButton        = new Button();
         protected Button townsFilterButton        = new Button();
 
-        Rect playerRegionOverlayPanelRect   = new Rect(0, 0, 320, 200);
-        Rect regionTextureOverlayPanelRect  = new Rect(0, regionPanelOffset, 320, 160);
-        Rect dungeonsFilterButtonSrcRect    = new Rect(0, 0, 99, 11);
-        Rect templesFilterButtonSrcRect     = new Rect(0, 11, 99, 11);
-        Rect homesFilterButtonSrcRect       = new Rect(99, 0, 80, 11);
-        Rect townsFilterButtonSrcRect       = new Rect(99, 11, 80, 11);
-        Rect findButtonRect                 = new Rect(0, 0, 45, 11);
-        Rect atButtonRect                   = new Rect(0, 11, 45, 11);
+        protected Rect playerRegionOverlayPanelRect   = new Rect(0, 0, 320, 200);
+        protected Rect regionTextureOverlayPanelRect  = new Rect(0, regionPanelOffset, 320, 160);
+        protected Rect dungeonsFilterButtonSrcRect    = new Rect(0, 0, 99, 11);
+        protected Rect templesFilterButtonSrcRect     = new Rect(0, 11, 99, 11);
+        protected Rect homesFilterButtonSrcRect       = new Rect(99, 0, 80, 11);
+        protected Rect townsFilterButtonSrcRect       = new Rect(99, 11, 80, 11);
+        protected Rect findButtonRect                 = new Rect(0, 0, 45, 11);
+        protected Rect atButtonRect                   = new Rect(0, 11, 45, 11);
 
-        Color32[] identifyPixelBuffer;
-        Color32[] locationDotsPixelBuffer;
-        Color32[] locationDotsOutlinePixelBuffer;
-        Color32[] locationPixelColors;              // Pixel colors for different location types
-        Color identifyFlashColor;
+        protected Color32[] identifyPixelBuffer;
+        protected Color32[] locationDotsPixelBuffer;
+        protected Color32[] locationDotsOutlinePixelBuffer;
+        protected Color32[] locationPixelColors;              // Pixel colors for different location types
+        protected Color identifyFlashColor;
 
-        int zoomfactor                  = 2;
-        int mouseOverRegion             = -1;
-        int selectedRegion              = -1;
-        int mapIndex                    = 0;        // Current index of loaded map from selectedRegionMapNames
-        float scale                     = 1.0f;
-        float identifyLastChangeTime    = 0;
-        float identifyChanges           = 0;
+        protected int zoomfactor                  = 2;
+        protected int mouseOverRegion             = -1;
+        protected int selectedRegion              = -1;
+        protected int mapIndex                    = 0;        // Current index of loaded map from selectedRegionMapNames
+        protected float scale                     = 1.0f;
+        protected float identifyLastChangeTime    = 0;
+        protected float identifyChanges           = 0;
 
-        bool identifyState          = false;
-        bool identifying            = false;
-        bool locationSelected       = false;
-        bool findingLocation        = false;
-        bool zoom                   = false;        // Toggles zoom mode
-        bool teleportationTravel    = false;        // Indicates travel should be by teleportation
+        protected bool identifyState          = false;
+        protected bool identifying            = false;
+        protected bool locationSelected       = false;
+        protected bool findingLocation        = false;
+        protected bool zoom                   = false;        // Toggles zoom mode
+        protected bool teleportationTravel    = false;        // Indicates travel should be by teleportation
+        protected static bool revealUndiscoveredLocations;    // Flag used to indicate cheat/debugging mode for revealing undiscovered locations
 
-        static bool revealUndiscoveredLocations;    // Flag used to indicate cheat/debugging mode for revealing undiscovered locations
+        protected static bool filterDungeons = false;
+        protected static bool filterTemples = false;
+        protected static bool filterHomes = false;
+        protected static bool filterTowns = false;
 
-        static bool filterDungeons  = false;
-        static bool filterTemples   = false;
-        static bool filterHomes     = false;
-        static bool filterTowns     = false;
+        protected Vector2 lastMousePos = Vector2.zero;
+        protected Vector2 zoomOffset = Vector2.zero;
+        protected Vector2 zoomPosition = Vector2.zero;
 
-        Vector2 lastMousePos = Vector2.zero;
-        Vector2 zoomOffset = Vector2.zero;
-        Vector2 zoomPosition = Vector2.zero;
-
-        readonly Dictionary<string, Texture2D> regionTextures = new Dictionary<string, Texture2D>();
-        readonly Dictionary<int, Texture2D> importedOverlays = new Dictionary<int, Texture2D>();
+        protected readonly Dictionary<string, Texture2D> regionTextures = new Dictionary<string, Texture2D>();
+        protected readonly Dictionary<int, Texture2D> importedOverlays = new Dictionary<int, Texture2D>();
 
         private readonly int maxMatchingResults = 1000;
         private string distanceRegionName = null;
@@ -169,32 +179,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         string RegionImgName { get; set; }
 
-        bool HasMultipleMaps
+        protected bool HasMultipleMaps
         {
             get { return (selectedRegionMapNames.Length > 1) ? true : false; }
         }
 
-        bool HasVerticalMaps
+        protected bool HasVerticalMaps
         {
             get { return (selectedRegionMapNames.Length > 2) ? true : false; }
         }
 
-        bool RegionSelected
+        protected bool RegionSelected
         {
             get { return selectedRegion != -1; }
         }
 
-        bool MouseOverRegion
+        protected bool MouseOverRegion
         {
             get { return mouseOverRegion != -1; }
         }
 
-        bool MouseOverOtherRegion
+        protected bool MouseOverOtherRegion
         {
             get { return RegionSelected && (selectedRegion != mouseOverRegion); }
         }
 
-        bool FindingLocation
+        protected bool FindingLocation
         {
             get { return identifying && findingLocation && RegionSelected; }
         }
@@ -227,7 +237,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             catch (Exception ex)
             {
                 Debug.LogError(string.Format("Error Registering Travelmap Console commands: {0}", ex.Message));
-
             }
         }
 
@@ -347,7 +356,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.TravelMap);
 
-            if(IsSetup)
+            if (IsSetup)
             {
                 StartIdentify();
                 UpdateIdentifyTextureForPlayerRegion();
@@ -376,7 +385,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (RegionSelected)
                     CloseRegionPanel();
                 else
-                    CloseWindow();             
+                    CloseWindow();
             }
 
             // Input handling
@@ -569,9 +578,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             atButtonTexture = ImageReader.GetSubTexture(atButtonTexture, atButtonRect, buttonsFullSize);
 
             // Arrows
-            upArrowTexture      = ImageReader.GetTexture(upArrowImgName);
-            downArrowTexture    = ImageReader.GetTexture(downArrowImgName);
-            leftArrowTexture    = ImageReader.GetTexture(leftArrowImgName);
+            upArrowTexture = ImageReader.GetTexture(upArrowImgName);
+            downArrowTexture = ImageReader.GetTexture(downArrowImgName);
+            leftArrowTexture = ImageReader.GetTexture(leftArrowImgName);
             rightArrowTexture = ImageReader.GetTexture(rightArrowImgName);
         }
 
@@ -638,7 +647,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Map Texture Management
 
         // Called when a region is selected
-        void UpdateMapTextures()
+        protected virtual void UpdateMapTextures()
         {
             // Region must be selected
             if (!RegionSelected)
@@ -723,7 +732,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Zoom and pan region texture
-        void ZoomMapTextures()
+        protected virtual void ZoomMapTextures()
         {
             // Exit cropped rendering
             if (!RegionSelected || !zoom)
@@ -792,13 +801,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Show/hide map borders based on state
-        void UpdateBorder()
+        protected virtual void UpdateBorder()
         {
             borderPanel.Enabled = (RegionSelected && !zoom);
         }
 
         // Set region block for identify overlay
-        void UpdateIdentifyTextureForPlayerRegion()
+        protected virtual void UpdateIdentifyTextureForPlayerRegion()
         {
             // Only for overworld map
             if (RegionSelected)
@@ -847,7 +856,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             identifyOverlayPanel.BackgroundTexture = identifyTexture;
         }
 
-        void UpdateCrosshair()
+        protected virtual void UpdateCrosshair()
         {
             if (FindingLocation)
                 UpdateIdentifyTextureForPosition(MapsFile.GetPixelFromPixelID(locationSummary.ID), locationSummary.RegionIndex);
@@ -855,7 +864,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 UpdateIdentifyTextureForPosition(TravelTimeCalculator.GetPlayerTravelPosition(), selectedRegion);
         }
 
-        void UpdateIdentifyTextureForPosition(DFPosition pos, int regionIndex = -1)
+        protected virtual void UpdateIdentifyTextureForPosition(DFPosition pos, int regionIndex = -1)
         {
             if (regionIndex == -1)
                 regionIndex = GetPlayerRegion();
@@ -863,7 +872,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Set location crosshair for identify overlay
-        void UpdateIdentifyTextureForPosition(int mapPixelX, int mapPixelY, int regionIndex)
+        protected virtual void UpdateIdentifyTextureForPosition(int mapPixelX, int mapPixelY, int regionIndex)
         {
             // Only for regions
             if (!RegionSelected)
@@ -906,7 +915,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Event Handlers
 
         // Handle clicks on the main panel
-        void ClickHandler(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             position.y -= regionPanelOffset;
 
@@ -933,13 +942,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void ExitButtonClickHandler(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ExitButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseTravelWindows();
         }
 
-        void AtButtonClickHandler(BaseScreenComponent sender, Vector2 position)
+        protected virtual void AtButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             // Identify region or map location
             findingLocation = false;
@@ -947,7 +956,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateCrosshair();
         }
 
-        void FindlocationButtonClickHandler(BaseScreenComponent sender, Vector2 position)
+        protected virtual void FindlocationButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             // Open find location pop-up
             if (RegionSelected)
@@ -965,7 +974,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// Button handler for travel confirmation pop up. This is a temporary solution until implementing the final pop-up.
         /// </summary>
-        void ConfirmTravelPopupButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void ConfirmTravelPopupButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             sender.CloseWindow();
@@ -978,13 +987,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// Handles click events for the arrow buttons in the region view
         /// </summary>
-        void ArrowButtonClickHandler(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ArrowButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             if (RegionSelected == false || !HasMultipleMaps)
                 return;
             int newIndex = mapIndex;
 
-            if (sender.Name == "horizontalArrowButton") 
+            if (sender.Name == "horizontalArrowButton")
             {
                 if (newIndex % 2 == 0)
                     newIndex += 1;          // Move right
@@ -1012,21 +1021,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// Handles click events for the filter buttons in the region view
         /// </summary>
-        void FilterButtonClickHandler(BaseScreenComponent sender, Vector2 position)
+        protected virtual void FilterButtonClickHandler(BaseScreenComponent sender, Vector2 position)
         {
-            if(sender.Name == "dungeonsFilterButton")
+            if (sender.Name == "dungeonsFilterButton")
             {
                 filterDungeons = !filterDungeons;
             }
-            else if(sender.Name == "templesFilterButton")
+            else if (sender.Name == "templesFilterButton")
             {
                 filterTemples = !filterTemples;
             }
-            else if(sender.Name == "homesFilterButton")
+            else if (sender.Name == "homesFilterButton")
             {
                 filterHomes = !filterHomes;
             }
-            else if(sender.Name == "townsFilterButton")
+            else if (sender.Name == "townsFilterButton")
             {
                 filterTowns = !filterTowns;
             }
@@ -1060,7 +1069,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Private Methods
 
         // Set selected region and open region panel
-        void OpenRegionPanel(int region)
+        protected virtual void OpenRegionPanel(int region)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             string[] mapNames = GetRegionMapNames(region);
@@ -1086,7 +1095,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Close region panel and reset values
-        void CloseRegionPanel()
+        protected virtual void CloseRegionPanel()
         {
             selectedRegion = -1;
             mouseOverRegion = -1;
@@ -1132,7 +1141,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return false;
         }
 
-        Vector2 GetCoordinates()
+        protected Vector2 GetCoordinates()
         {
             string mapName = selectedRegionMapNames[mapIndex];
             Vector2 origin = offsetLookup[mapName];
@@ -1158,7 +1167,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
 
         // Check if player mouse over valid location while region selected & not finding location
-        void UpdateMouseOverLocation()
+        protected virtual void UpdateMouseOverLocation()
         {
             if (RegionSelected == false || FindingLocation)
                 return;
@@ -1176,7 +1185,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Vector2 coordinates = GetCoordinates();
             int x = (int)(coordinates.x / scale);
             int y = (int)(coordinates.y / scale);
-            
+
             if (selectedRegion == betonyIndex)      // Manually correct Betony offset
             {
                 x += 60;
@@ -1225,7 +1234,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Check if mouse over a region
-        void UpdateMouseOverRegion()
+        protected virtual void UpdateMouseOverRegion()
         {
             mouseOverRegion = -1;
 
@@ -1259,7 +1268,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Updates the text label at top of screen
-        void UpdateRegionLabel()
+        protected virtual void UpdateRegionLabel()
         {
             if (RegionSelected == false)
                 regionLabel.Text = GetRegionName(mouseOverRegion);
@@ -1281,7 +1290,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Updates search button toggle state based on current flags
-        void UpdateSearchButtons()
+        protected virtual void UpdateSearchButtons()
         {
             // Dungeons
             if (!filterDungeons)
@@ -1316,7 +1325,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             data.filterTemples = filterTemples;
             data.filterTowns = filterTowns;
 
-            if(popUp != null)
+            if (popUp != null)
             {
                 data.sleepInn = popUp.SleepModeInn;
                 data.speedCautious = popUp.SpeedCautious;
@@ -1353,7 +1362,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Helper Methods
 
         // Get index to locationPixelColor array or -1 if invalid or filtered
-        int GetPixelColorIndex(DFRegion.LocationTypes locationType)
+        protected virtual int GetPixelColorIndex(DFRegion.LocationTypes locationType)
         {
             int index = -1;
             switch (locationType)
@@ -1419,7 +1428,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Handles events from Find Location pop-up.
-        void HandleLocationFindEvent(DaggerfallInputMessageBox inputMessageBox, string locationName)
+        protected virtual void HandleLocationFindEvent(DaggerfallInputMessageBox inputMessageBox, string locationName)
         {
             List<DistanceMatch> matching;
             if (FindLocation(locationName, out matching))
@@ -1448,7 +1457,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Find location by name
-        bool FindLocation(string name, out List<DistanceMatch> matching)
+        protected virtual bool FindLocation(string name, out List<DistanceMatch> matching)
         {
             matching = new List<DistanceMatch>();
             if (string.IsNullOrEmpty(name))
@@ -1507,7 +1516,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private class MatchesCutOff
         {
             private readonly float threshold;
-                
+
             public MatchesCutOff(float bestRelevance)
             {
                 // If perfect match exists, return all perfect matches only
@@ -1553,7 +1562,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Gets current player region or -1 if player not in any region (e.g. in ocean)
-        int GetPlayerRegion()
+        protected int GetPlayerRegion()
         {
             DFPosition position = TravelTimeCalculator.GetPlayerTravelPosition();
             int region = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetPoliticIndex(position.X, position.Y) - 128;
@@ -1564,13 +1573,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Gets name of region
-        string GetRegionName(int region)
+        protected string GetRegionName(int region)
         {
             return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region);
         }
 
         // Gets maps for region
-        string[] GetRegionMapNames(int region)
+        protected string[] GetRegionMapNames(int region)
         {
             // Get map name array with special handling for multi-screen regions
             if (region == 0)
@@ -1584,7 +1593,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         // Gets scale of region map
-        float GetRegionMapScale(int region)
+        protected virtual float GetRegionMapScale(int region)
         {
             if (region == betonyIndex)
                 return 4f;
@@ -1592,7 +1601,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return 1;
         }
 
-        void CreateConfirmationPopUp()
+        protected virtual void CreateConfirmationPopUp()
         {
             const int doYouWishToTravelToTextId = 31;
 
@@ -1613,7 +1622,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(messageBox);
         }
 
-        void CreatePopUpWindow()
+        protected virtual void CreatePopUpWindow()
         {
             DFPosition pos = MapsFile.GetPixelFromPixelID(locationSummary.ID);
             if (teleportationTravel)
@@ -1759,7 +1768,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 public static readonly string usage = "map_reveallocation [regionName] [locationName] - inside the name strings use underscores instead of spaces, e.g Dragontail_Mountains";
 
                 public static string Execute(params string[] args)
-                {                    
+                {
                     if (args == null || args.Length < 2)
                     {
                         try
@@ -1786,7 +1795,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         catch (Exception ex)
                         {
                             return string.Format("Could not reveal location: {0}", ex.Message);
-                        }                        
+                        }
                     }
                 }
             }
