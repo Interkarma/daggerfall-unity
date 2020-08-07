@@ -34,26 +34,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region Fields
 
-        const int betonyIndex = 19;
+        protected const int betonyIndex = 19;
 
-        const string overworldImgName                       = "TRAV0I00.IMG";
-        const string regionPickerImgName                    = "TRAV0I01.IMG";
-        const string findAtButtonImgName                    = "TRAV0I03.IMG";
-        const string locationFilterButtonEnabledImgName     = "TRAV01I0.IMG";
-        const string locationFilterButtonDisabledImgName    = "TRAV01I1.IMG";
-        const string downArrowImgName                       = "TRAVAI05.IMG";
-        const string upArrowImgName                         = "TRAVBI05.IMG";
-        const string rightArrowImgName                      = "TRAVCI05.IMG";
-        const string leftArrowImgName                       = "TRAVDI05.IMG";
-        const string regionBorderImgName                    = "MBRD00I0.IMG";
-        const string colorPaletteColName                    = "FMAP_PAL.COL";
-        const int regionPanelOffset                         = 12;
-        const int identifyFlashCount                        = 4;
-        const int identifyFlashCountSelected                = 2;
-        const float identifyFlashInterval                   = 0.5f;
-        const int dotsOutlineThickness                      = 1;
-        Color32 dotOutlineColor                             = new Color32(0, 0, 0, 128);
-        Vector2[] outlineDisplacements =
+        protected const string overworldImgName                       = "TRAV0I00.IMG";
+        protected const string regionPickerImgName                    = "TRAV0I01.IMG";
+        protected const string findAtButtonImgName                    = "TRAV0I03.IMG";
+        protected const string locationFilterButtonEnabledImgName     = "TRAV01I0.IMG";
+        protected const string locationFilterButtonDisabledImgName    = "TRAV01I1.IMG";
+        protected const string downArrowImgName                       = "TRAVAI05.IMG";
+        protected const string upArrowImgName                         = "TRAVBI05.IMG";
+        protected const string rightArrowImgName                      = "TRAVCI05.IMG";
+        protected const string leftArrowImgName                       = "TRAVDI05.IMG";
+        protected const string regionBorderImgName                    = "MBRD00I0.IMG";
+        protected const string colorPaletteColName                    = "FMAP_PAL.COL";
+        protected const int regionPanelOffset                         = 12;
+        protected const int identifyFlashCount                        = 4;
+        protected const int identifyFlashCountSelected                = 2;
+        protected const float identifyFlashInterval                   = 0.5f;
+        protected const int dotsOutlineThickness                      = 1;
+        protected Color32 dotOutlineColor                             = new Color32(0, 0, 0, 128);
+        protected Vector2[] outlineDisplacements =
         {
             new Vector2(-0.5f, -0f),
             new Vector2(0f, -0.5f),
@@ -61,19 +61,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new Vector2(0.5f, 0f)
         };
 
-        DaggerfallTravelPopUp popUp;
+        protected DaggerfallTravelPopUp popUp;
 
         protected Dictionary<string, Vector2> offsetLookup = new Dictionary<string, Vector2>();
         protected string[] selectedRegionMapNames;
 
-        string gotoLocation = null;
-        int gotoRegion;
+        protected string gotoLocation = null;
+        protected int gotoRegion;
 
-        DFBitmap regionPickerBitmap;
-        DFRegion currentDFRegion;
-        ContentReader.MapSummary locationSummary;
+        protected DFBitmap regionPickerBitmap;
+        protected DFRegion currentDFRegion;
+        protected ContentReader.MapSummary locationSummary;
 
-        KeyCode toggleClosedBinding;
+        protected KeyCode toggleClosedBinding;
 
         protected Panel borderPanel;
         protected Panel regionTextureOverlayPanel;
@@ -158,15 +158,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected readonly Dictionary<string, Texture2D> regionTextures = new Dictionary<string, Texture2D>();
         protected readonly Dictionary<int, Texture2D> importedOverlays = new Dictionary<int, Texture2D>();
 
-        private readonly int maxMatchingResults = 1000;
-        private string distanceRegionName = null;
-        private IDistance distance;
+        protected readonly int maxMatchingResults = 1000;
+        protected string distanceRegionName = null;
+        protected IDistance distance;
 
         #endregion
 
         #region Properties
 
-        string RegionImgName { get; set; }
+        protected string RegionImgName { get; set; }
 
         protected bool HasMultipleMaps
         {
