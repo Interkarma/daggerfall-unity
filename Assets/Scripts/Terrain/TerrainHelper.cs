@@ -173,7 +173,7 @@ namespace DaggerfallWorkshop
             }
 
             // Update location rect with extra clearance
-            const int extraClearance = 2;
+            int extraClearance = location.MapTableData.LocationType == DFRegion.LocationTypes.TownCity ? 3 : 2;
             Rect locationRect = new Rect();
             locationRect.xMin = xmin - extraClearance;
             locationRect.xMax = xmax + extraClearance;
