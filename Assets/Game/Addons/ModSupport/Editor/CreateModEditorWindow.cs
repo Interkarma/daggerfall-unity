@@ -528,7 +528,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             buildMap[0].assetBundleVariant = "";       //TODO
             AddAssetToMod(GetAssetPathFromFilePath(currentFilePath));
             var tempAssetPaths = new List<string>(Assets);
-            var prefabPaths = new List<string>();
 
 #if LOG_BUILD_TIME
             var stopWatch = new System.Diagnostics.Stopwatch();
@@ -541,7 +540,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             {
                 for (int i = 0; i < tempAssetPaths.Count; i++)
                 {
-                    string filePath = Assets[i];
+                    string filePath = tempAssetPaths[i];
 
                     EditorUtility.DisplayProgressBar(modBuilderLabel, filePath, (float)i / tempAssetPaths.Count);
 
@@ -562,13 +561,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     }
                     else if (filePath.EndsWith(".prefab", StringComparison.Ordinal))
                     {
-                        // Create a copy of prefab in temp directory
-                        string assetPath = CopyAsset<GameObject>(filePath);
-                        if (assetPath == null)
-                            return false;
-
-                        tempAssetPaths[i] = assetPath;
-                        prefabPaths.Add(assetPath);
+                        // Serialize custom components
+                        // Will create a prefab copy without custom components if needed
+                        var prefabCopy = CheckForImportedComponents(filePath);
+                        if (prefabCopy.HasValue)
+                        {
+                            tempAssetPaths[i] = prefabCopy.Value.prefabPath;
+                            tempAssetPaths.Add(prefabCopy.Value.dataPath);
+                        }
                     }
                 }
             }
@@ -576,32 +576,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             {
                 EditorUtility.ClearProgressBar();
                 AssetDatabase.StopAssetEditing();
-            }
-
-            if (prefabPaths.Count > 0)
-            {
-                AssetDatabase.StartAssetEditing();
-
-                try
-                {
-                    // Serialize custom components
-                    for (int i = 0; i < prefabPaths.Count; i++)
-                    {
-                        EditorUtility.DisplayProgressBar(modBuilderLabel, prefabPaths[i], (float)i / prefabPaths.Count);
-
-                        string importedComponentsPath = CheckForImportedComponents(prefabPaths[i]);
-                        if (importedComponentsPath != null)
-                        {
-                            if (!tempAssetPaths.Contains(importedComponentsPath))
-                                tempAssetPaths.Add(importedComponentsPath);
-                        }
-                    }
-                }
-                finally
-                {
-                    EditorUtility.ClearProgressBar();
-                    AssetDatabase.StopAssetEditing();
-                }
             }
 
 #if LOG_BUILD_TIME
@@ -689,18 +663,34 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         }
 
-        private string CheckForImportedComponents(string prefabPath)
+        /// <summary>
+        /// Checks if a prefab has custom components that need to be deserialized by mod manager.
+        /// Custom components are removed and edited prefab is saved to a temp location.
+        /// </summary>
+        /// <param name="prefabPath">Asset path of original prefab.</param>
+        /// <returns>Paths of prefab copy and json data; null if not copied./returns>
+        private (string prefabPath, string dataPath)? CheckForImportedComponents(string prefabPath)
         {
-            var go = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-            string importedComponentsPath = ImportedComponentAttribute.Save(go, GetTempModDirPath(modInfo.ModTitle));
-            if (importedComponentsPath != null)
-            {
-                importedComponentsPath = GetAssetPathFromFilePath(importedComponentsPath);
-                AssetDatabase.ImportAsset(importedComponentsPath);
-                return importedComponentsPath;
-            }
+            var go = PrefabUtility.LoadPrefabContents(prefabPath);
 
-            return null;
+            try
+            {
+                string tempModPath = GetTempModDirPath(modInfo.ModTitle);
+                string importedComponentsPath = ImportedComponentAttribute.Save(go, tempModPath);
+                if (importedComponentsPath != null)
+                {
+                    string tempPrefabPath = GetAssetPathFromFilePath($"{tempModPath}/{go.name}.prefab");
+                    PrefabUtility.SaveAsPrefabAsset(go, tempPrefabPath);                    
+                    string tempDataPath = GetAssetPathFromFilePath(importedComponentsPath);
+                    return (tempPrefabPath, tempDataPath);
+                }
+
+                return null;
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(go);
+            }
         }
 
         private static BuildAssetBundleOptions ToBuildAssetBundleOptions(ModCompressionOptions value)
