@@ -99,8 +99,7 @@ Message:  1011
                             Yours respectfully,
  
                             _knight_
- 
--removed erroneous blank message <--->
+
 
 Message:  1012
 <ce>                   A courier bearing the heraldry of
