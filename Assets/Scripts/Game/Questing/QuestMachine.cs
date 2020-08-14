@@ -374,6 +374,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new DropFace(null));
             RegisterAction(new GetItem(null));
             RegisterAction(new StartQuest(null));
+            RegisterAction(new RunQuest(null));
             RegisterAction(new UnsetTask(null));
             RegisterAction(new ChangeReputeWith(null));
             RegisterAction(new ReputeExceedsDo(null));
