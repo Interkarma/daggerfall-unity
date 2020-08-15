@@ -140,12 +140,12 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual TextFile.Token[] GetRSCTokens(int id)
         {
-            if (localizedStringDebug && !string.IsNullOrEmpty(TextManager.Instance.textRSCCollection))
-                Debug.LogFormat("Trying localized string using RSC collection '{0}'", TextManager.Instance.textRSCCollection);
+            if (localizedStringDebug && !string.IsNullOrEmpty(TextManager.Instance.runtimeRSCStrings))
+                Debug.LogFormat("Trying localized string using RSC collection '{0}'", TextManager.Instance.runtimeRSCStrings);
 
             // First attempt to get string from localization
             string localizedString;
-            if (GetLocalizedString(TextManager.Instance.textRSCCollection, id.ToString(), out localizedString))
+            if (GetLocalizedString(TextManager.Instance.runtimeRSCStrings, id.ToString(), out localizedString))
                 return DaggerfallStringTableImporter.ConvertStringToRSCTokens(localizedString);
 
             if (localizedStringDebug)

@@ -445,7 +445,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dbdf49d2cb02c448af96547d7d1daf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textRSCCollection: 
+  runtimeInternalStrings: Internal_Strings
+  runtimeRSCStrings: 
 --- !u!4 &671540519
 Transform:
   m_ObjectHideFlags: 0
