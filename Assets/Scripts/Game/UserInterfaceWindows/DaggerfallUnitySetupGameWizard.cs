@@ -157,6 +157,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             moveNextStage = true;
 
+            int cursorWidth = 32;
+            int cursorHeight = 32;
+
             // Apply joystick settings to input manager to keep consistency between the setup wizard and the game
             InputManager.Instance.JoystickCursorSensitivity = DaggerfallUnity.Settings.JoystickCursorSensitivity;
             InputManager.Instance.JoystickDeadzone = DaggerfallUnity.Settings.JoystickDeadzone;
@@ -165,9 +168,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D tex;
             if (TextureReplacement.TryImportTexture("Cursor", true, out tex))
             {
-                Cursor.SetCursor(tex, Vector2.zero, CursorMode.Auto);
+                CursorMode cursorMode = CursorMode.Auto;
+                cursorWidth = tex.width;
+                cursorHeight = tex.height;
+
+                // Cases when true cursor size cannot be achieved using hardware accelerated cursor
+                if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows && (cursorWidth > 32 || cursorHeight > 32))
+                    cursorMode = CursorMode.ForceSoftware;
+
+                Cursor.SetCursor(tex, Vector2.zero, cursorMode);
                 Debug.Log("Cursor texture overridden by mods.");
             }
+
+            DaggerfallUnity.Settings.CursorWidth = cursorWidth;
+            DaggerfallUnity.Settings.CursorHeight = cursorHeight;
         }
 
         public override void Update()
