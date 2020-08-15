@@ -979,7 +979,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Assigns guild memberships to player from classic save tree.
         /// </summary>
-        public void AssignGuildMemberships(SaveTree saveTree)
+        public void AssignGuildMemberships(SaveTree saveTree, bool vampire = false)
         {
             // Find character record, should always be a singleton
             CharacterRecord characterRecord = (CharacterRecord)saveTree.FindRecord(RecordTypes.Character);
@@ -988,7 +988,18 @@ namespace DaggerfallWorkshop.Game.Entity
 
             // Find all guild memberships, and add Daggerfall Unity guild memberships
             List<SaveTreeBaseRecord> guildMembershipRecords = saveTree.FindRecords(RecordTypes.GuildMembership, characterRecord);
-            GameManager.Instance.GuildManager.ImportMembershipData(guildMembershipRecords);
+            List<SaveTreeBaseRecord> oldMembershipRecords = saveTree.FindRecords(RecordTypes.OldGuild, characterRecord);
+
+            if (vampire)
+            {
+                GameManager.Instance.GuildManager.ImportMembershipData(guildMembershipRecords, true);
+                GameManager.Instance.GuildManager.ImportMembershipData(oldMembershipRecords);
+            }
+            else
+            {
+                GameManager.Instance.GuildManager.ImportMembershipData(guildMembershipRecords);
+                GameManager.Instance.GuildManager.ImportMembershipData(oldMembershipRecords, true);
+            }
         }
 
         /// <summary>
@@ -1046,7 +1057,6 @@ namespace DaggerfallWorkshop.Game.Entity
             int calmHumanoidID = 91;
             int nimblenessID = 85;
             int paralysisID = 50;
-            int freeActionID = 10;
             int healID = 64;
             int shieldID = 17;
             int resistColdID = 11;
@@ -1056,6 +1066,7 @@ namespace DaggerfallWorkshop.Game.Entity
             int invisibilityID = 6;
             int iceStormID = 20;
             int wildfireID = 33;
+            int recallID = 94;
 
             // Common spells
             AssignVampireSpell(levitateID);
@@ -1072,7 +1083,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     AssignVampireSpell(paralysisID);
                     break;
                 case VampireClans.Montalion:
-                    AssignVampireSpell(freeActionID);
+                    AssignVampireSpell(recallID);
                     break;
                 case VampireClans.Thrafey:
                     AssignVampireSpell(healID);
@@ -1357,7 +1368,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         skills.SetPermanentSkillValue(i, (short)(skills.GetPermanentSkillValue(i) + 1));
                         SetSkillRecentlyIncreased(i);
                         SetCurrentLevelUpSkillSum();
-                        DaggerfallUI.Instance.PopupMessage(HardStrings.skillImprove.Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DFCareer.Skills)i)));
+                        DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("skillImprove").Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DFCareer.Skills)i)));
                         if (skills.GetPermanentSkillValue(i) == 100)
                         {
                             List<DFCareer.Skills> primarySkills = GetPrimarySkills();
@@ -2359,7 +2370,7 @@ namespace DaggerfallWorkshop.Game.Entity
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
 
             if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
-                messageBox.SetText(HardStrings.exhaustedInWater);
+                messageBox.SetText(TextManager.Instance.GetLocalizedText("exhaustedInWater"));
             else
             {
                 if (!enemiesNearby)

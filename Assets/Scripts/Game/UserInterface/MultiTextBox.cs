@@ -189,9 +189,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// Gets result values from a row of size 2.
         /// </summary>
-        public Tuple<int, int> GetIntTuple(int row = 0)
+        public DaggerfallWorkshop.Utility.Tuple<int, int> GetIntTuple(int row = 0)
         {
-            return Tuple<int, int>.Make(GetIntValue(row, 0), GetIntValue(row, 1));
+            return DaggerfallWorkshop.Utility.Tuple<int, int>.Make(GetIntValue(row, 0), GetIntValue(row, 1));
         }
 
         /// <summary>
@@ -221,9 +221,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// <summary>
         /// Gets result values from a row of size 2.
         /// </summary>
-        public Tuple<float, float> GetFloatTuple(int row = 0)
+        public DaggerfallWorkshop.Utility.Tuple<float, float> GetFloatTuple(int row = 0)
         {
-            return Tuple<float, float>.Make(GetFloatValue(row, 0), GetFloatValue(row, 1));
+            return DaggerfallWorkshop.Utility.Tuple<float, float>.Make(GetFloatValue(row, 0), GetFloatValue(row, 1));
         }
 
         #endregion

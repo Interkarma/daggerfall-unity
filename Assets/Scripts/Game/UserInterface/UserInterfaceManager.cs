@@ -84,6 +84,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Clear all user input from world
             InputManager.Instance.ClearAllActions();
 
+            // Clear fade in progress when any UI window is pushed
+            if (DaggerfallUI.Instance.FadeBehaviour && DaggerfallUI.Instance.FadeBehaviour.FadeInProgress)
+                DaggerfallUI.Instance.FadeBehaviour.ClearFade();
+
             // Raise event
             if (OnWindowChange != null)
                 OnWindowChange(this, null);

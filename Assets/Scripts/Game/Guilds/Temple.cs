@@ -131,14 +131,14 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         static Dictionary<Divines, RankData> templeData = new Dictionary<Divines, RankData>()
         {
-            { Divines.Akatosh,  new RankData(2, 1, 4, 5,-1,-1,-1,-1,-1, 7, 5290, 5245, 4058, 709, HardStrings.akatoshDesc) },
-            { Divines.Arkay,    new RankData(3, 0, 1, 4,-1,-1,-1,-1, 4, 7, 5287, 5242, 4055, 0, HardStrings.arkayDesc) },
-            { Divines.Dibella,  new RankData(4, 2, 1, 5,-1,-1,-1,-1,-1, 7, 5290, 5247, 4059, 712, HardStrings.dibellaDesc) },
-            { Divines.Julianos, new RankData(0, 2,-1,-1, 3, 5,-1,-1,-1, 6, 6610, 5246, 4060, 710, HardStrings.julianosDesc) },
-            { Divines.Kynareth, new RankData(4, 1,-1,-1,-1,-1, 3, 6,-1, 7, 5290, 5249, 4062, 717, HardStrings.kynarethDesc) },
-            { Divines.Mara,     new RankData(4, 1, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5244, 4057, 707, HardStrings.maraDesc) },
-            { Divines.Stendarr, new RankData(4, 0, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5248, 4061, 716, HardStrings.stendarDesc) },
-            { Divines.Zenithar, new RankData(4, 1, 1, 6,-1,-1,-1,-1,-1, 8, 5288, 5243, 4056, 705, HardStrings.zenDesc) },
+            { Divines.Akatosh,  new RankData(2, 1, 4, 5,-1,-1,-1,-1,-1, 7, 5290, 5245, 4058, 709, TextManager.Instance.GetLocalizedText("akatoshDesc")) },
+            { Divines.Arkay,    new RankData(3, 0, 1, 4,-1,-1,-1,-1, 4, 7, 5287, 5242, 4055, 0, TextManager.Instance.GetLocalizedText("arkayDesc")) },
+            { Divines.Dibella,  new RankData(4, 2, 1, 5,-1,-1,-1,-1,-1, 7, 5290, 5247, 4059, 712, TextManager.Instance.GetLocalizedText("dibellaDesc")) },
+            { Divines.Julianos, new RankData(0, 2,-1,-1, 3, 5,-1,-1,-1, 6, 6610, 5246, 4060, 710, TextManager.Instance.GetLocalizedText("julianosDesc")) },
+            { Divines.Kynareth, new RankData(4, 1,-1,-1,-1,-1, 3, 6,-1, 7, 5290, 5249, 4062, 717, TextManager.Instance.GetLocalizedText("kynarethDesc")) },
+            { Divines.Mara,     new RankData(4, 1, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5244, 4057, 707, TextManager.Instance.GetLocalizedText("maraDesc")) },
+            { Divines.Stendarr, new RankData(4, 0, 2, 5,-1,-1,-1,-1,-1, 7, 5289, 5248, 4061, 716, TextManager.Instance.GetLocalizedText("stendarDesc")) },
+            { Divines.Zenithar, new RankData(4, 1, 1, 6,-1,-1,-1,-1,-1, 8, 5288, 5243, 4056, 705, TextManager.Instance.GetLocalizedText("zenDesc")) },
         };
 
         static Dictionary<Divines, List<DFCareer.Skills>> guildSkills = new Dictionary<Divines, List<DFCareer.Skills>>()
@@ -448,7 +448,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 !GameManager.Instance.PlayerEnterExit.IsPlayerSubmerged &&
                 UnityEngine.Random.Range(0, 50) < rank)
             {
-                DaggerfallUI.AddHUDText(HardStrings.avoidDeath);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("avoidDeath"));
                 return true;
             }
             return false;

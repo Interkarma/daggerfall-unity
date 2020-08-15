@@ -32,7 +32,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         protected int forcedRoundsRemaining = 1;
         protected Diseases classicDiseaseType = Diseases.None;
         protected DiseaseData diseaseData;
-        protected TextFile.Token[] contractedMessageTokens;
         protected bool incubationOver = false;
         protected uint lastDay;
         protected int daysOfSymptomsLeft;
@@ -58,10 +57,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             set { daysOfSymptomsLeft = value; }
         }
 
-        public TextFile.Token[] ContractedMessageTokens
-        {
-            get { return contractedMessageTokens; }
-        }
+        public abstract TextFile.Token[] ContractedMessageTokens { get; }
 
         #endregion
 
@@ -166,7 +162,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             // Output alert text
-            DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.youFeelSomewhatBad, 2.5f);
+            DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youFeelSomewhatBad"), 2.5f);
         }
 
         /// <summary>

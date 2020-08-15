@@ -422,7 +422,7 @@ namespace DaggerfallWorkshop.Game
                 // Show climbing message then disable further showing of climbing mode message until current climb attempt is stopped
                 if (showClimbingModeMessage)
                 {
-                    DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.climbingMode);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("climbingMode"));
                     showClimbingModeMessage = false;
                 }
 

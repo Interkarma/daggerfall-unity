@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -25,10 +26,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(39, 2);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "detect");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "treasure");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1598);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1298);
             properties.SupportDuration = true;
             properties.AllowedTargets = TargetTypes.CasterOnly;
             properties.AllowedElements = ElementTypes.Magic;
@@ -36,6 +33,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.MagicSkill = DFCareer.MagicSkills.Thaumaturgy;
             properties.DurationCosts = MakeEffectCosts(20, 8, 160);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("detect");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("treasure");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1598);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1298);
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {

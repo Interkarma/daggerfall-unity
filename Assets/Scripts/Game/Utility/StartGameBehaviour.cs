@@ -217,6 +217,10 @@ namespace DaggerfallWorkshop.Game.Utility
 
             InputManager.Instance.JoystickMovementThreshold = DaggerfallUnity.Settings.JoystickMovementThreshold;
 
+            InputManager.Instance.JoystickDeadzone = DaggerfallUnity.Settings.JoystickDeadzone;
+
+            InputManager.Instance.EnableController = DaggerfallUnity.Settings.EnableController;
+
             // Set shadow resolution
             GameManager.UpdateShadowResolution();
 
@@ -580,7 +584,7 @@ namespace DaggerfallWorkshop.Game.Utility
             playerEntity.AssignItemsAndSpells(saveTree);
 
             // Assign guild memberships
-            playerEntity.AssignGuildMemberships(saveTree);
+            playerEntity.AssignGuildMemberships(saveTree, characterDocument.classicTransformedRace == Races.Vampire);
 
             // Assign gold pieces
             playerEntity.GoldPieces = (int)characterRecord.ParsedData.physicalGold;

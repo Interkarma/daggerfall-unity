@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.Entity
         bool pickpocketByPlayerAttempted = false;
         int questFoeSpellQueueIndex = -1;
         int questFoeItemQueueIndex = -1;
+        bool suppressInfighting = false;
 
         // From FALL.EXE offset 0x1C0F14
         static byte[] ImpSpells            = { 0x07, 0x0A, 0x1D, 0x2C };
@@ -86,6 +87,19 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             get { return questFoeItemQueueIndex; }
             set { questFoeItemQueueIndex = value; }
+        }
+
+        /// <summary>
+        /// Suppress enemy infighting for this entity.
+        /// Entity will not target anyone but player and cannot be a target for infighting.
+        /// One example of use is Daedra Secuder whose winged sprites have no facing other than directly forward to player.
+        /// If Seducer participates in winged infighting their sprite can no longer align properly with controller facing.
+        /// Seducer behaviour will disable infighting once they transform into winged variant so enemy combats player only.
+        /// </summary>
+        public bool SuppressInfighting
+        {
+            get { return suppressInfighting; }
+            set { suppressInfighting = value; }
         }
 
         public bool SoulTrapActive { get; set; }
@@ -165,21 +179,21 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (SoulTrap.FillEmptyTrapItem((MobileTypes)mobileEnemy.ID))
                 {
                     // Trap filled, allow entity to die normally
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapSuccess"), 1.5f);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("trapSuccess"), 1.5f);
                     return true;
                 }
                 else
                 {
                     // No empty gems, keep entity tethered to life - player is alerted so they know what's happening
                     currentHealth = 1;
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapNoneEmpty"));
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("trapNoneEmpty"));
                     return false;
                 }
             }
             else
             {
                 // Trap failed
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapFail"), 1.5f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("trapFail"), 1.5f);
                 return true;
             }
         }

@@ -103,8 +103,7 @@ namespace DaggerfallWorkshop.Game
             controller = GetComponent<CharacterController>();
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
             IsHostile = mobile.Summary.Enemy.Reactions == MobileReactions.Hostile;
-            flies = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying ||
-                    mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral;
+            flies = CanFly();
             swims = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Aquatic;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             entityBlood = GetComponent<EnemyBlood>();
@@ -129,6 +128,7 @@ namespace DaggerfallWorkshop.Game
             if (GameManager.Instance.DisableAI)
                 return;
 
+            flies = CanFly();
             canAct = true;
             flyerFalls = false;
             falls = false;
@@ -410,6 +410,10 @@ namespace DaggerfallWorkshop.Game
                 distance = senses.DistanceToTarget;
             else
                 distance = (destination - transform.position).magnitude;
+
+            // Do not change action if currently playing oneshot wants to stop actions
+            if (isPlayingOneShot && mobile.OneShotPauseActionsWhilePlaying())
+                return;
 
             // Ranged attacks
             if (DoRangedAttack(direction, moveSpeed, distance, isPlayingOneShot))
@@ -758,6 +762,16 @@ namespace DaggerfallWorkshop.Game
                 return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// Checks if enemy can fly based on behaviour.
+        /// This can change in the case of a transformed Seducer.
+        /// </summary>
+        /// <returns>True if enemy can fly.</returns>
+        bool CanFly()
+        {
+            return mobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying || mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral;
         }
 
         /// <summary>

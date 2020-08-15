@@ -28,9 +28,6 @@ namespace DaggerfallWorkshop.Game
     {
         #region Fields
 
-        public const float minAcceleration = 1.0f;
-        public const float maxAcceleration = 10.0f;
-
         //there are only 16 recognized axes
         const int numAxes = 16;
         const int startingAxisKeyCode = 5000;
@@ -51,6 +48,7 @@ namespace DaggerfallWorkshop.Game
         //These three dictionaries are built for InputManager.GetAxisRaw(...), specifically to
         //deal with raising KeyUp events, since Unity does not provide an "OnAxisValueChange" event
         Dictionary<int, float> previousAxisRaw = new Dictionary<int, float>();
+        List<KeyValuePair<int, float>> previousAxisRawQueue = new List<KeyValuePair<int, float>>();
         Dictionary<int, bool> upAxisRaw = new Dictionary<int, bool>();
         Dictionary<int, bool> downAxisRaw = new Dictionary<int, bool>();
 
@@ -58,13 +56,18 @@ namespace DaggerfallWorkshop.Game
 
         const float deadZone = 0.05f;
         const float inputWaitTotal = 0.0833f;
+        const float moveAccelerationConst = 9.8f;
 
         IList keyCodeList;
         KeyCode[] reservedKeys = new KeyCode[] { };
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
         Dictionary<String, AxisActions> axisActionKeyDict = new Dictionary<String, AxisActions>();
         Dictionary<KeyCode, string> unknownActions = new Dictionary<KeyCode, string>();
-        KeyCode[] controllerUIDict = new KeyCode[3]; //leftClick, rightClick, MiddleClick
+        //making keys 'int' instead of AxisActions because enum keys cause GC overhead in Unity
+        Dictionary<int, bool> axisActionInvertDict = new Dictionary<int, bool>();
+        Dictionary<KeyCode, JoystickUIActions> joystickUIDict = new Dictionary<KeyCode, JoystickUIActions>();
+
+        KeyCode[] joystickUICache = new KeyCode[3]; //leftClick, rightClick, MiddleClick
         String[] cameraAxisBindingCache = new String[2];
         String[] movementAxisBindingCache = new String[2];
 
@@ -75,6 +78,10 @@ namespace DaggerfallWorkshop.Game
         float inputWaitTimer;
         float horizontal;
         float vertical;
+        float negHorizontalLimit = 1f;
+        float posHorizontalLimit = 1f;
+        float negVerticalLimit = 1f;
+        float posVerticalLimit = 1f;
         float lookX;
         float lookY;
         float keyboardLookX;
@@ -87,8 +94,7 @@ namespace DaggerfallWorkshop.Game
         bool negHorizontalImpulse;
         bool posVerticalImpulse;
         bool negVerticalImpulse;
-        float acceleration = 5.0f;
-
+        bool moveAcceleration;
 
         float joystickCameraSensitivity = 1.0f;
         float joystickUIMouseSensitivity = 1.0f;
@@ -100,6 +106,8 @@ namespace DaggerfallWorkshop.Game
         float controllerCursorHorizontalSpeed = 300.0F;
         float controllerCursorVerticalSpeed = 300.0F;
 
+        bool pauseController = false;
+
         #endregion
 
         #region Structures
@@ -109,6 +117,8 @@ namespace DaggerfallWorkshop.Game
         {
             public Dictionary<String, string> actionKeyBinds;
             public Dictionary<String, AxisActions> axisActionKeyBinds;
+            public Dictionary<String, String> axisActionInversions;
+            public Dictionary<String, String> joystickUIKeyBinds;
         }
 
         #endregion
@@ -169,17 +179,43 @@ namespace DaggerfallWorkshop.Game
 
         public float Horizontal
         {
-            get { return (horizontal < -deadZone || horizontal > deadZone) ? horizontal : 0; }
+            get { return Mathf.Clamp((horizontal < -deadZone || horizontal > deadZone) ? horizontal : 0, -negHorizontalLimit, posHorizontalLimit); }
         }
 
         public float Vertical
         {
-            get { return (vertical < -deadZone || vertical > deadZone) ? vertical : 0; }
+            get { return Mathf.Clamp((vertical < -deadZone || vertical > deadZone) ? vertical : 0, -negVerticalLimit, posVerticalLimit); }
+        }
+
+        public bool ToggleAutorun { get; set; }
+
+        public float NegHorizontalLimit
+        {
+            get { return negHorizontalLimit; }
+            set { negHorizontalLimit = Mathf.Clamp(value, 0f, 1f); }
+        }
+
+        public float PosHorizontalLimit
+        {
+            get { return posHorizontalLimit; }
+            set { posHorizontalLimit = Mathf.Clamp(value, 0f, 1f); }
+        }
+
+        public float NegVerticalLimit
+        {
+            get { return negVerticalLimit; }
+            set { negVerticalLimit = Mathf.Clamp(value, 0f, 1f); }
+        }
+
+        public float PosVerticalLimit
+        {
+            get { return posVerticalLimit; }
+            set { posVerticalLimit = Mathf.Clamp(value, 0f, 1f); }
         }
 
         public bool UsingController
         {
-            get { return usingControllerCursor; }
+            get { return usingControllerCursor && EnableController && !pauseController; }
         }
 
         public KeyCode LastKeyDown { get; private set; }
@@ -192,7 +228,7 @@ namespace DaggerfallWorkshop.Game
 
         public Vector3 MousePosition {
             get {
-                if (usingControllerCursor)
+                if (UsingController)
                     return controllerCursorPosition;
                 else
                     return Input.mousePosition;
@@ -219,6 +255,11 @@ namespace DaggerfallWorkshop.Game
             set { joystickMovementThreshold = value; }
         }
 
+        public bool MaximizeJoystickMovement { get; set; }
+        public float JoystickDeadzone { get; set; }
+
+        public bool EnableController { get; set; }
+
         #endregion
 
         #region Enums
@@ -228,6 +269,12 @@ namespace DaggerfallWorkshop.Game
             MovementVertical,
             CameraHorizontal,
             CameraVertical,
+        }
+
+        public enum JoystickUIActions {
+            LeftClick,
+            RightClick,
+            MiddleClick
         }
 
         public enum Actions
@@ -286,6 +333,8 @@ namespace DaggerfallWorkshop.Game
             QuickLoad,
 
             PrintScreen,
+
+            AutoRun,
             
             Unknown,
         }
@@ -331,8 +380,8 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            // Read acceleration/deceleration setting
-            acceleration = DaggerfallUnity.Settings.MoveSpeedAcceleration;
+            // Read acceleration setting
+            moveAcceleration = DaggerfallUnity.Settings.MovementAcceleration;
 
             //memoization for 'axis keycodes'
             for (int i = startingAxisKeyCode; i < startingAxisKeyCode + numAxes * 2; i++)
@@ -369,6 +418,10 @@ namespace DaggerfallWorkshop.Game
 
             // Clear current actions
             currentActions.Clear();
+
+            foreach (var kv in previousAxisRawQueue)
+                previousAxisRaw[kv.Key] = kv.Value;
+            previousAxisRawQueue.Clear();
 
             // Clear look and mouse axes
             mouseX = 0;
@@ -419,12 +472,30 @@ namespace DaggerfallWorkshop.Game
 
             // Collect mouse axes
             mouseX = Input.GetAxisRaw("Mouse X");
-            if (mouseX == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[0]))
-                mouseX = Input.GetAxis(cameraAxisBindingCache[0]);
-
             mouseY = Input.GetAxisRaw("Mouse Y");
-            if (mouseY == 0F && !String.IsNullOrEmpty(cameraAxisBindingCache[1]))
-                mouseY = Input.GetAxis(cameraAxisBindingCache[1]);
+
+
+            if (EnableController && (mouseX == 0F || mouseY == 0F) && !String.IsNullOrEmpty(cameraAxisBindingCache[0]))
+            {
+                var h = Input.GetAxis(cameraAxisBindingCache[0]);
+                var v = Input.GetAxis(cameraAxisBindingCache[1]);
+
+                if(Mathf.Sqrt(h*h + v*v) > JoystickDeadzone)
+                {
+                    mouseX = h;
+                    mouseY = v;
+                }
+
+                if (GetAxisActionInversion(AxisActions.CameraHorizontal))
+                    mouseX *= -1;
+                if (GetAxisActionInversion(AxisActions.CameraVertical))
+                    mouseY *= -1;
+            }
+
+            if(ToggleAutorun)
+            {
+                ApplyVerticalForce(1);
+            }
 
             // Process actions from input sources
             FindKeyboardActions();
@@ -447,32 +518,43 @@ namespace DaggerfallWorkshop.Game
 
             var horizj = Input.GetAxis(horizBinding);
             var vertj = Input.GetAxis(vertBinding);
+            var cameraHorizJ = Input.GetAxis(cameraAxisBindingCache[0]);
+            var cameraVertJ = Input.GetAxis(cameraAxisBindingCache[1]);
 
-            if (!usingControllerCursor &&
-                (horizj != 0
-                || vertj != 0
-                || Input.GetAxis(cameraAxisBindingCache[0]) != 0
-                || Input.GetAxis(cameraAxisBindingCache[1]) != 0))
+            float distMovement = Mathf.Sqrt(horizj * horizj + vertj * vertj);
+            float distCamera = Mathf.Sqrt(cameraHorizJ * cameraHorizJ + cameraVertJ * cameraVertJ);
+
+            bool movingMouse = (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0);
+            pauseController = movingMouse;
+
+            if (!UsingController && (distMovement > JoystickDeadzone || distCamera > JoystickDeadzone))
             {
                 usingControllerCursor = true;
                 controllerCursorPosition = Input.mousePosition;
             }
-            else if (usingControllerCursor && (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0))
-            {
+
+            if (movingMouse)
                 usingControllerCursor = false;
-            }
 
             if (CursorVisible)
             {
-                if (usingControllerCursor)
+                if (UsingController)
                 {
                     Cursor.visible = false;
                     //Cursor.lockState = CursorLockMode.Locked;
 
                     GUI.depth = 0;
 
-                    controllerCursorPosition.x += JoystickCursorSensitivity * controllerCursorHorizontalSpeed * horizj * Time.fixedDeltaTime;
-                    controllerCursorPosition.y += JoystickCursorSensitivity * controllerCursorVerticalSpeed * vertj * Time.fixedDeltaTime;
+                    if (GetAxisActionInversion(AxisActions.MovementHorizontal))
+                        horizj *= -1;
+                    if (GetAxisActionInversion(AxisActions.MovementVertical))
+                        vertj *= -1;
+
+                    if (distMovement > JoystickDeadzone)
+                    {
+                        controllerCursorPosition.x += JoystickCursorSensitivity * controllerCursorHorizontalSpeed * horizj * Time.fixedDeltaTime;
+                        controllerCursorPosition.y += JoystickCursorSensitivity * controllerCursorVerticalSpeed * vertj * Time.fixedDeltaTime;
+                    }
 
                     controllerCursorPosition.x = Mathf.Clamp(controllerCursorPosition.x, 0, Screen.width);
                     controllerCursorPosition.y = Mathf.Clamp(controllerCursorPosition.y, 0, Screen.height);
@@ -581,6 +663,20 @@ namespace DaggerfallWorkshop.Game
             return String.Empty;
         }
 
+        public KeyCode GetJoystickUIBinding(JoystickUIActions action)
+        {
+            if (joystickUIDict.ContainsValue(action))
+            {
+                foreach (var k in joystickUIDict.Keys)
+                {
+                    if (joystickUIDict[k] == action)
+                        return k;
+                }
+            }
+
+            return KeyCode.None;
+        }
+
         /// <summary>
         /// Finds all keycodes made to a specific action.
         /// Will return empty array if no bindings found.
@@ -638,6 +734,22 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public void SetJoystickUIBinding(KeyCode code, JoystickUIActions action)
+        {
+            // Not allowing multi-bind at this time as the front-end doesn't support it
+            ClearJoystickUIBinding(action);
+
+            if (!joystickUIDict.ContainsKey(code))
+            {
+                joystickUIDict.Add(code, action);
+            }
+            else
+            {
+                joystickUIDict.Remove(code);
+                joystickUIDict.Add(code, action);
+            }
+        }
+
         /// <summary>
         /// Unbinds a KeyCode to an action via KeyCode
         /// </summary>
@@ -683,6 +795,28 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// Unbinds a KeyCode to a JoystickUIAction via string name
+        /// </summary>
+        public void ClearJoystickUIBinding(KeyCode code)
+        {
+            if (joystickUIDict.ContainsKey(code))
+            {
+                joystickUIDict.Remove(code);
+            }
+        }
+
+        /// <summary>
+        /// Unbinds a KeyCode to a JoystickUIAction via the JoystickUIAction
+        /// </summary>
+        public void ClearJoystickUIBinding(JoystickUIActions action)
+        {
+            foreach (var binding in joystickUIDict.Where(kvp => kvp.Value == action).ToList())
+            {
+                joystickUIDict.Remove(binding.Key);
+            }
+        }
+
         // Save keybindings
         public void SaveKeyBinds()
         {
@@ -691,6 +825,8 @@ namespace DaggerfallWorkshop.Game
             KeyBindData_v1 keyBindsData = new KeyBindData_v1();
             keyBindsData.axisActionKeyBinds = axisActionKeyDict;
             keyBindsData.actionKeyBinds = new Dictionary<string, string>();
+            keyBindsData.axisActionInversions = new Dictionary<string, string>();
+            keyBindsData.joystickUIKeyBinds = new Dictionary<string, string>();
 
             foreach (var item in actionKeyDict)
             {
@@ -704,10 +840,30 @@ namespace DaggerfallWorkshop.Game
                 keyBindsData.actionKeyBinds.Add(GetKeyString(item.Key), item.Value);
             }
 
+            foreach (var item in joystickUIDict)
+            {
+                keyBindsData.joystickUIKeyBinds.Add(GetKeyString(item.Key), item.Value.ToString());
+            }
+
+            foreach (var item in axisActionInvertDict)
+            {
+                keyBindsData.axisActionInversions.Add(((AxisActions)item.Key).ToString(), item.Value ? "True" : "False");
+            }
+
             string json = SaveLoadManager.Serialize(keyBindsData.GetType(), keyBindsData);
             File.WriteAllText(path, json);
             UpdateAxisBindingCache();
             RaiseSavedKeyBindsEvent();
+        }
+
+        public bool GetAxisActionInversion(AxisActions axis)
+        {
+            return axisActionInvertDict.ContainsKey((int)axis) && axisActionInvertDict[(int)axis];
+        }
+
+        public void SetAxisActionInversion(AxisActions axis, bool invert)
+        {
+            axisActionInvertDict[(int)axis] = invert;
         }
 
         // Set keybindings to defaults
@@ -733,6 +889,7 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.RightControl, Actions.Slide);
             SetBinding(KeyCode.LeftShift, Actions.Run);
             SetBinding(KeyCode.RightShift, Actions.Run);
+            SetBinding(KeyCode.Mouse2, Actions.AutoRun);
 
             SetBinding(KeyCode.R, Actions.Rest);
             SetBinding(KeyCode.T, Actions.Transport);
@@ -777,33 +934,27 @@ namespace DaggerfallWorkshop.Game
             SetAxisBinding("Axis4", AxisActions.CameraHorizontal);
             SetAxisBinding("Axis5", AxisActions.CameraVertical);
 
-            controllerUIDict[0] = KeyCode.JoystickButton0;
-            controllerUIDict[1] = KeyCode.JoystickButton1;
+            SetJoystickUIBinding(KeyCode.JoystickButton0, JoystickUIActions.LeftClick);
+            SetJoystickUIBinding(KeyCode.JoystickButton1, JoystickUIActions.RightClick);
             UpdateAxisBindingCache();
+
+            foreach (AxisActions axisAction in Enum.GetValues(typeof(AxisActions)))
+                SetAxisActionInversion(axisAction, false);
         }
 
         public bool GetMouseButtonDown(int button)
         {
-            if (usingControllerCursor)
-                return GetKeyDown(controllerUIDict[button]);
-
-            return Input.GetMouseButtonDown(button);
+            return Input.GetMouseButtonDown(button) || (EnableController && GetKeyDown(joystickUICache[button]));
         }
 
         public bool GetMouseButtonUp(int button)
         {
-            if (usingControllerCursor)
-                return GetKeyUp(controllerUIDict[button]);
-
-            return Input.GetMouseButtonUp(button);
+            return Input.GetMouseButtonUp(button) || (EnableController && GetKeyUp(joystickUICache[button]));
         }
 
         public bool GetMouseButton(int button)
         {
-            if (usingControllerCursor)
-                return GetKey(controllerUIDict[button]);
-
-            return Input.GetMouseButton(button);
+            return Input.GetMouseButton(button) || (EnableController && GetKey(joystickUICache[button]));
         }
 
         public bool GetKey(KeyCode key)
@@ -896,6 +1047,10 @@ namespace DaggerfallWorkshop.Game
 
         private void UpdateAxisBindingCache()
         {
+            joystickUICache[0] = GetJoystickUIBinding(JoystickUIActions.LeftClick);
+            joystickUICache[1] = GetJoystickUIBinding(JoystickUIActions.RightClick);
+            joystickUICache[2] = GetJoystickUIBinding(JoystickUIActions.MiddleClick);
+
             cameraAxisBindingCache[0] = GetAxisBinding(AxisActions.CameraHorizontal);
             cameraAxisBindingCache[1] = GetAxisBinding(AxisActions.CameraVertical);
             movementAxisBindingCache[0] = GetAxisBinding(AxisActions.MovementHorizontal);
@@ -924,6 +1079,17 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        // Sets KeyCode binding only if action is missing
+        // This is to ensure default actions are restored if missing
+        // and to push out new actions to existing keybind files
+        private void TestSetJoystickUIBinding(KeyCode code, JoystickUIActions action)
+        {
+            if (!joystickUIDict.ContainsValue(action))
+            {
+                SetJoystickUIBinding(code, action);
+            }
+        }
+
         // Deploys default values if action missing from loaded keybinds
         private void SetupDefaults()
         {
@@ -945,6 +1111,7 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.RightControl, Actions.Slide);
             TestSetBinding(KeyCode.LeftShift, Actions.Run);
             TestSetBinding(KeyCode.RightShift, Actions.Run);
+            TestSetBinding(KeyCode.Mouse2, Actions.AutoRun);
 
             TestSetBinding(KeyCode.R, Actions.Rest);
             TestSetBinding(KeyCode.T, Actions.Transport);
@@ -989,17 +1156,21 @@ namespace DaggerfallWorkshop.Game
             TestSetAxisBinding("Axis4", AxisActions.CameraHorizontal);
             TestSetAxisBinding("Axis5", AxisActions.CameraVertical);
 
-            controllerUIDict[0] = KeyCode.JoystickButton0;
-            controllerUIDict[1] = KeyCode.JoystickButton1;
+            TestSetJoystickUIBinding(KeyCode.JoystickButton0, JoystickUIActions.LeftClick);
+            TestSetJoystickUIBinding(KeyCode.JoystickButton1, JoystickUIActions.RightClick);
             UpdateAxisBindingCache();
+
+            foreach (AxisActions axisAction in Enum.GetValues(typeof(AxisActions)))
+                if(!axisActionInvertDict.ContainsKey((int)axisAction))
+                    SetAxisActionInversion(axisAction, false);
         }
 
         // Apply force to horizontal axis
-        void ApplyHorizontalForce(float scale)
+        public void ApplyHorizontalForce(float scale)
         {
-            // Use acceleration setting or "just go" at max value
-            if (acceleration < maxAcceleration)
-                horizontal = Mathf.Clamp(horizontal + (acceleration * scale) * Time.deltaTime, -1, 1);
+            // Use acceleration setting or "just go"
+            if (moveAcceleration)
+                horizontal = Mathf.Clamp(horizontal + (moveAccelerationConst * scale) * Time.deltaTime, -1, 1);
             else
                 horizontal = scale;
 
@@ -1010,11 +1181,11 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Apply force to vertical axis
-        void ApplyVerticalForce(float scale)
+        public void ApplyVerticalForce(float scale)
         {
-            // Use acceleration setting or "just go" at max value
-            if (acceleration < maxAcceleration)
-                vertical = Mathf.Clamp(vertical + (acceleration * scale) * Time.deltaTime, -1, 1);
+            // Use acceleration setting or "just go"
+            if (moveAcceleration)
+                vertical = Mathf.Clamp(vertical + (moveAccelerationConst * scale) * Time.deltaTime, -1, 1);
             else
                 vertical = scale;
 
@@ -1027,18 +1198,18 @@ namespace DaggerfallWorkshop.Game
         // Apply friction to decelerate inactive movement impulses towards 0
         void ApplyFriction()
         {
-            // Use acceleration setting or "just stop" at max value
-            if (acceleration < maxAcceleration)
+            // Use acceleration setting or "just stop"
+            if (moveAcceleration)
             {
                 if (!posVerticalImpulse && vertical > 0)
-                    vertical = Mathf.Clamp(vertical - acceleration * Time.deltaTime, 0, vertical);
+                    vertical = Mathf.Clamp(vertical - moveAccelerationConst * Time.deltaTime, 0, vertical);
                 if (!negVerticalImpulse && vertical < 0)
-                    vertical = Mathf.Clamp(vertical + acceleration * Time.deltaTime, vertical, 0);
+                    vertical = Mathf.Clamp(vertical + moveAccelerationConst * Time.deltaTime, vertical, 0);
 
                 if (!posHorizontalImpulse && horizontal > 0)
-                    horizontal = Mathf.Clamp(horizontal - acceleration * Time.deltaTime, 0, horizontal);
+                    horizontal = Mathf.Clamp(horizontal - moveAccelerationConst * Time.deltaTime, 0, horizontal);
                 if (!negHorizontalImpulse && horizontal < 0)
-                    horizontal = Mathf.Clamp(horizontal + acceleration * Time.deltaTime, horizontal, 0);
+                    horizontal = Mathf.Clamp(horizontal + moveAccelerationConst * Time.deltaTime, horizontal, 0);
             }
             else
             {
@@ -1112,7 +1283,8 @@ namespace DaggerfallWorkshop.Game
 
         //Returns the name of the axis that Unity's Input Manager uses
         //there are always two keys to a single axis for positive and negative floats
-        String AxisKeyCodeToInputAxis(int key)
+        //Used by joystick controls window
+        public String AxisKeyCodeToInputAxis(int key)
         {
             if (key < startingAxisKeyCode)
                 return String.Empty;
@@ -1173,7 +1345,7 @@ namespace DaggerfallWorkshop.Game
         // Also updates upAxisRaw and downAxisRaw dictionaries to process GetAxisKeyDown and GetAxisKeyUp events
         float GetAxisRaw(int keyCode, int signage)
         {
-            if (keyCode < startingAxisKeyCode || !axisKeyCodeToInputAxis.ContainsKey(keyCode))
+            if (!EnableController || keyCode < startingAxisKeyCode || !axisKeyCodeToInputAxis.ContainsKey(keyCode))
                 return 0;
 
             String unityInputAxisString = axisKeyCodeToInputAxis[keyCode];
@@ -1206,7 +1378,7 @@ namespace DaggerfallWorkshop.Game
                     LastKeyDown = (KeyCode)keyCode;
             }
 
-            previousAxisRaw[keyCode] = ret;
+            previousAxisRawQueue.Add(new KeyValuePair<int, float>(keyCode, ret));
 
             return ret;
         }
@@ -1237,6 +1409,7 @@ namespace DaggerfallWorkshop.Game
                             ApplyVerticalForce(1);
                             break;
                         case Actions.MoveBackwards:
+                            ToggleAutorun = false;
                             ApplyVerticalForce(-1);
                             break;
                         case Actions.TurnLeft:
@@ -1260,7 +1433,7 @@ namespace DaggerfallWorkshop.Game
         void FindInputAxisActions()
         {
 
-            if (String.IsNullOrEmpty(movementAxisBindingCache[0]) || String.IsNullOrEmpty(movementAxisBindingCache[1]))
+            if (!EnableController || String.IsNullOrEmpty(movementAxisBindingCache[0]) || String.IsNullOrEmpty(movementAxisBindingCache[1]))
                 return;
 
             float horiz = Input.GetAxis(movementAxisBindingCache[0]);
@@ -1268,9 +1441,20 @@ namespace DaggerfallWorkshop.Game
 
             if (vert != 0 || horiz != 0)
             {
-                float dist = Mathf.Clamp(Mathf.Sqrt(horiz*horiz + vert*vert), controllerMinimumAxisFloat, 1.0F);
+                if (GetAxisActionInversion(AxisActions.MovementHorizontal))
+                    horiz *= -1;
 
-                if (dist > JoystickMovementThreshold)
+                if (GetAxisActionInversion(AxisActions.MovementVertical))
+                    vert *= -1;
+
+                float jd = Mathf.Sqrt(horiz*horiz + vert*vert);
+
+                if (jd <= JoystickDeadzone)
+                    return;
+
+                float dist = Mathf.Clamp(jd, controllerMinimumAxisFloat, 1.0F);
+
+                if (MaximizeJoystickMovement || dist > JoystickMovementThreshold)
                     dist = 1.0F;
 
                 if (horiz > 0)
@@ -1291,6 +1475,7 @@ namespace DaggerfallWorkshop.Game
                 }
                 else if (vert < 0)
                 {
+                    ToggleAutorun = false;
                     currentActions.Add(Actions.MoveBackwards);
                     vert = -dist;
                 }
@@ -1349,6 +1534,33 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 keyBindsData.axisActionKeyBinds = new Dictionary<String, AxisActions>();
+            }
+
+            if (keyBindsData.joystickUIKeyBinds != null)
+            {
+                foreach (var item in keyBindsData.joystickUIKeyBinds)
+                {
+                    KeyCode key = ParseKeyCodeString(item.Key);
+                    JoystickUIActions val = (JoystickUIActions)Enum.Parse(typeof(JoystickUIActions), item.Value);
+                    if (!joystickUIDict.ContainsKey(key))
+                        joystickUIDict.Add(key, val);
+                }
+                UpdateAxisBindingCache();
+            }
+
+            if (keyBindsData.axisActionInversions != null)
+            {
+                foreach (var item in keyBindsData.axisActionInversions)
+                {
+                    AxisActions key = (AxisActions)Enum.Parse(typeof(AxisActions), item.Key);
+                    SetAxisActionInversion(key, item.Value == "True" ? true : false);
+                }
+            }
+            else
+            {
+                keyBindsData.axisActionInversions = new Dictionary<String, string>();
+                foreach (AxisActions axisAction in Enum.GetValues(typeof(AxisActions)))
+                    SetAxisActionInversion(axisAction, false);
             }
 
             RaiseLoadedKeyBindsEvent();

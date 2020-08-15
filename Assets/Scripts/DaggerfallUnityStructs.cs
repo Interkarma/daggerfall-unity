@@ -164,6 +164,7 @@ namespace DaggerfallWorkshop
         public int NumFrames;                       // Number of frames in this animation
         public int FramePerSecond;                  // Speed at which this animation plays
         public bool FlipLeftRight;                  // True if animation flipped left-to-right
+        public bool BounceAnim;                     // Plays anim forwards then backwards - only works on move/idle looping anims
     }
 
     /// <summary>
@@ -173,7 +174,6 @@ namespace DaggerfallWorkshop
     public struct MobileEnemy
     {
         public int ID;                              // ID of this mobile
-        public string Name;                         // In-game name of this mobile
         public MobileBehaviour Behaviour;           // Behaviour of mobile
         public MobileAffinity Affinity;             // Affinity of mobile
         public MobileGender Gender;                 // Gender of mobile
@@ -225,6 +225,10 @@ namespace DaggerfallWorkshop
         public int[] RangedAttackAnimFrames;        // Animation sequence to play when doing bow & arrow attack
         public bool HasSpellAnimation;              // Whether or not this character has specific animations for casting spells
         public int[] SpellAnimFrames;               // Animation sequence to play when doing a spell cast
+        public bool HasSeducerTransform1;           // Has Seducer start transform amins
+        public bool HasSeducerTransform2;           // Has Seducer end transform anims
+        public int[] SeducerTransform1Frames;       // Animation sequence to play when Seducer crouches and grows wings
+        public int[] SeducerTransform2Frames;       // Animation sequence to play when Seducer stands and spreads wings
         public MobileTeams Team;                    // Team that this enemy uses if enemy in-fighting is on
     }
 

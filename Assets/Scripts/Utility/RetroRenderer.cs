@@ -304,6 +304,10 @@ namespace DaggerfallWorkshop.Utility
             new Color32(  65,  41,  33, 255),
             new Color32(  57,  43,  39, 255),
             new Color32(   0,   0,   0, 255),
+            // Add a few missing grey levels
+            new Color32(   4,   4,   4, 255),
+            new Color32(   8,   8,   8, 255),
+            new Color32(  12,  12,  12, 255),
         };
 
         // LUT downsampling

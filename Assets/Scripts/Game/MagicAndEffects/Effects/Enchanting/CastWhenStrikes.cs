@@ -32,12 +32,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             properties.Key = EffectKey;
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances | ItemMakerFlags.AlphaSortSecondaryList | ItemMakerFlags.WeaponOnly;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Strikes;
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText(EffectKey);
 
         /// <summary>
         /// Outputs spells available to this item effect abstracted as EnchantmentSettings array.
@@ -62,7 +63,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     EffectKey = EffectKey,
                     ClassicType = EnchantmentTypes.CastWhenStrikes,
                     ClassicParam = id,
-                    PrimaryDisplayName = properties.GroupName,
+                    PrimaryDisplayName = GroupName,
                     SecondaryDisplayName = spellRecord.spellName,
                     EnchantCost = classicSpellCosts[i],
                 };
@@ -79,7 +80,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     Version = 1,
                     EffectKey = EffectKey,
                     CustomParam = offer.Key,
-                    PrimaryDisplayName = properties.GroupName,
+                    PrimaryDisplayName = GroupName,
                     SecondaryDisplayName = offer.BundleSetttings.Name,
                     EnchantCost = offer.EnchantmentCost,
                 };

@@ -242,7 +242,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     EnemyEntity enemyEntity = entity as EnemyEntity;
                     if (SoulTrap.FillEmptyTrapItem((MobileTypes)enemyEntity.MobileEnemy.ID, true))
                     {
-                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "trapSuccess"), 1.5f);
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("trapSuccess"), 1.5f);
                     }
                 }
 

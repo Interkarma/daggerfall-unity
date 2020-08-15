@@ -25,12 +25,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             properties.Key = EffectKey;
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held;
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText(EffectKey);
 
         /// <summary>
         /// Outputs all variant settings for this enchantment.
@@ -48,8 +49,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     EffectKey = EffectKey,
                     ClassicType = EnchantmentTypes.ImprovesTalents,
                     ClassicParam = (short)i,
-                    PrimaryDisplayName = properties.GroupName,
-                    SecondaryDisplayName = TextManager.Instance.GetText(textDatabase, classicTextKeys[i]),
+                    PrimaryDisplayName = GroupName,
+                    SecondaryDisplayName = TextManager.Instance.GetLocalizedText(classicTextKeys[i]),
                     EnchantCost = classicParamCosts[i],
                 };
 
@@ -108,8 +109,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         static string[] classicTextKeys =
         {
             "hearing",
-            "athleticism",
-            "adrenalineRush",
+            "athleticismLower",
+            "adrenalineRushLower",
         };
 
         #endregion

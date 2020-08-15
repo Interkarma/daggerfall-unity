@@ -9,7 +9,7 @@
 // Notes:
 //
 
-using System;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -28,6 +28,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.Key = WereboarInfectionKey;
             InfectionType = LycanthropyTypes.Wereboar;
         }
+
+        public override TextFile.Token[] ContractedMessageTokens => null;
 
         protected override void DeployFullBlownLycanthropy()
         {

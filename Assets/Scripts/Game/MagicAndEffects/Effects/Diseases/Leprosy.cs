@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -9,19 +9,22 @@
 // Notes:
 //
 
+using DaggerfallConnect.Arena2;
+
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
     public class Leprosy : DiseaseEffect
     {
+        Diseases diseaseType = Diseases.Leprosy;
+
         public override void SetProperties()
         {
-            Diseases diseaseType = Diseases.Leprosy;
-
             properties.Key = GetClassicDiseaseEffectKey(diseaseType);
             properties.ShowSpellIcon = false;
             classicDiseaseType = diseaseType;
             diseaseData = GetClassicDiseaseData(diseaseType);
-            contractedMessageTokens = GetClassicContractedMessageTokens(diseaseType);
         }
+
+        public override TextFile.Token[] ContractedMessageTokens => GetClassicContractedMessageTokens(diseaseType);
     }
 }

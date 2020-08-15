@@ -23,8 +23,6 @@ namespace DaggerfallWorkshop.Game
     {
         public GameObject PlayerTorch;
 
-        const string textDatabase = "DaggerfallUI";
-
         DaggerfallUnity dfUnity;
         PlayerEnterExit playerEnterExit;
         PlayerEntity playerEntity;
@@ -75,7 +73,7 @@ namespace DaggerfallWorkshop.Game
 
                         if (lightSource.currentCondition == 0 && DaggerfallUnityItem.CompareItems(playerEntity.LightSource, lightSource))
                         {
-                            DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "lightDies"), false, lightSource);
+                            DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("lightDies"), false, lightSource);
                             enableTorch = false;
                             playerEntity.LightSource = null;
                             if (!lightSource.IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Lantern))

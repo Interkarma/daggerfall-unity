@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 .Where(x => ((EnemyEntity)x.gameObject.GetComponent<DaggerfallEntityBehaviour>().Entity).Team != MobileTeams.PlayerAlly).ToList();
             if (nearby.Count == 0)
             {
-                DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetText(textDatabase, "noMonstersNearby"));
+                DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("noMonstersNearby"));
                 return null;
             }
 

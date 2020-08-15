@@ -57,7 +57,10 @@ schema: id,*name
 128, Mage
 129, Spellsword
 130, Battle_mage
+-- Misspelled "Sorceror" must be retained for backwards compatibility with classic quests
+-- Added correct spelling "Sorcerer" matched to same ID for new quests
 131, Sorceror
+131, Sorcerer
 132, Healer
 133, Nightblade
 134, Bard

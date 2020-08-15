@@ -44,6 +44,8 @@ namespace DaggerfallWorkshop.Game
         float initialQualitySettingsShadowDistance;
         //Texture2D pauseScreenshot;
 
+        Dictionary<Func<bool>, string> preventRestConditions = new Dictionary<Func<bool>, string>();
+
         GameObject playerObject = null;
         Camera mainCamera = null;
         RetroRenderer retroRenderer = null;
@@ -542,7 +544,7 @@ namespace DaggerfallWorkshop.Game
             if (InputManager.Instance.ActionStarted(InputManager.Actions.QuickSave))
             {
                 if (SaveLoadManager.IsSavingPrevented)
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText("DaggerfallUI", "cannotSaveNow"));
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotSaveNow"));
                 else
                     SaveLoadManager.Instance.QuickSave();
             }
@@ -550,7 +552,10 @@ namespace DaggerfallWorkshop.Game
             {
                 if (SaveLoadManager.Instance.HasQuickSave(GameManager.Instance.PlayerEntity.Name))
                 {
-                    SaveLoadManager.Instance.QuickLoad();
+                    GameManager.Instance.SaveLoadManager.PromptQuickLoadGame(GameManager.Instance.PlayerEntity.Name, () =>
+                    {
+                        SaveLoadManager.Instance.QuickLoad();
+                    });
                 }
             }
         }
@@ -589,6 +594,46 @@ namespace DaggerfallWorkshop.Game
                     hudDisabledByPause = false;
                 }
             }
+        }
+
+        /// <summary>
+        /// Iterates through conditions if rest is should be prevented
+        /// </summary>
+        /// <returns>Non-null message string if prevented, null otherwise</returns>
+        public string GetPreventedRestMessage()
+        {
+            if (preventRestConditions != null && preventRestConditions.Count > 0)
+            {
+                foreach (var kv in preventRestConditions)
+                {
+                    if (kv.Key())
+                        return kv.Value;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Registers a boolean method that prevents the player from starting or continuing to rest
+        /// </summary>
+        /// <param name="handler">The method returning a boolean whether the player can rest
+        /// <param name="message">The message to be displayed
+        public void RegisterPreventRestCondition(Func<bool> handler, string message)
+        {
+            // If the message is null, it is assumed by the game that there was no prevention, so we must set it to be the empty string instead
+            if (message == null)
+                message = "";
+            preventRestConditions[handler] = message;
+        }
+
+        /// <summary>
+        /// Unregisters a boolean method from being used to prevent the player from resting
+        /// </summary>
+        /// <param name="handler">The method returning a boolean whether the player can rest
+        public void UnregisterPreventRestCondition(Func<bool> handler)
+        {
+            preventRestConditions.Remove(handler);
         }
 
         /// <summary>

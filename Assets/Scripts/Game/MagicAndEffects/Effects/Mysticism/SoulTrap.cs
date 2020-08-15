@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
@@ -28,9 +29,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(12, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "soulTrap");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1603);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1303);
             properties.ShowSpellIcon = false;
             properties.SupportDuration = true;
             properties.SupportChance = true;
@@ -41,6 +39,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.DurationCosts = MakeEffectCosts(60, 68);
             properties.ChanceCosts = MakeEffectCosts(40, 68);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("soulTrap");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1603);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1303);
 
         public override bool ChanceSuccess
         {
@@ -81,7 +83,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     End();
                     return;
             }
-            DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, messageID));
+            DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText(messageID));
         }
 
         protected override bool IsLikeKind(IncumbentEffect other)

@@ -385,27 +385,10 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// Gets the dominant race in player's current region.
-        /// This seems to be based on subclimate rather than FACTION.TXT.
-        /// The faction data has very little diversity and does not match observed race in many regions.
         /// </summary>
         public Races GetRaceOfCurrentRegion()
         {
-            // Racial distribution in Daggerfall:
-            //  * Desert, Desert2, Rainforest = Redguard
-            //  * Mountain, MountainWoods = Nord
-            //  * Swamp, Subtropical, Woodlands, Default = Breton
-
-            DFLocation.ClimateSettings settings = MapsFile.GetWorldClimateSettings(climateSettings.WorldClimate);
-            switch(settings.People)
-            {
-                case FactionFile.FactionRaces.Redguard:
-                    return Races.Redguard;
-                case FactionFile.FactionRaces.Nord:
-                    return Races.Nord;
-                case FactionFile.FactionRaces.Breton:
-                default:
-                    return Races.Breton;
-            }
+            return (Races) MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex] + 1;
         }
 
         /// <summary>
@@ -1189,7 +1172,7 @@ namespace DaggerfallWorkshop
             if (RMBLayout.IsResidence(buildingSummary.BuildingType))
             {
                 // Residence                
-                buildingDiscoveryData.displayName = HardStrings.residence;
+                buildingDiscoveryData.displayName = TextManager.Instance.GetLocalizedText("residence");
             }
             else
             {
@@ -1222,7 +1205,7 @@ namespace DaggerfallWorkshop
                 if (discoveredLocation.Value.discoveredBuildings != null)
                 {
                     foreach (var discoveredBuilding in discoveredLocation.Value.discoveredBuildings)
-                        if (discoveredBuilding.Value.displayName == HardStrings.residence)
+                        if (discoveredBuilding.Value.displayName == TextManager.Instance.GetLocalizedText("residence"))
                             keysToRemove.Add(discoveredBuilding.Key);
 
                     foreach (int key in keysToRemove)

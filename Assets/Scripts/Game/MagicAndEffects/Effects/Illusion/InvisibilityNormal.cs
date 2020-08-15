@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -25,11 +26,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(13, 0);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "invisibility");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "normal");
-            properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1560);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1260);
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
@@ -40,10 +36,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             startConcealmentMessageKey = "youAreInvisible";
         }
 
+        public override string GroupName => TextManager.Instance.GetLocalizedText("invisibility");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("normal");
+        public override string DisplayName => string.Format("{0} ({1})", GroupName, SubGroupName);
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1560);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1260);
+
         public override void SetPotionProperties()
         {
             PotionRecipe invisibility = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "invisibility"),
+                TextManager.Instance.GetLocalizedText("invisibility"),
                 250,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Rain_water,

@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -24,10 +25,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(9, 6);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "fortifyAttribute");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "speed");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1538);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1238);
             properties.SupportDuration = true;
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
@@ -38,5 +35,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.MagnitudeCosts = MakeEffectCosts(40, 120);
             fortifyStat = DFCareer.Stats.Speed;
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("fortifyAttribute");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("speed");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1538);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1238);
     }
 }

@@ -94,6 +94,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public SceneCache_v1 sceneCache;
         public TravelMapSaveData travelMapData;
         public AdvancedClimbingData_v1 advancedClimbingState;
+        public ModInfo_v1[] modInfoData;
     }
 
     #endregion
@@ -146,6 +147,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public TransportModes transportMode;
         public PlayerPositionData_v1 boardShipPosition;  // Holds the player position from before boarding a ship.
         public Dictionary<int, GuildMembership_v1> guildMemberships;
+        public Dictionary<int, GuildMembership_v1> vampireMemberships;
         public List<string> oneTimeQuestsAccepted;
     }
 
@@ -377,6 +379,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int questFoeItemQueueIndex;
         public bool wabbajackActive;
         public int team;
+        public bool specialTransformationCompleted;
     }
 
     #endregion
@@ -447,6 +450,16 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string characterName;
         public DateAndTime_v1 dateAndTime;
         public string dfuVersion;
+    }
+
+    [fsObject("v1")]
+    public class ModInfo_v1
+    {
+        public string fileName;
+        public string title;
+        public string guid;
+        public string version;
+        public int loadPriority;
     }
 
     #endregion

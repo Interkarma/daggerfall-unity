@@ -30,12 +30,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             properties.Key = EffectKey;
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances | ItemMakerFlags.AlphaSortSecondaryList;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held;
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText(EffectKey);
 
         /// <summary>
         /// Outputs all variant settings for this enchantment.
@@ -54,7 +55,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     EffectKey = EffectKey,
                     ClassicType = EnchantmentTypes.EnhancesSkill,
                     ClassicParam = (short)i,
-                    PrimaryDisplayName = properties.GroupName,
+                    PrimaryDisplayName = GroupName,
                     SecondaryDisplayName = DaggerfallUnity.Instance.TextProvider.GetSkillName(skill),
                     EnchantCost = enchantCost,
                 };

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -12,8 +12,8 @@
 #region Using Statements
 using System;
 using System.IO;
-using UnityEngine;
 using DaggerfallConnect.Utility;
+using UnityEngine;
 #endregion
 
 namespace DaggerfallConnect.Arena2
@@ -228,8 +228,9 @@ namespace DaggerfallConnect.Arena2
         /// <param name="alphaIndex">Index to receive transparent alpha.</param>
         /// <param name="border">Number of pixels border to add around image.</param>
         /// <param name="sizeOut">Receives image dimensions with borders included.</param>
+        /// <param name="emissionIndex">Force matching emissive index to non-transparent.</param>
         /// <returns>Color32 array.</returns>
-        public Color32[] GetColor32(DFBitmap srcBitmap, int alphaIndex, int border, out DFSize sizeOut)
+        public Color32[] GetColor32(DFBitmap srcBitmap, int alphaIndex, int border, out DFSize sizeOut, int emissionIndex = -1, int customAlphaValue = 255)
         {
             // Calculate dimensions
             int srcWidth = srcBitmap.Width;
@@ -256,7 +257,8 @@ namespace DaggerfallConnect.Arena2
                     c.r = paletteData[offset];
                     c.g = paletteData[offset + 1];
                     c.b = paletteData[offset + 2];
-                    c.a = (alphaIndex == index) ? (byte)0 : (byte)255;
+                    c.a = (alphaIndex == index) ? (byte)0 : (byte)customAlphaValue;     // General cutout alpha with custom alpha output
+                    c.a = (emissionIndex == index) ? (byte)255 : c.a;                   // Make emissive parts fully non-transparent alpha
                     colors[dstRow + border + x] = c;
                 }
             }
@@ -292,6 +294,53 @@ namespace DaggerfallConnect.Arena2
                     index = srcBitmap.Data[srcRow + x];
                     if (index == emissionIndex)
                         emissionColors[dstRow + x] = Color.white;
+                }
+            }
+
+            return emissionColors;
+        }
+
+        /// <summary>
+        /// Gets a Color32 array as emission map for spectral textures (glowing eyes).
+        /// Needs extra handling for borders as spectral textures might be atlased.
+        /// </summary>
+        /// <param name="srcBitmap">Source bitmap.</param>
+        /// <param name="borderSize">Size of border for atlased textures.</param>
+        /// <param name="eyesEmissionIndex">Index to receive emission colour.</param>
+        /// <param name="eyeEmission">Amount of emission to apply to other parts of body (black=none, white=full).</param>
+        /// <param name="otherEmission">Amount of emission to apply to other parts of body (black=none, white=full).</param>
+        /// <returns>Color32 array.</returns>
+        public Color32[] GetSpectralEmissionColors32(DFBitmap srcBitmap, Color32[] albedoColors, int borderSize, int eyesEmissionIndex, Color eyeEmission, Color otherEmission)
+        {
+            // Create target array
+            DFSize sz = new DFSize(srcBitmap.Width + borderSize * 2, srcBitmap.Height + borderSize * 2);
+            Color32[] emissionColors = new Color32[sz.Width * sz.Height];
+
+            // Generate emissive parts of texture based on index
+            int index, srcRow, dstRow;
+            for (int y = 0; y < srcBitmap.Height; y++)
+            {
+                // Get row position
+                srcRow = y * srcBitmap.Width;
+                dstRow = (sz.Height - 1 - borderSize - y) * sz.Width;
+
+                // Write data for this row
+                for (int x = 0; x < srcBitmap.Width; x++)
+                {
+                    index = srcBitmap.Data[srcRow + x];
+                    if (index == eyesEmissionIndex)
+                        emissionColors[dstRow + borderSize + x] = eyeEmission;
+                    else
+                    {
+                        // Feed albedoColors into emission to really pop lighter features like ribs and skulls
+                        // Use otherEmission (with Color.black) for flatter more stealthy ghost
+                        float H;
+                        float S;
+                        float V;
+                        Color.RGBToHSV(albedoColors[dstRow + borderSize + x], out H, out S, out V);
+                        float emission = Mathf.Pow(V, 1.9f);
+                        emissionColors[dstRow + borderSize + x] = Color.Lerp(otherEmission, albedoColors[dstRow + borderSize + x], Mathf.Clamp01(emission));
+                    }
                 }
             }
 

@@ -24,6 +24,10 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public class TextureReader
     {
+        const int spectralEyesReserved = 14;
+        const int spectralEyesPatched = 247;
+        const int spectralGrayStart = 96;
+
         bool mipMaps = true;
 
         // Special texture indices
@@ -187,8 +191,9 @@ namespace DaggerfallWorkshop.Utility
         {
             GetTextureResults results = new GetTextureResults();
 
-            // Check if window or auto-emissive
+            // Check if window, spectral, or auto-emissive
             bool isWindow = ClimateSwaps.IsExteriorWindow(settings.archive, settings.record);
+            bool isSpectral = TextureFile.IsSpectralArchive(settings.archive);
             bool isEmissive = (settings.autoEmission) ? IsEmissive(settings.archive, settings.record) : false;
 
             // Override readable flag when user has set preference in material reader
@@ -208,10 +213,24 @@ namespace DaggerfallWorkshop.Utility
             else
                 textureFile = settings.textureFile;
 
-            // Get starting DFBitmap and albedo Color32 array
+            // Get starting DFBitmap
             DFSize sz;
             DFBitmap srcBitmap = textureFile.GetDFBitmap(settings.record, settings.frame);
-            Color32[] albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz);
+
+            // Get albedo Color32 array
+            Color32[] albedoColors;
+            if (isSpectral)
+            {
+                // Adjust source bitmap to set spectral grays
+                // 180 = transparency amount (~70% visible)
+                SetSpectral(ref srcBitmap);
+                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz, spectralEyesPatched, 180);
+            }
+            else
+            {
+                // Read direct from source bitmap
+                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz);
+            }
 
             // Sharpen source image
             if (settings.sharpen)
@@ -296,6 +315,18 @@ namespace DaggerfallWorkshop.Utility
                     resultEmissive = true;
                 }
 
+                // Spectral need special handling as only eye parts are emissive
+                if ((settings.createEmissionMap || settings.autoEmission) && isSpectral)
+                {
+                    Color eyeEmission = Color.red;
+                    Color bodyEmission = Color.black;// new Color(0.1f, 0.1f, 0.1f);
+                    Color32[] emissionColors = textureFile.GetSpectralEmissionColors32(srcBitmap, albedoColors, settings.borderSize, spectralEyesPatched, eyeEmission, bodyEmission);
+                    emissionMap = new Texture2D(albedoMap.width, albedoMap.height, ParseTextureFormat(alphaTextureFormat), MipMaps);
+                    emissionMap.SetPixels32(emissionColors);
+                    emissionMap.Apply(true, !settings.stayReadable);
+                    resultEmissive = true;
+                }
+
                 // Some archives need special handling as they contains a mix of emissive and non-emissive flats
                 // This can cause problems with atlas packing due to mismatch between albedo and emissive texture counts
                 if ((settings.createEmissionMap || settings.autoEmission) && IsEmissiveArchive(settings.archive))
@@ -330,6 +361,25 @@ namespace DaggerfallWorkshop.Utility
             results.textureFile = textureFile;
 
             return results;
+        }
+
+        /// <summary>
+        /// Updates spectral color indices to set eyes red and accentuate other features
+        /// </summary>
+        /// <param name="srcBitmap"></param>
+        public void SetSpectral(ref DFBitmap srcBitmap)
+        {
+            for (int i = 0; i < srcBitmap.Data.Length; i++)
+            {
+                byte index = srcBitmap.Data[i];
+
+                // Index 14 is reserved for emissive eyes, patching this to 112 (white color index) for best interaction with shader
+                // Other colours are reindexed to a grey gradiant area of palette so that bones are brighter than shroud
+                if (index == spectralEyesReserved)
+                    srcBitmap.Data[i] = spectralEyesPatched;
+                else if (index > 0)
+                    srcBitmap.Data[i] = (byte)(spectralGrayStart - index);
+            }
         }
 
         /// <summary>
@@ -969,6 +1019,40 @@ namespace DaggerfallWorkshop.Utility
             new DaggerfallTextureIndex() { archive = 253, record = 75 },
             new DaggerfallTextureIndex() { archive = 253, record = 77 },
 
+            // Ghost
+            new DaggerfallTextureIndex() { archive = 273, record = 0 },
+            new DaggerfallTextureIndex() { archive = 273, record = 1 },
+            new DaggerfallTextureIndex() { archive = 273, record = 2 },
+            new DaggerfallTextureIndex() { archive = 273, record = 3 },
+            new DaggerfallTextureIndex() { archive = 273, record = 4 },
+            new DaggerfallTextureIndex() { archive = 273, record = 5 },
+            new DaggerfallTextureIndex() { archive = 273, record = 6 },
+            new DaggerfallTextureIndex() { archive = 273, record = 7 },
+            new DaggerfallTextureIndex() { archive = 273, record = 8 },
+            new DaggerfallTextureIndex() { archive = 273, record = 9 },
+            new DaggerfallTextureIndex() { archive = 273, record = 10 },
+            new DaggerfallTextureIndex() { archive = 273, record = 11 },
+            new DaggerfallTextureIndex() { archive = 273, record = 12 },
+            new DaggerfallTextureIndex() { archive = 273, record = 13 },
+            new DaggerfallTextureIndex() { archive = 273, record = 14 },
+
+            // Wraith
+            new DaggerfallTextureIndex() { archive = 278, record = 0 },
+            new DaggerfallTextureIndex() { archive = 278, record = 1 },
+            new DaggerfallTextureIndex() { archive = 278, record = 2 },
+            new DaggerfallTextureIndex() { archive = 278, record = 3 },
+            new DaggerfallTextureIndex() { archive = 278, record = 4 },
+            new DaggerfallTextureIndex() { archive = 278, record = 5 },
+            new DaggerfallTextureIndex() { archive = 278, record = 6 },
+            new DaggerfallTextureIndex() { archive = 278, record = 7 },
+            new DaggerfallTextureIndex() { archive = 278, record = 8 },
+            new DaggerfallTextureIndex() { archive = 278, record = 9 },
+            new DaggerfallTextureIndex() { archive = 278, record = 10 },
+            new DaggerfallTextureIndex() { archive = 278, record = 11 },
+            new DaggerfallTextureIndex() { archive = 278, record = 12 },
+            new DaggerfallTextureIndex() { archive = 278, record = 13 },
+            new DaggerfallTextureIndex() { archive = 278, record = 14 },
+
             // Frost daedra
             new DaggerfallTextureIndex() { archive = 280, record = 0 },
             new DaggerfallTextureIndex() { archive = 280, record = 1 },
@@ -1060,6 +1144,23 @@ namespace DaggerfallWorkshop.Utility
             // new DaggerfallTextureIndex() { archive = 380, record = 5 }, // UI
             new DaggerfallTextureIndex() { archive = 434, record = 3 },
             // new DaggerfallTextureIndex() { archive = 434, record = 5 }, // UI
+
+            // Lysandus
+            new DaggerfallTextureIndex() { archive = 473, record = 0 },
+            new DaggerfallTextureIndex() { archive = 473, record = 1 },
+            new DaggerfallTextureIndex() { archive = 473, record = 2 },
+            new DaggerfallTextureIndex() { archive = 473, record = 3 },
+            new DaggerfallTextureIndex() { archive = 473, record = 4 },
+            new DaggerfallTextureIndex() { archive = 473, record = 5 },
+            new DaggerfallTextureIndex() { archive = 473, record = 6 },
+            new DaggerfallTextureIndex() { archive = 473, record = 7 },
+            new DaggerfallTextureIndex() { archive = 473, record = 8 },
+            new DaggerfallTextureIndex() { archive = 473, record = 9 },
+            new DaggerfallTextureIndex() { archive = 473, record = 10 },
+            new DaggerfallTextureIndex() { archive = 473, record = 11 },
+            new DaggerfallTextureIndex() { archive = 473, record = 12 },
+            new DaggerfallTextureIndex() { archive = 473, record = 13 },
+            new DaggerfallTextureIndex() { archive = 473, record = 14 },
         };
 
         static Dictionary<int, List<int>> fastEmissiveTextures = null;
@@ -1106,6 +1207,76 @@ namespace DaggerfallWorkshop.Utility
             File.WriteAllBytes(path, bytes);
         }
 #endif
+
+        /// <summary>
+        /// Checks if sprite is a child NPC sprite texture.
+        /// </summary>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Texture record.</param>
+        /// <returns>True if a child NPC sprite texture.</returns>
+        public static bool IsChildNPCTexture(int archive, int record)
+        {
+            // Archives known to store child NPC textures
+            // Records are checked for each individually for a match
+            const int templePeople = 181;
+            const int mediumCommonPeople = 182;
+            const int flatPeople2 = 184;
+            const int testBigFlats = 186;
+            const int kludgeTown = 197;
+            const int daggerfallPeople = 334;
+            const int wayrestPeople = 346;
+            const int sentinelPeople = 357;
+
+            if (archive == templePeople)
+            {
+                if (record == 3)
+                    return true;
+            }
+
+            if (archive == mediumCommonPeople)
+            {
+                if (record == 4 || record == 5 || record == 6 || record == 18 || record == 36 || record == 37 || record == 38 || record == 42 || record == 43 || record == 52 || record == 53)
+                    return true;
+            }
+
+            if (archive == flatPeople2)
+            {
+                if (record == 15)
+                    return true;
+            }
+
+            if (archive == testBigFlats)
+            {
+                if (record == 4 || record == 5 || record == 6 || record == 7 || record == 19 || record == 37 || record == 38 || record == 39 || record == 43 || record == 44 || record == 53 || record == 54)
+                    return true;
+            }
+
+            if (archive == kludgeTown)
+            {
+                if (record == 3)
+                    return true;
+            }
+
+            if (archive == daggerfallPeople)
+            {
+                if (record == 2 || record == 3 || record == 6 || record == 9 || record == 12)
+                    return true;
+            }
+
+            if (archive == wayrestPeople)
+            {
+                if (record == 2 || record == 3 || record == 12 || record == 15 || record == 16 || record == 18)
+                    return true;
+            }
+
+            if (archive == sentinelPeople)
+            {
+                if (record == 5 || record == 6 || record == 7 || record == 8)
+                    return true;
+            }
+
+            return false;
+        }
 
         #endregion
 

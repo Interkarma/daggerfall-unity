@@ -14,7 +14,7 @@ public class PostProcessBuild
         //const string modReadMeText = "Place your .dfmod files in this folder for the mod system.";
 
         if (target == BuildTarget.StandaloneWindows || target == BuildTarget.StandaloneWindows64 ||
-            target == BuildTarget.StandaloneLinux || target == BuildTarget.StandaloneLinux64 || target == BuildTarget.StandaloneLinuxUniversal ||
+            target == BuildTarget.StandaloneLinux64 ||
             target == BuildTarget.StandaloneOSX)
         {
             // Get build path

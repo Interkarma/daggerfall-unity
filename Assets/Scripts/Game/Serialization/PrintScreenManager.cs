@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
-                if (Input.GetKeyUp(prtscrBinding))
+                if (InputManager.Instance.GetKeyUp(prtscrBinding))
                     StartCoroutine(TakeScreenshot());
             }
         }

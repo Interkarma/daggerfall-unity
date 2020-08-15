@@ -226,7 +226,7 @@ namespace DaggerfallWorkshop.Game
             if (!IsHanging)
             {
                 if (showHangingModeMessage)
-                    DaggerfallUI.AddHUDText(UserInterfaceWindows.HardStrings.hangingMode);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("hangingMode"));
 
                 showHangingModeMessage = false;
                 IsHanging = true;

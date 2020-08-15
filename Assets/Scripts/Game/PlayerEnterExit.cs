@@ -353,7 +353,7 @@ namespace DaggerfallWorkshop.Game
                 bool overEncumbered = (GameManager.Instance.PlayerEntity.CarriedWeight * 4 > 250);
                 if ((overEncumbered && levitateMotor.IsSwimming) && !displayAfloatMessage && !GameManager.Instance.PlayerEntity.IsWaterWalking)
                 {
-                    DaggerfallUI.AddHUDText(HardStrings.cannotFloat, 1.75f);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("cannotFloat"), 1.75f);
                     displayAfloatMessage = true;
                 }
                 else if ((!overEncumbered || !levitateMotor.IsSwimming) && displayAfloatMessage)
@@ -674,7 +674,7 @@ namespace DaggerfallWorkshop.Game
             }
             catch (Exception e)
             {
-                DaggerfallUI.AddHUDText(HardStrings.thisHouseHasNothingOfValue);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("thisHouseHasNothingOfValue"));
                 Debug.LogException(e);
                 Destroy(newInterior);
                 RaiseOnFailedTransition(TransitionType.ToBuildingInterior);
@@ -1316,7 +1316,7 @@ namespace DaggerfallWorkshop.Game
                     location.MapTableData.LocationType != DFRegion.LocationTypes.HomeYourShips)
                 {
                     // Show "You are entering %s"
-                    string youAreEntering = HardStrings.youAreEntering;
+                    string youAreEntering = TextManager.Instance.GetLocalizedText("youAreEntering");
                     youAreEntering = youAreEntering.Replace("%s", location.Name);
                     DaggerfallUI.AddHUDText(youAreEntering, 2);
 
@@ -1330,7 +1330,7 @@ namespace DaggerfallWorkshop.Game
                         foreach (RoomRental_v1 room in rooms)
                         {
                             string remainingHours = PlayerEntity.GetRemainingHours(room).ToString();
-                            DaggerfallUI.AddHUDText(HardStrings.youHaveRentedRoom.Replace("%s", room.name).Replace("%d", remainingHours), 6);
+                            DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youHaveRentedRoom").Replace("%s", room.name).Replace("%d", remainingHours), 6);
                         }
                     }
 

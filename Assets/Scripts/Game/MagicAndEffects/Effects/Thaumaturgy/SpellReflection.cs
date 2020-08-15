@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -24,9 +25,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(21, 255);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "spellReflection");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1569);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1269);
             properties.SupportDuration = true;
             properties.SupportChance = true;
             properties.ChanceFunction = ChanceFunction.Custom;
@@ -37,6 +35,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.DurationCosts = MakeEffectCosts(28, 140);
             properties.ChanceCosts = MakeEffectCosts(28, 140);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("spellReflection");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1569);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1269);
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {
