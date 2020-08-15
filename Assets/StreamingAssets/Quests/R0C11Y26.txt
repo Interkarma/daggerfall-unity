@@ -6,6 +6,7 @@
 -- QuestId: 26
 Messages: 51
 Quest: R0C11Y26
+DisplayName: The Mad Ripper
 -- Message panels
 QRC:
 
@@ -16,7 +17,7 @@ QuestorOffer:  [1000]
 <ce>              and constabulary are helpless against him.
 <ce>            They have no clues to his identity whatsoever.
 <ce>               I know you have some resources and rather
-<ce>                untraditional contacts. Can you try and
+<ce>                nontraditional contacts. Can you try and
 <ce>                 help me in this matter, for the good
 <ce>             of all %reg -- and a substantial sum of gold?
 

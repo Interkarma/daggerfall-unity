@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 34
 Quest: A0C00Y08
+DisplayName: The Assassin
 -- Message panels
 QRC:
 

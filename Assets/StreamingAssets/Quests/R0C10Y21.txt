@@ -6,6 +6,7 @@
 -- QuestId: 21
 Messages: 16
 Quest: R0C10Y21
+DisplayName: The Temple of the Orcs
 -- Message panels
 QRC:
 
@@ -54,7 +55,7 @@ QuestComplete:  [1004]
 <ce>                     _reward_ gold pieces. Go wild.
 
 RumorsDuringQuest:  [1005]
-There's a orc community in ___mondung_ that's been bothering _qgfriend_.
+There's an orc community in ___mondung_ that's been bothering _qgfriend_.
 <--->
 ___mondung_ was, I think, an orc temple years ago. Now they're bringing it back.
 

@@ -69,7 +69,7 @@ QuestorPostfailure:  [1009]
 <ce>               take care of a bunch of Harpies. Pathetic.
 
 Message:  1020
-<ce>                   Thats five. That should be enough
+<ce>                   That's five. That should be enough
 <ce>                         to hold _questgiver_.
 
 Message:  1030

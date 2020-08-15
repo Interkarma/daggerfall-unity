@@ -35,7 +35,7 @@ AcceptQuest:  [1002]
 
 QuestComplete:  [1004]
 <ce>                        The orc menace has been
-<ce>                           striken from %reg.
+<ce>                           stricken from %reg.
 <ce>                             All hail %pcn!
 
 RumorsDuringQuest:  [1005]

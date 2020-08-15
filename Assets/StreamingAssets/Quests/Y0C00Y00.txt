@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 31
 Quest: Y0C00Y00
+DisplayName: Mehrunes Dagon's Quest
 -- Message panels
 QRC:
 

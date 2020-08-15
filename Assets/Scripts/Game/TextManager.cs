@@ -35,8 +35,8 @@ namespace DaggerfallWorkshop.Game
         const string textFolderName = "Text";
         const string textColumn = "text";
 
-        public string internalStringsCollection = defaultInternalStringsCollectionName;
-        public string textRSCCollection = string.Empty;
+        public string runtimeInternalStrings = defaultInternalStringsCollectionName;
+        public string runtimeRSCStrings = string.Empty;
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
         Dictionary<string, string[]> cachedLocalizedTextLists = new Dictionary<string, string[]>();
@@ -202,18 +202,18 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         /// <param name="collection">Collection enum value.</param>
         /// <returns>Name of collection set to specified collection value.</returns>
-        private string GetCollectionName(TextCollections collection)
+        private string GetRuntimeCollectionName(TextCollections collection)
         {
             string collectionName;
             switch (collection)
             {
                 default:
                 case TextCollections.Internal:
-                    collectionName = internalStringsCollection;
+                    collectionName = runtimeInternalStrings;
                     break;
 
                 case TextCollections.TextRSC:
-                    collectionName = textRSCCollection;
+                    collectionName = runtimeRSCStrings;
                     break;
             }
 
@@ -259,7 +259,7 @@ namespace DaggerfallWorkshop.Game
         public string GetLocalizedText(string key, TextCollections collection = TextCollections.Internal, bool exception = false)
         {
             string localizedText;
-            if (TryGetLocalizedText(GetCollectionName(collection), key, out localizedText))
+            if (TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedText))
                 return localizedText;
             else if (TryGetLocalizedText(GetDefaultCollectionName(collection), key, out localizedText))
                 return localizedText;
@@ -281,7 +281,7 @@ namespace DaggerfallWorkshop.Game
         /// <returns>Text array if all keys found, otherwise returns null or throws exception.</returns>
         public string[] GetLocalizedTextListFromKeyArray(string[] keyArray, TextCollections collection = TextCollections.Internal, bool exception = true)
         {
-            return GetLocalizedTextListFromKeyArray(GetCollectionName(collection), keyArray, exception);
+            return GetLocalizedTextListFromKeyArray(GetRuntimeCollectionName(collection), keyArray, exception);
         }
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace DaggerfallWorkshop.Game
         /// <returns>Text array if found, otherwise returns null or throws exception.</returns>
         public string[] GetLocalizedTextList(string key, TextCollections collection = TextCollections.Internal, bool exception = true)
         {
-            return GetLocalizedTextList(GetCollectionName(collection), key, exception);
+            return GetLocalizedTextList(GetRuntimeCollectionName(collection), key, exception);
         }
 
         /// <summary>

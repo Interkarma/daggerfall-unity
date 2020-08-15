@@ -6,6 +6,7 @@
 -- QuestId: 11
 Messages: 16
 Quest: R0C10Y11
+DisplayName: Contraband Goods
 -- Message panels
 QRC:
 

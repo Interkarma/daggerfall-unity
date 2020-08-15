@@ -6,6 +6,7 @@
 -- QuestId: 9
 Messages: 22
 Quest: P0B20L09
+DisplayName: The Vanguard
 -- Message panels
 QRC:
 
@@ -80,7 +81,7 @@ Message:  1012
  at __vamp_ in ___vamp_.
 
 Message:  1013
-%dat:
+%qdt:
  _vamp_ has sent me to
  ___mondung_, where a group of impudent
  werecreatures have dared intrude on

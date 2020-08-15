@@ -6,6 +6,7 @@
 -- QuestId: 22
 Messages: 31
 Quest: R0C20Y22
+DisplayName: Business with Orcs
 -- Message panels
 QRC:
 

@@ -23,7 +23,7 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                  Somehow I thought you might try for
-<ce>     this one. Its your funereal. This mark is no arena gladiator.
+<ce>     this one. It's your funeral. This mark is no arena gladiator.
 <ce>                   We're talking about a veteran of
 <ce>                 the Betony war. Killed 9 men, if the
 <ce>                  stories are right. Go to _mondung_
@@ -49,7 +49,7 @@ RumorsDuringQuest:  [1005]
 Such a shame, what's happening in Daggerfall.
 
 RumorsPostfailure:  [1006]
-I hear the queen is pregnant. At least thats what everyone is saying.
+I hear the queen is pregnant. At least that's what everyone is saying.
 
 RumorsPostsuccess:  [1007]
 Did you hear about that war hero? Killed in a duel. What a shame.

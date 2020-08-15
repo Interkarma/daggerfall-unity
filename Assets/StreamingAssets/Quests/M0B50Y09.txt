@@ -39,7 +39,7 @@ QuestComplete:  [1004]
 <ce>                            for such a deed.
 
 RumorsDuringQuest:  [1005]
-<ce>                  The mages guild has refused to kill
+<ce>                  The Mages Guild has refused to kill
 <ce>                that rampaging gargoyle. They claim its
 <ce>                    not their fault. Lazy bastards.
 
@@ -63,7 +63,7 @@ QuestorPostfailure:  [1009]
 
 QuestLogEntry:  [1010]
 On %qdt,
- The Fighers Guild of ___qgiver_
+ The Fighters Guild of ___qgiver_
  charged me with the duty of destroying a
  gargoyle that lairs in ___dungeon_.
  I have =2dung_ days to finish the task.

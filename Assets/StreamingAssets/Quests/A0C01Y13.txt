@@ -4,8 +4,8 @@
 -- Questor: peasant
 -- Repute: 01
 -- QuestId: 13
-Messages: 1006
 Quest: A0C01Y13
+DisplayName: Defamation
 -- Message panels
 QRC:
 
@@ -181,7 +181,7 @@ Message:  1022
                                      <--->
 <ce>                _giver_ has been keeping some secrets.
                                      <--->
-<ce>              Everone around here has their own stories.
+<ce>              Everyone around here has their own stories.
                                      <--->
 <ce>                     There's always talk at _inn_.
 

@@ -34,7 +34,7 @@ AcceptQuest:  [1002]
 <ce>                        _mitem_ will be crafted
 <ce>                for thee. Now, journey thou to farthest
 <ce>                     __tavern_ and seek the one who has
-<ce>                    betrayed us, a villianous =man_
+<ce>                    betrayed us, a villainous =man_
 <ce>                       who calls %g2-self _man_.
 <ce>                Give to %g2 this _jewelry_, tell %g2 it
 <ce>                is a gift from %g3 old lover, and then
@@ -50,7 +50,7 @@ AcceptQuest:  [1002]
 
 QuestComplete:  [1004]
 <ce>                       Good %pcf, thy promise to
-<ce>                      the ==qgiver_ is fulfilled.
+<ce>                      ==qgiver_ is fulfilled.
 <ce>                         Here is the _mitem_ I
 <ce>                         promised. Poor _man_.
 <ce>                I hope they allow %g2 to suffer deeply,

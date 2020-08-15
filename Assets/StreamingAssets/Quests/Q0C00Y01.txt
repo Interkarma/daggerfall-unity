@@ -12,7 +12,7 @@ DisplayName: The Libel
 QRC:
 
 QuestorOffer:  [1000]
-<ce>                      We would use thee to find a
+<ce>                      We would use thee to find
 <ce>                  a perfidious document circulated by
 <ce>                  our enemies in an effort to suppress
 <ce>                 our coven. I know wherein this packet

@@ -32,7 +32,7 @@ QuestFail:  [1003]
 <ce>                    I wanted some real proof, %pcf.
 
 QuestComplete:  [1004]
-<ce>             This what I most feared. Poor _brother_. As I
+<ce>             This is what I most feared. Poor _brother_. As I
 <ce>                promised, here's what I've heard about
 <ce>              Lysandus. I don't know how much of this is
 <ce>             secret, but I trust you. Lysandus was in love
@@ -41,7 +41,7 @@ QuestComplete:  [1004]
 <ce>             his queen found out. They say that while her
 <ce>               husband was gone, Queen Mynisera banished
 <ce>              Medora from the court. My sister Aubk-i is
-<ce>            queen now, part of the treaty to insure peace,
+<ce>            queen now, part of the treaty to ensure peace,
 <ce>            but Mynisera still resides at Castle Daggerfall
 <ce>                     as the dowager Queen mother.
 <ce>                                    
@@ -105,7 +105,7 @@ QuestLogEntry:  [1010]
  the kingdom. I cannot say I missed the love; I received
  much attention from the doctors, priests, and herbalists
  constantly at court. Certainly I was not to be the sort
- of warrior that King Cameron was, but one of my dearest
+ of warrior that King Camaron was, but one of my dearest
  friends, a priest of Stendarr said that I might be the
  first scholar-king in the history of Sentinel.
  
@@ -168,7 +168,7 @@ The Underking used to have a crypt around here -- ___ukcrypt_, just %di of here.
 <--->
 No one has heard much of the Underking since his crypt ___ukcrypt_ was abandoned.
 <--->
-King Cameron himself drove the Underking's servants out of ___ukcrypt_.
+King Camaron himself drove the Underking's servants out of ___ukcrypt_.
 
 Message:  1013
 The Underking is supposed to be centuries old.
@@ -179,7 +179,7 @@ He is a lich of great power. So they say.
 <--->
 I heard he kidnapped Prince _brother_.
 <--->
-King Cameron blamed the Underking for Prince _brother_'s death. Never made sense to me though.
+King Camaron blamed the Underking for Prince _brother_'s death. Never made sense to me though.
 <--->
 They say Tiber Septim never really died. He became the Underking.
 <--->
@@ -233,8 +233,7 @@ Message:  1019
  by the Underking years ago.
 
 Message:  1020
-<ce>                             You pick up a
-<ce>                          Death Certificate.
+<ce>                You pick up a death certificate.
 
 Message:  1030
 _brother_ was a prince of Sentinel. He died years ago.
@@ -243,17 +242,17 @@ _brother_ came down with a fever and eventually died.
 <--->
 Wasn't he the scholar prince?
 <--->
-_brother_ like books more than swords. It used to drive King Cameron crazy.
+_brother_ liked books more than swords. It used to drive King Camaron crazy.
 <--->
-He was the only prince never to recieve a public funeral.
+He was the only prince never to receive a public funeral.
 
 Message:  1031
-<ce> Old King Cameron, may his soul rest in peace, never liked _brother_.
+<ce> Old King Camaron, may his soul rest in peace, never liked _brother_.
  He would have preferred Greklith to be his heir.
                                      <--->
 I heard that _brother_'s former nursemaid was sent to Skyrim with a chest full of gold. 
 <--->
-King Cameron seemed far too happy when _brother_ died.
+King Camaron seemed far too happy when _brother_ died.
 <--->
 I heard he died of a fever.
 <--->
@@ -318,8 +317,6 @@ Place _dirennitower_ permanent DirenniTowerEntry
 Place _agentplace_ remote tavern
 
 Clock _S.13_ 3.00:00 7.00:00
--1002 edited to remove additional 'to'
-
 
 --	Quest start-up:
 	dialog link for location _ukcrypt_ 

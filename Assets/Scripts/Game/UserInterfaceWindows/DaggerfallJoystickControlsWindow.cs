@@ -397,7 +397,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             IEnumerable<String> keyList = UnsavedKeybindDict.Select(kv => kv.Value);
 
-            var dupes = DaggerfallControlsWindow.GetDuplicates(keyList);
+            var dupes = ControlsConfigManager.Instance.GetDuplicates(keyList);
 
             AllowCancel = dupes.Count == 0;
 

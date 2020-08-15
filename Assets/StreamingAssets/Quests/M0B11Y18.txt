@@ -264,9 +264,9 @@ Message:  1061
 
 Message:  1062
 <ce>                 _traitor_ looks at you intently. The
-<ce>               color drains from %g3 face as %g realizes
+<ce>               color drains from his face as he realizes
 <ce>                who you are, and before anyone can stop
-<ce>                 %g2 %g turns and bolts for the door.
+<ce>                 him he turns and bolts for the door.
 
 Message:  1070
 <ce>                    %ra dog, you will pay for your
@@ -281,12 +281,12 @@ Message:  1072
 <ce>                          _traitor_ is dead.
 
 Message:  1073
-<ce>                   _traitor_ throws down %g3 weapon.
-<ce>                   Thinking %g is surrendering, you
+<ce>                   _traitor_ throws down his weapon.
+<ce>                   Thinking he is surrendering, you
 <ce>                   pause in your attack, but instead
-<ce>                    %g twists a ring on %g3 finger.
+<ce>                    he twists a ring on his finger.
 <ce>                   As _traitor_ disappears in a haze
-<ce>                 of light, you faintly hear %g2 shout,
+<ce>                 of light, you faintly hear him shout,
 <ce>                                    
 <ce>                       "Tell that bitch that she
 <ce>                     hasn't seen the last of me!"

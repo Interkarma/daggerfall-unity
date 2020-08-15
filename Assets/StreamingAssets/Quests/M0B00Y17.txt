@@ -95,6 +95,14 @@ Message:  1021
  I just have to get it back to _dummy_
  in ___dummy_.
 
+ Message:  1022
+%qdt:
+ I found the tiger in ___mondung_,
+ but I killed it. The best I can do now
+ is go to __dummy_ of ___dummy_
+ and apologize to _dummy_
+ for the botched job.
+
 Message:  1030
 <ce>                      Oops. You killed the tiger.
 <ce>                    I wonder what _dummy_ will say?
@@ -241,6 +249,8 @@ until _S.02_ performed:
 _S.03_ task:
 	killed 1 _tiger_ 
 	say 1030 
+	log 1022 step 1
+--adds log in case user missed kill message
 
 variable _S.04_
 _S.05_ task:

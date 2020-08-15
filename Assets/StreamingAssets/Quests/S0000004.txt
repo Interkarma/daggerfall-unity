@@ -13,7 +13,7 @@ QuestorOffer:  [1000]
 <ce>               scandals in the Bay of which I am totally
 <ce>             ignorant. I could give you some information,
 <ce>              but nothing is without a price, that I know
-<ce>               well. I need a champion who does fear the
+<ce>               well. I need a champion who doesn't fear the
 <ce>                 fire of Oblivion. Are you interested?
 
 RefuseQuest:  [1001]
@@ -52,7 +52,7 @@ QuestComplete:  [1004]
 <ce>                                    
 <ce>            The letter you seek is in the hands of Gortwog,
 <ce>            the Warlord of the Orcs. He bought it from the
-<ce>            thieves guild of Daggerfall after one of their
+<ce>            Thieves Guild of Daggerfall after one of their
 <ce>                  number stole it from Queen Aubk-i.
 <ce>                                    
 <ce>            I confess I don't know why the Emperor sent it

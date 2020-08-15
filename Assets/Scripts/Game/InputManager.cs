@@ -60,9 +60,13 @@ namespace DaggerfallWorkshop.Game
 
         IList keyCodeList;
         KeyCode[] reservedKeys = new KeyCode[] { };
+
+        Dictionary<int, int> primarySecondaryKeybindDict = new Dictionary<int, int>();
         Dictionary<KeyCode, Actions> actionKeyDict = new Dictionary<KeyCode, Actions>();
+        Dictionary<KeyCode, Actions> secondaryActionKeyDict = new Dictionary<KeyCode, Actions>();
         Dictionary<String, AxisActions> axisActionKeyDict = new Dictionary<String, AxisActions>();
         Dictionary<KeyCode, string> unknownActions = new Dictionary<KeyCode, string>();
+        Dictionary<KeyCode, string> secondaryUnknownActions = new Dictionary<KeyCode, string>();
         //making keys 'int' instead of AxisActions because enum keys cause GC overhead in Unity
         Dictionary<int, bool> axisActionInvertDict = new Dictionary<int, bool>();
         Dictionary<KeyCode, JoystickUIActions> joystickUIDict = new Dictionary<KeyCode, JoystickUIActions>();
@@ -96,7 +100,6 @@ namespace DaggerfallWorkshop.Game
         bool negVerticalImpulse;
         bool moveAcceleration;
 
-        float joystickCameraSensitivity = 1.0f;
         float joystickUIMouseSensitivity = 1.0f;
         bool cursorVisible = true;
         bool usingControllerCursor;
@@ -116,6 +119,7 @@ namespace DaggerfallWorkshop.Game
         public class KeyBindData_v1
         {
             public Dictionary<String, string> actionKeyBinds;
+            public Dictionary<String, String> secondaryActionKeyBinds;
             public Dictionary<String, AxisActions> axisActionKeyBinds;
             public Dictionary<String, String> axisActionInversions;
             public Dictionary<String, String> joystickUIKeyBinds;
@@ -632,13 +636,14 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Finds first keycode bound to a specific action.
         /// </summary>
-        public KeyCode GetBinding(Actions action)
+        public KeyCode GetBinding(Actions action, bool primary = true)
         {
-            if (actionKeyDict.ContainsValue(action))
+            var dict = primary ? actionKeyDict : secondaryActionKeyDict;
+            if (dict.ContainsValue(action))
             {
-                foreach (var k in actionKeyDict.Keys)
+                foreach (var k in dict.Keys)
                 {
-                    if (actionKeyDict[k] == action)
+                    if (dict[k] == action)
                         return k;
                 }
             }
@@ -699,20 +704,29 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Binds a KeyCode to an action
         /// </summary>
-        public void SetBinding(KeyCode code, Actions action)
+        public void SetBinding(KeyCode code, Actions action, bool primary = true)
         {
-            // Not allowing multi-bind at this time as the front-end doesn't support it
-            ClearBinding(action);
+            var dict = primary ? actionKeyDict : secondaryActionKeyDict;
+            var alt = primary ? secondaryActionKeyDict : actionKeyDict;
 
-            if (!actionKeyDict.ContainsKey(code))
+            if (alt.ContainsKey(code))
             {
-                actionKeyDict.Add(code, action);
+                alt.Remove(code);
+            }
+
+            ClearBinding(action, primary);
+
+            if (!dict.ContainsKey(code))
+            {
+                dict.Add(code, action);
             }
             else
             {
-                actionKeyDict.Remove(code);
-                actionKeyDict.Add(code, action);
+                dict.Remove(code);
+                dict.Add(code, action);
             }
+
+            MapSecondaryBindings(action);
         }
 
         /// <summary>
@@ -753,11 +767,13 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Unbinds a KeyCode to an action via KeyCode
         /// </summary>
-        public void ClearBinding(KeyCode code)
+        public void ClearBinding(KeyCode code, bool primary = true)
         {
-            if (actionKeyDict.ContainsKey(code))
+            var dict = primary ? actionKeyDict : secondaryActionKeyDict;
+
+            if (dict.ContainsKey(code))
             {
-                actionKeyDict.Remove(code);
+                dict.Remove(code);
             }
         }
 
@@ -787,11 +803,12 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Unbinds a KeyCode to an action via Action
         /// </summary>
-        public void ClearBinding(Actions action)
+        public void ClearBinding(Actions action, bool removePrimary = true)
         {
-            foreach (var binding in actionKeyDict.Where(kvp => kvp.Value == action).ToList())
+            var dict = removePrimary ? actionKeyDict : secondaryActionKeyDict;
+            foreach (var binding in dict.Where(kvp => kvp.Value == action).ToList())
             {
-                actionKeyDict.Remove(binding.Key);
+                dict.Remove(binding.Key);
             }
         }
 
@@ -827,17 +844,33 @@ namespace DaggerfallWorkshop.Game
             keyBindsData.actionKeyBinds = new Dictionary<string, string>();
             keyBindsData.axisActionInversions = new Dictionary<string, string>();
             keyBindsData.joystickUIKeyBinds = new Dictionary<string, string>();
+            keyBindsData.secondaryActionKeyBinds = new Dictionary<string, string>();
 
             foreach (var item in actionKeyDict)
             {
                 keyBindsData.actionKeyBinds.Add(GetKeyString(item.Key), item.Value.ToString());
             }
 
+            foreach (var item in secondaryActionKeyDict)
+            {
+                keyBindsData.secondaryActionKeyBinds.Add(GetKeyString(item.Key), item.Value.ToString());
+            }
+
             // If unknown actions were detected in this run, make sure we append them back to the settings file, so we won't break
             // the newer builds potentially using them.
+            // If the key has been rebinded, then ignore the unknown action, as it should be repopulated in a newer build
             foreach (var item in unknownActions)
             {
-                keyBindsData.actionKeyBinds.Add(GetKeyString(item.Key), item.Value);
+                var key = GetKeyString(item.Key);
+                if (!keyBindsData.actionKeyBinds.ContainsKey(key))
+                    keyBindsData.actionKeyBinds.Add(key, item.Value);
+            }
+
+            foreach (var item in secondaryUnknownActions)
+            {
+                var key = GetKeyString(item.Key);
+                if (!keyBindsData.secondaryActionKeyBinds.ContainsKey(key))
+                    keyBindsData.secondaryActionKeyBinds.Add(key, item.Value);
             }
 
             foreach (var item in joystickUIDict)
@@ -959,26 +992,17 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetKey(KeyCode key)
         {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            var k = (((int)conv) < startingAxisKeyCode && Input.GetKey(conv)) || GetAxisKey((int)conv);
-            if (k)
-                LastKeyDown = conv;
-            return k;
+            return GetSingleKey(key) || GetSingleKey(GetSecondaryBinding(key));
         }
 
         public bool GetKeyDown(KeyCode key)
         {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            var kd = (((int)conv) < startingAxisKeyCode && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
-            if (kd)
-                LastKeyDown = conv;
-            return kd;
+            return GetSingleKeyDown(key) || GetSingleKeyDown(GetSecondaryBinding(key));
         }
 
         public bool GetKeyUp(KeyCode key)
         {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            return (((int)conv) < startingAxisKeyCode && Input.GetKeyUp(conv)) || GetAxisKeyUp((int)conv);
+            return GetSingleKeyUp(key) || GetSingleKeyUp(GetSecondaryBinding(key));
         }
 
         public bool AnyKeyDown
@@ -1055,16 +1079,46 @@ namespace DaggerfallWorkshop.Game
             cameraAxisBindingCache[1] = GetAxisBinding(AxisActions.CameraVertical);
             movementAxisBindingCache[0] = GetAxisBinding(AxisActions.MovementHorizontal);
             movementAxisBindingCache[1] = GetAxisBinding(AxisActions.MovementVertical);
+
+            foreach(Actions a in Enum.GetValues(typeof(Actions)))
+                MapSecondaryBindings(a);
+        }
+
+        KeyCode GetSecondaryBinding(KeyCode a)
+        {
+            int ret;
+            if(primarySecondaryKeybindDict.TryGetValue((int)a, out ret))
+                return (KeyCode)ret;
+
+            return KeyCode.None;
+        }
+
+        void SetSecondaryBinding(KeyCode primary, KeyCode secondary)
+        {
+            primarySecondaryKeybindDict[(int)primary] = (int)secondary;
+            primarySecondaryKeybindDict[(int)secondary] = (int)primary;
+        }
+
+        void MapSecondaryBindings(Actions a)
+        {
+            KeyCode primKey = actionKeyDict.FirstOrDefault(x => x.Value == a).Key;
+            KeyCode secKey = secondaryActionKeyDict.FirstOrDefault(x => x.Value == a).Key;
+
+            if(primKey != KeyCode.None && secKey != KeyCode.None)
+            {
+                SetSecondaryBinding(primKey, secKey);
+            }
         }
 
         // Sets KeyCode binding only if action is missing
         // This is to ensure default actions are restored if missing
         // and to push out new actions to existing keybind files
-        private void TestSetBinding(KeyCode code, Actions action)
+        private void TestSetBinding(KeyCode code, Actions action, bool primary = true)
         {
-            if (!actionKeyDict.ContainsValue(action))
+            var dict = primary ? actionKeyDict : secondaryActionKeyDict;
+            if (!dict.ContainsValue(action))
             {
-                SetBinding(code, action);
+                SetBinding(code, action, primary);
             }
         }
 
@@ -1254,6 +1308,30 @@ namespace DaggerfallWorkshop.Game
             keyCodeList = list;
 
             return keyCodeList;
+        }
+
+        bool GetSingleKey(KeyCode key)
+        {
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            var k = (((int)conv) < startingAxisKeyCode && Input.GetKey(conv)) || GetAxisKey((int)conv);
+            if (k)
+                LastKeyDown = conv;
+            return k;
+        }
+
+        bool GetSingleKeyDown(KeyCode key)
+        {
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            var kd = (((int)conv) < startingAxisKeyCode && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
+            if (kd)
+                LastKeyDown = conv;
+            return kd;
+        }
+
+        bool GetSingleKeyUp(KeyCode key)
+        {
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            return (((int)conv) < startingAxisKeyCode && Input.GetKeyUp(conv)) || GetAxisKeyUp((int)conv);
         }
 
         //Converts all joystick KeyCodes to be controller-agnostic (e.g. "Joystick3Button0" to "JoystickButton0")
@@ -1502,25 +1580,38 @@ namespace DaggerfallWorkshop.Game
             return false;
         }
 
+        void LoadActionKeybinds(bool primary, KeyBindData_v1 keyBindsData)
+        {
+            var saved = primary ? keyBindsData.actionKeyBinds : keyBindsData.secondaryActionKeyBinds;
+            var dict = primary ? actionKeyDict : secondaryActionKeyDict;
+            var unknown = primary ? unknownActions : secondaryUnknownActions;
+
+            foreach(var item in saved)
+            {
+                KeyCode key = ParseKeyCodeString(item.Key);
+                var actionVal = ActionNameToEnum(item.Value);
+                if (!dict.ContainsKey(key) && actionVal != Actions.Unknown)
+                    dict.Add(key, actionVal);
+                else
+                {
+                    // This action is unknown in this game, make sure we still keep it so once we save the settings, we
+                    // won't discard them.
+                    unknown.Add(key, item.Value);
+                }
+            }
+        }
+
         void LoadKeyBinds()
         {
             string path = GetKeyBindsSavePath();
 
             string json = File.ReadAllText(path);
             KeyBindData_v1 keyBindsData = SaveLoadManager.Deserialize(typeof(KeyBindData_v1), json) as KeyBindData_v1;
-            foreach(var item in keyBindsData.actionKeyBinds)
-            {
-                KeyCode key = ParseKeyCodeString(item.Key);
-                var actionVal = ActionNameToEnum(item.Value);
-                if (!actionKeyDict.ContainsKey(key) && actionVal != Actions.Unknown)
-                    actionKeyDict.Add(key, actionVal);
-                else
-                {
-                    // This action is unknown in this game, make sure we still keep it so once we save the settings, we
-                    // won't discard them.
-                    unknownActions.Add(key, item.Value);
-                }
-            }
+
+            LoadActionKeybinds(true, keyBindsData);
+
+            if(keyBindsData.secondaryActionKeyBinds != null)
+                LoadActionKeybinds(false, keyBindsData);
 
             if (keyBindsData.axisActionKeyBinds != null)
             {
