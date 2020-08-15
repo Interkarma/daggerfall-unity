@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 17
 Quest: K0C00Y00
+DisplayName: An Object Lesson
 -- Message panels
 QRC:
 
@@ -30,7 +31,7 @@ AcceptQuest:  [1002]
 <ce>                   in it is a _mitem_ that I want you
 <ce>            liberate. And, on your way out, please drop this
 <ce>            note off anywhere in the store. I can't resist.
-<ce>                 _competitor_ is going to passing that
+<ce>                 _competitor_ is going to pass that
 <ce>                  _mitem_ to a more secure location in
 <ce>               =2storehouse_ days, so you'll need to move
 <ce>               swiftly. If you're not back in that time,

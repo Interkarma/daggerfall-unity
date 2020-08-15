@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 16
 Quest: 50C00Y00
+DisplayName: Peryite's Quest
 -- Message panels
 QRC:
 

@@ -51,7 +51,7 @@ AcceptQuest:  [1002]
 <ce>                     if you would go to __contact_
 <ce>                         in ___contact_ and get
 <ce>                 the artifact from %g2, I would be most
-<ce>                 appreciative. Time is of the essense,
+<ce>                 appreciative. Time is of the essence,
 <ce>                  for %g says that %g will abandon the
 <ce>                  artifact if someone is not there to
 <ce>               take it in =1stparton_ days. Meanwhilst, I
@@ -97,7 +97,7 @@ QuestLogEntry:  [1010]
 <ce>                 By Dibella, I've been a nervous wreck
 <ce>                 waitin' for you to show up. Here's the
 <ce>                icon -- I'm glad to be rid of it. I can
-<ce>                  feel every cuthroat's eyes on on it.
+<ce>                  feel every cutthroat's eyes on on it.
 <ce>                You better get back to the House before
 <ce>                    they think you ran off with it.
 
@@ -113,7 +113,7 @@ A forgery, in all probability. But very pretty, nevertheless.
 
 Message:  1030
 %qdt:
- The House of Dibella has hired to
+ The House of Dibella has hired
  me to meet with an archaeologist
  who has uncovered an icon for them, pay for it,
  and bring the icon back to the House. This

@@ -5,7 +5,6 @@
 -- Repute: 01
 -- QuestId: 0
 -- Edited for Daggerfall Unity by Jay_H
--- Temp changes to allow joining DB made by Hazelnut
 Messages: 21
 Quest: L0A01L00
 DisplayName: The Acceptance Test
@@ -22,7 +21,7 @@ QuestComplete:  [1004]
 <ce>               town, you will know if there are any guild
 <ce>                  buildings there. It is customary for
 <ce>               the novice to receive payment of a single
-<ce>               gold coin for his first sanctioned death.
+<ce>               gold coin for %pg1 first sanctioned death.
 <ce>                             Here is yours.
 
 RumorsDuringQuest:  [1005]

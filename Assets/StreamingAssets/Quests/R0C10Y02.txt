@@ -6,6 +6,7 @@
 -- QuestId: 2
 Messages: 31
 Quest: R0C10Y02
+DisplayName: Gold Smuggling
 -- Message panels
 QRC:
 

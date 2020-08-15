@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 36
 Quest: A0C01Y06
+DisplayName: An Unexpected Journey Part II
 -- Message panels
 QRC:
 
@@ -69,7 +70,7 @@ QuestLogEntry:  [1010]
  who told me %g3 master,
  _master_, would pay _gold_ gold
  pieces for an unknown but certainly
- dangerous task. He is staying in
+ dangerous task. %g1 is staying in
  _meetingplace_ in __meetingplace_.
 
 Message:  1011

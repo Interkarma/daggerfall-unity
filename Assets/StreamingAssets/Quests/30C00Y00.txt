@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 31
 Quest: 30C00Y00
+DisplayName: Namira's Quest
 -- Message panels
 QRC:
 

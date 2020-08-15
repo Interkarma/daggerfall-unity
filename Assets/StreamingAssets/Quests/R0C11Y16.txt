@@ -6,6 +6,7 @@
 -- QuestId: 16
 Messages: 17
 Quest: R0C11Y16
+DisplayName: Espionage Equipment
 -- Message panels
 QRC:
 

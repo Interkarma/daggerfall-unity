@@ -6,6 +6,7 @@
 -- QuestId: 7
 Messages: 12
 Quest: R0C20Y07
+DisplayName: The Lost Sapphire
 -- Message panels
 QRC:
 

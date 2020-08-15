@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 31
 Quest: T0C00Y00
+DisplayName: Lady Azura's Quest
 -- Message panels
 QRC:
 
@@ -35,7 +36,7 @@ AcceptQuest:  [1002]
 <ce>                 You would! Oh jolly good. Well, this
 <ce>                perfectly awful priest is also a Healer,
 <ce>                if that means anything. Isn't that just
-<ce>              typical?  As usual with these self-rightous
+<ce>              typical?  As usual with these self-righteous
 <ce>                      types, =monster_ is secluded
 <ce>                       in ___mondung_, cleansing
 <ce>                or some such ridiculous thing.  Anyway,

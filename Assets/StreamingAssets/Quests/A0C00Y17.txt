@@ -6,6 +6,7 @@
 -- QuestId: 17
 Messages: 51
 Quest: A0C00Y17
+DisplayName: The Escort
 -- Message panels
 QRC:
 

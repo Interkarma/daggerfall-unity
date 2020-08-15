@@ -6,6 +6,7 @@
 -- QuestId: 10
 Messages: 11
 Quest: R0C10Y10
+DisplayName: Weapon Supply
 -- Message panels
 QRC:
 

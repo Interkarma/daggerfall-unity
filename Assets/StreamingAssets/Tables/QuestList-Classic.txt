@@ -161,37 +161,37 @@ A0C00Y00, Commoners, N, 0, 0, Passed
 A0C00Y06, Commoners, M, 0, 0, Passed
 A0C00Y07, Commoners, M, 0, 0, Passed
 A0C00Y08, Commoners, M, 0, 0, Passed
-A0C00Y10, Commoners, N, 0, 0,
+A0C00Y10, Commoners, N, 0, 0, Passed
 A0C00Y11, Commoners, M, 0, 0, Passed
 A0C00Y12, Commoners, M, 0, 0, Passed
-A0C00Y14, Commoners, N, 0, 0,
-A0C00Y15, Commoners, N, 0, 0,
+A0C00Y14, Commoners, N, 0, 0, Passed
+A0C00Y15, Commoners, N, 0, 0, Passed
 -A0C00Y16, Commoners, M, 0, 0, FAILED. _hidingplace_ not marked on map when player asks about _missingperson_. Can be found from debug marker.
-A0C00Y17, Commoners, M, 0, 0,
-A0C01Y01, Commoners, N, 0, 1,
-A0C01Y03, Commoners, M, 0, 1,
-A0C01Y06, Commoners, M, 0, 1,
-A0C01Y09, Commoners, N, 0, 1,
-A0C01Y13, Commoners, M, 0, 1,
-A0C0XY04, Commoners, M, 0, X,
-A0C10Y02, Commoners, N, 1, 0,
-A0C10Y05, Commoners, M, 1, 0,
-A0C41Y18, Commoners, M, 4, 1,
+A0C00Y17, Commoners, M, 0, 0, Passed
+A0C01Y01, Commoners, N, 0, 1, Passed
+A0C01Y03, Commoners, M, 0, 1, Passed
+A0C01Y06, Commoners, M, 0, 1, Passed
+A0C01Y09, Commoners, N, 0, 1, Passed
+A0C01Y13, Commoners, M, 0, 1, Passed
+A0C0XY04, Commoners, M, 0, X, Passed
+A0C10Y02, Commoners, N, 1, 0, Passed
+A0C10Y05, Commoners, M, 1, 0, Passed
+A0C41Y18, Commoners, M, 4, 1, Passed
 
 -- Merchants
-K0C00Y00, Merchants, M, 0, 0,
-K0C00Y02, Merchants, N, 0, 0,
-K0C00Y03, Merchants, M, 0, 0,
+K0C00Y00, Merchants, M, 0, 0, Passed
+K0C00Y02, Merchants, N, 0, 0, Passed
+K0C00Y03, Merchants, M, 0, 0, Passed
 K0C00Y04, Merchants, M, 0, 0, Passed
-K0C00Y05, Merchants, M, 0, 0,
--K0C00Y06, Merchants, M, 0, 0, "A Mix-Up"
-K0C00Y07, Merchants, M, 0, 0,
-K0C00Y08, Merchants, M, 0, 0,
+K0C00Y05, Merchants, M, 0, 0, Passed
+-K0C00Y06, Merchants, M, 0, 0, "A Mix-Up", tons of branching paths to test, NPCs wouldn't always show up in correct buildings
+K0C00Y07, Merchants, M, 0, 0, Passed
+K0C00Y08, Merchants, M, 0, 0, Passed
 K0C00Y09, Merchants, M, 0, 0, Passed
-K0C01Y00, Merchants, N, 0, 1,
-K0C01Y10, Merchants, M, 0, 1,
-K0C0XY01, Merchants, M, 0, X,
-K0C30Y03, Merchants, M, 3, 0,
+K0C01Y00, Merchants, N, 0, 1, Passed
+K0C01Y10, Merchants, M, 0, 1, Passed
+K0C0XY01, Merchants, M, 0, X, Passed
+K0C30Y03, Merchants, M, 3, 0, Passed
 
 -- Vampires
 P0A01L00, Vampires, P, 0, 1, Passed
@@ -206,32 +206,32 @@ P0B10L10, Vampires, M, 1, 0, Passed
 P0B20L09, Vampires, M, 2, 0, Passed
 
 -- Nobility
-R0C10Y00, Nobility, N, 1, 0,
-R0C10Y01, Nobility, M, 1, 0,
-R0C10Y02, Nobility, N, 1, 0,
-R0C10Y04, Nobility, N, 1, 0,
-R0C10Y05, Nobility, N, 1, 0,
-R0C10Y06, Nobility, N, 1, 0,
-R0C10Y08, Nobility, N, 1, 0,
-R0C10Y09, Nobility, N, 1, 0,
-R0C10Y10, Nobility, N, 1, 0,
-R0C10Y11, Nobility, M, 1, 0,
-R0C10Y12, Nobility, M, 1, 0,
-R0C10Y13, Nobility, M, 1, 0,
-R0C10Y14, Nobility, M, 1, 0,
-R0C10Y15, Nobility, N, 1, 0,
-R0C10Y17, Nobility, N, 1, 0,
-R0C10Y18, Nobility, N, 1, 0,
-R0C10Y20, Nobility, N, 1, 0,
-R0C10Y21, Nobility, N, 1, 0,
-R0C11Y03, Nobility, N, 1, 1,
-R0C11Y16, Nobility, N, 1, 1,
-R0C11Y19, Nobility, N, 1, 1,
-R0C11Y26, Nobility, M, 1, 1, Adds journal entries which need %qdat - assuming thats the date of entry and not quest start
-R0C11Y27, Nobility, N, 1, 1,
+R0C10Y00, Nobility, N, 1, 0, Passed
+R0C10Y01, Nobility, M, 1, 0, Passed
+R0C10Y02, Nobility, N, 1, 0, Passed
+R0C10Y04, Nobility, N, 1, 0, Passed
+R0C10Y05, Nobility, N, 1, 0, Passed
+R0C10Y06, Nobility, N, 1, 0, Passed
+R0C10Y08, Nobility, N, 1, 0, Passed
+R0C10Y09, Nobility, N, 1, 0, Passed
+R0C10Y10, Nobility, N, 1, 0, Passed
+R0C10Y11, Nobility, M, 1, 0, Passed
+R0C10Y12, Nobility, M, 1, 0, Passed
+R0C10Y13, Nobility, M, 1, 0, Passed
+R0C10Y14, Nobility, M, 1, 0, Passed
+R0C10Y15, Nobility, N, 1, 0, Passed
+R0C10Y17, Nobility, N, 1, 0, Passed
+R0C10Y18, Nobility, N, 1, 0, Passed
+R0C10Y20, Nobility, N, 1, 0, Passed
+R0C10Y21, Nobility, N, 1, 0, Passed
+R0C11Y03, Nobility, N, 1, 1, Passed
+R0C11Y16, Nobility, N, 1, 1, Passed
+R0C11Y19, Nobility, N, 1, 1, Passed
+R0C11Y26, Nobility, M, 1, 1, Passed
+-R0C11Y27, Nobility, N, 1, 1, duplicate of r0c10y17
 R0C11Y28, Nobility, M, 1, 1, Needs %vcn macro implementation to get vamp clan of _vamp_ npc to be tested
-R0C20Y07, Nobility, N, 2, 0,
-R0C20Y22, Nobility, M, 2, 0,
+R0C20Y07, Nobility, N, 2, 0, Passed
+R0C20Y22, Nobility, M, 2, 0, Passed
 R0C30Y25, Nobility, N, 3, 0, Passed
 -R0C40Y23, Nobility, N, 4, 0, BROKEN. QRC file is missing in DF+DFQFIX. Duplicate of r0c4xy23.
 R0C4XY23, Nobility, M, 4, X, Passed

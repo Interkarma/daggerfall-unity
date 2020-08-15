@@ -52,7 +52,7 @@ RumorsPostfailure:  [1006]
 
 RumorsPostsuccess:  [1007]
 <ce>      Thank %god _dummy_ finally sent someone to kill that giant
-<ce>    in ___mondung_.  It must have killed one of %g2 precious sheep.
+<ce>    in ___mondung_.  It must have killed one of %g3 precious sheep.
 
 QuestorPostsuccess:  [1008]
 <ce>                 It's my old friend Giant-Killer %pcf!

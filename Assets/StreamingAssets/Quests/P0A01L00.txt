@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 31
 Quest: P0A01L00
+DisplayName: The Rite of Acceptance
 -- Message panels
 QRC:
 

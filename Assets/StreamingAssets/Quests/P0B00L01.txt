@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 27
 Quest: P0B00L01
+DisplayName: The Vampire's Letter
 -- Message panels
 QRC:
 
@@ -55,7 +56,7 @@ That nervous =pawn_ finally left __pawn_. Must've missed %g3 nighttime meeting.
 That =vampire_ in __vampire_ was muttering about that %ra %g's always with.
 
 RumorsPostsuccess:  [1007]
-The %rt apparently changed %g3 mind about the existance of vampires in %reg.
+The %rt apparently changed %g3 mind about the existence of vampires in %reg.
 <--->
 The %rt was going to put more guards out at night, but changed %g3 mind.
 

@@ -6,6 +6,7 @@
 -- QuestId: 6
 Messages: 24
 Quest: P0B00L06
+DisplayName: Deadly Knowledge
 -- Message panels
 QRC:
 
@@ -163,7 +164,7 @@ Message:  1018
 <ce>                       vampires could be anyone.
 
 Message:  1019
-%dat: _mg_ of
+%qdt: _mg_ of
  __mg_ in ___mg_
  wants me to go to ___mondung_
  to take _mage_'s
@@ -186,7 +187,7 @@ Message:  1020
  How is one cured of vampirism (find
  that Vampires of the Iliac Bay book,
  references to a society of former
- vampires)? Slaying the preeminant member
+ vampires)? Slaying the preeminent member
  of the same bloodline, from what I can
  gather from personal interviews and
  whatnot. (Note to me: that rather
@@ -205,7 +206,7 @@ Message:  1020
  about increasing funding. Going nowhere.
 
 Message:  1021
-%dat: A sorceror named
+%qdt: A sorceror named
  _mage_ has come close
  to major discoveries about %vam
  and _vamp_ has sent me

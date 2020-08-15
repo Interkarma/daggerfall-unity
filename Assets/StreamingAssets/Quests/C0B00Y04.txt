@@ -15,7 +15,7 @@ QuestorOffer:  [1000]
 <ce>                        __qgiver_ often delves
 <ce>                 into mysteries of cosmic proportions,
 <ce>                  and occasionally we misjudge one of
-<ce>                 ours priest's suppleness of sanity in
+<ce>                 our priests' suppleness of sanity in
 <ce>                 the face of eternity. In other words,
 <ce>                  one of our priests has gone off his
 <ce>                    nut. Will you help us bring the

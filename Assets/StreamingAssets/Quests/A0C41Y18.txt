@@ -4,8 +4,8 @@
 -- Questor: peasant
 -- Repute: 41
 -- QuestId: 18
-Messages: 51
 Quest: A0C41Y18
+DisplayName: The Mummy's Finger
 -- Message panels
 QRC:
 

@@ -42,7 +42,7 @@ So, Mynisera seeks to sweet talk me.
  people may not be so lenient toward a
  %ra wandering the halls of Orsinium.
  If you can survive my realm and find
- the letter, you make take it back to
+ the letter, you may take it back to
  her. I will also consider you to be
  a worthy %ra.
 
@@ -55,7 +55,7 @@ Lord Gortwog,
  have you and the Orcish people sought
  formal recognition by the empire. My dead
  husband King Lysandus supported your claim
- to sovreign rule. I would now help you in
+ to sovereign rule. I would now help you in
  your cause. Sadly, a minor missive from
  the emperor has been misplaced. For me to
  truly hold the trust and ear of Emperor

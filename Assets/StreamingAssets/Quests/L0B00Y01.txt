@@ -14,7 +14,7 @@ QuestorOffer:  [1000]
 <ce>                       As you know, %pct, there
 <ce>                     is no room for failure in the
 <ce>                    Dark Brotherhood. Brothers who
-<ce>                     fail us are targetted for an
+<ce>                     fail us are targeted for an
 <ce>                     accounting. You will find and
 <ce>                        correct one such errant
 <ce>                            former member.

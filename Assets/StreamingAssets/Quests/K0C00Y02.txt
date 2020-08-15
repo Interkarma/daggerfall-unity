@@ -6,6 +6,7 @@
 -- QuestId: 2
 Messages: 16
 Quest: K0C00Y02
+DisplayName: Counterfeit Gold
 -- Message panels
 QRC:
 
@@ -58,7 +59,7 @@ _palace_ is improving its security, due to rumors about thieves in the area.
 The maid at _mansion_ said she saw some undesirables watching the place.
 
 RumorsPostfailure:  [1006]
-%t %rn is seems to think that the head of the smuggling operation is _qgiver_.
+%t %rn seems to think that the head of the smuggling operation is _qgiver_.
 <--->
 _qgiver_ has apparently been smuggling foscarium, pretending its gold.
 <--->

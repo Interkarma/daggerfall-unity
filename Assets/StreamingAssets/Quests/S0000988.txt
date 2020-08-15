@@ -14,7 +14,7 @@ Dear %pcf,
  Numidium, but you need to.
  
  The legend dates back to the earliest parts of
- the third era.
+ the Third Era.
  
  Numidium was supposed to be a giant so big his
  hands could knock the moons from the sky. I do
@@ -87,7 +87,7 @@ Dear %pcf,
 <ce>                               A Friend
 
 Message:  1020
-<ce>       You approached by a young page who smiles in recognition
+<ce>       You are approached by a young page who smiles in recognition
 <ce>        and does not ask your name before he hands you a letter
 <ce>         addressed to you. To all of your questions, he merely
 <ce>                responds with a blank look and a smile.
@@ -111,7 +111,7 @@ Message:  1020
 <ce>             A redfaced courier startles you with a cry of
 <ce>                  "Letter for %pcn! Hey that must be
 <ce>                 you. Here, take this. Gotta go. Other
-<ce>                        deliveries to be made.
+<ce>                        deliveries to be made."
 
 
 -- Symbols used in the QRC file:

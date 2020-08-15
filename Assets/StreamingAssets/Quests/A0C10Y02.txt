@@ -4,8 +4,8 @@
 -- Questor: peasant
 -- Repute: 10
 -- QuestId: 2
-Messages: 21
 Quest: A0C10Y02
+DisplayName: The Abducted Child
 -- Message panels
 QRC:
 

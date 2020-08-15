@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 42
 Quest: A0C00Y11
+DisplayName: The Cure
 -- Message panels
 QRC:
 
