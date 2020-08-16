@@ -2002,10 +2002,11 @@ namespace DaggerfallWorkshop.Game
             {
                 if (elem.name.Contains("DaggerfallDungeon"))
                 {
+                    DFLocation.DungeonBlock[] blocks = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationData.Dungeon.Blocks;
                     GameObject gameobjectDungeon = new GameObject(newGeometryName);
 
                     // Create dungeon layout
-                    foreach (DFLocation.DungeonBlock block in location.Dungeon.Blocks)
+                    foreach (DFLocation.DungeonBlock block in blocks)
                     {
                         if (location.Name == "Orsinium")
                         {
@@ -2019,6 +2020,7 @@ namespace DaggerfallWorkshop.Game
                         gameobjectBlock.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
                         gameobjectBlock.transform.SetParent(gameobjectDungeon.transform);
+                        AddWater(gameobjectBlock, block.WaterLevel);
                     }
 
                     gameobjectDungeon.transform.SetParent(gameobjectGeometry.transform);
@@ -2045,6 +2047,27 @@ namespace DaggerfallWorkshop.Game
             InjectMeshAndMaterialProperties();
 
             //oldGeometryName = newGeometryName;
+        }
+
+        private void AddWater(GameObject parent, short nativeBlockWaterLevel)
+        {
+            // Exit if no water present
+            if (nativeBlockWaterLevel == 10000)
+                return;
+
+            float waterLevel = nativeBlockWaterLevel * -1 * MeshReader.GlobalScale;
+            MeshRenderer[] renderers = parent.GetComponentsInChildren<MeshRenderer>();
+
+            if (renderers != null)
+            {
+                MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+                foreach (MeshRenderer renderer in renderers)
+                {
+                    renderer.GetPropertyBlock(propertyBlock);
+                    propertyBlock.SetFloat("_WaterLevel", waterLevel);
+                    renderer.SetPropertyBlock(propertyBlock);
+                }
+            }
         }
 
         /// <summary>
