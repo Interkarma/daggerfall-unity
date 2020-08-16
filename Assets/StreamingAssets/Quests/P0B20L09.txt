@@ -105,7 +105,6 @@ Message:  1021
 <ce>                 Don't make me kill you, bloodsucker.
 <ce>                 Go back and tell %vam that =wereboar_
 <ce>              sent you home because you didn't play nice.
-                                     <--->
  
 
 -- Symbols used in the QRC file:

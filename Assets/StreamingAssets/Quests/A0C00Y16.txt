@@ -170,7 +170,6 @@ Message:  1054
 <ce>                      you made that Smiley suffer,
 <ce>                         %pcn. This is a day of
 <ce>                          great sorrow for me.
-                                     <--->
  
 
 -- Symbols used in the QRC file:
