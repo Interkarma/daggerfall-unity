@@ -1435,8 +1435,8 @@ namespace DaggerfallWorkshop.Game
         public static event Action<TransitionEventArgs> OnFailedTransition;
         protected virtual void RaiseOnFailedTransition(TransitionType transitionType)
         {
-            if (OnTransitionInterior != null)
-                OnTransitionInterior(new TransitionEventArgs(transitionType));
+            if (OnFailedTransition != null)
+                OnFailedTransition(new TransitionEventArgs(transitionType));
         }
 
         // OnMovePlayerToDungeonStart
