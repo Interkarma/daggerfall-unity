@@ -262,7 +262,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Lower player resting flag when UI closes
-            GameManager.Instance.PlayerEntity.IsResting = false;
+            playerEntity.IsResting = false;
+            playerEntity.IsLoitering = false;
 
             // Raise sleep ended event when popping UI and player has rested more than 6 hours
             if (totalHours > sleepEventMinimumHours)
@@ -766,6 +767,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hoursRemaining = time;
             waitTimer = Time.realtimeSinceStartup;
             currentRestMode = RestModes.Loiter;
+            playerEntity.IsLoitering = true;
         }
 
 
