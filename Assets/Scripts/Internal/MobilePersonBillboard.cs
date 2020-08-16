@@ -62,6 +62,15 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <returns>Size of npc.</returns>
         public abstract Vector3 GetSize();
+
+        /// <summary>
+        /// Gets a bitmask that provides all the layers used by this asset.
+        /// </summary>
+        /// <returns>A layer mask.</returns>
+        public virtual int GetLayerMask()
+        {
+            return 1 << gameObject.layer;
+        }
     }
 
     /// <summary>
