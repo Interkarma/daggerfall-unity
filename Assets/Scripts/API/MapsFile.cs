@@ -72,6 +72,19 @@ namespace DaggerfallConnect.Arena2
         };
 
         /// <summary>
+        /// Region temple faction IDs, extracted from FALL.EXE.
+        /// </summary>
+        private static readonly int[] regionTemples = {
+            106,  82,   0,   0,   0,  98,   0,  0,   0,  92,
+              0, 106,   0,   0,   0,  84,  36,  8,  84,  88,
+             82,  88,  98,  92,   0,   0,  82,  0,   0,   0,
+              0,   0,  88,  94,  36,  94, 106, 84, 106, 106,
+             88,  98,  82,  98,  84,  94,  36, 88,  94,  36,
+             98,  84, 106,  88, 106,  88,  92, 84,  98,  88,
+             82,  94
+        };
+
+        /// <summary>
         /// Block file prefixes.
         /// </summary>
         private readonly string[] rmbBlockPrefixes = {
@@ -233,6 +246,13 @@ namespace DaggerfallConnect.Arena2
         public static byte[] RegionRaces
         {
             get { return regionRaces; }
+        }
+
+        /// <summary>
+        /// Gets region temple faction IDs.
+        /// </summary>
+        public static int[] RegionTemples {
+            get { return regionTemples; }
         }
 
         /// <summary>

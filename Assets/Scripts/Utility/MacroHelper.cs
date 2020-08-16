@@ -100,7 +100,7 @@ namespace DaggerfallWorkshop.Utility
             { "%g3", Pronoun3 },  // His/Her
             { "%gii", GoldCarried }, // Amount of gold in hand
             { "%gdd", GodDesc }, // God description i.e. God of Logic
-            { "%god", God }, // Some god (listed in TEXT.RSC)
+            { "%god", God }, // God of current region or current temple
             { "%gtp", GoldToPay }, // Amount of fine
             { "%hea", HpMod }, // HP Modifier
             { "%hmd", HealRateMod }, // Healing rate modifer

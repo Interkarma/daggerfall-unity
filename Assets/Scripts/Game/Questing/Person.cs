@@ -11,7 +11,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
@@ -40,7 +39,6 @@ namespace DaggerfallWorkshop.Game.Questing
         bool isIndividualNPC = false;
         bool isIndividualAtHome = false;
         string displayName = string.Empty;
-        string godName = string.Empty;
         Symbol homePlaceSymbol = null;
         Symbol lastAssignedPlaceSymbol = null;
         bool assignedToHome = false;
@@ -100,11 +98,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public string DisplayName
         {
             get { return displayName; }
-        }
-
-        public string GodName
-        {
-            get { return godName; }
         }
 
         public string HomeTownName
@@ -269,7 +262,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 AssignHUDFace(faceIndex);
                 AssignDisplayName();
                 AssignHomeTown();
-                AssignGod();
 
                 // Is NPC at home?
                 isIndividualAtHome = atHome;
@@ -283,7 +275,6 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // TODO:
             //  * Support for home town/building (believe this is just random unless NPC moved from a Place)
-            //  * Support for %god (TEXT.RSC 4077-4084)
             //  * Support for pronoun (%g1, %g2, %g2, %g2self, %g3)
             //  * Support for class (not sure what NPCs have a class, need to see this used in a quest)
             //  * Support for faction (believe this is just the name of faction they belong to, e.g. The Merchants)
@@ -698,11 +689,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 HomeBuildingName);
         }
 
-        void AssignGod()
-        {
-            godName = GetRandomGodName();
-        }
-
         Genders GetGender(string genderName)
         {
             Genders gender;
@@ -861,16 +847,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 throw new Exception(string.Format("Could not find faction data for FactionID {0}", factionID));
 
             return factionData;
-        }
-
-        public static string GetRandomGodName()
-        {
-            const int minGodID = 4077;
-            const int maxGodID = 4084;
-
-            // Select a random god for this NPC
-            int godID = UnityEngine.Random.Range(minGodID, maxGodID + 1);
-            return DaggerfallUnity.Instance.TextProvider.GetRandomText(godID);
         }
 
         #endregion
@@ -1099,7 +1075,6 @@ namespace DaggerfallWorkshop.Game.Questing
             public bool isIndividualNPC;
             public bool isIndividualAtHome;
             public string displayName;
-            public string godName;
             public Symbol homePlaceSymbol;
             public Symbol lastAssignedPlaceSymbol;
             public bool assignedToHome;
@@ -1123,7 +1098,6 @@ namespace DaggerfallWorkshop.Game.Questing
             data.isIndividualNPC = isIndividualNPC;
             data.isIndividualAtHome = isIndividualAtHome;
             data.displayName = displayName;
-            data.godName = godName;
             data.homePlaceSymbol = homePlaceSymbol;
             data.lastAssignedPlaceSymbol = lastAssignedPlaceSymbol;
             data.assignedToHome = assignedToHome;
@@ -1157,7 +1131,6 @@ namespace DaggerfallWorkshop.Game.Questing
             isIndividualNPC = data.isIndividualNPC;
             isIndividualAtHome = data.isIndividualAtHome;
             displayName = data.displayName;
-            godName = data.godName;
             homePlaceSymbol = data.homePlaceSymbol;
             lastAssignedPlaceSymbol = data.lastAssignedPlaceSymbol;
             assignedToHome = data.assignedToHome;

@@ -440,6 +440,14 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Gets the dominant temple in player's current region.
+        /// </summary>
+        public int GetTempleOfCurrentRegion()
+        {
+            return MapsFile.RegionTemples[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+        }
+
+        /// <summary>
         /// Checks if player is inside a location world cell, optionally inside location rect, optionally outside
         /// </summary>
         /// <returns>True if player inside a township</returns>
