@@ -6,6 +6,7 @@
 -- QuestId: 13
 Messages: 21
 Quest: R0C10Y13
+DisplayName: A Peace Offering
 -- Message panels
 QRC:
 

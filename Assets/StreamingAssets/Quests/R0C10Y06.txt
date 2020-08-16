@@ -6,6 +6,7 @@
 -- QuestId: 6
 Messages: 12
 Quest: R0C10Y06
+DisplayName: The Heirloom
 -- Message panels
 QRC:
 

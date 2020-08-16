@@ -6,6 +6,7 @@
 -- QuestId: 3
 Messages: 18
 Quest: A0C01Y03
+DisplayName: The Riddle
 -- Message panels
 QRC:
 
@@ -30,7 +31,7 @@ AcceptQuest:  [1002]
 <ce>                The only person who might help you find
 <ce>                         _hermit_ is _spouse_.
 <ce>                     %g can be found in ___spouse_.
-<ce>              Take these flowers. They are %g2 favorites.
+<ce>              Take these flowers. They are %g3 favorites.
 <ce>                 They may gain you some favor with %g2.
 <ce>                    Here is a letter with _hermit_'s
 <ce>               riddle inscribed upon it. If you have not
@@ -110,14 +111,14 @@ Speak not of love or hate, but tell
  me that I can never buy for myself?
 
 Message:  1015
-On %dat, I spoke with
+On %qdt, I spoke with
  _spouse_. %g told me that
  _hermit_ left to
  study under _teacher_
  in __school_.
 
 Message:  1016
-On %dat, I met with
+On %qdt, I met with
  _hermit_'s teacher,
  _teacher_ of
  __school_. %g said that

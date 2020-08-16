@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public string GUID = "invalid";
         public List<string> Files;      //list of assets to add to mod (only used during creation)
 
+#pragma warning disable 649
         /// <summary>
         /// Automatic asset injections defined by manifest .json file.
         /// These values are not available for edits from mods at runtime.
@@ -60,6 +61,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         [SerializeField]
         internal ModDependency[] Dependencies;
+#pragma warning restore 649
 
         public ModInfo()
         {
@@ -106,6 +108,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     [Serializable]
     internal struct ModDependency
     {
+#pragma warning disable 649
         /// <summary>
         /// Name of target mod.
         /// </summary>
@@ -131,6 +134,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         [SerializeField]
         internal string Version;
+#pragma warning restore 649
     }
 
     /// <summary>

@@ -103,7 +103,7 @@ Message:  1011
 
 Message:  1012
 <ce>                     Fool! You should know better
-<ce>                      that to disturb a mage in a
+<ce>                      than to disturb a mage in a
 <ce>                      spell trance. You shall pay
 <ce>                       for this! Leave this guild
 <ce>                      hall now. I will bring this

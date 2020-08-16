@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 56
 Quest: K0C30Y03
+DisplayName: A Noble's Debts
 -- Message panels
 QRC:
 
@@ -138,6 +139,7 @@ Message:  1014
 <ce> 
 <ce>
              _patsy_
+
 --eliminating unmarked white spaces. this problem was patched out in previous versions but i still prefer to have lines with blank spaces filled just in case.
 
 Message:  1015
@@ -252,7 +254,7 @@ That _rock_ must have been mined years ago when ___mondung_ was a mine.
 
 Message:  1029
 <ce>                   This looks like the deed _patsy_
-<ce>                     gave _qgiver_ as collaterial.
+<ce>                     gave _qgiver_ as collateral.
 
 Message:  1030
 <ce>                   This appears to be the gold that
@@ -385,7 +387,7 @@ This document bears witness to the ownership
  of _house3_ of __house3_ in %reg.
  Let all who read this know that _patsy_
  is the sole and rightful owner of the
- afore mentioned property.
+ aforementioned property.
 
 
 -- Symbols used in the QRC file:

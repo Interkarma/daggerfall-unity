@@ -6,6 +6,7 @@
 -- QuestId: 18
 Messages: 22
 Quest: R0C10Y18
+DisplayName: An Item on Loan
 -- Message panels
 QRC:
 

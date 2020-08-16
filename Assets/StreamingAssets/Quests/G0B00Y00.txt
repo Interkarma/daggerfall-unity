@@ -17,7 +17,7 @@ QuestorOffer:  [1000]
                                      <--->
 <ce>                  The Goddess has spoken to us in our
 <ce>                 auguries, and she demands the blood of
-<ce>                 the foul villian who has profaned her
+<ce>                 the foul villain who has profaned her
 <ce>                  name. Help us to appease our angered
 <ce>                           mistress Kynareth.
 

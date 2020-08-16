@@ -47,7 +47,7 @@ RumorsDuringQuest:  [1005]
 RumorsPostfailure:  [1006]
 <ce>                    The Fighter's Guild killed that
 <ce>                      bear that got into _house_.
-<ce>                 Its a good thing we have them around.
+<ce>                 It's a good thing we have them around.
 
 RumorsPostsuccess:  [1007]
 <ce>                That creature mauled some woman before

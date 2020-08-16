@@ -9,6 +9,8 @@
 // Notes:
 //
 
+// #define LOG_BUILD_TIME
+
 using UnityEngine;
 using UnityEditor;
 using System;
@@ -45,19 +47,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         ModInfo modInfo;
 
         //asset bundles will be created for any targets here
-        BuildTarget[] buildTargets = new BuildTarget[]
+        readonly BuildTarget[] buildTargets = new BuildTarget[]
         {
             BuildTarget.StandaloneWindows,
             BuildTarget.StandaloneOSX,
             BuildTarget.StandaloneLinux64,
         };
-
-        bool[] buildTargetsToggles = new bool[] {true, true, true};
+        readonly bool[] buildTargetsToggles = new bool[] { true, true, true };
         ModCompressionOptions compressionOption = ModCompressionOptions.LZ4;
         bool ModInfoReady { get { return ModInfoReadyTowrite(); } }
         List<string> Assets { get { return modInfo.Files; } set { modInfo.Files = value; } }         //list of assets to be added
-        GUIStyle titleStyle = new GUIStyle();
-        GUIStyle fieldStyle = new GUIStyle();
+        readonly GUIStyle titleStyle = new GUIStyle();
+        readonly GUIStyle fieldStyle = new GUIStyle();
         GUIContent documentationGUIContent;
         bool isSupportedEditorVersion;
 
@@ -120,7 +121,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 if (string.IsNullOrEmpty(info.GUID) || info.GUID == "invalid")
                     info.GUID = System.Guid.NewGuid().ToString();
             }
-            catch(System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.LogError(ex.Message);
                 return new ModInfo();
@@ -320,6 +321,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             EditorGUILayout.TextArea("", GUI.skin.horizontalSlider);
 
+            EditorGUILayout.Space();
+
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
 
@@ -356,6 +359,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             EditorGUILayout.Space();
 
             EditorGUILayout.TextArea("", GUI.skin.horizontalSlider);
+
+            EditorGUILayout.Space();
 
             GUILayoutHelper.Horizontal(() =>
             {
@@ -440,19 +445,26 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return;
             }
 
-            var selection = Selection.GetFiltered(typeof(object), SelectionMode.Deep);
-            if (selection == null)
+            var selection = Selection.GetFiltered<UnityEngine.Object>(SelectionMode.Deep);
+            if (selection.Length == 0)
             {
-                Debug.Log("selection null");
+                EditorUtility.DisplayDialog("Mod Builder", "No assets selected.", "OK");
                 return;
             }
 
             for (int i = 0; i < selection.Length; i++)
             {
                 string path = FixSeperatorCharacters(AssetDatabase.GetAssetPath(selection[i].GetInstanceID()));
-                Debug.Log("Adding asset at: " + path);
-
-                if (File.Exists(path))
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    const string errorMessage = "Selected asset is not saved to disk. Make sure you selected an asset from the Project window and not the Hierarchy window.";
+                    EditorUtility.DisplayDialog("Mod Builder", errorMessage, "OK");
+                }
+                else if (!File.Exists(path))
+                {
+                    EditorUtility.DisplayDialog("Mod Builder", $"Path {path} doesn't exist.", "OK");
+                }
+                else
                 {
                     UnityEngine.Object[] objs = AssetDatabase.LoadAllAssetsAtPath(path);
                     for (int j = 0; j < objs.Length; j++)
@@ -464,11 +476,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         }
                     }
                 }
-                else
-                    Debug.LogWarning("Asset not found for: " + path);
-
-                if (!Assets.Contains(path))
-                    AddAssetToMod(path);
             }
         }
 
@@ -487,6 +494,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         //Builds the actual asset bundle.  Only builds if files added & required information set in mod info fields
         bool BuildMod()
         {
+            const string modBuilderLabel = "Mod Builder";
+
             if (!ModInfoReady)
             {
                 Debug.LogWarning("Not ready to build, canceled.");
@@ -518,108 +527,113 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             buildMap[0].assetBundleName = modFilePath.Substring(modFilePath.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
             buildMap[0].assetBundleVariant = "";       //TODO
             AddAssetToMod(GetAssetPathFromFilePath(currentFilePath));
-            List<string> tempAssetPaths = new List<string>(Assets);
+            var tempAssetPaths = new List<string>(Assets);
 
-            for (int i = 0; i < tempAssetPaths.Count; i++ )
+#if LOG_BUILD_TIME
+            var stopWatch = new System.Diagnostics.Stopwatch();
+            stopWatch.Start();
+#endif
+
+            AssetDatabase.StartAssetEditing();
+
+            try
             {
-                string filePath =  Assets[i];
+                for (int i = 0; i < tempAssetPaths.Count; i++)
+                {
+                    string filePath = tempAssetPaths[i];
 
-                if(!File.Exists(filePath))
-                {
-                    Debug.LogError("Asset not found: " + filePath);
-                    return false;
-                }
-                else
-                {
-                    Debug.Log("Adding Asset: " + filePath);
-                }
-                //replace c# file with text asset
-                if (filePath.ToLower().EndsWith(".cs"))
-                {
-                    filePath = CopyAsset<TextAsset>(filePath, ".txt");
-                    tempAssetPaths[i] = GetAssetPathFromFilePath(filePath);
-                }
-                else if (filePath.ToLower().EndsWith(".prefab"))
-                {
-                    string assetPath = CopyAsset<GameObject>(filePath); //create a copy of prefab in temp. directory
-                    if(assetPath == null)
-                    {
-                        Debug.LogError("Failed to duplicate prefab: " + assetPath);
-                        continue;
-                    }
-                    else
-                    {
-                        tempAssetPaths[i] = assetPath;                  //replace path to original prefab w/ path to copy
-                    }
+                    EditorUtility.DisplayProgressBar(modBuilderLabel, filePath, (float)i / tempAssetPaths.Count);
 
-                    string importedComponentsPath = CheckForImportedComponents(assetPath);
-                    if (importedComponentsPath != null)
+                    if (!File.Exists(filePath))
                     {
-                        if (!tempAssetPaths.Contains(importedComponentsPath))
-                            tempAssetPaths.Add(importedComponentsPath);
+                        Debug.LogError("Asset not found: " + filePath);
+                        return false;
+                    }
+                    
+                    if (filePath.EndsWith(".cs", StringComparison.Ordinal))
+                    {
+                        // Create a copy of C# script as a .txt text asset
+                        string assetPath = CopyAsset<TextAsset>(filePath, ".txt");
+                        if (assetPath == null)
+                            return false;
+
+                        tempAssetPaths[i] = assetPath;
+                    }
+                    else if (filePath.EndsWith(".prefab", StringComparison.Ordinal))
+                    {
+                        // Serialize custom components
+                        // Will create a prefab copy without custom components if needed
+                        var prefabCopy = CheckForImportedComponents(filePath);
+                        if (prefabCopy.HasValue)
+                        {
+                            tempAssetPaths[i] = prefabCopy.Value.prefabPath;
+                            tempAssetPaths.Add(prefabCopy.Value.dataPath);
+                        }
                     }
                 }
             }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+                AssetDatabase.StopAssetEditing();
+            }
+
+#if LOG_BUILD_TIME
+            stopWatch.Stop();
+            Debug.Log($"Mod Builder: elapsed {stopWatch.ElapsedMilliseconds} milliseconds to prepare assets.");
+#endif
 
             buildMap[0].assetNames = tempAssetPaths.ToArray();
 
             //build for every target in buildTarget array
             for (int i = 0; i < buildTargets.Length; i++)
             {
+                if (EditorUtility.DisplayCancelableProgressBar(modBuilderLabel, $"Building for {buildTargets[i]}.", (float)i / buildTargets.Length))
+                    return false;
+
                 if (buildTargetsToggles[i] == false) { continue;  }
 
                 string fullPath = Path.Combine(modOutPutPath, buildTargets[i].ToString());
-                if (!Directory.Exists(fullPath))
-                {
-                    Directory.CreateDirectory(fullPath);
-                }
+                Directory.CreateDirectory(fullPath);
                 BuildPipeline.BuildAssetBundles(fullPath, buildMap, ToBuildAssetBundleOptions(compressionOption), buildTargets[i]);
             }
+
+            EditorUtility.ClearProgressBar();
             return true;
         }
 
         string CopyAsset<T>(string path, string suffix = "") where T : UnityEngine.Object
         {
-            T oldAsset = AssetDatabase.LoadAssetAtPath<T>(path);
+            string fileName = Path.GetFileName(path) + suffix;
+            string newFilePath = Path.Combine(GetTempModDirPath(modInfo.ModTitle), fileName);
+            string newAssetPath = GetAssetPathFromFilePath(newFilePath);
 
-            if(oldAsset == null)
-            {
-                Debug.LogError("Failed to load asset: " + path);
-            }
-
-            string name = path.Substring(path.LastIndexOfAny(new char[] { '\\', '/' }) + 1) + suffix;
-            string newPath = Path.Combine(GetTempModDirPath(modInfo.ModTitle), name);
-            newPath = GetAssetPathFromFilePath(newPath);
-
-            if (!AssetDatabase.CopyAsset(path, newPath))
+            if (!AssetDatabase.CopyAsset(path, newAssetPath))
             {
                 Debug.LogError("Failed to Copy asset: " + path);
                 return null;
             }
 
-            return newPath;
-        } 
+            return newAssetPath;
+        }
 
 
         static string GetAssetPathFromFilePath(string fullPath)
         {
             if (string.IsNullOrEmpty(fullPath))
             {
-                Debug.Log("Invalid string, can't get AssetPath");
+                Debug.Log("Invalid string, can't get AssetPath.");
                 return null;
             }
 
-            int index = fullPath.LastIndexOf("Assets");
+            int index = fullPath.LastIndexOf("Assets", StringComparison.Ordinal);
 
             if (index == -1)
             {
-                Debug.Log(string.Format("Invalid string: {0}, can't get AssetPath", fullPath));
+                Debug.LogError($"Invalid string: {fullPath}, can't get AssetPath.");
                 return null;
             }
-            else
-            {
-                Debug.Log(string.Format("index: {0} full path: {1} Asset Path: {2} ", index, fullPath, fullPath.Substring(index)));
-            }
+
             return FixSeperatorCharacters(fullPath.Substring(index));
         }
 
@@ -649,31 +663,46 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         }
 
-        private string CheckForImportedComponents(string prefabPath)
+        /// <summary>
+        /// Checks if a prefab has custom components that need to be deserialized by mod manager.
+        /// Custom components are removed and edited prefab is saved to a temp location.
+        /// </summary>
+        /// <param name="prefabPath">Asset path of original prefab.</param>
+        /// <returns>Paths of prefab copy and json data; null if not copied./returns>
+        private (string prefabPath, string dataPath)? CheckForImportedComponents(string prefabPath)
         {
-            var go = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject)) as GameObject;
-            string importedComponentsPath = ImportedComponentAttribute.Save(go, GetTempModDirPath(modInfo.ModTitle));
-            if (importedComponentsPath != null)
-            {
-                importedComponentsPath = GetAssetPathFromFilePath(importedComponentsPath);
-                AddAssetToMod(importedComponentsPath);
-                AssetDatabase.Refresh();
-                return importedComponentsPath;
-            }
+            var go = PrefabUtility.LoadPrefabContents(prefabPath);
 
-            return null;
+            try
+            {
+                string tempModPath = GetTempModDirPath(modInfo.ModTitle);
+                string importedComponentsPath = ImportedComponentAttribute.Save(go, tempModPath);
+                if (importedComponentsPath != null)
+                {
+                    string tempPrefabPath = GetAssetPathFromFilePath($"{tempModPath}/{go.name}.prefab");
+                    PrefabUtility.SaveAsPrefabAsset(go, tempPrefabPath);                    
+                    string tempDataPath = GetAssetPathFromFilePath(importedComponentsPath);
+                    return (tempPrefabPath, tempDataPath);
+                }
+
+                return null;
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(go);
+            }
         }
 
-        private static UnityEditor.BuildAssetBundleOptions ToBuildAssetBundleOptions(ModCompressionOptions value)
+        private static BuildAssetBundleOptions ToBuildAssetBundleOptions(ModCompressionOptions value)
         {
             switch(value)
             {
                 case ModCompressionOptions.LZ4:
-                    return UnityEditor.BuildAssetBundleOptions.ChunkBasedCompression;
+                    return BuildAssetBundleOptions.ChunkBasedCompression;
                 case ModCompressionOptions.Uncompressed:
-                    return UnityEditor.BuildAssetBundleOptions.UncompressedAssetBundle;
+                    return BuildAssetBundleOptions.UncompressedAssetBundle;
                 default:
-                    return UnityEditor.BuildAssetBundleOptions.None;
+                    return BuildAssetBundleOptions.None;
             }
         }
 

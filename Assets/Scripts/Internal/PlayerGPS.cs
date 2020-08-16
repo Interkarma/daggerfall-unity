@@ -439,6 +439,21 @@ namespace DaggerfallWorkshop
             return factions[0].id;
         }
 
+        public int GetCurrentRegionVampireClan()
+        {
+            FactionFile.FactionData factionData;
+            GameManager.Instance.PlayerEntity.FactionData.GetRegionFaction(CurrentRegionIndex, out factionData);
+            return factionData.vam;
+        }
+
+        /// <summary>
+        /// Gets the dominant temple in player's current region.
+        /// </summary>
+        public int GetTempleOfCurrentRegion()
+        {
+            return MapsFile.RegionTemples[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+        }
+
         /// <summary>
         /// Checks if player is inside a location world cell, optionally inside location rect, optionally outside
         /// </summary>

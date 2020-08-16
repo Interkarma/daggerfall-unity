@@ -6,6 +6,7 @@
 -- QuestId: 7
 Messages: 18
 Quest: P0B10L07
+DisplayName: Intimidation
 -- Message panels
 QRC:
 
@@ -90,7 +91,7 @@ Message:  1012
  as soon as possible.
 
 Message:  1013
-%dat: _vamp_
+%qdt: _vamp_
  wants me to go to ___mondung_
  and throttle _knight_,
  a knight who refuses to bend to the
@@ -127,7 +128,7 @@ Message:  1016
 Message:  1017
 <ce>                     A pale young boy hands you a
 <ce>                      letter before scurrying away
-<ce>                        with suprising agility.
+<ce>                        with surprising agility.
 
 
 -- Symbols used in the QRC file:
@@ -188,7 +189,9 @@ _S.03_ task:
 _S.04_ task:
 	injured _F.00_ 
 	say 1014 
-	restrain foe _F.00_ task _S.04_ 
+	restrain foe _F.00_
+--task _S.04_ 
+--This was appended to the restrain foe action, not sure why
 
 _S.05_ task:
 	killed 1 _F.00_ 

@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 100
 Quest: K0C00Y07
+DisplayName: The Ransom
 -- Message panels
 QRC:
 

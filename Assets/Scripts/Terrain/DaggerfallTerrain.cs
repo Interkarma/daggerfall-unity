@@ -185,9 +185,9 @@ namespace DaggerfallWorkshop
         /// 1) BeginMapPixelDataUpdate - Schedules terrain data update using jobs system.
         /// 2) CompleteMapPixelDataUpdate - Completes terrain data update using jobs system.
         /// </summary>
-        /// <param name="terrainTexturing">Instance of TerrainTexturing class to use.</param>
+        /// <param name="terrainTexturing">Instance of ITerrainTexturing implementation class to use.</param>
         /// <returns>JobHandle of the scheduled jobs</returns>
-        public JobHandle BeginMapPixelDataUpdate(TerrainTexturing terrainTexturing = null)
+        public JobHandle BeginMapPixelDataUpdate(ITerrainTexturing terrainTexturing = null)
         {
             // Get basic terrain data.
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
@@ -240,8 +240,8 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Complete terrain data update using jobs system. (second of a two stage process)
         /// </summary>
-        /// <param name="terrainTexturing">Instance of TerrainTexturing class to use.</param>
-        public void CompleteMapPixelDataUpdate(TerrainTexturing terrainTexturing = null)
+        /// <param name="terrainTexturing">Instance of ITerrainTexturing implementation class to use.</param>
+        public void CompleteMapPixelDataUpdate(ITerrainTexturing terrainTexturing = null)
         {
             // Convert heightmap data back to standard managed 2d array.
             MapData.heightmapSamples = new float[heightmapDim, heightmapDim];

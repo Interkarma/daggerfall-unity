@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 41
 Quest: 10C00Y00
+DisplayName: Meridia's Quest
 -- Message panels
 QRC:
 

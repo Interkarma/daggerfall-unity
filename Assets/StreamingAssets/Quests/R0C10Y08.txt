@@ -6,6 +6,7 @@
 -- QuestId: 8
 Messages: 21
 Quest: R0C10Y08
+DisplayName: Theft from a Temple
 -- Message panels
 QRC:
 
@@ -89,7 +90,7 @@ Message:  1011
 <ce>           _transporter_ is a nervous-looking =transporter_
 <ce>                   with connections to _questgiver_.
                                      <--->
-A =transporter_ -- %g's %di of here at __tranporter_.
+A =transporter_ -- %g's %di of here at __transporter_.
 
 Message:  1012
 <ce>                        You pick up the _item_.
@@ -97,7 +98,7 @@ Message:  1012
 
 Message:  1015
 %qdt:
-_questgiver_ of
+_questgiver_
  has sent me to _itemplace_
  in __itemplace_ to steal
  a certain _item_, then deliver it to

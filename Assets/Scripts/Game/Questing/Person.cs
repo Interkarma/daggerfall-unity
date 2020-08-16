@@ -11,7 +11,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
@@ -19,6 +18,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallConnect.Arena2;
 using FullSerializer;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -40,7 +40,6 @@ namespace DaggerfallWorkshop.Game.Questing
         bool isIndividualNPC = false;
         bool isIndividualAtHome = false;
         string displayName = string.Empty;
-        string godName = string.Empty;
         Symbol homePlaceSymbol = null;
         Symbol lastAssignedPlaceSymbol = null;
         bool assignedToHome = false;
@@ -100,11 +99,6 @@ namespace DaggerfallWorkshop.Game.Questing
         public string DisplayName
         {
             get { return displayName; }
-        }
-
-        public string GodName
-        {
-            get { return godName; }
         }
 
         public string HomeTownName
@@ -269,7 +263,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 AssignHUDFace(faceIndex);
                 AssignDisplayName();
                 AssignHomeTown();
-                AssignGod();
 
                 // Is NPC at home?
                 isIndividualAtHome = atHome;
@@ -283,7 +276,6 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // TODO:
             //  * Support for home town/building (believe this is just random unless NPC moved from a Place)
-            //  * Support for %god (TEXT.RSC 4077-4084)
             //  * Support for pronoun (%g1, %g2, %g2, %g2self, %g3)
             //  * Support for class (not sure what NPCs have a class, need to see this used in a quest)
             //  * Support for faction (believe this is just the name of faction they belong to, e.g. The Merchants)
@@ -320,12 +312,19 @@ namespace DaggerfallWorkshop.Game.Questing
                     break;
 
                 case MacroTypes.FactionMacro:           // Faction macro
-                    // Want name of guild, not the person
-                    FactionFile.FactionData guildData;
-                    if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(ParentQuest.FactionId, out guildData))
-                        textOut = guildData.name;
+                    if (isQuestor)
+                    { 
+                        // Want name of guild, not the person
+                        FactionFile.FactionData guildData;
+                        if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(ParentQuest.FactionId, out guildData))
+                            textOut = guildData.name;
+                        else
+                            result = false;
+                    }
                     else
-                        result = false;
+                    {
+                        textOut = factionData.name;
+                    }
                     break;
 
                 default:                                // Macro not supported
@@ -692,11 +691,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 HomeBuildingName);
         }
 
-        void AssignGod()
-        {
-            godName = GetRandomGodName();
-        }
-
         Genders GetGender(string genderName)
         {
             Genders gender;
@@ -857,16 +851,6 @@ namespace DaggerfallWorkshop.Game.Questing
             return factionData;
         }
 
-        public static string GetRandomGodName()
-        {
-            const int minGodID = 4077;
-            const int maxGodID = 4084;
-
-            // Select a random god for this NPC
-            int godID = UnityEngine.Random.Range(minGodID, maxGodID + 1);
-            return DaggerfallUnity.Instance.TextProvider.GetRandomText(godID);
-        }
-
         #endregion
 
         #region FactionID Lookups
@@ -948,12 +932,19 @@ namespace DaggerfallWorkshop.Game.Questing
                 case FactionFile.FactionTypes.Individual:
                     return GetRandomFactionOfType(factionType);
 
-                // Not sure how to use vampire clans yet
-                // These are *mostly* used by vampire quests where its assumed the player's vampire faction will be used
-                // It wouldn't make sense for player to gain reputation with another vampire clan after all
-                // As vampire factions not in game yet, just select one at random to ensure NPC is created
+                // Classic is bugged there as it always selects a random vampire clan.
+                // Here we fix it by using player vampire clan for vampire and cure vampirism quests
+                // and by using the vampire clan affiliated to the current region otherwise.
                 case FactionFile.FactionTypes.VampireClan:
-                    return GetRandomFactionOfType(factionType);
+                    if (ParentQuest.QuestName.StartsWith("P0") || ParentQuest.QuestName.StartsWith("$CUREVAM"))
+                    {
+                        RacialOverrideEffect racialEffect = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+                        return (int)(racialEffect as VampirismEffect).VampireClan;
+                    }
+                    else
+                    { 
+                        return GameManager.Instance.PlayerGPS.GetCurrentRegionVampireClan();
+                    }
 
                 // Assign an NPC from current player region
                 case FactionFile.FactionTypes.Province:
@@ -1093,7 +1084,6 @@ namespace DaggerfallWorkshop.Game.Questing
             public bool isIndividualNPC;
             public bool isIndividualAtHome;
             public string displayName;
-            public string godName;
             public Symbol homePlaceSymbol;
             public Symbol lastAssignedPlaceSymbol;
             public bool assignedToHome;
@@ -1117,7 +1107,6 @@ namespace DaggerfallWorkshop.Game.Questing
             data.isIndividualNPC = isIndividualNPC;
             data.isIndividualAtHome = isIndividualAtHome;
             data.displayName = displayName;
-            data.godName = godName;
             data.homePlaceSymbol = homePlaceSymbol;
             data.lastAssignedPlaceSymbol = lastAssignedPlaceSymbol;
             data.assignedToHome = assignedToHome;
@@ -1151,7 +1140,6 @@ namespace DaggerfallWorkshop.Game.Questing
             isIndividualNPC = data.isIndividualNPC;
             isIndividualAtHome = data.isIndividualAtHome;
             displayName = data.displayName;
-            godName = data.godName;
             homePlaceSymbol = data.homePlaceSymbol;
             lastAssignedPlaceSymbol = data.lastAssignedPlaceSymbol;
             assignedToHome = data.assignedToHome;

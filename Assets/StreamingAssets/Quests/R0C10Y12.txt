@@ -6,6 +6,7 @@
 -- QuestId: 12
 Messages: 24
 Quest: R0C10Y12
+DisplayName: Smuggled Goods
 -- Message panels
 QRC:
 
@@ -15,7 +16,7 @@ QuestorOffer:  [1000]
 <ce>                  awkward indeed. I'm in possession of
 <ce>                   a certain ... item that is not, to
 <ce>                  be blunt, legally mine. If you would
-<ce>                     carry it a contact of mine in
+<ce>                     carry it to a contact of mine in
 <ce>                        ___contact_, you will be
 <ce>                handsomely rewarded. Does _reward_ gold
 <ce>                       pieces sound fair to you?
@@ -58,7 +59,7 @@ Those guards are even searching _questgiver_'s house for that _item_ shipment.
 It's a complete mystery where that _item_ disappeared. Everyone's curious.
 
 RumorsPostfailure:  [1006]
-What an embarassment for _questgiver_. The stolen _item_ was traced to %g2.
+What an embarrassment for _questgiver_. The stolen _item_ was traced to %g2.
 <--->
 I hear _questgiver_ tried to smuggle the _item_ to ___contact_.
 

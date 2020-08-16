@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Localization;
 using DaggerfallWorkshop.Utility;
 using UnityEditor.Localization;
 using UnityEngine.Localization.Tables;
+using UnityEditor.Localization.UI;
 
 namespace DaggerfallWorkshop
 {
@@ -45,20 +46,35 @@ namespace DaggerfallWorkshop
         {
             DrawDefaultInspector();
 
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField(new GUIContent("String Importer", "Import classic text data into named String Table Collections.\nNOTE: You must create collections manually.\nWARNING: Existing collections will be cleared."), EditorStyles.boldLabel);
-            GUILayoutHelper.Horizontal(() =>
-            {
-                var rscCollectionName = Prop("textRSCCollection");
-                if (GUILayout.Button("Import All"))
-                {
-                    DaggerfallStringTableImporter.ImportTextRSCToStringTables(rscCollectionName.stringValue);
-                }
-                if (GUILayout.Button("Clear All"))
-                {
-                    DaggerfallStringTableImporter.ClearStringTables(rscCollectionName.stringValue);
-                }
-            });
+            //EditorGUILayout.LabelField("Internal String Tables");
+            //GUILayoutHelper.Indent(() =>
+            //{
+            //    EditorGUILayout.SelectableLabel(TextManager.defaultInternalStringsCollectionName, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            //    EditorGUILayout.SelectableLabel(TextManager.defaultInternalRSCCollectionName, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            //});
+
+            //EditorGUILayout.Space();
+            //GUILayoutHelper.Horizontal(() =>
+            //{
+
+            //});
+            //EditorGUILayout.SelectableLabel(multiName, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+            //EditorGUILayout.LabelField(new GUIContent("String Importer", NG: Existing collections will be cleared."), EditorStyles.boldLabel);
+
+            //EditorGUILayout.Space();
+            //EditorGUILayout.LabelField(new GUIContent("String Importer", "Import classic text data into named String Table Collections.\nNOTE: You must create collections manually.\nWARNING: Existing collections will be cleared."), EditorStyles.boldLabel);
+            //GUILayoutHelper.Horizontal(() =>
+            //{
+            //    var rscCollectionName = Prop("textRSCCollection");
+            //    if (GUILayout.Button("Import All"))
+            //    {
+            //        DaggerfallStringTableImporter.ImportTextRSCToStringTables(rscCollectionName.stringValue);
+            //    }
+            //    if (GUILayout.Button("Clear All"))
+            //    {
+            //        DaggerfallStringTableImporter.ClearStringTables(rscCollectionName.stringValue);
+            //    }
+            //});
         }
     }
 }

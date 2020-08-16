@@ -906,7 +906,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             int casterLevel = (caster) ? caster.Entity.Level : 1;
             if (Properties.SupportDuration)
-                roundsRemaining = settings.DurationBase + settings.DurationPlus * (int)Mathf.Floor(casterLevel / settings.DurationPerLevel);
+            {
+                // Multiplier clamped at 1 or player can lose a round depending on spell settings and level
+                int durationPerLevelMultiplier = (int)Mathf.Floor(casterLevel / settings.DurationPerLevel);
+                if (durationPerLevelMultiplier < 1)
+                    durationPerLevelMultiplier = 1;
+                roundsRemaining = settings.DurationBase + settings.DurationPlus * durationPerLevelMultiplier;
+            }
             else
                 roundsRemaining = 0;
 

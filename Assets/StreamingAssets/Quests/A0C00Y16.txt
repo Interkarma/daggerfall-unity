@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 55
 Quest: A0C00Y16
+DisplayName: Missing Person Case
 -- Message panels
 QRC:
 

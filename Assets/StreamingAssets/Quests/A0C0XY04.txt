@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 36
 Quest: A0C0XY04
+DisplayName: The Impostor
 -- Message panels
 QRC:
 

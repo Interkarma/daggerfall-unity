@@ -90,6 +90,8 @@ namespace DaggerfallWorkshop
         public float ExteriorShadowDistance { get; set; }
         public bool EnableTextureArrays { get; set; }
         public int RandomDungeonTextures { get; set; }
+        public int CursorWidth { get; set; }
+        public int CursorHeight { get; set; }
 
         // [Audio]
         public string SoundFont { get; set; }
