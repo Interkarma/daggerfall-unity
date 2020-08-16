@@ -639,5 +639,11 @@ namespace DaggerfallWorkshop.Utility
             // %q12b
             throw new NotImplementedException();
         }
+
+        public virtual string ImperialName()
+        {
+            // %imp
+            throw new NotImplementedException();
+        }
     }
 }
