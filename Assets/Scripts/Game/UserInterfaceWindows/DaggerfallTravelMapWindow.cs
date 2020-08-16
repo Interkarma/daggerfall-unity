@@ -146,10 +146,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected bool teleportationTravel    = false;        // Indicates travel should be by teleportation
         protected static bool revealUndiscoveredLocations;    // Flag used to indicate cheat/debugging mode for revealing undiscovered locations
 
-        protected static bool filterDungeons = false;
-        protected static bool filterTemples = false;
-        protected static bool filterHomes = false;
-        protected static bool filterTowns = false;
+        protected bool filterDungeons = false;
+        protected bool filterTemples = false;
+        protected bool filterHomes = false;
+        protected bool filterTowns = false;
 
         protected Vector2 lastMousePos = Vector2.zero;
         protected Vector2 zoomOffset = Vector2.zero;
