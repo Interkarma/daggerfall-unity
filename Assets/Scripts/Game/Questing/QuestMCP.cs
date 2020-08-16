@@ -9,6 +9,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -141,31 +142,23 @@ namespace DaggerfallWorkshop.Game.Questing
                 return parent.GetCurrentLogMessageTime().DateString();
             }
 
-            /// <summary>
-            /// Oaths by race.
-            /// </summary>
-            enum RacialOaths
-            {
-                None = 0,
-                Nord = 201,
-                Khajiit = 202,
-                Redguard = 203,
-                Breton = 204,
-                Argonian = 205,
-                Bosmer = 206,
-                Altmer = 207,
-                Dunmer = 208,
-            }
-
-            // Oaths seem to be declared by NPC race
-            // Daggerfall NPCs have a limited range of races (usually Breton or Redguard).
-            // Have seen Nord oaths used in Daggerfall (e.g. Mages guild questor in Gothway Garden)
-            // Suspect NPCs with race: -1 (e.g. #63) get a random humanoid race within reason
-            // Just returning Nord oaths for now until ready to build this out properly
-            // https://www.imperial-library.info/content/daggerfall-oaths-and-expletives
+            // Oaths are declared by NPC race according to the race index used in FACTION.TXT.
+            // Unfortunately, classic never uses this faction race ID but, instead, uses the
+            // hardcoded index race of each region, which is not the same. In classic, this
+            // results in all NPCs from High Rock saying Nord oaths, while all NPCs in Hammerfell
+            // will say Khajiit oaths.
+            // Instead, DFU uses the faction race ID to return the correct oath.
+            // For the list of oaths, see https://www.imperial-library.info/content/daggerfall-oaths-and-expletives
             public override string Oath()
             {
-                return DaggerfallUnity.Instance.TextProvider.GetRandomText((int)RacialOaths.Nord);
+                // Get the questor race to find the correct oath
+                Races race = Races.None;
+                Symbol[] questors = parent.GetQuestors();
+                if (questors.Length > 0)
+                    race = parent.GetPerson(questors[0]).Race;
+
+                int oathId = (int)RaceTemplate.GetFactionRaceFromRace(race);
+                return DaggerfallUnity.Instance.TextProvider.GetRandomText(201 + oathId);
             }
 
             public override string HomeRegion()

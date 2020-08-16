@@ -539,18 +539,12 @@ namespace DaggerfallWorkshop.Game.Questing
 
         void AssignRace()
         {
-            // Use faction race only for individuals
-            if (isIndividualNPC)
-            {
-                race = RaceTemplate.GetRaceFromFactionRace((FactionFile.FactionRaces)factionData.race);
-                if (race != Races.None)
-                {
-                    return;
-                }
-            }
+            // Try to get the race from the current faction
+            race = RaceTemplate.GetRaceFromFactionRace((FactionFile.FactionRaces)factionData.race);
+            if (race == Races.None)
+                // Otherwise use race of current region
+                race = GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
 
-            // Otherwise use race of current region
-            race = GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
             nameBank = GameManager.Instance.PlayerGPS.GetNameBankOfCurrentRegion();
         }
 
