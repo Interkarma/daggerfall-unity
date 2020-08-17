@@ -18,7 +18,7 @@ QuestorOffer:  [1000]
 <ce>              know of her condition, but few possess the
 <ce>               bravery to face the horrors of her castle
 <ce>              and speak with her. My reward for a report
-<ce>                    on her health is a _magicitem_.
+<ce>                    on her health is a magical _magicitem_.
 <ce>                   Will you be my champion in this?
 
 RefuseQuest:  [1001]
@@ -30,9 +30,9 @@ AcceptQuest:  [1002]
 <ce>                  champion. The name of her castle is
 <ce>                Shedungent, and it should not take you
 <ce>              longer than =2shedungent_ days to go there.
-<ce>              If she is insane, Shedungent may be a very
-<ce>               dangerous place indeed. Be very careful.
-<ce>                  May Kynareth and Mara protect you.
+<ce>              and return. If she is insane, Shedungent
+<ce>               may be a very dangerous place indeed.
+<ce>           Be very careful. May Kynareth and Mara protect you.
 
 QuestFail:  [1003]
 <ce>                  Until you have spoken with Nulfaga,
