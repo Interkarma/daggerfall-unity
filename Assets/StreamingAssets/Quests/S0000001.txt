@@ -89,7 +89,7 @@ QuestLogEntry:  [1010]
  water. I do not know whether hunger or poor health or
  one of the creatures who share this dank hole with me
  will kill me first -- I only know that I will soon be
- dead, and not even my bones with remain. My hope is that
+ dead, and not even my bones will remain. My hope is that
  in the years that come, this letter will be read and the
  sad story of _brother_, Prince of Sentinel will be told.
  
