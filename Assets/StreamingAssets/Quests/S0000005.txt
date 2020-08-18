@@ -29,7 +29,7 @@ AcceptQuest:  [1002]
 <ce>                    %oth, I am glad to have found a
 <ce>                  champion. The name of her castle is
 <ce>                Shedungent, and it should not take you
-<ce>              longer than =2shedungent_ days to go there.
+<ce>              longer than =2shedungent_ days to go there
 <ce>              and return. If she is insane, Shedungent
 <ce>               may be a very dangerous place indeed.
 <ce>           Be very careful. May Kynareth and Mara protect you.
