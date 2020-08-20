@@ -156,9 +156,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Halt random enemy spawns for next playerEntity update so player isn't bombarded by spawned enemies after transform time
             GameManager.Instance.PlayerEntity.PreventEnemySpawns = true;
 
-            // Reset legal reputation for all regions and strip player of guild memberships
-            ResetLegalRepAndGuildMembership();
-
             // Raise game time to an evening two weeks later
             float raiseTime = (2 * DaggerfallDateTime.SecondsPerWeek) + (DaggerfallDateTime.DuskHour + 1 - DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour) * 3600;
             DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
@@ -214,13 +211,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 throw new System.Exception("VampirismInfection.GetRandomCemetery() could not find a cemetery in this region.");
 
             return location;
-        }
-
-        void ResetLegalRepAndGuildMembership()
-        {
-            // TODO: Reset legal reputation for all regions and remove player's guilds memberships, but keep backup of current ranks
-            // UESP indicates that rank is restored after 28 days when player re-joins a guild as a vampire
-            // https://en.uesp.net/wiki/Daggerfall:Vampirism#Reputations
         }
 
         #endregion
