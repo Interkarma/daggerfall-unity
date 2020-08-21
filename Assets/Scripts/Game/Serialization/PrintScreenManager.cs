@@ -34,9 +34,12 @@ namespace DaggerfallWorkshop.Game.Serialization
         #region Fields
 
         const string rootScreenshotsFolder = "Screenshots";
+        const string fileExtension = ".jpg";
 
         private string unityScreenshotsPath;
         private KeyCode prtscrBinding = KeyCode.None;
+
+        WaitForEndOfFrame endOfFrame = new WaitForEndOfFrame();
 
         #endregion
 
@@ -80,23 +83,30 @@ namespace DaggerfallWorkshop.Game.Serialization
             string name = DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
             int inc = 1;
 
-            if (File.Exists(Path.Combine(UnityScreenshotsPath, name + ".png")))
+            if (File.Exists(Path.Combine(UnityScreenshotsPath, name + fileExtension)))
             {
-                while(File.Exists(Path.Combine(UnityScreenshotsPath, name + "_" + inc + ".png")))
+                while (File.Exists(Path.Combine(UnityScreenshotsPath, name + "_" + inc + fileExtension)))
                     inc++;
                 name += "_" + inc;
             }
 
-            string path = Path.Combine(UnityScreenshotsPath, name + ".png");
+            yield return endOfFrame;
 
-            //this is an async function
-            ScreenCapture.CaptureScreenshot(path);
+            string path = Path.Combine(UnityScreenshotsPath, name + fileExtension);
 
-            //prevent the HUD text below from appearing on the screenshot
+            Texture2D pic = new Texture2D(Screen.width, Screen.height);
+            pic.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+            pic.Apply();
+            byte[] bytes = pic.EncodeToJPG();
+
+            // Save file
+            System.IO.File.WriteAllBytes(path, bytes);
+
+            // Prevent the HUD text below from appearing on the screenshot
             while (!File.Exists(path))
                 yield return new WaitForSeconds(0.1f);
 
-            DaggerfallUI.AddHUDText("Screenshot captured as '" + name + ".png'");
+            DaggerfallUI.AddHUDText("Screenshot captured as '" + name + fileExtension + "'");
         }
 
         string GetUnityScreenshotsPath()
