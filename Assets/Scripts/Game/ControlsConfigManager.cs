@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Utility;
 
@@ -201,6 +202,33 @@ namespace DaggerfallWorkshop.Game
         {
             SetKeyBindValues(true);
             SetKeyBindValues(false);
+        }
+
+        public void PromptRemoveKeybindMessage(Button button, Action checkDuplicates)
+        {
+            if (button.Label.Text == KeyCode.None.ToString())
+                return;
+
+            DaggerfallMessageBox removeAssignmentBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow);
+            removeAssignmentBox.PauseWhileOpen = true;
+
+            removeAssignmentBox.SetText($"Are you sure you want to remove the keybind for {button.Name} ('{button.Label.Text}')?");
+            removeAssignmentBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+            removeAssignmentBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No, true);
+
+            removeAssignmentBox.OnButtonClick += ((s, messageBoxButton) =>
+            {
+                if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+                {
+                    button.Label.Text = KeyCode.None.ToString();
+                    var action = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), button.Name);
+                    SetUnsavedBinding(action, button.Label.Text);
+                    checkDuplicates();
+                }
+                s.CloseWindow();
+            });
+
+            removeAssignmentBox.Show();
         }
 
         #endregion
