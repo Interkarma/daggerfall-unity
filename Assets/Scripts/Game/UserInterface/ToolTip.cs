@@ -31,6 +31,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         DaggerfallFont font;
         float toolTipDelay = 0;
         Vector2 mouseOffset = new Vector2(0, 4);
+        private int currentCursorHeight = -1;
+        private int currentSystemHeight;
+        private int currentRenderingHeight;
+        private bool currentFullScreen;
+
         bool drawToolTip = false;
         Color textColor = DaggerfallUI.DaggerfallUnityDefaultToolTipTextColor;
 
@@ -93,6 +98,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
         #endregion
 
         #region Public Methods
+
+        public override void Update()
+        {
+            base.Update();
+            if (DaggerfallUnity.Settings.CursorHeight != currentCursorHeight ||
+                Display.main.systemHeight != currentSystemHeight ||
+                Display.main.renderingHeight != currentRenderingHeight || 
+                DaggerfallUnity.Settings.Fullscreen != currentFullScreen)
+                UpdateMouseOffset();
+        }
+
+        private void UpdateMouseOffset()
+        {
+            currentCursorHeight = DaggerfallUnity.Settings.CursorHeight;
+            currentSystemHeight = Display.main.systemHeight;
+            currentRenderingHeight = Display.main.renderingHeight;
+            currentFullScreen = DaggerfallUnity.Settings.Fullscreen;
+            mouseOffset = new Vector2(0, currentCursorHeight * 200f / (currentFullScreen ? currentSystemHeight : currentRenderingHeight));
+        }
 
         /// <summary>
         /// Flags tooltip to be drawn at end of UI update.

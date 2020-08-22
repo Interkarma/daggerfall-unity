@@ -916,8 +916,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     return true;
 
                 // Seek from mods
-                if (ModManager.Instance != null)
-                    return ModManager.Instance.TryGetAsset(name, null, out tex);
+                if (ModManager.Instance && ModManager.Instance.TryGetAsset(name, null, out tex))
+                {
+                    if (!readOnly && !tex.isReadable)
+                        Debug.LogWarning($"Texture {name} is not readable.");
+
+                    return true;
+                }
             }
 
             tex = null;

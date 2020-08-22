@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 36
 Quest: A0C00Y12
+DisplayName: The First Printing
 -- Message panels
 QRC:
 

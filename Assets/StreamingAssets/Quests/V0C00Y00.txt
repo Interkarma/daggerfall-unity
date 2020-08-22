@@ -6,12 +6,13 @@
 -- QuestId: 0
 Messages: 31
 Quest: V0C00Y00
+DisplayName: Clavicus Vile's Quest
 -- Message panels
 QRC:
 
 QuestorOffer:  [1000]
 <ce>                My needs are rather ... modest, but my
-<ce>             offer, I think you will agree, is altruistism
+<ce>             offer, I think you will agree, is altruism
 <ce>               and generosity indissoluble. In return for
 <ce>                        _artifact_, an artifact
 <ce>            of great power, I only ask that you exterminate
@@ -97,7 +98,8 @@ Message:  1020
  located in the dungeon ___mondung_.
  A =contact_ named _contact_ will
  wait for =1stparton_ days for me at __contact_
- in ___contact_ to give me the _artifact_.
+ in ___contact_ to give me the Masque
+ of Clavicus Vile.
 
 Message:  1030
 <ce>                     You have slain the werewolf,
@@ -127,7 +129,6 @@ Place _mondung_ remote dungeon
 Place _tavern_ remote tavern
 
 Clock _1stparton_ 00:00 0 flag 1 range 0 5
-Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _monster_ is Werewolf
 --removed period from 1003
@@ -141,13 +142,13 @@ Foe _monster_ is Werewolf
 _pcgetsgold_ task:
 	when _qgclicked_ and _mondead_ 
 	give pc _artifact_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 variable _queston_
 _mondead_ task:
 	killed 1 _monster_ 
 	say 1030 
-	create npc _contact_ 
 
 _qgclicked_ task:
 	clicked npc _contact_ 
@@ -160,6 +161,3 @@ _clearclick_ task:
 	when _qgclicked_ and not _mondead_
 	say 1003 
 	clear _qgclicked_ _clearclick_ 
-
-_delay_ task:
-	end quest 

@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game
         public Vector2 sensitivity = new Vector2(2, 2);
         public Vector2 smoothing = new Vector2(3, 3);
         public float sensitivityScale = 1.0f;
+        public float joystickSensitivityScale = 1.0f;
         public bool enableMouseLook = true;
         public bool enableSmoothing = true;
         public bool simpleCursorLock = false;
@@ -168,10 +169,22 @@ namespace DaggerfallWorkshop.Game
                 rawMouseDelta.y = -rawMouseDelta.y;
 
             // Scale sensitivity
-            float sensitivityX = sensitivity.x * sensitivityScale;
-            float sensitivityY = sensitivity.y * sensitivityScale;
+            float sensitivityX = 1.0f;
+            float sensitivityY = 1.0f;
 
-            if (enableSmoothing)
+            if (InputManager.Instance.UsingController)
+            {
+                sensitivityX = sensitivity.x * joystickSensitivityScale;
+                sensitivityY = sensitivity.y * joystickSensitivityScale;
+            }
+            else
+            {
+                sensitivityX = sensitivity.x * sensitivityScale;
+                sensitivityY = sensitivity.y * sensitivityScale;
+            }
+
+            //controller should just use smoothing
+            if (enableSmoothing || InputManager.Instance.UsingController)
             {
                 // Scale raw mouse delta against the smoothing value
                 Vector2 smoothMouseDelta = Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX * smoothing.x, sensitivityY * smoothing.y));

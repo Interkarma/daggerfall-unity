@@ -15,7 +15,7 @@ QuestorOffer:  [1000]
 <ce>                            I am _qgiver_.
 <ce>                 The Fighter's Guild doesn't hand out
 <ce>                  charity work. If I weren't short on
-<ce>                 fighter's right now, I'd have to send
+<ce>                 fighters right now, I'd have to send
 <ce>                 you away %pcn. I do need a fighter to
 <ce>                  chase off some barbarian that's
 <ce>                  running wild. Do it for me and I'll

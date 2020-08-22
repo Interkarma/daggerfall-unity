@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -24,10 +25,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(11, 2);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "transfer");
-            properties.SubGroupName = TextManager.Instance.GetText("ClassicEffects", "willpower");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1552);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1252);
             properties.SupportMagnitude = true;
             properties.ShowSpellIcon = false;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
@@ -37,5 +34,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.MagnitudeCosts = MakeEffectCosts(60, 100, 40);
             drainStat = DFCareer.Stats.Willpower;
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("transfer");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("willpower");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1552);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1252);
     }
 }

@@ -28,7 +28,6 @@ namespace DaggerfallWorkshop.Game.Player
         private const string PrefixDateHeader = "D:";
         private const string PrefixQuestion = "Q:";
         private const string PrefixAnswer = "A:";
-        const string textDatabase = "DaggerfallUI";
         const int MaxMessageCount = 50;
 
         readonly static TextFile.Token NothingToken = new TextFile.Token() {
@@ -111,7 +110,7 @@ namespace DaggerfallWorkshop.Game.Player
         {
             List<TextFile.Token> note = new List<TextFile.Token>();
             note.Add(new TextFile.Token() {
-                text = string.Format(TextManager.Instance.GetText(textDatabase, "noteHeader"),
+                text = string.Format(TextManager.Instance.GetLocalizedText("noteHeader"),
                     DaggerfallUnity.Instance.WorldTime.Now.DateTimeString(), MacroHelper.CityName(null)),
                 formatting = TextFile.Formatting.TextHighlight,
             });
@@ -220,7 +219,7 @@ namespace DaggerfallWorkshop.Game.Player
             if (messages != null && messages.Count > 0)
             {
                 Quest quest = messages[0].ParentQuest;
-                string questName = string.IsNullOrEmpty(quest.DisplayName) ? TextManager.Instance.GetText(textDatabase, "quest") : quest.DisplayName;
+                string questName = string.IsNullOrEmpty(quest.DisplayName) ? TextManager.Instance.GetLocalizedText("quest") : quest.DisplayName;
                 List<TextFile.Token> entry = CreateFinishedQuest(questName, quest.QuestSuccess);
                 foreach (Message msg in messages)
                 {
@@ -241,10 +240,10 @@ namespace DaggerfallWorkshop.Game.Player
 
         private static List<TextFile.Token> CreateFinishedQuest(string questName, bool success)
         {
-            string status = TextManager.Instance.GetText(textDatabase, success ? "completedQuest" : "endedQuest");
+            string status = TextManager.Instance.GetLocalizedText(success ? "completedQuest" : "endedQuest");
             List<TextFile.Token> entry = new List<TextFile.Token>();
             entry.Add(new TextFile.Token() {
-                text = string.Format(TextManager.Instance.GetText(textDatabase, "finishQuestHeader"),
+                text = string.Format(TextManager.Instance.GetLocalizedText("finishQuestHeader"),
                     questName, status, DaggerfallUnity.Instance.WorldTime.Now.MidDateTimeString()),
                 formatting = TextFile.Formatting.TextHighlight,
             });

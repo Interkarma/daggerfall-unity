@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop
                 return;
             }
 
-            var layers = new List<Tuple<Texture2D, DaggerfallTextureIndex>>();
+            var layers = new List<DaggerfallWorkshop.Utility.Tuple<Texture2D, DaggerfallTextureIndex>>();
 
             foreach (var tex in selection)
             {
@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop
                     return;
                 }
 
-                layers.Add(new Tuple<Texture2D, DaggerfallTextureIndex>(tex as Texture2D, new DaggerfallTextureIndex
+                layers.Add(new DaggerfallWorkshop.Utility.Tuple<Texture2D, DaggerfallTextureIndex>(tex as Texture2D, new DaggerfallTextureIndex
                 {
                     archive = int.Parse(match.Groups["archive"].Value),
                     record = int.Parse(match.Groups["record"].Value),

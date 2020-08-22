@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     [Serializable]
     internal struct BookMappingEntry
     {
+#pragma warning disable 649
         /// <summary>
         /// The file name with the extension; for example `example-book.TXT` for `StreamingAssets\Books\example-book.TXT`.
         /// </summary>
@@ -53,6 +54,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         [SerializeField]
         internal int? WhenVarSet;
+#pragma warning restore 649
     }
 
     /// <summary>

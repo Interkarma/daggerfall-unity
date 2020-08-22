@@ -44,8 +44,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallMessageBox nextMessageBox;
         int customYPos = -1;
         float presentationTime = 0;
+        bool isActivateButtonDeferred = false;
 
         KeyCode extraProceedBinding = KeyCode.None;
+        bool isNextMessageDeferred = false;
 
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
@@ -288,30 +290,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            if (!DaggerfallUI.Instance.HotkeySequenceProcessed &&
-                (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || InputManager.Instance.GetKeyUp(extraProceedBinding)))
+            if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
             {
-                // Special handling for message boxes with buttons
-                if (buttons.Count > 0)
+                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || InputManager.Instance.GetKeyDown(extraProceedBinding))
+                    isNextMessageDeferred = true;
+                else if ((Input.GetKeyUp(KeyCode.Return) || Input.GetKeyUp(KeyCode.KeypadEnter) || InputManager.Instance.GetKeyUp(extraProceedBinding)) && isNextMessageDeferred)
                 {
-                    // Trigger default button if one is present
-                    Button defaultButton = GetDefaultButton();
-                    if (defaultButton != null)
-                        defaultButton.TriggerMouseClick();
+                    isNextMessageDeferred = false;
+                    // Special handling for message boxes with buttons
+                    if (buttons.Count > 0)
+                    {
+                        // Trigger default button if one is present
+                        Button defaultButton = GetDefaultButton();
+                        if (defaultButton != null)
+                            defaultButton.TriggerMouseClick();
 
-                    // Exit here if no other message boxes queued
-                    // Most of the time this won't be the case and we don't want message boxes waiting for input to close prematurely
-                    if (nextMessageBox == null)
-                        return;
+                        // Exit here if no other message boxes queued
+                        // Most of the time this won't be the case and we don't want message boxes waiting for input to close prematurely
+                        if (nextMessageBox == null)
+                            return;
+                    }
+                    // if there is a nested next message box show it
+                    if (this.nextMessageBox != null)
+                    {
+                        nextMessageBox.Show();
+                    }
+                    else // or close window if there is no next message box to show
+                    {
+                        CloseWindow();
+                    }
                 }
-                // if there is a nested next message box show it
-                if (this.nextMessageBox != null)
+                else if (buttonClicked)
                 {
-                    nextMessageBox.Show();
-                }
-                else // or close window if there is no next message box to show
-                {
-                    CloseWindow();
+                    // if there is a nested next message box show it
+                    if (nextMessageBox != null)
+                        nextMessageBox.Show();
                 }
             }
             else if (buttonClicked)
@@ -344,6 +357,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.OnMouseClick += ButtonClickHandler;
             button.DefaultButton = defaultButton;
             button.Hotkey = DaggerfallShortcut.GetBinding(ToShortcutButton(messageBoxButton));
+            button.OnKeyboardEvent += ButtonKeyboardEvent;
             buttons.Add(button);
 
             // Once a button has been added the owner is expecting some kind of input from player
@@ -444,11 +458,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private Methods
 
-        void ButtonClickHandler(BaseScreenComponent sender, Vector2 position)
+        private void ActivateButton(BaseScreenComponent sender)
         {
             buttonClicked = true;
             selectedButton = (MessageBoxButtons)sender.Tag;
             RaiseOnButtonClickEvent(this, selectedButton);
+        }
+
+        void ButtonClickHandler(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            ActivateButton(sender);
+        }
+
+        void ButtonKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isActivateButtonDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isActivateButtonDeferred)
+            {
+                isActivateButtonDeferred = false;
+                ActivateButton(sender);
+            }
         }
 
         void UpdatePanelSizes()
@@ -627,7 +661,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (OnButtonClick != null)
                 OnButtonClick(sender, messageBoxButton);
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
         #endregion

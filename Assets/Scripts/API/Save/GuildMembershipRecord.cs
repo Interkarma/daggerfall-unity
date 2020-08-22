@@ -87,7 +87,8 @@ namespace DaggerfallConnect.Save
         void ReadNativeGuildMembershipData()
         {
             // Must be a guild membership type
-            if (recordType != RecordTypes.GuildMembership)
+            if (recordType != RecordTypes.GuildMembership &&
+                recordType != RecordTypes.OldGuild)
                 return;
 
             // Prepare stream

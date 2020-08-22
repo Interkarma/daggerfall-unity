@@ -48,7 +48,7 @@ QuestComplete:  [1004]
 <ce>                           not long from now.
 
 RumorsDuringQuest:  [1005]
-%t %rn is evidentally proud of %g3 new _jewelry_. Everyone wants to see it.
+%t %rn is evidently proud of %g3 new _jewelry_. Everyone wants to see it.
 <--->
 Security is up in _palace_, apparently because of the new _jewelry_.
 

@@ -20,13 +20,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallExteriorAutomapWindow : DaggerfallPopupWindow
     {
-        const string textDatabase = "DaggerfallUI";
-
-        public static string TextDatabase
-        {
-            get { return textDatabase; }
-        }
-
         const int toolTipDelay = 1; // delay in seconds before button tooltips are shown        
 
         const float minTextScaleNameplates = 1.4f; // minimum text scale for nameplates
@@ -58,6 +51,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Handle toggle closing
         KeyCode automapBinding = KeyCode.None;
         HotkeySequence HotkeySequence_toggleClose;
+        bool isCloseWindowDeferred = false;
         readonly KeyCode fallbackKey = KeyCode.Home;
 
         // definitions of hotkey sequences
@@ -226,16 +220,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void UpdateButtonToolTipsText()
         {
-            gridButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipTextGridButton"), HotkeySequence_SwitchToNextExteriorAutomapViewMode, HotkeySequence_SwitchToExteriorAutomapViewModeOriginal, HotkeySequence_SwitchToExteriorAutomapViewModeExtra, HotkeySequence_SwitchToExteriorAutomapViewModeAll, HotkeySequence_SwitchToExteriorAutomapBackgroundOriginal, HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative1, HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative2, HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative3);
-            forwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipForwardButton"), HotkeySequence_MoveForward, HotkeySequence_MoveToNorthLocationBorder);
-            backwardButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipBackwardButton"), HotkeySequence_MoveBackward, HotkeySequence_MoveToSouthLocationBorder);
-            leftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipLeftButton"), HotkeySequence_MoveLeft, HotkeySequence_MoveToWestLocationBorder);
-            rightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipRightButton"), HotkeySequence_MoveRight, HotkeySequence_MoveToEastLocationBorder);
-            rotateLeftButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipRotateLeftButton"), HotkeySequence_RotateLeft, HotkeySequence_RotateAroundPlayerPosLeft);
-            rotateRightButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipRotateRightButton"), HotkeySequence_RotateRight, HotkeySequence_RotateAroundPlayerPosRight);
-            upstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipUpstairsButton"), HotkeySequence_ZoomIn);
-            downstairsButton.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipDownstairsButton"), HotkeySequence_ZoomOut);
-            dummyPanelCompass.ToolTipText = String.Format(TextManager.Instance.GetText(textDatabase, "exteriorAutomapToolTipPanelCompass"), HotkeySequence_FocusPlayerPosition, HotkeySequence_ResetView);
+            gridButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("exteriorAutomapToolTipTextGridButton"), HotkeySequence_SwitchToNextExteriorAutomapViewMode, HotkeySequence_SwitchToExteriorAutomapViewModeOriginal, HotkeySequence_SwitchToExteriorAutomapViewModeExtra, HotkeySequence_SwitchToExteriorAutomapViewModeAll, HotkeySequence_SwitchToExteriorAutomapBackgroundOriginal, HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative1, HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative2, HotkeySequence_SwitchToExteriorAutomapBackgroundAlternative3);
+            forwardButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("exteriorAutomapToolTipForwardButton"), HotkeySequence_MoveForward, HotkeySequence_MoveToNorthLocationBorder);
+            backwardButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("exteriorAutomapToolTipBackwardButton"), HotkeySequence_MoveBackward, HotkeySequence_MoveToSouthLocationBorder);
+            leftButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("exteriorAutomapToolTipLeftButton"), HotkeySequence_MoveLeft, HotkeySequence_MoveToWestLocationBorder);
+            rightButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("exteriorAutomapToolTipRightButton"), HotkeySequence_MoveRight, HotkeySequence_MoveToEastLocationBorder);
+            rotateLeftButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("exteriorAutomapToolTipRotateLeftButton"), HotkeySequence_RotateLeft, HotkeySequence_RotateAroundPlayerPosLeft);
+            rotateRightButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("exteriorAutomapToolTipRotateRightButton"), HotkeySequence_RotateRight, HotkeySequence_RotateAroundPlayerPosRight);
+            upstairsButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("exteriorAutomapToolTipUpstairsButton"), HotkeySequence_ZoomIn);
+            downstairsButton.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("exteriorAutomapToolTipDownstairsButton"), HotkeySequence_ZoomOut);
+            dummyPanelCompass.ToolTipText = String.Format(TextManager.Instance.GetLocalizedText("exteriorAutomapToolTipPanelCompass"), HotkeySequence_FocusPlayerPosition, HotkeySequence_ResetView);
         }
 
         /// <summary>
@@ -570,10 +564,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
 
-            if (Input.GetKeyUp(KeyCode.Escape) ||
+            if (Input.GetKeyDown(KeyCode.Escape) ||
                 // Toggle window closed with same hotkey used to open it
-                HotkeySequence_toggleClose.IsUpWith(keyModifiers))
+                HotkeySequence_toggleClose.IsDownWith(keyModifiers))
+                isCloseWindowDeferred = true;
+            else if ((Input.GetKeyUp(KeyCode.Escape) ||
+                // Toggle window closed with same hotkey used to open it
+                HotkeySequence_toggleClose.IsUpWith(keyModifiers)) && isCloseWindowDeferred)
             {
+                isCloseWindowDeferred = false;
                 CloseWindow();
                 return;
             }

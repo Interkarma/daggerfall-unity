@@ -34,7 +34,7 @@ AcceptQuest:  [1002]
 <ce>               self.  By all reports, a masterful little
 <ce>              piece of work, but according to my research,
 <ce>             impossible.  The internal azimuth vectors are
-<ce>              such that I cannnot reconcile the externally
+<ce>              such that I cannot reconcile the externally
 <ce>             manifested lateral flow lines ... Well, having
 <ce>             the piece to study would help me immeasurably,
 <ce>             but I have not had much luck tracking it down.
@@ -84,7 +84,7 @@ RumorsPostsuccess:  [1007]
 <ce>                %g3 research.  Hey, that was you, right?
 
 QuestorPostsuccess:  [1008]
-<ce>        Eh?  Oh, my good friend %pcf.  You searched all of %ra
+<ce>        Eh?  Oh, my good friend %pcf.  You searched all of %reg
 <ce>                       for that _item_ I wanted.
 
 QuestorPostfailure:  [1009]
@@ -190,7 +190,7 @@ Message:  1032
 _contact_ --
  
  Please send me:
-   3 doz. newt's tongues (dessicated)
+   3 doz. newt's tongues (desiccated)
    4.25 oz. powdered unicorn horn (pure northern ONLY!)
    1 _ingredient_ (FRESH this time, for %god's sake)
    A jar of basilisk eyes

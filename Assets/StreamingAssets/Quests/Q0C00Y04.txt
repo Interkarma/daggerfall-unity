@@ -132,8 +132,7 @@ Message:  1017
 <ce>                   been desecrated! I am disappointed
 <ce>                   that you cannot do this one simple
 <ce>                             thing for me.
-                                     <--->
- 
+
 
 -- Symbols used in the QRC file:
 --

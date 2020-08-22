@@ -39,11 +39,6 @@ namespace DaggerfallConnect.Arena2
         private SolidTypes solidType = SolidTypes.None;
 
         /// <summary>
-        /// Types of spectral image.
-        /// </summary>
-        private SpectralTypes spectralType = SpectralTypes.None;
-
-        /// <summary>
         /// File header.
         /// </summary>
         private FileHeader header;
@@ -70,15 +65,6 @@ namespace DaggerfallConnect.Arena2
             None,
             SolidColoursA,
             SolidColoursB,
-        }
-
-        /// <summary>
-        /// Spectral types enumeration.
-        /// </summary>
-        private enum SpectralTypes
-        {
-            None,
-            Spectral,
         }
 
         /// <summary>
@@ -298,12 +284,6 @@ namespace DaggerfallConnect.Arena2
             else
                 solidType = SolidTypes.None;
 
-            // Handle spectral types
-            if (fn == "TEXTURE.273" || fn == "TEXTURE.278")
-                spectralType = SpectralTypes.Spectral;
-            else
-                spectralType = SpectralTypes.None;
-
             // Load file
             if (!managedFile.Load(filePath, usage, readOnly))
                 return false;
@@ -456,6 +436,19 @@ namespace DaggerfallConnect.Arena2
             return string.Format("TEXTURE.{0:000}", archiveIndex);
         }
 
+        /// <summary>
+        /// Check if archive is of a known spectral texture.
+        /// </summary>
+        /// <param name="archive">Archive index.</param>
+        /// <returns>True if archive is a spectral type.</returns>
+        public static bool IsSpectralArchive(int archive)
+        {
+            // 273 = Ghost
+            // 278 = Wraith
+            // 473 = Lysandus
+            return (archive == 273 || archive == 278 || archive == 473);
+        }
+
         #endregion
 
         #region Readers
@@ -582,12 +575,6 @@ namespace DaggerfallConnect.Arena2
                     break;
             }
 
-            // Handle spectral types
-            if (spectralType != SpectralTypes.None)
-            {
-                SetSpectral(record, frame);
-            }
-
             return result;
         }
 
@@ -621,22 +608,6 @@ namespace DaggerfallConnect.Arena2
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Modify image data for spectral textures.
-        /// </summary>
-        /// <param name="record">Record index.</param>
-        /// <param name="frame">Frame index.</param>
-        private void SetSpectral(int record, int frame)
-        {
-            // Just set spectral enemies to dark gray for now
-            for (int i = 0; i < records[record].Frames[frame].Data.Length; i++)
-            {
-                int index = records[record].Frames[frame].Data[i];
-                if (index > 0)
-                    records[record].Frames[frame].Data[i] = 93;
-            }
         }
 
         /// <summary>

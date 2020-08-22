@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -23,8 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         const int totalVariants = 5;
         //const int savingThrowModifier = 75;
-        //const string textDatabase = "ClassicEffects";
-        readonly string[] subGroupTextKeys = { "fire", "frost", "poison", "shock", "magicka" };
+        readonly string[] subGroupTextKeys = { "Fire", "Frost", "Poison", "Shock", "Magicka" };
         readonly VariantProperties[] variantProperties = new VariantProperties[totalVariants];
 
         #endregion
@@ -70,7 +70,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             // Set properties shared by all variants
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "elementalResistance");
             properties.SupportDuration = true;
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
@@ -89,12 +88,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             SetVariantProperties(DFCareer.Elements.Magic);
         }
 
+        public override string GroupName => TextManager.Instance.GetLocalizedText("elementalResistance");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText(subGroupTextKeys[currentVariant]);
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1527 + currentVariant);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1227 + currentVariant);
+
         public override void SetPotionProperties()
         {
             EffectSettings resistSettings = SetEffectChance(DefaultEffectSettings(), 100, 1, 1);
 
             PotionRecipe resistFire = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "resistFire"),
+                TextManager.Instance.GetLocalizedText("resistFire"),
                 75,
                 resistSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,
@@ -104,7 +108,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.PlantIngredients2.Cactus);
 
             PotionRecipe resistFrost = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "resistFrost"),
+                TextManager.Instance.GetLocalizedText("resistFrost"),
                 75,
                 resistSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,
@@ -113,7 +117,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.PlantIngredients2.White_rose);
 
             PotionRecipe resistShock = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "resistShock"),
+                TextManager.Instance.GetLocalizedText("resistShock"),
                 75,
                 resistSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,
@@ -122,7 +126,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             EffectSettings poisonResistSettings = SetEffectChance(DefaultEffectSettings(), 5, 19, 1);
             PotionRecipe resistPoison = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "resistPoison"),
+                TextManager.Instance.GetLocalizedText("resistPoison"),
                 125,
                 poisonResistSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,
@@ -183,15 +187,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         void SetVariantProperties(DFCareer.Elements element)
         {
             int variantIndex = (int)element;
-            string name = TextManager.Instance.GetText("ClassicEffects", subGroupTextKeys[variantIndex]);
 
             VariantProperties vp = new VariantProperties();
             vp.effectProperties = properties;
-            vp.effectProperties.Key = string.Format("ElementalResistance-{0}", name);
+            vp.effectProperties.Key = string.Format("ElementalResistance-{0}", subGroupTextKeys[variantIndex]);
             vp.effectProperties.ClassicKey = MakeClassicKey(8, (byte)variantIndex);
-            vp.effectProperties.SubGroupName = name;
-            vp.effectProperties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1527 + variantIndex);
-            vp.effectProperties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1227 + variantIndex);
             vp.elementResisted = element;
             variantProperties[variantIndex] = vp;
         }

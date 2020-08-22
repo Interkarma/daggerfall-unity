@@ -123,6 +123,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.questFoeItemQueueIndex = entity.QuestFoeItemQueueIndex;
             data.wabbajackActive = entity.WabbajackActive;
             data.team = (int)entity.Team + 1;
+            data.specialTransformationCompleted = mobileEnemy.Summary.specialTransformationCompleted;
 
             // Add quest resource data if present
             QuestResourceBehaviour questResourceBehaviour = GetComponent<QuestResourceBehaviour>();
@@ -147,6 +148,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             EnemySenses senses = enemy.GetComponent<EnemySenses>();
             EnemyMotor motor = enemy.GetComponent<EnemyMotor>();
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
+            DaggerfallMobileUnit mobileEnemy = enemy.GetComponentInChildren<DaggerfallMobileUnit>();
 
             // Restore enemy career or class if different
             if (entity == null || entity.EntityType != data.entityType || entity.CareerIndex != data.careerIndex)
@@ -218,6 +220,12 @@ namespace DaggerfallWorkshop.Game.Serialization
 
             // Restore instanced effect bundles
             GetComponent<EntityEffectManager>().RestoreInstancedBundleSaveData(data.instancedEffectBundles);
+
+            // Restore special transformation state if completed
+            if (data.specialTransformationCompleted && mobileEnemy)
+            {
+                mobileEnemy.SetSpecialTransformationCompleted();
+            }
 
             // Resume entity
             entity.Quiesce = false;

@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -25,10 +26,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(3, 1);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "cure");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "poison");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1510);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1210);
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
@@ -37,11 +34,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.ChanceCosts = MakeEffectCosts(8, 100);
         }
 
+        public override string GroupName => TextManager.Instance.GetLocalizedText("cure");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("poison");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1510);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1210);
+
         public override void SetPotionProperties()
         {
             EffectSettings cureSettings = SetEffectChance(DefaultEffectSettings(), 5, 19, 1);
             PotionRecipe curePoison = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "curePoison"),
+                TextManager.Instance.GetLocalizedText("curePoison"),
                 200,
                 cureSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,

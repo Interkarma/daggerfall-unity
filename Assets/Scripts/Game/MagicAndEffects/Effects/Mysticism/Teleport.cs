@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -48,15 +49,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(43, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "teleport");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1602);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1302);
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.ShowSpellIcon = false;
             properties.MagicSkill = DFCareer.MagicSkills.Mysticism;
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("teleport");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1602);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1302);
 
         protected override int RemoveRound()
         {

@@ -186,9 +186,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 switch (token.formatting)
                 {
-                    // Set font on current group
+                    // Set font on current group - note that tokens are 1-based and DaggerfallFont.FontName is 0-based
                     case TextFile.Formatting.FontPrefix:
-                        workingGroup.font = prevFont = DaggerfallUI.Instance.GetFont(token.x);
+                        workingGroup.font = prevFont = DaggerfallUI.Instance.GetFont((DaggerfallFont.FontName)token.x - 1);
                         break;
 
                     // Text is added to working group

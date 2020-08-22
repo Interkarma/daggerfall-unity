@@ -11,6 +11,7 @@
 
 using System;
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -68,7 +69,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             itemPicker.AllowCancel = false;
             foreach (CreateItemSelection item in Enum.GetValues(typeof(CreateItemSelection)))
             {
-                itemPicker.ListBox.AddItem(TextManager.Instance.GetText(textDatabase, item.ToString()));
+                itemPicker.ListBox.AddItem(TextManager.Instance.GetLocalizedText(item.ToString()));
             }
         }
 
@@ -76,10 +77,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(2, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "createItem");
-            properties.SubGroupName = string.Empty;
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1507);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1207);
             properties.SupportDuration = true;
             properties.ShowSpellIcon = false;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
@@ -88,6 +85,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.MagicSkill = DFCareer.MagicSkills.Mysticism;
             properties.DurationCosts = MakeEffectCosts(60, 120);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("createItem");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1507);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1207);
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -19,7 +19,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public class VerticalProgress : BaseScreenComponent
     {
         public Texture2D ProgressTexture;
-        public Texture2D ColorTexture;
+        Texture2D colorTexture;
 
         Color32 color;
         float amount = 1.0f;
@@ -49,6 +49,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public override void Draw()
         {
+            // Create texture once
+            if (!colorTexture)
+                colorTexture = DaggerfallUI.CreateSolidTexture(UnityEngine.Color.white, 8);
+
             if (Enabled)
             {
                 base.Draw();
@@ -58,12 +62,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void SetColor(Color32 color)
         {
-            ColorTexture = new Texture2D(1, 1);
-            Color32[] colors = new Color32[1];
-            colors[0] = color;
-            ColorTexture.SetPixels32(colors);
-            ColorTexture.Apply(false, true);
-            ColorTexture.filterMode = FilterMode.Point;
             this.color = color;
         }
 
@@ -71,14 +69,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             Rect srcRect = new Rect(0, 0, 1, 1 * amount);
             Rect dstRect = Rectangle;
-            dstRect.y += dstRect.height - dstRect.height * amount;
-            dstRect.height *= amount;
+            float scaledAmount = Mathf.Round(dstRect.height * amount);
+            dstRect.y += dstRect.height - scaledAmount;
+            dstRect.height = scaledAmount;
 
             if (ProgressTexture)
                 GUI.DrawTextureWithTexCoords(dstRect, ProgressTexture, srcRect, false);
-            else if (ColorTexture)
+            else if (colorTexture)
             {
-                GUI.DrawTextureWithTexCoords(dstRect, ColorTexture, srcRect, false);
+                Color lastColor = GUI.color;
+                GUI.color = color;
+                GUI.DrawTextureWithTexCoords(dstRect, colorTexture, srcRect, false);
+                GUI.color = lastColor;
             }
         }
     }

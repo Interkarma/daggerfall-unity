@@ -6,6 +6,7 @@
 -- QuestId: 2
 Messages: 31
 Quest: P0B01L02
+DisplayName: The Vampire Relic
 -- Message panels
 QRC:
 

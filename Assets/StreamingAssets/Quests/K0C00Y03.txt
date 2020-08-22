@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 18
 Quest: K0C00Y03
+DisplayName: Smuggling
 -- Message panels
 QRC:
 

@@ -142,8 +142,6 @@ namespace DaggerfallWorkshop.Game
 
         #region Fields
 
-        const string textDatabase = "DaggerfallUI";
-
         const string ResourceNameRotateArrow = "RotateArrow";
 
         const string NameGamobjectBeacons = "Beacons";
@@ -274,11 +272,6 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Properties
-
-        public static string TextDatabase
-        {
-            get { return textDatabase; }
-        }
 
         /// <summary>
         /// DaggerfallAutomapWindow script will use this to get automap layer
@@ -569,27 +562,27 @@ namespace DaggerfallWorkshop.Game
                 // if hit geometry is player position beacon
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconPlayerPosition)
                 {
-                    return TextManager.Instance.GetText(textDatabase, "automapPlayerPositionBeacon");
+                    return TextManager.Instance.GetLocalizedText("automapPlayerPositionBeacon");
                 }
                 // if hit geometry is player rotation pivot axis or rotation indicator arrows
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconRotationPivotAxis || nearestHit.Value.transform.name == NameGameobjectRotateArrow)
                 {
-                    return TextManager.Instance.GetText(textDatabase, "automapRotationPivotAxis");
+                    return TextManager.Instance.GetLocalizedText("automapRotationPivotAxis");
                 }
                 // if hit geometry is dungeon entrance/exit position beacon
                 else if (nearestHit.Value.transform.name == NameGameobjectBeaconEntrancePositionMarker)
                 {
-                    return TextManager.Instance.GetText(textDatabase, "automapEntranceExitPositionBeacon");
+                    return TextManager.Instance.GetLocalizedText("automapEntranceExitPositionBeacon");
                 }
                 // if hit geometry is dungeon entrance/exit position marker
                 else if (nearestHit.Value.transform.name == NameGameobjectCubeEntrancePositionMarker)
                 {
-                    return TextManager.Instance.GetText(textDatabase, "automapEntranceExit");
+                    return TextManager.Instance.GetLocalizedText("automapEntranceExit");
                 }
                 // if hit geometry is player position marker arrow
                 else if (nearestHit.Value.transform.name == NameGameobjectPlayerMarkerArrow)
                 {
-                    return TextManager.Instance.GetText(textDatabase, "automapPlayerMarker");
+                    return TextManager.Instance.GetLocalizedText("automapPlayerMarker");
                 }
                 // if hit geometry is teleporter portal marker and its parent gameobject is an teleporter entrance
                 else if (
@@ -598,7 +591,7 @@ namespace DaggerfallWorkshop.Game
                         nearestHit.Value.transform.parent.transform.name.EndsWith(NameGameobjectTeleporterEntranceSubStringEnd)
                         )
                 {
-                    return TextManager.Instance.GetText(textDatabase, "automapTeleporterEntrance");
+                    return TextManager.Instance.GetLocalizedText("automapTeleporterEntrance");
                 }
                 // if hit geometry is teleporter portal marker and its parent gameobject is an teleporter exit
                 else if (
@@ -607,7 +600,7 @@ namespace DaggerfallWorkshop.Game
                         nearestHit.Value.transform.parent.transform.name.EndsWith(NameGameobjectTeleporterExitSubStringEnd)
                         )
                 {
-                    return TextManager.Instance.GetText(textDatabase, "automapTeleporterExit");
+                    return TextManager.Instance.GetLocalizedText("automapTeleporterExit");
                 }
             }
             return ""; // otherwise return empty string (= no mouse hover over text will be displayed)
@@ -2009,10 +2002,11 @@ namespace DaggerfallWorkshop.Game
             {
                 if (elem.name.Contains("DaggerfallDungeon"))
                 {
+                    DFLocation.DungeonBlock[] blocks = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.LocationData.Dungeon.Blocks;
                     GameObject gameobjectDungeon = new GameObject(newGeometryName);
 
                     // Create dungeon layout
-                    foreach (DFLocation.DungeonBlock block in location.Dungeon.Blocks)
+                    foreach (DFLocation.DungeonBlock block in blocks)
                     {
                         if (location.Name == "Orsinium")
                         {
@@ -2026,6 +2020,7 @@ namespace DaggerfallWorkshop.Game
                         gameobjectBlock.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
                         gameobjectBlock.transform.SetParent(gameobjectDungeon.transform);
+                        AddWater(gameobjectBlock, block.WaterLevel);
                     }
 
                     gameobjectDungeon.transform.SetParent(gameobjectGeometry.transform);
@@ -2052,6 +2047,27 @@ namespace DaggerfallWorkshop.Game
             InjectMeshAndMaterialProperties();
 
             //oldGeometryName = newGeometryName;
+        }
+
+        private void AddWater(GameObject parent, short nativeBlockWaterLevel)
+        {
+            // Exit if no water present
+            if (nativeBlockWaterLevel == 10000)
+                return;
+
+            float waterLevel = nativeBlockWaterLevel * -1 * MeshReader.GlobalScale;
+            MeshRenderer[] renderers = parent.GetComponentsInChildren<MeshRenderer>();
+
+            if (renderers != null)
+            {
+                MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+                foreach (MeshRenderer renderer in renderers)
+                {
+                    renderer.GetPropertyBlock(propertyBlock);
+                    propertyBlock.SetFloat("_WaterLevel", waterLevel);
+                    renderer.SetPropertyBlock(propertyBlock);
+                }
+            }
         }
 
         /// <summary>

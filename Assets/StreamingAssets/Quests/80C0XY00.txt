@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 54
 Quest: 80C0XY00
+DisplayName: Malacath's Quest
 -- Message panels
 QRC:
 
@@ -112,7 +113,7 @@ Message:  1030
  our plans for %reg are ruined.  You will
  find %g2 in the Palace of ___ruler_.  Make
  sure %g3 death cannot be traced back to us.
-     Once you have carried out the assasination,
+     Once you have carried out the assassination,
  wait for me in ___mondung_.  I will bring
  your reward and your next assignment from
  Malacath.
@@ -194,7 +195,6 @@ Person _ruler_ group Noble female anyInfo 1052 rumors 1053
 Place _mondung_ remote dungeon
 
 Clock _1stparton_ 00:00 0 flag 18 range 2 5
-Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _monster_ is Daedra_seducer
 
@@ -215,8 +215,8 @@ variable _2ndparton_
 _pcgetsgold_ task:
 	when _npcclicked_ and _mondead_ 
 	give pc _artifact_ 
-	start timer _delay_ 
-	unset _npcclicked_ 
+	end quest 
+--removed unnecessary delay
 
 _mondead_ task:
 	killed 1 _monster_ 
@@ -231,9 +231,6 @@ _clearclick_ task:
 	when _npcclicked_ and not _mondead_
 	say 1003
 	clear _npcclicked_ _clearclick_
-
-_delay_ task:
-	end quest 
 
 _readnote_ task:
 	add dialog for person _murder_ 

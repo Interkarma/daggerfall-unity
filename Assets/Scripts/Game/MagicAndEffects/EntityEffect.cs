@@ -12,6 +12,7 @@
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallConnect.FallExe;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Formulas;
@@ -55,6 +56,26 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Gets key from properties.
         /// </summary>
         string Key { get; }
+
+        /// <summary>
+        /// Group display name (used by crafting stations).
+        /// </summary>
+        string GroupName { get; }
+
+        /// <summary>
+        /// SubGroup display name (used by crafting stations).
+        /// </summary>
+        string SubGroupName { get; }
+
+        /// <summary>
+        /// Description for spellmaker.
+        /// </summary>
+        TextFile.Token[] SpellMakerDescription { get; }
+
+        /// <summary>
+        /// Description for spellbook.
+        /// </summary>
+        TextFile.Token[] SpellBookDescription { get; }
 
         /// <summary>
         /// Gets display name from properties or construct one from Group+SubGroup text in properties.
@@ -233,8 +254,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
-        protected const string textDatabase = "ClassicEffects";
-
         protected EffectProperties properties = new EffectProperties();
         protected EffectSettings settings = new EffectSettings();
         protected PotionProperties potionProperties = new PotionProperties();
@@ -273,8 +292,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         protected BaseEntityEffect()
         {
             // Set default properties
-            properties.GroupName = string.Empty;
-            properties.SubGroupName = string.Empty;
             properties.ShowSpellIcon = true;
             properties.SupportDuration = false;
             properties.SupportChance = false;
@@ -355,9 +372,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return Properties.Key; }
         }
 
-        public string DisplayName
+        public virtual string GroupName
+        {
+            get { return string.Empty; }
+        }
+
+        public virtual string SubGroupName
+        {
+            get { return string.Empty; }
+        }
+
+        public virtual string DisplayName
         {
             get { return GetDisplayName(); }
+        }
+
+        public virtual TextFile.Token[] SpellMakerDescription
+        {
+            get { return null; }
+        }
+
+        public virtual TextFile.Token[] SpellBookDescription
+        {
+            get { return null; }
         }
 
         public LiveEffectBundle ParentBundle
@@ -853,27 +890,29 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         string GetDisplayName()
         {
-            // Get display name or manufacture a default from group names
-            if (!string.IsNullOrEmpty(Properties.DisplayName))
-            {
-                return Properties.DisplayName;
-            }
+            // Manufacture a default display name from group names
+            // Effects can override DisplayName property to set a custom display name
+            string groupName = GroupName;
+            string subGroupName = SubGroupName;
+            if (!string.IsNullOrEmpty(groupName) && !string.IsNullOrEmpty(subGroupName))
+                return string.Format("{0} {1}", groupName, subGroupName);
+            else if (!string.IsNullOrEmpty(groupName) && string.IsNullOrEmpty(subGroupName))
+                return groupName;
             else
-            {
-                if (!string.IsNullOrEmpty(Properties.GroupName) && !string.IsNullOrEmpty(Properties.SubGroupName))
-                    return properties.DisplayName = string.Format("{0} {1}", Properties.GroupName, Properties.SubGroupName);
-                else if (!string.IsNullOrEmpty(Properties.GroupName) && string.IsNullOrEmpty(Properties.SubGroupName))
-                    return properties.DisplayName = Properties.GroupName;
-                else
-                    return properties.DisplayName = TextManager.Instance.GetText("ClassicEffect", "noName");
-            }
+                return TextManager.Instance.GetLocalizedText("noName");
         }
 
         void SetDuration()
         {
             int casterLevel = (caster) ? caster.Entity.Level : 1;
             if (Properties.SupportDuration)
-                roundsRemaining = settings.DurationBase + settings.DurationPlus * (int)Mathf.Floor(casterLevel / settings.DurationPerLevel);
+            {
+                // Multiplier clamped at 1 or player can lose a round depending on spell settings and level
+                int durationPerLevelMultiplier = (int)Mathf.Floor(casterLevel / settings.DurationPerLevel);
+                if (durationPerLevelMultiplier < 1)
+                    durationPerLevelMultiplier = 1;
+                roundsRemaining = settings.DurationBase + settings.DurationPlus * durationPerLevelMultiplier;
+            }
             else
                 roundsRemaining = 0;
 

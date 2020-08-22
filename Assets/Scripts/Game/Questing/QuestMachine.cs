@@ -374,6 +374,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new DropFace(null));
             RegisterAction(new GetItem(null));
             RegisterAction(new StartQuest(null));
+            RegisterAction(new RunQuest(null));
             RegisterAction(new UnsetTask(null));
             RegisterAction(new ChangeReputeWith(null));
             RegisterAction(new ReputeExceedsDo(null));
@@ -1445,10 +1446,6 @@ namespace DaggerfallWorkshop.Game.Questing
                     Debug.LogWarningFormat("CullResourceTarget() could not find Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID);
                     return;
                 }
-
-                // Do nothing if old Place same as new Place
-                if (place.Symbol.Equals(newPlace))
-                    continue;
 
                 // Modify selected spawn QuestMarker for this Place
                 QuestMarker selectedMarker = place.SiteDetails.selectedMarker;

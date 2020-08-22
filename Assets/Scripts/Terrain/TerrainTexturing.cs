@@ -18,10 +18,18 @@ using Unity.Collections;
 namespace DaggerfallWorkshop
 {
     /// <summary>
+    /// Terrain texturing interface.
+    /// </summary>
+    public interface ITerrainTexturing
+    {
+        JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true);
+    }
+
+    /// <summary>
     /// Generates texture tiles for terrains and uses marching squares for tile transitions.
     /// These features are very much in early stages of development.
     /// </summary>
-    public class TerrainTexturing
+    public class DefaultTerrainTexturing : ITerrainTexturing
     {
         // Use same seed to ensure continuous tiles
         const int seed = 417028;
@@ -31,18 +39,18 @@ namespace DaggerfallWorkshop
         const byte grass = 2;
         const byte stone = 3;
 
-        static readonly int tileDataDim = MapsFile.WorldMapTileDim + 1;
+        protected static readonly int tileDataDim = MapsFile.WorldMapTileDim + 1;
 
-        static readonly int assignTilesDim = MapsFile.WorldMapTileDim;
+        protected static readonly int assignTilesDim = MapsFile.WorldMapTileDim;
 
-        byte[] lookupTable;
+        protected byte[] lookupTable;
 
-        public TerrainTexturing()
+        public DefaultTerrainTexturing()
         {
             CreateLookupTable();
         }
 
-        public JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true)
+        public virtual JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true)
         {
             // Cache tile data to minimise noise sampling during march.
             NativeArray<byte> tileData = new NativeArray<byte>(tileDataDim * tileDataDim, Allocator.TempJob);
@@ -86,7 +94,7 @@ namespace DaggerfallWorkshop
         // Very basic marching squares for water > dirt > grass > stone transitions.
         // Cannot handle water > grass or water > stone, etc.
         // Will improve this at later date to use a wider range of transitions.
-        struct AssignTilesJob : IJobParallelFor
+        protected struct AssignTilesJob : IJobParallelFor
         {
             [ReadOnly]
             public NativeArray<byte> tileData;
@@ -132,7 +140,7 @@ namespace DaggerfallWorkshop
             }
         }
 
-        struct GenerateTileDataJob : IJobParallelFor
+        protected struct GenerateTileDataJob : IJobParallelFor
         {
             [ReadOnly]
             public NativeArray<float> heightmapData;

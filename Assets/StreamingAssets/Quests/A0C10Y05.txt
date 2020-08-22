@@ -5,8 +5,8 @@
 -- Repute: 10
 -- QuestId: 5
 -- Edited for Daggerfall Unity by Jay_H
-Messages: 21
 Quest: A0C10Y05
+DisplayName: The Matchmaker
 -- Message panels
 QRC:
 

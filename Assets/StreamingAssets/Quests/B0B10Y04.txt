@@ -24,7 +24,7 @@ RefuseQuest:  [1001]
 <ce>                   when you are less faint of heart.
 
 AcceptQuest:  [1002]
-<ce>               Very well. In a dark pit not to far away,
+<ce>               Very well. In a dark pit not too far away,
 <ce>                   a cursed place called ___mondung_,
 <ce>                      an _soldier_ named =soldier_
 <ce>              has been conspiring with a group of renegade

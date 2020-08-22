@@ -271,7 +271,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         if (hit.distance > DefaultActivationDistance)
                         {
-                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                            DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                             return;
                         }
 
@@ -414,7 +414,7 @@ namespace DaggerfallWorkshop.Game
                     if (!buildingUnlocked && buildingType < DFLocation.BuildingTypes.Temple
                         && buildingType != DFLocation.BuildingTypes.HouseForSale)
                     {
-                        string buildingClosedMessage = (buildingType == DFLocation.BuildingTypes.GuildHall) ? HardStrings.guildClosed : HardStrings.storeClosed;
+                        string buildingClosedMessage = (buildingType == DFLocation.BuildingTypes.GuildHall) ? TextManager.Instance.GetLocalizedText("guildClosed") : TextManager.Instance.GetLocalizedText("storeClosed");
                         buildingClosedMessage = buildingClosedMessage.Replace("%d1", openHours[(int)buildingType].ToString());
                         buildingClosedMessage = buildingClosedMessage.Replace("%d2", closeHours[(int)buildingType].ToString());
                         DaggerfallUI.Instance.PopupMessage(buildingClosedMessage);
@@ -439,7 +439,7 @@ namespace DaggerfallWorkshop.Game
                 // Check if close enough to activate
                 if (hit.distance > DoorActivationDistance)
                 {
-                    DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                    DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                     return;
                 }
 
@@ -452,13 +452,12 @@ namespace DaggerfallWorkshop.Game
                     if (HandleOpenEffectOnExteriorDoor(buildingLockValue))
                         buildingUnlocked = true;
 
-                    // TODO: Implement lockpicking and door bashing for exterior doors
-                    // For now, any locked building door can be entered by using steal mode
+                    // Handle locked buildings
                     if (!buildingUnlocked)
                     {
                         if (currentMode != PlayerActivateModes.Steal)
                         {
-                            DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetText("GeneralText", "lockedExteriorDoor"));
+                            DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockedExteriorDoor"));
                             LookAtInteriorLock(buildingLockValue);
                             return;
                         }
@@ -484,7 +483,7 @@ namespace DaggerfallWorkshop.Game
                             {
                                 // Show success and play unlock sound
                                 player.TallyCrimeGuildRequirements(true, 1);
-                                DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingSuccess);
+                                DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockpickingSuccess"));
                                 DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
                                 if (dfAudioSource != null)
                                     dfAudioSource.PlayOneShot(SoundClips.ActivateLockUnlock);
@@ -494,7 +493,7 @@ namespace DaggerfallWorkshop.Game
                                 // Show failure and record attempt skill level in discovery data
                                 // Have not been able to create a guard response in classic, even when early morning NPCs are nearby
                                 // Assuming for now that exterior lockpicking is discrete enough that no response on failure is required
-                                DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
+                                DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockpickingFailure"));
                                 GameManager.Instance.PlayerGPS.SetLastLockpickAttempt(building.buildingKey, skillValue);
                                 return;
                             }
@@ -591,7 +590,7 @@ namespace DaggerfallWorkshop.Game
             // Check if close enough to activate
             if (hit.distance > DoorActivationDistance)
             {
-                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                 return;
             }
 
@@ -658,7 +657,7 @@ namespace DaggerfallWorkshop.Game
                 case PlayerActivateModes.Steal:
                     if (hit.distance > StaticNPCActivationDistance)
                     {
-                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                        DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                         break;
                     }
                     StaticNPCClick(npc);
@@ -675,7 +674,7 @@ namespace DaggerfallWorkshop.Game
                 case PlayerActivateModes.Talk:
                     if (hit.distance > MobileNPCActivationDistance)
                     {
-                        DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                        DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                         break;
                     }
                     GameManager.Instance.TalkManager.TalkToMobileNPC(mobileNpc);
@@ -685,7 +684,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         if (hit.distance > PickpocketDistance)
                         {
-                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                            DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                             break;
                         }
                         mobileNpc.PickpocketByPlayerAttempted = true;
@@ -706,13 +705,14 @@ namespace DaggerfallWorkshop.Game
                     if (enemyEntity != null)
                     {
                         MobileEnemy mobileEnemy = enemyEntity.MobileEnemy;
-                        bool startsWithVowel = "aeiouAEIOU".Contains(mobileEnemy.Name[0].ToString());
+                        string enemyName = TextManager.Instance.GetLocalizedEnemyName(mobileEnemy.ID);
+                        bool startsWithVowel = "aeiouAEIOU".Contains(enemyName[0].ToString());
                         string message;
                         if (startsWithVowel)
-                            message = HardStrings.youSeeAn;
+                            message = TextManager.Instance.GetLocalizedText("youSeeAn");
                         else
-                            message = HardStrings.youSeeA;
-                        message = message.Replace("%s", mobileEnemy.Name);
+                            message = TextManager.Instance.GetLocalizedText("youSeeA");
+                        message = message.Replace("%s", enemyName);
                         DaggerfallUI.Instance.PopupMessage(message);
                     }
                     break;
@@ -728,7 +728,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         if (hit.distance > PickpocketDistance)
                         {
-                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                            DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                             break;
                         }
                         enemyEntity.PickpocketByPlayerAttempted = true;
@@ -746,7 +746,7 @@ namespace DaggerfallWorkshop.Game
             {
                 if (hit.distance > DefaultActivationDistance)
                 {
-                    DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                    DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                     return;
                 }
                 if (ladder)
@@ -766,7 +766,7 @@ namespace DaggerfallWorkshop.Game
             if (loot.ContainerType != LootContainerTypes.CorpseMarker &&
                 hit.distance > TreasureActivationDistance)
             {
-                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                 return;
             }
             Random.InitState(Time.frameCount);
@@ -819,26 +819,28 @@ namespace DaggerfallWorkshop.Game
                     if (currentMode == PlayerActivateModes.Info)
                     {   // Corpse info mode
                         if (!string.IsNullOrEmpty(loot.entityName))
-                            DaggerfallUI.AddHUDText((loot.isEnemyClass) ? HardStrings.youSeeADeadPerson : HardStrings.youSeeADead.Replace("%s", loot.entityName));
+                            DaggerfallUI.AddHUDText((loot.isEnemyClass) ?
+                                TextManager.Instance.GetLocalizedText("youSeeADeadPerson") :
+                                TextManager.Instance.GetLocalizedText("youSeeADead").Replace("%s", loot.entityName));
                         return;
                     }
                     else
                     {   // Check if close enough to activate and that corpse has items
                         if (hit.distance > CorpseActivationDistance)
                         {
-                            DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                            DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                             return;
                         }
                         else if (loot.Items.Count == 0)
                         {
-                            DaggerfallUI.AddHUDText(HardStrings.theBodyHasNoTreasure);
+                            DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("theBodyHasNoTreasure"));
                             DisableEmptyCorpseContainer(loot.gameObject);
                             return;
                         }
                         else if (loot.Items.Count == 1 && loot.Items.Contains(ItemGroups.Weapons, (int)Weapons.Arrow))
                         {   // If only one item and it's arrows, then auto-pickup.
                             GameManager.Instance.PlayerEntity.Items.TransferAll(loot.Items);
-                            DaggerfallUI.AddHUDText(HardStrings.youCollectArrows);
+                            DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youCollectArrows"));
                             return;
                         }
                         break;
@@ -868,6 +870,10 @@ namespace DaggerfallWorkshop.Game
         {
             if (lockValue < 20)
             {
+                string[] lockpickChance = TextManager.Instance.GetLocalizedTextList("lockpickChance");
+                if (lockpickChance == null)
+                    throw new System.Exception("lockpickChance array text not found");
+
                 PlayerEntity player = Game.GameManager.Instance.PlayerEntity;
                 // There seems to be an oversight in classic. It uses two separate lockpicking functions (seems to be one for animated doors in interiors and one for exterior doors)
                 // but the difficulty text is always based on the exterior function.
@@ -878,18 +884,18 @@ namespace DaggerfallWorkshop.Game
                 if (chance >= 30)
                     if (chance >= 35)
                         if (chance >= 95)
-                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[9]);
+                            Game.DaggerfallUI.SetMidScreenText(lockpickChance[9]);
                         else if (chance >= 45)
-                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance[(chance - 45) / 5]);
+                            Game.DaggerfallUI.SetMidScreenText(lockpickChance[(chance - 45) / 5]);
                         else
-                            Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance3);
+                            Game.DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("lockpickChance3"));
                     else
-                        Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance2);
+                        Game.DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("lockpickChance2"));
                 else
-                    Game.DaggerfallUI.SetMidScreenText(HardStrings.lockpickChance1);
+                    Game.DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("lockpickChance1"));
             }
             else
-                Game.DaggerfallUI.SetMidScreenText(HardStrings.magicLock);
+                Game.DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("magicLock"));
         }
 
         #endregion
@@ -931,7 +937,7 @@ namespace DaggerfallWorkshop.Game
             // Player level must meet or exceed lock level for success
             if (GameManager.Instance.PlayerEntity.Level < buildingLockValue)
             {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText("ClassicEffects", "openFailed"), 1.5f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("openFailed"), 1.5f);
                 return false;
             }
 
@@ -1316,27 +1322,27 @@ namespace DaggerfallWorkshop.Game
             switch (currentMode)
             {
                 case PlayerActivateModes.Steal:
-                    modeText = HardStrings.steal;
+                    modeText = TextManager.Instance.GetLocalizedText("steal");
                     break;
                 case PlayerActivateModes.Grab:
-                    modeText = HardStrings.grab;
+                    modeText = TextManager.Instance.GetLocalizedText("grab");
                     break;
                 case PlayerActivateModes.Info:
-                    modeText = HardStrings.info;
+                    modeText = TextManager.Instance.GetLocalizedText("info");
                     break;
                 case PlayerActivateModes.Talk:
-                    modeText = HardStrings.dialogue;
+                    modeText = TextManager.Instance.GetLocalizedText("dialogue");
                     break;
             }
 
             // Present new mode to player
-            DaggerfallUI.SetMidScreenText(HardStrings.interactionIsNowInMode.Replace("%s", modeText));
+            DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("interactionIsNowInMode").Replace("%s", modeText));
         }
 
         // Output NPC info to HUD
         private void PresentNPCInfo(StaticNPC npc)
         {
-            DaggerfallUI.AddHUDText(HardStrings.youSee.Replace("%s", npc.DisplayName));
+            DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youSee").Replace("%s", npc.DisplayName));
 
             // Add debug info
             if (DaggerfallUI.Instance.DaggerfallHUD.QuestDebugger.State != HUDQuestDebugger.DisplayState.Nothing)
@@ -1483,11 +1489,11 @@ namespace DaggerfallWorkshop.Game
                     if (pinchedGoldPieces == 1)
                     {
                         // Classic doesn't have this string, it only has the plural one
-                        gotGold = HardStrings.youPinchedGoldPiece;
+                        gotGold = TextManager.Instance.GetLocalizedText("youPinchedGoldPiece");
                     }
                     else
                     {
-                        gotGold = HardStrings.youPinchedGoldPieces;
+                        gotGold = TextManager.Instance.GetLocalizedText("youPinchedGoldPieces");
                         gotGold = gotGold.Replace("%d", pinchedGoldPieces.ToString());
                     }
                     DaggerfallUI.MessageBox(gotGold);
@@ -1501,7 +1507,7 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                string notSuccessfulMessage = HardStrings.youAreNotSuccessful;
+                string notSuccessfulMessage = TextManager.Instance.GetLocalizedText("youAreNotSuccessful");
                 DaggerfallUI.Instance.PopupMessage(notSuccessfulMessage);
 
                 // Register crime and start spawning guards.

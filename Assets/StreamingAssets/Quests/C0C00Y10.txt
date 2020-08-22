@@ -163,15 +163,12 @@ Person _healer_ face 64 group Chemist
 
 
 Clock _questtime_ 00:00 0 flag 1 range 3 5
-Clock _delay_ 01:00 0 flag 1 range 0 1
-
 
 --	Quest start-up:
 	start timer _questtime_ 
 	prompt 1011 yes _S.01_ no _S.02_ 
 	pick one of _S.06_ _S.07_ 
 	_talisman_ used do _S.08_ 
-	create npc _cousin_ 
 
 _questtime_ task:
 	end quest 
@@ -202,10 +199,11 @@ _S.08_ task:
 
 _S.09_ task:
 	toting _talisman_ and _cousin_ clicked 
-	start timer _delay_ 
 	log 1018 step 2 
 	say 1016 
 	give pc nothing 
+	end quest 
+--removed unnecessary delay
 --moved "give pc nothing" to end of task, more sensible for dialogue
 
 _S.10_ task:
@@ -222,6 +220,3 @@ _S.11_ task:
 
 _S.12_ task:
 	say 1015 
-
-_delay_ task:
-	end quest 

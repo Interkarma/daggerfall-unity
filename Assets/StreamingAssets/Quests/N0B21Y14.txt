@@ -81,13 +81,13 @@ The Oracle has no eyes but she is said to be the wisest woman in Tamriel.
 <--->
 The Oracle has traditionally been the counselor to the monarchs of Sentinel.
 <--->
-The Oracle advised King Cameron against warring with Daggerfall.
+The Oracle advised King Camaron against warring with Daggerfall.
 <--->
-King Cameron didn't the Oracle's advice against warring with Daggerfall.
+King Camaron didn't the Oracle's advice against warring with Daggerfall.
 <--->
 The Oracle knew that Sentinel would lose the war with Daggerfall.
 <--->
-If Cameron of Sentinel had listened to the Oracle, he'd be alive today.
+If Camaron of Sentinel had listened to the Oracle, he'd be alive today.
 
 Message:  1014
 %qdt: I got a letter
@@ -105,7 +105,7 @@ Message:  1015
 <ce>               speaking with %g2, but I am not permitted
 <ce>                 to enter %g3 company in _noblehouse_.
 <ce>              My mistress, the Oracle, intends to come to
-<ce>                       __temple_ speak with %g3
+<ce>                       __temple_ to speak with %g3
 <ce>                Grace, and I last heard that she was in
 <ce>                  __oracletemple_. I am not familiar
 <ce>               with these parts, so I don't know how far
@@ -178,7 +178,7 @@ Message:  1020
 <ce>                             answer, %pct.
 
 Message:  1021
-%dat:
+%qdt:
  _noble_ refuses to go
  into hiding until %g knows
  that %g3 love, _love_,

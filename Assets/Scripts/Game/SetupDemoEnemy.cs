@@ -125,6 +125,11 @@ namespace DaggerfallWorkshop.Game
                 MeshRenderer meshRenderer = dfMobile.GetComponent<MeshRenderer>();
                 if (meshRenderer)
                 {
+                    if (dfMobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral)
+                    {
+                        meshRenderer.material.shader = Shader.Find(MaterialReader._DaggerfallGhostShaderName);
+                        meshRenderer.material.SetFloat("_Cutoff", 0.1f);
+                    }
                     if (dfMobile.Summary.Enemy.NoShadow)
                     {
                         meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -165,6 +170,12 @@ namespace DaggerfallWorkshop.Game
                     {
                         entityBehaviour.EntityType = EntityTypes.None;
                     }
+                }
+
+                // Add special behaviour for Daedra Seducer mobiles
+                if (dfMobile.Summary.Enemy.ID == (int)MobileTypes.DaedraSeducer)
+                {
+                    dfMobile.gameObject.AddComponent<DaedraSeducerMobileBehaviour>();
                 }
             }
         }

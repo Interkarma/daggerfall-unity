@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 21
 Quest: 90C00Y00
+DisplayName: Vaernima's Quest
 -- Message panels
 QRC:
 
@@ -58,7 +59,7 @@ QuestComplete:  [1004]
 <ce>                   pleased with the news. I hope you
 <ce>                   won't mind if I embellish a little
 <ce>                  about some horrible outrageous sins
-<ce>                   you commited in your journey. Here
+<ce>                   you committed in your journey. Here
 <ce>                   is _artifact_. Use it whenever you
 <ce>                  want a target to be faced with their
 <ce>                     darkest side. Farewell, %pcf,
@@ -82,7 +83,7 @@ We may never know who destroyed that lich in ___mondung_, but he's in our prayer
 Message:  1011
 _qgfriend_ is that creepy =qgfriend_ over at __qgfriend_ to the %di.
 <--->
-_qgfriend_ is the foul-smelling =qgfriend_ I saw at _qgfriend_.
+_qgfriend_ is the foul-smelling =qgfriend_ I saw at __qgfriend_.
 
 Message:  1012
 _qgfriend_ is one of Vaernima's agents of corruption in %reg.
@@ -141,7 +142,6 @@ Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
 Place _mondung_ remote dungeon
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
-Clock _delay_ 01:00 0 flag 1 range 0 1
 
 Foe _monster_ is Lich
 --fixed msg 1020 to not share qdt line
@@ -160,7 +160,8 @@ variable _2ndparton_
 _pcgetsgold_ task:
 	when _npcclicked_ and _mondead_ 
 	give pc _artifact_ 
-	start timer _delay_ 
+	end quest 
+--removed unnecessary delay
 
 variable _queston_
 --unused variable
@@ -175,6 +176,3 @@ _clearclick_ task:
 	when _npcclicked_ and not _mondead_ 
 	say 1003
 	clear _npcclicked_ 
-
-_delay_ task:
-	end quest 

@@ -76,7 +76,7 @@ Perhaps you'd like to speak to those who died because you did not get the _item_
 
 QuestLogEntry:  [1010]
 <ce>                     Here's the _item_, %pcf. Now
-<ce>                    hurry back to the Temple. There
+<ce>                    hurry back to the Temple. There are
 <ce>                    many there waiting to be healed.
 
 Message:  1030

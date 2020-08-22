@@ -143,6 +143,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool PreventEnemySpawns { get { return preventEnemySpawns; } set { preventEnemySpawns = value; } }
         public bool PreventNormalizingReputations { get { return preventNormalizingReputations; } set { preventNormalizingReputations = value; } }
         public bool IsResting { get { return isResting; } set { isResting = value; } }
+        public bool IsLoitering { get; set; }
         public Races Race { get { return (Races)RaceTemplate.ID; } }
         public RaceTemplate RaceTemplate { get { return GetLiveRaceTemplate(); } }
         public RaceTemplate BirthRaceTemplate { get { return raceTemplate; } set { raceTemplate = value; } }
@@ -478,8 +479,10 @@ namespace DaggerfallWorkshop.Game.Entity
 
                 for (uint l = 0; l < (gameMinutes - lastGameMinutes); ++l)
                 {
-                    // Catch up time and break if something spawns. Don't spawn encounters while player is swimming in water (same as classic).
-                    if (!GameManager.Instance.PlayerEnterExit.IsPlayerSwimming && IntermittentEnemySpawn(l + lastGameMinutes + 1))
+                    // Catch up time and break if something spawns. Don't spawn encounters while player is swimming in water or on ship (same as classic).
+                    if (!GameManager.Instance.PlayerEnterExit.IsPlayerSwimming && 
+                        !GameManager.Instance.TransportManager.IsOnShip() && 
+                        IntermittentEnemySpawn(l + lastGameMinutes + 1))
                         break;
 
                     // Confirm regionData is available
@@ -979,7 +982,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Assigns guild memberships to player from classic save tree.
         /// </summary>
-        public void AssignGuildMemberships(SaveTree saveTree)
+        public void AssignGuildMemberships(SaveTree saveTree, bool vampire = false)
         {
             // Find character record, should always be a singleton
             CharacterRecord characterRecord = (CharacterRecord)saveTree.FindRecord(RecordTypes.Character);
@@ -988,7 +991,18 @@ namespace DaggerfallWorkshop.Game.Entity
 
             // Find all guild memberships, and add Daggerfall Unity guild memberships
             List<SaveTreeBaseRecord> guildMembershipRecords = saveTree.FindRecords(RecordTypes.GuildMembership, characterRecord);
-            GameManager.Instance.GuildManager.ImportMembershipData(guildMembershipRecords);
+            List<SaveTreeBaseRecord> oldMembershipRecords = saveTree.FindRecords(RecordTypes.OldGuild, characterRecord);
+
+            if (vampire)
+            {
+                GameManager.Instance.GuildManager.ImportMembershipData(guildMembershipRecords, true);
+                GameManager.Instance.GuildManager.ImportMembershipData(oldMembershipRecords);
+            }
+            else
+            {
+                GameManager.Instance.GuildManager.ImportMembershipData(guildMembershipRecords);
+                GameManager.Instance.GuildManager.ImportMembershipData(oldMembershipRecords, true);
+            }
         }
 
         /// <summary>
@@ -1046,7 +1060,6 @@ namespace DaggerfallWorkshop.Game.Entity
             int calmHumanoidID = 91;
             int nimblenessID = 85;
             int paralysisID = 50;
-            int freeActionID = 10;
             int healID = 64;
             int shieldID = 17;
             int resistColdID = 11;
@@ -1056,6 +1069,7 @@ namespace DaggerfallWorkshop.Game.Entity
             int invisibilityID = 6;
             int iceStormID = 20;
             int wildfireID = 33;
+            int recallID = 94;
 
             // Common spells
             AssignVampireSpell(levitateID);
@@ -1072,7 +1086,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     AssignVampireSpell(paralysisID);
                     break;
                 case VampireClans.Montalion:
-                    AssignVampireSpell(freeActionID);
+                    AssignVampireSpell(recallID);
                     break;
                 case VampireClans.Thrafey:
                     AssignVampireSpell(healID);
@@ -1357,7 +1371,7 @@ namespace DaggerfallWorkshop.Game.Entity
                         skills.SetPermanentSkillValue(i, (short)(skills.GetPermanentSkillValue(i) + 1));
                         SetSkillRecentlyIncreased(i);
                         SetCurrentLevelUpSkillSum();
-                        DaggerfallUI.Instance.PopupMessage(HardStrings.skillImprove.Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DFCareer.Skills)i)));
+                        DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("skillImprove").Replace("%s", DaggerfallUnity.Instance.TextProvider.GetSkillName((DFCareer.Skills)i)));
                         if (skills.GetPermanentSkillValue(i) == 100)
                         {
                             List<DFCareer.Skills> primarySkills = GetPrimarySkills();
@@ -1596,10 +1610,6 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public void RegionPowerAndConditionsUpdate(bool updateConditions)
         {
-            int[] TemplesAssociatedWithRegions =    { 106, 82, 0, 0, 0, 98, 0, 0, 0, 92, 0, 106, 0, 0, 0, 84, 36, 8, 84, 88, 82, 88, 98, 92, 0, 0, 82, 0,
-                                                        0, 0, 0, 0, 88, 94, 36, 94, 106, 84, 106, 106, 88, 98, 82, 98, 84, 94, 36, 88, 94, 36, 98, 84, 106,
-                                                       88, 106, 88, 92, 84, 98, 88, 82, 94};
-
             // Note: For some reason rumor updating is disabled in classic while the player is serving jail time. There's no clear reason for this,
             // so not replicating that here.
             GameManager.Instance.TalkManager.RefreshRumorMill();
@@ -1946,7 +1956,7 @@ namespace DaggerfallWorkshop.Game.Entity
 
                             // Plague
                             FactionFile.FactionData temple;
-                            FactionData.GetFactionData(TemplesAssociatedWithRegions[factionData.FactionDict[key].region], out temple);
+                            FactionData.GetFactionData(MapsFile.RegionTemples[factionData.FactionDict[key].region], out temple);
 
                             if (regionData[factionData.FactionDict[key].region].Flags[(int)RegionDataFlags.PlagueEnding])
                                 TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PlagueEnding);
@@ -1979,7 +1989,7 @@ namespace DaggerfallWorkshop.Game.Entity
                             }
 
                             // Persecuted temple
-                            if (TemplesAssociatedWithRegions[factionData.FactionDict[key].region] != 0)
+                            if (MapsFile.RegionTemples[factionData.FactionDict[key].region] != 0)
                             {
                                 if (Dice100.FailedRoll((temple.power - factionData.FactionDict[key].power + 5) / 5))
                                     TurnOffConditionFlag(factionData.FactionDict[key].region, RegionDataFlags.PersecutedTemple);
@@ -2359,7 +2369,7 @@ namespace DaggerfallWorkshop.Game.Entity
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
 
             if (GameManager.Instance.PlayerEnterExit.IsPlayerSwimming)
-                messageBox.SetText(HardStrings.exhaustedInWater);
+                messageBox.SetText(TextManager.Instance.GetLocalizedText("exhaustedInWater"));
             else
             {
                 if (!enemiesNearby)

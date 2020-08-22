@@ -485,7 +485,7 @@ namespace DaggerfallWorkshop.Game
                             if (FormulaHelper.CalculateEnemyPacification(player, languageSkill))
                             {
                                 motor.IsHostile = false;
-                                DaggerfallUI.AddHUDText(HardStrings.languagePacified.Replace("%e", enemyEntity.Name).Replace("%s", languageSkill.ToString()), 5);
+                                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("languagePacified").Replace("%e", enemyEntity.Name).Replace("%s", languageSkill.ToString()), 5);
                                 player.TallySkill(languageSkill, 3);    // BCHG: increased skill uses from 1 in classic on success to make raising language skills easier
                             }
                             else if (languageSkill != DFCareer.Skills.Etiquette && languageSkill != DFCareer.Skills.Streetwise)
@@ -715,9 +715,9 @@ namespace DaggerfallWorkshop.Game
                     // Can't target ally
                     if (targetBehaviour == player && enemyEntity.Team == MobileTeams.PlayerAlly)
                         continue;
-                    else if (DaggerfallUnity.Settings.EnemyInfighting)
+                    else if (DaggerfallUnity.Settings.EnemyInfighting && !enemyEntity.SuppressInfighting && targetEntity != null && !targetEntity.SuppressInfighting)
                     {
-                        if (targetEntity != null && targetEntity.Team == enemyEntity.Team)
+                        if (targetEntity.Team == enemyEntity.Team)
                             continue;
                     }
                     else

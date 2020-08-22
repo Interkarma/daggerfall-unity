@@ -89,10 +89,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider cameraRecoilStrength;
         HorizontalSlider mouseSensitivity;
         HorizontalSlider weaponSensitivity;
-        HorizontalSlider movementAcceleration;
         TextBox weaponAttackThreshold;
         HorizontalSlider soundVolume;
         HorizontalSlider musicVolume;
+        Checkbox movementAcceleration;
         Checkbox spellLighting;
         Checkbox spellShadows;
         Checkbox bowDrawback;
@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider helmAndShieldMaterialDisplay;
         Checkbox geographicBackgrounds;
         Checkbox dungeonExitWagonPrompt;
-        HorizontalSlider loiterLimitInHours;
+        Checkbox travelMapLocationsOutline;
 
         // Enhancements
         Checkbox modSystem;
@@ -134,6 +134,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox playerTorchFromItems;
         Checkbox guildQuestListBox;
         Checkbox bowLeftHandWithSwitching;
+        HorizontalSlider loiterLimitInHours;
         HorizontalSlider dungeonAmbientLightScale;
         HorizontalSlider nightAmbientLightScale;
         HorizontalSlider playerTorchLightScale;
@@ -150,7 +151,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider terrainDistance;
         HorizontalSlider shadowResolutionMode;
         HorizontalSlider retroRenderingMode;
-        HorizontalSlider PostProcessingInRetroMode;
+        HorizontalSlider postProcessingInRetroMode;
         Checkbox dungeonLightShadows;
         Checkbox interiorLightShadows;
         Checkbox exteriorLightShadows;
@@ -228,7 +229,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddSectionTitle(leftPanel, "controls");
             mouseSensitivity = AddSlider(leftPanel, "mouseSensitivity", 0.1f, 8.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
             weaponSensitivity = AddSlider(leftPanel, "weaponSensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
-            movementAcceleration = AddSlider(leftPanel, "moveSpeedAcceleration", InputManager.minAcceleration, InputManager.maxAcceleration, DaggerfallUnity.Settings.MoveSpeedAcceleration);
+            movementAcceleration = AddCheckbox(leftPanel, "movementAcceleration", DaggerfallUnity.Settings.MovementAcceleration);
             weaponAttackThreshold = AddTextbox(leftPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
             bowDrawback = AddCheckbox(leftPanel, "bowDrawback", DaggerfallUnity.Settings.BowDrawback);
             toggleSneak = AddCheckbox(leftPanel, "toggleSneak", DaggerfallUnity.Settings.ToggleSneak);
@@ -282,8 +283,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
             geographicBackgrounds = AddCheckbox(rightPanel, "geographicBackgrounds", DaggerfallUnity.Settings.EnableGeographicBackgrounds);
             dungeonExitWagonPrompt = AddCheckbox(rightPanel, "dungeonExitWagonPrompt", DaggerfallUnity.Settings.DungeonExitWagonPrompt);
-            loiterLimitInHours = AddSlider(rightPanel, "loiterLimitInHours", 3, 12, DaggerfallUnity.Settings.LoiterLimitInHours);
-
+            travelMapLocationsOutline = AddCheckbox(rightPanel, "travelMapLocationsOutline", DaggerfallUnity.Settings.TravelMapLocationsOutline);
         }
 
         private void Enhancements(Panel leftPanel, Panel rightPanel)
@@ -316,6 +316,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             instantRepairs = AddCheckbox(rightPanel, "instantRepairs", DaggerfallUnity.Settings.InstantRepairs);
             guildQuestListBox = AddCheckbox(rightPanel, "guildQuestListBox", DaggerfallUnity.Settings.GuildQuestListBox);
             bowLeftHandWithSwitching = AddCheckbox(rightPanel, "bowLeftHandWithSwitching", DaggerfallUnity.Settings.BowLeftHandWithSwitching);
+            loiterLimitInHours = AddSlider(rightPanel, "loiterLimitInHours", 3, 12, DaggerfallUnity.Settings.LoiterLimitInHours);
         }
 
         private void Video(Panel leftPanel, Panel rightPanel)
@@ -356,8 +357,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
             retroRenderingMode = AddSlider(rightPanel, "retroRenderingMode",
                 DaggerfallUnity.Settings.RetroRenderingMode, "Off", "320x200", "640x400");
-            PostProcessingInRetroMode = AddSlider(rightPanel, "postProcessingInRetroMode",
-                DaggerfallUnity.Settings.PostProcessingInRetroMode, "Off", "Posterization", "Palettization");
+            postProcessingInRetroMode = AddSlider(rightPanel, "postProcessingInRetroMode",
+                DaggerfallUnity.Settings.PostProcessingInRetroMode, "Off", "Posterization (full)", "Posterization (-sky)", "Palettization (full)", "Palettization (-sky)");
         }
 
         private void SaveSettings()
@@ -369,7 +370,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivity.GetValue();
             DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivity.GetValue();
-            DaggerfallUnity.Settings.MoveSpeedAcceleration = movementAcceleration.GetValue();
+            DaggerfallUnity.Settings.MovementAcceleration = movementAcceleration.IsChecked;
             float weaponAttackThresholdValue;
             if (float.TryParse(weaponAttackThreshold.Text, out weaponAttackThresholdValue))
                 DaggerfallUnity.Settings.WeaponAttackThreshold = Mathf.Clamp(weaponAttackThresholdValue, 0.001f, 1.0f);
@@ -423,6 +424,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.InstantRepairs = instantRepairs.IsChecked;
             DaggerfallUnity.Settings.GuildQuestListBox = guildQuestListBox.IsChecked;
             DaggerfallUnity.Settings.BowLeftHandWithSwitching = bowLeftHandWithSwitching.IsChecked;
+            DaggerfallUnity.Settings.TravelMapLocationsOutline = travelMapLocationsOutline.IsChecked;
 
             DaggerfallUnity.Settings.DungeonAmbientLightScale = dungeonAmbientLightScale.GetValue();
             DaggerfallUnity.Settings.NightAmbientLightScale = nightAmbientLightScale.GetValue();
@@ -468,7 +470,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.InteriorLightShadows = interiorLightShadows.IsChecked;
             DaggerfallUnity.Settings.ExteriorLightShadows = exteriorLightShadows.IsChecked;
             DaggerfallUnity.Settings.RetroRenderingMode = retroRenderingMode.ScrollIndex;
-            DaggerfallUnity.Settings.PostProcessingInRetroMode = PostProcessingInRetroMode.ScrollIndex;
+            DaggerfallUnity.Settings.PostProcessingInRetroMode = postProcessingInRetroMode.ScrollIndex;
 
             DaggerfallUnity.Settings.SaveSettings();
         }

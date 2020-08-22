@@ -202,16 +202,24 @@ namespace DaggerfallWorkshop.Game.Utility
                 // Set mouse look
                 PlayerMouseLook mouseLook = cameraObject.GetComponent<PlayerMouseLook>();
                 if (mouseLook)
+                {
                     mouseLook.invertMouseY = DaggerfallUnity.Settings.InvertMouseVertical;
-
-                // Set mouse look smoothing
-                if (mouseLook)
+                    // Set mouse look smoothing
                     mouseLook.enableSmoothing = DaggerfallUnity.Settings.MouseLookSmoothing;
-
-                // Set mouse look sensitivity
-                if (mouseLook)
+                    // Set mouse look sensitivity
                     mouseLook.sensitivityScale = DaggerfallUnity.Settings.MouseLookSensitivity;
+
+                    mouseLook.joystickSensitivityScale = DaggerfallUnity.Settings.JoystickLookSensitivity;
+                }
             }
+
+            InputManager.Instance.JoystickCursorSensitivity = DaggerfallUnity.Settings.JoystickCursorSensitivity;
+
+            InputManager.Instance.JoystickMovementThreshold = DaggerfallUnity.Settings.JoystickMovementThreshold;
+
+            InputManager.Instance.JoystickDeadzone = DaggerfallUnity.Settings.JoystickDeadzone;
+
+            InputManager.Instance.EnableController = DaggerfallUnity.Settings.EnableController;
 
             // Set shadow resolution
             GameManager.UpdateShadowResolution();
@@ -576,7 +584,7 @@ namespace DaggerfallWorkshop.Game.Utility
             playerEntity.AssignItemsAndSpells(saveTree);
 
             // Assign guild memberships
-            playerEntity.AssignGuildMemberships(saveTree);
+            playerEntity.AssignGuildMemberships(saveTree, characterDocument.classicTransformedRace == Races.Vampire);
 
             // Assign gold pieces
             playerEntity.GoldPieces = (int)characterRecord.ParsedData.physicalGold;

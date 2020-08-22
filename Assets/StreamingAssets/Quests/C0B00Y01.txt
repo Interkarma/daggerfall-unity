@@ -83,7 +83,7 @@ _prophet_ spends %g3 time in %g3 room in _prophouse_, writing.
 _prophet_ hasn't ever gotten on well with __qgiver_.
 
 RumorsPostsuccess:  [1007]
-That _prophet_ was a charletan who found some fools in __tavern_.
+That _prophet_ was a charlatan who found some fools in __tavern_.
 
 QuestorPostsuccess:  [1008]
 For what thou hast done for the faith, I'd be happy to help thee.
@@ -202,7 +202,7 @@ Message:  1016
 <ce>                                  it.
 
 Message:  1017
-_lover_ -- ah, poor =lover_. Well, %g keeps mostly to %g3-self.
+_lover_ -- ah, poor =lover_. Well, %g keeps mostly to %g2self.
 <--->
 _lover_ is a =lover_ in __lover_. They say %g mourns for %g3 lost love.
 <--->
@@ -411,7 +411,6 @@ Message:  1037
  I found a finger which I presume was once attached
  to _priest_. It was curiously,
  even ceremoniously severed.
-<--->
  
 
 

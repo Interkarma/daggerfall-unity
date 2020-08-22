@@ -73,7 +73,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D baseTexture;
         const string baseTextureName = "MASK00I0.IMG";
         const int alternateAlphaIndex = 12;
-        const string textDatabase = "DaggerfallUI";
 
         #endregion
 
@@ -304,7 +303,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // If player doesn't have all the required ingredients, display message else move ingredients into cauldron.
             if (recipeIngreds.ContainsValue(null))
             {
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "reqIngredients"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("reqIngredients"));
             }
             else
             {
@@ -329,14 +328,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Debug.LogFormat("Potion matched: {0}", potionRecipe.DisplayName);
                 GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(recipeKey));
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "potionMixed"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("potionMixed"));
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.MakePotion);
             }
             else
             {
                 // Changed from classic, don't create useless 'Unknown Powers' potions.
                 //GameManager.Instance.PlayerEntity.Items.AddItem(ItemBuilder.CreatePotion(0));
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "potionFailed"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("potionFailed"));
             }
 
             // Remove item from player inventory unless a stack remains.
@@ -382,7 +381,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (recipes.Count > 0)
                 uiManager.PushWindow(recipePicker);
             else
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noRecipes"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("noRecipes"));
         }
 
         public void RecipePicker_OnItemPicked(int index, string recipeName)

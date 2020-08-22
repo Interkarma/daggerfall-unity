@@ -47,6 +47,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         DaggerfallTravelMapWindow travelWindow = null;
         DFPosition destinationPos;
         string destinationName;
+        bool isCloseWindowDeferred = false;
+        bool isTeleportAwayDeferred = false;
 
         public DFPosition DestinationPos { get { return destinationPos; } set { destinationPos = value; } }
         public string DestinationName { get { return destinationName; } set { destinationName = value; } }
@@ -87,11 +89,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             yesButton = DaggerfallUI.AddButton(yesButtonRect, mainPanel);
             yesButton.OnMouseClick += YesButton_OnMouseClick;
             yesButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.Yes);
+            yesButton.OnKeyboardEvent += YesButton_OnKeyboardEvent;
 
             // No button
             noButton = DaggerfallUI.AddButton(noButtonRect, mainPanel);
             noButton.OnMouseClick += NoButton_OnMouseClick;
             noButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.No);
+            noButton.OnKeyboardEvent += NoButton_OnKeyboardEvent;
 
             NativePanel.Components.Add(mainPanel);
         }
@@ -114,7 +118,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             CloseWindow();
         }
 
-        private void YesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        void NoButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
+        }
+
+
+        private void TeleportAway()
         {
             DaggerfallUI.Instance.FadeBehaviour.SmashHUDToBlack();
 
@@ -132,6 +150,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
         }
 
+        private void YesButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            TeleportAway();
+        }
+
+        void YesButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+                isTeleportAwayDeferred = true;
+            else if (keyboardEvent.type == EventType.KeyUp && isTeleportAwayDeferred)
+            {
+                isTeleportAwayDeferred = false;
+                TeleportAway();
+            }
+        }
+
         #endregion
+
     }
 }

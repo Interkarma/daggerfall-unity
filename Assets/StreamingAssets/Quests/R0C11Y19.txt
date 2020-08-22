@@ -6,6 +6,7 @@
 -- QuestId: 19
 Messages: 22
 Quest: R0C11Y19
+DisplayName: The Emperor's Gift
 -- Message panels
 QRC:
 

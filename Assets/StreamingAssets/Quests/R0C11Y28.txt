@@ -6,6 +6,7 @@
 -- QuestId: 28
 Messages: 51
 Quest: R0C11Y28
+DisplayName: The Mad Slayer
 -- Message panels
 QRC:
 
@@ -106,7 +107,7 @@ QuestLogEntry:  [1010]
 <ce>                       these notes to a _vamp_,
 <ce>                       a =vamp_ you will find at
 <ce>                      _hookerhouse_. If anything
-<ce>               should happen to me, I want somone to be
+<ce>               should happen to me, I want someone to be
 <ce>              able to continue on in the investigations.
 <ce>                        That will be _vamp_ and
 <ce>                   you, %pcf. So don't get yourself
@@ -143,7 +144,7 @@ _contact_,
  I would very much like to meet with you
  about your fascinating mortuary studies of
  the Slayer victims. As you know, I have
- done similiar investigations and would be
+ done similar investigations and would be
  happy to share my knowledge and experience
  with a distinguished colleague.
  
@@ -152,7 +153,7 @@ _contact_,
  staying at _hookerhouse_,
  but perhaps you would rather meet at
  _bookstore_ so I might
- see the corpses in question. In either,
+ see the corpses in question. In either
  case I look forward to receiving your
  courier and note.
  
@@ -421,10 +422,10 @@ Foe _murder_ is Vampire
 	start timer _total_ 
 	start timer _1stparton_ 
 	log 1020 step 0 
-	create npc at _ripperhouse_ 
 	place npc _contact_ at _bookstore_ 
 	place npc _vamp_ at _hookerhouse_ 
 	place npc _widow_ at _widowhouse_ 
+	have _I.04_ set _deadbody_
 
 _S.00_ task:
 	killed 1 _murder_ 
@@ -455,7 +456,6 @@ _pcgetsgold_ task:
 	end quest 
 
 _deadbody_ task:
-	clicked item _I.04_
 	take _I.04_ from pc
 --added deadbody task. otherwise body would clog inventory
 
@@ -480,7 +480,7 @@ _S.10_ task:
 	clicked npc _contact_ 
 	add dialog for person _vamp_ 
 	log 1021 step 1 
-	get item _I.03_ from _vamp_ 
+	get item _I.03_
 	say 1010 
 
 _S.11_ task:

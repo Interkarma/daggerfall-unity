@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game
         public float OpenDoorDistance = 2f;         // Maximum distance to open door
         const float attackSpeedDivisor = 2f;        // How much to slow down during attack animations
         float stopDistance = 1.7f;                  // Used to prevent orbiting
+        const float doorCrouchingHeight = 1.65f;    // How low enemies dive to pass thru doors
         bool flies;                                 // The enemy can fly
         bool swims;                                 // The enemy can swim
         bool pausePursuit;                          // pause to wait for the player to come closer to ground
@@ -77,6 +78,7 @@ namespace DaggerfallWorkshop.Game
         Vector3 detourDestination;
         CharacterController controller;
         DaggerfallMobileUnit mobile;
+        Collider myCollider;
         DaggerfallEntityBehaviour entityBehaviour;
         EnemyBlood entityBlood;
         EntityEffectManager entityEffectManager;
@@ -102,9 +104,9 @@ namespace DaggerfallWorkshop.Game
             senses = GetComponent<EnemySenses>();
             controller = GetComponent<CharacterController>();
             mobile = GetComponentInChildren<DaggerfallMobileUnit>();
+            myCollider = gameObject.GetComponent<Collider>();
             IsHostile = mobile.Summary.Enemy.Reactions == MobileReactions.Hostile;
-            flies = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying ||
-                    mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral;
+            flies = CanFly();
             swims = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Aquatic;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             entityBlood = GetComponent<EnemyBlood>();
@@ -129,6 +131,7 @@ namespace DaggerfallWorkshop.Game
             if (GameManager.Instance.DisableAI)
                 return;
 
+            flies = CanFly();
             canAct = true;
             flyerFalls = false;
             falls = false;
@@ -411,6 +414,10 @@ namespace DaggerfallWorkshop.Game
             else
                 distance = (destination - transform.position).magnitude;
 
+            // Do not change action if currently playing oneshot wants to stop actions
+            if (isPlayingOneShot && mobile.OneShotPauseActionsWhilePlaying())
+                return;
+
             // Ranged attacks
             if (DoRangedAttack(direction, moveSpeed, distance, isPlayingOneShot))
                 return;
@@ -646,6 +653,22 @@ namespace DaggerfallWorkshop.Game
             if (sphereCastDir == EnemySenses.ResetPlayerPos)
                 return false;
 
+            // No point blank shooting special handling here, makes enemies favor other attack types (melee, touch spells,...)
+
+            bool myColliderWasEnabled = false;
+            if (myCollider)
+            {
+                myColliderWasEnabled = myCollider.enabled;
+                // Exclude enemy collider from CheckSphere test
+                myCollider.enabled = false;
+            }
+            bool isSpaceInsufficient = Physics.CheckSphere(transform.position, radius, ignoreMaskForShooting);
+            if (myCollider)
+                myCollider.enabled = myColliderWasEnabled;
+
+            if (isSpaceInsufficient)
+                return false;
+
             float sphereCastDist = (sphereCastDir - transform.position).magnitude;
             sphereCastDir = (sphereCastDir - transform.position).normalized;
 
@@ -758,6 +781,16 @@ namespace DaggerfallWorkshop.Game
                 return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// Checks if enemy can fly based on behaviour.
+        /// This can change in the case of a transformed Seducer.
+        /// </summary>
+        /// <returns>True if enemy can fly.</returns>
+        bool CanFly()
+        {
+            return mobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying || mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral;
         }
 
         /// <summary>
@@ -1056,7 +1089,8 @@ namespace DaggerfallWorkshop.Game
         void ObstacleCheck(Vector3 direction)
         {
             obstacleDetected = false;
-            const float checkDistance = 0.8f;
+            // Rationale: follow walls at 45° incidence; is that optimal? At least it seems very good
+            float checkDistance = controller.radius / Mathf.Sqrt(2f);
             foundUpwardSlope = false;
             foundDoor = false;
 
@@ -1064,7 +1098,7 @@ namespace DaggerfallWorkshop.Game
             // Climbable/not climbable step for the player seems to be at around a height of 0.65f. The player is 1.8f tall.
             // Using the same ratio to height as these values, set the capsule for the enemy. 
             Vector3 p1 = transform.position + (Vector3.up * -originalHeight * 0.1388F);
-            Vector3 p2 = p1 + (Vector3.up * Mathf.Min(originalHeight, 1.75f) / 2);
+            Vector3 p2 = p1 + (Vector3.up * Mathf.Min(originalHeight, doorCrouchingHeight) / 2);
 
             if (Physics.CapsuleCast(p1, p2, controller.radius / 2, direction, out hit, checkDistance))
             {
@@ -1359,15 +1393,15 @@ namespace DaggerfallWorkshop.Game
         {
             // If enemy bumps into something, temporarily reduce their height to 1.65, which should be short enough to fit through most if not all doorways.
             // Unfortunately, while the enemy is shortened, projectiles will not collide with the top of the enemy for the difference in height.
-            if (!resetHeight && controller && ((controller.collisionFlags & CollisionFlags.CollidedSides) != 0) && originalHeight > 1.65f)
+            if (!resetHeight && controller && ((controller.collisionFlags & CollisionFlags.CollidedSides) != 0) && originalHeight > doorCrouchingHeight)
             {
                 // Adjust the center of the controller so that sprite doesn't sink into the ground
-                centerChange = (1.65f - controller.height) / 2;
+                centerChange = (doorCrouchingHeight - controller.height) / 2;
                 Vector3 newCenter = controller.center;
                 newCenter.y += centerChange;
                 controller.center = newCenter;
                 // Adjust the height
-                controller.height = 1.65f;
+                controller.height = doorCrouchingHeight;
                 resetHeight = true;
                 heightChangeTimer = 0.5f;
             }

@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -25,10 +26,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(10, 8);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "heal");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "health");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1548);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1248);
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
@@ -37,12 +34,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.MagnitudeCosts = MakeEffectCosts(20, 28);
         }
 
+        public override string GroupName => TextManager.Instance.GetLocalizedText("heal");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("health");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1548);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1248);
+
         public override void SetPotionProperties()
         {
             // First recipe variant: Magnitude 5-5 + 9-9 per 1 levels
             EffectSettings healingSettings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 9, 9, 1);
             PotionRecipe healing = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "healing"),
+                TextManager.Instance.GetLocalizedText("healing"),
                 50,
                 healingSettings,
                 (int)Items.MiscellaneousIngredients1.Elixir_vitae,
@@ -53,7 +55,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Second recipe variant: Magnitude 5-5 + 19-19 per 1 levels
             EffectSettings healTrueSettings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 19, 19, 1);
             PotionRecipe healTrue = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "healTrue"),
+                TextManager.Instance.GetLocalizedText("healTrue"),
                 100,
                 healTrueSettings,
                 (int)Items.MiscellaneousIngredients1.Elixir_vitae,

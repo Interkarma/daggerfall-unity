@@ -19,7 +19,6 @@ using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
-using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
@@ -511,8 +510,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     continue;
 
                 // Ignore duplicate groups
-                if (!groupNames.Contains(effect.Properties.GroupName))
-                    groupNames.Add(effect.Properties.GroupName);
+                if (!groupNames.Contains(effect.GroupName))
+                    groupNames.Add(effect.GroupName);
             }
 
             // Sort if required
@@ -533,13 +532,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             List<string> subGroupNames = new List<string>();
 
-            foreach (BaseEntityEffect effect in magicEffectTemplates.Values.Where(effect => effect.Properties.GroupName == groupName))
+            foreach (BaseEntityEffect effect in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
             {
                 // Skip effects not fitting at least one station requirement
                 if ((craftingStations & effect.Properties.AllowedCraftingStations) == 0)
                     continue;
 
-                subGroupNames.Add(effect.Properties.SubGroupName);
+                subGroupNames.Add(effect.SubGroupName);
             }
 
             // Sort if required
@@ -559,7 +558,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             List<IEntityEffect> effectTemplates = new List<IEntityEffect>();
 
-            foreach (IEntityEffect effectTemplate in magicEffectTemplates.Values.Where(effect => effect.Properties.GroupName == groupName))
+            foreach (IEntityEffect effectTemplate in magicEffectTemplates.Values.Where(effect => effect.GroupName == groupName))
             {
                 // Skip effects not fitting at least one station requirement
                 if ((craftingStations & effectTemplate.Properties.AllowedCraftingStations) == 0)
@@ -589,7 +588,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             if (sortAlpha)
-                return enchantmentTemplates.OrderBy(o => o.Properties.GroupName).ToList();
+                return enchantmentTemplates.OrderBy(o => o.GroupName).ToList();
             else
                 return enchantmentTemplates;
         }

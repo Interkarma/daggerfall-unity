@@ -32,6 +32,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         int pageLines;
         int pageStartLine = 0;
 
+        bool isCloseWindowDeferred = false;
+
         public int ClassId { get; protected set; }
 
         public DaggerfallPlayerHistoryWindow(IUserInterfaceManager uiManager)
@@ -50,7 +52,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.BackgroundTexture = nativeTexture;
 
             // Load default pixel font
-            ChangeFont(4);
+            ChangeFont(DaggerfallFont.FontName.FONT0003);
 
             // Add buttons
             Button nextPageButton = DaggerfallUI.AddButton(new Rect(208, 188, 14, 8), NativePanel);
@@ -64,6 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(new Rect(277, 187, 32, 10), NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.HistoryExit);
+            exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             LayoutPage();
             DaggerfallUI.Instance.PlayOneShot(SoundClips.OpenBook);
@@ -113,6 +116,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             CloseWindow();
         }
 
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                pageStartLine = 0; // Go back to the first page
+                CloseWindow();
+            }
+        }
+
         public override void OnPush()
         {
             if (IsSetup)
@@ -156,9 +174,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             pageLabels.Clear();
         }
 
-        void ChangeFont(int index)
+        void ChangeFont(DaggerfallFont.FontName fontName)
         {
-            currentFont = DaggerfallUI.Instance.GetFont(index);
+            currentFont = DaggerfallUI.Instance.GetFont(fontName);
         }
 
         bool MoveNextPage()

@@ -78,9 +78,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         new public bool ProcessHotkeySequences(HotkeySequence.KeyModifiers keyModifiers)
         {
-            bool isActivated = shortcutKey.IsUpWith(keyModifiers);
+            bool isKeyDown = Event.current.type == EventType.KeyDown;
+            bool isActivated = isKeyDown ? shortcutKey.IsDownWith(keyModifiers) : shortcutKey.IsUpWith(keyModifiers);
             if (isActivated)
-                TriggerMouseClick();
+            {
+                if (!KeyboardEvent(Event.current))
+                {
+                    // Legacy support fallback, OnMouseClick handlers receive KeyDown events as faked clicks
+                    if (isKeyDown)
+                        TriggerMouseClick();
+                }
+            }
             return isActivated;
         }
 

@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -25,11 +26,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(24, 0);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "shadow");
-            properties.SubGroupName = TextManager.Instance.GetText(textDatabase, "normal");
-            properties.DisplayName = string.Format("{0} ({1})", properties.GroupName, properties.SubGroupName);
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1573);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1273);
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_MagicOnly;
@@ -40,10 +36,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             startConcealmentMessageKey = "youAreAShade";
         }
 
+        public override string GroupName => TextManager.Instance.GetLocalizedText("shadow");
+        public override string SubGroupName => TextManager.Instance.GetLocalizedText("normal");
+        public override string DisplayName => string.Format("{0} ({1})", GroupName, SubGroupName);
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1573);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1273);
+
         public override void SetPotionProperties()
         {
             PotionRecipe shadowForm = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "shadowForm"),
+                TextManager.Instance.GetLocalizedText("shadowForm"),
                 200,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Rain_water,

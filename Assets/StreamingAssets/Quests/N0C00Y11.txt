@@ -29,7 +29,7 @@ QuestorOffer:  [1000]
 <ce>                       _ingredient_, which we are
 <ce>                   fresh out of. If you got some for
 <ce>                     me, I would be very grateful.
-<ce>                      You standing with the guild
+<ce>                      Your standing with the guild
 <ce>                         would surely improve.
 
 RefuseQuest:  [1001]

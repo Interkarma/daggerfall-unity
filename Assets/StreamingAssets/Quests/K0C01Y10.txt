@@ -6,6 +6,7 @@
 -- QuestId: 10
 Messages: 16
 Quest: K0C01Y10
+DisplayName: Background Information
 -- Message panels
 QRC:
 

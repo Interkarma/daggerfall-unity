@@ -88,15 +88,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         List<ItemGroups> itemTypesAccepted = storeBuysItemType[DFLocation.BuildingTypes.GeneralStore];
 
-        ItemCollection merchantItems = new ItemCollection();
-        ItemCollection basketItems = new ItemCollection();
+        protected ItemCollection merchantItems = new ItemCollection();
+        protected ItemCollection basketItems = new ItemCollection();
 
-        int cost = 0;
+        protected int cost = 0;
         bool usingIdentifySpell = false;
         DaggerfallUnityItem itemBeingRepaired;
 
         bool suppressInventory = false;
         string suppressInventoryMessage = string.Empty;
+
+        bool isStealDeferred = false;
+        bool isModeActionDeferred = false;
 
         static Dictionary<DFLocation.BuildingTypes, List<ItemGroups>> storeBuysItemType = new Dictionary<DFLocation.BuildingTypes, List<ItemGroups>>()
         {
@@ -237,6 +240,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
             exitButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeExit);
+            //exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             // Setup initial state
             SelectTabPage((WindowMode == WindowModes.Identify) ? TabPages.MagicItems : TabPages.WeaponsAndArmor);
@@ -272,8 +276,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             bool repairDone = item.RepairData.IsBeingRepaired() ? item.RepairData.IsRepairFinished() : item.currentCondition == item.maxCondition;
             return repairDone ? 
-                    TextManager.Instance.GetText(textDatabase, "repairDone") : 
-                    TextManager.Instance.GetText(textDatabase, "repairDays").Replace("%d", item.RepairData.EstimatedDaysUntilRepaired().ToString());
+                    TextManager.Instance.GetLocalizedText("repairDone") : 
+                    TextManager.Instance.GetLocalizedText("repairDays").Replace("%d", item.RepairData.EstimatedDaysUntilRepaired().ToString());
         }
 
         void SetupCostAndGold()
@@ -307,6 +311,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 stealButton = DaggerfallUI.AddButton(stealButtonRect, actionButtonsPanel);
                 stealButton.OnMouseClick += StealButton_OnMouseClick;
                 stealButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeSteal);
+                stealButton.OnKeyboardEvent += StealButton_OnKeyboardEvent;
             }
             modeActionButton = DaggerfallUI.AddButton(modeActionButtonRect, actionButtonsPanel);
             modeActionButton.OnMouseClick += ModeActionButton_OnMouseClick;
@@ -329,6 +334,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     modeActionButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TradeSell);
                     break;
             }
+            modeActionButton.OnKeyboardEvent += ModeActionButton_OnKeyboardEvent;
 
             clearButton = DaggerfallUI.AddButton(clearButtonRect, actionButtonsPanel);
             clearButton.OnMouseClick += ClearButton_OnMouseClick;
@@ -367,7 +373,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Get building info, message if invalid, otherwise setup acccepted item list
                 buildingDiscoveryData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
                 if (buildingDiscoveryData.buildingKey <= 0)
-                    DaggerfallUI.MessageBox(HardStrings.oldSaveNoTrade, true);
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("oldSaveNoTrade"), true);
                 else if (WindowMode == WindowModes.Sell)
                     itemTypesAccepted = storeBuysItemType[buildingDiscoveryData.buildingType];
             }
@@ -476,7 +482,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             modeActionButton.Enabled = modeActionEnabled;
         }
 
-        private int GetTradePrice()
+        protected int GetTradePrice()
         {
             switch (WindowMode)
             {
@@ -520,7 +526,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (commit && !item.RepairData.IsBeingRepaired())
                 {
                     item.RepairData.LeaveForRepair(repairTime);
-                    string note = string.Format(TextManager.Instance.GetText(textDatabase, "repairNote"), item.LongName, buildingDiscoveryData.displayName);
+                    string note = string.Format(TextManager.Instance.GetLocalizedText("repairNote"), item.LongName, buildingDiscoveryData.displayName);
                     GameManager.Instance.PlayerEntity.Notebook.AddNote(note);
                 }
                 totalRepairTime += repairTime;
@@ -808,7 +814,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         if (!item.IsIdentified)
                             TransferItem(item, localItems, remoteItems);
                         else
-                            DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "doesntNeedIdentify"));
+                            DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("doesntNeedIdentify"));
                         break;
                 }
             }
@@ -830,7 +836,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (item.RepairData.IsBeingRepaired() && !item.RepairData.IsRepairFinished())
                     {
                         itemBeingRepaired = item;
-                        string strInterruptRepair = TextManager.Instance.GetText(textDatabase, "interruptRepair");
+                        string strInterruptRepair = TextManager.Instance.GetLocalizedText("interruptRepair");
                         DaggerfallMessageBox confirmInterruptRepairBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, strInterruptRepair, this);
                         confirmInterruptRepairBox.OnButtonClick += ConfirmInterruptRepairBox_OnButtonClick;
                         confirmInterruptRepairBox.Show();
@@ -889,26 +895,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SelectActionMode(ActionModes.Select);
         }
 
-        private void StealButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void DoSteal()
         {
-            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             if (WindowMode == WindowModes.Buy && cost > 0)
             {
                 // Calculate the weight of all items picked from shelves, then get chance of shoplifting success.
-                int weightAndNumItems = (int) basketItems.GetWeight() + basketItems.Count;
+                int weightAndNumItems = (int)basketItems.GetWeight() + basketItems.Count;
                 int chanceBeingDetected = FormulaHelper.CalculateShopliftingChance(PlayerEntity, buildingDiscoveryData.quality, weightAndNumItems);
                 PlayerEntity.TallySkill(DFCareer.Skills.Pickpocket, 1);
 
                 if (Dice100.FailedRoll(chanceBeingDetected))
                 {
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "stealSuccess"), 2);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("stealSuccess"), 2);
                     RaiseOnTradeHandler(basketItems.GetNumItems(), 0);
                     PlayerEntity.Items.TransferAll(basketItems);
                     PlayerEntity.TallyCrimeGuildRequirements(true, 1);
                 }
                 else
                 {   // Register crime and start spawning guards.
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "stealFailure"), 2);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("stealFailure"), 2);
                     RaiseOnTradeHandler(0, 0);
                     PlayerEntity.CrimeCommitted = PlayerEntity.Crimes.Theft;
                     PlayerEntity.SpawnCityGuards(true);
@@ -917,17 +922,56 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void StealButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            DoSteal();
+        }
+
+        void StealButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isStealDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isStealDeferred)
+            {
+                isStealDeferred = false;
+                DoSteal();
+            }
+        }
+
+        private void DoModeAction()
+        {
             if (usingIdentifySpell)
             {   // No trade when using a spell, just identify immediately
                 for (int i = 0; i < remoteItems.Count; i++)
                     remoteItems.GetItem(i).IdentifyItem();
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "itemsIdentified"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("itemsIdentified"));
             }
             else
                 ShowTradePopup();
+        }
+
+        private void ModeActionButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+            DoModeAction();
+        }
+
+        void ModeActionButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isModeActionDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isModeActionDeferred)
+            {
+                isModeActionDeferred = false;
+                DoModeAction();
+            }
         }
 
         private void ClearButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -937,7 +981,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
         }
 
-        private void ConfirmTrade_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void ConfirmTrade_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             bool receivedLetterOfCredit = false;
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
@@ -1003,14 +1047,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             CloseWindow();
             if (receivedLetterOfCredit)
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "letterOfCredit"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("letterOfCredit"));
         }
 
         #endregion
 
         #region Misc Events & Helpers
 
-        void ShowTradePopup()
+        protected virtual void ShowTradePopup()
         {
             const int tradeMessageBaseId = 260;
             const int notEnoughGoldId = 454;

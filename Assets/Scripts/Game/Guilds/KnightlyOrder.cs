@@ -232,7 +232,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             }
             else if ((flags & HouseFlagMask) > 0)
             {
-                DaggerfallUI.MessageBox(HardStrings.serviceReceiveHouseAlready);
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("serviceReceiveHouseAlready"));
             }
             else
             {   // Give a house if one availiable

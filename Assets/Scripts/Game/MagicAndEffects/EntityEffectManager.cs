@@ -37,7 +37,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         #region Fields
 
-        const string textDatabase = "ClassicEffects";
         const string youDontHaveTheSpellPointsMessageKey = "youDontHaveTheSpellPoints";
         const int minAcceptedSpellVersion = 1;
         const int rerollMinimumHours = 6;
@@ -257,7 +256,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     if (GameManager.Instance.PlayerEntity.Items.Contains(ItemGroups.MiscItems, (int)MiscItems.Spellbook))
                         SetReadySpell(lastSpell);
                     else
-                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "noSpellbook"));
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("noSpellbook"));
                     return;
                 }
 
@@ -329,7 +328,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // to determine whether or not it can still cast spells.
             if (IsPlayerEntity && entityBehaviour.Entity.CurrentMagicka < readySpellCastingCost && !godModeCast && !noSpellPointCost)
             {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, youDontHaveTheSpellPointsMessageKey));
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText(youDontHaveTheSpellPointsMessageKey));
 
                 readySpell = null;
                 readySpellCastingCost = 0;
@@ -345,7 +344,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             if (IsPlayerEntity && !instantCast)
             {
-                DaggerfallUI.AddHUDText(HardStrings.pressButtonToFireSpell, 0.4f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("pressButtonToFireSpell"), 0.4f);
             }
 
             return true;
@@ -502,7 +501,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         entityBehaviour.Entity.IncreaseMagicka(absorbSpellPoints);
 
                         // Output "Spell was absorbed."
-                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellAbsorbed"));
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("spellAbsorbed"));
 
                         continue;
                     }
@@ -528,12 +527,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     if (IsPlayerEntity && sourceBundle.Settings.TargetType == TargetTypes.CasterOnly)
                     {
                         // Output "Spell effect failed." for caster only spells
-                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellEffectFailed"));
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("spellEffectFailed"));
                     }
                     else if (IsPlayerEntity || showNonPlayerFailures)
                     {
                         // Output "Save versus spell made." for external contact spells
-                        DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
+                        DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("saveVersusSpellMade"));
                     }
 
                     continue;
@@ -562,7 +561,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                         if (IsPlayerEntity || showNonPlayerFailures)
                         {
                             // Output "Save versus spell made." for external contact spells
-                            DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "saveVersusSpellMade"));
+                            DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("saveVersusSpellMade"));
                         }
                         continue;
                     }
@@ -1201,7 +1200,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                 // Output "Spell was reflected." when player is the one reflecting spell
                 if (IsPlayerEntity)
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellReflected"));
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("spellReflected"));
 
                 return true;
             }
@@ -1231,7 +1230,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 // Output "Spell was resisted." when player is the one resisting spell
                 if (IsPlayerEntity)
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "spellResisted"));
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("spellResisted"));
 
                 return true;
             }
@@ -1588,6 +1587,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return racialOverrideEffect is LycanthropyEffect;
         }
 
+        public LycanthropyTypes LycanthropyType()
+        {
+            if (HasLycanthropy())
+                return (racialOverrideEffect as LycanthropyEffect).InfectionType;
+            else
+                return LycanthropyTypes.None;
+        }
+
         public bool IsTransformedLycanthrope()
         {
             if (HasLycanthropy())
@@ -1690,15 +1697,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 foreach (IEntityEffect effect in bundle.liveEffects)
                 {
                     // Update effects with remaining rounds, item effects are always ticked
-                    if (effect.RoundsRemaining > 0 || bundle.fromEquippedItem != null)
-                    {
+                    hasRemainingEffectRounds = effect.RoundsRemaining > 0;
+                    if (hasRemainingEffectRounds || bundle.fromEquippedItem != null)
                         effect.MagicRound();
-                        if (effect.RoundsRemaining > 0)
-                            hasRemainingEffectRounds = true;
-                    }
                 }
 
-                if (bundle.fromEquippedItem != null)
+                if (bundle.fromEquippedItem != null && bundle.fromEquippedItem.IsEquipped)
                 {
                     // If bundle has an item source keep it alive until item breaks or is unequipped
                     hasRemainingEffectRounds = true;
@@ -1817,10 +1821,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             entityBehaviour.Entity.Skills.AssignMods(combinedSkillMods);
             entityBehaviour.Entity.Resistances.AssignMods(combinedResistanceMods);
 
-            // Kill host if any stat is reduced to 1
+            // Kill host if any stat is reduced to 0 live total
             for (int i = 0; i < DaggerfallStats.Count; i++)
             {
-                if (entityBehaviour.Entity.Stats.GetLiveStatValue(i) == 1)
+                if (entityBehaviour.Entity.Stats.GetLiveStatValue(i) == 0)
                 {
                     entityBehaviour.Entity.CurrentHealth = 0;
                     return;
@@ -1894,7 +1898,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Output "You are silenced." if the host manager is player
                 // Just to let them know why casting isn't working
                 if (entityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "youAreSilenced"), 1.5f);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youAreSilenced"), 1.5f);
 
                 readySpell = null;
                 return true;
@@ -1978,11 +1982,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 }
                 RemovePendingBundles();
 
-                // Execute reroll callbacks on item
-                DoItemEnchantmentPayloads(EnchantmentPayloadFlags.RerollEffect, item);
+                if (item.IsEquipped)
+                {
+                    // Execute reroll callbacks on item if still equipped
+                    DoItemEnchantmentPayloads(EnchantmentPayloadFlags.RerollEffect, item);
 
-                // Update recast time in item
-                item.timeEffectsLastRerolled = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                    // Update recast time in item
+                    item.timeEffectsLastRerolled = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+                }
             }
 
             // Clean up

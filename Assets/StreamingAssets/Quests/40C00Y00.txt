@@ -6,6 +6,7 @@
 -- QuestId: 0
 Messages: 51
 Quest: 40C00Y00
+DisplayName: Nocturnal's Quest
 -- Message panels
 QRC:
 

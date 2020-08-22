@@ -273,7 +273,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Set type name with fallback
             MobileEnemy enemy;
             if (EnemyBasics.GetEnemy(foeType, out enemy))
-                typeName = enemy.Name;
+                typeName = TextManager.Instance.GetLocalizedEnemyName(enemy.ID);
             else
                 typeName = foeType.ToString();
 

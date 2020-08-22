@@ -6,6 +6,7 @@
 -- QuestId: 1
 Messages: 22
 Quest: R0C10Y01
+DisplayName: Contraband Trade
 -- Message panels
 QRC:
 

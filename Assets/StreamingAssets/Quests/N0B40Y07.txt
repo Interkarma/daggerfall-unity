@@ -129,7 +129,6 @@ Message:  1060
 <ce>                        The daedra =daedra_ has
 <ce>                      been properly banished back
 <ce>                       to the Plane of Oblivion.
-                                     <--->
    
 
 

@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// True when player owns a ship
+        /// True when player owns a cart
         /// </summary>
         /// <returns></returns>
         public bool HasCart()
@@ -228,11 +228,11 @@ namespace DaggerfallWorkshop.Game
                 {   // Update Animation frame?
                     if (lastFrameTime == 0)
                     {
-                        lastFrameTime = Time.time;
+                        lastFrameTime = Time.unscaledTime;
                     }
-                    else if (Time.time > lastFrameTime + animFrameTime)
+                    else if (Time.unscaledTime > lastFrameTime + animFrameTime)
                     {
-                        lastFrameTime = Time.time;
+                        lastFrameTime = Time.unscaledTime;
                         frameIndex = (frameIndex == 3) ? 0 : frameIndex + 1;
                         ridingTexture = ridingTexures[frameIndex];
                     }
@@ -266,7 +266,7 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
                 // Time for a whinney?
-                if (neighTime < Time.time)
+                if (neighTime < Time.time && dfAudioSource.AudioSource.enabled)
                 {
                     dfAudioSource.AudioSource.PlayOneShot(neighClip, RidingVolumeScale * DaggerfallUnity.Settings.SoundVolume);
                     neighTime = Time.time + Random.Range(2, 40);

@@ -73,8 +73,8 @@ namespace DaggerfallWorkshop.Game
             gameObject.SetActive(false);
 
             // Show death message
-            string deathMessage = HardStrings.thingJustDied;
-            deathMessage = deathMessage.Replace("%s", mobile.Summary.Enemy.Name);
+            string deathMessage = TextManager.Instance.GetLocalizedText("thingJustDied");
+            deathMessage = deathMessage.Replace("%s", TextManager.Instance.GetLocalizedEnemyName(mobile.Summary.Enemy.ID));
             DaggerfallUI.Instance.PopupMessage(deathMessage);
 
             // Generate lootable corpse marker

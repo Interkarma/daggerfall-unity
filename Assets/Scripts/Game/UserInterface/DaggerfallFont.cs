@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// Supports classic FONT0000-0004 with an SDF variant.
     /// Classic font has the same limitations of 256 characters starting from ASCII 33.
     /// SDF font uses a keyed dictionary so can support any number of glyph codes.
-    /// Current implementation will load a TextMeshPro 1.3.x font asset directly for SDF variant.
+    /// Current implementation will load a TextMeshPro 2.0.x font asset directly for SDF variant.
     /// </summary>
     public class DaggerfallFont
     {
@@ -60,11 +60,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public enum FontName
         {
-            FONT0000,
-            FONT0001,
-            FONT0002,
-            FONT0003,
-            FONT0004,
+            FONT0000, // Large Font
+            FONT0001, // Title Font
+            FONT0002, // Small Font
+            FONT0003, // Default Font
+            FONT0004, // Unused
         }
 
         public struct GlyphInfo
@@ -454,8 +454,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Load a TextMeshPro 1.3.x asset used for this to use for SDF rendering.
-        /// Mods can use DaggerfallUI.Instance.Font1 through Font4 to access the instances used by other game windows.
+        /// Load a TextMeshPro 2.0.x asset used for this to use for SDF rendering.
+        /// Mods can use DaggerfallUI.Instance.Font0 through Font4 to access the instances used by other game windows.
         /// Custom font should be set only during startup.
         /// </summary>
         /// <param name="path">Path to a TextMeshPro 1.3.x font asset.</param>
@@ -468,34 +468,34 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Create font info
             SDFFontInfo fi = new SDFFontInfo();
-            fi.pointSize = tmpFont.fontInfo.PointSize;
+            fi.pointSize = tmpFont.faceInfo.pointSize;
             fi.atlas = tmpFont.atlas;
-            fi.baseline = tmpFont.fontInfo.Baseline;
+            fi.baseline = tmpFont.faceInfo.baseline;
             fi.glyphs = new Dictionary<int, SDFGlyphInfo>();
 
             // Cache glyph info
             float atlasWidth = tmpFont.atlas.width;
             float atlasHeight = tmpFont.atlas.height;
-            foreach (var kvp in tmpFont.characterDictionary)
+            foreach (var kvp in tmpFont.characterLookupTable)
             {
                 // Compose glyph rect inside of atlas
-                TMP_Glyph glyph = kvp.Value;
-                float atlasGlyphX = glyph.x / atlasWidth;
-                float atlasGlyphY = (atlasHeight - glyph.y - glyph.height) / atlasHeight;
-                float atlasGlyphWidth = glyph.width / atlasWidth;
-                float atlasGlyphHeight = glyph.height / atlasHeight;
+                TMP_Character character = kvp.Value;
+                float atlasGlyphX = character.glyph.glyphRect.x / atlasWidth;
+                float atlasGlyphY = character.glyph.glyphRect.y / atlasHeight;
+                float atlasGlyphWidth = character.glyph.glyphRect.width / atlasWidth;
+                float atlasGlyphHeight = character.glyph.glyphRect.height / atlasHeight;
                 Rect atlasGlyphRect = new Rect(atlasGlyphX, atlasGlyphY, atlasGlyphWidth, atlasGlyphHeight);
 
                 // Store information about this glyph
                 SDFGlyphInfo glyphInfo = new SDFGlyphInfo()
                 {
-                    code = kvp.Key,
+                    code = (int)kvp.Key,
                     rect = atlasGlyphRect,
-                    offset = new Vector2(glyph.xOffset, glyph.yOffset),
-                    size = new Vector2(glyph.width, glyph.height),
-                    advance = glyph.xAdvance,
+                    offset = new Vector2(character.glyph.metrics.horizontalBearingX, character.glyph.metrics.horizontalBearingY),
+                    size = new Vector2(character.glyph.metrics.width, character.glyph.metrics.height),
+                    advance = character.glyph.metrics.horizontalAdvance,
                 };
-                fi.glyphs.Add(kvp.Key, glyphInfo);
+                fi.glyphs.Add((int)kvp.Key, glyphInfo);
             }
 
             // Set live font info

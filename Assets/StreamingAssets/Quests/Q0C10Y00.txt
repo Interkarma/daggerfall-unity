@@ -221,5 +221,8 @@ _S.14_ task:
 
 _S.15_ task:
 	when _pchasitem1_ and _pchasitem2_ and _pchasitem3_ 
-	give pc _reward1_ and _reward2_ and _reward3_ 
+	give pc _reward1_
+	give pc _reward2_
+	give pc _reward3_ 
 	end quest 
+--changed to multi-line give pc reward, as I know this implementation works fine. --JayH

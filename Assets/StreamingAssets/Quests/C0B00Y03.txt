@@ -14,7 +14,7 @@ QuestorOffer:  [1000]
 <ce>                       %pct, one of our clerics,
 <ce>                            a =cleric_ named
 <ce>                     _cleric_ has disappeared while
-<ce>                     on an archeological dig. Will
+<ce>                     on an archaeological dig. Will
 <ce>                         you help us find %g2?
                                      <--->
 <ce>                    I fear that one of our noblest

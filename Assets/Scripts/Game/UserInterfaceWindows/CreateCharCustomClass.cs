@@ -171,14 +171,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup help dictionary
             helpDict = new Dictionary<string, int> 
             {
-                { HardStrings.helpAttributes, 2402 },
-                { HardStrings.helpClassName, 2401 },
-                { HardStrings.helpGeneral, 2400 },
-                { HardStrings.helpReputations, 2406 },
-                { HardStrings.helpSkillAdvancement, 2407 },
-                { HardStrings.helpSkills, 2403 },
-                { HardStrings.helpSpecialAdvantages, 2404 },
-                { HardStrings.helpSpecialDisadvantages, 2405 }
+                { TextManager.Instance.GetLocalizedText("helpAttributes"), 2402 },
+                { TextManager.Instance.GetLocalizedText("helpClassName"), 2401 },
+                { TextManager.Instance.GetLocalizedText("helpGeneral"), 2400 },
+                { TextManager.Instance.GetLocalizedText("helpReputations"), 2406 },
+                { TextManager.Instance.GetLocalizedText("helpSkillAdvancement"), 2407 },
+                { TextManager.Instance.GetLocalizedText("helpSkills"), 2403 },
+                { TextManager.Instance.GetLocalizedText("helpSpecialAdvantages"), 2404 },
+                { TextManager.Instance.GetLocalizedText("helpSpecialDisadvantages"), 2405 }
             };
 
             // Setup skills dictionary

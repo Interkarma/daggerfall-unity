@@ -88,6 +88,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D baseTexture;
         Texture2D goldTexture;
+        readonly DFSize baseSize = new DFSize(320, 200);
+        readonly DFSize goldSize = new DFSize(81, 36);
 
         Texture2D weaponsAndArmorNotSelected;
         Texture2D magicItemsNotSelected;
@@ -97,6 +99,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D magicItemsSelected;
         Texture2D clothingAndMiscSelected;
         Texture2D ingredientsSelected;
+        Texture2D smoothEnhancedScrollbar;
 
         #endregion
 
@@ -104,7 +107,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const MagicCraftingStations thisMagicStation = MagicCraftingStations.ItemMaker;
 
-        const string textDatabase = "ClassicEffects";
         const string baseTextureName = "ITEM00I0.IMG";
         const string goldTextureName = "ITEM01I0.IMG";
         const int alternateAlphaIndex = 12;
@@ -201,7 +203,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 int itemEnchantmentPower = selectedItem.GetEnchantmentPower();
 
                 enchantmentCostLabel.Text = string.Format("{0}/{1}", totalEnchantmentCost, itemEnchantmentPower);
-                Debug.LogFormat("used: {0} onBuild: {1}", itemEnchantmentPower, selectedItem.enchantmentPoints);
+                //Debug.LogFormat("used: {0} onBuild: {1}", itemEnchantmentPower, selectedItem.enchantmentPoints);
 
                 goldCostLabel.Text = totalGoldCost.ToString();
             }
@@ -283,8 +285,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             baseTexture = ImageReader.GetTexture(baseTextureName, 0, 0, true, alternateAlphaIndex);
             goldTexture = ImageReader.GetTexture(goldTextureName);
-            DFSize baseSize = new DFSize(320, 200);
-            DFSize goldSize = new DFSize(81, 36);
 
             // Cut out tab page not selected button textures
             weaponsAndArmorNotSelected = ImageReader.GetSubTexture(baseTexture, weaponsAndArmorRect, baseSize);
@@ -378,11 +378,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void SetupItemListScrollers()
         {
-            itemsListScroller = new ItemListScroller(4, 1, itemListPanelRect, itemButtonRects, new TextLabel(), defaultToolTip)
+            if (DaggerfallUnity.Settings.EnableEnhancedItemLists)
             {
-                Position = new Vector2(itemListScrollerRect.x, itemListScrollerRect.y),
-                Size = new Vector2(itemListScrollerRect.width, itemListScrollerRect.height),
-            };
+                // Clean UI background with 2 panels, and initialise a standard enhanced inventory list.
+                Panel panel1 = DaggerfallUI.AddPanel(new Rect(253, 179, 9, 5), NativePanel);
+                panel1.BackgroundTexture = ImageReader.GetSubTexture(baseTexture, new Rect(253, 175, 9, 5), baseSize);
+                Panel panel2 = DaggerfallUI.AddPanel(new Rect(312, 49, 1, 149), NativePanel);
+                panel2.BackgroundColor = Color.black;
+                itemsListScroller = new ItemListScroller(defaultToolTip);
+            }
+            else
+            {
+                itemsListScroller = new ItemListScroller(4, 1, itemListPanelRect, itemButtonRects, new TextLabel(), defaultToolTip);
+            }
+            itemsListScroller.Position = new Vector2(itemListScrollerRect.x, itemListScrollerRect.y);
+            itemsListScroller.Size = new Vector2(itemListScrollerRect.width, itemListScrollerRect.height);
             NativePanel.Components.Add(itemsListScroller);
             itemsListScroller.OnItemClick += ItemListScroller_OnItemClick;
         }
@@ -641,7 +651,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (effect.IsEnchantmentExclusiveTo(currentPowers) || effect.IsEnchantmentExclusiveTo(currentSideEffects))
                     continue;
 
-                enchantmentPrimaryPicker.ListBox.AddItem(effect.Properties.GroupName, -1, effect);
+                enchantmentPrimaryPicker.ListBox.AddItem(effect.GroupName, -1, effect);
             }
             uiManager.PushWindow(enchantmentPrimaryPicker);
         }
@@ -686,7 +696,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (effect.IsEnchantmentExclusiveTo(currentPowers) || effect.IsEnchantmentExclusiveTo(currentSideEffects))
                     continue;
 
-                enchantmentPrimaryPicker.ListBox.AddItem(effect.Properties.GroupName, -1, effect);
+                enchantmentPrimaryPicker.ListBox.AddItem(effect.GroupName, -1, effect);
             }
             uiManager.PushWindow(enchantmentPrimaryPicker);
         }
@@ -710,7 +720,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Must have enchantments to apply or display "You have not prepared enchantments for this item."
             if (powersList.EnchantmentCount == 0 && sideEffectsList.EnchantmentCount == 0)
             {
-                DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noEnchantments"));
+                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("noEnchantments"));
                 return;
             }
 
@@ -790,7 +800,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
             mb.TextBox.Text = itemNameLabel.Text;
-            mb.SetTextBoxLabel(TextManager.Instance.GetText("ClassicEffects", "enterNewName") + " ");
+            mb.SetTextBoxLabel(TextManager.Instance.GetLocalizedText("enterNewName"));
             mb.OnGotUserInput += EnterName_OnGotUserInput;
             mb.Show();
         }
@@ -879,7 +889,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Also adding +1 to account for incoming enchantment
                 if (powersList.EnchantmentCount + sideEffectsList.EnchantmentCount + forcedPowers.Length + forcedSideEffects.Length + 1 > 10)
                 {
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetText(textDatabase, "noRoomInItem"));
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("noRoomInItem"));
                     return;
                 }
             }

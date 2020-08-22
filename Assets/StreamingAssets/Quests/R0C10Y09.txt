@@ -6,6 +6,7 @@
 -- QuestId: 9
 Messages: 21
 Quest: R0C10Y09
+DisplayName: The Procurer
 -- Message panels
 QRC:
 

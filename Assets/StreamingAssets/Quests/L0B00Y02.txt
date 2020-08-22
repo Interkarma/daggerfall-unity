@@ -39,7 +39,7 @@ AcceptQuest:  [1002]
 <ce>                  has pursued %g3 quarry to a dungeon
 <ce>                         called ___mondung_. If
 <ce>                  you have not found any clues to the
-<ce>                  employer's wherebouts, return here.
+<ce>                  employer's whereabouts, return here.
 <ce>                   I would, of course, prefer for you
 <ce>                         to account =assassin_
 <ce>                   and %g3 employer both, but I'd be

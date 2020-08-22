@@ -52,7 +52,7 @@ RumorsPostfailure:  [1006]
 
 RumorsPostsuccess:  [1007]
 <ce>      Thank %god _dummy_ finally sent someone to kill that giant
-<ce>    in ___mondung_.  It must have killed one of %g2 precious sheep.
+<ce>    in ___mondung_.  It must have killed one of %g3 precious sheep.
 
 QuestorPostsuccess:  [1008]
 <ce>                 It's my old friend Giant-Killer %pcf!
@@ -240,8 +240,11 @@ _S.17_ task:
 	when _success_ and _escortComplete_ 
 
 _S.18_ task:
-	when _qtime_ or _S.15_ or _S.16_ or _S.17_ 
+	when _qtime_ or _S.15_ or _S.16_ or _S.17_ or _S.19_
 	end quest 
+
+_S.19_ task:
+	when _success_ and _victim_ and not _S.10_
 
 _giantWaveWhileInDungeon_ task:
 	pc at _mondung_ set _spawnGiants_

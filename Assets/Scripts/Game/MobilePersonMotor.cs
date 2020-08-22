@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -390,7 +390,7 @@ namespace DaggerfallWorkshop.Game
                 var customMobilePersonAsset = customMobilePersonAssetGo.GetComponent<MobilePersonAsset>();
                 if (customMobilePersonAsset)
                 {
-                    GameObject.Destroy(mobilePersonAsset.gameObject);
+                    mobilePersonAsset.gameObject.SetActive(false);
                     customMobilePersonAssetGo.transform.SetParent(gameObject.transform);
                     mobilePersonAsset = customMobilePersonAsset;
                     mobilePersonAsset.Trigger = GetComponent<CapsuleCollider>();
@@ -411,7 +411,7 @@ namespace DaggerfallWorkshop.Game
             // Aim low to better detect stairs
             tempTargetScenePosition.y += 0.1f;
             Ray ray = new Ray(transform.position, tempTargetScenePosition - transform.position);
-            bool collision = Physics.Raycast(transform.position, tempTargetScenePosition - transform.position, Vector3.Distance(transform.position, tempTargetScenePosition));
+            bool collision = Physics.Raycast(transform.position, tempTargetScenePosition - transform.position, Vector3.Distance(transform.position, tempTargetScenePosition), ~mobileAsset.GetLayerMask());
             // Debug.DrawRay(transform.position, tempTargetScenePosition - transform.position, collision ? Color.red : Color.green, 1f);
             return !collision;
         }

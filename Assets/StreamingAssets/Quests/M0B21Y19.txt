@@ -221,7 +221,7 @@ Foe _F.02_ is 4 Assassin
 	log 1020 step 0 
 	pc at _victimhouse_ set _S.05_ 
 	_note_ used do _readnote_
-	create npc _victim_ at _victimhouse_ 
+	have _I.02_ set _deadbody_
 
 variable _qtime_
 _readnote_ task:
@@ -235,23 +235,26 @@ _S.03_ task:
 	_letter_ used do _readletter_ 
 	start timer _S.04_ 
 	give pc _letter_ notify 1070 
-	create npc at _daughterhouse_ 
 	place npc _daughter_ at _daughterhouse_ 
 
 _S.04_ task:
 	end quest 
 
 _S.05_ task:
+	start task _insidespawn_
+--more repairs to prevent duplicate effects. now only one time per quest
+
+_insidespawn_ task:
+	create foe _enemy_ every 0 minutes 4 times with 100% success 
 	place item _I.02_ at _victimhouse_ 
 	place item _note_ at _victimhouse_ 
-	create foe _enemy_ every 0 minutes 4 times with 100% success 
 	--sped up spawn rate. very slow for an ambush 
 	log 1021 step 1 
 	rumor mill 1040 
 	hide npc _victim_ 
+--user reports repeated spawns upon entering house, should not be so
 
 _deadbody_ task:
-	clicked item _I.02_
 	take _I.02_ from pc
 --added deadbody task. otherwise body would clog inventory
 
@@ -296,7 +299,6 @@ _S.13_ task:
 	pc at _safehouse_ set _S.14_ 
 	when _S.08_ and not _S.12_ 
 	log 1023 step 3 
-	create npc at _safehouse_ 
 	say 1052
 
 _S.14_ task:

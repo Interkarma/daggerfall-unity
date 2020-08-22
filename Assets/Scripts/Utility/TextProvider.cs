@@ -10,17 +10,15 @@
 //
 
 using UnityEngine;
-using System;
-using System.IO;
-using System.Text;
-using System.Collections;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Localization;
+using UnityEngine.Localization.Tables;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -109,6 +107,21 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="stat">Stat.</param>
         /// <returns>Text resource ID.</returns>
         int GetStatDescriptionTextID(DFCareer.Stats stat);
+
+        /// <summary>
+        /// Attempts to read a localized string from a named table collection.
+        /// </summary>
+        /// <param name="collection">Name of table collection.</param>
+        /// <param name="id">ID of string to get.</param>
+        /// <param name="result">Localized string result or null/empty.</param>
+        /// <returns>True if string found, otherwise false.</returns>
+        bool GetLocalizedString(string collection, string id, out string result);
+
+        /// <summary>
+        /// Enable or disable verbose localized string debug in player log.
+        /// </summary>
+        /// <param name="enable">True to enable, false to disable.</param>
+        void EnableLocalizedStringDebug(bool enable);
     }
 
     /// <summary>
@@ -117,6 +130,8 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public abstract class TextProvider : ITextProvider
     {
+        public bool localizedStringDebug = false;
+
         TextFile rscFile = new TextFile();
 
         public TextProvider()
@@ -125,6 +140,17 @@ namespace DaggerfallWorkshop.Utility
 
         public virtual TextFile.Token[] GetRSCTokens(int id)
         {
+            if (localizedStringDebug && !string.IsNullOrEmpty(TextManager.Instance.runtimeRSCStrings))
+                Debug.LogFormat("Trying localized string using RSC collection '{0}'", TextManager.Instance.runtimeRSCStrings);
+
+            // First attempt to get string from localization
+            string localizedString;
+            if (GetLocalizedString(TextManager.Instance.runtimeRSCStrings, id.ToString(), out localizedString))
+                return DaggerfallStringTableImporter.ConvertStringToRSCTokens(localizedString);
+
+            if (localizedStringDebug)
+                Debug.Log("Failed to get localized string. Fallback to TEXT.RSC");
+
             if (!rscFile.IsLoaded)
                 OpenTextRSCFile();
 
@@ -218,30 +244,84 @@ namespace DaggerfallWorkshop.Utility
             return tokens.ToArray();
         }
 
+        /// <summary>
+        /// Attempts to read a localized string from a named table collection.
+        /// </summary>
+        /// <param name="collection">Name of table collection.</param>
+        /// <param name="id">ID of string to get.</param>
+        /// <param name="result">Localized string result or null/empty.</param>
+        /// <returns>True if string found, otherwise false.</returns>
+        public virtual bool GetLocalizedString(string collection, string id, out string result)
+        {
+            result = string.Empty;
+            if (string.IsNullOrEmpty(collection))
+            {
+                if (localizedStringDebug)
+                    Debug.Log("Collection name is null or empty.");
+                return false;
+            }
+
+            StringTable table = null;
+            var sd = LocalizationSettings.StringDatabase;
+            var op = sd.GetTableAsync(collection);
+            if (op.IsDone)
+                table = op.Result;
+            else
+                op.Completed += (o) => table = o.Result;
+
+            if (table != null)
+            {
+                var entry = table.GetEntry(id);
+                if (entry != null)
+                {
+                    result = entry.GetLocalizedString();
+                    if (localizedStringDebug)
+                        Debug.LogFormat("Found localized string for locale {0}\n{1}", LocalizationSettings.SelectedLocale.name, result);
+                    return true;
+                }
+            }
+            else
+            {
+                if (localizedStringDebug)
+                    Debug.LogFormat("StringTable collection '{0}' not found", collection);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Enable or disable verbose localized string debug in player log.
+        /// </summary>
+        /// <param name="enable">True to enable, false to disable.</param>
+        public void EnableLocalizedStringDebug(bool enable)
+        {
+            localizedStringDebug = enable;
+        }
+
         public string GetWeaponMaterialName(WeaponMaterialTypes material)
         {
             switch(material)
             {
                 case WeaponMaterialTypes.Iron:
-                    return "Iron";
+                    return TextManager.Instance.GetLocalizedText("iron");
                 case WeaponMaterialTypes.Steel:
-                    return "Steel";
+                    return TextManager.Instance.GetLocalizedText("steel");
                 case WeaponMaterialTypes.Silver:
-                    return "Silver";
+                    return TextManager.Instance.GetLocalizedText("silver");
                 case WeaponMaterialTypes.Elven:
-                    return "Elven";
+                    return TextManager.Instance.GetLocalizedText("elven");
                 case WeaponMaterialTypes.Dwarven:
-                    return "Dwarven";
+                    return TextManager.Instance.GetLocalizedText("dwarven");
                 case WeaponMaterialTypes.Mithril:
-                    return "Mithril";
+                    return TextManager.Instance.GetLocalizedText("mithril");
                 case WeaponMaterialTypes.Adamantium:
-                    return "Adamantium";
+                    return TextManager.Instance.GetLocalizedText("adamantium");
                 case WeaponMaterialTypes.Ebony:
-                    return "Ebony";
+                    return TextManager.Instance.GetLocalizedText("ebony");
                 case WeaponMaterialTypes.Orcish:
-                    return "Orcish";
+                    return TextManager.Instance.GetLocalizedText("orcish");
                 case WeaponMaterialTypes.Daedric:
-                    return "Daedric";
+                    return TextManager.Instance.GetLocalizedText("daedric");
                 default:
                     return string.Empty;
             }
@@ -252,30 +332,30 @@ namespace DaggerfallWorkshop.Utility
             switch (material)
             {
                 case ArmorMaterialTypes.Leather:
-                    return "Leather";
+                    return TextManager.Instance.GetLocalizedText("leather");
                 case ArmorMaterialTypes.Chain:
                 case ArmorMaterialTypes.Chain2:
-                    return "Chain";
+                    return TextManager.Instance.GetLocalizedText("chain");
                 case ArmorMaterialTypes.Iron:
-                    return "Iron";
+                    return TextManager.Instance.GetLocalizedText("iron");
                 case ArmorMaterialTypes.Steel:
-                    return "Steel";
+                    return TextManager.Instance.GetLocalizedText("steel");
                 case ArmorMaterialTypes.Silver:
-                    return "Silver";
+                    return TextManager.Instance.GetLocalizedText("silver");
                 case ArmorMaterialTypes.Elven:
-                    return "Elven";
+                    return TextManager.Instance.GetLocalizedText("elven");
                 case ArmorMaterialTypes.Dwarven:
-                    return "Dwarven";
+                    return TextManager.Instance.GetLocalizedText("dwarven");
                 case ArmorMaterialTypes.Mithril:
-                    return "Mithril";
+                    return TextManager.Instance.GetLocalizedText("mithril");
                 case ArmorMaterialTypes.Adamantium:
-                    return "Adamantium";
+                    return TextManager.Instance.GetLocalizedText("adamantium");
                 case ArmorMaterialTypes.Ebony:
-                    return "Ebony";
+                    return TextManager.Instance.GetLocalizedText("ebony");
                 case ArmorMaterialTypes.Orcish:
-                    return "Orcish";
+                    return TextManager.Instance.GetLocalizedText("orcish");
                 case ArmorMaterialTypes.Daedric:
-                    return "Daedric";
+                    return TextManager.Instance.GetLocalizedText("daedric");
             }
 
             // Standard material type value not found.
@@ -292,75 +372,75 @@ namespace DaggerfallWorkshop.Utility
             switch (skill)
             {
                 case DFCareer.Skills.Medical:
-                    return "Medical";
+                    return TextManager.Instance.GetLocalizedText("medical");
                 case DFCareer.Skills.Etiquette:
-                    return "Etiquette";
+                    return TextManager.Instance.GetLocalizedText("etiquette");
                 case DFCareer.Skills.Streetwise:
-                    return "Streetwise";
+                    return TextManager.Instance.GetLocalizedText("streetwise");
                 case DFCareer.Skills.Jumping:
-                    return "Jumping";
+                    return TextManager.Instance.GetLocalizedText("jumping");
                 case DFCareer.Skills.Orcish:
-                    return "Orcish";
+                    return TextManager.Instance.GetLocalizedText("orcish");
                 case DFCareer.Skills.Harpy:
-                    return "Harpy";
+                    return TextManager.Instance.GetLocalizedText("harpy");
                 case DFCareer.Skills.Giantish:
-                    return "Giantish";
+                    return TextManager.Instance.GetLocalizedText("giantish");
                 case DFCareer.Skills.Dragonish:
-                    return "Dragonish";
+                    return TextManager.Instance.GetLocalizedText("dragonish");
                 case DFCareer.Skills.Nymph:
-                    return "Nymph";
+                    return TextManager.Instance.GetLocalizedText("nymph");
                 case DFCareer.Skills.Daedric:
-                    return "Daedric";
+                    return TextManager.Instance.GetLocalizedText("daedric");
                 case DFCareer.Skills.Spriggan:
-                    return "Spriggan";
+                    return TextManager.Instance.GetLocalizedText("spriggan");
                 case DFCareer.Skills.Centaurian:
-                    return "Centaurian";
+                    return TextManager.Instance.GetLocalizedText("centaurian");
                 case DFCareer.Skills.Impish:
-                    return "Impish";
+                    return TextManager.Instance.GetLocalizedText("impish");
                 case DFCareer.Skills.Lockpicking:
-                    return "Lockpicking";
+                    return TextManager.Instance.GetLocalizedText("lockpicking");
                 case DFCareer.Skills.Mercantile:
-                    return "Mercantile";
+                    return TextManager.Instance.GetLocalizedText("mercantile");
                 case DFCareer.Skills.Pickpocket:
-                    return "Pickpocket";
+                    return TextManager.Instance.GetLocalizedText("pickpocket");
                 case DFCareer.Skills.Stealth:
-                    return "Stealth";
+                    return TextManager.Instance.GetLocalizedText("stealth");
                 case DFCareer.Skills.Swimming:
-                    return "Swimming";
+                    return TextManager.Instance.GetLocalizedText("swimming");
                 case DFCareer.Skills.Climbing:
-                    return "Climbing";
+                    return TextManager.Instance.GetLocalizedText("climbing");
                 case DFCareer.Skills.Backstabbing:
-                    return "Backstabbing";
+                    return TextManager.Instance.GetLocalizedText("backstabbing");
                 case DFCareer.Skills.Dodging:
-                    return "Dodging";
+                    return TextManager.Instance.GetLocalizedText("dodging");
                 case DFCareer.Skills.Running:
-                    return "Running";
+                    return TextManager.Instance.GetLocalizedText("running");
                 case DFCareer.Skills.Destruction:
-                    return "Destruction";
+                    return TextManager.Instance.GetLocalizedText("destruction");
                 case DFCareer.Skills.Restoration:
-                    return "Restoration";
+                    return TextManager.Instance.GetLocalizedText("restoration");
                 case DFCareer.Skills.Illusion:
-                    return "Illusion";
+                    return TextManager.Instance.GetLocalizedText("illusion");
                 case DFCareer.Skills.Alteration:
-                    return "Alteration";
+                    return TextManager.Instance.GetLocalizedText("alteration");
                 case DFCareer.Skills.Thaumaturgy:
-                    return "Thaumaturgy";
+                    return TextManager.Instance.GetLocalizedText("thaumaturgy");
                 case DFCareer.Skills.Mysticism:
-                    return "Mysticism";
+                    return TextManager.Instance.GetLocalizedText("mysticism");
                 case DFCareer.Skills.ShortBlade:
-                    return "Short Blade";
+                    return TextManager.Instance.GetLocalizedText("shortBlade");
                 case DFCareer.Skills.LongBlade:
-                    return "Long Blade";
+                    return TextManager.Instance.GetLocalizedText("longBlade");
                 case DFCareer.Skills.HandToHand:
-                    return "Hand-to-Hand";
+                    return TextManager.Instance.GetLocalizedText("handToHand");
                 case DFCareer.Skills.Axe:
-                    return "Axe";
+                    return TextManager.Instance.GetLocalizedText("axe");
                 case DFCareer.Skills.BluntWeapon:
-                    return "Blunt Weapon";
+                    return TextManager.Instance.GetLocalizedText("bluntWeapon");
                 case DFCareer.Skills.Archery:
-                    return "Archery";
+                    return TextManager.Instance.GetLocalizedText("archery");
                 case DFCareer.Skills.CriticalStrike:
-                    return "Critical Strike";
+                    return TextManager.Instance.GetLocalizedText("criticalStrike");
                 default:
                     return string.Empty;
             }
@@ -371,21 +451,21 @@ namespace DaggerfallWorkshop.Utility
             switch (stat)
             {
                 case DFCareer.Stats.Strength:
-                    return "Strength";
+                    return TextManager.Instance.GetLocalizedText("strength");
                 case DFCareer.Stats.Intelligence:
-                    return "Intelligence";
+                    return TextManager.Instance.GetLocalizedText("intelligence");
                 case DFCareer.Stats.Willpower:
-                    return "Willpower";
+                    return TextManager.Instance.GetLocalizedText("willpower");
                 case DFCareer.Stats.Agility:
-                    return "Agility";
+                    return TextManager.Instance.GetLocalizedText("agility");
                 case DFCareer.Stats.Endurance:
-                    return "Endurance";
+                    return TextManager.Instance.GetLocalizedText("endurance");
                 case DFCareer.Stats.Personality:
-                    return "Personality";
+                    return TextManager.Instance.GetLocalizedText("personality");
                 case DFCareer.Stats.Speed:
-                    return "Speed";
+                    return TextManager.Instance.GetLocalizedText("speed");
                 case DFCareer.Stats.Luck:
-                    return "Luck";
+                    return TextManager.Instance.GetLocalizedText("luck");
                 default:
                     return string.Empty;
             }
@@ -396,21 +476,21 @@ namespace DaggerfallWorkshop.Utility
             switch (stat)
             {
                 case DFCareer.Stats.Strength:
-                    return "STR";
+                    return TextManager.Instance.GetLocalizedText("STR");
                 case DFCareer.Stats.Intelligence:
-                    return "INT";
+                    return TextManager.Instance.GetLocalizedText("INT");
                 case DFCareer.Stats.Willpower:
-                    return "WIL";
+                    return TextManager.Instance.GetLocalizedText("WIL");
                 case DFCareer.Stats.Agility:
-                    return "AGI";
+                    return TextManager.Instance.GetLocalizedText("AGI");
                 case DFCareer.Stats.Endurance:
-                    return "END";
+                    return TextManager.Instance.GetLocalizedText("END");
                 case DFCareer.Stats.Personality:
-                    return "PER";
+                    return TextManager.Instance.GetLocalizedText("PER");
                 case DFCareer.Stats.Speed:
-                    return "SPD";
+                    return TextManager.Instance.GetLocalizedText("SPD");
                 case DFCareer.Stats.Luck:
-                    return "LUC";
+                    return TextManager.Instance.GetLocalizedText("LUC");
                 default:
                     return string.Empty;
             }

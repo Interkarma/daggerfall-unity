@@ -28,7 +28,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region Fields
 
-        const string textDatabase = "DaggerfallUI";
         const string nativeImgName = "LGBK00I0.IMG";
 
         const SoundClips openJournal = SoundClips.OpenBook;
@@ -65,6 +64,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button upArrowButton;
         Button downArrowButton;
         Button exitButton;
+
+        bool isCloseWindowDeferred = false;
 
         public JournalDisplay DisplayMode { get; set; }
 
@@ -119,7 +120,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dialogButton.Hotkey             = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.JournalNextCategory);
             dialogButton.Name               = "dialog_button";
             dialogButton.ToolTip            = defaultToolTip;
-            dialogButton.ToolTipText        = TextManager.Instance.GetText(textDatabase, "dialogButtonInfo");
+            dialogButton.ToolTipText        = TextManager.Instance.GetLocalizedText("dialogButtonInfo");
             mainPanel.Components.Add(dialogButton);
 
             upArrowButton                   = new Button();
@@ -143,6 +144,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.Size                 = new Vector2(30, 9);
             exitButton.OnMouseClick         += ExitButton_OnMouseClick;
             exitButton.Hotkey               = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.JournalExit);
+            exitButton.OnKeyboardEvent      += ExitButton_OnKeyboardEvent;
             exitButton.Name                 = "exit_button";
             mainPanel.Components.Add(exitButton);
 
@@ -163,7 +165,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Font = DaggerfallUI.LargeFont,
                 ShadowColor = new Color(0f, 0.2f, 0.5f),
                 ToolTip = defaultToolTip,
-                ToolTipText = TextManager.Instance.GetText(textDatabase, "activeQuestsInfo"),
+                ToolTipText = TextManager.Instance.GetLocalizedText("activeQuestsInfo"),
             };
             titlePanel.Components.Add(titleLabel);
             mainPanel.Components.Add(titlePanel);
@@ -301,6 +303,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
+        }
+
+        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
         }
 
         void QuestLogLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -460,9 +476,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private DaggerfallMessageBox CreateDialogBox(string entryStr, string baseKey)
         {
-            string heading = TextManager.Instance.GetText(textDatabase, baseKey + "Head");
-            string action = TextManager.Instance.GetText(textDatabase, baseKey);
-            string explanation = TextManager.Instance.GetText(textDatabase, baseKey + "2");
+            string heading = TextManager.Instance.GetLocalizedText(baseKey + "Head");
+            string action = TextManager.Instance.GetLocalizedText(baseKey);
+            string explanation = TextManager.Instance.GetLocalizedText(baseKey + "2");
             TextFile.Token[] tokens = new TextFile.Token[] {
                 TextFile.CreateTextToken(heading), TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter), TextFile.NewLineToken,
                 TextFile.CreateTextToken(action), TextFile.NewLineToken, TextFile.NewLineToken,
@@ -486,7 +502,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Debug.Log("Add at " + selectedEntry);
 
                 TextFile.Token prompt = new TextFile.Token() {
-                    text = TextManager.Instance.GetText(textDatabase, "enterNote"),
+                    text = TextManager.Instance.GetLocalizedText("enterNote"),
                     formatting = TextFile.Formatting.Text,
                 };
                 DaggerfallInputMessageBox enterNote =
@@ -541,8 +557,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             messageCount = questMessages.Count;
             questLogLabel.TextScale = 1;
-            titleLabel.Text = TextManager.Instance.GetText(textDatabase, "activeQuests");
-            titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "activeQuestsInfo");
+            titleLabel.Text = TextManager.Instance.GetLocalizedText("activeQuests");
+            titleLabel.ToolTipText = TextManager.Instance.GetLocalizedText("activeQuestsInfo");
 
             int totalLineCount = 0;
             entryLineMap = new List<int>(maxLinesQuests);
@@ -585,8 +601,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             List<TextFile.Token[]> finishedQuests = GameManager.Instance.PlayerEntity.Notebook.GetFinishedQuests();
             messageCount = finishedQuests.Count;
             questLogLabel.TextScale = 1;
-            titleLabel.Text = TextManager.Instance.GetText(textDatabase, "finishedQuests");
-            titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "finishedQuestsInfo");
+            titleLabel.Text = TextManager.Instance.GetLocalizedText("finishedQuests");
+            titleLabel.ToolTipText = TextManager.Instance.GetLocalizedText("finishedQuestsInfo");
             SetTextWithListEntries(finishedQuests, maxLinesQuests);
         }
 
@@ -595,8 +611,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             List<TextFile.Token[]> notes = GameManager.Instance.PlayerEntity.Notebook.GetNotes();
             messageCount = notes.Count;
             questLogLabel.TextScale = textScaleSmall;
-            titleLabel.Text = TextManager.Instance.GetText(textDatabase, "notebook");
-            titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "notebookInfo");
+            titleLabel.Text = TextManager.Instance.GetLocalizedText("notebook");
+            titleLabel.ToolTipText = TextManager.Instance.GetLocalizedText("notebookInfo");
             SetTextWithListEntries(notes, maxLinesSmall);
         }
 
@@ -605,8 +621,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             List<TextFile.Token[]> messages = GameManager.Instance.PlayerEntity.Notebook.GetMessages();
             messageCount = messages.Count;
             questLogLabel.TextScale = textScaleSmall;
-            titleLabel.Text = TextManager.Instance.GetText(textDatabase, "messages");
-            titleLabel.ToolTipText = TextManager.Instance.GetText(textDatabase, "messagesInfo");
+            titleLabel.Text = TextManager.Instance.GetLocalizedText("messages");
+            titleLabel.ToolTipText = TextManager.Instance.GetLocalizedText("messagesInfo");
             SetTextWithListEntries(messages, maxLinesSmall);
         }
 

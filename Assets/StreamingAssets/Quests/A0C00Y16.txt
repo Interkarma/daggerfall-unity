@@ -7,6 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 55
 Quest: A0C00Y16
+DisplayName: Missing Person Case
 -- Message panels
 QRC:
 
@@ -169,7 +170,6 @@ Message:  1054
 <ce>                      you made that Smiley suffer,
 <ce>                         %pcn. This is a day of
 <ce>                          great sorrow for me.
-                                     <--->
  
 
 -- Symbols used in the QRC file:
@@ -205,7 +205,6 @@ Place _hidingplace_ local random
 
 Clock _S.16_ 2.00:00
 --removed flags to make exact two days
-Clock _delay_ 00:00
 
 Foe _F.00_ is 3 Barbarian
 
@@ -293,11 +292,9 @@ _yes_ task:
 
 _givereward_ task:
 	when _yes_ and _S.18_ 
-	start timer _delay_
-
-_delay_ task:
 	give pc _gold_ 
 	end quest 
+--removed unnecessary delay
 
 _S.22_ task:
 	clicked npc _missingperson_ 

@@ -241,6 +241,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         // Used to store indexes of copied talk fragments so they can be entered into Notebook in chronological order
         List<int> copyIndexes;
 
+        bool isCloseWindowDeferred = false;
+
         public DaggerfallTalkWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
@@ -714,13 +716,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             buttonGoodbye.Name = "button_goodbye";
             buttonGoodbye.OnMouseClick += ButtonGoodbye_OnMouseClick;
             buttonGoodbye.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TalkExit);
+            buttonGoodbye.OnKeyboardEvent += ButtonGoodbye_OnKeyboardEvent;
+
             mainPanel.Components.Add(buttonGoodbye);
 
             buttonLogbook = new Button {
                 Position = new Vector2(118, 158),
                 Size = new Vector2(67, 18),
                 ToolTip = defaultToolTip,
-                ToolTipText = TextManager.Instance.GetText(TalkManager.TextDatabase, "copyLogbookInfo"),
+                ToolTipText = TextManager.Instance.GetLocalizedText("copyLogbookInfo"),
             };
             if (defaultToolTip != null)
                 buttonLogbook.ToolTip.ToolTipDelay = 1;
@@ -858,11 +862,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     item.caption = item.key; //  just try to take key as caption then (answers might still be broken)
                     if (item.caption == String.Empty)
-                        item.caption = TextManager.Instance.GetText(TalkManager.TextDatabase, "resolvingError");
+                        item.caption = TextManager.Instance.GetLocalizedText("resolvingError");
                 }
                 else if (item.caption == String.Empty)
                 {
-                    item.caption = TextManager.Instance.GetText(TalkManager.TextDatabase, "resolvingError");
+                    item.caption = TextManager.Instance.GetLocalizedText("resolvingError");
                 }
                 listboxTopic.AddItem(item.caption, out listboxItem);
                 if (item.type == TalkManager.ListItemType.NavigationBack)
@@ -1590,6 +1594,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
+        }
+
+        protected void ButtonGoodbye_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                isCloseWindowDeferred = true;
+            }
+            else if (keyboardEvent.type == EventType.KeyUp && isCloseWindowDeferred)
+            {
+                isCloseWindowDeferred = false;
+                CloseWindow();
+            }
         }
 
         #endregion

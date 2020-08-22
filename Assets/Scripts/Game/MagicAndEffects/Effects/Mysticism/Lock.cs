@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -28,9 +29,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(16, 255);
-            properties.GroupName = TextManager.Instance.GetText("ClassicEffects", "lock");
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1564);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1264);
             properties.ShowSpellIcon = false;
             properties.SupportChance = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Self;
@@ -39,6 +37,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.MagicSkill = DFCareer.MagicSkills.Mysticism;
             properties.ChanceCosts = MakeEffectCosts(28, 120, 120);
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText("lock");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1564);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1264);
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
@@ -83,7 +85,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Output "Ready to lock." if the host manager is player
             if (awakeAlert && manager.EntityBehaviour == GameManager.Instance.PlayerEntityBehaviour)
             {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "readyToLock"), 1.5f);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("readyToLock"), 1.5f);
                 awakeAlert = false;
             }
         }
@@ -106,7 +108,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 // Door already locked
                 if (activatedByPlayer)
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "doorAlreadyLocked"), 1.5f);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("doorAlreadyLocked"), 1.5f);
             }
             else
             {
@@ -114,7 +116,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 actionDoor.CurrentLockValue = manager.EntityBehaviour.Entity.Level;
 
                 if (activatedByPlayer)
-                    DaggerfallUI.AddHUDText(TextManager.Instance.GetText(textDatabase, "doorLocked"), 1.5f);
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("doorLocked"), 1.5f);
             }
 
             if (actionDoor.IsOpen)

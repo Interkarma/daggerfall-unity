@@ -35,12 +35,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetProperties()
         {
             properties.Key = EffectKey;
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, EffectKey);
             properties.ShowSpellIcon = false;
             properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AlphaSortSecondaryList;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Enchanted | EnchantmentPayloadFlags.Breaks;
         }
+
+        public override string GroupName => TextManager.Instance.GetLocalizedText(EffectKey);
 
         public override EnchantmentSettings[] GetEnchantmentSettings()
         {
@@ -59,8 +60,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     EffectKey = EffectKey,
                     ClassicType = EnchantmentTypes.SoulBound,
                     ClassicParam = (short)i,
-                    PrimaryDisplayName = properties.GroupName,
-                    SecondaryDisplayName = EnemyBasics.Enemies[i].Name,
+                    PrimaryDisplayName = GroupName,
+                    SecondaryDisplayName = TextManager.Instance.GetLocalizedEnemyName(EnemyBasics.Enemies[i].ID),
                     EnchantCost = classicParamCosts[i],
                 };
 

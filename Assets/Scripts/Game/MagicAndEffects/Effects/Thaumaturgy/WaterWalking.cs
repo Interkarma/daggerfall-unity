@@ -10,6 +10,7 @@
 //
 
 using DaggerfallConnect;
+using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
@@ -25,10 +26,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(31, 255);
-            properties.GroupName = TextManager.Instance.GetText(textDatabase, "waterWalking");
-            properties.SubGroupName = string.Empty;
-            properties.SpellMakerDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1583);
-            properties.SpellBookDescription = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1283);
             properties.SupportDuration = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_All;
             properties.AllowedElements = ElementTypes.Magic;
@@ -37,10 +34,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             properties.DurationCosts = MakeEffectCosts(20, 8);
         }
 
+        public override string GroupName => TextManager.Instance.GetLocalizedText("waterWalking");
+        public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1583);
+        public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1283);
+
         public override void SetPotionProperties()
         {
             PotionRecipe waterWalking = new PotionRecipe(
-                TextManager.Instance.GetText(textDatabase, "waterWalking"),
+                TextManager.Instance.GetLocalizedText("waterWalking"),
                 50,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Pure_water,

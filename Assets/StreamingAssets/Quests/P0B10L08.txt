@@ -6,6 +6,7 @@
 -- QuestId: 8
 Messages: 22
 Quest: P0B10L08
+DisplayName: A Test of Determination
 -- Message panels
 QRC:
 
@@ -34,9 +35,7 @@ RumorsDuringQuest:  [1005]
 Strange things are afoot in ___mondung_. Even stranger than usual, I should say.
 
 RumorsPostfailure:  [1006]
-Things have quieted down around ___mondung_. But the daedra stars burn at night
-<--->
-.
+Things have quieted down around ___mondung_. But the daedra stars burn at night.
 
 RumorsPostsuccess:  [1007]
 ___mondung_ has quieted. Even the daedra stars glowed softer last night.
@@ -161,10 +160,7 @@ Message:  1019
 <ce>                         You have failed %vam,
 <ce>                      %pcf. The Coven of ==daedra_
 <ce>                     challenged us, and you were an
-<ce>                 embarassment. It is a night of shame.
-
-Message:  1020
-Error: Questtext 1020 Called.
+<ce>                 embarrassment. It is a night of shame.
 
 Message:  1021
 <ce>                    A terribly pale, wild-eyed boy

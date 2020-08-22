@@ -153,12 +153,12 @@ namespace DaggerfallWorkshop
 
                 if (Dice100.FailedRoll(chance))
                 {
-                    Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
+                    Game.DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockpickingFailure"));
                     FailedSkillLevel = player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking);
                 }
                 else
                 {
-                    Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingSuccess);
+                    Game.DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockpickingSuccess"));
                     CurrentLockValue = 0;
 
                     if (PlaySounds && PickedLockSound > 0 && audioSource)
@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop
             }
             else
             {
-                Game.DaggerfallUI.Instance.PopupMessage(HardStrings.lockpickingFailure);
+                Game.DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockpickingFailure"));
             }
         }
 

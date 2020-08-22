@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         private void ShowSummonFailMessage()
         {
-            DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetText(textDatabase, "noMonstersNearby"));
+            DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("noMonstersNearby"));
         }
     }
 }

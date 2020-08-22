@@ -6,6 +6,7 @@
 -- QuestId: 20
 Messages: 16
 Quest: R0C10Y20
+DisplayName: A Rare Ingredient
 -- Message panels
 QRC:
 
