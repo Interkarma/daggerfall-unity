@@ -115,7 +115,13 @@ namespace DaggerfallWorkshop.Game
             // For the list of oaths, see https://www.imperial-library.info/content/daggerfall-oaths-and-expletives
             public override string Oath()
             {
-                int oathId = (int)RaceTemplate.GetFactionRaceFromRace(parent.npcRace);
+                // Get NPC race with fallback to race of current region
+                Races race = parent.npcRace;
+                if (race == Races.None)
+                    race = GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
+
+                int oathId = (int)RaceTemplate.GetFactionRaceFromRace(race);
+
                 return DaggerfallUnity.Instance.TextProvider.GetRandomText(201 + oathId);
             }
 
