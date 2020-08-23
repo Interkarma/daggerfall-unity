@@ -411,6 +411,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             mainPanel.Size = new Vector2(320, 200); // reference size is always vanilla df resolution
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
+            mainPanel.BackgroundColor = Color.black;
 
             panelPortrait = DaggerfallUI.AddPanel(new Rect(panelPortraitPos, panelPortraitSize), NativePanel);
             panelPortrait.BackgroundTexture = texturePortrait;
