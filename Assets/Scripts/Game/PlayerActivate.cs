@@ -613,7 +613,7 @@ namespace DaggerfallWorkshop.Game
             // Check if close enough to Activate
             if (hit.distance > MobileNPCActivationDistance)
             {
-                DaggerfallUI.SetMidScreenText(HardStrings.youAreTooFarAway);
+                DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                 return;
             }
 
@@ -621,19 +621,27 @@ namespace DaggerfallWorkshop.Game
             var bulletinBoardMessage = GameManager.Instance.TalkManager.GetNewsOrRumorsForBulletinBoard();
 
             // format message
-            var tokens = new TextFile.Token[]
+            var tokens = new List<TextFile.Token>
             {
-                            new TextFile.Token(TextFile.Formatting.JustifyCenter, null),
-                            new TextFile.Token(TextFile.Formatting.Text, GameManager.Instance.PlayerGPS.CurrentLocation.Name),
-                            new TextFile.Token(TextFile.Formatting.JustifyCenter, null),
-                            new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
-                            new TextFile.Token(TextFile.Formatting.Text, string.Empty),
-                            new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
-                            new TextFile.Token(TextFile.Formatting.Text, bulletinBoardMessage),
+                new TextFile.Token(TextFile.Formatting.JustifyCenter, null),
+                new TextFile.Token(TextFile.Formatting.Text, GameManager.Instance.PlayerGPS.CurrentLocation.Name),
+                new TextFile.Token(TextFile.Formatting.JustifyCenter, null)
             };
 
+            // formatting message is split into 2 parts, depending whether we got any news or not.
+            if (bulletinBoardMessage != string.Empty)
+            {
+                tokens.AddRange(new List<TextFile.Token>
+                {
+                    new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
+                    new TextFile.Token(TextFile.Formatting.Text, string.Empty),
+                    new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
+                    new TextFile.Token(TextFile.Formatting.Text, bulletinBoardMessage),
+                });
+            }
+
             // Display message
-            DaggerfallUI.MessageBox(tokens);
+            DaggerfallUI.MessageBox(tokens.ToArray());
         }
 
         void ActivateStaticNPC(RaycastHit hit, StaticNPC npc)

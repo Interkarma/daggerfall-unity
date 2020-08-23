@@ -113,6 +113,8 @@ namespace DaggerfallWorkshop.Game
         readonly ushort[] greetings =               { 8550, 8551, 8552, 8553, 8554, 8555, 8556, 8557, 8558, 8559, 8560, 8561, 8562, 8562,
                                                       8563, 8564, 8564, 8565, 8566, 8566, 8567, 8568, 8568, 8569, 8570, 8570, 8571 };
 
+        readonly ushort[] allowedBulletinTextIds =  { 1475, 1476, 1477, 1478, 1479, 1482, 1483 };
+
         const float DefaultChanceKnowsSomethingAboutWhereIs = 0.6f; // Chances unknown
         const float DefaultChanceKnowsSomethingAboutQuest = 0.8f; // Chances unknown
         const float DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC = 0.8f; // Chances unknown
@@ -347,6 +349,7 @@ namespace DaggerfallWorkshop.Game
             public int regionID; // ID of region involved.
             public int flags; // Rumor flags
             public int type; // Rumor type
+            public int textID; // Text ID
         }
         // list of rumors in rumor mill
         List<RumorMillEntry> listRumorMill = new List<RumorMillEntry>();
@@ -1111,7 +1114,7 @@ namespace DaggerfallWorkshop.Game
                 playerPos = new Vector2(buildingInfoCurrentBuilding.position.x, buildingInfoCurrentBuilding.position.y);
 
                 if (buildingInfoCurrentBuilding.buildingKey == buildingInfoTargetBuilding.buildingKey)
-                    return TextManager.Instance.GetLocalizedText("thisPlace");       
+                    return TextManager.Instance.GetLocalizedText("thisPlace");
             }
 
             Vector2 vecDirectionToTarget = buildingInfoTargetBuilding.position - playerPos;
@@ -1237,37 +1240,34 @@ namespace DaggerfallWorkshop.Game
 
         public string GetNewsOrRumorsForBulletinBoard()
         {
-            const int outOfNewsRecordIndex = 1457;
-            string news = TextManager.Instance.GetText(textDatabase, "resolvingError");
+            string news = string.Empty;
+
             List<RumorMillEntry> validRumors = GetValidRumors(true);
 
             if (validRumors.Count == 0)
-                return ExpandRandomTextRecord(outOfNewsRecordIndex);
+                return news;
 
-            int randomIndex = UnityEngine.Random.Range(0, validRumors.Count);
-            RumorMillEntry entry = validRumors[randomIndex];
-            if (entry.rumorType == RumorType.CommonRumor)
+            // Simply use first rumor available
+            RumorMillEntry validRumor = validRumors.FirstOrDefault(x => x.rumorType == RumorType.CommonRumor);
+            if (validRumor != null && validRumor.listRumorVariants != null)
             {
-                if (entry.listRumorVariants != null)
-                {
-                    TextFile.Token[] tokens = entry.listRumorVariants[0];
-                    int regionID = -1;
-                    FactionFile.FactionData factionData;
+                TextFile.Token[] tokens = validRumor.listRumorVariants[0];
+                int regionID = -1;
+                FactionFile.FactionData factionData;
 
-                    if (entry.regionID != -1)
-                        regionID = entry.regionID;
-                    else if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction1, out factionData) && factionData.region != -1)
-                        regionID = factionData.region;
-                    else if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(entry.faction2, out factionData) && factionData.region != -1)
-                        regionID = factionData.region;
-                    else // Classic uses a random region in this case, but that can create odd results for the witches rumor and maybe more. Using current region.
-                        regionID = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+                if (validRumor.regionID != -1)
+                    regionID = validRumor.regionID;
+                else if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(validRumor.faction1, out factionData) && factionData.region != -1)
+                    regionID = factionData.region;
+                else if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(validRumor.faction2, out factionData) && factionData.region != -1)
+                    regionID = factionData.region;
+                else // Classic uses a random region in this case, but that can create odd results for the witches rumor and maybe more. Using current region.
+                    regionID = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
 
-                    MacroHelper.SetFactionIdsAndRegionID(entry.faction1, entry.faction2, regionID);
-                    MacroHelper.ExpandMacros(ref tokens, this);
-                    MacroHelper.SetFactionIdsAndRegionID(-1, -1, -1); // Reset again so %reg macro may resolve to current region if needed
-                    news = TokensToString(tokens, false);
-                }
+                MacroHelper.SetFactionIdsAndRegionID(validRumor.faction1, validRumor.faction2, regionID);
+                MacroHelper.ExpandMacros(ref tokens, this);
+                MacroHelper.SetFactionIdsAndRegionID(-1, -1, -1); // Reset again so %reg macro may resolve to current region if needed
+                news = TokensToString(tokens, false);
             }
 
             return news;
@@ -1334,6 +1334,12 @@ namespace DaggerfallWorkshop.Game
 
             foreach (RumorMillEntry entry in listRumorMill)
             {
+                if (readingSign && !allowedBulletinTextIds.Any(x => x == entry.textID))
+                {
+                    // skip non-bulletin texts if we are getting rumors for a bulletin board
+                    continue;
+                }
+
                 if (entry.rumorType == RumorType.CommonRumor)
                 {
                     // Note: Classic only checks that regionID matches for sign messages. Because of this, some rumors that seem they were supposed to
@@ -2617,24 +2623,25 @@ namespace DaggerfallWorkshop.Game
             listRumorMill.Add(entry);
         }
 
-        public void AddNonQuestRumor(int faction1, int faction2, int regionID, int type, int textID)
+        public void AddNonQuestRumor(int faction1, int faction2, int regionID, int type, int textId)
         {
             if (listRumorMill == null)
                 listRumorMill = new List<RumorMillEntry>();
-            RumorMillEntry entry = new RumorMillEntry();
 
-            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(textID);
+            var tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(textId);
 
-            entry.rumorType = RumorType.CommonRumor;
-            entry.listRumorVariants = new List<TextFile.Token[]>();
-            entry.listRumorVariants.Add(tokens);
-            entry.faction1 = faction1;
-            entry.faction2 = faction2;
-            entry.type = type;
-            entry.regionID = regionID;
-            entry.flags = GetFlagsForNewRumor(type);
-            entry.timeLimit = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() + 43140;
-
+            RumorMillEntry entry = new RumorMillEntry
+            {
+                rumorType = RumorType.CommonRumor,
+                listRumorVariants = new List<TextFile.Token[]> { tokens },
+                faction1 = faction1,
+                faction2 = faction2,
+                type = type,
+                regionID = regionID,
+                flags = GetFlagsForNewRumor(type),
+                timeLimit = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() + 43140,
+                textID = textId
+            };
             listRumorMill.Add(entry);
         }
 
