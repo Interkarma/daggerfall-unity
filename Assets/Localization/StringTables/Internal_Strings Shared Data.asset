@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_Strings Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 803
+  m_NextAvailableId: 811
   m_TableCollectionName: Internal_Strings
   m_TableCollectionNameGuidString: 3bc310f2421c1a740ae0f7372d787911
   m_Entries:
@@ -3214,6 +3214,38 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 802
     m_Key: noItemToActivate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 803
+    m_Key: Akatosh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804
+    m_Key: Arkay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 805
+    m_Key: Dibella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 806
+    m_Key: Julianos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 807
+    m_Key: Kynareth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 808
+    m_Key: Mara
+    m_Metadata:
+      m_Items: []
+  - m_Id: 809
+    m_Key: Stendarr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 810
+    m_Key: Zenithar
     m_Metadata:
       m_Items: []
   m_Metadata:

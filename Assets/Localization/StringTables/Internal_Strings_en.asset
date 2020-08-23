@@ -3594,5 +3594,37 @@ MonoBehaviour:
     m_Localized: You have no usable magic item
     m_Metadata:
       m_Items: []
+  - m_Id: 803
+    m_Localized: Akatosh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804
+    m_Localized: Arkay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 805
+    m_Localized: Dibella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 806
+    m_Localized: Julianos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 807
+    m_Localized: Kynareth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 808
+    m_Localized: Mara
+    m_Metadata:
+      m_Items: []
+  - m_Id: 809
+    m_Localized: Stendarr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 810
+    m_Localized: Zenithar
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

@@ -203,8 +203,8 @@ namespace DaggerfallWorkshop.Game.Questing
                     return god.ToString();
                 }
 
-                Temple temple = (Temple)GameManager.Instance.GuildManager.GetGuild(factionId);
-                return temple.Deity.ToString();
+                Temple.Divines divine = Temple.GetDivine(factionId);
+                return TextManager.Instance.GetLocalizedText(divine.ToString());
             }
 
             public override string Direction()
