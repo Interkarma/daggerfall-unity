@@ -31,7 +31,6 @@ namespace DaggerfallWorkshop.Game
         bool sliding;
 
         Vector3 lastMovePosition = Vector3.zero;
-        int stuckFrameCount = 0;
 
         public Vector3 ContactPoint
         {
