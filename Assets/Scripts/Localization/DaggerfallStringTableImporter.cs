@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Utility;
 using UnityEngine;
 using UnityEngine.Localization.Tables;
+using DaggerfallWorkshop.Game;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Localization;
@@ -319,6 +320,127 @@ namespace DaggerfallWorkshop.Localization
         #region Editor Only Methods
 
 #if UNITY_EDITOR
+        // Gets string table from collection name and locale code
+        private static StringTable GetSourceStringTable(string source, string locale)
+        {
+            // Get source string table collection
+            var sourceCollection = LocalizationEditorSettings.GetStringTableCollection(source);
+            if (sourceCollection == null)
+            {
+                Debug.LogErrorFormat("GetSourceStringTable() could not find source string table collection '{0}'", source);
+                return null;
+            }
+
+            // Find table in source collection with locale code
+            StringTable sourceTable = null;
+            foreach (StringTable table in sourceCollection.StringTables)
+            {
+                if (table.LocaleIdentifier == locale)
+                {
+                    sourceTable = table;
+                    break;
+                }
+            }
+
+            // Handle table not found
+            if (sourceTable == null)
+            {
+                Debug.LogErrorFormat("GetSourceStringTable() could not find source string table with locale code '{0}' in collection '{1}'", locale, source);
+                return null;
+            }
+
+            return sourceTable;
+        }
+
+        // Gets list of all text keys from table
+        private static List<string> GetKeys(LocalizedTable table)
+        {
+            List<string> keys = new List<string>();
+            foreach (SharedTableData.SharedTableEntry entry in table.SharedData.Entries)
+            {
+                keys.Add(entry.Key);
+            }
+            return keys;
+        }
+
+        /// <summary>
+        /// Copies default Internal_Strings EN to all string tables in target collection.
+        /// </summary>
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
+        public static void CopyInternalStringTable(string target, bool overwriteExistingKeys)
+        {
+            // Use default Internal_Strings collection with EN locale code as source
+            string sourceCollectionName = TextManager.defaultInternalStringsCollectionName;
+            string sourceLocaleCode = enLocaleCode;
+
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
+
+            // Target cannot be same as source
+            if (string.Compare(target, sourceCollectionName, true) == 0)
+            {
+                Debug.LogError("CopyInternalStringTable() target cannot be same as source");
+                return;
+            }
+
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopyInternalStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
+
+            // Get source string table
+            StringTable sourceTable = GetSourceStringTable(sourceCollectionName, sourceLocaleCode);
+            if (!sourceTable)
+            {
+                Debug.LogErrorFormat("CopyInternalStringTable() could not find source table '{0}' with locale '{1}'", sourceCollectionName, sourceLocaleCode);
+                return;
+            }
+
+            // Copy source string to all tables in target collection
+            int totalSourceEntries = sourceTable.SharedData.Entries.Count;
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                // Iterate through all string table values found in source table
+                foreach (var item in sourceTable.SharedData.Entries)
+                {
+                    string key = item.Key;
+                    var sourceEntry = sourceTable.GetEntry(key);
+                    if (sourceEntry == null)
+                    {
+                        Debug.LogWarningFormat("CopyInternalStringTable() could not find source table entry for key '{0}'", key);
+                        continue;
+                    }
+
+                    var targetEntry = targetTable.GetEntry(key);
+                    if (targetEntry == null)
+                    {
+                        targetTable.AddEntry(key, sourceEntry.Value);
+                        copiedNew++;
+                    }
+                    else if (targetEntry != null && overwriteExistingKeys)
+                    {
+                        if (targetTable.RemoveEntry(key))
+                        {
+                            targetTable.AddEntry(key, sourceEntry.Value);
+                            copiedOverwrite++;
+                        }
+                    }
+                }
+            }
+
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Source collection '{0}' has a total of {1} entries.\nTarget collection '{2}' received {3} new entries, {4} entries were overwritten.", sourceCollectionName, totalSourceEntries, target, copiedNew, copiedOverwrite);
+        }
+
         /// <summary>
         /// Helper to import TEXT.RSC from classic game data into specified StringTable.
         /// WARNING: Named StringTable collection will be cleared and replaced with data from game files.
@@ -326,68 +448,68 @@ namespace DaggerfallWorkshop.Localization
         /// <param name="name">StringTable collection name to receive TEXT.RSC data.</param>
         public static void ImportTextRSCToStringTables(string name)
         {
-            // Clear all tables
-            ClearStringTables(name);
+            //// Clear all tables
+            //ClearStringTables(name);
 
-            // Load character mapping table
-            Table charMappingTable = null;
-            TextAsset mappingTableText = Resources.Load<TextAsset>(textMappingTableFilename);
-            if (mappingTableText)
-                charMappingTable = new Table(mappingTableText.text);
+            //// Load character mapping table
+            //Table charMappingTable = null;
+            //TextAsset mappingTableText = Resources.Load<TextAsset>(textMappingTableFilename);
+            //if (mappingTableText)
+            //    charMappingTable = new Table(mappingTableText.text);
 
-            // Load default TEXT.RSC file
-            TextFile defaultRSC = new TextFile(DaggerfallUnity.Instance.Arena2Path, TextFile.Filename);
-            if (defaultRSC == null || defaultRSC.IsLoaded == false)
-                throw new Exception("Could not load default TEXT.RSC");
+            //// Load default TEXT.RSC file
+            //TextFile defaultRSC = new TextFile(DaggerfallUnity.Instance.Arena2Path, TextFile.Filename);
+            //if (defaultRSC == null || defaultRSC.IsLoaded == false)
+            //    throw new Exception("Could not load default TEXT.RSC");
 
-            // Get string tables collection
-            var collection = LocalizationEditorSettings.GetStringTableCollection(name);
-            if (collection == null)
-                return;
+            //// Get string tables collection
+            //var collection = LocalizationEditorSettings.GetStringTableCollection(name);
+            //if (collection == null)
+            //    return;
 
-            // Add all text records to each table
-            foreach (StringTable table in collection.StringTables)
-            {
-                bool en = table.LocaleIdentifier.Code == enLocaleCode;
+            //// Add all text records to each table
+            //foreach (StringTable table in collection.StringTables)
+            //{
+            //    bool en = table.LocaleIdentifier.Code == enLocaleCode;
 
-                TextFile rsc = defaultRSC;
-                TextFile localeRSC = LoadCustomLocaleTextRSC(table.LocaleIdentifier.Code);
-                if (localeRSC != null)
-                    rsc = localeRSC;
+            //    TextFile rsc = defaultRSC;
+            //    TextFile localeRSC = LoadCustomLocaleTextRSC(table.LocaleIdentifier.Code);
+            //    if (localeRSC != null)
+            //        rsc = localeRSC;
 
-                for (int i = 0; i < defaultRSC.RecordCount; i++)
-                {
-                    // Extract this record to tokens
-                    byte[] buffer = rsc.GetBytesByIndex(i);
-                    TextFile.Token[] tokens = TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
+            //    for (int i = 0; i < defaultRSC.RecordCount; i++)
+            //    {
+            //        // Extract this record to tokens
+            //        byte[] buffer = rsc.GetBytesByIndex(i);
+            //        TextFile.Token[] tokens = TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
 
-                    // Get token key and text
-                    int id = rsc.IndexToId(i);
-                    if (id == -1)
-                        continue;
-                    string key = MakeTextRSCKey(id);
-                    string text = ConvertRSCTokensToString(tokens);
+            //        // Get token key and text
+            //        int id = rsc.IndexToId(i);
+            //        if (id == -1)
+            //            continue;
+            //        string key = MakeTextRSCKey(id);
+            //        string text = ConvertRSCTokensToString(tokens);
 
-                    // Remap characters when mapping table present
-                    if (charMappingTable != null)
-                        text = RemapCharacters(table.LocaleIdentifier.Code, text, charMappingTable);
+            //        // Remap characters when mapping table present
+            //        if (charMappingTable != null)
+            //            text = RemapCharacters(table.LocaleIdentifier.Code, text, charMappingTable);
 
-                    // Add text to table
-                    table.AddEntry(key, text);
+            //        // Add text to table
+            //        table.AddEntry(key, text);
 
-                    // Add shared keys only when reading en table
-                    // These keys match across entire collection
-                    if (en)
-                        collection.SharedData.AddKey(key);
-                }
+            //        // Add shared keys only when reading en table
+            //        // These keys match across entire collection
+            //        if (en)
+            //            collection.SharedData.AddKey(key);
+            //    }
 
-                // Set table dirty
-                EditorUtility.SetDirty(table);
-                Debug.LogFormat("Added {0} TEXT.RSC entries to table {1}", rsc.RecordCount, table.LocaleIdentifier.Code);
-            }
+            //    // Set table dirty
+            //    EditorUtility.SetDirty(table);
+            //    Debug.LogFormat("Added {0} TEXT.RSC entries to table {1}", rsc.RecordCount, table.LocaleIdentifier.Code);
+            //}
 
-            // Set shared data dirty
-            EditorUtility.SetDirty(collection.SharedData);
+            //// Set shared data dirty
+            //EditorUtility.SetDirty(collection.SharedData);
         }
 
         /// <summary>

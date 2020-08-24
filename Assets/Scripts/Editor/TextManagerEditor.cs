@@ -24,6 +24,10 @@ namespace DaggerfallWorkshop
     [CustomEditor(typeof(TextManager))]
     public class TextManagerEditor : Editor
     {
+        bool overwriteTargetStringTables = false;
+        string targetInternalStrings = string.Empty;
+        string targetRSCStrings = string.Empty;
+
         SerializedProperty Prop(string name)
         {
             return serializedObject.FindProperty(name);
@@ -46,35 +50,26 @@ namespace DaggerfallWorkshop
         {
             DrawDefaultInspector();
 
-            //EditorGUILayout.LabelField("Internal String Tables");
-            //GUILayoutHelper.Indent(() =>
-            //{
-            //    EditorGUILayout.SelectableLabel(TextManager.defaultInternalStringsCollectionName, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-            //    EditorGUILayout.SelectableLabel(TextManager.defaultInternalRSCCollectionName, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-            //});
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Copy String Tables", EditorStyles.boldLabel);
+            GUILayoutHelper.Indent(() =>
+            {
+                targetInternalStrings = EditorGUILayout.TextField("Internal Strings > ", targetInternalStrings);
+                targetRSCStrings = EditorGUILayout.TextField("RSC Strings > ", targetRSCStrings);
+            });
 
-            //EditorGUILayout.Space();
-            //GUILayoutHelper.Horizontal(() =>
-            //{
+            overwriteTargetStringTables = EditorGUILayout.Toggle(new GUIContent("Overwrite Target String Tables?", "When enabled will copy over existing strings in target string tables."), overwriteTargetStringTables);
+            if (overwriteTargetStringTables)
+                EditorGUILayout.HelpBox("Warning: Existing keys in the target string tables will be replaced by source.", MessageType.Warning);
+            else
+                EditorGUILayout.HelpBox("Copy will create all missing keys in target string tables from source. Existing keys will not be overwritten.", MessageType.Info);
 
-            //});
-            //EditorGUILayout.SelectableLabel(multiName, EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight));
-            //EditorGUILayout.LabelField(new GUIContent("String Importer", NG: Existing collections will be cleared."), EditorStyles.boldLabel);
-
-            //EditorGUILayout.Space();
-            //EditorGUILayout.LabelField(new GUIContent("String Importer", "Import classic text data into named String Table Collections.\nNOTE: You must create collections manually.\nWARNING: Existing collections will be cleared."), EditorStyles.boldLabel);
-            //GUILayoutHelper.Horizontal(() =>
-            //{
-            //    var rscCollectionName = Prop("textRSCCollection");
-            //    if (GUILayout.Button("Import All"))
-            //    {
-            //        DaggerfallStringTableImporter.ImportTextRSCToStringTables(rscCollectionName.stringValue);
-            //    }
-            //    if (GUILayout.Button("Clear All"))
-            //    {
-            //        DaggerfallStringTableImporter.ClearStringTables(rscCollectionName.stringValue);
-            //    }
-            //});
+            EditorGUILayout.Space();
+            if (GUILayout.Button("Copy All"))
+            {
+                DaggerfallStringTableImporter.CopyInternalStringTable(targetInternalStrings, overwriteTargetStringTables);
+                //DaggerfallStringTableImporter.ImportTextRSCToStringTables(rscCollectionName.stringValue);
+            }
         }
     }
 }
