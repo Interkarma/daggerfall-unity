@@ -50,21 +50,22 @@ namespace DaggerfallWorkshop
         IniData defaultIniData = null;
         IniData userIniData = null;
 
-        static string devPersistentPath = null;
+        string persistentPath = null;
 
         public string PersistentDataPath
         {
             get
             {
-#if UNITY_EDITOR && SEPARATE_DEV_PERSISTENT_PATH
-                if (string.IsNullOrEmpty(devPersistentPath))
+                if (string.IsNullOrEmpty(persistentPath))
                 {
-                    devPersistentPath = String.Concat(Application.persistentDataPath, ".devenv");
-                    Directory.CreateDirectory(devPersistentPath);
-                }
-                return devPersistentPath;
+#if UNITY_EDITOR && SEPARATE_DEV_PERSISTENT_PATH
+                    persistentPath = String.Concat(Application.persistentDataPath, ".devenv");
+                    Directory.CreateDirectory(persistentPath);
+#else
+                    persistentPath = Application.persistentDataPath;
 #endif
-                return Application.persistentDataPath; 
+                }
+                return persistentPath;
             }
         }
 
