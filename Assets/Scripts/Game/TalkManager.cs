@@ -745,9 +745,7 @@ namespace DaggerfallWorkshop.Game
             npcData.socialGroup = factionData.sgroup < 5 ? (FactionFile.SocialGroups)factionData.sgroup : FactionFile.SocialGroups.Merchants;
             npcData.guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
             npcData.factionData = factionData;
-            npcData.race = RaceTemplate.GetRaceFromFactionRace((FactionFile.FactionRaces)factionData.race);
-            if (npcData.race == Races.None)
-                npcData.race = GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
+            npcData.race = targetNPC.Data.race;
             npcData.chanceKnowsSomethingAboutWhereIs = DefaultChanceKnowsSomethingAboutWhereIs + FormulaHelper.BonusChanceToKnowWhereIs();
             npcData.chanceKnowsSomethingAboutQuest = DefaultChanceKnowsSomethingAboutQuest;
             npcData.chanceKnowsSomethingAboutOrganizations = DefaultChanceKnowsSomethingAboutOrganizationsStaticNPC;

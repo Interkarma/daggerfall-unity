@@ -85,6 +85,7 @@ namespace DaggerfallWorkshop.Game
             public int factionID;
             public int nameSeed;
             public Genders gender;
+            public Races race;
             public Context context;
 
             // Derived at runtime
@@ -183,6 +184,7 @@ namespace DaggerfallWorkshop.Game
             data.billboardRecordIndex = record;
             data.nameSeed = (int)position ^ buildingKey + GameManager.Instance.PlayerGPS.CurrentLocation.LocationIndex;
             data.gender = ((flags & 32) == 32) ? Genders.Female : Genders.Male;
+            data.race = GetRaceFromFaction(factionId);
             data.buildingKey = buildingKey;
         }
 
@@ -206,6 +208,7 @@ namespace DaggerfallWorkshop.Game
             npcData.factionID = factionID;
             npcData.nameSeed = (nameSeed == -1) ? npcData.hash : nameSeed;
             npcData.gender = gender;
+            npcData.race = GetRaceFromFaction(factionID);
             npcData.context = Context.Custom;
         }
 
@@ -305,6 +308,25 @@ namespace DaggerfallWorkshop.Game
             bool isChildrenFaction = data.factionID == childrenFactionID;
 
             return isChildNPCTexture || isChildrenFaction;
+        }
+
+        /// <summary>
+        /// Return the race corresponding to a given faction ID.
+        /// </summary>
+        /// <param name="factionId"></param>
+        /// <returns>The faction race if available, otherwise the race of the current region.</returns>
+        public static Races GetRaceFromFaction(int factionId)
+        {
+            if (factionId != 0)
+            {
+                FactionFile.FactionData fd;
+                GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionId, out fd);
+                Races race = RaceTemplate.GetRaceFromFactionRace((FactionFile.FactionRaces)fd.race);
+                if (race != Races.None)
+                    return race;
+            }
+
+            return GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
         }
 
         #endregion
