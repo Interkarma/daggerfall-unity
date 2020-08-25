@@ -9,6 +9,8 @@
 // Notes:
 //
 
+//#define SEPARATE_DEV_PERSISTENT_PATH
+
 using UnityEngine;
 using System;
 using System.Globalization;
@@ -48,9 +50,22 @@ namespace DaggerfallWorkshop
         IniData defaultIniData = null;
         IniData userIniData = null;
 
+        static string devPersistentPath = null;
+
         public string PersistentDataPath
         {
-            get { return Application.persistentDataPath; }
+            get
+            {
+#if UNITY_EDITOR && SEPARATE_DEV_PERSISTENT_PATH
+                if (string.IsNullOrEmpty(devPersistentPath))
+                {
+                    devPersistentPath = String.Concat(Application.persistentDataPath, ".devenv");
+                    Directory.CreateDirectory(devPersistentPath);
+                }
+                return devPersistentPath;
+#endif
+                return Application.persistentDataPath; 
+            }
         }
 
         public SettingsManager()
@@ -476,7 +491,7 @@ namespace DaggerfallWorkshop
 
             // Must have settings.ini in persistent data path
             string message;
-            string userIniPath = Path.Combine(Application.persistentDataPath, settingsIniName);
+            string userIniPath = Path.Combine(PersistentDataPath, settingsIniName);
             if (!File.Exists(userIniPath))
             {
                 // Create file
@@ -502,7 +517,7 @@ namespace DaggerfallWorkshop
             {
                 try
                 {
-                    string path = Path.Combine(Application.persistentDataPath, settingsIniName);
+                    string path = Path.Combine(PersistentDataPath, settingsIniName);
                     if (File.Exists(path))
                     {
                         iniParser.WriteFile(path, userIniData);

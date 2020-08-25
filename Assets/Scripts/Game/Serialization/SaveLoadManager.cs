@@ -657,7 +657,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (string.IsNullOrEmpty(result) || !Directory.Exists(result))
             {
                 // Default to dataPath
-                result = Path.Combine(Application.persistentDataPath, rootSaveFolder);
+                result = Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, rootSaveFolder);
                 if (!Directory.Exists(result))
                 {
                     // Attempt to create path

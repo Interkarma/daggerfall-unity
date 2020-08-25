@@ -304,7 +304,7 @@ namespace DaggerfallWorkshop
             StreamWriter sw = null;
             try
             {
-                string filePath = Path.Combine(Application.persistentDataPath, fileName);
+                string filePath = Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, fileName);
                 fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 sw = new StreamWriter(fs);
                 if (File.Exists(filePath))
