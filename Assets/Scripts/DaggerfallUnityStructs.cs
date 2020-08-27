@@ -376,6 +376,7 @@ namespace DaggerfallWorkshop
         public int mapLocationIndex;                // Map location index (if location present)
         public int locationID;                      // Location ID (if location present)
         public string locationName;                 // Location name (if location present)
+        public DFRegion.LocationTypes LocationType; // Location type (if location present)       
         public float averageHeight;                 // Average height of terrain for location placement
         public float maxHeight;                     // Max height of terrain for location placement
         public Rect locationRect;                   // Rect of location tiles in sample are
