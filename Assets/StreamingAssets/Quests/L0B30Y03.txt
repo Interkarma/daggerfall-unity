@@ -46,7 +46,7 @@ AcceptQuest:  [1002]
 <ce>                               and foot.
 
 QuestFail:  [1003]
-<ce>                       The sorceror still lives,
+<ce>                       The sorcerer still lives,
 <ce>                          %pcf. Do not fail in
 <ce>                            this assignment.
 
@@ -63,7 +63,7 @@ QuestComplete:  [1004]
 RumorsDuringQuest:  [1005]
 Things are quiet at the Mages Guild. Makes me think of a sleeping dragon.
 <--->
-Sometime somebody's gonna do something about that wicked sorceror.
+Sometime somebody's gonna do something about that wicked sorcerer.
 
 RumorsPostfailure:  [1006]
 <ce>                 Well, the mage left the Mages Guild,

@@ -18,7 +18,7 @@ QuestorOffer:  [1000]
 <ce>                 they may be right. I am in need of an
 <ce>                 assassin with enough time to travel to
 <ce>                      ___mondung_ and destroy the
-<ce>               necromantic sorceror there. I am prepared
+<ce>               necromantic sorcerer there. I am prepared
 <ce>             to pay _reward_ gold pieces for this service.
 <ce>                          Are you interested?
 
@@ -33,7 +33,7 @@ AcceptQuest:  [1002]
 <ce>                     luck, %pcf, and show no mercy.
 
 QuestFail:  [1003]
-<ce>           I don't want to see you again until that sorceror
+<ce>           I don't want to see you again until that sorcerer
 <ce>                                is dead.
 
 QuestComplete:  [1004]
@@ -45,17 +45,17 @@ QuestComplete:  [1004]
 RumorsDuringQuest:  [1005]
 You can almost feel the malevolent magicka building.
 <--->
-Some sorceror has vowed to reduce _questgiver_'s land to rubble.
+Some sorcerer has vowed to reduce _questgiver_'s land to rubble.
 
 RumorsPostfailure:  [1006]
-That sorceror in ___mondung_ has apparently moved on.
+That sorcerer in ___mondung_ has apparently moved on.
 <--->
-Apparently some adventurer spooked the sorceror out of ___mondung_.
+Apparently some adventurer spooked the sorcerer out of ___mondung_.
 
 RumorsPostsuccess:  [1007]
 The Mad Wizard of ___mondung_ was apparently slain by a brave %ra.
 <--->
-Had that sorceror survived, _questgiver_ would have been in deep trouble.
+Had that sorcerer survived, _questgiver_ would have been in deep trouble.
 
 QuestorPostsuccess:  [1008]
 Ah, the slayer of the mad wizard is back. How are you, my friend?
@@ -74,10 +74,10 @@ QuestorPostfailure:  [1009]
 
 Message:  1011
 <ce>              _questgiver_ is a noble with a real hatred
-<ce>                   for a sorceror called _fakename_.
+<ce>                   for a sorcerer called _fakename_.
                                      <--->
 <ce>             _questgiver_ is a noble who has been plagued
-<ce>                    by a sorceror called _fakename_.
+<ce>                    by a sorcerer called _fakename_.
 
 Message:  1012
 _fakename_ the wizard is dead.
