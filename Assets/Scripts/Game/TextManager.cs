@@ -18,6 +18,7 @@ using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using Wenzil.Console;
 using DaggerfallWorkshop.Game.UserInterface;
+using UnityEngine.Localization.Tables;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -37,6 +38,11 @@ namespace DaggerfallWorkshop.Game
 
         public string runtimeInternalStrings = defaultInternalStringsCollectionName;
         public string runtimeRSCStrings = string.Empty;
+
+        // String table copy editor properties
+        public bool tableCopyOverwriteTargetStringTables = false;
+        public string tableCopyTargetInternalStrings = null;
+        public string tableCopyTargetRSCStrings = null;
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
         Dictionary<string, string[]> cachedLocalizedTextLists = new Dictionary<string, string[]>();

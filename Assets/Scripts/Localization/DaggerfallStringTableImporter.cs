@@ -378,10 +378,10 @@ namespace DaggerfallWorkshop.Localization
             if (string.IsNullOrEmpty(target))
                 return;
 
-            // Target cannot be same as source
+            // Target cannot be same as default
             if (string.Compare(target, sourceCollectionName, true) == 0)
             {
-                Debug.LogError("CopyInternalStringTable() target cannot be same as source");
+                Debug.LogError("CopyInternalStringTable() target cannot be same as default");
                 return;
             }
 
@@ -401,7 +401,7 @@ namespace DaggerfallWorkshop.Localization
                 return;
             }
 
-            // Copy source string to all tables in target collection
+            // Copy source strings to all tables in target collection
             int totalSourceEntries = sourceTable.SharedData.Entries.Count;
             int copiedNew = 0;
             int copiedOverwrite = 0;
@@ -431,8 +431,15 @@ namespace DaggerfallWorkshop.Localization
                             targetTable.AddEntry(key, sourceEntry.Value);
                             copiedOverwrite++;
                         }
+                        else
+                        {
+                            Debug.LogErrorFormat("CopyInternalStringTable() could not remove key '{0}'. Overwrite failed.", key);
+                        }
                     }
                 }
+
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
             }
 
             // Set target collection shared data dirty
@@ -442,74 +449,107 @@ namespace DaggerfallWorkshop.Localization
         }
 
         /// <summary>
-        /// Helper to import TEXT.RSC from classic game data into specified StringTable.
-        /// WARNING: Named StringTable collection will be cleared and replaced with data from game files.
+        /// Copy to import TEXT.RSC from classic game data into specified StringTable.
+        /// Default EN DFU uses TEXT.RSC directly, but can use translated string tables.
+        /// TEXT.RSC might be migrated to a full internal string table in future.
         /// </summary>
-        /// <param name="name">StringTable collection name to receive TEXT.RSC data.</param>
-        public static void ImportTextRSCToStringTables(string name)
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
+        public static void CopyTextRSCToStringTable(string target, bool overwriteExistingKeys)
         {
-            //// Clear all tables
-            //ClearStringTables(name);
+            // Use default Internal_RSC collection with EN locale code as source
+            // Note: Internal_RSC is reserved for future use
+            string sourceCollectionName = TextManager.defaultInternalRSCCollectionName;
 
-            //// Load character mapping table
-            //Table charMappingTable = null;
-            //TextAsset mappingTableText = Resources.Load<TextAsset>(textMappingTableFilename);
-            //if (mappingTableText)
-            //    charMappingTable = new Table(mappingTableText.text);
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
 
-            //// Load default TEXT.RSC file
-            //TextFile defaultRSC = new TextFile(DaggerfallUnity.Instance.Arena2Path, TextFile.Filename);
-            //if (defaultRSC == null || defaultRSC.IsLoaded == false)
-            //    throw new Exception("Could not load default TEXT.RSC");
+            // Target cannot be same as default
+            if (string.Compare(target, sourceCollectionName, true) == 0)
+            {
+                Debug.LogError("CopyTextRSCToStringTable() target cannot be same as default");
+                return;
+            }
 
-            //// Get string tables collection
-            //var collection = LocalizationEditorSettings.GetStringTableCollection(name);
-            //if (collection == null)
-            //    return;
+            // Load character mapping table
+            Table charMappingTable = null;
+            TextAsset mappingTableText = Resources.Load<TextAsset>(textMappingTableFilename);
+            if (mappingTableText)
+                charMappingTable = new Table(mappingTableText.text);
 
-            //// Add all text records to each table
-            //foreach (StringTable table in collection.StringTables)
-            //{
-            //    bool en = table.LocaleIdentifier.Code == enLocaleCode;
+            // Load default TEXT.RSC file
+            TextFile defaultRSC = new TextFile(DaggerfallUnity.Instance.Arena2Path, TextFile.Filename);
+            if (defaultRSC == null || defaultRSC.IsLoaded == false)
+            {
+                Debug.LogError("CopyTextRSCToStringTable() could not find default TEXT.RSC file");
+                return;
+            }
 
-            //    TextFile rsc = defaultRSC;
-            //    TextFile localeRSC = LoadCustomLocaleTextRSC(table.LocaleIdentifier.Code);
-            //    if (localeRSC != null)
-            //        rsc = localeRSC;
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopyTextRSCToStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
 
-            //    for (int i = 0; i < defaultRSC.RecordCount; i++)
-            //    {
-            //        // Extract this record to tokens
-            //        byte[] buffer = rsc.GetBytesByIndex(i);
-            //        TextFile.Token[] tokens = TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
+            // Copy source strings to all tables in target collection
+            int totalSourceEntries = defaultRSC.RecordCount;
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                TextFile rsc = defaultRSC;
+                TextFile localeRSC = LoadCustomLocaleTextRSC(targetTable.LocaleIdentifier.Code);
+                if (localeRSC != null)
+                    rsc = localeRSC;
 
-            //        // Get token key and text
-            //        int id = rsc.IndexToId(i);
-            //        if (id == -1)
-            //            continue;
-            //        string key = MakeTextRSCKey(id);
-            //        string text = ConvertRSCTokensToString(tokens);
+                for (int i = 0; i < defaultRSC.RecordCount; i++)
+                {
+                    // Extract this record to tokens
+                    byte[] buffer = rsc.GetBytesByIndex(i);
+                    TextFile.Token[] tokens = TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
 
-            //        // Remap characters when mapping table present
-            //        if (charMappingTable != null)
-            //            text = RemapCharacters(table.LocaleIdentifier.Code, text, charMappingTable);
+                    // Get token key and text
+                    int id = rsc.IndexToId(i);
+                    if (id == -1)
+                        continue;
+                    string key = MakeTextRSCKey(id);
+                    string text = ConvertRSCTokensToString(tokens);
 
-            //        // Add text to table
-            //        table.AddEntry(key, text);
+                    // Remap characters when mapping table present
+                    if (charMappingTable != null)
+                        text = RemapCharacters(targetTable.LocaleIdentifier.Code, text, charMappingTable);
 
-            //        // Add shared keys only when reading en table
-            //        // These keys match across entire collection
-            //        if (en)
-            //            collection.SharedData.AddKey(key);
-            //    }
+                    var targetEntry = targetTable.GetEntry(key);
+                    if (targetEntry == null)
+                    {
+                        targetTable.AddEntry(key, text);
+                        copiedNew++;
+                    }
+                    else if (targetEntry != null && overwriteExistingKeys)
+                    {
+                        if (targetTable.RemoveEntry(key))
+                        {
+                            targetTable.AddEntry(key, text);
+                            copiedOverwrite++;
+                        }
+                        else
+                        {
+                            Debug.LogErrorFormat("CopyTextRSCToStringTable() could not remove key '{0}'. Overwrite failed.", key);
+                        }
+                    }
+                }
 
-            //    // Set table dirty
-            //    EditorUtility.SetDirty(table);
-            //    Debug.LogFormat("Added {0} TEXT.RSC entries to table {1}", rsc.RecordCount, table.LocaleIdentifier.Code);
-            //}
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
+            }
 
-            //// Set shared data dirty
-            //EditorUtility.SetDirty(collection.SharedData);
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Source collection TEXT.RSC has a total of {0} entries.\nTarget collection '{1}' received {2} new entries, {3} entries were overwritten.", totalSourceEntries, target, copiedNew, copiedOverwrite);
         }
 
         /// <summary>

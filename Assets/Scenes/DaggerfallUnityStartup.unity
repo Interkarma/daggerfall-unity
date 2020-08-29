@@ -447,6 +447,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runtimeInternalStrings: Internal_Strings
   runtimeRSCStrings: 
+  tableCopyOverwriteTargetStringTables: 0
+  tableCopyTargetInternalStrings: 
+  tableCopyTargetRSCStrings: 
 --- !u!4 &671540519
 Transform:
   m_ObjectHideFlags: 0

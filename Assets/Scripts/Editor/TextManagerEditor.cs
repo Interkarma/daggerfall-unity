@@ -24,10 +24,6 @@ namespace DaggerfallWorkshop
     [CustomEditor(typeof(TextManager))]
     public class TextManagerEditor : Editor
     {
-        bool overwriteTargetStringTables = false;
-        string targetInternalStrings = string.Empty;
-        string targetRSCStrings = string.Empty;
-
         SerializedProperty Prop(string name)
         {
             return serializedObject.FindProperty(name);
@@ -48,18 +44,20 @@ namespace DaggerfallWorkshop
 
         void DisplayGUI()
         {
-            DrawDefaultInspector();
+            var tableCopyOverwriteTargetStringTables = Prop("tableCopyOverwriteTargetStringTables");
+            var tableCopyTargetInternalStrings = Prop("tableCopyTargetInternalStrings");
+            var tableCopyTargetRSCStrings = Prop("tableCopyTargetRSCStrings");
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Copy String Tables", EditorStyles.boldLabel);
             GUILayoutHelper.Indent(() =>
             {
-                targetInternalStrings = EditorGUILayout.TextField("Internal Strings > ", targetInternalStrings);
-                targetRSCStrings = EditorGUILayout.TextField("RSC Strings > ", targetRSCStrings);
+                tableCopyTargetInternalStrings.stringValue = EditorGUILayout.TextField("Internal Strings > ", tableCopyTargetInternalStrings.stringValue);
+                tableCopyTargetRSCStrings.stringValue = EditorGUILayout.TextField("RSC Strings > ", tableCopyTargetRSCStrings.stringValue);
             });
 
-            overwriteTargetStringTables = EditorGUILayout.Toggle(new GUIContent("Overwrite Target String Tables?", "When enabled will copy over existing strings in target string tables."), overwriteTargetStringTables);
-            if (overwriteTargetStringTables)
+            tableCopyOverwriteTargetStringTables.boolValue = EditorGUILayout.Toggle(new GUIContent("Overwrite Target String Tables?", "When enabled will copy over existing strings in target string tables."), tableCopyOverwriteTargetStringTables.boolValue);
+            if (tableCopyOverwriteTargetStringTables.boolValue)
                 EditorGUILayout.HelpBox("Warning: Existing keys in the target string tables will be replaced by source.", MessageType.Warning);
             else
                 EditorGUILayout.HelpBox("Copy will create all missing keys in target string tables from source. Existing keys will not be overwritten.", MessageType.Info);
@@ -67,8 +65,8 @@ namespace DaggerfallWorkshop
             EditorGUILayout.Space();
             if (GUILayout.Button("Copy All"))
             {
-                DaggerfallStringTableImporter.CopyInternalStringTable(targetInternalStrings, overwriteTargetStringTables);
-                //DaggerfallStringTableImporter.ImportTextRSCToStringTables(rscCollectionName.stringValue);
+                DaggerfallStringTableImporter.CopyInternalStringTable(tableCopyTargetInternalStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
+                DaggerfallStringTableImporter.CopyTextRSCToStringTable(tableCopyTargetRSCStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
             }
         }
     }
