@@ -36,8 +36,8 @@ namespace DaggerfallWorkshop.Game
         const string textFolderName = "Text";
         const string textColumn = "text";
 
-        public string runtimeInternalStrings = defaultInternalStringsCollectionName;
-        public string runtimeRSCStrings = string.Empty;
+        string runtimeInternalStrings = defaultInternalStringsCollectionName;
+        string runtimeRSCStrings = defaultInternalRSCCollectionName;
 
         // String table copy editor properties
         public bool tableCopyOverwriteTargetStringTables = false;
@@ -47,6 +47,28 @@ namespace DaggerfallWorkshop.Game
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
         Dictionary<string, string[]> cachedLocalizedTextLists = new Dictionary<string, string[]>();
         Dictionary<string, DaggerfallFont> localizedFonts = new Dictionary<string, DaggerfallFont>();
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets name of StringTable collection to use in place of Internal_Strings.
+        /// </summary>
+        public string RuntimeInternalStrings
+        {
+            get { return runtimeInternalStrings; }
+            set { runtimeInternalStrings = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets name of StringTable collection to use in place of Internal_RSC.
+        /// </summary>
+        public string RuntimeRSCStrings
+        {
+            get { return runtimeRSCStrings; }
+            set { runtimeRSCStrings = value; }
+        }
 
         #endregion
 
