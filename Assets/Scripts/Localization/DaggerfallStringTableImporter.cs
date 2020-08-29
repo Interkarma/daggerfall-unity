@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallConnect.Arena2;
@@ -67,7 +68,7 @@ namespace DaggerfallWorkshop.Localization
         /// </summary>
         /// <param name="tokens">RSC token input.</param>
         /// <returns>String with markup converted from RSC tokens.</returns>
-        public static string ConvertRSCTokensToString(TextFile.Token[] tokens)
+        public static string ConvertRSCTokensToString(int id, TextFile.Token[] tokens)
         {
             string recordsText = string.Empty;
 
@@ -88,7 +89,7 @@ namespace DaggerfallWorkshop.Localization
                 switch (tokens[i].formatting)
                 {
                     case TextFile.Formatting.Text:
-                        if (trimStartSpaces)
+                        if (trimStartSpaces && !ExcludeFromStartTrim(id))
                         {
                             text += tokens[i].text.TrimStart(' ');
                             trimStartSpaces = false;
@@ -135,6 +136,14 @@ namespace DaggerfallWorkshop.Localization
                 recordsText = AppendSubrecord(recordsText, text, true);
 
             return recordsText;
+        }
+
+        public static bool ExcludeFromStartTrim(int id)
+        {
+            // 9000 requires whitespace at start for character questionnaire to work
+            int[] excludedIDs = new int[] { 9000 };
+
+            return excludedIDs.Contains<int>(id);
         }
 
         /// <summary>
@@ -516,7 +525,7 @@ namespace DaggerfallWorkshop.Localization
                     if (id == -1)
                         continue;
                     string key = MakeTextRSCKey(id);
-                    string text = ConvertRSCTokensToString(tokens);
+                    string text = ConvertRSCTokensToString(id, tokens);
 
                     // Remap characters when mapping table present
                     if (charMappingTable != null)
