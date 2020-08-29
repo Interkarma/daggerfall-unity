@@ -177,6 +177,7 @@ namespace DaggerfallConnect.Arena2
             }
             #endregion
 
+            TextFile.Token lastToken = new TextFile.Token();
             GameManager.Instance.PlayerEntity.BirthRaceTemplate = characterDocument.raceTemplate; // Need correct race set when parsing %ra macro
             List<string> backStory = new List<string>();
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(tokensStart + classIndex);
@@ -187,6 +188,12 @@ namespace DaggerfallConnect.Arena2
                 {
                     backStory.Add(token.text);
                 }
+                else if (token.formatting == TextFile.Formatting.JustifyLeft)
+                {
+                    if (lastToken.formatting == TextFile.Formatting.JustifyLeft)
+                        backStory.Add("\n");
+                }
+                lastToken = token;
             }
 
             return backStory;
