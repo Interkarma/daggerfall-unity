@@ -1901,6 +1901,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dbdf49d2cb02c448af96547d7d1daf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  runtimeInternalStrings: Internal_Strings
+  runtimeRSCStrings: Internal_RSC
+  tableCopyOverwriteTargetStringTables: 0
+  tableCopyTargetInternalStrings: 
+  tableCopyTargetRSCStrings: 
 --- !u!4 &1437448955
 Transform:
   m_ObjectHideFlags: 0
