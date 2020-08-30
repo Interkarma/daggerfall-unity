@@ -36,8 +36,8 @@ namespace DaggerfallWorkshop.Game
         const string textFolderName = "Text";
         const string textColumn = "text";
 
-        string runtimeInternalStrings = defaultInternalStringsCollectionName;
-        string runtimeRSCStrings = defaultInternalRSCCollectionName;
+        public string runtimeInternalStrings = defaultInternalStringsCollectionName;
+        public string runtimeRSCStrings = defaultInternalRSCCollectionName;
 
         // String table copy editor properties
         public bool tableCopyOverwriteTargetStringTables = false;

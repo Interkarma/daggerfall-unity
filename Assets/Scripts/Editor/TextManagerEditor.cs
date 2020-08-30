@@ -44,9 +44,20 @@ namespace DaggerfallWorkshop
 
         void DisplayGUI()
         {
+            var runtimeInternalStrings = Prop("runtimeInternalStrings");
+            var runtimeRSCStrings = Prop("runtimeRSCStrings");
+
             var tableCopyOverwriteTargetStringTables = Prop("tableCopyOverwriteTargetStringTables");
             var tableCopyTargetInternalStrings = Prop("tableCopyTargetInternalStrings");
             var tableCopyTargetRSCStrings = Prop("tableCopyTargetRSCStrings");
+
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Live String Tables", EditorStyles.boldLabel);
+            GUILayoutHelper.Indent(() =>
+            {
+                runtimeInternalStrings.stringValue = EditorGUILayout.TextField("Internal Strings", runtimeInternalStrings.stringValue);
+                runtimeRSCStrings.stringValue = EditorGUILayout.TextField("RSC Strings", runtimeRSCStrings.stringValue);
+            });
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Copy String Tables", EditorStyles.boldLabel);
@@ -54,9 +65,9 @@ namespace DaggerfallWorkshop
             {
                 tableCopyTargetInternalStrings.stringValue = EditorGUILayout.TextField("Internal Strings > ", tableCopyTargetInternalStrings.stringValue);
                 tableCopyTargetRSCStrings.stringValue = EditorGUILayout.TextField("RSC Strings > ", tableCopyTargetRSCStrings.stringValue);
+                tableCopyOverwriteTargetStringTables.boolValue = EditorGUILayout.Toggle(new GUIContent("Overwrite String Tables?", "When enabled will copy over existing strings in target string tables."), tableCopyOverwriteTargetStringTables.boolValue);
             });
 
-            tableCopyOverwriteTargetStringTables.boolValue = EditorGUILayout.Toggle(new GUIContent("Overwrite Target String Tables?", "When enabled will copy over existing strings in target string tables."), tableCopyOverwriteTargetStringTables.boolValue);
             if (tableCopyOverwriteTargetStringTables.boolValue)
                 EditorGUILayout.HelpBox("Warning: Existing keys in the target string tables will be replaced by source.", MessageType.Warning);
             else
