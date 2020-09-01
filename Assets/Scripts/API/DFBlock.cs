@@ -1083,10 +1083,10 @@ namespace DaggerfallConnect
             /// Offset from start of RDB record to an object that should be activated
             ///  directly after this object. This allows actions to be chained together.
             /// </summary>
-            internal Int32 NextObjectOffset;
+            public Int32 NextObjectOffset;
 
             /// <summary>Offset from start of RDB record to an object that should be activated before this object</summary>
-            internal Int32 PreviousObjectOffset;
+            public Int32 PreviousObjectOffset;
 
             /// <summary>
             /// Index of model in RdbObject array that should be activated
