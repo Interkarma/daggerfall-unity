@@ -197,7 +197,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             const int notSatedTextID = 36;
 
-            if (DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() - lastTimeFed > DaggerfallDateTime.MinutesPerDay)
+            if (!IsSatiated())
             {
                 DaggerfallMessageBox mb = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager);
                 mb.PreviousWindow = DaggerfallUI.Instance.UserInterfaceManager.TopWindow;
@@ -270,6 +270,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public void UpdateSatiation()
         {
             lastTimeFed = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+        }
+
+        /// <summary>
+        /// Gets whether vampire thirst is satiated.
+        /// </summary>
+        public bool IsSatiated()
+        {
+            return DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() - lastTimeFed <= DaggerfallDateTime.MinutesPerDay;
         }
 
         /// <summary>
