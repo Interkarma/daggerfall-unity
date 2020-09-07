@@ -265,6 +265,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void UpdateBorderDrawRects(Rect drawRect)
         {
+            // Round input rectangle to pixel coordinates
+            drawRect.x = Mathf.Round(drawRect.x);
+            drawRect.y = Mathf.Round(drawRect.y);
+            drawRect.xMax = Mathf.Round(drawRect.xMax);
+            drawRect.yMax = Mathf.Round(drawRect.yMax);
+
             // Top-left
             topLeftBorderRect.x = drawRect.x;
             topLeftBorderRect.y = drawRect.y;
