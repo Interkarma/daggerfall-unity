@@ -977,17 +977,17 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetMouseButtonDown(int button)
         {
-            return Input.GetMouseButtonDown(button) || (EnableController && GetKeyDown(joystickUICache[button]));
+            return Input.GetMouseButtonDown(button) || (EnableController && GetSingleKeyDown(joystickUICache[button]));
         }
 
         public bool GetMouseButtonUp(int button)
         {
-            return Input.GetMouseButtonUp(button) || (EnableController && GetKeyUp(joystickUICache[button]));
+            return Input.GetMouseButtonUp(button) || (EnableController && GetSingleKeyUp(joystickUICache[button]));
         }
 
         public bool GetMouseButton(int button)
         {
-            return Input.GetMouseButton(button) || (EnableController && GetKey(joystickUICache[button]));
+            return Input.GetMouseButton(button) || (EnableController && GetSingleKey(joystickUICache[button]));
         }
 
         public bool GetKey(KeyCode key)
@@ -1003,6 +1003,30 @@ namespace DaggerfallWorkshop.Game
         public bool GetKeyUp(KeyCode key)
         {
             return GetSingleKeyUp(key) || GetSingleKeyUp(GetSecondaryBinding(key));
+        }
+
+        public bool GetSingleKey(KeyCode key)
+        {
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            var k = (((int)conv) < startingAxisKeyCode && Input.GetKey(conv)) || GetAxisKey((int)conv);
+            if (k)
+                LastKeyDown = conv;
+            return k;
+        }
+
+        public bool GetSingleKeyDown(KeyCode key)
+        {
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            var kd = (((int)conv) < startingAxisKeyCode && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
+            if (kd)
+                LastKeyDown = conv;
+            return kd;
+        }
+
+        public bool GetSingleKeyUp(KeyCode key)
+        {
+            KeyCode conv = ConvertJoystickButtonKeyCode(key);
+            return (((int)conv) < startingAxisKeyCode && Input.GetKeyUp(conv)) || GetAxisKeyUp((int)conv);
         }
 
         public bool AnyKeyDown
@@ -1308,30 +1332,6 @@ namespace DaggerfallWorkshop.Game
             keyCodeList = list;
 
             return keyCodeList;
-        }
-
-        bool GetSingleKey(KeyCode key)
-        {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            var k = (((int)conv) < startingAxisKeyCode && Input.GetKey(conv)) || GetAxisKey((int)conv);
-            if (k)
-                LastKeyDown = conv;
-            return k;
-        }
-
-        bool GetSingleKeyDown(KeyCode key)
-        {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            var kd = (((int)conv) < startingAxisKeyCode && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
-            if (kd)
-                LastKeyDown = conv;
-            return kd;
-        }
-
-        bool GetSingleKeyUp(KeyCode key)
-        {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            return (((int)conv) < startingAxisKeyCode && Input.GetKeyUp(conv)) || GetAxisKeyUp((int)conv);
         }
 
         //Converts all joystick KeyCodes to be controller-agnostic (e.g. "Joystick3Button0" to "JoystickButton0")
