@@ -204,6 +204,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             SetBackground(button, keybindButtonBackgroundColor, "advancedControlsKeybindBackgroundColor");
             button.OnMouseClick += KeybindButton_OnMouseClick;
+            button.OnRightMouseClick += KeybindButton_OnMouseRightClick;
 
             buttonGroup.Add(button);
 
@@ -366,6 +367,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button thisKeybindButton = (Button)sender;
 
             InputManager.Instance.StartCoroutine(WaitForKeyPress(thisKeybindButton));
+        }
+
+        private void KeybindButton_OnMouseRightClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (waitingForInput || ((Button)sender).Label.Text == KeyCode.None.ToString())
+                return;
+
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+
+            ControlsConfigManager.Instance.PromptRemoveKeybindMessage((Button)sender, CheckDuplicates);
         }
 
         IEnumerator WaitForKeyPress(Button button)

@@ -206,6 +206,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     controlsPanel.Components.Add(buttonGroup[j]);
                     buttonGroup[j].Name = actions[i];
                     buttonGroup[j].OnMouseClick += KeybindButton_OnMouseClick;
+                    buttonGroup[j].OnRightMouseClick += KeybindButton_OnMouseRightClick;
                     if (i == endPoint - 1)
                     {
                         allKeys.Add(buttonGroup);
@@ -362,6 +363,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Button thisKeybindButton = (Button)sender;
 
             InputManager.Instance.StartCoroutine(WaitForKeyPress(thisKeybindButton, CheckDuplicates, SetWaitingForInput));
+        }
+
+        private void KeybindButton_OnMouseRightClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (waitingForInput || ((Button)sender).Label.Text == KeyCode.None.ToString())
+                return;
+
+            DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+
+            ControlsConfigManager.Instance.PromptRemoveKeybindMessage((Button)sender, CheckDuplicates);
         }
 
         public static IEnumerator WaitForKeyPress(Button button, System.Action checkDuplicates, System.Action<bool> setWaitingForInput)
