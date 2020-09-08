@@ -111,7 +111,9 @@ namespace DaggerfallWorkshop.Game
 
         // Greeting records extracted from FALL.EXE.
         readonly ushort[] greetings =               { 8550, 8551, 8552, 8553, 8554, 8555, 8556, 8557, 8558, 8559, 8560, 8561, 8562, 8562,
-                                                      8563, 8564, 8564, 8565, 8566, 8566, 8567, 8568, 8568, 8569, 8570, 8570, 8571 }; 
+                                                      8563, 8564, 8564, 8565, 8566, 8566, 8567, 8568, 8568, 8569, 8570, 8570, 8571 };
+
+        readonly ushort[] allowedBulletinTextIds =  { 1475, 1476, 1477, 1478, 1479, 1482, 1483 };
 
         const float DefaultChanceKnowsSomethingAboutWhereIs = 0.6f; // Chances unknown
         const float DefaultChanceKnowsSomethingAboutQuest = 0.8f; // Chances unknown
@@ -347,6 +349,7 @@ namespace DaggerfallWorkshop.Game
             public int regionID; // ID of region involved.
             public int flags; // Rumor flags
             public int type; // Rumor type
+            public int textID; // Text ID
         }
         // list of rumors in rumor mill
         List<RumorMillEntry> listRumorMill = new List<RumorMillEntry>();
@@ -522,7 +525,7 @@ namespace DaggerfallWorkshop.Game
 
         int GetReactionToPlayer_0_1_2(QuestionType qt, FactionFile.SocialGroups npcSocialGroup)
         {
-            int socialGroup = (int) npcSocialGroup;
+            int socialGroup = (int)npcSocialGroup;
             if (socialGroup >= 5)
                 socialGroup = 1; // Merchants
 
@@ -578,7 +581,7 @@ namespace DaggerfallWorkshop.Game
                 case QuestionType.QuestItem:
                     classicDataIndex = 6; // == Tell me about Thing
                     break;
-                // 7 == Tell me about Work (not used)
+                    // 7 == Tell me about Work (not used)
             }
 
             int reaction = player.Stats.LivePersonality / 5
@@ -653,7 +656,7 @@ namespace DaggerfallWorkshop.Game
             else if (!isChildNPC && IsCastleNpcOfferingQuest(targetNPC.Data.nameSeed))
             {
                 uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.QuestOffer,
-                    new object[] {uiManager, targetNPC.Data, (FactionFile.SocialGroups)npcFactionData.sgroup, menu}));
+                    new object[] { uiManager, targetNPC.Data, (FactionFile.SocialGroups)npcFactionData.sgroup, menu }));
                 return;
             }
             currentNPCType = NPCType.Static;
@@ -1111,9 +1114,9 @@ namespace DaggerfallWorkshop.Game
                 playerPos = new Vector2(buildingInfoCurrentBuilding.position.x, buildingInfoCurrentBuilding.position.y);
 
                 if (buildingInfoCurrentBuilding.buildingKey == buildingInfoTargetBuilding.buildingKey)
-                    return TextManager.Instance.GetLocalizedText("thisPlace");       
+                    return TextManager.Instance.GetLocalizedText("thisPlace");
             }
-           
+
             Vector2 vecDirectionToTarget = buildingInfoTargetBuilding.position - playerPos;
             return DirectionVector2DirectionHintString(vecDirectionToTarget);
         }
@@ -1171,7 +1174,7 @@ namespace DaggerfallWorkshop.Game
                 if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentQuestionListItem.key))
                     dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap;
                 GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
-                
+
                 // above line could also be done with these statements:
                 // Place place = (Place)dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questResource;
                 // GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey, place.SiteDetails.buildingName);
@@ -1235,6 +1238,41 @@ namespace DaggerfallWorkshop.Game
             return question;
         }
 
+        public string GetNewsOrRumorsForBulletinBoard()
+        {
+            string news = string.Empty;
+
+            List<RumorMillEntry> validRumors = GetValidRumors(true);
+
+            if (validRumors.Count == 0)
+                return news;
+
+            // Simply use first rumor available
+            RumorMillEntry validRumor = validRumors.FirstOrDefault(x => x.rumorType == RumorType.CommonRumor);
+            if (validRumor != null && validRumor.listRumorVariants != null)
+            {
+                TextFile.Token[] tokens = validRumor.listRumorVariants[0];
+                int regionID = -1;
+                FactionFile.FactionData factionData;
+
+                if (validRumor.regionID != -1)
+                    regionID = validRumor.regionID;
+                else if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(validRumor.faction1, out factionData) && factionData.region != -1)
+                    regionID = factionData.region;
+                else if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(validRumor.faction2, out factionData) && factionData.region != -1)
+                    regionID = factionData.region;
+                else // Classic uses a random region in this case, but that can create odd results for the witches rumor and maybe more. Using current region.
+                    regionID = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
+
+                MacroHelper.SetFactionIdsAndRegionID(validRumor.faction1, validRumor.faction2, regionID);
+                MacroHelper.ExpandMacros(ref tokens, this);
+                MacroHelper.SetFactionIdsAndRegionID(-1, -1, -1); // Reset again so %reg macro may resolve to current region if needed
+                news = TokensToString(tokens, false);
+            }
+
+            return news;
+        }
+
         public string GetNewsOrRumors()
         {
             const int outOfNewsRecordIndex = 1457;
@@ -1290,12 +1328,18 @@ namespace DaggerfallWorkshop.Game
             return ExpandRandomTextRecord(outOfNewsRecordIndex);
         }
 
-        private List<RumorMillEntry> GetValidRumors()
+        private List<RumorMillEntry> GetValidRumors(bool readingSign = false)
         {
             List<RumorMillEntry> validRumors = new List<RumorMillEntry>();
 
             foreach (RumorMillEntry entry in listRumorMill)
             {
+                if (readingSign && !allowedBulletinTextIds.Any(x => x == entry.textID))
+                {
+                    // skip non-bulletin texts if we are getting rumors for a bulletin board
+                    continue;
+                }
+
                 if (entry.rumorType == RumorType.CommonRumor)
                 {
                     // Note: Classic only checks that regionID matches for sign messages. Because of this, some rumors that seem they were supposed to
@@ -1305,9 +1349,16 @@ namespace DaggerfallWorkshop.Game
                     if (entry.regionID != -1 && entry.regionID != GameManager.Instance.PlayerGPS.CurrentRegionIndex)
                         continue;
 
-                    // TODO: For now, only spoken rumors, no sign messages
-                    if ((entry.flags & 1) == 1)
+                    // skip sign rumors if talking
+                    if (!readingSign && (entry.flags & 1) == 1)
+                    {
                         continue;
+                    }
+                    // skip spoken rumors if reading sign
+                    if (readingSign && (entry.flags & 1) != 1)
+                    {
+                        continue;
+                    }
 
                     if (entry.faction1 != 0 || entry.faction2 != 0 || entry.type != 100)
                     {
@@ -1699,7 +1750,7 @@ namespace DaggerfallWorkshop.Game
                 GetPersonResource(currentQuestionListItem.questID, key, out person);
                 if (person.IsQuestor)
                 {
-                    buildingKey = GetPersonBuildingKey(ref person);                    
+                    buildingKey = GetPersonBuildingKey(ref person);
                     if (buildingKey != 0)
                         buildingName = GetBuildingNameForBuildingKey(buildingKey);
                 }
@@ -1944,14 +1995,14 @@ namespace DaggerfallWorkshop.Game
         {
             AssembleTopicLists();
         }
-        
+
         public void AddQuestTopicWithInfoAndRumors(Quest quest)
         {
             // Add RumorsDuringQuest rumor to rumor mill
             Message message = quest.GetMessage((int)QuestMachine.QuestMessages.RumorsDuringQuest);
             if (message != null)
                 AddOrReplaceQuestProgressRumor(quest.UID, message);
-            
+
             // Add topics for the places to see, people to meet and items to handle.
             foreach (QuestResource resource in quest.GetAllResources())
             {
@@ -2572,24 +2623,25 @@ namespace DaggerfallWorkshop.Game
             listRumorMill.Add(entry);
         }
 
-        public void AddNonQuestRumor(int faction1, int faction2, int regionID, int type, int textID)
+        public void AddNonQuestRumor(int faction1, int faction2, int regionID, int type, int textId)
         {
             if (listRumorMill == null)
                 listRumorMill = new List<RumorMillEntry>();
-            RumorMillEntry entry = new RumorMillEntry();
 
-            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(textID);
+            var tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(textId);
 
-            entry.rumorType = RumorType.CommonRumor;
-            entry.listRumorVariants = new List<TextFile.Token[]>();
-            entry.listRumorVariants.Add(tokens);
-            entry.faction1 = faction1;
-            entry.faction2 = faction2;
-            entry.type = type;
-            entry.regionID = regionID;
-            entry.flags = GetFlagsForNewRumor(type);
-            entry.timeLimit = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() + 43140;
-
+            RumorMillEntry entry = new RumorMillEntry
+            {
+                rumorType = RumorType.CommonRumor,
+                listRumorVariants = new List<TextFile.Token[]> { tokens },
+                faction1 = faction1,
+                faction2 = faction2,
+                type = type,
+                regionID = regionID,
+                flags = GetFlagsForNewRumor(type),
+                timeLimit = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() + 43140,
+                textID = textId
+            };
             listRumorMill.Add(entry);
         }
 
@@ -2618,13 +2670,7 @@ namespace DaggerfallWorkshop.Game
 
             uint nowClassic = DaggerfallUnity.Instance.WorldTime.Now.ToClassicDaggerfallTime();
 
-            for (int i = listRumorMill.Count - 1; i >= 0; i--)
-            {
-                if (listRumorMill[i].timeLimit < nowClassic)
-                {
-                    listRumorMill.RemoveAt(i);
-                }
-            }
+            listRumorMill.RemoveAll(x => x.timeLimit < nowClassic);
         }
 
         private void SetupRumorMill()
@@ -2882,7 +2928,7 @@ namespace DaggerfallWorkshop.Game
         private bool CheckNPCcanKnowAboutTellMeAboutTopic(ListItem item)
         {
             Quest quest = GameManager.Instance.QuestMachine.GetQuest(item.questID);
-            
+
             if (item.questionType == QuestionType.QuestLocation)
             {
                 QuestResource questResource = quest.GetResource(item.key);

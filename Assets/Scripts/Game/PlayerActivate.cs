@@ -148,9 +148,12 @@ namespace DaggerfallWorkshop.Game
         {
             DaggerfallUnity.LogMessage("HandleRegisterCustomActivation: " + goFlatModelName, true);
             CustomModActivation existingActivation;
-            if (customModActivations.TryGetValue(goFlatModelName, out existingActivation) && existingActivation.Provider.LoadPriority > provider.LoadPriority) {
+            if (customModActivations.TryGetValue(goFlatModelName, out existingActivation) && existingActivation.Provider.LoadPriority > provider.LoadPriority)
+            {
                 Debug.Log("Denied custom activation registration from " + provider.Title + " for " + goFlatModelName + " | " + existingActivation.Provider.Title + " has higher load priority");
-            } else {
+            }
+            else
+            {
                 customModActivations[goFlatModelName] = new CustomModActivation(customActivation, activationDistance, provider);
             }
         }
@@ -180,7 +183,8 @@ namespace DaggerfallWorkshop.Game
         /// Checks if an object has a custom activation assigned
         /// </summary>
         /// <param name="goFlatModelName">The name of the flat / model object to check.</param>
-        public static bool HasCustomActivation(string goFlatModelName) {
+        public static bool HasCustomActivation(string goFlatModelName)
+        {
             return customModActivations.ContainsKey(goFlatModelName);
         }
         #endregion
@@ -334,7 +338,7 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallBulletinBoard bulletinBoard;
                     if (BulletinBoardCheck(hit, out bulletinBoard))
                     {
-                        Debug.Log("Player clicked bulletin board");
+                        ActivateBulletinBoard(hit, bulletinBoard);
                     }
 
                     // Check for static NPC hit
@@ -370,7 +374,8 @@ namespace DaggerfallWorkshop.Game
                     CustomModActivation customActivation;
                     if (customModActivations.TryGetValue(flatModelName, out customActivation))
                     {
-                        if(hit.distance <= customActivation.ActivationDistance) {
+                        if (hit.distance <= customActivation.ActivationDistance)
+                        {
                             customActivation.Action(hit);
                         }
                     }
@@ -603,6 +608,42 @@ namespace DaggerfallWorkshop.Game
                 actionDoor.ToggleDoor(true);
         }
 
+        void ActivateBulletinBoard(RaycastHit hit, DaggerfallBulletinBoard bulletinBoard)
+        {
+            // Check if close enough to Activate
+            if (hit.distance > MobileNPCActivationDistance)
+            {
+                DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
+                return;
+            }
+
+            // Get news
+            var bulletinBoardMessage = GameManager.Instance.TalkManager.GetNewsOrRumorsForBulletinBoard();
+
+            // format message
+            var tokens = new List<TextFile.Token>
+            {
+                new TextFile.Token(TextFile.Formatting.JustifyCenter, null),
+                new TextFile.Token(TextFile.Formatting.Text, GameManager.Instance.PlayerGPS.CurrentLocation.Name),
+                new TextFile.Token(TextFile.Formatting.JustifyCenter, null)
+            };
+
+            // formatting message is split into 2 parts, depending whether we got any news or not.
+            if (bulletinBoardMessage != string.Empty)
+            {
+                tokens.AddRange(new List<TextFile.Token>
+                {
+                    new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
+                    new TextFile.Token(TextFile.Formatting.Text, string.Empty),
+                    new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
+                    new TextFile.Token(TextFile.Formatting.Text, bulletinBoardMessage),
+                });
+            }
+
+            // Display message
+            DaggerfallUI.MessageBox(tokens.ToArray());
+        }
+
         void ActivateStaticNPC(RaycastHit hit, StaticNPC npc)
         {
             // Do not activate static NPCs carrying specific non-dialog actions as these usually have some bespoke task to perform
@@ -748,7 +789,7 @@ namespace DaggerfallWorkshop.Game
                     // Open Trade Window if shop is open
                     if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop)
                     {
-                        DaggerfallTradeWindow tradeWindow = (DaggerfallTradeWindow) UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, null, DaggerfallTradeWindow.WindowModes.Buy, null });
+                        DaggerfallTradeWindow tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, null, DaggerfallTradeWindow.WindowModes.Buy, null });
                         tradeWindow.MerchantItems = loot.Items;
                         uiManager.PushWindow(tradeWindow);
                         return;
