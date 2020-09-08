@@ -28,12 +28,15 @@ namespace DaggerfallWorkshop.Game
         private readonly KeyCode keyCode;
         private readonly KeyModifiers modifiers;
 
+        private readonly bool useSecondary;
+
         public static HotkeySequence None = new HotkeySequence(KeyCode.None, KeyModifiers.None);
 
-        public HotkeySequence(KeyCode keyCode, KeyModifiers modifiers)
+        public HotkeySequence(KeyCode keyCode, KeyModifiers modifiers, bool useSecondary = false)
         {
             this.keyCode = keyCode;
             this.modifiers = modifiers;
+            this.useSecondary = useSecondary;
             // Add inferred virtuals
             if ((modifiers & (KeyModifiers.LeftCtrl | KeyModifiers.RightCtrl)) != 0)
                 this.modifiers |= KeyModifiers.Ctrl;
@@ -153,17 +156,17 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsDownWith(KeyModifiers pressedModifiers)
         {
-            return InputManager.Instance.GetKeyDown(keyCode, false) && CheckSetModifiers(pressedModifiers, modifiers);
+            return InputManager.Instance.GetKeyDown(keyCode, useSecondary) && CheckSetModifiers(pressedModifiers, modifiers);
         }
 
         public bool IsUpWith(KeyModifiers pressedModifiers)
         {
-            return InputManager.Instance.GetKeyUp(keyCode, false) && CheckSetModifiers(pressedModifiers, modifiers);
+            return InputManager.Instance.GetKeyUp(keyCode, useSecondary) && CheckSetModifiers(pressedModifiers, modifiers);
         }
 
         public bool IsPressedWith(KeyModifiers pressedModifiers)
         {
-            return InputManager.Instance.GetKey(keyCode, false) && CheckSetModifiers(pressedModifiers, modifiers);
+            return InputManager.Instance.GetKey(keyCode, useSecondary) && CheckSetModifiers(pressedModifiers, modifiers);
         }
 
         // Simple method variants if you don't mind building a temporary KeyModifiers
