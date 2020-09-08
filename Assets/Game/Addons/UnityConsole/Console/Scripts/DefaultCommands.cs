@@ -139,8 +139,8 @@ namespace Wenzil.Console
 
                         string regionJson = SaveLoadManager.Serialize(region.GetType(), region);
                         string fileName = WorldDataReplacement.GetDFRegionReplacementFilename(playerGPS.CurrentRegionIndex);
-                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), regionJson);
-                        return "Region data json written to " + Path.Combine(Application.persistentDataPath, fileName);
+                        File.WriteAllText(Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, fileName), regionJson);
+                        return "Region data json written to " + Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, fileName);
                     }
                     return error;
                 }
@@ -169,8 +169,8 @@ namespace Wenzil.Console
 
                         string locJson = SaveLoadManager.Serialize(location.GetType(), location);
                         string fileName = WorldDataReplacement.GetDFLocationReplacementFilename(location.RegionIndex, location.LocationIndex);
-                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), locJson);
-                        return "Location data json written to " + Path.Combine(Application.persistentDataPath, fileName);
+                        File.WriteAllText(Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, fileName), locJson);
+                        return "Location data json written to " + Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, fileName);
                     }
                     return error;
                 }
@@ -194,9 +194,9 @@ namespace Wenzil.Console
                     {
                         blockIndex += string.Format("{0}: {1}\n", b, blockBsa.GetRecordName(b));
                     }
-                    string fileName = Path.Combine(Application.persistentDataPath, "BlockIndex.txt");
+                    string fileName = Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, "BlockIndex.txt");
                     File.WriteAllText(fileName, blockIndex);
-                    return "Block index data written to " + Path.Combine(Application.persistentDataPath, fileName);
+                    return "Block index data written to " + Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, fileName);
                 }
                 else
                 {
@@ -213,8 +213,8 @@ namespace Wenzil.Console
                     {
                         string blockJson = SaveLoadManager.Serialize(blockData.GetType(), blockData);
                         string fileName = WorldDataReplacement.GetDFBlockReplacementFilename(blockData.Name);
-                        File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), blockJson);
-                        return "Block data json written to " + Path.Combine(Application.persistentDataPath, fileName);
+                        File.WriteAllText(Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, fileName), blockJson);
+                        return "Block data json written to " + Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, fileName);
                     }
                     return error;
                 }
@@ -244,7 +244,7 @@ namespace Wenzil.Console
                         }
                     }
                     string locJson = SaveLoadManager.Serialize(locBlocks.GetType(), locBlocks);
-                    string fileName = Path.Combine(Application.persistentDataPath, "LocationBlockNames.json");
+                    string fileName = Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, "LocationBlockNames.json");
                     File.WriteAllText(fileName, locJson);
                     return "Location block names json written to " + fileName;
                 }
@@ -260,7 +260,7 @@ namespace Wenzil.Console
                             locIndex += string.Format("{0}, {1}: {2}\n", region, dfLoc.LocationIndex, dfLoc.Name);
                         }
                     }
-                    string fileName = Path.Combine(Application.persistentDataPath, "LocationIndex.txt");
+                    string fileName = Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, "LocationIndex.txt");
                     File.WriteAllText(fileName, locIndex);
                     return "Location index written to " + fileName;
                 }
@@ -304,7 +304,7 @@ namespace Wenzil.Console
                     for (int i = 0; i < args.Length; i++)
                         blocks = blocks + "-" + args[i];
 
-                    string fileName = Path.Combine(Application.persistentDataPath, blocks.Substring(1) + "-locations.json");
+                    string fileName = Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, blocks.Substring(1) + "-locations.json");
                     File.WriteAllText(fileName, locJson);
                     return "Location block names json written to " + fileName;
 
@@ -336,8 +336,8 @@ namespace Wenzil.Console
                         Quality = blockData.RmbBlock.FldHeader.BuildingDataList[recordIndex].Quality,
                     };
                     string buildingJson = SaveLoadManager.Serialize(buildingData.GetType(), buildingData);
-                    File.WriteAllText(Path.Combine(Application.persistentDataPath, fileName), buildingJson);
-                    return "Building data written to " + Path.Combine(Application.persistentDataPath, fileName);
+                    File.WriteAllText(Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, fileName), buildingJson);
+                    return "Building data written to " + Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, fileName);
                 }
                 return error;
             }

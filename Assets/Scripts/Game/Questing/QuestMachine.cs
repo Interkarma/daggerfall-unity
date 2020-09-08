@@ -221,7 +221,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         private static string LogPath
         {
-            get { return Path.Combine(Application.persistentDataPath, questLogFilename); }
+            get { return Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, questLogFilename); }
         }
 
         /// <summary>

@@ -1610,7 +1610,7 @@ namespace DaggerfallWorkshop.Game
 
         string GetKeyBindsSavePath()
         {
-            return Path.Combine(Application.persistentDataPath, keyBindsFilename);
+            return Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, keyBindsFilename);
         }
 
         bool HasKeyBindsSave()

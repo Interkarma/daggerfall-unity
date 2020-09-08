@@ -93,7 +93,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         internal string ModDataDirectory
         {
-            get { return Path.Combine(Application.persistentDataPath, Path.Combine("Mods", dataFolder)); }
+            get { return Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, Path.Combine("Mods", dataFolder)); }
         }
 
         /// <summary>
