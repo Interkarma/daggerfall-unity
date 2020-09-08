@@ -319,7 +319,7 @@ namespace DaggerfallWorkshop.Game
             // Count down holiday text display
             if (holidayTextTimer > 0)
                 holidayTextTimer -= Time.deltaTime;
-            if (holidayTextTimer <= 0 && holidayTextPrimed)
+            if (holidayTextTimer <= 0 && holidayTextPrimed && GameManager.Instance.IsPlayerOnHUD)
             {
                 holidayTextPrimed = false;
                 ShowHolidayText();
