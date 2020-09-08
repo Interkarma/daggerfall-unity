@@ -213,8 +213,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                 }
 
-                buttonGroup[j].Label.Text = ControlsConfigManager.Instance.GetUnsavedBinding(key);
+                var code = ControlsConfigManager.Instance.GetUnsavedBindingKeyCode(key);
+                buttonGroup[j].Label.Text = ControlsConfigManager.Instance.GetButtonText(code);
                 buttonGroup[j].Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
+
+                buttonGroup[j].ToolTip = defaultToolTip;
+                buttonGroup[j].SuppressToolTip = buttonGroup[j].Label.Text != ControlsConfigManager.ElongatedButtonText;
+                buttonGroup[j].ToolTipText = ControlsConfigManager.Instance.GetButtonText(code, true);
             }
         }
 
@@ -395,11 +400,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if(InputManager.Instance.ReservedKeys.FirstOrDefault(x => x == code) == KeyCode.None)
                 {
-                    button.Label.Text = InputManager.Instance.GetKeyString(code);
+                    button.Label.Text = ControlsConfigManager.Instance.GetButtonText(code);
+                    button.SuppressToolTip = button.Label.Text != ControlsConfigManager.ElongatedButtonText;
+                    button.ToolTipText = ControlsConfigManager.Instance.GetButtonText(code, true);
 
                     var action = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), button.Name);
 
-                    ControlsConfigManager.Instance.SetUnsavedBinding(action, button.Label.Text);
+                    ControlsConfigManager.Instance.SetUnsavedBinding(action, InputManager.Instance.GetKeyString(code));
                     checkDuplicates();
                 }
                 else

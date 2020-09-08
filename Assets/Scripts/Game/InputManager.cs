@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game
 
         //there are only 16 recognized axes
         const int numAxes = 16;
-        const int startingAxisKeyCode = 5000;
+        public const int startingAxisKeyCode = 5000;
 
         //if the force is greater than this threshold, round it up to 1
         float joystickMovementThreshold = 0.95F;

@@ -158,12 +158,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private methods
 
-        //for "reset defaults" overload
-        //**might delete this, since reset defaults is in the main controls window
         private void SetupKeybindButton(Button button, InputManager.Actions action)
         {
-            button.Label.Text = ControlsConfigManager.Instance.GetUnsavedBinding(action);
+            var code = ControlsConfigManager.Instance.GetUnsavedBindingKeyCode(action);
+            button.Label.Text = ControlsConfigManager.Instance.GetButtonText(code);
             button.Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
+
+            button.ToolTip = defaultToolTip;
+            button.SuppressToolTip = button.Label.Text != ControlsConfigManager.ElongatedButtonText;
+            button.ToolTipText = ControlsConfigManager.Instance.GetButtonText(code, true);
         }
 
         //for initialization
