@@ -35,10 +35,6 @@ namespace DaggerfallWorkshop.Game
         //if the force is greater than this threshold, round it up to 1
         float joystickMovementThreshold = 0.95F;
 
-        //this arbitrary float value seems to be the minimum force that can be given without unnecessarily
-        //triggering FrictionMotor's UnstickHandling() method, which can create jagged movement at lower force
-        const float controllerMinimumAxisFloat = 0.68f;
-
         public Texture2D controllerCursorImage;
 
         Dictionary<int, String> axisKeyCodeStrings = new Dictionary<int, String>();
@@ -1575,9 +1571,9 @@ namespace DaggerfallWorkshop.Game
                 if (jd <= JoystickDeadzone)
                     return;
 
-                float dist = Mathf.Clamp(jd, controllerMinimumAxisFloat, 1.0F);
+                float dist = jd / JoystickMovementThreshold;
 
-                if (MaximizeJoystickMovement || dist > JoystickMovementThreshold)
+                if (MaximizeJoystickMovement || dist > 1.0F)
                     dist = 1.0F;
 
                 if (horiz > 0)
