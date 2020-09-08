@@ -995,32 +995,32 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetMouseButtonDown(int button)
         {
-            return Input.GetMouseButtonDown(button) || (EnableController && GetKeyDown(joystickUICache[button]));
+            return Input.GetMouseButtonDown(button) || (EnableController && GetSingleKeyDown(joystickUICache[button]));
         }
 
         public bool GetMouseButtonUp(int button)
         {
-            return Input.GetMouseButtonUp(button) || (EnableController && GetKeyUp(joystickUICache[button]));
+            return Input.GetMouseButtonUp(button) || (EnableController && GetSingleKeyUp(joystickUICache[button]));
         }
 
         public bool GetMouseButton(int button)
         {
-            return Input.GetMouseButton(button) || (EnableController && GetKey(joystickUICache[button]));
+            return Input.GetMouseButton(button) || (EnableController && GetSingleKey(joystickUICache[button]));
         }
 
-        public bool GetKey(KeyCode key)
+        public bool GetKey(KeyCode key, bool useSecondary = true)
         {
-            return GetSingleKey(key) || GetSingleKey(GetSecondaryBinding(key));
+            return GetSingleKey(key) || (useSecondary && GetSingleKey(GetSecondaryBinding(key)));
         }
 
-        public bool GetKeyDown(KeyCode key)
+        public bool GetKeyDown(KeyCode key, bool useSecondary = true)
         {
-            return GetSingleKeyDown(key) || GetSingleKeyDown(GetSecondaryBinding(key));
+            return GetSingleKeyDown(key) || (useSecondary && GetSingleKeyDown(GetSecondaryBinding(key)));
         }
 
-        public bool GetKeyUp(KeyCode key)
+        public bool GetKeyUp(KeyCode key, bool useSecondary = true)
         {
-            return GetSingleKeyUp(key) || GetSingleKeyUp(GetSecondaryBinding(key));
+            return GetSingleKeyUp(key) || (useSecondary && GetSingleKeyUp(GetSecondaryBinding(key)));
         }
 
         public bool AnyKeyDown

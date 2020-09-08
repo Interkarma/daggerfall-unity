@@ -153,17 +153,17 @@ namespace DaggerfallWorkshop.Game
 
         public bool IsDownWith(KeyModifiers pressedModifiers)
         {
-            return InputManager.Instance.GetKeyDown(keyCode) && CheckSetModifiers(pressedModifiers, modifiers);
+            return InputManager.Instance.GetKeyDown(keyCode, false) && CheckSetModifiers(pressedModifiers, modifiers);
         }
 
         public bool IsUpWith(KeyModifiers pressedModifiers)
         {
-            return InputManager.Instance.GetKeyUp(keyCode) && CheckSetModifiers(pressedModifiers, modifiers);
+            return InputManager.Instance.GetKeyUp(keyCode, false) && CheckSetModifiers(pressedModifiers, modifiers);
         }
 
         public bool IsPressedWith(KeyModifiers pressedModifiers)
         {
-            return InputManager.Instance.GetKey(keyCode) && CheckSetModifiers(pressedModifiers, modifiers);
+            return InputManager.Instance.GetKey(keyCode, false) && CheckSetModifiers(pressedModifiers, modifiers);
         }
 
         // Simple method variants if you don't mind building a temporary KeyModifiers
