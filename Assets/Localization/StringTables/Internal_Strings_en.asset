@@ -3626,5 +3626,9 @@ MonoBehaviour:
     m_Localized: Zenithar
     m_Metadata:
       m_Items: []
+  - m_Id: 811
+    m_Localized: Are you sure you want to remove the keybind for {0} ('{1}')?
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

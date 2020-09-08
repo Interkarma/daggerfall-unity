@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -212,7 +212,8 @@ namespace DaggerfallWorkshop.Game
             DaggerfallMessageBox removeAssignmentBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow);
             removeAssignmentBox.PauseWhileOpen = true;
 
-            removeAssignmentBox.SetText($"Are you sure you want to remove the keybind for {button.Name} ('{button.Label.Text}')?");
+            string prompt = TextManager.Instance.GetLocalizedText("removeKeybind");
+            removeAssignmentBox.SetText(string.Format(prompt, button.Name, button.Label.Text));
             removeAssignmentBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
             removeAssignmentBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No, true);
 
