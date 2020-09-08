@@ -485,7 +485,7 @@ namespace DaggerfallWorkshop.Game
                 var h = Input.GetAxis(cameraAxisBindingCache[0]);
                 var v = Input.GetAxis(cameraAxisBindingCache[1]);
 
-                if(Mathf.Sqrt(h*h + v*v) > JoystickDeadzone)
+                if (Mathf.Sqrt(h*h + v*v) > JoystickDeadzone)
                 {
                     mouseX = h;
                     mouseY = v;
@@ -497,7 +497,7 @@ namespace DaggerfallWorkshop.Game
                     mouseY *= -1;
             }
 
-            if(ToggleAutorun)
+            if (ToggleAutorun)
             {
                 ApplyVerticalForce(1);
             }
@@ -937,9 +937,7 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.Space, Actions.Jump);
             SetBinding(KeyCode.C, Actions.Crouch);
             SetBinding(KeyCode.LeftControl, Actions.Slide);
-            SetBinding(KeyCode.RightControl, Actions.Slide);
             SetBinding(KeyCode.LeftShift, Actions.Run);
-            SetBinding(KeyCode.RightShift, Actions.Run);
             SetBinding(KeyCode.Mouse2, Actions.AutoRun);
 
             SetBinding(KeyCode.R, Actions.Rest);
@@ -969,7 +967,6 @@ namespace DaggerfallWorkshop.Game
             SetBinding(KeyCode.Delete, Actions.LookDown);
             SetBinding(KeyCode.Home, Actions.CenterView);
             SetBinding(KeyCode.LeftAlt, Actions.Sneak);
-            SetBinding(KeyCode.RightAlt, Actions.Sneak);
 
             SetBinding(KeyCode.L, Actions.LogBook);
             SetBinding(KeyCode.N, Actions.NoteBook);
@@ -1109,14 +1106,14 @@ namespace DaggerfallWorkshop.Game
             }
 
             primarySecondaryKeybindDict.Clear();
-            foreach(Actions a in Enum.GetValues(typeof(Actions)))
+            foreach (Actions a in Enum.GetValues(typeof(Actions)))
                 MapSecondaryBindings(a);
         }
 
         KeyCode GetSecondaryBinding(KeyCode a)
         {
             int ret;
-            if(primarySecondaryKeybindDict.TryGetValue((int)a, out ret))
+            if (primarySecondaryKeybindDict.TryGetValue((int)a, out ret))
                 return (KeyCode)ret;
 
             return KeyCode.None;
@@ -1203,9 +1200,7 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.Space, Actions.Jump);
             TestSetBinding(KeyCode.C, Actions.Crouch);
             TestSetBinding(KeyCode.LeftControl, Actions.Slide);
-            TestSetBinding(KeyCode.RightControl, Actions.Slide);
             TestSetBinding(KeyCode.LeftShift, Actions.Run);
-            TestSetBinding(KeyCode.RightShift, Actions.Run);
             TestSetBinding(KeyCode.Mouse2, Actions.AutoRun);
 
             TestSetBinding(KeyCode.R, Actions.Rest);
@@ -1235,7 +1230,6 @@ namespace DaggerfallWorkshop.Game
             TestSetBinding(KeyCode.Delete, Actions.LookDown);
             TestSetBinding(KeyCode.Home, Actions.CenterView);
             TestSetBinding(KeyCode.LeftAlt, Actions.Sneak);
-            TestSetBinding(KeyCode.RightAlt, Actions.Sneak);
 
             TestSetBinding(KeyCode.L, Actions.LogBook);
             TestSetBinding(KeyCode.N, Actions.NoteBook);
@@ -1256,7 +1250,7 @@ namespace DaggerfallWorkshop.Game
             UpdateBindingCache();
 
             foreach (AxisActions axisAction in Enum.GetValues(typeof(AxisActions)))
-                if(!axisActionInvertDict.ContainsKey((int)axisAction))
+                if (!axisActionInvertDict.ContainsKey((int)axisAction))
                     SetAxisActionInversion(axisAction, false);
         }
 
@@ -1627,7 +1621,7 @@ namespace DaggerfallWorkshop.Game
             var dict = primary ? actionKeyDict : secondaryActionKeyDict;
             var unknown = primary ? unknownActions : secondaryUnknownActions;
 
-            foreach(var item in saved)
+            foreach (var item in saved)
             {
                 KeyCode key = ParseKeyCodeString(item.Key);
                 var actionVal = ActionNameToEnum(item.Value);
@@ -1651,7 +1645,7 @@ namespace DaggerfallWorkshop.Game
 
             LoadActionKeybinds(true, keyBindsData);
 
-            if(keyBindsData.secondaryActionKeyBinds != null)
+            if (keyBindsData.secondaryActionKeyBinds != null)
                 LoadActionKeybinds(false, keyBindsData);
 
             if (keyBindsData.axisActionKeyBinds != null)
