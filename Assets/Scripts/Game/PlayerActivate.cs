@@ -990,6 +990,8 @@ namespace DaggerfallWorkshop.Game
                 if (Dice100.SuccessRoll(chance))
                 {
                     // Success - player has forced their way into building
+                    if (Dice100.SuccessRoll(10)) // 10% chance someone saw you breaking in, as with Attempted
+                        playerEntity.CrimeCommitted = PlayerEntity.Crimes.Breaking_And_Entering;
                     playerEntity.TallyCrimeGuildRequirements(true, 1);
                     TransitionInterior(doorOwner, door, true);
                     return true;

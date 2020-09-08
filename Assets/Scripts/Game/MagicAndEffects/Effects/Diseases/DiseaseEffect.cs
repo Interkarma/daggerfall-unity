@@ -238,9 +238,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return diseaseDataSources[(int)diseaseType];
         }
 
-        protected bool IsDiseasePermanent()
+        public bool IsDiseasePermanent()
         {
             return (diseaseData.daysOfSymptomsMin == permanentDiseaseValue);
+        }
+
+        public bool IsDiseaseCompleted()
+        {
+            return (daysOfSymptomsLeft == completedDiseaseValue);
         }
 
         #endregion
