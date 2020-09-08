@@ -156,8 +156,14 @@ namespace DaggerfallWorkshop.Game.Questing
                 Symbol[] questors = parent.GetQuestors();
                 if (questors.Length > 0)
                     race = parent.GetPerson(questors[0]).Race;
+                else if (QuestMachine.Instance.LastNPCClicked != null)
+                {
+                    // %oth is used in some of the main quests before the questor is actually set. In this
+                    // case try to use the data from the last clicked NPC, which should be the questor.
+                    race = QuestMachine.Instance.LastNPCClicked.Data.race;
+                }
 
-                // Fallback to race of current region 
+                // Fallback to race of current region
                 if (race == Races.None)
                     race = GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
 
