@@ -68,7 +68,7 @@ The Mages Guild has sent someone to deal with that mad wizard in ___mondung_.
 Everyone's just holding their breath, waiting for that wizard's next move.
 
 RumorsPostfailure:  [1006]
-Not even the Mages Guild could do anything about that crazed sorceror.
+Not even the Mages Guild could do anything about that crazed sorcerer.
 <--->
 No one knows where that _wizard_ is, but nowhere's safe until %g1's gone.
 

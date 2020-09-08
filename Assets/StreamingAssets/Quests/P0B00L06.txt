@@ -135,11 +135,11 @@ Message:  1015
 <ce>                 right one for this, being sufficiently
 <ce>                 mettlesome, thewy, in short, puissant
 <ce>                            to aid _mage_, a
-<ce>                  sorceror who fears that %g3 research
+<ce>                  sorcerer who fears that %g3 research
 <ce>                  has attracted the, ah, inquisitorial
 <ce>                attention of a local tribe of vampires.
 <ce>                  Too much work had made the poor old
-<ce>                 sorceror, well, oversensitive. If you
+<ce>                 sorcerer, well, oversensitive. If you
 <ce>                   would just pop on over to %g3 lab,
 <ce>                       ___mondung_, and get these
 <ce>                 precious notes, I would be very, very,
@@ -206,7 +206,7 @@ Message:  1020
  about increasing funding. Going nowhere.
 
 Message:  1021
-%qdt: A sorceror named
+%qdt: A sorcerer named
  _mage_ has come close
  to major discoveries about %vam
  and _vamp_ has sent me
