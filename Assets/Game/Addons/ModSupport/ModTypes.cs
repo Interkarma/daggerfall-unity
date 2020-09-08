@@ -55,13 +55,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         [SerializeField]
         internal ModContributes Contributes;
+#pragma warning restore 649
 
         /// <summary>
         /// A list of mods that this mod depends on or is otherwise compatible with only if certain conditions are met.
         /// </summary>
         [SerializeField]
-        internal ModDependency[] Dependencies;
-#pragma warning restore 649
+        public ModDependency[] Dependencies;
 
         public ModInfo()
         {
@@ -106,26 +106,25 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     /// - Optional peer dependency: if is available it must follow specified criteria but higher priority is not required.
     /// </summary>
     [Serializable]
-    internal struct ModDependency
+    public struct ModDependency
     {
-#pragma warning disable 649
         /// <summary>
         /// Name of target mod.
         /// </summary>
         [SerializeField]
-        internal string Name;
+        public string Name;
 
         /// <summary>
         /// If true, target mod doesn't need to be available, but must validate these criteria if it is.
         /// </summary>
         [SerializeField]
-        internal bool IsOptional;
+        public bool IsOptional;
 
         /// <summary>
         /// If true, target mod can be positioned anywhere in the load order, otherwise must be positioned above.
         /// </summary>
         [SerializeField]
-        internal bool IsPeer;
+        public bool IsPeer;
 
         /// <summary>
         /// If not null this string is the minimum accepted version with format X.Y.Z.
@@ -133,8 +132,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// For example "1.0.0" is equal to "1.0.0-rc.1".
         /// </summary>
         [SerializeField]
-        internal string Version;
-#pragma warning restore 649
+        public string Version;
     }
 
     /// <summary>

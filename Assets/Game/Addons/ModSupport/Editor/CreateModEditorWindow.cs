@@ -136,6 +136,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         void OnGUI()
         {
+            bool openDependenciesWindow = false;
             EditorGUI.indentLevel++;
 
             GUILayoutHelper.Horizontal(() =>
@@ -276,6 +277,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         GUILayout.Space(300);
                     });
 
+                    EditorGUILayout.Space();
+
+                    GUILayoutHelper.Horizontal(() =>
+                    {
+                        EditorGUILayout.LabelField(new GUIContent("Mod Dependencies: "), titleStyle);
+                        if (GUILayout.Button("Open Dependencies Editor"))
+                            openDependenciesWindow = true;
+                        GUILayout.Space(300);
+                    });
                 });
 
                 EditorGUILayout.Space();
@@ -398,6 +408,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 }
 
             });
+
+            if (openDependenciesWindow)
+            {
+                var modDependenciesWindow = CreateInstance<ModDependenciesEditorWindow>();
+                modDependenciesWindow.SetModinfo(modInfo);
+                modDependenciesWindow.ShowUtility();
+            }
         }
 
 
