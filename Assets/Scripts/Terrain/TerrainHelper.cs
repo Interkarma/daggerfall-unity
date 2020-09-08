@@ -52,6 +52,10 @@ namespace DaggerfallWorkshop
             return string.Format("DaggerfallTerrain [{0},{1}]", mapPixelX, mapPixelY);
         }
 
+        // Allow mods to set extra blend space around locations for placing content, specifed in # of tiles
+        public delegate int AdditionalLocationBlendSpace(DFRegion.LocationTypes locationType);
+        public static AdditionalLocationBlendSpace ExtraBlendSpace = (locationType) => { return 0; };
+
         /// <summary>
         /// Gets map pixel data for any location in world.
         /// </summary>
@@ -90,6 +94,7 @@ namespace DaggerfallWorkshop
                 mapLocationIndex = mapIndex,
                 locationID = id,
                 locationName = locationName,
+                LocationType = mapSummary.LocationType
             };
 
             return mapPixel;
@@ -203,6 +208,14 @@ namespace DaggerfallWorkshop
                 hDim = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension,
                 locationRect = mapPixel.locationRect,
             };
+            int extraBlendSpace = ExtraBlendSpace(mapPixel.LocationType);
+            if (extraBlendSpace > 0)
+            {
+                blendLocationTerrainJob.locationRect.xMin -= extraBlendSpace;
+                blendLocationTerrainJob.locationRect.xMax += extraBlendSpace;
+                blendLocationTerrainJob.locationRect.yMin -= extraBlendSpace;
+                blendLocationTerrainJob.locationRect.yMax += extraBlendSpace;
+            }
             return blendLocationTerrainJob.Schedule(dependencies);
         }
 
