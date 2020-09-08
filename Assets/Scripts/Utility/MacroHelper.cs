@@ -541,8 +541,15 @@ namespace DaggerfallWorkshop.Utility
         }
 
         private static string CityName2(IMacroContextProvider mcp)
-        {   // %cn2 (only used in msg #200 where cn and cn2 are random? places)
-            throw new NotImplementedException();
+        {   // %cn2 (only used in msg #200 where cn2 is a random? city)
+            // Return first city of the region, unless it's current location, not worth doing more as the macro is hardly ever used.
+            DFRegion dfRegion = GameManager.Instance.PlayerGPS.CurrentRegion;
+            for (int i = 0; i < dfRegion.LocationCount; i++)
+            {
+                if (GameManager.Instance.PlayerGPS.CurrentLocationIndex != i && dfRegion.MapTable[i].LocationType == DFRegion.LocationTypes.TownCity)
+                    return dfRegion.MapNames[i];
+            }
+            return "Daggerfall";
         }
 
         private static string CurrentRegion(IMacroContextProvider mcp)
