@@ -687,29 +687,30 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 for (int i = 0; i < mods.Length; i++)
                 {
-                    try
+                    List<SetupOptions> setupOptions = mods[i].FindModLoaders(state);
+
+                    if (setupOptions == null)
                     {
-                        List<SetupOptions> setupOptions = mods[i].FindModLoaders(state);
+                        Debug.Log("No mod loaders found for mod: " + mods[i].Title);
+                        continue;
+                    }
 
-                        if (setupOptions == null)
-                        {
-                            Debug.Log("No mod loaders found for mod: " + mods[i].Title);
+                    for (int j = 0; j < setupOptions.Count; j++)
+                    {
+                        SetupOptions options = setupOptions[j];
+                        MethodInfo mi = options.mi;
+                        if (mi == null)
                             continue;
-                        }
+                        InitParams initParams = new InitParams(options.mod, ModManager.Instance.GetModIndex(options.mod.Title), LoadedModCount);
 
-                        for (int j = 0; j < setupOptions.Count; j++)
+                        try
                         {
-                            SetupOptions options = setupOptions[j];
-                            MethodInfo mi = options.mi;
-                            if (mi == null)
-                                continue;
-                            InitParams initParams = new InitParams(options.mod, ModManager.Instance.GetModIndex(options.mod.Title), LoadedModCount);
                             mi.Invoke(null, new object[] { initParams });
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.LogError(ex.Message);
+                        catch (TargetInvocationException e)
+                        {
+                            Debug.LogError($"Exception has been thrown by entry point \"{mi.Name}\" of mod \"{mods[i].Title}\":\n{e.InnerException}");
+                        }
                     }
                 }
 #if DEBUG
