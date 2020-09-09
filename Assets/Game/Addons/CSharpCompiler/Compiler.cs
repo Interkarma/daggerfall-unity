@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -50,11 +50,14 @@ namespace DaggerfallWorkshop.Game.Utility
             //assemblies, as assembly.Location will fail for them
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                try
+                if (!assembly.IsDynamic)
                 {
-                    compilerparams.ReferencedAssemblies.Add(assembly.Location);
+                    // Precompiled assemblies loaded from bytes aren't dynamic but don't have a location
+                    // Prevents "assemblyString cannot have zero length"
+                    if (!string.IsNullOrWhiteSpace(assembly.Location))
+                        compilerparams.ReferencedAssemblies.Add(assembly.Location);
                 }
-                catch
+                else
                 {
                     if (DynamicAssemblyResolver.ContainsKey(assembly.FullName))
                         compilerparams.ReferencedAssemblies.Add(assembly.GetName().FullName);

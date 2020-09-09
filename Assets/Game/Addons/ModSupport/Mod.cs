@@ -852,7 +852,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     bool isSource = false;
                     bool isPrecompiled = false;
 
-                    if (assetName.EndsWith(".cs", StringComparison.Ordinal))
+                    if (assetName.EndsWith(".cs.txt", StringComparison.Ordinal))
                     {
                         isSource = true;
                         isPrecompiled = false;
