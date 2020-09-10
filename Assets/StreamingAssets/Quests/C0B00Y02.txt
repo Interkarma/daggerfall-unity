@@ -374,6 +374,7 @@ _clickpriest_ task:
 _rebuff_ task:
 	when _clickpriest_ and not _firstclickchild_ and not _rescueitem_ and not _exorcise_ and not _givenitem_
 	say 1018 
+	clear _clickpriest_
 
 _priestgivesitem_ task:
 	when _clickpriest_ and _firstclickchild_ and not _exorcise_ and not _rescueitem_
@@ -435,4 +436,4 @@ _qgclicked_ task:
 
 _clearclick_ task:
 	when _qgclicked_ and not _rescueitem_ and not _exorcise_
-	clear _qgclicked_
+	clear _qgclicked_ _clearclick_
