@@ -41,7 +41,7 @@ QuestComplete:  [1004]
 <ce>                   membership in the knightly order.
 
 RumorsDuringQuest:  [1005]
-That _monster_ is a real nuisance in %cn.
+That _monster_ is a real nuisance in ___qgiver_.
 <--->
 Many wish the knights would do something about that _monster_.
 

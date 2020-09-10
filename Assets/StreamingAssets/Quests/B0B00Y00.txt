@@ -66,14 +66,14 @@ QuestComplete:  [1004]
 <ce>                             be forgotten.
 
 RumorsDuringQuest:  [1005]
-Poor Princess _lady_. When her father gets to %cn, he will be furious.
+Poor Princess _lady_. When her father gets to ___qgiver_, he will be furious.
 <--->
 _qgiver_ promised Princess _lady_'s father that she would be protected.
 
 RumorsPostfailure:  [1006]
 The Princess managed to escape ___mondung_ by herself. Some knightly valor.
 <--->
-The Princess just wandered in %cn by herself, pale from bloodloss.
+The Princess just wandered in ___qgiver_ by herself, pale from bloodloss.
 
 RumorsPostsuccess:  [1007]
 The knights are celebrating the heroism of the great %ra who rescued _lady_.
@@ -133,7 +133,7 @@ Message:  1015
 
 -- Symbols used in the QRC file:
 --
---               %cn occurs 2 times.
+--               ___qgiver_ occurs 2 times.
 --              %god occurs 3 times.
 --              %pcf occurs 5 times.
 --              %pcn occurs 1 time.
