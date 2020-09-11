@@ -215,9 +215,9 @@ _vamp_ is the =vamp_ I met over at _hookerhouse_. Nice enough, but spooky.
 _vamp_ is the name of the =vamp_ staying over at _hookerhouse_.
 
 Message:  1017
-_vamp_ is one of the %___bookstore_, sent to ___bookstore_ to eliminate the mad Slayer.
+_vamp_ is one of the %vcn, sent to ___bookstore_ to eliminate the mad Slayer.
 <--->
-_vamp_ is a %___bookstore_ vampire here to stop the risk to %g3 security, the Slayer.
+_vamp_ is a %vcn vampire here to stop the risk to %g3 security, the Slayer.
 
 Message:  1018
 Poor _widow_ stays at _widowhouse_ every since the Slayer got %g3 brother.
@@ -313,7 +313,7 @@ Message:  1025
  trap if there ever was one.
 
 Message:  1026
-<ce>                 Which letter brought you to me, %___bookstore_?
+<ce>                 Which letter brought you to me, %pcn?
 <ce>             You are probably aware that I wrote them all.
 <ce>                      After _contact_ refused to
 <ce>           listen to my polite warnings about investigating
@@ -348,7 +348,7 @@ Message:  1050
 <ce>                   By killing _rippername_, you have
 <ce>                 aided both %reg and myself. For this,
 <ce>                  I give you a _reward2_. Perhaps we
-<ce>                     may meet again one day, %___bookstore_.
+<ce>                     may meet again one day, %pcn.
 <ce>                  You have intrigued me in our brief
 <ce>              acquaintance. May the night keep you safe.
 
@@ -364,12 +364,12 @@ Message:  1050
 --              %god occurs 3 times.
 --               %mn occurs 3 times.
 --              %pcf occurs 11 times.
---              %___bookstore_ occurs 2 times.
+--              %pcn occurs 2 times.
 --             %qdat occurs 6 times.
 --               %ra occurs 1 time.
 --              %reg occurs 10 times.
 --               %rt occurs 1 time.
---              %___bookstore_ occurs 3 times.
+--              %vcn occurs 3 times.
 --         =contact_ occurs 2 times.
 --           =total_ occurs 2 times.
 --            =vamp_ occurs 4 times.
