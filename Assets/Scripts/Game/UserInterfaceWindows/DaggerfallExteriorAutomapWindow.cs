@@ -470,7 +470,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 automapBinding = InputManager.Instance.GetBinding(InputManager.Actions.AutoMap);
 
                 // Store toggle closed binding for this window
-                HotkeySequence_toggleClose = new HotkeySequence(automapBinding, HotkeySequence.KeyModifiers.None);
+                HotkeySequence_toggleClose = new HotkeySequence(automapBinding, HotkeySequence.KeyModifiers.None, true);
                 // update hotkey sequences taking current toggleClosedBinding into account
                 SetupHotkeySequences();
                 // update button tool tip texts - since hotkeys changed
