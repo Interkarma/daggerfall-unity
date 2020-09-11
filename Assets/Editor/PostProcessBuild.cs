@@ -9,7 +9,7 @@ public class PostProcessBuild
     public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
     {
         //const string defaultModsFolderName = "StreamingAssets";
-        const string manualFileName = "Daggerfall Unity Manual.pdf";
+        //const string manualFileName = "Daggerfall Unity Manual.pdf";
         //const string readMeFilename = "readme.txt";
         //const string modReadMeText = "Place your .dfmod files in this folder for the mod system.";
 
@@ -37,7 +37,7 @@ public class PostProcessBuild
             //stream.Close();
 
             // Copy manual
-            FileUtil.CopyFileOrDirectory(Path.Combine("Assets/Docs", manualFileName), Path.Combine(pureBuildPath, manualFileName));
+            //FileUtil.CopyFileOrDirectory(Path.Combine("Assets/Docs", manualFileName), Path.Combine(pureBuildPath, manualFileName));
         }
     }
 }
