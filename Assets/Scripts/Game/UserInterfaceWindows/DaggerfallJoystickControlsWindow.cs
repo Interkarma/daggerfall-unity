@@ -241,7 +241,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //for "reset defaults" overload
         private void SetupKeybindButton(Button button, string action)
         {
-            button.Label.Text = UnsavedKeybindDict[action];
+            if (action == leftClickString || action == rightClickString)
+            {
+                var code = InputManager.Instance.ParseKeyCodeString(UnsavedKeybindDict[action]);
+                button.Label.Text = ControlsConfigManager.Instance.GetButtonText(code);
+
+                button.ToolTip = defaultToolTip;
+                button.SuppressToolTip = button.Label.Text != ControlsConfigManager.ElongatedButtonText;
+                button.ToolTipText = ControlsConfigManager.Instance.GetButtonText(code, true);
+            }
+            else
+                button.Label.Text = UnsavedKeybindDict[action];
+
             button.Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
         }
 
@@ -551,12 +562,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     }
                     else
                     {
-                        button.Label.Text = InputManager.Instance.GetKeyString(code);
+                        button.Label.Text = ControlsConfigManager.Instance.GetButtonText(code);
+                        button.SuppressToolTip = button.Label.Text != ControlsConfigManager.ElongatedButtonText;
+                        button.ToolTipText = ControlsConfigManager.Instance.GetButtonText(code, true);
                     }
 
                     string actionKey = button.Name;
 
-                    UnsavedKeybindDict[actionKey] = button.Label.Text;
+                    UnsavedKeybindDict[actionKey] = InputManager.Instance.GetKeyString(code);
                     CheckDuplicates();
                 }
                 else
