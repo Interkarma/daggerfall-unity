@@ -231,11 +231,15 @@ namespace DaggerfallWorkshop.Game
             if (button.Label.Text == KeyCode.None.ToString())
                 return;
 
-            DaggerfallMessageBox removeAssignmentBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow);
+            DaggerfallMessageBox removeAssignmentBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallUI.UIManager.TopWindow, true);
             removeAssignmentBox.PauseWhileOpen = true;
 
             string prompt = TextManager.Instance.GetLocalizedText("removeKeybind");
-            removeAssignmentBox.SetText(string.Format(prompt, button.Name, button.Label.Text));
+            var action = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), button.Name);
+            string text = GetButtonText(GetUnsavedBindingKeyCode(action), true);
+
+            removeAssignmentBox.SetText(string.Format(prompt, Regex.Replace(button.Name, "(?<=[a-z])([A-Z])", " $1", RegexOptions.Compiled).Trim(), text));
+
             removeAssignmentBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
             removeAssignmentBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No, true);
 
@@ -244,7 +248,6 @@ namespace DaggerfallWorkshop.Game
                 if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
                 {
                     button.Label.Text = KeyCode.None.ToString();
-                    var action = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), button.Name);
                     SetUnsavedBinding(action, button.Label.Text);
                     checkDuplicates();
                 }
