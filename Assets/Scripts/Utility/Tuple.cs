@@ -19,6 +19,11 @@ namespace DaggerfallWorkshop.Utility
             Second = b;
         }
 
+        public Tuple((T1, T2) valueTuple)
+            : this(valueTuple.Item1, valueTuple.Item2)
+        {
+        }
+
         public static Tuple<T1, T2> Make(T1 a, T2 b)
         {
             return new Tuple<T1, T2>(a, b);
@@ -27,6 +32,11 @@ namespace DaggerfallWorkshop.Utility
         public override string ToString()
         {
             return string.Format("First: {0}, Second: {1}", First, Second);
+        }
+
+        public (T1, T2) ToValueTuple()
+        {
+            return (First, Second);
         }
     }
 }
