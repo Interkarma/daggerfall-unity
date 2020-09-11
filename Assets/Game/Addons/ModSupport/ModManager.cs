@@ -587,6 +587,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         continue;
                     }
 
+                    if (string.IsNullOrWhiteSpace(modInfo.ModTitle))
+                    {
+                        Debug.LogError($"Discarded {manifestPath} because it doesn't have a valid title.");
+                        continue;
+                    }
+
                     if (mods.Any(x => x.ModInfo.GUID == modInfo.GUID))
                     {
                         Debug.LogWarningFormat("Ignoring virtual mod {0} because release mod is already loaded.", modInfo.ModTitle);
