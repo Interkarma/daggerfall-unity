@@ -70,6 +70,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
     readonly Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
     readonly Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
     readonly Color textColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+    readonly Color disabledModTextColor = new Color(0.35f, 0.35f, 0.35f, 1);
+    readonly Color disabledButtonBackground = new Color(0.35f, 0.35f, 0.35f, 0.4f);
 
     Stage currentStage = Stage.None;
     bool moveNextStage = false;
@@ -119,7 +121,6 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         modList.SelectedShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
         modList.SelectedShadowColor = Color.black;
         modList.OnScroll += ModList_OnScroll;
-        modList.MaxCharacters = 20;
         ModListPanel.Components.Add(modList);
 
         modListScrollBar.Size = new Vector2(5, 115);
@@ -334,7 +335,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             modsett.modInfo = mods[i].ModInfo;
             modsett.enabled = mods[i].Enabled;
             modSettings[i] = modsett;
-            modList.AddItem(modsett.modInfo.ModTitle);
+            modList.AddItem(modsett.modInfo.ModTitle, out ListBox.ListItem item);
+            item.textColor = modsett.enabled ? unselectedTextColor : disabledModTextColor;
         }
 
         if (modList.SelectedIndex < 0 || modList.SelectedIndex >= modList.Count)
@@ -380,10 +382,8 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             modTitleLabel.Text += " (debug)";
 #endif
 
-        if (ms.enabled)
-            modList.SelectedTextColor = selectedTextColor;
-        else
-            modList.SelectedTextColor = Color.red;
+        bool hasDescription = !string.IsNullOrWhiteSpace(ms.modInfo.ModDescription);
+        showModDescriptionButton.BackgroundColor = hasDescription ? textColor : disabledButtonBackground;
 
         // Update buttons
         if (mod.HasSettings)
@@ -684,7 +684,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
     {
         if (modSettings == null || modSettings.Length < 1)
             return;
-        else if (string.IsNullOrEmpty(modSettings[currentSelection].modInfo.ModDescription))
+        else if (string.IsNullOrWhiteSpace(modSettings[currentSelection].modInfo.ModDescription))
             return;
 
         ModDescriptionMessageBox = new DaggerfallMessageBox(uiManager, this, true);
@@ -716,6 +716,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
             return;
 
         modSettings[modList.SelectedIndex].enabled = modEnabledCheckBox.IsChecked;
+        modList.SelectedValue.textColor = modEnabledCheckBox.IsChecked ? unselectedTextColor : disabledModTextColor;
         UpdateModPanel();
     }
 
