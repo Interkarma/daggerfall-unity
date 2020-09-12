@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game
         const int numAxes = 16;
         public const int startingAxisKeyCode = 5000;
         public const int startingComboKeyCode = 65537;
+        const int totalHeldKeys = 6;
 
         //if the force is greater than this threshold, round it up to 1
         float joystickMovementThreshold = 0.95F;
@@ -73,8 +74,8 @@ namespace DaggerfallWorkshop.Game
 
         List<Actions> currentActions = new List<Actions>();
         List<Actions> previousActions = new List<Actions>();
-        KeyCode[] heldKeys = new KeyCode[5];
-        KeyCode[] previousKeys = new KeyCode[5];
+        KeyCode[] heldKeys = new KeyCode[totalHeldKeys];
+        KeyCode[] previousKeys = new KeyCode[totalHeldKeys];
         KeyCode heldModifier;
         int heldKeyCounter;
         int previousKeyCounter;
@@ -393,9 +394,9 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            getKeyMethod = (k) => ContainsKeyCode(heldKeys, k, true);
-            getKeyDownMethod = (k) => !ContainsKeyCode(previousKeys, k, false) && ContainsKeyCode(heldKeys, k, true);
-            getKeyUpMethod = (k) => ContainsKeyCode(previousKeys, k, false) && !ContainsKeyCode(heldKeys, k, true);
+            getKeyMethod = (k) => heldKeyCounter > 0 && ContainsKeyCode(heldKeys, k, true);
+            getKeyDownMethod = (k) => heldKeyCounter > 0 && (previousKeyCounter <= 0 || !ContainsKeyCode(previousKeys, k, false)) && ContainsKeyCode(heldKeys, k, true);
+            getKeyUpMethod = (k) => previousKeyCounter > 0 && ContainsKeyCode(previousKeys, k, false) && (heldKeyCounter <= 0 || !ContainsKeyCode(heldKeys, k, true));
 
             // Read acceleration setting
             moveAcceleration = DaggerfallUnity.Settings.MovementAcceleration;
@@ -1016,16 +1017,22 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetKey(KeyCode k, bool useSecondary = true)
         {
+            if (heldKeyCounter == 0)
+                return false;
             return GetUnaryKey(k, getKeyMethod, true) || (useSecondary && GetUnaryKey(GetSecondaryBinding(k), getKeyMethod, true));
         }
 
         public bool GetKeyDown(KeyCode k, bool useSecondary = true)
         {
+            if (heldKeyCounter == 0)
+                return false;
             return GetUnaryKey(k, getKeyDownMethod, true) || (useSecondary && GetUnaryKey(GetSecondaryBinding(k), getKeyDownMethod, true));
         }
 
         public bool GetKeyUp(KeyCode k, bool useSecondary = true)
         {
+            if (previousKeyCounter == 0)
+                return false;
             return GetUnaryKey(k, getKeyUpMethod, false) || (useSecondary && GetUnaryKey(GetSecondaryBinding(k), getKeyUpMethod, false));
         }
 
@@ -1627,7 +1634,7 @@ namespace DaggerfallWorkshop.Game
 
         void AddHeldKey(KeyCode[] keys, KeyCode key)
         {
-            if (heldKeyCounter >= 5)
+            if (heldKeyCounter >= totalHeldKeys)
                 return;
 
             keys[heldKeyCounter++] = key;
