@@ -542,7 +542,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             SetWaitingForInput(false);
 
-            KeyCode code = InputManager.Instance.LastKeyDown;
+            KeyCode code = InputManager.Instance.LastSingleKeyDown;
 
             if (code != KeyCode.None)
             {

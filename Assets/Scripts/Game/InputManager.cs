@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game
         //there are only 16 recognized axes
         const int numAxes = 16;
         public const int startingAxisKeyCode = 5000;
+        public const int startingComboKeyCode = 65537;
 
         //if the force is greater than this threshold, round it up to 1
         float joystickMovementThreshold = 0.95F;
@@ -38,15 +39,7 @@ namespace DaggerfallWorkshop.Game
         public Texture2D controllerCursorImage;
 
         Dictionary<int, String> axisKeyCodeStrings = new Dictionary<int, String>();
-        Dictionary<int, String> axisKeyCodeToInputAxis = new Dictionary<int, String>();
-        Dictionary<int, System.Func<bool>> axisKeyCodePresses = new Dictionary<int, System.Func<bool>>();
-
-        //These three dictionaries are built for InputManager.GetAxisRaw(...), specifically to
-        //deal with raising KeyUp events, since Unity does not provide an "OnAxisValueChange" event
-        Dictionary<int, float> previousAxisRaw = new Dictionary<int, float>();
-        List<KeyValuePair<int, float>> previousAxisRawQueue = new List<KeyValuePair<int, float>>();
-        Dictionary<int, bool> upAxisRaw = new Dictionary<int, bool>();
-        Dictionary<int, bool> downAxisRaw = new Dictionary<int, bool>();
+        String[] axisKeyCodeToInputAxis = new String[numAxes * 2];
 
         const string keyBindsFilename = "KeyBinds.txt";
 
@@ -54,7 +47,7 @@ namespace DaggerfallWorkshop.Game
         const float inputWaitTotal = 0.0833f;
         const float moveAccelerationConst = 9.8f;
 
-        IList keyCodeList;
+        KeyCode[] keyCodeList;
         KeyCode[] reservedKeys = new KeyCode[] { };
 
         // KeyCode linkage between primary and secondary keybinds
@@ -75,9 +68,22 @@ namespace DaggerfallWorkshop.Game
         KeyCode[] joystickUICache = new KeyCode[3]; //leftClick, rightClick, MiddleClick
         String[] cameraAxisBindingCache = new String[2];
         String[] movementAxisBindingCache = new String[2];
+        Dictionary<int, bool> modifierHeldFirstDict = new Dictionary<int, bool>();
+        Dictionary<int, Tuple<KeyCode, KeyCode>> comboCache = new Dictionary<int, Tuple<KeyCode, KeyCode>>();
 
         List<Actions> currentActions = new List<Actions>();
         List<Actions> previousActions = new List<Actions>();
+        KeyCode[] heldKeys = new KeyCode[5];
+        KeyCode[] previousKeys = new KeyCode[5];
+        KeyCode heldModifier;
+        int heldKeyCounter;
+        int previousKeyCounter;
+
+        // Storing these methods to prevent GC alloc in the GetKey methods
+        Func<KeyCode, bool> getKeyMethod;
+        Func<KeyCode, bool> getKeyDownMethod;
+        Func<KeyCode, bool> getKeyUpMethod;
+
         bool isPaused;
         bool wasPaused;
         float inputWaitTimer;
@@ -136,7 +142,8 @@ namespace DaggerfallWorkshop.Game
             set { isPaused = value; }
         }
 
-        public IList KeyCodeList {
+        public KeyCode[] KeyCodeList
+        {
             get { return GetKeyCodeList(); }
         }
 
@@ -224,6 +231,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         public KeyCode LastKeyDown { get; private set; }
+        public KeyCode LastSingleKeyDown { get; private set; }
 
         public bool CursorVisible
         {
@@ -385,6 +393,10 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
+            getKeyMethod = (k) => ContainsKeyCode(heldKeys, k, true);
+            getKeyDownMethod = (k) => !ContainsKeyCode(previousKeys, k, false) && ContainsKeyCode(heldKeys, k, true);
+            getKeyUpMethod = (k) => ContainsKeyCode(previousKeys, k, false) && !ContainsKeyCode(heldKeys, k, true);
+
             // Read acceleration setting
             moveAcceleration = DaggerfallUnity.Settings.MovementAcceleration;
 
@@ -392,8 +404,7 @@ namespace DaggerfallWorkshop.Game
             for (int i = startingAxisKeyCode; i < startingAxisKeyCode + numAxes * 2; i++)
             {
                 axisKeyCodeStrings[i] = AxisKeyCodeToString(i);
-                axisKeyCodePresses[i] = AxisKeyCodePress(i);
-                axisKeyCodeToInputAxis[i] = AxisKeyCodeToInputAxis(i);
+                axisKeyCodeToInputAxis[i % startingAxisKeyCode] = AxisKeyCodeToInputAxis(i);
             }
 
             try
@@ -424,9 +435,7 @@ namespace DaggerfallWorkshop.Game
             // Clear current actions
             currentActions.Clear();
 
-            foreach (var kv in previousAxisRawQueue)
-                previousAxisRaw[kv.Key] = kv.Value;
-            previousAxisRawQueue.Clear();
+            PollInput();
 
             // Clear look and mouse axes
             mouseX = 0;
@@ -992,32 +1001,32 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetMouseButtonDown(int button)
         {
-            return Input.GetMouseButtonDown(button) || (EnableController && GetSingleKeyDown(joystickUICache[button]));
+            return Input.GetMouseButtonDown(button) || (EnableController && GetKeyDown(joystickUICache[button], false));
         }
 
         public bool GetMouseButtonUp(int button)
         {
-            return Input.GetMouseButtonUp(button) || (EnableController && GetSingleKeyUp(joystickUICache[button]));
+            return Input.GetMouseButtonUp(button) || (EnableController && GetKeyUp(joystickUICache[button], false));
         }
 
         public bool GetMouseButton(int button)
         {
-            return Input.GetMouseButton(button) || (EnableController && GetSingleKey(joystickUICache[button]));
+            return Input.GetMouseButton(button) || (EnableController && GetKey(joystickUICache[button], false));
         }
 
-        public bool GetKey(KeyCode key, bool useSecondary = true)
+        public bool GetKey(KeyCode k, bool useSecondary = true)
         {
-            return GetSingleKey(key) || (useSecondary && GetSingleKey(GetSecondaryBinding(key)));
+            return GetUnaryKey(k, getKeyMethod, true) || (useSecondary && GetUnaryKey(GetSecondaryBinding(k), getKeyMethod, true));
         }
 
-        public bool GetKeyDown(KeyCode key, bool useSecondary = true)
+        public bool GetKeyDown(KeyCode k, bool useSecondary = true)
         {
-            return GetSingleKeyDown(key) || (useSecondary && GetSingleKeyDown(GetSecondaryBinding(key)));
+            return GetUnaryKey(k, getKeyDownMethod, true) || (useSecondary && GetUnaryKey(GetSecondaryBinding(k), getKeyDownMethod, true));
         }
 
-        public bool GetKeyUp(KeyCode key, bool useSecondary = true)
+        public bool GetKeyUp(KeyCode k, bool useSecondary = true)
         {
-            return GetSingleKeyUp(key) || (useSecondary && GetSingleKeyUp(GetSecondaryBinding(key)));
+            return GetUnaryKey(k, getKeyUpMethod, false) || (useSecondary && GetUnaryKey(GetSecondaryBinding(k), getKeyUpMethod, false));
         }
 
         public bool AnyKeyDown
@@ -1025,13 +1034,81 @@ namespace DaggerfallWorkshop.Game
             get
             {
                 foreach (KeyCode k in KeyCodeList)
-                    if (GetKeyDown(k)) return true;
+                    if (GetUnaryKey(k, getKeyDownMethod, true, false)) return true;
                 return false;
             }
         }
 
+        public bool AnyKeyUp
+        {
+            get
+            {
+                foreach (KeyCode k in KeyCodeList)
+                    if (GetUnaryKey(k, getKeyUpMethod, false, false)) return true;
+                return false;
+            }
+        }
+
+        public KeyCode GetComboCode(KeyCode a, KeyCode b)
+        {
+            uint x = (uint)a;
+            uint y = (uint)b;
+
+            // Only positive 16-bit keycodes <= 32767 allowed to be used for combos.
+            // We want our combo code to be a positive signed integer to easily check against the const startingComboKeyCode,
+            // so we only allow keycodes <= 32767 to avoid the most significant bit being 1 and making the combo code negative
+            if (x > 32767 || y > 32767 || x < 0 || y < 0)
+                return KeyCode.None;
+
+            //from left-to-right: bits 0-15 are the first, 16-31 are the second
+            return (KeyCode)(x << 16 | y);
+        }
+
+        public KeyCode GetComboCode(String s)
+        {
+            var splice = s.Split('+');
+            if (splice.Length < 2)
+                return KeyCode.None;
+
+            var mod = ParseKeyCodeString(splice[0].TrimEnd());
+            var key = ParseKeyCodeString(splice[1].TrimStart());
+
+            if (mod == KeyCode.None || key == KeyCode.None)
+                return KeyCode.None;
+
+            return GetComboCode(mod, key);
+        }
+
+        public Tuple<KeyCode, KeyCode> GetCombo(KeyCode comboCode)
+        {
+            Tuple<KeyCode, KeyCode> cb;
+            if (!comboCache.TryGetValue((int)comboCode, out cb))
+            {
+                uint a = (uint)comboCode >> 16;
+                uint b = ((uint)comboCode << 16) >> 16;
+
+                cb = new Tuple<KeyCode, KeyCode>((KeyCode)a, (KeyCode)b);
+                comboCache[(int)comboCode] = cb;
+            }
+
+            return cb;
+        }
+
+        public String GetComboString(KeyCode comboCode)
+        {
+            var c = GetCombo(comboCode);
+            return GetComboString(c.Item1, c.Item2);
+        }
+
+        public String GetComboString(KeyCode a, KeyCode b)
+        {
+            return String.Format("{0} + {1}", GetKeyString(a), GetKeyString(b));
+        }
+
         public String GetKeyString(KeyCode key)
         {
+            if ((int)key >= startingComboKeyCode)
+                return GetComboString(key) ?? key.ToString();
             if (axisKeyCodeStrings.ContainsKey((int)key))
                 return axisKeyCodeStrings[(int)key];
             else
@@ -1046,7 +1123,10 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                return (KeyCode)axisKeyCodeStrings.FirstOrDefault(x => x.Value == s).Key;
+                var axis = (KeyCode)axisKeyCodeStrings.FirstOrDefault(x => x.Value == s).Key;
+                if (axis == KeyCode.None)
+                    return GetComboCode(s);
+                return axis;
             }
         }
 
@@ -1108,6 +1188,14 @@ namespace DaggerfallWorkshop.Game
             primarySecondaryKeybindDict.Clear();
             foreach (Actions a in Enum.GetValues(typeof(Actions)))
                 MapSecondaryBindings(a);
+
+            var mods = primarySecondaryKeybindDict.Keys.Where(x => (int)x >= startingComboKeyCode);
+
+            modifierHeldFirstDict.Clear();
+            foreach (var key in mods)
+            {
+                modifierHeldFirstDict[(int)this.GetCombo((KeyCode)key).Item1] = false;
+            }
         }
 
         KeyCode GetSecondaryBinding(KeyCode a)
@@ -1327,46 +1415,160 @@ namespace DaggerfallWorkshop.Game
         }
 
         // returns a list of all the Unity Input.KeyCodes and the custom axis KeyCodes
-        IList GetKeyCodeList()
+        KeyCode[] GetKeyCodeList()
         {
             if (keyCodeList != null)
                 return keyCodeList;
 
-            List<KeyCode> list = new List<KeyCode>();
+            HashSet<KeyCode> list = new HashSet<KeyCode>();
 
             foreach (var e in Enum.GetValues(typeof(KeyCode)))
-                list.Add((KeyCode)e);
+            {
+                var k = (KeyCode)e;
+                if (k < KeyCode.Joystick1Button0 || k > KeyCode.Joystick8Button19)
+                    list.Add(k);
+                else
+                    list.Add(ConvertJoystickButtonKeyCode(k));
+            }
 
-            foreach (var k in axisKeyCodePresses.Keys)
+            foreach (var k in axisKeyCodeStrings.Keys)
                 list.Add((KeyCode)k);
 
-            keyCodeList = list;
+            // Remove keys that require a 'shift'
+            list.Remove(KeyCode.Tilde);
+            list.Remove(KeyCode.None);
+            list.Remove(KeyCode.Exclaim);
+            list.Remove(KeyCode.At);
+            list.Remove(KeyCode.Hash);
+            list.Remove(KeyCode.Dollar);
+            list.Remove(KeyCode.Percent);
+            list.Remove(KeyCode.Caret);
+            list.Remove(KeyCode.Ampersand);
+            list.Remove(KeyCode.Asterisk);
+            list.Remove(KeyCode.LeftParen);
+            list.Remove(KeyCode.RightParen);
+            list.Remove(KeyCode.Underscore);
+            list.Remove(KeyCode.Plus);
+            list.Remove(KeyCode.Pipe);
+
+            list.Remove(KeyCode.LeftCurlyBracket);
+            list.Remove(KeyCode.RightCurlyBracket);
+            list.Remove(KeyCode.Colon);
+            list.Remove(KeyCode.DoubleQuote);
+
+            list.Remove(KeyCode.Less);
+            list.Remove(KeyCode.Greater);
+            list.Remove(KeyCode.Question);
+
+            list.Remove(KeyCode.Numlock);
+
+            keyCodeList = list.ToArray();
 
             return keyCodeList;
         }
 
-        bool GetSingleKey(KeyCode key)
+        // Checks whether the modifier is being held solely without any other keys that are combo'd to that modifier
+        // E.g. 'LeftShift' is a modifier, LeftShift+K jumps, LeftShift+L opens a menu. It checks to make sure that 
+        // either 'K' or 'L' are not being held. It will ignore keys that are not combo'd to it, like 'W' for forward.
+        // It will also check to make sure no other modifiers are being held.
+        bool ModifierOnlyHeld(KeyCode modifier)
         {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            var k = (((int)conv) < startingAxisKeyCode && Input.GetKey(conv)) || GetAxisKey((int)conv);
-            if (k)
-                LastKeyDown = conv;
-            return k;
+            if (heldKeys.Length == 1)
+                return heldKeys[0] == modifier;
+            else if (heldKeys.Length > 1)
+            {
+                for (int i = 0; i < heldKeyCounter; i++)
+                {
+                    var k = heldKeys[i];
+                    if (modifier != k
+                    && (primarySecondaryKeybindDict.ContainsKey((int)GetComboCode(modifier, k))
+                        || modifierHeldFirstDict.ContainsKey((int)k)))
+                        return false;
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
-        bool GetSingleKeyDown(KeyCode key)
+        bool GetPollKey(KeyCode k)
         {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            var kd = (((int)conv) < startingAxisKeyCode && Input.GetKeyDown(conv)) || GetAxisKeyDown((int)conv);
-            if (kd)
-                LastKeyDown = conv;
-            return kd;
+            if ((int)k < startingAxisKeyCode)
+                return Input.GetKey(k);
+            else
+                return GetAxisKey((int)k);
         }
 
-        bool GetSingleKeyUp(KeyCode key)
+        bool GetAxisKey(int key)
         {
-            KeyCode conv = ConvertJoystickButtonKeyCode(key);
-            return (((int)conv) < startingAxisKeyCode && Input.GetKeyUp(conv)) || GetAxisKeyUp((int)conv);
+            if (!EnableController || key < startingAxisKeyCode)
+                return false;
+
+            if (key % 2 == 0)
+                return Input.GetAxisRaw(axisKeyCodeToInputAxis[key % startingAxisKeyCode]) > 0;
+            else
+                return Input.GetAxisRaw(axisKeyCodeToInputAxis[key % startingAxisKeyCode]) < 0;
+        }
+
+        bool GetUnaryKey(KeyCode k, System.Func<KeyCode, bool> method, bool keyDown, bool checkModHeldFirst = true)
+        {
+            if (k == KeyCode.None)
+                return false;
+            
+            bool hit = false;
+
+            // If this is a non-combo KeyCode
+            if ((int)k < startingComboKeyCode)
+            {
+                // If this key is not key'd up/down/held in the first place, stop and return false
+                if (!method(k))
+                    return false;
+
+                // Return false if we are checking that a modifier is being held, and that this key is combo'd with that modifier.
+                // E.g. 'space' is jump, 'LeftShift+Space' opens inventory. We want to ignore jumping if we were holding shift
+                // prior to pressing 'space' so that way we *only* open the inventory window.
+                if (checkModHeldFirst && heldModifier != KeyCode.None && modifierHeldFirstDict[(int)heldModifier]
+                    && primarySecondaryKeybindDict.ContainsKey((int)GetComboCode(heldModifier, k)))
+                        return false;
+
+                hit = true;
+            }
+            else
+            {
+                // Get the tuple combo of this keycode
+                var combo = GetCombo(k);
+                
+                // If the modifier is currently being held down (getKeyMethod)
+                if (GetUnaryKey(combo.Item1, getKeyMethod, keyDown))
+                {
+                    // If no other key that is combo'd with this modifier is being held, then set the modifier's flag
+                    // of being held first to true
+                    if (ModifierOnlyHeld(combo.Item1))
+                    {
+                        modifierHeldFirstDict[(int)combo.Item1] = true;
+                    }
+                }
+                else
+                {
+                    // else if the modifier is not being held down, set flag to false
+                    modifierHeldFirstDict[(int)combo.Item1] = false;
+                }
+
+                // This method should return true if the modifier was held first and the combo'd key has hit down/up/held
+                hit = modifierHeldFirstDict[(int)combo.Item1] && GetUnaryKey(combo.Item2, method, keyDown, false);
+            }
+
+            if (hit && keyDown)
+            {
+                LastKeyDown = k;
+
+                // Specifically made for the controls window that wants to grab individual keys when rebinding
+                if ((int)k < startingComboKeyCode)
+                    LastSingleKeyDown = k;
+            }
+
+            return hit;
         }
 
         //Converts all joystick KeyCodes to be controller-agnostic (e.g. "Joystick3Button0" to "JoystickButton0")
@@ -1410,90 +1612,62 @@ namespace DaggerfallWorkshop.Game
             return String.Concat("Axis", axisNum);
         }
 
-        //Returns a function to determine if an axis button has been pressed
-        System.Func<bool> AxisKeyCodePress(int key){
-            if (key < startingAxisKeyCode)
-                return () => false;
-
-            //even-numbered keys are positive axis, odd are negative
-            if (key % 2 == 0)
-                return () => InputManager.Instance.GetAxisRaw(key, 1) > 0;
-            else
-                return () => InputManager.Instance.GetAxisRaw(key, -1) < 0;
-        }
-
-        bool GetAxisKey(int key)
+        // Provides significant optimizations for polling
+        bool ContainsKeyCode(KeyCode[] keys, KeyCode key, bool heldKeys)
         {
-            return axisKeyCodePresses.ContainsKey(key) && axisKeyCodePresses[key]();
-        }
-
-        bool GetAxisKeyDown(int key)
-        {
-            if (key < startingAxisKeyCode)
-                return false;
-
-            //This is a hacky solution. Without this statement, when the game is paused on a window,
-            //the GetAxisRaw function will stop running (if there is nothing in that script updating
-            //for a "GetKey" or "GetKeyDown").
-
-            //Because it stops running, GetAxisKeyDown(...) will be unable to listen for that "up" event,
-            //(via the downAxisRaw dictionary), and thus if the user presses the toggle button on the window,
-            //it will do nothing.
-            axisKeyCodePresses[key]();
-            return downAxisRaw.ContainsKey(key) && downAxisRaw[key];
-        }
-
-        bool GetAxisKeyUp(int key)
-        {
-            if (key < startingAxisKeyCode)
-                return false;
-
-            //Same hacky solution as GetAxisKeyDown
-            axisKeyCodePresses[key]();
-
-            return upAxisRaw.ContainsKey(key) && upAxisRaw[key];
-        }
-
-        // Returns the raw axis value based on the custom axis KeyCode and input direction via signage
-        // Also updates upAxisRaw and downAxisRaw dictionaries to process GetAxisKeyDown and GetAxisKeyUp events
-        float GetAxisRaw(int keyCode, int signage)
-        {
-            if (!EnableController || keyCode < startingAxisKeyCode || !axisKeyCodeToInputAxis.ContainsKey(keyCode))
-                return 0;
-
-            String unityInputAxisString = axisKeyCodeToInputAxis[keyCode];
-
-            float ret = Input.GetAxisRaw(unityInputAxisString);
-
-            if (previousAxisRaw.ContainsKey(keyCode))
+            int len = heldKeys ? heldKeyCounter : previousKeyCounter;
+            for (int i = 0; i < len; i++)
             {
-                float prev = previousAxisRaw[keyCode];
-
-                // keyup -> if the previous frame captured input, but the current frame has not
-                bool statement = (prev != ret);
-                if (signage < 0)
-                    statement = prev < 0;
-                else if (signage > 0)
-                    statement = prev > 0;
-
-                upAxisRaw[keyCode] = (ret == 0 && statement);
-
-                // keydown -> if the previous frame did not captured input, but the current frame has
-                statement = (prev != ret);
-                if (signage < 0)
-                    statement = ret < 0;
-                else if (signage > 0)
-                    statement = ret > 0;
-
-                downAxisRaw[keyCode] = (prev == 0 && statement);
-
-                if (downAxisRaw[keyCode])
-                    LastKeyDown = (KeyCode)keyCode;
+                if (keys[i] == key)
+                    return true;
             }
 
-            previousAxisRawQueue.Add(new KeyValuePair<int, float>(keyCode, ret));
+            return false;
+        }
 
-            return ret;
+        void AddHeldKey(KeyCode[] keys, KeyCode key)
+        {
+            if (heldKeyCounter >= 5)
+                return;
+
+            keys[heldKeyCounter++] = key;
+        }
+
+        void SetPreviousKeys(KeyCode[] keys1, KeyCode[] keys2)
+        {
+            for (int i = 0; i < heldKeyCounter; i++)
+            {
+                keys1[i] = keys2[i];
+            }
+        }
+
+        void PollInput()
+        {
+            heldModifier = KeyCode.None;
+
+            previousKeyCounter = heldKeyCounter;
+            SetPreviousKeys(previousKeys, heldKeys);
+
+            // Clear current actions
+            heldKeyCounter = 0;
+
+            foreach (KeyCode k in KeyCodeList)
+            {
+                if (GetPollKey(k))
+                    AddHeldKey(heldKeys, k);
+
+                if (getKeyDownMethod(k))
+                    DaggerfallUI.Instance.OnKeyPress(k, true);
+
+                if (getKeyUpMethod(k))
+                    DaggerfallUI.Instance.OnKeyPress(k, false);
+            }
+
+            foreach (KeyCode modifier in modifierHeldFirstDict.Keys)
+            {
+                if (GetKey(modifier))
+                    heldModifier = modifier;
+            }
         }
 
         // Enumerate all keyboard actions in progress

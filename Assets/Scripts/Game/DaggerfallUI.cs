@@ -82,6 +82,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallFont[] daggerfallFonts = new DaggerfallFont[5];
         char lastCharacterTyped;
         KeyCode lastKeyCode;
+        bool processHotkeys;
         HotkeySequence.KeyModifiers lastKeyModifiers;
         bool hotkeySequenceProcessed = false;
         FadeBehaviour fadeBehaviour = null;
@@ -176,6 +177,8 @@ namespace DaggerfallWorkshop.Game
             get { return globalFilterMode; }
             set { globalFilterMode = value; }
         }
+
+        public Event KeyEvent { get; private set; } = new Event();
 
         public char LastCharacterTyped
         {
@@ -380,17 +383,13 @@ namespace DaggerfallWorkshop.Game
                 if (Event.current.character != (char)0)
                     lastCharacterTyped = Event.current.character;
 
-                if (Event.current.keyCode != KeyCode.None)
-                    lastKeyCode = Event.current.keyCode;
-
                 if (lastCharacterTyped > 255)
                     lastCharacterTyped = (char)0;
-
-                hotkeySequenceProcessed = ProcessHotKeySequences();
             }
 
-            if (Event.current.type == EventType.KeyUp)
+            if (processHotkeys)
             {
+                processHotkeys = false;
                 hotkeySequenceProcessed = ProcessHotKeySequences();
             }
 
@@ -415,6 +414,16 @@ namespace DaggerfallWorkshop.Game
                     RenderTexture.active = oldRT;
                 }
             }
+        }
+
+        public void OnKeyPress(KeyCode key, bool down)
+        {
+            KeyEvent.type = down ? EventType.KeyDown : EventType.KeyUp;
+            KeyEvent.keyCode = key;
+
+            if (down && key != KeyCode.None)
+                lastKeyCode = key;
+            processHotkeys = true;
         }
 
         private void InstantiatePersistentWindowInstances()

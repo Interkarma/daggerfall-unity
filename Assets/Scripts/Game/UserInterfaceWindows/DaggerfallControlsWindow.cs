@@ -392,27 +392,38 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 setWaitingForInput(true);
                 yield return null;
             }
+
+            KeyCode code1 = InputManager.Instance.LastSingleKeyDown;
+
+            yield return new WaitForSecondsRealtime(0.05f);
+
+            while (!InputManager.Instance.AnyKeyDown)
+            {
+                if (InputManager.Instance.AnyKeyUp)
+                    break;
+
+                setWaitingForInput(true);
+                yield return null;
+            }
+
             setWaitingForInput(false);
 
-            KeyCode code = InputManager.Instance.LastKeyDown;
+            KeyCode code2 = InputManager.Instance.LastSingleKeyDown;
+            KeyCode code = code1 == code2 ? code1 : InputManager.Instance.GetComboCode(code1, code2);
 
-            if (code != KeyCode.None)
+            if (code != KeyCode.None && InputManager.Instance.ReservedKeys.FirstOrDefault(x => x == code) == KeyCode.None)
             {
-                if(InputManager.Instance.ReservedKeys.FirstOrDefault(x => x == code) == KeyCode.None)
-                {
-                    button.Label.Text = ControlsConfigManager.Instance.GetButtonText(code);
-                    button.SuppressToolTip = button.Label.Text != ControlsConfigManager.ElongatedButtonText;
-                    button.ToolTipText = ControlsConfigManager.Instance.GetButtonText(code, true);
+                button.Label.Text = ControlsConfigManager.Instance.GetButtonText(code);
+                button.SuppressToolTip = button.Label.Text != ControlsConfigManager.ElongatedButtonText;
+                button.ToolTipText = ControlsConfigManager.Instance.GetButtonText(code, true);
 
-                    var action = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), button.Name);
-
-                    ControlsConfigManager.Instance.SetUnsavedBinding(action, InputManager.Instance.GetKeyString(code));
-                    checkDuplicates();
-                }
-                else
-                {
-                    button.Label.Text = currentLabel;
-                }
+                var action = (InputManager.Actions)Enum.Parse(typeof(InputManager.Actions), button.Name);
+                ControlsConfigManager.Instance.SetUnsavedBinding(action, InputManager.Instance.GetKeyString(code));
+                checkDuplicates();
+            }
+            else
+            {
+                button.Label.Text = currentLabel;
             }
         }
 

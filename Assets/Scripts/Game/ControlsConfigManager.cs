@@ -147,14 +147,75 @@ namespace DaggerfallWorkshop.Game
         {
             HashSet<String> recorded = new HashSet<String>();
             HashSet<String> dupes = new HashSet<String>();
+            Dictionary<String, HashSet<String>> modifiers = new Dictionary<string, HashSet<string>>();
             String none = KeyCode.None.ToString();
 
-            foreach (String str in texts)
+            // Sort by combos first to record their modifiers
+            var list = texts.OrderByDescending(str =>
+            {
+                if (str.Contains('+'))
+                {
+                    var c = InputManager.Instance.GetCombo(InputManager.Instance.GetComboCode(str));
+                    // Only record the modifier (i.e. the button that gets held down first)
+                    var kc1 = InputManager.Instance.GetKeyString(c.Item1);
+
+                    // Add modifier to 'recorded' so it cannot be used as an independent keybind
+                    if (!recorded.Contains(kc1))
+                        recorded.Add(kc1);
+
+                    HashSet<String> mods;
+                    if (!modifiers.TryGetValue(kc1, out mods))
+                        mods = (modifiers[kc1] = new HashSet<String>());
+
+                    // Add combo to mod list
+                    mods.Add(str);
+
+                    return true;
+                }
+
+                return false;
+            });
+
+            // Simple check for duplicates in the list
+            // Example (both marked as dupes):
+            // "Action1: T"
+            // "Action2: T"
+            foreach (String str in list)
             {
                 if (!recorded.Contains(str))
                     recorded.Add(str);
                 else if (str != none)
                     dupes.Add(str);
+            }
+
+            // Mark combos as dupes too if a modifier has been used as an independent keybind
+            // Example (both marked as dupes):
+            // "Action1: LeftShift + T"
+            // "Action2: LeftShift"
+            foreach (var kv in modifiers)
+            {
+                if (dupes.Contains(kv.Key))
+                    dupes.UnionWith(kv.Value);
+            }
+
+            // Mark combos as dupes if the combo'd key is also used as a modifier
+            // Example (both marked as dupes):
+            // "Action1: LeftShift + T"
+            // "Action2: Z + LeftShift"
+            foreach (String str in list)
+            {
+                if (str.Contains('+'))
+                {
+                    var c = InputManager.Instance.GetCombo(InputManager.Instance.GetComboCode(str));
+                    var kc2 = InputManager.Instance.GetKeyString(c.Item2);
+                    HashSet<string> mods;
+
+                    if (modifiers.TryGetValue(kc2, out mods))
+                    {
+                        dupes.UnionWith(mods);
+                        dupes.Add(str);
+                    }
+                }
             }
             return dupes;
         }
@@ -439,18 +500,18 @@ namespace DaggerfallWorkshop.Game
             {
                 text = "Joy B" + (((int)key - 10) % 20);
             }
-            else if ((int)key >= InputManager.startingAxisKeyCode)
+            else if ((int)key >= InputManager.startingAxisKeyCode && (int)key < InputManager.startingComboKeyCode)
             {
                 text = "Joy" + (((int)key % InputManager.startingAxisKeyCode) / 2 + 1) + " B" + ((int)key % 2);
             }
+            else if ((int)key >= InputManager.startingComboKeyCode)
+            {
+                var combo = InputManager.Instance.GetCombo(key);
+                text = FormatButtonText(GetButtonText(combo.Item1) + " + " + GetButtonText(combo.Item2), fullString);
+            }
             else if (string.IsNullOrEmpty(text))
             {
-                var str = InputManager.Instance.GetKeyString((KeyCode)key);
-                if (str.Length <= maxButtonTextLength || fullString)
-                    //Split camel/pascal case by spaces
-                    text = Regex.Replace(str, "(?<=[a-z])([A-Z])", " $1", RegexOptions.Compiled).Trim();
-                else
-                    text = ElongatedButtonText;
+                text = FormatButtonText(InputManager.Instance.GetKeyString((KeyCode)key), fullString);
             }
 
             return DaggerfallUnity.Settings.SDFFontRendering ? text : text.ToUpper();
@@ -488,6 +549,15 @@ namespace DaggerfallWorkshop.Game
                     Debug.LogFormat("({0}) Bound Action {1} with Code {2} ({3})", primary ? "Primary" : "Secondary", action, code.ToString(), (int)code);
                 }
             }
+        }
+
+        private string FormatButtonText(string str, bool fullString)
+        {
+            if (str.Length <= maxButtonTextLength || fullString)
+                //Split camel/pascal case by spaces
+                return Regex.Replace(str, "(?<=[a-z])([A-Z])", " $1", RegexOptions.Compiled).Trim();
+
+            return ElongatedButtonText;
         }
 
         #endregion
