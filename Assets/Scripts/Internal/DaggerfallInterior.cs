@@ -1010,12 +1010,12 @@ namespace DaggerfallWorkshop
                 go.transform.rotation = Quaternion.Euler(modelRotation);
                 go.transform.position = modelPosition;
 
-                // Get action door script
+                // Get action door script and assign loadID
                 DaggerfallActionDoor actionDoor = go.GetComponent<DaggerfallActionDoor>();
-
-                // Assign loadID
                 if (actionDoor)
                     actionDoor.LoadID = loadID;
+                else
+                    Debug.LogError($"Failed to get DaggerfallActionDoor on {modelId}. Make sure is added to door prefab.");
 
                 if (SaveLoadManager.Instance != null)
                     go.AddComponent<SerializableActionDoor>();
