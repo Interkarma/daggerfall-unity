@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop
     #endif
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
-    public class DaggerfallMobileUnit : MonoBehaviour
+    public class DaggerfallMobileUnit : MobileUnit
     {
         const int numberOrientations = 8;
         const float anglePerOrientation = 360f / numberOrientations;
@@ -66,27 +66,62 @@ namespace DaggerfallWorkshop
             get { return summary; }
         }
 
+        public override bool IsSetup
+        {
+            get { return summary.IsSetup; }
+            protected set { summary.IsSetup = value; }
+        }
+
         public int CurrentFrame
         {
             get { return currentFrame; }
         }
 
-        public bool DoMeleeDamage
+        public override bool DoMeleeDamage
         {
             get { return doMeleeDamage; }
             set { doMeleeDamage = value; }
         }
 
-        public bool ShootArrow
+        public override bool ShootArrow
         {
             get { return shootArrow; }
             set { shootArrow = value; }
         }
 
-        public bool FreezeAnims
+        public override bool FreezeAnims
         {
             get { return freezeAnims; }
             set { freezeAnims = value; }
+        }
+
+        public override MobileEnemy Enemy
+        {
+            get { return summary.Enemy; }
+            protected set { summary.Enemy = value; }
+        }
+
+        public override MobileStates EnemyState
+        {
+            get { return summary.EnemyState; }
+            protected set { summary.EnemyState = value; }
+        }
+
+        public override bool IsBackFacing
+        {
+            get { return summary.AnimStateRecord % 5 > 2; }
+        }
+
+        public override byte ClassicSpawnDistanceType
+        {
+            get { return summary.ClassicSpawnDistanceType; }
+            protected set { summary.ClassicSpawnDistanceType = value; }
+        }
+
+        public override bool SpecialTransformationCompleted
+        {
+            get { return Summary.specialTransformationCompleted; }
+            protected set { summary.specialTransformationCompleted = value; }
         }
 
         [Serializable]
@@ -145,18 +180,8 @@ namespace DaggerfallWorkshop
             }
         }
 
-        /// <summary>
-        /// Sets new enemy type.
-        /// </summary>
-        /// <param name="dfUnity">DaggerfallUnity singleton. Required for content readers and settings.</param>
-        /// <param name="enemyType">Enemy type.</param>
-        public void SetEnemy(DaggerfallUnity dfUnity, MobileEnemy enemy, MobileReactions reaction, byte classicSpawnDistanceType)
+        protected override void ApplyEnemy(DaggerfallUnity dfUnity)
         {
-            // Initial enemy settings
-            summary.Enemy = enemy;
-            summary.EnemyState = MobileStates.Move;
-            summary.Enemy.Reactions = reaction;
-
             // Load enemy content
             int archive = GetTextureArchive();
             CacheRecordSizesAndFrames(dfUnity, archive);
@@ -165,125 +190,30 @@ namespace DaggerfallWorkshop
             // Apply enemy state and update orientation
             lastOrientation = -1;
             ApplyEnemyState();
-
-            // Set initial contact range
-            summary.ClassicSpawnDistanceType = classicSpawnDistanceType;
-
-            // Raise setup flag
-            summary.IsSetup = true;
         }
 
-        /// <summary>
-        /// Sets a new enemy state and restarts frame counter.
-        /// Certain states are one-shot only (such as attack and hurt) and return to idle when completed.
-        /// Continuous states (such as move) will keep looping until changed.
-        /// </summary>
-        /// <param name="state">New state.</param>
-        /// <returns>Frames per second of new state.</returns>
-        public float ChangeEnemyState(MobileStates state)
+        protected override void ApplyEnemyStateChange(MobileStates currentState, MobileStates newState)
         {
-            // Don't change state during animation freeze
-            if (freezeAnims)
-                return 0;
-
             // Don't reset frame to 0 for idle/move switches for enemies without idle animations
             bool resetFrame = true;
 
             if (!summary.Enemy.HasIdle &&
-                ((summary.EnemyState == MobileStates.Idle && state == MobileStates.Move) ||
-                (summary.EnemyState == MobileStates.Move && state == MobileStates.Idle)))
+                ((currentState == MobileStates.Idle && newState == MobileStates.Move) ||
+                (currentState == MobileStates.Move && newState == MobileStates.Idle)))
                 resetFrame = false;
 
-            // Only change if in a different state
-            if (summary.EnemyState != state)
+            if (resetFrame)
             {
-                summary.EnemyState = state;
-                if (resetFrame)
-                {
-                    currentFrame = 0;
-                    animReversed = false;
-                }
-                ApplyEnemyState();
+                currentFrame = 0;
+                animReversed = false;
             }
 
-            // Cannot set anims is not setup
-            if (!summary.IsSetup)
-                return 0;
-
-            return summary.StateAnims[lastOrientation].FramePerSecond;
+            ApplyEnemyState();
         }
 
-        /// <summary>
-        /// Gets true if playing a one-shot animation like attack and hurt.
-        /// </summary>
-        /// <returns>True if playing one-shot animation.</returns>
-        public bool IsPlayingOneShot()
+        public override Vector3 GetSize()
         {
-            if (summary.EnemyState == MobileStates.Hurt ||
-                summary.EnemyState == MobileStates.PrimaryAttack ||
-                summary.EnemyState == MobileStates.RangedAttack1 ||
-                summary.EnemyState == MobileStates.RangedAttack2 ||
-                summary.EnemyState == MobileStates.Spell ||
-                summary.EnemyState == MobileStates.SeducerTransform1 ||
-                summary.EnemyState == MobileStates.SeducerTransform2)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Gets true if motor should prevent action state changes while playing current oneshot anim.
-        /// </summary>
-        /// <returns>True if motor should pause state changes while playing.</returns>
-        public bool OneShotPauseActionsWhilePlaying()
-        {
-            switch (summary.EnemyState)
-            {
-                case MobileStates.SeducerTransform1:        // Seducer should not move and attack while transforming
-                case MobileStates.SeducerTransform2:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Gets true if playing any attack animation.
-        /// </summary>
-        /// <returns>True if playing attack animation.</returns>
-        public bool IsAttacking()
-        {
-            if (summary.EnemyState == MobileStates.PrimaryAttack ||
-                summary.EnemyState == MobileStates.RangedAttack1 ||
-                summary.EnemyState == MobileStates.RangedAttack2)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Set special transformation completed, e.g. Daedra Seducer into winged form.
-        /// Used internally by mobile unit after playing seducer animations.
-        /// Called when restoring save game if unit has raised transformation completed flag.
-        /// </summary>
-        public void SetSpecialTransformationCompleted()
-        {
-            switch ((MobileTypes)summary.Enemy.ID)
-            {
-                case MobileTypes.DaedraSeducer:
-                    summary.Enemy.Behaviour = MobileBehaviour.Flying;
-                    summary.Enemy.CorpseTexture = EnemyBasics.CorpseTexture(400, 5);
-                    summary.Enemy.HasIdle = false;
-                    summary.Enemy.HasSpellAnimation = true;
-                    summary.Enemy.SpellAnimFrames = new int[] { 0, 1, 2, 3 };
-                    break;
-            }
-
-            summary.specialTransformationCompleted = true;
+            return summary.RecordSizes[0];
         }
 
         #region Private Methods

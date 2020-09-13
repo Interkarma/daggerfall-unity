@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Game
         AudioClip attackClip;
 
         GameObject player;
-        DaggerfallMobileUnit mobile;
+        MobileUnit mobile;
         DaggerfallAudioSource dfAudioSource;
         Vector3 directionToPlayer;
         float distanceToPlayer;
@@ -52,7 +52,7 @@ namespace DaggerfallWorkshop.Game
             // Save references
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
             player = GameObject.FindGameObjectWithTag("Player");
-            mobile = GetComponentInChildren<DaggerfallMobileUnit>();
+            mobile = GetComponentInChildren<MobileUnit>();
 
             // Setup audio source
             dfAudioSource.AudioSource.maxDistance = AttractRadius;
@@ -63,9 +63,9 @@ namespace DaggerfallWorkshop.Game
             // Assign sounds from mobile
             if (SoundsFromMobile && mobile)
             {
-                MoveSound = (SoundClips)mobile.Summary.Enemy.MoveSound;
-                BarkSound = (SoundClips)mobile.Summary.Enemy.BarkSound;
-                AttackSound = (SoundClips)mobile.Summary.Enemy.AttackSound;
+                MoveSound = (SoundClips)mobile.Enemy.MoveSound;
+                BarkSound = (SoundClips)mobile.Enemy.BarkSound;
+                AttackSound = (SoundClips)mobile.Enemy.AttackSound;
             }
 
             RaceForSounds = (Entity.Races)Random.Range(1, 5 + 1);
@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop.Game
 
         private bool IgnoreHumanSounds()
         {
-            if (mobile.Summary.Enemy.ID > 127 && mobile.Summary.Enemy.ID != 146 && MuteHumanSounds)
+            if (mobile.Enemy.ID > 127 && mobile.Enemy.ID != 146 && MuteHumanSounds)
                 return true;
             else
                 return false;

@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop.Game
 
         const float predictionInterval = 0.0625f;
 
-        DaggerfallMobileUnit mobile;
+        MobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
         QuestResourceBehaviour questBehaviour;
         EnemyMotor motor;
@@ -186,7 +186,7 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            mobile = GetComponentInChildren<DaggerfallMobileUnit>();
+            mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             enemyEntity = entityBehaviour.Entity as EnemyEntity;
             motor = GetComponent<EnemyMotor>();
@@ -199,7 +199,7 @@ namespace DaggerfallWorkshop.Game
             short[] classicDespawnXZDistArray = { 1024, 1024, 1024, 1024, 768, 768, 768 };
             short[] classicDespawnYDistArray = { 384, 384, 384, 384, 768, 768, 768 };
 
-            byte index = mobile.Summary.ClassicSpawnDistanceType;
+            byte index = mobile.ClassicSpawnDistanceType;
 
             classicSpawnXZDist = classicSpawnXZDistArray[index] * MeshReader.GlobalScale;
             classicSpawnYDistUpper = classicSpawnYDistUpperArray[index] * MeshReader.GlobalScale;
@@ -515,8 +515,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             // If aware of target, if distance is too far or can see nothing is there, use last known position as assumed current position
-            if (targetInSight || targetInEarshot || (predictedTargetPos - transform.position).magnitude > SightRadius + mobile.Summary.Enemy.SightModifier
-                || !Physics.Raycast(transform.position, (predictedTargetPosWithoutLead - transform.position).normalized, out tempHit, SightRadius + mobile.Summary.Enemy.SightModifier))
+            if (targetInSight || targetInEarshot || (predictedTargetPos - transform.position).magnitude > SightRadius + mobile.Enemy.SightModifier
+                || !Physics.Raycast(transform.position, (predictedTargetPosWithoutLead - transform.position).normalized, out tempHit, SightRadius + mobile.Enemy.SightModifier))
             {
                 assumedCurrentPosition = lastKnownTargetPos;
             }
@@ -627,7 +627,7 @@ namespace DaggerfallWorkshop.Game
             // In classic if the target is another AI character true is always returned.
 
             // Some enemy types can see through these effects.
-            if (mobile.Summary.Enemy.SeesThroughInvisibility)
+            if (mobile.Enemy.SeesThroughInvisibility)
                 return false;
 
             // If not one of the above enemy types, and target has invisibility,
@@ -822,7 +822,7 @@ namespace DaggerfallWorkshop.Game
             bool seen = false;
             actionDoor = null;
 
-            if (distanceToTarget < SightRadius + mobile.Summary.Enemy.SightModifier)
+            if (distanceToTarget < SightRadius + mobile.Enemy.SightModifier)
             {
                 // Check if target in field of view
                 float angle = Vector3.Angle(directionToTarget, transform.forward);
@@ -884,7 +884,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // TODO: Modify this by how much noise the target is making
-            return distanceToTarget < (HearingRadius * hearingScale) + mobile.Summary.Enemy.HearingModifier;
+            return distanceToTarget < (HearingRadius * hearingScale) + mobile.Enemy.HearingModifier;
         }
 
         #endregion
