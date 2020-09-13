@@ -1146,13 +1146,19 @@ namespace DaggerfallWorkshop.Utility
 
             // Get action door script
             DaggerfallActionDoor actionDoor = go.GetComponent<DaggerfallActionDoor>();
+            if (actionDoor)
+            {
+                // Set starting lock value
+                byte[] lockValues = { 0x00, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E, 0x10, 0x12, 0x14, 0x19, 0x1E, 0x32, 0x80, 0xFF };
+                actionDoor.StartingLockValue = lockValues[obj.Resources.ModelResource.TriggerFlag_StartingLock >> 4];
 
-            // Set starting lock value
-            byte[] lockValues = { 0x00, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E, 0x10, 0x12, 0x14, 0x19, 0x1E, 0x32, 0x80, 0xFF };
-            actionDoor.StartingLockValue = lockValues[obj.Resources.ModelResource.TriggerFlag_StartingLock >> 4];
-
-            // Set LoadID
-            actionDoor.LoadID = loadID;
+                // Set LoadID
+                actionDoor.LoadID = loadID;
+            }
+            else
+            {
+                Debug.LogError($"Failed to get DaggerfallActionDoor on {modelId}. Make sure is added to door prefab.");
+            }
 
             return go;
         }
