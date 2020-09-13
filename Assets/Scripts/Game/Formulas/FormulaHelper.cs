@@ -978,46 +978,30 @@ namespace DaggerfallWorkshop.Game.Formulas
                 if (enemyTarget.MobileEnemy.Affinity == MobileAffinity.Human)
                 {
                     if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                    {
                         damage += attacker.Level;
-                    }
                     if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                    {
                         damage -= attacker.Level;
-                    }
                 }
                 else if (enemyTarget.GetEnemyGroup() == DFCareer.EnemyGroups.Undead)
                 {
                     if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                    {
                         damage += attacker.Level;
-                    }
                     if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                    {
                         damage -= attacker.Level;
-                    }
                 }
                 else if (enemyTarget.GetEnemyGroup() == DFCareer.EnemyGroups.Daedra)
                 {
                     if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                    {
                         damage += attacker.Level;
-                    }
                     if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                    {
                         damage -= attacker.Level;
-                    }
                 }
                 else if (enemyTarget.GetEnemyGroup() == DFCareer.EnemyGroups.Animals)
                 {
                     if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                    {
                         damage += attacker.Level;
-                    }
                     if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                    {
                         damage -= attacker.Level;
-                    }
                 }
             }
             else // Assume target is player if not an enemy
@@ -1025,25 +1009,17 @@ namespace DaggerfallWorkshop.Game.Formulas
                 if ((target as PlayerEntity).RaceTemplate.Name == TextManager.Instance.GetLocalizedText("vampire")) // Vampires are undead, therefore add undead modifier
                 {
                     if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                    {
                         damage += attacker.Level;
-                    }
                     if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                    {
                         damage -= attacker.Level;
-                    }
                 }
                 else
                 {
                     // Player is assumed humanoid
                     if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                    {
                         damage += attacker.Level;
-                    }
                     if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                    {
                         damage -= attacker.Level;
-                    }
                 }
             }
 
