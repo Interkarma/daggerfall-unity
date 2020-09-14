@@ -548,7 +548,7 @@ namespace DaggerfallWorkshop.Game
             if (disc >= 0)
             {
                 // find the minimal positive solution
-                float discSqrt = Mathf.Sqrt(disc);
+                float discSqrt = Mathf.Sqrt(disc) * Mathf.Sign(a);
                 float t = (-b - discSqrt) / (2 * a);
                 if (t < 0)
                     t = (-b + discSqrt) / (2 * a);
