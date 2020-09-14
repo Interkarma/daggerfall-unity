@@ -526,8 +526,6 @@ namespace DaggerfallWorkshop.Game
                 assumedCurrentPosition = predictedTargetPosWithoutLead;
             }
 
-            // Get seconds to the predicted position so we lead target to intercept. Important when using this function to aim ranged attacks.
-            float secondsToPredictedPos = (assumedCurrentPosition - transform.position).magnitude / interceptSpeed;
             float divisor = predictionInterval;
 
             // Account for mid-interval call by DaggerfallMissile
@@ -537,26 +535,44 @@ namespace DaggerfallWorkshop.Game
                 lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
             }
 
-            Vector3 prediction = assumedCurrentPosition + (lastPositionDiff / divisor * secondsToPredictedPos);
+            // Let's solve cone / line intersection (quadratic equation)
+            Vector3 d = assumedCurrentPosition - transform.position;
+            Vector3 v = lastPositionDiff / divisor;
+            float a = v.sqrMagnitude - interceptSpeed * interceptSpeed;
+            float b = 2 * Vector3.Dot(d, v);
+            float c = d.sqrMagnitude;
+
+            Vector3 prediction;
+
+            float disc = b * b - 4 * a * c;
+            if (disc >= 0)
+            {
+                // find the minimal positive solution
+                float discSqrt = Mathf.Sqrt(disc);
+                float t = (-b - discSqrt) / (2 * a);
+                if (t < 0)
+                    t = (-b + discSqrt) / (2 * a);
+                if (t < 0)
+                    prediction = assumedCurrentPosition;
+                else
+                {
+                    prediction = assumedCurrentPosition + v * t;
+
+                    // Don't predict target will move through obstacles (prevent predicting movement through walls)
+                    RaycastHit hit;
+                    Ray ray = new Ray(assumedCurrentPosition, (prediction - assumedCurrentPosition).normalized);
+                    if (Physics.Raycast(ray, out hit, (prediction - assumedCurrentPosition).magnitude))
+                        prediction = assumedCurrentPosition;
+                }
+            }
+            else
+            {
+                prediction = assumedCurrentPosition;
+            }
+
 
             // Store prediction minus lead for next prediction update
             predictedTargetPosWithoutLead = assumedCurrentPosition + lastPositionDiff;
-
-            // Don't predict target will move right past us (prevents AI from turning around
-            // when target is approaching)
-            float a = assumedCurrentPosition.z * transform.position.x - assumedCurrentPosition.x * transform.position.z;
-            float b = assumedCurrentPosition.z * prediction.x - assumedCurrentPosition.x * prediction.z;
-            float c = prediction.z * transform.position.x - prediction.x * transform.position.z;
-            float d = prediction.z * assumedCurrentPosition.x - prediction.x * assumedCurrentPosition.z;
-
-            if (a * b >= 0 && c * d >= 0)
-                prediction = assumedCurrentPosition;
-
-            // Don't predict target will move through obstacles (prevent predicting movement through walls)
-            RaycastHit hit;
-            Ray ray = new Ray(assumedCurrentPosition, (prediction - assumedCurrentPosition).normalized);
-            if (Physics.Raycast(ray, out hit, (prediction - assumedCurrentPosition).magnitude))
-                prediction = assumedCurrentPosition;
 
             return prediction;
         }
