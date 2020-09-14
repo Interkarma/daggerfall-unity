@@ -205,7 +205,7 @@ namespace DaggerfallWorkshop
                                 {
                                     DaggerfallUnityItem item = null;
                                     if (itemGroup == ItemGroups.Weapons)
-                                        item = ItemBuilder.CreateWeapon(j + Weapons.Dagger, ItemBuilder.RandomMaterial(playerEntity.Level));
+                                        item = ItemBuilder.CreateWeapon(j + Weapons.Dagger, FormulaHelper.RandomMaterial(playerEntity.Level));
                                     else if (itemGroup == ItemGroups.Armor)
                                         item = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, j + Armor.Cuirass, ItemBuilder.RandomArmorMaterial(playerEntity.Level));
                                     else if (itemGroup == ItemGroups.MensClothing)
@@ -247,7 +247,7 @@ namespace DaggerfallWorkshop
                                     // Setup specific group stats
                                     if (itemGroup == ItemGroups.Weapons)
                                     {
-                                        WeaponMaterialTypes material = ItemBuilder.RandomMaterial(playerEntity.Level);
+                                        WeaponMaterialTypes material = FormulaHelper.RandomMaterial(playerEntity.Level);
                                         ItemBuilder.ApplyWeaponMaterial(item, material);
                                     }
                                     else if (itemGroup == ItemGroups.Armor)

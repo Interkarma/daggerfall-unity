@@ -26,6 +26,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -1289,7 +1290,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 // right-hand weapon
                 int item = UnityEngine.Random.Range((int)Weapons.Broadsword, (int)(Weapons.Longsword) + 1);
-                DaggerfallUnityItem weapon = ItemBuilder.CreateWeapon((Weapons)item, ItemBuilder.RandomMaterial(itemLevel));
+                DaggerfallUnityItem weapon = ItemBuilder.CreateWeapon((Weapons)item, FormulaHelper.RandomMaterial(itemLevel));
                 enemyEntity.ItemEquipTable.EquipItem(weapon, true, false);
                 enemyEntity.Items.AddItem(weapon);
 
@@ -1307,7 +1308,7 @@ namespace DaggerfallWorkshop.Game.Items
                 else if (Dice100.SuccessRoll(chance))
                 {
                     item = UnityEngine.Random.Range((int)Weapons.Dagger, (int)(Weapons.Shortsword) + 1);
-                    weapon = ItemBuilder.CreateWeapon((Weapons)item, ItemBuilder.RandomMaterial(itemLevel));
+                    weapon = ItemBuilder.CreateWeapon((Weapons)item, FormulaHelper.RandomMaterial(itemLevel));
                     enemyEntity.ItemEquipTable.EquipItem(weapon, true, false);
                     enemyEntity.Items.AddItem(weapon);
                 }
@@ -1316,7 +1317,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 // right-hand weapon
                 int item = UnityEngine.Random.Range((int)Weapons.Claymore, (int)(Weapons.Battle_Axe) + 1);
-                DaggerfallUnityItem weapon = ItemBuilder.CreateWeapon((Weapons)item, ItemBuilder.RandomMaterial(itemLevel));
+                DaggerfallUnityItem weapon = ItemBuilder.CreateWeapon((Weapons)item, FormulaHelper.RandomMaterial(itemLevel));
                 enemyEntity.ItemEquipTable.EquipItem(weapon, true, false);
                 enemyEntity.Items.AddItem(weapon);
 

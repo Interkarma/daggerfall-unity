@@ -20,6 +20,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -38,7 +39,7 @@ namespace DaggerfallWorkshop.Game.Items
         // This array is used to pick random material values.
         // The array is traversed, subtracting each value from a sum until the sum is less than the next value.
         // Steel through Daedric, or Iron if sum is less than the first value.
-        static readonly byte[] materialsByModifier = { 64, 128, 10, 21, 13, 8, 5, 3, 2, 5 };
+        public static readonly byte[] materialsByModifier = { 64, 128, 10, 21, 13, 8, 5, 3, 2, 5 };
 
         // Weight multipliers by material type. Iron through Daedric. Weight is baseWeight * value / 4.
         static readonly short[] weightMultipliersByMaterial = { 4, 5, 4, 4, 3, 4, 4, 2, 4, 5 };
@@ -93,37 +94,6 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Gets a random material based on player level.
-        /// </summary>
-        /// <param name="playerLevel">Player level.</param>
-        /// <returns>WeaponMaterialTypes.</returns>
-
-        public static WeaponMaterialTypes RandomMaterial(int playerLevel)
-        {
-            int levelModifier = (playerLevel - 10);
-
-            if (levelModifier >= 0)
-                levelModifier *= 2;
-            else
-                levelModifier *= 4;
-
-            int randomModifier = UnityEngine.Random.Range(0, 256);
-
-            int combinedModifiers = levelModifier + randomModifier;
-            combinedModifiers = Mathf.Clamp(combinedModifiers, 0, 256);
-
-            int material = 0; // initialize to iron
-
-            // The higher combinedModifiers is, the higher the material
-            while (materialsByModifier[material] < combinedModifiers)
-            {
-                combinedModifiers -= materialsByModifier[material++];
-            }
-
-            return (WeaponMaterialTypes)(material);
-        }
-
-        /// <summary>
         /// Gets a random armor material based on player level.
         /// </summary>
         /// <param name="playerLevel">Player level.</param>
@@ -137,7 +107,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 if (roll >= 90)
                 {
-                    WeaponMaterialTypes plateMaterial = RandomMaterial(playerLevel);
+                    WeaponMaterialTypes plateMaterial = FormulaHelper.RandomMaterial(playerLevel);
                     return (ArmorMaterialTypes)(0x0200 + plateMaterial);
                 }
                 else
@@ -442,7 +412,7 @@ namespace DaggerfallWorkshop.Game.Items
                 newItem = CreateItem(ItemGroups.Weapons, customItemTemplates[groupIndex - enumArray.Length]);
  
             // Random weapon material
-            WeaponMaterialTypes material = RandomMaterial(playerLevel);
+            WeaponMaterialTypes material = FormulaHelper.RandomMaterial(playerLevel);
             ApplyWeaponMaterial(newItem, material);
 
             // Handle arrows

@@ -2017,6 +2017,40 @@ namespace DaggerfallWorkshop.Game.Formulas
             return 0;
         }
 
+        /// <summary>
+        /// Gets a random material based on player level.
+        /// </summary>
+        /// <param name="playerLevel">Player level, possibly adjusted.</param>
+        /// <returns>WeaponMaterialTypes value of material selected.</returns>
+        public static WeaponMaterialTypes RandomMaterial(int playerLevel)
+        {
+            Func<int, WeaponMaterialTypes> del;
+            if (TryGetOverride("RandomMaterial", out del))
+                return del(playerLevel);
+
+            int levelModifier = (playerLevel - 10);
+
+            if (levelModifier >= 0)
+                levelModifier *= 2;
+            else
+                levelModifier *= 4;
+
+            int randomModifier = UnityEngine.Random.Range(0, 256);
+
+            int combinedModifiers = levelModifier + randomModifier;
+            combinedModifiers = Mathf.Clamp(combinedModifiers, 0, 256);
+
+            int material = 0; // initialize to iron
+
+            // The higher combinedModifiers is, the higher the material
+            while (ItemBuilder.materialsByModifier[material] < combinedModifiers)
+            {
+                combinedModifiers -= ItemBuilder.materialsByModifier[material++];
+            }
+
+            return (WeaponMaterialTypes)(material);
+        }
+
         #endregion
 
         #region Spell Costs
