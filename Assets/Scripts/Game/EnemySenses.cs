@@ -542,34 +542,38 @@ namespace DaggerfallWorkshop.Game
             float b = 2 * Vector3.Dot(d, v);
             float c = d.sqrMagnitude;
 
-            Vector3 prediction;
+            Vector3 prediction = assumedCurrentPosition;
 
-            float disc = b * b - 4 * a * c;
-            if (disc >= 0)
+            float t = -1;
+            if (Mathf.Abs(a) >= 1e-5)
             {
-                // find the minimal positive solution
-                float discSqrt = Mathf.Sqrt(disc) * Mathf.Sign(a);
-                float t = (-b - discSqrt) / (2 * a);
-                if (t < 0)
-                    t = (-b + discSqrt) / (2 * a);
-                if (t < 0)
-                    prediction = assumedCurrentPosition;
-                else
+                float disc = b * b - 4 * a * c;
+                if (disc >= 0)
                 {
-                    prediction = assumedCurrentPosition + v * t;
-
-                    // Don't predict target will move through obstacles (prevent predicting movement through walls)
-                    RaycastHit hit;
-                    Ray ray = new Ray(assumedCurrentPosition, (prediction - assumedCurrentPosition).normalized);
-                    if (Physics.Raycast(ray, out hit, (prediction - assumedCurrentPosition).magnitude))
-                        prediction = assumedCurrentPosition;
+                    // find the minimal positive solution
+                    float discSqrt = Mathf.Sqrt(disc) * Mathf.Sign(a);
+                    t = (-b - discSqrt) / (2 * a);
+                    if (t < 0)
+                        t = (-b + discSqrt) / (2 * a);
                 }
             }
             else
             {
-                prediction = assumedCurrentPosition;
+                // degenerated cases
+                if (Mathf.Abs(b) >= 1e-5)
+                    t = -d.sqrMagnitude / b;
             }
 
+            if (t >= 0)
+            {
+                prediction = assumedCurrentPosition + v * t;
+
+                // Don't predict target will move through obstacles (prevent predicting movement through walls)
+                RaycastHit hit;
+                Ray ray = new Ray(assumedCurrentPosition, (prediction - assumedCurrentPosition).normalized);
+                if (Physics.Raycast(ray, out hit, (prediction - assumedCurrentPosition).magnitude))
+                    prediction = assumedCurrentPosition;
+            }
 
             // Store prediction minus lead for next prediction update
             predictedTargetPosWithoutLead = assumedCurrentPosition + lastPositionDiff;
