@@ -221,8 +221,13 @@ namespace DaggerfallWorkshop
                 // Set location tiles.
                 TerrainHelper.SetLocationTiles(ref MapData);
 
-                // Schedule job to blend and flatten location heights. (depends on SetLocationTiles being done first)
-                blendLocationTerrainJobHandle = TerrainHelper.ScheduleBlendLocationTerrainJob(ref MapData, calcAvgMaxHeightJobHandle);
+                if (!dfUnity.TerrainSampler.IsLocationTerrainBlended())
+                {
+                    // Schedule job to blend and flatten location heights. (depends on SetLocationTiles being done first)
+                    blendLocationTerrainJobHandle = TerrainHelper.ScheduleBlendLocationTerrainJob(ref MapData, calcAvgMaxHeightJobHandle);
+                }
+                else
+                    blendLocationTerrainJobHandle = calcAvgMaxHeightJobHandle;
             }
             else
                 blendLocationTerrainJobHandle = generateHeightmapSamplesJobHandle;
