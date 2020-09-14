@@ -94,30 +94,6 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Gets a random armor material based on player level.
-        /// </summary>
-        /// <param name="playerLevel">Player level.</param>
-        /// <returns>ArmorMaterialTypes.</returns>
-        public static ArmorMaterialTypes RandomArmorMaterial(int playerLevel)
-        {
-            // Random armor material
-            int roll = Dice100.Roll();
-
-            if (roll >= 70)
-            {
-                if (roll >= 90)
-                {
-                    WeaponMaterialTypes plateMaterial = FormulaHelper.RandomMaterial(playerLevel);
-                    return (ArmorMaterialTypes)(0x0200 + plateMaterial);
-                }
-                else
-                    return ArmorMaterialTypes.Chain;
-            }
-            else
-                return ArmorMaterialTypes.Leather;
-        }
-
-        /// <summary>
         /// Creates a generic item from group and template index.
         /// </summary>
         /// <param name="itemGroup">Item group.</param>
@@ -479,7 +455,7 @@ namespace DaggerfallWorkshop.Game.Items
             else
                 newItem = CreateItem(ItemGroups.Armor, customItemTemplates[groupIndex - enumArray.Length]);
 
-            ApplyArmorSettings(newItem, gender, race, RandomArmorMaterial(playerLevel));
+            ApplyArmorSettings(newItem, gender, race, FormulaHelper.RandomArmorMaterial(playerLevel));
 
             return newItem;
         }
