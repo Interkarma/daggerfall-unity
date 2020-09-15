@@ -119,7 +119,7 @@ Place _itemdung_ remote dungeon13
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 --changed flags on timer, was giving very short time limits before
-Clock _2ndparton_ 00:00 0 flag 2 range 1 2
+Clock _2ndparton_ 00:00 0 flag 3 range 1 2
 
 Foe _giant_ is Giant
 
