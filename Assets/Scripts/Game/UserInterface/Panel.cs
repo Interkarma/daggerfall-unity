@@ -121,10 +121,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 DrawBorder();
 
             // Draw child components
-            foreach (BaseScreenComponent component in components)
+            BaseScreenComponent comp;
+            for (int i = 0; i < components.Count; i++)
             {
-                if (component.Enabled)
-                    component.Draw();
+                comp = components[i];
+                if (comp.Enabled)
+                    comp.Draw();
             }
         }
 
