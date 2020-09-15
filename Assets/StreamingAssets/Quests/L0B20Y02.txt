@@ -60,7 +60,7 @@ I hear that lady tried to seduce the knight and failed. That's why she's upset.
 RumorsPostfailure:  [1006]
 That warrior has moved on to new lands to corrupt their gentle womenfolk.
 <--->
-The soldier has left %cn like a hurricane, leaving broken hearts behind.
+The soldier has left ____questgiver_ like a hurricane, leaving broken hearts behind.
 
 RumorsPostsuccess:  [1007]
 That soldier got what was coming to %g2 if you ask me. What a cad!

@@ -39,7 +39,7 @@ QuestComplete:  [1004]
 <ce>                             All hail %pcn!
 
 RumorsDuringQuest:  [1005]
-The orcs of ___dungeon_ are making life for the merchants of %cn difficult.
+The orcs of ___dungeon_ are making life for the merchants of ___qgiver_ difficult.
 
 RumorsPostfailure:  [1006]
 The orcs of ___dungeon_ went to plunder someone else. But for how long?

@@ -12,8 +12,8 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>               There's a nightmare stalking the streets
-<ce>                    of %cn. They're calling him the
-<ce>                       %cn Slayer, and so far no
+<ce>                    of ___bookstore_. They're calling him the
+<ce>                       ___bookstore_ Slayer, and so far no
 <ce>               one can tell me if he's a man or a beast.
 <ce>                  One of my finest sages, _contact_,
 <ce>               is examing the bodies of the victims, but
@@ -23,7 +23,7 @@ QuestorOffer:  [1000]
 <ce>               if %g3 fears are justified. Will you help
 <ce>                    me in this, %pcf? I will offer
 <ce>              you _reward_ gold pieces in return for the
-<ce>                     retirement of the %cn Slayer.
+<ce>                     retirement of the ___bookstore_ Slayer.
 
 RefuseQuest:  [1001]
 <ce>                 Not an uncommon response. Then I have
@@ -42,11 +42,11 @@ AcceptQuest:  [1002]
 <ce>                 and I told %g2 I'd be sending someone
 <ce>                  there soon. Watch out for yourself,
 <ce>                     %pcf. Until this situation is
-<ce>                    resolved, remember that the %cn
+<ce>                    resolved, remember that the ___bookstore_
 <ce>                          night has a knife.
 
 QuestFail:  [1003]
-<ce>                        The %cn Slayer is still
+<ce>                        The ___bookstore_ Slayer is still
 <ce>                at large. I have no time for chatting,
 <ce>                            nor should you.
 
@@ -59,37 +59,37 @@ QuestComplete:  [1004]
 <ce>                             came to %reg.
 
 RumorsDuringQuest:  [1005]
-It isn't safe to walk the streets of %cn anymore. Not with the %cn Slayer.
+It isn't safe to walk the streets of ___bookstore_ anymore. Not with the ___bookstore_ Slayer.
 <--->
 I hear the Slayer isn't a man at all, but a daedra come to punish us all.
 <--->
-The last victim of the %cn Slayer was found scattered in pieces over %cn.
+The last victim of the ___bookstore_ Slayer was found scattered in pieces over ___bookstore_.
 <--->
 Some folks are wondering if the Slayer might be a vampire or a werewolf.
 
 RumorsPostfailure:  [1006]
 The killings stopped without us needing a mob. Guess the Slayer moved on.
 <--->
-_qgiver_'s just lucky the %cn Slayer decided to move on. Panic was setting in.
+_qgiver_'s just lucky the ___bookstore_ Slayer decided to move on. Panic was setting in.
 <--->
 _qgiver_ is still anxious. You'd think the Slayer's absence would relieve %g2.
 <--->
-The %cn Slayer disappeared just as suddenly as he came to %cn.
+The ___bookstore_ Slayer disappeared just as suddenly as he came to ___bookstore_.
 <--->
 Some say the Slayer's still here, waiting for the stars to be right again.
 
 RumorsPostsuccess:  [1007]
-I'm still afraid to be out in %cn alone, even with the Slayer supposedly dead.
+I'm still afraid to be out in ___bookstore_ alone, even with the Slayer supposedly dead.
 <--->
-Guess the %cn Slayer was just some poor lunatic. Nothing romantic to him at all.
+Guess the ___bookstore_ Slayer was just some poor lunatic. Nothing romantic to him at all.
 <--->
-The newest rumor is that the %cn Slayer wasn't a vampire, but thought he was.
+The newest rumor is that the ___bookstore_ Slayer wasn't a vampire, but thought he was.
 
 QuestorPostsuccess:  [1008]
-I still remember you, %pcf, and the discretion you showed with the %cn Slayer.
+I still remember you, %pcf, and the discretion you showed with the ___bookstore_ Slayer.
 
 QuestorPostfailure:  [1009]
-<ce>                    You failed me in the %cn Slayer
+<ce>                    You failed me in the ___bookstore_ Slayer
 <ce>                         affair, %pcf. I don't
 <ce>                  see any reason to believe you won't
 <ce>                            fail me again.
@@ -205,7 +205,7 @@ Message:  1015
 <ce>                  the Slayer's victims. This may seem
 <ce>                 like a trivial sentimentality, but it
 <ce>                 will bring you closer to finding the
-<ce>                        %cn Slayer than any of
+<ce>                        ___bookstore_ Slayer than any of
 <ce>                        _contact_'s scientific
 <ce>                      catalyses. Trust me, %pcf.
 
@@ -215,7 +215,7 @@ _vamp_ is the =vamp_ I met over at _hookerhouse_. Nice enough, but spooky.
 _vamp_ is the name of the =vamp_ staying over at _hookerhouse_.
 
 Message:  1017
-_vamp_ is one of the %vcn, sent to %cn to eliminate the mad Slayer.
+_vamp_ is one of the %vcn, sent to ___bookstore_ to eliminate the mad Slayer.
 <--->
 _vamp_ is a %vcn vampire here to stop the risk to %g3 security, the Slayer.
 
@@ -247,8 +247,8 @@ Message:  1019
 Message:  1020
 %qdat:
  I am on the trail of the Slayer
- of %cn. %rt _qgiver_ wants
- the %cn Slayer caught in =total_ days
+ of ___bookstore_. %rt _qgiver_ wants
+ the ___bookstore_ Slayer caught in =total_ days
  before the murders inflame the populace
  to riot. _qgiver_ has a scientist
  who has been examining the bodies of the
@@ -355,7 +355,7 @@ Message:  1050
 
 -- Symbols used in the QRC file:
 --
---               %cn occurs 141 times.
+--               ___bookstore_ occurs 141 times.
 --               %di occurs 3 times.
 --               %fn occurs 2 times.
 --                %g occurs 117 times.

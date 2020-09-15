@@ -55,7 +55,7 @@ QuestComplete:  [1004]
 RumorsDuringQuest:  [1005]
 Poor little _child_. And poor _guardian_ having to watch %g3 ward suffer so.
 <--->
-The heart of %cn has really gone out to _child_ and %g3 terrible crisis.
+The heart of ___house_ has really gone out to _child_ and %g3 terrible crisis.
 
 RumorsPostfailure:  [1006]
 _child_ and _guardian_ left ___guardian_.
@@ -200,7 +200,7 @@ Message:  1020
  _child_ spoke
  when I saw %g2. That =child_
  is possessed, mad, or the best
- actor in %cn. It may be
+ actor in ___house_. It may be
  a good time to see the exorcist
  in __house3_, _priest_
  in _house3_.
@@ -374,6 +374,7 @@ _clickpriest_ task:
 _rebuff_ task:
 	when _clickpriest_ and not _firstclickchild_ and not _rescueitem_ and not _exorcise_ and not _givenitem_
 	say 1018 
+	clear _clickpriest_
 
 _priestgivesitem_ task:
 	when _clickpriest_ and _firstclickchild_ and not _exorcise_ and not _rescueitem_
@@ -435,4 +436,4 @@ _qgclicked_ task:
 
 _clearclick_ task:
 	when _qgclicked_ and not _rescueitem_ and not _exorcise_
-	clear _qgclicked_
+	clear _qgclicked_ _clearclick_

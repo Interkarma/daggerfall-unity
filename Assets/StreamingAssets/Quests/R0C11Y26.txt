@@ -12,14 +12,14 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                       %pcn, a madman they call
-<ce>                    the %reg Ripper is terrorizing
+<ce>                    the ____qgiver_ Ripper is terrorizing
 <ce>                 the city of ___qgiver_, and my guards
 <ce>              and constabulary are helpless against him.
 <ce>            They have no clues to his identity whatsoever.
 <ce>               I know you have some resources and rather
 <ce>                nontraditional contacts. Can you try and
 <ce>                 help me in this matter, for the good
-<ce>             of all %reg -- and a substantial sum of gold?
+<ce>             of all ____qgiver_ -- and a substantial sum of gold?
 
 RefuseQuest:  [1001]
 <ce>                 Not an uncommon response. Then I have
@@ -29,7 +29,7 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                     You are a true friend, %pcf.
-<ce>                    The people of %reg are becoming
+<ce>                    The people of ____qgiver_ are becoming
 <ce>               anxious about the lack of progress in the
 <ce>          official investigations. The situation is becoming
 <ce>                explosive, with people afraid that the
@@ -44,7 +44,7 @@ AcceptQuest:  [1002]
 <ce>              solve this mystery, then %god help us all.
 
 QuestFail:  [1003]
-<ce>                       The %reg Ripper is still
+<ce>                       The ____qgiver_ Ripper is still
 <ce>                at large. I have no time for chatting,
 <ce>                            nor should you.
 
@@ -54,36 +54,36 @@ QuestComplete:  [1004]
 <ce>                    gold I promised -- gladly will
 <ce>                     I give it for the end of that
 <ce>                     maniac. %god truly blessed us
-<ce>                        when you came to %reg.
+<ce>                        when you came to ____qgiver_.
 
 RumorsDuringQuest:  [1005]
-It isn't safe to walk the streets of %cn anymore. Not with the %reg Ripper.
+It isn't safe to walk the streets of ___qgiver_ anymore. Not with the ____qgiver_ Ripper.
 <--->
-I hear the %reg Ripper isn't a man at all, but a daedra come to punish us all.
+I hear the ____qgiver_ Ripper isn't a man at all, but a daedra come to punish us all.
 <--->
-The last victim of the %reg Ripper was found scattered in pieces over %cn.
+The last victim of the ____qgiver_ Ripper was found scattered in pieces over ___qgiver_.
 <--->
-Some folks are wondering if the %reg Ripper might be a vampire or a werewolf.
+Some folks are wondering if the ____qgiver_ Ripper might be a vampire or a werewolf.
 
 RumorsPostfailure:  [1006]
 The killings stopped without us needing a mob. Guess the Ripper moved on.
 <--->
-_qgiver_'s just lucky the %reg Ripper decided to move on. Panic was setting in.
+_qgiver_'s just lucky the ____qgiver_ Ripper decided to move on. Panic was setting in.
 
 RumorsPostsuccess:  [1007]
-I can't believe _rippername_ was the %reg Ripper -- %g was so nice and quiet.
+I can't believe _rippername_ was the ____qgiver_ Ripper -- %g was so nice and quiet.
 <--->
 %oth, they say they found a mountain of skulls buried under _rippername_'s house.
 <--->
 _rippername_, they say, was a loner who kept mostly to %g2-self. Typical.
 
 QuestorPostsuccess:  [1008]
-I always have time for the %ra who solved the %reg Ripper mystery, %pcf.
+I always have time for the %ra who solved the ____qgiver_ Ripper mystery, %pcf.
 <--->
-If it weren't for you, the %reg Ripper would still terrorize us. What can I do?
+If it weren't for you, the ____qgiver_ Ripper would still terrorize us. What can I do?
 
 QuestorPostfailure:  [1009]
-<ce>                     Lucky for you the %reg Ripper
+<ce>                     Lucky for you the ____qgiver_ Ripper
 <ce>                moved on. Otherwise, I'd be very angry
 <ce>                with you. In fact, I am angry with you.
 <ce>                            Sod off, %pcf.
@@ -113,15 +113,15 @@ Message:  1011
  you nexxt. Ripping and rippng and tHen a
 <ce>                   litle RIPPING to setle the scoor.
 <ce>                            Gracishly yors,
- The %reg Rippr
+ The ____qgiver_ Rippr
 
 Message:  1012
 _qgiver_,
     catsh me if you CAN
- may be now you care abut your %reg
+ may be now you care abut your ____qgiver_
  now its soked in BLOOD
  Yor freind,
-<ce>                            The %reg Rippr
+<ce>                            The ____qgiver_ Rippr
 
 Message:  1013
 _contact_,
@@ -157,7 +157,7 @@ Message:  1015
 <ce>                 %g2, mostly I was afraid of %g2 so I
 <ce>              guess I let %g2 think I liked %g2. 'Course
 <ce>              now I'm getting letters like this. I think
-<ce>                   %g's very much could be the %reg
+<ce>                   %g's very much could be the ____qgiver_
 <ce>                 Ripper. He lives at _ripperhouse_ if
 <ce>                 you want to go see %g2 for real life.
 
@@ -175,7 +175,7 @@ Message:  1020
 %qdat:
  I have arrived in ___qgiver_
  and met with _qgiver_ about
- the mystery of the %reg Ripper.
+ the mystery of the ____qgiver_ Ripper.
  %g wants the Ripper caught in =total_
  days before all ___qgiver_ turns into an
  angry mob. My only lead is a scholar named
@@ -193,7 +193,7 @@ Message:  1021
 
 Message:  1022
 %qdat:
- The %reg Ripper had a meeting
+ The ____qgiver_ Ripper had a meeting
  with _contact_ before I got there.
  One of the letters I found
  in __contact_ was from someone
@@ -251,7 +251,7 @@ Message:  1050
 
 -- Symbols used in the QRC file:
 --
---               %cn occurs 2 times.
+--               ___qgiver_ occurs 2 times.
 --               %di occurs 4 times.
 --                %g occurs 6 times.
 --               %g2 occurs 11 times.
@@ -262,7 +262,7 @@ Message:  1050
 --              %pcn occurs 1 time.
 --             %qdat occurs 5 times.
 --               %ra occurs 1 time.
---              %reg occurs 33 times.
+--              ____qgiver_ occurs 33 times.
 --          =hooker_ occurs 1 time.
 --           =total_ occurs 2 times.
 --        ___qgiver_ occurs 4 times.
