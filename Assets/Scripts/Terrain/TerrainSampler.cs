@@ -56,12 +56,19 @@ namespace DaggerfallWorkshop
         float BeachElevation { get; set; }
 
         /// <summary>
-        /// get terrain height scale for given x and y position on the world map
+        /// Get terrain height scale for given x and y position on the world map
         /// </summary>
         /// <param name="x">world map x position</param>
         /// <param name="y">world map y position</param>
         /// <returns></returns>
         float TerrainHeightScale(int x, int y);
+
+        /// <summary>
+        /// Indicates whether this sampler blends / flattens terrain for locations and thus controls whether the 
+        /// standard job to blend terrain for locations should be run or not.
+        /// </summary>
+        /// <returns>true if this sampler blends terrain for locations, false if standard location blending should be performed</returns>
+        bool IsLocationTerrainBlended();
 
         /// <summary>
         /// Populates a MapPixelData struct using custom height sample generator.
@@ -97,6 +104,8 @@ namespace DaggerfallWorkshop
         
         //this function may be overriden if terrain sampler implementation creates different height scales for different map pixels
         public virtual float TerrainHeightScale(int x, int y) { return MeanTerrainHeightScale; } // default implementation returns MeanTerrainHeightScale for every world map position
+
+        public virtual bool IsLocationTerrainBlended() { return false; }
 
         public abstract void GenerateSamples(ref MapPixelData mapPixel);
 
