@@ -2017,6 +2017,68 @@ namespace DaggerfallWorkshop.Game.Formulas
             return 0;
         }
 
+        /// <summary>
+        /// Gets a random material based on player level.
+        /// Note, this is called by default RandomArmorMaterial function.
+        /// </summary>
+        /// <param name="playerLevel">Player level, possibly adjusted.</param>
+        /// <returns>WeaponMaterialTypes value of material selected.</returns>
+        public static WeaponMaterialTypes RandomMaterial(int playerLevel)
+        {
+            Func<int, WeaponMaterialTypes> del;
+            if (TryGetOverride("RandomMaterial", out del))
+                return del(playerLevel);
+
+            int levelModifier = (playerLevel - 10);
+
+            if (levelModifier >= 0)
+                levelModifier *= 2;
+            else
+                levelModifier *= 4;
+
+            int randomModifier = UnityEngine.Random.Range(0, 256);
+
+            int combinedModifiers = levelModifier + randomModifier;
+            combinedModifiers = Mathf.Clamp(combinedModifiers, 0, 256);
+
+            int material = 0; // initialize to iron
+
+            // The higher combinedModifiers is, the higher the material
+            while (ItemBuilder.materialsByModifier[material] < combinedModifiers)
+            {
+                combinedModifiers -= ItemBuilder.materialsByModifier[material++];
+            }
+
+            return (WeaponMaterialTypes)(material);
+        }
+
+        /// <summary>
+        /// Gets a random armor material based on player level.
+        /// </summary>
+        /// <param name="playerLevel">Player level, possibly adjusted.</param>
+        /// <returns>ArmorMaterialTypes value of material selected.</returns>
+        public static ArmorMaterialTypes RandomArmorMaterial(int playerLevel)
+        {
+            Func<int, ArmorMaterialTypes> del;
+            if (TryGetOverride("RandomArmorMaterial", out del))
+                return del(playerLevel);
+
+            // Random armor material
+            int roll = Dice100.Roll();
+            if (roll >= 70)
+            {
+                if (roll >= 90)
+                {
+                    WeaponMaterialTypes plateMaterial = FormulaHelper.RandomMaterial(playerLevel);
+                    return (ArmorMaterialTypes)(0x0200 + plateMaterial);
+                }
+                else
+                    return ArmorMaterialTypes.Chain;
+            }
+            else
+                return ArmorMaterialTypes.Leather;
+        }
+
         #endregion
 
         #region Spell Costs
