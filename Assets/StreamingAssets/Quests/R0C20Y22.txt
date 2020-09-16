@@ -166,7 +166,8 @@ Person _orsinium_ face 184 faction Orsinium anyInfo 1012 rumors 1013
 
 Place orcCastle permanent OrsiniumCastle3
 
-Clock _queston_ 00:00 0 flag 2 range 3 5
+--changed flags on timer, was giving very short time limits before
+Clock _queston_ 00:00 0 flag 3 range 3 5
 
 Foe _note_ is 3 Orc
 Foe _F.01_ is Orc_sergeant
