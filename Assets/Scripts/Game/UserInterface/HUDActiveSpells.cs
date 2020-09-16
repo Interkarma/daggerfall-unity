@@ -297,7 +297,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 item.iconIndex = bundle.iconIndex;
                 item.icon = bundle.icon;
                 item.poolIndex = poolIndex++;
-                item.expiring = (GetMaxRoundsRemaining(bundle) <= 2) ? true : false;
+                item.expiring = (GetMaxRoundsRemaining(bundle) < 2) ? true : false;
                 item.isItem = (effectBundles[i].fromEquippedItem != null);
                 if (bundle.caster == null || bundle.caster != GameManager.Instance.PlayerEntityBehaviour)
                     activeOtherList.Add(item);
