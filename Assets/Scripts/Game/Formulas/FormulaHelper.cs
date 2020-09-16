@@ -1004,9 +1004,9 @@ namespace DaggerfallWorkshop.Game.Formulas
                         damage -= attacker.Level;
                 }
             }
-            else // Assume target is player if not an enemy
+            else if (target is PlayerEntity)
             {
-                if ((target as PlayerEntity).RaceTemplate.Name == TextManager.Instance.GetLocalizedText("vampire")) // Vampires are undead, therefore add undead modifier
+                if (GameManager.Instance.PlayerEffectManager.HasVampirism()) // Vampires are undead, therefore use undead modifier
                 {
                     if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
                         damage += attacker.Level;
