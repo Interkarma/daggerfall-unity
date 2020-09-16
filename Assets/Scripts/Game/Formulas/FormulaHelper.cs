@@ -644,6 +644,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
                             damage += hitDamage;
                         }
+
+                        damage += GetBonusOrPenaltyByEnemyType(attacker, target);
                         ++attackNumber;
                     }
                 }
@@ -711,11 +713,9 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             int damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + 1) + damageModifier;
 
-            EnemyEntity AITarget = null;
             if (target != GameManager.Instance.PlayerEntity)
             {
-                AITarget = target as EnemyEntity;
-                if (AITarget.CareerIndex == (int)MonsterCareers.SkeletalWarrior)
+                if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.SkeletalWarrior)
                 {
                     // Apply edged-weapon damage modifier for Skeletal Warrior
                     if ((weapon.flags & 0x10) == 0)
@@ -738,7 +738,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (damage < 1)
                 damage = 0;
 
-            damage += GetBonusOrPenaltyByEnemyType(attacker, AITarget);
+            damage += GetBonusOrPenaltyByEnemyType(attacker, target);
 
             // Mod hook for adjusting final weapon damage. (no-op in DFU)
             damage = AdjustWeaponAttackDamage(attacker, target, damage, weaponAnimTime, weapon);
@@ -762,6 +762,8 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Apply strength modifier for players. It is not applied in classic despite what the in-game description for the Strength attribute says.
             if (player)
                 damage += DamageModifier(attacker.Stats.LiveStrength);
+
+            damage += GetBonusOrPenaltyByEnemyType(attacker, target);
 
             return damage;
         }
@@ -958,60 +960,66 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
-        public static int GetBonusOrPenaltyByEnemyType(DaggerfallEntity attacker, EnemyEntity AITarget)
+        public static int GetBonusOrPenaltyByEnemyType(DaggerfallEntity attacker, DaggerfallEntity target)
         {
-            Func<DaggerfallEntity, EnemyEntity, int> del;
+            Func<DaggerfallEntity, DaggerfallEntity, int> del;
             if (TryGetOverride("GetBonusOrPenaltyByEnemyType", out del))
-                return del(attacker, AITarget);
+                return del(attacker, target);
 
-            if (attacker == null || AITarget == null)
+            if (attacker == null || target == null)
                 return 0;
 
             int damage = 0;
             // Apply bonus or penalty by opponent type.
             // In classic this is broken and only works if the attack is done with a weapon that has the maximum number of enchantments.
-            if (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Undead)
+            if (target is EnemyEntity)
             {
-                if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                var enemyTarget = target as EnemyEntity;
+                if (enemyTarget.MobileEnemy.Affinity == MobileAffinity.Human)
                 {
-                    damage += attacker.Level;
+                    if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                        damage += attacker.Level;
+                    if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                        damage -= attacker.Level;
                 }
-                if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                else if (enemyTarget.GetEnemyGroup() == DFCareer.EnemyGroups.Undead)
                 {
-                    damage -= attacker.Level;
+                    if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                        damage += attacker.Level;
+                    if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                        damage -= attacker.Level;
+                }
+                else if (enemyTarget.GetEnemyGroup() == DFCareer.EnemyGroups.Daedra)
+                {
+                    if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                        damage += attacker.Level;
+                    if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                        damage -= attacker.Level;
+                }
+                else if (enemyTarget.GetEnemyGroup() == DFCareer.EnemyGroups.Animals)
+                {
+                    if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                        damage += attacker.Level;
+                    if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                        damage -= attacker.Level;
                 }
             }
-            else if (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Daedra)
+            else if (target is PlayerEntity)
             {
-                if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                if (GameManager.Instance.PlayerEffectManager.HasVampirism()) // Vampires are undead, therefore use undead modifier
                 {
-                    damage += attacker.Level;
+                    if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                        damage += attacker.Level;
+                    if (((int)attacker.Career.UndeadAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                        damage -= attacker.Level;
                 }
-                if (((int)attacker.Career.DaedraAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                else
                 {
-                    damage -= attacker.Level;
-                }
-            }
-            else if (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Humanoid)
-            {
-                if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                {
-                    damage += attacker.Level;
-                }
-                if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                {
-                    damage -= attacker.Level;
-                }
-            }
-            else if (AITarget.GetEnemyGroup() == DFCareer.EnemyGroups.Animals)
-            {
-                if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
-                {
-                    damage += attacker.Level;
-                }
-                if (((int)attacker.Career.AnimalsAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
-                {
-                    damage -= attacker.Level;
+                    // Player is assumed humanoid
+                    if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Bonus) != 0)
+                        damage += attacker.Level;
+                    if (((int)attacker.Career.HumanoidAttackModifier & (int)DFCareer.AttackModifier.Phobia) != 0)
+                        damage -= attacker.Level;
                 }
             }
 
