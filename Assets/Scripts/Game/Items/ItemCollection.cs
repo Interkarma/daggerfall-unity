@@ -596,7 +596,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 if (templateIndex == -1)
                 {
-                    if (item.GroupIndex == (int)itemGroup)
+                    if (item.ItemGroup == itemGroup)
                     {
                         results.Add(item);
                     }
