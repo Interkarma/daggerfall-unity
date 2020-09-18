@@ -318,12 +318,23 @@ namespace DaggerfallWorkshop
 
             // Snap back to physical world boundary to prevent player running off edge of world
             // Setting to approx. 10000 inches (254 metres) in from edge so end of world not so visible
-            if (WorldX < 10000 ||       // West
-                WorldZ > 16370000 ||    // North
-                WorldZ < 10000 ||       // South
-                WorldX > 32750000)      // East
-            {    
-                gameObject.transform.position = lastFramePosition;
+            if (WorldX < 10000)
+            {
+                // West
+                gameObject.transform.position = new Vector3(lastFramePosition.x + 0.01f, gameObject.transform.position.y, gameObject.transform.position.z);
+            } else if (WorldX > 32750000)
+            {
+                // East
+                gameObject.transform.position = new Vector3(lastFramePosition.x - 0.01f, gameObject.transform.position.y, gameObject.transform.position.z);
+            }
+            if (WorldZ < 10000)
+            {
+                // South
+                gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, lastFramePosition.z + 0.01f);
+            } else if (WorldZ > 16370000)
+            {
+                // North
+                gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, lastFramePosition.z - 0.01f);
             }
             
             // Record player's last frame position
