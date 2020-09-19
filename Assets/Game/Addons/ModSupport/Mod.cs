@@ -948,7 +948,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 {
                     var monoScript = AssetDatabase.LoadAssetAtPath<MonoScript>(fileName);
                     if (monoScript)
-                        types.Add(monoScript.GetClass());
+                    {
+                        Type type = monoScript.GetClass();
+                        if (type != null)
+                            types.Add(type);
+                    }
                 }
                 else if (fileName.EndsWith(".dll.bytes", StringComparison.Ordinal))
                 {
