@@ -1116,7 +1116,6 @@ namespace DaggerfallWorkshop.Utility
 
             // Instantiate door prefab and add model
             // A custom prefab can be provided by mods and must include DaggerfallActionDoor component with all requirements.
-            // LIMITATION: custom prefabs are not given texture table.
             GameObject go = MeshReplacement.ImportCustomGameobject(modelId, parent, Matrix4x4.identity);
             if (!go)
             {

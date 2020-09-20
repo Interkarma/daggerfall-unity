@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -88,6 +88,36 @@ namespace DaggerfallWorkshop
                 textureTable[5] = validSewerArchives[Random.Range(0, validSewerArchives.Length)];
 
             return textureTable;
+        }
+
+        /// <summary>
+        /// Applies the requested dungeon texture table to texture archive index.
+        /// </summary>
+        /// <param name="archive">Base texture archive index.</param>
+        /// <param name="textureTable">Target dungeon texture table with length <see cref="TableLength"/>.</param>
+        /// <param name="climateBaseType">Target climate type.</param>
+        /// <returns>Modified texture archive or the archive itself.</returns>
+        public static int ApplyTextureTable(int archive, int[] textureTable, DFLocation.ClimateBaseType climateBaseType)
+        {
+            switch (archive)
+            {
+                case 74:
+                    return archive += (int)climateBaseType;
+                case 119:
+                    return textureTable[0];
+                case 120:
+                    return textureTable[1];
+                case 122:
+                    return textureTable[2];
+                case 123:
+                    return textureTable[3];
+                case 124:
+                    return textureTable[4];
+                case 168:
+                    return textureTable[5];
+                default:
+                    return archive;
+            };
         }
     }
 }
