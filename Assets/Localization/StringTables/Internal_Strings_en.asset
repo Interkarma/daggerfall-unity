@@ -3630,5 +3630,9 @@ MonoBehaviour:
     m_Localized: Are you sure you want to remove the keybind for {0} ('{1}')?
     m_Metadata:
       m_Items: []
+  - m_Id: 812
+    m_Localized: Nord
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
