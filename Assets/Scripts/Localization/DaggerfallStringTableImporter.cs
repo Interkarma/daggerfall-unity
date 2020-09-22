@@ -362,7 +362,7 @@ namespace DaggerfallWorkshop.Localization
         }
 
         // Gets list of all text keys from table
-        private static List<string> GetKeys(LocalizedTable table)
+        private static List<string> GetKeys(LocalizationTable table)
         {
             List<string> keys = new List<string>();
             foreach (SharedTableData.SharedTableEntry entry in table.SharedData.Entries)
