@@ -132,14 +132,14 @@ namespace DaggerfallWorkshop.Game
         /// <returns>True if font of this name has been registered in current locale.</returns>
         public bool HasLocalizedFont(DaggerfallFont.FontName fontName)
         {
-            Locale selectedLocale;
+            Locale selectedLocale = null;
             var op = LocalizationSettings.SelectedLocaleAsync;
             if (op.IsDone)
                 selectedLocale = op.Result;
             else
-                return false;
+                op.Completed += (o) => selectedLocale = o.Result;
 
-            return localizedFonts.ContainsKey(GetLocaleFontKey(selectedLocale, fontName));
+            return (selectedLocale != null) ? localizedFonts.ContainsKey(GetLocaleFontKey(selectedLocale, fontName)) : false;
         }
 
         /// <summary>
@@ -167,14 +167,14 @@ namespace DaggerfallWorkshop.Game
         /// <returns></returns>
         public DaggerfallFont GetLocalizedFont(DaggerfallFont.FontName fontName)
         {
-            Locale selectedLocale;
+            Locale selectedLocale = null;
             var op = LocalizationSettings.SelectedLocaleAsync;
             if (op.IsDone)
                 selectedLocale = op.Result;
             else
-                return null;
+                op.Completed += (o) => selectedLocale = o.Result;
 
-            return GetLocalizedFont(selectedLocale, fontName);
+            return (selectedLocale != null) ? GetLocalizedFont(selectedLocale, fontName) : null;
         }
 
         private string GetLocaleFontKey(Locale locale, DaggerfallFont.FontName fontName)
