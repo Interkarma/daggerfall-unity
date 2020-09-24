@@ -577,6 +577,8 @@ namespace DaggerfallWorkshop.Utility
                 case DFRegion.LocationTypes.Tavern:
                     return TextManager.Instance.GetLocalizedText("community");
                 case DFRegion.LocationTypes.ReligionTemple:
+                    return TextManager.Instance.GetLocalizedText("temple");
+                case DFRegion.LocationTypes.ReligionCult:
                     return TextManager.Instance.GetLocalizedText("shrine");
                 default:
                     return gps.CurrentLocationType.ToString();
