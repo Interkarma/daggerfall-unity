@@ -3634,5 +3634,9 @@ MonoBehaviour:
     m_Localized: Nord
     m_Metadata:
       m_Items: []
+  - m_Id: 29516644352
+    m_Localized: temple
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
