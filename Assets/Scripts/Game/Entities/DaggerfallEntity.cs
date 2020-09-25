@@ -598,7 +598,10 @@ namespace DaggerfallWorkshop.Game.Entity
                     // Get slot used by this armor
                     EquipSlots slot = ItemEquipTable.GetEquipSlot(armor);
 
+                    // Get equip index with out of range check
                     int index = (int)DaggerfallUnityItem.GetBodyPartForEquipSlot(slot);
+                    if (armorValues == null || index < 0 || index >= armorValues.Length)
+                        return;
 
                     if (equipping)
                     {
