@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Internal_RSC Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 1409
   m_TableCollectionName: Internal_RSC
   m_TableCollectionNameGuidString: a53022878bfb3504595f69334a1cd2a2
   m_Entries:
@@ -5650,5 +5649,12 @@ MonoBehaviour:
       m_Items: []
   m_Metadata:
     m_Items: []
+  m_KeyGenerator:
+    id: 0
   references:
     version: 1
+    00000000:
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1601075518637
