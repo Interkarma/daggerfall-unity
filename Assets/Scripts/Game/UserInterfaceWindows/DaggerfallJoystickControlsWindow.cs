@@ -414,7 +414,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             foreach (Button keybindButton in buttonGroup)
             {
-                if (dupes.Contains(keybindButton.Label.Text))
+                string text;
+                //The left/right click buttons have tooltips, axis buttons do not
+                if (!string.IsNullOrEmpty(keybindButton.ToolTipText))
+                    text = UnsavedKeybindDict[keybindButton.Name];
+                else
+                    text = keybindButton.Label.Text;
+
+                if (dupes.Contains(text))
                     keybindButton.Label.TextColor = new Color(1, 0, 0);
                 else
                     keybindButton.Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
@@ -554,6 +561,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         if (!string.IsNullOrEmpty(text))
                         {
                             button.Label.Text = text;
+
+                            string actionKey = button.Name;
+                            UnsavedKeybindDict[actionKey] = text;
                         }
                         else
                         {
@@ -565,11 +575,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         button.Label.Text = ControlsConfigManager.Instance.GetButtonText(code);
                         button.SuppressToolTip = button.Label.Text != ControlsConfigManager.ElongatedButtonText;
                         button.ToolTipText = ControlsConfigManager.Instance.GetButtonText(code, true);
+
+                        string actionKey = button.Name;
+                        UnsavedKeybindDict[actionKey] = InputManager.Instance.GetKeyString(code);
                     }
 
-                    string actionKey = button.Name;
-
-                    UnsavedKeybindDict[actionKey] = InputManager.Instance.GetKeyString(code);
                     CheckDuplicates();
                 }
                 else
