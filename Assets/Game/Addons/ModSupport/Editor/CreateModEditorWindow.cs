@@ -62,6 +62,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         readonly GUIStyle titleStyle = new GUIStyle();
         readonly GUIStyle fieldStyle = new GUIStyle();
         GUIContent documentationGUIContent;
+        GUIContent targetInfoGUIContent;
         bool isSupportedEditorVersion;
 
         void OnEnable()
@@ -80,6 +81,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
             documentationGUIContent = new GUIContent(EditorGUIUtility.IconContent("_Help"));
             documentationGUIContent.text = " Mod System Documentation";
+            targetInfoGUIContent = new GUIContent($"{VersionInfo.DaggerfallUnityProductName} {VersionInfo.DaggerfallUnityStatus} {VersionInfo.DaggerfallUnityVersion} (Unity {VersionInfo.BaselineUnityVersion})");
             isSupportedEditorVersion = IsSupportedEditorVersion();
         }
 
@@ -203,6 +205,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             GUILayoutHelper.Vertical(() =>
             {
                 EditorGUILayout.Space();
+
+                GUILayoutHelper.Horizontal(() =>
+                {
+                    EditorGUILayout.LabelField(new GUIContent("Current Target: "), titleStyle);
+                    GUILayout.Space(-1000);
+                    EditorGUILayout.LabelField(targetInfoGUIContent, fieldStyle);
+                });
+
                 GUILayoutHelper.Horizontal(() =>
                 {
                     EditorGUILayout.LabelField(new GUIContent("Current File: "), titleStyle);
