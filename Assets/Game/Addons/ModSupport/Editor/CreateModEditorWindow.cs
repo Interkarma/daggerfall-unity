@@ -764,7 +764,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         private static bool IsSupportedEditorVersion()
         {
 #if UNITY_EDITOR_WIN || UNITY_EDITOR_OSX
-            return Application.unityVersion.Equals("2019.4.2f1", StringComparison.Ordinal);
+            return Application.unityVersion.Equals(VersionInfo.BaselineUnityVersion, StringComparison.Ordinal);
 #elif UNITY_EDITOR_LINUX
             return true;
 #else
