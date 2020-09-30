@@ -1544,6 +1544,9 @@ namespace DaggerfallWorkshop.Utility
             {
                 enemy.LoadID = loadID;
             }
+
+            GameManager.Instance?.RaiseOnEnemySpawnEvent(go);
+
         }
 
         private static DaggerfallLoot AddRandomTreasure(
