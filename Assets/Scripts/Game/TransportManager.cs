@@ -151,8 +151,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         AudioSource ridingAudioSource;
 
-        private bool stoppedRidingAudio;
-
         ImageData ridingTexture;
         ImageData[] ridingTexures = new ImageData[4];
         float lastFrameTime = 0;
@@ -202,13 +200,6 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        IEnumerator StopRidingAudio()
-        {
-            stoppedRidingAudio = true;
-            yield return new WaitForSecondsRealtime(0.2f);
-            ridingAudioSource.Stop();
-        }
-
         // Update is called once per frame
         void Update()
         {
@@ -221,8 +212,7 @@ namespace DaggerfallWorkshop.Game
                     lastFrameTime = 0;
                     frameIndex = 0;
                     ridingTexture = ridingTexures[0];
-                    if (!stoppedRidingAudio)
-                        StartCoroutine(StopRidingAudio());
+                    ridingAudioSource.Stop();
                 }
                 else
                 {   // Update Animation frame?
@@ -239,8 +229,6 @@ namespace DaggerfallWorkshop.Game
                     // Get appropriate hoof sound for horse
                     if (mode == TransportModes.Horse)
                     {
-                        stoppedRidingAudio = false;
-
                         if (!wasMovingLessThanHalfSpeed && playerMotor.IsMovingLessThanHalfSpeed)
                         {
                             wasMovingLessThanHalfSpeed = true;
