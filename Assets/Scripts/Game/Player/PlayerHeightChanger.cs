@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game
             bool swimming = levitateMotor.IsSwimming;
             bool crouching = playerMotor.IsCrouching;
             bool riding = playerMotor.IsRiding;
-            bool pressedCrouch = InputManager.Instance.ActionComplete(InputManager.Actions.Crouch);
+            bool pressedCrouch = InputManager.Instance.ActionStarted(InputManager.Actions.Crouch);
             bool climbing = climbingMotor.IsClimbing;
             bool levitating = playerMotor.IsLevitating;
             //timerMax = timerSlow;
