@@ -678,7 +678,7 @@ namespace DaggerfallWorkshop.Utility
             int offset = (isMasser) ? 3 : -1;
 
             // Find the lunar phase for current day
-            int moonRatio = (Day + offset) % 32;
+            int moonRatio = (DayOfYear + Year * 360 + offset) % 32;
             LunarPhases phase = LunarPhases.None;
             if (moonRatio == 0)
                 phase = LunarPhases.Full;
