@@ -249,10 +249,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     GlyphLayoutData glyph = glyphLayout[i];
 
                     Rect targetRect = new Rect(
-                        totalRect.x + glyph.x * LocalScale.x * textScale + HorzPixelScrollOffset * LocalScale.x * textScale,
-                        totalRect.y + glyph.y * LocalScale.y * textScale,
-                        glyph.width * LocalScale.x * textScale,
-                        font.GlyphHeight * LocalScale.y * textScale);
+                        (int)(totalRect.x + glyph.x * LocalScale.x * textScale + HorzPixelScrollOffset * LocalScale.x * textScale),
+                        (int)(totalRect.y + glyph.y * LocalScale.y * textScale),
+                        (int)(glyph.width * LocalScale.x * textScale),
+                        (int)(font.GlyphHeight * LocalScale.y * textScale));
 
                     font.DrawClassicGlyph((byte)glyph.code, targetRect, textColor, shadowPosition * LocalScale, shadowColor);
                 }
@@ -265,8 +265,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     GlyphLayoutData glyph = glyphLayout[i];
 
                     Vector2 position = new Vector2(
-                        totalRect.x + glyph.x * LocalScale.x * textScale + HorzPixelScrollOffset * LocalScale.x * textScale,
-                        totalRect.y + glyph.y * LocalScale.y * textScale);
+                        (int)(totalRect.x + glyph.x * LocalScale.x * textScale + HorzPixelScrollOffset * LocalScale.x * textScale),
+                        (int)(totalRect.y + glyph.y * LocalScale.y * textScale));
 
                     font.DrawSDFGlyph(glyph.code, position, LocalScale * textScale, textColor, shadowPosition * LocalScale, shadowColor);
                 }
