@@ -145,6 +145,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         ShowNonPlayerFailures = 1,
         BypassSavingThrows = 2,
         SpecialInfection = 4,
+        BypassChance = 8,
     }
 
     /// <summary>
