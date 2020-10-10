@@ -1152,6 +1152,8 @@ namespace DaggerfallWorkshop.Utility
             if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
                 AlignControllerToGround(go.GetComponent<CharacterController>());
 
+            GameManager.Instance?.RaiseOnEnemySpawnEvent(go);
+
             return go;
         }
 
@@ -1213,6 +1215,8 @@ namespace DaggerfallWorkshop.Utility
 
                 // Disable GameObject, caller must set active when ready
                 go.SetActive(false);
+
+                GameManager.Instance?.RaiseOnEnemySpawnEvent(go);
 
                 // Add to list
                 gameObjects.Add(go);

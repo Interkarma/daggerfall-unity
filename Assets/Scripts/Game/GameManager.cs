@@ -1056,6 +1056,17 @@ namespace DaggerfallWorkshop.Game
                 OnEncounter();
         }
 
+        //OnEnemySpawn
+        public delegate void OnEnemySpawnHandler(GameObject enemy);
+        public static event OnEnemySpawnHandler OnEnemySpawn;
+
+        public virtual void RaiseOnEnemySpawnEvent(GameObject enemy)
+        {
+            if (OnEnemySpawn != null)
+                OnEnemySpawn(enemy);
+        }
+
+
         #endregion
     }
 }
