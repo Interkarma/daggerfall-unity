@@ -345,6 +345,26 @@ namespace DaggerfallWorkshop.Game.Questing
                 return true;
             }
 
+            // Handle "anymarker" preference
+            if (markerIndexPreference == MarkerPreference.AnyMarker)
+            {
+                // Create a combined list of all markers
+                List<QuestMarker> allMarkers = new List<QuestMarker>();
+                allMarkers.AddRange(siteDetails.questSpawnMarkers);
+                allMarkers.AddRange(siteDetails.questItemMarkers);
+
+                // Select a random marker from combined list
+                if (allMarkers.Count > 0)
+                {
+                    siteDetails.selectedMarker = allMarkers[UnityEngine.Random.Range(0, allMarkers.Count)];
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
             // Determine preferred marker type for this resource
             MarkerTypes preferredMarkerType = MarkerTypes.None;
             if (resource is Person || resource is Foe || markerIndexPreference == MarkerPreference.UseQuestMarker)
@@ -416,7 +436,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 AssignResourceToMarker(targetSymbol.Clone(), ref siteDetails.selectedMarker);
 
             // Output debug information
-            if (resource is Person)
+            if (markerIndexPreference == MarkerPreference.AnyMarker)
+            {
+                Debug.LogFormat("Assigned resource {0} to random quest or item marker", resource.Symbol.Name);
+            }
+            else if (resource is Person)
             {
                 if (siteDetails.siteType == SiteTypes.Building)
                     Debug.LogFormat("Assigned Person {0} to Building {1}", (resource as Person).DisplayName, SiteDetails.buildingName);

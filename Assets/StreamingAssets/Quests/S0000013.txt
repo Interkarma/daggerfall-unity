@@ -187,7 +187,7 @@ until _S.04_ performed:
 	clear _S.02_ 
 
 yes task:
-	place item _treasure_ at _myndung_ marker 2
+	place item _treasure_ at _myndung_ anymarker
 	start timer _2myndung_ 
 	reveal _myndung_ 
 	log 1011 step 0 
