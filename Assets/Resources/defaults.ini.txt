@@ -30,6 +30,7 @@ RandomDungeonTextures=0
 
 [Audio]
 SoundFont=
+AlternateMusic=False
 
 [ChildGuard]
 PlayerNudity=False

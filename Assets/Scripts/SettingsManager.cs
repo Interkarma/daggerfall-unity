@@ -111,6 +111,7 @@ namespace DaggerfallWorkshop
 
         // [Audio]
         public string SoundFont { get; set; }
+        public bool AlternateMusic { get; set; }
 
         // [ChildGuard]
         public bool PlayerNudity { get; set; }
@@ -257,6 +258,7 @@ namespace DaggerfallWorkshop
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
 
             SoundFont = GetString(sectionAudio, "SoundFont");
+            AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
 
             PlayerNudity = GetBool(sectionChildGuard, "PlayerNudity");
 
@@ -388,6 +390,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
 
             SetString(sectionAudio, "SoundFont", SoundFont);
+            SetBool(sectionAudio, "AlternateMusic", AlternateMusic);
 
             SetBool(sectionChildGuard, "PlayerNudity", PlayerNudity);
 

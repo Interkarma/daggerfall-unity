@@ -38,6 +38,8 @@ weaponAttackThreshold,                              WeaponAttackThreshold
 weaponAttackThresholdInfo,                          Minimum mouse gesture travel distance for an attack
 soundFont,                                          SoundFont
 soundFontInfo,                                      Active soundfont
+alternateMusic,                                     Alternate Music
+alternateMusicInfo,                                 Use the OPL3-optimized version of the soundtrack.
 soundVolume,                                        Sound volume
 soundVolumeInfo,                                    Volume of sound.
 musicVolume,                                        Music volume

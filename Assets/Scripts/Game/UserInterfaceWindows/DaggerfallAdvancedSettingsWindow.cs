@@ -97,6 +97,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox spellShadows;
         Checkbox bowDrawback;
         Checkbox toggleSneak;
+        Checkbox alternateMusic;
 
         // Interface
         Checkbox toolTips;
@@ -240,6 +241,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddSectionTitle(rightPanel, "audio");
             TextBox soundFont = AddTextbox(rightPanel, "soundFont", !string.IsNullOrEmpty(DaggerfallUnity.Settings.SoundFont) ? DaggerfallUnity.Settings.SoundFont : "default");
             soundFont.ReadOnly = true;
+            alternateMusic = AddCheckbox(rightPanel, "alternateMusic", DaggerfallUnity.Settings.AlternateMusic);
             soundVolume = AddSlider(rightPanel, "soundVolume", 0, 1, DaggerfallUnity.Settings.SoundVolume);
             musicVolume = AddSlider(rightPanel, "musicVolume", 0, 1, DaggerfallUnity.Settings.MusicVolume);
 
@@ -377,6 +379,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.BowDrawback = bowDrawback.IsChecked;
             DaggerfallUnity.Settings.ToggleSneak = toggleSneak.IsChecked;
 
+            DaggerfallUnity.Settings.AlternateMusic = alternateMusic.IsChecked;
             DaggerfallUnity.Settings.SoundVolume = soundVolume.GetValue();
             DaggerfallUnity.Settings.MusicVolume = musicVolume.GetValue();
 
