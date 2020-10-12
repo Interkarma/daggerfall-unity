@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                         bundle = new EntityEffectBundle(bundleSettings, sourceEntity);
                         bundle.CastByItem = sourceItem;
                         if (bundle.Settings.TargetType == TargetTypes.CasterOnly)
-                            effectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+                            effectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows | AssignBundleFlags.BypassChance);
                         else
                             effectManager.SetReadySpell(bundle, true);
                     }

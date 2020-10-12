@@ -240,8 +240,8 @@ namespace DaggerfallWorkshop
             float yShear = (Mathf.Tan(angleXRadians) * zoom) * 0.50f;
             float scrollY = Mathf.Clamp(baseScrollY - (yShear * Screen.height), -height, 0f);
 
-            westRect = new Rect(westOffset + scrollX, scrollY, width, height);
-            eastRect = new Rect(eastOffset + scrollX, scrollY, width, height);
+            westRect = new Rect((int)(westOffset + scrollX), scrollY, width, height);
+            eastRect = new Rect((int)(eastOffset + scrollX), scrollY, width, height);
         }
 
         private void DrawSky()

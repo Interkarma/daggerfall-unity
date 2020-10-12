@@ -635,6 +635,7 @@ namespace DaggerfallWorkshop
     {
         Default,                // Assign Foe/Person to specified questmarker index and Item to specified itemmarker index
         UseQuestMarker,         // Assign Foe/Person/Item to specified questmarker index
+        AnyMarker,              // Assign Foe/Person/Item randomly from combined questmarker and itemmarker pool
     }
 
     /// <summary>

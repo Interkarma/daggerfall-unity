@@ -1465,11 +1465,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Get quest item
                 Item questItem = GetQuestItem(item);
 
-                // Player cannot drop most quest items
-                if (questItem == null || (!questItem.AllowDrop && from == localItems))
+                // Player cannot drop most quest items unless enabled
+                if (!DaggerfallUnity.Settings.CanDropQuestItems)
                 {
-                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotRemoveItem"));
-                    return;
+                    if (questItem == null || (!questItem.AllowDrop && from == localItems))
+                    {
+                        DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotRemoveItem"));
+                        return;
+                    }
                 }
 
                 // Dropping or picking up quest item
