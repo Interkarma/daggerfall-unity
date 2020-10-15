@@ -203,6 +203,8 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
             OnExhausted += PlayerEntity_OnExhausted;
+            PlayerGPS.OnExitLocationRect += PlayerGPS_OnExitLocationRect;
+            DaggerfallTravelPopUp.OnPostFastTravel += DaggerfallTravelPopUp_OnPostFastTravel;
         }
 
         #endregion
@@ -2409,6 +2411,18 @@ namespace DaggerfallWorkshop.Game.Entity
         private void ExhaustedMessageBox_OnClose()
         {
             displayingExhaustedPopup = false;
+        }
+
+        private void PlayerGPS_OnExitLocationRect()
+        {
+            // Clear crime state when exiting location rect
+            CrimeCommitted = Crimes.None;
+        }
+
+        private void DaggerfallTravelPopUp_OnPostFastTravel()
+        {
+            // Clear crime state post fast travel
+            CrimeCommitted = Crimes.None;
         }
 
         #endregion

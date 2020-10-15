@@ -153,6 +153,20 @@ namespace DaggerfallWorkshop.Game.Entity
             return currentHealth;
         }
 
+        public override void Update(DaggerfallEntityBehaviour sender)
+        {
+            base.Update(sender);
+
+            // Despawn city watch when active crime state returns to none
+            // This can happen when exiting city area, after fast travel, or via console
+            if (entityType == EntityTypes.EnemyClass &&
+                careerIndex == (int)MobileTypes.Knight_CityWatch - 128 &&
+                GameManager.Instance.PlayerEntity.CrimeCommitted == PlayerEntity.Crimes.None)
+            {
+                sender.gameObject.SetActive(false);
+            }
+        }
+
         /// <summary>
         /// Attempt to trap a soul.
         /// </summary>
