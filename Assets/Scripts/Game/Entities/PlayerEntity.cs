@@ -616,8 +616,10 @@ namespace DaggerfallWorkshop.Game.Entity
         // Recreation of guard spawning based on classic
         public void SpawnCityGuards(bool immediateSpawn)
         {
-            // Only spawn if player is not in a dungeon, and if there are 10 or fewer existing guards
-            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, false, true) <= 10)
+            const int maxActiveGuardSpawns = 5;
+
+            // Only spawn if player is not in a dungeon, and if there are fewer than max active guards
+            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, false, true) <= maxActiveGuardSpawns)
             {
                 // Handle indoor guard spawning
                 if (GameManager.Instance.PlayerEnterExit.IsPlayerInside && GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop)

@@ -163,7 +163,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 careerIndex == (int)MobileTypes.Knight_CityWatch - 128 &&
                 GameManager.Instance.PlayerEntity.CrimeCommitted == PlayerEntity.Crimes.None)
             {
-                sender.gameObject.SetActive(false);
+                GameObject.Destroy(sender.gameObject);
             }
         }
 
