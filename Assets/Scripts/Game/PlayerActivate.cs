@@ -76,8 +76,8 @@ namespace DaggerfallWorkshop.Game
         public const float MobileNPCActivationDistance = 256 * MeshReader.GlobalScale;
 
         // Opening and closing hours by building type
-        static byte[] openHours  = {  7,  8,  9,  8,  0,  9, 10, 10,  9,  6,  9, 11,  9,  9,  0,  0, 10, 0 };
-        static byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
+        public static byte[] openHours  = {  7,  8,  9,  8,  0,  9, 10, 10,  9,  6,  9, 11,  9,  9,  0,  0, 10, 0 };
+        public static byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
 
         const int PrivatePropertyId = 37;
 
@@ -571,7 +571,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        int GetBuildingLockValue(int quality)
+        public int GetBuildingLockValue(int quality)
         {
             // Currently unknown how classic calculates building lock value but suspect related to building quality level
             // No exterior buildings are known to have magically held locks, so 20 quality buildings (e.g. The Odd Blades) must have a lower lock value
@@ -580,7 +580,7 @@ namespace DaggerfallWorkshop.Game
             return quality / 2;
         }
 
-        int GetBuildingLockValue(BuildingSummary buildingSummary)
+        public int GetBuildingLockValue(BuildingSummary buildingSummary)
         {
             return GetBuildingLockValue(buildingSummary.Quality);
         }
@@ -1070,7 +1070,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Look for building array on object, then on direct parent
-        private DaggerfallStaticBuildings GetBuildings(Transform buildingsTransform, out Transform owner)
+        public DaggerfallStaticBuildings GetBuildings(Transform buildingsTransform, out Transform owner)
         {
             owner = null;
             DaggerfallStaticBuildings buildings = buildingsTransform.GetComponent<DaggerfallStaticBuildings>();
@@ -1089,7 +1089,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Look for doors on object, then on direct parent
-        private DaggerfallStaticDoors GetDoors(Transform doorsTransform, out Transform owner)
+        public DaggerfallStaticDoors GetDoors(Transform doorsTransform, out Transform owner)
         {
             owner = null;
             DaggerfallStaticDoors doors = doorsTransform.GetComponent<DaggerfallStaticDoors>();
@@ -1181,7 +1181,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Check if building is unlocked and enterable
-        private bool BuildingIsUnlocked(BuildingSummary buildingSummary)
+        public bool BuildingIsUnlocked(BuildingSummary buildingSummary)
         {
             // Player owned house is always unlocked
             if (DaggerfallBankManager.IsHouseOwned(buildingSummary.buildingKey))
@@ -1318,7 +1318,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Sets new activation mode
-        private void ChangeInteractionMode(PlayerActivateModes newMode)
+        public void ChangeInteractionMode(PlayerActivateModes newMode)
         {
             // Do nothing if new mode matches current mode
             if (newMode == currentMode)
@@ -1477,7 +1477,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Player has clicked on a pickpocket target in steal mode
-        void Pickpocket(DaggerfallEntityBehaviour target = null)
+        public void Pickpocket(DaggerfallEntityBehaviour target = null)
         {
             const int foundNothingValuableTextId = 8999;
 

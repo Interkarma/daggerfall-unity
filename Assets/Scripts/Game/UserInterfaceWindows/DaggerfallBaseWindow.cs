@@ -74,7 +74,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             protected set { isSetup = value; }
         }
 
-        protected Panel NativePanel
+        public Panel NativePanel
         {
             get { return nativePanel; }
         }
