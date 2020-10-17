@@ -804,6 +804,7 @@ namespace DaggerfallWorkshop.Game.Entity
             timeOfLastSkillIncreaseCheck = 0;
             timeOfLastSkillTraining = 0;
             rentedRooms.Clear();
+            crimeCommitted = Crimes.None;
             DaedraSummonDay = DaedraSummonIndex = 0;
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
