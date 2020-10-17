@@ -424,15 +424,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (PlayerEntity.ReadyToLevelUp)
             {
                 leveling = true;
-                PlayerEntity.Level++;
-                PlayerEntity.MaxHealth = PlayerEntity.RawMaxHealth + FormulaHelper.CalculateHitPointsPerLevelUp(PlayerEntity);
                 DaggerfallUI.Instance.PlayOneShot(levelUpSound);
 
                 int bonusPool;
-
                 if (!PlayerEntity.OghmaLevelUp)
                 {
                     bonusPool = FormulaHelper.BonusPool();
+                    PlayerEntity.Level++;
+                    PlayerEntity.MaxHealth = PlayerEntity.RawMaxHealth + FormulaHelper.CalculateHitPointsPerLevelUp(PlayerEntity);
                 }
                 else
                     bonusPool = oghmaBonusPool;

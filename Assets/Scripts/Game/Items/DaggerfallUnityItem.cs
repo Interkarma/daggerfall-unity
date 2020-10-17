@@ -1147,9 +1147,10 @@ namespace DaggerfallWorkshop.Game.Items
             currentCondition -= amount;
             if (currentCondition <= 0)
             {
+                // Handle breaking - if AllowMagicRepairs enabled then item will not disappear
                 currentCondition = 0;
                 ItemBreaks(unequipFromOwner);
-                if (removeFromCollectionWhenBreaks != null)
+                if (removeFromCollectionWhenBreaks != null && !DaggerfallUnity.Settings.AllowMagicRepairs)
                     removeFromCollectionWhenBreaks.RemoveItem(this);
             }
         }

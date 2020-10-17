@@ -570,7 +570,7 @@ namespace DaggerfallWorkshop.Game
                     continue;
 
                 // Instantiate payload bundle on target
-                effectManager.AssignBundle(payload);
+                effectManager.AssignBundle(payload, AssignBundleFlags.ShowNonPlayerFailures);
             }
         }
 

@@ -203,6 +203,8 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
             OnExhausted += PlayerEntity_OnExhausted;
+            PlayerGPS.OnExitLocationRect += PlayerGPS_OnExitLocationRect;
+            DaggerfallTravelPopUp.OnPostFastTravel += DaggerfallTravelPopUp_OnPostFastTravel;
         }
 
         #endregion
@@ -614,8 +616,10 @@ namespace DaggerfallWorkshop.Game.Entity
         // Recreation of guard spawning based on classic
         public void SpawnCityGuards(bool immediateSpawn)
         {
-            // Only spawn if player is not in a dungeon, and if there are 10 or fewer existing guards
-            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, false, true) <= 10)
+            const int maxActiveGuardSpawns = 5;
+
+            // Only spawn if player is not in a dungeon, and if there are fewer than max active guards
+            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, false, true) <= maxActiveGuardSpawns)
             {
                 // Handle indoor guard spawning
                 if (GameManager.Instance.PlayerEnterExit.IsPlayerInside && GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop)
@@ -802,6 +806,7 @@ namespace DaggerfallWorkshop.Game.Entity
             timeOfLastSkillIncreaseCheck = 0;
             timeOfLastSkillTraining = 0;
             rentedRooms.Clear();
+            crimeCommitted = Crimes.None;
             DaedraSummonDay = DaedraSummonIndex = 0;
             if (skillUses != null)
                 System.Array.Clear(skillUses, 0, skillUses.Length);
@@ -2409,6 +2414,18 @@ namespace DaggerfallWorkshop.Game.Entity
         private void ExhaustedMessageBox_OnClose()
         {
             displayingExhaustedPopup = false;
+        }
+
+        private void PlayerGPS_OnExitLocationRect()
+        {
+            // Clear crime state when exiting location rect
+            CrimeCommitted = Crimes.None;
+        }
+
+        private void DaggerfallTravelPopUp_OnPostFastTravel()
+        {
+            // Clear crime state post fast travel
+            CrimeCommitted = Crimes.None;
         }
 
         #endregion

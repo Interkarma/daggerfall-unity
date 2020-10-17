@@ -110,6 +110,8 @@ namespace Wenzil.Console
 
             ConsoleCommandsDatabase.RegisterCommand(PlayFLC.name, PlayFLC.description, PlayFLC.usage, PlayFLC.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PlayVID.name, PlayVID.description, PlayVID.usage, PlayVID.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(PrintCrimeCommitted.name, PrintCrimeCommitted.description, PrintCrimeCommitted.usage, PrintCrimeCommitted.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(ClearCrimeCommitted.name, ClearCrimeCommitted.description, ClearCrimeCommitted.usage, ClearCrimeCommitted.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ClearNegativeLegalRep.name, ClearNegativeLegalRep.description, ClearNegativeLegalRep.usage, ClearNegativeLegalRep.Execute);
 
@@ -2488,6 +2490,31 @@ namespace Wenzil.Console
                 DaggerfallUI.Instance.UserInterfaceManager.PushWindow(vidPlayerWindow);
 
                 return "Finished";
+            }
+        }
+
+        private static class PrintCrimeCommitted
+        {
+            public static readonly string name = "print_crimecommitted";
+            public static readonly string description = "Output active crime state";
+            public static readonly string usage = "print_crimecommitted";
+
+            public static string Execute(params string[] args)
+            {
+                return GameManager.Instance.PlayerEntity.CrimeCommitted.ToString();
+            }
+        }
+
+        private static class ClearCrimeCommitted
+        {
+            public static readonly string name = "clear_crimecommitted";
+            public static readonly string description = "Clear active crime state";
+            public static readonly string usage = "clear_crimecommitted";
+
+            public static string Execute(params string[] args)
+            {
+                GameManager.Instance.PlayerEntity.CrimeCommitted = PlayerEntity.Crimes.None;
+                return "Cleared active crime state";
             }
         }
 
