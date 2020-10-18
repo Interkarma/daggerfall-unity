@@ -147,6 +147,7 @@ namespace DaggerfallWorkshop
         public bool LargeHUD { get; set; }
         public float LargeHUDScale { get; set; }
         public bool CanDropQuestItems { get; set; }
+        public bool RunInBackground { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -291,6 +292,7 @@ namespace DaggerfallWorkshop
             LargeHUD = GetBool(sectionGUI, "LargeHUD");
             LargeHUDScale = GetFloat(sectionGUI, "LargeHUDScale", 0.25f, 2.0f);
             CanDropQuestItems = GetBool(sectionGUI, "CanDropQuestItems");
+            RunInBackground = GetBool(sectionGUI, "RunInBackground");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
