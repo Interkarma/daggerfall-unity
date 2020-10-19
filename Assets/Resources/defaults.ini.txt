@@ -13,6 +13,7 @@ VSync=True
 TargetFrameRate=0
 Fullscreen=False
 ExclusiveFullscreen=False
+RunInBackground=True
 FieldOfView=65
 MainFilterMode=0
 QualityLevel=5
@@ -66,7 +67,6 @@ IllegalRestWarning=True
 LargeHUD=false
 LargeHUDScale=1.0
 CanDropQuestItems=False
-RunInBackground=True
 
 [Spells]
 EnableSpellLighting=True

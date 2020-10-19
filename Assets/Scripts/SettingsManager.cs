@@ -242,6 +242,7 @@ namespace DaggerfallWorkshop
             TargetFrameRate = GetInt(sectionVideo, "TargetFrameRate", 0, 300);
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             ExclusiveFullscreen = GetBool(sectionVideo, "ExclusiveFullscreen");
+            RunInBackground = GetBool(sectionVideo, "RunInBackground");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
             MainFilterMode = GetInt(sectionVideo, "MainFilterMode", 0, 2);
             ShadowResolutionMode = GetInt(sectionVideo, "ShadowResolutionMode", 0, 3);
@@ -292,7 +293,6 @@ namespace DaggerfallWorkshop
             LargeHUD = GetBool(sectionGUI, "LargeHUD");
             LargeHUDScale = GetFloat(sectionGUI, "LargeHUDScale", 0.25f, 2.0f);
             CanDropQuestItems = GetBool(sectionGUI, "CanDropQuestItems");
-            RunInBackground = GetBool(sectionGUI, "RunInBackground");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -374,6 +374,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
             SetBool(sectionVideo, "ExclusiveFullscreen", ExclusiveFullscreen);
+            SetBool(sectionVideo, "RunInBackground", RunInBackground);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
             SetInt(sectionVideo, "MainFilterMode", MainFilterMode);
             SetInt(sectionVideo, "ShadowResolutionMode", ShadowResolutionMode);

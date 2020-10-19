@@ -133,6 +133,8 @@ fullscreen,                                         Fullscreen
 fullscreenInfo,                                     Enable fullscreen
 exclusiveFullscreen,                                Exclusive Fullscreen
 exclusiveFullscreenInfo,                            Enable exclusive fullscreen
+runInBackground,                                    Run in background
+runInBackgroundInfo,                                Should the game keep running when it loses focus
 qualityLevel,                                       Quality Level
 qualityLevelInfo,                                   General graphic quality
 mainFilterMode,                                     Main Filter
