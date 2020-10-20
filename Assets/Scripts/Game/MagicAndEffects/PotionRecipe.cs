@@ -28,8 +28,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public static readonly int[] classicRecipeKeys = { 221871, 239524, 4975678, 5017404, 5188896, 111516185, 4826108, 216843, 224588, 220192,
                                                            240081, 4937012, 228890, 221117, 4870452, 5361377, 112080144, 4842851, 4815872, 2031019196 };
 
-        public static readonly string UnknownPowers = "Unknown Powers";
-
         #region Fields
 
         Ingredient[] ingredients = null;
@@ -39,10 +37,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #region Properties
 
+        public string DisplayName
+        {
+            get { return GetDisplayName(); }
+        }
+
         /// <summary>
         /// The display name of this potion recipe.
         /// </summary>
-        public string DisplayName { get; set; }
+        public string DisplayNameKey { get; set; }
 
         /// <summary>
         /// The price of this potion recipe.
@@ -92,13 +95,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// Ingredient[] array constructor.
         /// </summary>
-        /// <param name="displayName">Potion name to use for this recipe.</param>
+        /// <param name="displayNameKey">Potion name key to use for this recipe.</param>
         /// <param name="price">Value of potion in gp.</param>
         /// <param name="settings">Settings for this potion recipe.</param>
         /// <param name="ingredients">Ingredient array.</param>
-        public PotionRecipe(string displayName, int price, EffectSettings settings, params Ingredient[] ingredients)
+        public PotionRecipe(string displayNameKey, int price, EffectSettings settings, params Ingredient[] ingredients)
         {
-            DisplayName = displayName;
+            DisplayNameKey = displayNameKey;
             Price = price;
             this.Settings = settings;
             Array.Sort(ingredients);
@@ -123,13 +126,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <summary>
         /// int[] array of item template IDs constructor.
         /// </summary>
-        /// <param name="displayName">Potion name to use for this recipe.</param>
+        /// <param name="displayName">Potion name key to use for this recipe.</param>
         /// <param name="price">Value of potion in gp.</param>
         /// <param name="settings">Settings for this potion recipe.</param>
         /// <param name="ids">Array of item template IDs.</param>
-        public PotionRecipe(string displayName, int price, EffectSettings settings, params int[] ids)
+        public PotionRecipe(string displayNameKey, int price, EffectSettings settings, params int[] ids)
         {
-            DisplayName = displayName;
+            DisplayNameKey = displayNameKey;
             Price = price;
             this.Settings = settings;
             Array.Sort(ids);
@@ -212,6 +215,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         #endregion
 
         #region Public Methods
+
+        public string GetDisplayName()
+        {
+            if (string.IsNullOrEmpty(DisplayNameKey))
+                return TextManager.Instance.GetLocalizedText("unknownPowers");
+            else
+                return TextManager.Instance.GetLocalizedText(DisplayNameKey);
+        }
 
         /// <summary>
         /// Checks if recipe is defined.

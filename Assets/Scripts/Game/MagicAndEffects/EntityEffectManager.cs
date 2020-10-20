@@ -909,13 +909,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             EffectBundleSettings bundleSettings = new EffectBundleSettings()
             {
                 Version = EntityEffectBroker.CurrentSpellVersion,
+                Name = potionRecipe.DisplayName,
                 BundleType = BundleTypes.Potion,
                 TargetType = TargetTypes.CasterOnly,
                 Effects = potionEffects,
             };
             // Assign effect bundle.
             EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-            AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+            AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows | AssignBundleFlags.BypassChance);
 
             // Play cast sound on drink for player only.
             if (IsPlayerEntity)

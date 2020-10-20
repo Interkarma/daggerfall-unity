@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Magnitude 5-5 + 4-4 per 1 levels
             EffectSettings restorePowerSettings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 4, 4, 1);
             PotionRecipe restorePower = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("restorePower"),
+                "restorePower",
                 75,
                 restorePowerSettings,
                 (int)Items.MiscellaneousIngredients1.Nectar,

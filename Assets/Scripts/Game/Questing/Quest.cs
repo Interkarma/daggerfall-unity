@@ -61,6 +61,7 @@ namespace DaggerfallWorkshop.Game.Questing
         DaggerfallDateTime questTombstoneTime;
 
         QuestSmallerDungeonsState smallerDungeonsState = QuestSmallerDungeonsState.NotSet;
+        string compiledByVersion = VersionInfo.DaggerfallUnityVersion;
 
         Place lastPlaceReferenced = null;
         QuestResource lastResourceReferenced = null;
@@ -885,6 +886,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public bool questTombstoned;
             public DaggerfallDateTime questTombstoneTime;
             public QuestSmallerDungeonsState smallerDungeonsState;
+            public string compiledByVersion;
             public LogEntry[] activeLogMessages;
             public Message.MessageSaveData_v1[] messages;
             public QuestResource.ResourceSaveData_v1[] resources;
@@ -906,6 +908,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.questTombstoned = questTombstoned;
             data.questTombstoneTime = questTombstoneTime;
             data.smallerDungeonsState = smallerDungeonsState;
+            data.compiledByVersion = compiledByVersion;
 
             // Save active log messages
             List<LogEntry> activeLogMessagesSaveDataList = new List<LogEntry>();
@@ -959,6 +962,7 @@ namespace DaggerfallWorkshop.Game.Questing
             questTombstoned = data.questTombstoned;
             questTombstoneTime = data.questTombstoneTime;
             smallerDungeonsState = data.smallerDungeonsState;
+            compiledByVersion = data.compiledByVersion;
 
             // Restore active log messages
             activeLogMessages.Clear();

@@ -3638,5 +3638,9 @@ MonoBehaviour:
     m_Localized: temple
     m_Metadata:
       m_Items: []
+  - m_Id: 9244149909045248
+    m_Localized: Unknown Powers
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

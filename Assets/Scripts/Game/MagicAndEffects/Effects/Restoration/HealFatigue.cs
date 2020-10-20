@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Magnitude 5-5 + 4-4 per 1 levels
             EffectSettings staminaSettings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 4, 4, 1);
             PotionRecipe stamina = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("stamina"),
+                "stamina",
                 25,
                 staminaSettings,
                 (int)Items.MiscellaneousIngredients1.Pure_water,

@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             EffectSettings cureSettings = SetEffectChance(DefaultEffectSettings(), 1, 10, 1);
             PotionRecipe cureDisease = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("cureDisease"),
+                "cureDisease",
                 100,
                 cureSettings,
                 (int)Items.MiscellaneousIngredients1.Elixir_vitae,
@@ -53,7 +53,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             EffectSettings purificationSettings = SetEffectChance(DefaultEffectSettings(), 1, 10, 1);
             purificationSettings = SetEffectMagnitude(purificationSettings, 5, 5, 19, 19, 1);
             PotionRecipe purification = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("purification"),
+                "purification",
                 500,
                 purificationSettings,
                 (int)Items.MiscellaneousIngredients1.Elixir_vitae,

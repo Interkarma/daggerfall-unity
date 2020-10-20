@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe waterWalking = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("waterWalking"),
+                "waterWalking",
                 50,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Pure_water,

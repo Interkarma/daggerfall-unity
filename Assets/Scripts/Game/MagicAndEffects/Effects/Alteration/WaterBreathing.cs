@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe waterBreathing = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("waterBreathing"),
+                "waterBreathing",
                 100,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Rain_water,
