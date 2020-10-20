@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe chameleonForm = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("chameleonForm"),
+                "chameleonForm",
                 200,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Rain_water,

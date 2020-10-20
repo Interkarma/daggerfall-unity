@@ -41,7 +41,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe levitation = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("levitation"),
+                "levitation",
                 125,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Pure_water,

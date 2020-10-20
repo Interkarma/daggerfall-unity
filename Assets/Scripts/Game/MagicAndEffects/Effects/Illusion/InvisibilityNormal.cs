@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe invisibility = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("invisibility"),
+                "invisibility",
                 250,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Rain_water,

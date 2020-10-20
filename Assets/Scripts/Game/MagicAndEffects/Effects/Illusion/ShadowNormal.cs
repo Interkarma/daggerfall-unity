@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe shadowForm = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("shadowForm"),
+                "shadowForm",
                 200,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Rain_water,
