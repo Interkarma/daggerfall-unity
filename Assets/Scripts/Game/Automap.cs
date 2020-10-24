@@ -1844,8 +1844,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             int microMapBlockSizeInPixels = 2;
-            int width = 9 * microMapBlockSizeInPixels;
-            int height = 9 * microMapBlockSizeInPixels;
+            int width = 11 * microMapBlockSizeInPixels;
+            int height = 11 * microMapBlockSizeInPixels;
             textureMicroMap = new Texture2D(width, height, TextureFormat.ARGB32, false);
             textureMicroMap.filterMode = FilterMode.Point;
 
