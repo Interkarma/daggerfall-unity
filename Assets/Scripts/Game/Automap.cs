@@ -1859,9 +1859,9 @@ namespace DaggerfallWorkshop.Game
                     if (block.Z < blockZMin) blockZMin = block.Z;
                     if (block.Z > blockZMax) blockZMax = block.Z;
                 }
-                originX = -blockXMin;
-                originY = -blockZMin;
-                sizeX = sizeY = Math.Max(sizeMin, Math.Max(blockXMax - blockXMin + 1, blockZMax - blockZMin + 1));
+                originX = -blockXMin + 1;
+                originY = -blockZMin + 1;
+                sizeX = sizeY = Math.Max(sizeMin, Math.Max(blockXMax + 1 + originX, blockZMax + 1 + originY));
             }
 
             int microMapBlockSizeInPixels = 2;
