@@ -2525,7 +2525,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 173
-    m_Localized: 'You smell of freshly buried dead.[/record]
+    m_Localized: 'You smell freshly buried dead.[/record]
 
       Wagon ruts lead
       off a ways.[/record]
@@ -2825,8 +2825,8 @@ MonoBehaviour:
       If you want constant
       action and a steady flow[/center]
 
-      of gold coin, its the guild for you.
-      Its far[/center]
+      of gold coin, it''s the guild for you.
+      It''s far[/center]
 
       better than some Knightly order. Did you you[/center]
 
@@ -3724,13 +3724,13 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 232
-    m_Localized: The Kynaran Order are those knights who have dedicated themselves
+    m_Localized: The Kynaran Order is composed of knights who have dedicated themselves
       mind, body, and sword to the Goddess of the Air, Kynareth. They are most often
       in the company of Her priests of the Temple of Kynareth.[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 233
-    m_Localized: The Order of the Dragon is composed of the finest knights of the
+    m_Localized: The Knights of the Dragon are composed of the finest knights of the
       Daggerfall militia, bound together by vows of service to the royal family and
       kingdom.[/end]
     m_Metadata:
@@ -3752,7 +3752,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 237
-    m_Localized: The Host of the Horn are composed of the finest knights of Lainlyn,
+    m_Localized: The Host of the Horn is composed of the finest knights of Lainlyn,
       bound by oaths to protect and serve the Barony of Lainlyn and its ruling family.[/end]
     m_Metadata:
       m_Items: []
@@ -3762,7 +3762,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 239
-    m_Localized: The Knights of the Raven have been the consecrated protectors of
+    m_Localized: The Order of the Raven has been the consecrated protector of
       the Barony of Dwynnen for hundreds of years.[/end]
     m_Metadata:
       m_Items: []
@@ -3772,13 +3772,13 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 241
-    m_Localized: The Knights of the Scarab are charged by holy oaths with the protection
-      of the royal family and land of Totambu.[/end]
+    m_Localized: The Order of the Scarab is composed of knights charged by holy oaths
+      with the protection of the royal family and land of Totambu.[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 242
     m_Localized: The Knights of the Hawk are chosen from the finest, noblest warriors
-      in Santaki, to protect and fight for the royal family and people of the land.[/end]
+      in Antiphyllos, to protect and fight for the royal family and people of the land.[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 243
@@ -11880,7 +11880,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 641
-    m_Localized: 'We of the Order of the Rose have the honor of[/center]
+    m_Localized: 'We of the Knights of the Rose have the honor of[/center]
 
       being
       the guard and strong arm of his majesty,[/center]
@@ -12105,7 +12105,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 647
-    m_Localized: 'We of the Knights of the Scarab have the[/center]
+    m_Localized: 'We of the Order of the Scarab have the[/center]
 
       honor
       of being the official guard for the[/center]
@@ -12130,12 +12130,12 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 648
-    m_Localized: 'The Order of the Hawk act as the noble[/center]
+    m_Localized: 'The Knights of the Hawk act as the noble[/center]
 
       warriors
       and protectors of the town and[/center]
 
-      royal family of Santaki. Many
+      royal family of Antiphyllos. Many
       have trained[/center]
 
       since childhood to join our knightly order,[/center]
@@ -22083,7 +22083,7 @@ MonoBehaviour:
       No offense,
       but why would I tell you anything?[/record]
 
-      Its none of yer damn business.[/end]'
+      It''s none of yer damn business.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1199
@@ -22291,7 +22291,7 @@ MonoBehaviour:
       That''s %hnt.[/record]
 
       I
-      suppose its okay to tell you. Its %hnt.[/record]
+      suppose it''s okay to tell you. It''s %hnt.[/record]
 
       You''ll find %key %hnt.[/record]
 
@@ -22312,7 +22312,7 @@ MonoBehaviour:
   - m_Id: 1208
     m_Localized: 'Mmm. Well, try %hnt.[/record]
 
-      I guess I can tell ya %hnt.[/record]
+      I guess I can tell ya it''s %hnt.[/record]
 
       Ya
       gotta go %hnt.[/record]
@@ -22333,9 +22333,9 @@ MonoBehaviour:
       It''s really easy. You''ll want to go %hnt.[/record]
 
       The
-      best way to go %hnt.[/record]
+      best way is to go %hnt.[/record]
 
-      What you''re going to want to do is go
+      What you''re going to want to do is to go
       %hnt.[/record]
 
       You asked the right person. Just look for it %hnt.[/record]
@@ -22388,10 +22388,10 @@ MonoBehaviour:
       I pinched some gold near %key. Walk %hnt.[/record]
 
       I
-      cut someone there yesterday. Its %hnt.[/record]
+      cut someone there yesterday. It''s %hnt.[/record]
 
       %key? Gonna pinch some
-      coin, are ya? No? Well, its %hnt.[/end]'
+      coin, are ya? No? Well, it''s %hnt.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1212
@@ -22431,7 +22431,7 @@ MonoBehaviour:
   - m_Id: 1213
     m_Localized: 'This is what they says. %hnt[/record]
 
-      Its a good story it
+      It''s a good story it
       is. %hnt[/record]
 
       %hnt[/record]
@@ -22611,7 +22611,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1222
-    m_Localized: 'Anything for %hnr %pcf. Its %hnt.[/record]
+    m_Localized: 'Anything for %hnr %pcf. It''s %hnt.[/record]
 
       Gladly %hnr.
       Go %hnt.[/record]
@@ -22619,9 +22619,9 @@ MonoBehaviour:
       It would be my honor. Try %hnt.[/record]
 
       I''d
-      take you there myself, but I''m needed here. Its %hnt.[/record]
+      take you there myself, but I''m needed here. It''s %hnt.[/record]
 
-      Its
+      It''s
       sunshine in my day to help %hnr %pcf. Go %hnt.[/record]
 
       Give me a second.
@@ -22637,12 +22637,12 @@ MonoBehaviour:
       %pcn, take ya %hnt.[/record]
 
       You''ve always done good fer me and mine
-      %hnr %pcf. Its %hnt.[/record]
+      %hnr %pcf. It''s %hnt.[/record]
 
       I likes doin'' ya favors %pcf. Try %hnt.[/record]
 
-      Its
-      me pleasure %hnr %pcf. Its %hnt.[/record]
+      It''s
+      me pleasure %hnr %pcf. It''s %hnt.[/record]
 
       You will find %key %hnt.[/record]
 
@@ -22650,13 +22650,13 @@ MonoBehaviour:
       I do know that location. It''s %hnt.[/record]
 
       Let me think for a minute
-      ... %hnt.[/record]
+      ... %key is %hnt.[/record]
 
-      I see ... %hnt.[/end]'
+      I see ... %key is %hnt.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1224
-    m_Localized: 'Readily and gladly done. Its %hnt.[/record]
+    m_Localized: 'Readily and gladly done. It''s %hnt.[/record]
 
       For you, of
       course. Go %hnt.[/record]
@@ -22664,13 +22664,13 @@ MonoBehaviour:
       The simplest of tasks. Try %hnt.[/record]
 
       Gladly
-      %hnr. Its %hnt.[/record]
+      %hnr. It''s %hnt.[/record]
 
       A trivial request. Go %hnt.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1225
-    m_Localized: 'For one of your loyalty, of course. Its %hnt.[/record]
+    m_Localized: 'For one of your loyalty, of course. It''s %hnt.[/record]
 
       I
       could do no less for a loyal subject. Go %hnt.[/record]
@@ -22679,7 +22679,7 @@ MonoBehaviour:
       itself. Try %hnt.[/record]
 
       You have always helped me, now I can return
-      the favor. Its %hnt.[/record]
+      the favor. It''s %hnt.[/record]
 
       Of course. Have we not always been friends?
       Go %hnt[/record]
@@ -22688,7 +22688,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1226
-    m_Localized: 'Ya don''t haveta ask twice. Its %hnt.[/record]
+    m_Localized: 'Ya don''t haveta ask twice. It''s %hnt.[/record]
 
       Fer you?
       No sweat. Go %hnt.[/record]
@@ -22696,7 +22696,7 @@ MonoBehaviour:
       ''Tis not well known, but try %hnt.[/record]
 
       Since
-      its that or slit yer throat (wink and chuckle), its %hnt.[/record]
+      it''s that or slit yer throat (wink and chuckle), it''s %hnt.[/record]
 
       Go
       %hnt. Watch yer back %pcf.[/end]'
@@ -22818,29 +22818,28 @@ MonoBehaviour:
       awfully close by. It''d be best if I marked %loc
       on your map[/record]
 
-      its right there (points to %loc your map)[/end]'
+      right there (points to %loc your map)[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1233
-    m_Localized: '%loc is %di of here[/record]
+    m_Localized: '%di of here[/record]
 
-      %loc is %di of where we''re
+      %di of where we''re
       standing[/record]
 
-      just keep going %di[/record]
+      that way, just keep going %di[/record]
 
       that way, %di[/record]
 
-      %loc
-      is a ways %di of here[/record]
+      a way %di of here[/record]
 
-      %loc is not too far to the %di, if you
+      not too far to the %di, if you
       don''t mind walking[/record]
 
-      %loc is %di of here, unless I''m mistaken[/record]
+      %di of here, unless I''m mistaken[/record]
 
       %di
-      of here, I think.[/record]
+      of here, I think[/record]
 
       a bit of a walk. Just go %di[/end]'
     m_Metadata:
@@ -25045,7 +25044,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1350
-    m_Localized: 'Its always good to meet another member of %fnpc.[/center]
+    m_Localized: 'It''s always good to meet another member of %fnpc.[/center]
 
       [/record]
 
@@ -25272,7 +25271,7 @@ MonoBehaviour:
       [/record]
 
       Even
-      though %fnpc is opposed to %pc, courtesy dictates that I help you.[/center]
+      though %fnpc is opposed to %fpc, courtesy dictates that I help you.[/center]
 
       [/record]
 

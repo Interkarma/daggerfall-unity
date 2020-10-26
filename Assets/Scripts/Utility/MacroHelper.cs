@@ -146,7 +146,6 @@ namespace DaggerfallWorkshop.Utility
             { "%olf", OldLeaderFate }, // What happened to _ol1
             { "%on", null },  // ?
             { "%oth", Oath }, // An oath (listed in TEXT.RSC)
-            { "%pc", null },  // ?
             { "%pcf", PlayerFirstname }, // Character's first name
             { "%pcn", PlayerName }, // Character's full name
             { "%pct", GuildTitle }, // Player guild title/rank
