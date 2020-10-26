@@ -478,6 +478,14 @@ namespace DaggerfallWorkshop
                             customAimPosition.y += 40 * MeshReader.GlobalScale;
                             missile.CustomAimPosition = customAimPosition;
                             missile.CustomAimDirection = Vector3.Normalize(GameManager.Instance.PlayerObject.transform.position - thisAction.transform.position);
+
+                            // If action spell payload is "touch" then set to "target at range" (targets player position as above)
+                            if (missile.Payload.Settings.TargetType == TargetTypes.ByTouch)
+                            {
+                                EffectBundleSettings settings = missile.Payload.Settings;
+                                settings.TargetType = TargetTypes.SingleTargetAtRange;
+                                missile.Payload.Settings = settings;
+                            }
                         }
                     }
                 }
