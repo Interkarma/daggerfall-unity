@@ -1846,8 +1846,7 @@ namespace DaggerfallWorkshop.Game
             DFLocation location = currentLocation.Value;
             int originX, originY, sizeX, sizeY;
             {
-                const int sizeXMin = 7;
-                const int sizeYMin = 7;
+                const int sizeMin = 7;
 
                 int blockXMin = 1000;
                 int blockXMax = -1000;
@@ -1862,8 +1861,7 @@ namespace DaggerfallWorkshop.Game
                 }
                 originX = -blockXMin;
                 originY = -blockZMin;
-                sizeX = Math.Max(sizeXMin, blockXMax - blockXMin + 1);
-                sizeY = Math.Max(sizeYMin, blockZMax - blockZMin + 1);
+                sizeX = sizeY = Math.Max(sizeMin, Math.Max(blockXMax - blockXMin + 1, blockZMax - blockZMin + 1));
             }
 
             int microMapBlockSizeInPixels = 2;
