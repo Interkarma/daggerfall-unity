@@ -1646,7 +1646,7 @@ namespace DaggerfallWorkshop.Game
                 else // Everybody else gives rumors here for %hnt2
                     answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].rumorsAnswers;
 
-                if (answers.Count == 0) // If no rumors are available, fall back to anyInfoAnswers
+                if (answers == null || answers.Count == 0) // If no rumors are available, fall back to anyInfoAnswers
                     answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
                 return GetAnswerFromTokensArray(listItem.questID, answers);
             }
