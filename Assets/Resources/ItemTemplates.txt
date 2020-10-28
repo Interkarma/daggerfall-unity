@@ -3888,7 +3888,7 @@
         "basePrice": 100,
         "enchantmentPoints": 50,
         "rarity": 6,
-        "variants": 1,
+        "variants": 3,
         "drawOrderOrEffect": 40,
         "isBluntWeapon": false,
         "isLiquid": false,
