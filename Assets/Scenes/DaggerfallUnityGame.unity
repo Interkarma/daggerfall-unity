@@ -1903,9 +1903,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runtimeInternalStrings: Internal_Strings
   runtimeRSCStrings: Internal_RSC
+  runtimeBOKStrings: Internal_BOK
   tableCopyOverwriteTargetStringTables: 0
   tableCopyTargetInternalStrings: 
   tableCopyTargetRSCStrings: 
+  tableCopyTargetBOKStrings: 
 --- !u!4 &1437448955
 Transform:
   m_ObjectHideFlags: 0

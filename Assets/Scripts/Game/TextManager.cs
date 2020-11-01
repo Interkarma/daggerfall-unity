@@ -30,7 +30,8 @@ namespace DaggerfallWorkshop.Game
         #region Fields
 
         public static string defaultInternalStringsCollectionName = "Internal_Strings";
-        public static string defaultInternalRSCCollectionName = "Internal_RSC"; // Not in use at this time, reserving name to exclude from importer
+        public static string defaultInternalRSCCollectionName = "Internal_RSC";
+        public static string defaultInternalBOKCollectionName = "Internal_BOK";
 
         const string localizedTextLookupError = "<LocaleText-NotFound>";
         const string textFolderName = "Text";
@@ -38,11 +39,13 @@ namespace DaggerfallWorkshop.Game
 
         public string runtimeInternalStrings = defaultInternalStringsCollectionName;
         public string runtimeRSCStrings = defaultInternalRSCCollectionName;
+        public string runtimeBOKStrings = defaultInternalBOKCollectionName;
 
         // String table copy editor properties
         public bool tableCopyOverwriteTargetStringTables = false;
         public string tableCopyTargetInternalStrings = null;
         public string tableCopyTargetRSCStrings = null;
+        public string tableCopyTargetBOKStrings = null;
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
         Dictionary<string, string[]> cachedLocalizedTextLists = new Dictionary<string, string[]>();
