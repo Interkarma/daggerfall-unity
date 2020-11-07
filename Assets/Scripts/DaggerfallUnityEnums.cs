@@ -724,7 +724,7 @@ namespace DaggerfallWorkshop
         Menevia = 33,
         Alcaire = 34,
         Koegria = 35,
-        Bhoraine = 36,
+        Bhoriane = 36,
         Kambria = 37,
         Phrygias = 38,
         Urvaius = 39,
