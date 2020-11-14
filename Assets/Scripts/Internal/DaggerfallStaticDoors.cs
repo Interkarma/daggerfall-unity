@@ -190,13 +190,13 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Find lowest door position in world space.
+        /// Find the lowest, farthest from building origin door position in world space.
         /// </summary>
         /// <param name="record">Door record index.</param>
         /// <param name="doorPosOut">Position of closest door in world space.</param>
         /// <param name="doorIndexOut">Door index in Doors array of closest door.</param>
         /// <returns>Whether or not we found a door</returns>
-        public bool FindLowestDoor(int record, out Vector3 doorPosOut, out int doorIndexOut)
+        public bool FindLowestOutermostDoor(int record, out Vector3 doorPosOut, out int doorIndexOut)
         {
             doorPosOut = Vector3.zero;
             doorIndexOut = -1;
@@ -204,8 +204,9 @@ namespace DaggerfallWorkshop
             if (Doors == null)
                 return false;
 
-            // Find lowest door in interior
+            // Find lowest (and outermost) door in interior
             float lowestY = float.MaxValue;
+            double farthestDist = 0d;
             for (int i = 0; i < Doors.Length; i++)
             {
                 // Get this door centre in world space
@@ -214,12 +215,15 @@ namespace DaggerfallWorkshop
                 // Check if door belongs to same building record or accept any record
                 if (Doors[i].recordIndex == record || record == -1)
                 {
+                    var interiorPos = GameObjectHelper.GetSpawnParentTransform().position;
                     float y = centre.y;
-                    if (y < lowestY)
+                    var dist = Vector2.Distance(new Vector2(interiorPos.x, interiorPos.z), new Vector2(centre.x, centre.z));
+                    if (y <= lowestY && dist > farthestDist)
                     {
                         doorPosOut = centre;
                         doorIndexOut = i;
                         lowestY = y;
+                        farthestDist = dist;
                     }
                 }
             }

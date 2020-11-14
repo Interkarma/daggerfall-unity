@@ -142,6 +142,18 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// True when player is inside a tavern.
+        /// Set upon entry.
+        /// </summary>
+        public bool IsPlayerInsideTavern { get; set; }
+
+        /// <summary>
+        /// True when player is inside a residence.
+        /// Set upon entry.
+        /// </summary>
+        public bool IsPlayerInsideResidence { get; set; }
+
+        /// <summary>
         /// True when player is swimming in water.
         /// </summary>
         public bool IsPlayerSwimming

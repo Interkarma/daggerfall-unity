@@ -1045,6 +1045,8 @@ namespace DaggerfallWorkshop.Game
             // Perform transition
             playerEnterExit.BuildingDiscoveryData = db;
             playerEnterExit.IsPlayerInsideOpenShop = RMBLayout.IsShop(db.buildingType) && IsBuildingOpen(db.buildingType);
+            playerEnterExit.IsPlayerInsideTavern = RMBLayout.IsTavern(db.buildingType);
+            playerEnterExit.IsPlayerInsideResidence = RMBLayout.IsResidence(db.buildingType);
             playerEnterExit.TransitionInterior(doorOwner, door, doFade, false);
         }
 
