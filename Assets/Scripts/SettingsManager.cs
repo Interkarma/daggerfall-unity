@@ -146,6 +146,7 @@ namespace DaggerfallWorkshop
         public bool IllegalRestWarning { get; set; }
         public bool LargeHUD { get; set; }
         public float LargeHUDScale { get; set; }
+        public bool LargeHUDScaleToFit { get; set; }
         public bool CanDropQuestItems { get; set; }
 
         // [Spells]
@@ -290,6 +291,7 @@ namespace DaggerfallWorkshop
             IllegalRestWarning = GetBool(sectionGUI, "IllegalRestWarning");
             LargeHUD = GetBool(sectionGUI, "LargeHUD");
             LargeHUDScale = GetFloat(sectionGUI, "LargeHUDScale", 0.25f, 2.0f);
+            LargeHUDScaleToFit = GetBool(sectionGUI, "LargeHUDScaleToFit");
             CanDropQuestItems = GetBool(sectionGUI, "CanDropQuestItems");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
@@ -422,6 +424,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "IllegalRestWarning", IllegalRestWarning);
             SetBool(sectionGUI, "LargeHUD", LargeHUD);
             SetFloat(sectionGUI, "LargeHUDScale", LargeHUDScale);
+            SetBool(sectionGUI, "LargeHUDScaleToFit", LargeHUDScaleToFit);
             SetBool(sectionGUI, "CanDropQuestItems", CanDropQuestItems);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);

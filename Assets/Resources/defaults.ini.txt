@@ -65,6 +65,7 @@ TravelMapLocationsOutline=False
 IllegalRestWarning=True
 LargeHUD=false
 LargeHUDScale=1.0
+LargeHUDScaleToFit=True
 CanDropQuestItems=False
 
 [Spells]

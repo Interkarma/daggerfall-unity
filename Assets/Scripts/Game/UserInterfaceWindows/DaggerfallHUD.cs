@@ -135,7 +135,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             largeHUD.Size = new Vector2(320, 46);
             largeHUD.HorizontalAlignment = HorizontalAlignment.Center;
             largeHUD.VerticalAlignment = VerticalAlignment.Bottom;
-            largeHUD.AutoSize = AutoSizeModes.Scale;
 
             activeSpells.Size = NativePanel.Size;
             activeSpells.HorizontalAlignment = HorizontalAlignment.Center;
@@ -180,13 +179,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             activeSpells.Enabled = ShowActiveSpells;
 
             // Large HUD will force certain other HUD elements off as they conflict in space or utility
-            bool largeHUDEnabled = false;//DaggerfallUnity.Settings.LargeHUD;
+            bool largeHUDEnabled = DaggerfallUnity.Settings.LargeHUD;
             if (largeHUDEnabled)
             {
                 largeHUD.Enabled = true;
                 vitals.Enabled = false;
                 compass.Enabled = false;
                 interactionModeIcon.Enabled = false;
+                largeHUD.AutoSize = (DaggerfallUnity.Settings.LargeHUDScaleToFit) ? AutoSizeModes.ScaleToFit : AutoSizeModes.Scale;
             }
             else
             {
