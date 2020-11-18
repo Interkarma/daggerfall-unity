@@ -301,7 +301,7 @@ namespace DaggerfallWorkshop.Game
                 WeaponOffsetHeight = 0;
                 if (DaggerfallUnity.Settings.LargeHUD && DaggerfallUnity.Settings.LargeHUDOffsetWeapon)
                 {
-                    WeaponOffsetHeight = DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Rectangle.height;
+                    WeaponOffsetHeight = (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Rectangle.height;
                 }
 
                 // Source weapon images are designed to overlay a fixed 320x200 display.
