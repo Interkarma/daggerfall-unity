@@ -66,6 +66,8 @@ IllegalRestWarning=True
 LargeHUD=false
 LargeHUDScale=1.0
 LargeHUDScaleToFit=True
+LargeHUDAlignment=0
+LargeHUDOffsetWeapon=True
 CanDropQuestItems=False
 
 [Spells]

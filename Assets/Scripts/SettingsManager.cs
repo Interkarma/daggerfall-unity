@@ -147,6 +147,8 @@ namespace DaggerfallWorkshop
         public bool LargeHUD { get; set; }
         public float LargeHUDScale { get; set; }
         public bool LargeHUDScaleToFit { get; set; }
+        public int LargeHUDAlignment { get; set; }
+        public bool LargeHUDOffsetWeapon { get; set; }
         public bool CanDropQuestItems { get; set; }
 
         // [Spells]
@@ -292,6 +294,8 @@ namespace DaggerfallWorkshop
             LargeHUD = GetBool(sectionGUI, "LargeHUD");
             LargeHUDScale = GetFloat(sectionGUI, "LargeHUDScale", 0.25f, 2.0f);
             LargeHUDScaleToFit = GetBool(sectionGUI, "LargeHUDScaleToFit");
+            LargeHUDAlignment = GetInt(sectionGUI, "LargeHUDAlignment", 0, 3);
+            LargeHUDOffsetWeapon = GetBool(sectionGUI, "LargeHUDOffsetWeapon");
             CanDropQuestItems = GetBool(sectionGUI, "CanDropQuestItems");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
@@ -425,6 +429,8 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "LargeHUD", LargeHUD);
             SetFloat(sectionGUI, "LargeHUDScale", LargeHUDScale);
             SetBool(sectionGUI, "LargeHUDScaleToFit", LargeHUDScaleToFit);
+            SetInt(sectionGUI, "LargeHUDAlignment", LargeHUDAlignment);
+            SetBool(sectionGUI, "LargeHUDOffsetWeapon", LargeHUDOffsetWeapon);
             SetBool(sectionGUI, "CanDropQuestItems", CanDropQuestItems);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
