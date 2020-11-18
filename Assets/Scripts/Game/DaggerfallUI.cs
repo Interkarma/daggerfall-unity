@@ -666,6 +666,12 @@ namespace DaggerfallWorkshop.Game
 
         #region Helpers
 
+        public static void RefreshLargeHUDHeadTexture()
+        {
+            if (Instance.dfHUD != null && Instance.dfHUD.LargeHUD != null)
+                Instance.dfHUD.LargeHUD.HeadTexture = null;
+        }
+
         public static void AddHUDText(string message)
         {
             if (Instance.dfHUD != null)

@@ -160,6 +160,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Our transformation is complete - cure everything on player (including stage one disease)
             GameManager.Instance.PlayerEffectManager.CureAll();
+
+            // Refresh head texture after effect starts
+            DaggerfallUI.RefreshLargeHUDHeadTexture();
+        }
+
+        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Resume(effectData, manager, caster);
+
+            // Refresh head texture after effect resumes
+            DaggerfallUI.RefreshLargeHUDHeadTexture();
+        }
+
+        public override void End()
+        {
+            base.End();
+
+            // Refresh head texture after effect ends
+            DaggerfallUI.RefreshLargeHUDHeadTexture();
         }
 
         public override void ConstantEffect()
@@ -280,6 +299,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             textureOut = backgroundTexture;
             return true;
+        }
+
+        public override bool GetCustomHeadImageData(PlayerEntity playerEntity, out ImageData imageDataOut)
+        {
+            // TODO: Return correct lycanthrope head based on transform state
+            return base.GetCustomHeadImageData(playerEntity, out imageDataOut);
         }
 
         public override bool SetFPSWeapon(FPSWeapon target)
@@ -488,6 +513,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Store time whenever cast
             lastCastMorphSelf = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+
+            // Refresh head texture after transform
+            DaggerfallUI.RefreshLargeHUDHeadTexture();
         }
 
         #endregion

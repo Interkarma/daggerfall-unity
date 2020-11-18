@@ -12,6 +12,7 @@
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -28,12 +29,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string compass2Filename = "CMPA02I0.BSS";     // Red compass (unused)
         const int compassFrameCount = 32;
 
+        protected Rect headPanelRect = new Rect(5, 8, 37, 30);
         protected Rect compassPanelRect = new Rect(275, 2, 43, 42);
 
         Texture2D mainTexture;
         Texture2D[] compassTextures = new Texture2D[compassFrameCount];
 
+        Panel headPanel;
         Panel compassPanel;
+
         Camera compassCamera;
         float eulerAngle;
 
@@ -58,6 +62,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { eulerAngle = Mathf.Clamp(value, 0f, 360f); }
         }
 
+        /// <summary>
+        /// Gets or sets texture for head image. Set to null if a refresh of head texture is needed.
+        /// Head texture can change at runtime, e.g. loading a new game, lycanthrope shapechange, vampire infection.
+        /// </summary>
+        public Texture2D HeadTexture { get; set; }
+
         public HUDLarge()
             : base()
         {
@@ -65,6 +75,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             playerEntity = GameManager.Instance.PlayerEntity;
             LoadAssets();
             Setup();
+
+            // Events to refresh head on new game or load
+            Serialization.SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
+            Utility.StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
         void LoadAssets()
@@ -84,6 +98,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             compassPanel = DaggerfallUI.AddPanel(compassPanelRect);
             Components.Add(compassPanel);
+
+            headPanel = DaggerfallUI.AddPanel(headPanelRect);
+            headPanel.BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
+            Components.Add(headPanel);
+        }
+
+        void Refresh()
+        {
+            HeadTexture = null;
         }
 
         public override void Update()
@@ -91,11 +114,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!Enabled)
                 return;
 
+            // Update head image data when null
+            if (HeadTexture == null)
+                UpdateHeadTexture();
+
+            // Set head in panel
+            headPanel.BackgroundTexture = HeadTexture;
+
             // When using custom scale adjust position and size based on screen scale
             // HUD elements exist outside of native window space so elements have full control over their own placement
             // This also requires some manual adjustments as child panels don't inherit scale
             if (!DaggerfallUnity.Settings.LargeHUDScaleToFit)
             {
+                headPanel.Position = headPanelRect.position * Scale;
+                headPanel.Size = headPanelRect.size * Scale;
                 compassPanel.Position = compassPanelRect.position * Scale;
                 compassPanel.Size = compassPanelRect.size * Scale;
             }
@@ -112,5 +144,45 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             base.Update();
         }
+
+        void UpdateHeadTexture()
+        {
+            ImageData head;
+
+            // Check for racial override head
+            RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
+            if (racialOverride != null && racialOverride.GetCustomHeadImageData(playerEntity, out head))
+            {
+                HeadTexture = head.texture;
+                return;
+            }
+
+            // Otherwise just get standard head based on gender and race
+            switch (playerEntity.Gender)
+            {
+                default:
+                case Genders.Male:
+                    head = ImageReader.GetImageData(playerEntity.RaceTemplate.PaperDollHeadsMale, playerEntity.FaceIndex, 0, true);
+                    break;
+                case Genders.Female:
+                    head = ImageReader.GetImageData(playerEntity.RaceTemplate.PaperDollHeadsFemale, playerEntity.FaceIndex, 0, true);
+                    break;
+            }
+            HeadTexture = head.texture;
+        }
+
+        #region Event Handlers
+
+        private void SaveLoadManager_OnLoad(Serialization.SaveData_v1 saveData)
+        {
+            Refresh();
+        }
+
+        private void StartGameBehaviour_OnNewGame()
+        {
+            Refresh();
+        }
+
+        #endregion
     }
 }
