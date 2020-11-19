@@ -41,8 +41,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDLarge largeHUD = new HUDLarge();
         bool renderHUD = true;
         bool startupComplete = false;
-        //GameObject player;
-        //DaggerfallEntityBehaviour playerEntity;
 
         float midScreenTextTimer = -1;
         float midScreenTextDelay = 1.5f;
@@ -120,10 +118,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowActiveSpells = true;
             ShowArrowCount = DaggerfallUnity.Settings.EnableArrowCounter;
 
-            // Get references
-            //player = GameObject.FindGameObjectWithTag("Player");
-            //playerEntity = player.GetComponent<DaggerfallEntityBehaviour>();
-
             ParentPanel.Components.Add(largeHUD);
             ParentPanel.Components.Add(crosshair);
             ParentPanel.Components.Add(vitals);
@@ -134,9 +128,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
-            largeHUD.Size = new Vector2(320, 46);
-            largeHUD.VerticalAlignment = VerticalAlignment.Bottom;
-
             activeSpells.Size = NativePanel.Size;
             activeSpells.HorizontalAlignment = HorizontalAlignment.Center;
             NativePanel.Components.Add(activeSpells);
@@ -191,10 +182,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Automatically scale to fit screen width or use custom scale
                 largeHUD.AutoSize = (DaggerfallUnity.Settings.LargeHUDDocked) ? AutoSizeModes.ScaleToFit : AutoSizeModes.Scale;
 
-                // Alignment when large HUS is undocked - 0=None/Default (centred), 1=Left, 2=Center, 3=Right
-                largeHUD.HorizontalAlignment = (HorizontalAlignment)DaggerfallUnity.Settings.LargeHUDUndockedAlignment;
-                if (largeHUD.HorizontalAlignment == HorizontalAlignment.None)
-                    largeHUD.HorizontalAlignment = HorizontalAlignment.Center;
+                // Alignment when large HUD is undocked - 0=None/Default (centred), 1=Left, 2=Center, 3=Right
+                if (!DaggerfallUnity.Settings.LargeHUDDocked)
+                {
+                    largeHUD.HorizontalAlignment = (HorizontalAlignment)DaggerfallUnity.Settings.LargeHUDUndockedAlignment;
+                    if (largeHUD.HorizontalAlignment == HorizontalAlignment.None)
+                        largeHUD.HorizontalAlignment = HorizontalAlignment.Center;
+                }
             }
             else
             {
@@ -202,9 +196,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Scale large HUD
-            largeHUD.Scale = NativePanel.LocalScale;
+            largeHUD.CustomScale = NativePanel.LocalScale;
             if (!DaggerfallUnity.Settings.LargeHUDDocked)
-                largeHUD.Scale *= DaggerfallUnity.Settings.LargeHUDUndockedScale;
+                largeHUD.CustomScale *= DaggerfallUnity.Settings.LargeHUDUndockedScale;
 
             // Scale HUD elements
             compass.Scale = NativePanel.LocalScale;

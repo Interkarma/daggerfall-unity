@@ -89,6 +89,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { breathBar.Amount = value; UpdateBreathBar(); }
         }
 
+        public Vector2? CustomHealthBarPosition { get; set; }
+        public Vector2? CustomHealthBarSize { get; set; }
+
+        public Vector2? CustomFatigueBarPosition { get; set; }
+        public Vector2? CustomFatigueBarSize { get; set; }
+
+        public Vector2? CustomMagickaBarPosition { get; set; }
+        public Vector2? CustomMagickaBarSize { get; set; }
+
+        public Vector2? CustomBreathBarPosition { get; set; }
+        public Vector2? CustomBreathBarSize { get; set; }
+
         public HUDVitals()
             :base()
         {
@@ -128,6 +140,58 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Components.Add(breathBar);
 
             VitalsChangeDetector.OnReset += VitalChangeDetector_OnReset;
+        }
+
+        public void SetAllHorizontalAlignment(HorizontalAlignment alignment)
+        {
+            healthBar.HorizontalAlignment = alignment;
+            fatigueBar.HorizontalAlignment = alignment;
+            magickaBar.HorizontalAlignment = alignment;
+            healthBarLoss.HorizontalAlignment = alignment;
+            fatigueBarLoss.HorizontalAlignment = alignment;
+            magickaBarLoss.HorizontalAlignment = alignment;
+            healthBarGain.HorizontalAlignment = alignment;
+            fatigueBarGain.HorizontalAlignment = alignment;
+            magickaBarGain.HorizontalAlignment = alignment;
+        }
+
+        public void SetAllVerticalAlignment(VerticalAlignment alignment)
+        {
+            healthBar.VerticalAlignment = alignment;
+            fatigueBar.VerticalAlignment = alignment;
+            magickaBar.VerticalAlignment = alignment;
+            healthBarLoss.VerticalAlignment = alignment;
+            fatigueBarLoss.VerticalAlignment = alignment;
+            magickaBarLoss.VerticalAlignment = alignment;
+            healthBarGain.VerticalAlignment = alignment;
+            fatigueBarGain.VerticalAlignment = alignment;
+            magickaBarGain.VerticalAlignment = alignment;
+        }
+
+        public void SetAllAutoSize(AutoSizeModes mode)
+        {
+            healthBar.AutoSize = mode;
+            fatigueBar.AutoSize = mode;
+            magickaBar.AutoSize = mode;
+            healthBarLoss.AutoSize = mode;
+            fatigueBarLoss.AutoSize = mode;
+            magickaBarLoss.AutoSize = mode;
+            healthBarGain.AutoSize = mode;
+            fatigueBarGain.AutoSize = mode;
+            magickaBarGain.AutoSize = mode;
+        }
+
+        public void SetAllParent(Panel parent)
+        {
+            healthBar.Parent = parent;
+            fatigueBar.Parent = parent;
+            magickaBar.Parent = parent;
+            healthBarLoss.Parent = parent;
+            fatigueBarLoss.Parent = parent;
+            magickaBarLoss.Parent = parent;
+            healthBarGain.Parent = parent;
+            fatigueBarGain.Parent = parent;
+            magickaBarGain.Parent = parent;
         }
 
         void LoadAssets()
@@ -181,17 +245,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             Size = new Vector2(barWidth * 5, barHeight);
 
-            healthBar.Position = new Vector2(0, 0);
-            healthBar.Size = new Vector2(barWidth, barHeight);
+            healthBar.Position = (CustomHealthBarPosition != null) ? CustomHealthBarPosition.Value : Position + new Vector2(0, 0);
+            healthBar.Size =  (CustomHealthBarSize != null) ? CustomHealthBarSize.Value : new Vector2(barWidth, barHeight);
 
-            fatigueBar.Position = new Vector2(barWidth * 2, 0);
-            fatigueBar.Size = new Vector2(barWidth, barHeight);
+            fatigueBar.Position = (CustomFatigueBarPosition != null) ? CustomFatigueBarPosition.Value : Position + new Vector2(barWidth * 2, 0);
+            fatigueBar.Size = (CustomFatigueBarSize != null) ? CustomFatigueBarSize.Value : new Vector2(barWidth, barHeight);
 
-            magickaBar.Position = new Vector2(barWidth * 4, 0);
-            magickaBar.Size = new Vector2(barWidth, barHeight);
+            magickaBar.Position = (CustomMagickaBarPosition != null) ? CustomMagickaBarPosition.Value : Position + new Vector2(barWidth * 4, 0);
+            magickaBar.Size = (CustomMagickaBarSize != null) ? CustomMagickaBarSize.Value : new Vector2(barWidth, barHeight);
 
-            breathBar.Position = new Vector2(306 * Scale.x, (-60 * Scale.y) - breathBarHeight);
-            breathBar.Size = new Vector2(breathBarWidth, breathBarHeight);
+            breathBar.Position = (CustomBreathBarPosition != null) ? CustomBreathBarPosition.Value : Position + new Vector2(306 * Scale.x, (-60 * Scale.y) - breathBarHeight);
+            breathBar.Size = (CustomBreathBarSize != null) ? CustomBreathBarSize.Value : new Vector2(breathBarWidth, breathBarHeight);
 
             if (DaggerfallUnity.Settings.EnableVitalsIndicators)
             {

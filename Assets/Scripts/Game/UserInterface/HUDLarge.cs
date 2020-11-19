@@ -29,14 +29,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const string compass2Filename = "CMPA02I0.BSS";     // Red compass (unused)
         const int compassFrameCount = 32;
 
+        protected Rect mainPanelRect = new Rect(0, 0, 320, 46);
         protected Rect headPanelRect = new Rect(5, 8, 37, 30);
         protected Rect compassPanelRect = new Rect(275, 2, 43, 42);
+        protected Rect healthPanelRect = new Rect(49, 7, 4, 32);
+        protected Rect fatiguePanelRect = new Rect(57, 7, 4, 32);
+        protected Rect magickaPanelRect = new Rect(65, 7, 4, 32);
 
         Texture2D mainTexture;
         Texture2D[] compassTextures = new Texture2D[compassFrameCount];
 
-        Panel headPanel;
-        Panel compassPanel;
+        Panel headPanel = new Panel();
+        Panel compassPanel = new Panel();
+        HUDVitals vitals = new HUDVitals();
 
         Camera compassCamera;
         float eulerAngle;
@@ -74,6 +79,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         public float ScreenHeight { get; private set; }
 
+        /// <summary>
+        /// Gets or sets custom scaling value for all large HUD controls.
+        /// </summary>
+        public Vector2 CustomScale { get; set; }
+
         public HUDLarge()
             : base()
         {
@@ -89,6 +99,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void LoadAssets()
         {
+            // Main large HUD background
             mainTexture = ImageReader.GetTexture(mainFilename);
 
             // Read compass animations
@@ -100,14 +111,27 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void Setup()
         {
+            // Setup self as main container for all other large HUD controls
+            VerticalAlignment = VerticalAlignment.Bottom;
             BackgroundTexture = mainTexture;
+            BackgroundColor = Color.gray;
 
-            compassPanel = DaggerfallUI.AddPanel(compassPanelRect);
+            // Compass
             Components.Add(compassPanel);
 
-            headPanel = DaggerfallUI.AddPanel(headPanelRect);
+            // Head
             headPanel.BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
             Components.Add(headPanel);
+
+            // Vitals
+            vitals.HorizontalAlignment = HorizontalAlignment.None;
+            vitals.VerticalAlignment = VerticalAlignment.None;
+            vitals.AutoSize = AutoSizeModes.None;
+            vitals.SetMargins(Margins.All, 0);
+            vitals.SetAllAutoSize(AutoSizeModes.None);
+            vitals.SetAllHorizontalAlignment(HorizontalAlignment.None);
+            vitals.SetAllVerticalAlignment(VerticalAlignment.None);
+            Components.Add(vitals);
         }
 
         void Refresh()
@@ -126,23 +150,27 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Update screen height
             ScreenHeight = (int)Rectangle.height;
 
+            // Manually update position and scale of controls to match overall large HUD scale
+            // Large HUD exists in screen space not in native 320x200 UI space so scale needs to be amended
+            Position = mainPanelRect.position * CustomScale;
+            Size = mainPanelRect.size * CustomScale;
+            compassPanel.Position = compassPanelRect.position * CustomScale;
+            compassPanel.Size = compassPanelRect.size * CustomScale;
+            headPanel.Position = headPanelRect.position * CustomScale;
+            headPanel.Size = headPanelRect.size * CustomScale;
+            vitals.CustomHealthBarPosition = healthPanelRect.position * CustomScale;
+            vitals.CustomHealthBarSize = healthPanelRect.size * CustomScale;
+            vitals.CustomFatigueBarPosition = fatiguePanelRect.position * CustomScale;
+            vitals.CustomFatigueBarSize = fatiguePanelRect.size * CustomScale;
+            vitals.CustomMagickaBarPosition = magickaPanelRect.position * CustomScale;
+            vitals.CustomMagickaBarSize = magickaPanelRect.size * CustomScale;
+
             // Update head image data when null
             if (HeadTexture == null)
                 UpdateHeadTexture();
 
             // Set head in panel
             headPanel.BackgroundTexture = HeadTexture;
-
-            // When using undocked HUD and custom scale, adjust position and size based on screen scale
-            // HUD elements exist outside of native window space so elements have full control over their own placement
-            // This also requires some manual adjustments as child panels don't inherit scale
-            if (!DaggerfallUnity.Settings.LargeHUDDocked)
-            {
-                headPanel.Position = headPanelRect.position * Scale;
-                headPanel.Size = headPanelRect.size * Scale;
-                compassPanel.Position = compassPanelRect.position * Scale;
-                compassPanel.Size = compassPanelRect.size * Scale;
-            }
 
             // Calculate compass rotation percent
             float percent;
