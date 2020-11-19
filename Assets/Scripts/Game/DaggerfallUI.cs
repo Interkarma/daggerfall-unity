@@ -403,6 +403,14 @@ namespace DaggerfallWorkshop.Game
                     customRenderTarget.Clear();
                 }
 
+                // A docked large HUD changes viewport area
+                // This can result in bottom part of display becoming stale (i.e. blank or filled with garbage) while in overlapping UI
+                // When using a large HUD, always repaint HUD before main window
+                // This generally matches classes where small windows (e.g. spellbook, pause) do not clear large HUD and large windows overlap it completely
+                // Repainting large HUD whether docked or not for consistency
+                if (dfHUD != null && DaggerfallUnity.Settings.LargeHUD)
+                    dfHUD.Draw();
+
                 // Draw top window
                 if (uiManager.TopWindow != null)
                 {
