@@ -40,6 +40,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 BackgroundTexture = CrosshairTexture;
                 Size = crosshairSize * CrosshairScale;
 
+                // Adjust crosshair position when large HUD is docked to match new viewport size
+                if (DaggerfallUI.Instance.DaggerfallHUD != null &&
+                    DaggerfallUnity.Settings.LargeHUD &&
+                    DaggerfallUnity.Settings.LargeHUDDocked)
+                {
+                    VerticalAlignment = VerticalAlignment.None;
+                    HUDLarge largeHUD = DaggerfallUI.Instance.DaggerfallHUD.LargeHUD;
+                    float y = (Screen.height - largeHUD.ScreenHeight - crosshairSize.y) / 2;
+                    Position = new Vector2(0, y);
+                }
+                else
+                {
+                    VerticalAlignment = VerticalAlignment.Middle;
+                }
+
                 base.Update();
             }
         }
