@@ -303,8 +303,30 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override bool GetCustomHeadImageData(PlayerEntity playerEntity, out ImageData imageDataOut)
         {
-            // TODO: Return correct lycanthrope head based on transform state
-            return base.GetCustomHeadImageData(playerEntity, out imageDataOut);
+            const string boarHead = "WERE00I0.IMG";
+            const string wolfHead = "WERE01I0.IMG";
+
+            // Use standard head if not transformed
+            imageDataOut = new ImageData();
+            if (!isTransformed)
+                return false;
+
+            // Select head based on lycanthropy type
+            string filename;
+            switch (infectionType)
+            {
+                case LycanthropyTypes.Werewolf:
+                    filename = wolfHead;
+                    break;
+                case LycanthropyTypes.Wereboar:
+                    filename = boarHead;
+                    break;
+                default:
+                    return false;
+            }
+
+            imageDataOut = ImageReader.GetImageData(filename, 0, 0, true);
+            return true;
         }
 
         public override bool SetFPSWeapon(FPSWeapon target)
