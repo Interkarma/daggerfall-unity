@@ -20,7 +20,9 @@ namespace DaggerfallWorkshop.Utility
     public class RetroRenderer : MonoBehaviour
     {
         public RenderTexture RetroTexture320x200;
+        public RenderTexture RetroTexture320x200_HUD;
         public RenderTexture RetroTexture640x400;
+        public RenderTexture RetroTexture640x400_HUD;
         public RenderTexture RetroPresentationTarget;
 
         private const string ExcludeSkyKeyword = "EXCLUDE_SKY";
@@ -371,14 +373,7 @@ namespace DaggerfallWorkshop.Utility
             // Get sky reference
             sky = GameManager.Instance.SkyRig.GetComponent<DaggerfallSky>();
 
-            // Get reference to retro rendertexture
-            //  0 = retro rendering off
-            //  1 = retro 320x200 rendering on
-            //  2 = retro 640x400 rendering on
-            if (retroMode == 1 && RetroTexture320x200)
-                retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture320x200;
-            else if (retroMode == 2 && RetroTexture640x400)
-                retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture640x400;
+            UpdateRenderTarget();
 
             // Get depth process material
             Shader shader;
@@ -405,6 +400,34 @@ namespace DaggerfallWorkshop.Utility
             {
                 Debug.Log("Couldn't find retro shader " + DaggerfallUnity.Settings.PostProcessingInRetroMode);
                 retroMode = 0;
+            }
+        }
+
+        public void UpdateRenderTarget()
+        {
+            // Unity viewport rect does not work with target render textures
+            // Need to set new target with custom size when using a docked large HUD
+            if (DaggerfallUnity.Settings.LargeHUD && DaggerfallUnity.Settings.LargeHUDDocked)
+            {
+                // Get reference to retro rendertexture
+                //  0 = retro rendering off
+                //  1 = retro 320x200 rendering on with docked large HUD
+                //  2 = retro 640x400 rendering on with docked large HUD
+                if (retroMode == 1 && RetroTexture320x200)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture320x200_HUD;
+                else if (retroMode == 2 && RetroTexture640x400)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture640x400_HUD;
+            }
+            else
+            {
+                // Get reference to retro rendertexture
+                //  0 = retro rendering off
+                //  1 = retro 320x200 rendering on
+                //  2 = retro 640x400 rendering on
+                if (retroMode == 1 && RetroTexture320x200)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture320x200;
+                else if (retroMode == 2 && RetroTexture640x400)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture640x400;
             }
         }
 

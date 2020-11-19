@@ -20,6 +20,8 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public class ViewportChanger : MonoBehaviour
     {
+        public bool isRetroPresenter = false;
+
         Rect standardViewportRect = new Rect(0, 0, 1, 1);
         Rect lastViewportRect;
         Camera camera;
@@ -62,7 +64,19 @@ namespace DaggerfallWorkshop.Utility
             // Set viewport rect to camera
             if (camera)
             {
-                camera.rect = rect;
+                // Handle retro rendering mode
+                // Camera viewport does not work with render textures so need to adjust output to appropriately size render target instead
+                // Then retro presentation needs to use correct screen viewport area, not main camera
+                if (DaggerfallUnity.Settings.RetroRenderingMode != 0 && !isRetroPresenter)
+                {
+                    camera.rect = standardViewportRect;
+                    GameManager.Instance.RetroRenderer.UpdateRenderTarget();
+                }
+                else
+                {
+                    camera.rect = rect;
+                }
+
                 lastViewportRect = rect;
             }
         }

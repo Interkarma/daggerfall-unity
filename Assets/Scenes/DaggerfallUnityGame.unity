@@ -784,6 +784,16 @@ PrefabInstance:
       propertyPath: DungeonParent
       value: 
       objectReference: {fileID: 620133648}
+    - target: {fileID: 114064879103926240, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 3}
+      propertyPath: RetroTexture320x200_HUD
+      value: 
+      objectReference: {fileID: 8400000, guid: ca3500725f430474e899bc87867e968e, type: 2}
+    - target: {fileID: 114064879103926240, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 3}
+      propertyPath: RetroTexture640x400_HUD
+      value: 
+      objectReference: {fileID: 8400000, guid: 1af2073506665c64180188b569dfba46, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
 --- !u!1 &334547543 stripped
@@ -804,6 +814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9336076e82de61d49bfdea08a57e1d52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isRetroPresenter: 0
 --- !u!1 &348738038
 GameObject:
   m_ObjectHideFlags: 0
@@ -1456,6 +1467,7 @@ GameObject:
   - component: {fileID: 1102152088}
   - component: {fileID: 1102152089}
   - component: {fileID: 1102152087}
+  - component: {fileID: 1102152090}
   m_Layer: 0
   m_Name: RetroPresentation
   m_TagString: Untagged
@@ -1534,6 +1546,19 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1102152090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1102152086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9336076e82de61d49bfdea08a57e1d52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRetroPresenter: 1
 --- !u!224 &1168575604 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 22400006, guid: 312abd0527754e047a6bfbc424f09ace,
