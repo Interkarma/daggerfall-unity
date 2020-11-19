@@ -145,10 +145,10 @@ namespace DaggerfallWorkshop
         public bool TravelMapLocationsOutline { get; set; }
         public bool IllegalRestWarning { get; set; }
         public bool LargeHUD { get; set; }
-        public float LargeHUDScale { get; set; }
         public bool LargeHUDDocked { get; set; }
-        public int LargeHUDAlignment { get; set; }
-        public bool LargeHUDOffsetWeapon { get; set; }
+        public float LargeHUDUndockedScale { get; set; }
+        public int LargeHUDUndockedAlignment { get; set; }
+        public bool LargeHUDUndockedOffsetWeapon { get; set; }
         public bool CanDropQuestItems { get; set; }
 
         // [Spells]
@@ -292,10 +292,10 @@ namespace DaggerfallWorkshop
             TravelMapLocationsOutline = GetBool(sectionGUI, "TravelMapLocationsOutline");
             IllegalRestWarning = GetBool(sectionGUI, "IllegalRestWarning");
             LargeHUD = GetBool(sectionGUI, "LargeHUD");
-            LargeHUDScale = GetFloat(sectionGUI, "LargeHUDScale", 0.25f, 2.0f);
             LargeHUDDocked = GetBool(sectionGUI, "LargeHUDDocked");
-            LargeHUDAlignment = GetInt(sectionGUI, "LargeHUDAlignment", 0, 3);
-            LargeHUDOffsetWeapon = GetBool(sectionGUI, "LargeHUDOffsetWeapon");
+            LargeHUDUndockedScale = GetFloat(sectionGUI, "LargeHUDUndockedScale", 0.25f, 2.0f);
+            LargeHUDUndockedAlignment = GetInt(sectionGUI, "LargeHUDUndockedAlignment", 0, 3);
+            LargeHUDUndockedOffsetWeapon = GetBool(sectionGUI, "LargeHUDUndockedOffsetWeapon");
             CanDropQuestItems = GetBool(sectionGUI, "CanDropQuestItems");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
@@ -427,10 +427,10 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "TravelMapLocationsOutline", TravelMapLocationsOutline);
             SetBool(sectionGUI, "IllegalRestWarning", IllegalRestWarning);
             SetBool(sectionGUI, "LargeHUD", LargeHUD);
-            SetFloat(sectionGUI, "LargeHUDScale", LargeHUDScale);
             SetBool(sectionGUI, "LargeHUDDocked", LargeHUDDocked);
-            SetInt(sectionGUI, "LargeHUDAlignment", LargeHUDAlignment);
-            SetBool(sectionGUI, "LargeHUDOffsetWeapon", LargeHUDOffsetWeapon);
+            SetFloat(sectionGUI, "LargeHUDUndockedScale", LargeHUDUndockedScale);
+            SetInt(sectionGUI, "LargeHUDUndockedAlignment", LargeHUDUndockedAlignment);
+            SetBool(sectionGUI, "LargeHUDUndockedOffsetWeapon", LargeHUDUndockedOffsetWeapon);
             SetBool(sectionGUI, "CanDropQuestItems", CanDropQuestItems);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);

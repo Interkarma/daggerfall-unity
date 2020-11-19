@@ -65,9 +65,9 @@ TravelMapLocationsOutline=False
 IllegalRestWarning=True
 LargeHUD=False
 LargeHUDDocked=True
-LargeHUDScale=1.0
-LargeHUDAlignment=0
-LargeHUDOffsetWeapon=True
+LargeHUDUndockedScale=0.75
+LargeHUDUndockedAlignment=0
+LargeHUDUndockedOffsetWeapon=False
 CanDropQuestItems=False
 
 [Spells]

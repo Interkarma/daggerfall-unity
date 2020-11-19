@@ -292,13 +292,13 @@ namespace DaggerfallWorkshop.Game
                     weaponScaleY *= 1.01f;
                 }
 
-                // Offset weapon by large HUD height when both large HUD and weapon offset enabled
+                // Offset weapon by large HUD height when both large HUD and undocked weapon offset enabled
                 // Weapon is forced to offset when using docked HUD else it would appear underneath HUD
                 // This helps user avoid such misconfiguration or it might be interpreted as a bug
                 weaponOffsetHeight = 0;
                 if (DaggerfallUI.Instance.DaggerfallHUD != null &&
                     DaggerfallUnity.Settings.LargeHUD &&
-                    (DaggerfallUnity.Settings.LargeHUDOffsetWeapon || DaggerfallUnity.Settings.LargeHUDDocked))
+                    (DaggerfallUnity.Settings.LargeHUDUndockedOffsetWeapon || DaggerfallUnity.Settings.LargeHUDDocked))
                 {
                     weaponOffsetHeight = (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
                 }

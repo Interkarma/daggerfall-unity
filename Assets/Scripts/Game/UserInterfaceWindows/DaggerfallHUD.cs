@@ -189,8 +189,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Automatically scale to fit screen width or use custom scale
                 largeHUD.AutoSize = (DaggerfallUnity.Settings.LargeHUDDocked) ? AutoSizeModes.ScaleToFit : AutoSizeModes.Scale;
 
-                // Alignment - 0=None/Default (centred), 1=Left, 2=Center, 3=Right
-                largeHUD.HorizontalAlignment = (HorizontalAlignment)DaggerfallUnity.Settings.LargeHUDAlignment;
+                // Alignment when large HUS is undocked - 0=None/Default (centred), 1=Left, 2=Center, 3=Right
+                largeHUD.HorizontalAlignment = (HorizontalAlignment)DaggerfallUnity.Settings.LargeHUDUndockedAlignment;
                 if (largeHUD.HorizontalAlignment == HorizontalAlignment.None)
                     largeHUD.HorizontalAlignment = HorizontalAlignment.Center;
             }
@@ -199,8 +199,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 largeHUD.Enabled = false;
             }
 
+            // Scale large HUD
+            largeHUD.Scale = NativePanel.LocalScale;
+            if (!DaggerfallUnity.Settings.LargeHUDDocked)
+                largeHUD.Scale *= DaggerfallUnity.Settings.LargeHUDUndockedScale;
+
             // Scale HUD elements
-            largeHUD.Scale = NativePanel.LocalScale * DaggerfallUnity.Settings.LargeHUDScale;
             compass.Scale = NativePanel.LocalScale;
             vitals.Scale = NativePanel.LocalScale;
             crosshair.CrosshairScale = CrosshairScale;
