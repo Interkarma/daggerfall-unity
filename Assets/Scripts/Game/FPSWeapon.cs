@@ -69,6 +69,7 @@ namespace DaggerfallWorkshop.Game
         int animTicks = 0;
         float animTickTime;
         Rect curAnimRect;
+        float weaponOffsetHeight;
 
         readonly Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
         Texture2D curCustomTexture;
@@ -76,12 +77,6 @@ namespace DaggerfallWorkshop.Game
         #region Properties
 
         public WeaponStates WeaponState { get { return weaponState; } }
-
-        /// <summary>
-        /// Gets the height weapon image is offset vertically by presence of large HUD
-        /// Always 0 when large HUD is disabled or weapon offset not enabled
-        /// </summary>
-        public float WeaponOffsetHeight { get; private set; }
 
         #endregion
 
@@ -298,10 +293,14 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // Offset weapon by large HUD height when both large HUD and weapon offset enabled
-                WeaponOffsetHeight = 0;
-                if (DaggerfallUnity.Settings.LargeHUD && DaggerfallUnity.Settings.LargeHUDOffsetWeapon)
+                // Weapon is forced to offset when using scale-to-fit HUD else it would appear underneath HUD
+                // This helps user avoid such misconfiguration or it might be interpreted as a bug
+                weaponOffsetHeight = 0;
+                if (DaggerfallUI.Instance.DaggerfallHUD != null &&
+                    DaggerfallUnity.Settings.LargeHUD &&
+                    (DaggerfallUnity.Settings.LargeHUDOffsetWeapon || DaggerfallUnity.Settings.LargeHUDScaleToFit))
                 {
-                    WeaponOffsetHeight = (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Rectangle.height;
+                    weaponOffsetHeight = (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
                 }
 
                 // Source weapon images are designed to overlay a fixed 320x200 display.
@@ -334,7 +333,7 @@ namespace DaggerfallWorkshop.Game
         {
             weaponPosition = new Rect(
                 Screen.width * anim.Offset,
-                Screen.height - height * weaponScaleY - WeaponOffsetHeight,
+                Screen.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }
@@ -343,7 +342,7 @@ namespace DaggerfallWorkshop.Game
         {
             weaponPosition = new Rect(
                 Screen.width / 2f - (width * weaponScaleX) / 2f,
-                Screen.height - height * weaponScaleY - WeaponOffsetHeight,
+                Screen.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }
@@ -359,7 +358,7 @@ namespace DaggerfallWorkshop.Game
 
             weaponPosition = new Rect(
                 Screen.width * (1f - anim.Offset) - width * weaponScaleX,
-                Screen.height - height * weaponScaleY - WeaponOffsetHeight,
+                Screen.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }

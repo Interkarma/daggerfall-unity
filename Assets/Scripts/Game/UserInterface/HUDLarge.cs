@@ -68,6 +68,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         public Texture2D HeadTexture { get; set; }
 
+        /// <summary>
+        /// Gets height of large HUD in screen space pixels (relative to configured resolution).
+        /// Always 0 when large HUD disabled
+        /// </summary>
+        public float ScreenHeight { get; private set; }
+
         public HUDLarge()
             : base()
         {
@@ -112,7 +118,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Update()
         {
             if (!Enabled)
+            {
+                ScreenHeight = 0;
                 return;
+            }
+
+            // Update screen height
+            ScreenHeight = (int)Rectangle.height;
 
             // Update head image data when null
             if (HeadTexture == null)
