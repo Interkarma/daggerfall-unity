@@ -307,10 +307,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void SetMidScreenText(string message, float delay = 1.5f)
         {
             // Adjust position for variable sized large HUD
-            // Text will remain in default position unless it needs to avoid being draw under HUD
+            // Text will remain in default position unless it needs to avoid being drawn under HUD
             if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUnity.Settings.LargeHUD)
             {
-                float offset = Screen.height - DaggerfallUI.Instance.DaggerfallHUD.largeHUD.ScreenHeight;
+                float offset = Screen.height - DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
                 float localY = (offset / midScreenTextLabel.LocalScale.y) - 7;
                 if (localY < midScreenTextDefaultY)
                     midScreenTextLabel.Position = new Vector2(0, (int)localY);
