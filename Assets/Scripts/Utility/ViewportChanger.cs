@@ -35,11 +35,11 @@ namespace DaggerfallWorkshop.Utility
             if (DaggerfallUI.Instance.DaggerfallHUD == null)
                 return;
 
-            // Change viewport when large HUD is scale-to-fit
-            // When not using scale-to-fit the large HUD is just an overlay of variable size and main viewport does not change
-            if (DaggerfallUnity.Settings.LargeHUD && DaggerfallUnity.Settings.LargeHUDScaleToFit)
+            // Change viewport when large HUD is docked
+            // When not using docked the large HUD is just an overlay of variable size and main viewport does not change
+            if (DaggerfallUnity.Settings.LargeHUD && DaggerfallUnity.Settings.LargeHUDDocked)
             {
-                // Shrink viewport to area not occupied by scale-to-fit large HUD
+                // Shrink viewport to area not occupied by docked large HUD
                 // Check size every frame as HUD height can change (e.g. resizing window, changing resolution)
                 HUDLarge largeHUD = DaggerfallUI.Instance.DaggerfallHUD.LargeHUD;
                 float hudHeight = largeHUD.ScreenHeight / Screen.height;

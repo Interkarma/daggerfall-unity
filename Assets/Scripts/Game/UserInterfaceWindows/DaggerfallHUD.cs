@@ -187,7 +187,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 interactionModeIcon.Enabled = false;
 
                 // Automatically scale to fit screen width or use custom scale
-                largeHUD.AutoSize = (DaggerfallUnity.Settings.LargeHUDScaleToFit) ? AutoSizeModes.ScaleToFit : AutoSizeModes.Scale;
+                largeHUD.AutoSize = (DaggerfallUnity.Settings.LargeHUDDocked) ? AutoSizeModes.ScaleToFit : AutoSizeModes.Scale;
 
                 // Alignment - 0=None/Default (centred), 1=Left, 2=Center, 3=Right
                 largeHUD.HorizontalAlignment = (HorizontalAlignment)DaggerfallUnity.Settings.LargeHUDAlignment;

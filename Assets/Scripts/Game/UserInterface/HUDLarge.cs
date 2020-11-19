@@ -133,10 +133,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Set head in panel
             headPanel.BackgroundTexture = HeadTexture;
 
-            // When using custom scale adjust position and size based on screen scale
+            // When using undocked HUD and custom scale, adjust position and size based on screen scale
             // HUD elements exist outside of native window space so elements have full control over their own placement
             // This also requires some manual adjustments as child panels don't inherit scale
-            if (!DaggerfallUnity.Settings.LargeHUDScaleToFit)
+            if (!DaggerfallUnity.Settings.LargeHUDDocked)
             {
                 headPanel.Position = headPanelRect.position * Scale;
                 headPanel.Size = headPanelRect.size * Scale;

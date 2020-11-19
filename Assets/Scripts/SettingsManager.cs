@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop
         public bool IllegalRestWarning { get; set; }
         public bool LargeHUD { get; set; }
         public float LargeHUDScale { get; set; }
-        public bool LargeHUDScaleToFit { get; set; }
+        public bool LargeHUDDocked { get; set; }
         public int LargeHUDAlignment { get; set; }
         public bool LargeHUDOffsetWeapon { get; set; }
         public bool CanDropQuestItems { get; set; }
@@ -293,7 +293,7 @@ namespace DaggerfallWorkshop
             IllegalRestWarning = GetBool(sectionGUI, "IllegalRestWarning");
             LargeHUD = GetBool(sectionGUI, "LargeHUD");
             LargeHUDScale = GetFloat(sectionGUI, "LargeHUDScale", 0.25f, 2.0f);
-            LargeHUDScaleToFit = GetBool(sectionGUI, "LargeHUDScaleToFit");
+            LargeHUDDocked = GetBool(sectionGUI, "LargeHUDDocked");
             LargeHUDAlignment = GetInt(sectionGUI, "LargeHUDAlignment", 0, 3);
             LargeHUDOffsetWeapon = GetBool(sectionGUI, "LargeHUDOffsetWeapon");
             CanDropQuestItems = GetBool(sectionGUI, "CanDropQuestItems");
@@ -428,7 +428,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "IllegalRestWarning", IllegalRestWarning);
             SetBool(sectionGUI, "LargeHUD", LargeHUD);
             SetFloat(sectionGUI, "LargeHUDScale", LargeHUDScale);
-            SetBool(sectionGUI, "LargeHUDScaleToFit", LargeHUDScaleToFit);
+            SetBool(sectionGUI, "LargeHUDDocked", LargeHUDDocked);
             SetInt(sectionGUI, "LargeHUDAlignment", LargeHUDAlignment);
             SetBool(sectionGUI, "LargeHUDOffsetWeapon", LargeHUDOffsetWeapon);
             SetBool(sectionGUI, "CanDropQuestItems", CanDropQuestItems);
