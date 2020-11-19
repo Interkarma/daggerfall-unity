@@ -22,6 +22,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallHUD : DaggerfallBaseWindow
     {
+        const int midScreenTextDefaultY = 146;
+
         float crosshairScale = 0.75f;
 
         PopupText popupText = new PopupText();
@@ -143,7 +145,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(popupText);
 
             midScreenTextLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            midScreenTextLabel.Position = new Vector2(0, 146);
+            midScreenTextLabel.Position = new Vector2(0, midScreenTextDefaultY);
             NativePanel.Components.Add(midScreenTextLabel);
 
             placeMarker.Size = new Vector2(640, 400);
@@ -304,6 +306,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void SetMidScreenText(string message, float delay = 1.5f)
         {
+            // Adjust position for variable sized large HUD
+            // Text will remain in default position unless it needs to avoid being draw under HUD
+            if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUnity.Settings.LargeHUD)
+            {
+                float offset = Screen.height - DaggerfallUI.Instance.DaggerfallHUD.largeHUD.ScreenHeight;
+                float localY = (offset / midScreenTextLabel.LocalScale.y) - 7;
+                if (localY < midScreenTextDefaultY)
+                    midScreenTextLabel.Position = new Vector2(0, (int)localY);
+                else
+                    midScreenTextLabel.Position = new Vector2(0, midScreenTextDefaultY);
+            }
+
             // Set text and start timing
             midScreenTextLabel.Text = message;
             midScreenTextTimer = 0;
