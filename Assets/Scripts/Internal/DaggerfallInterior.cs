@@ -436,8 +436,8 @@ namespace DaggerfallWorkshop
                     modelPosition = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
                 }
 
-                // Stop special object from being combined
-                if (obj.ModelIdNum == ladderModelId)
+                // Stop special objects or those with actions from being combined
+                if (obj.ModelIdNum == ladderModelId || PlayerActivate.HasCustomActivation(obj.ModelIdNum))
                     stopCombine = true;
 
                 // Get model transform
