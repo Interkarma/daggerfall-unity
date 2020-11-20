@@ -150,6 +150,7 @@ namespace DaggerfallWorkshop
         public int LargeHUDUndockedAlignment { get; set; }
         public bool LargeHUDUndockedOffsetWeapon { get; set; }
         public bool CanDropQuestItems { get; set; }
+        public bool RunInBackground { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -244,6 +245,7 @@ namespace DaggerfallWorkshop
             TargetFrameRate = GetInt(sectionVideo, "TargetFrameRate", 0, 300);
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             ExclusiveFullscreen = GetBool(sectionVideo, "ExclusiveFullscreen");
+            RunInBackground = GetBool(sectionVideo, "RunInBackground");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
             MainFilterMode = GetInt(sectionVideo, "MainFilterMode", 0, 2);
             ShadowResolutionMode = GetInt(sectionVideo, "ShadowResolutionMode", 0, 3);
@@ -378,6 +380,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
             SetBool(sectionVideo, "ExclusiveFullscreen", ExclusiveFullscreen);
+            SetBool(sectionVideo, "RunInBackground", RunInBackground);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
             SetInt(sectionVideo, "MainFilterMode", MainFilterMode);
             SetInt(sectionVideo, "ShadowResolutionMode", ShadowResolutionMode);

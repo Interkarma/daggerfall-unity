@@ -13,6 +13,7 @@ VSync=True
 TargetFrameRate=0
 Fullscreen=False
 ExclusiveFullscreen=False
+RunInBackground=True
 FieldOfView=65
 MainFilterMode=0
 QualityLevel=5
