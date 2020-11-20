@@ -202,6 +202,24 @@ namespace DaggerfallWorkshop.Game
             if (mainCamera == null)
                 return;
 
+            // Change activate mode
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.StealMode))
+                ChangeInteractionMode(PlayerActivateModes.Steal);
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.GrabMode))
+                ChangeInteractionMode(PlayerActivateModes.Grab);
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.InfoMode))
+                ChangeInteractionMode(PlayerActivateModes.Info);
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.TalkMode))
+                ChangeInteractionMode(PlayerActivateModes.Talk);
+
+            // Do not do scene activation if player has cursor active over large HUD
+            if (GameManager.Instance.PlayerMouseLook.cursorActive &&
+                DaggerfallUI.Instance.DaggerfallHUD != null &&
+                DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ActiveMouseOverLargeHUD)
+            {
+                return;
+            }
+
             // Do nothing further if player has spell ready to cast as activate button is now used to fire spell
             // The exception is a readied touch spell where player can activate doors, etc.
             // Touch spells only fire once a target entity is in range
@@ -227,16 +245,6 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // Change activate mode
-            if (InputManager.Instance.ActionStarted(InputManager.Actions.StealMode))
-                ChangeInteractionMode(PlayerActivateModes.Steal);
-            else if (InputManager.Instance.ActionStarted(InputManager.Actions.GrabMode))
-                ChangeInteractionMode(PlayerActivateModes.Grab);
-            else if (InputManager.Instance.ActionStarted(InputManager.Actions.InfoMode))
-                ChangeInteractionMode(PlayerActivateModes.Info);
-            else if (InputManager.Instance.ActionStarted(InputManager.Actions.TalkMode))
-                ChangeInteractionMode(PlayerActivateModes.Talk);
-
             // Handle click delay
             if (clickDelay > 0 && Time.realtimeSinceStartup < clickDelayStartTime + clickDelay)
             {
@@ -248,9 +256,12 @@ namespace DaggerfallWorkshop.Game
                 clickDelayStartTime = 0;
             }
 
-            // Fire ray into scene
+            // Player activates object
             if (InputManager.Instance.ActionComplete(InputManager.Actions.ActivateCenterObject))
             {
+                // TODO: Handle player clicking into scene with active cursor
+                // In this case the activation ray should project from click into scene not from camera position
+
                 // Fire ray into scene for hit tests (excluding player so their ray does not intersect self)
                 Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
                 RaycastHit hit;
