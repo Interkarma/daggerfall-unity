@@ -68,7 +68,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected const float loiterWaitTimePerHour = 1.25f;
         protected const int cityCampingIllegal = 17;
 
-        protected RestModes currentRestMode = RestModes.Selection;
         protected int minutesOfHour = 0;
         protected int hoursRemaining = 0;
         protected int totalHours = 0;
@@ -89,9 +88,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Properties
+
+        protected RestModes currentRestMode
+        {
+            get { return GameManager.Instance.PlayerEntity.CurrentRestMode; }
+            set { GameManager.Instance.PlayerEntity.CurrentRestMode = value; }
+        }
+
+        #endregion
+
         #region Enums
 
-        protected enum RestModes
+        public enum RestModes
         {
             Selection,
             TimedRest,
