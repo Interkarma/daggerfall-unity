@@ -31,6 +31,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel arrowCountTextLabel = new TextLabel();
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
+        HUDBreathBar breathBar = new HUDBreathBar();
         HUDCompass compass = new HUDCompass();
         HUDFlickerController flickerController = new HUDFlickerController();
         HUDInteractionModeIcon interactionModeIcon;
@@ -49,6 +50,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public bool ShowMidScreenText { get; set; }
         public bool ShowCrosshair { get; set; }
         public bool ShowVitals { get; set; }
+        public bool ShowBreathBar { get; set; }
         public bool ShowCompass { get; set; }
         public bool ShowInteractionModeIcon { get; set; }
         public bool ShowLocalQuestPlaces { get; set; }
@@ -75,6 +77,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public HUDVitals HUDVitals
         {
             get { return vitals; }
+        }
+
+        public HUDBreathBar HUDBreathBar
+        {
+            get { return breathBar; }
         }
 
         public HUDCompass HUDCompass
@@ -111,6 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowMidScreenText = true;
             ShowCrosshair = DaggerfallUnity.Settings.Crosshair;
             ShowVitals = true;
+            ShowBreathBar = true;
             ShowCompass = true;
             ShowInteractionModeIcon = DaggerfallUnity.Settings.InteractionModeIcon.ToLower() != "none";
             ShowEscortingFaces = true;
@@ -121,6 +129,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.Components.Add(largeHUD);
             ParentPanel.Components.Add(crosshair);
             ParentPanel.Components.Add(vitals);
+            ParentPanel.Components.Add(breathBar);
             ParentPanel.Components.Add(compass);
             ParentPanel.Components.Add(interactionModeIcon);
             ParentPanel.Components.Add(flickerController);
@@ -163,6 +172,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             midScreenTextLabel.Enabled = ShowMidScreenText;
             crosshair.Enabled = ShowCrosshair;
             vitals.Enabled = ShowVitals;
+            breathBar.Enabled = ShowBreathBar;
             compass.Enabled = ShowCompass;
             interactionModeIcon.Enabled = ShowInteractionModeIcon;
             placeMarker.Enabled = ShowLocalQuestPlaces;
@@ -203,6 +213,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Scale HUD elements
             compass.Scale = NativePanel.LocalScale;
             vitals.Scale = NativePanel.LocalScale;
+            breathBar.Scale = NativePanel.LocalScale;
             crosshair.CrosshairScale = CrosshairScale;
             interactionModeIcon.Scale = NativePanel.LocalScale;
 
