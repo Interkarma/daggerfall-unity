@@ -30,7 +30,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int compassFrameCount = 32;
 
         protected Rect mainPanelRect = new Rect(0, 0, 320, 46);
-        protected Rect headPanelRect = new Rect(5, 8, 37, 30);
+        protected Rect headPanelRect = new Rect(7, 8, 33, 30);
         protected Rect compassPanelRect = new Rect(275, 2, 43, 42);
         protected Rect healthPanelRect = new Rect(49, 7, 4, 32);
         protected Rect fatiguePanelRect = new Rect(57, 7, 4, 32);
