@@ -76,6 +76,7 @@ namespace DaggerfallWorkshop.Game
 
         float lastScreenWidth, lastScreenHeight;
         bool lastLargeHUDSetting, lastLargeHUDDockSetting;
+        bool lastSheathed;
 
         #region Properties
 
@@ -112,12 +113,14 @@ namespace DaggerfallWorkshop.Game
             if (Screen.width != lastScreenWidth ||
                 Screen.height != lastScreenHeight ||
                 DaggerfallUnity.Settings.LargeHUD != lastLargeHUDSetting ||
-                DaggerfallUnity.Settings.LargeHUDDocked != lastLargeHUDDockSetting)
+                DaggerfallUnity.Settings.LargeHUDDocked != lastLargeHUDDockSetting ||
+                GameManager.Instance.WeaponManager.Sheathed != lastSheathed)
             {
                 lastScreenWidth = Screen.width;
                 lastScreenHeight = Screen.height;
                 lastLargeHUDSetting = DaggerfallUnity.Settings.LargeHUD;
                 lastLargeHUDDockSetting = DaggerfallUnity.Settings.LargeHUDDocked;
+                lastSheathed = GameManager.Instance.WeaponManager.Sheathed;
                 updateWeapon = true;
             }
 
