@@ -74,6 +74,9 @@ namespace DaggerfallWorkshop.Game
         readonly Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
         Texture2D curCustomTexture;
 
+        float lastScreenWidth, lastScreenHeight;
+        bool lastLargeHUDSetting, lastLargeHUDDockSetting;
+
         #region Properties
 
         public WeaponStates WeaponState { get { return weaponState; } }
@@ -89,6 +92,7 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
+            bool updateWeapon = false;
             GUI.depth = 1;
 
             // Must be ready and not loading the game
@@ -101,8 +105,25 @@ namespace DaggerfallWorkshop.Game
                 LoadWeaponAtlas();
                 if (weaponAtlas == null)
                     return;
-                UpdateWeapon();
+                updateWeapon = true;
             }
+
+            // Update weapon when resolution or large HUD state changes
+            if (Screen.width != lastScreenWidth ||
+                Screen.height != lastScreenHeight ||
+                DaggerfallUnity.Settings.LargeHUD != lastLargeHUDSetting ||
+                DaggerfallUnity.Settings.LargeHUDDocked != lastLargeHUDDockSetting)
+            {
+                lastScreenWidth = Screen.width;
+                lastScreenHeight = Screen.height;
+                lastLargeHUDSetting = DaggerfallUnity.Settings.LargeHUD;
+                lastLargeHUDDockSetting = DaggerfallUnity.Settings.LargeHUDDocked;
+                updateWeapon = true;
+            }
+
+            // Update weapon state only as needed
+            if (updateWeapon)
+                UpdateWeapon();
 
             if (Event.current.type.Equals(EventType.Repaint) && ShowWeapon)
             {
