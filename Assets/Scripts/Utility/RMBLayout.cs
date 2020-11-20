@@ -772,7 +772,7 @@ namespace DaggerfallWorkshop.Utility
 
                     // Use Daggerfall Model
                     // Add or combine
-                    if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum))
+                    if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum))
                         AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                     else
                         combiner.Add(ref modelData, modelMatrix);
@@ -815,7 +815,7 @@ namespace DaggerfallWorkshop.Utility
 
                 // Use Daggerfall Model
                 // Add or combine
-                if (combiner == null || IsBulletinBoard(obj.ModelIdNum))
+                if (combiner == null || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum))
                 {
                     AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                 }
