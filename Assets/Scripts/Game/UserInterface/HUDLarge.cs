@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
@@ -24,24 +25,34 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public class HUDLarge : Panel
     {
         const string mainFilename = "MAIN00I0.IMG";
+        const string interactionModesFilename = "MAIN01I0.IMG";
         const string compass0Filename = "CMPA00I0.BSS";     // Standard compass
         const string compass1Filename = "CMPA01I0.BSS";     // Blue compass (unused)
         const string compass2Filename = "CMPA02I0.BSS";     // Red compass (unused)
         const int compassFrameCount = 32;
 
         protected Rect mainPanelRect = new Rect(0, 0, 320, 46);
+        protected Rect stealModeSubrect = new Rect(0, 0, 47, 23);
+        protected Rect talkModeSubrect = new Rect(0, 23, 47, 23);
+        protected Rect grabModeSubrect = new Rect(0, 46, 47, 23);
+        protected Rect infoModeSubrect = new Rect(0, 69, 47, 23);
         protected Rect headPanelRect = new Rect(7, 8, 33, 30);
         protected Rect compassPanelRect = new Rect(275, 2, 43, 42);
         protected Rect healthPanelRect = new Rect(49, 7, 4, 32);
         protected Rect fatiguePanelRect = new Rect(57, 7, 4, 32);
         protected Rect magickaPanelRect = new Rect(65, 7, 4, 32);
+        protected Rect interactionModePanelRect = new Rect(131, 0, 47, 23);
+
+        DFSize nativeInteractionModesTextureSize = new DFSize(47, 92);
 
         Texture2D mainTexture;
         Texture2D[] compassTextures = new Texture2D[compassFrameCount];
+        Texture2D stealModeTexture, talkModeTexture, grabModeTexture, infoModeTexture;
 
         Panel headPanel = new Panel();
         Panel compassPanel = new Panel();
         HUDVitals vitals = new HUDVitals();
+        Panel interactionModePanel = new Panel();
 
         Camera compassCamera;
         float eulerAngle;
@@ -112,6 +123,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 compassTextures[i] = ImageReader.GetTexture(compass0Filename, 0, i, true);
             }
+
+            // Split interaction mode icons
+            Texture2D interactionModesTexture = ImageReader.GetTexture(interactionModesFilename);
+            stealModeTexture = ImageReader.GetSubTexture(interactionModesTexture, stealModeSubrect, nativeInteractionModesTextureSize);
+            talkModeTexture = ImageReader.GetSubTexture(interactionModesTexture, talkModeSubrect, nativeInteractionModesTextureSize);
+            grabModeTexture = ImageReader.GetSubTexture(interactionModesTexture, grabModeSubrect, nativeInteractionModesTextureSize);
+            infoModeTexture = ImageReader.GetSubTexture(interactionModesTexture, infoModeSubrect, nativeInteractionModesTextureSize);
         }
 
         void Setup()
@@ -137,6 +155,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             vitals.SetAllHorizontalAlignment(HorizontalAlignment.None);
             vitals.SetAllVerticalAlignment(VerticalAlignment.None);
             Components.Add(vitals);
+
+            // Interaction mode
+            interactionModePanel.BackgroundColor = new Color(1, 0, 0, 0.25f);
+            interactionModePanel.OnMouseClick += InteractionModePanel_OnMouseClick;
+            Components.Add(interactionModePanel);
         }
 
         void Refresh()
@@ -170,6 +193,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             vitals.CustomFatigueBarSize = fatiguePanelRect.size * CustomScale;
             vitals.CustomMagickaBarPosition = magickaPanelRect.position * CustomScale;
             vitals.CustomMagickaBarSize = magickaPanelRect.size * CustomScale;
+            interactionModePanel.Position = interactionModePanelRect.position * CustomScale;
+            interactionModePanel.Size = interactionModePanelRect.size * CustomScale;
 
             // Update head image data when null
             if (HeadTexture == null)
@@ -187,6 +212,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Update compass pointer
             compassPanel.BackgroundTexture = compassTextures[(int)(compassFrameCount * percent)];
+
+            // Update interaction mode
+            UpdateInteractionModeTexture();
 
             base.Update();
         }
@@ -217,6 +245,25 @@ namespace DaggerfallWorkshop.Game.UserInterface
             HeadTexture = head.texture;
         }
 
+        void UpdateInteractionModeTexture()
+        {
+            switch (GameManager.Instance.PlayerActivate.CurrentMode)
+            {
+                case PlayerActivateModes.Steal:
+                    interactionModePanel.BackgroundTexture = stealModeTexture;
+                    break;
+                case PlayerActivateModes.Talk:
+                    interactionModePanel.BackgroundTexture = talkModeTexture;
+                    break;
+                case PlayerActivateModes.Grab:
+                    interactionModePanel.BackgroundTexture = grabModeTexture;
+                    break;
+                case PlayerActivateModes.Info:
+                    interactionModePanel.BackgroundTexture = infoModeTexture;
+                    break;
+            }
+        }
+
         protected override void MouseEnter()
         {
             // Cannot be over large HUD when cursor not active or large HUD not enabled
@@ -242,6 +289,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void StartGameBehaviour_OnNewGame()
         {
             Refresh();
+        }
+
+        private void InteractionModePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // Cycle interaction mode
+            switch (GameManager.Instance.PlayerActivate.CurrentMode)
+            {
+                case PlayerActivateModes.Steal:
+                    GameManager.Instance.PlayerActivate.ChangeInteractionMode(PlayerActivateModes.Talk);
+                    break;
+                case PlayerActivateModes.Talk:
+                    GameManager.Instance.PlayerActivate.ChangeInteractionMode(PlayerActivateModes.Grab);
+                    break;
+                case PlayerActivateModes.Grab:
+                    GameManager.Instance.PlayerActivate.ChangeInteractionMode(PlayerActivateModes.Info);
+                    break;
+                case PlayerActivateModes.Info:
+                    GameManager.Instance.PlayerActivate.ChangeInteractionMode(PlayerActivateModes.Steal);
+                    break;
+            }
         }
 
         #endregion
