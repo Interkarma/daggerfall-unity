@@ -46,6 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected Rect spellbookPanelRect = new Rect(84, 0, 47, 23);
         protected Rect inventoryPanelRect = new Rect(178, 0, 47, 23);
         protected Rect sheathPanelRect = new Rect(225, 0, 47, 23);
+        protected Rect useMagicItemPanelRect = new Rect(84, 23, 47, 23);
 
         DFSize nativeInteractionModesTextureSize = new DFSize(47, 92);
 
@@ -61,6 +62,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         Panel spellbookPanel = new Panel();
         Panel inventoryPanel = new Panel();
         Panel sheathPanel = new Panel();
+        Panel useMagicItemPanel = new Panel();
 
         Camera compassCamera;
         float eulerAngle;
@@ -190,6 +192,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             sheathPanel.OnMouseClick += SheathPanel_OnMouseClick;
             sheathPanel.OnRightMouseClick += SheathPanel_OnMouseClick;
             Components.Add(sheathPanel);
+
+            // Use magic item
+            useMagicItemPanel.OnMouseClick += UseMagicItemPanel_OnMouseClick;
+            useMagicItemPanel.OnRightMouseClick += UseMagicItemPanel_OnMouseClick;
+            Components.Add(useMagicItemPanel);
         }
 
         void Refresh()
@@ -233,6 +240,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             inventoryPanel.Size = inventoryPanelRect.size * CustomScale;
             sheathPanel.Position = sheathPanelRect.position * CustomScale;
             sheathPanel.Size = sheathPanelRect.size * CustomScale;
+            useMagicItemPanel.Position = useMagicItemPanelRect.position * CustomScale;
+            useMagicItemPanel.Size = useMagicItemPanelRect.size * CustomScale;
 
             // Update head image data when null
             if (HeadTexture == null)
@@ -419,6 +428,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 GameManager.Instance.WeaponManager.ToggleSheath();
+            }
+        }
+
+        private void UseMagicItemPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (!GameManager.IsGamePaused)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenUseMagicItemWindow);
             }
         }
 
