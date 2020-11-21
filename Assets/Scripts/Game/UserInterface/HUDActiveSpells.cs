@@ -131,12 +131,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Draw();
 
-            if (GameManager.IsGamePaused)
-            {
-                // Draw tooltips only when paused
-                if (defaultToolTip != null)
-                    defaultToolTip.Draw();
-            }
+            // Draw tooltips when paused or cursor active
+            if ((GameManager.IsGamePaused || GameManager.Instance.PlayerMouseLook.cursorActive) && defaultToolTip != null)
+                defaultToolTip.Draw();
         }
 
         #endregion
