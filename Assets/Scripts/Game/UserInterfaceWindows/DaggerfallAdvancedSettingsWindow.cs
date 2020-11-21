@@ -143,6 +143,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider resolution;
         Checkbox fullscreen;
         //Checkbox exclusiveFullscreen;
+        Checkbox runInBackground;
         HorizontalSlider qualityLevel;
         HorizontalSlider mainFilterMode;
         HorizontalSlider guiFilterMode;
@@ -331,6 +332,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //exclusiveFullscreen = AddCheckbox(leftPanel, "exclusiveFullscreen", DaggerfallUnity.Settings.ExclusiveFullscreen);
             fullscreen.OnToggleState += Fullscreen_OnToggleState;
             //exclusiveFullscreen.OnToggleState += ExclusiveFullscreen_OnToggleState;
+            runInBackground = AddCheckbox(leftPanel, "runInBackground", DaggerfallUnity.Settings.RunInBackground);
             qualityLevel = AddSlider(leftPanel, "qualityLevel", DaggerfallUnity.Settings.QualityLevel, QualitySettings.names);
             qualityLevel.OnScroll += QualityLevel_OnScroll;
             string[] filterModes = new string[] { "Point", "Bilinear", "Trilinear" };
@@ -459,6 +461,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.QualityLevel = qualityLevel.ScrollIndex;
                 QualitySettings.SetQualityLevel(qualityLevel.ScrollIndex);
             }
+            Application.runInBackground = DaggerfallUnity.Settings.RunInBackground = runInBackground.IsChecked;
             DaggerfallUnity.Settings.MainFilterMode = mainFilterMode.ScrollIndex;
             DaggerfallUnity.Settings.GUIFilterMode = guiFilterMode.ScrollIndex;
             DaggerfallUnity.Settings.VideoFilterMode = videoFilterMode.ScrollIndex;

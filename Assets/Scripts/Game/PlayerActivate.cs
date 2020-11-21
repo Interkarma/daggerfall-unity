@@ -76,8 +76,8 @@ namespace DaggerfallWorkshop.Game
         public const float MobileNPCActivationDistance = 256 * MeshReader.GlobalScale;
 
         // Opening and closing hours by building type
-        static byte[] openHours  = {  7,  8,  9,  8,  0,  9, 10, 10,  9,  6,  9, 11,  9,  9,  0,  0, 10, 0 };
-        static byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
+        public static byte[] openHours  = {  7,  8,  9,  8,  0,  9, 10, 10,  9,  6,  9, 11,  9,  9,  0,  0, 10, 0 };
+        public static byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
 
         const int PrivatePropertyId = 37;
 
@@ -202,6 +202,24 @@ namespace DaggerfallWorkshop.Game
             if (mainCamera == null)
                 return;
 
+            // Change activate mode
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.StealMode))
+                ChangeInteractionMode(PlayerActivateModes.Steal);
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.GrabMode))
+                ChangeInteractionMode(PlayerActivateModes.Grab);
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.InfoMode))
+                ChangeInteractionMode(PlayerActivateModes.Info);
+            else if (InputManager.Instance.ActionStarted(InputManager.Actions.TalkMode))
+                ChangeInteractionMode(PlayerActivateModes.Talk);
+
+            // Do not do scene activation if player has cursor active over large HUD
+            if (GameManager.Instance.PlayerMouseLook.cursorActive &&
+                DaggerfallUI.Instance.DaggerfallHUD != null &&
+                DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ActiveMouseOverLargeHUD)
+            {
+                return;
+            }
+
             // Do nothing further if player has spell ready to cast as activate button is now used to fire spell
             // The exception is a readied touch spell where player can activate doors, etc.
             // Touch spells only fire once a target entity is in range
@@ -227,16 +245,6 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // Change activate mode
-            if (InputManager.Instance.ActionStarted(InputManager.Actions.StealMode))
-                ChangeInteractionMode(PlayerActivateModes.Steal);
-            else if (InputManager.Instance.ActionStarted(InputManager.Actions.GrabMode))
-                ChangeInteractionMode(PlayerActivateModes.Grab);
-            else if (InputManager.Instance.ActionStarted(InputManager.Actions.InfoMode))
-                ChangeInteractionMode(PlayerActivateModes.Info);
-            else if (InputManager.Instance.ActionStarted(InputManager.Actions.TalkMode))
-                ChangeInteractionMode(PlayerActivateModes.Talk);
-
             // Handle click delay
             if (clickDelay > 0 && Time.realtimeSinceStartup < clickDelayStartTime + clickDelay)
             {
@@ -248,9 +256,12 @@ namespace DaggerfallWorkshop.Game
                 clickDelayStartTime = 0;
             }
 
-            // Fire ray into scene
+            // Player activates object
             if (InputManager.Instance.ActionComplete(InputManager.Actions.ActivateCenterObject))
             {
+                // TODO: Handle player clicking into scene with active cursor
+                // In this case the activation ray should project from click into scene not from camera position
+
                 // Fire ray into scene for hit tests (excluding player so their ray does not intersect self)
                 Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
                 RaycastHit hit;
@@ -571,7 +582,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        int GetBuildingLockValue(int quality)
+        public int GetBuildingLockValue(int quality)
         {
             // Currently unknown how classic calculates building lock value but suspect related to building quality level
             // No exterior buildings are known to have magically held locks, so 20 quality buildings (e.g. The Odd Blades) must have a lower lock value
@@ -580,7 +591,7 @@ namespace DaggerfallWorkshop.Game
             return quality / 2;
         }
 
-        int GetBuildingLockValue(BuildingSummary buildingSummary)
+        public int GetBuildingLockValue(BuildingSummary buildingSummary)
         {
             return GetBuildingLockValue(buildingSummary.Quality);
         }
@@ -1070,7 +1081,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Look for building array on object, then on direct parent
-        private DaggerfallStaticBuildings GetBuildings(Transform buildingsTransform, out Transform owner)
+        public DaggerfallStaticBuildings GetBuildings(Transform buildingsTransform, out Transform owner)
         {
             owner = null;
             DaggerfallStaticBuildings buildings = buildingsTransform.GetComponent<DaggerfallStaticBuildings>();
@@ -1089,7 +1100,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Look for doors on object, then on direct parent
-        private DaggerfallStaticDoors GetDoors(Transform doorsTransform, out Transform owner)
+        public DaggerfallStaticDoors GetDoors(Transform doorsTransform, out Transform owner)
         {
             owner = null;
             DaggerfallStaticDoors doors = doorsTransform.GetComponent<DaggerfallStaticDoors>();
@@ -1181,7 +1192,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Check if building is unlocked and enterable
-        private bool BuildingIsUnlocked(BuildingSummary buildingSummary)
+        public bool BuildingIsUnlocked(BuildingSummary buildingSummary)
         {
             // Player owned house is always unlocked
             if (DaggerfallBankManager.IsHouseOwned(buildingSummary.buildingKey))
@@ -1318,7 +1329,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Sets new activation mode
-        private void ChangeInteractionMode(PlayerActivateModes newMode)
+        public void ChangeInteractionMode(PlayerActivateModes newMode)
         {
             // Do nothing if new mode matches current mode
             if (newMode == currentMode)
@@ -1477,7 +1488,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Player has clicked on a pickpocket target in steal mode
-        void Pickpocket(DaggerfallEntityBehaviour target = null)
+        public void Pickpocket(DaggerfallEntityBehaviour target = null)
         {
             const int foundNothingValuableTextId = 8999;
 

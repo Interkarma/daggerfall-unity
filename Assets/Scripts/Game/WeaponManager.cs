@@ -285,6 +285,14 @@ namespace DaggerfallWorkshop.Game
             else
                 ShowWeapons(true);
 
+            // Do nothing if player has cursor active over large HUD (player is clicking on HUD not clicking to attack)
+            if (GameManager.Instance.PlayerMouseLook.cursorActive &&
+                DaggerfallUI.Instance.DaggerfallHUD != null &&
+                DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ActiveMouseOverLargeHUD)
+            {
+                return;
+            }
+
             // Get if bow is equipped
             bool bowEquipped = (ScreenWeapon && ScreenWeapon.WeaponType == WeaponTypes.Bow);
 
@@ -887,7 +895,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void ToggleSheath()
+        public void ToggleSheath()
         {
             Sheathed = !Sheathed;
             if (!Sheathed)

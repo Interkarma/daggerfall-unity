@@ -96,6 +96,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Our dark transformation is complete - cure everything on player (including stage one disease)
             GameManager.Instance.PlayerEffectManager.CureAll();
+
+            // Refresh head texture after effect starts
+            DaggerfallUI.RefreshLargeHUDHeadTexture();
+        }
+
+        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Resume(effectData, manager, caster);
+
+            // Refresh head texture after effect resumes
+            DaggerfallUI.RefreshLargeHUDHeadTexture();
         }
 
         public override void ConstantEffect()
@@ -258,6 +269,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Remove player metal immunity
             entityBehaviour.Entity.MinMetalToHit = WeaponMaterialTypes.Iron;
+
+            // Refresh head texture after effect ends
+            DaggerfallUI.RefreshLargeHUDHeadTexture();
         }
 
         #endregion

@@ -144,6 +144,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool PreventNormalizingReputations { get { return preventNormalizingReputations; } set { preventNormalizingReputations = value; } }
         public bool IsResting { get { return isResting; } set { isResting = value; } }
         public bool IsLoitering { get; set; }
+        public DaggerfallRestWindow.RestModes CurrentRestMode { get; set; }
         public Races Race { get { return (Races)RaceTemplate.ID; } }
         public RaceTemplate RaceTemplate { get { return GetLiveRaceTemplate(); } }
         public RaceTemplate BirthRaceTemplate { get { return raceTemplate; } set { raceTemplate = value; } }

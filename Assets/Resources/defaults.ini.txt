@@ -13,6 +13,7 @@ VSync=True
 TargetFrameRate=0
 Fullscreen=False
 ExclusiveFullscreen=False
+RunInBackground=True
 FieldOfView=65
 MainFilterMode=0
 QualityLevel=5
@@ -63,8 +64,11 @@ EnableGeographicBackgrounds=False
 DungeonExitWagonPrompt=True
 TravelMapLocationsOutline=False
 IllegalRestWarning=True
-LargeHUD=false
-LargeHUDScale=1.0
+LargeHUD=False
+LargeHUDDocked=True
+LargeHUDUndockedScale=0.75
+LargeHUDUndockedAlignment=0
+LargeHUDUndockedOffsetWeapon=False
 CanDropQuestItems=False
 
 [Spells]

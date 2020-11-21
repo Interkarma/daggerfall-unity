@@ -131,12 +131,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Draw();
 
-            if (GameManager.IsGamePaused)
-            {
-                // Draw tooltips only when paused
-                if (defaultToolTip != null)
-                    defaultToolTip.Draw();
-            }
+            // Draw tooltips when paused or cursor active
+            if ((GameManager.IsGamePaused || GameManager.Instance.PlayerMouseLook.cursorActive) && defaultToolTip != null)
+                defaultToolTip.Draw();
         }
 
         #endregion
@@ -323,6 +320,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     icon.Enabled = true;
                     icon.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(spell.icon);
                     icon.Position = position;
+                    AdjustIconPositionForLargeHUD(icon);
                     icon.Size = iconsPositioning.iconSize;
                     icon.ToolTipText = spell.displayName;
                     if (++column == iconsPositioning.iconColumns)
@@ -336,6 +334,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         position += iconsPositioning.columnStep;
                     }
                 }
+            }
+        }
+
+        void AdjustIconPositionForLargeHUD(Panel icon)
+        {
+            // Adjust position for variable sized large HUD
+            // Icon will remain in default position unless it needs to avoid being drawn under HUD
+            if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUnity.Settings.LargeHUD)
+            {
+                float startY = icon.Position.y;
+                float offset = Screen.height - DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
+                float localY = (offset / icon.LocalScale.y) - 18;
+                if (localY < startY)
+                    icon.Position = new Vector2(icon.Position.x, (int)localY);
             }
         }
 

@@ -69,9 +69,15 @@ namespace DaggerfallWorkshop.Game
         int animTicks = 0;
         float animTickTime;
         Rect curAnimRect;
+        float weaponOffsetHeight;
 
         readonly Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
         Texture2D curCustomTexture;
+
+        float lastScreenWidth, lastScreenHeight;
+        bool lastLargeHUDSetting, lastLargeHUDDockSetting;
+        bool lastSheathed;
+        float lastWeaponOffsetHeight;
 
         #region Properties
 
@@ -88,6 +94,7 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
+            bool updateWeapon = false;
             GUI.depth = 1;
 
             // Must be ready and not loading the game
@@ -100,8 +107,40 @@ namespace DaggerfallWorkshop.Game
                 LoadWeaponAtlas();
                 if (weaponAtlas == null)
                     return;
-                UpdateWeapon();
+                updateWeapon = true;
             }
+
+            // Offset weapon by large HUD height when both large HUD and undocked weapon offset enabled
+            // Weapon is forced to offset when using docked HUD else it would appear underneath HUD
+            // This helps user avoid such misconfiguration or it might be interpreted as a bug
+            weaponOffsetHeight = 0;
+            if (DaggerfallUI.Instance.DaggerfallHUD != null &&
+                DaggerfallUnity.Settings.LargeHUD &&
+                (DaggerfallUnity.Settings.LargeHUDUndockedOffsetWeapon || DaggerfallUnity.Settings.LargeHUDDocked))
+            {
+                weaponOffsetHeight = (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
+            }
+
+            // Update weapon when resolution or large HUD state changes
+            if (Screen.width != lastScreenWidth ||
+                Screen.height != lastScreenHeight ||
+                DaggerfallUnity.Settings.LargeHUD != lastLargeHUDSetting ||
+                DaggerfallUnity.Settings.LargeHUDDocked != lastLargeHUDDockSetting ||
+                GameManager.Instance.WeaponManager.Sheathed != lastSheathed ||
+                weaponOffsetHeight != lastWeaponOffsetHeight)
+            {
+                lastScreenWidth = Screen.width;
+                lastScreenHeight = Screen.height;
+                lastLargeHUDSetting = DaggerfallUnity.Settings.LargeHUD;
+                lastLargeHUDDockSetting = DaggerfallUnity.Settings.LargeHUDDocked;
+                lastSheathed = GameManager.Instance.WeaponManager.Sheathed;
+                lastWeaponOffsetHeight = weaponOffsetHeight;
+                updateWeapon = true;
+            }
+
+            // Update weapon state only as needed
+            if (updateWeapon)
+                UpdateWeapon();
 
             if (Event.current.type.Equals(EventType.Repaint) && ShowWeapon)
             {
@@ -321,7 +360,7 @@ namespace DaggerfallWorkshop.Game
         {
             weaponPosition = new Rect(
                 Screen.width * anim.Offset,
-                Screen.height - height * weaponScaleY,
+                Screen.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }
@@ -330,7 +369,7 @@ namespace DaggerfallWorkshop.Game
         {
             weaponPosition = new Rect(
                 Screen.width / 2f - (width * weaponScaleX) / 2f,
-                Screen.height - height * weaponScaleY,
+                Screen.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }
@@ -346,7 +385,7 @@ namespace DaggerfallWorkshop.Game
 
             weaponPosition = new Rect(
                 Screen.width * (1f - anim.Offset) - width * weaponScaleX,
-                Screen.height - height * weaponScaleY,
+                Screen.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }

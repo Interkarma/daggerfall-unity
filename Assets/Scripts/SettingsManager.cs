@@ -145,8 +145,12 @@ namespace DaggerfallWorkshop
         public bool TravelMapLocationsOutline { get; set; }
         public bool IllegalRestWarning { get; set; }
         public bool LargeHUD { get; set; }
-        public float LargeHUDScale { get; set; }
+        public bool LargeHUDDocked { get; set; }
+        public float LargeHUDUndockedScale { get; set; }
+        public int LargeHUDUndockedAlignment { get; set; }
+        public bool LargeHUDUndockedOffsetWeapon { get; set; }
         public bool CanDropQuestItems { get; set; }
+        public bool RunInBackground { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -241,6 +245,7 @@ namespace DaggerfallWorkshop
             TargetFrameRate = GetInt(sectionVideo, "TargetFrameRate", 0, 300);
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             ExclusiveFullscreen = GetBool(sectionVideo, "ExclusiveFullscreen");
+            RunInBackground = GetBool(sectionVideo, "RunInBackground");
             FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
             MainFilterMode = GetInt(sectionVideo, "MainFilterMode", 0, 2);
             ShadowResolutionMode = GetInt(sectionVideo, "ShadowResolutionMode", 0, 3);
@@ -289,7 +294,10 @@ namespace DaggerfallWorkshop
             TravelMapLocationsOutline = GetBool(sectionGUI, "TravelMapLocationsOutline");
             IllegalRestWarning = GetBool(sectionGUI, "IllegalRestWarning");
             LargeHUD = GetBool(sectionGUI, "LargeHUD");
-            LargeHUDScale = GetFloat(sectionGUI, "LargeHUDScale", 0.25f, 2.0f);
+            LargeHUDDocked = GetBool(sectionGUI, "LargeHUDDocked");
+            LargeHUDUndockedScale = GetFloat(sectionGUI, "LargeHUDUndockedScale", 0.25f, 2.0f);
+            LargeHUDUndockedAlignment = GetInt(sectionGUI, "LargeHUDUndockedAlignment", 0, 3);
+            LargeHUDUndockedOffsetWeapon = GetBool(sectionGUI, "LargeHUDUndockedOffsetWeapon");
             CanDropQuestItems = GetBool(sectionGUI, "CanDropQuestItems");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
@@ -372,6 +380,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
             SetBool(sectionVideo, "ExclusiveFullscreen", ExclusiveFullscreen);
+            SetBool(sectionVideo, "RunInBackground", RunInBackground);
             SetInt(sectionVideo, "FieldOfView", FieldOfView);
             SetInt(sectionVideo, "MainFilterMode", MainFilterMode);
             SetInt(sectionVideo, "ShadowResolutionMode", ShadowResolutionMode);
@@ -421,7 +430,10 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "TravelMapLocationsOutline", TravelMapLocationsOutline);
             SetBool(sectionGUI, "IllegalRestWarning", IllegalRestWarning);
             SetBool(sectionGUI, "LargeHUD", LargeHUD);
-            SetFloat(sectionGUI, "LargeHUDScale", LargeHUDScale);
+            SetBool(sectionGUI, "LargeHUDDocked", LargeHUDDocked);
+            SetFloat(sectionGUI, "LargeHUDUndockedScale", LargeHUDUndockedScale);
+            SetInt(sectionGUI, "LargeHUDUndockedAlignment", LargeHUDUndockedAlignment);
+            SetBool(sectionGUI, "LargeHUDUndockedOffsetWeapon", LargeHUDUndockedOffsetWeapon);
             SetBool(sectionGUI, "CanDropQuestItems", CanDropQuestItems);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);

@@ -165,7 +165,7 @@ namespace DaggerfallConnect.Arena2
             Menevia = 209,
             Alcaire = 210,
             Koegria = 211,
-            Bhoraine = 212,
+            Bhoriane = 212,
             Kambria = 213,
             Phrygia = 214,
             Urvaius = 215,
@@ -404,8 +404,8 @@ namespace DaggerfallConnect.Arena2
             Court_of_Koegria = 533,
             People_of_Koegria = 534,
 
-            Court_of_Bhoraine = 535,
-            People_of_Bhoraine = 536,
+            Court_of_Bhoriane = 535,
+            People_of_Bhoriane = 536,
 
             Court_of_Kambria = 537,
             People_of_Kambria = 538,

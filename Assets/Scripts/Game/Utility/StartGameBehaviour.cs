@@ -221,6 +221,8 @@ namespace DaggerfallWorkshop.Game.Utility
 
             InputManager.Instance.EnableController = DaggerfallUnity.Settings.EnableController;
 
+            Application.runInBackground = DaggerfallUnity.Settings.RunInBackground;
+
             // Set shadow resolution
             GameManager.UpdateShadowResolution();
 
