@@ -895,7 +895,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void ToggleSheath()
+        public void ToggleSheath()
         {
             Sheathed = !Sheathed;
             if (!Sheathed)
