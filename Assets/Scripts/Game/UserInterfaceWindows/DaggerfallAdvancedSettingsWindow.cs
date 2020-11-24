@@ -79,6 +79,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         bool applyScreenChanges = false;
 
+        protected GameObject gameObject;
+
         #endregion
 
         #region Settings Controls
@@ -92,6 +94,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextBox weaponAttackThreshold;
         HorizontalSlider soundVolume;
         HorizontalSlider musicVolume;
+        DaggerfallAudioSource dfAudioSource;
         Checkbox movementAcceleration;
         Checkbox spellLighting;
         Checkbox spellShadows;
@@ -169,6 +172,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AllowCancel = false;
             ParentPanel.BackgroundColor = Color.clear;
 
+            gameObject = new GameObject();
+            gameObject.name = "DaggerfallAdvancedSettingsWindow";
+            gameObject.AddComponent<AudioSource>();
+            dfAudioSource = gameObject.AddComponent<DaggerfallAudioSource>();
+
             // Pages selection top bar
             bar.Outline.Enabled = true;
             bar.BackgroundColor = backgroundColor;
@@ -242,7 +250,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TextBox soundFont = AddTextbox(rightPanel, "soundFont", !string.IsNullOrEmpty(DaggerfallUnity.Settings.SoundFont) ? DaggerfallUnity.Settings.SoundFont : "default");
             soundFont.ReadOnly = true;
             soundVolume = AddSlider(rightPanel, "soundVolume", 0, 1, DaggerfallUnity.Settings.SoundVolume);
+            soundVolume.OnScroll += SoundVolume_OnScroll;
+            soundVolume.OnMouseUp += SoundVolume_OnMouseUp;
             musicVolume = AddSlider(rightPanel, "musicVolume", 0, 1, DaggerfallUnity.Settings.MusicVolume);
+            musicVolume.OnScroll += MusicVolume_OnScroll;
 
             // Spells
             AddSectionTitle(rightPanel, "spells");
@@ -734,6 +745,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void CloseButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SaveSettings();
+            UnityEngine.Object.Destroy(gameObject);
             DaggerfallUI.UIManager.PopWindow();
         }
 
@@ -757,6 +769,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void Resolution_OnScroll()
         {
             applyScreenChanges = true;
+        }
+
+         private void MusicVolume_OnScroll()
+        {
+            DaggerfallUnity.Settings.MusicVolume = musicVolume.GetValue();
+        }
+
+        private void SoundVolume_OnScroll()
+        {
+            DaggerfallUnity.Settings.SoundVolume = soundVolume.GetValue();
+            if (dfAudioSource)
+                dfAudioSource.AudioSource.volume = 1.0f * DaggerfallUnity.Settings.SoundVolume;
+        }
+
+        private void SoundVolume_OnMouseUp(BaseScreenComponent sender, Vector2 position)
+        {
+            if (dfAudioSource)
+                dfAudioSource.PlayOneShot(SoundClips.DungeonDoorOpen, 0f, 1f);
         }
 
         #endregion
