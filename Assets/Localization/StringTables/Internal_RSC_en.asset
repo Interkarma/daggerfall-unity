@@ -21405,78 +21405,78 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1163
-    m_Localized: '%1com. If possible, I would hear about %key %2com.[/record]
+    m_Localized: '%1com. If possible, I would hear about %key.[/record]
 
       %1com.
-      I would be grateful for information about %key %2com.[/record]
+      I would be grateful for information about %key.[/record]
 
       %1com.
-      I would appreciate any information about %key %2com.[/record]
+      I would appreciate any information about %key.[/record]
 
       %1com.
-      I was hoping you might know about %key %2com.[/record]
+      I was hoping you might know about %key.[/record]
 
       %1com. Enlighten
-      me on the subject of %key %2com.[/record]
+      me on the subject of %key.[/record]
 
       %1com. Apprize me of the situation
-      with %key %2com.[/record]
+      with %key.[/record]
 
       %1com. I gather you know something about %key
-      %2com.[/end]'
+     .[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1164
-    m_Localized: '%1com. What can you tell me about %key %2com?[/record]
+    m_Localized: '%1com. What can you tell me about %key?[/record]
 
       %1com.
-      I am seeking information on %key %2com.[/record]
+      I am seeking information on %key.[/record]
 
       %1com. What do you
-      know about %key %2com?[/record]
+      know about %key?[/record]
 
-      %1com. I need to know about %key %2com.[/record]
+      %1com. I need to know about %key.[/record]
 
       %1com.
-      Do you know anything about %key %2com?[/record]
+      Do you know anything about %key?[/record]
 
       %1com. What does %key
-      mean to you %2com?[/record]
+      mean to you?[/record]
 
-      %1com. Talk to me about %key %2com.[/record]
+      %1com. Talk to me about %key.[/record]
 
       %1com.
-      You must know something about %key %2com.[/end]'
+      You must know something about %key.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1165
-    m_Localized: '%1com. What''s the newest word on %key %2com?[/record]
+    m_Localized: '%1com. What''s the newest word on %key?[/record]
 
       %1com.
-      Any news about %key %2com?[/record]
+      Any news about %key?[/record]
 
       %1com. What''s the story on %key
-      %2com?[/record]
+     ?[/record]
 
-      %1com. I''m looking for a tip on %key %2com.[/record]
+      %1com. I''m looking for a tip on %key.[/record]
 
       %1com.
-      Know anything about %key %2com?[/record]
+      Know anything about %key?[/record]
 
       %1com. Any hot tips on %key
-      %2com?[/record]
+     ?[/record]
 
-      %1com. %key. That''s what I really want to know %2com.[/record]
-
-      %1com.
-      Fill me in on %key %2com.[/record]
-
-      %1com. Put me wise on %key %2com.[/record]
+      %1com. %key. That''s what I really want to know.[/record]
 
       %1com.
-      Ever hear of %key %2com?[/record]
+      Fill me in on %key.[/record]
 
-      %1com. %key from around here %2com?[/end]'
+      %1com. Put me wise on %key.[/record]
+
+      %1com.
+      Ever hear of %key?[/record]
+
+      %1com. %key from around here?[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1166

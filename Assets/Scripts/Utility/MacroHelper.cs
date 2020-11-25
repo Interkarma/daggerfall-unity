@@ -43,7 +43,6 @@ namespace DaggerfallWorkshop.Utility
             { "%1hn", null }, // ?
             { "%2am", MagnitudePlusMax }, // 2nd + Magnitude
             { "%2bm", MagnitudeBaseMax }, // 2nd Base Magnitude
-            { "%2com", DummyResolve2com },// ? (comment Nystul: it seems to be used in questions about work - it seems to be resolved to an empty string but not sure what else this macro does)
             { "%2hn", null }, // ?
             { "%3hn", null }, // ?
             { "%a", Amount },   // Cost of somthing.
@@ -849,12 +848,6 @@ namespace DaggerfallWorkshop.Utility
         {
             // %1com
             return GameManager.Instance.TalkManager.GetPCGreetingOrFollowUpText();
-        }
-
-        private static string DummyResolve2com(IMacroContextProvider mcp)
-        {
-            // %2com
-            return ""; // return empty string for now - not known if it does something else in classic
         }
 
         private static string FactionAlly(IMacroContextProvider mcp)
