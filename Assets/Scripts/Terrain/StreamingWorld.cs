@@ -486,7 +486,18 @@ namespace DaggerfallWorkshop
             if (!currentPlayerLocationObject)
                 return null;
 
-            return currentPlayerLocationObject.GetComponent<BuildingDirectory>();
+            // buildingDirectory MapID must match PlayerGPS.CurrentLocation MapID or building data might be out of sync with location until world finishes loading
+            BuildingDirectory buildingDirectory = currentPlayerLocationObject.GetComponent<BuildingDirectory>();
+            if (buildingDirectory && buildingDirectory.MapID != GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId)
+            {
+                Debug.LogWarningFormat(
+                    "GetCurrentBuildingDirectory() MapID={0} does not match PlayerGPS.CurrentLocation MapID={1}. StreamingWorld might still be loading locations.",
+                    currentPlayerLocationObject.Summary.MapID,
+                    GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId);
+                return null;
+            }
+
+            return buildingDirectory;
         }
 
         /// <summary>

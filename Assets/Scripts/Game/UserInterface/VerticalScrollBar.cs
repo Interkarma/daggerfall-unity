@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -213,9 +213,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Draw thumb texture slices in screen space
             float topTextureHeight = vScrollThumbTop.height * LocalScale.y;
             float bottomTextureHeight = vScrollThumbBottom.height * LocalScale.y;
-            Rect topRect = new Rect(totalRect.x, totalRect.y + thumbY, totalRect.width, topTextureHeight);
-            Rect bodyRect = new Rect(totalRect.x, topRect.yMax, totalRect.width, thumbHeight - topTextureHeight - bottomTextureHeight);
-            Rect bottomRect = new Rect(totalRect.x, bodyRect.yMax, totalRect.width, bottomTextureHeight);
+            Rect topRect = new Rect((int)totalRect.x, (int)(totalRect.y + thumbY), (int)totalRect.width, (int)topTextureHeight);
+            Rect bodyRect = new Rect((int)totalRect.x, (int)topRect.yMax, (int)totalRect.width, (int)(thumbHeight - topTextureHeight - bottomTextureHeight));
+            Rect bottomRect = new Rect((int)totalRect.x, (int)bodyRect.yMax, (int)totalRect.width, (int)bottomTextureHeight);
             GUI.DrawTexture(topRect, vScrollThumbTop, ScaleMode.StretchToFill);
             GUI.DrawTexture(bodyRect, vScrollThumbBody, ScaleMode.StretchToFill);
             GUI.DrawTexture(bottomRect, vScrollThumbBottom, ScaleMode.StretchToFill);

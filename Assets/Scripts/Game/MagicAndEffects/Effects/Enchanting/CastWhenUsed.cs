@@ -106,6 +106,15 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (!effectManager)
                 return null;
 
+            // Do not activate enchantment if broken
+            // But still return durability loss so "item has broken" message displays
+            // If AllowMagicRepairs enabled then item will not disappear
+            if (sourceItem != null && sourceItem.currentCondition <= 0)
+                return new PayloadCallbackResults()
+                {
+                    durabilityLoss = durabilityLossOnUse
+                };
+
             // Cast when used enchantment prepares a new ready spell
             if (!string.IsNullOrEmpty(param.Value.CustomParam))
             {
@@ -126,7 +135,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                         bundle = new EntityEffectBundle(bundleSettings, sourceEntity);
                         bundle.CastByItem = sourceItem;
                         if (bundle.Settings.TargetType == TargetTypes.CasterOnly)
-                            effectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+                            effectManager.AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows | AssignBundleFlags.BypassChance);
                         else
                             effectManager.SetReadySpell(bundle, true);
                     }

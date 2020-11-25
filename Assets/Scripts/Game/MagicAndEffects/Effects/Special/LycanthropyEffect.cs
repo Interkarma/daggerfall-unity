@@ -160,6 +160,25 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Our transformation is complete - cure everything on player (including stage one disease)
             GameManager.Instance.PlayerEffectManager.CureAll();
+
+            // Refresh head texture after effect starts
+            DaggerfallUI.RefreshLargeHUDHeadTexture();
+        }
+
+        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
+        {
+            base.Resume(effectData, manager, caster);
+
+            // Refresh head texture after effect resumes
+            DaggerfallUI.RefreshLargeHUDHeadTexture();
+        }
+
+        public override void End()
+        {
+            base.End();
+
+            // Refresh head texture after effect ends
+            DaggerfallUI.RefreshLargeHUDHeadTexture();
         }
 
         public override void ConstantEffect()
@@ -279,6 +298,34 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
 
             textureOut = backgroundTexture;
+            return true;
+        }
+
+        public override bool GetCustomHeadImageData(PlayerEntity playerEntity, out ImageData imageDataOut)
+        {
+            const string boarHead = "WERE00I0.IMG";
+            const string wolfHead = "WERE01I0.IMG";
+
+            // Use standard head if not transformed
+            imageDataOut = new ImageData();
+            if (!isTransformed)
+                return false;
+
+            // Select head based on lycanthropy type
+            string filename;
+            switch (infectionType)
+            {
+                case LycanthropyTypes.Werewolf:
+                    filename = wolfHead;
+                    break;
+                case LycanthropyTypes.Wereboar:
+                    filename = boarHead;
+                    break;
+                default:
+                    return false;
+            }
+
+            imageDataOut = ImageReader.GetImageData(filename, 0, 0, true);
             return true;
         }
 
@@ -488,6 +535,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Store time whenever cast
             lastCastMorphSelf = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
+
+            // Refresh head texture after transform
+            DaggerfallUI.RefreshLargeHUDHeadTexture();
         }
 
         #endregion

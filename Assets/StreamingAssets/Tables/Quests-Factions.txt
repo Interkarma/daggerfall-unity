@@ -186,7 +186,7 @@ Northmoor,                 0, -1, 208
 Menevia,                   0, -1, 209
 Alcaire,                   0, -1, 210
 Koegria,                   0, -1, 211
-Bhoraine,                  0, -1, 212
+Bhoriane,                  0, -1, 212
 Kambria,                   0, -1, 213
 Phrygia,                   0, -1, 214
 Urvaius,                   0, -1, 215
@@ -374,8 +374,8 @@ Court_of_Alcaire,          0, -1, 531
 People_of_Alcaire,         0, -1, 532
 Court_of_Koegria,          0, -1, 533
 People_of_Koegria,         0, -1, 534
-Court_of_Bhoraine,         0, -1, 535
-People_of_Bhoraine,        0, -1, 536
+Court_of_Bhoriane,         0, -1, 535
+People_of_Bhoriane,        0, -1, 536
 Court_of_Kambria,          0, -1, 537
 People_of_Kambria,         0, -1, 538
 Court_of_Phrygia,          0, -1, 539

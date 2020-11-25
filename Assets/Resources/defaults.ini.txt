@@ -13,6 +13,7 @@ VSync=True
 TargetFrameRate=0
 Fullscreen=False
 ExclusiveFullscreen=False
+RunInBackground=True
 FieldOfView=65
 MainFilterMode=0
 QualityLevel=5
@@ -25,7 +26,6 @@ GeneralBillboardShadows=False
 DungeonShadowDistance=20.0
 InteriorShadowDistance=30.0
 ExteriorShadowDistance=90.0
-
 EnableTextureArrays=True
 RandomDungeonTextures=0
 
@@ -63,10 +63,13 @@ SDFFontRendering=True
 EnableGeographicBackgrounds=False
 DungeonExitWagonPrompt=True
 TravelMapLocationsOutline=False
-
 IllegalRestWarning=True
-LargeHUD=false
-LargeHUDScale=1.0
+LargeHUD=False
+LargeHUDDocked=True
+LargeHUDUndockedScale=0.75
+LargeHUDUndockedAlignment=0
+LargeHUDUndockedOffsetWeapon=False
+CanDropQuestItems=False
 
 [Spells]
 EnableSpellLighting=True

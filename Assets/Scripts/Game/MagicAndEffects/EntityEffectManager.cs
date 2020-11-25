@@ -437,6 +437,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             bool showNonPlayerFailures = (flags & AssignBundleFlags.ShowNonPlayerFailures) == AssignBundleFlags.ShowNonPlayerFailures;
             bool bypassSavingThrows = (flags & AssignBundleFlags.BypassSavingThrows) == AssignBundleFlags.BypassSavingThrows;
             bool specialInfection = (flags & AssignBundleFlags.SpecialInfection) == AssignBundleFlags.SpecialInfection;
+            bool bypassChance = (flags & AssignBundleFlags.BypassChance) == AssignBundleFlags.BypassChance;
 
             // Source bundle must have one or more effects
             if (sourceBundle.Settings.Effects == null || sourceBundle.Settings.Effects.Length == 0)
@@ -519,7 +520,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 effect.Start(this, sourceBundle.CasterEntityBehaviour);
 
                 // Do not proceed if chance failed
-                if (effect.Properties.SupportChance &&
+                if (!bypassChance &&
+                    effect.Properties.SupportChance &&
                     effect.Properties.ChanceFunction == ChanceFunction.OnCast &&
                     !effect.ChanceSuccess)
                 {
@@ -907,13 +909,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             EffectBundleSettings bundleSettings = new EffectBundleSettings()
             {
                 Version = EntityEffectBroker.CurrentSpellVersion,
+                Name = potionRecipe.DisplayName,
                 BundleType = BundleTypes.Potion,
                 TargetType = TargetTypes.CasterOnly,
                 Effects = potionEffects,
             };
             // Assign effect bundle.
             EntityEffectBundle bundle = new EntityEffectBundle(bundleSettings, entityBehaviour);
-            AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows);
+            AssignBundle(bundle, AssignBundleFlags.BypassSavingThrows | AssignBundleFlags.BypassChance);
 
             // Play cast sound on drink for player only.
             if (IsPlayerEntity)

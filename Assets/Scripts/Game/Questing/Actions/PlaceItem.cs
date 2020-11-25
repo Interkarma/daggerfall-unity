@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             get { return @"place item (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+) marker (?<marker>\d+)|" +
                          @"place item (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+) questmarker (?<questmarker>\d+)|" +
+                         @"place item (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+) (?<anymarker>anymarker)|" +
                          @"place item (?<anItem>[a-zA-Z0-9_.-]+) at (?<aPlace>[a-zA-Z0-9_.-]+)"; }
         }
 
@@ -61,6 +62,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 action.marker = Parser.ParseInt(markerPreferenceGroup.Value);
                 action.markerPreference = MarkerPreference.UseQuestMarker;
             }
+
+            // Set any marker
+            Group anyMarkerGroup = match.Groups["anymarker"];
+            if (anyMarkerGroup.Success)
+                action.markerPreference = MarkerPreference.AnyMarker;
 
             return action;
         }

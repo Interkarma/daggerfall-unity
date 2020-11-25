@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             PotionRecipe slowFalling = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("slowFalling"),
+                "slowFalling",
                 100,
                 DefaultEffectSettings(),
                 (int)Items.MiscellaneousIngredients1.Pure_water,

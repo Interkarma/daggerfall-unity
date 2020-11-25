@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             fullScreenButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.OptionsFullScreen);
             fullScreenTick = DaggerfallUI.AddPanel(new Rect(64f, 3.2f, 3.7f, 3.2f), fullScreenButton);
             fullScreenTick.BackgroundColor = DaggerfallUI.DaggerfallUnityDefaultCheckboxToggleColor;
-            fullScreenTick.Enabled = DaggerfallUnity.Settings.LargeHUD;
+            fullScreenTick.Enabled = !DaggerfallUnity.Settings.LargeHUD;
 
             // Head bobbing
             Button headBobbingButton = DaggerfallUI.AddButton(new Rect(76, 47, 70, 8), optionsPanel);
@@ -306,8 +306,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void FullScreenButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+
             // Fullscreen button toggles large HUD setting
-            fullScreenTick.Enabled = DaggerfallUnity.Settings.LargeHUD = !DaggerfallUnity.Settings.LargeHUD;
+            DaggerfallUnity.Settings.LargeHUD = !DaggerfallUnity.Settings.LargeHUD;
+            fullScreenTick.Enabled = !DaggerfallUnity.Settings.LargeHUD;
 
             if (!saveSettings)
                 saveSettings = true;

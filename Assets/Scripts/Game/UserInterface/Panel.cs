@@ -250,7 +250,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Draw fill
-            GUI.DrawTextureWithTexCoords(fillBordersRect, fillBordersTexture, new Rect(0, 0, fillBordersRect.width / virtualSizes.Fill.x, fillBordersRect.height / virtualSizes.Fill.y));
+            GUI.DrawTextureWithTexCoords(fillBordersRect, fillBordersTexture, new Rect(0, 0, (fillBordersRect.width / LocalScale.x) / virtualSizes.Fill.x, (fillBordersRect.height / LocalScale.y) / virtualSizes.Fill.y));
 
             // Draw corners
             GUI.DrawTexture(topLeftBorderRect, topLeftBorderTexture);

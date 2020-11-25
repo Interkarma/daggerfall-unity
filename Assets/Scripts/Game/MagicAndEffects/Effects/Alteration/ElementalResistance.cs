@@ -98,7 +98,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             EffectSettings resistSettings = SetEffectChance(DefaultEffectSettings(), 100, 1, 1);
 
             PotionRecipe resistFire = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("resistFire"),
+                "resistFire",
                 75,
                 resistSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,
@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.PlantIngredients2.Cactus);
 
             PotionRecipe resistFrost = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("resistFrost"),
+                "resistFrost",
                 75,
                 resistSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,
@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 (int)Items.PlantIngredients2.White_rose);
 
             PotionRecipe resistShock = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("resistShock"),
+                "resistShock",
                 75,
                 resistSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,
@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             EffectSettings poisonResistSettings = SetEffectChance(DefaultEffectSettings(), 5, 19, 1);
             PotionRecipe resistPoison = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("resistPoison"),
+                "resistPoison",
                 125,
                 poisonResistSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,

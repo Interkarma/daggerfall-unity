@@ -46,7 +46,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Magnitude 1-1 + 14-14 per 1 levels
             EffectSettings orcStrengthSettings = SetEffectMagnitude(DefaultEffectSettings(), 1, 1, 14, 14, 1);
             PotionRecipe orcStrength = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("orcStrength"),
+                "orcStrength",
                 50,
                 orcStrengthSettings,
                 (int)Items.CreatureIngredients1.Orcs_blood,

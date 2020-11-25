@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Banking;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Guilds
 {
@@ -39,6 +40,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         private const int ArmorFlagMask = 1;
         private const int HouseFlagMask = 2;
+        private const int ArmorFlagStart = 4;
 
         #endregion
 
@@ -109,15 +111,6 @@ namespace DaggerfallWorkshop.Game.Guilds
         #endregion
 
         #region Guild Membership and Faction
-
-        public override TextFile.Token[] UpdateRank(PlayerEntity playerEntity)
-        {
-            TextFile.Token[] tokens = base.UpdateRank(playerEntity);
-            if (tokens != null)
-                flags = 0;
-
-            return tokens;
-        }
 
         public override int GetFactionId()
         {
@@ -200,7 +193,8 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public void ReceiveArmor(PlayerEntity playerEntity)
         {
-            if ((flags & ArmorFlagMask) > 0)
+            int armorMask = ArmorFlagStart << rank;
+            if ((flags & armorMask) > 0)
             {
                 DaggerfallUI.MessageBox(NoArmorId);
             }
@@ -214,7 +208,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     rewardArmor.AddItem(ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, armor, material));
                 }
                 DaggerfallMessageBox mb = DaggerfallUI.MessageBox(ArmorId);
-                DaggerfallUI.Instance.InventoryWindow.SetChooseOne(rewardArmor, item => flags = flags | ArmorFlagMask);
+                DaggerfallUI.Instance.InventoryWindow.SetChooseOne(rewardArmor, item => flags = flags | armorMask);
                 mb.OnClose += ReceiveArmorPopup_OnClose;
             }
         }
@@ -290,6 +284,14 @@ namespace DaggerfallWorkshop.Game.Guilds
             base.RestoreGuildData(data);
             order = (Orders)data.variant;
             flags = data.flags;
+            if ((flags & 4092) == 0)
+            {
+                for (int i = 0; i < rank; i++)
+                    flags = flags | ArmorFlagStart << i;
+                if ((flags & ArmorFlagMask) > 0)
+                    flags = flags | ArmorFlagStart << rank;
+                Debug.LogFormat("Converted flags: {0}, rank: {1}, new flags: {2}", Convert.ToString(data.flags, 2), rank, Convert.ToString(flags, 2));
+            }
         }
 
         #endregion

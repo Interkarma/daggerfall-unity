@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             EffectSettings cureSettings = SetEffectChance(DefaultEffectSettings(), 5, 19, 1);
             PotionRecipe freeAction = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("freeAction"),
+                "freeAction",
                 125,
                 cureSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,

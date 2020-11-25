@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             EffectSettings cureSettings = SetEffectChance(DefaultEffectSettings(), 5, 19, 1);
             PotionRecipe curePoison = new PotionRecipe(
-                TextManager.Instance.GetLocalizedText("curePoison"),
+                "curePoison",
                 200,
                 cureSettings,
                 (int)Items.MiscellaneousIngredients1.Ichor,

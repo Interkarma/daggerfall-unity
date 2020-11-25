@@ -11,9 +11,7 @@
 
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -26,6 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         int forcedRoundsRemaining = 1;
         bool awakeAlert = true;
+        bool castByItem = false;
         bool castBySkeletonKey = false;
 
         public override void SetProperties()
@@ -49,14 +48,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Start(manager, caster);
-            CheckCastBySkeletonKey();
+            CheckCastByItem();
             StartWaitingForDoor();
         }
 
         public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Resume(effectData, manager, caster);
-            CheckCastBySkeletonKey();
+            CheckCastByItem();
             StartWaitingForDoor();
         }
 
@@ -81,8 +80,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         void StartWaitingForDoor()
         {
-            // Do nothing if failed - Skeleton's Key always works
-            if (!castBySkeletonKey && !RollChance())
+            // Do nothing if spell chance fails
+            // Always succeeds chance roll when cast by item but still subject to level vs. door requirement
+            if (!castByItem && !castBySkeletonKey && !RollChance())
             {
                 DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("spellEffectFailed"));
                 CancelEffect();
@@ -144,8 +144,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             ResignAsIncumbent();
         }
 
-        void CheckCastBySkeletonKey()
+        void CheckCastByItem()
         {
+            castByItem = ParentBundle.castByItem != null;
+
             castBySkeletonKey = 
                 ParentBundle.castByItem != null &&
                 ParentBundle.castByItem.IsArtifact &&

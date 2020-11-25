@@ -791,8 +791,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 magnitude = baseMagnitude + plusMagnitude * multiplier;
             }
 
+            int initialMagnitude = magnitude;
             if (ParentBundle.targetType != TargetTypes.CasterOnly)
                 magnitude = FormulaHelper.ModifyEffectAmount(this, manager.EntityBehaviour.Entity, magnitude);
+
+            // Output "Save versus spell made." when magnitude is fully reduced to 0 by saving throw
+            if (initialMagnitude > 0 && magnitude == 0)
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("saveVersusSpellMade"));
 
             return magnitude;
         }

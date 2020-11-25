@@ -635,6 +635,7 @@ namespace DaggerfallWorkshop
     {
         Default,                // Assign Foe/Person to specified questmarker index and Item to specified itemmarker index
         UseQuestMarker,         // Assign Foe/Person/Item to specified questmarker index
+        AnyMarker,              // Assign Foe/Person/Item randomly from combined questmarker and itemmarker pool
     }
 
     /// <summary>
@@ -723,7 +724,7 @@ namespace DaggerfallWorkshop
         Menevia = 33,
         Alcaire = 34,
         Koegria = 35,
-        Bhoraine = 36,
+        Bhoriane = 36,
         Kambria = 37,
         Phrygias = 38,
         Urvaius = 39,

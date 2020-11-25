@@ -151,7 +151,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallAudioSource dfAudioSource;
         AudioSource ridingAudioSource;
 
-        private bool stoppedRidingAudio;
+        private bool pendingStopRidingAudio;
 
         ImageData ridingTexture;
         ImageData[] ridingTexures = new ImageData[4];
@@ -204,9 +204,10 @@ namespace DaggerfallWorkshop.Game
 
         IEnumerator StopRidingAudio()
         {
-            stoppedRidingAudio = true;
+            pendingStopRidingAudio = true;
             yield return new WaitForSecondsRealtime(0.2f);
             ridingAudioSource.Stop();
+            pendingStopRidingAudio = false;
         }
 
         // Update is called once per frame
@@ -221,7 +222,7 @@ namespace DaggerfallWorkshop.Game
                     lastFrameTime = 0;
                     frameIndex = 0;
                     ridingTexture = ridingTexures[0];
-                    if (!stoppedRidingAudio)
+                    if (!pendingStopRidingAudio)
                         StartCoroutine(StopRidingAudio());
                 }
                 else
@@ -239,7 +240,7 @@ namespace DaggerfallWorkshop.Game
                     // Get appropriate hoof sound for horse
                     if (mode == TransportModes.Horse)
                     {
-                        stoppedRidingAudio = false;
+                        pendingStopRidingAudio = false;
 
                         if (!wasMovingLessThanHalfSpeed && playerMotor.IsMovingLessThanHalfSpeed)
                         {
@@ -286,10 +287,15 @@ namespace DaggerfallWorkshop.Game
                     float horseScaleY = (float)Screen.height / (float)nativeScreenHeight;
                     float horseScaleX = horseScaleY * ScaleFactorX;
 
+                    // Handle docked large HUD - does not move horse with fullscreen HUD or undocked large HUD
+                    float horseOffsetHeight = 0;
+                    if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUnity.Settings.LargeHUD && DaggerfallUnity.Settings.LargeHUDDocked)
+                        horseOffsetHeight = (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
+
                     // Calculate position for horse texture and draw it.
                     Rect pos = new Rect(
                                     Screen.width / 2f - (ridingTexture.width * horseScaleX) / 2f,
-                                    Screen.height - (ridingTexture.height * horseScaleY),
+                                    Screen.height - (ridingTexture.height * horseScaleY) - horseOffsetHeight,
                                     ridingTexture.width * horseScaleX,
                                     ridingTexture.height * horseScaleY);
                     GUI.DrawTexture(pos, ridingTexture.texture);

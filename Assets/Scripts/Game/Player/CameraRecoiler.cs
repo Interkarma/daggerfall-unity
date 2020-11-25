@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game
         void Update()
         {
             if (GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength) == CameraRecoilSetting.Off ||
-                GameManager.IsGamePaused) // prevent continuous spinning on pause
+                GameManager.IsGamePaused || GameManager.Instance.PlayerMouseLook.cursorActive) // prevent continuous spinning on pause
                 return;
             else
                 cameraRecoilSetting = GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength);

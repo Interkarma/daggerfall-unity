@@ -3259,6 +3259,10 @@ MonoBehaviour:
     m_Key: temple
     m_Metadata:
       m_Items: []
+  - m_Id: 9244149909045248
+    m_Key: unknownPowers
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
