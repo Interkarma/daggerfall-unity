@@ -482,8 +482,6 @@ namespace DaggerfallWorkshop
             else
                 vanillaNightSky = 0;
 
-            Debug.Log("Vanilla Sky: " + vanillaNightSky);
-
             //TYPE 1: NIGHTIME VANILLA
             string baseName = string.Format("NITE{0:00}I0.IMG", vanillaNightSky);
             TextureReplacement.TryImportTexture(baseName, false, out westTexture);
