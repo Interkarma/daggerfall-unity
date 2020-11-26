@@ -415,7 +415,7 @@ namespace DaggerfallWorkshop.Game
                     LoadKeyBinds();
 
                 // Ensure defaults are deployed if missing
-                SetupDefaults();
+                ResetDefaults(true);
 
                 // Update keybinds save
                 SaveKeyBinds();
@@ -927,77 +927,97 @@ namespace DaggerfallWorkshop.Game
             axisActionInvertDict[(int)axis] = invert;
         }
 
-        // Set keybindings to defaults
-        public void ResetDefaults()
+        // 'autofill' false: Forcefully set keybindings to defaults
+        // 'autofill' true: Deploys default values if action missing from loaded keybinds
+        public void ResetDefaults(bool autofill = false)
         {
-            actionKeyDict.Clear();
+            if (!autofill)
+                actionKeyDict.Clear();
 
-            SetBinding(KeyCode.Escape, Actions.Escape);
-            SetBinding(KeyCode.BackQuote, Actions.ToggleConsole);
+            Action<KeyCode, Actions, bool> setBinding;
+            Action<string, AxisActions> setAxisBinding;
+            Action<KeyCode, JoystickUIActions> setJoystickUIBinding;
 
-            SetBinding(KeyCode.W, Actions.MoveForwards);
-            SetBinding(KeyCode.S, Actions.MoveBackwards);
-            SetBinding(KeyCode.A, Actions.MoveLeft);
-            SetBinding(KeyCode.D, Actions.MoveRight);
-            SetBinding(KeyCode.LeftArrow, Actions.TurnLeft);
-            SetBinding(KeyCode.RightArrow, Actions.TurnRight);
+            if(autofill)
+            {
+                setBinding = TestSetBinding;
+                setAxisBinding = TestSetAxisBinding;
+                setJoystickUIBinding = TestSetJoystickUIBinding;
+            }
+            else
+            {
+                setBinding = SetBinding;
+                setAxisBinding = SetAxisBinding;
+                setJoystickUIBinding = SetJoystickUIBinding;
+            }
 
-            SetBinding(KeyCode.PageUp, Actions.FloatUp);
-            SetBinding(KeyCode.PageDown, Actions.FloatDown);
-            SetBinding(KeyCode.Space, Actions.Jump);
-            SetBinding(KeyCode.C, Actions.Crouch);
-            SetBinding(KeyCode.LeftControl, Actions.Slide);
-            SetBinding(KeyCode.LeftShift, Actions.Run);
-            SetBinding(KeyCode.Mouse2, Actions.AutoRun);
+            setBinding(KeyCode.Escape, Actions.Escape, true);
+            setBinding(KeyCode.BackQuote, Actions.ToggleConsole, true);
 
-            SetBinding(KeyCode.R, Actions.Rest);
-            SetBinding(KeyCode.T, Actions.Transport);
-            SetBinding(KeyCode.F1, Actions.StealMode);
-            SetBinding(KeyCode.F2, Actions.GrabMode);
-            SetBinding(KeyCode.F3, Actions.InfoMode);
-            SetBinding(KeyCode.F4, Actions.TalkMode);
+            setBinding(KeyCode.W, Actions.MoveForwards, true);
+            setBinding(KeyCode.S, Actions.MoveBackwards, true);
+            setBinding(KeyCode.A, Actions.MoveLeft, true);
+            setBinding(KeyCode.D, Actions.MoveRight, true);
+            setBinding(KeyCode.LeftArrow, Actions.TurnLeft, true);
+            setBinding(KeyCode.RightArrow, Actions.TurnRight, true);
 
-            SetBinding(KeyCode.Backspace, Actions.CastSpell);
-            SetBinding(KeyCode.Q, Actions.RecastSpell);
-            SetBinding(KeyCode.E, Actions.AbortSpell);
-            SetBinding(KeyCode.U, Actions.UseMagicItem);
+            setBinding(KeyCode.PageUp, Actions.FloatUp, true);
+            setBinding(KeyCode.PageDown, Actions.FloatDown, true);
+            setBinding(KeyCode.Space, Actions.Jump, true);
+            setBinding(KeyCode.C, Actions.Crouch, true);
+            setBinding(KeyCode.LeftControl, Actions.Slide, true);
+            setBinding(KeyCode.LeftShift, Actions.Run, true);
+            setBinding(KeyCode.Mouse2, Actions.AutoRun, true);
 
-            SetBinding(KeyCode.Z, Actions.ReadyWeapon);
-            SetBinding(KeyCode.Mouse1, Actions.SwingWeapon);
-            SetBinding(KeyCode.H, Actions.SwitchHand);
+            setBinding(KeyCode.R, Actions.Rest, true);
+            setBinding(KeyCode.T, Actions.Transport, true);
+            setBinding(KeyCode.F1, Actions.StealMode, true);
+            setBinding(KeyCode.F2, Actions.GrabMode, true);
+            setBinding(KeyCode.F3, Actions.InfoMode, true);
+            setBinding(KeyCode.F4, Actions.TalkMode, true);
 
-            SetBinding(KeyCode.I, Actions.Status);
-            SetBinding(KeyCode.F5, Actions.CharacterSheet);
-            SetBinding(KeyCode.F6, Actions.Inventory);
+            setBinding(KeyCode.Backspace, Actions.CastSpell, true);
+            setBinding(KeyCode.Q, Actions.RecastSpell, true);
+            setBinding(KeyCode.E, Actions.AbortSpell, true);
+            setBinding(KeyCode.U, Actions.UseMagicItem, true);
 
-            SetBinding(KeyCode.Mouse0, Actions.ActivateCenterObject);
-            SetBinding(KeyCode.Return, Actions.ActivateCursor);
+            setBinding(KeyCode.Z, Actions.ReadyWeapon, true);
+            setBinding(KeyCode.Mouse1, Actions.SwingWeapon, true);
+            setBinding(KeyCode.H, Actions.SwitchHand, true);
 
-            SetBinding(KeyCode.Insert, Actions.LookUp);
-            SetBinding(KeyCode.Delete, Actions.LookDown);
-            SetBinding(KeyCode.Home, Actions.CenterView);
-            SetBinding(KeyCode.LeftAlt, Actions.Sneak);
+            setBinding(KeyCode.I, Actions.Status, true);
+            setBinding(KeyCode.F5, Actions.CharacterSheet, true);
+            setBinding(KeyCode.F6, Actions.Inventory, true);
 
-            SetBinding(KeyCode.L, Actions.LogBook);
-            SetBinding(KeyCode.N, Actions.NoteBook);
-            SetBinding(KeyCode.M, Actions.AutoMap);
-            SetBinding(KeyCode.V, Actions.TravelMap);
+            setBinding(KeyCode.Mouse0, Actions.ActivateCenterObject, true);
+            setBinding(KeyCode.Return, Actions.ActivateCursor, true);
 
-            SetBinding(KeyCode.F8, Actions.PrintScreen);
-            SetBinding(KeyCode.F9, Actions.QuickSave);
-            SetBinding(KeyCode.F12, Actions.QuickLoad);
+            setBinding(KeyCode.Insert, Actions.LookUp, true);
+            setBinding(KeyCode.Delete, Actions.LookDown, true);
+            setBinding(KeyCode.Home, Actions.CenterView, true);
+            setBinding(KeyCode.LeftAlt, Actions.Sneak, true);
 
-            SetAxisBinding("Axis1", AxisActions.MovementHorizontal);
-            SetAxisBinding("Axis2", AxisActions.MovementVertical);
-            SetAxisBinding("Axis4", AxisActions.CameraHorizontal);
-            SetAxisBinding("Axis5", AxisActions.CameraVertical);
+            setBinding(KeyCode.L, Actions.LogBook, true);
+            setBinding(KeyCode.N, Actions.NoteBook, true);
+            setBinding(KeyCode.M, Actions.AutoMap, true);
+            setBinding(KeyCode.V, Actions.TravelMap, true);
 
-            SetJoystickUIBinding(KeyCode.JoystickButton0, JoystickUIActions.LeftClick);
-            SetJoystickUIBinding(KeyCode.JoystickButton1, JoystickUIActions.RightClick);
+            setBinding(KeyCode.F8, Actions.PrintScreen, true);
+            setBinding(KeyCode.F9, Actions.QuickSave, true);
+            setBinding(KeyCode.F12, Actions.QuickLoad, true);
+
+            setAxisBinding("Axis1", AxisActions.MovementHorizontal);
+            setAxisBinding("Axis2", AxisActions.MovementVertical);
+            setAxisBinding("Axis4", AxisActions.CameraHorizontal);
+            setAxisBinding("Axis5", AxisActions.CameraVertical);
+
+            setJoystickUIBinding(KeyCode.JoystickButton0, JoystickUIActions.LeftClick);
+            setJoystickUIBinding(KeyCode.JoystickButton1, JoystickUIActions.RightClick);
             UpdateBindingCache();
 
             foreach (AxisActions axisAction in Enum.GetValues(typeof(AxisActions)))
-                SetAxisActionInversion(axisAction, false);
+                if (!autofill || !axisActionInvertDict.ContainsKey((int)axisAction))
+                    SetAxisActionInversion(axisAction, false);
         }
 
         public bool GetMouseButtonDown(int button)
@@ -1275,78 +1295,6 @@ namespace DaggerfallWorkshop.Game
             {
                 SetJoystickUIBinding(code, action);
             }
-        }
-
-        // Deploys default values if action missing from loaded keybinds
-        private void SetupDefaults()
-        {
-            TestSetBinding(KeyCode.Escape, Actions.Escape);
-            TestSetBinding(KeyCode.BackQuote, Actions.ToggleConsole);
-
-            TestSetBinding(KeyCode.W, Actions.MoveForwards);
-            TestSetBinding(KeyCode.S, Actions.MoveBackwards);
-            TestSetBinding(KeyCode.A, Actions.MoveLeft);
-            TestSetBinding(KeyCode.D, Actions.MoveRight);
-            TestSetBinding(KeyCode.LeftArrow, Actions.TurnLeft);
-            TestSetBinding(KeyCode.RightArrow, Actions.TurnRight);
-
-            TestSetBinding(KeyCode.PageUp, Actions.FloatUp);
-            TestSetBinding(KeyCode.PageDown, Actions.FloatDown);
-            TestSetBinding(KeyCode.Space, Actions.Jump);
-            TestSetBinding(KeyCode.C, Actions.Crouch);
-            TestSetBinding(KeyCode.LeftControl, Actions.Slide);
-            TestSetBinding(KeyCode.LeftShift, Actions.Run);
-            TestSetBinding(KeyCode.Mouse2, Actions.AutoRun);
-
-            TestSetBinding(KeyCode.R, Actions.Rest);
-            TestSetBinding(KeyCode.T, Actions.Transport);
-            TestSetBinding(KeyCode.F1, Actions.StealMode);
-            TestSetBinding(KeyCode.F2, Actions.GrabMode);
-            TestSetBinding(KeyCode.F3, Actions.InfoMode);
-            TestSetBinding(KeyCode.F4, Actions.TalkMode);
-
-            TestSetBinding(KeyCode.Backspace, Actions.CastSpell);
-            TestSetBinding(KeyCode.Q, Actions.RecastSpell);
-            TestSetBinding(KeyCode.E, Actions.AbortSpell);
-            TestSetBinding(KeyCode.U, Actions.UseMagicItem);
-
-            TestSetBinding(KeyCode.Z, Actions.ReadyWeapon);
-            TestSetBinding(KeyCode.Mouse1, Actions.SwingWeapon);
-            TestSetBinding(KeyCode.H, Actions.SwitchHand);
-
-            TestSetBinding(KeyCode.I, Actions.Status);
-            TestSetBinding(KeyCode.F5, Actions.CharacterSheet);
-            TestSetBinding(KeyCode.F6, Actions.Inventory);
-
-            TestSetBinding(KeyCode.Mouse0, Actions.ActivateCenterObject);
-            TestSetBinding(KeyCode.Return, Actions.ActivateCursor);
-
-            TestSetBinding(KeyCode.Insert, Actions.LookUp);
-            TestSetBinding(KeyCode.Delete, Actions.LookDown);
-            TestSetBinding(KeyCode.Home, Actions.CenterView);
-            TestSetBinding(KeyCode.LeftAlt, Actions.Sneak);
-
-            TestSetBinding(KeyCode.L, Actions.LogBook);
-            TestSetBinding(KeyCode.N, Actions.NoteBook);
-            TestSetBinding(KeyCode.M, Actions.AutoMap);
-            TestSetBinding(KeyCode.V, Actions.TravelMap);
-
-            TestSetBinding(KeyCode.F8, Actions.PrintScreen);
-            TestSetBinding(KeyCode.F9, Actions.QuickSave);
-            TestSetBinding(KeyCode.F12, Actions.QuickLoad);
-
-            TestSetAxisBinding("Axis1", AxisActions.MovementHorizontal);
-            TestSetAxisBinding("Axis2", AxisActions.MovementVertical);
-            TestSetAxisBinding("Axis4", AxisActions.CameraHorizontal);
-            TestSetAxisBinding("Axis5", AxisActions.CameraVertical);
-
-            TestSetJoystickUIBinding(KeyCode.JoystickButton0, JoystickUIActions.LeftClick);
-            TestSetJoystickUIBinding(KeyCode.JoystickButton1, JoystickUIActions.RightClick);
-            UpdateBindingCache();
-
-            foreach (AxisActions axisAction in Enum.GetValues(typeof(AxisActions)))
-                if (!axisActionInvertDict.ContainsKey((int)axisAction))
-                    SetAxisActionInversion(axisAction, false);
         }
 
         // Apply force to horizontal axis
