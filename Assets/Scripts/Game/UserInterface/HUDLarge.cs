@@ -47,27 +47,31 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected Rect inventoryPanelRect = new Rect(178, 0, 47, 23);
         protected Rect sheathPanelRect = new Rect(225, 0, 47, 23);
         protected Rect useMagicItemPanelRect = new Rect(84, 23, 47, 23);
+        protected Rect transportModePanelRect = new Rect(131, 23, 47, 23);
 
-        DFSize nativeInteractionModesTextureSize = new DFSize(47, 92);
+        protected DFSize nativeInteractionModesTextureSize = new DFSize(47, 92);
 
-        Texture2D mainTexture;
-        Texture2D[] compassTextures = new Texture2D[compassFrameCount];
-        Texture2D stealModeTexture, talkModeTexture, grabModeTexture, infoModeTexture;
+        protected Texture2D mainTexture;
+        protected Texture2D[] compassTextures = new Texture2D[compassFrameCount];
+        protected Texture2D stealModeTexture, talkModeTexture, grabModeTexture, infoModeTexture;
 
-        Panel headPanel = new Panel();
-        Panel compassPanel = new Panel();
-        HUDVitals vitals = new HUDVitals();
-        Panel interactionModePanel = new Panel();
-        Panel optionsPanel = new Panel();
-        Panel spellbookPanel = new Panel();
-        Panel inventoryPanel = new Panel();
-        Panel sheathPanel = new Panel();
-        Panel useMagicItemPanel = new Panel();
+        protected Panel headPanel = new Panel();
+        protected Panel compassPanel = new Panel();
+        protected HUDVitals vitals = new HUDVitals();
+        protected Panel interactionModePanel = new Panel();
+        protected Panel optionsPanel = new Panel();
+        protected Panel spellbookPanel = new Panel();
+        protected Panel inventoryPanel = new Panel();
+        protected Panel sheathPanel = new Panel();
+        protected Panel useMagicItemPanel = new Panel();
+        protected Panel transportModePanel = new Panel();
 
-        Camera compassCamera;
-        float eulerAngle;
+        protected Camera compassCamera;
+        protected float eulerAngle;
 
-        PlayerEntity playerEntity;
+        protected PlayerEntity playerEntity;
+
+        Vector2 lastCustomScale;
 
         /// <summary>
         /// Gets or sets a compass camera to automatically determine compass heading.
@@ -197,6 +201,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             useMagicItemPanel.OnMouseClick += UseMagicItemPanel_OnMouseClick;
             useMagicItemPanel.OnRightMouseClick += UseMagicItemPanel_OnMouseClick;
             Components.Add(useMagicItemPanel);
+
+            // Transport
+            transportModePanel.OnMouseClick += TransportModePanel_OnMouseClick;
+            transportModePanel.OnRightMouseClick += TransportModePanel_OnMouseClick;
+            Components.Add(transportModePanel);
         }
 
         void Refresh()
@@ -218,30 +227,37 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Manually update position and scale of controls to match overall large HUD scale
             // Large HUD exists in screen space not in native 320x200 UI space so scale needs to be amended
-            Position = mainPanelRect.position * CustomScale;
-            Size = mainPanelRect.size * CustomScale;
-            compassPanel.Position = compassPanelRect.position * CustomScale;
-            compassPanel.Size = compassPanelRect.size * CustomScale;
-            headPanel.Position = headPanelRect.position * CustomScale;
-            headPanel.Size = headPanelRect.size * CustomScale;
-            vitals.CustomHealthBarPosition = healthPanelRect.position * CustomScale;
-            vitals.CustomHealthBarSize = healthPanelRect.size * CustomScale;
-            vitals.CustomFatigueBarPosition = fatiguePanelRect.position * CustomScale;
-            vitals.CustomFatigueBarSize = fatiguePanelRect.size * CustomScale;
-            vitals.CustomMagickaBarPosition = magickaPanelRect.position * CustomScale;
-            vitals.CustomMagickaBarSize = magickaPanelRect.size * CustomScale;
-            interactionModePanel.Position = interactionModePanelRect.position * CustomScale;
-            interactionModePanel.Size = interactionModePanelRect.size * CustomScale;
-            optionsPanel.Position = optionsPanelRect.position * CustomScale;
-            optionsPanel.Size = optionsPanelRect.size * CustomScale;
-            spellbookPanel.Position = spellbookPanelRect.position * CustomScale;
-            spellbookPanel.Size = spellbookPanelRect.size * CustomScale;
-            inventoryPanel.Position = inventoryPanelRect.position * CustomScale;
-            inventoryPanel.Size = inventoryPanelRect.size * CustomScale;
-            sheathPanel.Position = sheathPanelRect.position * CustomScale;
-            sheathPanel.Size = sheathPanelRect.size * CustomScale;
-            useMagicItemPanel.Position = useMagicItemPanelRect.position * CustomScale;
-            useMagicItemPanel.Size = useMagicItemPanelRect.size * CustomScale;
+            if (lastCustomScale != CustomScale)
+            {
+                Position = mainPanelRect.position * CustomScale;
+                Size = mainPanelRect.size * CustomScale;
+                compassPanel.Position = compassPanelRect.position * CustomScale;
+                compassPanel.Size = compassPanelRect.size * CustomScale;
+                headPanel.Position = headPanelRect.position * CustomScale;
+                headPanel.Size = headPanelRect.size * CustomScale;
+                vitals.CustomHealthBarPosition = healthPanelRect.position * CustomScale;
+                vitals.CustomHealthBarSize = healthPanelRect.size * CustomScale;
+                vitals.CustomFatigueBarPosition = fatiguePanelRect.position * CustomScale;
+                vitals.CustomFatigueBarSize = fatiguePanelRect.size * CustomScale;
+                vitals.CustomMagickaBarPosition = magickaPanelRect.position * CustomScale;
+                vitals.CustomMagickaBarSize = magickaPanelRect.size * CustomScale;
+                interactionModePanel.Position = interactionModePanelRect.position * CustomScale;
+                interactionModePanel.Size = interactionModePanelRect.size * CustomScale;
+                optionsPanel.Position = optionsPanelRect.position * CustomScale;
+                optionsPanel.Size = optionsPanelRect.size * CustomScale;
+                spellbookPanel.Position = spellbookPanelRect.position * CustomScale;
+                spellbookPanel.Size = spellbookPanelRect.size * CustomScale;
+                inventoryPanel.Position = inventoryPanelRect.position * CustomScale;
+                inventoryPanel.Size = inventoryPanelRect.size * CustomScale;
+                sheathPanel.Position = sheathPanelRect.position * CustomScale;
+                sheathPanel.Size = sheathPanelRect.size * CustomScale;
+                useMagicItemPanel.Position = useMagicItemPanelRect.position * CustomScale;
+                useMagicItemPanel.Size = useMagicItemPanelRect.size * CustomScale;
+                transportModePanel.Position = transportModePanelRect.position * CustomScale;
+                transportModePanel.Size = transportModePanelRect.size * CustomScale;
+
+                lastCustomScale = CustomScale;
+            }
 
             // Update head image data when null
             if (HeadTexture == null)
@@ -437,6 +453,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenUseMagicItemWindow);
+            }
+        }
+
+        private void TransportModePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (!GameManager.IsGamePaused)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenTransportWindow);
             }
         }
 

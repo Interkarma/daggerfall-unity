@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game
 
                         if (lightSource.currentCondition == 0 && DaggerfallUnityItem.CompareItems(playerEntity.LightSource, lightSource))
                         {
-                            DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("lightDies"), false, lightSource);
+                            DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("lightDies").Replace("%it", lightSource.ItemName));
                             enableTorch = false;
                             playerEntity.LightSource = null;
                             if (!lightSource.IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Lantern))
