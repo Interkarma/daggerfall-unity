@@ -2062,7 +2062,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 127
-    m_Localized: 'I see your magicka is low. You sorcerors[/center]
+    m_Localized: 'I see your magicka is low. You sorcerers[/center]
 
       really
       need to be more careful.[/center]
@@ -2123,7 +2123,7 @@ MonoBehaviour:
       the library at the guild. There are a number[/center]
 
       of
-      books about daedric summonings, including[/center]
+      books about Daedra summonings, including[/center]
 
       the dates appropriate
       for summoning.[/center]
@@ -2206,7 +2206,7 @@ MonoBehaviour:
       Orc tracks cover the ground.[/record]
 
       Was
-      that an orcish sigil?[/end]'
+      that an Orcish sigil?[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 138
@@ -2305,7 +2305,7 @@ MonoBehaviour:
       Spider webs hang
       from the trees.[/record]
 
-      Hmm.  No mosquitos.[/end]'
+      Hmm. No mosquitos.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 149
@@ -2359,7 +2359,7 @@ MonoBehaviour:
       A low, ghostly moan
       shivers by.[/record]
 
-      A crow caws in the distanct.[/end]'
+      A crow caws in the distance.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 155
@@ -2525,7 +2525,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 173
-    m_Localized: 'You smell of freshly buried dead.[/record]
+    m_Localized: 'You smell freshly buried dead.[/record]
 
       Wagon ruts lead
       off a ways.[/record]
@@ -2660,7 +2660,7 @@ MonoBehaviour:
       You do not, to be blunt, have the
       finest[/center]
 
-      reputation amongst members of the intelligensia.[/center]
+      reputation amongst members of the intelligentsia.[/center]
 
       [/record]
 
@@ -2825,8 +2825,8 @@ MonoBehaviour:
       If you want constant
       action and a steady flow[/center]
 
-      of gold coin, its the guild for you.
-      Its far[/center]
+      of gold coin, it''s the guild for you.
+      It''s far[/center]
 
       better than some Knightly order. Did you you[/center]
 
@@ -3488,7 +3488,7 @@ MonoBehaviour:
   - m_Id: 211
     m_Localized: 'The Dark Brotherhood is a very mysterious organization, often hired
       as assassins by the more pragmatic rulers. They have a reputation as maniacs
-      and daedra worshippers, but they must be doing something right. They''ve been
+      and Daedra worshippers, but they must be doing something right. They''ve been
       around for thousands of years.[/record]
 
       A bunch of assassins posing
@@ -3613,7 +3613,7 @@ MonoBehaviour:
       Resolution is the fancy name the priests of Zenithar give to their temples.[/record]
 
       Zenithar
-      is the God of Work and Commerce. A no-nonsense kind of diety, and His temples
+      is the God of Work and Commerce. A no-nonsense kind of deity, and His temples
       are so headstrong, they''re called Resolutions.[/end]'
     m_Metadata:
       m_Items: []
@@ -3724,13 +3724,13 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 232
-    m_Localized: The Kynaran Order are those knights who have dedicated themselves
+    m_Localized: The Kynaran Order is composed of knights who have dedicated themselves
       mind, body, and sword to the Goddess of the Air, Kynareth. They are most often
       in the company of Her priests of the Temple of Kynareth.[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 233
-    m_Localized: The Order of the Dragon is composed of the finest knights of the
+    m_Localized: The Knights of the Dragon are composed of the finest knights of the
       Daggerfall militia, bound together by vows of service to the royal family and
       kingdom.[/end]
     m_Metadata:
@@ -3752,7 +3752,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 237
-    m_Localized: The Host of the Horn are composed of the finest knights of Lainlyn,
+    m_Localized: The Host of the Horn is composed of the finest knights of Lainlyn,
       bound by oaths to protect and serve the Barony of Lainlyn and its ruling family.[/end]
     m_Metadata:
       m_Items: []
@@ -3762,7 +3762,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 239
-    m_Localized: The Knights of the Raven have been the consecrated protectors of
+    m_Localized: The Order of the Raven has been the consecrated protector of
       the Barony of Dwynnen for hundreds of years.[/end]
     m_Metadata:
       m_Items: []
@@ -3772,13 +3772,13 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 241
-    m_Localized: The Knights of the Scarab are charged by holy oaths with the protection
-      of the royal family and land of Totambu.[/end]
+    m_Localized: The Order of the Scarab is composed of knights charged by holy oaths
+      with the protection of the royal family and land of Totambu.[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 242
     m_Localized: The Knights of the Hawk are chosen from the finest, noblest warriors
-      in Santaki, to protect and fight for the royal family and people of the land.[/end]
+      in Antiphyllos, to protect and fight for the royal family and people of the land.[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 243
@@ -4119,7 +4119,7 @@ MonoBehaviour:
       The wolf
       at the far moon doth howl[/record]
 
-      At night, the daedra dark doth prowl[/record]
+      At night, the Daedra dark doth prowl[/record]
 
       Into
       the wind, must I howl?[/record]
@@ -5967,7 +5967,7 @@ MonoBehaviour:
       Target will gain %1bm to %2bm points of Luck[/center]
 
       plus
-      %1am to %2am points for every %cs %1am to %2am points for every %clm level(s)[/center]
+      %1am to %2am points for every %clm level(s)[/center]
 
       of
       the caster. Increase lasts %bdr round(s), plus %adr round(s)[/center]
@@ -7984,7 +7984,7 @@ MonoBehaviour:
       change the very structure and composition
       of[/center]
 
-      objects. Dimunition and Shield are two classic[/center]
+      objects. Slowfalling and Shield are two classic[/center]
 
       Alteration
       spells.[/center]
@@ -8092,7 +8092,7 @@ MonoBehaviour:
     m_Localized: 'Daedric is a language skill checked whenever[/center]
 
       one
-      attempts to speak with a daedra, such as[/center]
+      attempts to speak with a Daedra, such as[/center]
 
       a Fire Daedra or a
       Daedra Lord.[/center]
@@ -8114,7 +8114,7 @@ MonoBehaviour:
       damage
       to a target, such as Fireball or[/center]
 
-      Acidic Field.[/center]
+      Toxic Cloud.[/center]
 
       [/end]'
     m_Metadata:
@@ -8390,7 +8390,7 @@ MonoBehaviour:
       a short-bladed stabbing weapon such
       as[/center]
 
-      dagger as tantos, to determine the[/center]
+      a dagger or a tanto, to determine the[/center]
 
       aim and
       damage possible in a strike.[/center]
@@ -8460,7 +8460,7 @@ MonoBehaviour:
       Thaumaturgy,
       one of the six avenues[/center]
 
-      of magica study. A Thaumaturgical[/center]
+      of magical study. A Thaumaturgical[/center]
 
       spell
       does not change the appearance[/center]
@@ -8473,7 +8473,7 @@ MonoBehaviour:
       as evident in such spells
       as[/center]
 
-      Levitate and Detection.[/center]
+      Levitate and Water Walking.[/center]
 
       [/end]'
     m_Metadata:
@@ -8727,7 +8727,7 @@ MonoBehaviour:
   - m_Id: 459
     m_Localized: 'There are rumors that someone has a clue to the whereabouts of
       Auriel''s Shield. Supposedly the shield can make you invulnerable to fire and
-      magick.[/record]
+      magic.[/record]
 
       Some drunken knight was claiming to have lost the Warlock''s
       Ring. Of course, if he really did have that artifact, he would be a king and
@@ -9025,7 +9025,7 @@ MonoBehaviour:
       All weapons must be peace
       bonded.[/record]
 
-      Magick is strictly prohibited in town.[/center]
+      Magic is strictly prohibited in town.[/center]
 
       [/record]
 
@@ -11306,7 +11306,7 @@ MonoBehaviour:
       [/center]
 
       Of course, the Mages Guild
-      is no mere curiousity[/center]
+      is no mere curiosity[/center]
 
       shop. Persons judged worthy to join the
       Mages Guild[/center]
@@ -11391,8 +11391,8 @@ MonoBehaviour:
       Death.
       Arkay is the great spirit who brings every[/center]
 
-      man and woman, human,
-      elf, khajiit, and Argonian[/center]
+      man and woman, Human,
+      Elf, Khajiit, and Argonian[/center]
 
       into this world, and when the time
       is true, ends[/center]
@@ -11534,7 +11534,7 @@ MonoBehaviour:
     m_Localized: 'The School of Julianos is no mere temple, dedicated[/center]
 
       to
-      mindless obseisance to a distant and hazy God[/center]
+      mindless obeisance to a distant and hazy God[/center]
 
       figure. Julianos
       is a God, to be sure, but foremost[/center]
@@ -11786,7 +11786,7 @@ MonoBehaviour:
       approximates ones rank within the Guild, in
       terms[/center]
 
-      of rights and priveleges.[/center]
+      of rights and privileges.[/center]
 
       [/center]
 
@@ -11880,7 +11880,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 641
-    m_Localized: 'We of the Order of the Rose have the honor of[/center]
+    m_Localized: 'We of the Knights of the Rose have the honor of[/center]
 
       being
       the guard and strong arm of his majesty,[/center]
@@ -11904,7 +11904,7 @@ MonoBehaviour:
       those few whose combat abilities and true[/center]
 
       loyalty to the King
-      are judged acceptible, we[/center]
+      are judged acceptable, we[/center]
 
       offer membership in the most respected
       order[/center]
@@ -12105,7 +12105,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 647
-    m_Localized: 'We of the Knights of the Scarab have the[/center]
+    m_Localized: 'We of the Order of the Scarab have the[/center]
 
       honor
       of being the official guard for the[/center]
@@ -12130,12 +12130,12 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 648
-    m_Localized: 'The Order of the Hawk act as the noble[/center]
+    m_Localized: 'The Knights of the Hawk act as the noble[/center]
 
       warriors
       and protectors of the town and[/center]
 
-      royal family of Santaki. Many
+      royal family of Antiphyllos. Many
       have trained[/center]
 
       since childhood to join our knightly order,[/center]
@@ -12572,12 +12572,12 @@ MonoBehaviour:
       the thiefly talents. The skills most often employed[/center]
 
       by Bards
-      are: Streetwisdom, Etiquette,[/center]
+      are: Streetwise, Etiquette,[/center]
 
       Pickpocketing, Stealth, Short
-      blade, and[/center]
+      Blade, and[/center]
 
-      Hand to hand.[/center]
+      Hand-to-Hand.[/center]
 
       Do you wish your character
       to be a Bard?[/center]
@@ -12600,7 +12600,7 @@ MonoBehaviour:
       Stealth, Climbing, Mercantile,[/center]
 
       Dodging,
-      and Short blade.[/center]
+      and Short Blade.[/center]
 
       Do you wish your character to be a Burglar?[/center]
 
@@ -12619,7 +12619,7 @@ MonoBehaviour:
       Stealth, Dodging, Pickpocketing,
       Backstabbing,[/center]
 
-      and Streetwisdom.[/center]
+      and Streetwise.[/center]
 
       Do you wish
       your character to be a Rogue?[/center]
@@ -13167,7 +13167,7 @@ MonoBehaviour:
       reach to the chasm of Oblivion[/center]
 
       to bring that foul spirit, the
-      daedra regent[/center]
+      Daedra regent[/center]
 
       %dts into the Mundus. From you, %a gold[/center]
 
@@ -13199,7 +13199,7 @@ MonoBehaviour:
       the chasm of Oblivion to bring that foul spirit,[/center]
 
       the
-      daedra regent %dts into the Mundus.[/center]
+      Daedra regent %dts into the Mundus.[/center]
 
       A favor to you. Shall I
       continue?[/center]
@@ -13247,7 +13247,7 @@ MonoBehaviour:
       but tomorrow will be a day too late to[/center]
 
       summon
-      the daedra %dts.[/center]
+      the Daedra %dts.[/center]
 
       [/end]'
     m_Metadata:
@@ -13346,7 +13346,7 @@ MonoBehaviour:
       You''ve picked one skill in
       which[/center]
 
-      your ability certainly supercedes[/center]
+      your ability certainly supersedes[/center]
 
       mine,
       %pct.[/center]
@@ -13461,7 +13461,7 @@ MonoBehaviour:
 
       The %ln Crypts[/record]
 
-      THe Crypts of %ln[/record]
+      The Crypts of %ln[/record]
 
       The
       %ln Burial Ground[/record]
@@ -13636,7 +13636,7 @@ MonoBehaviour:
   - m_Id: 714
     m_Localized: 'Soul[/record]
 
-      Ascencion[/record]
+      Ascension[/record]
 
       Altar[/record]
 
@@ -14219,7 +14219,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 726
-    m_Localized: 'Your parents complimented one another, both as sorcerors as[/left]
+    m_Localized: 'Your parents complimented one another, both as sorcerers as[/left]
 
       well
       as educators. Your mother was most attentive in teaching[/left]
@@ -15086,7 +15086,7 @@ MonoBehaviour:
       even searched out your little village,
       looking for political[/left]
 
-      dissendents and other undesirables. Those
+      dissidents and other undesirables. Those
       they found[/left]
 
       disappeared forever.[/left]
@@ -15118,7 +15118,7 @@ MonoBehaviour:
       from the village, and when you asked him[/left]
 
       his name, he told you,
-      hesistantly, "%imp."[/left]
+      hesitantly, "%imp."[/left]
 
       You laughed at his royal sounding name,
       and he told you very[/left]
@@ -15222,7 +15222,7 @@ MonoBehaviour:
       even searched out that
       little village, looking for political[/left]
 
-      dissendents and other undesirables.
+      dissidents and other undesirables.
       Those they found[/left]
 
       disappeared forever.[/left]
@@ -15254,7 +15254,7 @@ MonoBehaviour:
       from the village, and when you asked him[/left]
 
       his name, he told you,
-      hesistantly, "%imp."[/left]
+      hesitantly, "%imp."[/left]
 
       You laughed at his royal sounding name,
       and he told you very[/left]
@@ -15349,13 +15349,13 @@ MonoBehaviour:
       %hpw of %hpn,
       and had believed that orcs[/left]
 
-      were demons or daedra, but you found
-      the tribe to be suprisingly[/left]
+      were demons or Daedra, but you found
+      the tribe to be surprisingly[/left]
 
       civil. They needed a %ra to interpret
       the books they[/left]
 
-      had found about the ancient orcish capital of
+      had found about the ancient Orcish capital of
       Orsinium. As you[/left]
 
       stayed with them and learned their language,
@@ -15448,7 +15448,7 @@ MonoBehaviour:
       even searched out your little village,
       looking for political[/left]
 
-      dissendents and other undesirables. Those
+      dissidents and other undesirables. Those
       they found[/left]
 
       disappeared forever.[/left]
@@ -15480,7 +15480,7 @@ MonoBehaviour:
       from the village, and when you asked him[/left]
 
       his name, he told you,
-      hesistantly, "%imp."[/left]
+      hesitantly, "%imp."[/left]
 
       You laughed at his royal sounding name,
       and he told you very[/left]
@@ -16786,7 +16786,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 774
-    m_Localized: studying otherwordly forces, and learning to wield their power[/end]
+    m_Localized: studying otherworldly forces, and learning to wield their power[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 775
@@ -16940,7 +16940,7 @@ MonoBehaviour:
 
       oppressive warriors[/record]
 
-      beserker
+      berserker
       soldiers[/end]'
     m_Metadata:
       m_Items: []
@@ -17168,7 +17168,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 837
-    m_Localized: You also envied Tharn for his incredible knowlege[/end]
+    m_Localized: You also envied Tharn for his incredible knowledge[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 838
@@ -17426,7 +17426,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 891
-    m_Localized: the daedra from the plane of Oblivion[/end]
+    m_Localized: the Daedra from the plane of Oblivion[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 892
@@ -17438,7 +17438,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 894
-    m_Localized: the mischevious imps of Oblivion[/end]
+    m_Localized: the mischievious imps of Oblivion[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 895
@@ -17472,7 +17472,7 @@ MonoBehaviour:
   - m_Id: 902
     m_Localized: 'wizard[/record]
 
-      sorceror[/end]'
+      sorcerer[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 903
@@ -18137,7 +18137,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1014
-    m_Localized: speak the Harpie tongue[/end]
+    m_Localized: speak the Harpies tongue[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 1015
@@ -18157,7 +18157,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1019
-    m_Localized: converse with the Spriggan[/end]
+    m_Localized: converse with the Spriggans[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 1020
@@ -18484,10 +18484,10 @@ MonoBehaviour:
       responsible and trustworthy enough
       to have[/center]
 
-      rights to the daedra summoning chamber. I[/center]
+      rights to the Daedra summoning chamber. I[/center]
 
       don''t
-      need to tell you that summoning a daedra[/center]
+      need to tell you that summoning a Daedra[/center]
 
       is an act to be performed
       only after serious[/center]
@@ -18497,7 +18497,7 @@ MonoBehaviour:
       merits
       a summoning, the Guild Summoner will[/center]
 
-      aid you. Naturally, daedra
+      aid you. Naturally, Daedra
       lords may only be[/center]
 
       summoned on certain particular days for the[/center]
@@ -18505,7 +18505,7 @@ MonoBehaviour:
       safety
       of the Guild as a whole. It is a grave[/center]
 
-      privelege, %pcn, of
+      privilege, %pcn, of
       which[/center]
 
       the Guild finds you worthy.[/center]
@@ -20805,7 +20805,7 @@ MonoBehaviour:
       %lev. But it is more than[/center]
 
       a title. With it, you have a new
-      privelege[/center]
+      privilege[/center]
 
       in the temple -- the right to use our[/center]
 
@@ -20874,10 +20874,10 @@ MonoBehaviour:
       honored
       position in the temple. As such[/center]
 
-      you are given a terrible privelege
+      you are given a terrible privilege
       -- the[/center]
 
-      right to summon daedra. Obviously, the[/center]
+      right to summon Daedra. Obviously, the[/center]
 
       theological
       implications alone should give[/center]
@@ -21037,7 +21037,7 @@ MonoBehaviour:
       immediately,
       you are elevated in rank, and most[/center]
 
-      importantly, in privelege,
+      importantly, in privilege,
       by order of the[/center]
 
       elder clerics, to %lev. What[/center]
@@ -21405,78 +21405,78 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1163
-    m_Localized: '%1com. If possible, I would hear about %key %2com.[/record]
+    m_Localized: '%1com. If possible, I would hear about %key.[/record]
 
       %1com.
-      I would be grateful for information about %key %2com.[/record]
+      I would be grateful for information about %key.[/record]
 
       %1com.
-      I would appreciate any information about %key %2com.[/record]
+      I would appreciate any information about %key.[/record]
 
       %1com.
-      I was hoping you might know about %key %2com.[/record]
+      I was hoping you might know about %key.[/record]
 
       %1com. Enlighten
-      me on the subject of %key %2com.[/record]
+      me on the subject of %key.[/record]
 
       %1com. Apprize me of the situation
-      with %key %2com.[/record]
+      with %key.[/record]
 
       %1com. I gather you know something about %key
-      %2com.[/end]'
+     .[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1164
-    m_Localized: '%1com. What can you tell me about %key %2com?[/record]
+    m_Localized: '%1com. What can you tell me about %key?[/record]
 
       %1com.
-      I am seeking information on %key %2com.[/record]
+      I am seeking information on %key.[/record]
 
       %1com. What do you
-      know about %key %2com?[/record]
+      know about %key?[/record]
 
-      %1com. I need to know about %key %2com.[/record]
+      %1com. I need to know about %key.[/record]
 
       %1com.
-      Do you know anything about %key %2com?[/record]
+      Do you know anything about %key?[/record]
 
       %1com. What does %key
-      mean to you %2com?[/record]
+      mean to you?[/record]
 
-      %1com. Talk to me about %key %2com.[/record]
+      %1com. Talk to me about %key.[/record]
 
       %1com.
-      You must know something about %key %2com.[/end]'
+      You must know something about %key.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1165
-    m_Localized: '%1com. What''s the newest word on %key %2com?[/record]
+    m_Localized: '%1com. What''s the newest word on %key?[/record]
 
       %1com.
-      Any news about %key %2com?[/record]
+      Any news about %key?[/record]
 
       %1com. What''s the story on %key
-      %2com?[/record]
+     ?[/record]
 
-      %1com. I''m looking for a tip on %key %2com.[/record]
+      %1com. I''m looking for a tip on %key.[/record]
 
       %1com.
-      Know anything about %key %2com?[/record]
+      Know anything about %key?[/record]
 
       %1com. Any hot tips on %key
-      %2com?[/record]
+     ?[/record]
 
-      %1com. %key. That''s what I really want to know %2com.[/record]
-
-      %1com.
-      Fill me in on %key %2com.[/record]
-
-      %1com. Put me wise on %key %2com.[/record]
+      %1com. %key. That''s what I really want to know.[/record]
 
       %1com.
-      Ever hear of %key %2com?[/record]
+      Fill me in on %key.[/record]
 
-      %1com. %key from around here %2com?[/end]'
+      %1com. Put me wise on %key.[/record]
+
+      %1com.
+      Ever hear of %key?[/record]
+
+      %1com. %key from around here?[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1166
@@ -21596,7 +21596,7 @@ MonoBehaviour:
       %1com. I''d appreciate your directions
       to %key.[/record]
 
-      %1com. Are you familiar with the wherebouts of %key?[/end]'
+      %1com. Are you familiar with the whereabouts of %key?[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1177
@@ -21663,7 +21663,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1182
-    m_Localized: '%1com. Please, desseminate a little news, will you?[/record]
+    m_Localized: '%1com. Please, disseminate a little news, will you?[/record]
 
       %1com.
       Indulge me in a little gossip, if you would.[/record]
@@ -21748,7 +21748,7 @@ MonoBehaviour:
   - m_Id: 1186
     m_Localized: '%oth! Can''t blame me for asking.[/record]
 
-      Oh. How embarassing.
+      Oh. How embarrassing.
       Forget I asked.[/record]
 
       I''m sorry. I thought you felt it too.[/record]
@@ -21938,7 +21938,7 @@ MonoBehaviour:
     m_Localized: 'Yer %pcn. I don''t think I wanna tell ya where to find %key.[/record]
 
       Beggin''
-      yer pardon, but thats such a stupid question, I don''t think I should haveta
+      yer pardon, but that''s such a stupid question, I don''t think I should haveta
       answer.[/record]
 
       I reckin'' a little more wanderin'' around will make
@@ -22083,11 +22083,11 @@ MonoBehaviour:
       No offense,
       but why would I tell you anything?[/record]
 
-      Its none of yer damn business.[/end]'
+      It''s none of yer damn business.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1199
-    m_Localized: 'Knowledge of %key is priviledged, particularly with respect to
+    m_Localized: 'Knowledge of %key is privileged, particularly with respect to
       you.[/record]
 
       %key is difficult to learn about. I shall enjoy observing
@@ -22121,7 +22121,7 @@ MonoBehaviour:
 
       A
       %ra wanting to know about %key. How droll. I''ve always said commonfolk need
-      to be kept ingnorant.[/record]
+      to be kept ignorant.[/record]
 
       Of course I know all about %key. The
       problem is I don''t like you.[/record]
@@ -22229,13 +22229,13 @@ MonoBehaviour:
       are the first person to ask. Sadly, I remain ignorant of the answer.[/record]
 
       North?
-      No...south? My profuse appologies. I am unable to recall anything about %key.[/record]
+      No...south? My profuse apologies. I am unable to recall anything about %key.[/record]
 
       I
       had one once, but the wheel fell off. Would you hold my foot while I get a
       drink of air?[/record]
 
-      An obtuse topic if ever their was one. No answer
+      An obtuse topic if ever there was one. No answer
       appears to be forthcoming.[/record]
 
       I''m sorry to ask, but why did you
@@ -22249,7 +22249,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1205
-    m_Localized: 'You have atleast mastered the minimum forms of etiquette, but I
+    m_Localized: 'You have at least mastered the minimum forms of etiquette, but I
       just don''t know.[/record]
 
       How refreshing. A %ra with manners. Sadly,
@@ -22291,7 +22291,7 @@ MonoBehaviour:
       That''s %hnt.[/record]
 
       I
-      suppose its okay to tell you. Its %hnt.[/record]
+      suppose it''s okay to tell you. It''s %hnt.[/record]
 
       You''ll find %key %hnt.[/record]
 
@@ -22312,7 +22312,7 @@ MonoBehaviour:
   - m_Id: 1208
     m_Localized: 'Mmm. Well, try %hnt.[/record]
 
-      I guess I can tell ya %hnt.[/record]
+      I guess I can tell ya it''s %hnt.[/record]
 
       Ya
       gotta go %hnt.[/record]
@@ -22333,9 +22333,9 @@ MonoBehaviour:
       It''s really easy. You''ll want to go %hnt.[/record]
 
       The
-      best way to go %hnt.[/record]
+      best way is to go %hnt.[/record]
 
-      What you''re going to want to do is go
+      What you''re going to want to do is to go
       %hnt.[/record]
 
       You asked the right person. Just look for it %hnt.[/record]
@@ -22376,7 +22376,7 @@ MonoBehaviour:
       My personal scrivner assures me %key is %hnt.[/record]
 
       Try
-      %hnt. Thats how my carriage driver goes.[/end]'
+      %hnt. That''s how my carriage driver goes.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1211
@@ -22385,13 +22385,13 @@ MonoBehaviour:
       You''re
       an okay %ra. Go %hnt.[/record]
 
-      I pinched some gold near %key. Walk %hnt.[/record]
+      I pinched some gold near %key. Go %hnt.[/record]
 
       I
-      cut someone there yesterday. Its %hnt.[/record]
+      cut someone there yesterday. It''s %hnt.[/record]
 
       %key? Gonna pinch some
-      coin, are ya? No? Well, its %hnt.[/end]'
+      coin, are ya? No? Well, it''s %hnt.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1212
@@ -22431,7 +22431,7 @@ MonoBehaviour:
   - m_Id: 1213
     m_Localized: 'This is what they says. %hnt[/record]
 
-      Its a good story it
+      It''s a good story it
       is. %hnt[/record]
 
       %hnt[/record]
@@ -22509,7 +22509,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1216
-    m_Localized: '%hnt Atleast that''s the street buzz.[/record]
+    m_Localized: '%hnt At least that''s the street buzz.[/record]
 
       %oth. Don''t
       you know? %hnt[/record]
@@ -22522,7 +22522,7 @@ MonoBehaviour:
       I got contacts. %hnt2[/record]
 
       I''m
-      not da best person ta ask. %hnt Thats all I know.[/record]
+      not da best person ta ask. %hnt That''s all I know.[/record]
 
       Ask someone
       else, %pcf. %hnt. Which anyone could have told you.[/end]'
@@ -22611,7 +22611,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1222
-    m_Localized: 'Anything for %hnr %pcf. Its %hnt.[/record]
+    m_Localized: 'Anything for %hnr %pcf. It''s %hnt.[/record]
 
       Gladly %hnr.
       Go %hnt.[/record]
@@ -22619,9 +22619,9 @@ MonoBehaviour:
       It would be my honor. Try %hnt.[/record]
 
       I''d
-      take you there myself, but I''m needed here. Its %hnt.[/record]
+      take you there myself, but I''m needed here. It''s %hnt.[/record]
 
-      Its
+      It''s
       sunshine in my day to help %hnr %pcf. Go %hnt.[/record]
 
       Give me a second.
@@ -22637,12 +22637,12 @@ MonoBehaviour:
       %pcn, take ya %hnt.[/record]
 
       You''ve always done good fer me and mine
-      %hnr %pcf. Its %hnt.[/record]
+      %hnr %pcf. It''s %hnt.[/record]
 
       I likes doin'' ya favors %pcf. Try %hnt.[/record]
 
-      Its
-      me pleasure %hnr %pcf. Its %hnt.[/record]
+      It''s
+      me pleasure %hnr %pcf. It''s %hnt.[/record]
 
       You will find %key %hnt.[/record]
 
@@ -22650,13 +22650,13 @@ MonoBehaviour:
       I do know that location. It''s %hnt.[/record]
 
       Let me think for a minute
-      ... %hnt.[/record]
+      ... %key is %hnt.[/record]
 
-      I see ... %hnt.[/end]'
+      I see ... %key is %hnt.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1224
-    m_Localized: 'Readily and gladly done. Its %hnt.[/record]
+    m_Localized: 'Readily and gladly done. It''s %hnt.[/record]
 
       For you, of
       course. Go %hnt.[/record]
@@ -22664,13 +22664,13 @@ MonoBehaviour:
       The simplest of tasks. Try %hnt.[/record]
 
       Gladly
-      %hnr. Its %hnt.[/record]
+      %hnr. It''s %hnt.[/record]
 
       A trivial request. Go %hnt.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1225
-    m_Localized: 'For one of your loyalty, of course. Its %hnt.[/record]
+    m_Localized: 'For one of your loyalty, of course. It''s %hnt.[/record]
 
       I
       could do no less for a loyal subject. Go %hnt.[/record]
@@ -22679,7 +22679,7 @@ MonoBehaviour:
       itself. Try %hnt.[/record]
 
       You have always helped me, now I can return
-      the favor. Its %hnt.[/record]
+      the favor. It''s %hnt.[/record]
 
       Of course. Have we not always been friends?
       Go %hnt[/record]
@@ -22688,7 +22688,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1226
-    m_Localized: 'Ya don''t haveta ask twice. Its %hnt.[/record]
+    m_Localized: 'Ya don''t haveta ask twice. It''s %hnt.[/record]
 
       Fer you?
       No sweat. Go %hnt.[/record]
@@ -22696,7 +22696,7 @@ MonoBehaviour:
       ''Tis not well known, but try %hnt.[/record]
 
       Since
-      its that or slit yer throat (wink and chuckle), its %hnt.[/record]
+      it''s that or slit yer throat (wink and chuckle), it''s %hnt.[/record]
 
       Go
       %hnt. Watch yer back %pcf.[/end]'
@@ -22818,31 +22818,30 @@ MonoBehaviour:
       awfully close by. It''d be best if I marked %loc
       on your map[/record]
 
-      its right there (points to %loc your map)[/end]'
+      right there (points to %loc your map)[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1233
-    m_Localized: '%loc is %di of here[/record]
+    m_Localized: '%di of here[/record]
 
-      %loc is %di of where we''re
+      %di of where we''re
       standing[/record]
 
-      just keep going %di[/record]
+      that way, just keep going %di[/record]
 
       that way, %di[/record]
 
-      %loc
-      is a ways %di of here[/record]
+      a way %di of here[/record]
 
-      %loc is not too far to the %di, if you
+      not too far to the %di, if you
       don''t mind walking[/record]
 
-      %loc is %di of here, unless I''m mistaken[/record]
+      %di of here, unless I''m mistaken[/record]
 
       %di
-      of here, I think.[/record]
+      of here, I think[/record]
 
-      a bit of a walk. Just go %di[/end]'
+      %di, with a bit of a walk[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1234
@@ -22895,7 +22894,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1240
-    m_Localized: A strong, orcish voice in the back of the hall snarls "All who enter
+    m_Localized: A strong, Orcish voice in the back of the hall snarls "All who enter
       must face the trial by arms."[/end]
     m_Metadata:
       m_Items: []
@@ -23822,7 +23821,7 @@ MonoBehaviour:
   - m_Id: 1291
     m_Localized: 'On the 7th of First Seed every year, the people of %cn[/center]
 
-      celebrat
+      celebrate
       First Planting, symbolically sowing the seeds[/center]
 
       for the autumn
@@ -24405,7 +24404,7 @@ MonoBehaviour:
       blessings. Pageants are held on[/center]
 
       such themes as the Ghraewaj,
-      when the daedra[/center]
+      when the Daedra[/center]
 
       worshippers in Lainlyn were changed to harpies[/center]
 
@@ -24781,7 +24780,7 @@ MonoBehaviour:
       the
       time when everyone prays for a good planting season.[/record]
 
-      a majorreligious
+      a major religious
       holiday here in %cn.[/record]
 
       when I can get this festering sore on
@@ -25045,7 +25044,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1350
-    m_Localized: 'Its always good to meet another member of %fnpc.[/center]
+    m_Localized: 'It''s always good to meet another member of %fnpc.[/center]
 
       [/record]
 
@@ -25272,7 +25271,7 @@ MonoBehaviour:
       [/record]
 
       Even
-      though %fnpc is opposed to %pc, courtesy dictates that I help you.[/center]
+      though %fnpc is opposed to %fpc, courtesy dictates that I help you.[/center]
 
       [/record]
 
@@ -25304,7 +25303,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1361
-    m_Localized: '%fpc and %fnpc are both enemys of %fe. What can I do to help you?[/center]
+    m_Localized: '%fpc and %fnpc are both enemies of %fe. What can I do to help you?[/center]
 
       [/record]
 
@@ -25462,7 +25461,7 @@ MonoBehaviour:
 
       [/record]
 
-      I couldn t help you even if[/center]
+      I couldn''t help you even if[/center]
 
       I
       wanted to, which I don''t.[/center]
@@ -25870,7 +25869,7 @@ MonoBehaviour:
       [/left]
 
       Spells:
-      none[/left]
+      None[/left]
 
       [/end]'
     m_Metadata:
@@ -25921,7 +25920,7 @@ MonoBehaviour:
       most folk would care to have. It summons[/left]
 
       a
-      lesser daedra to the user. The daedra[/left]
+      lesser Daedra to the user. The Daedra[/left]
 
       will attack any other creature
       in the area[/left]
@@ -26244,8 +26243,8 @@ MonoBehaviour:
 
       [/left]
 
-      Spells: Paralysis,
-      and vampiric touch[/left]
+      Spells: Paralysis
+      and Vampiric Touch[/left]
 
       [/end]'
     m_Metadata:
@@ -26295,9 +26294,9 @@ MonoBehaviour:
       [/left]
 
       Spells:
-      Shalidor s mirror, heal,[/left]
+      Shalidor''s Mirror, Heal,[/left]
 
-      and feet of Notorgo[/left]
+      and Feet of Notorgo[/left]
 
       [/end]'
     m_Metadata:
@@ -26349,9 +26348,9 @@ MonoBehaviour:
       [/left]
 
       Spells:
-      Lightning, hand of sleep,[/left]
+      Lightning, Hand of Sleep,[/left]
 
-      and magicka leech[/left]
+      and Magicka Leech[/left]
 
       [/end]'
     m_Metadata:
@@ -26364,7 +26363,7 @@ MonoBehaviour:
       The legendary Necromancer''s
       Amulet, the[/left]
 
-      last surviving relic of the mad sorceror[/left]
+      last surviving relic of the mad sorcerer[/left]
 
       Mannimarco,
       grants any spellcaster who[/left]
@@ -26395,7 +26394,7 @@ MonoBehaviour:
       [/left]
 
       Spells:
-      Troll s blood and wisdom[/left]
+      Troll''s Blood and Wisdom[/left]
 
       [/end]'
     m_Metadata:
@@ -26405,7 +26404,7 @@ MonoBehaviour:
 
       [/left]
 
-      Chrysamere, the Paladin,s
+      Chrysamere, the Paladin''s
       Blade and Sword[/left]
 
       of Heroes, is an ancient claymore with[/left]
@@ -26434,9 +26433,9 @@ MonoBehaviour:
       [/left]
 
       Spells:  
-      Resist fire, Shalidor s mirror,[/left]
+      Resist Fire, Shalidor''s Mirror,[/left]
 
-      and heal[/left]
+      and Heal[/left]
 
       [/end]'
     m_Metadata:
@@ -26475,7 +26474,7 @@ MonoBehaviour:
       [/left]
 
       Spells:
-      Cure poison and spell shield[/left]
+      Cure Poison and Spell Shield[/left]
 
       [/end]'
     m_Metadata:
@@ -26511,7 +26510,7 @@ MonoBehaviour:
 
       [/left]
 
-      Spells: Spell absorption[/left]
+      Spells: Spell Absorption[/left]
 
       [/end]'
     m_Metadata:
@@ -26555,7 +26554,7 @@ MonoBehaviour:
 
       [/left]
 
-      Spells: Invisibility and feet of
+      Spells: Invisibility and Feet of
       Notorgo[/left]
 
       [/end]'
@@ -26600,9 +26599,9 @@ MonoBehaviour:
       [/left]
 
       Spells:
-      Resist fire, shield,[/left]
+      Resist Fire, Shield,[/left]
 
-      and spell shield[/left]
+      and Spell Shield[/left]
 
       [/end]'
     m_Metadata:
@@ -26623,7 +26622,7 @@ MonoBehaviour:
       its wielder nigh invulnerable.
       In its[/left]
 
-      resistance to fire and magick, Auriel''s[/left]
+      resistance to fire and magic, Auriel''s[/left]
 
       Shield
       is unsurpassed. Like many[/left]
@@ -26648,9 +26647,9 @@ MonoBehaviour:
       [/left]
 
       Spells:
-      Resist fire, shield,[/left]
+      Resist Fire, Shield,[/left]
 
-      and spell reflection[/left]
+      and Spell Reflection[/left]
 
       [/end]'
     m_Metadata:
@@ -26679,7 +26678,7 @@ MonoBehaviour:
       from any spellcaster, either by
       dispelling[/left]
 
-      magicks or silencing any mage about to[/left]
+      magic or silencing any mage about to[/left]
 
       cast
       a spell. It is said that the Breaker[/left]
@@ -26695,7 +26694,7 @@ MonoBehaviour:
       Spell Breaker for any time
       is power enough.[/left]
 
-      Spells: Free action and spell reflection[/left]
+      Spells: Free Action and Spell Reflection[/left]
 
       [/end]'
     m_Metadata:
@@ -26809,9 +26808,9 @@ MonoBehaviour:
       [/left]
 
       Spells:
-      Far silence, vampiric touch,[/left]
+      Far silence, Vampiric Touch,[/left]
 
-      and energy leech[/left]
+      and Energy Leech[/left]
 
       [/end]'
     m_Metadata:
@@ -27189,12 +27188,12 @@ MonoBehaviour:
       for a few weeks[/left]\n     could not only be enlightening, it could also
       be very[/left]\n     interesting.[/left]\n b)  Live with your great uncle --
       a sick old man who has[/left]\n     always been something of a stranger to
-      you. A few[/left]\n     weeks with him may be ardorous, but he is in more need[/left]\n    
+      you. A few[/left]\n     weeks with him may be arduous, but he is in more need[/left]\n    
       of your help than your great aunt.[/left]\n c)  Think of a way to divide your
       time between your great[/left]\n     aunt and great uncle. Perhaps you will
       not be able to[/left]\n     spend as much time with either as much as you would[/left]\n    
       like, but neither would be left out.[/left]\n {22.    A friend has on several
-      occassions made remarks[/left]\n     about how much he likes a particular gold
+      occasions made remarks[/left]\n     about how much he likes a particular gold
       ring of[/left]\n     yours. One day you discover that this ring is missing[/left]\n    
       and after making a thorough search, find it in a coat[/left]\n     your friend
       had left in your pantry. Are you most[/left]\n     inclined to: a)  Ask your
@@ -27218,7 +27217,7 @@ MonoBehaviour:
       Let you help him write anonymous love letters and[/left]\n     poems to see
       her reaction without needing to face her[/left]\n     directly. If the reaction
       is favorable, he can talk to[/left]\n     her friends in the village and arrange
-      an \"accidental\"[/left]\n     meeting.[/left]\n {24.    Your Armmaster is
+      an \"accidental\"[/left]\n     meeting.[/left]\n {24.    Your Armsmaster is
       relating the story of a great[/left]\n     king he knew in a faraway land whose
       inventors created[/left]\n     a wondrous balloon of such size, it could transport[/left]\n    
       dozens of people through the air to any place they[/left]\n     chose. If you
@@ -27250,7 +27249,7 @@ MonoBehaviour:
       The village lord should let him go[/left]\n     free. b)  Even as you sympathize
       with the young man, vigilante[/left]\n     law cannot be tolerated if there
       is to be peace.[/left]\n c)  The young man's only mistake was getting caught
-      while[/left]\n     exacting vengance. For that, he now must accept[/left]\n    
+      while[/left]\n     exacting vengeance. For that, he now must accept[/left]\n    
       whatever fate has in store for him.[/left]\n {27.    One night, walking home,
       you are attacked by a[/left]\n     young man you know from class. You defend
       yourself[/left]\n     ably and knock him unconscious. While he is out, you:[/left]\n
@@ -27326,10 +27325,10 @@ MonoBehaviour:
       something she does not[/left]\n     really like but you do?[/left]\n c)  Pretend
       that they are excellent brandied plums and see[/left]\n     if she will give
       up something really good in exchange?[/left]\n {34.    Your cousin has given
-      you a very embarassing[/left]\n     nickname and, even worse, likes to call
+      you a very embarrassing[/left]\n     nickname and, even worse, likes to call
       you it in front[/left]\n     of your friends. You have asked him to stop, but
       he[/left]\n     finds it very amusing to watch you blush. What do you     do?:[/left]\n
-      a)  Make up an even more embarassing nickname for him and[/left]\n     use
+      a)  Make up an even more embarrassing nickname for him and[/left]\n     use
       it constantly until he learns his lesson.[/left]\n b)  Make up a story that
       makes your nickname a badge of[/left]\n     honor instead of something humiliating.[/left]\n
       c)  Beat up your cousin, then tell him that if he ever[/left]\n     calls you
@@ -27353,7 +27352,7 @@ MonoBehaviour:
       should not resort [/left]\n     to stealing.[/left]\n b)  Close the door behind
       you and say nothing. Your family[/left]\n     can live without the candlestick,
       but your cousin's[/left]\n     family obviously cannot.[/left]\nc)  Treat him
-      like any other burgler. Lock him in the room[/left]\n     and call for your
+      like any other burglar. Lock him in the room[/left]\n     and call for your
       father. If he chooses to be merciful[/left]\n     because of your cousin's
       poverty, that is his decision.[/left]\n     It is your father's candlestick,
       after all.[/left]\n {37.    While exploring the woods with two other[/left]\n    
