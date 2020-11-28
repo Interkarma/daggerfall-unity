@@ -2825,8 +2825,8 @@ MonoBehaviour:
       If you want constant
       action and a steady flow[/center]
 
-      of gold coin, it''s the guild for you.
-      It''s far[/center]
+      of gold coin, it''s the guild for
+      you. It''s far[/center]
 
       better than some Knightly order. Did you you[/center]
 
@@ -3730,9 +3730,9 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 233
-    m_Localized: The Knights of the Dragon are composed of the finest knights of the
-      Daggerfall militia, bound together by vows of service to the royal family and
-      kingdom.[/end]
+    m_Localized: The Knights of the Dragon are composed of the finest knights of
+      the Daggerfall militia, bound together by vows of service to the royal family
+      and kingdom.[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 234
@@ -3762,8 +3762,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 239
-    m_Localized: The Order of the Raven has been the consecrated protector of
-      the Barony of Dwynnen for hundreds of years.[/end]
+    m_Localized: The Order of the Raven has been the consecrated protector of the
+      Barony of Dwynnen for hundreds of years.[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 240
@@ -3778,7 +3778,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 242
     m_Localized: The Knights of the Hawk are chosen from the finest, noblest warriors
-      in Antiphyllos, to protect and fight for the royal family and people of the land.[/end]
+      in Antiphyllos, to protect and fight for the royal family and people of the
+      land.[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 243
@@ -5969,11 +5970,11 @@ MonoBehaviour:
       plus
       %1am to %2am points for every %clm level(s)[/center]
 
-      of
-      the caster. Increase lasts %bdr round(s), plus %adr round(s)[/center]
+      of the caster.
+      Increase lasts %bdr round(s), plus %adr round(s)[/center]
 
-      for
-      every %cld level(s) of caster."[/center]
+      for every
+      %cld level(s) of caster."[/center]
 
       [/end]'
     m_Metadata:
@@ -8392,8 +8393,8 @@ MonoBehaviour:
 
       a dagger or a tanto, to determine the[/center]
 
-      aim and
-      damage possible in a strike.[/center]
+      aim
+      and damage possible in a strike.[/center]
 
       [/end]'
     m_Metadata:
@@ -12107,11 +12108,11 @@ MonoBehaviour:
   - m_Id: 647
     m_Localized: 'We of the Order of the Scarab have the[/center]
 
-      honor
-      of being the official guard for the[/center]
+      honor of
+      being the official guard for the[/center]
 
-      royal family of Totambu.
-      Our duties are many,[/center]
+      royal family of Totambu. Our
+      duties are many,[/center]
 
       our favor is great. Only the most refined[/center]
 
@@ -12135,8 +12136,8 @@ MonoBehaviour:
       warriors
       and protectors of the town and[/center]
 
-      royal family of Antiphyllos. Many
-      have trained[/center]
+      royal family of Antiphyllos.
+      Many have trained[/center]
 
       since childhood to join our knightly order,[/center]
 
@@ -12574,8 +12575,8 @@ MonoBehaviour:
       by Bards
       are: Streetwise, Etiquette,[/center]
 
-      Pickpocketing, Stealth, Short
-      Blade, and[/center]
+      Pickpocketing, Stealth, Short Blade,
+      and[/center]
 
       Hand-to-Hand.[/center]
 
@@ -12621,8 +12622,8 @@ MonoBehaviour:
 
       and Streetwise.[/center]
 
-      Do you wish
-      your character to be a Rogue?[/center]
+      Do you wish your
+      character to be a Rogue?[/center]
 
       [/end]'
     m_Metadata:
@@ -15120,8 +15121,8 @@ MonoBehaviour:
       his name, he told you,
       hesitantly, "%imp."[/left]
 
-      You laughed at his royal sounding name,
-      and he told you very[/left]
+      You laughed at his royal sounding name, and
+      he told you very[/left]
 
       seriously that he was the son of the rightful
       ruler of Tamriel[/left]
@@ -15256,8 +15257,8 @@ MonoBehaviour:
       his name, he told you,
       hesitantly, "%imp."[/left]
 
-      You laughed at his royal sounding name,
-      and he told you very[/left]
+      You laughed at his royal sounding name, and
+      he told you very[/left]
 
       seriously that he was the son of the rightful
       ruler of Tamriel[/left]
@@ -15482,8 +15483,8 @@ MonoBehaviour:
       his name, he told you,
       hesitantly, "%imp."[/left]
 
-      You laughed at his royal sounding name,
-      and he told you very[/left]
+      You laughed at his royal sounding name, and
+      he told you very[/left]
 
       seriously that he was the son of the rightful
       ruler of Tamriel[/left]
@@ -21410,20 +21411,19 @@ MonoBehaviour:
       %1com.
       I would be grateful for information about %key.[/record]
 
-      %1com.
-      I would appreciate any information about %key.[/record]
+      %1com. I would
+      appreciate any information about %key.[/record]
+
+      %1com. I was hoping
+      you might know about %key.[/record]
+
+      %1com. Enlighten me on the subject
+      of %key.[/record]
+
+      %1com. Apprize me of the situation with %key.[/record]
 
       %1com.
-      I was hoping you might know about %key.[/record]
-
-      %1com. Enlighten
-      me on the subject of %key.[/record]
-
-      %1com. Apprize me of the situation
-      with %key.[/record]
-
-      %1com. I gather you know something about %key
-     .[/end]'
+      I gather you know something about %key .[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1164
@@ -21432,16 +21432,16 @@ MonoBehaviour:
       %1com.
       I am seeking information on %key.[/record]
 
-      %1com. What do you
-      know about %key?[/record]
+      %1com. What do you know about
+      %key?[/record]
 
       %1com. I need to know about %key.[/record]
 
       %1com.
       Do you know anything about %key?[/record]
 
-      %1com. What does %key
-      mean to you?[/record]
+      %1com. What does %key mean
+      to you?[/record]
 
       %1com. Talk to me about %key.[/record]
 
@@ -21455,21 +21455,21 @@ MonoBehaviour:
       %1com.
       Any news about %key?[/record]
 
-      %1com. What''s the story on %key
-     ?[/record]
-
-      %1com. I''m looking for a tip on %key.[/record]
+      %1com. What''s the story on %key ?[/record]
 
       %1com.
-      Know anything about %key?[/record]
+      I''m looking for a tip on %key.[/record]
 
-      %1com. Any hot tips on %key
-     ?[/record]
+      %1com. Know anything about
+      %key?[/record]
 
-      %1com. %key. That''s what I really want to know.[/record]
+      %1com. Any hot tips on %key ?[/record]
 
       %1com.
-      Fill me in on %key.[/record]
+      %key. That''s what I really want to know.[/record]
+
+      %1com. Fill me in
+      on %key.[/record]
 
       %1com. Put me wise on %key.[/record]
 
@@ -22087,30 +22087,29 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1199
-    m_Localized: 'Knowledge of %key is privileged, particularly with respect to
-      you.[/record]
+    m_Localized: 'Knowledge of %key is privileged, particularly with respect to you.[/record]
 
-      %key is difficult to learn about. I shall enjoy observing
-      your discomfort and ignorance.[/record]
+      %key
+      is difficult to learn about. I shall enjoy observing your discomfort and ignorance.[/record]
 
-      Where did you hear about %key?
-      I''ll not tell some wetback %ra any more about %key.[/record]
+      Where
+      did you hear about %key? I''ll not tell some wetback %ra any more about %key.[/record]
 
-      I would
-      never divulge information about %key.[/record]
+      I
+      would never divulge information about %key.[/record]
 
-      %key? To %pcn? This must
-      be some lowbrow attempt at humor. Listen, you are obviously not a busy person,
-      but I am. Get lost, %pcf.[/record]
+      %key? To %pcn?
+      This must be some lowbrow attempt at humor. Listen, you are obviously not a
+      busy person, but I am. Get lost, %pcf.[/record]
 
-      This isn''t going anywhere, %pcf.
-      I''m going back to my life, you go to yours.[/record]
+      This isn''t going anywhere,
+      %pcf. I''m going back to my life, you go to yours.[/record]
 
-      I have no interest
-      in telling you anything. Run along now, %pcf.[/record]
+      I have no
+      interest in telling you anything. Run along now, %pcf.[/record]
 
-      Who do you think
-      I am, the travellers bureau? Leave me alone.[/end]'
+      Who
+      do you think I am, the travellers bureau? Leave me alone.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1200
@@ -22123,23 +22122,23 @@ MonoBehaviour:
       %ra wanting to know about %key. How droll. I''ve always said commonfolk need
       to be kept ignorant.[/record]
 
-      Of course I know all about %key. The
-      problem is I don''t like you.[/record]
+      Of course I know all about %key. The problem
+      is I don''t like you.[/record]
 
-      Noblemen should not consort with
-      common rabble. Leave me.[/record]
+      Noblemen should not consort with common
+      rabble. Leave me.[/record]
 
-      I don''t think I care for your tone
-      of voice, %pcf.[/record]
+      I don''t think I care for your tone of voice,
+      %pcf.[/record]
 
-      Listen, I don''t talk to anyone who talks to
-      me like that.[/record]
+      Listen, I don''t talk to anyone who talks to me like
+      that.[/record]
 
-      How impertinent to think I''d want to give you
-      any sort of information. Goodbye.[/record]
+      How impertinent to think I''d want to give you any sort
+      of information. Goodbye.[/record]
 
-      Listen, I have a life. I''d
-      recommend you go out and get one too. Goodbye, %pcf.[/end]'
+      Listen, I have a life. I''d recommend
+      you go out and get one too. Goodbye, %pcf.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1201
@@ -22249,8 +22248,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1205
-    m_Localized: 'You have at least mastered the minimum forms of etiquette, but I
-      just don''t know.[/record]
+    m_Localized: 'You have at least mastered the minimum forms of etiquette, but
+      I just don''t know.[/record]
 
       How refreshing. A %ra with manners. Sadly,
       I know nothing of %key.[/record]
@@ -22293,34 +22292,35 @@ MonoBehaviour:
       I
       suppose it''s okay to tell you. It''s %hnt.[/record]
 
-      You''ll find %key %hnt.[/record]
-
-      You''ll
-      want to go %hnt.[/record]
-
-      Oh, that''s %hnt.[/record]
-
-      Well, it''s
+      You''ll find %key
       %hnt.[/record]
 
-      You''ll find it %hnt. Just ask me civilly next time.[/record]
+      You''ll want to go %hnt.[/record]
 
-      If
-      it''s your concern, you''ll find it %hnt.[/end]'
+      Oh, that''s
+      %hnt.[/record]
+
+      Well, it''s %hnt.[/record]
+
+      You''ll find it %hnt.
+      Just ask me civilly next time.[/record]
+
+      If it''s your concern, you''ll
+      find it %hnt.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1208
     m_Localized: 'Mmm. Well, try %hnt.[/record]
 
-      I guess I can tell ya it''s %hnt.[/record]
+      I guess I can tell ya it''s
+      %hnt.[/record]
 
-      Ya
-      gotta go %hnt.[/record]
+      Ya gotta go %hnt.[/record]
 
       %key is somewhere %hnt.[/record]
 
-      Go north...no,
-      east...no, %hnt.[/record]
+      Go
+      north...no, east...no, %hnt.[/record]
 
       That''s easy, %pcf. It''s %hnt.[/record]
 
@@ -22335,8 +22335,8 @@ MonoBehaviour:
       The
       best way is to go %hnt.[/record]
 
-      What you''re going to want to do is to go
-      %hnt.[/record]
+      What you''re going to want to do is
+      to go %hnt.[/record]
 
       You asked the right person. Just look for it %hnt.[/record]
 
@@ -22390,8 +22390,8 @@ MonoBehaviour:
       I
       cut someone there yesterday. It''s %hnt.[/record]
 
-      %key? Gonna pinch some
-      coin, are ya? No? Well, it''s %hnt.[/end]'
+      %key? Gonna pinch
+      some coin, are ya? No? Well, it''s %hnt.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1212
@@ -22431,13 +22431,13 @@ MonoBehaviour:
   - m_Id: 1213
     m_Localized: 'This is what they says. %hnt[/record]
 
-      It''s a good story it
-      is. %hnt[/record]
+      It''s a good story
+      it is. %hnt[/record]
 
       %hnt[/record]
 
-      I wouldn''t wanna be called no
-      gossip, but...%hnt[/record]
+      I wouldn''t wanna be called
+      no gossip, but...%hnt[/record]
 
       Who woulda thought it. %hnt[/record]
 
@@ -22824,24 +22824,25 @@ MonoBehaviour:
   - m_Id: 1233
     m_Localized: '%di of here[/record]
 
-      %di of where we''re
-      standing[/record]
+      %di of where we''re standing[/record]
 
-      that way, just keep going %di[/record]
+      that
+      way, just keep going %di[/record]
 
       that way, %di[/record]
 
-      a way %di of here[/record]
+      a way
+      %di of here[/record]
 
-      not too far to the %di, if you
-      don''t mind walking[/record]
-
-      %di of here, unless I''m mistaken[/record]
+      not too far to the %di, if you don''t mind walking[/record]
 
       %di
-      of here, I think[/record]
+      of here, unless I''m mistaken[/record]
 
-      %di, with a bit of a walk[/end]'
+      %di of here, I think[/record]
+
+      %di,
+      with a bit of a walk[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1234
@@ -24780,14 +24781,14 @@ MonoBehaviour:
       the
       time when everyone prays for a good planting season.[/record]
 
-      a major religious
-      holiday here in %cn.[/record]
+      a major
+      religious holiday here in %cn.[/record]
 
-      when I can get this festering sore on
-      my foot healed, maybe for free![/record]
+      when I can get this festering
+      sore on my foot healed, maybe for free![/record]
 
-      held over at the temple, where
-      the clergy sometimes heals the sick for free.[/record]
+      held over at the temple,
+      where the clergy sometimes heals the sick for free.[/record]
 
 '
     m_Metadata:
@@ -27142,11 +27143,11 @@ MonoBehaviour:
       your bond and that it takes precedence over[/left]\n     anything else?[/left]\n{17.   
       While fishing one sunny afternoon you find that the[/left]\n     boots which
       you discarded are now full of ants who are[/left]\n     busily making their
-      way from a piece of bread you[/left]\n     dropped to their anthill. Do you:[/left]\n
-      a)  Pick up the boots wash all the ants off now, even[/left]\n     though you
-      are not leaving until dusk?[/left]\n b)  Watch the ants, curious as to how
-      they work so[/left]\n     efficiently, and content to live and let live?[/left]\n
-      c)  Make boats out of leaves and then send each ant down[/left]\n     the stream
+      way from a piece of bread you[/left]\n     dropped to their anthill. Do you:[/left]\na) 
+      Pick up the boots wash all the ants off now, even[/left]\n     though you are
+      not leaving until dusk?[/left]\n b)  Watch the ants, curious as to how they
+      work so[/left]\n     efficiently, and content to live and let live?[/left]\nc) 
+      Make boats out of leaves and then send each ant down[/left]\n     the stream
       to pass the time until a fish bites?[/left]\n {18.    You hear the Armsmaster
       remark during weapons[/left]\n     class, 'The intent of your opponent can
       be seen in his[/left]\n     blade'. Many of the students scoff at this, though
@@ -27201,11 +27202,11 @@ MonoBehaviour:
       probable that he found it and meant[/left]\n     to return it to you.[/left]\nb) 
       Confront him with his theft. You know that there is no[/left]\n     way the
       ring just fell into his pocket by accident,[/left]\n     and therefore he is
-      nothing but a common thief who[/left]\n     would betray you for material gain.[/left]\n
-      c)  Say nothing, deciding instead to wait and see what[/left]\n     your friend
+      nothing but a common thief who[/left]\n     would betray you for material gain.[/left]\nc) 
+      Say nothing, deciding instead to wait and see what[/left]\n     your friend
       does. If he is innocent or guilty, you[/left]\n     will know by whatever actions
-      he takes. At that time,[/left]\n     you can confront him with the truth.[/left]\n
-      {23.    A good friend of yours is in love with a girl from[/left]\n     a neighboring
+      he takes. At that time,[/left]\n     you can confront him with the truth.[/left]\n{23.   
+      A good friend of yours is in love with a girl from[/left]\n     a neighboring
       village, a girl who barely knows him. He[/left]\n     is extremely shy and
       inexperienced, and he pleads for[/left]\n     your help. Would you suggest
       he:[/left]\n a)  Go to her immediately and declare his love. If the[/left]\n    
@@ -27224,18 +27225,18 @@ MonoBehaviour:
       were this king, he asks you, how would[/left]\n     you use this remarkable
       balloon? Would you:[/left]\n a)  Explore regions previously impossible or extremely[/left]\n    
       dangerous to visit by land.[/left]\n b)  Keep the balloon a secret, saving
-      it for surprise[/left]\n     attacks or defense in a time of war.[/left]\n
-      c)  Commission the inventor to create dozens of these[/left]\n     'balloons'
-      in hopes of making a travel system across[/left]\n     your realm that will
-      speed up transportation time and[/left]\n     the exchange of ideas.[/left]\n{25.   
+      it for surprise[/left]\n     attacks or defense in a time of war.[/left]\nc) 
+      Commission the inventor to create dozens of these[/left]\n     'balloons' in
+      hopes of making a travel system across[/left]\n     your realm that will speed
+      up transportation time and[/left]\n     the exchange of ideas.[/left]\n{25.   
       There is a lot of heated discussion at the local[/left]\n     tavern over a
       group of people called 'Telepaths'. They[/left]\n     have been hired by certain
       City-State kings. Rumor has[/left]\n     it these Telepaths read a person's
       mind and tell their[/left]\n     lord whether a follower is telling the truth
       or not.[/left]\n     You believe:[/left]\n a)  That this is a terrible practice.
       A person's thoughts[/left]\n     are his own and no one, not even a king, has
-      the right[/left]\n     to make such an invasion into another human's mind.[/left]\n
-      b)  Loyal followers to the King have nothing to fear from[/left]\n     a Telepath.
+      the right[/left]\n     to make such an invasion into another human's mind.[/left]\nb) 
+      Loyal followers to the King have nothing to fear from[/left]\n     a Telepath.
       It is important to have a method of[/left]\n     finding assassins and spies
       before it is too late.[/left]\n c)  In these times, it is a necessary evil.
       Although you[/left]\n     do not necessarily like the idea, a Telepath could[/left]\n    
@@ -27244,39 +27245,39 @@ MonoBehaviour:
       caught by[/left]\n     the village guards and accused of murder. Apparently,[/left]\n    
       his brother was killed by a group of four ruffians in[/left]\n     a local
       tavern, and in his grief, the young man[/left]\n     tracked each of them down
-      and murdered them. Upon[/left]\n     reflection, you believe that:[/left]\n
-      a)  The young man acted honorably in avenging his[/left]\n     brother's death.
+      and murdered them. Upon[/left]\n     reflection, you believe that:[/left]\na) 
+      The young man acted honorably in avenging his[/left]\n     brother's death.
       The village lord should let him go[/left]\n     free. b)  Even as you sympathize
       with the young man, vigilante[/left]\n     law cannot be tolerated if there
       is to be peace.[/left]\n c)  The young man's only mistake was getting caught
       while[/left]\n     exacting vengeance. For that, he now must accept[/left]\n    
       whatever fate has in store for him.[/left]\n {27.    One night, walking home,
       you are attacked by a[/left]\n     young man you know from class. You defend
-      yourself[/left]\n     ably and knock him unconscious. While he is out, you:[/left]\n
-      a)  Tie him up, intending to interrogate him later when he[/left]\n     wakes
-      up. You want to know why he attacked you. You[/left]\n     can then turn him
-      into the Armsmaster at your leisure.[/left]\nb)  Slit his throat. You know
-      him from class, and think he[/left]\n     would have done the same had your
-      positions been[/left]\n     reversed.[/left]\nc)  Leave him with a visible
-      scar, the knowledge of his[/left]\n     defeat at your hands and the visible
-      reminder[/left]\n     punishment enough for one who has resorted to such[/left]\n    
-      dishonorable tactics.[/left]\n {28.    Your father delights in telling you
-      stories of his[/left]\n     travels in his youth. In one memorable tale, he
-      tells[/left]\n     you about a primitive island he visited where a young[/left]\n    
-      child was sacrificed once a year to appease Arius, the[/left]\n     God of
-      Fire. Whenever the natives neglected the[/left]\n     sacrifice, the island
-      volcano would erupt, killing[/left]\n     hundreds of villagers. You tell your
-      father:[/left]\n a)  You do not believe in any such Volcano God. Civilized[/left]\n    
-      men should intervene, find the natural cause behind[/left]\n     the eruptions,
-      and stop the sacrifices.[/left]\nb)  The God Arius must be evil to demand child
-      sacrifice.[/left]\n     The villagers should find some way to combat this God,[/left]\n    
-      instead of just giving in to his demands.[/left]\n c)  It is tragic, but the
-      death of one small child is[/left]\n     preferable to that of many villagers.
-      If it works,[/left]\n     they should keep the tradition. Gods are not to be[/left]\n    
-      toyed with.[/left]\n {29.    Your Armsmaster introduces a new student to the[/left]\n    
-      class - a small, awkward boy named Tys who does not[/left]\n     seem to have
-      any natural talent at all. The class is[/left]\n     divided into two sides
-      for a mock battle and, as one of[/left]\n     the 'generals', you are to assign
+      yourself[/left]\n     ably and knock him unconscious. While he is out, you:[/left]\na) 
+      Tie him up, intending to interrogate him later when he[/left]\n     wakes up.
+      You want to know why he attacked you. You[/left]\n     can then turn him into
+      the Armsmaster at your leisure.[/left]\nb)  Slit his throat. You know him from
+      class, and think he[/left]\n     would have done the same had your positions
+      been[/left]\n     reversed.[/left]\nc)  Leave him with a visible scar, the
+      knowledge of his[/left]\n     defeat at your hands and the visible reminder[/left]\n    
+      punishment enough for one who has resorted to such[/left]\n     dishonorable
+      tactics.[/left]\n {28.    Your father delights in telling you stories of his[/left]\n    
+      travels in his youth. In one memorable tale, he tells[/left]\n     you about
+      a primitive island he visited where a young[/left]\n     child was sacrificed
+      once a year to appease Arius, the[/left]\n     God of Fire. Whenever the natives
+      neglected the[/left]\n     sacrifice, the island volcano would erupt, killing[/left]\n    
+      hundreds of villagers. You tell your father:[/left]\n a)  You do not believe
+      in any such Volcano God. Civilized[/left]\n     men should intervene, find
+      the natural cause behind[/left]\n     the eruptions, and stop the sacrifices.[/left]\nb) 
+      The God Arius must be evil to demand child sacrifice.[/left]\n     The villagers
+      should find some way to combat this God,[/left]\n     instead of just giving
+      in to his demands.[/left]\n c)  It is tragic, but the death of one small child
+      is[/left]\n     preferable to that of many villagers. If it works,[/left]\n    
+      they should keep the tradition. Gods are not to be[/left]\n     toyed with.[/left]\n
+      {29.    Your Armsmaster introduces a new student to the[/left]\n     class
+      - a small, awkward boy named Tys who does not[/left]\n     seem to have any
+      natural talent at all. The class is[/left]\n     divided into two sides for
+      a mock battle and, as one of[/left]\n     the 'generals', you are to assign
       your soldiers. Tys[/left]\n     is one of your men. You decide to:[/left]\na) 
       Put Tys at the frontline with the other fighters,[/left]\n     rationalizing
       that in any realistic battle, he would[/left]\n     probably be a casualty
@@ -27327,41 +27328,40 @@ MonoBehaviour:
       up something really good in exchange?[/left]\n {34.    Your cousin has given
       you a very embarrassing[/left]\n     nickname and, even worse, likes to call
       you it in front[/left]\n     of your friends. You have asked him to stop, but
-      he[/left]\n     finds it very amusing to watch you blush. What do you     do?:[/left]\n
-      a)  Make up an even more embarrassing nickname for him and[/left]\n     use
-      it constantly until he learns his lesson.[/left]\n b)  Make up a story that
-      makes your nickname a badge of[/left]\n     honor instead of something humiliating.[/left]\n
-      c)  Beat up your cousin, then tell him that if he ever[/left]\n     calls you
-      that nickname again, you will bloody him[/left]\n     worse than this time.[/left]\n
-      {35.    Othisa, a friend, has been beaten by a boy several[/left]\n     years
-      older than either you or her. She asks for your[/left]\n     help. Are you
-      more inclined to:[/left]\n a)  Gather a bunch of friends together and ambush
-      the boy,[/left]\n     teaching him a lesson about bullying.[/left]\n b)  Tell
-      Othisa to avoid the bully - no reason to make[/left]\n     things worse than
-      they are.[/left]\n c)  Challenge the older boy, knowing that you will[/left]\n    
-      probably take a beating, but confident that if you do[/left]\n     it enough
-      times, he will move on to pick on someone[/left]\n     who is an easier target.[/left]\n
-      {36.    Your parents are having a party for several[/left]\n     relatives.
-      While helping around the house, you see your[/left]\n     cousin slip into
-      a darkened room. Curious, you follow[/left]\n     and discover him slipping
-      a silver candlestick into his[/left]\n     jacket. He is an honorable boy,
-      but you know his family[/left]\n     has suffered some recent financial hardship.
-      He has not[/left]\n     seen you yet. Do you:[/left]\n a)  Clear your throat
-      and tell him to put the candlestick[/left]\n     back, reassuring him that
-      your parents can help him if[/left]\n     his family is in trouble, but he
-      should not resort [/left]\n     to stealing.[/left]\n b)  Close the door behind
-      you and say nothing. Your family[/left]\n     can live without the candlestick,
-      but your cousin's[/left]\n     family obviously cannot.[/left]\nc)  Treat him
-      like any other burglar. Lock him in the room[/left]\n     and call for your
-      father. If he chooses to be merciful[/left]\n     because of your cousin's
-      poverty, that is his decision.[/left]\n     It is your father's candlestick,
-      after all.[/left]\n {37.    While exploring the woods with two other[/left]\n    
-      adventurers, you come across a small, abandoned hut[/left]\n     that seems
-      to have once belonged to a mage. Looking[/left]\n     through the window, you
-      see the remains of a[/left]\n     laboratory, many potions and scrolls still
-      on the[/left]\n     shelves. Geotina, who thinks you a cowardly sort,[/left]\n    
-      suggests breaking into the shack and exploring. Another[/left]\n     fighter
-      named Hunard suggests going to town to find out[/left]\n     more information.
+      he[/left]\n     finds it very amusing to watch you blush. What do you     do?:[/left]\na) 
+      Make up an even more embarrassing nickname for him and[/left]\n     use it
+      constantly until he learns his lesson.[/left]\n b)  Make up a story that makes
+      your nickname a badge of[/left]\n     honor instead of something humiliating.[/left]\nc) 
+      Beat up your cousin, then tell him that if he ever[/left]\n     calls you that
+      nickname again, you will bloody him[/left]\n     worse than this time.[/left]\n{35.   
+      Othisa, a friend, has been beaten by a boy several[/left]\n     years older
+      than either you or her. She asks for your[/left]\n     help. Are you more inclined
+      to:[/left]\n a)  Gather a bunch of friends together and ambush the boy,[/left]\n    
+      teaching him a lesson about bullying.[/left]\n b)  Tell Othisa to avoid the
+      bully - no reason to make[/left]\n     things worse than they are.[/left]\n
+      c)  Challenge the older boy, knowing that you will[/left]\n     probably take
+      a beating, but confident that if you do[/left]\n     it enough times, he will
+      move on to pick on someone[/left]\n     who is an easier target.[/left]\n{36.   
+      Your parents are having a party for several[/left]\n     relatives. While helping
+      around the house, you see your[/left]\n     cousin slip into a darkened room.
+      Curious, you follow[/left]\n     and discover him slipping a silver candlestick
+      into his[/left]\n     jacket. He is an honorable boy, but you know his family[/left]\n    
+      has suffered some recent financial hardship. He has not[/left]\n     seen you
+      yet. Do you:[/left]\n a)  Clear your throat and tell him to put the candlestick[/left]\n    
+      back, reassuring him that your parents can help him if[/left]\n     his family
+      is in trouble, but he should not resort [/left]\n     to stealing.[/left]\n
+      b)  Close the door behind you and say nothing. Your family[/left]\n     can
+      live without the candlestick, but your cousin's[/left]\n     family obviously
+      cannot.[/left]\nc)  Treat him like any other burglar. Lock him in the room[/left]\n    
+      and call for your father. If he chooses to be merciful[/left]\n     because
+      of your cousin's poverty, that is his decision.[/left]\n     It is your father's
+      candlestick, after all.[/left]\n {37.    While exploring the woods with two
+      other[/left]\n     adventurers, you come across a small, abandoned hut[/left]\n    
+      that seems to have once belonged to a mage. Looking[/left]\n     through the
+      window, you see the remains of a[/left]\n     laboratory, many potions and
+      scrolls still on the[/left]\n     shelves. Geotina, who thinks you a cowardly
+      sort,[/left]\n     suggests breaking into the shack and exploring. Another[/left]\n    
+      fighter named Hunard suggests going to town to find out[/left]\n     more information.
       You advise:[/left]\n a)  Going into town. They are more familiar with the area[/left]\n    
       and may have important information about this hut and[/left]\n     the surrounding
       area.[/left]\n b)  Breaking into the shack, but leaving one person on[/left]\n    
