@@ -48,6 +48,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected Rect sheathPanelRect = new Rect(225, 0, 47, 23);
         protected Rect useMagicItemPanelRect = new Rect(84, 23, 47, 23);
         protected Rect transportModePanelRect = new Rect(131, 23, 47, 23);
+        protected Rect mapPanelRect = new Rect(178, 23, 47, 23);
+        protected Rect restPanelRect = new Rect(225, 23, 47, 23);
 
         protected DFSize nativeInteractionModesTextureSize = new DFSize(47, 92);
 
@@ -65,6 +67,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected Panel sheathPanel = new Panel();
         protected Panel useMagicItemPanel = new Panel();
         protected Panel transportModePanel = new Panel();
+        protected Panel mapPanel = new Panel();
+        protected Panel restPanel = new Panel();
 
         protected Camera compassCamera;
         protected float eulerAngle;
@@ -206,6 +210,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             transportModePanel.OnMouseClick += TransportModePanel_OnMouseClick;
             transportModePanel.OnRightMouseClick += TransportModePanel_OnMouseClick;
             Components.Add(transportModePanel);
+
+            // Map
+            mapPanel.OnMouseClick += MapPanel_OnMouseClick;
+            mapPanel.OnRightMouseClick += MapPanel_OnRightMouseClick;
+            Components.Add(mapPanel);
+
+            // Rest
+            restPanel.OnMouseClick += RestPanel_OnMouseClick;
+            restPanel.OnRightMouseClick += RestPanel_OnMouseClick;
+            Components.Add(restPanel);
         }
 
         void Refresh()
@@ -255,6 +269,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 useMagicItemPanel.Size = useMagicItemPanelRect.size * CustomScale;
                 transportModePanel.Position = transportModePanelRect.position * CustomScale;
                 transportModePanel.Size = transportModePanelRect.size * CustomScale;
+                mapPanel.Position = mapPanelRect.position * CustomScale;
+                mapPanel.Size = mapPanelRect.size * CustomScale;
+                restPanel.Position = restPanelRect.position * CustomScale;
+                restPanel.Size = restPanelRect.size * CustomScale;
 
                 lastCustomScale = CustomScale;
             }
@@ -462,6 +480,33 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenTransportWindow);
+            }
+        }
+
+        private void MapPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (!GameManager.IsGamePaused)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenAutomap);
+            }
+        }
+
+        private void MapPanel_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (!GameManager.IsGamePaused)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
+            }
+        }
+
+        private void RestPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (!GameManager.IsGamePaused)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenRestWindow);
             }
         }
 
