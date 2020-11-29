@@ -287,10 +287,15 @@ namespace DaggerfallWorkshop.Game
                     float horseScaleY = (float)Screen.height / (float)nativeScreenHeight;
                     float horseScaleX = horseScaleY * ScaleFactorX;
 
-                    // Handle docked large HUD - does not move horse with fullscreen HUD or undocked large HUD
+                    // Allow horse to be offset when large HUD enabled
+                    // This is enabled by default to match classic but can be toggled for either docked/undocked large HUD
                     float horseOffsetHeight = 0;
-                    if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUnity.Settings.LargeHUD && DaggerfallUnity.Settings.LargeHUDDocked)
+                    if (DaggerfallUI.Instance.DaggerfallHUD != null &&
+                        DaggerfallUnity.Settings.LargeHUD &&
+                        DaggerfallUnity.Settings.LargeHUDOffsetHorse)
+                    {
                         horseOffsetHeight = (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
+                    }
 
                     // Calculate position for horse texture and draw it.
                     Rect pos = new Rect(

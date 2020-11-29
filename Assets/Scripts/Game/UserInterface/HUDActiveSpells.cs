@@ -57,6 +57,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         bool blinkState = false;
         float blinkTimer = 0;
         ToolTip defaultToolTip = null;
+        bool lastLargeHUD;
 
         #endregion
 
@@ -91,6 +92,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             GameManager.Instance.PlayerEffectManager.OnAddIncumbentState += UpdateIcons;
             SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
 
+            lastLargeHUD = DaggerfallUnity.Settings.LargeHUD;
+
             InitIcons();
         }
 
@@ -124,6 +127,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 SetIconBlinkState(activeOtherList, true);
                 if (defaultToolTip != null)
                     defaultToolTip.Update();
+            }
+
+            // Adjust icons when large HUD state changes
+            if (DaggerfallUI.Instance.DaggerfallHUD != null &&
+                DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Enabled != lastLargeHUD)
+            {
+                lastLargeHUD = DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Enabled;
+                UpdateIcons();
             }
         }
 
@@ -341,11 +352,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Adjust position for variable sized large HUD
             // Icon will remain in default position unless it needs to avoid being drawn under HUD
-            if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUnity.Settings.LargeHUD)
+            if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Enabled)
             {
                 float startY = icon.Position.y;
-                float offset = Screen.height - DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
-                float localY = (offset / icon.LocalScale.y) - 18;
+                float offset = Screen.height - (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Rectangle.height;
+                float localY = (offset / LocalScale.y) - 18;
                 if (localY < startY)
                     icon.Position = new Vector2(icon.Position.x, (int)localY);
             }
