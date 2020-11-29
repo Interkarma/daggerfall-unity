@@ -158,6 +158,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             BackgroundColor = Color.gray;
 
             // Compass
+            compassPanel.OnMouseClick += CompassPanel_OnMouseClick;
+            compassPanel.OnRightMouseClick += CompassPanel_OnMouseClick;
             Components.Add(compassPanel);
 
             // Head
@@ -507,6 +509,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenRestWindow);
+            }
+        }
+
+        private void CompassPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (!GameManager.IsGamePaused)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiStatusInfo);
             }
         }
 
