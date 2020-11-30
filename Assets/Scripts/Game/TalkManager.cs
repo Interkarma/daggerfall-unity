@@ -180,6 +180,7 @@ namespace DaggerfallWorkshop.Game
             public FactionFile.SocialGroups socialGroup;
             public FactionFile.GuildGroups guildGroup;
             public FactionFile.FactionData factionData;
+            public string npcFactionName; // kept for guild related greetings
             public string pcFactionName; // kept for guild related greetings
             public string allyFactionName; // kept for guild related greetings
             public string enemyFactionName; // kept for guild related greetings
@@ -903,8 +904,10 @@ namespace DaggerfallWorkshop.Game
                 FactionFile.FactionData guildFactionData;
                 persistentFactionData.GetFactionData(guild.GetFactionId(), out guildFactionData);
 
+                // Check if NPC and PC are in the same guild
                 if (npcGroupFaction.id == guildFactionData.id)
                 {
+                    npcData.npcFactionName = guildFactionData.name;
                     npcData.pcFactionName = guildFactionData.name;
                     return 0;
                 }
@@ -916,6 +919,7 @@ namespace DaggerfallWorkshop.Game
                     npcGroupFaction.parent == guildFactionData.id) &&
                     greetingIndex > 1)
                 {
+                    npcData.npcFactionName = npcGroupFaction.name;
                     npcData.pcFactionName = guildFactionData.name;
                     greetingIndex = 1;
                     reputation += 15;
@@ -926,6 +930,7 @@ namespace DaggerfallWorkshop.Game
                     FactionFile.IsAlly(ref npcGroupFaction, ref guildFactionData)
                   && greetingIndex > 2)
                 {
+                    npcData.npcFactionName = npcGroupFaction.name;
                     npcData.pcFactionName = guildFactionData.name;
                     reputation += 10;
                     greetingIndex = 2;
@@ -936,6 +941,7 @@ namespace DaggerfallWorkshop.Game
                     FactionFile.IsEnemy(ref npcGroupFaction, ref guildFactionData)
                   && greetingIndex > 3)
                 {
+                    npcData.npcFactionName = npcGroupFaction.name;
                     npcData.pcFactionName = guildFactionData.name;
                     // Fixed a bug from classic where reputation is set to 20 instead of being decreased
                     reputation -= 20;
@@ -953,6 +959,7 @@ namespace DaggerfallWorkshop.Game
                             guildEnemies[i] == npcEnemies[j] &&
                             greetingIndex > 4)
                         {
+                            npcData.npcFactionName = npcGroupFaction.name;
                             npcData.pcFactionName = guildFactionData.name;
                             npcData.enemyFactionName = persistentFactionData.GetFactionName(guildEnemies[i]);
                             greetingIndex = 4;
@@ -972,6 +979,7 @@ namespace DaggerfallWorkshop.Game
                             guildAllies[i] == npcAllies[j] &&
                             greetingIndex > 5)
                         {
+                            npcData.npcFactionName = npcGroupFaction.name;
                             npcData.pcFactionName = guildFactionData.name;
                             npcData.allyFactionName = persistentFactionData.GetFactionName(guildAllies[i]);
                             greetingIndex = 5;
@@ -988,6 +996,7 @@ namespace DaggerfallWorkshop.Game
                         FactionFile.IsAlly(ref guildFactionData, ref enemy) &&
                         greetingIndex > 6)
                     {
+                        npcData.npcFactionName = npcGroupFaction.name;
                         npcData.pcFactionName = guildFactionData.name;
                         npcData.enemyFactionName = enemy.name;
                         greetingIndex = 6;
@@ -1003,6 +1012,7 @@ namespace DaggerfallWorkshop.Game
                         FactionFile.IsEnemy(ref guildFactionData, ref ally) &&
                         greetingIndex > 7)
                     {
+                        npcData.npcFactionName = npcGroupFaction.name;
                         npcData.pcFactionName = guildFactionData.name;
                         npcData.allyFactionName = ally.name;
                         greetingIndex = 7;
@@ -1665,7 +1675,7 @@ namespace DaggerfallWorkshop.Game
 
         public string GetFactionNPC()
         {
-            return npcData.factionData.name;
+            return npcData.npcFactionName;
         }
 
         public string GetFactionPC()
