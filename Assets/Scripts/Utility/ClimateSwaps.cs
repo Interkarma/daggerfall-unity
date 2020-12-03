@@ -58,15 +58,11 @@ namespace DaggerfallWorkshop.Utility
                 ci.supportsWinter = false;
 
             // Handle swamp climate sets with missing winter textures
-            if (climate == ClimateBases.Swamp)
+            if (climate == ClimateBases.Swamp &&
+                ci.textureSet == DFLocation.ClimateTextureSet.Exterior_MagesGuild ||
+                ci.textureSet == DFLocation.ClimateTextureSet.Exterior_Castle && record > 3)
             {
-                switch (ci.textureSet)
-                {
-                    case DFLocation.ClimateTextureSet.Exterior_Castle:
-                    case DFLocation.ClimateTextureSet.Exterior_MagesGuild:
-                        ci.supportsWinter = false;
-                        break;
-                }
+                ci.supportsWinter = false;
             }
 
             // Handle archives with missing winter textures
