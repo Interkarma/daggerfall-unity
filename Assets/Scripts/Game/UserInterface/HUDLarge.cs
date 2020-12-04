@@ -26,12 +26,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         const string mainFilename = "MAIN00I0.IMG";
         const string interactionModesFilename = "MAIN01I0.IMG";
-        const string compass0Filename = "CMPA00I0.BSS";     // Standard compass
-        const string compass1Filename = "CMPA01I0.BSS";     // Blue compass (unused)
-        const string compass2Filename = "CMPA02I0.BSS";     // Red compass (unused)
+        const string compass0Filename = "CMPA00I0.BSS";                 // Standard compass
+        const string compass1Filename = "CMPA01I0.BSS";                 // Blue compass (unused)
+        const string compass2Filename = "CMPA02I0.BSS";                 // Red compass (unused)
+        const string mainColorBackgroundFilename = "MCOL00I0.CIF";      // Color backgrounds for portrait and vitals
         const int compassFrameCount = 32;
 
         protected Rect mainPanelRect = new Rect(0, 0, 320, 46);
+        protected Rect mainColorBackgroundPanelRect = new Rect(5, 5, 66, 36);
         protected Rect stealModeSubrect = new Rect(0, 0, 47, 23);
         protected Rect talkModeSubrect = new Rect(0, 23, 47, 23);
         protected Rect grabModeSubrect = new Rect(0, 46, 47, 23);
@@ -54,9 +56,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected DFSize nativeInteractionModesTextureSize = new DFSize(47, 92);
 
         protected Texture2D mainTexture;
+        protected Texture2D mainColorBackgroundTexture;
         protected Texture2D[] compassTextures = new Texture2D[compassFrameCount];
         protected Texture2D stealModeTexture, talkModeTexture, grabModeTexture, infoModeTexture;
 
+        protected Panel mainColorBackgroundPanel = new Panel();
         protected Panel headPanel = new Panel();
         protected Panel compassPanel = new Panel();
         protected HUDVitals vitals = new HUDVitals();
@@ -135,6 +139,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Main large HUD background
             mainTexture = ImageReader.GetTexture(mainFilename);
+            mainColorBackgroundTexture = ImageReader.GetTexture(mainColorBackgroundFilename, 0, 0);  // Classic uses blue by default - when are other colors used?
 
             // Read compass animations
             for (int i = 0; i < compassFrameCount; i++)
@@ -156,6 +161,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             VerticalAlignment = VerticalAlignment.Bottom;
             BackgroundTexture = mainTexture;
             BackgroundColor = Color.gray;
+
+            // Add main color background panel
+            mainColorBackgroundPanel.BackgroundTexture = mainColorBackgroundTexture;
+            Components.Add(mainColorBackgroundPanel);
 
             // Compass
             compassPanel.OnMouseClick += CompassPanel_OnMouseClick;
@@ -247,6 +256,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Position = mainPanelRect.position * CustomScale;
                 Size = mainPanelRect.size * CustomScale;
+                mainColorBackgroundPanel.Position = mainColorBackgroundPanelRect.position * CustomScale;
+                mainColorBackgroundPanel.Size = mainColorBackgroundPanelRect.size * CustomScale;
                 compassPanel.Position = compassPanelRect.position * CustomScale;
                 compassPanel.Size = compassPanelRect.size * CustomScale;
                 headPanel.Position = headPanelRect.position * CustomScale;
