@@ -8,7 +8,7 @@ namespace DaggerfallWorkshop.Game
     {
         const float slowFallSpeed = 105f;
 
-        public float jumpSpeed = 8.0f;
+        public float jumpSpeed = 4.5f;
         public float gravity = 20.0f;
         public float crouchingJumpDelta = 0.8f;
         public float fallingDamageThreshold = 5.0f;
