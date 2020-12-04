@@ -532,7 +532,10 @@ namespace DaggerfallWorkshop.Game
 
                     // Calculate damage
                     int animTime = (int)(ScreenWeapon.GetAnimTime() * 1000);    // Get animation time, converted to ms.
-                    int damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, entityMobileUnit.Summary.AnimStateRecord, animTime, strikingWeapon);
+                    bool isEnemyFacingAwayFromPlayer = entityMobileUnit.Summary.AnimStateRecord % 5 > 2 &&
+                        entityMobileUnit.Summary.EnemyState != MobileStates.SeducerTransform1 &&
+                        entityMobileUnit.Summary.EnemyState != MobileStates.SeducerTransform2;
+                    int damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, isEnemyFacingAwayFromPlayer, animTime, strikingWeapon);
 
                     // Break any "normal power" concealment effects on player
                     if (playerEntity.IsMagicallyConcealedNormalPower && damage > 0)
