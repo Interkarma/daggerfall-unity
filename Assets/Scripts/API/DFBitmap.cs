@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -143,6 +143,10 @@ namespace DaggerfallConnect
         /// <returns>Cloned DFBitmap.</returns>
         static public DFBitmap CloneDFBitmap(DFBitmap bitmap, bool cloneData = true)
         {
+            // Handle null bitmap or data input
+            if (bitmap == null || bitmap.Data == null)
+                return new DFBitmap();
+
             // Create destination bitmap to receive normal image
             DFBitmap newBitmap = new DFBitmap();
             newBitmap.Width = bitmap.Width;
