@@ -23,7 +23,6 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
-using static DaggerfallWorkshop.DaggerfallMobileUnit;
 
 namespace DaggerfallWorkshop.Game.Formulas
 {
