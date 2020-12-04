@@ -50,7 +50,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Jump! But only if the jump button has been released and player has been grounded for a given number of frames
+        /// Jump!
         /// </summary>
         /// <param name="moveDirection"></param>
         public void HandleJumpInput(ref Vector3 moveDirection)
@@ -61,6 +61,13 @@ namespace DaggerfallWorkshop.Game
                 GameManager.Instance.PlayerMotor.OnExteriorWater == PlayerMotor.OnExteriorWaterMethod.Swimming ||
                 GameManager.Instance.PlayerEntity.IsSlowFalling ||
                 GameManager.Instance.TransportManager.TransportMode == TransportModes.Cart)
+                return;
+
+            // Cancel jump if player has not been grounded for long enough
+            // Players with low jumping skills don't jump very high, which can result in unwanted bunny-hopping before player can release jump key
+            // A grounded time check helps ensure bunny-hops are intended as player has continued to hold down jump key
+            // Also the effect of bunny-hopping too quickly feels like player is jumping again before landing properly
+            if (playerMotor.GroundedTime < 0.15f)
                 return;
 
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump))

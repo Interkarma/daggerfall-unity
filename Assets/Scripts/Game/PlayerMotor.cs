@@ -66,6 +66,8 @@ namespace DaggerfallWorkshop.Game
         bool onExteriorPathMethod = false;
         bool onExteriorStaticGeometryMethod = false;
 
+        float groundedTime;
+
         #endregion
 
         #region Enums
@@ -91,6 +93,11 @@ namespace DaggerfallWorkshop.Game
         public bool IsGrounded
         {
             get { return grounded; }
+        }
+
+        public float GroundedTime
+        {
+            get { return groundedTime; }
         }
 
         public float Speed
@@ -269,6 +276,12 @@ namespace DaggerfallWorkshop.Game
         {
             // Check if on a solid surface
             grounded = (collisionFlags & CollisionFlags.Below) != 0;
+
+            // Time how long player has been grounded
+            if (grounded)
+                groundedTime += Time.deltaTime;
+            else
+                groundedTime = 0;
 
             // Clear movement
             if (cancelMovement)
