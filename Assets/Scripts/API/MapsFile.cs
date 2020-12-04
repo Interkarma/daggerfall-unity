@@ -736,7 +736,7 @@ namespace DaggerfallConnect.Arena2
             if (!dfLocation.HasDungeon || DaggerfallDungeon.IsMainStoryDungeon(dfLocation.MapTableData.MapId))
                 return false;
 
-            // Collect any SiteLinks associdated with this dungeon - there should only be one quest assignment per dungeon
+            // Collect any SiteLinks associated with this dungeon - there should only be one quest assignment per dungeon
             SiteLink[] siteLinks = QuestMachine.Instance.GetSiteLinks(SiteTypes.Dungeon, dfLocation.MapTableData.MapId);
             if (siteLinks != null && siteLinks.Length > 0)
             {
