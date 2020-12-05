@@ -67,7 +67,7 @@ namespace DaggerfallWorkshop.Game
             // Players with low jumping skills don't jump very high, which can result in unwanted bunny-hopping before player can release jump key
             // A grounded time check helps ensure bunny-hops are intended as player has continued to hold down jump key
             // Also the effect of bunny-hopping too quickly feels like player is jumping again before landing properly
-            if (playerMotor.GroundedTime < 0.15f)
+            if (!climbingMotor.WasClimbing && playerMotor.GroundedTime < 0.1f)
                 return;
 
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump))
