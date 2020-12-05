@@ -225,11 +225,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Draw();
 
-            // Draw vitals
-            if (hud != null)
-            {
+            // Draw standard vitals if enabled
+            if (hud != null && hud.HUDVitals.Enabled)
                 hud.HUDVitals.Draw();
-            }
+
+            // Draw large HUD if enabled
+            if (hud != null && hud.LargeHUD.Enabled)
+                hud.LargeHUD.Draw();
         }
 
         public override void OnPush()
