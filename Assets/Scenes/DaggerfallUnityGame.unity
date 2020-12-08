@@ -794,7 +794,13 @@ PrefabInstance:
       propertyPath: RetroTexture640x400_HUD
       value: 
       objectReference: {fileID: 8400000, guid: 1af2073506665c64180188b569dfba46, type: 2}
-    m_RemovedComponents: []
+    - target: {fileID: 114101796857139080, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 3}
+      propertyPath: jumpSpeed
+      value: 4.5
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 54817387169916590, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
 --- !u!1 &334547543 stripped
 GameObject:

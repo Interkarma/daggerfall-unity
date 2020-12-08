@@ -234,6 +234,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public bool insideOpenShop;
         public string terrainSamplerName;
         public int terrainSamplerVersion;
+        public QuestSmallerDungeonsState smallerDungeonsState;
         public StaticDoor[] exteriorDoors;
         public PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         public WeatherType weather;

@@ -8,7 +8,7 @@ namespace DaggerfallWorkshop.Game
     {
         const float slowFallSpeed = 105f;
 
-        public float jumpSpeed = 8.0f;
+        public float jumpSpeed = 4.5f;
         public float gravity = 20.0f;
         public float crouchingJumpDelta = 0.8f;
         public float fallingDamageThreshold = 5.0f;
@@ -50,7 +50,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Jump! But only if the jump button has been released and player has been grounded for a given number of frames
+        /// Jump!
         /// </summary>
         /// <param name="moveDirection"></param>
         public void HandleJumpInput(ref Vector3 moveDirection)
@@ -63,32 +63,44 @@ namespace DaggerfallWorkshop.Game
                 GameManager.Instance.TransportManager.TransportMode == TransportModes.Cart)
                 return;
 
+            // Cancel jump if player has not been grounded for long enough
+            // Players with low jumping skills don't jump very high, which can result in unwanted bunny-hopping before player can release jump key
+            // A grounded time check helps ensure bunny-hops are intended as player has continued to hold down jump key
+            // Also the effect of bunny-hopping too quickly feels like player is jumping again before landing properly
+            if (!climbingMotor.WasClimbing && playerMotor.GroundedTime < 0.1f)
+                return;
+
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump))
             {
-                const float jumpSpellMultiplier = 1.6f;
-                const float athleticismMultiplier = 1.1f;
-                const float improvedAthleticismMultiplier = 1.2f;
+                const float athleticismMultiplier = 0.1f;           // +10%
+                const float improvedAthleticismMultiplier = 0.1f;   // +10%
+                const float jumpSpellMultiplier = 0.6f;             // +60%
 
-                // Jumping effect states "causes target to jump at twice natural capacity" - multiplying jump speed for more height
-                // Not quite double here, as it feels too high and all character have same base jump height anyway
-                // This is just temporary as jump height currently not modified by jumping skill or any other bonuses
-                // Ideally this spell would double jump skill which in turn increases height (classic matched jumping is todo on roadmap)
-                // TODO: Implement classic jump speed formula as per roadmap and refine below
-                // NOTE: Jump speed is either increased by 60% by jump spell or 10% by athleticism or 20% by improved athleticism, they do not stack currently
+                // Baseline jump speed is improved by a percentage equal to JumpingSkill / 2
+                // Jumping in DFU is roughly the same as classic at low skill levels
+                // Jumping in DFU is higher at 100 skill than in classic, but still not so high as pre-beta DFU
                 float jumpSpeedMultiplier = 1.0f;
+                jumpSpeedMultiplier += GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue(DaggerfallConnect.DFCareer.Skills.Jumping) / 2 / 100f;
+
+                // Add Athleticism and Improved Athleticism multipliers (will together make for +20%)
+                if (GameManager.Instance.PlayerEntity.Career.Athleticism)
+                {
+                    jumpSpeedMultiplier += athleticismMultiplier;
+                    if (GameManager.Instance.PlayerEntity.ImprovedAthleticism)
+                        jumpSpeedMultiplier += improvedAthleticismMultiplier;
+                }
+
+                // Add Jumping effect multiplier
                 if (GameManager.Instance.PlayerEntity.IsEnhancedJumping)
-                    jumpSpeedMultiplier = jumpSpellMultiplier;
-                else if (GameManager.Instance.PlayerEntity.Career.Athleticism)
-                    jumpSpeedMultiplier = (GameManager.Instance.PlayerEntity.ImprovedAthleticism) ? improvedAthleticismMultiplier : athleticismMultiplier;
+                    jumpSpeedMultiplier += jumpSpellMultiplier;
 
                 moveDirection.y = jumpSpeed * jumpSpeedMultiplier;
                 jumping = true;
 
                 // HACK: Also adds a small amount of forward boost to player when they jump while moving
                 // This (very) loosely simulates classic where player receives more forward momentum than in DFUnity at present
-                // TODO: This should be revisited when jumping and gravity are tuned to be more like classic
                 if (!GameManager.Instance.PlayerMotor.IsStandingStill)
-                    moveDirection += (transform.forward * jumpSpeed) * 0.1f;
+                    moveDirection += (transform.forward * jumpSpeed) * 0.05f;
 
                 // Modify crouching jump speed
                 if (playerMotor.IsCrouching)
@@ -119,7 +131,7 @@ namespace DaggerfallWorkshop.Game
 
             float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && playerMotor.limitDiagonalSpeed) ? .7071f : 1.0f;
 
-            if ((rappelMotor.IsRappelling || airControl) && frictionMotor.PlayerControl)
+            if ((rappelMotor.IsRappelling || airControl || GameManager.Instance.PlayerEntity.IsEnhancedJumping) && frictionMotor.PlayerControl)
             {
                 moveDirection.x = inputX * speed * inputModifyFactor;
                 moveDirection.z = inputY * speed * inputModifyFactor;

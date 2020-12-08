@@ -214,6 +214,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerPosition.insideOpenShop = playerEnterExit.IsPlayerInsideOpenShop;
             playerPosition.terrainSamplerName = DaggerfallUnity.Instance.TerrainSampler.ToString();
             playerPosition.terrainSamplerVersion = DaggerfallUnity.Instance.TerrainSampler.Version;
+            playerPosition.smallerDungeonsState = (DaggerfallUnity.Settings.SmallerDungeons) ? QuestSmallerDungeonsState.Enabled : QuestSmallerDungeonsState.Disabled;
             playerPosition.weather = GameManager.Instance.WeatherManager.PlayerWeather.WeatherType;
             return playerPosition;
         }

@@ -240,6 +240,13 @@ namespace DaggerfallWorkshop.Utility
                 return false;
             }
 
+            // Special cases before normalisation
+            if (archive == 36 && record == 2 ||
+                archive == 151 && record == 3 ||
+                archive == 154 && record == 3 ||
+                archive == 351 && record == 3)
+                return true;
+
             // Normalise archive index
             archive = archive % 100;
 
@@ -256,6 +263,7 @@ namespace DaggerfallWorkshop.Utility
                 case 026:
                 case 027:
                 case 035:
+                case 036:
                 case 038:
                 case 039:
                 case 042:
