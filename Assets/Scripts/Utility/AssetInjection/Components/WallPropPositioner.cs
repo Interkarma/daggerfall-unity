@@ -71,7 +71,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="direction">A normalized direction in local space.</param>
         protected void Align(Vector3 direction)
         {
-            Bounds bounds = MeshRenderer.bounds;
+            Bounds bounds = Renderer.bounds;
             Vector3 worldSpaceDirection = transform.TransformDirection(direction);
 
             // Bottom point on bounds
