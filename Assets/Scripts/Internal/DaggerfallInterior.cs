@@ -204,20 +204,19 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Finds the interior door that is closest to ground level.
+        /// Finds the interior door that is closest to ground level and farthest from the center of the building.
         /// </summary>
         /// <param name="lowestDoorPositionOut">Position of lowest door in scene.</param>
         /// <param name="lowestDoorNormalOut">Normal vector of lowest door in scene.</param>
-        /// <returns>True if successful.</returns>
-        public bool FindLowestInteriorDoor(out Vector3 lowestDoorPositionOut, out Vector3 lowestDoorNormalOut)
+        /// <returns>True if successful. False if no doors are found.</returns>
+        public bool FindLowestOuterInteriorDoor(out Vector3 lowestDoorPositionOut, out Vector3 lowestDoorNormalOut)
         {
             lowestDoorPositionOut = lowestDoorNormalOut = Vector3.zero;
             DaggerfallStaticDoors interiorDoors = GetComponent<DaggerfallStaticDoors>();
             if (!interiorDoors)
                 return false;
 
-            int doorIndex;
-            if (interiorDoors.FindLowestDoor(-1, out lowestDoorPositionOut, out doorIndex))
+            if (interiorDoors.FindLowestOutermostDoor(-1, out lowestDoorPositionOut, out int doorIndex))
             {
                 lowestDoorNormalOut = interiorDoors.GetDoorNormal(doorIndex);
                 return true;

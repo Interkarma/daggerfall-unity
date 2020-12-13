@@ -623,11 +623,10 @@ namespace DaggerfallWorkshop.Game.Entity
             if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && GameManager.Instance.HowManyEnemiesOfType(MobileTypes.Knight_CityWatch, false, true) <= maxActiveGuardSpawns)
             {
                 // Handle indoor guard spawning
-                if (GameManager.Instance.PlayerEnterExit.IsPlayerInside && GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop)
+                var enterExit = GameManager.Instance.PlayerEnterExit;
+                if (enterExit.IsPlayerInside && (enterExit.IsPlayerInsideOpenShop || enterExit.IsPlayerInsideTavern || enterExit.IsPlayerInsideResidence))
                 {
-                    Vector3 lowestDoorPos;
-                    Vector3 lowestDoorNormal;
-                    if (GameManager.Instance.PlayerEnterExit.Interior.FindLowestInteriorDoor(out lowestDoorPos, out lowestDoorNormal))
+                    if (enterExit.Interior.FindLowestOuterInteriorDoor(out Vector3 lowestDoorPos, out Vector3 lowestDoorNormal))
                     {
                         lowestDoorPos += lowestDoorNormal * (GameManager.Instance.PlayerController.radius + 0.1f);
                         int guardCount = UnityEngine.Random.Range(2, 6);

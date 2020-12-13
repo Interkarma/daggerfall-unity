@@ -693,6 +693,11 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        /// <summary>
+        /// Checks if building is a tavern.
+        /// </summary>
+        public static bool IsTavern(DFLocation.BuildingTypes buildingType) => buildingType == DFLocation.BuildingTypes.Tavern;
+
         #endregion
 
         #region Private Methods
