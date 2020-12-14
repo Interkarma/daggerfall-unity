@@ -635,9 +635,10 @@ namespace DaggerfallWorkshop.Game.Formulas
 
                         int reflexesChance = 50 - (10 * ((int)player.Reflexes - 2));
 
+                        int hitDamage = 0;
                         if (DFRandom.rand() % 100 < reflexesChance && minBaseDamage > 0 && CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart))
                         {
-                            int hitDamage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
+                            hitDamage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
                             // Apply special monster attack effects
                             if (hitDamage > 0)
                                 OnMonsterHit(AIAttacker, target, hitDamage);
@@ -645,7 +646,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                             damage += hitDamage;
                         }
 
-                        damage += GetBonusOrPenaltyByEnemyType(attacker, target);
+                        // Apply bonus damage only when monster has actually hit, or they will accumulate bonus damage even for missed attacks and zero-damage attacks
+                        if (hitDamage > 0)
+                            damage += GetBonusOrPenaltyByEnemyType(attacker, target);
+
                         ++attackNumber;
                     }
                 }
