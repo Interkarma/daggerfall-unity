@@ -30,6 +30,7 @@ EnableTextureArrays=True
 RandomDungeonTextures=0
 
 [Audio]
+AlternateMusic=False
 SoundFont=
 
 [ChildGuard]

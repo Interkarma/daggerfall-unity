@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -153,6 +153,27 @@ namespace DaggerfallWorkshop.Game
             {
                 playerEnterExit = LocalPlayerGPS.GetComponent<PlayerEnterExit>();
                 playerWeather = LocalPlayerGPS.GetComponent<PlayerWeather>();
+            }
+
+            // Use alternate music if set
+            if (DaggerfallUnity.Settings.AlternateMusic)
+            {
+                DungeonInteriorSongs = _dungeonSongsFM;
+                SunnySongs = _sunnySongsFM;
+                CloudySongs = _cloudySongsFM;
+                OvercastSongs = _overcastSongsFM;
+                RainSongs = _weatherRainSongsFM;
+                SnowSongs = _weatherSnowSongsFM;
+                TempleSongs = _templeSongsFM;
+                TavernSongs = _tavernSongsFM;
+                NightSongs = _nightSongsFM;
+                ShopSongs = _shopSongsFM;
+                MagesGuildSongs = _magesGuildSongsFM;
+                InteriorSongs = _interiorSongsFM;
+                PalaceSongs = _palaceSongsFM;
+                CastleSongs = _castleSongsFM;
+                CourtSongs = _courtSongsFM;
+                SneakingSongs = _sneakingSongsFM;
             }
 
             PlayerEnterExit.OnTransitionDungeonInterior += PlayerEnterExit_OnTransitionDungeonInterior;
@@ -620,6 +641,17 @@ namespace DaggerfallWorkshop.Game
             SongFiles.song_22,
         };
 
+        // Sunny FM Version
+        static SongFiles[] _sunnySongsFM = new SongFiles[]
+        {
+            SongFiles.song_fday___d,
+            SongFiles.song_fm_swim2,
+            SongFiles.song_fm_sunny,
+            SongFiles.song_02fm,
+            SongFiles.song_03fm,
+            SongFiles.song_22fm,
+        };
+
         // Cloudy
         static SongFiles[] _cloudySongs = new SongFiles[]
         {
@@ -634,6 +666,19 @@ namespace DaggerfallWorkshop.Game
             SongFiles.song_12,
         };
 
+        // Cloudy FM
+        static SongFiles[] _cloudySongsFM = new SongFiles[]
+{
+            SongFiles.song_fday___d,
+            SongFiles.song_fm_swim2,
+            SongFiles.song_fm_sunny,
+            SongFiles.song_02fm,
+            SongFiles.song_03fm,
+            SongFiles.song_22fm,
+            SongFiles.song_29fm,
+            SongFiles.song_12fm,
+};
+
         // Overcast/Fog
         static SongFiles[] _overcastSongs = new SongFiles[]
         {
@@ -642,6 +687,16 @@ namespace DaggerfallWorkshop.Game
             SongFiles.song_13,
             SongFiles.song_gpalac,
             SongFiles.song_overcast,
+        };
+
+        // Overcast/Fog FM Version
+        static SongFiles[] _overcastSongsFM = new SongFiles[]
+        {
+            SongFiles.song_29fm,
+            SongFiles.song_12fm,
+            SongFiles.song_13fm,
+            SongFiles.song_fpalac,
+            SongFiles.song_fmover_c,
         };
 
         // Rain
@@ -710,7 +765,7 @@ namespace DaggerfallWorkshop.Game
         };
 
         // Dungeon FM version
-        /*static SongFiles[] _dungeonSongsFM = new SongFiles[]
+        static SongFiles[] _dungeonSongsFM = new SongFiles[]
         {
             SongFiles.song_fm_dngn1,
             SongFiles.song_fm_dngn2,
@@ -828,7 +883,7 @@ namespace DaggerfallWorkshop.Game
             SongFiles.song_d8fm,
             SongFiles.song_d9fm,
             SongFiles.song_d10fm,
-        };*/
+        };
 
         // Shop
         static SongFiles[] _shopSongs = new SongFiles[]
@@ -837,10 +892,10 @@ namespace DaggerfallWorkshop.Game
         };
 
         // Shop FM version
-        /*static SongFiles[] _shopSongsFM = new SongFiles[]
+        static SongFiles[] _shopSongsFM = new SongFiles[]
         {
             SongFiles.song_fm_sqr_2,
-        };*/
+        };
 
         // Mages Guild
         static SongFiles[] _magesGuildSongs = new SongFiles[]
@@ -850,10 +905,10 @@ namespace DaggerfallWorkshop.Game
         };
 
         // Mages Guild FM version
-        /*static SongFiles[] _magesGuildSongsFM = new SongFiles[]
+        static SongFiles[] _magesGuildSongsFM = new SongFiles[]
         {
             SongFiles.song_fm_nite3,
-        };*/
+        };
 
         // Interior
         static SongFiles[] _interiorSongs = new SongFiles[]
@@ -862,12 +917,12 @@ namespace DaggerfallWorkshop.Game
         };
 
         // Interior FM version
-        /*static SongFiles[] _interiorSongsFM = new SongFiles[]
+        static SongFiles[] _interiorSongsFM = new SongFiles[]
         {
             SongFiles.song_23fm,
-        };*/
+        };
 
-        /*// Not used in classic. There is unused code to play it in knightly orders
+        // Not used in classic. There is unused code to play it in knightly orders
         static SongFiles[] _unusedKnightSong = new SongFiles[]
         {  
             SongFiles.song_17,
@@ -877,7 +932,7 @@ namespace DaggerfallWorkshop.Game
         static SongFiles[] _unusedKnightSongFM = new SongFiles[]
         {
             SongFiles.song_17fm,
-        };*/
+        };
 
         // Palace
         static SongFiles[] _palaceSongs = new SongFiles[]
@@ -886,10 +941,10 @@ namespace DaggerfallWorkshop.Game
         };
 
         // Palace FM version
-        /*static SongFiles[] _palaceSongsFM = new SongFiles[]
+        static SongFiles[] _palaceSongsFM = new SongFiles[]
         {
             SongFiles.song_06fm,
-        };*/
+        };
 
         // Castle
         static SongFiles[] _castleSongs = new SongFiles[]
@@ -897,10 +952,22 @@ namespace DaggerfallWorkshop.Game
             SongFiles.song_gpalac,
         };
 
+        // Castle FM Version
+        static SongFiles[] _castleSongsFM = new SongFiles[]
+        {
+            SongFiles.song_fpalac,
+        };
+
         // Court
         static SongFiles[] _courtSongs = new SongFiles[]
         {
             SongFiles.song_11,
+        };
+
+        // Court FM Version
+        static SongFiles[] _courtSongsFM = new SongFiles[]
+        {
+            SongFiles.song_11fm,
         };
 
         #endregion

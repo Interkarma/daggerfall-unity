@@ -55,7 +55,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         [Tooltip("The direction in which the object is moved.")]
         public Direction Direction;
 
-        protected MeshRenderer MeshRenderer { get; private set; }
+        /// <summary>
+        /// The renderer that defines object bounds.
+        /// </summary>
+        [Tooltip("The renderer that defines object bounds.")]
+        public Renderer Renderer;
 
         /// <summary>
         /// Always true because this component doesn't affect object rotation.
@@ -65,18 +69,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             get { return true; }
         }
 
-        private void Awake()
-        {
-            MeshRenderer = GetComponent<MeshRenderer>();
-        }
-
         private void Start()
         {
             const int ignoreRaycastLayer = 2;
 
-            if (!MeshRenderer)
+            if (!Renderer && !(Renderer = GetComponent<Renderer>()))
             {
-                Debug.LogError("MeshRenderer not found!", this);
+                Debug.LogError("Renderer not found!", this);
                 return;
             }
 
@@ -125,7 +124,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="direction">A normalized direction in local space.</param>
         protected void Move(Vector3 direction)
         {
-            Bounds bounds = MeshRenderer.bounds;
+            Bounds bounds = Renderer.bounds;
             Ray ray = new Ray(bounds.center, transform.TransformDirection(direction));
 
             RaycastHit hitInfo;
@@ -139,6 +138,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Move the object for the distance between collision and bound point
             transform.Translate(hitInfo.point - (bounds.center - extents), Space.World);
         }
+
+#if UNITY_EDITOR
+        private void Reset()
+        {
+            Direction = Direction.None;
+            Renderer = GetComponent<Renderer>();
+        }
+#endif
 
         /// <summary>
         /// Converts a direction to the corresponding normalized vector.
