@@ -597,7 +597,15 @@ namespace DaggerfallWorkshop
 
         bool GetBool(string sectionName, string valueName)
         {
-            return bool.Parse(GetData(sectionName, valueName));
+            try
+            {
+                return bool.Parse(GetData(sectionName, valueName));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarningFormat("GetBool() could not read value [{0}]{1}. Returning False. The exception was '{2}'.", sectionName, valueName, ex.Message);
+                return false;
+            }
         }
 
         void SetBool(string sectionName, string valueName, bool value)
@@ -607,13 +615,29 @@ namespace DaggerfallWorkshop
 
         int GetInt(string sectionName, string valueName)
         {
-            return int.Parse(GetData(sectionName, valueName));
+            try
+            {
+                return int.Parse(GetData(sectionName, valueName));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarningFormat("GetInt() could not read value [{0}]{1}. Returning 0. The exception was '{2}'.", sectionName, valueName, ex.Message);
+                return 0;
+            }
         }
 
         int GetInt(string sectionName, string valueName, int min, int max)
         {
-            int value = int.Parse(GetData(sectionName, valueName));
-            return Mathf.Clamp(value, min, max);
+            try
+            {
+                int value = int.Parse(GetData(sectionName, valueName));
+                return Mathf.Clamp(value, min, max);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarningFormat("GetInt() could not read value [{0}]{1}. Returning {2}. The exception was '{3}'.", sectionName, valueName, min, ex.Message);
+                return min;
+            }
         }
 
         void SetInt(string sectionName, string valueName, int value)
@@ -623,13 +647,29 @@ namespace DaggerfallWorkshop
 
         float GetFloat(string sectionName, string valueName)
         {
-            return float.Parse(GetData(sectionName, valueName), NumberStyles.Float, CultureInfo.InvariantCulture);
+            try
+            {
+                return float.Parse(GetData(sectionName, valueName), NumberStyles.Float, CultureInfo.InvariantCulture);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarningFormat("GetFloat() could not read value [{0}]{1}. Returning 0. The exception was '{2}'.", sectionName, valueName, ex.Message);
+                return 0;
+            }
         }
 
         float GetFloat(string sectionName, string valueName, float min, float max)
         {
-            float value = float.Parse(GetData(sectionName, valueName), NumberStyles.Float, CultureInfo.InvariantCulture);
-            return Mathf.Clamp(value, min, max);
+            try
+            {
+                float value = float.Parse(GetData(sectionName, valueName), NumberStyles.Float, CultureInfo.InvariantCulture);
+                return Mathf.Clamp(value, min, max);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarningFormat("GetFloat() could not read value [{0}]{1}. Returning {2}. The exception was '{3}'.", sectionName, valueName, min, ex.Message);
+                return min;
+            }
         }
 
         void SetFloat(string sectionName, string valueName, float value)
@@ -645,8 +685,9 @@ namespace DaggerfallWorkshop
                 Color result = StringToColor(colorStr);
                 return result;
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogWarningFormat("GetColor() could not read value [{0}]{1}. Returning {2}. The exception was '{3}'.", sectionName, valueName, defaultColor, ex.Message);
                 return defaultColor;
             }
         }
