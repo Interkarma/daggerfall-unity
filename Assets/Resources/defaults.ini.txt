@@ -30,8 +30,8 @@ EnableTextureArrays=True
 RandomDungeonTextures=0
 
 [Audio]
-SoundFont=
 AlternateMusic=False
+SoundFont=
 
 [ChildGuard]
 PlayerNudity=False
