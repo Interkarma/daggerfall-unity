@@ -248,6 +248,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enemyBrokeRest = false;
             preventedRestMessage = null;
             abortRestForEnemySpawn = false;
+            currentRestMode = RestModes.Selection;
 
             // Get references
             playerEntity = GameManager.Instance.PlayerEntity;
