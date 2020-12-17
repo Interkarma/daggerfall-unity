@@ -58,15 +58,11 @@ namespace DaggerfallWorkshop.Utility
                 ci.supportsWinter = false;
 
             // Handle swamp climate sets with missing winter textures
-            if (climate == ClimateBases.Swamp)
+            if (climate == ClimateBases.Swamp &&
+                ci.textureSet == DFLocation.ClimateTextureSet.Exterior_MagesGuild ||
+                ci.textureSet == DFLocation.ClimateTextureSet.Exterior_Castle && record > 3)
             {
-                switch (ci.textureSet)
-                {
-                    case DFLocation.ClimateTextureSet.Exterior_Castle:
-                    case DFLocation.ClimateTextureSet.Exterior_MagesGuild:
-                        ci.supportsWinter = false;
-                        break;
-                }
+                ci.supportsWinter = false;
             }
 
             // Handle archives with missing winter textures
@@ -244,6 +240,13 @@ namespace DaggerfallWorkshop.Utility
                 return false;
             }
 
+            // Special cases before normalisation
+            if (archive == 36 && record == 2 ||
+                archive == 151 && record == 3 ||
+                archive == 154 && record == 3 ||
+                archive == 351 && record == 3)
+                return true;
+
             // Normalise archive index
             archive = archive % 100;
 
@@ -260,6 +263,7 @@ namespace DaggerfallWorkshop.Utility
                 case 026:
                 case 027:
                 case 035:
+                case 036:
                 case 038:
                 case 039:
                 case 042:

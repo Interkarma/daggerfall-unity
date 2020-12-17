@@ -513,18 +513,18 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// </summary>
         /// <param name="attacker">Attacking entity</param>
         /// <param name="target">Target entity</param>
-        /// <param name="enemyAnimStateRecord">Record # of the target, used for backstabbing</param>
+        /// <param name="isEnemyFacingAwayFromPlayer">Whether enemy is facing away from player, used for backstabbing</param>
         /// <param name="weaponAnimTime">Time the weapon animation lasted before the attack in ms, used for bow drawing </param>
         /// <param name="weapon">The weapon item being used</param>
         /// <returns>Damage inflicted to target, can be 0 for a miss or ineffective hit</returns>
-        public static int CalculateAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int enemyAnimStateRecord, int weaponAnimTime, DaggerfallUnityItem weapon)
+        public static int CalculateAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, bool isEnemyFacingAwayFromPlayer, int weaponAnimTime, DaggerfallUnityItem weapon)
         {
             if (attacker == null || target == null)
                 return 0;
 
-            Func<DaggerfallEntity, DaggerfallEntity, int, int, DaggerfallUnityItem, int> del;
+            Func<DaggerfallEntity, DaggerfallEntity, bool, int, DaggerfallUnityItem, int> del;
             if (TryGetOverride("CalculateAttackDamage", out del))
-                return del(attacker, target, enemyAnimStateRecord, weaponAnimTime, weapon);
+                return del(attacker, target, isEnemyFacingAwayFromPlayer, weaponAnimTime, weapon);
 
             int damageModifiers = 0;
             int damage = 0;
@@ -590,7 +590,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 damageModifiers += racialMods.damageMod;
                 chanceToHitMod += racialMods.toHitMod;
 
-                backstabChance = CalculateBackstabChance(player, null, enemyAnimStateRecord);
+                backstabChance = CalculateBackstabChance(player, null, isEnemyFacingAwayFromPlayer);
                 chanceToHitMod += backstabChance;
             }
 
@@ -635,9 +635,10 @@ namespace DaggerfallWorkshop.Game.Formulas
 
                         int reflexesChance = 50 - (10 * ((int)player.Reflexes - 2));
 
+                        int hitDamage = 0;
                         if (DFRandom.rand() % 100 < reflexesChance && minBaseDamage > 0 && CalculateSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart))
                         {
-                            int hitDamage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
+                            hitDamage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
                             // Apply special monster attack effects
                             if (hitDamage > 0)
                                 OnMonsterHit(AIAttacker, target, hitDamage);
@@ -645,7 +646,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                             damage += hitDamage;
                         }
 
-                        damage += GetBonusOrPenaltyByEnemyType(attacker, target);
+                        // Apply bonus damage only when monster has actually hit, or they will accumulate bonus damage even for missed attacks and zero-damage attacks
+                        if (hitDamage > 0)
+                            damage += GetBonusOrPenaltyByEnemyType(attacker, target);
+
                         ++attackNumber;
                     }
                 }
@@ -930,14 +934,13 @@ namespace DaggerfallWorkshop.Game.Formulas
             return mods;
         }
 
-        public static int CalculateBackstabChance(PlayerEntity player, DaggerfallEntity target, int enemyAnimStateRecord)
+        public static int CalculateBackstabChance(PlayerEntity player, DaggerfallEntity target, bool isEnemyFacingAwayFromPlayer)
         {
-            Func<PlayerEntity, DaggerfallEntity, int, int> del;
+            Func<PlayerEntity, DaggerfallEntity, bool, int> del;
             if (TryGetOverride("CalculateBackstabChance", out del))
-                return del(player, target, enemyAnimStateRecord);
+                return del(player, target, isEnemyFacingAwayFromPlayer);
 
-            // If enemy is facing away from player
-            if (enemyAnimStateRecord % 5 > 2)
+            if (isEnemyFacingAwayFromPlayer)
             {
                 player.TallySkill(DFCareer.Skills.Backstabbing, 1);
                 return player.Skills.GetLiveSkillValue(DFCareer.Skills.Backstabbing);

@@ -14,6 +14,9 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using DaggerfallConnect.Utility;
+using DaggerfallWorkshop;
+using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Utility.AssetInjection;
 #endregion
 
@@ -720,15 +723,34 @@ namespace DaggerfallConnect.Arena2
             dfLocation.RegionIndex = region;
             dfLocation.LocationIndex = location;
 
-            // Generate smaller dungeon when enabled
-            if (dfLocation.HasDungeon &&
-                DaggerfallWorkshop.DaggerfallUnity.Settings.SmallerDungeons &&
-                !DaggerfallWorkshop.DaggerfallDungeon.IsMainStoryDungeon(dfLocation.MapTableData.MapId))
-            {
+            // Generate smaller dungeon when possible
+            if (UseSmallerDungeon(ref dfLocation))
                 GenerateSmallerDungeon(ref dfLocation);
-            }
 
             return dfLocation;
+        }
+
+        private bool UseSmallerDungeon(ref DFLocation dfLocation)
+        {
+            // Do nothing if location has no dungeon or if a main story dungeon - these are never made smaller
+            if (!dfLocation.HasDungeon || DaggerfallDungeon.IsMainStoryDungeon(dfLocation.MapTableData.MapId))
+                return false;
+
+            // Collect any SiteLinks associated with this dungeon - there should only be one quest assignment per dungeon
+            SiteLink[] siteLinks = QuestMachine.Instance.GetSiteLinks(SiteTypes.Dungeon, dfLocation.MapTableData.MapId);
+            if (siteLinks != null && siteLinks.Length > 0)
+            {
+                // If a SiteLink and related Quest is found then use whatever SmallerDungeons setting as configured at time quest started
+                // Marker assignments are not relocated when user changes SmallerDungeons state so we always use whatever quest compiled with
+                Quest quest = QuestMachine.Instance.GetQuest(siteLinks[0].questUID);
+                if (quest != null && quest.SmallerDungeonsState == QuestSmallerDungeonsState.Enabled)
+                    return true;
+                else if (quest != null && quest.SmallerDungeonsState == QuestSmallerDungeonsState.Disabled)
+                    return false;
+            }
+
+            // If not a main story dungeon and no quest found in dungeon then just use setting as configured
+            return DaggerfallUnity.Settings.SmallerDungeons;
         }
 
         /// <summary>

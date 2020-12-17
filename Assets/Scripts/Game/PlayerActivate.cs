@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game
     {
         PlayerGPS playerGPS;
         PlayerEnterExit playerEnterExit;        // Example component to enter/exit buildings
-        GameObject mainCamera;
+        Camera mainCamera;
         int playerLayerMask = 0;
 
         Transform deferredInteriorDoorOwner;    // Used to defer interior transition after popup message
@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop.Game
         {
             playerGPS = GetComponent<PlayerGPS>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
-            mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+            mainCamera = GameManager.Instance.MainCamera;
             playerLayerMask = ~(1 << LayerMask.NameToLayer("Player"));
         }
 
@@ -259,14 +259,39 @@ namespace DaggerfallWorkshop.Game
             // Player activates object
             if (InputManager.Instance.ActionComplete(InputManager.Actions.ActivateCenterObject))
             {
-                // TODO: Handle player clicking into scene with active cursor
-                // In this case the activation ray should project from click into scene not from camera position
+                // Fire ray into scene from active mouse cursor or camera
+                Ray ray = new Ray();
+                if (GameManager.Instance.PlayerMouseLook.cursorActive)
+                {
+                    if (DaggerfallUnity.Settings.RetroRenderingMode > 0)
+                    {
+                        // Need to scale screen mouse position to match actual viewport area when retro rendering enabled
+                        // Also need to account for when large HUD is enabled and docked as this changes the retro viewport area
+                        // Undocked large HUD does not change retro viewport area
+                        float largeHUDHeight = 0;
+                        if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Enabled && DaggerfallUnity.Settings.LargeHUDDocked)
+                            largeHUDHeight = DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
+                        float xm = Input.mousePosition.x / Screen.width;
+                        float ym = (Input.mousePosition.y - largeHUDHeight) / (Screen.height - largeHUDHeight);
+                        Vector2 retroMousePos = new Vector2(mainCamera.targetTexture.width * xm, mainCamera.targetTexture.height * ym);
+                        ray = mainCamera.ScreenPointToRay(retroMousePos);
+                        //Debug.Log(retroMousePos);
+                    }
+                    else
+                    {
+                        // Ray from mouse position into viewport
+                        ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+                    }
+                }
+                else
+                {
+                    // Ray from camera crosshair position
+                    ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
+                }
 
-                // Fire ray into scene for hit tests (excluding player so their ray does not intersect self)
-                Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
+                // Test ray against scene
                 RaycastHit hit;
                 bool hitSomething = Physics.Raycast(ray, out hit, RayDistance, playerLayerMask);
-                // Debug.DrawRay(ray.origin, ray.direction, Color.yellow, 2f);
                 if (hitSomething)
                 {
                     bool hitBuilding = false;
@@ -1056,6 +1081,8 @@ namespace DaggerfallWorkshop.Game
             // Perform transition
             playerEnterExit.BuildingDiscoveryData = db;
             playerEnterExit.IsPlayerInsideOpenShop = RMBLayout.IsShop(db.buildingType) && IsBuildingOpen(db.buildingType);
+            playerEnterExit.IsPlayerInsideTavern = RMBLayout.IsTavern(db.buildingType);
+            playerEnterExit.IsPlayerInsideResidence = RMBLayout.IsResidence(db.buildingType);
             playerEnterExit.TransitionInterior(doorOwner, door, doFade, false);
         }
 

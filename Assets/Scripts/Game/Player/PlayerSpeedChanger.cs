@@ -159,7 +159,10 @@ namespace DaggerfallWorkshop.Game
             if (useWalkSpeedOverride)
                 return walkSpeedOverride;
             else
-                return (player.Stats.LiveSpeed + dfWalkBase) / classicToUnitySpeedUnitRatio;
+            {
+                float drag = 0.5f * (100 - (player.Stats.LiveSpeed >= 30 ? player.Stats.LiveSpeed : 30));
+                return (player.Stats.LiveSpeed + dfWalkBase - drag) / classicToUnitySpeedUnitRatio;
+            }
         }
 
         /// <summary>
@@ -171,8 +174,12 @@ namespace DaggerfallWorkshop.Game
         {
             if (useRunSpeedOverride)
                 return runSpeedOverride;
-            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-            return baseSpeed * (1.25f + (player.Skills.GetLiveSkillValue(DFCareer.Skills.Running) / 200f));
+            else
+            {
+                Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+                float baseRunSpeed = (player.Stats.LiveSpeed + dfWalkBase) / classicToUnitySpeedUnitRatio;
+                return baseRunSpeed * (1.35f + (player.Skills.GetLiveSkillValue(DFCareer.Skills.Running) / 200f));
+            }
         }
 
         /// <summary>

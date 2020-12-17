@@ -394,6 +394,10 @@ namespace DaggerfallWorkshop.Utility
         {
             const int mask = 0xff;
 
+            // Handle null bitmap or data input
+            if (srcBitmap == null || srcBitmap.Data == null)
+                return new DFBitmap();
+
             // Clone bitmap
             DFBitmap dstBitmap = DFBitmap.CloneDFBitmap(srcBitmap, false);
 

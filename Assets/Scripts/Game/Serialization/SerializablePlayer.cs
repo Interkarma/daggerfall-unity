@@ -212,8 +212,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             playerPosition.insideDungeon = playerEnterExit.IsPlayerInsideDungeon;
             playerPosition.insideBuilding = playerEnterExit.IsPlayerInsideBuilding;
             playerPosition.insideOpenShop = playerEnterExit.IsPlayerInsideOpenShop;
+            playerPosition.insideTavern = playerEnterExit.IsPlayerInsideTavern;
+            playerPosition.insideResidence = playerEnterExit.IsPlayerInsideResidence;
             playerPosition.terrainSamplerName = DaggerfallUnity.Instance.TerrainSampler.ToString();
             playerPosition.terrainSamplerVersion = DaggerfallUnity.Instance.TerrainSampler.Version;
+            playerPosition.smallerDungeonsState = (DaggerfallUnity.Settings.SmallerDungeons) ? QuestSmallerDungeonsState.Enabled : QuestSmallerDungeonsState.Disabled;
             playerPosition.weather = GameManager.Instance.WeatherManager.PlayerWeather.WeatherType;
             return playerPosition;
         }
@@ -386,6 +389,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             {
                 playerEnterExit.BuildingDiscoveryData = data.playerPosition.buildingDiscoveryData;
                 playerEnterExit.IsPlayerInsideOpenShop = data.playerPosition.insideOpenShop;
+                playerEnterExit.IsPlayerInsideTavern = data.playerPosition.insideTavern;
+                playerEnterExit.IsPlayerInsideResidence = data.playerPosition.insideResidence;
             }
 
             // Lower player position flag if inside with no doors

@@ -26,12 +26,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         const string mainFilename = "MAIN00I0.IMG";
         const string interactionModesFilename = "MAIN01I0.IMG";
-        const string compass0Filename = "CMPA00I0.BSS";     // Standard compass
-        const string compass1Filename = "CMPA01I0.BSS";     // Blue compass (unused)
-        const string compass2Filename = "CMPA02I0.BSS";     // Red compass (unused)
+        const string compass0Filename = "CMPA00I0.BSS";                 // Standard compass
+        const string compass1Filename = "CMPA01I0.BSS";                 // Blue compass (unused)
+        const string compass2Filename = "CMPA02I0.BSS";                 // Red compass (unused)
+        const string mainColorBackgroundFilename = "MCOL00I0.CIF";      // Color backgrounds for portrait and vitals
         const int compassFrameCount = 32;
 
         protected Rect mainPanelRect = new Rect(0, 0, 320, 46);
+        protected Rect mainColorBackgroundPanelRect = new Rect(5, 5, 66, 36);
         protected Rect stealModeSubrect = new Rect(0, 0, 47, 23);
         protected Rect talkModeSubrect = new Rect(0, 23, 47, 23);
         protected Rect grabModeSubrect = new Rect(0, 46, 47, 23);
@@ -48,13 +50,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected Rect sheathPanelRect = new Rect(225, 0, 47, 23);
         protected Rect useMagicItemPanelRect = new Rect(84, 23, 47, 23);
         protected Rect transportModePanelRect = new Rect(131, 23, 47, 23);
+        protected Rect mapPanelRect = new Rect(178, 23, 47, 23);
+        protected Rect restPanelRect = new Rect(225, 23, 47, 23);
 
         protected DFSize nativeInteractionModesTextureSize = new DFSize(47, 92);
 
         protected Texture2D mainTexture;
+        protected Texture2D mainColorBackgroundTexture;
         protected Texture2D[] compassTextures = new Texture2D[compassFrameCount];
         protected Texture2D stealModeTexture, talkModeTexture, grabModeTexture, infoModeTexture;
 
+        protected Panel mainColorBackgroundPanel = new Panel();
         protected Panel headPanel = new Panel();
         protected Panel compassPanel = new Panel();
         protected HUDVitals vitals = new HUDVitals();
@@ -65,6 +71,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected Panel sheathPanel = new Panel();
         protected Panel useMagicItemPanel = new Panel();
         protected Panel transportModePanel = new Panel();
+        protected Panel mapPanel = new Panel();
+        protected Panel restPanel = new Panel();
 
         protected Camera compassCamera;
         protected float eulerAngle;
@@ -131,6 +139,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Main large HUD background
             mainTexture = ImageReader.GetTexture(mainFilename);
+            mainColorBackgroundTexture = ImageReader.GetTexture(mainColorBackgroundFilename, 0, 0);  // Classic uses blue by default - when are other colors used?
 
             // Read compass animations
             for (int i = 0; i < compassFrameCount; i++)
@@ -153,7 +162,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             BackgroundTexture = mainTexture;
             BackgroundColor = Color.gray;
 
+            // Add main color background panel
+            mainColorBackgroundPanel.BackgroundTexture = mainColorBackgroundTexture;
+            Components.Add(mainColorBackgroundPanel);
+
             // Compass
+            compassPanel.OnMouseClick += CompassPanel_OnMouseClick;
+            compassPanel.OnRightMouseClick += CompassPanel_OnMouseClick;
             Components.Add(compassPanel);
 
             // Head
@@ -206,6 +221,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             transportModePanel.OnMouseClick += TransportModePanel_OnMouseClick;
             transportModePanel.OnRightMouseClick += TransportModePanel_OnMouseClick;
             Components.Add(transportModePanel);
+
+            // Map
+            mapPanel.OnMouseClick += MapPanel_OnMouseClick;
+            mapPanel.OnRightMouseClick += MapPanel_OnRightMouseClick;
+            Components.Add(mapPanel);
+
+            // Rest
+            restPanel.OnMouseClick += RestPanel_OnMouseClick;
+            restPanel.OnRightMouseClick += RestPanel_OnMouseClick;
+            Components.Add(restPanel);
         }
 
         void Refresh()
@@ -231,6 +256,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Position = mainPanelRect.position * CustomScale;
                 Size = mainPanelRect.size * CustomScale;
+                mainColorBackgroundPanel.Position = mainColorBackgroundPanelRect.position * CustomScale;
+                mainColorBackgroundPanel.Size = mainColorBackgroundPanelRect.size * CustomScale;
                 compassPanel.Position = compassPanelRect.position * CustomScale;
                 compassPanel.Size = compassPanelRect.size * CustomScale;
                 headPanel.Position = headPanelRect.position * CustomScale;
@@ -255,6 +282,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 useMagicItemPanel.Size = useMagicItemPanelRect.size * CustomScale;
                 transportModePanel.Position = transportModePanelRect.position * CustomScale;
                 transportModePanel.Size = transportModePanelRect.size * CustomScale;
+                mapPanel.Position = mapPanelRect.position * CustomScale;
+                mapPanel.Size = mapPanelRect.size * CustomScale;
+                restPanel.Position = restPanelRect.position * CustomScale;
+                restPanel.Size = restPanelRect.size * CustomScale;
 
                 lastCustomScale = CustomScale;
             }
@@ -462,6 +493,42 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenTransportWindow);
+            }
+        }
+
+        private void MapPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (!GameManager.IsGamePaused)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenAutomap);
+            }
+        }
+
+        private void MapPanel_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (!GameManager.IsGamePaused)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
+            }
+        }
+
+        private void RestPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (!GameManager.IsGamePaused)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenRestWindow);
+            }
+        }
+
+        private void CompassPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (!GameManager.IsGamePaused)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiStatusInfo);
             }
         }
 

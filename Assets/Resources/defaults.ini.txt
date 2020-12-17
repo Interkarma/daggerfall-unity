@@ -30,6 +30,7 @@ EnableTextureArrays=True
 RandomDungeonTextures=0
 
 [Audio]
+AlternateMusic=False
 SoundFont=
 
 [ChildGuard]
@@ -69,6 +70,7 @@ LargeHUDDocked=True
 LargeHUDUndockedScale=0.75
 LargeHUDUndockedAlignment=0
 LargeHUDUndockedOffsetWeapon=False
+LargeHUDOffsetHorse=True
 CanDropQuestItems=False
 
 [Spells]

@@ -52,13 +52,19 @@ namespace DaggerfallWorkshop.Game
 
         private static void OverdueLoan(int regionIndex)
         {
+            // Try to repay the loan off player's account
             int transferAmount = (int)Math.Min(DaggerfallBankManager.GetLoanedTotal(regionIndex), DaggerfallBankManager.GetAccountTotal(regionIndex));
             DaggerfallBankManager.MakeTransaction(TransactionType.Repaying_loan_from_account, transferAmount, regionIndex);
             if (!DaggerfallBankManager.HasLoan(regionIndex))
                 return;
 
+            // Only apply reputation drop once
+            if (DaggerfallBankManager.HasDefaulted(regionIndex))
+                return;
+
             // Set hasDefaulted flag (Note: Does not seem to ever be set in classic)
             DaggerfallBankManager.SetDefaulted(regionIndex, true);
+
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             // Should that be weighted by the amount?
             playerEntity.LowerRepForCrime(regionIndex, PlayerEntity.Crimes.LoanDefault);

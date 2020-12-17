@@ -14,11 +14,11 @@ using System;
 public static class VersionInfo
 {
     public const string DaggerfallUnityProductName = "Daggerfall Unity";
-    public const string DaggerfallUnityStatus = "alpha";
+    public const string DaggerfallUnityStatus = "beta";
 
-    // Last updated versions 10-October-2020
-    public const string DaggerfallUnityVersion = "0.10.27";
-    public const string DaggerfallToolsForUnityVersion = "1.8.9";
+    // Last updated versions 14-December-2020
+    public const string DaggerfallUnityVersion = "0.11.0";
+    public const string DaggerfallToolsForUnityVersion = "1.9.0";
     
     public const string BaselineUnityVersion = "2019.4.10f1";
 }
