@@ -189,7 +189,7 @@ namespace DaggerfallWorkshop
         private void UpdateSkyRects()
         {
             Vector3 angles = mainCamera.transform.eulerAngles;
-            float width = Screen.width * skyScale;
+            float width = (int)(Screen.width * skyScale);
             float height = Screen.height * skyScale;
             float halfScreenWidth = Screen.width * 0.5f;
 
@@ -205,13 +205,13 @@ namespace DaggerfallWorkshop
                 scrollX = width * (percent - 1.0f);
 
                 // westRect center
-                westOffset = halfScreenWidth;
+                westOffset = (int)(halfScreenWidth + scrollX);
                 if (yAngle < 90f)
                     // eastRect to the left of westRect
-                    eastOffset = halfScreenWidth - width;
+                    eastOffset = westOffset - width;
                 else
                     // eastRect to the right of westRect
-                    eastOffset = halfScreenWidth + width;
+                    eastOffset = westOffset + width;
             }
             else
             {
@@ -219,13 +219,13 @@ namespace DaggerfallWorkshop
                 scrollX = width * (percent - 1.0f);
 
                 // eastRect center
-                eastOffset = halfScreenWidth;
+                eastOffset = (int)(halfScreenWidth + scrollX);
                 if (yAngle < -90f)
                     // westRect to the left of eastRect
-                    westOffset = halfScreenWidth - width;
+                    westOffset = eastOffset - width;
                 else
                     // westRect to the right of eastRect
-                    westOffset = halfScreenWidth + width;
+                    westOffset = eastOffset + width;
             }
 
             // Scroll up-down
@@ -240,8 +240,8 @@ namespace DaggerfallWorkshop
             float yShear = (Mathf.Tan(angleXRadians) * zoom) * 0.50f;
             float scrollY = Mathf.Clamp(baseScrollY - (yShear * Screen.height), -height, 0f);
 
-            westRect = new Rect((int)(westOffset + scrollX), scrollY, width, height);
-            eastRect = new Rect((int)(eastOffset + scrollX), scrollY, width, height);
+            westRect = new Rect(westOffset, scrollY, width, height);
+            eastRect = new Rect(eastOffset, scrollY, width, height);
         }
 
         private void DrawSky()
