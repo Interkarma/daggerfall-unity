@@ -744,14 +744,17 @@ namespace DaggerfallWorkshop.Game
 
             ClearBinding(action, primary);
 
-            if (!dict.ContainsKey(code))
+            if (code != KeyCode.None)
             {
-                dict.Add(code, action);
-            }
-            else
-            {
-                dict.Remove(code);
-                dict.Add(code, action);
+                if (!dict.ContainsKey(code))
+                {
+                    dict.Add(code, action);
+                }
+                else
+                {
+                    dict.Remove(code);
+                    dict.Add(code, action);
+                }
             }
 
             MapSecondaryBindings(action);
@@ -1202,18 +1205,26 @@ namespace DaggerfallWorkshop.Game
             movementAxisBindingCache[0] = GetAxisBinding(AxisActions.MovementHorizontal);
             movementAxisBindingCache[1] = GetAxisBinding(AxisActions.MovementVertical);
 
-            existingKeyDict.Clear();
-            foreach (var kv in actionKeyDict)
-            {
-                var key = kv.Key;
-                if (key == KeyCode.None)
-                    key = GetBinding(kv.Value, false);
+            // Populate existingKeyDict with primary bindings
+            existingKeyDict = new Dictionary<KeyCode, Actions>(actionKeyDict);
+            var enums = Enum.GetValues(typeof(Actions));
+            var set = new HashSet<Actions>(existingKeyDict.Values);
 
-                existingKeyDict[key] = kv.Value;
+            // Populate missing bindings in existingKeyDict with secondary bindings
+            foreach (Actions en in enums)
+            {
+                // If the existingKeyDict does not contain an action,
+                // but the secondary bindings does, add it to our existingKeyDict
+                if (!set.Contains(en))
+                {
+                    var key = GetBinding(en, false);
+                    if (key != KeyCode.None)
+                        existingKeyDict[key] = en;
+                }
             }
 
             primarySecondaryKeybindDict.Clear();
-            foreach (Actions a in Enum.GetValues(typeof(Actions)))
+            foreach (Actions a in enums)
                 MapSecondaryBindings(a);
 
             var mods = primarySecondaryKeybindDict.Keys.Where(x => (int)x >= startingComboKeyCode);
@@ -1263,13 +1274,16 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        // Sets KeyCode binding only if action is missing
+        // Sets KeyCode binding only if action is missing,
+        // and its default key is not used in alternate bindings.
         // This is to ensure default actions are restored if missing
         // and to push out new actions to existing keybind files
         private void TestSetBinding(KeyCode code, Actions action, bool primary = true)
         {
             var dict = primary ? actionKeyDict : secondaryActionKeyDict;
-            if (!dict.ContainsValue(action))
+            var alt = primary ? secondaryActionKeyDict : actionKeyDict;
+
+            if (!dict.ContainsValue(action) && !alt.ContainsKey(code))
             {
                 SetBinding(code, action, primary);
             }
