@@ -17,7 +17,9 @@ using FullSerializer;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
-    //loaded asset - used for lookups w/ mods
+    /// <summary>
+    /// An asset loaded from a mod.
+    /// </summary>
     public struct LoadedAsset
     {
         public Type T;
@@ -104,7 +106,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     /// - Optional dependency: if is available it must have higher priority and follow specified criteria.
     /// - Peer dependency: must be available and follow specified criteria but higher priority is not required.
     /// - Optional peer dependency: if is available it must follow specified criteria but higher priority is not required.
-    /// </summary>
+    /// </remarks>
     [Serializable]
     public struct ModDependency
     {

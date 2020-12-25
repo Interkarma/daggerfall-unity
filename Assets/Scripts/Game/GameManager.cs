@@ -34,7 +34,11 @@ namespace DaggerfallWorkshop.Game
     public class GameManager : MonoBehaviour
     {
         #region Fields
-        public const float classicUpdateInterval = 0.0625f;        // Update every 1/16 of a second. An approximation of classic's update loop, which varies with framerate.
+
+        /// <summary>
+        /// Update every 1/16 of a second. An approximation of classic's update loop, which varies with framerate.
+        /// </summary>
+        public const float classicUpdateInterval = 0.0625f;
 
         public bool Verbose = false;
         bool isGamePaused = false;
@@ -408,6 +412,10 @@ namespace DaggerfallWorkshop.Game
         #region Singleton
 
         static GameManager instance = null;
+
+        /// <summary>
+        /// Gets or instantiate singleton.
+        /// </summary>
         public static GameManager Instance
         {
             get
@@ -425,6 +433,9 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// Checks if singleton instance is available without causing side effects.
+        /// </summary>
         public static bool HasInstance
         {
             get
@@ -565,6 +576,12 @@ namespace DaggerfallWorkshop.Game
         #region Public Methods
 
         bool hudDisabledByPause = false;
+
+        /// <summary>
+        /// Pauses or unpauses running game. Time scale is set to zero and, optionally, HUD is disabled when game is paused.
+        /// </summary>
+        /// <param name="pause">True to pause or false to unpause.</param>
+        /// <param name="hideHUD">HUD is disabled on screen if true. Ignored when unpausing.</param>
         public void PauseGame(bool pause, bool hideHUD = false)
         {
             DaggerfallUI.Instance.ShowVersionText = false;
@@ -617,8 +634,8 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Registers a boolean method that prevents the player from starting or continuing to rest
         /// </summary>
-        /// <param name="handler">The method returning a boolean whether the player can rest
-        /// <param name="message">The message to be displayed
+        /// <param name="handler">The delegate returning a boolean whether the player can rest.</param>
+        /// <param name="message">The message to be displayed.</param>
         public void RegisterPreventRestCondition(Func<bool> handler, string message)
         {
             // If the message is null, it is assumed by the game that there was no prevention, so we must set it to be the empty string instead
@@ -630,7 +647,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Unregisters a boolean method from being used to prevent the player from resting
         /// </summary>
-        /// <param name="handler">The method returning a boolean whether the player can rest
+        /// <param name="handler">The delegate returning a boolean whether the player can rest.</param>
         public void UnregisterPreventRestCondition(Func<bool> handler)
         {
             preventRestConditions.Remove(handler);
@@ -785,6 +802,11 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Static Methods
 
+        /// <summary>
+        /// Finds singleton in scene. <see cref="Instance"/> should be used instead to retrieve cached instance.
+        /// </summary>
+        /// <param name="singletonOut">Retrieved instance.</param>
+        /// <returns>True if instance found.</returns>
         public static bool FindSingleton(out GameManager singletonOut)
         {
             singletonOut = GameObject.FindObjectOfType<GameManager>();
@@ -797,6 +819,9 @@ namespace DaggerfallWorkshop.Game
             return true;
         }
 
+        /// <summary>
+        /// Applies shadow distance setting for local area.
+        /// </summary>
         public static void UpdateShadowDistance()
         {
             if (Instance.playerEnterExit.IsPlayerInsideDungeon)
@@ -809,6 +834,9 @@ namespace DaggerfallWorkshop.Game
                 QualitySettings.shadowDistance = Instance.initialQualitySettingsShadowDistance;
         }
 
+        /// <summary>
+        /// Applies shadow resolution setting.
+        /// </summary>
         public static void UpdateShadowResolution()
         {
             switch (DaggerfallUnity.Settings.ShadowResolutionMode)
@@ -1049,6 +1077,10 @@ namespace DaggerfallWorkshop.Game
 
         // OnEncounter
         public delegate void OnEncounterEventHandler();
+        /// <summary>
+        /// Raised when foes are being spawned near the player in the world.
+        /// Use <see cref="OnEnemySpawn"/> if you need access to any individual enemy in the scene.
+        /// </summary>
         public static event OnEncounterEventHandler OnEncounter;
         public virtual void RaiseOnEncounterEvent()
         {
@@ -1058,6 +1090,10 @@ namespace DaggerfallWorkshop.Game
 
         //OnEnemySpawn
         public delegate void OnEnemySpawnHandler(GameObject enemy);
+        /// <summary>
+        /// Raised when a foe gameobject is instantiated. The gameobject is passed to event handlers.
+        /// Use <see cref="OnEncounter"/> to detect when enemies are spawned near player. 
+        /// </summary>
         public static event OnEnemySpawnHandler OnEnemySpawn;
 
         public virtual void RaiseOnEnemySpawnEvent(GameObject enemy)
@@ -1065,7 +1101,6 @@ namespace DaggerfallWorkshop.Game
             if (OnEnemySpawn != null)
                 OnEnemySpawn(enemy);
         }
-
 
         #endregion
     }
