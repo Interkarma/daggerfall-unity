@@ -332,7 +332,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     DFRandom.srand(unknown2 ^ ((byte)region << 8));
                     random = DFRandom.rand();
-                    index = (int)(random % 15);
+                    index = (int)(random % DungeonInteriorSongs.Length);
                 }
                 else if (currentPlaylist == SneakingSongs)
                 {
