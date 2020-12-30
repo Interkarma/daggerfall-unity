@@ -70,6 +70,21 @@ namespace DaggerfallWorkshop.Game.Items
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Array of all magic item templates including artifact data.
+        /// Data is loaded from MagicItemTemplates.txt, a JSON dump of fixed MAGIC.DEF.
+        /// </summary>
+        public MagicItemTemplate[] MagicItemTemplates => allMagicItemTemplates.ToArray();
+
+        /// <summary>
+        /// Array of magic item templates filtered to just artifact data.
+        /// </summary>
+        public MagicItemTemplate[] ArtifactItemTemplates => artifactItemTemplates.ToArray();
+
+        #endregion
+
         #region Constructors
 
         public ItemHelper()
