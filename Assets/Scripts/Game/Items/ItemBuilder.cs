@@ -530,8 +530,7 @@ namespace DaggerfallWorkshop.Game.Items
             DaggerfallUnityItem newItem = null;
 
             // Get the list of magic item templates read from MAGIC.DEF
-            MagicItemsFile magicItemsFile = new MagicItemsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, "MAGIC.DEF"));
-            List<MagicItemTemplate> magicItems = magicItemsFile.MagicItemsList;
+            MagicItemTemplate[] magicItems = DaggerfallUnity.Instance.ItemHelper.MagicItemTemplates;
 
             // Reduce the list to only the regular magic items.
             MagicItemTemplate[] regularMagicItems = magicItems.Where(template => template.type == MagicItemTypes.RegularMagicItem).ToArray();
