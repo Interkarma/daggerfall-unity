@@ -1350,13 +1350,16 @@ namespace DaggerfallWorkshop.Game
                                 UnityEngine.Object.Destroy(animatedMaterial);
                             }
 
-                            MeshRenderer meshRenderer = inner2Elem.gameObject.GetComponent<MeshRenderer>();
-                            if (meshRenderer == null)
+                            MeshRenderer[] meshRenderers = inner2Elem.gameObject.GetComponentsInChildren<MeshRenderer>();
+                            if (meshRenderers == null)
                                 continue;
 
                             // update materials and set meshes as visited in this run (so "Interior" geometry always is colored
                             // (since we don't disable the mesh, it is also discovered - which is a precondition for being rendered))
-                            UpdateMaterialsOfMeshRenderer(meshRenderer, true);                            
+                            foreach (MeshRenderer meshRenderer in meshRenderers)
+                            {
+                                UpdateMaterialsOfMeshRenderer(meshRenderer, true);
+                            }
                         }
                     }
                 }
@@ -1379,18 +1382,21 @@ namespace DaggerfallWorkshop.Game
                                     UnityEngine.Object.Destroy(animatedMaterial);
                                 }
 
-                                MeshRenderer meshRenderer = inner3Elem.gameObject.GetComponent<MeshRenderer>();
-                                if (meshRenderer == null)
+                                MeshRenderer[] meshRenderers = inner3Elem.gameObject.GetComponentsInChildren<MeshRenderer>();
+                                if (meshRenderers == null)
                                     continue;
 
                                 // update materials (omit 2nd parameter so default behavior is initiated which is:
                                 // meshes are marked as not visited in this run (so "Dungeon" geometry that has been discovered in a previous dungeon run is rendered in grayscale)
-                                UpdateMaterialsOfMeshRenderer(meshRenderer);
-
-                                if (resetDiscoveryState) // if forced reset of discovery state
+                                foreach (MeshRenderer meshRenderer in meshRenderers)
                                 {
-                                    // mark meshRenderer as undiscovered
-                                    meshRenderer.enabled = false;
+                                    UpdateMaterialsOfMeshRenderer(meshRenderer);
+
+                                    if (resetDiscoveryState) // if forced reset of discovery state
+                                    {
+                                        // mark meshRenderer as undiscovered
+                                        meshRenderer.enabled = false;
+                                    }
                                 }
                             }
                         }
