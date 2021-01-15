@@ -142,10 +142,9 @@ namespace DaggerfallConnect.Arena2
 
             public override string Name()
             {   // %bn
-                System.Random random = new System.Random();
-                DFRandom.Seed = (uint)random.Next();
-                NameHelper.BankTypes race = MacroHelper.GetNameBank((Races)parent.characterDocument.raceTemplate.ID);
-                return DaggerfallUnity.Instance.NameHelper.FullName(race, Genders.Male);
+                DFRandom.Seed = (uint)parent.GetHashCode();
+                NameHelper.BankTypes nameBank = MacroHelper.GetNameBank((Races)parent.characterDocument.raceTemplate.ID);
+                return DaggerfallUnity.Instance.NameHelper.FullName(nameBank, Genders.Male);
             }
 
             public override string Q1()
@@ -619,10 +618,23 @@ namespace DaggerfallConnect.Arena2
             public override string ImperialName()
             {   // %imp
                 string[] names = { "Pelagius", "Cephorus", "Uriel", "Cassynder", "Voragiel", "Trabbatus" };
-                System.Random random = new System.Random();
-                DFRandom.Seed = (uint)random.Next();
+                DFRandom.Seed = (uint)parent.GetHashCode();
                 uint rand = DFRandom.rand() % 6;
                 return names[rand];
+            }
+
+            public override string FemaleName()
+            {   // %fn
+                DFRandom.Seed = (uint)parent.GetHashCode() + 123;
+                NameHelper.BankTypes nameBank = MacroHelper.GetNameBank((Races)parent.characterDocument.raceTemplate.ID);
+                return DaggerfallUnity.Instance.NameHelper.FullName(nameBank, Genders.Female);
+            }
+
+            public override string MaleName()
+            {   // %mn
+                DFRandom.Seed = (uint)parent.GetHashCode() + 9543;
+                NameHelper.BankTypes nameBank = MacroHelper.GetNameBank((Races)parent.characterDocument.raceTemplate.ID);
+                return DaggerfallUnity.Instance.NameHelper.FullName(nameBank, Genders.Male);
             }
         }
     }

@@ -51,8 +51,8 @@ namespace DaggerfallWorkshop.Game
                 // Used for greeting messages only: 7215, 7216, 7217
                 if (!string.IsNullOrEmpty(GameManager.Instance.TalkManager.GreetingNameNPC))
                     return GameManager.Instance.TalkManager.GreetingNameNPC;
-                else
-                    return null;
+
+                return MacroHelper.GetRandomFullName();
             }
 
             public override string Direction()
