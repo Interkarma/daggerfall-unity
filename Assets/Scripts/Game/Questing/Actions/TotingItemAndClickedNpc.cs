@@ -86,9 +86,6 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 // Check if player has item
                 if (GameManager.Instance.PlayerEntity.Items.Contains(item))
                 {
-                    // Rearm person click after current task
-                    ParentQuest.ScheduleClickRearm(person);
-
                     // Show message popup, remove item, return true on trigger
                     ParentQuest.ShowMessagePopup(id);
                     GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(ParentQuest.UID, item);

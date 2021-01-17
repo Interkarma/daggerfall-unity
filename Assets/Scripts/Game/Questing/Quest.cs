@@ -67,7 +67,6 @@ namespace DaggerfallWorkshop.Game.Questing
         QuestResource lastResourceReferenced = null;
         bool questBreak = false;
         Stack<DaggerfallMessageBox> pendingMessageBoxStack = new Stack<DaggerfallMessageBox>();
-        List<QuestResource> pendingClickRearms = new List<QuestResource>();
 
         int ticksToEnd = 0;
 
@@ -324,12 +323,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Update task
                 task.Update();
                 ShowPendingTaskMessages();
-
-                // Perform pending click rearms
-                // Allows tasks to "own" a player click on a first-come, first-serve basis
-                // Prevents concurrency issues when multiple tasks are listening for click on same resource and may all run at same time
-                // Reference quest P0B00L01 where clicks on _vampire_ will both progress and end quest
-                ClearPendingClickRearms();
             }
 
             // Show any remaining pending task messages
@@ -341,24 +334,6 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 resource.PostTick(this);
             }
-        }
-
-        /// <summary>
-        /// Schedule a quest resource to rearm player click immediately after task execution.
-        /// </summary>
-        /// <param name="resource"></param>
-        public void ScheduleClickRearm(QuestResource resource)
-        {
-            pendingClickRearms.Add(resource);
-        }
-
-        void ClearPendingClickRearms()
-        {
-            foreach(QuestResource resource in pendingClickRearms)
-            {
-                resource.RearmPlayerClick();
-            }
-            pendingClickRearms.Clear();
         }
 
         public void EndQuest()
