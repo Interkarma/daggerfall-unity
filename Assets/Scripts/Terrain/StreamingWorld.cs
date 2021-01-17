@@ -870,7 +870,7 @@ namespace DaggerfallWorkshop
                     terrainArray[index].updateLocation = terrainArray[index].hasLocation;
                 }
                 // If any nature model replacements are used then do extra nature updates for any terrains moving into or out of distance 1 or less.
-                if (TerrainHelper.NatureMeshUsed)
+                if (dfUnity.TerrainNature.NatureMeshUsed)
                 {
                     int prevDist = GetTerrainDist(prevMapPixel, terrainArray[index].mapPixelX, terrainArray[index].mapPixelY);
                     int currDist = GetTerrainDist(LocalPlayerGPS.CurrentMapPixel, terrainArray[index].mapPixelX, terrainArray[index].mapPixelY);
@@ -1253,7 +1253,7 @@ namespace DaggerfallWorkshop
                 int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
                 dfBillboardBatch.SetMaterial(natureArchive);
                 int terrainDist = GetTerrainDist(LocalPlayerGPS.CurrentMapPixel, dfTerrain.MapPixelX, dfTerrain.MapPixelY);
-                TerrainHelper.LayoutNatureBillboards(dfTerrain, dfBillboardBatch, TerrainScale, terrainDist);
+                dfUnity.TerrainNature.LayoutNature(dfTerrain, dfBillboardBatch, TerrainScale, terrainDist);
             }
 
             // Only set active again once complete

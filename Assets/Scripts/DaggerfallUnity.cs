@@ -56,6 +56,7 @@ namespace DaggerfallWorkshop
         NameHelper nameHelper;
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         ITerrainTexturing terrainTexturing = new DefaultTerrainTexturing();
+        ITerrainNature terrainNature = new DefaultTerrainNature();
         ITextProvider textProvider = new DefaultTextProvider();
 
         const ulong startingUID = 0x2000000;
@@ -189,6 +190,12 @@ namespace DaggerfallWorkshop
         {
             get { return terrainTexturing; }
             set { terrainTexturing = value; }
+        }
+
+        public ITerrainNature TerrainNature
+        {
+            get { return terrainNature; }
+            set { terrainNature = value; }
         }
 
         public ITextProvider TextProvider
