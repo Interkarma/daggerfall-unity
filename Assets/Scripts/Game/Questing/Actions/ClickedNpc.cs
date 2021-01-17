@@ -102,9 +102,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 if (id != 0)
                     ParentQuest.ShowMessagePopup(id);
 
-                // Rearm person click after current task
-                ParentQuest.ScheduleClickRearm(person);
-
                 return true;
             }
 
