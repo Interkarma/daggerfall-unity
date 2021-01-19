@@ -671,9 +671,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 Cursor.SetCursor(tex, Vector2.zero, cursorMode);
                 Debug.Log("Cursor texture overridden by mods.");
-
-                if (!refresh)
-                    StateManager.OnStateChange += StateManager_OnStateChange;
             }
             else
             {
@@ -682,6 +679,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.Settings.CursorWidth = cursorWidth;
             DaggerfallUnity.Settings.CursorHeight = cursorHeight;
+
+            if (!refresh)
+                StateManager.OnStateChange += StateManager_OnStateChange;
         }
 
         #endregion
