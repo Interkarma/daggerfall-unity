@@ -458,6 +458,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             {
                 currentFilePath = path;
                 EditorPrefs.SetString("lastModFile", currentFilePath);
+
+                var dataUri = new Uri(Application.dataPath);
+                var currentFileUri = new Uri(currentFilePath);
+                if (dataUri.IsBaseOf(currentFileUri))
+                    AssetDatabase.ImportAsset(dataUri.MakeRelativeUri(currentFileUri).ToString());
+
                 return true;
             }
             else
