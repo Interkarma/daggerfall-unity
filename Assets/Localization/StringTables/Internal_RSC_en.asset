@@ -22027,7 +22027,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1197
-    m_Localized: 'I''ve heard about you %pcnf. I''m not telling you anything about
+    m_Localized: 'I''ve heard about you %pcn. I''m not telling you anything about
       %key.[/record]
 
       %key? I know lots. But I''m not about to tell the likes
