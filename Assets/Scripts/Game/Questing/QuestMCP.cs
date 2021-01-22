@@ -11,6 +11,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -33,10 +34,23 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             public override string Name()
-            {
-                // Set seed to the quest UID before falling through to random name generation. (See t=2108)
-                DFRandom.srand((int) parent.UID);
-                return null;
+            {   // %n %nam
+                DFRandom.Seed = (uint)parent.UID;
+                return MacroHelper.GetRandomFullName();
+            }
+
+            public override string FemaleName()
+            {   // %fn
+                DFRandom.Seed = (uint)parent.UID;
+                NameHelper.BankTypes nameBank = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+                return DaggerfallUnity.Instance.NameHelper.FullName(nameBank, Genders.Female);
+            }
+
+            public override string MaleName()
+            {   // %mn
+                DFRandom.Seed = (uint)parent.UID + 3457;
+                NameHelper.BankTypes nameBank = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+                return DaggerfallUnity.Instance.NameHelper.FullName(nameBank, Genders.Male);
             }
 
             public override string FactionOrderName()
