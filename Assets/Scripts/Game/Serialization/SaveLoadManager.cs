@@ -484,8 +484,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
                 modBox.EnableVerticalScrolling(80);
                 modBox.SetText(modMessage);
-                modBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                modBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No, true);
+                modBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes, true);
+                modBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 modBox.PauseWhileOpen = true;
 
                 modBox.OnButtonClick += ((s, messageBoxButton) =>
