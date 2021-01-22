@@ -887,18 +887,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         /// <summary>
         /// Combines an array of strings into a path.
-        /// This is a substitute of an overload of <see cref="Path.Combine(string, string)"/> which is not available with current .NET version.
+        /// This is a substitute of <see cref="Path.Combine(string[])"/>, which was not available with previously used .NET version.
         /// </summary>
         /// <param name="paths">An array of parts of the path.</param>
         /// <returns>The combined paths.</returns>
+        [Obsolete("Use string Path.Combine(params string[] paths")]
         public static string CombinePaths(params string[] paths)
         {
-            string path = string.Empty;
-
-            for (int i = 0; i < paths.Length; i++)
-                path = Path.Combine(path, paths[i]);
-
-            return path;
+            return Path.Combine(paths);
         }
 
 #if UNITY_EDITOR

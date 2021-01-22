@@ -411,7 +411,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             Preset preset = settings.Presets[listBox.SelectedIndex];
             string fileName = string.Join("_", preset.Title.Split(Path.GetInvalidFileNameChars())) + ".json";
 
-            string dirPath = ModManager.CombinePaths(DaggerfallUnity.Settings.PersistentDataPath, "Mods", "ExportedPresets", mod.FileName);
+            string dirPath = Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, "Mods", "ExportedPresets", mod.FileName);
             string filePath = Path.Combine(dirPath, fileName);
 
             var messageBox = new DaggerfallMessageBox(uiManager, this, true);
