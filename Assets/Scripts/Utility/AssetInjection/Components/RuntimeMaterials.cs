@@ -62,14 +62,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Apply materials when the gameobject is first instantiated (not when cloned).
             if (!hasAppliedMaterials)
             {
+                ApplyMaterials(false);
+
                 if (UseDungeonTextureTable)
                 {
                     DaggerfallDungeon.OnSetDungeon += DaggerfallDungeon_OnSetDungeon;
                     subscribedToOnSetDungeon = true;
-                }
-                else
-                {
-                    ApplyMaterials(false);
                 }
             }
         }
@@ -134,9 +132,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (Materials == null || Materials.Length == 0)
                 return;
 
-            if (UseDungeonTextureTable && dungeonTextureTable == null)
-                return;
-
             try
             {
                 var meshRenderer = GetComponent<MeshRenderer>();
@@ -180,7 +175,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             int archive = runtimeMaterial.Archive;
             int record = runtimeMaterial.Record;
 
-            if (UseDungeonTextureTable)
+            if (dungeonTextureTable != null)
                 archive = DungeonTextureTables.ApplyTextureTable(archive, dungeonTextureTable, climateBaseType);
 
             if (runtimeMaterial.ApplyClimate)
@@ -218,7 +213,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 DaggerfallDungeon.OnSetDungeon -= DaggerfallDungeon_OnSetDungeon;
                 subscribedToOnSetDungeon = false;
-                ApplyMaterials(false, daggerfallDungeon.DungeonTextureTable);
+                ApplyMaterials(true, daggerfallDungeon.DungeonTextureTable);
             }
         }
     }

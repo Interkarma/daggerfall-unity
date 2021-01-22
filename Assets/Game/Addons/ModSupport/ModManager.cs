@@ -398,7 +398,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <returns>True if asset is found and loaded sucessfully.</returns>
         public bool TryGetAsset<T>(string name, bool? clone, out T asset) where T : UnityEngine.Object
         {
-            var query = from mod in EnumerateModsReverse()
+            var query = from mod in EnumerateEnabledModsReverse()
 #if UNITY_EDITOR
                         where (mod.AssetBundle != null && mod.AssetBundle.Contains(name)) || (mod.IsVirtual && mod.HasAsset(name))
 #else
@@ -423,7 +423,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <returns>True if asset is found and loaded sucessfully.</returns>
         public bool TryGetAsset<T>(string[] names, bool? clone, out T asset) where T : UnityEngine.Object
         {
-            var query = from mod in EnumerateModsReverse()
+            var query = from mod in EnumerateEnabledModsReverse()
 #if UNITY_EDITOR
                         where mod.AssetBundle != null || mod.IsVirtual
                         from name in names where mod.IsVirtual ? mod.HasAsset(name) : mod.AssetBundle.Contains(name)
@@ -887,18 +887,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         /// <summary>
         /// Combines an array of strings into a path.
-        /// This is a substitute of an overload of <see cref="Path.Combine(string, string)"/> which is not available with current .NET version.
+        /// This is a substitute of <see cref="Path.Combine(string[])"/>, which was not available with previously used .NET version.
         /// </summary>
         /// <param name="paths">An array of parts of the path.</param>
         /// <returns>The combined paths.</returns>
+        [Obsolete("Use string Path.Combine(params string[] paths")]
         public static string CombinePaths(params string[] paths)
         {
-            string path = string.Empty;
-
-            for (int i = 0; i < paths.Length; i++)
-                path = Path.Combine(path, paths[i]);
-
-            return path;
+            return Path.Combine(paths);
         }
 
 #if UNITY_EDITOR
@@ -1032,6 +1028,20 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Enumerates all enabled mods with reverse load order, for internal use only. Mods are always launched
+        /// at a later time (after disabled mods are unloaded), so they can use <see cref="EnumerateModsReverse()"/> instead.
+        /// </summary>
+        /// <returns>An enumeration of enabled mods sorted by reverse load order.</returns>
+        internal IEnumerable<Mod> EnumerateEnabledModsReverse()
+        {
+            IEnumerable<Mod> query = EnumerateModsReverse();
+            if (alreadyAtStartMenuState)
+                return query;
+
+            return query.Where(x => x.Enabled);
         }
 
         internal Mod GetModFromName(string name)

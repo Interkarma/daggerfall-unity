@@ -308,6 +308,17 @@ namespace DaggerfallWorkshop.Utility
             return DaggerfallUnity.Instance.NameHelper.FullName(GetNameBank(race), gender);
         }
 
+        public static string GetRandomFullName()
+        {
+            // Get appropriate nameBankType for this region and a random gender
+            NameHelper.BankTypes nameBankType = NameHelper.BankTypes.Breton;
+            if (GameManager.Instance.PlayerGPS.CurrentRegionIndex > -1)
+                nameBankType = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+            Genders gender = (DFRandom.random_range_inclusive(0, 1) == 1) ? Genders.Female : Genders.Male;
+
+            return DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
+        }
+
         public static NameHelper.BankTypes GetNameBank(Races race)
         {
             switch (race)
@@ -628,7 +639,7 @@ namespace DaggerfallWorkshop.Utility
                         return child.name;
             }
             // Use a random name if no defined individual ruler.
-            return Name(null);
+            return GetRandomFullName();
         }
 
         private static string Crime(IMacroContextProvider mcp)
@@ -995,13 +1006,15 @@ namespace DaggerfallWorkshop.Utility
         }
 
         private static string FemaleName(IMacroContextProvider mcp)
-        {   // %fn
-            return DaggerfallUnity.Instance.NameHelper.FullName(GetRandomNameBank(), Genders.Female);
+        {   // %fn %fn2
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().FemaleName();
         }
 
         private static string MaleName(IMacroContextProvider mcp)
-        {   // %mn
-            return DaggerfallUnity.Instance.NameHelper.FullName(GetRandomNameBank(), Genders.Male);
+        {   // %mn %mn2
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().MaleName();
         }
 
         private static string VampireClan(IMacroContextProvider mcp)
@@ -1021,24 +1034,9 @@ namespace DaggerfallWorkshop.Utility
         #region Contextual macro handlers
 
         private static string Name(IMacroContextProvider mcp)
-        {   // %n %nam
-            // Call the MCP first for context.
-            if (mcp != null)
-            {
-                try {
-                    string name = mcp.GetMacroDataSource().Name();
-                    if (name != null)
-                        return name;
-                } catch (NotImplementedException) { }
-            }
-            
-            // Get appropriate nameBankType for this region and a random gender
-            NameHelper.BankTypes nameBankType = NameHelper.BankTypes.Breton;
-            if (GameManager.Instance.PlayerGPS.CurrentRegionIndex > -1)
-                nameBankType = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
-            Genders gender = (DFRandom.random_range_inclusive(0, 1) == 1) ? Genders.Female : Genders.Male;
-
-            return DaggerfallUnity.Instance.NameHelper.FullName(nameBankType, gender);
+        {   // %n %nam %bn
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Name();
         }
 
         private static string VampireNpcClan(IMacroContextProvider mcp)

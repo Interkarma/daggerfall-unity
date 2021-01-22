@@ -332,11 +332,11 @@ namespace DaggerfallWorkshop.Game
                     }
                     DFRandom.srand(unknown2 ^ ((byte)region << 8));
                     random = DFRandom.rand();
-                    index = (int)(random % 15);
+                    index = (int)(random % DungeonInteriorSongs.Length);
                 }
-                else if (currentPlaylist == SneakingSongs)
+                else if (currentPlaylist == SneakingSongs || currentPlaylist == MagesGuildSongs)
                 {
-                    index = UnityEngine.Random.Range(0, SneakingSongs.Length);
+                    index = UnityEngine.Random.Range(0, currentPlaylist.Length);
                 }
             }
             currentSong = currentPlaylist[index];
@@ -739,7 +739,6 @@ namespace DaggerfallWorkshop.Game
             SongFiles.song_ggood,
             SongFiles.song_gbad,
             SongFiles.song_gneut,
-            SongFiles.song_gneut,
         };
 
         // Tavern
@@ -768,6 +767,7 @@ namespace DaggerfallWorkshop.Game
         static SongFiles[] _dungeonSongsFM = new SongFiles[]
         {
             SongFiles.song_fm_dngn1,
+            SongFiles.song_fm_dngn1,
             SongFiles.song_fm_dngn2,
             SongFiles.song_fm_dngn3,
             SongFiles.song_fm_dngn4,
@@ -779,6 +779,7 @@ namespace DaggerfallWorkshop.Game
             SongFiles.song_04fm,
             SongFiles.song_05fm,
             SongFiles.song_07fm,
+            SongFiles.song_15fm,
             SongFiles.song_15fm,
         };
 

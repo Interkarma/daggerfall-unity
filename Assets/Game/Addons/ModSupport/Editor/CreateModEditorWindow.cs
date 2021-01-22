@@ -74,6 +74,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (EditorPrefs.HasKey("lastModFile"))
                 currentFilePath = EditorPrefs.GetString("lastModFile");
 
+            for (int i = 0; i < buildTargetsToggles.Length; i++)
+                buildTargetsToggles[i] = EditorPrefs.GetBool($"ModBuildTarget:{buildTargets[i]}", buildTargetsToggles[i]);
+
             modInfo = ReadModInfoFile(currentFilePath);
             titleStyle.fontSize = 15;
             fieldStyle.fontSize = 12;
@@ -89,6 +92,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         {
             EditorPrefs.SetString("modOutPutPath", modOutPutPath);
             EditorPrefs.SetString("lastModFile", currentFilePath);
+
+            for (int i = 0; i < buildTargetsToggles.Length; i++)
+                EditorPrefs.SetBool($"ModBuildTarget:{buildTargets[i]}", buildTargetsToggles[i]);
         }
 
 
@@ -458,6 +464,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             {
                 currentFilePath = path;
                 EditorPrefs.SetString("lastModFile", currentFilePath);
+
+                var dataUri = new Uri(Application.dataPath);
+                var currentFileUri = new Uri(currentFilePath);
+                if (dataUri.IsBaseOf(currentFileUri))
+                    AssetDatabase.ImportAsset(dataUri.MakeRelativeUri(currentFileUri).ToString());
+
                 return true;
             }
             else

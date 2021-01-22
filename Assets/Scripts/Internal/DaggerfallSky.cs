@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
 {
@@ -59,7 +60,6 @@ namespace DaggerfallWorkshop
 
         DaggerfallUnity dfUnity;
         WeatherManager weatherManager;
-        public SkyFile skyFile;
         public ImgFile imgFile;
         Camera mainCamera;
         Camera myCamera;
@@ -83,6 +83,7 @@ namespace DaggerfallWorkshop
             public Color32[] west;
             public Color32[] east;
             public Color clearColor;
+            public Vector2Int imageSize;
         }
 
         #endregion
@@ -189,7 +190,7 @@ namespace DaggerfallWorkshop
         private void UpdateSkyRects()
         {
             Vector3 angles = mainCamera.transform.eulerAngles;
-            float width = Screen.width * skyScale;
+            float width = (int)(Screen.width * skyScale);
             float height = Screen.height * skyScale;
             float halfScreenWidth = Screen.width * 0.5f;
 
@@ -205,13 +206,13 @@ namespace DaggerfallWorkshop
                 scrollX = width * (percent - 1.0f);
 
                 // westRect center
-                westOffset = halfScreenWidth;
+                westOffset = (int)(halfScreenWidth + scrollX);
                 if (yAngle < 90f)
                     // eastRect to the left of westRect
-                    eastOffset = halfScreenWidth - width;
+                    eastOffset = westOffset - width;
                 else
                     // eastRect to the right of westRect
-                    eastOffset = halfScreenWidth + width;
+                    eastOffset = westOffset + width;
             }
             else
             {
@@ -219,13 +220,13 @@ namespace DaggerfallWorkshop
                 scrollX = width * (percent - 1.0f);
 
                 // eastRect center
-                eastOffset = halfScreenWidth;
+                eastOffset = (int)(halfScreenWidth + scrollX);
                 if (yAngle < -90f)
                     // westRect to the left of eastRect
-                    westOffset = halfScreenWidth - width;
+                    westOffset = eastOffset - width;
                 else
                     // westRect to the right of eastRect
-                    westOffset = halfScreenWidth + width;
+                    westOffset = eastOffset + width;
             }
 
             // Scroll up-down
@@ -240,8 +241,8 @@ namespace DaggerfallWorkshop
             float yShear = (Mathf.Tan(angleXRadians) * zoom) * 0.50f;
             float scrollY = Mathf.Clamp(baseScrollY - (yShear * Screen.height), -height, 0f);
 
-            westRect = new Rect((int)(westOffset + scrollX), scrollY, width, height);
-            eastRect = new Rect((int)(eastOffset + scrollX), scrollY, width, height);
+            westRect = new Rect(westOffset, scrollY, width, height);
+            eastRect = new Rect(eastOffset, scrollY, width, height);
         }
 
         private void DrawSky()
@@ -261,26 +262,13 @@ namespace DaggerfallWorkshop
 
         private void PromoteToTexture(SkyColors colors, bool flip = false)
         {
-            const int dayWidth = 512;
-            const int dayHeight = 220;
-            const int nightWidth = 512;
-            const int nightHeight = 219;
-
             // Destroy old textures
             Destroy(westTexture);
             Destroy(eastTexture);
 
             // Create new textures
-            if (!IsNight || !showNightSky)
-            {
-                westTexture = new Texture2D(dayWidth, dayHeight, TextureFormat.ARGB32, false);
-                eastTexture = new Texture2D(dayWidth, dayHeight, TextureFormat.ARGB32, false);
-            }
-            else
-            {
-                westTexture = new Texture2D(nightWidth, nightHeight, TextureFormat.ARGB32, false);
-                eastTexture = new Texture2D(nightWidth, nightHeight, TextureFormat.ARGB32, false);
-            }
+            westTexture = new Texture2D(colors.imageSize.x, colors.imageSize.y, TextureFormat.ARGB32, false);
+            eastTexture = new Texture2D(colors.imageSize.x, colors.imageSize.y, TextureFormat.ARGB32, false);
 
             // Set pixels, flipping hemisphere if required
             if (!flip)
@@ -400,31 +388,189 @@ namespace DaggerfallWorkshop
             if (!IsNight || !showNightSky)
                 LoadDaySky(targetFrame);
             else
-                LoadNightSky();
+                LoadNightSky(targetFrame);
         }
 
         private void LoadDaySky(int frame)
         {
-            skyFile = new SkyFile(Path.Combine(dfUnity.Arena2Path, SkyFile.IndexToFileName(SkyIndex)), FileUsage.UseMemory, true);
+            if (DaggerfallUnity.Settings.AssetInjection)
+            {
+                TryLoadDayTextures(SkyIndex, frame,
+                    out Texture2D westTexture, out Texture2D eastTexture);
 
-            skyFile.Palette = skyFile.GetDFPalette(frame);
-            skyColors.east = skyFile.GetColor32(0, frame);
-            skyColors.west = skyFile.GetColor32(1, frame);
-            skyColors.clearColor = skyColors.west[0];
+                if (westTexture && eastTexture)
+                {
+                    skyColors = new SkyColors();
+                    skyColors.east = eastTexture.GetPixels32();
+                    skyColors.west = westTexture.GetPixels32();
+                    skyColors.clearColor = skyColors.west[0];
+                    skyColors.imageSize = new Vector2Int(westTexture.width, westTexture.height);
+                    return;
+                }
+            }
+
+            skyColors = LoadVanillaDaySky(SkyIndex, frame);
         }
 
-        private void LoadNightSky()
+        private void LoadNightSky(int frame)
+        {
+            if (DaggerfallUnity.Settings.AssetInjection)
+            {
+                TryLoadNightSkyTextures(SkyIndex, frame,
+                    out Texture2D westTexture, out Texture2D eastTexture);
+
+                if (westTexture && eastTexture)
+                {
+                    skyColors = new SkyColors();
+                    skyColors.east = eastTexture.GetPixels32();
+                    skyColors.west = westTexture.GetPixels32();
+                    skyColors.clearColor = skyColors.west[0];
+                    skyColors.imageSize = new Vector2Int(westTexture.width, westTexture.height);
+
+                    return;
+                }
+            }
+
+            skyColors = LoadVanillaNightSky(SkyIndex);
+        }
+
+        /// <summary>
+        /// Tries loading day sky files from mods and loose files
+        /// </summary>
+        /// <param name="skyIndex"></param>
+        /// <param name="frame"></param>
+        /// <param name="westTexture"></param>
+        /// <param name="eastTexture"></param>
+        /// <param name="applyStars"></param>
+        /// <returns></returns>
+        private bool TryLoadDayTextures(int skyIndex, int frame, out Texture2D westTexture, out Texture2D eastTexture)
+        {
+            string baseName = string.Format("SKY{0:00}.DAT", skyIndex);
+
+            //In format SKY00_0-0.DAT
+            string eastName = Path.GetFileNameWithoutExtension(baseName) + "_0-" + frame + Path.GetExtension(baseName);
+            string westName = Path.GetFileNameWithoutExtension(baseName) + "_1-" + frame + Path.GetExtension(baseName);
+
+            TextureReplacement.TryImportTexture(eastName, false, out eastTexture);
+            TextureReplacement.TryImportTexture(westName, false, out westTexture);
+
+            if (eastTexture != null && westTexture != null)
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Tries loading day sky files from mods and loose files
+        /// </summary>
+        /// <param name="skyIndex"></param>
+        /// <param name="frame"></param>
+        /// <param name="westTexture"></param>
+        /// <param name="eastTexture"></param>
+        /// <param name="applyStars"></param>
+        /// <returns></returns>
+        private bool TryLoadNightSkyTextures(int skyIndex, int frame, out Texture2D westTexture, out Texture2D eastTexture)
+        {
+            // Get night sky matching sky index
+            int vanillaNightSky;
+            if (skyIndex >= 0 && skyIndex <= 7)
+                vanillaNightSky = 3;
+            else if (skyIndex >= 8 && skyIndex <= 15)
+                vanillaNightSky = 1;
+            else if (skyIndex >= 16 && skyIndex <= 23)
+                vanillaNightSky = 2;
+            else
+                vanillaNightSky = 0;
+
+            //TYPE 1: NIGHTIME VANILLA
+            string baseName = string.Format("NITE{0:00}I0.IMG", vanillaNightSky);
+            TextureReplacement.TryImportTexture(baseName, false, out westTexture);
+
+            //Vanilla worked!
+            if (westTexture != null)
+            {
+                //Note east is copied from west
+                eastTexture = westTexture;
+                return true;
+            }
+
+            //TYPE 2: FULL NIGHTIME
+            baseName = string.Format("NITEFULL{0:00}I0.IMG", skyIndex);
+            TextureReplacement.TryImportTexture(baseName, false, out westTexture);
+
+            //Full worked!
+            if (westTexture != null)
+            {
+                //Note east is copied from west
+                eastTexture = westTexture;
+                return true;
+            }
+
+            //TYPE 3: NIGHTIME VANILLA
+            baseName = string.Format("NITE{0:00}I0.IMG", vanillaNightSky);
+            string eastName = Path.GetFileNameWithoutExtension(baseName) + "-0" + Path.GetExtension(baseName);
+            string westName = Path.GetFileNameWithoutExtension(baseName) + "-1" + Path.GetExtension(baseName);
+
+            TextureReplacement.TryImportTexture(eastName, false, out eastTexture);
+            TextureReplacement.TryImportTexture(westName, false, out westTexture);
+
+            //Vanilla with east+west worked!
+            if (westTexture != null && eastTexture != null)
+                return true;
+
+            //TYPE 2: FULL NIGHTIME
+            baseName = string.Format("NITEFULL{0:00}I0.IMG", skyIndex);
+            eastName = Path.GetFileNameWithoutExtension(baseName) + "-0" + Path.GetExtension(baseName);
+            westName = Path.GetFileNameWithoutExtension(baseName) + "-1" + Path.GetExtension(baseName);
+
+            TextureReplacement.TryImportTexture(eastName, false, out eastTexture);
+            TextureReplacement.TryImportTexture(westName, false, out westTexture);
+
+            //Full with east+west worked!
+            if (westTexture != null && eastTexture != null)
+                return true;
+
+            westTexture = null;
+            eastTexture = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Loads day sky from arena files
+        /// </summary>
+        /// <param name="skyIndex"></param>
+        /// <returns>SkyColors loaded</returns>
+        private SkyColors LoadVanillaDaySky(int skyIndex, int frame)
+        {
+            SkyFile skyFile = new SkyFile(Path.Combine(dfUnity.Arena2Path, SkyFile.IndexToFileName(skyIndex)), FileUsage.UseMemory, true);
+            skyFile.Palette = skyFile.GetDFPalette(frame);
+
+            SkyColors colors = new SkyColors();
+            colors.east = skyFile.GetColor32(0, frame);
+            colors.west = skyFile.GetColor32(1, frame);
+            colors.clearColor = colors.west[0];
+            colors.imageSize = new Vector2Int(512, 220);
+
+            return colors;
+        }
+
+        /// <summary>
+        /// Loads night sky from arena files and adds stars if enabled in settings
+        /// </summary>
+        /// <param name="skyIndex"></param>
+        /// <returns>SkyColors loaded</returns>
+        private SkyColors LoadVanillaNightSky(int skyIndex)
         {
             const int width = 512;
             const int height = 219;
 
             // Get night sky matching sky index
             int nightSky;
-            if (SkyIndex >= 0 && SkyIndex <= 7)
+            if (skyIndex >= 0 && skyIndex <= 7)
                 nightSky = 3;
-            else if (SkyIndex >= 8 && SkyIndex <= 15)
+            else if (skyIndex >= 8 && skyIndex <= 15)
                 nightSky = 1;
-            else if (SkyIndex >= 16 && SkyIndex <= 23)
+            else if (skyIndex >= 16 && skyIndex <= 23)
                 nightSky = 2;
             else
                 nightSky = 0;
@@ -461,9 +607,13 @@ namespace DaggerfallWorkshop
                 colors[pos + 1] = colors[pos];
             }
 
+            SkyColors skyColors = new SkyColors();
+
             skyColors.west = colors;
             skyColors.east = colors;
             skyColors.clearColor = skyColors.west[0];
+            skyColors.imageSize = new Vector2Int(512, 219);
+            return skyColors;
         }
 
         private void SetupCameras()

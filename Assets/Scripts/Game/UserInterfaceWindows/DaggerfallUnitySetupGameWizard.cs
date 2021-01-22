@@ -157,31 +157,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             moveNextStage = true;
 
-            int cursorWidth = 32;
-            int cursorHeight = 32;
-
             // Apply joystick settings to input manager to keep consistency between the setup wizard and the game
             InputManager.Instance.JoystickCursorSensitivity = DaggerfallUnity.Settings.JoystickCursorSensitivity;
             InputManager.Instance.JoystickDeadzone = DaggerfallUnity.Settings.JoystickDeadzone;
 
             // Override cursor
-            Texture2D tex;
-            if (TextureReplacement.TryImportTexture("Cursor", true, out tex))
-            {
-                CursorMode cursorMode = CursorMode.Auto;
-                cursorWidth = tex.width;
-                cursorHeight = tex.height;
-
-                // Cases when true cursor size cannot be achieved using hardware accelerated cursor
-                if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows && (cursorWidth > 32 || cursorHeight > 32))
-                    cursorMode = CursorMode.ForceSoftware;
-
-                Cursor.SetCursor(tex, Vector2.zero, cursorMode);
-                Debug.Log("Cursor texture overridden by mods.");
-            }
-
-            DaggerfallUnity.Settings.CursorWidth = cursorWidth;
-            DaggerfallUnity.Settings.CursorHeight = cursorHeight;
+            SetCursor();
         }
 
         public override void Update()
@@ -673,6 +654,36 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return TextManager.Instance.GetText("MainMenu", key);
         }
 
+        private void SetCursor(bool refresh = false)
+        {
+            int cursorWidth = 32;
+            int cursorHeight = 32;
+
+            if (TextureReplacement.TryImportTexture("Cursor", true, out Texture2D tex))
+            {
+                CursorMode cursorMode = CursorMode.Auto;
+                cursorWidth = tex.width;
+                cursorHeight = tex.height;
+
+                // Cases when true cursor size cannot be achieved using hardware accelerated cursor
+                if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows && (cursorWidth > 32 || cursorHeight > 32))
+                    cursorMode = CursorMode.ForceSoftware;
+
+                Cursor.SetCursor(tex, Vector2.zero, cursorMode);
+                Debug.Log("Cursor texture overridden by mods.");
+            }
+            else
+            {
+                Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            }
+
+            DaggerfallUnity.Settings.CursorWidth = cursorWidth;
+            DaggerfallUnity.Settings.CursorHeight = cursorHeight;
+
+            if (!refresh)
+                StateManager.OnStateChange += StateManager_OnStateChange;
+        }
+
         #endregion
 
         #region Event Handlers
@@ -867,6 +878,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 AdvancedSettingsWindow advancedSettingsWindow = new AdvancedSettingsWindow(DaggerfallUI.UIManager);
                 DaggerfallUI.UIManager.PushWindow(advancedSettingsWindow);
+            }
+        }
+
+        private void StateManager_OnStateChange(StateManager.StateTypes state)
+        {
+            if (state == StateManager.StateTypes.Start)
+            {
+                StateManager.OnStateChange -= StateManager_OnStateChange;
+                SetCursor(true);
             }
         }
 

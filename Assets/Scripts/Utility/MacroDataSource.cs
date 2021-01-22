@@ -20,7 +20,7 @@ namespace DaggerfallWorkshop.Utility
     // TODO: extract interface when complete set of handlers done? : IMacroDataSource
     {
         public virtual string Name()
-        {   // %n %nam
+        {   // %n %nam %bn
             throw new NotImplementedException();
         }
 
@@ -643,6 +643,18 @@ namespace DaggerfallWorkshop.Utility
         public virtual string ImperialName()
         {
             // %imp
+            throw new NotImplementedException();
+        }
+
+        public virtual string FemaleName()
+        {
+            // %fn %fn2
+            throw new NotImplementedException();
+        }
+
+        public virtual string MaleName()
+        {
+            // %mn %mn2
             throw new NotImplementedException();
         }
     }
