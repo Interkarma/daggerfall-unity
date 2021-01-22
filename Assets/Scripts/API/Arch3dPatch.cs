@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -131,6 +131,9 @@ namespace DaggerfallConnect.Arena2
             // Model 725 (dungeon exterior bridge)
             {13255810, 0, 0},
             {13255818, 0, 8},
+
+            // Model 729 (left door of dungeon main entrance)
+            {13243060, 2, 28},
 
             // Model 761 (house exterior wall)
             {19367896, 0, 4},
