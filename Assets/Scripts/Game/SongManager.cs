@@ -334,9 +334,9 @@ namespace DaggerfallWorkshop.Game
                     random = DFRandom.rand();
                     index = (int)(random % DungeonInteriorSongs.Length);
                 }
-                else if (currentPlaylist == SneakingSongs)
+                else if (currentPlaylist == SneakingSongs || currentPlaylist == MagesGuildSongs)
                 {
-                    index = UnityEngine.Random.Range(0, SneakingSongs.Length);
+                    index = UnityEngine.Random.Range(0, currentPlaylist.Length);
                 }
             }
             currentSong = currentPlaylist[index];
@@ -738,7 +738,6 @@ namespace DaggerfallWorkshop.Game
             SongFiles.song_gbad,
             SongFiles.song_ggood,
             SongFiles.song_gbad,
-            SongFiles.song_gneut,
             SongFiles.song_gneut,
         };
 
