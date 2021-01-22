@@ -62,6 +62,11 @@ namespace DaggerfallWorkshop.Game
 
         int lastPlayerDungeonBlockIndex = -1;
         DFLocation.DungeonBlock playerDungeonBlockData = new DFLocation.DungeonBlock();
+
+        /// <summary>
+        /// If different than <c>10000</c> this is the height level of water in current dungeon.
+        /// Otherwise player is not inside a dungeon with water.
+        /// </summary>
         public short blockWaterLevel = 10000;
 
         DFLocation.BuildingTypes buildingType = DFLocation.BuildingTypes.None;
@@ -529,6 +534,9 @@ namespace DaggerfallWorkshop.Game
             RaiseOnRespawnerCompleteEvent();
         }
 
+        /// <summary>
+        /// Shows UI message with text for current holiday, if any.
+        /// </summary>
         public void ShowHolidayText()
         {
             const int holidaysStartID = 8349;
@@ -1072,6 +1080,10 @@ namespace DaggerfallWorkshop.Game
             GameManager.UpdateShadowDistance();
         }
 
+        /// <summary>
+        /// Moves player to a start marker inside current dungeon.
+        /// </summary>
+        /// <param name="marker">Marker gameobject. See <see cref="DaggerfallRDBBlock.StartMarkers"/>.</param>
         public void MovePlayerToMarker(GameObject marker)
         {
             if (!isPlayerInsideDungeon || !marker)
@@ -1087,6 +1099,9 @@ namespace DaggerfallWorkshop.Game
             RaiseOnMovePlayerToDungeonStartEvent();
         }
 
+        /// <summary>
+        /// Moves player to main start marker inside current dungeon.
+        /// </summary>
         public void MovePlayerToDungeonStart()
         {
             MovePlayerToMarker(dungeon.StartMarker);
@@ -1095,6 +1110,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Player is leaving dungeon, transition them back outside.
         /// </summary>
+        /// <param name="doFade">Fade HUD after transition if true.</param>
         public void TransitionDungeonExterior(bool doFade = false)
         {
             if (!ReferenceComponents() || !dungeon || !isPlayerInsideDungeon)
@@ -1151,6 +1167,9 @@ namespace DaggerfallWorkshop.Game
             RaiseOnTransitionDungeonExteriorEvent();
         }
 
+        /// <summary>
+        /// Prepares for leaving dungeon, but do not perform transition logic. Reposition process is up to the caller.
+        /// </summary>
         public void TransitionDungeonExteriorImmediate()
         {
             if (!ReferenceComponents() || !dungeon || !isPlayerInsideDungeon)
@@ -1442,7 +1461,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// This event is raised when a transition has started being performed and <see cref="OnPreTransition"/>
         /// was fired but it couldn't be finished correctly due to an unexpected issue (i.e when 
-        /// <see cref="HardStrings.thisHouseHasNothingOfValue"/> is also shown).
+        /// <c>"thisHouseHasNothingOfValue"</c> is also shown).
         /// </summary>
         public static event Action<TransitionEventArgs> OnFailedTransition;
         protected virtual void RaiseOnFailedTransition(TransitionType transitionType)
