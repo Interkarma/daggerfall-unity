@@ -57,6 +57,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         static Dictionary<VariantBuildingKey, string> buildingVariants = new Dictionary<VariantBuildingKey, string>();
 
+        /// <summary>
+        /// Sets the last location key to specified location in region. Used before entering buildings to
+        /// ensure that the correct location specific variant can be found.
+        /// </summary>
+        public static void SetLastLocationKeyTo(int regionIndex, int locationIndex)
+        {
+            lastLocationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
+        }
+
         #region Setters for variants
 
         /// <summary>

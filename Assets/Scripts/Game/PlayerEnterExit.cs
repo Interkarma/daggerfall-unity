@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -666,6 +667,9 @@ namespace DaggerfallWorkshop.Game
                 // Clear all stateful objects from world loose object tracking
                 world.ClearStatefulLooseObjects();
             }
+
+            // Ensure building variant checks use this location.
+            WorldDataVariants.SetLastLocationKeyTo(playerGPS.CurrentRegionIndex, playerGPS.CurrentLocationIndex);
 
             // Raise event
             RaiseOnPreTransitionEvent(TransitionType.ToBuildingInterior, door);
