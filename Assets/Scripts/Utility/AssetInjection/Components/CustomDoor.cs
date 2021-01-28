@@ -26,10 +26,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     {
         private StaticDoor? staticDoor;
 
+        [Tooltip("Type of door that is being defined. None means building textures are used to determine this.")]
+        public DoorTypes DoorType = DoorTypes.None;
+        
         /// <summary>
-        /// The trigger for this door.
+        /// The triggers for the doors.
         /// </summary>
-        [Tooltip("The trigger for this door.")]
+        [Tooltip("The triggers for the doors.")]
         public BoxCollider DoorTrigger;
 
         private void Awake()
@@ -53,9 +56,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             staticDoor.buildingKey = buildingKey;
 
             // Set data to all doors in the building
-            var doors = building.GetComponentsInChildren<CustomDoor>();
-            for (int i = 0; i < doors.Length; i++)
-                doors[i].staticDoor = staticDoor;
+            CustomDoor[] allCustomDoors = building.GetComponentsInChildren<CustomDoor>();
+            for (int i = 0; i < allCustomDoors.Length; i++)
+            {
+                if ((allCustomDoors[i].DoorType != null) && (allCustomDoors[i].DoorType != DoorTypes.None))
+                    staticDoor.DoorType = allCustomDoors[i].DoorType;
+                allCustomDoors[i].staticDoor = staticDoor;
+            }
         }
 
         /// <summary>
