@@ -1250,7 +1250,7 @@ namespace DaggerfallWorkshop
             if (dfTerrain && dfBillboardBatch)
             {
                 // Get current climate and nature archive and terrain distance
-                int natureArchive = ClimateSwaps.GetNatureArchive(LocalPlayerGPS.ClimateSettings.NatureSet, dfUnity.WorldTime.Now.SeasonValue);
+                int natureArchive = ClimateSwaps.GetNatureArchive(dfTerrain.MapData.worldClimate, dfUnity.WorldTime.Now.SeasonValue);
                 dfBillboardBatch.SetMaterial(natureArchive);
                 int terrainDist = GetTerrainDist(LocalPlayerGPS.CurrentMapPixel, dfTerrain.MapPixelX, dfTerrain.MapPixelY);
                 dfUnity.TerrainNature.LayoutNature(dfTerrain, dfBillboardBatch, TerrainScale, terrainDist);

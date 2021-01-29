@@ -383,6 +383,48 @@ namespace DaggerfallWorkshop.Utility
             return GetNatureArchive(natureSet, climateSeason);
         }
 
+        public static int GetNatureArchive(int climate, DaggerfallDateTime.Seasons worldSeason)
+        {
+            ClimateNatureSets natureSet;
+            ClimateSeason climateSeason = ClimateSeason.Summer;
+            if (worldSeason == DaggerfallDateTime.Seasons.Winter)
+                climateSeason = ClimateSeason.Winter;
+
+            switch (climate)
+            {
+                case 227:
+                    natureSet = ClimateNatureSets.RainForest;
+                    break;
+                case 229:
+                    natureSet = ClimateNatureSets.SubTropical;
+                    break;
+                case 228:
+                    natureSet = ClimateNatureSets.Swamp;
+                    break;
+                case 224:
+                case 225:
+                    natureSet = ClimateNatureSets.Desert;
+                    break;
+                case 231:
+                    natureSet = ClimateNatureSets.TemperateWoodland;
+                    break;
+                case 230:
+                    natureSet = ClimateNatureSets.WoodlandHills;
+                    break;
+                case 232:
+                    natureSet = ClimateNatureSets.HauntedWoodlands;
+                    break;
+                case 226:
+                    natureSet = ClimateNatureSets.Mountains;
+                    break;
+                default:
+                    natureSet = ClimateNatureSets.TemperateWoodland;
+                    break;
+            }
+
+            return GetNatureArchive(natureSet, climateSeason);
+        }
+
         public static int GetNatureArchive(ClimateNatureSets natureSet, ClimateSeason climateSeason)
         {
             // Get base set
