@@ -207,32 +207,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Helper Methods
         private List<int> GetQuestions()
         {
-            TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(classQuestionsToken);
-            StringBuilder question = new StringBuilder();
+            const int questionStartIndex = 1;
+            const int questionCountInclusive = 40;
+
             int questionInd = 0;
             questionLibrary = new Dictionary<int, string>();
-            for (int i = 0; i < tokens.Length; i++)
+
+            for (int q = questionStartIndex; q <= questionCountInclusive; q++)
             {
-                if (tokens[i].text != null)
+                string key = string.Format("{0}.{1}", classQuestionsToken, q);
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(key);
+                StringBuilder question = new StringBuilder();
+                for (int i = 0; i < tokens.Length; i++)
                 {
-                    string[] tokenText = Regex.Split(tokens[i].text, @"{\d+.");
+                    string[] tokenText = Regex.Split(tokens[i].text, @"\d+.");
                     if (tokenText.Length > 1) // If true the line contains the expression, which means it is the start of a question.
-                    {
-                        if (question.Length != 0)
-                        {
-                            // Finished parsing question - add to library and continue
-                            questionLibrary.Add(questionInd++, question.ToString());
-                            question = new StringBuilder();
-                        }
                         question.AppendLine(tokenText[1]);
-                    }
                     else
-                    {
                         question.AppendLine(tokenText[0]);
-                    }
                 }
+                questionLibrary.Add(questionInd++, question.ToString());
             }
-            questionLibrary.Add(questionInd, question.ToString()); // add the final question
 
             Dictionary<int, bool> pickedQuestions = new Dictionary<int, bool>();
             List<int> indices = new List<int>();
