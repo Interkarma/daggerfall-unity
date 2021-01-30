@@ -617,7 +617,7 @@ namespace DaggerfallWorkshop.Game
 
             timeOfLastStealthCheck = gameMinutes;
 
-            int stealthChance = 2 * ((int)(distanceToTarget / MeshReader.GlobalScale) * target.Entity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth) >> 10);
+            int stealthChance = FormulaHelper.CalculateStealthChance(distanceToTarget, MeshReader.GlobalScale, target);
 
             return Dice100.FailedRoll(stealthChance);
         }
