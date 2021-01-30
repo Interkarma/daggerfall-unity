@@ -275,6 +275,17 @@ namespace DaggerfallWorkshop.Game.Formulas
             chance += shopQuality + weightAndNumItems;
             return Mathf.Clamp(chance, 5, 95);
         }
+        
+        // Calculate chance of stealth skill hiding the user.
+        public static int CalculateStealthChance(float distanceToTarget, float globalScale, DaggerfallEntityBehaviour target)
+        {
+            Func<float, float, DaggerfallEntityBehaviour, int> del;
+            if (TryGetOverride("CalculateStealthChance", out del))
+                return del(distanceToTarget, globalScale, target);
+
+            int chance = 2 * ((int)(distanceToTarget / globalScale) * target.Entity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth) >> 10);
+            return chance;
+        }
 
         // Calculate chance of successfully climbing - checked repeatedly while climbing
         public static int CalculateClimbingChance(PlayerEntity player, int basePercentSuccess)
