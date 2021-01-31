@@ -77,6 +77,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #endregion
 
         List<DaggerfallUnityItem> ingredients = new List<DaggerfallUnityItem>();
+        // Keep track of parent stack for splitted off ingredients
+        // invariant: if parent is in cauldron, no children is in ingredients
+        Dictionary<DaggerfallUnityItem, DaggerfallUnityItem> parentStacks = new Dictionary<DaggerfallUnityItem, DaggerfallUnityItem>();
         List<DaggerfallUnityItem> cauldron = new List<DaggerfallUnityItem>();
         List<PotionRecipe> recipes = new List<PotionRecipe>();
 
@@ -133,6 +136,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             goldLabel.Text = GameManager.Instance.PlayerEntity.GetGoldAmount().ToString();
 
             // Add ingredient items to list and gather recipes - from inventory and wagon
+            parentStacks.Clear();
             ingredients.Clear();
             List<DaggerfallUnityItem> recipeItems = new List<DaggerfallUnityItem>();
             foreach (ItemCollection playerItems in new ItemCollection[] { GameManager.Instance.PlayerEntity.Items, GameManager.Instance.PlayerEntity.WagonItems })
@@ -248,6 +252,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     item.stackCount--;
                     DaggerfallUnityItem newItem = item.Clone();
                     newItem.stackCount = 1;
+                    parentStacks.Add(newItem, item);
                     cauldron.Add(newItem);
                 }
                 ingredientsListScroller.Items = ingredients;
@@ -259,18 +264,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             nameLabel.Text = "";
             cauldron.Remove(item);
-            bool stacked = false;
-            foreach (DaggerfallUnityItem checkItem in ingredients)
+            DaggerfallUnityItem itemParentStack;
+            if (parentStacks.TryGetValue(item, out itemParentStack))
             {
-                if (checkItem.ItemGroup == item.ItemGroup && checkItem.GroupIndex == item.GroupIndex)
+                int parentStackIndex = cauldron.IndexOf(itemParentStack);
+                if (parentStackIndex >= 0)
                 {
-                    checkItem.stackCount++;
-                    stacked = true;
-                    break;
+                    // if item has a parent stack also in cauldron, remove parent stack first instead
+                    cauldron[parentStackIndex] = item;
+                    ingredients.Add(itemParentStack);
+                }
+                else
+                {
+                    // otherwise parent must be in ingredients already - gather ingredients back
+                    parentStacks.Remove(item);
+                    itemParentStack.stackCount++;
                 }
             }
-            if (!stacked)
+            else
+            {
+                // lone ingredient
                 ingredients.Add(item);
+            }
 
             ingredientsListScroller.Items = ingredients;
             cauldronListScroller.Items = cauldron;
@@ -341,17 +356,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Remove item from player inventory unless a stack remains.
             foreach (DaggerfallUnityItem item in cauldron)
             {
-                bool stacked = false;
-                foreach (DaggerfallUnityItem checkItem in ingredients)
+                if (parentStacks.ContainsKey(item))
                 {
-                    if (checkItem.ItemGroup == item.ItemGroup && checkItem.GroupIndex == item.GroupIndex)
-                    {
-                        stacked = true;
-                        break;
-                    }
+                    // children ingredients have already been decremented from their parent's stackCount
+                    parentStacks.Remove(item);
                 }
-                if (!stacked)
+                else
                 {
+                    // lone ingredients and parent stacks must be removed from player's ingredients
                     GameManager.Instance.PlayerEntity.Items.RemoveItem(item);
                     GameManager.Instance.PlayerEntity.WagonItems.RemoveItem(item);
                 }
