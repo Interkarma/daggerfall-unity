@@ -277,7 +277,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
         
         // Calculate chance of stealth skill hiding the user.
-        public static int CalculateStealthChance(float distanceToTarget, float globalScale, DaggerfallEntityBehaviour target)
+        public static int CalculateStealthChance(float distanceToTarget, DaggerfallEntityBehaviour target)
         {
             Func<float, float, DaggerfallEntityBehaviour, int> del;
             if (TryGetOverride("CalculateStealthChance", out del))
