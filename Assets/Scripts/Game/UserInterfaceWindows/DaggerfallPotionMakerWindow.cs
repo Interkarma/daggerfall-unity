@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         List<DaggerfallUnityItem> ingredients = new List<DaggerfallUnityItem>();
         // Keep track of parent stack for splitted off ingredients
-        // invariant: if parent is in cauldron, no children is in ingredients
+        // invariant: if parent is in cauldron, no children are in ingredients
         Dictionary<DaggerfallUnityItem, DaggerfallUnityItem> parentStacks = new Dictionary<DaggerfallUnityItem, DaggerfallUnityItem>();
         List<DaggerfallUnityItem> cauldron = new List<DaggerfallUnityItem>();
         List<PotionRecipe> recipes = new List<PotionRecipe>();
