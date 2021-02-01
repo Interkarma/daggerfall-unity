@@ -26979,7 +26979,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1406
-    m_Localized: "{1.   On a clear day you chance upon a strange animal, its[/left]\n   
+    m_Localized: Deprecated record.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1407
+    m_Localized: Reserved to 9912 for Bruce and Co. (do not translate)[/end]
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1408
+    m_Localized: Dummy entry. Must always [/end]
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265898790912
+    m_Localized: "1.   On a clear day you chance upon a strange animal, its[/left]\n   
       leg trapped in a hunter's clawsnare. Judging from the[/left]\n    bleeding
       it will not survive long. Do you:[/left]\n a) Draw your dagger, mercifully
       ending its life[/left]\n    with a single thrust?[/left]\n b) Do not interfere
@@ -26988,119 +27000,164 @@ MonoBehaviour:
       before?[/left]\n c) Use herbs from your pack to put it to sleep, then[/left]\n   
       free it from the clawsnare and take it somewhere[/left]\n    where it can be
       safe, knowing that in doing so you[/left]\n    will probably deprive a hunter
-      and his family of[/left]\n    sustenance?[/left]\n {2.   One summer afternoon
-      your father gives you a choice[/left]\n    of chores. Would you rather:[/left]\na)
-      Work in the forge with him casting iron for a new plow?[/left]\n b) Gather
-      herbs for your mother who is preparing dinner?[/left]\n c) Go catch fish at
-      the stream using a net and line?[/left]\n {3.   Your father and you are returning
-      from the town[/left]\n    market when you see a small boy running from a store.[/left]\n   
-      In his hands he clutches a loaf of bread. Behind him[/left]\n    races the
-      baker with a cleaver in his hands. You know[/left]\n    that the boy must be
-      hungry, but the town is suffering[/left]\n    from a drought, which has made
-      food valuable. Do you:[/left]\n a) Side with justice and urge your father to
-      stop the boy?[/left]\n b) Help the poor waif by running into the baker's way?[/left]\nc)
-      Stand out of the way and wait to see what your father[/left]\n    decides,
-      trusting his experience?[/left]\n {4.   Your father tells you one night the
-      story of his[/left]\n    battle at Borim Valley, where his men had routed the[/left]\n   
-      enemy. They would have captured them all if not for the[/left]\n    brave sacrifice
-      of a young Sergeant on the opposing[/left]\n    side, who held a pass long
-      enough for his men to[/left]\n    retreat to safety. He had done so knowing
-      that it would[/left]\n    cost him his life. If you had been that man would
-      you[/left]\n    have:[/left]\n a) Fled, rationalizing that your experience
-      with battle[/left]\n    tactics was too valuable to be wasted, and could make[/left]\n   
-      the difference later?[/left]\n b) Held the pass also, so that the men under
-      your command[/left]\n    could flee, though it meant your life?[/left]\n c)
-      Searched for some means to distract the enemy so that[/left]\n    your men
-      might have the possibility of escaping, but[/left]\n    not at the cost of
-      your own life?[/left]\n {5.   Your mother sends you to the market with a list
-      of[/left]\n    goods to buy. After you finish you find that by mistake[/left]\n   
-      a shopkeeper has given you too much money back in[/left]\n    exchange for
-      one of the items. Do you:[/left]\n a) Return to the store and give the shopkeeper
-      his hard-[/left]\n    earned money, explaining to him the mistake?[/left]\nb)
-      Pocket the extra money, knowing that shopkeepers in[/left]\n    general tend
-      to overcharge customers anyway?[/left]\n c) Decide to put the extra money to
-      good use and purchase[/left]\n    items that would help your family?[/left]\n{6.  
-      While in a market place you witness a thief cut a[/left]\n    purse from a
-      noble. Even as he does so the noble[/left]\n    notices and calls for the city
-      guards. In his haste to[/left]\n    get away, the thief drops the purse near
-      you.[/left]\n    Surprisingly, no one seems to notice the bag of coins[/left]\n   
-      at your feet. Do you: [/left]\n a) Pick up the bag and pocket it, knowing that
-      the extra[/left]\n    windfall will help your family in times of trouble?[/left]\nb)
-      Pick up the bag and signal to the guard, knowing that[/left]\n    the only
-      honorable thing to do is return the money to[/left]\n    its rightful owner?[/left]\nc)
-      Leave the bag there, knowing that it is better not to[/left]\n    get involved?[/left]\n{7.  
-      Your father sends you on a task which you loathe,[/left]\n    cleaning the
-      stables. On the way there, pitchfork in[/left]\n    hand, you run into your
-      friend from the homestead near[/left]\n    your own. He offers to do it for
-      you, in return for a[/left]\n    future favor of his choosing. Do you:[/left]\na)
-      Decline his offer, knowing that your father expects you[/left]\n    to do the
-      work, and it is better not to be in debt?[/left]\n b) Accept his offer, reasoning
-      that as long as the stables[/left]\n    are cleaned, it matters not who does
-      the cleaning?[/left]\n c) Ask him to help you, knowing that two people can
-      do the[/left]\n    job faster than one, and agree to help him with one[/left]\n   
-      task of his choosing in the future?[/left]\n {8.   Your mother asks you to
-      help fix the stove. While[/left]\n     you are working, a very hot pipe slips
-      its moorings[/left]\n     and falls towards her. Do you:[/left]\n a) Push your
-      mother out of the way?[/left]\n b) Grab the hot pipe and try and push it away?[/left]\nc)
-      Position yourself between the pipe and your mother?[/left]\n {9.   While in
-      town the baker gives you a sweetroll.[/left]\n    Delighted, you take it into
-      an alley to enjoy, only to[/left]\n    be intercepted by a gang of three other
-      kids your age.[/left]\n    The leader demands the sweetroll, or else he and
-      his[/left]\n    friends will beat you and take it. Do you:[/left]\na) Drop
-      the sweetroll and step on it, then get ready for[/left]\n    the fight?[/left]\nb)
-      Give him the sweetroll now without argument, knowing[/left]\n    that later
-      this afternoon you will have all your[/left]\n    friends with you and can
-      come and take whatever he[/left]\n    owes you?[/left]\n c) Act like you're
-      going to give him the sweetroll but[/left]\n    at the last minute throw it
-      in the air, hoping that[/left]\n    they'll pay attention to it long enough
-      for you to get[/left]\n    a shot in on the leader?[/left]\n {10.    Entering
-      town you find that you are witness to a[/left]\n     very well dressed man
-      running from a crowd. He screams[/left]\n     to you for help. The crowd behind
-      him seems very[/left]\n     angry. Do you:[/left]\n a)  Rush to the man's aid
-      immediately, despite your lack[/left]\n     of knowledge of the circumstances?[/left]\nb) 
-      Rush to the town's aid immediately, despite your lack[/left]\n     of knowledge
-      of the circumstances?[/left]\n c)  Stand aside and allow the man and mob to
-      pass,[/left]\n     realizing that it is probably best not to get involved?[/left]\n{11.   
-      You and your best friend buy your first daggers[/left]\n     together, a matched
-      pair. You loan him the amount[/left]\n     since he doesn't have enough gold,
-      and he agrees to[/left]\n     pay you back later. After leaving the shop you
-      and he[/left]\n     sit down to marvel at your new weapons. To your dismay[/left]\n    
-      you notice that there is a small notch on the blade[/left]\n     of the dagger
-      you selected. Your friend asks you to[/left]\n     please watch his weapon
-      for him while he runs an[/left]\n     errand. Do you:[/left]\n a)  Wait for
-      your friend's return then point out the flaw[/left]\n     in your dagger and
-      return to the weapons shop to[/left]\n     demand a refund.[/left]\nb)  Switch
-      the daggers, rationalizing that since you paid[/left]\n     for them you should
-      get the first choice, and that if[/left]\n     your friend ever notices the
-      notch, you could always[/left]\n     take him back to the weapon shop and get
-      a refund?[/left]\n c)  Keep his dagger safe until his return, then switch the[/left]\n    
-      daggers with your best friend's knowledge, justifying[/left]\n     it with
-      the fact that you paid for them, and then[/left]\n     offer to accompany him
-      back to the weapons shop?[/left]\n {12.    You are at weapons practice. Your
-      Armsmaster is[/left]\n     very old now, but takes his teaching very seriously.[/left]\n    
-      You have heard him say it is all he has left in life.[/left]\n     Today he
-      has ceaselessly taunted you at every mistake.[/left]\n     Finally he asks
-      you to attack him with the same[/left]\n     technique you just did, in an
-      effort to show you the[/left]\n     proper execution. Do you:[/left]\n a) 
-      Do the technique just fast enough so that he can block[/left]\n     it, knowing
-      that it is more important to allow the[/left]\n     master to retain dignity,
-      regardless of your personal[/left]\n     feelings?[/left]\n b)  Attack him
-      at full speed, knowing that you could[/left]\n     probably score the hit and
-      justify his unfair[/left]\n     treatment of you by showing the class that
-      you were[/left]\n     actually doing it right?[/left]\n c)  Refuse and leave
-      practice, unable to compromise your[/left]\n     anger with his dignity, and
-      realizing that whatever[/left]\n     course you choose would cause you to lose
-      respect for[/left]\n     either him or for yourself?[/left]\n {13.    While
-      throwing a ball to you your friend breaks a[/left]\n     window on his house.
-      His father rushes out and demands[/left]\n     to know who broke the window.
-      You know that your[/left]\n     friend's father is a strict disciplinarian
-      and will[/left]\n     punish your friend severely if he takes the blame. You[/left]\n    
-      on the other hand, not being his son, could get away[/left]\n     virtually
-      unscathed. Do you:[/left]\n a)  Raise your hand and take the blame before your
-      friend[/left]\n     can answer?[/left]\n b)  Remain silent and not get involved?[/left]\nc) 
-      Point at your friend, knowing that anything else would[/left]\n     probably
-      delay the inevitable and make things just[/left]\n     that much worse for
-      him?[/left]\n {14.    Your Armsmaster during a lesson on strategy[/left]\n    
+      and his family of[/left]\n    sustenance?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733952
+    m_Localized: "2.   One summer afternoon your father gives you a choice[/left]\n   
+      of chores. Would you rather:[/left]\n a) Work in the forge with him casting
+      iron for a new plow?[/left]\n b) Gather herbs for your mother who is preparing
+      dinner?[/left]\n c) Go catch fish at the stream using a net and line?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733953
+    m_Localized: "3.   Your father and you are returning from the town[/left]\n   
+      market when you see a small boy running from a store.[/left]\n    In his hands
+      he clutches a loaf of bread. Behind him[/left]\n    races the baker with a
+      cleaver in his hands. You know[/left]\n    that the boy must be hungry, but
+      the town is suffering[/left]\n    from a drought, which has made food valuable.
+      Do you:[/left]\n a) Side with justice and urge your father to stop the boy?[/left]\n
+      b) Help the poor waif by running into the baker's way?[/left]\n c) Stand out
+      of the way and wait to see what your father[/left]\n    decides, trusting his
+      experience?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733954
+    m_Localized: "4.   Your father tells you one night the story of his[/left]\n   
+      battle at Borim Valley, where his men had routed the[/left]\n    enemy. They
+      would have captured them all if not for the[/left]\n    brave sacrifice of
+      a young Sergeant on the opposing[/left]\n    side, who held a pass long enough
+      for his men to[/left]\n    retreat to safety. He had done so knowing that it
+      would[/left]\n    cost him his life. If you had been that man would you[/left]\n   
+      have:[/left]\n a) Fled, rationalizing that your experience with battle[/left]\n   
+      tactics was too valuable to be wasted, and could make[/left]\n    the difference
+      later?[/left]\n b) Held the pass also, so that the men under your command[/left]\n   
+      could flee, though it meant your life?[/left]\n c) Searched for some means
+      to distract the enemy so that[/left]\n    your men might have the possibility
+      of escaping, but[/left]\n    not at the cost of your own life?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733955
+    m_Localized: "5.   Your mother sends you to the market with a list of[/left]\n   
+      goods to buy. After you finish you find that by mistake[/left]\n    a shopkeeper
+      has given you too much money back in[/left]\n    exchange for one of the items.
+      Do you:[/left]\n a) Return to the store and give the shopkeeper his hard-[/left]\n   
+      earned money, explaining to him the mistake?[/left]\n b) Pocket the extra money,
+      knowing that shopkeepers in[/left]\n    general tend to overcharge customers
+      anyway?[/left]\n c) Decide to put the extra money to good use and purchase[/left]\n   
+      items that would help your family?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733956
+    m_Localized: "6.   While in a market place you witness a thief cut a[/left]\n   
+      purse from a noble. Even as he does so the noble[/left]\n    notices and calls
+      for the city guards. In his haste to[/left]\n    get away, the thief drops
+      the purse near you.[/left]\n    Surprisingly, no one seems to notice the bag
+      of coins[/left]\n    at your feet. Do you: [/left]\n a) Pick up the bag and
+      pocket it, knowing that the extra[/left]\n    windfall will help your family
+      in times of trouble?[/left]\n b) Pick up the bag and signal to the guard, knowing
+      that[/left]\n    the only honorable thing to do is return the money to[/left]\n   
+      its rightful owner?[/left]\n c) Leave the bag there, knowing that it is better
+      not to[/left]\n    get involved?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733957
+    m_Localized: "7.   Your father sends you on a task which you loathe,[/left]\n   
+      cleaning the stables. On the way there, pitchfork in[/left]\n    hand, you
+      run into your friend from the homestead near[/left]\n    your own. He offers
+      to do it for you, in return for a[/left]\n    future favor of his choosing.
+      Do you:[/left]\n a) Decline his offer, knowing that your father expects you[/left]\n   
+      to do the work, and it is better not to be in debt?[/left]\n b) Accept his
+      offer, reasoning that as long as the stables[/left]\n    are cleaned, it matters
+      not who does the cleaning?[/left]\n c) Ask him to help you, knowing that two
+      people can do the[/left]\n    job faster than one, and agree to help him with
+      one[/left]\n    task of his choosing in the future?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733958
+    m_Localized: "8.   Your mother asks you to help fix the stove. While[/left]\n    
+      you are working, a very hot pipe slips its moorings[/left]\n     and falls
+      towards her. Do you:[/left]\n a) Push your mother out of the way?[/left]\n
+      b) Grab the hot pipe and try and push it away?[/left]\n c) Position yourself
+      between the pipe and your mother?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733959
+    m_Localized: "9.   While in town the baker gives you a sweetroll.[/left]\n   
+      Delighted, you take it into an alley to enjoy, only to[/left]\n    be intercepted
+      by a gang of three other kids your age.[/left]\n    The leader demands the
+      sweetroll, or else he and his[/left]\n    friends will beat you and take it.
+      Do you:[/left]\n a) Drop the sweetroll and step on it, then get ready for[/left]\n   
+      the fight?[/left]\n b) Give him the sweetroll now without argument, knowing[/left]\n   
+      that later this afternoon you will have all your[/left]\n    friends with you
+      and can come and take whatever he[/left]\n    owes you?[/left]\n c) Act like
+      you're going to give him the sweetroll but[/left]\n    at the last minute throw
+      it in the air, hoping that[/left]\n    they'll pay attention to it long enough
+      for you to get[/left]\n    a shot in on the leader?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733960
+    m_Localized: "10.    Entering town you find that you are witness to a[/left]\n    
+      very well dressed man running from a crowd. He screams[/left]\n     to you
+      for help. The crowd behind him seems very[/left]\n     angry. Do you:[/left]\n
+      a)  Rush to the man's aid immediately, despite your lack[/left]\n     of knowledge
+      of the circumstances?[/left]\n b)  Rush to the town's aid immediately, despite
+      your lack[/left]\n     of knowledge of the circumstances?[/left]\n c)  Stand
+      aside and allow the man and mob to pass,[/left]\n     realizing that it is
+      probably best not to get involved?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733961
+    m_Localized: "11.    You and your best friend buy your first daggers[/left]\n    
+      together, a matched pair. You loan him the amount[/left]\n     since he doesn't
+      have enough gold, and he agrees to[/left]\n     pay you back later. After leaving
+      the shop you and he[/left]\n     sit down to marvel at your new weapons. To
+      your dismay[/left]\n     you notice that there is a small notch on the blade[/left]\n    
+      of the dagger you selected. Your friend asks you to[/left]\n     please watch
+      his weapon for him while he runs an[/left]\n     errand. Do you:[/left]\n a) 
+      Wait for your friend's return then point out the flaw[/left]\n     in your
+      dagger and return to the weapons shop to[/left]\n     demand a refund.[/left]\n
+      b)  Switch the daggers, rationalizing that since you paid[/left]\n     for
+      them you should get the first choice, and that if[/left]\n     your friend
+      ever notices the notch, you could always[/left]\n     take him back to the
+      weapon shop and get a refund?[/left]\n c)  Keep his dagger safe until his return,
+      then switch the[/left]\n     daggers with your best friend's knowledge, justifying[/left]\n    
+      it with the fact that you paid for them, and then[/left]\n     offer to accompany
+      him back to the weapons shop?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733962
+    m_Localized: "12.    You are at weapons practice. Your Armsmaster is[/left]\n    
+      very old now, but takes his teaching very seriously.[/left]\n     You have
+      heard him say it is all he has left in life.[/left]\n     Today he has ceaselessly
+      taunted you at every mistake.[/left]\n     Finally he asks you to attack him
+      with the same[/left]\n     technique you just did, in an effort to show you
+      the[/left]\n     proper execution. Do you:[/left]\n a)  Do the technique just
+      fast enough so that he can block[/left]\n     it, knowing that it is more important
+      to allow the[/left]\n     master to retain dignity, regardless of your personal[/left]\n    
+      feelings?[/left]\n b)  Attack him at full speed, knowing that you could[/left]\n    
+      probably score the hit and justify his unfair[/left]\n     treatment of you
+      by showing the class that you were[/left]\n     actually doing it right?[/left]\n
+      c)  Refuse and leave practice, unable to compromise your[/left]\n     anger
+      with his dignity, and realizing that whatever[/left]\n     course you choose
+      would cause you to lose respect for[/left]\n     either him or for yourself?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733963
+    m_Localized: "13.    While throwing a ball to you your friend breaks a[/left]\n    
+      window on his house. His father rushes out and demands[/left]\n     to know
+      who broke the window. You know that your[/left]\n     friend's father is a
+      strict disciplinarian and will[/left]\n     punish your friend severely if
+      he takes the blame. You[/left]\n     on the other hand, not being his son,
+      could get away[/left]\n     virtually unscathed. Do you:[/left]\n a)  Raise
+      your hand and take the blame before your friend[/left]\n     can answer?[/left]\n
+      b)  Remain silent and not get involved?[/left]\n c)  Point at your friend,
+      knowing that anything else would[/left]\n     probably delay the inevitable
+      and make things just[/left]\n     that much worse for him?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733964
+    m_Localized: "14.    Your Armsmaster during a lesson on strategy[/left]\n    
       remarks, 'The best victory is to completely and[/left]\n     totally humiliate
       your opponent'. He then turns to you[/left]\n     and asks you if you agree
       with him. You know the[/left]\n     Armsmaster has been in numerous life and
@@ -27113,306 +27170,390 @@ MonoBehaviour:
       from opposition with his opinion, and not sheep-like[/left]\n     agreement?[/left]\nc) 
       Refuse to answer the question, choosing to withhold an[/left]\n     opinion
       until you have more experience and can[/left]\n     converse on the subject
-      in an intelligent manner with[/left]\n     him?[/left]\n {15.    The senior
-      student in your weapons class has[/left]\n     trounced you unmercifully for
-      the past several years.[/left]\n     Today is the Tournament of Students and
-      you find with[/left]\n     dismay that you are paired against him for your
-      first[/left]\n     match. As you prepare your friend approaches and[/left]\n    
-      offers to tell you of an injury the senior student[/left]\n     suffered in
-      yesterday's sparring class, which you[/left]\n     missed. Do you:[/left]\na) 
-      Accept the offer, knowing that it would allow you to[/left]\n     concentrate
+      in an intelligent manner with[/left]\n     him?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733965
+    m_Localized: "15.    The senior student in your weapons class has[/left]\n    
+      trounced you unmercifully for the past several years.[/left]\n     Today is
+      the Tournament of Students and you find with[/left]\n     dismay that you are
+      paired against him for your first[/left]\n     match. As you prepare your friend
+      approaches and[/left]\n     offers to tell you of an injury the senior student[/left]\n    
+      suffered in yesterday's sparring class, which you[/left]\n     missed. Do you:[/left]\n
+      a)  Accept the offer, knowing that it would allow you to[/left]\n     concentrate
       on the injured area and greatly increase[/left]\n     your chances of beating
       him?[/left]\n b)  Refuse the offer, knowing that win or lose you would[/left]\n    
       rather do it through your own skill and not some extra[/left]\n     knowledge
       in what should be a fair and honorable[/left]\n     fight?[/left]\n c)  Accept
       the offer, reasoning that it is better to have[/left]\n     the knowledge in
       case you need it, and realizing that[/left]\n     having the knowledge does
-      not necessarily mean using[/left]\n     it?[/left]\n {16.    An old man stops
-      you on the way to market,[/left]\n     claiming to have been robbed. He is
-      lying on the trail[/left]\n     and seems gravely injured. He asks you to run
-      to town[/left]\n     and get the constable. You give him your word that you[/left]\n    
-      will go directly to town and bring the constable back.[/left]\n     As you
-      make your way back you notice a suspicious man[/left]\n     creeping along
-      another trail. He doesn't seem to[/left]\n     notice you yet. Do you:[/left]\na) 
-      Follow the man, reasoning that if this man is the[/left]\n     robber you could
-      lead the constable directly to him[/left]\n     and safeguard other travelers,
-      although it would mean[/left]\n     breaking your word?[/left]\n b)  Take note
-      of him but continue on, reasoning that the[/left]\n     man on the trail is
-      hurt too badly to stop, regardless[/left]\n     of any other consideration?[/left]\nc) 
-      Take note of him but continue on, reasoning that your[/left]\n     word is
-      your bond and that it takes precedence over[/left]\n     anything else?[/left]\n{17.   
-      While fishing one sunny afternoon you find that the[/left]\n     boots which
-      you discarded are now full of ants who are[/left]\n     busily making their
-      way from a piece of bread you[/left]\n     dropped to their anthill. Do you:[/left]\na) 
-      Pick up the boots wash all the ants off now, even[/left]\n     though you are
-      not leaving until dusk?[/left]\n b)  Watch the ants, curious as to how they
-      work so[/left]\n     efficiently, and content to live and let live?[/left]\nc) 
-      Make boats out of leaves and then send each ant down[/left]\n     the stream
-      to pass the time until a fish bites?[/left]\n {18.    You hear the Armsmaster
-      remark during weapons[/left]\n     class, 'The intent of your opponent can
-      be seen in his[/left]\n     blade'. Many of the students scoff at this, though
-      not[/left]\n     openly. Do you:[/left]\n a)  Feel that the disrespect the
-      students show at this[/left]\n     points to something which they do not understand,
-      and[/left]\n     therefore causes you to focus your efforts on[/left]\n    
-      understanding it all the more?[/left]\n b)  Feel that he means the way the
-      opponent attacks and[/left]\n     moves shows you how he feels?[/left]\n c) 
-      Realize that Armsmaster Festil should not be the[/left]\n     object of scorn,
-      but rather one of respect, for he has[/left]\n     lived a full life and survived
-      things none of the[/left]\n     students could imagine?[/left]\n {19.    The
-      town has a lottery in which the winning chit[/left]\n     is called. You look
-      in shock as the winning chit[/left]\n     number matches your own! Before you
-      can say anything[/left]\n     another family walks forward. You have seen them
-      before[/left]\n     and know that they are extremely poor. Your family on[/left]\n    
-      the other hand could do without the 100 gold piece[/left]\n     prize. Do you:[/left]\na) 
-      Say nothing and allow the other family to claim the[/left]\n     prize?[/left]\nb) 
-      Stand and show your chit, knowing that the prize is[/left]\n     rightfully
-      yours?[/left]\n c)  Stand and show your chit, and offer to split the prize[/left]\n    
-      in half with the other family?[/left]\n {20.    Your Armsmaster poses a question
-      one day to his[/left]\n     class. A company of 100 men is attempting to flee
-      from[/left]\n     the enemy. There are two paths out of the broken[/left]\n    
-      stronghold. One path will kill half the men under the[/left]\n     officers
-      command, but the other half would survive. The[/left]\n     other path has
-      a fifty percent chance that everyone[/left]\n     would die, but also a fifty
-      percent chance that[/left]\n     everyone would survive. As the commanding
-      officer,[/left]\n     would you:[/left]\n a)  Choose the path that would guarantee
-      half your men[/left]\n     would survive?[/left]\n b)  Choose the path that
-      has a fifty percent chance that[/left]\n     all would survive, and a fifty
-      percent chance that all[/left]\n     would perish?[/left]\n c)  Turn the choice
-      over to the men and let them decide by[/left]\n     majority vote which path
-      they should commit[/left]\n     themselves to?[/left]\n {21.    You have a
-      great aunt and a great uncle living in[/left]\n     two different nearby villages,
-      both of whom have asked[/left]\n     your father to allow you to live with
-      them for a few[/left]\n     weeks.[/left]\n     Your father knows where he
-      plans to send you, but he[/left]\n     is curious about your opinion. Given
-      the choice, would[/left]\n     you rather:[/left]\n a)  Live with your great
-      aunt -- a wise old woman of[/left]\n     considerable wealth. Living in luxury
-      for a few weeks[/left]\n     could not only be enlightening, it could also
-      be very[/left]\n     interesting.[/left]\n b)  Live with your great uncle --
-      a sick old man who has[/left]\n     always been something of a stranger to
-      you. A few[/left]\n     weeks with him may be arduous, but he is in more need[/left]\n    
-      of your help than your great aunt.[/left]\n c)  Think of a way to divide your
-      time between your great[/left]\n     aunt and great uncle. Perhaps you will
-      not be able to[/left]\n     spend as much time with either as much as you would[/left]\n    
-      like, but neither would be left out.[/left]\n {22.    A friend has on several
-      occasions made remarks[/left]\n     about how much he likes a particular gold
-      ring of[/left]\n     yours. One day you discover that this ring is missing[/left]\n    
-      and after making a thorough search, find it in a coat[/left]\n     your friend
-      had left in your pantry. Are you most[/left]\n     inclined to: a)  Ask your
-      friend how he came about the ring, reasoning[/left]\n     that it is highly
-      probable that he found it and meant[/left]\n     to return it to you.[/left]\nb) 
-      Confront him with his theft. You know that there is no[/left]\n     way the
-      ring just fell into his pocket by accident,[/left]\n     and therefore he is
-      nothing but a common thief who[/left]\n     would betray you for material gain.[/left]\nc) 
-      Say nothing, deciding instead to wait and see what[/left]\n     your friend
+      not necessarily mean using[/left]\n     it?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733966
+    m_Localized: "16.    An old man stops you on the way to market,[/left]\n    
+      claiming to have been robbed. He is lying on the trail[/left]\n     and seems
+      gravely injured. He asks you to run to town[/left]\n     and get the constable.
+      You give him your word that you[/left]\n     will go directly to town and bring
+      the constable back.[/left]\n     As you make your way back you notice a suspicious
+      man[/left]\n     creeping along another trail. He doesn't seem to[/left]\n    
+      notice you yet. Do you:[/left]\n a)  Follow the man, reasoning that if this
+      man is the[/left]\n     robber you could lead the constable directly to him[/left]\n    
+      and safeguard other travelers, although it would mean[/left]\n     breaking
+      your word?[/left]\n b)  Take note of him but continue on, reasoning that the[/left]\n    
+      man on the trail is hurt too badly to stop, regardless[/left]\n     of any
+      other consideration?[/left]\n c)  Take note of him but continue on, reasoning
+      that your[/left]\n     word is your bond and that it takes precedence over[/left]\n    
+      anything else?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733967
+    m_Localized: "17.    While fishing one sunny afternoon you find that the[/left]\n    
+      boots which you discarded are now full of ants who are[/left]\n     busily
+      making their way from a piece of bread you[/left]\n     dropped to their anthill.
+      Do you:[/left]\n a)  Pick up the boots wash all the ants off now, even[/left]\n    
+      though you are not leaving until dusk?[/left]\n b)  Watch the ants, curious
+      as to how they work so[/left]\n     efficiently, and content to live and let
+      live?[/left]\n c)  Make boats out of leaves and then send each ant down[/left]\n    
+      the stream to pass the time until a fish bites?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733968
+    m_Localized: "18.    You hear the Armsmaster remark during weapons[/left]\n    
+      class, 'The intent of your opponent can be seen in his[/left]\n     blade'.
+      Many of the students scoff at this, though not[/left]\n     openly. Do you:[/left]\na) 
+      Feel that the disrespect the students show at this[/left]\n     points to something
+      which they do not understand, and[/left]\n     therefore causes you to focus
+      your efforts on[/left]\n     understanding it all the more?[/left]\n b)  Feel
+      that he means the way the opponent attacks and[/left]\n     moves shows you
+      how he feels?[/left]\n c)  Realize that Armsmaster Festil should not be the[/left]\n    
+      object of scorn, but rather one of respect, for he has[/left]\n     lived a
+      full life and survived things none of the[/left]\n     students could imagine?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733969
+    m_Localized: "19.    The town has a lottery in which the winning chit[/left]\n    
+      is called. You look in shock as the winning chit[/left]\n     number matches
+      your own! Before you can say anything[/left]\n     another family walks forward.
+      You have seen them before[/left]\n     and know that they are extremely poor.
+      Your family on[/left]\n     the other hand could do without the 100 gold piece[/left]\n    
+      prize. Do you:[/left]\n a)  Say nothing and allow the other family to claim
+      the[/left]\n     prize?[/left]\n b)  Stand and show your chit, knowing that
+      the prize is[/left]\n     rightfully yours?[/left]\n c)  Stand and show your
+      chit, and offer to split the prize[/left]\n     in half with the other family?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733970
+    m_Localized: "20.    Your Armsmaster poses a question one day to his[/left]\n    
+      class. A company of 100 men is attempting to flee from[/left]\n     the enemy.
+      There are two paths out of the broken[/left]\n     stronghold. One path will
+      kill half the men under the[/left]\n     officers command, but the other half
+      would survive. The[/left]\n     other path has a fifty percent chance that
+      everyone[/left]\n     would die, but also a fifty percent chance that[/left]\n    
+      everyone would survive. As the commanding officer,[/left]\n     would you:[/left]\n
+      a)  Choose the path that would guarantee half your men[/left]\n     would survive?[/left]\n
+      b)  Choose the path that has a fifty percent chance that[/left]\n     all would
+      survive, and a fifty percent chance that all[/left]\n     would perish?[/left]\n
+      c)  Turn the choice over to the men and let them decide by[/left]\n     majority
+      vote which path they should commit[/left]\n     themselves to?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733971
+    m_Localized: "21.    You have a great aunt and a great uncle living in[/left]\n    
+      two different nearby villages, both of whom have asked[/left]\n     your father
+      to allow you to live with them for a few[/left]\n     weeks.[/left]\n     Your
+      father knows where he plans to send you, but he[/left]\n     is curious about
+      your opinion. Given the choice, would[/left]\n     you rather:[/left]\n a) 
+      Live with your great aunt -- a wise old woman of[/left]\n     considerable
+      wealth. Living in luxury for a few weeks[/left]\n     could not only be enlightening,
+      it could also be very[/left]\n     interesting.[/left]\n b)  Live with your
+      great uncle -- a sick old man who has[/left]\n     always been something of
+      a stranger to you. A few[/left]\n     weeks with him may be ardorous, but he
+      is in more need[/left]\n     of your help than your great aunt.[/left]\n c) 
+      Think of a way to divide your time between your great[/left]\n     aunt and
+      great uncle. Perhaps you will not be able to[/left]\n     spend as much time
+      with either as much as you would[/left]\n     like, but neither would be left
+      out.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733972
+    m_Localized: "22.    A friend has on several occassions made remarks[/left]\n    
+      about how much he likes a particular gold ring of[/left]\n     yours. One day
+      you discover that this ring is missing[/left]\n     and after making a thorough
+      search, find it in a coat[/left]\n     your friend had left in your pantry.
+      Are you most[/left]\n     inclined to:[/left]\n a)  Ask your friend how he
+      came about the ring, reasoning[/left]\n     that it is highly probable that
+      he found it and meant[/left]\n     to return it to you.[/left]\n b)  Confront
+      him with his theft. You know that there is no[/left]\n     way the ring just
+      fell into his pocket by accident,[/left]\n     and therefore he is nothing
+      but a common thief who[/left]\n     would betray you for material gain.[/left]\n
+      c)  Say nothing, deciding instead to wait and see what[/left]\n     your friend
       does. If he is innocent or guilty, you[/left]\n     will know by whatever actions
-      he takes. At that time,[/left]\n     you can confront him with the truth.[/left]\n{23.   
-      A good friend of yours is in love with a girl from[/left]\n     a neighboring
-      village, a girl who barely knows him. He[/left]\n     is extremely shy and
-      inexperienced, and he pleads for[/left]\n     your help. Would you suggest
-      he:[/left]\n a)  Go to her immediately and declare his love. If the[/left]\n    
+      he takes. At that time,[/left]\n     you can confront him with the truth.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733973
+    m_Localized: "23.    A good friend of yours is in love with a girl from[/left]\n    
+      a neighboring village, a girl who barely knows him. He[/left]\n     is extremely
+      shy and inexperienced, and he pleads for[/left]\n     your help. Would you
+      suggest he:[/left]\n a)  Go to her immediately and declare his love. If the[/left]\n    
       relationship is to be, he needs to be honest from the[/left]\n     start. You
-      offer to accompany him to the village for[/left]\n     support.[/left]\nb) 
+      offer to accompany him to the village for[/left]\n     support.[/left]\n b) 
       Find out more about this girl using any contact he can[/left]\n     find in
       her village. He will not be so shy if he knows[/left]\n     something about
-      her, and may even find out she is not[/left]\n     the right girl for him.[/left]\nc) 
-      Let you help him write anonymous love letters and[/left]\n     poems to see
-      her reaction without needing to face her[/left]\n     directly. If the reaction
-      is favorable, he can talk to[/left]\n     her friends in the village and arrange
-      an \"accidental\"[/left]\n     meeting.[/left]\n {24.    Your Armsmaster is
-      relating the story of a great[/left]\n     king he knew in a faraway land whose
-      inventors created[/left]\n     a wondrous balloon of such size, it could transport[/left]\n    
-      dozens of people through the air to any place they[/left]\n     chose. If you
-      were this king, he asks you, how would[/left]\n     you use this remarkable
-      balloon? Would you:[/left]\n a)  Explore regions previously impossible or extremely[/left]\n    
-      dangerous to visit by land.[/left]\n b)  Keep the balloon a secret, saving
-      it for surprise[/left]\n     attacks or defense in a time of war.[/left]\nc) 
-      Commission the inventor to create dozens of these[/left]\n     'balloons' in
-      hopes of making a travel system across[/left]\n     your realm that will speed
-      up transportation time and[/left]\n     the exchange of ideas.[/left]\n{25.   
-      There is a lot of heated discussion at the local[/left]\n     tavern over a
-      group of people called 'Telepaths'. They[/left]\n     have been hired by certain
-      City-State kings. Rumor has[/left]\n     it these Telepaths read a person's
-      mind and tell their[/left]\n     lord whether a follower is telling the truth
-      or not.[/left]\n     You believe:[/left]\n a)  That this is a terrible practice.
-      A person's thoughts[/left]\n     are his own and no one, not even a king, has
-      the right[/left]\n     to make such an invasion into another human's mind.[/left]\nb) 
-      Loyal followers to the King have nothing to fear from[/left]\n     a Telepath.
-      It is important to have a method of[/left]\n     finding assassins and spies
-      before it is too late.[/left]\n c)  In these times, it is a necessary evil.
-      Although you[/left]\n     do not necessarily like the idea, a Telepath could[/left]\n    
-      have certain advantages during a time of war or in[/left]\n     finding someone
-      innocent of a crime.[/left]\n {26.    You are told that a young man has been
-      caught by[/left]\n     the village guards and accused of murder. Apparently,[/left]\n    
-      his brother was killed by a group of four ruffians in[/left]\n     a local
-      tavern, and in his grief, the young man[/left]\n     tracked each of them down
-      and murdered them. Upon[/left]\n     reflection, you believe that:[/left]\na) 
-      The young man acted honorably in avenging his[/left]\n     brother's death.
-      The village lord should let him go[/left]\n     free. b)  Even as you sympathize
+      her, and may even find out she is not[/left]\n     the right girl for him.[/left]\n
+      c)  Let you help him write anonymous love letters and[/left]\n     poems to
+      see her reaction without needing to face her[/left]\n     directly. If the
+      reaction is favorable, he can talk to[/left]\n     her friends in the village
+      and arrange an \"accidental\"[/left]\n     meeting.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733974
+    m_Localized: "24.    Your Armmaster is relating the story of a great[/left]\n    
+      king he knew in a faraway land whose inventors created[/left]\n     a wondrous
+      balloon of such size, it could transport[/left]\n     dozens of people through
+      the air to any place they[/left]\n     chose. If you were this king, he asks
+      you, how would[/left]\n     you use this remarkable balloon? Would you:[/left]\n
+      a)  Explore regions previously impossible or extremely[/left]\n     dangerous
+      to visit by land.[/left]\n b)  Keep the balloon a secret, saving it for surprise[/left]\n    
+      attacks or defense in a time of war.[/left]\n c)  Commission the inventor to
+      create dozens of these[/left]\n     'balloons' in hopes of making a travel
+      system across[/left]\n     your realm that will speed up transportation time
+      and[/left]\n     the exchange of ideas.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733975
+    m_Localized: "25.    There is a lot of heated discussion at the local[/left]\n    
+      tavern over a group of people called 'Telepaths'. They[/left]\n     have been
+      hired by certain City-State kings. Rumor has[/left]\n     it these Telepaths
+      read a person's mind and tell their[/left]\n     lord whether a follower is
+      telling the truth or not.[/left]\n     You believe:[/left]\n a)  That this
+      is a terrible practice. A person's thoughts[/left]\n     are his own and no
+      one, not even a king, has the right[/left]\n     to make such an invasion into
+      another human's mind.[/left]\n b)  Loyal followers to the King have nothing
+      to fear from[/left]\n     a Telepath. It is important to have a method of[/left]\n    
+      finding assassins and spies before it is too late.[/left]\n c)  In these times,
+      it is a necessary evil. Although you[/left]\n     do not necessarily like the
+      idea, a Telepath could[/left]\n     have certain advantages during a time of
+      war or in[/left]\n     finding someone innocent of a crime.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733976
+    m_Localized: "26.    You are told that a young man has been caught by[/left]\n    
+      the village guards and accused of murder. Apparently,[/left]\n     his brother
+      was killed by a group of four ruffians in[/left]\n     a local tavern, and
+      in his grief, the young man[/left]\n     tracked each of them down and murdered
+      them. Upon[/left]\n     reflection, you believe that:[/left]\n a)  The young
+      man acted honorably in avenging his[/left]\n     brother's death. The village
+      lord should let him go[/left]\n     free.[/left]\n b)  Even as you sympathize
       with the young man, vigilante[/left]\n     law cannot be tolerated if there
       is to be peace.[/left]\n c)  The young man's only mistake was getting caught
-      while[/left]\n     exacting vengeance. For that, he now must accept[/left]\n    
-      whatever fate has in store for him.[/left]\n {27.    One night, walking home,
-      you are attacked by a[/left]\n     young man you know from class. You defend
-      yourself[/left]\n     ably and knock him unconscious. While he is out, you:[/left]\na) 
-      Tie him up, intending to interrogate him later when he[/left]\n     wakes up.
-      You want to know why he attacked you. You[/left]\n     can then turn him into
-      the Armsmaster at your leisure.[/left]\nb)  Slit his throat. You know him from
-      class, and think he[/left]\n     would have done the same had your positions
-      been[/left]\n     reversed.[/left]\nc)  Leave him with a visible scar, the
-      knowledge of his[/left]\n     defeat at your hands and the visible reminder[/left]\n    
-      punishment enough for one who has resorted to such[/left]\n     dishonorable
-      tactics.[/left]\n {28.    Your father delights in telling you stories of his[/left]\n    
+      while[/left]\n     exacting vengance. For that, he now must accept[/left]\n    
+      whatever fate has in store for him.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733977
+    m_Localized: "27.    One night, walking home, you are attacked by a[/left]\n    
+      young man you know from class. You defend yourself[/left]\n     ably and knock
+      him unconscious. While he is out, you:[/left]\n a)  Tie him up, intending to
+      interrogate him later when he[/left]\n     wakes up. You want to know why he
+      attacked you. You[/left]\n     can then turn him into the Armsmaster at your
+      leisure.[/left]\n b)  Slit his throat. You know him from class, and think he[/left]\n    
+      would have done the same had your positions been[/left]\n     reversed.[/left]\n
+      c)  Leave him with a visible scar, the knowledge of his[/left]\n     defeat
+      at your hands and the visible reminder[/left]\n     punishment enough for one
+      who has resorted to such[/left]\n     dishonorable tactics.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733978
+    m_Localized: "28.    Your father delights in telling you stories of his[/left]\n    
       travels in his youth. In one memorable tale, he tells[/left]\n     you about
       a primitive island he visited where a young[/left]\n     child was sacrificed
       once a year to appease Arius, the[/left]\n     God of Fire. Whenever the natives
       neglected the[/left]\n     sacrifice, the island volcano would erupt, killing[/left]\n    
       hundreds of villagers. You tell your father:[/left]\n a)  You do not believe
       in any such Volcano God. Civilized[/left]\n     men should intervene, find
-      the natural cause behind[/left]\n     the eruptions, and stop the sacrifices.[/left]\nb) 
-      The God Arius must be evil to demand child sacrifice.[/left]\n     The villagers
-      should find some way to combat this God,[/left]\n     instead of just giving
-      in to his demands.[/left]\n c)  It is tragic, but the death of one small child
-      is[/left]\n     preferable to that of many villagers. If it works,[/left]\n    
-      they should keep the tradition. Gods are not to be[/left]\n     toyed with.[/left]\n
-      {29.    Your Armsmaster introduces a new student to the[/left]\n     class
-      - a small, awkward boy named Tys who does not[/left]\n     seem to have any
-      natural talent at all. The class is[/left]\n     divided into two sides for
-      a mock battle and, as one of[/left]\n     the 'generals', you are to assign
-      your soldiers. Tys[/left]\n     is one of your men. You decide to:[/left]\na) 
-      Put Tys at the frontline with the other fighters,[/left]\n     rationalizing
+      the natural cause behind[/left]\n     the eruptions, and stop the sacrifices.[/left]\n
+      b)  The God Arius must be evil to demand child sacrifice.[/left]\n     The
+      villagers should find some way to combat this God,[/left]\n     instead of
+      just giving in to his demands.[/left]\n c)  It is tragic, but the death of
+      one small child is[/left]\n     preferable to that of many villagers. If it
+      works,[/left]\n     they should keep the tradition. Gods are not to be[/left]\n    
+      toyed with.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733979
+    m_Localized: "29.    Your Armsmaster introduces a new student to the[/left]\n    
+      class - a small, awkward boy named Tys who does not[/left]\n     seem to have
+      any natural talent at all. The class is[/left]\n     divided into two sides
+      for a mock battle and, as one of[/left]\n     the 'generals', you are to assign
+      your soldiers. Tys[/left]\n     is one of your men. You decide to:[/left]\n
+      a)  Put Tys at the frontline with the other fighters,[/left]\n     rationalizing
       that in any realistic battle, he would[/left]\n     probably be a casualty
       anyway, and that there must be[/left]\n     some sacrifices.[/left]\n b)  Use
       Tys as a scout, rationalizing that because of his[/left]\n     small size he
       would probably be good at sneaking in[/left]\n     and gathering information
       on the enemy.[/left]\n c)  Assign Tys to several posts during the course of
       the[/left]\n     battle, staying near and helping him so he can gain[/left]\n    
-      valuable experience and improve.[/left]\n {30.    Your mother is terribly ill
-      and you have been sent[/left]\n     with a few gold pieces to buy some rare,
-      medicinal[/left]\n     herbs for her. As you reach the door to the[/left]\n    
-      apothecary's, you realize there is a hole in your purse[/left]\n     and all
-      the gold has fallen out. Do you:[/left]\n a)  Enter the store, tell the apothecary
-      your dilemma, and[/left]\n     promise on your honor to pay him back for the
-      herbs[/left]\n     your mother so desperately needs.[/left]\n b)  Attempt to
-      steal the herbs from the apothecary's. You[/left]\n     know the old man who
-      works in the store will not be[/left]\n     able to catch you, and your mother
-      lies sick.[/left]\n c)  Run back home and admit the loss, hoping that your[/left]\n    
-      father will have more gold. You know you'll be[/left]\n     punished, but you
-      will neither be in debt to the[/left]\n     apothecary, nor will you be a thief.[/left]\n{31.   
-      A boat you are in is suddenly caught in a[/left]\n     tremendous whirlpool.
-      As the current reaches an[/left]\n     impossible velocity, the little boat
-      begins springing[/left]\n     leaks and starts to sink under the vortex. You
-      can see[/left]\n     no way out that does not promise death, so you:[/left]\na) 
-      Pick up a bucket and begin bailing furiously, hoping[/left]\n     to keep the
-      boat afloat just a few more seconds.[/left]\n b)  Sit back and accept your
-      fate, choosing to die with a[/left]\n     sense of decorum and nobility, not
-      as a commoner who[/left]\n     fears the unknown.[/left]\n c)  Dive into the
-      churning current. You may only be[/left]\n     hastening your own death, but
-      at least you are doing[/left]\n     something.[/left]\n {32.    You're hunting
-      in the King's Hunt, a contest in[/left]\n     which the best hunter will win
-      riches enough to live[/left]\n     comfortably for the rest of his or her life.
-      You track[/left]\n     a white stag many of you had shot at earlier. You are[/left]\n    
-      alone as you examine the stag and recognize the arrow[/left]\n     as one fired
-      from your friend's bow. As you retrieve[/left]\n     the arrow for closer examination
-      you hear your friends[/left]\n     arrive. Do you:[/left]\n a)  Claim to have
-      fired the arrow that hit the stag, thus[/left]\n     gaining the honor for
-      the kill?[/left]\n b)  Show the others the arrow and proclaim your friend the[/left]\n    
-      archer of the day?[/left]\n c)  Suggest dividing the prize, reasoning that
-      although[/left]\n     your friend's arrow brought down the hart, all of you[/left]\n    
-      were instrumental in the tracking and the kill?[/left]\n {33.    One night
-      after Tales and Tallows, you look at the[/left]\n     horde of treats you have
-      collected and find lots of[/left]\n     brandied plums, a treat you particularly
-      dislike. You[/left]\n     know your younger cousin likes them. Do you:[/left]\na) 
-      Give her all your brandied plums?[/left]\n b)  Trade the brandied plums for
-      something she does not[/left]\n     really like but you do?[/left]\n c)  Pretend
-      that they are excellent brandied plums and see[/left]\n     if she will give
-      up something really good in exchange?[/left]\n {34.    Your cousin has given
-      you a very embarrassing[/left]\n     nickname and, even worse, likes to call
-      you it in front[/left]\n     of your friends. You have asked him to stop, but
-      he[/left]\n     finds it very amusing to watch you blush. What do you     do?:[/left]\na) 
-      Make up an even more embarrassing nickname for him and[/left]\n     use it
-      constantly until he learns his lesson.[/left]\n b)  Make up a story that makes
-      your nickname a badge of[/left]\n     honor instead of something humiliating.[/left]\nc) 
-      Beat up your cousin, then tell him that if he ever[/left]\n     calls you that
-      nickname again, you will bloody him[/left]\n     worse than this time.[/left]\n{35.   
-      Othisa, a friend, has been beaten by a boy several[/left]\n     years older
-      than either you or her. She asks for your[/left]\n     help. Are you more inclined
-      to:[/left]\n a)  Gather a bunch of friends together and ambush the boy,[/left]\n    
-      teaching him a lesson about bullying.[/left]\n b)  Tell Othisa to avoid the
-      bully - no reason to make[/left]\n     things worse than they are.[/left]\n
-      c)  Challenge the older boy, knowing that you will[/left]\n     probably take
-      a beating, but confident that if you do[/left]\n     it enough times, he will
-      move on to pick on someone[/left]\n     who is an easier target.[/left]\n{36.   
-      Your parents are having a party for several[/left]\n     relatives. While helping
-      around the house, you see your[/left]\n     cousin slip into a darkened room.
-      Curious, you follow[/left]\n     and discover him slipping a silver candlestick
-      into his[/left]\n     jacket. He is an honorable boy, but you know his family[/left]\n    
-      has suffered some recent financial hardship. He has not[/left]\n     seen you
-      yet. Do you:[/left]\n a)  Clear your throat and tell him to put the candlestick[/left]\n    
-      back, reassuring him that your parents can help him if[/left]\n     his family
-      is in trouble, but he should not resort [/left]\n     to stealing.[/left]\n
-      b)  Close the door behind you and say nothing. Your family[/left]\n     can
-      live without the candlestick, but your cousin's[/left]\n     family obviously
-      cannot.[/left]\nc)  Treat him like any other burglar. Lock him in the room[/left]\n    
-      and call for your father. If he chooses to be merciful[/left]\n     because
-      of your cousin's poverty, that is his decision.[/left]\n     It is your father's
-      candlestick, after all.[/left]\n {37.    While exploring the woods with two
-      other[/left]\n     adventurers, you come across a small, abandoned hut[/left]\n    
-      that seems to have once belonged to a mage. Looking[/left]\n     through the
-      window, you see the remains of a[/left]\n     laboratory, many potions and
-      scrolls still on the[/left]\n     shelves. Geotina, who thinks you a cowardly
-      sort,[/left]\n     suggests breaking into the shack and exploring. Another[/left]\n    
-      fighter named Hunard suggests going to town to find out[/left]\n     more information.
-      You advise:[/left]\n a)  Going into town. They are more familiar with the area[/left]\n    
-      and may have important information about this hut and[/left]\n     the surrounding
+      valuable experience and improve.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733980
+    m_Localized: "30.    Your mother is terribly ill and you have been sent[/left]\n    
+      with a few gold pieces to buy some rare, medicinal[/left]\n     herbs for her.
+      As you reach the door to the[/left]\n     apothecary's, you realize there is
+      a hole in your purse[/left]\n     and all the gold has fallen out. Do you:[/left]\n
+      a)  Enter the store, tell the apothecary your dilemma, and[/left]\n     promise
+      on your honor to pay him back for the herbs[/left]\n     your mother so desperately
+      needs.[/left]\n b)  Attempt to steal the herbs from the apothecary's. You[/left]\n    
+      know the old man who works in the store will not be[/left]\n     able to catch
+      you, and your mother lies sick.[/left]\n c)  Run back home and admit the loss,
+      hoping that your[/left]\n     father will have more gold. You know you'll be[/left]\n    
+      punished, but you will neither be in debt to the[/left]\n     apothecary, nor
+      will you be a thief.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733981
+    m_Localized: "31.    A boat you are in is suddenly caught in a[/left]\n     tremendous
+      whirlpool. As the current reaches an[/left]\n     impossible velocity, the
+      little boat begins springing[/left]\n     leaks and starts to sink under the
+      vortex. You can see[/left]\n     no way out that does not promise death, so
+      you:[/left]\n a)  Pick up a bucket and begin bailing furiously, hoping[/left]\n    
+      to keep the boat afloat just a few more seconds.[/left]\n b)  Sit back and
+      accept your fate, choosing to die with a[/left]\n     sense of decorum and
+      nobility, not as a commoner who[/left]\n     fears the unknown.[/left]\n c) 
+      Dive into the churning current. You may only be[/left]\n     hastening your
+      own death, but at least you are doing[/left]\n     something.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733982
+    m_Localized: "32.    You're hunting in the King's Hunt, a contest in[/left]\n    
+      which the best hunter will win riches enough to live[/left]\n     comfortably
+      for the rest of his or her life. You track[/left]\n     a white stag many of
+      you had shot at earlier. You are[/left]\n     alone as you examine the stag
+      and recognize the arrow[/left]\n     as one fired from your friend's bow. As
+      you retrieve[/left]\n     the arrow for closer examination you hear your friends[/left]\n    
+      arrive. Do you:[/left]\n a)  Claim to have fired the arrow that hit the stag,
+      thus[/left]\n     gaining the honor for the kill?[/left]\n b)  Show the others
+      the arrow and proclaim your friend the[/left]\n     archer of the day?[/left]\n
+      c)  Suggest dividing the prize, reasoning that although[/left]\n     your friend's
+      arrow brought down the hart, all of you[/left]\n     were instrumental in the
+      tracking and the kill?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733983
+    m_Localized: "33.    One night after Tales and Tallows, you look at the[/left]\n    
+      horde of treats you have collected and find lots of[/left]\n     brandied plums,
+      a treat you particularly dislike. You[/left]\n     know your younger cousin
+      likes them. Do you:[/left]\n a)  Give her all your brandied plums?[/left]\n
+      b)  Trade the brandied plums for something she does not[/left]\n     really
+      like but you do?[/left]\n c)  Pretend that they are excellent brandied plums
+      and see[/left]\n     if she will give up something really good in exchange?[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733984
+    m_Localized: "34.    Your cousin has given you a very embarassing[/left]\n    
+      nickname and, even worse, likes to call you it in front[/left]\n     of your
+      friends. You have asked him to stop, but he[/left]\n     finds it very amusing
+      to watch you blush. What do you     do?:[/left]\n a)  Make up an even more
+      embarassing nickname for him and[/left]\n     use it constantly until he learns
+      his lesson.[/left]\n b)  Make up a story that makes your nickname a badge of[/left]\n    
+      honor instead of something humiliating.[/left]\n c)  Beat up your cousin, then
+      tell him that if he ever[/left]\n     calls you that nickname again, you will
+      bloody him[/left]\n     worse than this time.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733985
+    m_Localized: "35.    Othisa, a friend, has been beaten by a boy several[/left]\n    
+      years older than either you or her. She asks for your[/left]\n     help. Are
+      you more inclined to:[/left]\n a)  Gather a bunch of friends together and ambush
+      the boy,[/left]\n     teaching him a lesson about bullying.[/left]\n b)  Tell
+      Othisa to avoid the bully - no reason to make[/left]\n     things worse than
+      they are.[/left]\n c)  Challenge the older boy, knowing that you will[/left]\n    
+      probably take a beating, but confident that if you do[/left]\n     it enough
+      times, he will move on to pick on someone[/left]\n     who is an easier target.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733986
+    m_Localized: "36.    Your parents are having a party for several[/left]\n    
+      relatives. While helping around the house, you see your[/left]\n     cousin
+      slip into a darkened room. Curious, you follow[/left]\n     and discover him
+      slipping a silver candlestick into his[/left]\n     jacket. He is an honorable
+      boy, but you know his family[/left]\n     has suffered some recent financial
+      hardship. He has not[/left]\n     seen you yet. Do you:[/left]\n a)  Clear
+      your throat and tell him to put the candlestick[/left]\n     back, reassuring
+      him that your parents can help him if[/left]\n     his family is in trouble,
+      but he should not resort [/left]\n     to stealing.[/left]\n b)  Close the
+      door behind you and say nothing. Your family[/left]\n     can live without
+      the candlestick, but your cousin's[/left]\n     family obviously cannot.[/left]\nc) 
+      Treat him like any other burgler. Lock him in the room[/left]\n     and call
+      for your father. If he chooses to be merciful[/left]\n     because of your
+      cousin's poverty, that is his decision.[/left]\n     It is your father's candlestick,
+      after all.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733987
+    m_Localized: "37.    While exploring the woods with two other[/left]\n     adventurers,
+      you come across a small, abandoned hut[/left]\n     that seems to have once
+      belonged to a mage. Looking[/left]\n     through the window, you see the remains
+      of a[/left]\n     laboratory, many potions and scrolls still on the[/left]\n    
+      shelves. Geotina, who thinks you a cowardly sort,[/left]\n     suggests breaking
+      into the shack and exploring. Another[/left]\n     fighter named Hunard suggests
+      going to town to find out[/left]\n     more information. You advise:[/left]\n
+      a)  Going into town. They are more familiar with the area[/left]\n     and
+      may have important information about this hut and[/left]\n     the surrounding
       area.[/left]\n b)  Breaking into the shack, but leaving one person on[/left]\n    
       the outside in case something goes wrong. You should[/left]\n     investigate
       new things, not run away from them.[/left]\n c)  Daring Geotina to go in first.
       If there is a trap, she[/left]\n     can trip it, then you and Hunard can go
-      in and explore[/left]\n     at your leisure.[/left]\n {38.    It is a particularly
-      grueling class. Your[/left]\n     Armsmaster has been unreasonably demanding
-      on everyone,[/left]\n     including you. His criticisms border on abuse, and
-      it[/left]\n     seems he has no positive comments to make. He turns to[/left]\n    
-      berate you at the end of class, and over his shoulder,[/left]\n     you see
-      some classmates put an aggressive but[/left]\n     non-poisonous snake in his
-      hand sack. You would:[/left]\n a)  Do nothing. The great Armsmaster needs a
-      dose of[/left]\n     humility and this might be a good way of paying him[/left]\n    
-      back for all the misery he has put you through today.[/left]\n b)  Tell him
-      you saw a snake creep into his hand sack,[/left]\n     but do not tell him
-      what your classmates did. No[/left]\n     reason to get anyone in even further
-      trouble.[/left]\n c)  Immediately tell him what the classmates did. There[/left]\n    
-      is no excuse for treating a seasoned fighter like him[/left]\n     with disrespect,
-      regardless of his treatment to you[/left]\n     that particular day.[/left]\n{39.   
-      Because you expressed interest, your Armsmaster[/left]\n     told you a few
-      hints about recognizing magical[/left]\n     weaponry. Later you are practicing
-      archery with a few[/left]\n     friends. One boy who was never a strong archer
-      has[/left]\n     become something of a sharpshooter. You suddenly[/left]\n    
-      realize that he is using magical arrows. What do you[/left]\n     do?:[/left]\na) 
-      Tell the others about the arrows. In a friendly[/left]\n     archery match,
-      using magical arrows is cheating.[/left]\n b)  Tell your friend you noticed
-      that he was using magical[/left]\n     arrows, and if he doesn't get you some,
-      you will tell[/left]\n     the Armsmaster and the others the reason behind
-      his[/left]\n     improvement.[/left]\n c)  Say nothing. If you have a need
-      for magical arrows[/left]\n     you can always mention something to him later.
-      After[/left]\n     all, magic is not really a cheat, it is a different[/left]\n    
-      skill.[/left]\n {40.    Practicing alone, you develop a new fighting style[/left]\n    
+      in and explore[/left]\n     at your leisure.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733988
+    m_Localized: "38.    It is a particularly grueling class. Your[/left]\n     Armsmaster
+      has been unreasonably demanding on everyone,[/left]\n     including you. His
+      criticisms border on abuse, and it[/left]\n     seems he has no positive comments
+      to make. He turns to[/left]\n     berate you at the end of class, and over
+      his shoulder,[/left]\n     you see some classmates put an aggressive but[/left]\n    
+      non-poisonous snake in his hand sack. You would:[/left]\n a)  Do nothing. The
+      great Armsmaster needs a dose of[/left]\n     humility and this might be a
+      good way of paying him[/left]\n     back for all the misery he has put you
+      through today.[/left]\n b)  Tell him you saw a snake creep into his hand sack,[/left]\n    
+      but do not tell him what your classmates did. No[/left]\n     reason to get
+      anyone in even further trouble.[/left]\n c)  Immediately tell him what the
+      classmates did. There[/left]\n     is no excuse for treating a seasoned fighter
+      like him[/left]\n     with disrespect, regardless of his treatment to you[/left]\n    
+      that particular day.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733989
+    m_Localized: "39.    Because you expressed interest, your Armsmaster[/left]\n    
+      told you a few hints about recognizing magical[/left]\n     weaponry. Later
+      you are practicing archery with a few[/left]\n     friends. One boy who was
+      never a strong archer has[/left]\n     become something of a sharpshooter.
+      You suddenly[/left]\n     realize that he is using magical arrows. What do
+      you[/left]\n     do?:[/left]\n a)  Tell the others about the arrows. In a friendly[/left]\n    
+      archery match, using magical arrows is cheating.[/left]\n b)  Tell your friend
+      you noticed that he was using magical[/left]\n     arrows, and if he doesn't
+      get you some, you will tell[/left]\n     the Armsmaster and the others the
+      reason behind his[/left]\n     improvement.[/left]\n c)  Say nothing. If you
+      have a need for magical arrows[/left]\n     you can always mention something
+      to him later. After[/left]\n     all, magic is not really a cheat, it is a
+      different[/left]\n     skill.[/left]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45335265940733990
+    m_Localized: "40.    Practicing alone, you develop a new fighting style[/left]\n    
       you are very excited about. When you mention it to your[/left]\n     Armsmaster,
-      he tells you it would never work in[/left]\n     practical combat. Do you:[/left]\na) 
-      Use the new style in the middle of a class spar.[/left]\n     When it works,
+      he tells you it would never work in[/left]\n     practical combat. Do you:[/left]\n
+      a)  Use the new style in the middle of a class spar.[/left]\n     When it works,
       he will be forced to admit its[/left]\n     practicality or give a reason for
       not accepting it.[/left]\n b)  Keep asking him questions about it, focusing
       on[/left]\n     details of the form to find his objection. Eventually[/left]\n    
       he will have to give a more specific criticism.[/left]\n c)  Accept his word
       without question. Your Armsmaster has[/left]\n     been fighting since your
       grandfather's day. He knows a[/left]\n     flawed style when he sees it, and
-      it is better not to[/left]\n     waste his or your time asking why.[/left]\n{[/end]"
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1407
-    m_Localized: Reserved to 9912 for Bruce and Co. (do not translate)[/end]
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1408
-    m_Localized: Dummy entry. Must always [/end]
+      it is better not to[/left]\n     waste his or your time asking why.[/left]"
     m_Metadata:
       m_Items: []
   references:
