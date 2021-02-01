@@ -1112,7 +1112,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Check if location with MapSummary summary is already discovered
         protected virtual bool checkLocationDiscovered(ContentReader.MapSummary summary)
         {
-            // Check location MapTabe.Discovered in world replacement data then cached MAPS.BSA data
+            // Check location MapTableData.Discovered flag in world replacement data then cached MAPS.BSA data
             bool discovered = false;
             DFLocation location;
             if (WorldDataReplacement.GetDFLocationReplacementData(summary.RegionIndex, summary.MapIndex, out location))
