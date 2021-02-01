@@ -251,6 +251,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { horizontalScrollMode = value; }
         }
 
+        /// <summary>
+        /// List will accept keyboard input even when mouse not over control.
+        /// Do not set this when multiple lists are used within same UI.
+        /// </summary>
+        public bool AlwaysAcceptKeyboardInput { get; set; }
+
         #endregion
 
         #region Constructors
@@ -266,7 +272,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
-            if (MouseOverComponent)
+            if (MouseOverComponent || AlwaysAcceptKeyboardInput)
             {
                 if (DaggerfallUI.Instance.LastKeyCode == KeyCode.UpArrow)
                     SelectPrevious();

@@ -351,6 +351,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 spellsListBox.OnUseSelectedItem += SpellsListBox_OnUseSelectedItem;
             spellsListBox.OnMouseScrollDown += SpellsListBox_OnMouseScroll;
             spellsListBox.OnMouseScrollUp += SpellsListBox_OnMouseScroll;
+            spellsListBox.AlwaysAcceptKeyboardInput = true;
             mainPanel.Components.Add(spellsListBox);
 
             // Spells list scroller
