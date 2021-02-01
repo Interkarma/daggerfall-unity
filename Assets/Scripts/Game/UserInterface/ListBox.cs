@@ -253,7 +253,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         /// <summary>
         /// List will accept keyboard input even when mouse not over control.
-        /// Do not set this when multiple lists are used within same UI.
+        /// Do not set this when multiple lists are used within same UI, or any other control where inputs might overlap.
         /// </summary>
         public bool AlwaysAcceptKeyboardInput { get; set; }
 
