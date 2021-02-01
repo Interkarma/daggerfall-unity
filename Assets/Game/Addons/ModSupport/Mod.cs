@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 using DaggerfallWorkshop.Utility;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
@@ -41,8 +43,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 #endif
         private string[] assetNames;
         private List<Source> sources;                               //any source code found in asset bundle
-        private Table textdatabase;
-        private bool textdatabaseLoaded;
+        private LocalizationDatabase localizationDatabase;
+        private bool localizationDatabaseLoaded;
 
         #endregion
 
@@ -512,7 +514,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <returns>Localized string.</returns>
         public string Localize(string key)
         {
-            return TryLocalize(key) ?? string.Format("{0} - MissingText", Title);
+            return TryLocalize(key) ?? string.Format(LocalizationSettings.StringDatabase.NoTranslationFoundFormat, key);
         }
 
         /// <summary>
@@ -587,16 +589,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return TextManager.Instance.GetText(databaseName, key);
 
             // Get fallback table from mod
-            if (!textdatabaseLoaded)
+            if (!localizationDatabaseLoaded)
             {
-                string tableContent = ReadText("textdatabase.txt");
-                if (tableContent != null)
-                    textdatabase = new Table(tableContent);
-                textdatabaseLoaded = true;
+                DiscoverLocalizationDatabase();
+                localizationDatabaseLoaded = true;
             }
 
-            return textdatabase != null && textdatabase.HasValue(key) ?
-                textdatabase.GetValue("text", key) : null;
+            if (localizationDatabase != null && localizationDatabase.TryGetValue(key, out string value))
+                return value;
+
+            return null;
         }
 
         /// <summary>
@@ -700,27 +702,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
         }
 
-        /// <summary>
-        /// Gets content of a text file.
-        /// </summary>
-        /// <param name="name">Name of text file.</param>
-        /// <returns>Content of text file or null.</returns>
-        private string ReadText(string name)
-        {
-#if UNITY_EDITOR
-            if (IsVirtual)
-            {
-                string path = ModInfo.Files.FirstOrDefault(CompareNameWithPath(name));
-                return path != null ? File.ReadAllText(path) : null;
-            }
-#endif
-
-            if (AssetBundle.Contains(name))
-                return GetAsset<TextAsset>(name).ToString();
-
-            return null;
-        }
-
 #if UNITY_EDITOR
         /// <summary>
         /// Load an asset from its name. The asset path must be defined in the manifest file.
@@ -776,6 +757,78 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             };
         }
 #endif
+
+        /// <summary>
+        /// Seeks text databases named textdatabase.txt, [id]textdatabase.txt or [id(GUID)]textdatabase.txt.
+        /// </summary>
+        private void DiscoverLocalizationDatabase()
+        {
+            string baseName = "textdatabase.txt";
+            if (!HasAsset(baseName))
+            {
+                localizationDatabase = null;
+                return;
+            }
+
+            var database = new LocalizationDatabase((this, baseName));
+
+            Locale locale = LocalizationSettings.SelectedLocale;
+            if (locale != null)
+            {
+                string localeName = $"[{locale.Identifier.Code}]{baseName}";
+                string externName = null;
+                if (GUID != null && !GUID.Equals("invalid", StringComparison.Ordinal))
+                    externName = $"[{locale.Identifier.Code}({GUID})]{baseName}";
+
+                foreach (Mod mod in ModManager.Instance.Mods)
+                {
+                    if (mod == this && HasAsset(localeName))
+                        database = new LocalizationDatabase((mod, localeName), database);
+
+                    if (externName != null && mod.HasAsset(externName))
+                        database = new LocalizationDatabase((mod, externName), database);
+                }
+            }
+
+            localizationDatabase = database;
+        }
+
+        private class LocalizationDatabase
+        {
+            private readonly (Mod Mod, string AssetName) provider;
+            private readonly LocalizationDatabase fallback;
+            private Table table;
+
+            internal LocalizationDatabase((Mod Mod, string AssetName) provider, LocalizationDatabase fallback = null)
+            {
+                this.provider = provider;
+                this.fallback = fallback;
+            }
+
+            internal bool TryGetValue(string key, out string value)
+            {
+                if (table == null)
+                {
+                    var textAsset = provider.Mod.GetAsset<TextAsset>(provider.AssetName);
+                    if (!textAsset)
+                        throw new InvalidOperationException($"Failed to load text database {provider}.");
+
+                    table = new Table(textAsset.text);
+                }
+
+                if (table.HasValue(key))
+                {
+                    value = table.GetValue("text", key);
+                    return true;
+                }
+
+                if (fallback != null)
+                    return fallback.TryGetValue(key, out value);
+
+                value = null;
+                return false;
+            }
+        }
 
         #endregion
 
