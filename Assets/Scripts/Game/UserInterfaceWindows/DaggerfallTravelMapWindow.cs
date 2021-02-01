@@ -1112,13 +1112,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Check if location with MapSummary summary is already discovered
         protected virtual bool checkLocationDiscovered(ContentReader.MapSummary summary)
         {
-            if (GameManager.Instance.PlayerGPS.HasDiscoveredLocation(summary.ID) ||
-                summary.Discovered ||
-                revealUndiscoveredLocations == true)
-            {
-                return true;
-            }
-            return false;
+            // Check location MapTabe.Discovered in world replacement data then cached MAPS.BSA data
+            bool discovered = false;
+            DFLocation location;
+            if (WorldDataReplacement.GetDFLocationReplacementData(summary.RegionIndex, summary.MapIndex, out location))
+                discovered = location.MapTableData.Discovered;
+            else
+                discovered = summary.Discovered;
+
+            return GameManager.Instance.PlayerGPS.HasDiscoveredLocation(summary.ID) || discovered || revealUndiscoveredLocations == true;
         }
 
         // Check if place is discovered, so it can be found on map.
