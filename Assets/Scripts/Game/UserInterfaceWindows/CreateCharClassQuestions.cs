@@ -220,7 +220,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 StringBuilder question = new StringBuilder();
                 for (int i = 0; i < tokens.Length; i++)
                 {
-                    string[] tokenText = Regex.Split(tokens[i].text, @"\d+.");
+                    string[] tokenText = Regex.Split(tokens[i].text, @"\d+[.]");
                     if (tokenText.Length > 1) // If true the line contains the expression, which means it is the start of a question.
                         question.AppendLine(tokenText[1]);
                     else
