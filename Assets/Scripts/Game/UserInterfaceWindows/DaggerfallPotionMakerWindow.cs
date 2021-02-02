@@ -124,6 +124,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh();
         }
 
+        public override void OnPop()
+        {
+            ingredients.Clear();
+            ingredientsList.Clear();
+            cauldron.Clear();
+            recipes.Clear();
+        }
+
         protected virtual void Refresh()
         {
             // Update labels
