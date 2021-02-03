@@ -720,6 +720,10 @@ namespace DaggerfallConnect.Arena2
                     blocks[block].DFBlock.RmbBlock.SubRecords[i] = buildingReplacementData.RmbSubRecord;
                     blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].FactionId = buildingReplacementData.FactionId;
                     blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].BuildingType = (DFLocation.BuildingTypes)buildingReplacementData.BuildingType;
+                    if (buildingReplacementData.Quality > 0)
+                        blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].Quality = buildingReplacementData.Quality;
+                    if (buildingReplacementData.NameSeed > 0)
+                        blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].NameSeed = buildingReplacementData.NameSeed;
                     if (buildingReplacementData.AutoMapData != null && buildingReplacementData.AutoMapData.Length == 64 * 64)
                         blocks[block].DFBlock.RmbBlock.FldHeader.AutoMapData = buildingReplacementData.AutoMapData;
                 }
