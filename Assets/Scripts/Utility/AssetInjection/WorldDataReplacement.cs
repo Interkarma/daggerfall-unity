@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public ushort FactionId;
         public int BuildingType;
         public byte Quality;
+        public ushort NameSeed;
         public DFBlock.RmbSubRecord RmbSubRecord;
         public byte[] AutoMapData;      // for coloured map (optional)
     }
