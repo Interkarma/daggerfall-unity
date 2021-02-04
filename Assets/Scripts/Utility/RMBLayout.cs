@@ -569,7 +569,7 @@ namespace DaggerfallWorkshop.Utility
                                     item.used = false;
                                     building.FactionId = buildingReplacementData.FactionId;
                                     building.Quality = buildingReplacementData.Quality;
-                                    building.NameSeed = buildingReplacementData.NameSeed;
+                                    building.NameSeed = (ushort)(buildingReplacementData.NameSeed + location.LocationIndex);    // Vary name seed by location
                                 }
                                 // Always override type
                                 building.BuildingType = (DFLocation.BuildingTypes)buildingReplacementData.BuildingType;
