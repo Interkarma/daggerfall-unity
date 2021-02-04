@@ -2264,16 +2264,20 @@ namespace DaggerfallWorkshop.Game
                     foreach (Transform currentTransformMesh in currentTransformModel.transform)
                     {
                         AutomapGeometryModelState model = new AutomapGeometryModelState();
-                        MeshRenderer meshRenderer = currentTransformMesh.GetComponent<MeshRenderer>();
-                        if ((meshRenderer) && (meshRenderer.enabled))
+                        MeshRenderer[] meshRenderers = currentTransformMesh.GetComponentsInChildren<MeshRenderer>();
+                        for (int i = 0; i < meshRenderers.Length; i++)
                         {
-                            model.discovered = true;
-                            model.visitedInThisRun = !meshRenderer.materials[0].IsKeywordEnabled("RENDER_IN_GRAYSCALE"); // all materials of model have the same setting - so just material[0] is tested
-                        }
-                        else
-                        {
-                            model.discovered = false;
-                            model.visitedInThisRun = false;
+                            if ((meshRenderers[i]) && (meshRenderers[i].enabled))
+                            {
+                                model.discovered = true;
+                                model.visitedInThisRun = !meshRenderers[i].materials[0].IsKeywordEnabled("RENDER_IN_GRAYSCALE"); // all materials of model have the same setting - so just material[0] is tested
+                                break;
+                            }
+                            else
+                            {
+                                model.discovered = false;
+                                model.visitedInThisRun = false;
+                            }
                         }
                         models.Add(model);
                     }
