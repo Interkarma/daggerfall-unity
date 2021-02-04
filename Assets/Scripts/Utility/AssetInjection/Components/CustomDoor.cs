@@ -26,21 +26,54 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     {
         private StaticDoor? staticDoor;
 
+        [Tooltip("Number of attached Box Colliders that will be used as doors.")]
+        public int NumberOfTriggers = 1;
+        
         [Tooltip("Type of door that is being defined. None means building textures are used to determine this.")]
         public DoorTypes DoorType = DoorTypes.None;
         
         /// <summary>
         /// The triggers for the doors.
         /// </summary>
-        [Tooltip("The triggers for the doors.")]
-        public BoxCollider DoorTrigger;
+        [HideInInspector]
+        public BoxCollider[] DoorTriggers;
 
         private void Awake()
         {
-            if (!DoorTrigger)
-                DoorTrigger = GetComponent<BoxCollider>();
+            if (DoorTriggers.Length < 1)
+                DoorTriggers = GetComponents<BoxCollider>();
 
-            DoorTrigger.isTrigger = true;
+            string objectName;
+            if (DoorTriggers.Length < 1)
+            {
+                if (name == "default")
+                    objectName = transform.parent.name;
+                else
+                    objectName = name;
+                Debug.LogErrorFormat("No Box Colliders are attached to {0}. Did you forget to add them?", objectName);
+                return;
+            }
+            if (NumberOfTriggers < 1)
+            {
+                if (name == "default")
+                    objectName = transform.parent.name;
+                else
+                    objectName = name;
+                Debug.LogErrorFormat("Number of Triggers for {0} was less than 1. Did you put in the wrong number?", objectName);
+                return;
+            }
+            if (NumberOfTriggers > DoorTriggers.Length)
+            {
+                if (name == "default")
+                    objectName = transform.parent.name;
+                else
+                    objectName = name;
+                Debug.LogErrorFormat("Number of Triggers for {0} was greater than the number of attached Box Colliders. Are you missing Box Colliders? Did you put in the wrong number?", objectName);
+                return;
+            }
+
+            for (int i = 0; i < NumberOfTriggers; i++)
+                DoorTriggers[i].isTrigger = true;
         }
 
         /// <summary>
@@ -59,8 +92,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             CustomDoor[] allCustomDoors = building.GetComponentsInChildren<CustomDoor>();
             for (int i = 0; i < allCustomDoors.Length; i++)
             {
-                if ((allCustomDoors[i].DoorType != null) && (allCustomDoors[i].DoorType != DoorTypes.None))
-                    staticDoor.DoorType = allCustomDoors[i].DoorType;
+                if (allCustomDoors[i].DoorType != DoorTypes.None)
+                    staticDoor.doorType = allCustomDoors[i].DoorType;
                 allCustomDoors[i].staticDoor = staticDoor;
             }
         }
@@ -75,23 +108,30 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// Modders should ensure that the CustomDoor component is added to the right gameobject.
         /// This allows to avoid unnecessary seeks on parent/children, which are potentially performance heavy.
         /// </remarks>
-        public static bool HasHit(RaycastHit raycastHit, out StaticDoor door)
+        public static bool HasHit(RaycastHit raycastHit, out StaticDoor door, out bool noCustomDoorFound)
         {
             var doors = raycastHit.transform.GetComponents<CustomDoor>();
             for (int i = 0; i < doors.Length; i++)
             {
-                if (doors[i].DoorTrigger.bounds.Contains(raycastHit.point))
+                for (int j = 0; j < doors[i].NumberOfTriggers; j++)
                 {
-                    if (doors[i].staticDoor.HasValue)
+                    if (doors[i].DoorTriggers[j].bounds.Contains(raycastHit.point))
                     {
-                        door = doors[i].staticDoor.Value;
-                        return true;
-                    }
+                        if (doors[i].staticDoor.HasValue)
+                        {
+                            door = doors[i].staticDoor.Value;
+                            noCustomDoorFound = false;
+                            return true;
+                        }
 
-                    Debug.LogErrorFormat("Static door for {0} is not set.", raycastHit.transform.name);
+                        Debug.LogErrorFormat("Static door for {0} is not set.", raycastHit.transform.name);
+                    }
                 }
             }
 
+            noCustomDoorFound = false;
+            if (doors.Length == 0)
+                noCustomDoorFound = true;
             door = new StaticDoor();
             return false;
         }

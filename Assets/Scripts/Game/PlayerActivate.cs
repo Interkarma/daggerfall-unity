@@ -469,8 +469,9 @@ namespace DaggerfallWorkshop.Game
             int buildingLockValue,
             Transform doorOwner)
         {
+            bool noCustomDoorFound;
             StaticDoor door;
-            if (CustomDoor.HasHit(hit, out door) || doors.HasHit(hit.point, out door))
+            if (CustomDoor.HasHit(hit, out door, out noCustomDoorFound) || (doors && noCustomDoorFound && doors.HasHit(hit.point, out door)))
             {
                 // Check if close enough to activate
                 if (hit.distance > DoorActivationDistance)
@@ -1003,7 +1004,8 @@ namespace DaggerfallWorkshop.Game
             Transform doorOwner;
             DaggerfallStaticDoors doors = GetDoors(hit.transform, out doorOwner);
             StaticDoor door;
-            if (doors && doors.HasHit(hit.point, out door) || CustomDoor.HasHit(hit, out door))
+            bool noCustomDoorFound;
+            if (CustomDoor.HasHit(hit, out door, out noCustomDoorFound) || (doors && noCustomDoorFound && doors.HasHit(hit.point, out door)))
             {
                 // Discover building - this is needed to check lock level and transition to interior
                 GameManager.Instance.PlayerGPS.DiscoverBuilding(door.buildingKey);
