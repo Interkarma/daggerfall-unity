@@ -1010,9 +1010,9 @@ namespace DaggerfallWorkshop
                 go.transform.position = modelPosition;
 
                 // Get action door script and assign loadID
-                DaggerfallActionDoor actionDoor = go.GetComponent<DaggerfallActionDoor>();
-                if (actionDoor)
-                    actionDoor.LoadID = loadID;
+                DaggerfallActionDoor[] allActionDoors = go.GetComponentsInChildren<DaggerfallActionDoor>();
+                if (allActionDoors[0])
+                    allActionDoors[0].LoadID = loadID;
                 else
                     Debug.LogError($"Failed to get DaggerfallActionDoor on {modelId}. Make sure is added to door prefab.");
 

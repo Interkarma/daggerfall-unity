@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.Serialization
     {
         #region Fields
 
-        DaggerfallActionDoor actionDoor;
+        DaggerfallActionDoor[] allActionDoors;
 
         #endregion
 
@@ -32,8 +32,8 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         void Awake()
         {
-            actionDoor = GetComponent<DaggerfallActionDoor>();
-            if (!actionDoor)
+            allActionDoors = GetComponentsInChildren<DaggerfallActionDoor>();
+            if (!allActionDoors[0])
                 throw new Exception("DaggerfallActionDoor not found.");
         }
 
@@ -42,10 +42,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (LoadID != 0)
             {
                 // Using same hack ID fix as SerializableEnemy
-                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && actionDoor)
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon && allActionDoors[0])
                 {
-                    while (SaveLoadManager.StateManager.ContainsActionDoor(actionDoor.LoadID))
-                        actionDoor.LoadID++;
+                    while (SaveLoadManager.StateManager.ContainsActionDoor(allActionDoors[0].LoadID))
+                        allActionDoors[0].LoadID++;
                 }
 
                 SaveLoadManager.RegisterSerializableGameObject(this);
@@ -67,17 +67,17 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         public object GetSaveData()
         {
-            if (!actionDoor)
+            if (!allActionDoors[0])
                 return null;
 
             ActionDoorData_v1 data = new ActionDoorData_v1();
             data.loadID = LoadID;
-            data.currentLockValue = actionDoor.CurrentLockValue;
+            data.currentLockValue = allActionDoors[0].CurrentLockValue;
             data.currentRotation = transform.rotation;
-            data.currentState = actionDoor.CurrentState;
-            data.lockpickFailedSkillLevel = actionDoor.FailedSkillLevel;
+            data.currentState = allActionDoors[0].CurrentState;
+            data.lockpickFailedSkillLevel = allActionDoors[0].FailedSkillLevel;
 
-            if (actionDoor.IsMoving)
+            if (allActionDoors[0].IsMoving)
             {
                 __ExternalAssets.iTween tween = GetComponent<__ExternalAssets.iTween>();
                 if (tween)
@@ -94,11 +94,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             ActionDoorData_v1 data = (ActionDoorData_v1)dataIn;
             if (data.loadID == LoadID)
             {
-                actionDoor.CurrentLockValue = data.currentLockValue;
-                actionDoor.transform.rotation = data.currentRotation;
-                actionDoor.CurrentState = data.currentState;
-                actionDoor.RestartTween(1 - data.actionPercentage);
-                actionDoor.FailedSkillLevel = data.lockpickFailedSkillLevel;
+                allActionDoors[0].CurrentLockValue = data.currentLockValue;
+                allActionDoors[0].transform.rotation = data.currentRotation;
+                allActionDoors[0].CurrentState = data.currentState;
+                allActionDoors[0].RestartTween(1 - data.actionPercentage);
+                allActionDoors[0].FailedSkillLevel = data.lockpickFailedSkillLevel;
             }
         }
 
@@ -108,12 +108,12 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         bool HasChanged()
         {
-            if (!actionDoor)
+            if (!allActionDoors[0])
                 return false;
 
             // Save when door not closed or lock value has changed
             // Door is otherwise in starting closed position with initial lock value
-            if (actionDoor.CurrentState != ActionState.Start || actionDoor.CurrentLockValue != actionDoor.StartingLockValue)
+            if (allActionDoors[0].CurrentState != ActionState.Start || allActionDoors[0].CurrentLockValue != allActionDoors[0].StartingLockValue)
                 return true;
 
             return false;
@@ -121,10 +121,10 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         ulong GetLoadID()
         {
-            if (!actionDoor)
+            if (!allActionDoors[0])
                 return 0;
 
-            return actionDoor.LoadID;
+            return allActionDoors[0].LoadID;
         }
 
         #endregion
