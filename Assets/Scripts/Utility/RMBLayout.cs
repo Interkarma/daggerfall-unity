@@ -153,20 +153,23 @@ namespace DaggerfallWorkshop.Utility
             // Add models and static props
             GameObject modelsNode = new GameObject("Models");
             modelsNode.transform.parent = go.transform;
-            AddModels(dfUnity, layoutX, layoutY, ref blockData, out modelDoors, out modelBuildings, combiner, modelsNode.transform);
+            AddModels(dfUnity, layoutX, layoutY, ref blockData, out modelDoors, out modelBuildings, out bool dontCreateStaticDoors, combiner, modelsNode.transform);
             AddProps(dfUnity, ref blockData, out propDoors, combiner, modelsNode.transform);
 
             // Combine list of doors found in models and props
             List<StaticDoor> allDoors = new List<StaticDoor>();
-            if (modelDoors.Count > 0) allDoors.AddRange(modelDoors);
-            if (propDoors.Count > 0) allDoors.AddRange(propDoors);
-
-            // Assign building key to each door
-            for (int i = 0; i < allDoors.Count; i++)
+            if (dontCreateStaticDoors != true)
             {
-                StaticDoor door = allDoors[i];
-                door.buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)door.recordIndex);
-                allDoors[i] = door;
+                if (modelDoors.Count > 0) allDoors.AddRange(modelDoors);
+                if (propDoors.Count > 0) allDoors.AddRange(propDoors);
+
+                // Assign building key to each door
+                for (int i = 0; i < allDoors.Count; i++)
+                {
+                    StaticDoor door = allDoors[i];
+                    door.buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)door.recordIndex);
+                    allDoors[i] = door;
+                }
             }
 
             // Assign building key to each building
@@ -710,11 +713,13 @@ namespace DaggerfallWorkshop.Utility
             ref DFBlock blockData,
             out List<StaticDoor> doorsOut,
             out List<StaticBuilding> buildingsOut,
+            out bool dontCreateStaticDoors,
             ModelCombiner combiner = null,
             Transform parent = null)
         {
             doorsOut = new List<StaticDoor>();
             buildingsOut = new List<StaticBuilding>();
+            dontCreateStaticDoors = false;
 
             // Iterate through all subrecords
             int recordCount = 0;
@@ -771,7 +776,7 @@ namespace DaggerfallWorkshop.Utility
                     {
                         // Find doors
                         if (staticDoors != null && staticDoors.Length > 0)
-                            CustomDoor.InitDoors(go, staticDoors, buildingKey);
+                            CustomDoor.InitDoors(go, staticDoors, buildingKey, out dontCreateStaticDoors);
 
                         continue;
                     }
