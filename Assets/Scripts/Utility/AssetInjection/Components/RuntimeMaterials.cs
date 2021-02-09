@@ -123,11 +123,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (materials != null)
                     Materials = materials;
                 UseDungeonTextureTable = true;
-                ApplyMaterials(true, dungeonTextureTable);
+//                ApplyMaterials(true, dungeonTextureTable);
             }
         }
 
-        private void ApplyMaterials(bool force, int[] dungeonTextureTable = null)
+        private void ApplyMaterials(bool force, DaggerfallDungeon daggerfallDungeon = null)
         {
             if (Materials == null || Materials.Length == 0)
                 return;
@@ -142,8 +142,35 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
 
                 DFLocation.ClimateBaseType climateBaseType = GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType;
-                ClimateBases climate = ClimateSwaps.FromAPIClimateBase(climateBaseType);
-                ClimateSeason season = DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter ? ClimateSeason.Winter : ClimateSeason.Summer;
+                int[] dungeonTextureTable = null;
+                ClimateBases climate;
+                ClimateSeason season;
+                if (daggerfallDungeon != null)
+                {
+                    // This model is inside a dungeon
+                    dungeonTextureTable = daggerfallDungeon.DungeonTextureTable;
+                    int randomDungeonTextures = DaggerfallUnity.Settings.RandomDungeonTextures;
+                    if ((randomDungeonTextures == 2) || (randomDungeonTextures == 4) || 
+                        ((!DaggerfallDungeon.IsMainStoryDungeon(daggerfallDungeon.Summary.ID)) && 
+                        (randomDungeonTextures == 1 || randomDungeonTextures == 3)))
+                    {
+                        // Player either wants climate variations applied to all dungeons or to non-Main Quest dungeons, with this model not inside one.
+                        climate = ClimateSwaps.FromAPIClimateBase(climateBaseType);
+                        season = DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter ? ClimateSeason.Winter : ClimateSeason.Summer;
+                    }
+                    else
+                    {
+                        // Model is either in Main Quest dungeon or DungeonTextureTable is set to "Classic"
+                        climate = ClimateBases.Desert;
+                        season = ClimateSeason.Summer;
+                    }
+                }
+                else
+                {
+                    // This model is outside a dungeon
+                    climate = ClimateSwaps.FromAPIClimateBase(climateBaseType);
+                    season = DaggerfallUnity.Instance.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter ? ClimateSeason.Winter : ClimateSeason.Summer;
+                }
 
                 Material[] materials = meshRenderer.sharedMaterials;
                 for (int i = 0; i < Materials.Length; i++)
@@ -213,7 +240,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 DaggerfallDungeon.OnSetDungeon -= DaggerfallDungeon_OnSetDungeon;
                 subscribedToOnSetDungeon = false;
-                ApplyMaterials(true, daggerfallDungeon.DungeonTextureTable);
+                ApplyMaterials(true, daggerfallDungeon);
             }
         }
     }
