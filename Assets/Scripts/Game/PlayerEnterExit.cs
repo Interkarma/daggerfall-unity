@@ -887,9 +887,10 @@ namespace DaggerfallWorkshop.Game
             RaiseOnPreTransitionEvent(TransitionType.ToDungeonInterior, door);
 
             // Layout dungeon
-            GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform);
+            GameObject newDungeon;
+            dungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform, out newDungeon);
+            dungeon.SetDungeon(location);
             newDungeon.hideFlags = defaultHideFlags;
-            dungeon = newDungeon.GetComponent<DaggerfallDungeon>();
 
             // Find start marker to position player
             if (!dungeon.StartMarker)
@@ -947,9 +948,10 @@ namespace DaggerfallWorkshop.Game
             RaiseOnPreTransitionEvent(TransitionType.ToDungeonInterior);
 
             // Layout dungeon
-            GameObject newDungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform, importEnemies);
+            GameObject newDungeon;
+            dungeon = GameObjectHelper.CreateDaggerfallDungeonGameObject(location, DungeonParent.transform, out newDungeon);
+            dungeon.SetDungeon(location, importEnemies);
             newDungeon.hideFlags = defaultHideFlags;
-            dungeon = newDungeon.GetComponent<DaggerfallDungeon>();
 
             GameObject marker = null;
             if (preferEnterMarker && dungeon.EnterMarker != null)

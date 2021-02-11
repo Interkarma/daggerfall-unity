@@ -1338,18 +1338,24 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
-        public static GameObject CreateDaggerfallDungeonGameObject(string multiName, Transform parent)
+        public static GameObject CreateDaggerfallDungeonGameObject(string multiName, Transform parent, bool importEnemies = true)
         {
             // Get dungeon
+            DaggerfallDungeon daggerfallDungeon = null;
             DFLocation location;
             if (!FindMultiNameLocation(multiName, out location))
                 return null;
+            
+            GameObject daggerfallDungeonObject;
+            daggerfallDungeon = CreateDaggerfallDungeonGameObject(location, parent, out daggerfallDungeonObject);
+            daggerfallDungeon.SetDungeon(location, importEnemies);
 
-            return CreateDaggerfallDungeonGameObject(location, parent);
+            return daggerfallDungeonObject;
         }
 
-        public static GameObject CreateDaggerfallDungeonGameObject(DFLocation location, Transform parent, bool importEnemies = true)
+        public static DaggerfallDungeon CreateDaggerfallDungeonGameObject(DFLocation location, Transform parent, out GameObject go)
         {
+            go = null;
             if (!location.HasDungeon)
             {
                 string multiName = string.Format("{0}/{1}", location.RegionName, location.Name);
@@ -1357,12 +1363,12 @@ namespace DaggerfallWorkshop.Utility
                 return null;
             }
 
-            GameObject go = new GameObject(DaggerfallDungeon.GetSceneName(location));
-            if (parent) go.transform.parent = parent;
-            DaggerfallDungeon c = go.AddComponent<DaggerfallDungeon>();
-            c.SetDungeon(location, importEnemies);
+            go = new GameObject(DaggerfallDungeon.GetSceneName(location));
+            if (parent)
+                go.transform.parent = parent;
+            DaggerfallDungeon daggerfallDungeon = go.AddComponent<DaggerfallDungeon>();
 
-            return go;
+            return daggerfallDungeon;
         }
 
         public static GameObject CreateDaggerfallTerrainGameObject(Transform parent)
