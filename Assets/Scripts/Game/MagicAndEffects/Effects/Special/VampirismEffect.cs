@@ -243,7 +243,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     // Select a quest at random from appropriate pool
                     Quest offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(
                         FactionFile.GuildGroups.Vampires,
-                        MembershipStatus.Nonmember,
+                        MembershipStatus.Member,
                         factionId,
                         reputation,
                         GameManager.Instance.PlayerEntity.Level);
