@@ -136,21 +136,39 @@ namespace DaggerfallConnect.Arena2
             BinaryReader reader = bookFile.GetReader();
 
             header = new BookHeader();
-            header.Title = FileProxy.ReadCStringSkip(reader, 0, 64);
-            header.Author = FileProxy.ReadCStringSkip(reader, 0, 64);
-            header.IsNaughty = (FileProxy.ReadCStringSkip(reader, 0, 8) == naughty);
-            header.NullValues = reader.ReadBytes(88);
-            header.Price = reader.ReadUInt32();
-            header.Unknown1 = reader.ReadUInt16();
-            header.Unknown2 = reader.ReadUInt16();
-            header.Unknown3 = reader.ReadUInt16();
-            header.PageCount = reader.ReadUInt16();
+            try
+            {
+                header.Title = FileProxy.ReadCStringSkip(reader, 0, 64);
+                header.Author = FileProxy.ReadCStringSkip(reader, 0, 64);
+                header.IsNaughty = (FileProxy.ReadCStringSkip(reader, 0, 8) == naughty);
+                header.NullValues = reader.ReadBytes(88);
+                header.Price = reader.ReadUInt32();
+                header.Unknown1 = reader.ReadUInt16();
+                header.Unknown2 = reader.ReadUInt16();
+                header.Unknown3 = reader.ReadUInt16();
+                header.PageCount = reader.ReadUInt16();
+            }
+            catch (EndOfStreamException e)
+            {
+                if (header.Title != null)
+                    Debug.LogErrorFormat($"EndOfStreamException encountered for book {header.Title}.\n{e}");
+                else
+                    Debug.LogErrorFormat($"EndOfStreamException encountered for last book whose title couldn't be retrieved.\n{e}");
+            }
             header.PageOffsets = new UInt32[header.PageCount];
             for (int i = 0; i < header.PageCount; i++)
             {
-                header.PageOffsets[i] = reader.ReadUInt32();
+                try
+                {
+                    header.PageOffsets[i] = reader.ReadUInt32();
+                }
+                catch (EndOfStreamException e)
+                {
+                    Debug.LogErrorFormat($"EndOfStreamException encountered for book {header.Title} at position {i} of {header.PageCount}.\n{e}");
+                    break;
+                }
             }
-            
+
             if (randomPrice)
             {
                 // Overwrite price field using random seeded with first 4 bytes.
