@@ -366,8 +366,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 ForegroundAnimationDelay = magicAnimationDelay
             };
             NativePanel.Components.Add(localItemListScroller);
-            localItemListScroller.OnItemClick += LocalItemListScroller_OnItemClick;
+            localItemListScroller.OnItemClick += LocalItemListScroller_OnItemLeftClick;
             localItemListScroller.OnItemRightClick += LocalItemListScroller_OnItemRightClick;
+            localItemListScroller.OnItemMiddleClick += LocalItemListScroller_OnItemMiddleClick;
             if (itemInfoPanelLabel != null)
                 localItemListScroller.OnItemHover += ItemListScroller_OnHover;
 
@@ -380,8 +381,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 ForegroundAnimationDelay = magicAnimationDelay
             };
             NativePanel.Components.Add(remoteItemListScroller);
-            remoteItemListScroller.OnItemClick += RemoteItemListScroller_OnItemClick;
+            remoteItemListScroller.OnItemClick += RemoteItemListScroller_OnItemLeftClick;
             remoteItemListScroller.OnItemRightClick += RemoteItemListScroller_OnItemRightClick;
+            remoteItemListScroller.OnItemMiddleClick += RemoteItemListScroller_OnItemMiddleClick;
             SetRemoteItemsAnimation();
 
             if (itemInfoPanelLabel != null)
@@ -454,8 +456,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(paperDoll);
             paperDoll.Position = new Vector2(49, 13);
             paperDoll.OnMouseMove += PaperDoll_OnMouseMove;
-            paperDoll.OnMouseClick += PaperDoll_OnMouseClick;
+            paperDoll.OnMouseClick += PaperDoll_OnLeftMouseClick;
             paperDoll.OnRightMouseClick += PaperDoll_OnRightMouseClick;
+            paperDoll.OnMiddleMouseClick += PaperDoll_OnMiddleMouseClick;
             paperDoll.ToolTip = defaultToolTip;
             paperDoll.Refresh();
         }
@@ -536,7 +539,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 button.ToolTip = defaultToolTip;
                 button.Tag = i;
                 button.AnimationDelayInSeconds = magicAnimationDelay;
-                button.OnMouseClick += AccessoryItemsButton_OnMouseClick;
+                button.OnMouseClick += AccessoryItemsButton_OnLeftMouseClick;
+                button.OnRightMouseClick += AccessoryItemsButton_OnRightMouseClick;
                 if (itemInfoPanelLabel != null)
                     button.OnMouseEnter += AccessoryItemsButton_OnMouseEnter;
                 accessoryButtons[i] = button;
@@ -1840,7 +1844,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Item Click Event Handlers
 
-        protected virtual void AccessoryItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        // Get action mode, swapping equip and remove - for right clicks
+        protected virtual ActionModes GetActionModeRightClick()
+        {
+            ActionModes actionMode = selectedActionMode;
+            if (actionMode == ActionModes.Equip)
+                actionMode = ActionModes.Remove;
+            else if (actionMode == ActionModes.Remove)
+                actionMode = ActionModes.Equip;
+            else if (actionMode == ActionModes.Select)
+                actionMode = ActionModes.Remove;
+            return actionMode;
+        }
+
+        protected virtual void AccessoryItemsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position, ActionModes actionMode)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             // Get item
@@ -1850,19 +1867,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             // Handle click based on action
-            if (selectedActionMode == ActionModes.Equip ||
-                selectedActionMode == ActionModes.Select)
+            if (actionMode == ActionModes.Equip ||
+                actionMode == ActionModes.Select)
             {
                 UnequipItem(item);
             }
-            else if (selectedActionMode == ActionModes.Info)
+            else if (actionMode == ActionModes.Info)
             {
                 ShowInfoPopup(item);
             }
-            else if (selectedActionMode == ActionModes.Use)
+            else if (actionMode == ActionModes.Use)
             {
                 UseItem(item);
             }
+        }
+
+        protected virtual void AccessoryItemsButton_OnLeftMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            AccessoryItemsButton_OnMouseClick(sender, position, selectedActionMode);
+        }
+
+        protected virtual void AccessoryItemsButton_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            AccessoryItemsButton_OnMouseClick(sender, position, GetActionModeRightClick());
         }
 
         private DaggerfallUnityItem PaperDoll_GetItem(BaseScreenComponent sender, Vector2 position)
@@ -1879,33 +1906,43 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return item;
         }
 
-        protected virtual void PaperDoll_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void PaperDoll_OnMouseClick(BaseScreenComponent sender, Vector2 position, ActionModes actionMode)
         {
             DaggerfallUnityItem item = PaperDoll_GetItem(sender, position);
             if (item == null)
                 return;
 
             // Handle click based on action
-            if (selectedActionMode == ActionModes.Equip ||
-                selectedActionMode == ActionModes.Select)
+            if (actionMode == ActionModes.Equip ||
+                actionMode == ActionModes.Select)
             {
                 UnequipItem(item);
             }
-            else if (selectedActionMode == ActionModes.Use)
+            else if (actionMode == ActionModes.Use)
             {
                 NextVariant(item);
             }
-            else if (selectedActionMode == ActionModes.Info)
+            else if (actionMode == ActionModes.Info)
             {
                 ShowInfoPopup(item);
             }
-            else if (selectedActionMode == ActionModes.Use)
+            else if (actionMode == ActionModes.Use)
             {
                 UseItem(item);
             }
         }
 
+        protected virtual void PaperDoll_OnLeftMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            PaperDoll_OnMouseClick(sender, position, selectedActionMode);
+        }
+
         protected virtual void PaperDoll_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            PaperDoll_OnMouseClick(sender, position, GetActionModeRightClick());
+        }
+
+        protected virtual void PaperDoll_OnMiddleMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUnityItem item = PaperDoll_GetItem(sender, position);
             if (item == null)
@@ -1914,10 +1951,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NextVariant(item);
         }
 
-        protected virtual void LocalItemListScroller_OnItemClick(DaggerfallUnityItem item)
+        protected virtual void LocalItemListScroller_OnItemClick(DaggerfallUnityItem item, ActionModes actionMode)
         {
             // Handle click based on action
-            if (selectedActionMode == ActionModes.Equip)
+            if (actionMode == ActionModes.Equip)
             {
                 if (item.IsLightSource)
                 {
@@ -1927,14 +1964,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     EquipItem(item);
             }
-            else if (selectedActionMode == ActionModes.Use)
+            else if (actionMode == ActionModes.Use)
             {
                 // Allow item to handle its own use, fall through to general use function if unhandled
                 if (!item.UseItem(localItems))
                     UseItem(item, localItems);
                 Refresh(false);
             }
-            else if (selectedActionMode == ActionModes.Remove)
+            else if (actionMode == ActionModes.Remove)
             {
                 // Transfer to remote items
                 if (remoteItems != null && !chooseOne)
@@ -1947,18 +1984,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         theftBasket.RemoveItem(item);
                 }
             }
-            else if (selectedActionMode == ActionModes.Info)
+            else if (actionMode == ActionModes.Info)
             {
                 ShowInfoPopup(item);
             }
         }
 
+        protected virtual void LocalItemListScroller_OnItemLeftClick(DaggerfallUnityItem item)
+        {
+            LocalItemListScroller_OnItemClick(item, selectedActionMode);
+        }
+
         protected virtual void LocalItemListScroller_OnItemRightClick(DaggerfallUnityItem item)
+        {
+            LocalItemListScroller_OnItemClick(item, GetActionModeRightClick());
+        }
+
+        protected virtual void LocalItemListScroller_OnItemMiddleClick(DaggerfallUnityItem item)
         {
             NextVariant(item);
         }
 
-        protected virtual void RemoteItemListScroller_OnItemClick(DaggerfallUnityItem item)
+        protected virtual void RemoteItemListScroller_OnItemClick(DaggerfallUnityItem item, ActionModes actionMode)
         {
             // Send click to quest system
             if (item.IsQuestItem)
@@ -1973,7 +2020,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Handle click based on action
-            if (selectedActionMode == ActionModes.Equip)
+            if (actionMode == ActionModes.Equip)
             {
                 // Transfer to local items
                 if (localItems != null)
@@ -1981,26 +2028,36 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (theftBasket != null && lootTarget != null && lootTarget.houseOwned)
                     theftBasket.AddItem(item);
             }
-            else if (selectedActionMode == ActionModes.Use)
+            else if (actionMode == ActionModes.Use)
             {
                 // Allow item to handle its own use, fall through to general use function if unhandled
                 if (!item.UseItem(remoteItems))
                     UseItem(item, remoteItems);
                 Refresh(false);
             }
-            else if (selectedActionMode == ActionModes.Remove)
+            else if (actionMode == ActionModes.Remove)
             {
                 TransferItem(item, remoteItems, localItems, CanCarryAmount(item));
                 if (theftBasket != null && lootTarget != null && lootTarget.houseOwned)
                     theftBasket.AddItem(item);
             }
-            else if (selectedActionMode == ActionModes.Info)
+            else if (actionMode == ActionModes.Info)
             {
                 ShowInfoPopup(item);
             }
         }
 
+        protected virtual void RemoteItemListScroller_OnItemLeftClick(DaggerfallUnityItem item)
+        {
+            RemoteItemListScroller_OnItemClick(item, selectedActionMode);
+        }
+
         protected virtual void RemoteItemListScroller_OnItemRightClick(DaggerfallUnityItem item)
+        {
+            RemoteItemListScroller_OnItemClick(item, GetActionModeRightClick());
+        }
+
+        protected virtual void RemoteItemListScroller_OnItemMiddleClick(DaggerfallUnityItem item)
         {
             NextVariant(item);
         }
