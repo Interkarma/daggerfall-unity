@@ -17,6 +17,9 @@ namespace DaggerfallWorkshop.Game.Questing
 {
     /// <summary>
     /// Handles player clicking on NPC.
+    /// NOTES:
+    ///  - Will clear click after handling if player clicks NPC.
+    ///  - If used in combination with TotingItemAndClickedNpc on same NPC elsewhere in quest, always call TotingItemAndClickedNpc check BEFORE ClickedNpc.
     /// </summary>
     public class ClickedNpc : ActionTemplate
     {

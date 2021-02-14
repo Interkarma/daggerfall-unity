@@ -18,6 +18,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     /// <summary>
     /// Condition triggers when player clicks on NPC while holding a quest Item in their inventory.
     /// Superficially very similar to ClickedNpc but also requires item check to be true.
+    /// NOTES:
+    ///  - Will clear click after handling if player clicks NPC while holding specified item.
+    ///  - If used in combination with ClickedNpc on same NPC elsewhere in quest, always call TotingItemAndClickedNpc check BEFORE ClickedNpc.
     /// </summary>
     public class TotingItemAndClickedNpc : ActionTemplate
     {
