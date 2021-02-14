@@ -342,6 +342,13 @@ Clock _S.18_ 150.00:00 0 flag 1 range 0 1
 	add Barenziah as questor 
 	add _gortwog_ as questor 
 
+_S.08_ task:
+	toting Chapter6 and Barenziah clicked 
+	say 1014 
+	give pc _reward_ 
+	start task _S.19_ 
+	change repute with Barenziah by +10 
+
 _S.00_ task:
 	clicked npc Barenziah 
 
@@ -372,13 +379,6 @@ _no_ task:
 	say RefuseQuest 
 	end quest 
 
-_S.08_ task:
-	toting Chapter6 and Barenziah clicked 
-	give pc _reward_ 
-	start task _S.19_ 
-	say 1014 
-	change repute with Barenziah by +10 
-
 _S.09_ task:
 	log 1060 step 1 
 	reveal _scourgbarrow_ in province 1 at 450958 
@@ -398,13 +398,6 @@ _S.12_ task:
 until _S.12_ performed:
 	clear _S.00_ 
 
-_S.13_ task:
-	clicked npc _gortwog_ 
-
-_S.14_ task:
-	when _S.03_ and _S.13_ 
-	prompt 1050 yes _S.09_ no _S.10_ 
-
 _S.15_ task:
 	toting Chapter6 and _gortwog_ clicked 
 	get item _jewelry_ 
@@ -412,6 +405,13 @@ _S.15_ task:
 	make _jewelry_ permanent 
 	change repute with Barenziah by -20 
 	change repute with _gortwog_ by +15 
+
+_S.13_ task:
+	clicked npc _gortwog_ 
+
+_S.14_ task:
+	when _S.03_ and _S.13_ 
+	prompt 1050 yes _S.09_ no _S.10_ 
 
 _clearclick_ task:
 	when _S.13_ and not _S.03_ 
