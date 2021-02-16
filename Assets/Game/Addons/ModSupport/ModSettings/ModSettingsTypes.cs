@@ -544,7 +544,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         protected override void Deserialize(string textValue)
         {
             float value;
-            if (float.TryParse(textValue, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out value))
+            if (float.TryParse(textValue, NumberStyles.Float, CultureInfo.InvariantCulture, out value))
                 Value = Mathf.Clamp(value, Min, Max);
         }
     }
