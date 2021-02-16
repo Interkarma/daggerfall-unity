@@ -262,7 +262,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// </summary>
         public void Save(string path)
         {
-            Serialize(path, this);
+            if (Serialize(path, this))
+                ModManager.ImportAsset(path);
         }
 
 #endif
@@ -289,7 +290,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         public void SavePresets(string path)
         {
             if (Presets.Count > 0)
-                Serialize(path, Presets);
+            {
+                if (Serialize(path, Presets))
+                    ModManager.ImportAsset(path);
+            }
             else if (File.Exists(path))
                 File.Delete(path);
         }
@@ -540,7 +544,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         /// <summary>
         /// Derialize to a file on disk.
         /// </summary>
-        private static void Serialize<T>(string path, T instance)
+        private static bool Serialize<T>(string path, T instance)
         {
             fsData fsData;
             fsResult fsResult = ModManager._serializer.TrySerialize(instance, out fsData);
@@ -548,6 +552,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 File.WriteAllText(path, fsJsonPrinter.PrettyJson(fsData));
             else
                 Debug.LogErrorFormat("Failed to write {0}:\n{1}", path, fsResult.FormattedMessages);
+            return fsResult.Succeeded;
         }
 
         #endregion
