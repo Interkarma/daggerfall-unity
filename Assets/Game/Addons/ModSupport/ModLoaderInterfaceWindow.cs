@@ -663,6 +663,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         for (int i = 0; i < modSettings.Length; i++)
         {
             modSettings[i].enabled = true;
+            modList.GetItem(i).textColor = unselectedTextColor;
         }
         UpdateModPanel();
     }
@@ -675,6 +676,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         for (int i = 0; i < modSettings.Length; i++)
         {
             modSettings[i].enabled = false;
+            modList.GetItem(i).textColor = disabledModTextColor;
         }
 
         UpdateModPanel();
