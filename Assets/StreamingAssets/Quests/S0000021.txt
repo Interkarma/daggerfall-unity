@@ -131,7 +131,7 @@ _S.03_ task:
 	when _S.02_ and _S.15_ 
 	prompt QuestorOffer yes yes no _no_ 
 
-until _S.03_ performed:
+until _killmon_ performed:
 	clear _S.02_ 
 
 yes task:
@@ -156,11 +156,12 @@ _S.07_ task:
 
 _S.08_ task:
 	killed 1 _lich_ 
+	setvar _killmon_
 	add Karolis1 face 
 
 variable _killmon_
 _S.10_ task:
-	toting _scarab_ and KingOfWorms4 clicked 
+	when _S.02_ and _killmon_
 
 _S.11_ task:
 	when not _S.08_ and _S.10_ 
@@ -172,7 +173,6 @@ _givereward_ task:
 	start task _S.14_ 
 	drop Karolis1 face 
 	change repute with KingOfWorms4 by +15 
-	place npc KingOfWorms1 at _sentinel_ 
 	end quest 
 
 KingOfWormsGotTotem _S.13_
