@@ -65,6 +65,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             DebuggerToggle,
             DebuggerPrevQuest,
             DebuggerNextQuest,
+            DebuggerPrevMarker,
+            DebuggerNextMarker,
 
             // Rest menu
             RestForAWhile,

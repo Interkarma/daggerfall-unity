@@ -46,6 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         ulong[] allQuests;
         int currentQuestIndex;
         Quest currentQuest;
+        int currentMarkerIndex = -1;
 
         DisplayState displayState = DisplayState.Nothing;
 
@@ -148,11 +149,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (displayState < DisplayState.Nothing || displayState > DisplayState.QuestStateFull)
                 displayState = DisplayState.Nothing;
 
+            // Change quest selection
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
             if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.DebuggerPrevQuest).IsDownWith(keyModifiers))
                 MovePreviousQuest();
             else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.DebuggerNextQuest).IsDownWith(keyModifiers))
                 MoveNextQuest();
+
+            // Change marker selection
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.DebuggerPrevMarker).IsDownWith(keyModifiers))
+                MovePreviousMarker();
+            else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.DebuggerNextMarker).IsDownWith(keyModifiers))
+                MoveNextMarker();
         }
 
         private void QuestMachine_OnTick()
@@ -481,6 +489,50 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 currentQuestIndex = allQuests.Length - 1;
 
             SetCurrentQuest(QuestMachine.Instance.GetQuest(allQuests[currentQuestIndex]));
+        }
+
+        void MoveNextMarker()
+        {
+            // Must be inside a dungeon
+            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                return;
+
+            // Get markers
+            Vector3[] markerPositions = GameManager.Instance.PlayerEnterExit.Dungeon.GetAllDebuggerMarkerPositions();
+            if (markerPositions == null || markerPositions.Length == 0)
+                return;
+
+            // Select next index
+            if (++currentMarkerIndex >= markerPositions.Length)
+                currentMarkerIndex = 0;
+
+            // Move player object to marker position
+            GameManager.Instance.PlayerObject.transform.localPosition = markerPositions[currentMarkerIndex];
+            GameManager.Instance.PlayerMotor.FixStanding();
+
+            Debug.LogFormat("Moved to next marker - index {0}", currentMarkerIndex);
+        }
+
+        void MovePreviousMarker()
+        {
+            // Must be inside a dungeon
+            if (!GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon)
+                return;
+
+            // Get markers
+            Vector3[] markerPositions = GameManager.Instance.PlayerEnterExit.Dungeon.GetAllDebuggerMarkerPositions();
+            if (markerPositions == null || markerPositions.Length == 0)
+                return;
+
+            // Select previous index
+            if (--currentMarkerIndex < 0)
+                currentMarkerIndex = markerPositions.Length - 1;
+
+            // Move player object to marker position
+            GameManager.Instance.PlayerObject.transform.localPosition = markerPositions[currentMarkerIndex];
+            GameManager.Instance.PlayerMotor.FixStanding();
+
+            Debug.LogFormat("Moved to previous marker - index {0}", currentMarkerIndex);
         }
 
         void EnableGlobalVars(bool value)

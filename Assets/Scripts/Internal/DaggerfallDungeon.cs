@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop
 
         GameObject startMarker = null;
         GameObject enterMarker = null;
+        List<Vector3> debuggerMarkerPositions = null;
 
         /// <summary>
         /// Gets the scene name for the dungeon at the given location.
@@ -266,6 +267,20 @@ namespace DaggerfallWorkshop
             return dungeonName.TrimEnd('.');
         }
 
+        /// <summary>
+        /// Gets all debugger marker positions for this dungeon.
+        /// Not related to gameplay systems like quests. Only used for teleporting player around marker positions using quest debugger.
+        /// </summary>
+        /// <returns>Array of all debugger marker positions. Can return null or empty.</returns>
+        public Vector3[] GetAllDebuggerMarkerPositions()
+        {
+            EnumerateDebuggerMarkers();
+            if (debuggerMarkerPositions != null && debuggerMarkerPositions.Count > 0)
+                return debuggerMarkerPositions.ToArray();
+            else
+                return null;
+        }
+
         #region Private Methods
 
         private void LayoutDungeon(ref DFLocation location, bool importEnemies = true)
@@ -459,6 +474,74 @@ namespace DaggerfallWorkshop
         DaggerfallStaticDoors[] EnumerateStaticDoorCollections()
         {
             return GetComponentsInChildren<DaggerfallStaticDoors>();
+        }
+
+        // Enumerates marker positions in dungeon for player to teleport around using quest debugger
+        // Not used for any gameplay system and does not collect any other information about marker other than position
+        // Currently collects all Enter, Start, Quest, Item markers
+        void EnumerateDebuggerMarkers()
+        {
+            const int editorFlatArchive = 199;
+            const int enterMarkerIndex = 8;
+            const int startMarkerIndex = 10;
+            const int spawnMarkerFlatIndex = 11;
+            const int itemMarkerFlatIndex = 18;
+
+            // Only enumerate debugger marker positions once for this dungeon object
+            if (debuggerMarkerPositions != null)
+                return;
+            else
+                debuggerMarkerPositions = new List<Vector3>();
+
+            // Step through dungeon layout to find all blocks with markers
+            foreach (var dungeonBlock in summary.LocationData.Dungeon.Blocks)
+            {
+                // Get block data
+                DFBlock blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(dungeonBlock.BlockName);
+
+                // Skip misplaced overlapping N block at -1,-1 in Orsinium
+                // This must be a B block to close out dungeon on that edge, not an N block which opens dungeon to void
+                // DaggerfallDungeon skips this N block during layout, so prevent it being available to quest system
+                if (summary.LocationData.MapTableData.MapId == 19021260 &&
+                    dungeonBlock.X == -1 && dungeonBlock.Z == -1 && dungeonBlock.BlockName == "N0000065.RDB")
+                {
+                    continue;
+                }
+
+                // Iterate all groups
+                foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
+                {
+                    // Skip empty object groups
+                    if (null == group.RdbObjects)
+                        continue;
+
+                    // Look for flats in this group
+                    foreach (DFBlock.RdbObject obj in group.RdbObjects)
+                    {
+                        // Get marker ID
+                        ulong markerID = (ulong)(blockData.Position + obj.Position);
+
+                        // Look for editor flats and collect marker positions adjusted for dungeon block position
+                        Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
+                        if (obj.Type == DFBlock.RdbResourceTypes.Flat)
+                        {
+                            if (obj.Resources.FlatResource.TextureArchive == editorFlatArchive)
+                            {
+                                Vector3 dungeonBlockPosition = new Vector3(dungeonBlock.X * RDBLayout.RDBSide, 0, dungeonBlock.Z * RDBLayout.RDBSide);
+                                switch (obj.Resources.FlatResource.TextureRecord)
+                                {
+                                    case enterMarkerIndex:
+                                    case startMarkerIndex:
+                                    case itemMarkerFlatIndex:
+                                    case spawnMarkerFlatIndex:
+                                        debuggerMarkerPositions.Add(dungeonBlockPosition + position);
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private bool ReadyCheck()
