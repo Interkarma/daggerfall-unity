@@ -196,7 +196,7 @@ Item _reward_ magic_item
 Item _I.02_ dead_body
 Item _letter_ letter used 1031
 
-Person _victim_ face 5 group Group_5.2
+Person _victim_ face 5 faction People_of_Sentinel male
 Person _questgiver_ group Questor male
 Person _daughter_ face 3 faction People_of_Sentinel female
 Person _darkb_ faction The_Dark_Brotherhood anyInfo 1015 rumors 1016
@@ -219,6 +219,8 @@ Foe _F.02_ is 4 Assassin
 	dialog link for person _darkb_ 
 	start timer _qtime_ 
 	log 1020 step 0 
+	place npc _victim_ at _victimhouse_
+	hide npc _victim_
 	pc at _victimhouse_ set _S.05_ 
 	_note_ used do _readnote_
 	have _I.02_ set _deadbody_
