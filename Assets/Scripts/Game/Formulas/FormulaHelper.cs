@@ -207,7 +207,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int CalculateFatigueRecoveryRate(int maxFatigue)
         {
             Func<int, int> del;
-            if (TryGetOverride("HealingRateModifier", out del))
+            if (TryGetOverride("CalculateFatigueRecoveryRate", out del))
                 return del(maxFatigue);
 
             return Mathf.Max((int)Mathf.Floor(maxFatigue / 8), 1);
@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int CalculateSpellPointRecoveryRate(PlayerEntity player)
         {
             Func<PlayerEntity, int> del;
-            if (TryGetOverride("HealingRateModifier", out del))
+            if (TryGetOverride("CalculateSpellPointRecoveryRate", out del))
                 return del(player);
 
             if (player.Career.NoRegenSpellPoints)
