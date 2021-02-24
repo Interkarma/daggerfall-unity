@@ -393,6 +393,7 @@ namespace DaggerfallWorkshop.Utility
             if (go)
             {
                 go.tag = DaggerfallUnity.staticGeometryTag;
+                go.isStatic = true;
             }
         }
 
