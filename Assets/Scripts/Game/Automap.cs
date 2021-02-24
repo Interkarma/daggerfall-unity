@@ -1296,115 +1296,6 @@ namespace DaggerfallWorkshop.Game
             Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
         }
 
-        private void UpdateMaterialsOfMeshRenderer(MeshRenderer meshRenderer, bool visitedInThisEntering = false)
-        {
-            Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
-            Material[] newMaterials = new Material[meshRenderer.materials.Length];
-            for (int i = 0; i < meshRenderer.materials.Length; i++)
-            {
-                Material material = meshRenderer.materials[i];
-                Material newMaterial = newMaterials[i];
-
-                newMaterial = new Material(Shader.Find("Daggerfall/Automap"));
-                //newMaterial.CopyPropertiesFromMaterial(material);
-                newMaterial.name = "AutomapBelowSclicePlane injected for: " + material.name;
-                if (material.HasProperty(Uniforms.MainTex))
-                    newMaterial.SetTexture(Uniforms.MainTex, material.GetTexture(Uniforms.MainTex));
-                if (material.HasProperty(Uniforms.BumpMap))
-                    newMaterial.SetTexture(Uniforms.BumpMap, material.GetTexture(Uniforms.BumpMap));
-                if (material.HasProperty(Uniforms.EmissionMap))
-                    newMaterial.SetTexture(Uniforms.EmissionMap, material.GetTexture(Uniforms.EmissionMap));
-                if (material.HasProperty(Uniforms.EmissionColor))
-                    newMaterial.SetColor(Uniforms.EmissionColor, material.GetColor(Uniforms.EmissionColor));
-                Vector4 playerPosition = new Vector4(playerAdvancedPos.x, playerAdvancedPos.y + Camera.main.transform.localPosition.y, playerAdvancedPos.z, 0.0f);
-                newMaterial.SetVector("_PlayerPosition", playerPosition);
-                if (visitedInThisEntering == true)
-                    newMaterial.DisableKeyword("RENDER_IN_GRAYSCALE");
-                else
-                    newMaterial.EnableKeyword("RENDER_IN_GRAYSCALE");
-                newMaterials[i] = newMaterial;
-            }
-            meshRenderer.materials = newMaterials;
-        }     
-
-        /// <summary>
-        /// will inject materials and properties to MeshRenderer in the proper hierarchy level of automap level geometry GameObject
-        /// note: the proper hierarchy level differs between an "Interior" and a "Dungeon" geometry GameObject
-        /// </summary>
-        /// <param name="resetDiscoveryState"> if true resets the discovery state for geometry that needs to be discovered (when inside dungeons or castles) </param>
-        private void InjectMeshAndMaterialProperties(bool resetDiscoveryState = true)
-        {
-            if (GameManager.Instance.IsPlayerInsideBuilding)
-            {
-                // find all MeshRenderers in 3rd hierarchy level
-                foreach (Transform elem in gameobjectGeometry.transform)
-                {
-                    foreach (Transform innerElem in elem.gameObject.transform)
-                    {
-                        foreach (Transform inner2Elem in innerElem.gameObject.transform)
-                        {
-                            // get rid of animated materials (will not break automap rendering but is not necessary)
-                            AnimatedMaterial[] animatedMaterials = inner2Elem.gameObject.GetComponents<AnimatedMaterial>();                            
-                            foreach (AnimatedMaterial animatedMaterial in animatedMaterials)
-                            {
-                                UnityEngine.Object.Destroy(animatedMaterial);
-                            }
-
-                            MeshRenderer[] meshRenderers = inner2Elem.gameObject.GetComponentsInChildren<MeshRenderer>();
-                            if (meshRenderers == null)
-                                continue;
-
-                            // update materials and set meshes as visited in this run (so "Interior" geometry always is colored
-                            // (since we don't disable the mesh, it is also discovered - which is a precondition for being rendered))
-                            foreach (MeshRenderer meshRenderer in meshRenderers)
-                            {
-                                UpdateMaterialsOfMeshRenderer(meshRenderer, true);
-                            }
-                        }
-                    }
-                }
-            }
-            else if ((GameManager.Instance.IsPlayerInsideDungeon)||(GameManager.Instance.IsPlayerInsideCastle))
-            {
-                // find all MeshRenderers in 4th hierarchy level
-                foreach (Transform elem in gameobjectGeometry.transform)
-                {
-                    foreach (Transform innerElem in elem.gameObject.transform)
-                    {
-                        foreach (Transform inner2Elem in innerElem.gameObject.transform)
-                        {
-                            foreach (Transform inner3Elem in inner2Elem.gameObject.transform)
-                            {
-                                // get rid of animated materials (will not break automap rendering but is not necessary)
-                                AnimatedMaterial[] animatedMaterials = inner3Elem.gameObject.GetComponents<AnimatedMaterial>();
-                                foreach (AnimatedMaterial animatedMaterial in animatedMaterials)
-                                {
-                                    UnityEngine.Object.Destroy(animatedMaterial);
-                                }
-
-                                MeshRenderer[] meshRenderers = inner3Elem.gameObject.GetComponentsInChildren<MeshRenderer>();
-                                if (meshRenderers == null)
-                                    continue;
-
-                                // update materials (omit 2nd parameter so default behavior is initiated which is:
-                                // meshes are marked as not visited in this run (so "Dungeon" geometry that has been discovered in a previous dungeon run is rendered in grayscale)
-                                foreach (MeshRenderer meshRenderer in meshRenderers)
-                                {
-                                    UpdateMaterialsOfMeshRenderer(meshRenderer);
-
-                                    if (resetDiscoveryState) // if forced reset of discovery state
-                                    {
-                                        // mark meshRenderer as undiscovered
-                                        meshRenderer.enabled = false;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         //private void SetMaterialTransparency(Material material)
         //{
         //    material.SetOverrideTag("RenderType", "Transparent");
@@ -1996,7 +1887,7 @@ namespace DaggerfallWorkshop.Game
             gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);
 
             // inject all materials of automap geometry with automap shader and reset MeshRenderer enabled state (this is used for the discovery mechanism)
-            InjectMeshAndMaterialProperties();
+            RaiseOnInjectMeshAndMaterialPropertiesEvent();
 
             //oldGeometryName = newGeometryName;
         }
@@ -2041,7 +1932,7 @@ namespace DaggerfallWorkshop.Game
 
                         DFBlock blockData;
                         int[] textureTable = null;
-                        GameObject gameobjectBlock = RDBLayout.CreateBaseGameObject(block.BlockName, null, out blockData, textureTable, true, null, false);
+                        GameObject gameobjectBlock = RDBLayout.CreateBaseGameObject(block.BlockName, null, out blockData, textureTable, true, null, false, true);
                         gameobjectBlock.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
                         gameobjectBlock.transform.SetParent(gameobjectDungeon.transform);
@@ -2067,10 +1958,10 @@ namespace DaggerfallWorkshop.Game
 
             // put all objects inside gameobjectGeometry in layer "Automap"
             SetLayerRecursively(gameobjectGeometry, layerAutomap);
-            gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);            
+            gameobjectGeometry.transform.SetParent(gameobjectAutomap.transform);
 
             // inject all materials of automap geometry with automap shader and reset MeshRenderer enabled state (this is used for the discovery mechanism)
-            InjectMeshAndMaterialProperties();
+            RaiseOnInjectMeshAndMaterialPropertiesEvent();
 
             //oldGeometryName = newGeometryName;
         }
@@ -2658,6 +2549,26 @@ namespace DaggerfallWorkshop.Game
                 dictTeleporterConnections.Add(connection.ToString(), connection);
         }
 
+        /// <summary>
+        /// Send an event instructing all Automap models to apply Automap materials and properties to their MeshRenderers.
+        /// </summary>
+        /// <param name="resetDiscoveryState"> if true resets the discovery state for geometry that needs to be discovered (when inside dungeons or castles) </param>
+        public delegate void OnInjectMeshAndMaterialPropertiesEventHandler(bool playerIsInsideBuilding, Vector3 playerAdvancedPos, Material automapMaterial, bool resetDiscoveryState);
+        public static event OnInjectMeshAndMaterialPropertiesEventHandler OnInjectMeshAndMaterialProperties;
+        private void RaiseOnInjectMeshAndMaterialPropertiesEvent(bool resetDiscoveryState = true)
+        {
+            if (OnInjectMeshAndMaterialProperties != null)
+            {
+                bool playerIsInsideBuilding = false;
+                if (GameManager.Instance.IsPlayerInsideBuilding)
+                    playerIsInsideBuilding = true;
+
+                Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
+                Material automapMaterial = new Material(Shader.Find("Daggerfall/Automap"));
+
+                OnInjectMeshAndMaterialProperties(playerIsInsideBuilding, playerAdvancedPos, automapMaterial, resetDiscoveryState);
+            }
+        }
         #endregion
 
         #region console_commands
