@@ -2041,6 +2041,8 @@ namespace DaggerfallWorkshop.Game
 
                         DFBlock blockData;
                         int[] textureTable = null;
+                        if (GameManager.Instance.PlayerEnterExit.Dungeon != null)
+                            textureTable = GameManager.Instance.PlayerEnterExit.Dungeon.DungeonTextureTable;
                         GameObject gameobjectBlock = RDBLayout.CreateBaseGameObject(block.BlockName, null, out blockData, textureTable, true, null, false);
                         gameobjectBlock.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
