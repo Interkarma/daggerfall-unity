@@ -62,13 +62,28 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             // Apply materials when the gameobject is first instantiated (not when cloned).
             if (!hasAppliedMaterials)
             {
-                ApplyMaterials(false);
-
                 if (UseDungeonTextureTable)
                 {
-                    DaggerfallDungeon.OnSetDungeon += DaggerfallDungeon_OnSetDungeon;
-                    subscribedToOnSetDungeon = true;
+                    // Modder has enabled the use of the Dungeon Texture Table for this model.
+                    if (Automap.IsCreatingDungeonAutomapBaseGameObjects)
+                    {
+                        // This model's GameObject was created for a location interior's Automap. Immediately create materials and get texture table from DaggerfallDungeon.
+                        ApplyMaterials(false, GameManager.Instance.PlayerEnterExit.Dungeon.DungeonTextureTable);
+                    }
+                    else if (GameManager.Instance.PlayerEnterExit.IsCreatingDungeonBaseGameObjects == true)
+                    {
+                        // This model's GameObject was created for a dungeon's or castle's interior. Register for the OnSetDungeon event as the texture table is not available yet.
+                        DaggerfallDungeon.OnSetDungeon += DaggerfallDungeon_OnSetDungeon;
+                        subscribedToOnSetDungeon = true;
+                    }
+                    else
+                    {
+                        // Otherwise, this model's GameObject is in a location that doesn't need a dungeon texture table.
+                        ApplyMaterials(false);
+                    }
                 }
+                else
+                    ApplyMaterials(false);
             }
         }
 
