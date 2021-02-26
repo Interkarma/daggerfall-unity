@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game
         Light torchLight;
         float torchIntensity;
         float intensityMod = 1f;
-        float lastTickTime;
+        float tickTimeBuffer = 0f;
         float tickTimeInterval = 20f;
         float guttering = 0;
 
@@ -65,12 +65,13 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUnityItem lightSource = playerEntity.LightSource;
                 if (lightSource != null)
                 {
+                    tickTimeBuffer += Time.deltaTime;
                     enableTorch = true;
                     torchLight.range = lightSource.ItemTemplate.capacityOrTarget;
                     // Consume durability / fuel
-                    if (Time.realtimeSinceStartup > lastTickTime + tickTimeInterval)
+                    if (tickTimeBuffer > tickTimeInterval)
                     {
-                        lastTickTime = Time.realtimeSinceStartup;
+                        tickTimeBuffer = 0f;
                         if (lightSource.currentCondition > 0)
                             lightSource.currentCondition--;
 
