@@ -124,10 +124,10 @@ QuestorPostfailure:  [1009]
 <ce>                             breath on you?
 
 QuestLogEntry:  [1010]
-%qdt, I was
- asked to find a sample of
- _ingredient_ that is
- supposed to be hidden away
+%qdt:
+ I was asked to find a sample
+ of _ingredient_ that
+ is supposed to be hidden away
  in ___dungeon_.
  _qgiver_ of the Mages
  Guild of ___qgiver_
