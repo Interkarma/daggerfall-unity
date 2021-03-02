@@ -60,7 +60,7 @@ QuestorPostfailure:  [1009]
 <ce>                        wish to speak with you.
 
 QuestLogEntry:  [1010]
-%qdt
+%qdt:
  _giver_ of ___giver_ has offered me _gold_
  gold to find %g3 book, _book_.
 

@@ -53,7 +53,7 @@ QuestComplete:  [1004]
 <ce>                     with favor in the guild halls.
 
 RumorsDuringQuest:  [1005]
-That crazy mage at the Guild insists that ___dungeon_ has the best _ingredient_
+That crazy mage at the Guild insists that ___dungeon_ has the best _ingredient_.
 
 RumorsPostfailure:  [1006]
 I got a boil the other day ... but it healed.

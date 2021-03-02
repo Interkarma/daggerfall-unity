@@ -47,7 +47,7 @@ AcceptQuest:  [1002]
 <ce>          So that's the way you want it! I'm game to any %ra!
 
 QuestFail:  [1003]
-%qdt
+%qdt:
  I have agreed to duel with _giver_ at
  _inn_ in ___giver_ in six hours.
 

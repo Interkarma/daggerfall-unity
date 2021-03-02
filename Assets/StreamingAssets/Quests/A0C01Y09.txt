@@ -79,7 +79,7 @@ Message:  1013
 <ce>                               _questg_?
 
 Message:  1025
-%qdt
+%qdt:
  I have promised _questg_ of ___questg_
  that I will obtain some _item_ from
  _merchant_ at _store_
