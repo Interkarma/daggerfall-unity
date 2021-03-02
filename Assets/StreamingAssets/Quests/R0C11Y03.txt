@@ -108,8 +108,9 @@ A daedra's heart. It never spoils, but some recipes call for it to be fresh.
 The heart of a daedra. Not the sort of thing daedras like in mortals' hands.
 
 Message:  1015
-%qdt: _questgiver_
- of ___questgiver_ asked me
+%qdt:
+ _questgiver_ of
+ ___questgiver_ asked me
  to bring the heart of a daedra to
  %g3 alchemist in __chemist_ of
  ___chemist_. This alchemist

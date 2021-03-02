@@ -140,7 +140,8 @@ QuestorPostfailure:  [1009]
 <ce>                    I should keeping talking to you.
 
 QuestLogEntry:  [1010]
-%qdt: I met _questgiver_
+%qdt:
+ I met _questgiver_
  of the Mages Guild of ___questgiver_
  who sent me on a quest to find an
  ancient text hidden in ___dungeon_.

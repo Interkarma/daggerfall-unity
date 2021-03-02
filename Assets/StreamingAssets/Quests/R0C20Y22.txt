@@ -74,8 +74,9 @@ QuestorPostfailure:  [1009]
 <ce>                         question, by the way.
 
 QuestLogEntry:  [1010]
-%qdt: _questgiver_ has
- hired me to deliver a _item_ to someone
+%qdt: 
+ _questgiver_ has hired me
+ to deliver a _item_ to someone
  in ___contact_ named _contact_.
  %g will meet me at __contact_
  in =queston_ days to reward me if I have not

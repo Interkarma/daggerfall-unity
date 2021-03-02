@@ -94,8 +94,9 @@ _questgiver_
  less.
 
 Message:  1016
-%qdt: There was a
- _item2_ hidden in the _item1_. For the
+%qdt:
+ There was a _item2_ hidden
+ in the _item1_. For the
  _reward_ gold I was promised, I have to
  deliver the _item2_ to a third party
  in ___npc2_, _npc2_ of

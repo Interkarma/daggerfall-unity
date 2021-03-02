@@ -62,10 +62,11 @@ QuestorPostfailure:  [1009]
 <ce>                         might want you to do?
 
 QuestLogEntry:  [1010]
-%qdt: The Fighters
- Guild of ___qgiver_ has
- offered to let me to kill a
- giant spider which hatched
+%qdt:
+ The Fighters Guild of
+ ___qgiver_ has
+ offered to let me to kill
+ a giant spider which hatched
  in _house_.
  It's got be done today.
 

@@ -87,8 +87,9 @@ That =questgiver_ is a mentor of the vampiric bloodline, %vam.
 _questgiver_ is a proud and capable member of %vam bloodline.
 
 Message:  1015
-%qdt: I received a
- letter from a member of my "family."
+%qdt:
+ I received a letter from
+ a member of my "family."
  I have been told to slay a "member
  of a lesser bloodline," presumably
  not one of %vam, in a

@@ -88,12 +88,15 @@ QuestorPostfailure:  [1009]
 <ce>                        At least, nothing nice.
 
 QuestLogEntry:  [1010]
-%qdt: I agreed to
- protect _sleepingmage_ at
+%qdt: 
+ I agreed to protect
+ _sleepingmage_ at
  the _magesguild_ while
  %g lies helpless in a trance.
  I must guard %g2 for 3 hours
  starting immediately.
+
+-moved line down from %qdt line.
 
 Message:  1011
 <ce>                    Stand aside, apprentice whelp!

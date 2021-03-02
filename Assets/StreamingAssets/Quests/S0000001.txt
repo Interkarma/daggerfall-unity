@@ -227,10 +227,11 @@ Message:  1018
 <ce>            years ago. Why can't you let him rest in peace?
 
 Message:  1019
-%qdt: Prince Lhotun of
- Sentinel has asked me to investigate the death of
- his brother, _brother_, who was supposedly kidnapped
- by the Underking years ago.
+%qdt:
+ Prince Lhotun of Sentinel has asked
+ me to investigate the death of his
+ brother, _brother_, who was supposedly
+ kidnapped by the Underking years ago.
 
 Message:  1020
 <ce>                You pick up a death certificate.

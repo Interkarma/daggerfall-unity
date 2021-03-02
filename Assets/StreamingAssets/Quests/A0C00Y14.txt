@@ -75,7 +75,8 @@ QuestorPostfailure:  [1009]
 <ce>                        I would never help you.
 
 QuestLogEntry:  [1010]
-%qdt: _questgiver_ of
+%qdt:
+ _questgiver_ of
  ___questgiver_ has charged
  me with the task of delivering
  a package to _pickuplocal_,

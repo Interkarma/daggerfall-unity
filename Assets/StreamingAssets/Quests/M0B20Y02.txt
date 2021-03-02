@@ -79,7 +79,8 @@ Message:  1020
 <ce>                      Smash you! Smash you flat!
 
 Message:  1030
-%qdt: The Fighters Guild of
+%qdt:
+ The Fighters Guild of
  ___questgiver_ has hired me
  to kill a tribe of six giants in
  their hideout, ___mondung_. I

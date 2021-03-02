@@ -88,8 +88,9 @@ Message:  1013
 <ce>                 I have no idea what _artifact_ does.
 
 Message:  1020
-%qdt: The Daedric Prince
- Mehrunes Dagon wants me to slay a frost daedra in
+%qdt: 
+ The Daedric Prince Mehrunes Dagon
+ wants me to slay a frost daedra in
  ___mondung_.  After the extermination
  is complete, I have =1stparton_ days
  to meet with _contact_ and receive
