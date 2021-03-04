@@ -23,6 +23,13 @@ namespace DaggerfallWorkshop.Game
             Alt = 256,
         };
 
+        public enum HotkeySequenceProcessStatus
+        {
+            NotFound,
+            Handled,
+            Disabled,
+        };
+
         public const KeyModifiers virtualKeys = KeyModifiers.Ctrl | KeyModifiers.Shift | KeyModifiers.Alt;
 
         private readonly KeyCode keyCode;

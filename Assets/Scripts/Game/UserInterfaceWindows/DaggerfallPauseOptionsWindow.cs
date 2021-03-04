@@ -171,7 +171,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Scale version text based on native panel scaling
             versionTextLabel.TextScale = NativePanel.LocalScale.x * 0.75f;
 
-            if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
+            if (DaggerfallUI.Instance.HotkeySequenceProcessed == HotkeySequence.HotkeySequenceProcessStatus.NotFound)
             {
                 // Toggle window closed with same hotkey used to open it
                 if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
