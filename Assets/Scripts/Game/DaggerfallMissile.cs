@@ -83,6 +83,7 @@ namespace DaggerfallWorkshop.Game
         float initialIntensity;
         EntityEffectBundle payload;
         bool isArrow = false;
+        bool isArrowSummoned = false;
         GameObject goModel = null;
         EnemySenses enemySenses;
 
@@ -139,6 +140,11 @@ namespace DaggerfallWorkshop.Game
         {
             get { return isArrow; }
             set { isArrow = value; }
+        }
+        public bool IsArrowSummoned
+        {
+            get { return isArrowSummoned; }
+            set { isArrowSummoned = value; }
         }
 
         /// <summary>
@@ -595,7 +601,7 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 Transform hitTransform = arrowHitCollider.gameObject.transform;
-                GameManager.Instance.WeaponManager.WeaponDamage(GameManager.Instance.WeaponManager.LastBowUsed, true, hitTransform, hitTransform.position, goModel.transform.forward);
+                GameManager.Instance.WeaponManager.WeaponDamage(GameManager.Instance.WeaponManager.LastBowUsed, true, isArrowSummoned, hitTransform, hitTransform.position, goModel.transform.forward);
             }
         }
 
