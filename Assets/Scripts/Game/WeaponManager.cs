@@ -76,7 +76,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallUnityItem currentRightHandWeapon = null;
         DaggerfallUnityItem currentLeftHandWeapon = null;
         DaggerfallUnityItem lastBowUsed = null;
-        bool isLastArrowSummoned = false;
 
         public float EquipCountdownRightHand;
         public float EquipCountdownLeftHand;
@@ -371,12 +370,6 @@ namespace DaggerfallWorkshop.Game
             {
                 ScreenWeapon.PlaySwingSound();
                 isBowSoundFinished = true;
-
-                // Remove arrow
-                ItemCollection playerItems = playerEntity.Items;
-                DaggerfallUnityItem arrow = playerItems.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow, priorityToConjured: true);
-                isLastArrowSummoned = arrow.IsSummoned;
-                playerItems.RemoveOne(arrow);
             }
             else if (!isDamageFinished && ScreenWeapon.GetCurrentFrame() == ScreenWeapon.GetHitFrame())
             {
@@ -400,11 +393,17 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallMissile missile = Instantiate(ArrowMissilePrefab);
                     if (missile)
                     {
+                        // Remove arrow
+                        ItemCollection playerItems = playerEntity.Items;
+                        DaggerfallUnityItem arrow = playerItems.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow, priorityToConjured: true);
+                        bool isArrowSummoned = arrow.IsSummoned;
+                        playerItems.RemoveOne(arrow);
+
                         missile.Caster = GameManager.Instance.PlayerEntityBehaviour;
                         missile.TargetType = TargetTypes.SingleTargetAtRange;
                         missile.ElementType = ElementTypes.None;
                         missile.IsArrow = true;
-                        missile.IsArrowSummoned = isLastArrowSummoned;
+                        missile.IsArrowSummoned = isArrowSummoned;
 
                         lastBowUsed = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;;
                     }
