@@ -373,7 +373,7 @@ namespace DaggerfallWorkshop.Game
 
                 // Remove arrow
                 ItemCollection playerItems = playerEntity.Items;
-                DaggerfallUnityItem arrow = playerItems.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow);
+                DaggerfallUnityItem arrow = playerItems.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow, priorityToConjured: true);
                 playerItems.RemoveOne(arrow);
             }
             else if (!isDamageFinished && ScreenWeapon.GetCurrentFrame() == ScreenWeapon.GetHitFrame())

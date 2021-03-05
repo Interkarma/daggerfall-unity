@@ -348,16 +348,41 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="itemGroup">Item group.</param>
         /// <param name="itemIndex">Template index.</param>
+        /// <param name="priorityToConjured">Prefer (short lived) conjured items.</param>
         /// <returns>An item of this type, or null if none found.</returns>
-        public DaggerfallUnityItem GetItem(ItemGroups itemGroup, int itemIndex)
+        public DaggerfallUnityItem GetItem(ItemGroups itemGroup, int itemIndex, bool priorityToConjured = false)
         {
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(itemGroup, itemIndex);
-            foreach (DaggerfallUnityItem item in items.Values)
+            if (!priorityToConjured)
             {
-                if (item.ItemGroup == itemGroup && item.GroupIndex == groupIndex)
-                    return item;
+                foreach (DaggerfallUnityItem item in items.Values)
+                {
+                    if (item.ItemGroup == itemGroup && item.GroupIndex == groupIndex)
+                        return item;
+                }
+                return null;
             }
-            return null;
+            else
+            {
+                DaggerfallUnityItem selectedItem = null;
+
+                foreach (DaggerfallUnityItem item in items.Values)
+                {
+                    if (item.ItemGroup == itemGroup && item.GroupIndex == groupIndex)
+                    {
+                        if (item.IsSummoned)
+                        {
+                            // pick conjured items with shortest life
+                            if (selectedItem == null || !selectedItem.IsSummoned || selectedItem.TimeForItemToDisappear > item.TimeForItemToDisappear)
+                                selectedItem = item;
+                        }
+                        else // real item
+                            if (selectedItem == null)
+                                selectedItem = item;
+                    }
+                }
+                return selectedItem;
+            }
         }
 
         /// <summary>
