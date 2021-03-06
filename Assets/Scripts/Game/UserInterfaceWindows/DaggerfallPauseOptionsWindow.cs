@@ -153,6 +153,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Escape);
 
             hud = DaggerfallUI.Instance.DaggerfallHUD;
+            fullScreenTick.Enabled = !DaggerfallUnity.Settings.LargeHUD;
         }
 
         public override void Update()
