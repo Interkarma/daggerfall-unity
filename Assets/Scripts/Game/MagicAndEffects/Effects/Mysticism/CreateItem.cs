@@ -26,6 +26,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public static readonly string EffectKey = "CreateItem";
 
         DaggerfallListPickerWindow itemPicker;
+        static int lastSelectedIndex = 0;
 
         enum CreateItemSelection
         {
@@ -71,6 +72,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 itemPicker.ListBox.AddItem(TextManager.Instance.GetLocalizedText(item.ToString()));
             }
+            itemPicker.ListBox.SelectIndex(lastSelectedIndex);
+            itemPicker.ListBox.ScrollToSelected();
         }
 
         public override void SetProperties()
@@ -115,6 +118,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         private void ItemPicker_OnItemPicked(int index, string itemString)
         {
+            lastSelectedIndex = index;
             //Add selected item to inventory with time limit
             DaggerfallUnityItem item = CreateTempItem((CreateItemSelection)index);
             if (item != null)
