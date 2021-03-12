@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
         }
 
-        private void ApplyMaterials(bool force, int[] dungeonTextureTable = null)
+        private void ApplyMaterials(bool force, int[] dungeonTextureTable = null, int dungeonID = -1)
         {
             if (Materials == null || Materials.Length == 0)
                 return;
@@ -146,9 +146,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 ClimateSeason season;
                 if (dungeonTextureTable != null)
                 {
+                    if ((dungeonID == -1) && (GameManager.Instance.PlayerEnterExit?.Dungeon?.Summary != null))
+                        dungeonID = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.ID;
+
                     // This model is inside a dungeon
                     int randomDungeonTextures = DaggerfallUnity.Settings.RandomDungeonTextures;
-                    if ((randomDungeonTextures == 2) || ((!DaggerfallDungeon.IsMainStoryDungeon(GameManager.Instance.PlayerEnterExit.Dungeon.Summary.ID)) && (randomDungeonTextures == 3)))
+                    if ((randomDungeonTextures == 2) || ((dungeonID != -1) && (!DaggerfallDungeon.IsMainStoryDungeon(dungeonID)) && (randomDungeonTextures == 3)))
                     {
                         // Dungeon Textures is either set to "ClimateOnly" or set to "Climate" and model is not in a Main Quest dungeon.
                         climate = ClimateSwaps.FromAPIClimateBase(climateBaseType);
@@ -231,13 +234,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 #endif
 
-        private void DaggerfallDungeon_OnSetDungeon(DaggerfallDungeon daggerfallDungeon)
+        private void DaggerfallDungeon_OnSetDungeon(DaggerfallDungeon daggerfallDungeon, int[] dungeonTextureTable, int dungeonID)
         {
             if (transform.IsChildOf(daggerfallDungeon.transform))
             {
                 DaggerfallDungeon.OnSetDungeon -= DaggerfallDungeon_OnSetDungeon;
                 subscribedToOnSetDungeon = false;
-                ApplyMaterials(true, daggerfallDungeon.DungeonTextureTable);
+                ApplyMaterials(true, dungeonTextureTable, dungeonID);
             }
         }
     }
