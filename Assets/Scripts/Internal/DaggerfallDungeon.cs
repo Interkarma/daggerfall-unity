@@ -567,16 +567,11 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// An event raised after a dungeon has been set and its layout has been performed.
         /// </summary>
-        public delegate void OnSetDungeonEventHandler(DaggerfallDungeon daggerfallDungeon, int[] dungeonTextureTable, int dungeonID);
-        public static event OnSetDungeonEventHandler OnSetDungeon;
+        public static event Action<DaggerfallDungeon> OnSetDungeon;
         private void RaiseOnSetDungeonEvent()
         {
             if (OnSetDungeon != null)
-            {
-                int[] dungeonTextureTable = DungeonTextureTable;
-                int dungeonID = summary.ID;
-                OnSetDungeon(this, dungeonTextureTable, dungeonID);
-            }
+                OnSetDungeon(this);
         }
     }
 }

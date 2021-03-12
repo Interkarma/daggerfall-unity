@@ -234,13 +234,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 #endif
 
-        private void DaggerfallDungeon_OnSetDungeon(DaggerfallDungeon daggerfallDungeon, int[] dungeonTextureTable, int dungeonID)
+        private void DaggerfallDungeon_OnSetDungeon(DaggerfallDungeon daggerfallDungeon)
         {
             if (transform.IsChildOf(daggerfallDungeon.transform))
             {
                 DaggerfallDungeon.OnSetDungeon -= DaggerfallDungeon_OnSetDungeon;
                 subscribedToOnSetDungeon = false;
-                ApplyMaterials(true, dungeonTextureTable, dungeonID);
+                ApplyMaterials(true, daggerfallDungeon.DungeonTextureTable, daggerfallDungeon.Summary.ID);
             }
         }
     }
