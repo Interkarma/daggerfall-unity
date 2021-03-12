@@ -146,8 +146,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 ClimateSeason season;
                 if (dungeonTextureTable != null)
                 {
-                    if ((dungeonID == -1) && (GameManager.Instance.PlayerEnterExit?.Dungeon?.Summary != null))
-                        dungeonID = GameManager.Instance.PlayerEnterExit.Dungeon.Summary.ID;
+                    if (dungeonID == -1)
+                    {
+                        DaggerfallDungeon daggerfallDungeon = GameManager.Instance.PlayerEnterExit.Dungeon;
+                        if (daggerfallDungeon != null)
+                            dungeonID = daggerfallDungeon.Summary.ID;
+                    }
 
                     // This model is inside a dungeon
                     int randomDungeonTextures = DaggerfallUnity.Settings.RandomDungeonTextures;
