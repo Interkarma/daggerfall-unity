@@ -67,8 +67,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     // Modder has enabled the use of the Dungeon Texture Table for this model.
                     if (Automap.IsCreatingDungeonAutomapBaseGameObjects)
                     {
-                        // This model's GameObject was created for a location interior's Automap. Immediately create materials and get texture table from DaggerfallDungeon.
-                        ApplyMaterials(false, GameManager.Instance.PlayerEnterExit.Dungeon.DungeonTextureTable);
+                        if (GameManager.Instance.IsPlayerInsideBuilding)
+                        {
+                            // This model was created for a settlement interior's Automap. Immediately create materials without texture table.
+                            ApplyMaterials(false);
+                        }
+                        else
+                        {
+                            // This model's GameObject was created for a dungeon or castle Automap. Immediately create materials and get texture table from DaggerfallDungeon.
+                            ApplyMaterials(false, GameManager.Instance.PlayerEnterExit.Dungeon.DungeonTextureTable);
+                        }
                     }
                     else if (GameManager.Instance.PlayerEnterExit.IsCreatingDungeonBaseGameObjects == true)
                     {
@@ -227,7 +235,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 DaggerfallDungeon.OnSetDungeon -= DaggerfallDungeon_OnSetDungeon;
                 subscribedToOnSetDungeon = false;
-                ApplyMaterials(true, daggerfallDungeon.DungeonTextureTable);
+                ApplyMaterials(false, daggerfallDungeon.DungeonTextureTable);
             }
         }
     }

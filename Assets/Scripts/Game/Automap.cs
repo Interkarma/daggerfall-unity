@@ -2047,9 +2047,7 @@ namespace DaggerfallWorkshop.Game
                         }
 
                         DFBlock blockData;
-                        int[] textureTable = null;
-                        if (GameManager.Instance.PlayerEnterExit.Dungeon != null)
-                            textureTable = GameManager.Instance.PlayerEnterExit.Dungeon.DungeonTextureTable;
+                        int[] textureTable = GameManager.Instance.PlayerEnterExit?.Dungeon?.DungeonTextureTable;
 
                         Automap.isCreatingDungeonAutomapBaseGameObjects = true;
                         GameObject gameobjectBlock = RDBLayout.CreateBaseGameObject(block.BlockName, null, out blockData, textureTable, true, null, false);
