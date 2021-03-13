@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         [Tooltip("Daggerfall Texture record.")]
         public int Record;
 
-        [Tooltip("Use texture for current climate and season. Archive must be the base archive.")]
+        [Tooltip("Use texture for current climate and season. Archive must be the base archive. Ignored if UseDungeonTextureTable is enabled.")]
         public bool ApplyClimate;
     }
 
@@ -177,8 +177,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             if (dungeonTextureTable != null)
                 archive = DungeonTextureTables.ApplyTextureTable(archive, dungeonTextureTable, climateBaseType);
-
-            if (runtimeMaterial.ApplyClimate)
+            else if (runtimeMaterial.ApplyClimate)
                 archive = ClimateSwaps.ApplyClimate(archive, record, climate, season);
 
             return DaggerfallUnity.Instance.MaterialReader.GetMaterial(archive, record);
