@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -351,6 +351,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 spellsListBox.OnUseSelectedItem += SpellsListBox_OnUseSelectedItem;
             spellsListBox.OnMouseScrollDown += SpellsListBox_OnMouseScroll;
             spellsListBox.OnMouseScrollUp += SpellsListBox_OnMouseScroll;
+            spellsListBox.AlwaysAcceptKeyboardInput = true;
             mainPanel.Components.Add(spellsListBox);
 
             // Spells list scroller

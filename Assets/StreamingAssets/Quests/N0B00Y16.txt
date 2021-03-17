@@ -194,6 +194,9 @@ _qtime_ task:
 _clickqgiver_ task:
 	clicked npc _questgiver_ 
 
+_S.10_ task:
+	toting _crn_ and _merchant_ clicked 
+
 _S.02_ task:
 	clicked npc _merchant_ 
 	cast Open spell do _S.07_ 
@@ -227,9 +230,6 @@ _S.09_ task:
 	create foe _skeleton_ every 1 minutes 1 times with 100% success 
 	make _I.01_ permanent 
 
-_S.10_ task:
-	toting _crn_ and _merchant_ clicked 
-
 _S.11_ task:
 	when _S.08_ and _S.10_ 
 	say 1050 
@@ -249,4 +249,5 @@ _S.13_ task:
 	when _S.10_ and not _S.08_ 
 	get item _crn_ 
 	say 1051 
-	unset _S.10_ _S.13_ 
+	clear _S.10_
+	clear _S.13_ 

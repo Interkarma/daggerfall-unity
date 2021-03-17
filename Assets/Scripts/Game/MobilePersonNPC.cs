@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game
         int[] maleRedguardFaceRecordIndex = new int[] { 336, 312, 336, 312 };   // matching textures 381, 382, 383, 384 from MobilePersonBillboard class texture definition
         int[] femaleRedguardFaceRecordIndex = new int[] { 144, 144, 120, 96 };  // matching texture 395, 396, 397, 398 from MobilePersonBillboard class texture definition
 
-        int[] maleNordFaceRecordIndex = new int[] { 240, 264, 264, 216 };       // matching texture 387, 388, 389, 390 from MobilePersonBillboard class texture definition
+        int[] maleNordFaceRecordIndex = new int[] { 240, 264, 168, 216 };       // matching texture 387, 388, 389, 390 from MobilePersonBillboard class texture definition
         int[] femaleNordFaceRecordIndex = new int[] { 72, 0, 48, 72 };          // matching texture 392, 393, 451, 452 from MobilePersonBillboard class texture definition
 
         int[] maleBretonFaceRecordIndex = new int[] { 192, 216, 240, 240 };     // matching texture 385, 386, 391, 394 from MobilePersonBillboard class texture definition

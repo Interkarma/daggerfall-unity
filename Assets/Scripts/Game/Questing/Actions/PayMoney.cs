@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -21,10 +21,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         Symbol paidTaskSymbol;
         Symbol notTaskSymbol;
         int amount;
+        bool goldOnly;
 
         public override string Pattern
         {
-            get { return @"pay (?<amount>\d+) money do (?<paidTaskName>[a-zA-Z0-9_.]+) otherwise do (?<notTaskName>[a-zA-Z0-9_.]+)"; }
+            get { return @"pay (?<amount>\d+) (?<type>money|gold) do (?<paidTaskName>[a-zA-Z0-9_.]+) otherwise do (?<notTaskName>[a-zA-Z0-9_.]+)"; }
         }
 
         public PayMoney(Quest parentQuest)
@@ -43,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Factory new action
             PayMoney action = new PayMoney(parentQuest);
             action.amount = Parser.ParseInt(match.Groups["amount"].Value);
+            action.goldOnly = match.Groups["type"].Value == "gold";
             action.paidTaskSymbol = new Symbol(match.Groups["paidTaskName"].Value);
             action.notTaskSymbol = new Symbol(match.Groups["notTaskName"].Value);
 
@@ -56,21 +58,37 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // When an amount is specified
             if (amount > 0)
             {
-                // Does player have enough gold?
-                if (GameManager.Instance.PlayerEntity.GetGoldAmount() >= amount)
+                if (goldOnly)
                 {
-                    // Then deduct gold
-                    GameManager.Instance.PlayerEntity.DeductGoldAmount(amount);
-                    ParentQuest.StartTask(paidTaskSymbol);
+                    // Does player have enough gold?
+                    if (GameManager.Instance.PlayerEntity.GoldPieces >= amount)
+                    {
+                        // Then deduct gold and start paid task
+                        GameManager.Instance.PlayerEntity.GoldPieces -= amount;
+                        ParentQuest.StartTask(paidTaskSymbol);
+                    }
+                    else
+                    {
+                        // Otherwise trigger secondary task and exit
+                        ParentQuest.StartTask(notTaskSymbol);
+                    }
                 }
                 else
                 {
-                    // Otherwise trigger secondary task and exit
-                    ParentQuest.StartTask(notTaskSymbol);
+                    // Does player have enough money?
+                    if (GameManager.Instance.PlayerEntity.GetGoldAmount() >= amount)
+                    {
+                        // Then deduct money and start paid task
+                        GameManager.Instance.PlayerEntity.DeductGoldAmount(amount);
+                        ParentQuest.StartTask(paidTaskSymbol);
+                    }
+                    else
+                    {
+                        // Otherwise trigger secondary task and exit
+                        ParentQuest.StartTask(notTaskSymbol);
+                    }
                 }
             }
-
-            SetComplete();
         }
 
         #region Serialization
@@ -81,6 +99,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             public Symbol paidTaskSymbol;
             public Symbol notTaskSymbol;
             public int amount;
+            public bool goldOnly;
         }
 
         public override object GetSaveData()
@@ -89,6 +108,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             data.paidTaskSymbol = paidTaskSymbol;
             data.notTaskSymbol = notTaskSymbol;
             data.amount = amount;
+            data.goldOnly = goldOnly;
 
             return data;
         }
@@ -102,6 +122,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             paidTaskSymbol = data.paidTaskSymbol;
             notTaskSymbol = data.notTaskSymbol;
             amount = data.amount;
+            goldOnly = data.goldOnly;
         }
 
         #endregion

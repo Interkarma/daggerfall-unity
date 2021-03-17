@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -46,7 +46,10 @@ namespace DaggerfallWorkshop.Game
                 {
                     torchIntensity = torchLight.intensity;
                     if (DaggerfallUnity.Settings.PlayerTorchFromItems)
+                    {
                         torchLight.shadows = LightShadows.Soft;
+                        torchLight.transform.position = new Vector3(-0.3f, 1.2f, 0.2f);
+                    }
                 }
             }
         }

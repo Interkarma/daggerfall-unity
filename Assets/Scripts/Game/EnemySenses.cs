@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -617,7 +617,7 @@ namespace DaggerfallWorkshop.Game
 
             timeOfLastStealthCheck = gameMinutes;
 
-            int stealthChance = 2 * ((int)(distanceToTarget / MeshReader.GlobalScale) * target.Entity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth) >> 10);
+            int stealthChance = FormulaHelper.CalculateStealthChance(distanceToTarget, target);
 
             return Dice100.FailedRoll(stealthChance);
         }

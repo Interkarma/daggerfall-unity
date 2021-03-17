@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -492,7 +492,7 @@ namespace DaggerfallConnect.Arena2
                 case (int)Climates.MountainWoods:
                     settings.ClimateType = DFLocation.ClimateBaseType.Temperate;
                     settings.GroundArchive = 102;
-                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_TemperateWoodland;
+                    settings.NatureArchive = (int)DFLocation.ClimateTextureSet.Nature_WoodlandHills;
                     settings.SkyBase = 16;
                     settings.People = FactionFile.FactionRaces.Breton;
                     break;

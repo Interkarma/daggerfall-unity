@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -1003,7 +1003,7 @@ namespace DaggerfallWorkshop.Game
             Transform doorOwner;
             DaggerfallStaticDoors doors = GetDoors(hit.transform, out doorOwner);
             StaticDoor door;
-            if (doors && doors.HasHit(hit.point, out door))
+            if (doors && doors.HasHit(hit.point, out door) || CustomDoor.HasHit(hit, out door))
             {
                 // Discover building - this is needed to check lock level and transition to interior
                 GameManager.Instance.PlayerGPS.DiscoverBuilding(door.buildingKey);

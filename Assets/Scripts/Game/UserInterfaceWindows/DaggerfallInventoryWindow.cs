@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -441,7 +441,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 WrapText = true,
                 WrapWords = true,
                 ExtraLeading = 3, // spacing between info panel elements
-                TextColor = new Color32(250, 250, 220, 255),
+                TextColor = DaggerfallUI.DaggerfallInfoPanelTextColor,
                 ShadowPosition = new Vector2(0.5f, 0.5f),
                 ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1
             };
@@ -1331,7 +1331,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     prohibited = true;
 
                 // Check for prohibited armor type (leather, chain or plate)
-                else if ((1 << (item.NativeMaterialValue >> 8) & (int)playerEntity.Career.ForbiddenArmors) != 0)
+                else if (!item.IsShield && (1 << (item.NativeMaterialValue >> 8) & (int)playerEntity.Career.ForbiddenArmors) != 0)
                     prohibited = true;
 
                 // Check for prohibited material

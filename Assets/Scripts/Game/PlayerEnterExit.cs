@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -666,6 +667,9 @@ namespace DaggerfallWorkshop.Game
                 // Clear all stateful objects from world loose object tracking
                 world.ClearStatefulLooseObjects();
             }
+
+            // Ensure building variant checks use this location.
+            WorldDataVariants.SetLastLocationKeyTo(playerGPS.CurrentRegionIndex, playerGPS.CurrentLocationIndex);
 
             // Raise event
             RaiseOnPreTransitionEvent(TransitionType.ToBuildingInterior, door);

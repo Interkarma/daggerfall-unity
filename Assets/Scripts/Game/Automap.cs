@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -2020,6 +2020,7 @@ namespace DaggerfallWorkshop.Game
             gameobjectGeometry = new GameObject("GeometryAutomap (Dungeon)");
 
             // disable this option to get all small dungeon parts as individual models
+            bool combineRdbOptionState = DaggerfallUnity.Instance.Option_CombineRDB;
             DaggerfallUnity.Instance.Option_CombineRDB = false;
 
             foreach (Transform elem in GameManager.Instance.DungeonParent.transform)
@@ -2060,8 +2061,9 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            // enable this option (to reset to normal behavior)
-            DaggerfallUnity.Instance.Option_CombineRDB = true;
+            // set this option back to previous state (to reset to previous behavior)
+            if (combineRdbOptionState)
+                DaggerfallUnity.Instance.Option_CombineRDB = true;
 
             // put all objects inside gameobjectGeometry in layer "Automap"
             SetLayerRecursively(gameobjectGeometry, layerAutomap);

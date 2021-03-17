@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -71,6 +71,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected DFBitmap regionPickerBitmap;
         protected DFRegion currentDFRegion;
+        protected int currentDFRegionIndex = -1;
+        protected int lastQueryLocationIndex = -1;
+        protected string lastQueryLocationName;
         protected ContentReader.MapSummary locationSummary;
 
         protected KeyCode toggleClosedBinding;
@@ -1076,6 +1079,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             findButton.Enabled = true;
             findingLocation = false;
             currentDFRegion = DaggerfallUnity.ContentReader.MapFileReader.GetRegion(region);
+            currentDFRegionIndex = region;
+            lastQueryLocationIndex = -1;
             SetupArrowButtons();
             UpdateMapTextures();
             UpdateBorder();
@@ -1107,13 +1112,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Check if location with MapSummary summary is already discovered
         protected virtual bool checkLocationDiscovered(ContentReader.MapSummary summary)
         {
-            if (GameManager.Instance.PlayerGPS.HasDiscoveredLocation(summary.ID) ||
-                summary.Discovered ||
-                revealUndiscoveredLocations == true)
-            {
-                return true;
-            }
-            return false;
+            // Check location MapTableData.Discovered flag in world replacement data then cached MAPS.BSA data
+            bool discovered = false;
+            DFLocation location;
+            if (WorldDataReplacement.GetDFLocationReplacementData(summary.RegionIndex, summary.MapIndex, out location))
+                discovered = location.MapTableData.Discovered;
+            else
+                discovered = summary.Discovered;
+
+            return GameManager.Instance.PlayerGPS.HasDiscoveredLocation(summary.ID) || discovered || revealUndiscoveredLocations == true;
         }
 
         // Check if place is discovered, so it can be found on map.
@@ -1262,7 +1269,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (RegionSelected == false)
                 regionLabel.Text = GetRegionName(mouseOverRegion);
             else if (locationSelected)
-                regionLabel.Text = string.Format("{0} : {1}", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(mouseOverRegion), currentDFRegion.MapNames[locationSummary.MapIndex]);
+                regionLabel.Text = string.Format("{0} : {1}", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(mouseOverRegion), GetLocationNameInCurrentRegion(locationSummary.MapIndex, true));
             else if (MouseOverOtherRegion)
                 regionLabel.Text = string.Format("Switch To: {0} Region", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(mouseOverRegion));
             else
@@ -1567,6 +1574,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region);
         }
 
+        // Gets name of location in currently open region - tries world data replacement then falls back to MAPS.BSA
+        protected virtual string GetLocationNameInCurrentRegion(int locationIndex, bool cacheName = false)
+        {
+            // Must have a region open
+            if (currentDFRegionIndex == -1)
+                return string.Empty;
+
+            // Cache the last location index when requested and only update it when index changes
+            if (cacheName && lastQueryLocationIndex == locationIndex)
+                return lastQueryLocationName;
+
+            // Get location name from world data replacement if available or fall back to MAPS.BSA cached names
+            DFLocation location;
+            if (WorldDataReplacement.GetDFLocationReplacementData(currentDFRegionIndex, locationIndex, out location))
+            {
+                lastQueryLocationName = location.Name;
+                lastQueryLocationIndex = locationIndex;
+                return location.Name;
+            }
+            else
+            {
+                return currentDFRegion.MapNames[locationSummary.MapIndex];
+            }
+        }
+
         // Gets maps for region
         protected string[] GetRegionMapNames(int region)
         {
@@ -1601,7 +1633,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(doYouWishToTravelToTextId);
 
             // Hack to set location name in text token for now
-            textTokens[2].text = textTokens[2].text.Replace("%tcn", currentDFRegion.MapNames[locationSummary.MapIndex]);
+            textTokens[2].text = textTokens[2].text.Replace("%tcn", GetLocationNameInCurrentRegion(locationSummary.MapIndex));
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
             messageBox.SetTextTokens(textTokens);
@@ -1618,7 +1650,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 DaggerfallTeleportPopUp telePopup = (DaggerfallTeleportPopUp)UIWindowFactory.GetInstanceWithArgs(UIWindowType.TeleportPopUp, new object[] { uiManager, uiManager.TopWindow, this });
                 telePopup.DestinationPos = pos;
-                telePopup.DestinationName = currentDFRegion.MapNames[locationSummary.MapIndex];
+                telePopup.DestinationName = GetLocationNameInCurrentRegion(locationSummary.MapIndex);
                 uiManager.PushWindow(telePopup);
             }
             else

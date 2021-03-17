@@ -1,0 +1,216 @@
+1.	Ihr seid bis zu einem gewissen Grad mit ___ ge}bt.
+a.	Kurzwaffen
+	#4454
+	28 +6
+	IT 3 1 3
+b.	Nahkampf
+	#4455
+	30 +6
+	IT 2 1 0
+c.	Axtkampf
+	#4456
+	31 +6
+	IT 3 14 0
+d.	Stumpfe Waffen
+	#4457
+	32 +6
+	IT 3 2 0
+e.	Bogenschie*en
+	#4458
+	33 +6
+	IT 3 16 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+f.	Langwaffen
+	#4459
+	29 +6
+	IT 3 9 0
+
+2.	Welche Diebesfertigkeit habt Ihr am l#ngsten ge}bt?
+a.	Ausweichen
+	#4550
+	20 +6
+b.	Schleichen
+	#4551
+	16 +6
+c.	Meucheln
+	#4552
+	19 +6
+d.	Schl&sser &ffnen
+	#4554
+	13 +6
+e.	Taschendiebstahl
+	#4555
+	15 +6
+f.	Klettern
+	#4556
+	18 +6
+g.	Kritischer Schlag
+	#4557
+	34 +6
+h.	Rennen
+	#4558
+	21 +6
+i.	Springen
+	#4559
+	3 +6
+
+3.	Was bewegt Euch zu einem Leben als Abenteurer?
+a.	Reicht}mer
+	#4560
+	GP +500
+b.	Ruhm
+	#4561
+	r4 +10
+	r2 +10
+c.	Wissen
+	#4562
+	IT 7 0 0
+d.	Spa*
+	#4563
+	1 +3
+	2 +3
+e.	Anderen zu helfen
+	#4564
+	r0 +10
+
+4.	Eure bevorzugte Verbrechensmethode ist ___.
+a.	Fassadenklettern
+	#4565
+	AF F 7 12 +1
+b.	Stra*enraub
+	#4566
+	AF F 7 12 +1
+c.	Taschendiebstahl
+	#4567
+	AF F 7 12 +1
+d.	Betr}gerei
+	#4568
+	AF F 7 12 +1
+e.	Schmuggel
+	#4569
+	AF F 7 12 +1
+f.	Bankraub
+	#4570
+	AF F 7 12 +1
+
+5.	Wenn Ihr Euch eine Belohnung aussuchen k&nntet,
+	best}nde sie aus ___.
+a.	200 Goldst}cken
+	#4528
+	GP +200
+b.	einem Ebenerzdolch
+	#4529
+	IT 3 0 7
+c.	einem Buch
+	#4530
+	IT 7 0 0
+d.	einem Rubin
+	#4531
+	IT 14 0 0
+e.	einem Silberstab
+	#4532
+	IT 3 2 2
+f.	einem Amulett
+	#4192
+	IT 25 0 0
+
+6.	Eine der wichtigstens {berlebensf#higkeiten, die Ihr Euch
+	angenommen habt, besteht darin, wie man ___.
+a.	einfache Wunden heilt
+	0 +6
+b.	sich einschmeichelt
+	1 +6
+c.	andere herumkommandiert
+	2 +6
+d.	mit H#ndlern feilscht
+	14 +6
+e.	mit einem Messer k#mpft
+	28 +6
+
+7.	Ihr wart ein aktives Kind, ___ als alle anderen
+	Euren Alters.
+a.	ein schnellerer L#ufer
+	21 +6
+b.	ein geschickterer Schleicher
+	16 +6
+c.	ein wagemutigerer Kletterer
+	18 +6
+d.	ein ausdauerernder Schwimmer
+	17 +6
+e.	ein h#rterer Schl#ger
+	30 +6
+
+8.	Ihr k&nnt die meisten Dinge, die Ihr haben wollt,
+	bekommen wenn Ihr ___ bestehlt.
+a.	reiche Adlige
+	IT 25 3 0
+b.	Magier und Weise
+	IT 7 0 0
+c.	bekannte Tempel
+	IT 10 4 0
+d.	verschiedenste H#ndler
+	IT 25 5 0
+
+9.	Die eine Fertigkeit, ohne die Ihr nicht arbeiten
+	k&nnt, w#re ___.
+a.	Schl&sser &ffnen
+	13 +6
+b.	Taschendiebstahl
+	15 +6
+c.	Schleichen
+	16 +6
+d.	Ausweichen
+	20 +6
+e.	Klettern
+	18 +6
+f.	Meucheln
+	19 +6
+
+10.	Euer Spitzname als Kind war ___.
+a.	Sprunghase
+	3 +6
+b.	Guppyfisch
+	17 +6
+c.	Wieselflink
+	21 +6
+d.	Streithahn
+	30 +6
+e.	Affenstrolch
+	18 +6
+
+11.	Zu welchem Gott betet Ihr, wenn }berhaupt?
+a.	Zu keinem
+	r2 +5
+b.	Arkay, Gott v. Geburt u. Tod
+	rf82 +5
+c.	Zenithar, Gott des Handels
+	rf84 +5
+d.	Mara, der Mutterg&ttin
+	rf88 +5
+e.	Dibella, G&ttin der Sch&nheit
+	rf98 +5
+f.	Julianos, Gott der Logik
+	rf94 +5
+g.	Akatosh, Gott der Zeit
+	rf92 +5
+h.	Stendarr, Gott der Gnade
+	rf106 +5
+i.	Kynareth, G&ttin der Luft
+	rf36 +5
+
+12.	Euer schlechter Gesundheitszustand als Kind
+	machte Euch ___.
+a.	weniger giftresistent
+	RP -5
+b.	weniger krankheitsresistent
+	RD -5
+c.	weniger ausdauernd
+	FT -5
+d.	weniger magieresistent
+	MR -5
+

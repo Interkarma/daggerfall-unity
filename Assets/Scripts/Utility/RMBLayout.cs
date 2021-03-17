@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -565,13 +565,14 @@ namespace DaggerfallWorkshop.Utility
                                 // Use custom building values from replacement data, but only use up pool item if factionId is zero
                                 if (buildingReplacementData.FactionId != 0)
                                 {
-                                    // Don't use up pool item and set factionId from replacement data
+                                    // Don't use up pool item and set factionId, NameSeed, Quality from replacement data
                                     item.used = false;
                                     building.FactionId = buildingReplacementData.FactionId;
+                                    building.Quality = buildingReplacementData.Quality;
+                                    building.NameSeed = (ushort)(buildingReplacementData.NameSeed + location.LocationIndex);    // Vary name seed by location
                                 }
-                                // Always override type and quality
+                                // Always override type
                                 building.BuildingType = (DFLocation.BuildingTypes)buildingReplacementData.BuildingType;
-                                building.Quality = buildingReplacementData.Quality;
                             }
 
                             // Matched to classic: special handling for some Order of the Raven buildings

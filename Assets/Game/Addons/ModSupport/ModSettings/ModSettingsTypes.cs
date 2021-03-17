@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -544,7 +544,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         protected override void Deserialize(string textValue)
         {
             float value;
-            if (float.TryParse(textValue, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out value))
+            if (float.TryParse(textValue, NumberStyles.Float, CultureInfo.InvariantCulture, out value))
                 Value = Mathf.Clamp(value, Min, Max);
         }
     }

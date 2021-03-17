@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -21,8 +21,21 @@ namespace DaggerfallWorkshop
     /// </summary>
     public interface ITerrainNature
     {
+        /// <summary>
+        /// This should return true if any nature flat is replaced by a 3d model.
+        /// 
+        /// It's used by DFU streaming world to trigger nature layout for map pixels moving between distance 1 and 2 when
+        /// 3d models are used. Distance 1 use models, but map pixels at distance 2+ still use billboards for performance.
+        /// </summary>
         bool NatureMeshUsed { get; }
 
+        /// <summary>
+        /// Layout nature flats for a map pixel.
+        /// </summary>
+        /// <param name="dfTerrain">The terrain object for the map pixel</param>
+        /// <param name="dfBillboardBatch">Daggerfall billboard batcher object to add flats to</param>
+        /// <param name="terrainScale">Terrain scale being used by streaming world</param>
+        /// <param name="terrainDist">Distance of this map pixel from the one the player is currently in</param>
         void LayoutNature(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale, int terrainDist);
     }
 

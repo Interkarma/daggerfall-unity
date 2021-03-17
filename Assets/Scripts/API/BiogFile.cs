@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -28,11 +28,19 @@ namespace DaggerfallConnect.Arena2
         const int questionCount = 12;
         const int socialGroupCount = 5;
 
+        // Folder names constants
+        const string biogSourceFolderName = "BIOGs";
+
         string questionsStr = string.Empty;
         Question[] questions = new Question[questionCount];
         short[] changedReputations = new short[socialGroupCount];
         List<string> answerEffects = new List<string>();
         CharacterDocument characterDocument;
+
+        public static string BIOGSourceFolder
+        {
+            get { return Path.Combine(Application.streamingAssetsPath, biogSourceFolderName); }
+        }
 
         public BiogFile(CharacterDocument characterDocument)
         {
@@ -41,7 +49,7 @@ namespace DaggerfallConnect.Arena2
 
             // Load text file
             string fileName = "BIOG" + characterDocument.classIndex.ToString("D" + 2) + "T0.TXT";
-            FileProxy txtFile = new FileProxy(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseDisk, true);
+            FileProxy txtFile = new FileProxy(Path.Combine(BiogFile.BIOGSourceFolder, fileName), FileUsage.UseDisk, true);
             questionsStr = System.Text.Encoding.UTF8.GetString(txtFile.GetBytes());
 
             // Parse text into questions

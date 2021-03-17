@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -18,6 +18,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
     /// <summary>
     /// Condition triggers when player clicks on NPC while holding a quest Item in their inventory.
     /// Superficially very similar to ClickedNpc but also requires item check to be true.
+    /// NOTES:
+    ///  - Will clear click after handling if player clicks NPC while holding specified item.
+    ///  - If used in combination with ClickedNpc on same NPC elsewhere in quest, always call TotingItemAndClickedNpc check BEFORE ClickedNpc.
     /// </summary>
     public class TotingItemAndClickedNpc : ActionTemplate
     {
@@ -86,6 +89,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 // Check if player has item
                 if (GameManager.Instance.PlayerEntity.Items.Contains(item))
                 {
+                    // Rearm person click after current task
+                    ParentQuest.ScheduleClickRearm(person);
+
                     // Show message popup, remove item, return true on trigger
                     ParentQuest.ShowMessagePopup(id);
                     GameManager.Instance.PlayerEntity.ReleaseQuestItemForReoffer(ParentQuest.UID, item);

@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -663,6 +663,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         for (int i = 0; i < modSettings.Length; i++)
         {
             modSettings[i].enabled = true;
+            modList.GetItem(i).textColor = unselectedTextColor;
         }
         UpdateModPanel();
     }
@@ -675,6 +676,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         for (int i = 0; i < modSettings.Length; i++)
         {
             modSettings[i].enabled = false;
+            modList.GetItem(i).textColor = disabledModTextColor;
         }
 
         UpdateModPanel();

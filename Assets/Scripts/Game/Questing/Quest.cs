@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -67,6 +67,7 @@ namespace DaggerfallWorkshop.Game.Questing
         QuestResource lastResourceReferenced = null;
         bool questBreak = false;
         Stack<DaggerfallMessageBox> pendingMessageBoxStack = new Stack<DaggerfallMessageBox>();
+        List<QuestResource> pendingClickRearms = new List<QuestResource>();
 
         int ticksToEnd = 0;
 
@@ -323,6 +324,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Update task
                 task.Update();
                 ShowPendingTaskMessages();
+
+                // Perform pending click rearms
+                // Allows tasks to "own" a player click on a first-come, first-serve basis
+                // Prevents concurrency issues when multiple tasks are listening for click on same resource and may all run at same time
+                // Reference quest N0B00Y16 where click on _merchant_ will give player item to open then immediately display message as if player clicked on _merchant_ again without attempting to open chest
+                ClearPendingClickRearms();
             }
 
             // Show any remaining pending task messages
@@ -334,6 +341,24 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 resource.PostTick(this);
             }
+        }
+
+        /// <summary>
+        /// Schedule a quest resource to rearm player click immediately after task execution.
+        /// </summary>
+        /// <param name="resource"></param>
+        public void ScheduleClickRearm(QuestResource resource)
+        {
+            pendingClickRearms.Add(resource);
+        }
+
+        void ClearPendingClickRearms()
+        {
+            foreach (QuestResource resource in pendingClickRearms)
+            {
+                resource.RearmPlayerClick();
+            }
+            pendingClickRearms.Clear();
         }
 
         public void EndQuest()

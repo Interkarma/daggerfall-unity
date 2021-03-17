@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -29,6 +29,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public ushort FactionId;
         public int BuildingType;
         public byte Quality;
+        public ushort NameSeed;
         public DFBlock.RmbSubRecord RmbSubRecord;
         public byte[] AutoMapData;      // for coloured map (optional)
     }

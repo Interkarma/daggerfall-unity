@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -243,7 +243,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     // Select a quest at random from appropriate pool
                     Quest offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(
                         FactionFile.GuildGroups.Vampires,
-                        MembershipStatus.Nonmember,
+                        MembershipStatus.Member,
                         factionId,
                         reputation,
                         GameManager.Instance.PlayerEntity.Level);

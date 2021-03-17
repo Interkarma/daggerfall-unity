@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -251,6 +251,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             set { horizontalScrollMode = value; }
         }
 
+        /// <summary>
+        /// List will accept keyboard input even when mouse not over control.
+        /// Do not set this when multiple lists are used within same UI, or any other control where inputs might overlap.
+        /// </summary>
+        public bool AlwaysAcceptKeyboardInput { get; set; }
+
         #endregion
 
         #region Constructors
@@ -266,7 +272,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Update();
 
-            if (MouseOverComponent)
+            if (MouseOverComponent || AlwaysAcceptKeyboardInput)
             {
                 if (DaggerfallUI.Instance.LastKeyCode == KeyCode.UpArrow)
                     SelectPrevious();

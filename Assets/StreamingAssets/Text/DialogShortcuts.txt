@@ -56,6 +56,8 @@ ToggleRetroPP,        Shift-F11
 DebuggerToggle,       Shift-Tab
 DebuggerPrevQuest,    LeftBracket
 DebuggerNextQuest,    RightBracket
+DebuggerPrevMarker,   Shift-LeftBracket
+DebuggerNextMarker,   Shift-RightBracket
 
 -- Rest menu
 RestForAWhile,        F

@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -60,6 +60,7 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallUnityNotImplementedColor = new Color(1, 0, 0, 0.5f);
         public static Color DaggerfallPrisonDaysUntilFreedomColor = new Color32(232, 196, 76, 255);
         public static Color DaggerfallPrisonDaysUntilFreedomShadowColor = new Color32(48, 36, 20, 255);
+        public static Color DaggerfallInfoPanelTextColor = new Color32(250, 250, 220, 255);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
 
         public FilterMode globalFilterMode = FilterMode.Point;

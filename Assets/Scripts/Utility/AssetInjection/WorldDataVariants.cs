@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -56,6 +56,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static Dictionary<VariantBlockKey, string> blockVariants = new Dictionary<VariantBlockKey, string>();
 
         static Dictionary<VariantBuildingKey, string> buildingVariants = new Dictionary<VariantBuildingKey, string>();
+
+        /// <summary>
+        /// Sets the last location key to specified location in region. Used before entering buildings to
+        /// ensure that the correct location specific variant can be found.
+        /// </summary>
+        public static void SetLastLocationKeyTo(int regionIndex, int locationIndex)
+        {
+            lastLocationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
+        }
 
         #region Setters for variants
 
@@ -203,6 +212,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
             }
             return NoVariant;
+        }
+
+        public static string GetBuildingVariant(int regionIndex, int locationIndex, string blockName, int recordIndex)
+        {
+            int locationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
+            VariantBuildingKey buildingKey = new VariantBuildingKey(lastLocationKey, blockName, recordIndex);
+            return buildingVariants.ContainsKey(buildingKey) ? buildingVariants[buildingKey] : null;
         }
 
 

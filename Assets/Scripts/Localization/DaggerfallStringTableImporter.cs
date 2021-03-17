@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -531,6 +531,15 @@ namespace DaggerfallWorkshop.Localization
                     if (charMappingTable != null)
                         text = RemapCharacters(targetTable.LocaleIdentifier.Code, text, charMappingTable);
 
+                    // ID 9000 is diverted to multiple records after initial conversion
+                    // Otherwise this record is too long for string table editor
+                    // Multiple records also make questionnaire easier to maintain
+                    if (id == 9000)
+                    {
+                        SplitQuestionnaireRecord(text, key, targetTable, overwriteExistingKeys, ref copiedNew, ref copiedOverwrite);
+                        continue;
+                    }
+
                     var targetEntry = targetTable.GetEntry(key);
                     if (targetEntry == null)
                     {
@@ -559,6 +568,46 @@ namespace DaggerfallWorkshop.Localization
             EditorUtility.SetDirty(targetCollection.SharedData);
 
             Debug.LogFormat("Source collection TEXT.RSC has a total of {0} entries.\nTarget collection '{1}' received {2} new entries, {3} entries were overwritten.", totalSourceEntries, target, copiedNew, copiedOverwrite);
+        }
+
+        static void SplitQuestionnaireRecord(string text, string key, StringTable targetTable, bool overwriteExistingKeys, ref int copiedNew, ref int copiedOverwrite)
+        {
+            string[] splitText = text.Split('{');
+
+            if (splitText == null || splitText.Length == 0)
+            {
+                Debug.LogErrorFormat("SplitQuestionnaireRecord() found 0 entries.", key);
+                return;
+            }
+
+            for (int i = 0; i < splitText.Length; i++)
+            {
+                string itemKey = string.Format("{0}.{1}", key, i);
+                string itemText = splitText[i];
+
+                // Discard any empty records and trailing markup end record
+                if (string.IsNullOrEmpty(itemText) || string.Compare(markupEndRecord, itemText) == 0)
+                    continue;
+
+                var targetEntry = targetTable.GetEntry(itemKey);
+                if (targetEntry == null)
+                {
+                    targetTable.AddEntry(itemKey, itemText);
+                    copiedNew++;
+                }
+                else if (targetEntry != null && overwriteExistingKeys)
+                {
+                    if (targetTable.RemoveEntry(itemKey))
+                    {
+                        targetTable.AddEntry(itemKey, itemText);
+                        copiedOverwrite++;
+                    }
+                    else
+                    {
+                        Debug.LogErrorFormat("SplitQuestionnaireRecord() could not remove key '{0}'. Overwrite failed.", key);
+                    }
+                }
+            }
         }
 
         /// <summary>

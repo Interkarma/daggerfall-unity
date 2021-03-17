@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -326,7 +326,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 foreach (QuestData quest in guildQuests)
                 {
                     if ((status == (MembershipStatus)quest.membership || tplMemb == (MembershipStatus)quest.membership) &&
-                        (status == MembershipStatus.Nonmember || (quest.minReq < 10 && quest.minReq <= rank) || (quest.minReq >= 10 && quest.minReq <= rep)))
+                        ((status == MembershipStatus.Nonmember && quest.minReq == 0) || (quest.minReq < 10 && quest.minReq <= rank) || (quest.minReq >= 10 && quest.minReq <= rep)))
                     {
                         if ((!quest.adult || DaggerfallUnity.Settings.PlayerNudity) && !(quest.oneTime && oneTimeQuestsAccepted.Contains(quest.name)))
                             pool.Add(quest);

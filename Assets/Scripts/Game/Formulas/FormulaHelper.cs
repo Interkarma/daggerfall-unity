@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -207,7 +207,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int CalculateFatigueRecoveryRate(int maxFatigue)
         {
             Func<int, int> del;
-            if (TryGetOverride("HealingRateModifier", out del))
+            if (TryGetOverride("CalculateFatigueRecoveryRate", out del))
                 return del(maxFatigue);
 
             return Mathf.Max((int)Mathf.Floor(maxFatigue / 8), 1);
@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         public static int CalculateSpellPointRecoveryRate(PlayerEntity player)
         {
             Func<PlayerEntity, int> del;
-            if (TryGetOverride("HealingRateModifier", out del))
+            if (TryGetOverride("CalculateSpellPointRecoveryRate", out del))
                 return del(player);
 
             if (player.Career.NoRegenSpellPoints)
@@ -274,6 +274,17 @@ namespace DaggerfallWorkshop.Game.Formulas
             int chance = 100 - player.Skills.GetLiveSkillValue(DFCareer.Skills.Pickpocket);
             chance += shopQuality + weightAndNumItems;
             return Mathf.Clamp(chance, 5, 95);
+        }
+        
+        // Calculate chance of stealth skill hiding the user.
+        public static int CalculateStealthChance(float distanceToTarget, DaggerfallEntityBehaviour target)
+        {
+            Func<float, DaggerfallEntityBehaviour, int> del;
+            if (TryGetOverride("CalculateStealthChance", out del))
+                return del(distanceToTarget, target);
+
+            int chance = 2 * ((int)(distanceToTarget / MeshReader.GlobalScale) * target.Entity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth) >> 10);
+            return chance;
         }
 
         // Calculate chance of successfully climbing - checked repeatedly while climbing

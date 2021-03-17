@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -34,6 +34,14 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="id">Text resource ID.</param>
         /// <returns>Text resource tokens.</returns>
         TextFile.Token[] GetRSCTokens(int id);
+
+        /// <summary>
+        /// Gets tokens from RSC localization table with custom string ID and conversion back to RSC tokens.
+        /// Does not support fallback to classic TEXT.RSC. Record key must exist in RSC localization table.
+        /// </summary>
+        /// <param name="id">String table key.</param>
+        /// <returns>Text resource tokens.</returns>
+        TextFile.Token[] GetRSCTokens(string id);
 
         /// <summary>
         /// Gets tokens from a randomly selected subrecord.
@@ -159,6 +167,19 @@ namespace DaggerfallWorkshop.Utility
                 return null;
 
             return TextFile.ReadTokens(ref buffer, 0, TextFile.Formatting.EndOfRecord);
+        }
+
+        public virtual TextFile.Token[] GetRSCTokens(string id)
+        {
+            if (localizedStringDebug && !string.IsNullOrEmpty(TextManager.Instance.RuntimeRSCStrings))
+                Debug.LogFormat("Trying localized string using RSC collection '{0}'", TextManager.Instance.RuntimeRSCStrings);
+
+            // Attempt to get string from localization, no fallback for string IDs
+            string localizedString;
+            if (GetLocalizedString(TextManager.Instance.RuntimeRSCStrings, id, out localizedString))
+                return DaggerfallStringTableImporter.ConvertStringToRSCTokens(localizedString);
+
+            return null;
         }
 
         public virtual TextFile.Token[] GetRandomTokens(int id, bool dfRand = false)
