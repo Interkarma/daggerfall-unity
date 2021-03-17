@@ -22,7 +22,6 @@ MonoBehaviour:
     id: 4
   m_StringDatabase:
     id: 5
-  m_ShowLocaleMenuInGameView: 1
   references:
     version: 1
     00000000:
@@ -31,15 +30,15 @@ MonoBehaviour:
       data:
         m_CommandLineArgument: -language =
     00000001:
-      type: {class: SystemLocaleSelector, ns: UnityEngine.Localization.Settings, asm: Unity.Localization}
-      data:
-        dummyObject: 0
-    00000002:
       type: {class: SpecificLocaleSelector, ns: UnityEngine.Localization.Settings,
         asm: Unity.Localization}
       data:
         m_LocaleId:
           m_Code: en
+    00000002:
+      type: {class: SystemLocaleSelector, ns: UnityEngine.Localization.Settings, asm: Unity.Localization}
+      data:
+        dummyObject: 0
     00000003:
       type: {class: LocalesProvider, ns: UnityEngine.Localization.Settings, asm: Unity.Localization}
       data:
