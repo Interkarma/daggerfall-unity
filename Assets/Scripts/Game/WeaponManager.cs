@@ -482,7 +482,7 @@ namespace DaggerfallWorkshop.Game
         public bool WeaponDamage(DaggerfallUnityItem strikingWeapon, bool arrowHit, Transform hitTransform, Vector3 impactPosition, Vector3 direction)
         {
             DaggerfallEntityBehaviour entityBehaviour = hitTransform.GetComponent<DaggerfallEntityBehaviour>();
-            DaggerfallMobileUnit entityMobileUnit = hitTransform.GetComponentInChildren<DaggerfallMobileUnit>();
+            var entityMobileUnit = hitTransform.GetComponentInChildren<MobileUnit>();
             EnemyMotor enemyMotor = hitTransform.GetComponent<EnemyMotor>();
             EnemySounds enemySounds = hitTransform.GetComponent<EnemySounds>();
 
@@ -516,7 +516,7 @@ namespace DaggerfallWorkshop.Game
                     playerEntity.CrimeCommitted = PlayerEntity.Crimes.Assault;
                     GameObject guard = playerEntity.SpawnCityGuard(mobileNpc.transform.position, mobileNpc.transform.forward);
                     entityBehaviour = guard.GetComponent<DaggerfallEntityBehaviour>();
-                    entityMobileUnit = guard.GetComponentInChildren<DaggerfallMobileUnit>();
+                    entityMobileUnit = guard.GetComponentInChildren<MobileUnit>();
                     enemyMotor = guard.GetComponent<EnemyMotor>();
                     enemySounds = guard.GetComponent<EnemySounds>();
                 }
@@ -532,9 +532,9 @@ namespace DaggerfallWorkshop.Game
 
                     // Calculate damage
                     int animTime = (int)(ScreenWeapon.GetAnimTime() * 1000);    // Get animation time, converted to ms.
-                    bool isEnemyFacingAwayFromPlayer = entityMobileUnit.Summary.AnimStateRecord % 5 > 2 &&
-                        entityMobileUnit.Summary.EnemyState != MobileStates.SeducerTransform1 &&
-                        entityMobileUnit.Summary.EnemyState != MobileStates.SeducerTransform2;
+                    bool isEnemyFacingAwayFromPlayer = entityMobileUnit.IsBackFacing &&
+                        entityMobileUnit.EnemyState != MobileStates.SeducerTransform1 &&
+                        entityMobileUnit.EnemyState != MobileStates.SeducerTransform2;
                     int damage = FormulaHelper.CalculateAttackDamage(playerEntity, enemyEntity, isEnemyFacingAwayFromPlayer, animTime, strikingWeapon);
 
                     // Break any "normal power" concealment effects on player
@@ -587,7 +587,7 @@ namespace DaggerfallWorkshop.Game
                         if (DaggerfallUnity.Settings.CombatVoices && entityBehaviour.EntityType == EntityTypes.EnemyClass && Dice100.SuccessRoll(40))
                         {
                             Genders gender;
-                            if (entityMobileUnit.Summary.Enemy.Gender == MobileGender.Male || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                            if (entityMobileUnit.Enemy.Gender == MobileGender.Male || enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
                                 gender = Genders.Male;
                             else
                                 gender = Genders.Female;

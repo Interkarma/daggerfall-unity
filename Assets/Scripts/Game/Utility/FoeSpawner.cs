@@ -203,11 +203,11 @@ namespace DaggerfallWorkshop.Game.Utility
         // Fine tunes foe position slightly based on mobility and enables GameObject
         void FinalizeFoe(GameObject go)
         {
-            DaggerfallMobileUnit mobileUnit = go.GetComponentInChildren<DaggerfallMobileUnit>();
+            var mobileUnit = go.GetComponentInChildren<MobileUnit>();
             if (mobileUnit)
             {
                 // Align ground creatures on surface, raise flying creatures slightly into air
-                if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
+                if (mobileUnit.Enemy.Behaviour != MobileBehaviour.Flying)
                     GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
                 else
                     go.transform.localPosition += Vector3.up * 1.5f;

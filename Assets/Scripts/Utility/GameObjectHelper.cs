@@ -1148,8 +1148,8 @@ namespace DaggerfallWorkshop.Utility
             setupEnemy.ApplyEnemySettings(mobileType, mobileReaction, gender);
 
             // Align non-flying units with ground
-            DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
-            if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
+            MobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
+            if (mobileUnit.Enemy.Behaviour != MobileBehaviour.Flying)
                 AlignControllerToGround(go.GetComponent<CharacterController>());
 
             GameManager.Instance?.RaiseOnEnemySpawnEvent(go);
@@ -1192,8 +1192,8 @@ namespace DaggerfallWorkshop.Utility
                     setupEnemy.ApplyEnemySettings(foeType, reaction, gender, alliedToPlayer: alliedToPlayer);
 
                     // Align non-flying units with ground
-                    DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
-                    if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
+                    MobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
+                    if (mobileUnit.Enemy.Behaviour != MobileBehaviour.Flying)
                         GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
 
                     // Add QuestResourceBehaviour to GameObject

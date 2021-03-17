@@ -94,7 +94,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             EnemyMotor motor = enemy.GetComponent<EnemyMotor>();
             EnemySenses senses = enemy.GetComponent<EnemySenses>();
-            DaggerfallMobileUnit mobileEnemy = enemy.GetComponentInChildren<DaggerfallMobileUnit>();
+            var mobileEnemy = enemy.GetComponentInChildren<MobileUnit>();
             EnemyData_v1 data = new EnemyData_v1();
             data.loadID = LoadID;
             data.gameObjectName = entityBehaviour.gameObject.name;
@@ -114,16 +114,16 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.hasEncounteredPlayer = senses.HasEncounteredPlayer;
             data.isDead = (entity.CurrentHealth <= 0) ? true : false;
             data.questSpawn = enemy.QuestSpawn;
-            data.mobileGender = mobileEnemy.Summary.Enemy.Gender;
+            data.mobileGender = mobileEnemy.Enemy.Gender;
             data.items = entity.Items.SerializeItems();
             data.equipTable = entity.ItemEquipTable.SerializeEquipTable();
             data.instancedEffectBundles = GetComponent<EntityEffectManager>().GetInstancedBundlesSaveData();
-            data.alliedToPlayer = mobileEnemy.Summary.Enemy.Team == MobileTeams.PlayerAlly;
+            data.alliedToPlayer = mobileEnemy.Enemy.Team == MobileTeams.PlayerAlly;
             data.questFoeSpellQueueIndex = entity.QuestFoeSpellQueueIndex;
             data.questFoeItemQueueIndex = entity.QuestFoeItemQueueIndex;
             data.wabbajackActive = entity.WabbajackActive;
             data.team = (int)entity.Team + 1;
-            data.specialTransformationCompleted = mobileEnemy.Summary.specialTransformationCompleted;
+            data.specialTransformationCompleted = mobileEnemy.SpecialTransformationCompleted;
 
             // Add quest resource data if present
             QuestResourceBehaviour questResourceBehaviour = GetComponent<QuestResourceBehaviour>();
@@ -148,7 +148,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             EnemySenses senses = enemy.GetComponent<EnemySenses>();
             EnemyMotor motor = enemy.GetComponent<EnemyMotor>();
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
-            DaggerfallMobileUnit mobileEnemy = enemy.GetComponentInChildren<DaggerfallMobileUnit>();
+            MobileUnit mobileEnemy = enemy.GetComponentInChildren<MobileUnit>();
 
             // Restore enemy career or class if different
             if (entity == null || entity.EntityType != data.entityType || entity.CareerIndex != data.careerIndex)

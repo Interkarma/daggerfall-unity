@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game
 
         public static System.EventHandler OnEnemyDeath;
 
-        DaggerfallMobileUnit mobile;
+        MobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
         EnemyEntity enemyEntity;
 
@@ -40,9 +40,13 @@ namespace DaggerfallWorkshop.Game
 
         void Awake()
         {
-            mobile = GetComponentInChildren<DaggerfallMobileUnit>();
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             entityBehaviour.OnSetEntity += EntityBehaviour_OnSetEntity;
+        }
+
+        private void Start()
+        {
+            mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
         }
 
         private void Update()
@@ -74,7 +78,7 @@ namespace DaggerfallWorkshop.Game
 
             // Show death message
             string deathMessage = TextManager.Instance.GetLocalizedText("thingJustDied");
-            deathMessage = deathMessage.Replace("%s", TextManager.Instance.GetLocalizedEnemyName(mobile.Summary.Enemy.ID));
+            deathMessage = deathMessage.Replace("%s", TextManager.Instance.GetLocalizedEnemyName(mobile.Enemy.ID));
             DaggerfallUI.Instance.PopupMessage(deathMessage);
 
             // Generate lootable corpse marker
@@ -82,7 +86,7 @@ namespace DaggerfallWorkshop.Game
                 GameManager.Instance.PlayerObject,
                 entityBehaviour.gameObject,
                 enemyEntity,
-                mobile.Summary.Enemy.CorpseTexture,
+                mobile.Enemy.CorpseTexture,
                 DaggerfallUnity.NextUID);
 
             // This is still required so enemy equipment is not marked as equipped

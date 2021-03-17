@@ -1534,8 +1534,8 @@ namespace DaggerfallWorkshop.Utility
                 setupEnemy.ApplyEnemySettings(type, reaction, gender, classicSpawnDistanceType);
 
                 // Align non-flying units with ground
-                DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
-                if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
+                MobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
+                if (mobileUnit.Enemy.Behaviour != MobileBehaviour.Flying)
                     GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
             }
 
