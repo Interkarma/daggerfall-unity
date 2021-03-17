@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             public float pointSize;
             public float baseline;
-            public Texture2D atlas;
+            public Texture2D atlasTexture;
             public Dictionary<int, SDFGlyphInfo> glyphs;
         }
 
@@ -245,7 +245,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect targetRect = new Rect(xpos, ypos, glyph.size.x * scalingRatio, glyph.size.y * scalingRatio);
 
             // Draw glyph
-            Graphics.DrawTexture(targetRect, sdfFontInfo.Value.atlas, glyph.rect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
+            Graphics.DrawTexture(targetRect, sdfFontInfo.Value.atlasTexture, glyph.rect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
             return GetGlyphWidth(glyph, scale, GlyphSpacing);
         }
 
@@ -469,7 +469,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Create font info
             SDFFontInfo fi = new SDFFontInfo();
             fi.pointSize = tmpFont.faceInfo.pointSize;
-            fi.atlas = tmpFont.atlas;
+            fi.atlasTexture = tmpFont.atlasTexture;
             fi.baseline = tmpFont.faceInfo.baseline;
             fi.glyphs = new Dictionary<int, SDFGlyphInfo>();
 
