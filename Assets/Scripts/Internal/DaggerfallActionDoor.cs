@@ -41,12 +41,20 @@ namespace DaggerfallWorkshop
         public SoundClips PickedLockSound = SoundClips.ActivateLockUnlock;      // Sound clip to use when successfully picked a locked door
 
         ActionState currentState;
+        bool isMeshColliderConvexAlready;
         int startingLockValue = 0;                      // if > 0, is locked.
         ulong loadID = 0;
 
         Quaternion startingRotation;
         AudioSource audioSource;
-        BoxCollider boxCollider;
+
+        [SerializeField]
+        [Tooltip("Box Collider used to define a door's collision model. An enabled Box Collider is prioritised above a Mesh Collider")]
+        private BoxCollider boxCollider;
+
+        [SerializeField]
+        [Tooltip("Optional. Allows you to use a Mesh Collider instead of a Box Collider for the door's collision. To use this, disable the door's Box Collider component and add a Mesh Collider. You can use either a Box Collider or Mesh Collider, not both.")]
+        private MeshCollider meshCollider;
 
         public int StartingLockValue                    // Use to set starting lock value, will set current lock value as well
         {
@@ -99,7 +107,10 @@ namespace DaggerfallWorkshop
         void Awake()
         {
             audioSource = GetComponent<AudioSource>();
-            boxCollider = GetComponent<BoxCollider>();
+            if (boxCollider == null)
+                boxCollider = GetComponent<BoxCollider>();
+            if ((boxCollider?.enabled != true) && (meshCollider == null))
+                meshCollider = GetComponent<MeshCollider>();
         }
 
         void Start()
@@ -337,8 +348,28 @@ namespace DaggerfallWorkshop
 
         private void MakeTrigger(bool isTrigger)
         {
-            if (IsTriggerWhenOpen && boxCollider != null)
+            if ((IsTriggerWhenOpen) && (boxCollider != null) && (boxCollider?.enabled == true))
                 boxCollider.isTrigger = isTrigger;
+            else if ((IsTriggerWhenOpen) && (meshCollider != null) && (boxCollider?.enabled != true))
+            {
+                if (isTrigger == true)
+                {
+                    isMeshColliderConvexAlready = false;
+                    if (meshCollider.convex == false)
+                        meshCollider.convex = true;
+                    else
+                        isMeshColliderConvexAlready = true;
+                    meshCollider.isTrigger = true;
+                }
+                else
+                {
+                    meshCollider.isTrigger = false;
+                    if (isMeshColliderConvexAlready == true)
+                        isMeshColliderConvexAlready = false;
+                    else
+                        meshCollider.convex = false;
+                }
+            }
         }
 
         //For Doors that are also action objects, executes action when door opened / closed
