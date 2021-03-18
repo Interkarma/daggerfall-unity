@@ -1065,8 +1065,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Used payload callback
             EnchantmentParam param = new EnchantmentParam() { ClassicParam = settings.ClassicParam, CustomParam = settings.CustomParam };
             PayloadCallbackResults? results = effectTemplate.EnchantmentPayloadCallback(EnchantmentPayloadFlags.Used, param, entityBehaviour, entityBehaviour, item);
-            if (results != null && results.Value.durabilityLoss > 0)
-                item.LowerCondition(results.Value.durabilityLoss, GameManager.Instance.PlayerEntity, sourceCollection);
+            if (results != null)
+            {
+                if (results.Value.removeItem)
+                    sourceCollection.RemoveItem(item);
+                else if (results.Value.durabilityLoss > 0)
+                    item.LowerCondition(results.Value.durabilityLoss, GameManager.Instance.PlayerEntity, sourceCollection);
+            }
         }
 
         int StrikeWithItem(IEntityEffect effectTemplate, DaggerfallUnityItem item, EnchantmentSettings settings, DaggerfallEntityBehaviour targetEntity, int damageIn)
