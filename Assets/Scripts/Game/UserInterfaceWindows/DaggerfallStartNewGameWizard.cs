@@ -12,6 +12,8 @@
 using UnityEngine;
 using System;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
@@ -411,6 +413,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharChooseBioWindow.Cancelled)
             {
+                // Pick a biography template, 0 by default
+                // Classic only has a T0 template for each class, but mods can add more
+                Regex reg = new Regex($"BIOG{characterDocument.classIndex:D2}T([0-9]+).TXT");
+                IEnumerable<Match> biogMatches = Directory.EnumerateFiles(BiogFile.BIOGSourceFolder, "*.TXT")
+                    .Select(FilePath => reg.Match(FilePath))
+                    .Where(FileMatch => FileMatch.Success);
+
+                // For now, we choose at random between all available ones
+                // Maybe eventually, have a window for selecting a biography template when more than 1 is available?
+                int biogCount = biogMatches.Count();
+                int selectedBio = UnityEngine.Random.Range(0, biogCount);
+                Match selectedMatch = biogMatches.ElementAt(selectedBio);
+                characterDocument.biographyIndex = int.Parse(selectedMatch.Groups[1].Value);
+
                 if (!createCharChooseBioWindow.ChoseQuestions)
                 {
                     // Choose answers at random
@@ -435,7 +451,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     messageBox.OnClose += ReputationBox_OnClose;
 
                     characterDocument.biographyEffects = autoBiog.AnswerEffects;
-                    characterDocument.backStory = autoBiog.GenerateBackstory(characterDocument.classIndex);
+                    characterDocument.backStory = autoBiog.GenerateBackstory();
                 }
                 else
                 {
