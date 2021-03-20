@@ -2492,7 +2492,7 @@ namespace DaggerfallWorkshop.Game
                         {
                             if (meshRenderers[i])
                             {
-                                UpdateMeshRendererDungeonState(meshRenderers[i], automapDungeonState, indexBlock, indexElement, indexModel, forceNotVisitedInThisRun);
+                                UpdateMeshRendererDungeonState(ref meshRenderers[i], automapDungeonState, indexBlock, indexElement, indexModel, forceNotVisitedInThisRun);
                             }
                         }
                     }
