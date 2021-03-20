@@ -475,17 +475,33 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
-        /// convert full relative path to just the asset name for example:
-        /// /Assets/examples/myscript.cs to myscript.cs
+        /// Converts an asset path to only the asset name, preserving the extension, converted to invariant lower case.
+        /// The parameter <paramref name="assetPath"/> must be a Unity Editor asset path, using only the <c>"/"</c> separator, or an asset name.
+        /// For example <c>"Assets/Texture.png"</c> to <c>"texture.png"</c>, <c>"Assets/Texture"</c> to <c>"texture"</c> and <c>"Texture"</c> to <c>"texture"</c>.
         /// </summary>
-        /// <param name="assetPath">The full path of an asset.</param>
-        /// <returns>The name of the file in the given path with the extension.</returns>
+        /// <param name="assetPath">An asset path or asset name itself.</param>
+        /// <returns>Asset name converted to lower case.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="assetPath"/> is null.</exception>
+        /// <exception cref="FormatException"><paramref name="assetPath"/> is not a valid asset path.</exception>
         public static string GetAssetName(string assetPath)
         {
-            if (string.IsNullOrEmpty(assetPath))
-                return null;
-            int startIndex = assetPath.LastIndexOfAny(new char[] { '\\', '/' }) + 1;
-            return assetPath.Substring(startIndex).ToLower();
+            if (assetPath == null)
+                throw new ArgumentNullException(nameof(assetPath));
+
+            int separatorIndex = assetPath.LastIndexOf('/');
+            if (separatorIndex != -1)
+            {
+                int startIndex = separatorIndex + 1;
+                if (startIndex == assetPath.Length)
+                    throw new FormatException("Path ends with '/' separator.");
+
+                assetPath = assetPath.Substring(startIndex);
+            }
+
+            if (string.IsNullOrWhiteSpace(assetPath))
+                throw new FormatException("Asset name is empty.");
+
+            return assetPath.ToLowerInvariant();
         }
 
         /// <summary>
