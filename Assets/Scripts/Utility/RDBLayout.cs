@@ -97,7 +97,8 @@ namespace DaggerfallWorkshop.Utility
             int[] textureTable = null,
             bool allowExitDoors = true,
             DaggerfallRDBBlock cloneFrom = null,
-            bool serialize = true)
+            bool serialize = true,
+            bool isAutomapRun = false)
         {
             blockDataOut = new DFBlock();
 
@@ -113,7 +114,7 @@ namespace DaggerfallWorkshop.Utility
             // Get block data
             blockDataOut = dfUnity.ContentReader.BlockFileReader.GetBlock(blockName);
 
-            return CreateBaseGameObject(ref blockDataOut, actionLinkDict, textureTable, allowExitDoors, cloneFrom, serialize);
+            return CreateBaseGameObject(ref blockDataOut, actionLinkDict, textureTable, allowExitDoors, cloneFrom, serialize, isAutomapRun);
         }
 
         /// <summary>
@@ -131,7 +132,8 @@ namespace DaggerfallWorkshop.Utility
             int[] textureTable = null,
             bool allowExitDoors = true,
             DaggerfallRDBBlock cloneFrom = null,
-            bool serialize = true)
+            bool serialize = true,
+            bool isAutomapRun = false)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
@@ -142,16 +144,16 @@ namespace DaggerfallWorkshop.Utility
                 textureTable = DungeonTextureTables.DefaultTextureTable;
 
             // Create gameobject
-            GameObject go;
+            GameObject daggerfallBlockGO;
             string name = string.Format("DaggerfallBlock [{0}]", blockData.Name);
             if (cloneFrom != null)
             {
-                go = GameObjectHelper.InstantiatePrefab(cloneFrom.gameObject, name, null, Vector3.zero);
+                daggerfallBlockGO = GameObjectHelper.InstantiatePrefab(cloneFrom.gameObject, name, null, Vector3.zero);
             }
             else
             {
-                go = new GameObject(name);
-                go.AddComponent<DaggerfallRDBBlock>();
+                daggerfallBlockGO = new GameObject(name);
+                daggerfallBlockGO.AddComponent<DaggerfallRDBBlock>();
             }
 
             // Setup combiner
@@ -162,8 +164,8 @@ namespace DaggerfallWorkshop.Utility
             // Add parent node
             GameObject modelsNode = new GameObject("Models");
             GameObject actionModelsNode = new GameObject("Action Models");
-            modelsNode.transform.parent = go.transform;
-            actionModelsNode.transform.parent = go.transform;
+            modelsNode.transform.parent = daggerfallBlockGO.transform;
+            actionModelsNode.transform.parent = daggerfallBlockGO.transform;
 
             // Add models
             List<StaticDoor> exitDoors;
@@ -177,7 +179,8 @@ namespace DaggerfallWorkshop.Utility
                 serialize,
                 combiner,
                 modelsNode.transform,
-                actionModelsNode.transform);
+                actionModelsNode.transform,
+                isAutomapRun);
 
             // Apply combiner
             if (combiner != null)
@@ -197,11 +200,11 @@ namespace DaggerfallWorkshop.Utility
             // Add exit doors
             if (exitDoors.Count > 0)
             {
-                DaggerfallStaticDoors c = go.AddComponent<DaggerfallStaticDoors>();
+                DaggerfallStaticDoors c = daggerfallBlockGO.AddComponent<DaggerfallStaticDoors>();
                 c.Doors = exitDoors.ToArray();
             }
 
-            return go;
+            return daggerfallBlockGO;
         }
 
         /// <summary>
@@ -582,12 +585,13 @@ namespace DaggerfallWorkshop.Utility
             bool serialize,
             ModelCombiner combiner = null,
             Transform modelsParent = null,
-            Transform actionModelsParent = null)
+            Transform actionModelsParent = null,
+            bool isAutomapRun = false)
         {
             exitDoorsOut = new List<StaticDoor>();
 
             // Iterate object groups
-            foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
+            foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)      // XJDHDR - Test Parallel.ForEach
             {
                 // Skip empty object groups
                 if (null == group.RdbObjects)
@@ -596,7 +600,7 @@ namespace DaggerfallWorkshop.Utility
                 }
 
                 // Iterate objects in this group
-                foreach (DFBlock.RdbObject obj in group.RdbObjects)
+                foreach (DFBlock.RdbObject obj in group.RdbObjects)      // XJDHDR - Test Parallel.ForEach
                 {
                     // Add models
                     if (obj.Type == DFBlock.RdbResourceTypes.Model)
@@ -636,7 +640,7 @@ namespace DaggerfallWorkshop.Utility
                             // Special handling for dungeon exits - collider handled as a special case in DaggerfallStaticDoors startup
                             if (modelId == exitDoorModelID)
                             {
-                                AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, hasAction, true);
+                                AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, isAutomapRun, hasAction, true);
                                 continue;
                             }
 
@@ -646,14 +650,14 @@ namespace DaggerfallWorkshop.Utility
                             // Not sure if these object ever actions, but bypass this hack if they do
                             if (modelId >= minTapestryID && modelId <= maxTapestryID && !hasAction)
                             {
-                                AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, hasAction, true);
+                                AddStandaloneModel(dfUnity, ref modelData, modelMatrix, modelsParent, isAutomapRun, hasAction, true);
                                 continue;
                             }
 
                             // Add or combine
                             if (combiner == null || hasAction || PlayerActivate.HasCustomActivation(modelId))
                             {
-                                standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, hasAction);
+                                standaloneObject = AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent, isAutomapRun, hasAction);
                                 standaloneObject.GetComponent<DaggerfallMesh>().SetDungeonTextures(textureTable);
                             }
                             else
@@ -704,6 +708,7 @@ namespace DaggerfallWorkshop.Utility
             ref ModelData modelData,
             Matrix4x4 matrix,
             Transform parent,
+            bool isAutomapRun = false,
             bool overrideStatic = false,
             bool ignoreCollider = false,
             bool convexCollider = false)
@@ -713,12 +718,15 @@ namespace DaggerfallWorkshop.Utility
 
             // Add GameObject
             uint modelID = (uint)modelData.DFMesh.ObjectId;
-            GameObject go = GameObjectHelper.CreateDaggerfallMeshGameObject(modelID, parent, makeStatic, null, ignoreCollider, convexCollider);
-            go.transform.position = matrix.GetColumn(3);
-            go.transform.rotation = matrix.rotation;
-            go.transform.localScale = matrix.lossyScale;
+            GameObject modelGO = GameObjectHelper.CreateDaggerfallMeshGameObject(modelID, parent, makeStatic, null, ignoreCollider, convexCollider);
+            modelGO.transform.position = matrix.GetColumn(3);
+            modelGO.transform.rotation = matrix.rotation;
+            modelGO.transform.localScale = matrix.lossyScale;
 
-            return go;
+            if (isAutomapRun)
+                modelGO.AddComponent<AutomapModel>();
+
+            return modelGO;
         }
 
         /// <summary>
@@ -1534,8 +1542,8 @@ namespace DaggerfallWorkshop.Utility
                 setupEnemy.ApplyEnemySettings(type, reaction, gender, classicSpawnDistanceType);
 
                 // Align non-flying units with ground
-                DaggerfallMobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
-                if (mobileUnit.Summary.Enemy.Behaviour != MobileBehaviour.Flying)
+                MobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
+                if (mobileUnit.Enemy.Behaviour != MobileBehaviour.Flying)
                     GameObjectHelper.AlignControllerToGround(go.GetComponent<CharacterController>());
             }
 

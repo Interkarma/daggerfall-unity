@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game
         Vector3 destination;
         Vector3 detourDestination;
         CharacterController controller;
-        DaggerfallMobileUnit mobile;
+        MobileUnit mobile;
         Collider myCollider;
         DaggerfallEntityBehaviour entityBehaviour;
         EnemyBlood entityBlood;
@@ -103,11 +103,11 @@ namespace DaggerfallWorkshop.Game
         {
             senses = GetComponent<EnemySenses>();
             controller = GetComponent<CharacterController>();
-            mobile = GetComponentInChildren<DaggerfallMobileUnit>();
+            mobile = GetComponentInChildren<MobileUnit>();
             myCollider = gameObject.GetComponent<Collider>();
-            IsHostile = mobile.Summary.Enemy.Reactions == MobileReactions.Hostile;
+            IsHostile = mobile.Enemy.Reactions == MobileReactions.Hostile;
             flies = CanFly();
-            swims = mobile.Summary.Enemy.Behaviour == MobileBehaviour.Aquatic;
+            swims = mobile.Enemy.Behaviour == MobileBehaviour.Aquatic;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             entityBlood = GetComponent<EnemyBlood>();
             entityEffectManager = GetComponent<EntityEffectManager>();
@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game
             attack = GetComponent<EnemyAttack>();
 
             // Only need to check for ability to shoot bow once.
-            hasBowAttack = mobile.Summary.Enemy.HasRangedAttack1 && mobile.Summary.Enemy.ID > 129 && mobile.Summary.Enemy.ID != 132;
+            hasBowAttack = mobile.Enemy.HasRangedAttack1 && mobile.Enemy.ID > 129 && mobile.Enemy.ID != 132;
 
             // Add things AI should ignore when checking for a clear path to shoot.
             ignoreMaskForShooting = ~(1 << LayerMask.NameToLayer("SpellMissiles") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
@@ -237,7 +237,7 @@ namespace DaggerfallWorkshop.Game
                     KnockbackSpeed = (40 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
 
                 if (KnockbackSpeed > (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)) &&
-                    mobile.Summary.EnemyState != MobileStates.PrimaryAttack)
+                    mobile.EnemyState != MobileStates.PrimaryAttack)
                 {
                     mobile.ChangeEnemyState(MobileStates.Hurt);
                 }
@@ -262,7 +262,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     KnockbackSpeed -= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
                     if (KnockbackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10))
-                        && mobile.Summary.EnemyState != MobileStates.PrimaryAttack)
+                        && mobile.EnemyState != MobileStates.PrimaryAttack)
                     {
                         mobile.ChangeEnemyState(MobileStates.Move);
                     }
@@ -492,7 +492,7 @@ namespace DaggerfallWorkshop.Game
             {
                 destination = senses.PredictedTargetPos;
                 // Flying enemies and slaughterfish aim for target face
-                if (flies || IsLevitating || (swims && mobile.Summary.Enemy.ID == (int)MonsterCareers.Slaughterfish))
+                if (flies || IsLevitating || (swims && mobile.Enemy.ID == (int)MonsterCareers.Slaughterfish))
                     destination.y += targetController.height * 0.5f;
 
                 searchMult = 0;
@@ -543,9 +543,9 @@ namespace DaggerfallWorkshop.Game
                             // Random chance to shoot bow
                             if (Random.value < 1/32f)
                             {
-                                if (mobile.Summary.Enemy.HasRangedAttack1 && !mobile.Summary.Enemy.HasRangedAttack2)
+                                if (mobile.Enemy.HasRangedAttack1 && !mobile.Enemy.HasRangedAttack2)
                                     mobile.ChangeEnemyState(MobileStates.RangedAttack1);
-                                else if (mobile.Summary.Enemy.HasRangedAttack2)
+                                else if (mobile.Enemy.HasRangedAttack2)
                                     mobile.ChangeEnemyState(MobileStates.RangedAttack2);
                             }
                         }
@@ -574,7 +574,7 @@ namespace DaggerfallWorkshop.Game
                 && senses.DistanceToTarget <= attack.MeleeDistance + senses.TargetRateOfApproach
                 && CanCastTouchSpell() && entityEffectManager.SetReadySpell(selectedSpell))
             {
-                if (mobile.Summary.EnemyState != MobileStates.Spell)
+                if (mobile.EnemyState != MobileStates.Spell)
                     mobile.ChangeEnemyState(MobileStates.Spell);
 
                 attack.ResetMeleeTimer();
@@ -790,7 +790,7 @@ namespace DaggerfallWorkshop.Game
         /// <returns>True if enemy can fly.</returns>
         bool CanFly()
         {
-            return mobile.Summary.Enemy.Behaviour == MobileBehaviour.Flying || mobile.Summary.Enemy.Behaviour == MobileBehaviour.Spectral;
+            return mobile.Enemy.Behaviour == MobileBehaviour.Flying || mobile.Enemy.Behaviour == MobileBehaviour.Spectral;
         }
 
         /// <summary>
@@ -1369,7 +1369,7 @@ namespace DaggerfallWorkshop.Game
         void OpenDoors()
         {
             // Try to open doors blocking way
-            if (mobile.Summary.Enemy.CanOpenDoors)
+            if (mobile.Enemy.CanOpenDoors)
             {
                 if (senses.LastKnownDoor != null
                     && senses.DistanceToDoor < OpenDoorDistance && !senses.LastKnownDoor.IsOpen

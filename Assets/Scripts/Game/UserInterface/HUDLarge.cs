@@ -385,9 +385,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Refresh();
         }
 
+        private bool IsLargeHUDInteractable()
+        {
+            return GameManager.Instance.PlayerMouseLook.cursorActive && !GameManager.IsGamePaused;
+        }
+
         private void InteractionModePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (GameManager.IsGamePaused)
+            if (!IsLargeHUDInteractable())
                 return;
 
             // Cycle interaction mode forwards on left click
@@ -411,7 +416,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void InteractionModePanel_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (GameManager.IsGamePaused)
+            if (!IsLargeHUDInteractable())
                 return;
 
             // Cycle interaction mode backwards on right click
@@ -435,7 +440,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void HeadPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.IsGamePaused)
+            if (IsLargeHUDInteractable())
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
@@ -444,7 +449,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void OptionsPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.IsGamePaused)
+            if (IsLargeHUDInteractable())
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
@@ -453,7 +458,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void SpellbookPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.IsGamePaused)
+            if (IsLargeHUDInteractable())
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenSpellBookWindow);
@@ -462,7 +467,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void InventoryPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.IsGamePaused)
+            if (IsLargeHUDInteractable())
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
@@ -471,7 +476,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void SheathPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.IsGamePaused)
+            if (IsLargeHUDInteractable())
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 GameManager.Instance.WeaponManager.ToggleSheath();
@@ -480,7 +485,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void UseMagicItemPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.IsGamePaused)
+            if (IsLargeHUDInteractable())
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenUseMagicItemWindow);
@@ -489,7 +494,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void TransportModePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.IsGamePaused)
+            if (IsLargeHUDInteractable())
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenTransportWindow);
@@ -498,7 +503,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void MapPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.IsGamePaused)
+            if (IsLargeHUDInteractable())
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenAutomap);
@@ -507,7 +512,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void MapPanel_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.IsGamePaused)
+            if (IsLargeHUDInteractable())
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
@@ -516,7 +521,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void RestPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.IsGamePaused)
+            if (IsLargeHUDInteractable())
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiOpenRestWindow);
@@ -525,7 +530,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void CompassPanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.IsGamePaused)
+            if (IsLargeHUDInteractable())
             {
                 DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 DaggerfallUI.Instance.UserInterfaceManager.PostMessage(DaggerfallUIMessages.dfuiStatusInfo);

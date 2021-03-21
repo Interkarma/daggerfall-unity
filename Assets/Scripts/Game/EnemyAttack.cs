@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game
         EnemyMotor motor;
         EnemySenses senses;
         EnemySounds sounds;
-        DaggerfallMobileUnit mobile;
+        MobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
         int damage = 0;
 
@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game
             motor = GetComponent<EnemyMotor>();
             senses = GetComponent<EnemySenses>();
             sounds = GetComponent<EnemySounds>();
-            mobile = GetComponentInChildren<DaggerfallMobileUnit>();
+            mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
         }
 
@@ -207,7 +207,7 @@ namespace DaggerfallWorkshop.Game
                 if (DaggerfallUnity.Settings.CombatVoices && entity.EntityType == EntityTypes.EnemyClass && Dice100.SuccessRoll(20))
                 {
                     Genders gender;
-                    if (mobile.Summary.Enemy.Gender == MobileGender.Male || entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                    if (mobile.Enemy.Gender == MobileGender.Male || entity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
                         gender = Genders.Male;
                     else
                         gender = Genders.Female;
@@ -342,9 +342,9 @@ namespace DaggerfallWorkshop.Game
 
                 if (DaggerfallUnity.Settings.CombatVoices && senses.Target.EntityType == EntityTypes.EnemyClass && Dice100.SuccessRoll(40))
                 {
-                    DaggerfallMobileUnit targetMobileUnit = senses.Target.GetComponentInChildren<DaggerfallMobileUnit>();
+                    var targetMobileUnit = senses.Target.GetComponentInChildren<MobileUnit>();
                     Genders gender;
-                    if (targetMobileUnit.Summary.Enemy.Gender == MobileGender.Male || targetEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+                    if (targetMobileUnit.Enemy.Gender == MobileGender.Male || targetEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
                         gender = Genders.Male;
                     else
                         gender = Genders.Female;

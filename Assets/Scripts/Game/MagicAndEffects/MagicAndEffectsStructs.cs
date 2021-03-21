@@ -315,6 +315,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         public int strikesModulateDamage;                           // Amount to plus/minus from damage after Strikes effect payload
         public int durabilityLoss;                                  // Amount of durability lost after callback
+        public bool removeItem;                                     // Removes item from collection if true
     }
 
     /// <summary>

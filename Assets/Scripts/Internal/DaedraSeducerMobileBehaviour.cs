@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop
     {
         const float secondsToTransform = 8.0f;      // 0.0 will disable transform completely
 
-        DaggerfallMobileUnit enemyMobile;
+        MobileUnit enemyMobile;
         DaggerfallEntityBehaviour enemyEntityBehaviour;
         EnemyEntity enemyEntity;
         EnemySenses enemySenses;
@@ -33,7 +33,7 @@ namespace DaggerfallWorkshop
         private void Start()
         {
             // Get references
-            enemyMobile = GetComponent<DaggerfallMobileUnit>();
+            enemyMobile = GetComponent<MobileUnit>();
             enemyEntityBehaviour = GetComponentInParent<DaggerfallEntityBehaviour>();
             if (enemyEntityBehaviour && enemyEntityBehaviour.EntityType == EntityTypes.EnemyMonster)
             {
@@ -50,7 +50,7 @@ namespace DaggerfallWorkshop
 
             // Exit if special transformation already completed
             // Raise suppress infighting flag in case player has loaded game after transform
-            if (enemyMobile.Summary.specialTransformationCompleted)
+            if (enemyMobile.SpecialTransformationCompleted)
             {
                 enemyEntity.SuppressInfighting = true;
                 return;
@@ -59,8 +59,8 @@ namespace DaggerfallWorkshop
             // Keep trying to raise transform state if wants to start and currently in another state
             // This prevents some other state (e.g. hurt) breaking switch to transformation
             if (transformStarted &&
-                enemyMobile.Summary.EnemyState != MobileStates.SeducerTransform1 &&
-                enemyMobile.Summary.EnemyState != MobileStates.SeducerTransform2)
+                enemyMobile.EnemyState != MobileStates.SeducerTransform1 &&
+                enemyMobile.EnemyState != MobileStates.SeducerTransform2)
             {
                 StartTransformation();
                 return;

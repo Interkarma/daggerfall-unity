@@ -44,7 +44,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenCharacterSheetWindow);
             GameManager.Instance.PlayerEntity.Items.RemoveItem(sourceItem);
 
-            return null;
+            return new PayloadCallbackResults()
+            {
+                removeItem = true
+            };
         }
 
         #endregion
