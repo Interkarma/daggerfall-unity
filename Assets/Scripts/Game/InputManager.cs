@@ -930,6 +930,17 @@ namespace DaggerfallWorkshop.Game
             axisActionInvertDict[(int)axis] = invert;
         }
 
+        public bool IsUsedInAxisBinding(KeyCode code)
+        {
+            string axis = InputManager.Instance.AxisKeyCodeToInputAxis((int)code);
+
+            return (!string.IsNullOrEmpty(axis)
+                && (axis == movementAxisBindingCache[0]
+                || axis == movementAxisBindingCache[1]
+                || axis == cameraAxisBindingCache[0]
+                || axis == cameraAxisBindingCache[1]));
+        }
+
         // 'autofill' false: Forcefully set keybindings to defaults
         // 'autofill' true: Deploys default values if action missing from loaded keybinds
         public void ResetDefaults(bool autofill = false)
@@ -1062,22 +1073,60 @@ namespace DaggerfallWorkshop.Game
 
         public bool AnyKeyDown
         {
-            get
-            {
-                foreach (KeyCode k in KeyCodeList)
-                    if (GetUnaryKey(k, getKeyDownMethod, true, false)) return true;
-                return false;
-            }
+            get => GetAnyKeyDown() != KeyCode.None;
         }
 
         public bool AnyKeyUp
         {
-            get
-            {
-                foreach (KeyCode k in KeyCodeList)
-                    if (GetUnaryKey(k, getKeyUpMethod, false, false)) return true;
-                return false;
-            }
+            get => GetAnyKeyUp() != KeyCode.None;
+        }
+
+        public bool AnyKeyDownIgnoreAxisBinds
+        {
+            get => GetAnyKeyDownIgnoreAxisBinds() != KeyCode.None;
+        }
+
+
+        public bool AnyKeyUpIgnoreAxisBinds
+        {
+            get => GetAnyKeyUpIgnoreAxisBinds() != KeyCode.None;
+        }
+
+        public KeyCode GetAnyKeyDown()
+        {
+            foreach (KeyCode k in KeyCodeList)
+                if (GetUnaryKey(k, getKeyDownMethod, true, false))
+                    return k;
+
+            return KeyCode.None;
+        }
+
+        public KeyCode GetAnyKeyUp()
+        {
+            foreach (KeyCode k in KeyCodeList)
+                if (GetUnaryKey(k, getKeyUpMethod, false, false))
+                    return k;
+
+            return KeyCode.None;
+        }
+
+        public KeyCode GetAnyKeyDownIgnoreAxisBinds()
+        {
+            foreach (KeyCode k in KeyCodeList)
+                if (!IsUsedInAxisBinding(k) && GetUnaryKey(k, getKeyDownMethod, true, false)) 
+                    return k;
+
+            return KeyCode.None;
+        }
+
+
+        public KeyCode GetAnyKeyUpIgnoreAxisBinds()
+        {
+            foreach (KeyCode k in KeyCodeList)
+                if (!IsUsedInAxisBinding(k) && GetUnaryKey(k, getKeyUpMethod, false, false))
+                    return k;
+
+            return KeyCode.None;
         }
 
         public KeyCode GetComboCode(KeyCode a, KeyCode b)

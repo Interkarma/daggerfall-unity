@@ -383,23 +383,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public static IEnumerator WaitForKeyPress(Button button, System.Action checkDuplicates, System.Action<bool> setWaitingForInput)
         {
             string currentLabel = button.Label.Text;
+            KeyCode code1;
+            KeyCode code2;
 
             button.Label.Text = "";
             yield return new WaitForSecondsRealtime(0.05f);
 
-            while (!InputManager.Instance.AnyKeyDown)
+            while ((code1 = InputManager.Instance.GetAnyKeyDownIgnoreAxisBinds()) == KeyCode.None)
             {
                 setWaitingForInput(true);
                 yield return null;
             }
 
-            KeyCode code1 = InputManager.Instance.LastSingleKeyDown;
-
             yield return new WaitForSecondsRealtime(0.05f);
 
-            while (!InputManager.Instance.AnyKeyDown)
+            while ((code2 = InputManager.Instance.GetAnyKeyDownIgnoreAxisBinds()) == KeyCode.None)
             {
-                if (InputManager.Instance.AnyKeyUp)
+                if (InputManager.Instance.GetAnyKeyUpIgnoreAxisBinds() != KeyCode.None)
                     break;
 
                 setWaitingForInput(true);
@@ -408,8 +408,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             setWaitingForInput(false);
 
-            KeyCode code2 = InputManager.Instance.LastSingleKeyDown;
-            KeyCode code = code1 == code2 ? code1 : InputManager.Instance.GetComboCode(code1, code2);
+            KeyCode code = code1 == code2 || code2 == KeyCode.None ? code1 : InputManager.Instance.GetComboCode(code1, code2);
 
             if (code != KeyCode.None && InputManager.Instance.ReservedKeys.FirstOrDefault(x => x == code) == KeyCode.None)
             {

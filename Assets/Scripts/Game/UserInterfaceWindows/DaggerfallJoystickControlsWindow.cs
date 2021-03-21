@@ -555,11 +555,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         IEnumerator WaitForKeyPress(Button button, bool isAxisAction)
         {
             string currentLabel = button.Label.Text;
+            KeyCode code = KeyCode.None;
 
             button.Label.Text = "";
             yield return new WaitForSecondsRealtime(0.05f);
 
-            while (!InputManager.Instance.AnyKeyDown)
+            while ((!isAxisAction && (code = InputManager.Instance.GetAnyKeyDownIgnoreAxisBinds()) == KeyCode.None)
+                || (isAxisAction && (code = InputManager.Instance.GetAnyKeyDown()) == KeyCode.None))
             {
                 SetWaitingForInput(true);
                 yield return null;
@@ -567,13 +569,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             SetWaitingForInput(false);
 
-            KeyCode code = InputManager.Instance.LastSingleKeyDown;
-
             if (code != KeyCode.None)
             {
-                if(InputManager.Instance.ReservedKeys.FirstOrDefault(x => x == code) == KeyCode.None)
+                if (InputManager.Instance.ReservedKeys.FirstOrDefault(x => x == code) == KeyCode.None)
                 {
-                    if(isAxisAction)
+                    if (isAxisAction)
                     {
                         var text = InputManager.Instance.AxisKeyCodeToInputAxis((int)code);
                         if (!string.IsNullOrEmpty(text))
