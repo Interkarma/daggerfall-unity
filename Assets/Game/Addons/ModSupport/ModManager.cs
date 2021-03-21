@@ -10,6 +10,9 @@
 //
 
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -913,6 +916,22 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             return Path.Combine(paths);
         }
 
+        /// <summary>
+        /// Determines the difference between two paths.
+        /// </summary>
+        /// <param name="path0">The main path that contains <paramref name="path1"/>.</param>
+        /// <param name="path1">A path to a subdirectory or file inside <paramref name="path0"/>.</param>
+        /// <returns><paramref name="path1"/> converted to a relative path of <paramref name="path0"/> or null.</returns>
+        public static string MakeRelativePath(string path0, string path1)
+        {
+            var uri0 = new Uri(path0);
+            var uri1 = new Uri(path1);
+            if (uri0.IsBaseOf(uri1))
+                return uri0.MakeRelativeUri(uri1).ToString();
+
+            return null;
+        }
+
 #if UNITY_EDITOR
         /// <summary>
         /// Seeks asset contributes for the target mod, reading the folder name of each asset.
@@ -955,6 +974,18 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             string name = Path.GetFileNameWithoutExtension(path);
             if (!names.Contains(name))
                 names.Add(name);
+        }
+
+        /// <summary>
+        /// Import asset in editor from full path. This is an helper over <see cref="AssetDatabase.ImportAsset(string, ImportAssetOptions)"/> which takes a relative path.
+        /// </summary>
+        /// <param name="path">Full path to asset.</param>
+        /// <param name="importAssetOptions">Import asset options.</param>
+        public static void ImportAsset(string path, ImportAssetOptions importAssetOptions = ImportAssetOptions.Default)
+        {
+            string relPath = MakeRelativePath(Application.dataPath, path);
+            if (relPath != null)
+                AssetDatabase.ImportAsset(relPath, importAssetOptions);
         }
 #endif
 
