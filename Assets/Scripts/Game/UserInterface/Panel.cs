@@ -212,7 +212,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        public bool ProcessHotkeySequences(HotkeySequence.KeyModifiers keyModifiers)
+        public HotkeySequence.HotkeySequenceProcessStatus ProcessHotkeySequences(HotkeySequence.KeyModifiers keyModifiers)
         {
             foreach (BaseScreenComponent component in components)
             {
@@ -220,7 +220,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     Button buttonComponent = (Button)component;
                     if (buttonComponent.ProcessHotkeySequences(keyModifiers))
-                        return true;
+                        return HotkeySequence.HotkeySequenceProcessStatus.Handled;
                 }
             }
             foreach (BaseScreenComponent component in components)
@@ -228,11 +228,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (component.Enabled && component is Panel)
                 {
                     Panel panelComponent = (Panel)component;
-                    if (panelComponent.ProcessHotkeySequences(keyModifiers))
-                        return true;
+                    if (panelComponent.ProcessHotkeySequences(keyModifiers) == HotkeySequence.HotkeySequenceProcessStatus.Handled)
+                        return HotkeySequence.HotkeySequenceProcessStatus.Handled;
                 }
             }
-            return false;
+            return HotkeySequence.HotkeySequenceProcessStatus.NotFound;
         }
 
         #region Private Methods

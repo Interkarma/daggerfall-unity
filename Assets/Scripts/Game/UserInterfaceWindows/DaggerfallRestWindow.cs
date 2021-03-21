@@ -184,7 +184,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
+            if (DaggerfallUI.Instance.HotkeySequenceProcessed == HotkeySequence.HotkeySequenceProcessStatus.NotFound)
             {
                 // Toggle window closed with same hotkey used to open it, or the DaggerfallBaseWindow's exitKey
                 // Window will properly end the rest if the player was currently resting

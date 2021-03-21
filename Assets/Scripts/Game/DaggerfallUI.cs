@@ -85,7 +85,7 @@ namespace DaggerfallWorkshop.Game
         KeyCode lastKeyCode;
         bool processHotkeys;
         HotkeySequence.KeyModifiers lastKeyModifiers;
-        bool hotkeySequenceProcessed = false;
+        HotkeySequence.HotkeySequenceProcessStatus hotkeySequenceProcessed = HotkeySequence.HotkeySequenceProcessStatus.NotFound;
         FadeBehaviour fadeBehaviour = null;
         bool instantiatePersistentWindowInstances = true;
 
@@ -196,9 +196,10 @@ namespace DaggerfallWorkshop.Game
             get { return lastKeyModifiers; }
         }
 
-        public bool HotkeySequenceProcessed
+        public HotkeySequence.HotkeySequenceProcessStatus HotkeySequenceProcessed
         {
             get { return hotkeySequenceProcessed; }
+            private set {  hotkeySequenceProcessed = value; }
         }
 
         public DaggerfallHUD DaggerfallHUD
@@ -377,8 +378,7 @@ namespace DaggerfallWorkshop.Game
             // Possible to get multiple keydown events per frame, one with character, one with keycode
             // Only accept character or keycode if valid
             lastKeyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
-            hotkeySequenceProcessed = false;
-
+            
             if (Event.current.type == EventType.KeyDown)
             {
                 if (Event.current.character != (char)0)
@@ -391,8 +391,12 @@ namespace DaggerfallWorkshop.Game
             if (processHotkeys)
             {
                 processHotkeys = false;
-                hotkeySequenceProcessed = ProcessHotKeySequences();
+                HotkeySequenceProcessed = ProcessHotKeySequences();
             }
+            else if (uiManager.TopWindow.FocusControl != null && uiManager.TopWindow.FocusControl.OverridesHotkeySequences)
+                HotkeySequenceProcessed = HotkeySequence.HotkeySequenceProcessStatus.Disabled;
+            else
+                HotkeySequenceProcessed = HotkeySequence.HotkeySequenceProcessStatus.NotFound;
 
             if (Event.current.type == EventType.Repaint)
             {
@@ -656,7 +660,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        public bool ProcessHotKeySequences()
+        public HotkeySequence.HotkeySequenceProcessStatus ProcessHotKeySequences()
         {
             if (uiManager.TopWindow != null)
             {
@@ -664,13 +668,12 @@ namespace DaggerfallWorkshop.Game
                 if (focusControl == null || !focusControl.OverridesHotkeySequences)
                 {
                     if (uiManager.TopWindow.ParentPanel != null)
-                    {
                         return uiManager.TopWindow.ParentPanel.ProcessHotkeySequences(lastKeyModifiers);
-                    }
                 }
+                else if (focusControl != null && focusControl.OverridesHotkeySequences)
+                    return HotkeySequence.HotkeySequenceProcessStatus.Disabled;
             }
-
-            return false;
+            return HotkeySequence.HotkeySequenceProcessStatus.NotFound;
         }
 
         #region Helpers

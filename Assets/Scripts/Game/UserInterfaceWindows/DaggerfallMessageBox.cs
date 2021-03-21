@@ -290,7 +290,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            if (!DaggerfallUI.Instance.HotkeySequenceProcessed)
+            if (DaggerfallUI.Instance.HotkeySequenceProcessed == HotkeySequence.HotkeySequenceProcessStatus.NotFound)
             {
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || InputManager.Instance.GetKeyDown(extraProceedBinding))
                     isNextMessageDeferred = true;
