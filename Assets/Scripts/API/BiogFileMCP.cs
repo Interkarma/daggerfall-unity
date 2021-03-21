@@ -117,14 +117,14 @@ namespace DaggerfallConnect.Arena2
             public override string GeographicalFeature()
             {
                 // %hpw
-                switch ((Races)parent.characterDocument.raceTemplate.ID) // Note: These are educated guesses based on lore.
+                switch ((Races)parent.characterDocument.raceTemplate.ID)
                 {
                     case Races.Argonian:
                         return TextManager.Instance.GetLocalizedText("swamps");
                     case Races.Breton:
                         return TextManager.Instance.GetLocalizedText("rollingHills");
                     case Races.DarkElf:
-                        return TextManager.Instance.GetLocalizedText("rollingHills");
+                        return TextManager.Instance.GetLocalizedText("mountains");
                     case Races.HighElf:
                         return TextManager.Instance.GetLocalizedText("shores");
                     case Races.Khajiit:
