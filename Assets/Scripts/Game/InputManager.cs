@@ -1016,6 +1016,7 @@ namespace DaggerfallWorkshop.Game
 
             setJoystickUIBinding(KeyCode.JoystickButton0, JoystickUIActions.LeftClick);
             setJoystickUIBinding(KeyCode.JoystickButton1, JoystickUIActions.RightClick);
+            setJoystickUIBinding(KeyCode.JoystickButton2, JoystickUIActions.MiddleClick);
             UpdateBindingCache();
 
             foreach (AxisActions axisAction in Enum.GetValues(typeof(AxisActions)))
