@@ -558,7 +558,10 @@ namespace DaggerfallWorkshop.Utility
 
             // Create base object
             DFBlock blockData;
+            GameManager.Instance.PlayerEnterExit.IsCreatingDungeonBaseGameObjects = true;
             GameObject go = RDBLayout.CreateBaseGameObject(blockName, actionLinkDict, out blockData, textureTable, allowExitDoors, cloneFrom);
+            GameManager.Instance.PlayerEnterExit.IsCreatingDungeonBaseGameObjects = false;
+
             // Add action doors
             RDBLayout.AddActionDoors(go, actionLinkDict, ref blockData, textureTable);
 

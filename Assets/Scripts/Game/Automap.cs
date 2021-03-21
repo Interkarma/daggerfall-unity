@@ -269,6 +269,8 @@ namespace DaggerfallWorkshop.Game
 
         bool iTweenCameraAnimationIsRunning = false; // indicates if iTween camera animation is running (i.e. teleporter portal jump animation plays)
 
+        static bool isCreatingDungeonAutomapBaseGameObjects = false; // Indicates that the Automap is creating the models for a Castle's or Dungeon's Automap
+
         #endregion
 
         #region Properties
@@ -359,6 +361,11 @@ namespace DaggerfallWorkshop.Game
         public bool ITweenCameraAnimationIsRunning
         {
             get { return iTweenCameraAnimationIsRunning; }
+        }
+
+        public static bool IsCreatingDungeonAutomapBaseGameObjects
+        {
+            get { return isCreatingDungeonAutomapBaseGameObjects; }
         }
 
         #endregion
@@ -1931,8 +1938,10 @@ namespace DaggerfallWorkshop.Game
                         }
 
                         DFBlock blockData;
-                        int[] textureTable = null;
-                        GameObject gameobjectBlock = RDBLayout.CreateBaseGameObject(block.BlockName, null, out blockData, textureTable, true, null, false, true);
+                        int[] textureTable = GameManager.Instance.PlayerEnterExit?.Dungeon?.DungeonTextureTable;
+                        Automap.isCreatingDungeonAutomapBaseGameObjects = true;
+                        GameObject gameobjectBlock = RDBLayout.CreateBaseGameObject(block.BlockName, null, out blockData, textureTable, true, null, false);
+                        Automap.isCreatingDungeonAutomapBaseGameObjects = false;
                         gameobjectBlock.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
                         gameobjectBlock.transform.SetParent(gameobjectDungeon.transform);
