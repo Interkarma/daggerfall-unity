@@ -181,7 +181,7 @@ namespace DaggerfallWorkshop
             AssignBlockData(door);
 
             // Layout interior data
-            AddModels(mapBD);
+            AddModels(mapBD, true);
 
             return true;
         }
@@ -392,7 +392,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Add interior models.
         /// </summary>
-        private void AddModels(PlayerGPS.DiscoveredBuilding buildingData)
+        private void AddModels(PlayerGPS.DiscoveredBuilding buildingData, bool isAutomapRun = false)
         {
             List<StaticDoor> doors = new List<StaticDoor>();
             GameObject node = new GameObject("Models");
@@ -449,10 +449,10 @@ namespace DaggerfallWorkshop
                     doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
 
                 // Inject custom GameObject if available
-                GameObject go = MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, node.transform, modelMatrix);
+                GameObject modelGO = MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, node.transform, modelMatrix);
 
                 // Otherwise use Daggerfall mesh - combine or add
-                if (!go)
+                if (!modelGO)
                 {
                     if (dfUnity.Option_CombineRMB && !stopCombine)
                     {
@@ -461,28 +461,31 @@ namespace DaggerfallWorkshop
                     else
                     {
                         // Add individual GameObject
-                        go = GameObjectHelper.CreateDaggerfallMeshGameObject(obj.ModelIdNum, node.transform, dfUnity.Option_SetStaticFlags);
-                        go.transform.position = modelMatrix.GetColumn(3);
-                        go.transform.rotation = modelMatrix.rotation;
-                        go.transform.localScale = modelMatrix.lossyScale;
+                        modelGO = GameObjectHelper.CreateDaggerfallMeshGameObject(obj.ModelIdNum, node.transform, dfUnity.Option_SetStaticFlags);
+                        modelGO.transform.position = modelMatrix.GetColumn(3);
+                        modelGO.transform.rotation = modelMatrix.rotation;
+                        modelGO.transform.localScale = modelMatrix.lossyScale;
 
                         // Update climate
-                        DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
+                        DaggerfallMesh dfMesh = modelGO.GetComponent<DaggerfallMesh>();
                         dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
                     }
                 }
 
+                if ((modelGO != null) && (isAutomapRun))
+                    modelGO.AddComponent<AutomapModel>();
+
                 // Make ladder collider convex and ladder functionality, if set up as propModelType
                 if (obj.ModelIdNum == ladderModelId && obj.ObjectType == propModelType)
                 {
-                    var meshCollider = go.GetComponent<MeshCollider>();
+                    var meshCollider = modelGO.GetComponent<MeshCollider>();
                     if (meshCollider) meshCollider.convex = true;
-                    go.AddComponent<DaggerfallLadder>();
+                    modelGO.AddComponent<DaggerfallLadder>();
                 }
 
                 // Optionally add action objects to specific furniture items (e.g. loot containers), except when laying out map (buildingType=AllValid)
                 if (obj.ObjectType == propModelType && buildingData.buildingType != DFLocation.BuildingTypes.AllValid)
-                    AddFurnitureAction(obj, go, buildingData);
+                    AddFurnitureAction(obj, modelGO, buildingData);
             }
 
             // Add combined GameObject
@@ -491,10 +494,13 @@ namespace DaggerfallWorkshop
                 if (combiner.VertexCount > 0)
                 {
                     combiner.Apply();
-                    GameObject go = GameObjectHelper.CreateCombinedMeshGameObject(combiner, "CombinedModels", node.transform, dfUnity.Option_SetStaticFlags);
+                    GameObject modelGO = GameObjectHelper.CreateCombinedMeshGameObject(combiner, "CombinedModels", node.transform, dfUnity.Option_SetStaticFlags);
+
+                    if ((modelGO != null) && (isAutomapRun))
+                        modelGO.AddComponent<AutomapModel>();
 
                     // Update climate
-                    DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
+                    DaggerfallMesh dfMesh = modelGO.GetComponent<DaggerfallMesh>();
                     dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
                 }
             }
