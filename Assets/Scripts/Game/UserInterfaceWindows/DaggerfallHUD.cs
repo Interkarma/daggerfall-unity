@@ -270,6 +270,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
             }
 
+            // Toggle large HUD rendering
+            if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.LargeHUDToggle).IsDownWith(keyModifiers))
+            {
+                DaggerfallUnity.Settings.LargeHUD = !DaggerfallUnity.Settings.LargeHUD;
+            }
+
             // Toggle HUD rendering
             if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.HUDToggle).IsDownWith(keyModifiers))
             {

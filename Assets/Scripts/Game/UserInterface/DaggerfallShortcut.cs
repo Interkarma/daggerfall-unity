@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // General
             Pause,
+            LargeHUDToggle,
             HUDToggle,
             ToggleRetroPP,
 
