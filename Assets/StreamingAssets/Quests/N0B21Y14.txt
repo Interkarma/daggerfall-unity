@@ -90,8 +90,9 @@ The Oracle knew that Sentinel would lose the war with Daggerfall.
 If Camaron of Sentinel had listened to the Oracle, he'd be alive today.
 
 Message:  1014
-%qdt: I got a letter
- from The Acolyte asking for a meeting.
+%qdt:
+ I got a letter from The Acolyte 
+ asking for a meeting.
  He is staying at _temple_
  in __temple_.
 

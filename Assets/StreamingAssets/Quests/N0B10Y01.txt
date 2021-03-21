@@ -96,9 +96,10 @@ QuestLogEntry:  [1010]
 <ce>                       from the atronach's eyes.
 
 Message:  1020
-%qdt: The Mages Guild of
- ___questgiver_ has hired me to find an
- atronach that escaped from their laboratory.
+%qdt:
+ The Mages Guild of ___questgiver_
+ has hired me to find an atronach
+ that escaped from their laboratory.
  It has laired in ___mondung_.
  I need to have the creature dead and be back
  in ___questgiver_ in =1stparton_ days.

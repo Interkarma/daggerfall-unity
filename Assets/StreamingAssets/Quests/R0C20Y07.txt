@@ -78,8 +78,9 @@ QuestorPostfailure:  [1009]
 <ce>                               sapphire.
 
 QuestLogEntry:  [1010]
-%qdt: _questgiver_
- of ___questgiver_ has sent me
+%qdt:
+ _questgiver_ of
+ ___questgiver_ has sent me
  on a mission to find a sapphire stolen from
  %g3 friend, _qgfriend_ of
  __qgfriend_, ___qgfriend_.

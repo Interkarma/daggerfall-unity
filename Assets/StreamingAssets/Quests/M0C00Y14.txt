@@ -64,8 +64,9 @@ QuestorPostfailure:  [1009]
 <ce>                     rats. You are hopeless %pcn.
 
 QuestLogEntry:  [1010]
-%qdt: The Fighters
- Guild of ___qgiver_ has
+%qdt:
+ The Fighters Guild of
+ ___qgiver_ has
  offered to let me rid _house_
  of a giant rat infestation.
  I have one day to get it done.

@@ -86,7 +86,8 @@ _witch_ is a witch of ___witch_.
 _witch_ is a ___witch_ witch, a =witch_.
 
 Message:  1015
-%qdt: _witch_ of
+%qdt:
+ _witch_ of
  ___witch_ has sent me to slay
  a vampire ancient bent on the destruction
  of the witches of %reg. I

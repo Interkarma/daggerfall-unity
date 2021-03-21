@@ -60,8 +60,9 @@ QuestorPostfailure:  [1009]
 <ce>                        someone else to do it.
 
 QuestLogEntry:  [1010]
-%qdt: The Fighters
- Guild of ___qgiver_ has
+%qdt:
+ The Fighters Guild of
+ ___qgiver_ has
  offered to let me to take
  care of some barbarian
  marauding _house_.

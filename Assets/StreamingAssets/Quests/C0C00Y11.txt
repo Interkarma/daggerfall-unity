@@ -60,7 +60,7 @@ I gave thee a chance before, and it was a waste of breath.
 Do you think that I forgot _house_ already, %pct?
 
 QuestLogEntry:  [1010]
-%qdt
+%qdt:
  _qgiver_ of __qgiver_,
  in ___qgiver_ has given
  me the chance to rid _house_

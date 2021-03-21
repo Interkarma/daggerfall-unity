@@ -35,7 +35,7 @@ AcceptQuest:  [1002]
 <ce>                      back to me if you find it.
 
 QuestFail:  [1003]
-%qdt
+%qdt:
  I have agreed to find the book _book_
  for the Mages Guild of ___giver_.
  If I find it, I need to get it back to

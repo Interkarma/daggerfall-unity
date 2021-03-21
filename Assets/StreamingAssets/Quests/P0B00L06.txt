@@ -77,8 +77,9 @@ QuestLogEntry:  [1010]
                       _vamp_
 
 Message:  1011
-%qdt: I received a
- letter from _vamp_ of
+%qdt:
+ I received a letter
+ from _vamp_ of
  %vam in ___vamp_.
  I am to meet %g2 in a place
  called __vamp_ as
@@ -164,7 +165,8 @@ Message:  1018
 <ce>                       vampires could be anyone.
 
 Message:  1019
-%qdt: _mg_ of
+%qdt:
+ _mg_ of
  __mg_ in ___mg_
  wants me to go to ___mondung_
  to take _mage_'s
@@ -206,9 +208,10 @@ Message:  1020
  about increasing funding. Going nowhere.
 
 Message:  1021
-%qdt: A sorcerer named
- _mage_ has come close
- to major discoveries about %vam
+%qdt:
+ A sorcerer named _mage_
+ has come close to major
+ discoveries about %vam
  and _vamp_ has sent me
  to the laboratory, ___mondung_
  to retrieve the notes. It is likely that

@@ -32,8 +32,9 @@ AcceptQuest:  [1002]
 <ce>                                master.
 
 QuestLogEntry:  [1010]
-%qdt: I met
- _qgiver_ in ___qgiver_,
+%qdt:
+ I met _qgiver_
+ in ___qgiver_,
  who told me %g3 master in
  _meetingplace_ would
  pay _gold_ gold pieces for
@@ -41,9 +42,9 @@ QuestLogEntry:  [1010]
  dangerous task.
 
 Message:  1011
-%qdt: The traitor
- _traitor_ magicked me
- to __dungeon_.
+%qdt:
+ The traitor _traitor_
+ magicked me to __dungeon_.
  If I ever get out, we will meet again.
 
 Message:  1012
