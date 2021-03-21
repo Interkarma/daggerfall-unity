@@ -393,7 +393,7 @@ namespace DaggerfallWorkshop.Game
                 processHotkeys = false;
                 HotkeySequenceProcessed = ProcessHotKeySequences();
             }
-            else if (uiManager.TopWindow.FocusControl != null && uiManager.TopWindow.FocusControl.OverridesHotkeySequences)
+            else if (uiManager?.TopWindow?.FocusControl?.OverridesHotkeySequences == true)
                 HotkeySequenceProcessed = HotkeySequence.HotkeySequenceProcessStatus.Disabled;
             else
                 HotkeySequenceProcessed = HotkeySequence.HotkeySequenceProcessStatus.NotFound;
