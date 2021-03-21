@@ -72,27 +72,36 @@ namespace DaggerfallWorkshop.Game
 
             if (InputManager.Instance.HasAction(InputManager.Actions.Jump))
             {
-                const float athleticismMultiplier = 0.1f;           // +10%
-                const float improvedAthleticismMultiplier = 0.1f;   // +10%
-                const float jumpSpellMultiplier = 0.6f;             // +60%
-
-                // Baseline jump speed is improved by a percentage equal to JumpingSkill / 2
-                // Jumping in DFU is roughly the same as classic at low skill levels
-                // Jumping in DFU is higher at 100 skill than in classic, but still not so high as pre-beta DFU
-                float jumpSpeedMultiplier = 1.0f;
-                jumpSpeedMultiplier += GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue(DaggerfallConnect.DFCareer.Skills.Jumping) / 2 / 100f;
-
-                // Add Athleticism and Improved Athleticism multipliers (will together make for +20%)
-                if (GameManager.Instance.PlayerEntity.Career.Athleticism)
+                float jumpSpeedMultiplier;
+                if (GameManager.Instance.TransportManager.TransportMode == TransportModes.Horse)
                 {
-                    jumpSpeedMultiplier += athleticismMultiplier;
-                    if (GameManager.Instance.PlayerEntity.ImprovedAthleticism)
-                        jumpSpeedMultiplier += improvedAthleticismMultiplier;
+                    // At least 1.5f to be able to jump over hedges
+                    jumpSpeedMultiplier = 1.75f;
                 }
+                else
+                {
+                    const float athleticismMultiplier = 0.1f;           // +10%
+                    const float improvedAthleticismMultiplier = 0.1f;   // +10%
+                    const float jumpSpellMultiplier = 0.6f;             // +60%
 
-                // Add Jumping effect multiplier
-                if (GameManager.Instance.PlayerEntity.IsEnhancedJumping)
-                    jumpSpeedMultiplier += jumpSpellMultiplier;
+                    // Baseline jump speed is improved by a percentage equal to JumpingSkill / 2
+                    // Jumping in DFU is roughly the same as classic at low skill levels
+                    // Jumping in DFU is higher at 100 skill than in classic, but still not so high as pre-beta DFU
+                    jumpSpeedMultiplier = 1.0f;
+                    jumpSpeedMultiplier += GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue(DaggerfallConnect.DFCareer.Skills.Jumping) / 2 / 100f;
+
+                    // Add Athleticism and Improved Athleticism multipliers (will together make for +20%)
+                    if (GameManager.Instance.PlayerEntity.Career.Athleticism)
+                    {
+                        jumpSpeedMultiplier += athleticismMultiplier;
+                        if (GameManager.Instance.PlayerEntity.ImprovedAthleticism)
+                            jumpSpeedMultiplier += improvedAthleticismMultiplier;
+                    }
+
+                    // Add Jumping effect multiplier
+                    if (GameManager.Instance.PlayerEntity.IsEnhancedJumping)
+                        jumpSpeedMultiplier += jumpSpellMultiplier;
+                }
 
                 moveDirection.y = jumpSpeed * jumpSpeedMultiplier;
                 jumping = true;
