@@ -1940,7 +1940,7 @@ namespace DaggerfallWorkshop.Game
                         DFBlock blockData;
                         int[] textureTable = GameManager.Instance.PlayerEnterExit?.Dungeon?.DungeonTextureTable;
                         Automap.isCreatingDungeonAutomapBaseGameObjects = true;
-                        GameObject gameobjectBlock = RDBLayout.CreateBaseGameObject(block.BlockName, null, out blockData, textureTable, true, null, false);
+                        GameObject gameobjectBlock = RDBLayout.CreateBaseGameObject(block.BlockName, null, out blockData, textureTable, true, null, false, true);
                         Automap.isCreatingDungeonAutomapBaseGameObjects = false;
                         gameobjectBlock.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
