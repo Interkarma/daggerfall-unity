@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Utility
 
         Rect standardViewportRect = new Rect(0, 0, 1, 1);
         Rect lastViewportRect;
-        Camera camera;
+        new Camera camera;
 
         private void Start()
         {
