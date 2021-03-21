@@ -673,6 +673,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get player region
             int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             DFRegion regionData = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegion(regionIndex);
+            int playerLocationIndex = GameManager.Instance.PlayerGPS.CurrentLocationIndex;
 
             // Cannot use a region with no locations
             // This should not happen in normal play
@@ -700,6 +701,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Get a random location index
                 int locationIndex = UnityEngine.Random.Range(0, (int)regionData.LocationCount);
+
+                // Discard the current player location if selected
+                if (locationIndex == playerLocationIndex)
+                    continue;
 
                 // Discard all dungeon location types
                 if (IsDungeonType(regionData.MapTable[locationIndex].LocationType))
