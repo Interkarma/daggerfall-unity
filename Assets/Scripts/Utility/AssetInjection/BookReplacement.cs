@@ -167,16 +167,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 string path = Path.Combine(booksPath, name);
                 if (File.Exists(path))
                 {
-                    book.OpenBook(File.ReadAllBytes(path), name);
-                    return true;
+                    if (book.OpenBook(File.ReadAllBytes(path), name))
+                        return true;
                 }
 
                 // Seek from mods
                 TextAsset textAsset;
                 if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(name, false, out textAsset))
                 {
-                    book.OpenBook(textAsset.bytes, name);
-                    return true;
+                    if (book.OpenBook(textAsset.bytes, name))
+                        return true;
                 }
             }
 

@@ -30,6 +30,8 @@ namespace DaggerfallConnect.Arena2
         readonly FileProxy bookFile = new FileProxy();
         BookHeader header = new BookHeader();
 
+        internal string lastSuccessfulBookHeaderRead = "";
+
         #endregion
 
         #region Properties
@@ -96,8 +98,14 @@ namespace DaggerfallConnect.Arena2
                 return false;
 
             // Read book
-            ReadHeader();
-
+            try { ReadHeader(); }
+            catch (EndOfStreamException e)
+            {
+                Debug.LogErrorFormat($"EndOfStreamException encountered for book {name}.\n" +
+                    $"The last piece of data that was successfully read was {lastSuccessfulBookHeaderRead}.\n" +
+                    $"{e.ToString()}");
+                return false;
+            }
             return true;
         }
 
@@ -106,10 +114,18 @@ namespace DaggerfallConnect.Arena2
         /// </summary>
         /// <param name="data">Byte array to parse as a book file.</param>
         /// <param name="name">Name to describe book.</param>
-        public void OpenBook(byte[] data, string name)
+        public bool OpenBook(byte[] data, string name)
         {
             bookFile.Load(data, name);
-            ReadHeader(name.StartsWith("BOK", StringComparison.OrdinalIgnoreCase));
+            try { ReadHeader(name.StartsWith("BOK", StringComparison.OrdinalIgnoreCase)); }
+            catch (EndOfStreamException e)
+            {
+                Debug.LogErrorFormat($"EndOfStreamException encountered for modded book {name}.\n" +
+                    $"The last piece of data that was successfully read was {lastSuccessfulBookHeaderRead}.\n" +
+                    $"{e.ToString()}");
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -131,26 +147,37 @@ namespace DaggerfallConnect.Arena2
 
         #region Private Methods
 
-        void ReadHeader(bool randomPrice = true)
+        bool ReadHeader(bool randomPrice = true)
         {
             BinaryReader reader = bookFile.GetReader();
+            lastSuccessfulBookHeaderRead = "not even the Title";
 
             header = new BookHeader();
             header.Title = FileProxy.ReadCStringSkip(reader, 0, 64);
+            lastSuccessfulBookHeaderRead = "the Book's Title";
             header.Author = FileProxy.ReadCStringSkip(reader, 0, 64);
+            lastSuccessfulBookHeaderRead = "the Book's Author";
             header.IsNaughty = (FileProxy.ReadCStringSkip(reader, 0, 8) == naughty);
+            lastSuccessfulBookHeaderRead = "the Book's Naughty flag";
             header.NullValues = reader.ReadBytes(88);
+            lastSuccessfulBookHeaderRead = "the Book's Null Values";
             header.Price = reader.ReadUInt32();
+            lastSuccessfulBookHeaderRead = "the Book's Price";
             header.Unknown1 = reader.ReadUInt16();
+            lastSuccessfulBookHeaderRead = "the Book's Unknown1";
             header.Unknown2 = reader.ReadUInt16();
+            lastSuccessfulBookHeaderRead = "the Book's Unknown2";
             header.Unknown3 = reader.ReadUInt16();
+            lastSuccessfulBookHeaderRead = "the Book's Unknown3";
             header.PageCount = reader.ReadUInt16();
+            lastSuccessfulBookHeaderRead = "the Book's Page Count";
             header.PageOffsets = new UInt32[header.PageCount];
             for (int i = 0; i < header.PageCount; i++)
             {
                 header.PageOffsets[i] = reader.ReadUInt32();
+                lastSuccessfulBookHeaderRead = "the Book's Page Offsets: Loop " + i + " of " + header.PageCount;
             }
-            
+
             if (randomPrice)
             {
                 // Overwrite price field using random seeded with first 4 bytes.
@@ -159,6 +186,8 @@ namespace DaggerfallConnect.Arena2
                 DFRandom.Seed = reader.ReadUInt32(); // first 4 bytes of book file as a uint
                 header.Price = (uint)DFRandom.random_range_inclusive(300, 800);
             }
+            lastSuccessfulBookHeaderRead = "";
+            return true;
         }
 
         #endregion
