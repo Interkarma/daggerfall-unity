@@ -16,8 +16,8 @@ public static class VersionInfo
     public const string DaggerfallUnityProductName = "Daggerfall Unity";
     public const string DaggerfallUnityStatus = "beta";
 
-    // Last updated versions 09-February-2021
-    public const string DaggerfallUnityVersion = "0.11.1";
+    // Last updated versions 22-March-2021
+    public const string DaggerfallUnityVersion = "0.11.2";
     public const string DaggerfallToolsForUnityVersion = "1.9.0";
     
     public const string BaselineUnityVersion = "2019.4.10f1";
