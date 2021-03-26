@@ -242,7 +242,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region events
 
-        void DialogButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void DialogButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             switch (DisplayMode)
             {
@@ -265,44 +265,44 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(openJournal);
         }
 
-        void UpArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void UpArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
             if (currentMessageIndex - 1 >= 0)
                 currentMessageIndex -= 1;
         }
 
-        void DownArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void DownArrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.PageTurn);
             if (currentMessageIndex + 1 < messageCount)
                 currentMessageIndex += 1;
         }
 
-        void MainPanel_OnMouseScrollUp(BaseScreenComponent sender)
+        protected virtual void MainPanel_OnMouseScrollUp(BaseScreenComponent sender)
         {
             if (currentMessageIndex - 1 >= 0)
                 currentMessageIndex -= 1;
         }
 
-        void MainPanel_OnMouseScrollDown(BaseScreenComponent sender)
+        protected virtual void MainPanel_OnMouseScrollDown(BaseScreenComponent sender)
         {
             if (currentMessageIndex + 1 < messageCount)
                 currentMessageIndex += 1;
         }
 
-        void TitlePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void TitlePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             EnterNote(0);
         }
 
-        public void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        public virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
         }
 
-        protected void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        protected virtual void ExitButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
         {
             if (keyboardEvent.type == EventType.KeyDown)
             {
@@ -316,17 +316,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void QuestLogLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void QuestLogLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             HandleClick(position);
         }
 
-        void QuestLogLabel_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void QuestLogLabel_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             HandleClick(position, true);
         }
 
-        void RemoveEntry_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void RemoveEntry_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
@@ -340,14 +340,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             sender.CloseWindow();
         }
 
-        void MoveEntry_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void MoveEntry_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton != DaggerfallMessageBox.MessageBoxButtons.Yes)
                 selectedEntry = NULLINT;
             sender.CloseWindow();
         }
 
-        void FindPlace_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void FindPlace_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
@@ -359,7 +359,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void EnterNote_OnGotUserInput(DaggerfallInputMessageBox sender, string enteredNoteLine)
+        protected virtual void EnterNote_OnGotUserInput(DaggerfallInputMessageBox sender, string enteredNoteLine)
         {
             if (!string.IsNullOrEmpty(enteredNoteLine))
             {
@@ -370,7 +370,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedEntry = NULLINT;
         }
 
-        void EnterNote_OnCancel(DaggerfallPopupWindow sender)
+        protected virtual void EnterNote_OnCancel(DaggerfallPopupWindow sender)
         {
             selectedEntry = NULLINT;
         }
