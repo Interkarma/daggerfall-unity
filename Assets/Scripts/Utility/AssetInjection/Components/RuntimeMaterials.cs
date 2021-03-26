@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                             ApplyMaterials(false, GameManager.Instance.PlayerEnterExit.Dungeon.DungeonTextureTable);
                         }
                     }
-                    else if (GameManager.Instance.PlayerEnterExit.IsCreatingDungeonBaseGameObjects == true)
+                    else if (GameManager.Instance.PlayerEnterExit.IsCreatingDungeonObjects == true)
                     {
                         // This model's GameObject was created for a dungeon's or castle's interior. Register for the OnSetDungeon event as the texture table is not available yet.
                         DaggerfallDungeon.OnSetDungeon += DaggerfallDungeon_OnSetDungeon;
