@@ -11,6 +11,7 @@
 
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Utility
@@ -166,12 +167,20 @@ namespace DaggerfallWorkshop.Utility
             // Replace %ef
             if (a.Contains(firstNameTitleVar))
             {
-                // Need to burn a rand() for %ef roll to be correct
-                // What is Daggerfall rolling here?
+                // Need to burn a rand() for %ef roll to be correct.
+                // Classic is always doing this when expanding a macro.
                 DFRandom.rand();
 
-                // Observation finds nameplates only seem to use male Breton namebank
-                string firstName = DaggerfallUnity.Instance.NameHelper.FirstName(NameHelper.BankTypes.Breton, Game.Entity.Genders.Male);
+                // In classic, the function expanding the %ef macro uses a global variable containing the current
+                // region race. However, this variable is never updated when the character travels
+                // and remains at 0. This explains why the Breton name bank is always used for shops.
+                // This global variable is probably a leftover from Daggerfall early development as,
+                // with the exception of %lp, which presents a similar issue and always returns
+                // "High Rock", all naming functions use a global array of 62 fixed race values, one for each region.
+                // As with %lp, we choose to fix the original bug in DFU and use this array, meaning that
+                // all shops in Hammerfell now use Redguard names.
+                NameHelper.BankTypes nameBank = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+                string firstName = DaggerfallUnity.Instance.NameHelper.FirstName(nameBank, Game.Entity.Genders.Male);
                 a = a.Replace(firstNameTitleVar, firstName);
             }
 
