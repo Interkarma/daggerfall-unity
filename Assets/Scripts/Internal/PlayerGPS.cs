@@ -627,6 +627,8 @@ namespace DaggerfallWorkshop
 
         private void PlayerLocationRectCheck()
         {
+            int extraRect = 4096;
+
             // Bail if no current location at this map pixel
             if (!hasCurrentLocation)
             {
@@ -643,9 +645,10 @@ namespace DaggerfallWorkshop
 
             // Player can be inside a map pixel with location but not inside location rect
             // So check if player currently inside location rect
+            // Virtual location rect check is extended by 4096 units (size of a full city block) around physical town border to better match classic
             bool check;
-            if (WorldX >= locationWorldRectMinX && WorldX <= locationWorldRectMaxX &&
-                WorldZ >= locationWorldRectMinZ && WorldZ <= locationWorldRectMaxZ)
+            if (WorldX >= locationWorldRectMinX - extraRect && WorldX <= locationWorldRectMaxX + extraRect &&
+                WorldZ >= locationWorldRectMinZ - extraRect && WorldZ <= locationWorldRectMaxZ + extraRect)
             {
                 check = true;
             }
