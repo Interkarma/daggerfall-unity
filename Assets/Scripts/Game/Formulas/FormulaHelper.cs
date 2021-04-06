@@ -339,7 +339,8 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             int minRoll = player.Career.HitPointsPerLevel / 2;
             int maxRoll = player.Career.HitPointsPerLevel;
-            int addHitPoints = UnityEngine.Random.Range(minRoll, maxRoll + 1); // Adding +1 as Unity Random.Range(int,int) is exclusive of maximum value
+            DFRandom.Seed = (uint)Time.renderedFrameCount;
+            int addHitPoints = DFRandom.random_range_inclusive(minRoll, maxRoll);
             addHitPoints += HitPointsModifier(player.Stats.PermanentEndurance);
             if (addHitPoints < 1)
                 addHitPoints = 1;
