@@ -98,7 +98,7 @@ namespace DaggerfallWorkshop.Game.Entity
             // Warrior does not aggro in classic and it seems impossible to cast this class of spell on non-hostiles in classic
             // Would prefer a better system such as a quest action to whitelist certain spells on a Foe resource
             // But this will get job done in this case and we can expand/improve later
-            if (!IsHostileEnemy())
+            if (!IsHostileEnemy() && !(Entity is PlayerEntity))
                 return;
 
             DamageFatigueFromSource(sourceEffect.Caster, amount, assignMultiplier);
