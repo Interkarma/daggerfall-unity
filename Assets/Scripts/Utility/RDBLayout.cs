@@ -591,7 +591,7 @@ namespace DaggerfallWorkshop.Utility
             exitDoorsOut = new List<StaticDoor>();
 
             // Iterate object groups
-            foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)      // XJDHDR - Test Parallel.ForEach
+            foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
             {
                 // Skip empty object groups
                 if (null == group.RdbObjects)
@@ -600,7 +600,7 @@ namespace DaggerfallWorkshop.Utility
                 }
 
                 // Iterate objects in this group
-                foreach (DFBlock.RdbObject obj in group.RdbObjects)      // XJDHDR - Test Parallel.ForEach
+                foreach (DFBlock.RdbObject obj in group.RdbObjects)
                 {
                     // Add models
                     if (obj.Type == DFBlock.RdbResourceTypes.Model)
@@ -634,7 +634,7 @@ namespace DaggerfallWorkshop.Utility
 
                         // Get GameObject
                         Transform parent = (hasAction) ? actionModelsParent : modelsParent;
-                        GameObject standaloneObject = MeshReplacement.ImportCustomGameobject(modelId, parent, modelMatrix);
+                        GameObject standaloneObject = MeshReplacement.ImportCustomGameobject(modelId, parent, modelMatrix, isAutomapRun);
                         if (standaloneObject == null)
                         {
                             // Special handling for dungeon exits - collider handled as a special case in DaggerfallStaticDoors startup
