@@ -2028,16 +2028,16 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <summary>
         /// Allows loot found in containers and enemy corpses to be modified.
         /// </summary>
-        /// <param name="lootItems">An array of the loot items</param>
-        /// <returns>The number of items modified.</returns>
-        public static int ModifyFoundLootItems(ref DaggerfallUnityItem[] lootItems)
+        /// <param name="lootItems">An array of the loot items to modify</param>
+        /// <returns>The array of modified loot items</returns>
+        public static DaggerfallUnityItem[] ModifyFoundLootItems(ref DaggerfallUnityItem[] lootItems)
         {
-            Func<DaggerfallUnityItem[], int> del;
+            Func<DaggerfallUnityItem[], DaggerfallUnityItem[]> del;
             if (TryGetOverride("ModifyFoundLootItems", out del))
                 return del(lootItems);
 
-            // DFU does no post-processing of loot items hence report zero changes, this is solely for mods to override.
-            return 0;
+            // DFU does no post-processing of loot items hence return array unchanged. This function is solely for mods to override.
+            return lootItems;
         }
 
         /// <summary>
