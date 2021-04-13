@@ -200,7 +200,6 @@ a.	resister au poison
 b.	rester eveille et alerte 
 	FT -5
 c.	etre sociable
-	&
 	RR -5
 d.	resister aux maladies
 	RD -5

@@ -200,7 +200,6 @@ a.	Giften zu widerstehen
 b.	wach und alarmiert zu bleiben
 	FT -5
 c.	Kontakte zu kn}pfen
-	&
 	RR -5
 d.	Krankheiten zu verhindern
 	RD -5

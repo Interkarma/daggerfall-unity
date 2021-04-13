@@ -138,7 +138,6 @@ a.	resister aux poisons
 b.	rester eveille et alerte
 	FT -5
 c.	vous entendre avec les autres
-	&
 	RR -5
 d.	resister aux maladies
 	RD -5

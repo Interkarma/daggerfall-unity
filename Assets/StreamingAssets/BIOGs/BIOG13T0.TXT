@@ -125,7 +125,6 @@ a.	Resisting poisons
 b.	Staying awake and alert
 	FT -5
 c.	Getting along with others
-	&
 	RR -5
 d.	Avoiding diseases
 	RD -5
