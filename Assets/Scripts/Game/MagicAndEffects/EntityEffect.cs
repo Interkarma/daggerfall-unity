@@ -739,7 +739,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <returns>Chance value.</returns>
         public int ChanceValue()
         {
-            int casterLevel = (caster) ? caster.Entity.Level : 1;
+            int casterLevel = (caster) ? FormulaHelper.CalculateCasterLevel(caster.Entity, this) : 1;
             //Debug.LogFormat("{5} ChanceValue {0} = base + plus * (level/chancePerLevel) = {1} + {2} * ({3}/{4})", settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel), settings.ChanceBase, settings.ChancePlus, casterLevel, settings.ChancePerLevel, Key);
             return settings.ChanceBase + settings.ChancePlus * (int)Mathf.Floor(casterLevel / settings.ChancePerLevel);
         }
@@ -784,7 +784,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             int magnitude = 0;
             if (Properties.SupportMagnitude)
             {
-                int casterLevel = (caster) ? caster.Entity.Level : 1;
+                int casterLevel = (caster) ? FormulaHelper.CalculateCasterLevel(caster.Entity, this) : 1;
                 int baseMagnitude = UnityEngine.Random.Range(settings.MagnitudeBaseMin, settings.MagnitudeBaseMax + 1);
                 int plusMagnitude = UnityEngine.Random.Range(settings.MagnitudePlusMin, settings.MagnitudePlusMax + 1);
                 int multiplier = (int)Mathf.Floor(casterLevel / settings.MagnitudePerLevel);
@@ -909,7 +909,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         void SetDuration()
         {
-            int casterLevel = (caster) ? caster.Entity.Level : 1;
+            int casterLevel = (caster) ? FormulaHelper.CalculateCasterLevel(caster.Entity, this) : 1;
             if (Properties.SupportDuration)
             {
                 // Multiplier clamped at 1 or player can lose a round depending on spell settings and level

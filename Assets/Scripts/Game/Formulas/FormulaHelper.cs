@@ -841,6 +841,15 @@ namespace DaggerfallWorkshop.Game.Formulas
             return cooldown / classicFrameUpdate;
         }
 
+        public static int CalculateCasterLevel(DaggerfallEntity caster, IEntityEffect effect)
+        {
+            Func<DaggerfallEntity, IEntityEffect, int> del;
+            if (TryGetOverride("CalculateCasterLevel", out del))
+                return del(caster, effect);
+
+            return caster != null ? caster.Level : 1;
+        }
+
         #endregion
 
         #region Combat & Damage: component sub-formula
