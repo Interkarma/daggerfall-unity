@@ -247,7 +247,7 @@ namespace DaggerfallConnect.Arena2
 
         private static void ApplyPlayerEffect(PlayerEntity playerEntity, string effect)
         {
-            string[] tokens = effect.Split(' ');
+            string[] tokens = effect.Split(null);
             int parseResult;
 
             // Skill modifier effect
