@@ -395,8 +395,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 OnSettingsChanged();
 
             // Get spell cost
-            int goldCost, spellPointCost;
-            FormulaHelper.CalculateEffectCosts(EffectEntry, out goldCost, out spellPointCost);
+            (int _, int spellPointCost) = FormulaHelper.CalculateEffectCosts(EffectEntry);
             spellCostLabel.Text = spellPointCost.ToString();
         }
 

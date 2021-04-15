@@ -687,7 +687,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 effectEntries[editOrDeleteSlot] = effectEditor.EffectEntry;
 
             // Get total costs
-            FormulaHelper.CalculateTotalEffectCosts(effectEntries, selectedTarget, out totalGoldCost, out totalSpellPointCost);
+            (totalGoldCost, totalSpellPointCost) = FormulaHelper.CalculateTotalEffectCosts(effectEntries, selectedTarget);
             SetStatusLabels();
         }
 

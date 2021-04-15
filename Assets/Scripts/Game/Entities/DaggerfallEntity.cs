@@ -743,8 +743,7 @@ namespace DaggerfallWorkshop.Game.Entity
             List<EffectBundleSettings> sortedSpellbook = spellbook
                 .OrderBy((EffectBundleSettings spell) =>
                 {
-                    int goldCost, spellPointCost;
-                    FormulaHelper.CalculateTotalEffectCosts(spell.Effects, spell.TargetType, out goldCost, out spellPointCost, null, spell.MinimumCastingCost);
+                    (int _, int spellPointCost) = FormulaHelper.CalculateTotalEffectCosts(spell.Effects, spell.TargetType, null, spell.MinimumCastingCost);
                     return spellPointCost;
                 })
             .ToList();
