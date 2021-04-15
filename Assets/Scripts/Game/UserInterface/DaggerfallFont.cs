@@ -474,8 +474,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             fi.glyphs = new Dictionary<int, SDFGlyphInfo>();
 
             // Cache glyph info
-            float atlasWidth = tmpFont.atlas.width;
-            float atlasHeight = tmpFont.atlas.height;
+            float atlasWidth = tmpFont.atlasTexture.width;
+            float atlasHeight = tmpFont.atlasTexture.height;
             foreach (var kvp in tmpFont.characterLookupTable)
             {
                 // Compose glyph rect inside of atlas
