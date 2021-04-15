@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Game
         UnderwaterFog underwaterFog;
         DaggerfallUnity dfUnity;
         CharacterController controller;
-        bool isCreatingDungeonBaseGameObjects = false;
+        bool isCreatingDungeonObjects = false;
         bool isPlayerInside = false;
         bool isPlayerInsideDungeon = false;
         bool isPlayerInsideDungeonCastle = false;
@@ -99,10 +99,10 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// True when GameObjectHelper is creating the RDB Base Game Objects
         /// </summary>
-        public bool IsCreatingDungeonBaseGameObjects
+        public bool IsCreatingDungeonObjects
         {
-            get { return isCreatingDungeonBaseGameObjects; }
-            set { isCreatingDungeonBaseGameObjects = value; }
+            get { return isCreatingDungeonObjects; }
+            set { isCreatingDungeonObjects = value; }
         }
 
         /// <summary>
