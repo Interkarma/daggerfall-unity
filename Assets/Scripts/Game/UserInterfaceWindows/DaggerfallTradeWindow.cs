@@ -767,10 +767,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Item Click Event Handlers
 
-        protected override void LocalItemListScroller_OnItemClick(DaggerfallUnityItem item)
+        protected override void LocalItemListScroller_OnItemClick(DaggerfallUnityItem item, ActionModes actionMode)
         {
             // Handle click based on action & mode
-            if (selectedActionMode == ActionModes.Select)
+            if (actionMode == ActionModes.Select || actionMode == ActionModes.Remove)
             {
                 switch (WindowMode)
                 {
@@ -790,9 +790,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
 
                     case WindowModes.Buy:
-                        if (UsingWagon)     // Allows player to get & equip stuff from cart while purchasing.
+                        if (UsingWagon)                             // Allows player to get & equip stuff from cart while purchasing.
                             TransferItem(item, localItems, PlayerEntity.Items, CanCarryAmount(item), equip: !item.IsAStack());
-                        else                // Allows player to equip and unequip while purchasing.
+                        else if (actionMode == ActionModes.Remove && basketItems.Contains(item))    // Allows clearing individual items
+                            TransferItem(item, basketItems, remoteItems);
+                        else if (actionMode == ActionModes.Select)  // Allows player to equip and unequip while purchasing.
                             EquipItem(item);
                         break;
 
@@ -818,19 +820,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         break;
                 }
             }
-            else if (selectedActionMode == ActionModes.Info)
+            else if (actionMode == ActionModes.Info)
             {
                 ShowInfoPopup(item);
             }
         }
 
-        protected override void RemoteItemListScroller_OnItemClick(DaggerfallUnityItem item)
+        protected override void RemoteItemListScroller_OnItemClick(DaggerfallUnityItem item, ActionModes actionMode)
         {
             // Handle click based on action
-            if (selectedActionMode == ActionModes.Select)
+            if (actionMode == ActionModes.Select || actionMode == ActionModes.Remove)
             {
                 if (WindowMode == WindowModes.Buy)
-                    TransferItem(item, remoteItems, basketItems, CanCarryAmount(item), equip: !item.IsAStack());
+                    TransferItem(item, remoteItems, basketItems, CanCarryAmount(item), equip: !item.IsAStack() && actionMode == ActionModes.Select);
                 else if (WindowMode == WindowModes.Repair)
                 {
                     if (item.RepairData.IsBeingRepaired() && !item.RepairData.IsRepairFinished())
@@ -847,7 +849,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 else
                     TransferItem(item, remoteItems, localItems, UsingWagon ? WagonCanHoldAmount(item) : CanCarryAmount(item), blockTransport: UsingWagon);
             }
-            else if (selectedActionMode == ActionModes.Info)
+            else if (actionMode == ActionModes.Info)
             {
                 ShowInfoPopup(item);
             }

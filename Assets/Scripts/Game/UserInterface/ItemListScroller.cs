@@ -129,6 +129,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public delegate void OnItemRightClickHandler(DaggerfallUnityItem item);
         public event OnItemRightClickHandler OnItemRightClick;
 
+        public delegate void OnItemMiddleClickHandler(DaggerfallUnityItem item);
+        public event OnItemMiddleClickHandler OnItemMiddleClick;
+
         public delegate void OnItemHoverHandler(DaggerfallUnityItem item);
         public event OnItemHoverHandler OnItemHover;
 
@@ -338,6 +341,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 itemButtons[i].Tag = i;
                 itemButtons[i].OnMouseClick += ItemButton_OnMouseClick;
                 itemButtons[i].OnRightMouseClick += ItemButton_OnRightMouseClick;
+                itemButtons[i].OnMiddleMouseClick += ItemButton_OnMiddleMouseClick;
                 itemButtons[i].OnMouseEnter += ItemButton_OnMouseEnter;
                 itemButtons[i].OnMouseScrollUp += ItemButton_OnMouseEnter;
                 itemButtons[i].OnMouseScrollDown += ItemButton_OnMouseEnter;
@@ -528,7 +532,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Event handlers
 
-        void ItemButton_OnClick(BaseScreenComponent sender, Vector2 position, bool rightClick)
+        void ItemButton_OnClick(BaseScreenComponent sender, Vector2 position, bool rightClick, bool middleClick = false)
         {
             // Get index
             int index = (GetScrollIndex() * listWidth) + (int)sender.Tag;
@@ -538,10 +542,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Get item and raise item click event
             DaggerfallUnityItem item = items[index];
 
-            if (!rightClick && item != null && OnItemClick != null)
-                    OnItemClick(item);
-            else if (item != null && OnItemRightClick != null)
-                    OnItemRightClick(item);
+            if (middleClick && item != null && OnItemMiddleClick != null)
+                OnItemMiddleClick(item);
+            else if (rightClick && item != null && OnItemRightClick != null)
+                OnItemRightClick(item);
+            else if (item != null && OnItemClick != null)
+                OnItemClick(item);
 
             ItemButton_OnMouseEnter(sender);
         }
@@ -554,6 +560,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void ItemButton_OnRightMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             ItemButton_OnClick(sender, position, true);
+        }
+
+        void ItemButton_OnMiddleMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            ItemButton_OnClick(sender, position, false, true);
         }
 
         void ItemButton_OnMouseEnter(BaseScreenComponent sender)
