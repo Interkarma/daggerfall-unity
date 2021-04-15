@@ -299,7 +299,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
             {
                 // Draw default text while nothing else entered
-                if (defaultText.Length > 0)
+                if (defaultText != null && defaultText.Length > 0)
                 {
                     Rect rect = Rectangle;
                     font.DrawText(defaultText, new Vector2(rect.x + textOffsetX, rect.y + textOffsetY), LocalScale, defaultTextColor);
