@@ -94,24 +94,29 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="modelID">Daggerfall model ID.</param>
         /// <param name="parent">Parent to assign to GameObject.</param>
         /// <param name="matrix">Matrix with position and rotation of GameObject.</param>
+        /// <param name="isAutomapRun">True if current model is being created for an Automap?</param>
         /// <returns>Returns the imported model or null if not found.</returns>
-        public static GameObject ImportCustomGameobject (uint modelID, Transform parent, Matrix4x4 matrix)
+        public static GameObject ImportCustomGameobject (uint modelID, Transform parent, Matrix4x4 matrix, bool isAutomapRun = false)
         {
-            GameObject go;
-            if (!TryImportGameObject(modelID, true, out go))
+            GameObject modelGO;
+            if (!TryImportGameObject(modelID, true, out modelGO))
                 return null;
 
-            go.name = GameObjectHelper.GetGoModelName(modelID) + " [Replacement]";
-            go.transform.parent = parent;
-            go.transform.position = matrix.GetColumn(3);
-            go.transform.rotation = matrix.rotation;
+            modelGO.name = GameObjectHelper.GetGoModelName(modelID) + " [Replacement]";
+            modelGO.transform.parent = parent;
+            modelGO.transform.position = matrix.GetColumn(3);
+            modelGO.transform.rotation = matrix.rotation;
 
             //Multiply the scale instead of applying it, since custom 3D models doesn't necessary have (1,1,1) scale
-            go.transform.localScale = Vector3.Scale(go.transform.localScale, matrix.lossyScale);
+            modelGO.transform.localScale = Vector3.Scale(modelGO.transform.localScale, matrix.lossyScale);
 
             // Finalise gameobject
-            FinaliseMaterials(go);
-            return go;
+            FinaliseMaterials(modelGO);
+
+            if (isAutomapRun)
+                modelGO.AddComponent<AutomapModel>();
+
+            return modelGO;
         }
 
         public static string GetFlatReplacementName (int archive, int record)
