@@ -331,6 +331,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateRemoteTargetIcon();
 
             // Store toggle closed binding for this window
+            SetupClosedBinding();
+        }
+
+        protected void SetupClosedBinding()
+        {
             toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Inventory);
         }
 
@@ -811,7 +816,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localItemListScroller.Items = localItemsFiltered;
         }
 
-        void SelectActionMode(ActionModes mode)
+        protected void SelectActionMode(ActionModes mode)
         {
             selectedActionMode = mode;
 
@@ -1065,7 +1070,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Refresh(false);
         }
 
-        private void CheckWagonAccess()
+        protected void CheckWagonAccess()
         {
             if (allowDungeonWagonAccess)
             {
@@ -1112,7 +1117,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return false;
         }
 
-        void UpdateItemInfoPanel(DaggerfallUnityItem item)
+        protected virtual void UpdateItemInfoPanel(DaggerfallUnityItem item)
         {
             // Display info in local target icon panel, replacing justification tokens
             TextFile.Token[] tokens = ItemHelper.GetItemInfo(item, DaggerfallUnity.TextProvider);
@@ -1125,7 +1130,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateItemInfoPanel(tokens);
         }
 
-        private void UpdateItemInfoPanel(TextFile.Token[] tokens)
+        protected void UpdateItemInfoPanel(TextFile.Token[] tokens)
         {
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
@@ -2145,7 +2150,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Hover & StartGame Event Handlers
 
-        private void PaperDoll_OnMouseMove(int x, int y)
+        protected virtual void PaperDoll_OnMouseMove(int x, int y)
         {
             byte value = paperDoll.GetEquipIndex(x, y);
             if (value != 0xff)
