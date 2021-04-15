@@ -144,7 +144,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
 
                 // Create text biography
-                BackStory = biogFile.GenerateBackstory(Document.classIndex);
+                BackStory = biogFile.GenerateBackstory();
 
                 // Show reputation changes
                 biogFile.DigestRepChanges();

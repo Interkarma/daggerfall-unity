@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game.Player
         public sbyte biographyReactionMod;
         public List<string> biographyEffects;
         public int classIndex;
+        public int biographyIndex;
         public List<string> backStory;
         public bool isCustom = false;
         public Races classicTransformedRace = Races.None;
