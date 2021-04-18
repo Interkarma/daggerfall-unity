@@ -22,10 +22,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
     /// Output quest information on HUD to view state in real-time and optionally step-through execution.
-    /// Uses some non-bindable keys (not all implemented):
-    ///  * ]            Show next quest tasks/vars/timers (only when debugger HUD open)
-    ///  * [            Show previous quest tasks/vars/timers (only when debugger HUD open)
-    ///  * Shift+Tab    Toggle global variables display
+    /// Uses default keys (set in DialogShortcuts.txt file):
+    ///  * Ctrl+Shift+D             Cycle through debugger and global variables display state
+    ///  * Ctrl+Shift+RightArrow    Show next quest tasks/vars/timers (only when debugger HUD open)
+    ///  * Ctrl+Shift+LeftArrow     Show previous quest tasks/vars/timers (only when debugger HUD open)
+    ///  * Ctrl+Shift+UpArrow       Teleport to next dungeon marker (only when debugger HUD open inside dungeon)
+    ///  * Ctrl+Shift+DownArrow     Teleport to next dungeon marker (only when debugger HUD open inside dungeon)
+    /// NOTE: EnableQuestDebugger must be True in settings.ini
     /// </summary>
     public class HUDQuestDebugger : Panel
     {
@@ -129,6 +132,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Update()
         {
             base.Update();
+
+            // Display nothing and exit if quest debugger not enabled
+            if (!DaggerfallUnity.Settings.EnableQuestDebugger)
+            {
+                displayState = DisplayState.Nothing;
+                return;
+            }
 
             // Do not tick while HUD fading or load in progress
             // This is to prevent quest popups or other actions while player/world unavailable

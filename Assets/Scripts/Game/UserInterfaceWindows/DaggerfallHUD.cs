@@ -266,7 +266,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Cycle quest debugger state
             if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.DebuggerToggle).IsDownWith(keyModifiers))
             {
-                questDebugger.NextState();
+                if (DaggerfallUnity.Settings.EnableQuestDebugger)
+                    questDebugger.NextState();
             }
 
             if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.Pause).IsUpWith(keyModifiers))

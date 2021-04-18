@@ -153,6 +153,7 @@ namespace DaggerfallWorkshop
         public bool LargeHUDOffsetHorse { get; set; }
         public bool CanDropQuestItems { get; set; }
         public bool RunInBackground { get; set; }
+        public bool EnableQuestDebugger { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -303,6 +304,7 @@ namespace DaggerfallWorkshop
             LargeHUDUndockedOffsetWeapon = GetBool(sectionGUI, "LargeHUDUndockedOffsetWeapon");
             LargeHUDOffsetHorse = GetBool(sectionGUI, "LargeHUDOffsetHorse");
             CanDropQuestItems = GetBool(sectionGUI, "CanDropQuestItems");
+            EnableQuestDebugger = GetBool(sectionGUI, "EnableQuestDebugger");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -441,6 +443,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "LargeHUDUndockedOffsetWeapon", LargeHUDUndockedOffsetWeapon);
             SetBool(sectionGUI, "LargeHUDOffsetHorse", LargeHUDOffsetHorse);
             SetBool(sectionGUI, "CanDropQuestItems", CanDropQuestItems);
+            SetBool(sectionGUI, "EnableQuestDebugger", EnableQuestDebugger);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);

@@ -54,11 +54,11 @@ HUDToggle,            Shift-F10
 ToggleRetroPP,        Shift-F11
 
 -- Debugger
-DebuggerToggle,       Shift-Tab
-DebuggerPrevQuest,    LeftBracket
-DebuggerNextQuest,    RightBracket
-DebuggerPrevMarker,   Shift-LeftBracket
-DebuggerNextMarker,   Shift-RightBracket
+DebuggerToggle,       Ctrl-Shift-D
+DebuggerPrevQuest,    Ctrl-Shift-LeftArrow
+DebuggerNextQuest,    Ctrl-Shift-RightArrow
+DebuggerPrevMarker,   Ctrl-Shift-UpArrow
+DebuggerNextMarker,   Ctrl-Shift-DownArrow
 
 -- Rest menu
 RestForAWhile,        F
