@@ -1781,29 +1781,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             return 0;
         }
 
-        public static float BonusChanceToKnowWhereIs(float bonusPerBlockLess = 0.0078f)
-        {
-            const int maxArea = 64;
-
-            // Must be in a location
-            if (!GameManager.Instance.PlayerGPS.HasCurrentLocation)
-                return 0;
-
-            // Get area of current location
-            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-            int locationArea = location.Exterior.ExteriorData.Width * location.Exterior.ExteriorData.Height;
-
-            // The largest possible location has an area of 64 (e.g. Daggerfall/Wayrest/Sentinel)
-            // The smallest possible location has an area of 1 (e.g. a tavern town)
-            // In a big city NPCs could be ignorant of all buildings, but in a small town it's unlikely they don't know the local tavern or smith
-            // So we apply a bonus that INCREASES the more city area size DECREASES
-            // With default inputs, a tiny 1x1 town NPC will get a +0.4914 to the default 0.5 chance for a total of 0.9914 chance to know building
-            // This is a big help as small towns also have less NPCs, and it gets frustrating when multiple NPCs don't knows where something is
-            float bonus = (maxArea - locationArea) * bonusPerBlockLess;
-
-            return bonus;
-        }
-
         #endregion
 
         #region Commerce
