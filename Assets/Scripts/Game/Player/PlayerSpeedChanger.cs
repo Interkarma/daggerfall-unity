@@ -53,6 +53,7 @@ namespace DaggerfallWorkshop.Game
         public bool updateRunSpeed;
         private float previousBaseWalkSpeed;
         private float previousBaseRunSpeed;
+        private float baseSpeed = 0;
 
         private void Start()
         {
@@ -142,7 +143,6 @@ namespace DaggerfallWorkshop.Game
         public float GetBaseSpeed()
         {
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
-            float baseSpeed = 0;
             float playerSpeed = player.Stats.LiveSpeed;
             if (playerMotor == null) // fixes null reference bug.
                 playerMotor = GameManager.Instance.PlayerMotor;
