@@ -17,6 +17,29 @@ using DaggerfallWorkshop.Game.Utility;
 namespace DaggerfallWorkshop.Game.Items
 {
     /// <summary>
+    /// The parameters involved in creating a loot pile from a loot table.
+    /// </summary>
+    public class TabledLootSpawnedEventArgs : System.EventArgs
+    {
+        /// <summary>
+        /// The index of the location.
+        /// For Dungeons, this corresponds to DFRegion.DungeonTypes.
+        /// For Interiors, this corresponds to DFRegion.LocationTypes.
+        /// </summary>
+        public int LocationIndex { get; set; }
+
+        /// <summary>
+        /// The Key used to spawn the loot pile (ex: "K" for Crypt loot).
+        /// </summary>
+        public string Key { get; set; }
+
+        /// <summary>
+        /// The collection containing all the items of the loot pile. New items can be added.
+        /// </summary>
+        public ItemCollection Items { get; set; }
+    }
+
+    /// <summary>
     /// Built-in loot tables.
     /// Currently just for testing during early implementation.
     /// These approximate the loot tables on page 156 of Daggerfall Chronicles but are
@@ -25,6 +48,9 @@ namespace DaggerfallWorkshop.Game.Items
     /// </summary>
     public static class LootTables
     {
+        // When a Loot pile is generated from a loot table
+        public static System.EventHandler<TabledLootSpawnedEventArgs> OnLootSpawned;
+
         /// <summary>
         /// Default loot table chance matrices.
         /// Note: Temporary implementation. Will eventually be moved to an external file and loaded as keyed dict.
@@ -133,6 +159,9 @@ namespace DaggerfallWorkshop.Game.Items
                     DaggerfallLoot.RandomlyAddPotion(4, loot.Items);
                     DaggerfallLoot.RandomlyAddPotionRecipe(2, loot.Items);
                 }
+
+                OnLootSpawned?.Invoke(null, new TabledLootSpawnedEventArgs { LocationIndex = locationIndex, Key = lootTableKeys[locationIndex], Items = loot.Items });
+
                 return true;
             }
             return false;
