@@ -1744,7 +1744,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                     !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy1, random.id) &&
                                     !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy2, random.id) &&
                                     !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy3, random.id) &&
-                                    factionData.GetFaction2ARelationToFaction1(factionData.FactionDict[key].id, random.id) == -1)
+                                    factionData.GetFaction2RelationToFaction1(factionData.FactionDict[key].id, random.id) == -1)
                                 {
                                     int powerSum = factionPowerMod + factionData.FactionDict[key].rulerPowerBonus;
                                     if (Dice100.SuccessRoll((powerSum + factionData.GetNumberOfCommonAlliesAndEnemies(factionData.FactionDict[key].id, random.id) * 3) / 5))
@@ -1878,7 +1878,7 @@ namespace DaggerfallWorkshop.Game.Entity
                                     !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy2, random.id) &&
                                     !factionData.IsFaction2AnAllyOfFaction1(factionData.FactionDict[key].enemy3, random.id))
                                 {
-                                    int relation = factionData.GetFaction2ARelationToFaction1(factionData.FactionDict[key].id, random.id);
+                                    int relation = factionData.GetFaction2RelationToFaction1(factionData.FactionDict[key].id, random.id);
                                     if (relation == -1 || relation == 2)
                                     {
                                         int mod = 0;

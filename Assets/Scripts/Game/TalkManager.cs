@@ -161,6 +161,7 @@ namespace DaggerfallWorkshop.Game
             public ListItemType type = ListItemType.Item; // list item can be either a normal item, a navigation item (to get to parent list) or an item group (contains list of child items)
             public string caption = "undefined"; // the caption text that is displayed for this topic in the left sub window of the talk window
             public string key = String.Empty; // the key used for entries belonging to quest resources, is String.Empty if the entry is not a quest resource
+            public int factionID = -1; // the faction ID of the organization if asking about this
             public QuestionType questionType = QuestionType.NoQuestion; // the question type of the entry (see description of QuestionType)
             public NPCKnowledgeAboutItem npcKnowledgeAboutItem = NPCKnowledgeAboutItem.NotSet; // the knowledge of the current npc talk partner about this topic
             public int buildingKey = -1; // used for listitems that are buildings to identify buildings
@@ -530,6 +531,13 @@ namespace DaggerfallWorkshop.Game
 
             if (CheckNPCisInSameBuildingAsTopic(listItem) || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
                 return NPCKnowledgeAboutItem.KnowsAboutItem;
+
+            // Fixed from classic: an NPC belonging to an organization obviously knows about it
+            if (listItem.questionType == QuestionType.OrganizationInfo &&
+                GameManager.Instance.PlayerEntity.FactionData.IsFaction2RelatedToFaction1(npcData.factionData.id, listItem.factionID))
+            {
+                return NPCKnowledgeAboutItem.KnowsAboutItem;
+            }
 
             // Make roll result be the same every time for a given NPC
             if (currentNPCType == NPCType.Mobile)
@@ -3079,11 +3087,10 @@ namespace DaggerfallWorkshop.Game
             for (int i = 0; i < infoFactionIDs.Length; i++)
             {
                 ListItem itemOrganizationInfo = new ListItem();
-                FactionFile.FactionData factionData;
                 itemOrganizationInfo.type = ListItemType.Item;
                 itemOrganizationInfo.questionType = QuestionType.OrganizationInfo;
-                DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(infoFactionIDs[i], out factionData);
-                itemOrganizationInfo.caption = factionData.name;
+                itemOrganizationInfo.factionID = infoFactionIDs[i];
+                itemOrganizationInfo.caption = GameManager.Instance.PlayerEntity.FactionData.GetFactionName(infoFactionIDs[i]);
                 itemOrganizationInfo.index = i;
                 listTopicTellMeAbout.Add(itemOrganizationInfo);
             }
