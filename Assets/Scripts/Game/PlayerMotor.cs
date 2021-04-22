@@ -490,6 +490,10 @@ namespace DaggerfallWorkshop.Game
             // This prevents levitation flag carrying over and effect system can still restore it if needed
             if (levitateMotor)
                 levitateMotor.IsLevitating = false;
+
+            //reset speed modifiers.
+            //ensures speed modifiers from previous game does not carry over into new game.
+            speedChanger.ResetSpeed();
         }
 
         /// <summary>
