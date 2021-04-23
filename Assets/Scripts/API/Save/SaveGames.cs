@@ -250,8 +250,12 @@ namespace DaggerfallConnect.Save
             if (!rumorFile.Load(Path.Combine(saveGameDict[save], "RUMOR.DAT"), FileUsage.UseMemory, true))
                 UnityEngine.Debug.Log("Could not open RUMOR.DAT for index " + save);
 
-            for (int i = 0; i < rumorFile.rumors.Count; i++)
-                GameManager.Instance.TalkManager.ImportClassicRumor(rumorFile.rumors[i]);
+            // Only import classic rumours when loading in game, not when using Save Explorer
+            if (loadingInGame)
+            {
+                for (int i = 0; i < rumorFile.rumors.Count; i++)
+                    GameManager.Instance.TalkManager.ImportClassicRumor(rumorFile.rumors[i]);
+            }
 
             bioFile = new BioFile();
             if (!bioFile.Load(Path.Combine(saveGameDict[save], "BIO.DAT")))
