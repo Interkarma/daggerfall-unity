@@ -14,6 +14,7 @@ using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Utility;
 using UnityEngine;
 using UnityEngine.PostProcessing;
+using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game
@@ -86,6 +87,7 @@ namespace DaggerfallWorkshop.Game
         float _pollTimer;
         private WeatherTable _weatherTable;
         private float _pollWeatherInSeconds = 30f;
+        DFLocation.ClimateBaseType lastRespawnClimate = DFLocation.ClimateBaseType.None;
 
         // used to set post processing fog settings (excludeSkybox setting)
         private PostProcessingBehaviour postProcessingBehaviour;
@@ -105,7 +107,8 @@ namespace DaggerfallWorkshop.Game
         void Awake()
         {
             StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
-            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;            
+            SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
+            PlayerEnterExit.OnRespawnerComplete += PlayerEnterExit_OnRespawnerComplete;
             PlayerEnterExit.OnTransitionInterior += OnTransitionToInterior;
             PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonInterior += OnTransitionToDungeon;
@@ -386,11 +389,11 @@ namespace DaggerfallWorkshop.Game
             WeatherEffects.Presets = AmbientEffectsPlayer.AmbientSoundPresets.None;
         }
 
-        void PollWeatherChanges()
+        void PollWeatherChanges(bool forceUpdate = false)
         {
             // Increment poll timer
             _pollTimer += Time.deltaTime;
-            if (_pollTimer < _pollWeatherInSeconds)
+            if (_pollTimer < _pollWeatherInSeconds && !forceUpdate)
                 return;
 
             // Reset timer
@@ -509,6 +512,16 @@ namespace DaggerfallWorkshop.Game
             }
 
             startedFromLoadedSaveGame = true; // needed so StreamingWorld_OnInitWorld() does not break stuff again (see details in comment at variable definition of startedFromLoadedSaveGame)
+        }
+
+        private void PlayerEnterExit_OnRespawnerComplete()
+        {
+            DFLocation.ClimateBaseType currentClimate = GameManager.Instance.PlayerGPS.ClimateSettings.ClimateType;
+            if (currentClimate != lastRespawnClimate)
+            {
+                PollWeatherChanges(true);
+                lastRespawnClimate = currentClimate;
+            }
         }
 
         void StreamingWorld_OnInitWorld()
