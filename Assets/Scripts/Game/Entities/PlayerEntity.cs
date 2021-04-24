@@ -2364,6 +2364,10 @@ namespace DaggerfallWorkshop.Game.Entity
             if (displayingExhaustedPopup)
                 return;
 
+            // Do nothing if player already dead - prevents popup repeat if OnExhausted event is queued multiple times just prior to death
+            if (CurrentHealth == 0)
+                return;
+
             bool enemiesNearby = GameManager.Instance.AreEnemiesNearby();
 
             ITextProvider textProvider = DaggerfallUnity.Instance.TextProvider;
