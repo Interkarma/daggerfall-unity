@@ -58,6 +58,10 @@ namespace DaggerfallWorkshop.Game
                     if (!action.IsMoving)
                         return;
 
+                    // Exclude "BOX" to prevent unintended crushing hazard in Mantellan Crux - player instead pushed back by physics
+                    if (action.ModelDescription == "BOX")
+                        return;
+
                     // This object fits criteria for a crushing object
                     // Player will first be forced into a crouch then killed if they remain under crushing object past threshold height
                     if (!playerMotor.IsCrouching && heightChanger.HeightAction != HeightChangeAction.DoCrouching)
