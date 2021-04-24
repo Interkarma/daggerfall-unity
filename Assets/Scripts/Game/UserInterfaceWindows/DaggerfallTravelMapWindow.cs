@@ -89,7 +89,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected Texture2D overworldTexture;
         protected Texture2D identifyTexture;
-        protected Texture2D customRegionOverlayTexture;
         protected Texture2D locationDotsTexture;
         protected Texture2D locationDotsOutlineTexture;
         protected Texture2D findButtonTexture;
@@ -813,16 +812,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Clear existing pixel buffer
             Array.Clear(identifyPixelBuffer, 0, identifyPixelBuffer.Length);
 
-            // Import custom map overlays named TRAV0I00.IMG-RegionName (ex: TRAV0I00.IMG-Ilessan Hills)
-            if (!importedOverlays.TryGetValue(playerRegion, out customRegionOverlayTexture) &&
+            // Import custom map overlays named TRAV0I00.IMG-RegionName (e.g. TRAV0I00.IMG-Ilessan Hills) if available
+            // Custom image must be based on 320x160 interior snip of TRAV0I00.IMG (so exclude top and bottom bars) but can be a higher resolution like 1600x800
+            Texture2D customRegionOverlayTexture;
+            if (importedOverlays.TryGetValue(playerRegion, out customRegionOverlayTexture) ||
                 TextureReplacement.TryImportImage(string.Format("{0}-{1}", overworldImgName, GetRegionName(playerRegion)), false, out customRegionOverlayTexture))
-                importedOverlays[playerRegion] = customRegionOverlayTexture;
-            else
-                customRegionOverlayTexture = null;
-
-            // Nothing more to do if a custom region overlay has been set
-            if (customRegionOverlayTexture)
+            {
+                identifyOverlayPanel.BackgroundTexture = importedOverlays[playerRegion] = customRegionOverlayTexture;
                 return;
+            }
 
             // Region shape is filled from picker bitmap, so this has to be open
             if (regionPickerBitmap == null)
