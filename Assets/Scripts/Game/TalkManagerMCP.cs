@@ -9,6 +9,8 @@
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Utility;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -53,6 +55,21 @@ namespace DaggerfallWorkshop.Game
                     return GameManager.Instance.TalkManager.GreetingNameNPC;
 
                 return MacroHelper.GetRandomFullName();
+            }
+
+            public override string FemaleName()
+            {
+                NameHelper.BankTypes nameBank = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+                return DaggerfallUnity.Instance.NameHelper.FullName(nameBank, Genders.Female);
+            }
+
+            public override string MaleName()
+            {
+                DFRandom.Seed += 3547;
+                NameHelper.BankTypes nameBank = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+                string name= DaggerfallUnity.Instance.NameHelper.FullName(nameBank, Genders.Male);
+                DFRandom.Seed -= 3547;
+                return name;
             }
 
             public override string Direction()
