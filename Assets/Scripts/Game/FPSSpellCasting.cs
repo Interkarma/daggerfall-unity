@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -61,7 +61,8 @@ namespace DaggerfallWorkshop.Game
         Rect rightHandAnimRect;
         float handScaleX;
         float handScaleY;
-        float offset;
+        float offsetWidth;
+        float offsetHeight;
 
         #endregion
 
@@ -83,31 +84,17 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
-            //// TEMP: Cycle through playing different spell types for testing
-            //if (currentFrame == -1)
-            //{
-            //    switch (currentAnimType)
-            //    {
-            //        case SpellTypes.Cold:
-            //            SetCurrentAnims(SpellTypes.Fire);
-            //            break;
-            //        case SpellTypes.Fire:
-            //            SetCurrentAnims(SpellTypes.Magic);
-            //            break;
-            //        case SpellTypes.Magic:
-            //            SetCurrentAnims(SpellTypes.Poison);
-            //            break;
-            //        case SpellTypes.Poison:
-            //            SetCurrentAnims(SpellTypes.Shock);
-            //            break;
-            //        case SpellTypes.Shock:
-            //        case SpellTypes.None:
-            //            SetCurrentAnims(SpellTypes.Cold);
-            //            break;
-            //    }
-            //    Debug.LogFormat("Playing spell type {0}", currentAnimType.ToString());
-            //    currentFrame = 0;
-            //}
+            // Offset spellcasting animation by large HUD height when both large HUD and undocked weapon offset enabled
+            // Animation is forced to offset when using docked HUD else it would appear underneath HUD
+            // This helps user avoid such misconfiguration or it might be interpreted as a bug
+            // Same logic as in FPSWeapon
+            offsetHeight = 0;
+            if (DaggerfallUI.Instance.DaggerfallHUD != null &&
+                DaggerfallUnity.Settings.LargeHUD &&
+                (DaggerfallUnity.Settings.LargeHUDUndockedOffsetWeapon || DaggerfallUnity.Settings.LargeHUDDocked))
+            {
+                offsetHeight = (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
+            }
 
             GUI.depth = 1;
 
@@ -244,11 +231,11 @@ namespace DaggerfallWorkshop.Game
             rightHandAnimRect = new Rect(1, 0, -1, 1);
 
             // Determine frame offset based on source animation
-            offset = 0f;
+            offsetWidth = 0f;
             if (frameIndex == 0 || frameIndex == 5 ||                           // Frames 0 and 5 are always small frames
                 currentAnimType == ElementTypes.Fire && frameIndex == 4)          // Fire frame 4 is also a small frame
             {
-                offset = smallFrameAdjust;
+                offsetWidth = smallFrameAdjust;
             }
 
             // Source casting animations are designed to fit inside a fixed 320x200 display
@@ -262,8 +249,8 @@ namespace DaggerfallWorkshop.Game
         private void AlignLeftHand(int width, int height)
         {
             leftHandPosition = new Rect(
-                Screen.width * offset,
-                Screen.height - height * handScaleY,
+                Screen.width * offsetWidth,
+                Screen.height - height * handScaleY - offsetHeight,
                 width * handScaleX,
                 height * handScaleY);
         }
@@ -271,8 +258,8 @@ namespace DaggerfallWorkshop.Game
         private void AlignRightHand(int width, int height)
         {
             rightHandPosition = new Rect(
-                Screen.width * (1f - offset) - width * handScaleX,
-                Screen.height - height * handScaleY,
+                Screen.width * (1f - offsetWidth) - width * handScaleX,
+                Screen.height - height * handScaleY - offsetHeight,
                 width * handScaleX,
                 height * handScaleY);
         }
