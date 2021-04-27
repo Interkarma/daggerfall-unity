@@ -22,11 +22,34 @@ using DaggerfallWorkshop.Game.Items;
 namespace DaggerfallWorkshop.Game.Entity
 {
     /// <summary>
+    /// The parameters involved in creating an enemy loot pile
+    /// </summary>
+    public class EnemyLootSpawnedEventArgs : System.EventArgs
+    {
+        /// <summary>
+        /// The Mobile object used for the enemy
+        /// </summary>
+        public MobileEnemy MobileEnemy { get; set; }
+
+        /// <summary>
+        /// The Career template of the enemy
+        /// </summary>
+        public DFCareer EnemyCareer { get; set; }
+
+        /// <summary>
+        /// The collection containing all the items of the loot pile. New items can be added
+        /// </summary>
+        public ItemCollection Items { get; set; }
+    }
+
+    /// <summary>
     /// Implements DaggerfallEntity with properties specific to enemies.
     /// </summary>
     public class EnemyEntity : DaggerfallEntity
     {
         #region Fields
+
+        public static System.EventHandler<EnemyLootSpawnedEventArgs> OnLootSpawned;
 
         int careerIndex = -1;
         EntityTypes entityType = EntityTypes.None;
@@ -345,6 +368,8 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Chance of adding potion recipe
                 DaggerfallLoot.RandomlyAddPotionRecipe(2, items);
             }
+
+            OnLootSpawned?.Invoke(this, new EnemyLootSpawnedEventArgs { MobileEnemy = mobileEnemy, EnemyCareer = career, Items = items });
 
             FillVitalSigns();
         }
