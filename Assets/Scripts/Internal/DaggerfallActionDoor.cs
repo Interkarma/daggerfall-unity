@@ -255,7 +255,9 @@ namespace DaggerfallWorkshop
             DaggerfallAction action = GetComponent<DaggerfallAction>();
             if (action != null
                 && action.ActionFlag == DFBlock.RdbActionFlags.DoorText
-                && (action.TriggerFlag == DFBlock.RdbTriggerFlags.Door || action.TriggerFlag == DFBlock.RdbTriggerFlags.Direct) // Door to Mynisera's room has a "Direct" trigger flag
+                && action.Index > 0
+                && (action.TriggerFlag == DFBlock.RdbTriggerFlags.Door || action.TriggerFlag == DFBlock.RdbTriggerFlags.Direct // Door to Mynisera's room has a "Direct" trigger flagged
+                    || action.TriggerFlag == DFBlock.RdbTriggerFlags.MultiTrigger) // Some Castle Wayrest doors have "MultiTrigger" trigger flag
                 && action.activationCount == 0
                 && activatedByPlayer)
             {
