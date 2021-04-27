@@ -602,32 +602,58 @@ namespace DaggerfallWorkshop.Game.Player
         ///     2 if faction1 and faction2 share the same parent
         ///     3 if faction2 is a child of faction1
         /// </summary>
-        public int GetFaction2ARelationToFaction1(int factionID1, int factionID2)
+        public int GetFaction2RelationToFaction1(int factionID1, int factionID2)
         {
             if (factionDict.ContainsKey(factionID1) && factionDict.ContainsKey(factionID2))
             {
+                // Faction1 and faction2 are the same
                 if (factionID1 == factionID2)
                     return 0;
 
                 FactionFile.FactionData factionData1 = factionDict[factionID1];
-
-                if (factionData1.parent == factionID2)
-                    return 1;
-
-                if (factionDict.ContainsKey(factionData1.parent))
+                while (factionData1.parent != 0)
                 {
-                    FactionFile.FactionData parentData = factionDict[factionData1.parent];
-                    if (parentData.children != null && parentData.children.Contains(factionID2))
-                        return 2;
+                    // One of faction1 ancestor is faction2
+                    if (factionData1.parent == factionID2)
+                        return 1;
+
+                    factionData1 = factionDict[factionData1.parent];
                 }
 
-                if (factionData1.children != null && factionData1.children.Contains(factionID2))
-                    return 3;
+                FactionFile.FactionData factionData2 = factionDict[factionID2];
+                while (factionData2.parent != 0)
+                {
+                    // One of faction2 ancestor is faction1
+                    if (factionData2.parent == factionID1)
+                        return 3;
+
+                    factionData2 = factionDict[factionData2.parent];
+                }
+
+                // Faction1 and faction2 share the same ancestor
+                if (factionData1.id != factionID1 && factionData2.id != factionID2 && factionData1.id == factionData2.id)
+                    return 2;
             }
 
             return -1;
         }
 
+        /// <summary>
+        /// Recursively checks if faction2 is related to faction1 or to its parents.
+        /// </summary>
+        public bool IsFaction2RelatedToFaction1(int factionID1, int factionID2)
+        {
+            if (GetFaction2RelationToFaction1(factionID1, factionID2) > -1 ||
+               IsFaction2AnAllyOfFaction1(factionID1, factionID2) ||
+               IsFaction2AnEnemyOfFaction1(factionID1, factionID2))
+                return true;
+
+            FactionFile.FactionData factionData1 = factionDict[factionID1];
+            if (factionData1.parent != 0)
+                return IsFaction2RelatedToFaction1(factionData1.parent, factionID2);
+
+            return false;
+        }
 
         /// <summary>
         /// Start ally state between two factions.
