@@ -203,15 +203,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (largeHUD.HorizontalAlignment == HorizontalAlignment.None)
                         largeHUD.HorizontalAlignment = HorizontalAlignment.Center;
                 }
-                if (!largeHUDwasEnabled)
-                    RaiseOnLargeHUDToggleEvent();
             }
             else
             {
                 largeHUD.Enabled = false;
-                if (largeHUDwasEnabled)
-                    RaiseOnLargeHUDToggleEvent();
             }
+
+            if (largeHUDEnabled != largeHUDwasEnabled)
+                RaiseOnLargeHUDToggleEvent();
 
             // Scale large HUD
             largeHUD.CustomScale = NativePanel.LocalScale;
