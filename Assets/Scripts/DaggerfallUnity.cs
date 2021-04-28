@@ -56,6 +56,7 @@ namespace DaggerfallWorkshop
         NameHelper nameHelper;
         ITerrainSampler terrainSampler = new DefaultTerrainSampler();
         ITerrainTexturing terrainTexturing = new DefaultTerrainTexturing();
+        ITerrainMaterialProvider terrainMaterialProvider;
         ITerrainNature terrainNature = new DefaultTerrainNature();
         ITextProvider textProvider = new DefaultTextProvider();
 
@@ -196,6 +197,12 @@ namespace DaggerfallWorkshop
         {
             get { return terrainNature; }
             set { terrainNature = value; }
+        }
+
+        public ITerrainMaterialProvider TerrainMaterialProvider
+        {
+            get { return terrainMaterialProvider ?? (terrainMaterialProvider = DaggerfallWorkshop.TerrainMaterialProvider.Default); }
+            set { terrainMaterialProvider = value; }
         }
 
         public ITextProvider TextProvider
