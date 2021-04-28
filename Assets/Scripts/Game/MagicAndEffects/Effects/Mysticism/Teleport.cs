@@ -159,6 +159,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
             else
             {
+                // When teleporting to interior anchor, restore world compensation height early before initworld
+                // Ensures exterior world level is aligned with building height at time of anchor
+                // Only works with floating origin v3 saves and above with both serialized world compensation and context
+                if (anchorPosition.worldContext == WorldContext.Interior)
+                    GameManager.Instance.StreamingWorld.RestoreWorldCompensationHeight(anchorPosition.worldCompensation.y);
+                else
+                    GameManager.Instance.StreamingWorld.RestoreWorldCompensationHeight(0);
+
                 // Cache scene before departing
                 if (!playerEnterExit.IsPlayerInside)
                     SaveLoadManager.CacheScene(GameManager.Instance.StreamingWorld.SceneName);      // Player is outside

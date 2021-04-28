@@ -328,6 +328,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Cache scene first, if fast travelling while on ship.
             if (GameManager.Instance.TransportManager.IsOnShip())
                 SaveLoadManager.CacheScene(GameManager.Instance.StreamingWorld.SceneName);
+            GameManager.Instance.StreamingWorld.RestoreWorldCompensationHeight(0);
             GameManager.Instance.StreamingWorld.TeleportToCoordinates((int)endPos.X, (int)endPos.Y, StreamingWorld.RepositionMethods.DirectionFromStartMarker);
 
             if (speedCautious)

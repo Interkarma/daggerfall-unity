@@ -398,7 +398,6 @@ namespace DaggerfallWorkshop
             TeleportToMapPixel(mapPixel.X, mapPixel.Y, offset, RepositionMethods.Offset);
         }
 
-        // Offset world compensation for floating origin world
         /// <summary>
         /// Offset world compensation for floating origin.
         /// </summary>
@@ -410,6 +409,15 @@ namespace DaggerfallWorkshop
             if (offsetLastPlayerPos)
                 lastPlayerPos += offset;
             RaiseOnFloatingOriginChangeEvent();
+        }
+
+        /// <summary>
+        /// Restores world compensation height without triggering a reposition.
+        /// </summary>
+        /// <param name="height">Height compensation value to restore.</param>
+        public void RestoreWorldCompensationHeight(float height)
+        {
+            worldCompensation.y = height;
         }
 
         /// <summary>
@@ -567,7 +575,7 @@ namespace DaggerfallWorkshop
 
             // Init streaming world
             ClearStreamingWorld();
-            worldCompensation = Vector3.zero;
+            worldCompensation = new Vector3(0, worldCompensation.y, 0);
             mapOrigin = LocalPlayerGPS.CurrentMapPixel;
             MapPixelX = mapOrigin.X;
             MapPixelY = mapOrigin.Y;

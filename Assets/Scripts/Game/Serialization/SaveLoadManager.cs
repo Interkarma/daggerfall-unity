@@ -1313,6 +1313,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Immediately set date so world is loaded with correct season
             RestoreDateTimeData(saveData.dateAndTime);
 
+            // When loading an interior save, restore world compensation height early before initworld
+            // Ensures exterior world level is aligned with building height at time of save
+            // Only works with floating origin v3 saves and above with both serialized world compensation and context
+            if (saveData.playerData.playerPosition.worldContext == WorldContext.Interior)
+                GameManager.Instance.StreamingWorld.RestoreWorldCompensationHeight(saveData.playerData.playerPosition.worldCompensation.y);
+            else
+                GameManager.Instance.StreamingWorld.RestoreWorldCompensationHeight(0);
+
             // Restore discovery data
             if (!string.IsNullOrEmpty(discoveryDataJson))
             {
