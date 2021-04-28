@@ -224,6 +224,12 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// True when player just teleported into a dungeon via Teleport spell, otherwise false.
+        /// Flag is only raised by Teleport spell and is lowered any time player exits a dungeon or interior, or teleports to a non-dungeon anchor.
+        /// </summary>
+        public bool PlayerTeleportedIntoDungeon { get; set; }
+
+        /// <summary>
         /// Gets current player dungeon.
         /// Only valid when player is inside a dungeon.
         /// </summary>
@@ -856,6 +862,7 @@ namespace DaggerfallWorkshop.Game
 
             // Player is now outside building
             isPlayerInside = false;
+            PlayerTeleportedIntoDungeon = false;
             buildingType = DFLocation.BuildingTypes.None;
             factionID = 0;
 
@@ -1175,6 +1182,7 @@ namespace DaggerfallWorkshop.Game
             isPlayerInsideDungeonCastle = false;
             lastPlayerDungeonBlockIndex = -1;
             playerDungeonBlockData = new DFLocation.DungeonBlock();
+            PlayerTeleportedIntoDungeon = false;
 
             // Position player to door
             world.SetAutoReposition(StreamingWorld.RepositionMethods.DungeonEntrance, Vector3.zero);

@@ -236,7 +236,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 DaggerfallConnect.Utility.DFPosition anchorMapPixel = DaggerfallConnect.Arena2.MapsFile.WorldCoordToMapPixel(anchorPosition.worldPosX, anchorPosition.worldPosZ);
                 DaggerfallConnect.Utility.DFPosition playerMapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
                 if (anchorMapPixel.X == playerMapPixel.X && anchorMapPixel.Y == playerMapPixel.Y)
+                {
+                    GameManager.Instance.PlayerEnterExit.PlayerTeleportedIntoDungeon = true;
                     return true;
+                }
             }
 
             return false;
@@ -259,6 +262,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Restore final position and unwire event
             serializablePlayer.RestorePosition(anchorPosition);
             PlayerEnterExit.OnRespawnerComplete -= PlayerEnterExit_OnRespawnerComplete;
+
+            // Set "teleported into dungeon" flag when anchor is inside a dungeon
+            GameManager.Instance.PlayerEnterExit.PlayerTeleportedIntoDungeon = anchorPosition.insideDungeon;
 
             // Restore scene cache on arrival
             if (!playerEnterExit.IsPlayerInside)
