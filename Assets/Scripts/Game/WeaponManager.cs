@@ -395,7 +395,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         // Remove arrow
                         ItemCollection playerItems = playerEntity.Items;
-                        DaggerfallUnityItem arrow = playerItems.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow, priorityToConjured: true);
+                        DaggerfallUnityItem arrow = playerItems.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow, allowQuestItem: false, preferConjured: true);
                         bool isArrowSummoned = arrow.IsSummoned;
                         playerItems.RemoveOne(arrow);
 

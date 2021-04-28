@@ -253,7 +253,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     arrowLabelPos.x -= arrowCountTextLabel.TextWidth;
                     arrowLabelPos.y += compass.Size.y / 2 - arrowCountTextLabel.TextHeight / 2;
 
-                    DaggerfallUnityItem arrows = GameManager.Instance.PlayerEntity.Items.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow, priorityToConjured: true);
+                    DaggerfallUnityItem arrows = GameManager.Instance.PlayerEntity.Items.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow, allowQuestItem: false, preferConjured: true);
                     arrowCountTextLabel.Text = (arrows != null) ? arrows.stackCount.ToString() : "0";
                     arrowCountTextLabel.TextColor = (arrows != null && arrows.IsSummoned) ? conjuredArrowsColor : realArrowsColor;
                     arrowCountTextLabel.TextScale = NativePanel.LocalScale.x;
