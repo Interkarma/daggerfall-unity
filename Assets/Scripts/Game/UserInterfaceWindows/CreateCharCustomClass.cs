@@ -185,9 +185,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             skillsDict = new Dictionary<string, DFCareer.Skills>();
             foreach (DFCareer.Skills skill in Enum.GetValues(typeof(DFCareer.Skills)))
             {
-                skillsDict.Add(DaggerfallUnity.Instance.TextProvider.GetSkillName(skill), skill);
+                string name = DaggerfallUnity.Instance.TextProvider.GetSkillName(skill);
+                if(!string.IsNullOrEmpty(name))
+                    skillsDict.Add(name, skill);
             }
-            skillsDict.Remove(string.Empty); // Don't include "none" skill value.
             skillsList = new List<string>(skillsDict.Keys);
             skillsList.Sort(); // Sort skills alphabetically a la classic.
 
