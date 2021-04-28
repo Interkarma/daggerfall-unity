@@ -348,6 +348,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         /// <param name="itemGroup">Item group.</param>
         /// <param name="itemIndex">Template index.</param>
+        /// <param name="allowEnchantedItem">Include enchanted items.</param>
         /// <param name="allowQuestItem">Include quest items.</param>
         /// <param name="preferConjured">Prefer (short lived) conjured items.</param>
         /// <returns>An item of this type, or null if none found.</returns>
