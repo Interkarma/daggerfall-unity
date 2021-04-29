@@ -281,7 +281,7 @@ namespace DaggerfallWorkshop.Game
         /// Updates the players walk speed using for loop and dictionary values to ensure proper sequential processing to get proper end speed.
         /// Processing of modifiers is processed by their addition order. First added by modder is multiplied first, and so on.
         /// </summary>
-        private float RefreshWalkSpeed()
+        public float RefreshWalkSpeed()
         {
             //setup and grab needed base values for computing end speed.
             float baseWalkSpeed = GetWalkSpeed(GameManager.Instance.PlayerEntity);
@@ -331,7 +331,7 @@ namespace DaggerfallWorkshop.Game
         /// Updates the players walk speed using for loop and dictionary values to ensure proper sequential processing to get proper end speed.
         /// Processing of modifiers is processed by their addition order. First added by modder is multiplied first, and so on.
         /// </summary>
-        private float RefreshRunspeed()
+        public float RefreshRunSpeed()
         {
             //setup and grab needed base values for computing end speed.
             float baseRunSpeed = GetRunSpeed();

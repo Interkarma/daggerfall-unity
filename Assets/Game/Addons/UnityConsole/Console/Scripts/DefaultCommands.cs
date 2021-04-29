@@ -673,11 +673,11 @@ namespace Wenzil.Console
                     if (speedChanger.RemoveSpeedMod(args[0].ToString()))
                         return string.Format("Walk speed modifier " + args[0].ToString() + " removed");
                     else
-                        return error;
+                        return error + " Walk speed: " + speedChanger.RefreshWalkSpeed().ToString();
                 }
                 else if (speed != -1 && speed != -2 && speed < 0)
                 {
-                    return error;
+                    return error + " Walk speed: " + speedChanger.RefreshWalkSpeed().ToString();
                 }
                 else if (speed == -1)
                 {
@@ -687,12 +687,12 @@ namespace Wenzil.Console
                 else if (speed == -2)
                 {
                     speedChanger.ResetSpeed(true, false);
-                    return string.Format("Walk speed modifiers cleared. Walk speed is " + speedChanger.currentWalkSpeed); 
+                    return string.Format("Walk speed modifiers cleared. Walk speed is " + speedChanger.RefreshWalkSpeed().ToString()); 
                 }
                 else
                 {
                     speedChanger.AddWalkSpeedMod(out UID, speed);
-                    return string.Format("Walk speed Modifier added (UID: " + UID + "). Walk speed is " + speedChanger.currentWalkSpeed);
+                    return string.Format("Walk speed Modifier added (UID: " + UID + "). Walk speed is " + speedChanger.RefreshWalkSpeed().ToString());
                 }
 
             }
@@ -701,7 +701,7 @@ namespace Wenzil.Console
         private static class SetRunSpeed
         {
             public static readonly string name = "set_runspeed";
-            public static readonly string error = "Failed to set run speed - invalid setting or PlayerMotor object not found";
+            public static readonly string error = "Failed to set run speed - invalid setting or PlayerMotor object not found.";
             public static readonly string description = "Set run speed by multiplying current run speed by inserted percentage. Set to -1 to disable or enable speed overrides. Set to -2 to clear out all speed modifiers";
             public static readonly string usage = "set_runspeed [#]";
 
@@ -734,7 +734,7 @@ namespace Wenzil.Console
                     if (speedChanger.RemoveSpeedMod(args[0].ToString(), true))
                         return string.Format("Run speed modifier " + args[0].ToString() + " removed");
                     else
-                        return error;
+                        return error + " Run speed is " + speedChanger.RefreshRunspeed().ToString();
                 }
                 else if (speed != -1 && speed != -2 && speed < 0)
                 {
@@ -743,17 +743,17 @@ namespace Wenzil.Console
                 else if (speed == -1)
                 {
                     speedChanger.runSpeedOverride = !speedChanger.runSpeedOverride;
-                    return string.Format("Run speed override set to: " + speedChanger.runSpeedOverride);
+                    return string.Format("Run speed override set to: " + speedChanger.runSpeedOverride.ToString());
                 }
                 else if (speed == -2)
                 {
                     speedChanger.ResetSpeed(false, true);
-                    return string.Format("Run speed modifiers cleared. Run speed is " + speedChanger.currentRunSpeed);
+                    return string.Format("Run speed modifiers cleared. Run speed is " + speedChanger.RefreshRunspeed().ToString());
                 }
                 else
                 {
                     speedChanger.AddRunSpeedMod(out UID, speed);
-                    return string.Format("Run speed Modifier added (UID: " + UID + "). Run speed is " + speedChanger.currentRunSpeed);
+                    return string.Format("Run speed Modifier added (UID: " + UID + "). Run speed is " + speedChanger.RefreshRunspeed().ToString());
                 }
             }
         }
