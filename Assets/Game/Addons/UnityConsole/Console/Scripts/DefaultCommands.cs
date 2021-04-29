@@ -658,7 +658,7 @@ namespace Wenzil.Console
                 {
                     try
                     {
-                        Console.Log(string.Format("Current Walk Speed: ", speedChanger.currentWalkSpeed));
+                        Console.Log(string.Format("Current Walk Speed: ", speedChanger.RefreshWalkSpeed().ToString()));
                         return HelpCommand.Execute(SetWalkSpeed.name);
 
                     }
@@ -718,7 +718,7 @@ namespace Wenzil.Console
                 {
                     try
                     {
-                        Console.Log(string.Format("Current Run Speed: {0}", speedChanger.currentRunSpeed.ToString()));
+                        Console.Log(string.Format("Current Run Speed: {0}", speedChanger.RefreshRunSpeed().ToString()));
                         return HelpCommand.Execute(SetRunSpeed.name);
 
                     }
@@ -734,7 +734,7 @@ namespace Wenzil.Console
                     if (speedChanger.RemoveSpeedMod(args[0].ToString(), true))
                         return string.Format("Run speed modifier " + args[0].ToString() + " removed");
                     else
-                        return error + " Run speed is " + speedChanger.RefreshRunspeed().ToString();
+                        return error + " Run speed is " + speedChanger.RefreshRunSpeed().ToString();
                 }
                 else if (speed != -1 && speed != -2 && speed < 0)
                 {
@@ -748,12 +748,12 @@ namespace Wenzil.Console
                 else if (speed == -2)
                 {
                     speedChanger.ResetSpeed(false, true);
-                    return string.Format("Run speed modifiers cleared. Run speed is " + speedChanger.RefreshRunspeed().ToString());
+                    return string.Format("Run speed modifiers cleared. Run speed is " + speedChanger.RefreshRunSpeed().ToString());
                 }
                 else
                 {
                     speedChanger.AddRunSpeedMod(out UID, speed);
-                    return string.Format("Run speed Modifier added (UID: " + UID + "). Run speed is " + speedChanger.RefreshRunspeed().ToString());
+                    return string.Format("Run speed Modifier added (UID: " + UID + "). Run speed is " + speedChanger.RefreshRunSpeed().ToString());
                 }
             }
         }
