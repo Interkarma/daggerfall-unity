@@ -34,11 +34,11 @@ namespace DaggerfallWorkshop.Game
         private const float dfCartBase = dfWalkBase + 100f;
 
         public bool walkSpeedOverride = true;
-        public float currentWalkSpeed { get; private set; } = 0;
+        private float currentWalkSpeed = 0;
         private Dictionary<string, float> walkSpeedModifierList = new Dictionary<string, float>();
 
         public bool runSpeedOverride = true;
-        public float currentRunSpeed { get; private set; } = 0;
+        private float currentRunSpeed = 0;
         private Dictionary<string, float> runSpeedModifierList = new Dictionary<string, float>();
 
         public delegate bool CanPlayerRun();
@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game
 
             if (isRunning)
             {
-                speed = RefreshRunspeed();
+                speed = RefreshRunSpeed();
 
                 //switch sneaking off if was previously sneaking
                 sneakingMode = false;
