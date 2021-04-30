@@ -463,7 +463,7 @@ namespace DaggerfallWorkshop.Game
             if (smoothFollower != null && controller != null)
             {
                 float distanceMoved = Vector3.Distance(smoothFollowerPrevWorldPos, smoothFollower.position);        // Assuming the follower is a child of this motor transform we can get the distance travelled.
-                float distanceThreshold = speedChanger.GetRunSpeed(speed) * Time.deltaTime;         // Without question any distance travelled less than the running speed is legal.
+                float distanceThreshold = speedChanger.RefreshRunSpeed() * Time.deltaTime;         // Without question any distance travelled less than the running speed is legal.
                 float motorVelocity = controller.velocity.magnitude / Time.fixedDeltaTime;
                 float maxPossibleDistanceByMotorVelocity = motorVelocity * Time.deltaTime * 2.0f;   // Theoretically the max distance the motor can carry the player with a generous margin.
 
@@ -490,6 +490,10 @@ namespace DaggerfallWorkshop.Game
             // This prevents levitation flag carrying over and effect system can still restore it if needed
             if (levitateMotor)
                 levitateMotor.IsLevitating = false;
+
+            //reset speed modifiers.
+            //ensures speed modifiers from previous game does not carry over into new game.
+            speedChanger.ResetSpeed();
         }
 
         /// <summary>
