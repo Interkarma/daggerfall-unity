@@ -255,6 +255,8 @@ _S.09_ task:
 
 MyniseraSatisfied _S.10_
 GothrydGotTotem _S.11_
+
+_S.13_ task:
 	when _S.08_ and _S.10_ and _S.12_ 
 	start quest 8 8 
 	end quest 
