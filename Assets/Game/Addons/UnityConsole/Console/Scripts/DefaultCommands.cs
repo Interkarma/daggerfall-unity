@@ -115,6 +115,8 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ClearNegativeLegalRep.name, ClearNegativeLegalRep.description, ClearNegativeLegalRep.usage, ClearNegativeLegalRep.Execute);
 
+            ConsoleCommandsDatabase.RegisterCommand(PrintQuests.name, PrintQuests.description, PrintQuests.usage, PrintQuests.Execute);
+
             ConsoleCommandsDatabase.RegisterCommand(SummonDaedra.name, SummonDaedra.description, SummonDaedra.usage, SummonDaedra.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ChangeModSettings.name, ChangeModSettings.description, ChangeModSettings.usage, ChangeModSettings.Execute);
         }
@@ -2631,6 +2633,48 @@ namespace Wenzil.Console
                 else
                 {
                     return "Could not read legal reputation data.";
+                }
+
+                return output;
+            }
+        }
+
+        private static class PrintQuests
+        {
+            public static readonly string name = "print_quests";
+            public static readonly string description = "Output current quests running on quest machine.";
+            public static readonly string usage = "print_quests";
+
+            public static string Execute(params string[] args)
+            {
+                string output = string.Empty;
+
+                ulong[] allQuests = QuestMachine.Instance.GetAllQuests();
+                if (allQuests != null && allQuests.Length > 0)
+                {
+                    for (int i = 0; i < allQuests.Length; i++)
+                    {
+                        Quest quest = QuestMachine.Instance.GetQuest(allQuests[i]);
+
+                        string status = string.Empty;
+                        if (!quest.QuestComplete)
+                        {
+                            status = HUDQuestDebugger.questRunning;
+                        }
+                        else
+                        {
+                            if (quest.QuestSuccess)
+                                status = HUDQuestDebugger.questFinishedSuccess;
+                            else
+                                status = HUDQuestDebugger.questFinishedEnded;
+                        }
+
+                        output += string.Format("{0} '{1}' [UID={2}] - {3}\n", quest.QuestName, quest.DisplayName, quest.UID, status);
+                    }
+                }
+                else
+                {
+                    output = HUDQuestDebugger.noQuestsRunning;
                 }
 
                 return output;

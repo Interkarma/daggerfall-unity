@@ -38,10 +38,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int rowHeight = 10;
         const int taskColWidth = 60;
         const int timerColWidth = 100;
-        const string noQuestsRunning = "NO QUESTS RUNNING";
-        const string questRunning = "Running";
-        const string questFinishedSuccess = "Finished (success)";
-        const string questFinishedEnded = "Finished (ended)";
+        public const string noQuestsRunning = "NO QUESTS RUNNING";
+        public const string questRunning = "Running";
+        public const string questFinishedSuccess = "Finished (success)";
+        public const string questFinishedEnded = "Finished (ended)";
         const int taskLabelPoolCount = 84;
         const int timerLabelPoolCount = 20;
         const int globalLabelPoolCount = 64;
