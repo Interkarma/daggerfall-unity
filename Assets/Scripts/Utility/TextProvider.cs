@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Localization;
 using UnityEngine.Localization.Tables;
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -94,6 +95,14 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="skill">Skill.</param>
         /// <returns>Text for this skill.</returns>
         string GetSkillName(DFCareer.Skills skill);
+
+        /// <summary>
+        /// Gets text to be shown in the Skill summary popup
+        /// </summary>
+        /// <param name="skill">Skill.s</param>
+        /// <param name="startPosition">Position in pixel of the first positioning token</param>
+        /// <returns>Tokens for the skill.</returns>
+        TextFile.Token[] GetSkillSummary(DFCareer.Skills skill, int startPosition);
 
         /// <summary>
         /// Gets text for stat name.
@@ -465,6 +474,49 @@ namespace DaggerfallWorkshop.Utility
                 default:
                     return string.Empty;
             }
+        }
+
+        public TextFile.Token[] GetSkillSummary(DFCareer.Skills skill, int startPosition)
+        {
+            PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            bool highlight = playerEntity.GetSkillRecentlyIncreased(skill);
+
+            List<TextFile.Token> tokens = new List<TextFile.Token>();
+            TextFile.Formatting formatting = highlight ? TextFile.Formatting.TextHighlight : TextFile.Formatting.Text;
+
+            TextFile.Token skillNameToken = new TextFile.Token();
+            skillNameToken.formatting = formatting;
+            skillNameToken.text = DaggerfallUnity.Instance.TextProvider.GetSkillName(skill);
+
+            TextFile.Token skillValueToken = new TextFile.Token();
+            skillValueToken.formatting = formatting;
+            skillValueToken.text = string.Format("{0}%", playerEntity.Skills.GetLiveSkillValue(skill));
+
+            DFCareer.Stats primaryStat = DaggerfallSkills.GetPrimaryStat(skill);
+            TextFile.Token skillPrimaryStatToken = new TextFile.Token();
+            skillPrimaryStatToken.formatting = formatting;
+            skillPrimaryStatToken.text = DaggerfallUnity.Instance.TextProvider.GetAbbreviatedStatName(primaryStat);
+
+            TextFile.Token positioningToken = new TextFile.Token();
+            positioningToken.formatting = TextFile.Formatting.PositionPrefix;
+
+            TextFile.Token tabToken = new TextFile.Token();
+            tabToken.formatting = TextFile.Formatting.PositionPrefix;
+
+            if (startPosition != 0) // if this is the second column
+            {
+                positioningToken.x = startPosition;
+                tokens.Add(positioningToken);
+            }
+            tokens.Add(skillNameToken);
+            positioningToken.x = startPosition + 85;
+            tokens.Add(positioningToken);
+            tokens.Add(skillValueToken);
+            positioningToken.x = startPosition + 112;
+            tokens.Add(positioningToken);
+            tokens.Add(skillPrimaryStatToken);
+
+            return tokens.ToArray();
         }
 
         public string GetStatName(DFCareer.Stats stat)
