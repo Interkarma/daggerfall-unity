@@ -58,6 +58,7 @@ namespace DaggerfallWorkshop.Game
             StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
             SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
             DaggerfallCourtWindow.OnCourtScreen += DaggerfallCourtWindow_OnCourtScreen;
+            DaggerfallHUD.OnLargeHUDToggle += DaggerfallHUD_OnLargeHUDToggle;
         }
 
         void Update()
@@ -134,6 +135,12 @@ namespace DaggerfallWorkshop.Game
         private void DaggerfallCourtWindow_OnCourtScreen()
         {
             // Clear when player goes to court screen
+            ResetVitals();
+        }
+
+        private void DaggerfallHUD_OnLargeHUDToggle()
+        {
+            // Resynchronize indicators that were disabled
             ResetVitals();
         }
     }
