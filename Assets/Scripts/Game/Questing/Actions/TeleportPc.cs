@@ -60,6 +60,15 @@ namespace DaggerfallWorkshop.Game.Questing
             return action;
         }
 
+        public override void RearmAction()
+        {
+            base.RearmAction();
+
+            // If the action is disabled then rearmed, then teleport called before resumePending is finished, then player can desync from world
+            // Lower the resumePending flag as this will be a new instance of teleport
+            resumePending = false;
+        }
+
         public override void Update(Task caller)
         {
             base.Update(caller);
