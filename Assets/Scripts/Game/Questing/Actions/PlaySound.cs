@@ -31,30 +31,18 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         public int      soundIndex;
         public uint     interval;               //how often to play; measured in game minutes
         public int      unknown;                //according to Tipton's documentation, doesn't do anything
+        public int      count;                  //how many times to play sound - resets every time action rearms or game restarts
         public ulong    lastTimePlayed = 0;     //last time sound was played
         public AudioClip clip;                  //preloading
 
-
-        /// <summary>
-        /// Data to serialize action state can be placed in a struct.
-        /// It's a good idea to version struct in case you need to migrate between very different state setups in future.
-        /// For basic changes (e.g. just adding a new field with a sensible default) no migration should be needed.
-        /// See FullSerializer versioning docs for more: https://github.com/jacobdufault/fullserializer/wiki/Versioning
-        /// </summary>
-        [fsObject("v1")]
-        public struct MySaveData
-        {
-            public string soundName;
-            public int soundIndex;
-            public uint interval;
-            public ulong lastTimePlayed;
-        }
+        int timesPlayed = 0;
 
         public override string Pattern
         {
             get 
             {
-                return @"play sound (?<sound>\w+)( every)? (?<n1>\d+)( minutes)? (?<n2>\d+)";
+                return @"play sound (?<sound>\w+) every (?<n1>\d+) minutes (?<count>\d+) times|" +
+                       @"play sound (?<sound>\w+) (?<n1>\d+) (?<n2>\d+)";
             }
         }
 
@@ -81,10 +69,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 playSoundAction.soundName       = match.Groups["sound"].Value;
                 playSoundAction.interval        = (uint)Parser.ParseInt(match.Groups["n1"].Value) * 60;
                 playSoundAction.unknown         = Parser.ParseInt(match.Groups["n2"].Value);
+                playSoundAction.count           = Parser.ParseInt(match.Groups["count"].Value);
                 playSoundAction.lastTimePlayed  = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
                 var soundID                     = (uint)QuestMachine.Instance.SoundsTable.GetInt("id", match.Groups["sound"].Value);
                 playSoundAction.soundIndex      = (int)DaggerfallUnity.Instance.SoundReader.GetSoundIndex(soundID);
-                playSoundAction.clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip(playSoundAction.soundIndex);
+                playSoundAction.clip            = DaggerfallUnity.Instance.SoundReader.GetAudioClip(playSoundAction.soundIndex);
             }
             catch (System.Exception ex)
             {
@@ -112,8 +101,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip(soundIndex);
             }
 
-            if (lastTimePlayed + interval <= gameSeconds)
+            if (lastTimePlayed + interval <= gameSeconds && timesPlayed < count)
             {
+                timesPlayed++;
                 DaggerfallAudioSource source = QuestMachine.Instance.GetComponent<DaggerfallAudioSource>();
                 if (source != null && !source.IsPlaying())
                 {
@@ -122,6 +112,15 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 }
             }
             // Unlike message posts, the play sound command performs until task is cleared
+            // The exception are sounds played X times, these will stop and start again on load or action rearming
+        }
+
+        public override void RearmAction()
+        {
+            base.RearmAction();
+
+            timesPlayed = 0;
+            lastTimePlayed = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToSeconds();
         }
 
         #region Serialization
@@ -132,6 +131,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             public string soundName;
             public int soundIndex;
             public uint interval;
+            public int count;
             public int unknown;
             public ulong lastTimePlayed;
         }
@@ -142,6 +142,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             data.soundName = soundName;
             data.soundIndex = soundIndex;
             data.interval = interval;
+            data.count = count;
             data.unknown = unknown;
             data.lastTimePlayed = lastTimePlayed;
 
@@ -157,6 +158,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             soundName = data.soundName;
             soundIndex = data.soundIndex;
             interval = data.interval;
+            count = data.count;
             unknown = data.unknown;
             lastTimePlayed = data.lastTimePlayed;
         }
