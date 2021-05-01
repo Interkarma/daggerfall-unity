@@ -101,14 +101,17 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 clip = DaggerfallUnity.Instance.SoundReader.GetAudioClip(soundIndex);
             }
 
-            if (lastTimePlayed + interval <= gameSeconds && timesPlayed < count)
+            if (lastTimePlayed + interval <= gameSeconds)
             {
                 timesPlayed++;
-                DaggerfallAudioSource source = QuestMachine.Instance.GetComponent<DaggerfallAudioSource>();
-                if (source != null && !source.IsPlaying())
+                if (count == 0 || (count > 0 && timesPlayed <= count))
                 {
-                    source.PlayOneShot(soundIndex, 0, DaggerfallUnity.Settings.SoundVolume);
-                    lastTimePlayed = gameSeconds;
+                    DaggerfallAudioSource source = QuestMachine.Instance.GetComponent<DaggerfallAudioSource>();
+                    if (source != null && !source.IsPlaying())
+                    {
+                        source.PlayOneShot(soundIndex, 0, DaggerfallUnity.Settings.SoundVolume);
+                        lastTimePlayed = gameSeconds;
+                    }
                 }
             }
             // Unlike message posts, the play sound command performs until task is cleared

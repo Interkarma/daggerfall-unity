@@ -71,7 +71,7 @@ _S.03_ task:
 	when not _S.01_ and _S.02_ 
 	create foe _wraith_ every 21 minutes indefinitely with 50% success 
 	create foe _F.00_ every 31 minutes indefinitely with 50% success 
-	play sound vengence every 5 minutes 25 times 
+	play sound vengence 5 0
 
 variable _delay_
 variable _S.05_
