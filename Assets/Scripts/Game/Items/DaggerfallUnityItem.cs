@@ -350,6 +350,14 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Checks if this item is clothing.
+        /// </summary>
+        public bool IsClothing
+        {
+            get { return ItemGroup == ItemGroups.MensClothing || ItemGroup == ItemGroups.WomensClothing; }
+        }
+
+        /// <summary>
         /// Gets/sets the soul trapped in a soul trap.
         /// </summary>
         public MobileTypes TrappedSoulType

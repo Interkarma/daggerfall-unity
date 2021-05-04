@@ -1665,10 +1665,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     questItem.UseClicked = true;
 
-                    // Non-parchment items pop back to HUD so quest system has first shot at a custom click action in game world
+                    // Non-parchment and non-clothing items pop back to HUD so quest system has first shot at a custom click action in game world
                     // This is usually the case when actioning most quest items (e.g. a painting, bell, holy item, etc.)
-                    // But when clicking a parchment item this behaviour is usually incorrect (e.g. a letter to read)
-                    if (!questItem.DaggerfallUnityItem.IsParchment)
+                    // But when clicking a parchment or clothing item, this behaviour is usually incorrect (e.g. a letter to read)
+                    if (!questItem.DaggerfallUnityItem.IsParchment && !questItem.DaggerfallUnityItem.IsClothing)
                     {
                         DaggerfallUI.Instance.PopToHUD();
                         return;
@@ -1925,15 +1925,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (actionMode == ActionModes.Use)
             {
-                NextVariant(item);
+                UseItem(item);
             }
             else if (actionMode == ActionModes.Info)
             {
                 ShowInfoPopup(item);
-            }
-            else if (actionMode == ActionModes.Use)
-            {
-                UseItem(item);
             }
         }
 
