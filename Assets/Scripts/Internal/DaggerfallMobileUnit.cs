@@ -60,6 +60,7 @@ namespace DaggerfallWorkshop
         bool restartAnims = true;
         bool freezeAnims = false;
         bool animReversed = false;
+        int frameSpeedDivisor = 1;
 
         public MobileUnitSummary Summary
         {
@@ -75,6 +76,12 @@ namespace DaggerfallWorkshop
         public int CurrentFrame
         {
             get { return currentFrame; }
+        }
+
+        public int FrameSpeedDivisor
+        {
+            get { return frameSpeedDivisor; }
+            set { frameSpeedDivisor = (value < 1) ? 1 : value; }
         }
 
         public override bool DoMeleeDamage
@@ -471,7 +478,11 @@ namespace DaggerfallWorkshop
                 {
                     // Update enemy and fps
                     OrientEnemy(lastOrientation);
-                    fps = summary.StateAnims[lastOrientation].FramePerSecond;
+                    fps = summary.StateAnims[lastOrientation].FramePerSecond / FrameSpeedDivisor;
+
+                    // Enforce a lower limit on animation speed when using a custom FrameSpeedDivisor
+                    if (FrameSpeedDivisor > 1 && fps < 4)
+                        fps = 4;
 
                     bool doingAttackAnimation = (summary.EnemyState == MobileStates.PrimaryAttack ||
                         summary.EnemyState == MobileStates.RangedAttack1 ||
