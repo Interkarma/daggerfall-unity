@@ -724,13 +724,13 @@ namespace DaggerfallConnect.Arena2
             dfLocation.LocationIndex = location;
 
             // Generate smaller dungeon when possible
-            if (UseSmallerDungeon(ref dfLocation))
+            if (UseSmallerDungeon(dfLocation))
                 GenerateSmallerDungeon(ref dfLocation);
 
             return dfLocation;
         }
 
-        private bool UseSmallerDungeon(ref DFLocation dfLocation)
+        private bool UseSmallerDungeon(in DFLocation dfLocation)
         {
             // Do nothing if location has no dungeon or if a main story dungeon - these are never made smaller
             if (!dfLocation.HasDungeon || DaggerfallDungeon.IsMainStoryDungeon(dfLocation.MapTableData.MapId))
@@ -783,7 +783,7 @@ namespace DaggerfallConnect.Arena2
         /// <param name="x">Block X coordinate.</param>
         /// <param name="y">Block Y coordinate.</param>
         /// <returns>Block name.</returns>
-        public string GetRmbBlockName(ref DFLocation dfLocation, int x, int y)
+        public string GetRmbBlockName(in DFLocation dfLocation, int x, int y)
         {
             int index = y * dfLocation.Exterior.ExteriorData.Width + x;
             return dfLocation.Exterior.ExteriorData.BlockNames[index];
@@ -796,7 +796,7 @@ namespace DaggerfallConnect.Arena2
         /// <param name="x">Block X coordinate.</param>
         /// <param name="y">Block Y coordinate.</param>
         /// <returns>Block name.</returns>
-        public string ResolveRmbBlockName(ref DFLocation dfLocation, int x, int y)
+        public string ResolveRmbBlockName(in DFLocation dfLocation, int x, int y)
         {
             // Get indices
             int offset = y * dfLocation.Exterior.ExteriorData.Width + x;
@@ -804,7 +804,7 @@ namespace DaggerfallConnect.Arena2
             byte blockNumber = dfLocation.Exterior.ExteriorData.BlockNumber[offset];
             byte blockCharacter = dfLocation.Exterior.ExteriorData.BlockCharacter[offset];
 
-            return ResolveRmbBlockName(ref dfLocation, blockIndex, blockNumber, blockCharacter);
+            return ResolveRmbBlockName(dfLocation, blockIndex, blockNumber, blockCharacter);
         }
 
         /// <summary>
@@ -815,7 +815,7 @@ namespace DaggerfallConnect.Arena2
         /// <param name="blockNumber">Block number.</param>
         /// <param name="blockCharacter">Block character.</param>
         /// <returns>Block name.</returns>
-        public string ResolveRmbBlockName(ref DFLocation dfLocation, byte blockIndex, byte blockNumber, byte blockCharacter)
+        public string ResolveRmbBlockName(in DFLocation dfLocation, byte blockIndex, byte blockNumber, byte blockCharacter)
         {
             string letter1 = string.Empty;
             string letter2 = string.Empty;
@@ -1174,7 +1174,7 @@ namespace DaggerfallConnect.Arena2
             {
                 // Construct block name
                 dfLocation.Exterior.ExteriorData.BlockNames[i] = ResolveRmbBlockName(
-                    ref dfLocation,
+                    dfLocation,
                     dfLocation.Exterior.ExteriorData.BlockIndex[i],
                     dfLocation.Exterior.ExteriorData.BlockNumber[i],
                     dfLocation.Exterior.ExteriorData.BlockCharacter[i]);
@@ -1329,11 +1329,11 @@ namespace DaggerfallConnect.Arena2
 
             // Generate new dungeon layout with smallest viable dungeon (1x normal block surrounded by 4x border blocks)
             DFLocation.DungeonBlock[] layout = new DFLocation.DungeonBlock[5];
-            layout[0] = GenerateRDBBlock(0, 0, false, true, ref dfLocation);           // Central starting block
-            layout[1] = GenerateRDBBlock(0, -1, true, false, ref dfLocation);          // North border block
-            layout[2] = GenerateRDBBlock(-1, 0, true, false, ref dfLocation);          // West border block
-            layout[3] = GenerateRDBBlock(1, 0, true, false, ref dfLocation);           // East border block
-            layout[4] = GenerateRDBBlock(0, 1, true, false, ref dfLocation);           // South border block
+            layout[0] = GenerateRDBBlock(0, 0, false, true, dfLocation);           // Central starting block
+            layout[1] = GenerateRDBBlock(0, -1, true, false, dfLocation);          // North border block
+            layout[2] = GenerateRDBBlock(-1, 0, true, false, dfLocation);          // West border block
+            layout[3] = GenerateRDBBlock(1, 0, true, false, dfLocation);           // East border block
+            layout[4] = GenerateRDBBlock(0, 1, true, false, dfLocation);           // South border block
 
             // Inject new block array into location
             dfLocation.Dungeon.Blocks = layout;
@@ -1348,10 +1348,10 @@ namespace DaggerfallConnect.Arena2
         /// <param name="startingBlock">True to make this a starting block (must only be one).</param>
         /// <param name="dfLocation">Reference location to select a random block from.</param>
         /// <returns>DFLocation.DungeonBlock</returns>
-        DFLocation.DungeonBlock GenerateRDBBlock(sbyte x, sbyte z, bool borderBlock, bool startingBlock, ref DFLocation dfLocation)
+        DFLocation.DungeonBlock GenerateRDBBlock(sbyte x, sbyte z, bool borderBlock, bool startingBlock, in DFLocation dfLocation)
         {
             // Get random block from reference location and overwrite some properties
-            DFLocation.DungeonBlock block = GetRandomBlock(borderBlock, ref dfLocation);
+            DFLocation.DungeonBlock block = GetRandomBlock(borderBlock, dfLocation);
             block.X = x;
             block.Z = z;
             block.IsStartingBlock = startingBlock;
@@ -1365,7 +1365,7 @@ namespace DaggerfallConnect.Arena2
         /// <param name="borderBlock">True to select a border block, false to select an interior block.</param>
         /// <param name="dfLocation">Reference location to select a random block from.</param>
         /// <returns>DFLocation.DungeonBlock</returns>
-        DFLocation.DungeonBlock GetRandomBlock(bool borderBlock, ref DFLocation dfLocation)
+        DFLocation.DungeonBlock GetRandomBlock(bool borderBlock, in DFLocation dfLocation)
         {
             List<DFLocation.DungeonBlock> filteredBlocks = new List<DFLocation.DungeonBlock>();
             foreach (DFLocation.DungeonBlock block in dfLocation.Dungeon.Blocks)

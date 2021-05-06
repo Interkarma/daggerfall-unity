@@ -2660,25 +2660,10 @@ namespace DaggerfallWorkshop.Game
         {
             listBuildings = new List<BuildingInfo>();
 
-            ContentReader.MapSummary mapSummary;
-            DFPosition mapPixel = GameManager.Instance.PlayerGPS.CurrentMapPixel;
-            if (!DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out mapSummary))
-            {
-                // No location found
-                return; // Do nothing
-            }
-
-            DFLocation location = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex);
-            if (!location.Loaded)
-            {
-                // Location not loaded, something went wrong
-                DaggerfallUnity.LogMessage("Error when loading location in TalkManager.GetBuildingList", true);
-            }
-
+            DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
             ExteriorAutomap.BlockLayout[] blockLayout = GameManager.Instance.ExteriorAutomap.ExteriorLayout;
 
-            DFBlock[] blocks;
-            RMBLayout.GetLocationBuildingData(location, out blocks);
+            DFBlock[] blocks = RMBLayout.GetLocationBuildingData(location);
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
             bool populateQuestors = false;
@@ -2689,16 +2674,16 @@ namespace DaggerfallWorkshop.Game
             }
 
             int[] workStats = new int[12];
-            for (int y = 0; y < height; y++)
+            int index = 0;
+            for (int y = 0; y < height; ++y)
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < width; ++x, ++index)
                 {
-                    int index = y * width + x;
-                    BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(blocks[index], x, y);
-
-                    for (int i = 0; i < buildingsInBlock.Length; i++)
+                    ref readonly DFBlock block = ref blocks[index];
+                    BuildingSummary[] buildingsInBlock = RMBLayout.GetBuildingData(block, x, y);
+                    for (int i = 0; i < buildingsInBlock.Length; ++i)
                     {
-                        BuildingSummary buildingSummary = buildingsInBlock[i];
+                        ref readonly BuildingSummary buildingSummary = ref buildingsInBlock[i];
                         try
                         {
                             BuildingInfo item;
@@ -2723,12 +2708,13 @@ namespace DaggerfallWorkshop.Game
                         // Populate potential questors in this building
                         if (populateQuestors)
                         {
-                            PersistentFactionData factions = GameManager.Instance.PlayerEntity.FactionData;
-                            DFBlock.RmbBlockPeopleRecord[] buildingNpcs = blocks[index].RmbBlock.SubRecords[i].Interior.BlockPeopleRecords;
-                            for (int p = 0; p < buildingNpcs.Length; p++)
+                            ref readonly DFBlock.RmbBlockPeopleRecord[] buildingNpcs = ref block.RmbBlock.SubRecords[i].Interior.BlockPeopleRecords;
+                            for (int p = 0; p < buildingNpcs.Length; ++p)
                             {
+                                ref readonly DFBlock.RmbBlockPeopleRecord npc = ref buildingNpcs[p];
+
                                 FactionFile.FactionData factionData;
-                                GetStaticNPCFactionData(buildingNpcs[p].FactionID, buildingSummary.BuildingType, out factionData);
+                                GetStaticNPCFactionData(npc.FactionID, buildingSummary.BuildingType, out factionData);
 
                                 FactionFile.SocialGroups socialGroup = (FactionFile.SocialGroups)factionData.sgroup;
                                 if (socialGroup == FactionFile.SocialGroups.Merchants ||
@@ -2744,12 +2730,12 @@ namespace DaggerfallWorkshop.Game
 
                                     StaticNPC.NPCData npcData2 = new StaticNPC.NPCData();
                                     StaticNPC.SetLayoutData(ref npcData2,
-                                                            buildingNpcs[p].XPos, buildingNpcs[p].YPos, buildingNpcs[p].ZPos,
-                                                            buildingNpcs[p].Flags,
+                                                            npc.XPos, npc.YPos, npc.ZPos,
+                                                            npc.Flags,
                                                             factionData.id,
-                                                            buildingNpcs[p].TextureArchive,
-                                                            buildingNpcs[p].TextureRecord,
-                                                            buildingNpcs[p].Position,
+                                                            npc.TextureArchive,
+                                                            npc.TextureRecord,
+                                                            npc.Position,
                                                             buildingSummary.buildingKey);
 
                                     // Exclude children from NPCs with work
