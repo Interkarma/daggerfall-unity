@@ -65,7 +65,7 @@ namespace DaggerfallConnect.FallExe
         public int playerTextureRecord;             // Player inventory texture record index
 
         // DFU extension fields
-        public bool noRepairs;                      // Defaults to false if not specified
+        public bool isNotRepairable;                // Defaults to false if not specified
     }
 
     /// <summary>

@@ -2637,7 +2637,8 @@
         "worldTextureArchive": 207,
         "worldTextureRecord": 16,
         "playerTextureArchive": 0,
-        "playerTextureRecord": 0
+        "playerTextureRecord": 0,
+        "isNotRepairable": true
     },
     {
         "index": 132,
@@ -4957,7 +4958,8 @@
         "worldTextureArchive": 210,
         "worldTextureRecord": 6,
         "playerTextureArchive": 0,
-        "playerTextureRecord": 0
+        "playerTextureRecord": 0,
+        "isNotRepairable": true
     },
     {
         "index": 248,
@@ -4977,7 +4979,8 @@
         "worldTextureArchive": 200,
         "worldTextureRecord": 10,
         "playerTextureArchive": 0,
-        "playerTextureRecord": 0
+        "playerTextureRecord": 0,
+        "isNotRepairable": true
     },
     {
         "index": 249,
@@ -5077,7 +5080,8 @@
         "worldTextureArchive": 210,
         "worldTextureRecord": 3,
         "playerTextureArchive": 0,
-        "playerTextureRecord": 0
+        "playerTextureRecord": 0,
+        "isNotRepairable": true
     },
     {
         "index": 254,
@@ -5397,7 +5401,8 @@
         "worldTextureArchive": 210,
         "worldTextureRecord": 4,
         "playerTextureArchive": 0,
-        "playerTextureRecord": 0
+        "playerTextureRecord": 0,
+        "isNotRepairable": true
     },
     {
         "index": 270,

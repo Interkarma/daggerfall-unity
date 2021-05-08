@@ -802,7 +802,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         // Check that item can be repaired, is damaged & transfer if so.
                         if (item.IsEnchanted && !DaggerfallUnity.Settings.AllowMagicRepairs)
                             DaggerfallUI.MessageBox(magicItemsCannotBeRepairedTextId);
-                        else if (item.ItemTemplate.noRepairs)
+                        else if (item.ItemTemplate.isNotRepairable)
                             DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("cannotBeRepaired"));
                         else if ((item.currentCondition == item.maxCondition))
                             DaggerfallUI.MessageBox(doesNotNeedToBeRepairedTextId);
