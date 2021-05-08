@@ -89,16 +89,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public MacroDataSource GetMacroDataSource()
         {
-            return new GuildServiceMacroDataSource(this);
+            return new GuildServiceDonationMacroDataSource(this);
         }
 
         /// <summary>
         /// MacroDataSource context sensitive methods for guild service donation UI.
         /// </summary>
-        private class GuildServiceMacroDataSource : MacroDataSource
+        private class GuildServiceDonationMacroDataSource : MacroDataSource
         {
             private DaggerfallGuildServiceDonation parent;
-            public GuildServiceMacroDataSource(DaggerfallGuildServiceDonation guildServiceWindow)
+            public GuildServiceDonationMacroDataSource(DaggerfallGuildServiceDonation guildServiceWindow)
             {
                 this.parent = guildServiceWindow;
             }
