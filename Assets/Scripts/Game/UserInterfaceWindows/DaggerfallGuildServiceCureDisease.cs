@@ -29,10 +29,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected IGuild Guild { get; private set; }
         protected int BuildingFactionId { get; private set; }
 
-        PlayerEntity playerEntity;
+        protected PlayerEntity playerEntity;
 
-        int curingCost = 0;
-        PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
+        protected int curingCost = 0;
+        protected PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
 
         public DaggerfallGuildServiceCureDisease(IUserInterfaceManager uiManager, int buildingFactionId, IGuild guild)
             : base(uiManager, uiManager.TopWindow)

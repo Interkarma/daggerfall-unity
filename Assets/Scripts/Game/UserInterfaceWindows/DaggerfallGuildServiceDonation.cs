@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Based on the building faction id rather than guild object so it works for non-members as well
         protected int BuildingFactionId { get; private set; }
 
-        PlayerEntity playerEntity;
+        protected PlayerEntity playerEntity;
 
         public DaggerfallGuildServiceDonation(IUserInterfaceManager uiManager, int buildingFactionId)
             : base(uiManager)

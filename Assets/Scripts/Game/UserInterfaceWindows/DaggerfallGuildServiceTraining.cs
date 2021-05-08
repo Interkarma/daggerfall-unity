@@ -34,9 +34,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected GuildNpcServices NpcService { get; private set; }
         protected IGuild Guild { get; private set; }
 
-        PlayerEntity playerEntity;
+        protected PlayerEntity playerEntity;
 
-        public DaggerfallGuildServiceTraining(IUserInterfaceManager uiManager, GuildNpcServices npcService, IGuild guild = null)
+        public DaggerfallGuildServiceTraining(IUserInterfaceManager uiManager, GuildNpcServices npcService, IGuild guild)
             : base(uiManager, uiManager.TopWindow)
         {
             NpcService = npcService;
