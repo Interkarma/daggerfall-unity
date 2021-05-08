@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Fields
 
         protected const string baseTextureName = "GILD00I0.IMG";      // Join Guild / Talk / Service
-        protected const string memberTextureName = "GILD01I0.IMG";      // Join Guild / Talk / Service
+        protected const string memberTextureName = "GILD01I0.IMG";    // Join Guild / Talk / Service
 
         protected Texture2D baseTexture;
         protected PlayerEntity playerEntity;
@@ -380,7 +380,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("noSpellbook"));
                     break;
 
-                case GuildServices.BuyMagicItems:   // TODO: switch items depending on npcService?
+                case GuildServices.BuyMagicItems:
                     CloseWindow();
                     tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Buy, guild });
                     tradeWindow.MerchantItems = GetMerchantMagicItems();

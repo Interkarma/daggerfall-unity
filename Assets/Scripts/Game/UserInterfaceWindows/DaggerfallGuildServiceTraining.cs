@@ -20,7 +20,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     /**
-     * Guild service UI for temple donations.
+     * Guild service UI for guild training.
      * Note this is not a real UI window, and is not actually pushed onto the stack. This
      * is so replacements are not constrained what to present first.
      */
