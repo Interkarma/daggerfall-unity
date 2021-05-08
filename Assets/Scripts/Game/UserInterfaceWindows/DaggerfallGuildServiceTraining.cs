@@ -109,16 +109,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {   // Train the skill
-                DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
-                playerEntity.TimeOfLastSkillTraining = now.ToClassicDaggerfallTime();
-                now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
-                playerEntity.DeductGoldAmount(Guild.GetTrainingPrice());
-                playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
-                int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
-                short tallyAmount = (short)(UnityEngine.Random.Range(10, 20 + 1) * skillAdvancementMultiplier);
-                playerEntity.TallySkill(skillToTrain, tallyAmount);
-                DaggerfallUI.MessageBox(TrainSkillId);
+                TrainSkill(skillToTrain);
             }
+        }
+
+        protected void TrainSkill(DFCareer.Skills skillToTrain)
+        {
+            DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
+            playerEntity.TimeOfLastSkillTraining = now.ToClassicDaggerfallTime();
+            now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
+            playerEntity.DeductGoldAmount(Guild.GetTrainingPrice());
+            playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
+            int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
+            short tallyAmount = (short)(UnityEngine.Random.Range(10, 20 + 1) * skillAdvancementMultiplier);
+            playerEntity.TallySkill(skillToTrain, tallyAmount);
+            DaggerfallUI.MessageBox(TrainSkillId);
         }
 
         protected virtual List<DFCareer.Skills> GetTrainingSkills()
