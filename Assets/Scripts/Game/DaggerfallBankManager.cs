@@ -112,6 +112,8 @@ namespace DaggerfallWorkshop.Game.Banking
 
         public static DFPosition GetShipCoords() { return OwnsShip ? shipCoords[(int)ownedShip] : null; }
 
+        public static void ResetShip() { ownedShip = ShipType.None; }
+
         #endregion
 
         #region Houses:

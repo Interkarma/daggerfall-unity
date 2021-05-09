@@ -458,6 +458,7 @@ namespace DaggerfallWorkshop.Game.Utility
             SaveLoadManager.ClearSceneCache(true);
             GameManager.Instance.GuildManager.ClearMembershipData();
             GameManager.Instance.PlayerGPS.ClearDiscoveryData();
+            Banking.DaggerfallBankManager.ResetShip();
             RaiseOnNewGameEvent();
             ResetWeaponManager();
         }
