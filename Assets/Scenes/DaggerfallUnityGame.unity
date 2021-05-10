@@ -784,6 +784,11 @@ PrefabInstance:
       propertyPath: DungeonParent
       value: 
       objectReference: {fileID: 620133648}
+    - target: {fileID: 54817387169916590, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 114064879103926240, guid: 53a45b46ca97a974f8e677f68c2a85e6,
         type: 3}
       propertyPath: RetroTexture320x200_HUD
@@ -799,8 +804,7 @@ PrefabInstance:
       propertyPath: jumpSpeed
       value: 4.5
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 54817387169916590, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
 --- !u!1 &334547543 stripped
 GameObject:
