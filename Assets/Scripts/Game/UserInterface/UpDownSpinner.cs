@@ -174,7 +174,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public void SetValue(int value)
         {
             // Clamp values if ranges specified, otherwise accept whatever owner wants
-            if (minValue != 0 && maxValue != 0)
+            if (minValue != 0 || maxValue != 0)
                 this.value = Mathf.Clamp(value, minValue, maxValue);
             else
                 this.value = value;
@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void UpButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Auto +1 if ranges set
-            if (minValue != 0 && maxValue != 0)
+            if (minValue != 0 || maxValue != 0)
                 SetValue(value + 1);
 
             lastTickTime = Time.realtimeSinceStartup;
@@ -203,7 +203,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void DownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Auto -1 if ranges set
-            if (minValue != 0 && maxValue != 0)
+            if (minValue != 0 || maxValue != 0)
                 SetValue(value - 1);
 
             lastTickTime = Time.realtimeSinceStartup;
@@ -237,13 +237,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Handle any currently active mouse action.
                 if (action == Action.Up)
                 {   // Auto +1 if ranges set
-                    if (minValue != 0 && maxValue != 0)
+                    if (minValue != 0 || maxValue != 0)
                         SetValue(value + 1);
                     RaiseOnUpButtonClicked();
                 }
                 else if (action == Action.Down)
                 {   // Auto -1 if ranges set
-                    if (minValue != 0 && maxValue != 0)
+                    if (minValue != 0 || maxValue != 0)
                         SetValue(value - 1);
                     RaiseOnDownButtonClicked();
                 }

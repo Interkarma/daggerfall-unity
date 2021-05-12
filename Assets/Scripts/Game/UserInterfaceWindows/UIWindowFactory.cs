@@ -71,6 +71,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             { UIWindowType.Controls, typeof(DaggerfallControlsWindow) },
             { UIWindowType.Court, typeof(DaggerfallCourtWindow) },
             { UIWindowType.DaedraSummoned, typeof(DaggerfallDaedraSummonedWindow) },
+            { UIWindowType.EffectSettingsEditor, typeof(DaggerfallEffectSettingsEditorWindow) },
             { UIWindowType.ExteriorAutomap, typeof(DaggerfallExteriorAutomapWindow) },
             { UIWindowType.GuildServicePopup, typeof(DaggerfallGuildServicePopupWindow) },
             { UIWindowType.Inventory, typeof(DaggerfallInventoryWindow) },
