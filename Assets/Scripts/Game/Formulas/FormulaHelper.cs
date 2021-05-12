@@ -1306,7 +1306,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     }
                     break;
                 case (int)MonsterCareers.Nymph:
-                    FatigueDamage(target, damage);
+                    FatigueDamage(attacker, target, damage);
                     break;
                 case (int)MonsterCareers.Wereboar:
                     random = UnityEngine.Random.Range(0f, 100f);
@@ -1345,7 +1345,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     break;
                 case (int)MonsterCareers.Lamia:
                     // Nothing in classic, but DF Chronicles says 2 pts of fatigue damage per health damage
-                    FatigueDamage(target, damage);
+                    FatigueDamage(attacker, target, damage);
                     break;
                 default:
                     break;
@@ -1674,12 +1674,12 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
         }
 
-        public static void FatigueDamage(DaggerfallEntity target, int damage)
+        public static void FatigueDamage(EnemyEntity attacker, DaggerfallEntity target, int damage)
         {
-            Action<DaggerfallEntity, int> del;
+            Action<EnemyEntity, DaggerfallEntity, int> del;
             if (TryGetOverride("FatigueDamage", out del))
             {
-                del(target, damage);
+                del(attacker, target, damage);
                 return;
             }
 
