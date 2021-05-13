@@ -114,6 +114,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public delegate void OnSettingsChangedHandler();
         public event OnSettingsChangedHandler OnSettingsChanged;
 
+        protected void RaiseSettingsChanged()
+        {
+            OnSettingsChanged?.Invoke();
+        }
+
         #endregion
 
         #region Constructors
@@ -364,7 +369,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             magnitudePerLevelSpinner.Value = entry.Settings.MagnitudePerLevel;
         }
 
-        protected void UpdateCosts()
+        protected virtual void UpdateCosts()
         {
             if (OnSettingsChanged != null)
                 OnSettingsChanged();
@@ -374,7 +379,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellCostLabel.Text = spellPointCost.ToString();
         }
 
-        protected void SetSpinners(EffectSettings settings)
+        protected virtual void SetSpinners(EffectSettings settings)
         {
             if (!IsSetup)
                 return;
@@ -392,7 +397,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             magnitudePerLevelSpinner.Value = settings.MagnitudePerLevel;
         }
 
-        protected void SetEffectTemplate(IEntityEffect effectTemplate)
+        protected virtual void SetEffectTemplate(IEntityEffect effectTemplate)
         {
             this.effectTemplate = effectTemplate;
             SetSpinners(new EffectSettings());
