@@ -42,8 +42,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         QuestOffer,
         Rest,
         SpellBook,
-        SpellIconPicker,
-        SpellMaker,
+        SpellIconPicker = WitchesCovenPopup + 1, // new enum: setting this to the value after WitchesCovenPopup to avoid breaking precompiled mods
+        SpellMaker = SpellBook + 1,
         StartNewGameWizard,
         Start,
         Talk,
