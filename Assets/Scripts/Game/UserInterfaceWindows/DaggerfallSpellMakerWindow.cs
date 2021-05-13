@@ -191,7 +191,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             effectEditor.OnClose += EffectEditor_OnClose;
 
             // Setup icon picker
-            iconPicker = new SpellIconPickerWindow(uiManager, this);
+            iconPicker = (SpellIconPickerWindow)UIWindowFactory.GetInstance(UIWindowType.SpellIconPicker, uiManager, this);
             iconPicker.OnClose += IconPicker_OnClose;
         }
 
