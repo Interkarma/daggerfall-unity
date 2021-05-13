@@ -1125,7 +1125,10 @@ namespace DaggerfallWorkshop.Game.Formulas
             if ((amount == 0) && Dice100.SuccessRoll(20))
                 amount = 1;
 
-            item.LowerCondition(amount, owner);
+            if (item.IsEnchanted && owner is PlayerEntity)
+                item.LowerCondition(amount, owner, (owner as PlayerEntity).Items);      // Lower condition and trigger removal for magic items (will not be removed if AllowMagicRepairs enabled)
+            else
+                item.LowerCondition(amount, owner);                                     // Lower condition of mundane item and do not remove if it breaks
         }
 
         public static int CalculateWeaponToHit(DaggerfallUnityItem weapon)

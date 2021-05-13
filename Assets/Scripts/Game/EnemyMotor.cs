@@ -228,6 +228,10 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         void KnockbackMovement()
         {
+            // Prevent stunlocking transforming Seducers
+            if (mobile.EnemyState == MobileStates.SeducerTransform1 || mobile.EnemyState == MobileStates.SeducerTransform2)
+                return;
+
             // If hit, get knocked back
             if (KnockbackSpeed > 0)
             {

@@ -265,6 +265,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 uiManager.PushWindow(messageBox);
                 playerEntity.RegionData[regionIndex].SeverePunishmentFlags |= 1;
                 repositionPlayer = true;
+
+                // Refill player vitals after banishment, otherwise player left with 1HP outside city gates
+                playerEntity.FillVitalSigns();
                 state = 100;
             }
             // Note: Seems like an execution sentence can't be given in classic. It can't be given here, either.

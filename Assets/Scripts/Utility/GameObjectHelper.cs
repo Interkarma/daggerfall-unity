@@ -953,6 +953,12 @@ namespace DaggerfallWorkshop.Utility
                 // Individuals are always flat1 no matter gender
                 flatData = FactionFile.GetFlatData(person.FactionData.flat1);
             }
+            else if (person.IsQuestor)
+            {
+                // When person a questor use saved flat indices from questor data
+                flatData.archive = person.QuestorData.billboardArchiveIndex;
+                flatData.record = person.QuestorData.billboardRecordIndex;
+            }
             else if (person.Gender == Genders.Male)
             {
                 // Male has flat1

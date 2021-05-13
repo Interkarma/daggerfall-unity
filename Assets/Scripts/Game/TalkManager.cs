@@ -453,6 +453,11 @@ namespace DaggerfallWorkshop.Game
             get { return npcGreetingText; }
         }
 
+        public bool HasNPCsWithWork
+        {
+            get { return npcsWithWork != null && npcsWithWork.Count > 0; }
+        }
+
         #endregion
 
         #region Unity

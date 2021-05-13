@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game
             TalkManagerContext context = new TalkManagerContext();
             context.currentQuestionListItem = currentQuestionListItem;
             context.npcRace = this.npcData.race;
-            if (currentQuestionListItem != null && currentQuestionListItem.questionType == QuestionType.Work)
+            if (currentQuestionListItem != null && currentQuestionListItem.questionType == QuestionType.Work && TalkManager.Instance.HasNPCsWithWork)
             {
                 context.potentialQuestorGender = TalkManager.Instance.GetQuestorGender();
             }
