@@ -228,6 +228,7 @@ namespace DaggerfallWorkshop.Utility
             { "%wpn", null }, // Poison (?)
             { "%wth", Worth }, // Worth
         // DF Unity - new macros:
+            { "%", Percent }, // Not really a macro, just print %
             { "%pg", PlayerPronoun },   // He/She (player)
             { "%pg1", PlayerPronoun },  // His/Her (player)
             { "%pg2", PlayerPronoun2 }, // Him/Her (player)
@@ -817,6 +818,11 @@ namespace DaggerfallWorkshop.Utility
         private static string CurrentSeason(IMacroContextProvider mcp)
         {   // %sea
             return DaggerfallUnity.Instance.WorldTime.Now.SeasonName;
+        }
+
+        private static string Percent(IMacroContextProvider mcp)
+        {   // %
+            return "%";
         }
 
         private static string PlayerPronoun(IMacroContextProvider mcp)
