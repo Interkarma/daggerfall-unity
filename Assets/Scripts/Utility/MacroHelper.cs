@@ -229,7 +229,7 @@ namespace DaggerfallWorkshop.Utility
             { "%wth", Worth }, // Worth
         // DF Unity - new macros:
             { "%pg", PlayerPronoun },   // He/She (player)
-            { "%pg1", PlayerPronoun },  // He/She (player)
+            { "%pg1", PlayerPronoun },  // His/Her (player)
             { "%pg2", PlayerPronoun2 }, // Him/Her (player)
             { "%pg2self", PlayerPronoun2self },// Himself/Herself (player)
             { "%pg3", PlayerPronoun3 },  // His/Her (player)
@@ -820,8 +820,12 @@ namespace DaggerfallWorkshop.Utility
         }
 
         private static string PlayerPronoun(IMacroContextProvider mcp)
-        {   // %pg & %pg1
+        {   // %pg
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounShe") : TextManager.Instance.GetLocalizedText("pronounHe");
+        }
+        private static string PlayerPronoun1(IMacroContextProvider mcp)
+        {   // %pg1
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHis");
         }
 
         private static string PlayerPronoun2(IMacroContextProvider mcp)
