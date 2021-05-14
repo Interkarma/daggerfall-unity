@@ -470,7 +470,7 @@ namespace DaggerfallWorkshop.Game
             Transform doorOwner)
         {
             StaticDoor door;
-            if (CustomDoor.HasHit(hit, out door) || (doors && doors.HasHit(hit.point, out door))
+            if (CustomDoor.HasHit(hit, out door) || (doors && doors.HasHit(hit.point, out door)))
             {
                 // Check if close enough to activate
                 if (hit.distance > DoorActivationDistance)
