@@ -153,23 +153,20 @@ namespace DaggerfallWorkshop.Utility
             // Add models and static props
             GameObject modelsNode = new GameObject("Models");
             modelsNode.transform.parent = go.transform;
-            AddModels(dfUnity, layoutX, layoutY, ref blockData, out modelDoors, out modelBuildings, out bool dontCreateStaticDoors, combiner, modelsNode.transform);
+            AddModels(dfUnity, layoutX, layoutY, ref blockData, out modelDoors, out modelBuildings, combiner, modelsNode.transform);
             AddProps(dfUnity, ref blockData, out propDoors, combiner, modelsNode.transform);
 
             // Combine list of doors found in models and props
             List<StaticDoor> allDoors = new List<StaticDoor>();
-            if (dontCreateStaticDoors != true)
-            {
-                if (modelDoors.Count > 0) allDoors.AddRange(modelDoors);
-                if (propDoors.Count > 0) allDoors.AddRange(propDoors);
+            if (modelDoors.Count > 0) allDoors.AddRange(modelDoors);
+            if (propDoors.Count > 0) allDoors.AddRange(propDoors);
 
-                // Assign building key to each door
-                for (int i = 0; i < allDoors.Count; i++)
-                {
-                    StaticDoor door = allDoors[i];
-                    door.buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)door.recordIndex);
-                    allDoors[i] = door;
-                }
+            // Assign building key to each door
+            for (int i = 0; i < allDoors.Count; i++)
+            {
+                StaticDoor door = allDoors[i];
+                door.buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)door.recordIndex);
+                allDoors[i] = door;
             }
 
             // Assign building key to each building
@@ -713,13 +710,11 @@ namespace DaggerfallWorkshop.Utility
             ref DFBlock blockData,
             out List<StaticDoor> doorsOut,
             out List<StaticBuilding> buildingsOut,
-            out bool dontCreateStaticDoors,
             ModelCombiner combiner = null,
             Transform parent = null)
         {
             doorsOut = new List<StaticDoor>();
             buildingsOut = new List<StaticBuilding>();
-            dontCreateStaticDoors = false;
 
             // Iterate through all subrecords
             int recordCount = 0;
@@ -747,10 +742,7 @@ namespace DaggerfallWorkshop.Utility
                     // Does this model have doors?
                     StaticDoor[] staticDoors = null;
                     if (modelData.Doors != null)
-                    {
                         staticDoors = GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix);
-                        doorsOut.AddRange(staticDoors);
-                    }
 
                     // Store building information for first model of record
                     // First model is main record structure, others are attachments like posts
@@ -770,23 +762,23 @@ namespace DaggerfallWorkshop.Utility
                         firstModel = false;
                     }
 
-                    // Import custom GameObject
+                    bool dontCreateStaticDoors = false;
+
+                    // Import custom GameObject or use Daggerfall Model
                     GameObject go;
                     if (go = MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, parent, modelMatrix))
                     {
                         // Find doors
                         if (staticDoors != null && staticDoors.Length > 0)
                             CustomDoor.InitDoors(go, staticDoors, buildingKey, out dontCreateStaticDoors);
-
-                        continue;
                     }
-
-                    // Use Daggerfall Model
-                    // Add or combine
-                    if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum))
+                    else if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum))
                         AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                     else
                         combiner.Add(ref modelData, modelMatrix);
+
+                    if (modelData.Doors != null && !dontCreateStaticDoors)
+                        doorsOut.AddRange(staticDoors);
                 }
 
                 // Increment record count

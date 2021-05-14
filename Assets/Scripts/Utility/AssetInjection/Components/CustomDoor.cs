@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="building">The imported gameobject which provides building and doors.</param>
         /// <param name="staticDoors">The list of static doors for the vanilla building.</param>
         /// <param name="buildingKey">The key of the building that owns the doors.</param>
+        /// <param name="dontCreateStaticDoors">If true, custom door components request to suppress classic doors.</param>
         public static void InitDoors(GameObject building, StaticDoor[] staticDoors, int buildingKey, out bool dontCreateStaticDoors)
         {
             dontCreateStaticDoors = false;
