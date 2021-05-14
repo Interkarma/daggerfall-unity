@@ -189,6 +189,14 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Gets day of month with suffix (ex: 1st, 2nd, ... 30th)
+        /// </summary>
+        public string DayOfMonthWithSuffix
+        {
+            get { return DayOfMonth.ToString() + GetSuffix(Day + 1); }
+        }
+
+        /// <summary>
         /// Gets day of year 1-360.
         /// </summary>
         public int DayOfYear
