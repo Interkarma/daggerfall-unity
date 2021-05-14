@@ -411,6 +411,7 @@ namespace DaggerfallWorkshop.Utility
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
                 tokenText = tokens[tokenIdx].text;
+                // Check if the token contains any macro
                 if (tokenText != null && tokenText.IndexOf('%') >= 0)
                 {
                     // Handle multiline macros. (only handles the last one & must be only thing in this token)
@@ -430,57 +431,76 @@ namespace DaggerfallWorkshop.Utility
                             string word = words[wordIdx];
                             words[wordIdx] = string.Empty;
 
+                            // We loop over the entire word, in case the "word" has multiple adjacent macros without any spaces
+                            // ex: "%pg1/%pg2"
                             while (!string.IsNullOrEmpty(word))
                             {
                                 int pos;
+                                // Check if we have any macros left
                                 if ((pos = word.IndexOf('%')) >= 0 && word.Length > pos + 1)
                                 {
+                                    // Split the word into "prefix" ie: everything before the macro
+                                    // and the actual macro, potentially followed by a suffix
                                     string prefix = word.Substring(0, pos);
                                     string macro = word.Substring(pos);
-                                    string suffix = string.Empty;
+                                    string suffix = string.Empty; // represents the "leftover" after evaluating the current macro
 
                                     string symbolStr;
+                                    // Check if we have a direct match to an already evaluated macro
                                     if (macroCache.TryGetValue(macro, out symbolStr))
                                     {
                                         words[wordIdx] += $"{prefix}{symbolStr}";
                                     }
+                                    // Check if the macro is followed by any non-alpha character
                                     else if ((pos = macro.IndexOfAny(PUNCTUATION)) > 0)
                                     {
-                                        symbolStr = macro.Substring(0, pos);
-
-                                        string expandedString;
-                                        if (!macroCache.TryGetValue(symbolStr, out expandedString))
-                                        {
-                                            expandedString = GetValue(symbolStr, mcp);
-                                        }
+                                        // The punctuation ends the macro (ex: "%pg3.")
+                                        // Split it into the actual macro string vs the suffix
 
                                         suffix = macro.Substring(pos);
+                                        macro = macro.Substring(0, pos);
 
-                                        words[wordIdx] += $"{prefix}{expandedString}";
-                                        macroCache[macro] = expandedString;
+                                        // Check if our macro is already in the cache
+                                        if (!macroCache.TryGetValue(macro, out symbolStr))
+                                        {
+                                            symbolStr = GetValue(macro, mcp);
+                                        }                                        
+
+                                        // Add current prefix and evaluated macro, while keeping the suffix for the next iteration
+                                        words[wordIdx] += $"{prefix}{symbolStr}";
+                                        macroCache[macro] = symbolStr;
                                     }
+                                    // Check if the macro is followed by another macro
                                     else if ((pos = macro.Substring(1).IndexOf('%')) > 0)
                                     {
-                                        symbolStr = macro.Substring(0, pos + 1);
-
-                                        string expandedString;
-                                        if (!macroCache.TryGetValue(symbolStr, out expandedString))
-                                        {
-                                            expandedString = GetValue(symbolStr, mcp);
-                                        }
+                                        // The next macro ends the current macro (ex: "%pg3%pg3")
+                                        // Split it into the current macro string vs the suffix
 
                                         suffix = macro.Substring(pos + 1);
+                                        macro = macro.Substring(0, pos + 1);
 
-                                        words[wordIdx] += $"{prefix}{expandedString}";
-                                        macroCache[macro] = expandedString;
+                                        // Check if our macro is already in the cache
+                                        if (!macroCache.TryGetValue(macro, out symbolStr))
+                                        {
+                                            symbolStr = GetValue(macro, mcp);
+                                        }
+
+                                        // Add current prefix and evaluated macro, while keeping the suffix for the next iteration
+                                        words[wordIdx] += $"{prefix}{symbolStr}";
+                                        macroCache[macro] = symbolStr;
                                     }
                                     else
                                     {
+                                        // The entire string is the macro
+                                        // Evaluate it, and then we're done
+
                                         string expandedString = GetValue(macro, mcp);
-                                        words[wordIdx] += prefix + expandedString;
+                                        words[wordIdx] += $"{prefix}{expandedString}";
                                         macroCache[macro] = expandedString;
                                     }
 
+                                    // If we have any "leftovers", use it as the word to parse for the next iteration
+                                    // Otherwise, we're done
                                     if (!string.IsNullOrEmpty(suffix))
                                     {
                                         word = suffix;
@@ -492,11 +512,13 @@ namespace DaggerfallWorkshop.Utility
                                 }
                                 else
                                 {
+                                    // No macros left, just copy the rest of the word
                                     words[wordIdx] += word;
                                     word = string.Empty;
                                 }
                             }
                         }
+
                         // Re-assemble words and update token.
                         tokenText = string.Empty;
                         for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
