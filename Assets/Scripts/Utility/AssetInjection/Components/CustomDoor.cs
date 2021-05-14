@@ -26,8 +26,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     {
         private StaticDoor? staticDoor;
         
-        [Tooltip("If ticked, tells the game not to check for a static door hit after checking for custom doors. NOTE: This is enabled per model, not per script.")]
-        public bool NoStaticDoorCheck = false;
+        [Tooltip("Disables all classic doors on this building (not only on the gameobject where this component is added).")]
+        public bool DisableClassicDoors = false;
         
         [Tooltip("Choose which of the doors in this model's Static Door array will be copied for this custom door.")]
         public int StaticDoorCopied = 0;
@@ -35,7 +35,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// The trigger for this door.
         /// </summary>
-        [Tooltip("The trigger for this door. Drag and drop your Box Collider here.")]
+        [Tooltip("The trigger for this door. If unset, uses the first box collider found on gameobject.")]
         public BoxCollider DoorTrigger;
 
         private void Awake()
@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             CustomDoor[] allCustomDoors = building.GetComponentsInChildren<CustomDoor>();
             for (int i = 0; i < allCustomDoors.Length; i++)
             {
-                if (allCustomDoors[i].NoStaticDoorCheck == true)
+                if (allCustomDoors[i].DisableClassicDoors == true)
                     dontCreateStaticDoors = true;
 
                 if ((allCustomDoors[i].StaticDoorCopied < 0) || (allCustomDoors[i].StaticDoorCopied > staticDoors.Length))
