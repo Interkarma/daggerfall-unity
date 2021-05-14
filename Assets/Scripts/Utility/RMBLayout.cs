@@ -742,10 +742,7 @@ namespace DaggerfallWorkshop.Utility
                     // Does this model have doors?
                     StaticDoor[] staticDoors = null;
                     if (modelData.Doors != null)
-                    {
                         staticDoors = GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix);
-                        doorsOut.AddRange(staticDoors);
-                    }
 
                     // Store building information for first model of record
                     // First model is main record structure, others are attachments like posts
@@ -765,23 +762,23 @@ namespace DaggerfallWorkshop.Utility
                         firstModel = false;
                     }
 
-                    // Import custom GameObject
+                    bool dontCreateStaticDoors = false;
+
+                    // Import custom GameObject or use Daggerfall Model
                     GameObject go;
                     if (go = MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, parent, modelMatrix))
                     {
                         // Find doors
                         if (staticDoors != null && staticDoors.Length > 0)
-                            CustomDoor.InitDoors(go, staticDoors, buildingKey);
-
-                        continue;
+                            CustomDoor.InitDoors(go, staticDoors, buildingKey, out dontCreateStaticDoors);
                     }
-
-                    // Use Daggerfall Model
-                    // Add or combine
-                    if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum))
+                    else if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum))
                         AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
                     else
                         combiner.Add(ref modelData, modelMatrix);
+
+                    if (modelData.Doors != null && !dontCreateStaticDoors)
+                        doorsOut.AddRange(staticDoors);
                 }
 
                 // Increment record count

@@ -25,18 +25,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     public class CustomDoor : MonoBehaviour
     {
         private StaticDoor? staticDoor;
+        
+        [Tooltip("Disables all classic doors on this building (not only on the gameobject where this component is added).")]
+        public bool DisableClassicDoors = false;
+        
+        [Tooltip("Choose which of the doors in this model's Static Door array will be copied for this custom door.")]
+        public int StaticDoorCopied = 0;
 
         /// <summary>
         /// The trigger for this door.
         /// </summary>
-        [Tooltip("The trigger for this door.")]
+        [Tooltip("The trigger for this door. If unset, uses the first box collider found on gameobject.")]
         public BoxCollider DoorTrigger;
 
         private void Awake()
         {
             if (!DoorTrigger)
                 DoorTrigger = GetComponent<BoxCollider>();
-
             DoorTrigger.isTrigger = true;
         }
 
@@ -46,16 +51,33 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="building">The imported gameobject which provides building and doors.</param>
         /// <param name="staticDoors">The list of static doors for the vanilla building.</param>
         /// <param name="buildingKey">The key of the building that owns the doors.</param>
-        public static void InitDoors(GameObject building, StaticDoor[] staticDoors, int buildingKey)
+        /// <param name="dontCreateStaticDoors">If true, custom door components request to suppress classic doors.</param>
+        public static void InitDoors(GameObject building, StaticDoor[] staticDoors, int buildingKey, out bool dontCreateStaticDoors)
         {
-            // Make data for the static door; only the common data for the building is needed.
-            StaticDoor staticDoor = staticDoors[0];
-            staticDoor.buildingKey = buildingKey;
-
+            dontCreateStaticDoors = false;
             // Set data to all doors in the building
-            var doors = building.GetComponentsInChildren<CustomDoor>();
-            for (int i = 0; i < doors.Length; i++)
-                doors[i].staticDoor = staticDoor;
+            CustomDoor[] allCustomDoors = building.GetComponentsInChildren<CustomDoor>();
+            for (int i = 0; i < allCustomDoors.Length; i++)
+            {
+                if (allCustomDoors[i].DisableClassicDoors == true)
+                    dontCreateStaticDoors = true;
+
+                if ((allCustomDoors[i].StaticDoorCopied < 0) || (allCustomDoors[i].StaticDoorCopied > staticDoors.Length))
+                {
+                    string objectName;
+                    if (allCustomDoors[i].name == "default")
+                        objectName = allCustomDoors[i].transform.parent.name + "\\default";
+                    else
+                        objectName = allCustomDoors[i].name;
+                    Debug.LogErrorFormat("StaticDoorCopied for model {0} is outside the valid range for it's Static Door array. Defaulting to 0", objectName);
+                    allCustomDoors[i].StaticDoorCopied = 0;
+                }
+                // Make data for the static door; only the common data for the building is needed.
+                StaticDoor staticDoor = staticDoors[allCustomDoors[i].StaticDoorCopied];
+                staticDoor.buildingKey = buildingKey;
+
+                allCustomDoors[i].staticDoor = staticDoor;
+            }
         }
 
         /// <summary>
