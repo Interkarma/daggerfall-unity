@@ -253,7 +253,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnMouseClick += ExitButton_OnMouseClick;
         }
 
-        protected void InitControlState()
+        protected virtual void InitControlState()
         {
             // Must have an effect template set
             if (EffectTemplate == null)
