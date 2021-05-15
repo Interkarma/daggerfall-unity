@@ -17,9 +17,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallQuestOfferWindow : DaggerfallQuestPopupWindow
     {
-        StaticNPC.NPCData questorNPC;
-        FactionFile.SocialGroups socialGroup;
-        bool menu;
+        protected StaticNPC.NPCData questorNPC;
+        protected FactionFile.SocialGroups socialGroup;
+        protected bool menu;
 
         #region Constructors
 
