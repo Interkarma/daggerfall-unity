@@ -520,7 +520,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Resize the message panel to get a clean border of 22x22 pixel textures
             int minimum = 44;
-            float width = label.Size.x + messagePanel.LeftMargin + messagePanel.RightMargin;
+            float width = Math.Max(finalSize.x, label.Size.x) + messagePanel.LeftMargin + messagePanel.RightMargin;
             float height = label.Size.y + messagePanel.TopMargin + messagePanel.BottomMargin;
 
             // Enforce a minimum size
