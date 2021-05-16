@@ -2146,6 +2146,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Hover & StartGame Event Handlers
 
+        /// <summary>
+        /// Event raised when an item is hovered over in either list, the paperdoll, or accessories.
+        /// </summary>
+        public delegate void OnItemHoverHandler(DaggerfallUnityItem item);
+        public event OnItemHoverHandler OnItemHover;
+        protected virtual void RaiseOnItemHoverEvent(DaggerfallUnityItem item)
+        {
+            OnItemHover?.Invoke(item);
+        }
+
         protected virtual void PaperDoll_OnMouseMove(int x, int y)
         {
             byte value = paperDoll.GetEquipIndex(x, y);
@@ -2168,6 +2178,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // Update the info panel if used
                     if (itemInfoPanelLabel != null)
                         UpdateItemInfoPanel(item);
+
+                    RaiseOnItemHoverEvent(item);
                 }
                 // Update tooltip text
                 paperDoll.ToolTipText = text;
@@ -2187,12 +2199,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnityItem item = playerEntity.ItemEquipTable.GetItem(slot);
             if (item == null)
                 return;
-            UpdateItemInfoPanel(item);
+
+            // Update the info panel if used
+            if (itemInfoPanelLabel != null)
+                UpdateItemInfoPanel(item);
+
+            RaiseOnItemHoverEvent(item);
         }
 
         protected virtual void ItemListScroller_OnHover(DaggerfallUnityItem item)
         {
-            UpdateItemInfoPanel(item);
+            // Update the info panel if used
+            if (itemInfoPanelLabel != null)
+                UpdateItemInfoPanel(item);
+
+            RaiseOnItemHoverEvent(item);
         }
 
         protected virtual void GoldButton_OnMouseEnter(BaseScreenComponent sender)

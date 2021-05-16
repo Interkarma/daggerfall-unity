@@ -465,6 +465,7 @@ namespace DaggerfallWorkshop.Game
             dfExteriorAutomapWindow = (DaggerfallExteriorAutomapWindow)UIWindowFactory.GetInstance(UIWindowType.ExteriorAutomap, uiManager);
 
             instantiatePersistentWindowInstances = false;
+            RaiseOnInstantiatePersistentWindowInstances();
         }
 
         void ProcessMessages()
@@ -1493,6 +1494,16 @@ namespace DaggerfallWorkshop.Game
         private void GivePc_OnOfferPending(Questing.Actions.GivePc sender)
         {
             lastPendingOfferSender = sender;
+        }
+
+        /// <summary>
+        /// Event raised when the persistent window instances have been instantiated.
+        /// </summary>
+        public delegate void OnInstantiatePersistentWindowInstancesHandler();
+        public event OnInstantiatePersistentWindowInstancesHandler OnInstantiatePersistentWindowInstances;
+        protected virtual void RaiseOnInstantiatePersistentWindowInstances()
+        {
+            OnInstantiatePersistentWindowInstances?.Invoke();
         }
 
         #endregion
