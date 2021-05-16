@@ -16,7 +16,8 @@ MonoBehaviour:
     m_Code: en
   m_SharedData: {fileID: 11400000, guid: 3bc310f2421c1a740ae0f7372d787911, type: 2}
   m_Metadata:
-    m_Items: []
+    m_Items:
+    - id: 0
   m_TableData:
   - m_Id: 1
     m_Localized: This string table collection stores text that was hard-coded in
@@ -34,7 +35,8 @@ MonoBehaviour:
   - m_Id: 4
     m_Localized: Load Game
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - id: 0
   - m_Id: 5
     m_Localized: '%s just died.'
     m_Metadata:
@@ -3642,5 +3644,13 @@ MonoBehaviour:
     m_Localized: Unknown Powers
     m_Metadata:
       m_Items: []
+  - m_Id: 84794791081250816
+    m_Localized: You never awaken.
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
+    00000000:
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 0400000000000000
