@@ -246,6 +246,7 @@ namespace DaggerfallWorkshop.Utility
             { "%hour", TimeHour }, // Current hour
             { "%sign", CurrentSign }, // Current sign (ex: The Lady, The Tower, ...). Not TES2 lore, but it's a staple at this point
             { "%sea", CurrentSeason }, // Current season
+            { "%cbd", CurrentBuilding }, // Name of the current building, if any
         };
 
         // Multi-line macro handlers, returns tokens.
@@ -823,6 +824,21 @@ namespace DaggerfallWorkshop.Utility
         private static string Percent(IMacroContextProvider mcp)
         {   // %
             return "%";
+        }
+		
+        private static string CurrentBuilding(IMacroContextProvider mcp)
+        {   // %cbd
+            if(!GameManager.Instance.IsPlayerInsideBuilding)
+            {
+                return "[invalid]";
+            }
+
+            PlayerEnterExit enterExit = GameManager.Instance.PlayerEnterExit;
+            DaggerfallInterior buildingInterior = enterExit.Interior;
+            DFLocation.BuildingData buildingData = buildingInterior.BuildingData;
+            PlayerGPS gps = GameManager.Instance.PlayerGPS;
+            DFLocation location = gps.CurrentLocation;
+            return BuildingNames.GetName(buildingData.NameSeed, buildingData.BuildingType, buildingData.FactionId, location.Name, location.RegionName);
         }
 
         private static string PlayerPronoun(IMacroContextProvider mcp)
