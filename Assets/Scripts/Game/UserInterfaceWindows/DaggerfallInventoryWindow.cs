@@ -375,7 +375,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localItemListScroller.OnItemRightClick += LocalItemListScroller_OnItemRightClick;
             localItemListScroller.OnItemMiddleClick += LocalItemListScroller_OnItemMiddleClick;
             if (itemInfoPanelLabel != null)
-                localItemListScroller.OnItemHover += ItemListScroller_OnHover;
+                localItemListScroller.OnItemHover += LocalItemListScroller_OnHover;
 
             remoteItemListScroller = new ItemListScroller(defaultToolTip)
             {
@@ -392,7 +392,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetRemoteItemsAnimation();
 
             if (itemInfoPanelLabel != null)
-                remoteItemListScroller.OnItemHover += ItemListScroller_OnHover;
+                remoteItemListScroller.OnItemHover += RemoteItemListScroller_OnHover;
         }
 
         protected virtual Color ItemBackgroundColourHandler(DaggerfallUnityItem item)
@@ -2149,11 +2149,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// Event raised when an item is hovered over in either list, the paperdoll, or accessories.
         /// </summary>
-        public delegate void OnItemHoverHandler(DaggerfallUnityItem item);
+        public enum ItemHoverLocation { Accessories, Paperdoll, LocalList, RemoteList }
+        public delegate void OnItemHoverHandler(DaggerfallUnityItem item, ItemHoverLocation loc);
         public event OnItemHoverHandler OnItemHover;
-        protected virtual void RaiseOnItemHoverEvent(DaggerfallUnityItem item)
+        protected virtual void RaiseOnItemHoverEvent(DaggerfallUnityItem item, ItemHoverLocation loc)
         {
-            OnItemHover?.Invoke(item);
+            OnItemHover?.Invoke(item, loc);
         }
 
         protected virtual void PaperDoll_OnMouseMove(int x, int y)
@@ -2179,7 +2180,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (itemInfoPanelLabel != null)
                         UpdateItemInfoPanel(item);
 
-                    RaiseOnItemHoverEvent(item);
+                    RaiseOnItemHoverEvent(item, ItemHoverLocation.Paperdoll);
                 }
                 // Update tooltip text
                 paperDoll.ToolTipText = text;
@@ -2204,7 +2205,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (itemInfoPanelLabel != null)
                 UpdateItemInfoPanel(item);
 
-            RaiseOnItemHoverEvent(item);
+            RaiseOnItemHoverEvent(item, ItemHoverLocation.Accessories);
+        }
+
+        protected virtual void LocalItemListScroller_OnHover(DaggerfallUnityItem item)
+        {
+            ItemListScroller_OnHover(item);
+            RaiseOnItemHoverEvent(item, ItemHoverLocation.LocalList);
+        }
+
+        protected virtual void RemoteItemListScroller_OnHover(DaggerfallUnityItem item)
+        {
+            ItemListScroller_OnHover(item);
+            RaiseOnItemHoverEvent(item, ItemHoverLocation.RemoteList);
         }
 
         protected virtual void ItemListScroller_OnHover(DaggerfallUnityItem item)
@@ -2212,8 +2225,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update the info panel if used
             if (itemInfoPanelLabel != null)
                 UpdateItemInfoPanel(item);
-
-            RaiseOnItemHoverEvent(item);
         }
 
         protected virtual void GoldButton_OnMouseEnter(BaseScreenComponent sender)
