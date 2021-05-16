@@ -29,10 +29,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         EffectSettingsEditor,
         ExteriorAutomap,
         GuildServicePopup,
-        GuildServiceCureDisease,
-        GuildServiceDonation,
-        GuildServiceTraining,
-        Inventory,
+        GuildServiceCureDisease = 39,   // Ensure existing values remain 
+        GuildServiceDonation = 40,      //  unchanged so as not to break 
+        GuildServiceTraining = 41,      //  existing pre-compiled mods.
+        Inventory = 11,
         ItemMaker,
         JoystickControls,
         LoadClassicGame,
