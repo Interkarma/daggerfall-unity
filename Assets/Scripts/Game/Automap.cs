@@ -1931,12 +1931,6 @@ namespace DaggerfallWorkshop.Game
                     // Create dungeon layout
                     foreach (DFLocation.DungeonBlock block in blocks)
                     {
-                        if (location.Name == "Orsinium")
-                        {
-                            if (block.X == -1 && block.Z == -1 && block.BlockName == "N0000065.RDB")
-                                continue;
-                        }
-
                         DFBlock blockData;
                         int[] textureTable = GameManager.Instance.PlayerEnterExit?.Dungeon?.DungeonTextureTable;
                         Automap.isCreatingDungeonAutomapBaseGameObjects = true;
