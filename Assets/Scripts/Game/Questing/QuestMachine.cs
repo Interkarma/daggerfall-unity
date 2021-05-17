@@ -346,6 +346,9 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new TotingItemAndClickedNpc(null));
             RegisterAction(new DailyFrom(null));
             RegisterAction(new DroppedItemAtPlace(null));
+            RegisterAction(new Season(null));
+            RegisterAction(new Actions.Weather(null));
+            RegisterAction(new Climate(null));
 
             // Register default actions
             RegisterAction(new EndQuest(null));
@@ -411,6 +414,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new SetPlayerCrime(null));
             RegisterAction(new SpawnCityGuards(null));
             RegisterAction(new UnrestrainFoe(null));
+            RegisterAction(new TrainPc(null));
 
             // Raise event for custom actions to be registered
             RaiseOnRegisterCustomerActionsEvent();
