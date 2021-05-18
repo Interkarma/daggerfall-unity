@@ -592,15 +592,11 @@ namespace DaggerfallWorkshop.Game.Questing
         static readonly int[] validHouseTypes = { 17, 18, 19, 20 };
         static readonly int[] validShopTypes = { 0, 2, 5, 6, 7, 8, 9, 12, 13 }; // not including bank and library
 
-        public static bool IsPlayerAtPlaceType(int p1, int p2, int p3)
+        public static bool IsPlayerAtBuildingType(int p2, int p3)
         {
             // Get component handling player world status and transitions
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             if (!playerEnterExit)
-                return false;
-
-            // Only support building types for now
-            if (p1 != 0)
                 return false;
 
             if (!playerEnterExit.IsPlayerInsideBuilding)
@@ -620,7 +616,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     case 2: // shop
                         return validShopTypes.Contains(buildingType);
                     default: // unhandled
-                        Debug.LogWarning($"Unhandled building type: p1={p1}, p2={p2}, p3={p3}");
+                        Debug.LogWarning($"Unhandled building type: p1=0, p2={p2}, p3={p3}");
                         return false;
                 }
             }
