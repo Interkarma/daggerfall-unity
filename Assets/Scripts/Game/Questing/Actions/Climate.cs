@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                     : base(parentQuest)
         {
             IsTriggerCondition = true;
+            IsAlwaysOnTriggerCondition = true;
         }
 
         public override IQuestAction CreateNew(string source, Quest parentQuest)
