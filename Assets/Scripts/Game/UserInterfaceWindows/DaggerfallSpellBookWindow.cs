@@ -684,7 +684,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Macro handling
 
-        public override MacroDataSource GetMacroDataSource()
+        public MacroDataSource GetMacroDataSource()
         {
             return new SpellbookMacroDataSource(this);
         }
