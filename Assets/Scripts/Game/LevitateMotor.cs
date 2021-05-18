@@ -68,19 +68,8 @@ namespace DaggerfallWorkshop.Game
             if (GameManager.Instance.PlayerEntity.IsParalyzed)
                 return;
 
-            float inputX = 0f;
-            float inputY = 0f;
-            // Forward/backwards
-            if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
-                inputY++;
-            if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
-                inputY--;
-
-            // Right/left
-            if (InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
-                inputX++;
-            if (InputManager.Instance.HasAction(InputManager.Actions.MoveLeft))
-                inputX--;
+            float inputX = InputManager.Instance.Horizontal;
+            float inputY = InputManager.Instance.Vertical;
 
             if (inputX != 0.0f || inputY != 0.0f)
             {
