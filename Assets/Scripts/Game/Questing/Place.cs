@@ -569,6 +569,9 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        static readonly int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
+        static readonly int[] validHouseTypes = { 17, 18, 19, 20 };
+        static readonly int[] validShopTypes = { 0, 2, 5, 6, 7, 8, 9, 12, 13 }; // not including bank and library
         #endregion
 
         #region Local Site Methods
@@ -601,6 +604,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid, p3);
             else if (p2 == -1 && p3 == 1)
                 foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyHouse, p3);
+            else if (p2 == -1 && p3 == 2)
+                foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyShop, p3);
             else
                 foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2, p3);
 
@@ -1024,10 +1029,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         SiteDetails[] CollectQuestSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType, int guildHallFaction)
         {
-            // Valid building types for valid search
-            int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
-            int[] validHouseTypes = { 17, 18, 19, 20 };
-
             List<SiteDetails> foundSites = new List<SiteDetails>();
 
             // Get sites already involved in active quests and this quest so far
@@ -1071,6 +1072,18 @@ namespace DaggerfallWorkshop.Game.Questing
                                 {
                                     wildcardFound = true;
                                     wildcardType = (DFLocation.BuildingTypes)validHouseTypes[j];
+                                    break;
+                                }
+                            }
+                        }
+                        else if (buildingType == DFLocation.BuildingTypes.AnyShop)
+                        {
+                            for (int j = 0; j < validShopTypes.Length; j++)
+                            {
+                                if (validShopTypes[j] == (int)buildingSummary[i].BuildingType)
+                                {
+                                    wildcardFound = true;
+                                    wildcardType = (DFLocation.BuildingTypes)validShopTypes[j];
                                     break;
                                 }
                             }
