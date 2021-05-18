@@ -14,6 +14,7 @@ using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Linq;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
@@ -569,9 +570,66 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        /// <summary>
+        /// Custom parser to handle hex or decimal values from places data table.
+        /// </summary>
+        public static int CustomParseInt(string value)
+        {
+            int result;
+            if (value.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
+            {
+                result = int.Parse(value.Replace("0x", ""), NumberStyles.HexNumber);
+            }
+            else
+            {
+                result = int.Parse(value);
+            }
+
+            return result;
+        }
+
         static readonly int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
         static readonly int[] validHouseTypes = { 17, 18, 19, 20 };
         static readonly int[] validShopTypes = { 0, 2, 5, 6, 7, 8, 9, 12, 13 }; // not including bank and library
+
+        public static bool IsPlayerAtPlaceType(int p1, int p2, int p3)
+        {
+            // Get component handling player world status and transitions
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            if (!playerEnterExit)
+                return false;
+
+            // Only support building types for now
+            if (p1 != 0)
+                return false;
+
+            if (!playerEnterExit.IsPlayerInsideBuilding)
+                return false;
+
+            int buildingType = (int)playerEnterExit.Interior.BuildingData.BuildingType;
+
+            // DFU extensions
+            if (p2 == -1)
+            {
+                switch(p3)
+                {
+                    case 0: // random
+                        return validBuildingTypes.Contains(buildingType);
+                    case 1: // house
+                        return validHouseTypes.Contains(buildingType);
+                    case 2: // shop
+                        return validShopTypes.Contains(buildingType);
+                    default: // unhandled
+                        Debug.LogWarning($"Unhandled building type: p1={p1}, p2={p2}, p3={p3}");
+                        return false;
+                }
+            }
+            else
+            {
+                return buildingType == p2;
+            }
+        }
+
         #endregion
 
         #region Local Site Methods
@@ -985,24 +1043,6 @@ namespace DaggerfallWorkshop.Game.Questing
         #endregion
 
         #region Private Methods
-
-        /// <summary>
-        /// Custom parser to handle hex or decimal values from places data table.
-        /// </summary>
-        int CustomParseInt(string value)
-        {
-            int result = -1;
-            if (value.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
-            {
-                result = int.Parse(value.Replace("0x", ""), NumberStyles.HexNumber);
-            }
-            else
-            {
-                result = int.Parse(value);
-            }
-
-            return result;
-        }
 
         /// <summary>
         /// Checks if location is one of the dungeon types.

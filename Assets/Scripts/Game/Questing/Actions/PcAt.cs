@@ -16,6 +16,8 @@ using System;
 using DaggerfallConnect;
 using FullSerializer;
 
+using DaggerfallWorkshop.Utility;
+
 namespace DaggerfallWorkshop.Game.Questing.Actions
 {
     /// <summary>
@@ -27,6 +29,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         Symbol taskSymbol;
         int textId;
         bool textShown;
+        // Place type parameters
+        int p2;                     // Parameter 2
+        int p3;                     // Parameter 3
 
         public override string Pattern
         {
@@ -36,10 +41,16 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Probably a change between writing of docs and Template v1.11.
             // Supporting both variants as quest authors are working from docs
             // Docs also missing "pc at aPlace set aTask saying nnnn"
+            // DFU extension: also adding "pc at any <placeType>" so quests can check for any place of a certain type
             get { return @"pc at (?<aPlace>\w+) set (?<aTask>[a-zA-Z0-9_.]+) saying (?<id>\d+)|" +
                          @"pc at (?<aPlace>\w+) set (?<aTask>[a-zA-Z0-9_.]+)|" +
                          @"pc at (?<aPlace>\w+) do (?<aTask>[a-zA-Z0-9_.]+) saying (?<id>\d+)|" +
-                         @"pc at (?<aPlace>\w+) do (?<aTask>[a-zA-Z0-9_.]+)"; }
+                         @"pc at (?<aPlace>\w+) do (?<aTask>[a-zA-Z0-9_.]+)|" +
+                         @"pc at any (?<placeType>\w+) set (?<aTask>[a-zA-Z0-9_.]+) saying (?<id>\d+)|" +
+                         @"pc at any (?<placeType>\w+) set (?<aTask>[a-zA-Z0-9_.]+)|" +
+                         @"pc at any (?<placeType>\w+) do (?<aTask>[a-zA-Z0-9_.]+) saying (?<id>\d+)|" +
+                         @"pc at any (?<placeType>\w+) do (?<aTask>[a-zA-Z0-9_.]+)";
+            }
         }
 
         public PcAt(Quest parentQuest)
@@ -56,7 +67,33 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             // Factory new pcat
             PcAt pcat = new PcAt(parentQuest);
-            pcat.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+
+            // If this is a classic "pc at" action, use a declared location
+            if (string.IsNullOrEmpty(match.Groups["placeType"].Value))
+            {
+                pcat.placeSymbol = new Symbol(match.Groups["aPlace"].Value);
+            }
+            else
+            {
+                string name = match.Groups["placeType"].Value;
+                Table placesTable = QuestMachine.Instance.PlacesTable;
+                if (placesTable.HasValue(name))
+                {
+                    // Store values
+                    int p1 = Place.CustomParseInt(placesTable.GetValue("p1", name));
+                    if(p1 != 0 && p1 != 1)
+                    {
+                        throw new Exception("PcAt: This trigger condition can only be used with building types (p1=0) in Quests-Places table.");
+                    }
+                    pcat.p2 = Place.CustomParseInt(placesTable.GetValue("p2", name));
+                    pcat.p3 = Place.CustomParseInt(placesTable.GetValue("p3", name));
+                }
+                else
+                {
+                    throw new Exception(string.Format("PcAt: Could not find place type name in data table: '{0}'", name));
+                }
+            }
+
             pcat.taskSymbol = new Symbol(match.Groups["aTask"].Value);
             pcat.textId = Parser.ParseInt(match.Groups["id"].Value);
 
@@ -68,15 +105,22 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         /// </summary>
         public override void Update(Task caller)
         {
-            bool result = false;
+            bool result;
 
-            // Get place resource
-            Place place = ParentQuest.GetPlace(placeSymbol);
-            if (place == null)
-                return;
+            if (placeSymbol != null)
+            {
+                // Get place resource
+                Place place = ParentQuest.GetPlace(placeSymbol);
+                if (place == null)
+                    return;
 
-            // Check if player at this place
-            result = place.IsPlayerHere();
+                // Check if player at this place
+                result = place.IsPlayerHere();
+            }
+            else
+            {
+                result = Place.IsPlayerAtBuildingType(p2, p3);
+            }
 
             // Handle positive check
             if (result)
@@ -108,6 +152,9 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             public Symbol taskSymbol;
             public int textId;
             public bool textShown;
+            // Place type parameters
+            public int p2;
+            public int p3;
         }
 
         public override object GetSaveData()
@@ -117,6 +164,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             data.taskSymbol = taskSymbol;
             data.textId = textId;
             data.textShown = textShown;
+            data.p2 = p2;
+            data.p3 = p3;
 
             return data;
         }
@@ -131,6 +180,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             taskSymbol = data.taskSymbol;
             textId = data.textId;
             textShown = data.textShown;
+            p2 = data.p2;
+            p3 = data.p3;
         }
 
         #endregion
