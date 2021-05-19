@@ -335,14 +335,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Remove item from player inventory unless a stack remains.
             foreach (DaggerfallUnityItem item in cauldron)
             {
-                DaggerfallUnityItem playerItem = GameManager.Instance.PlayerEntity.Items.GetItem(item.ItemGroup, item.TemplateIndex);
+                DaggerfallUnityItem playerItem = GameManager.Instance.PlayerEntity.Items.GetItem(item.ItemGroup, item.TemplateIndex, allowEnchantedItem: false);
                 if (playerItem != null)
                 {
                     GameManager.Instance.PlayerEntity.Items.RemoveOne(playerItem);
                 }
                 else
                 {
-                    DaggerfallUnityItem wagonItem = GameManager.Instance.PlayerEntity.WagonItems.GetItem(item.ItemGroup, item.TemplateIndex);
+                    DaggerfallUnityItem wagonItem = GameManager.Instance.PlayerEntity.WagonItems.GetItem(item.ItemGroup, item.TemplateIndex, allowEnchantedItem: false);
                     if (wagonItem != null)
                     {
                         GameManager.Instance.PlayerEntity.WagonItems.RemoveOne(wagonItem);
