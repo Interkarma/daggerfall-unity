@@ -783,7 +783,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Helper Methods
 
-        protected void SetRemoteItemsAnimation()
+        protected virtual void SetRemoteItemsAnimation()
         {
             // Add animation handler for shop shelf stealing
             if (shopShelfStealing)
@@ -795,7 +795,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItemListScroller.BackgroundAnimationHandler = null;
         }
 
-        protected void SelectTabPage(TabPages tabPage)
+        protected virtual void SelectTabPage(TabPages tabPage)
         {
             // Select new tab page
             selectedTabPage = tabPage;
@@ -816,7 +816,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localItemListScroller.Items = localItemsFiltered;
         }
 
-        protected void SelectActionMode(ActionModes mode)
+        protected virtual void SelectActionMode(ActionModes mode)
         {
             selectedActionMode = mode;
 

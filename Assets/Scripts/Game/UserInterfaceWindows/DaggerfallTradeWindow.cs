@@ -567,7 +567,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Helper Methods
 
-        protected void SelectActionMode(ActionModes mode)
+        protected override void SelectActionMode(ActionModes mode)
         {
             selectedActionMode = mode;
             if (mode == ActionModes.Info)
