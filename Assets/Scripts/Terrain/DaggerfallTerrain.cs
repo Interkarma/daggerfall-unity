@@ -116,14 +116,7 @@ namespace DaggerfallWorkshop
             // Create terrain material
             if (terrainMaterial == null)
             {
-                if ((SystemInfo.supports2DArrayTextures) && DaggerfallUnity.Settings.EnableTextureArrays)
-                {
-                    terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTilemapTextureArrayShaderName));
-                }
-                else
-                {
-                    terrainMaterial = new Material(Shader.Find(MaterialReader._DaggerfallTilemapShaderName));
-                }
+                terrainMaterial = dfUnity.TerrainMaterialProvider.CreateMaterial();
                 UpdateClimateMaterial();
             }
 
@@ -133,49 +126,14 @@ namespace DaggerfallWorkshop
 
         /// <summary>
         /// Updates climate material based on current map pixel data.
+        /// Use <see cref="PromoteTerrainData()"/> to apply changes.
         /// </summary>
         public void UpdateClimateMaterial(bool init = false)
         {
             // Update atlas texture if world climate changed
             if (currentWorldClimate != MapData.worldClimate || dfUnity.WorldTime.Now.SeasonValue != season || init)
             {
-                // Get current climate and ground archive
-                DFLocation.ClimateSettings climate = MapsFile.GetWorldClimateSettings(MapData.worldClimate);
-                int groundArchive = climate.GroundArchive;
-                if (climate.ClimateType != DFLocation.ClimateBaseType.Desert &&
-                    dfUnity.WorldTime.Now.SeasonValue == DaggerfallDateTime.Seasons.Winter)
-                {
-                    // Offset to snow textures
-                    groundArchive++;
-                }
-
-                if ((SystemInfo.supports2DArrayTextures) && DaggerfallUnity.Settings.EnableTextureArrays)
-                {
-                    Material tileMaterial = dfUnity.MaterialReader.GetTerrainTextureArrayMaterial(groundArchive);
-                    currentWorldClimate = MapData.worldClimate;
-
-                    // Assign textures (propagate material settings from tileMaterial to terrainMaterial)
-                    terrainMaterial.SetTexture(TileTexArrUniforms.TileTexArr, tileMaterial.GetTexture(TileTexArrUniforms.TileTexArr));
-                    terrainMaterial.SetTexture(TileTexArrUniforms.TileNormalMapTexArr, tileMaterial.GetTexture(TileTexArrUniforms.TileNormalMapTexArr));
-                    if (tileMaterial.IsKeywordEnabled(KeyWords.NormalMap))
-                        terrainMaterial.EnableKeyword(KeyWords.NormalMap);
-                    else
-                        terrainMaterial.DisableKeyword(KeyWords.NormalMap);
-                    terrainMaterial.SetTexture(TileTexArrUniforms.TileMetallicGlossMapTexArr, tileMaterial.GetTexture(TileTexArrUniforms.TileMetallicGlossMapTexArr));
-                    terrainMaterial.SetTexture(TileTexArrUniforms.TilemapTex, tileMapTexture);
-                }
-                else
-                {
-                    // Get tileset material to "steal" atlas texture for our shader
-                    // TODO: Improve material system to handle custom shaders
-                    Material tileSetMaterial = dfUnity.MaterialReader.GetTerrainTilesetMaterial(groundArchive);
-                    currentWorldClimate = MapData.worldClimate;
-
-                    // Assign textures
-                    terrainMaterial.SetTexture(TileUniforms.TileAtlasTex, tileSetMaterial.GetTexture(TileUniforms.TileAtlasTex));
-                    terrainMaterial.SetTexture(TileUniforms.TilemapTex, tileMapTexture);
-                    terrainMaterial.SetInt(TileUniforms.TilemapDim, tilemapDim);
-                }
+                currentWorldClimate = MapData.worldClimate;
             }
         }
 
@@ -340,6 +298,8 @@ namespace DaggerfallWorkshop
             tileMapTexture.Apply(false);
 
             // Promote material
+            var terrainMaterialData = new TerrainMaterialData(terrainMaterial, terrain.terrainData, tileMapTexture, currentWorldClimate);
+            dfUnity.TerrainMaterialProvider.PromoteMaterial(this, terrainMaterialData);
             terrain.materialTemplate = terrainMaterial;
 
             // Promote heights
