@@ -283,18 +283,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Load spells for sale
             offeredSpells.Clear();
-            List<SpellRecord.SpellRecordData> standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Arena2Path, spellsFilename));
-            if (standardSpells == null || standardSpells.Count == 0)
+
+            var effectBroker = GameManager.Instance.EntityEffectBroker;
+
+            IEnumerable<SpellRecord.SpellRecordData> standardSpells = effectBroker.StandardSpells;
+            if (standardSpells == null || standardSpells.Count() == 0)
             {
                 Debug.LogError("Failed to load SPELLS.STD for spellbook in buy mode.");
                 return;
             }
 
             // Add standard spell bundles to offer
-            for (int i = 0; i < standardSpells.Count; i++)
+            foreach(SpellRecord.SpellRecordData standardSpell in standardSpells)
             {
                 // Filter internal spells starting with exclamation point '!'
-                if (standardSpells[i].spellName.StartsWith("!"))
+                if (standardSpell.spellName.StartsWith("!"))
                     continue;
 
                 // NOTE: Classic allows purchase of duplicate spells
@@ -303,7 +306,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 // Get effect bundle settings from classic spell
                 EffectBundleSettings bundle;
-                if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(standardSpells[i], BundleTypes.Spell, out bundle))
+                if (!effectBroker.ClassicSpellRecordDataToEffectBundleSettings(standardSpell, BundleTypes.Spell, out bundle))
                     continue;
 
                 // Store offered spell and add to list box
@@ -311,7 +314,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Add custom spells for sale bundles to list of offered spells
-            offeredSpells.AddRange(GameManager.Instance.EntityEffectBroker.GetCustomSpellBundles(EntityEffectBroker.CustomSpellBundleOfferUsage.SpellsForSale));
+            offeredSpells.AddRange(effectBroker.GetCustomSpellBundles(EntityEffectBroker.CustomSpellBundleOfferUsage.SpellsForSale));
 
             // Sort spells for easier finding
             offeredSpells = offeredSpells.OrderBy(x => x.Name).ToList();
