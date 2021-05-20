@@ -547,6 +547,66 @@ namespace DaggerfallConnect.Arena2
                 ReadRdbUnknownLinkedList(reader, block);
                 ReadRdbObjectSectionRootList(reader, block);
                 ReadRdbObjectLists(reader, block);
+
+                // Hack for W0000009.RDB to reposition the exit by replacing a corridor corner with one having a door.
+                // Classic does a similar but much dirtier trick.
+                if (block == 1025)
+                {
+                    // Add a brick wall door model
+                    ushort wallModelIndex = 0;
+                    var modelList = blocks[block].DFBlock.RdbBlock.ModelReferenceList;
+                    for (ushort i = 0; i < modelList.Length; ++i)
+                    {
+                        // Replace the first non used model reference by the wall
+                        if (modelList[i].ModelIdNum == 0)
+                        {
+                            var model = new DFBlock.RdbModelReference
+                            {
+                                ModelId = "72100",
+                                ModelIdNum = 72100,
+                                Description = "DOR"
+                            };
+                            modelList[i] = model;
+                            wallModelIndex = i;
+                            break;
+                        }
+                    }
+
+                    // Replace a corner near the original exit with a model having a door
+                    ref var rdbObject = ref blocks[block].DFBlock.RdbBlock.ObjectRootList[5].RdbObjects[39];
+                    rdbObject.XPos += 64;
+                    rdbObject.ZPos -= 64;
+                    int x = rdbObject.XPos;
+                    int y = rdbObject.YPos;
+                    int z = rdbObject.ZPos;
+                    rdbObject.Resources.ModelResource.ModelIndex = 35;
+                    rdbObject.Resources.ModelResource.YRotation = -512;
+                    // Move the exit to the corner door position
+                    rdbObject = ref blocks[block].DFBlock.RdbBlock.ObjectRootList[8].RdbObjects[0];
+                    rdbObject.XPos = x;
+                    rdbObject.ZPos = z + 126;
+                    // Move the start marker near the exit
+                    rdbObject = ref blocks[block].DFBlock.RdbBlock.ObjectRootList[4].RdbObjects[5];
+                    rdbObject.XPos = x;
+                    rdbObject.ZPos = z;
+
+                    // Add an RDB Object to seal the door in case the block is not the starting one
+                    var rdbObjects = new List<DFBlock.RdbObject>(blocks[block].DFBlock.RdbBlock.ObjectRootList[8].RdbObjects);
+                    var wall = new DFBlock.RdbObject
+                    {
+                        Index = rdbObjects.Count,
+                        XPos = x,
+                        YPos = y,
+                        ZPos = z + 128,
+                        Type = DFBlock.RdbResourceTypes.Model
+                    };
+                    wall.Resources.ModelResource.ModelIndex = wallModelIndex;
+                    wall.Resources.ModelResource.YRotation = -512;
+                    rdbObjects.Add(wall);
+
+                    blocks[block].DFBlock.RdbBlock.ObjectRootList[8].RdbObjects = rdbObjects.ToArray();
+                }
+
             }
             else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdi)
             {
