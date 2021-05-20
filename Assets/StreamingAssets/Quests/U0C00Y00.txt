@@ -83,14 +83,13 @@ _qgfriend_ is one of the Daedra Prince Boethiah's agents in Tamriel.
 <--->
 _qgfriend_ is a mean-spirited bully who works for the Daedra Prince Boethiah.
 
-Message:  1013
-Boethiah is the Daedra Prince of Cruelty and Torture. Not a nice lady.
-<--->
-She's a Prince of Oblivion, one of the Daedric Regents, and a real killer.
+-Message:  1013
+-Boethiah is the Daedra Prince of Cruelty and Torture. Not a nice lady.
+-<--->
+-She's a Prince of Oblivion, one of the Daedric Regents, and a real killer.
 
 Message:  1014
-<ce>       _artifact_ protects it's wearer from many kinds of harm.
- Fire and life draining are the two commonly known.
+_artifact_ protects it's wearer from many kinds of harm. Fire and life draining are the two commonly known.
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -173,9 +172,9 @@ QBN:
 Item _artifact_ artifact Ebony_Mail anyInfo 1014
 Item _letter_ letter used 1040
 
-Person _questgiver_ face 112 group Questor anyInfo 1013
+-Person _questgiver_ face 112 group Questor anyInfo 1013
 Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
-Person _mfriend_ group Local_4.0 female
+Person _mfriend_ group Resident1 female
 
 Place _mondung_ remote dungeon2
 Place _hideout_ remote dungeon6
@@ -188,7 +187,6 @@ Foe _monster1_ is Spellsword
 
 --	Quest start-up:
 	dialog link for person _mfriend_ 
-	start timer _1stparton_ 
 	start timer _escapetime_ 
 	reveal _mondung_ 
 	log 1010 step 0 
@@ -218,7 +216,9 @@ _clearclick_ task:
 	say 1003 
 	clear _npcclicked_ _clearclick_ 
 
-variable _escapetime_
+_escapetime_ task:
+	start timer _1stparton_ 
+
 _S.08_ task:
 	when _escapetime_ and not _mondead_ 
 	place item _letter_ at _mondung_ 
