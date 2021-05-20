@@ -2093,9 +2093,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     missile.Payload = readySpell;
             }
 
-            // Clear ready spell and reset casting - do not store last spell if casting from item
+            // Clear ready spell and reset casting - do not update last spell if casting from item
             RaiseOnCastReadySpell(readySpell);
-            lastSpell = (readySpellDoesNotCostSpellPoints) ? null : readySpell;
+            if (!readySpellDoesNotCostSpellPoints)
+                lastSpell = readySpell;
             readySpell = null;
             readySpellCastingCost = 0;
             instantCast = false;
