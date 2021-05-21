@@ -2305,7 +2305,9 @@ namespace DaggerfallWorkshop.Game
 
         void UpdateMeshRendererDungeonState(MeshRenderer meshRenderer, AutomapDungeonState automapDungeonState, int indexBlock, int indexElement, int indexModel, bool forceNotVisitedInThisRun)
         {
-            if (automapDungeonState.blocks[indexBlock].blockElements[indexElement].models[indexModel].discovered == true)
+            if ((indexBlock < automapDungeonState.blocks.Count) && (indexElement < automapDungeonState.blocks[indexBlock].blockElements.Count) &&
+                (indexModel < automapDungeonState.blocks[indexBlock].blockElements[indexElement].models.Count) &&
+                (automapDungeonState.blocks[indexBlock].blockElements[indexElement].models[indexModel].discovered == true))
             {
                 meshRenderer.enabled = true;
 
