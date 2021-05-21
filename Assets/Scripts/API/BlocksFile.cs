@@ -547,6 +547,19 @@ namespace DaggerfallConnect.Arena2
                 ReadRdbUnknownLinkedList(reader, block);
                 ReadRdbObjectSectionRootList(reader, block);
                 ReadRdbObjectLists(reader, block);
+
+                // Hack for N0000055.RDB to connect some disconnected parts.
+                // This should hopefully fix all block combinations issues.
+                if (block == 978)
+                {
+                    // Change a corner to a T block
+                    blocks[block].DFBlock.RdbBlock.ObjectRootList[1].RdbObjects[12].Resources.ModelResource.ModelIndex = 12;
+                    blocks[block].DFBlock.RdbBlock.ObjectRootList[1].RdbObjects[12].Resources.ModelResource.YRotation = 512;
+                    // Change a dead end to an open corridor
+                    blocks[block].DFBlock.RdbBlock.ObjectRootList[1].RdbObjects[9].Resources.ModelResource.ModelIndex = 3;
+                    // Move a random monster to another place since there is already one nearby
+                    blocks[block].DFBlock.RdbBlock.ObjectRootList[1].RdbObjects[30].ZPos = 896;
+                }
             }
             else if (blocks[block].DFBlock.Type == DFBlock.BlockTypes.Rdi)
             {
