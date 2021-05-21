@@ -270,63 +270,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.OnMouseClick += StatButton_OnMouseClick;
         }
 
-        // Creates formatting tokens for skill popups
-        TextFile.Token[] CreateSkillTokens(DFCareer.Skills skill, bool twoColumn = false, int startPosition = 0)
-        {
-            bool highlight = playerEntity.GetSkillRecentlyIncreased(skill);
-
-            List<TextFile.Token> tokens = new List<TextFile.Token>();
-            TextFile.Formatting formatting = highlight ? TextFile.Formatting.TextHighlight : TextFile.Formatting.Text;
-
-            TextFile.Token skillNameToken = new TextFile.Token();
-            skillNameToken.formatting = formatting;
-            skillNameToken.text = DaggerfallUnity.Instance.TextProvider.GetSkillName(skill);
-
-            TextFile.Token skillValueToken = new TextFile.Token();
-            skillValueToken.formatting = formatting;
-            skillValueToken.text = string.Format("{0}%", playerEntity.Skills.GetLiveSkillValue(skill));
-
-            DFCareer.Stats primaryStat = DaggerfallSkills.GetPrimaryStat(skill);
-            TextFile.Token skillPrimaryStatToken = new TextFile.Token();
-            skillPrimaryStatToken.formatting = formatting;
-            skillPrimaryStatToken.text = DaggerfallUnity.Instance.TextProvider.GetAbbreviatedStatName(primaryStat);
-
-            TextFile.Token positioningToken = new TextFile.Token();
-            positioningToken.formatting = TextFile.Formatting.PositionPrefix;
-
-            TextFile.Token tabToken = new TextFile.Token();
-            tabToken.formatting = TextFile.Formatting.PositionPrefix;
-
-            // Add tokens in order
-            if (!twoColumn)
-            {
-                tokens.Add(skillNameToken);
-                tokens.Add(tabToken);
-                tokens.Add(tabToken);
-                tokens.Add(tabToken);
-                tokens.Add(skillValueToken);
-                tokens.Add(tabToken);
-                tokens.Add(skillPrimaryStatToken);
-            }
-            else // miscellaneous skills
-            {
-                if (startPosition != 0) // if this is the second column
-                {
-                    positioningToken.x = startPosition;
-                    tokens.Add(positioningToken);
-                }
-                tokens.Add(skillNameToken);
-                positioningToken.x = startPosition + 85;
-                tokens.Add(positioningToken);
-                tokens.Add(skillValueToken);
-                positioningToken.x = startPosition + 112;
-                tokens.Add(positioningToken);
-                tokens.Add(skillPrimaryStatToken);
-            }
-
-            return tokens.ToArray();
-        }
-
         void ShowSkillsDialog(List<DFCareer.Skills> skills, bool twoColumn = false)
         {
             bool secondColumn = false;
@@ -339,7 +282,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 if (!twoColumn)
                 {
-                    tokens.AddRange(CreateSkillTokens(skills[i]));
+                    tokens.AddRange(DaggerfallUnity.TextProvider.GetSkillSummary(skills[i], 0));
                     if (i < skills.Count - 1)
                         tokens.Add(TextFile.NewLineToken);
                 }
@@ -347,12 +290,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     if (!secondColumn)
                     {
-                        tokens.AddRange(CreateSkillTokens(skills[i], true));
+                        tokens.AddRange(DaggerfallUnity.TextProvider.GetSkillSummary(skills[i], 0));
                         secondColumn = !secondColumn;
                     }
                     else
                     {
-                        tokens.AddRange(CreateSkillTokens(skills[i], true, 136));
+                        tokens.AddRange(DaggerfallUnity.TextProvider.GetSkillSummary(skills[i], 136));
                         secondColumn = !secondColumn;
                         if (i < skills.Count - 1)
                             tokens.Add(TextFile.NewLineToken);
