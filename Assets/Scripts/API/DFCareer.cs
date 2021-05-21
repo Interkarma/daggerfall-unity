@@ -483,6 +483,7 @@ namespace DaggerfallConnect
             BluntWeapon = 32,
             Archery = 33,
             CriticalStrike = 34,
+            Count = 35, // Not a valid skill
         }
 
         /// <summary>

@@ -444,7 +444,7 @@ namespace DaggerfallConnect.Arena2
             }
         }
 
-        public static void ApplyEffects(List<string> effects, PlayerEntity playerEntity)
+        public static void ApplyEffects(IEnumerable<string> effects, PlayerEntity playerEntity)
         {
             if (effects == null)
                 return;
@@ -453,6 +453,38 @@ namespace DaggerfallConnect.Arena2
             {
                 ApplyPlayerEffect(playerEntity, effect);
             }
+        }
+
+        public static int[] GetSkillEffects(IEnumerable<string> effects)
+        {
+            if (effects == null)
+                return null;
+
+            int skillCount = (int)DFCareer.Skills.Count;
+            int[] skills = new int[skillCount];
+
+            // Apply only skill effects
+            foreach(string effect in effects)
+            {
+                string[] tokens = effect.Split(null);
+                int parseResult;
+
+                // Skill modifier effect
+                if (int.TryParse(tokens[0], out parseResult) && parseResult >= 0 && parseResult < skillCount)
+                {
+                    short modValue;
+                    if (short.TryParse(tokens[1], out modValue))
+                    {
+                        skills[parseResult] += modValue;
+                    }
+                    else
+                    {
+                        Debug.LogError("CreateCharBiography: Invalid skill adjustment value.");
+                    }
+                }
+            }
+
+            return skills;
         }
 
         private static ArmorMaterialTypes WeaponToArmorMaterialType(WeaponMaterialTypes materialType)

@@ -249,6 +249,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 createCharAddBonusSkillsWindow = new CreateCharAddBonusSkills(uiManager);
                 createCharAddBonusSkillsWindow.OnClose += AddBonusSkillsWindow_OnClose;
                 createCharAddBonusSkillsWindow.DFClass = characterDocument.career;
+                createCharAddBonusSkillsWindow.SkillBonuses = BiogFile.GetSkillEffects(characterDocument.biographyEffects);
             }
 
             // Update class if player changes class selection
