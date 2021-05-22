@@ -685,7 +685,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                 // Handle poisoned weapons
                 if (damage > 0 && weapon.poisonType != Poisons.None)
                 {
-                    InflictPoison(target, weapon.poisonType, false);
+                    InflictPoison(attacker, target, weapon.poisonType, false);
                     weapon.poisonType = Poisons.None;
                 }
             }
@@ -1274,12 +1274,12 @@ namespace DaggerfallWorkshop.Game.Formulas
                     // In classic rat can only give plague (diseaseListA), but DF Chronicles says plague, stomach rot and brain fever (diseaseListB).
                     // Don't know which was intended. Using B since it has more variety.
                     if (Dice100.SuccessRoll(5))
-                        InflictDisease(target, diseaseListB);
+                        InflictDisease(attacker, target, diseaseListB);
                     break;
                 case (int)MonsterCareers.GiantBat:
                     // Classic uses 2% chance, but DF Chronicles says 5% chance. Not sure which was intended.
                     if (Dice100.SuccessRoll(2))
-                        InflictDisease(target, diseaseListB);
+                        InflictDisease(attacker, target, diseaseListB);
                     break;
                 case (int)MonsterCareers.Spider:
                 case (int)MonsterCareers.GiantScorpion:
@@ -1322,11 +1322,11 @@ namespace DaggerfallWorkshop.Game.Formulas
                     // Nothing in classic. DF Chronicles says 2% chance of disease, which seems like it was probably intended.
                     // Diseases listed in DF Chronicles match those of mummy (except missing cholera, probably a mistake)
                     if (Dice100.SuccessRoll(2))
-                        InflictDisease(target, diseaseListC);
+                        InflictDisease(attacker, target, diseaseListC);
                     break;
                 case (int)MonsterCareers.Mummy:
                     if (Dice100.SuccessRoll(5))
-                        InflictDisease(target, diseaseListC);
+                        InflictDisease(attacker, target, diseaseListC);
                     break;
                 case (int)MonsterCareers.Vampire:
                 case (int)MonsterCareers.VampireAncient:
@@ -1340,7 +1340,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     }
                     else if (random <= 2.0f)
                     {
-                        InflictDisease(target, diseaseListA);
+                        InflictDisease(attacker, target, diseaseListA);
                     }
                     break;
                 case (int)MonsterCareers.Lamia:
@@ -1352,12 +1352,19 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
         }
 
-        public static void InflictPoison(DaggerfallEntity target, Poisons poisonType, bool bypassResistance)
+        /// <summary>
+        /// Inflict a classic poison onto entity.
+        /// </summary>
+        /// <param name="attacker">Source entity. Can be the same as target</param>
+        /// <param name="target">Target entity</param>
+        /// <param name="poisonType">Classic poison type</param>
+        /// <param name="bypassResistance">Whether it should bypass resistances</param>
+        public static void InflictPoison(DaggerfallEntity attacker, DaggerfallEntity target, Poisons poisonType, bool bypassResistance)
         {
-            Action<DaggerfallEntity, Poisons, bool> del;
+            Action<DaggerfallEntity, DaggerfallEntity, Poisons, bool> del;
             if(TryGetOverride("InflictPoison", out del))
             {
-                del(target, poisonType, bypassResistance);
+                del(attacker, target, poisonType, bypassResistance);
                 return;
             }
 
@@ -1635,14 +1642,15 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <summary>
         /// Inflict a classic disease onto player.
         /// </summary>
+        /// <param name="attacker">Source entity. Can be the same as target</param>
         /// <param name="target">Target entity - must be player.</param>
         /// <param name="diseaseList">Array of disease indices matching Diseases enum.</param>
-        public static void InflictDisease(DaggerfallEntity target, Diseases[] diseaseList)
+        public static void InflictDisease(DaggerfallEntity attacker, DaggerfallEntity target, Diseases[] diseaseList)
         {
-            Action<DaggerfallEntity, Diseases[]> del;
+            Action<DaggerfallEntity, DaggerfallEntity, Diseases[]> del;
             if (TryGetOverride("InflictDisease", out del))
             {
-                del(target, diseaseList);
+                del(attacker, target, diseaseList);
                 return;
             }
 
