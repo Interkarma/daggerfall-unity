@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game.Entity
     {
         #region Fields
 
-        public const int Count = 35;
+        public const int Count = (int)DFCareer.Skills.Count;
         public const int PrimarySkillsCount = 3;
         public const int MajorSkillsCount = 3;
         public const int MinorSkillsCount = 6;
