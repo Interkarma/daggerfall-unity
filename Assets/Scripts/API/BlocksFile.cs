@@ -419,19 +419,14 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Gets block AutoMap by name.
         /// </summary>
-        /// <param name="name">Name of block.</param>
+        /// <param name="block">Reference to block.</param>
         /// <param name="removeGroundFlats">Filters ground flat "speckles" from the AutoMap.</param>
         /// <returns>DFBitmap object.</returns>
-        public DFBitmap GetBlockAutoMap(string name, bool removeGroundFlats)
+        static public DFBitmap GetBlockAutoMap(in DFBlock block, bool removeGroundFlats)
         {
-            // Test block is valid
-            DFBlock dfBlock = GetBlock(name);
-            if (string.IsNullOrEmpty(dfBlock.Name))
-                return new DFBitmap();
-
             // Create DFBitmap and copy data
             DFBitmap dfBitmap = new DFBitmap();
-            dfBitmap.Data = dfBlock.RmbBlock.FldHeader.AutoMapData;
+            dfBitmap.Data = block.RmbBlock.FldHeader.AutoMapData;
             dfBitmap.Width = 64;
             dfBitmap.Height = 64;
 

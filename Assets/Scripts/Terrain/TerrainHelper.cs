@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop
                 {
                     // Get block data
                     DFBlock block;
-                    string blockName = dfUnity.ContentReader.MapFileReader.GetRmbBlockName(ref location, blockX, blockY);
+                    string blockName = dfUnity.ContentReader.MapFileReader.GetRmbBlockName(location, blockX, blockY);
                     if (!dfUnity.ContentReader.GetBlock(blockName, out block))
                         continue;
 

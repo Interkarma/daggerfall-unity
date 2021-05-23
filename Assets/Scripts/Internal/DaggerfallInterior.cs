@@ -368,8 +368,7 @@ namespace DaggerfallWorkshop
         {
             // Get block data
             DFLocation location = GameManager.Instance.PlayerGPS.CurrentLocation;
-            DFBlock[] blocks;
-            RMBLayout.GetLocationBuildingData(location, out blocks);
+            DFBlock[] blocks = RMBLayout.GetLocationBuildingData(location);
             bool foundBlock = false;
             for (int index = 0; index < blocks.Length && !foundBlock; ++index)
             {

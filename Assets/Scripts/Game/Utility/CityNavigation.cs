@@ -208,7 +208,7 @@ namespace DaggerfallWorkshop.Game.Utility
         /// <param name="blockData">RMB block data.</param>
         /// <param name="xBlock">X block to set.</param>
         /// <param name="yBlock">Y block to set.</param>
-        public void SetRMBData(ref DFBlock blockData, int xBlock, int yBlock)
+        public void SetRMBData(in DFBlock blockData, int xBlock, int yBlock)
         {
             // Validate
             if (xBlock < 0 || xBlock >= cityWidth ||
