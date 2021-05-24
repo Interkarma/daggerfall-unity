@@ -27,127 +27,131 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        DFSize selectedIconsBaseSize = new DFSize(40, 80);
+        protected DFSize selectedIconsBaseSize = new DFSize(40, 80);
 
-        Vector2 tipLabelPos = new Vector2(5, 22);
-        Vector2 nameLabelPos = new Vector2(60, 185);
-        Rect effect1NameRect = new Rect(3, 30, 230, 9);
-        Rect effect2NameRect = new Rect(3, 62, 230, 9);
-        Rect effect3NameRect = new Rect(3, 94, 230, 9);
-        Rect addEffectButtonRect = new Rect(244, 114, 28, 28);
-        Rect buyButtonRect = new Rect(244, 147, 24, 16);
-        Rect newButtonRect = new Rect(244, 163, 24, 16);
-        Rect exitButtonRect = new Rect(244, 179, 24, 16);
-        Rect casterOnlyButtonRect = new Rect(275, 114, 24, 16);
-        Rect byTouchButtonRect = new Rect(275, 130, 24, 16);
-        Rect singleTargetAtRangeButtonRect = new Rect(275, 146, 24, 16);
-        Rect areaAroundCasterButtonRect = new Rect(275, 162, 24, 16);
-        Rect areaAtRangeButtonRect = new Rect(275, 178, 24, 16);
-        Rect fireBasedButtonRect = new Rect(299, 114, 16, 16);
-        Rect coldBasedButtonRect = new Rect(299, 130, 16, 16);
-        Rect poisonBasedButtonRect = new Rect(299, 146, 16, 16);
-        Rect shockBasedButtonRect = new Rect(299, 162, 16, 16);
-        Rect magicBasedButtonRect = new Rect(299, 178, 16, 16);
-        Rect nextIconButtonRect = new Rect(275, 80, 9, 16);
-        Rect previousIconButtonRect = new Rect(275, 96, 9, 16);
-        Rect selectIconButtonRect = new Rect(288, 94, 16, 16);
-        Rect nameSpellButtonRect = new Rect(59, 184, 142, 7);
+        protected Vector2 tipLabelPos = new Vector2(5, 22);
+        protected Vector2 nameLabelPos = new Vector2(60, 185);
+        protected Rect effect1NameRect = new Rect(3, 30, 230, 9);
+        protected Rect effect2NameRect = new Rect(3, 62, 230, 9);
+        protected Rect effect3NameRect = new Rect(3, 94, 230, 9);
+        protected Rect addEffectButtonRect = new Rect(244, 114, 28, 28);
+        protected Rect buyButtonRect = new Rect(244, 147, 24, 16);
+        protected Rect newButtonRect = new Rect(244, 163, 24, 16);
+        protected Rect exitButtonRect = new Rect(244, 179, 24, 16);
+        protected Rect casterOnlyButtonRect = new Rect(275, 114, 24, 16);
+        protected Rect byTouchButtonRect = new Rect(275, 130, 24, 16);
+        protected Rect singleTargetAtRangeButtonRect = new Rect(275, 146, 24, 16);
+        protected Rect areaAroundCasterButtonRect = new Rect(275, 162, 24, 16);
+        protected Rect areaAtRangeButtonRect = new Rect(275, 178, 24, 16);
+        protected Rect fireBasedButtonRect = new Rect(299, 114, 16, 16);
+        protected Rect coldBasedButtonRect = new Rect(299, 130, 16, 16);
+        protected Rect poisonBasedButtonRect = new Rect(299, 146, 16, 16);
+        protected Rect shockBasedButtonRect = new Rect(299, 162, 16, 16);
+        protected Rect magicBasedButtonRect = new Rect(299, 178, 16, 16);
+        protected Rect nextIconButtonRect = new Rect(275, 80, 9, 16);
+        protected Rect previousIconButtonRect = new Rect(275, 96, 9, 16);
+        protected Rect selectIconButtonRect = new Rect(288, 94, 16, 16);
+        protected Rect nameSpellButtonRect = new Rect(59, 184, 142, 7);
 
-        Rect casterOnlySubRect = new Rect(0, 0, 24, 16);
-        Rect byTouchSubRect = new Rect(0, 16, 24, 16);
-        Rect singleTargetAtRangeSubRect = new Rect(0, 32, 24, 16);
-        Rect areaAroundCasterSubRect = new Rect(0, 48, 24, 16);
-        Rect areaAtRangeSubRect = new Rect(0, 64, 24, 16);
+        protected Rect casterOnlySubRect = new Rect(0, 0, 24, 16);
+        protected Rect byTouchSubRect = new Rect(0, 16, 24, 16);
+        protected Rect singleTargetAtRangeSubRect = new Rect(0, 32, 24, 16);
+        protected Rect areaAroundCasterSubRect = new Rect(0, 48, 24, 16);
+        protected Rect areaAtRangeSubRect = new Rect(0, 64, 24, 16);
 
-        Rect fireBasedSubRect = new Rect(24, 0, 16, 16);
-        Rect coldBasedSubRect = new Rect(24, 16, 16, 16);
-        Rect poisonBasedSubRect = new Rect(24, 32, 16, 16);
-        Rect shockBasedSubRect = new Rect(24, 48, 16, 16);
-        Rect magicBasedSubRect = new Rect(24, 64, 16, 16);
+        protected Rect fireBasedSubRect = new Rect(24, 0, 16, 16);
+        protected Rect coldBasedSubRect = new Rect(24, 16, 16, 16);
+        protected Rect poisonBasedSubRect = new Rect(24, 32, 16, 16);
+        protected Rect shockBasedSubRect = new Rect(24, 48, 16, 16);
+        protected Rect magicBasedSubRect = new Rect(24, 64, 16, 16);
 
         #endregion
 
         #region UI Controls
 
-        TextLabel tipLabel;
-        TextLabel effect1NameLabel;
-        TextLabel effect2NameLabel;
-        TextLabel effect3NameLabel;
-        TextLabel maxSpellPointsLabel;
-        TextLabel moneyLabel;
-        TextLabel goldCostLabel;
-        TextLabel spellPointCostLabel;
-        TextLabel spellNameLabel;
+        protected TextLabel tipLabel;
+        protected TextLabel effect1NameLabel;
+        protected TextLabel effect2NameLabel;
+        protected TextLabel effect3NameLabel;
+        protected TextLabel maxSpellPointsLabel;
+        protected TextLabel moneyLabel;
+        protected TextLabel goldCostLabel;
+        protected TextLabel spellPointCostLabel;
+        protected TextLabel spellNameLabel;
 
-        DaggerfallListPickerWindow effectGroupPicker;
-        DaggerfallListPickerWindow effectSubGroupPicker;
-        DaggerfallEffectSettingsEditorWindow effectEditor;
-        SpellIconPickerWindow iconPicker;
+        protected DaggerfallListPickerWindow effectGroupPicker;
+        protected DaggerfallListPickerWindow effectSubGroupPicker;
+        protected DaggerfallEffectSettingsEditorWindow effectEditor;
+        protected SpellIconPickerWindow iconPicker;
 
-        Button selectIconButton;
+        protected Button selectIconButton;
 
-        Button casterOnlyButton;
-        Button byTouchButton;
-        Button singleTargetAtRangeButton;
-        Button areaAroundCasterButton;
-        Button areaAtRangeButton;
+        protected Button casterOnlyButton;
+        protected Button byTouchButton;
+        protected Button singleTargetAtRangeButton;
+        protected Button areaAroundCasterButton;
+        protected Button areaAtRangeButton;
 
-        Button fireBasedButton;
-        Button coldBasedButton;
-        Button poisonBasedButton;
-        Button shockBasedButton;
-        Button magicBasedButton;
+        protected Button fireBasedButton;
+        protected Button coldBasedButton;
+        protected Button poisonBasedButton;
+        protected Button shockBasedButton;
+        protected Button magicBasedButton;
 
         #endregion
 
         #region UI Textures
 
-        Texture2D baseTexture;
-        Texture2D selectedIconsTexture;
+        protected Texture2D baseTexture;
+        protected Texture2D selectedIconsTexture;
 
-        Texture2D casterOnlySelectedTexture;
-        Texture2D byTouchSelectedTexture;
-        Texture2D singleTargetAtRangeSelectedTexture;
-        Texture2D areaAroundCasterSelectedTexture;
-        Texture2D areaAtRangeSelectedTexture;
+        protected Texture2D casterOnlySelectedTexture;
+        protected Texture2D byTouchSelectedTexture;
+        protected Texture2D singleTargetAtRangeSelectedTexture;
+        protected Texture2D areaAroundCasterSelectedTexture;
+        protected Texture2D areaAtRangeSelectedTexture;
 
-        Texture2D fireBasedSelectedTexture;
-        Texture2D coldBasedSelectedTexture;
-        Texture2D poisonBasedSelectedTexture;
-        Texture2D shockBasedSelectedTexture;
-        Texture2D magicBasedSelectedTexture;
+        protected Texture2D fireBasedSelectedTexture;
+        protected Texture2D coldBasedSelectedTexture;
+        protected Texture2D poisonBasedSelectedTexture;
+        protected Texture2D shockBasedSelectedTexture;
+        protected Texture2D magicBasedSelectedTexture;
 
         #endregion
 
         #region Fields
 
-        const MagicCraftingStations thisMagicStation = MagicCraftingStations.SpellMaker;
+        protected const MagicCraftingStations thisMagicStation = MagicCraftingStations.SpellMaker;
 
-        const string baseTextureFilename = "INFO01I0.IMG";
-        const string goldSelectIconsFilename = "MASK01I0.IMG";
-        const string colorSelectIconsFilename = "MASK04I0.IMG";
+        protected const string baseTextureFilename = "INFO01I0.IMG";
+        protected const string goldSelectIconsFilename = "MASK01I0.IMG";
+        protected const string colorSelectIconsFilename = "MASK04I0.IMG";
 
-        const int alternateAlphaIndex = 12;
-        const int maxEffectsPerSpell = 3;
-        const int defaultSpellIcon = 1;
-        const TargetTypes defaultTargetFlags = EntityEffectBroker.TargetFlags_All;
-        const ElementTypes defaultElementFlags = EntityEffectBroker.ElementFlags_MagicOnly;
+        protected const int alternateAlphaIndex = 12;
+        protected const int maxEffectsPerSpell = 3;
+        protected const int defaultSpellIcon = 1;
+        protected const TargetTypes defaultTargetFlags = EntityEffectBroker.TargetFlags_All;
+        protected const ElementTypes defaultElementFlags = EntityEffectBroker.ElementFlags_MagicOnly;
 
-        const SoundClips inscribeGrimoire = SoundClips.ParchmentScratching;
+        protected const SoundClips inscribeGrimoire = SoundClips.ParchmentScratching;
 
         List<IEntityEffect> enumeratedEffectTemplates = new List<IEntityEffect>();
 
         EffectEntry[] effectEntries = new EffectEntry[maxEffectsPerSpell];
 
-        int editOrDeleteSlot = -1;
-        TargetTypes allowedTargets = defaultTargetFlags;
-        ElementTypes allowedElements = defaultElementFlags;
-        TargetTypes selectedTarget = TargetTypes.CasterOnly;
-        ElementTypes selectedElement = ElementTypes.Magic;
-        SpellIcon selectedIcon;
+        protected int editOrDeleteSlot = -1;
+        protected TargetTypes allowedTargets = defaultTargetFlags;
+        protected ElementTypes allowedElements = defaultElementFlags;
+        protected TargetTypes selectedTarget = TargetTypes.CasterOnly;
+        protected ElementTypes selectedElement = ElementTypes.Magic;
+        protected SpellIcon selectedIcon;
 
         int totalGoldCost = 0;
         int totalSpellPointCost = 0;
+
+        protected EffectEntry[] EffectEntries { get { return effectEntries; } }
+        protected int TotalGoldCost { get { return totalGoldCost; } }
+        protected int TotalSpellPointCost { get { return totalSpellPointCost; } }
 
         #endregion
 
@@ -182,12 +186,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetStatusLabels();
 
             // Setup effect editor window
-            effectEditor = new DaggerfallEffectSettingsEditorWindow(uiManager, this);
+            effectEditor = (DaggerfallEffectSettingsEditorWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.EffectSettingsEditor, new object[] { uiManager, this });
             effectEditor.OnSettingsChanged += EffectEditor_OnSettingsChanged;
             effectEditor.OnClose += EffectEditor_OnClose;
 
             // Setup icon picker
-            iconPicker = new SpellIconPickerWindow(uiManager, this);
+            iconPicker = (SpellIconPickerWindow)UIWindowFactory.GetInstance(UIWindowType.SpellIconPicker, uiManager, this);
             iconPicker.OnClose += IconPicker_OnClose;
         }
 
@@ -198,7 +202,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetDefaults();
         }
 
-        void SetDefaults()
+        protected virtual void SetDefaults()
         {
             allowedTargets = defaultTargetFlags;
             allowedElements = defaultElementFlags;
@@ -225,19 +229,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetStatusLabels()
-        {
-            maxSpellPointsLabel.Text = GameManager.Instance.PlayerEntity.MaxMagicka.ToString();
-            moneyLabel.Text = GameManager.Instance.PlayerEntity.GoldPieces.ToString();
-            goldCostLabel.Text = totalGoldCost.ToString();
-            spellPointCostLabel.Text = totalSpellPointCost.ToString();
-        }
-
         #endregion
 
-        #region Private Methods
+        #region Protected Methods
 
-        void LoadTextures()
+        protected virtual void LoadTextures()
         {
             // Load source textures
             baseTexture = ImageReader.GetTexture(baseTextureFilename, 0, 0, true, alternateAlphaIndex);
@@ -257,7 +253,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             magicBasedSelectedTexture = ImageReader.GetSubTexture(selectedIconsTexture, magicBasedSubRect, selectedIconsBaseSize);
         }
 
-        void SetupLabels()
+        protected virtual void SetupLabels()
         {
             // Tip label
             tipLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, tipLabelPos, string.Empty, NativePanel);
@@ -297,7 +293,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             effect3NameLabel.ShadowPosition = Vector2.zero;
         }
 
-        void SetupPickers()
+        protected virtual void SetupPickers()
         {
             // Use a picker for effect group
             effectGroupPicker = new DaggerfallListPickerWindow(uiManager, this);
@@ -309,7 +305,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             effectSubGroupPicker.ListBox.OnUseSelectedItem += AddEffectSubGroup_OnUseSelectedItem;
         }
 
-        void SetupButtons()
+        protected virtual void SetupButtons()
         {
             // Control
             AddTipButton(addEffectButtonRect, "addEffect", AddEffectButton_OnMouseClick, DaggerfallShortcut.Buttons.SpellMakerAddEffect);
@@ -342,7 +338,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateAllowedButtons();
         }
 
-        Button AddTipButton(Rect rect, string tipID, BaseScreenComponent.OnMouseClickHandler handler, DaggerfallShortcut.Buttons button)
+        protected virtual void SetIcon(SpellIcon icon)
+        {
+            // Fallback to classic index if no valid icon pack key
+            if (string.IsNullOrEmpty(icon.key) || !DaggerfallUI.Instance.SpellIconCollection.HasPack(icon.key))
+            {
+                icon.key = string.Empty;
+                icon.index = icon.index % DaggerfallUI.Instance.SpellIconCollection.SpellIconCount;
+            }
+
+            // Set icon
+            selectedIcon = icon;
+            selectIconButton.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(selectedIcon);
+        }
+
+        protected virtual void SetStatusLabels()
+        {
+            maxSpellPointsLabel.Text = GameManager.Instance.PlayerEntity.MaxMagicka.ToString();
+            moneyLabel.Text = GameManager.Instance.PlayerEntity.GoldPieces.ToString();
+            goldCostLabel.Text = totalGoldCost.ToString();
+            spellPointCostLabel.Text = totalSpellPointCost.ToString();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        protected virtual Button AddTipButton(Rect rect, string tipID, BaseScreenComponent.OnMouseClickHandler handler, DaggerfallShortcut.Buttons button)
         {
             Button tipButton = DaggerfallUI.AddButton(rect, NativePanel);
             tipButton.OnMouseEnter += TipButton_OnMouseEnter;
@@ -354,7 +376,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return tipButton;
         }
 
-        void InitEffectSlots()
+        protected virtual void InitEffectSlots()
         {
             effectEntries = new EffectEntry[maxEffectsPerSpell];
             for (int i = 0; i < maxEffectsPerSpell; i++)
@@ -363,7 +385,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void ClearPendingDeleteEffectSlot()
+        protected virtual void ClearPendingDeleteEffectSlot()
         {
             if (editOrDeleteSlot == -1)
                 return;
@@ -374,7 +396,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateAllowedButtons();
         }
 
-        int GetFirstFreeEffectSlotIndex()
+        protected int GetFirstFreeEffectSlotIndex()
         {
             for (int i = 0; i < maxEffectsPerSpell; i++)
             {
@@ -385,7 +407,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return -1;
         }
 
-        int GetFirstUsedEffectSlotIndex()
+        protected int GetFirstUsedEffectSlotIndex()
         {
             for (int i = 0; i < maxEffectsPerSpell; i++)
             {
@@ -396,7 +418,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return -1;
         }
 
-        int CountUsedEffectSlots()
+        protected int CountUsedEffectSlots()
         {
             int total = 0;
             for (int i = 0; i < maxEffectsPerSpell; i++)
@@ -408,7 +430,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return total;
         }
 
-        void UpdateSlotText(int slot, string text)
+        protected virtual void UpdateSlotText(int slot, string text)
         {
             // Get text label to update
             TextLabel label = null;
@@ -431,7 +453,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             label.Text = text;
         }
 
-        void AddAndEditSlot(IEntityEffect effectTemplate)
+        protected virtual void AddAndEditSlot(IEntityEffect effectTemplate)
         {
             effectEditor.EffectTemplate = effectTemplate;
             int slot = GetFirstFreeEffectSlotIndex();
@@ -442,7 +464,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(effectEditor);
         }
 
-        void EditOrDeleteSlot(int slot)
+        protected virtual void EditOrDeleteSlot(int slot)
         {
             const int howToAlterSpell = 1708;
 
@@ -463,7 +485,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mb.Show();
         }
 
-        void SetSpellTarget(TargetTypes targetType)
+        protected virtual void SetSpellTarget(TargetTypes targetType)
         {
             // Exclude target types based on effects added
             if ((allowedTargets & targetType) == TargetTypes.None)
@@ -500,7 +522,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateSpellCosts();
         }
 
-        void SetSpellElement(ElementTypes elementType)
+        protected virtual void SetSpellElement(ElementTypes elementType)
         {
             // Exclude element types based on effects added
             if ((allowedElements & elementType) == ElementTypes.None)
@@ -536,7 +558,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedElement = elementType;
         }
 
-        void UpdateAllowedButtons()
+        protected virtual void UpdateAllowedButtons()
         {
             // Set defaults when no effects added
             if (GetFirstUsedEffectSlotIndex() == -1)
@@ -572,7 +594,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             EnforceSelectedButtons();
         }
 
-        void EnforceSelectedButtons()
+        protected void EnforceSelectedButtons()
         {
             if ((allowedTargets & selectedTarget) == TargetTypes.None)
                 SelectFirstAllowedTargetType();
@@ -581,7 +603,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 SelectFirstAllowedElementType();
         }
 
-        void SelectFirstAllowedTargetType()
+        protected virtual void SelectFirstAllowedTargetType()
         {
             if ((allowedTargets & TargetTypes.CasterOnly) == TargetTypes.CasterOnly)
             {
@@ -610,7 +632,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SelectFirstAllowedElementType()
+        protected virtual void SelectFirstAllowedElementType()
         {
             if ((allowedElements & ElementTypes.Fire) == ElementTypes.Fire)
             {
@@ -639,21 +661,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void SetIcon(SpellIcon icon)
-        {
-            // Fallback to classic index if no valid icon pack key
-            if (string.IsNullOrEmpty(icon.key) || !DaggerfallUI.Instance.SpellIconCollection.HasPack(icon.key))
-            {
-                icon.key = string.Empty;
-                icon.index = icon.index % DaggerfallUI.Instance.SpellIconCollection.SpellIconCount;
-            }
-
-            // Set icon
-            selectedIcon = icon;
-            selectIconButton.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(selectedIcon);
-        }
-
-        List<EffectEntry> GetEffectEntries()
+        protected List<EffectEntry> GetEffectEntries()
         {
             // Get a list of actual effect entries and ignore empty slots
             List<EffectEntry> effects = new List<EffectEntry>();
@@ -666,7 +674,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return effects;
         }
 
-        void UpdateSpellCosts()
+        protected void UpdateSpellCosts()
         {
             // Note: Daggerfall shows gold cost 0 and spellpoint cost 5 with no effects added
             // Not copying this behaviour at this time intentionally as it seems unclear for an invalid
@@ -695,7 +703,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Button Events
 
-        private void AddEffectButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void AddEffectButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             const int noMoreThan3Effects = 1707;
 
@@ -729,7 +737,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(effectGroupPicker);
         }
 
-        private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             const int notEnoughGold = 1702;
             const int noSpellBook = 1703;
@@ -794,79 +802,79 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mbComplete.Show();
         }
 
-        private void SpellHasBeenInscribed_OnClose()
+        protected virtual void SpellHasBeenInscribed_OnClose()
         {
             SetDefaults();
             iconPicker.ResetScrollPosition();
         }
 
-        private void NewSpellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void NewSpellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetDefaults();
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             CloseWindow();
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void CasterOnlyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void CasterOnlyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellTarget(TargetTypes.CasterOnly);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void ByTouchButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ByTouchButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellTarget(TargetTypes.ByTouch);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void SingleTargetAtRangeButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void SingleTargetAtRangeButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellTarget(TargetTypes.SingleTargetAtRange);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void AreaAroundCasterButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void AreaAroundCasterButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellTarget(TargetTypes.AreaAroundCaster);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void AreaAtRangeButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void AreaAtRangeButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellTarget(TargetTypes.AreaAtRange);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void FireBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void FireBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellElement(ElementTypes.Fire);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void ColdBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ColdBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellElement(ElementTypes.Cold);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void PoisonBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void PoisonBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellElement(ElementTypes.Poison);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void ShockBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void ShockBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellElement(ElementTypes.Shock);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void MagicBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void MagicBasedButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SetSpellElement(ElementTypes.Magic);
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
@@ -883,13 +891,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void SelectIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void SelectIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             uiManager.PushWindow(iconPicker);
         }
 
-        private void PreviousIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void PreviousIconButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             int index = selectedIcon.index - 1;
             if (index < 0)
@@ -900,7 +908,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
         }
 
-        private void NameSpellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void NameSpellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallInputMessageBox mb = new DaggerfallInputMessageBox(uiManager, this);
@@ -910,7 +918,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mb.Show();
         }
 
-        private void AddEffectGroupListBox_OnUseSelectedItem()
+        protected virtual void AddEffectGroupListBox_OnUseSelectedItem()
         {
             // Clear existing
             effectSubGroupPicker.ListBox.ClearItems();
@@ -947,7 +955,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(effectSubGroupPicker);
         }
 
-        private void AddEffectSubGroup_OnUseSelectedItem()
+        protected virtual void AddEffectSubGroup_OnUseSelectedItem()
         {
             // Close effect pickers
             effectGroupPicker.CloseWindow();
@@ -962,17 +970,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void EditOrDeleteSpell_OnCancel(DaggerfallPopupWindow sender)
+        protected virtual void EditOrDeleteSpell_OnCancel(DaggerfallPopupWindow sender)
         {
             editOrDeleteSlot = -1;
         }
 
-        private void EditOrDeleteSpell_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void EditOrDeleteSpell_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             sender.CloseWindow();
         }
 
-        private void DeleteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void DeleteButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Delete effect entry
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
@@ -980,7 +988,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UpdateSpellCosts();
         }
 
-        private void EditButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void EditButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             // Edit effect entry
             effectEditor.EffectEntry = effectEntries[editOrDeleteSlot];
@@ -991,39 +999,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Effect Editor Events
 
-        private void EffectEditor_OnClose()
+        protected virtual void EffectEditor_OnClose()
         {
             editOrDeleteSlot = -1;
             UpdateAllowedButtons();
         }
 
-        private void EffectEditor_OnSettingsChanged()
+        protected virtual void EffectEditor_OnSettingsChanged()
         {
             UpdateSpellCosts();
         }
 
-        private void IconPicker_OnClose()
+        protected virtual void IconPicker_OnClose()
         {
             if (iconPicker.SelectedIcon != null)
                 SetIcon(iconPicker.SelectedIcon.Value);
         }
 
-        private void Effect1NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void Effect1NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             EditOrDeleteSlot(0);
         }
 
-        private void Effect2NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void Effect2NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             EditOrDeleteSlot(1);
         }
 
-        private void Effect3NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        protected virtual void Effect3NamePanel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             EditOrDeleteSlot(2);
         }
 
-        private void EnterName_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        protected virtual void EnterName_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
         {
             spellNameLabel.Text = input;
         }
@@ -1032,8 +1040,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Tip Events
 
-        bool lockTip = false;
-        private void TipButton_OnMouseEnter(BaseScreenComponent sender)
+        protected bool lockTip = false;
+        protected virtual void TipButton_OnMouseEnter(BaseScreenComponent sender)
         {
             // Lock tip if already has text, this means we are changing directly to adjacent button
             // This prevents OnMouseLeave event from previous button wiping tip text of new button
@@ -1049,7 +1057,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void TipButton_OnMouseLeave(BaseScreenComponent sender)
+        protected virtual void TipButton_OnMouseLeave(BaseScreenComponent sender)
         {
             // Clear tip when not locked, otherwise reset tip lock
             if (!lockTip)
