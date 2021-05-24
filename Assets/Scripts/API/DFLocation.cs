@@ -133,6 +133,7 @@ namespace DaggerfallConnect
             Special2 = 0xdf,
             Special3 = 0xf9,
             Special4 = 0xfa,
+            AnyShop = 0xfffd,       // DaggerfallUnity: all valid shop types
             AnyHouse = 0xfffe,      // DaggerfallUnity: all valid house types
             AllValid = 0xffff,      // DaggerfallUnity: all valid types
         }

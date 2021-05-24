@@ -14,6 +14,7 @@ using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Linq;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
@@ -569,6 +570,62 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        /// <summary>
+        /// Custom parser to handle hex or decimal values from places data table.
+        /// </summary>
+        public static int CustomParseInt(string value)
+        {
+            int result;
+            if (value.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
+            {
+                result = int.Parse(value.Replace("0x", ""), NumberStyles.HexNumber);
+            }
+            else
+            {
+                result = int.Parse(value);
+            }
+
+            return result;
+        }
+
+        static readonly int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
+        static readonly int[] validHouseTypes = { 17, 18, 19, 20 };
+        static readonly int[] validShopTypes = { 0, 2, 5, 6, 7, 8, 9, 12, 13 }; // not including bank and library
+
+        public static bool IsPlayerAtBuildingType(int p2, int p3)
+        {
+            // Get component handling player world status and transitions
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            if (!playerEnterExit)
+                return false;
+
+            if (!playerEnterExit.IsPlayerInsideBuilding)
+                return false;
+
+            int buildingType = (int)playerEnterExit.Interior.BuildingData.BuildingType;
+
+            // DFU extensions
+            if (p2 == -1)
+            {
+                switch(p3)
+                {
+                    case 0: // random
+                        return validBuildingTypes.Contains(buildingType);
+                    case 1: // house
+                        return validHouseTypes.Contains(buildingType);
+                    case 2: // shop
+                        return validShopTypes.Contains(buildingType);
+                    default: // unhandled
+                        Debug.LogWarning($"Unhandled building type: p1=0, p2={p2}, p3={p3}");
+                        return false;
+                }
+            }
+            else
+            {
+                return buildingType == p2;
+            }
+        }
+
         #endregion
 
         #region Local Site Methods
@@ -601,6 +658,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AllValid, p3);
             else if (p2 == -1 && p3 == 1)
                 foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyHouse, p3);
+            else if (p2 == -1 && p3 == 2)
+                foundSites = CollectQuestSitesOfBuildingType(location, DFLocation.BuildingTypes.AnyShop, p3);
             else
                 foundSites = CollectQuestSitesOfBuildingType(location, (DFLocation.BuildingTypes)p2, p3);
 
@@ -982,24 +1041,6 @@ namespace DaggerfallWorkshop.Game.Questing
         #region Private Methods
 
         /// <summary>
-        /// Custom parser to handle hex or decimal values from places data table.
-        /// </summary>
-        int CustomParseInt(string value)
-        {
-            int result = -1;
-            if (value.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
-            {
-                result = int.Parse(value.Replace("0x", ""), NumberStyles.HexNumber);
-            }
-            else
-            {
-                result = int.Parse(value);
-            }
-
-            return result;
-        }
-
-        /// <summary>
         /// Checks if location is one of the dungeon types.
         /// </summary>
         bool IsDungeonType(DFRegion.LocationTypes locationType)
@@ -1024,10 +1065,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         SiteDetails[] CollectQuestSitesOfBuildingType(DFLocation location, DFLocation.BuildingTypes buildingType, int guildHallFaction)
         {
-            // Valid building types for valid search
-            int[] validBuildingTypes = { 0, 2, 3, 5, 6, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 20 };
-            int[] validHouseTypes = { 17, 18, 19, 20 };
-
             List<SiteDetails> foundSites = new List<SiteDetails>();
 
             // Get sites already involved in active quests and this quest so far
@@ -1070,6 +1107,18 @@ namespace DaggerfallWorkshop.Game.Questing
                                 {
                                     wildcardFound = true;
                                     wildcardType = (DFLocation.BuildingTypes)validHouseTypes[j];
+                                    break;
+                                }
+                            }
+                        }
+                        else if (buildingType == DFLocation.BuildingTypes.AnyShop)
+                        {
+                            for (int j = 0; j < validShopTypes.Length; j++)
+                            {
+                                if (validShopTypes[j] == (int)buildingSummary[i].BuildingType)
+                                {
+                                    wildcardFound = true;
+                                    wildcardType = (DFLocation.BuildingTypes)validShopTypes[j];
                                     break;
                                 }
                             }
