@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using System.Text;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -227,6 +228,7 @@ namespace DaggerfallWorkshop.Utility
             { "%wpn", null }, // Poison (?)
             { "%wth", Worth }, // Worth
         // DF Unity - new macros:
+            { "%", Percent }, // Not really a macro, just print %
             { "%pg", PlayerPronoun },   // He/She (player)
             { "%pg1", PlayerPronoun1 },  // His/Her (player)
             { "%pg2", PlayerPronoun2 }, // Him/Her (player)
@@ -234,6 +236,17 @@ namespace DaggerfallWorkshop.Utility
             { "%pg3", PlayerPronoun3 },  // His/Her (player)
             { "%hrn", HomeRegion },  // Home region (of person)
             { "%pcl", PlayerLastname }, // Character's last name
+            { "%day", DayNum }, // Current day of the month (ex: 1, 2, ..., 30)
+            { "%dayn", DayName }, // Name of the current day (ex: Morndas)
+            { "%days", DayWithSuffix }, // Current day of the month with suffix (ex: 1st, 2nd, 3rd, ...)
+            { "%mon", MonthNum }, // Current month
+            { "%monn", MonthName }, // Name of the current month (ex: Hearthfire)
+            { "%year", YearNum }, // Current year
+            { "%min", TimeMin }, // Current minute
+            { "%hour", TimeHour }, // Current hour
+            { "%sign", CurrentSign }, // Current sign (ex: The Lady, The Tower, ...). Not TES2 lore, but it's a staple at this point
+            { "%sea", CurrentSeason }, // Current season
+            { "%cbd", CurrentBuilding }, // Name of the current building, if any
         };
 
         // Multi-line macro handlers, returns tokens.
@@ -281,7 +294,7 @@ namespace DaggerfallWorkshop.Utility
         public static NameHelper.BankTypes GetRandomNameBank()
         {
             DFRandom.Seed = (uint)random.Next();
-            Races race = (Races) DFRandom.random_range_inclusive(1, 8);
+            Races race = (Races)DFRandom.random_range_inclusive(1, 8);
             return GetNameBank(race);
         }
 
@@ -300,7 +313,7 @@ namespace DaggerfallWorkshop.Utility
                     return firstChild.name;
             }
 
-            Genders gender = (Genders) ((fd.ruler + 1) % 2); // even entries are female titles/genders, odd entries are male ones
+            Genders gender = (Genders)((fd.ruler + 1) % 2); // even entries are female titles/genders, odd entries are male ones
             Races race = RaceTemplate.GetRaceFromFactionRace((FactionFile.FactionRaces)fd.race);
             // Matched to classic: used to retain the same old and new ruler name for each region
             DFRandom.Seed = oldRuler ? fd.rulerNameSeed >> 16 : fd.rulerNameSeed & 0xffff;
@@ -380,8 +393,8 @@ namespace DaggerfallWorkshop.Utility
 
         #region Macro Expansion Code
 
-        // Any punctuation characters that can be on the end of a macro symbol need adding here.
-        static char[] PUNCTUATION = { '.', ',', '\'', '?', '!' };
+        // Any non-alpha characters that can be on the end of a macro symbol need adding here.
+        static readonly char[] MACRO_TERMINATORS = { ' ', '%', '.', ',', '\'', '?', '!', '/', '(', ')', '{', '}', '[', ']', '\"', ';', ':' };
 
         /// <summary>
         /// Expands any macros in the textfile tokens.
@@ -394,6 +407,7 @@ namespace DaggerfallWorkshop.Utility
             string tokenText;
             int multilineIdx = 0;
             TextFile.Token[] multilineTokens = null;
+
             // Initialise macro cache - used to ensure macros are only evaluated once per ExpandMacros() call.
             // Important since some macros evaluate differently each time. (e.g. macros with random generated names like %fx1 & %fx2)
             Dictionary<string, string> macroCache = new Dictionary<string, string>();
@@ -401,6 +415,7 @@ namespace DaggerfallWorkshop.Utility
             for (int tokenIdx = 0; tokenIdx < tokens.Length; tokenIdx++)
             {
                 tokenText = tokens[tokenIdx].text;
+                // Check if the token contains any macro
                 if (tokenText != null && tokenText.IndexOf('%') >= 0)
                 {
                     // Handle multiline macros. (only handles the last one & must be only thing in this token)
@@ -411,53 +426,42 @@ namespace DaggerfallWorkshop.Utility
                     }
                     else
                     {
-                        // Split token text into individual words
-                        string[] words = tokenText.Split(' ');
+                        StringBuilder builder = new StringBuilder();
+                        int currentPos = 0;
+                        int macroPos;
 
-                        // Iterate words to find macros
-                        for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
+                        // Find if we have a macro left in the string
+                        while ((macroPos = tokenText.IndexOf('%', currentPos)) >= 0)
                         {
-                            int pos = words[wordIdx].IndexOf('%');
-                            if (pos >= 0 && words[wordIdx].Length > pos + 1)
+                            // Find where the macro ends
+                            int endPos = macroPos + 1;
+                            while (endPos < tokenText.Length && (Array.IndexOf(MACRO_TERMINATORS, tokenText[endPos]) < 0))
+                                endPos++;
+
+                            // Evaluate macro
+                            string macroName = tokenText.Substring(macroPos, endPos - macroPos);
+                            if (!macroCache.TryGetValue(macroName, out string macroValue))
                             {
-                                string prefix = words[wordIdx].Substring(0, pos);
-                                string macro = words[wordIdx].Substring(pos);
-
-                                if (macro.StartsWith("%"))
-                                {
-                                    int macroLen;
-                                    if (macroCache.ContainsKey(macro))
-                                    {
-                                        words[wordIdx] = prefix + macroCache[macro];
-                                    }
-                                    else if ((macroLen = macro.IndexOfAny(PUNCTUATION)) > 0)
-                                    {
-                                        string symbolStr = macro.Substring(0, macroLen);
-                                        string expandedString = GetValue(symbolStr, mcp);
-                                        words[wordIdx] = prefix + expandedString + macro.Substring(macroLen);
-                                        macroCache[macro] = expandedString;
-                                    }
-                                    else
-                                    {
-                                        string expandedString = GetValue(macro, mcp);
-                                        words[wordIdx] = prefix + expandedString;
-                                        macroCache[macro] = expandedString;
-                                    }
-                                }
+                                macroValue = GetValue(macroName, mcp);
+                                macroCache[macroName] = macroValue;
                             }
+
+                            // Add "prefix" and evaluated macro
+                            builder.Append(tokenText, currentPos, macroPos - currentPos);
+                            builder.Append(macroValue);
+
+                            // Iterate from macro end
+                            currentPos = endPos;
                         }
-                        // Re-assemble words and update token.
-                        tokenText = string.Empty;
-                        for (int wordIdx = 0; wordIdx < words.Length; wordIdx++)
-                        {
-                            tokenText += words[wordIdx];
-                            if (wordIdx != words.Length - 1)
-                                tokenText += " ";
-                        }
-                        tokens[tokenIdx].text = tokenText;
+
+                        // Add the rest of the text
+                        builder.Append(tokenText, currentPos, tokenText.Length - currentPos);
+
+                        tokens[tokenIdx].text = builder.ToString();
                     }
                 }
             }
+
             // Insert multiline tokens if generated.
             if (multilineTokens != null && multilineTokens.Length > 0)
             {
@@ -767,6 +771,76 @@ namespace DaggerfallWorkshop.Utility
             return GetLastname(GameManager.Instance.PlayerEntity.Name);
         }
 
+        private static string DayNum(IMacroContextProvider mcp)
+        {   // %day
+            return DaggerfallUnity.Instance.WorldTime.Now.DayOfMonth.ToString();
+        }
+
+        private static string DayName(IMacroContextProvider mcp)
+        {   // %dayn
+            return DaggerfallUnity.Instance.WorldTime.Now.DayName;
+        }
+
+        private static string DayWithSuffix(IMacroContextProvider mcp)
+        {   // %days
+            return DaggerfallUnity.Instance.WorldTime.Now.DayOfMonthWithSuffix.ToString();
+        }
+
+        private static string MonthNum(IMacroContextProvider mcp)
+        {   // %mon
+            return DaggerfallUnity.Instance.WorldTime.Now.MonthOfYear.ToString();
+        }
+
+        private static string MonthName(IMacroContextProvider mcp)
+        {   // %monn
+            return DaggerfallUnity.Instance.WorldTime.Now.MonthName;
+        }
+
+        private static string YearNum(IMacroContextProvider mcp)
+        {   // %year
+            return DaggerfallUnity.Instance.WorldTime.Now.Year.ToString();
+        }
+
+        private static string TimeMin(IMacroContextProvider mcp)
+        {   // %min
+            return DaggerfallUnity.Instance.WorldTime.Now.Minute.ToString();
+        }
+
+        private static string TimeHour(IMacroContextProvider mcp)
+        {   // %hour
+            return DaggerfallUnity.Instance.WorldTime.Now.Hour.ToString();
+        }
+
+        private static string CurrentSign(IMacroContextProvider mcp)
+        {   // %sign
+            return DaggerfallUnity.Instance.WorldTime.Now.BirthSignName;
+        }
+
+        private static string CurrentSeason(IMacroContextProvider mcp)
+        {   // %sea
+            return DaggerfallUnity.Instance.WorldTime.Now.SeasonName;
+        }
+
+        private static string Percent(IMacroContextProvider mcp)
+        {   // %
+            return "%";
+        }
+		
+        private static string CurrentBuilding(IMacroContextProvider mcp)
+        {   // %cbd
+            if(!GameManager.Instance.IsPlayerInsideBuilding)
+            {
+                return "[invalid]";
+            }
+
+            PlayerEnterExit enterExit = GameManager.Instance.PlayerEnterExit;
+            DaggerfallInterior buildingInterior = enterExit.Interior;
+            DFLocation.BuildingData buildingData = buildingInterior.BuildingData;
+            PlayerGPS gps = GameManager.Instance.PlayerGPS;
+            DFLocation location = gps.CurrentLocation;
+            return BuildingNames.GetName(buildingData.NameSeed, buildingData.BuildingType, buildingData.FactionId, location.Name, location.RegionName);
+        }
+
         private static string PlayerPronoun(IMacroContextProvider mcp)
         {   // %pg
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounShe") : TextManager.Instance.GetLocalizedText("pronounHe");
@@ -775,6 +849,7 @@ namespace DaggerfallWorkshop.Utility
         {   // %pg1 (same as %pg3)
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHis");
         }
+
         private static string PlayerPronoun2(IMacroContextProvider mcp)
         {   // %pg2
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHim");
