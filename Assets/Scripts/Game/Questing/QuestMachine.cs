@@ -411,6 +411,7 @@ namespace DaggerfallWorkshop.Game.Questing
             RegisterAction(new SetPlayerCrime(null));
             RegisterAction(new SpawnCityGuards(null));
             RegisterAction(new UnrestrainFoe(null));
+            RegisterAction(new PromptMulti(null));
 
             // Raise event for custom actions to be registered
             RaiseOnRegisterCustomerActionsEvent();
