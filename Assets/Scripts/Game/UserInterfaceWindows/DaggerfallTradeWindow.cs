@@ -30,6 +30,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public partial class DaggerfallTradeWindow : DaggerfallInventoryWindow, IMacroContextProvider
     {
+        public const int TradeMessageBaseId = 260;
+        public const int NotEnoughGoldId = 454;
+
         #region UI Rects
 
         Rect costPanelRect = new Rect(49, 13, 111, 9);
@@ -564,7 +567,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Helper Methods
 
-        protected void SelectActionMode(ActionModes mode)
+        protected override void SelectActionMode(ActionModes mode)
         {
             selectedActionMode = mode;
             if (mode == ActionModes.Info)
@@ -1058,14 +1061,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected virtual void ShowTradePopup()
         {
-            const int tradeMessageBaseId = 260;
-            const int notEnoughGoldId = 454;
             int msgOffset = 0;
             int tradePrice = GetTradePrice();
 
             if (WindowMode != WindowModes.Sell && WindowMode != WindowModes.SellMagic && PlayerEntity.GetGoldAmount() < tradePrice)
             {
-                DaggerfallUI.MessageBox(notEnoughGoldId);
+                DaggerfallUI.MessageBox(NotEnoughGoldId);
             }
             else
             {
@@ -1080,7 +1081,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     msgOffset += 3;
 
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(tradeMessageBaseId + msgOffset);
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TradeMessageBaseId + msgOffset);
                 messageBox.SetTextTokens(tokens, this);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);

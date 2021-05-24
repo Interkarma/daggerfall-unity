@@ -350,14 +350,30 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="itemIndex">Template index.</param>
         /// <param name="priorityToConjured">Prefer (short lived) conjured items.</param>
         /// <returns>An item of this type, or null if none found.</returns>
-        public DaggerfallUnityItem GetItem(ItemGroups itemGroup, int itemIndex, bool priorityToConjured = false)
+
+        public DaggerfallUnityItem GetItem(ItemGroups itemGroup, int itemIndex, bool priorityToConjured)
+        {
+            return GetItem(itemGroup, itemIndex, true, true, priorityToConjured);
+        }
+
+        /// <summary>
+        /// Get the first of an item type from this collection that satisfies extra conditions.
+        /// </summary>
+        /// <param name="itemGroup">Item group.</param>
+        /// <param name="itemIndex">Template index.</param>
+        /// <param name="allowEnchantedItem">Include enchanted items.</param>
+        /// <param name="allowQuestItem">Include quest items.</param>
+        /// <param name="priorityToConjured">Prefer (short lived) conjured items.</param>
+        /// <returns>An item of this type, or null if none found.</returns>
+
+        public DaggerfallUnityItem GetItem(ItemGroups itemGroup, int itemIndex, bool allowEnchantedItem = true, bool allowQuestItem = true, bool priorityToConjured = false)
         {
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(itemGroup, itemIndex);
             if (!priorityToConjured)
             {
                 foreach (DaggerfallUnityItem item in items.Values)
                 {
-                    if (item.ItemGroup == itemGroup && item.GroupIndex == groupIndex)
+                    if (item.ItemGroup == itemGroup && item.GroupIndex == groupIndex && (allowEnchantedItem || !item.IsEnchanted) && (allowQuestItem || !item.IsQuestItem))
                         return item;
                 }
                 return null;
@@ -368,7 +384,7 @@ namespace DaggerfallWorkshop.Game.Items
 
                 foreach (DaggerfallUnityItem item in items.Values)
                 {
-                    if (item.ItemGroup == itemGroup && item.GroupIndex == groupIndex)
+                    if (item.ItemGroup == itemGroup && item.GroupIndex == groupIndex && (allowEnchantedItem || !item.IsEnchanted) && (allowQuestItem || !item.IsQuestItem))
                     {
                         if (item.IsSummoned)
                         {

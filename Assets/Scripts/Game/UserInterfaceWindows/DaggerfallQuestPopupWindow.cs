@@ -25,7 +25,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public abstract class DaggerfallQuestPopupWindow : DaggerfallPopupWindow, IMacroContextProvider
     {
-        protected const int NotEnoughGoldId = 454;
         protected const int SummonNotToday = 480;
         protected const int SummonAreYouSure = 481;
         protected const int SummonBefore = 482;
@@ -287,7 +286,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 else
                 {   // Display customised not enough gold message so players don't need to guess the cost.
-                    TextFile.Token[] notEnoughGold = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(NotEnoughGoldId);
+                    TextFile.Token[] notEnoughGold = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(DaggerfallTradeWindow.NotEnoughGoldId);
                     TextFile.Token[] msg = new TextFile.Token[] {
                         new TextFile.Token() { formatting = TextFile.Formatting.Text, text = TextManager.Instance.GetLocalizedText("serviceSummonCost1") },
                         new TextFile.Token() { formatting = TextFile.Formatting.JustifyCenter },

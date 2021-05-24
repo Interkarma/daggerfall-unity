@@ -1188,7 +1188,7 @@ namespace DaggerfallWorkshop.Game.Items
         public bool AddSpellbookItem(PlayerEntity playerEntity)
         {
             ItemCollection items = playerEntity.Items;
-            DaggerfallUnityItem spellbook = items.GetItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook);
+            DaggerfallUnityItem spellbook = items.GetItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook, allowQuestItem: false);
             if (spellbook == null)
             {
                 items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Spellbook));

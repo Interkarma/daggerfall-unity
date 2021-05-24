@@ -375,7 +375,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localItemListScroller.OnItemRightClick += LocalItemListScroller_OnItemRightClick;
             localItemListScroller.OnItemMiddleClick += LocalItemListScroller_OnItemMiddleClick;
             if (itemInfoPanelLabel != null)
-                localItemListScroller.OnItemHover += ItemListScroller_OnHover;
+                localItemListScroller.OnItemHover += LocalItemListScroller_OnHover;
 
             remoteItemListScroller = new ItemListScroller(defaultToolTip)
             {
@@ -392,7 +392,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetRemoteItemsAnimation();
 
             if (itemInfoPanelLabel != null)
-                remoteItemListScroller.OnItemHover += ItemListScroller_OnHover;
+                remoteItemListScroller.OnItemHover += RemoteItemListScroller_OnHover;
         }
 
         protected virtual Color ItemBackgroundColourHandler(DaggerfallUnityItem item)
@@ -783,7 +783,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Helper Methods
 
-        protected void SetRemoteItemsAnimation()
+        protected virtual void SetRemoteItemsAnimation()
         {
             // Add animation handler for shop shelf stealing
             if (shopShelfStealing)
@@ -795,7 +795,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 remoteItemListScroller.BackgroundAnimationHandler = null;
         }
 
-        protected void SelectTabPage(TabPages tabPage)
+        protected virtual void SelectTabPage(TabPages tabPage)
         {
             // Select new tab page
             selectedTabPage = tabPage;
@@ -816,7 +816,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             localItemListScroller.Items = localItemsFiltered;
         }
 
-        protected void SelectActionMode(ActionModes mode)
+        protected virtual void SelectActionMode(ActionModes mode)
         {
             selectedActionMode = mode;
 
@@ -1771,7 +1771,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (item.ItemGroup == ItemGroups.UselessItems2 && item.TemplateIndex == (int)UselessItems2.Oil && collection != null)
             {
-                DaggerfallUnityItem lantern = localItems.GetItem(ItemGroups.UselessItems2, (int)UselessItems2.Lantern);
+                DaggerfallUnityItem lantern = localItems.GetItem(ItemGroups.UselessItems2, (int)UselessItems2.Lantern, allowQuestItem: false);
                 if (lantern != null && lantern.currentCondition <= lantern.maxCondition - item.currentCondition)
                 {   // Re-fuel lantern with the oil.
                     lantern.currentCondition += item.currentCondition;
@@ -2146,6 +2146,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Hover & StartGame Event Handlers
 
+        /// <summary>
+        /// Event raised when an item is hovered over in either list, the paperdoll, or accessories.
+        /// </summary>
+        public enum ItemHoverLocation { Accessories, Paperdoll, LocalList, RemoteList }
+        public delegate void OnItemHoverHandler(DaggerfallUnityItem item, ItemHoverLocation loc);
+        public event OnItemHoverHandler OnItemHover;
+        protected virtual void RaiseOnItemHoverEvent(DaggerfallUnityItem item, ItemHoverLocation loc)
+        {
+            OnItemHover?.Invoke(item, loc);
+        }
+
         protected virtual void PaperDoll_OnMouseMove(int x, int y)
         {
             byte value = paperDoll.GetEquipIndex(x, y);
@@ -2168,6 +2179,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // Update the info panel if used
                     if (itemInfoPanelLabel != null)
                         UpdateItemInfoPanel(item);
+
+                    RaiseOnItemHoverEvent(item, ItemHoverLocation.Paperdoll);
                 }
                 // Update tooltip text
                 paperDoll.ToolTipText = text;
@@ -2187,12 +2200,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnityItem item = playerEntity.ItemEquipTable.GetItem(slot);
             if (item == null)
                 return;
-            UpdateItemInfoPanel(item);
+
+            // Update the info panel if used
+            if (itemInfoPanelLabel != null)
+                UpdateItemInfoPanel(item);
+
+            RaiseOnItemHoverEvent(item, ItemHoverLocation.Accessories);
+        }
+
+        protected virtual void LocalItemListScroller_OnHover(DaggerfallUnityItem item)
+        {
+            ItemListScroller_OnHover(item);
+            RaiseOnItemHoverEvent(item, ItemHoverLocation.LocalList);
+        }
+
+        protected virtual void RemoteItemListScroller_OnHover(DaggerfallUnityItem item)
+        {
+            ItemListScroller_OnHover(item);
+            RaiseOnItemHoverEvent(item, ItemHoverLocation.RemoteList);
         }
 
         protected virtual void ItemListScroller_OnHover(DaggerfallUnityItem item)
         {
-            UpdateItemInfoPanel(item);
+            // Update the info panel if used
+            if (itemInfoPanelLabel != null)
+                UpdateItemInfoPanel(item);
         }
 
         protected virtual void GoldButton_OnMouseEnter(BaseScreenComponent sender)

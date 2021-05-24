@@ -81,14 +81,14 @@ namespace DaggerfallWorkshop.Game
         /// Setup building directory from specified location.
         /// </summary>
         /// <param name="location">Source location data.</param>
-        public void SetLocation(DFLocation location)
+        /// <param name="blocks">Exterior blocks.</param>
+        public void SetLocation(in DFLocation location, out DFBlock[] blocks)
         {
             // Clear existing buildings
             buildingDict.Clear();
 
             // Get block data pre-populated with map building data.
-            DFBlock[] blocks;
-            RMBLayout.GetLocationBuildingData(location, out blocks);
+            blocks = RMBLayout.GetLocationBuildingData(location);
 
             // Construct building directory
             int width = location.Exterior.ExteriorData.Width;

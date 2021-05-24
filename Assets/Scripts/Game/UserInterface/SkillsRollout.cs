@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -10,13 +10,9 @@
 //
 
 using UnityEngine;
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
+using System.Linq;
 using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 
@@ -65,6 +61,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         TextLabel[] majorSkillValueLabels = new TextLabel[DaggerfallSkills.MajorSkillsCount];
         TextLabel[] minorSkillValueLabels = new TextLabel[DaggerfallSkills.MinorSkillsCount];
 
+        IEnumerable<int> skillBonuses;
+
         public DaggerfallSkills StartingSkills
         {
             get { return startingSkills; }
@@ -75,6 +73,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             get { return workingSkills; }
             set { SetSkills(startingSkills, value); }
+        }
+
+        public IEnumerable<int> SkillBonuses
+        {
+            get { return skillBonuses; }
+            set { skillBonuses = value; UpdateSkillValueLabels(); }
         }
 
         public int PrimarySkillBonusPoints
@@ -282,7 +286,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 int startingSkill = startingSkills.GetPermanentSkillValue(primarySkills[i]);
                 int workingSkill = workingSkills.GetPermanentSkillValue(primarySkills[i]);
 
-                primarySkillValueLabels[i].Text = workingSkill.ToString();
+                if (skillBonuses != null)
+                {
+                    int bonusSkill = skillBonuses.ElementAt((int)primarySkills[i]);
+                    primarySkillValueLabels[i].Text = (workingSkill + bonusSkill).ToString();
+                }
+                else
+                {
+                    primarySkillValueLabels[i].Text = workingSkill.ToString();
+                }
+
                 if (workingSkill != startingSkill)
                     primarySkillValueLabels[i].TextColor = modifiedStatTextColor;
                 else
@@ -295,7 +308,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 int startingSkill = startingSkills.GetPermanentSkillValue(majorSkills[i]);
                 int workingSkill = workingSkills.GetPermanentSkillValue(majorSkills[i]);
 
-                majorSkillValueLabels[i].Text = workingSkill.ToString();
+                if (skillBonuses != null)
+                {
+                    int bonusSkill = skillBonuses.ElementAt((int)majorSkills[i]);
+                    majorSkillValueLabels[i].Text = (workingSkill + bonusSkill).ToString();
+                }
+                else
+                {
+                    majorSkillValueLabels[i].Text = workingSkill.ToString();
+                }
+
                 if (workingSkill != startingSkill)
                     majorSkillValueLabels[i].TextColor = modifiedStatTextColor;
                 else
@@ -308,7 +330,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 int startingSkill = startingSkills.GetPermanentSkillValue(minorSkills[i]);
                 int workingSkill = workingSkills.GetPermanentSkillValue(minorSkills[i]);
 
-                minorSkillValueLabels[i].Text = workingSkill.ToString();
+                if (skillBonuses != null)
+                {
+                    int bonusSkill = skillBonuses.ElementAt((int)minorSkills[i]);
+                    minorSkillValueLabels[i].Text = (workingSkill + bonusSkill).ToString();
+                }
+                else
+                {
+                    minorSkillValueLabels[i].Text = workingSkill.ToString();
+                }
+
                 if (workingSkill != startingSkill)
                     minorSkillValueLabels[i].TextColor = modifiedStatTextColor;
                 else

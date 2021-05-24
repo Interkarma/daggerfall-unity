@@ -1073,8 +1073,7 @@ namespace DaggerfallWorkshop.Game.Questing
             QuestResource[] parentQuestPlaceResources = ParentQuest.GetAllResources(typeof(Place));
 
             // Iterate through all blocks
-            DFBlock[] blocks;
-            RMBLayout.GetLocationBuildingData(location, out blocks);
+            DFBlock[] blocks = RMBLayout.GetLocationBuildingData(location);
             int width = location.Exterior.ExteriorData.Width;
             int height = location.Exterior.ExteriorData.Height;
             for (int y = 0; y < height; y++)

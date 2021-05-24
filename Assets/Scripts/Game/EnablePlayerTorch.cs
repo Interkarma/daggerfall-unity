@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game
                     torchIntensity = torchLight.intensity;
                     if (DaggerfallUnity.Settings.PlayerTorchFromItems)
                     {
-                        torchLight.shadows = LightShadows.Soft;
+                        torchLight.shadows = DaggerfallUnity.Settings.EnableSpellShadows ? LightShadows.Soft : LightShadows.None;
                         torchLight.transform.position = new Vector3(-0.3f, 1.2f, 0.2f);
                     }
                 }
