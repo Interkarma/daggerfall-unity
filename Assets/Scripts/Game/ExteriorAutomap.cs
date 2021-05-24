@@ -1493,9 +1493,10 @@ namespace DaggerfallWorkshop.Game
 
         private void LoadAndCreateLocationExteriorAutomap()
         {
-            if (location.Loaded && (GameManager.Instance.PlayerGPS.CurrentLocation.Name == location.Name)) // if already loaded
+            // Do nothing if already loaded
+            if (location.Loaded && GameManager.Instance.PlayerGPS.CurrentLocation.MapTableData.MapId == location.MapTableData.MapId)
             {
-                return; // do nothing
+                return;
             }
 
             UnloadLocationExteriorAutomap(); // first make sure to unload location exterior automap and destroy resources
