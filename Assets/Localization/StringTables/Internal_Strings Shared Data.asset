@@ -3263,10 +3263,6 @@ MonoBehaviour:
     m_Key: unknownPowers
     m_Metadata:
       m_Items: []
-  - m_Id: 84794791081250816
-    m_Key: youNeverAwaken
-    m_Metadata:
-      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
