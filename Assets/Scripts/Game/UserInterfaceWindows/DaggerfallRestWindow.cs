@@ -212,7 +212,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (currentRestMode != RestModes.Selection)
             {
-                if ((currentRestMode == RestModes.FullRest) && IsPlayerFullyHealed())
+                if (GameManager.Instance.PlayerDeath.DeathInProgress)
+                {
+                    preventedRestMessage = TextManager.Instance.GetLocalizedText("youNeverAwaken");
+                    EndRest();
+                }
+                else if ((currentRestMode == RestModes.FullRest) && IsPlayerFullyHealed())
                     EndRest();
                 else if ((currentRestMode != RestModes.FullRest) && hoursRemaining < 1)
                     EndRest();
