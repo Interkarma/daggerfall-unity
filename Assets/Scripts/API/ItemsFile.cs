@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -63,6 +63,9 @@ namespace DaggerfallConnect.FallExe
         public int worldTextureRecord;              // World texture record index
         public int playerTextureArchive;            // Player inventory texture archive index
         public int playerTextureRecord;             // Player inventory texture record index
+
+        // DFU extension fields
+        public bool isNotRepairable;                // Defaults to false if not specified
     }
 
     /// <summary>

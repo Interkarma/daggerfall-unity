@@ -3642,5 +3642,9 @@ MonoBehaviour:
     m_Localized: Unknown Powers
     m_Metadata:
       m_Items: []
+  - m_Id: 81196844510765056
+    m_Localized: This cannot be repaired.
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

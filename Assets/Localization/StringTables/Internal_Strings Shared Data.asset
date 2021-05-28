@@ -3263,6 +3263,10 @@ MonoBehaviour:
     m_Key: unknownPowers
     m_Metadata:
       m_Items: []
+  - m_Id: 81196844510765056
+    m_Key: cannotBeRepaired
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
