@@ -68,17 +68,14 @@ namespace DaggerfallWorkshop.Game
             if (GameManager.Instance.PlayerEntity.IsParalyzed)
                 return;
 
-            // Forward/backwards
-            if (InputManager.Instance.HasAction(InputManager.Actions.MoveForwards))
-                AddMovement(playerCamera.transform.forward);
-            else if (InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
-                AddMovement(-playerCamera.transform.forward);
+            float inputX = InputManager.Instance.Horizontal;
+            float inputY = InputManager.Instance.Vertical;
 
-            // Right/left
-            if (InputManager.Instance.HasAction(InputManager.Actions.MoveRight))
-                AddMovement(playerCamera.transform.right);
-            else if (InputManager.Instance.HasAction(InputManager.Actions.MoveLeft))
-                AddMovement(-playerCamera.transform.right);
+            if (inputX != 0.0f || inputY != 0.0f)
+            {
+                float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && playerMotor.limitDiagonalSpeed) ? .7071f : 1.0f;
+                AddMovement(playerCamera.transform.TransformDirection(new Vector3(inputX * inputModifyFactor, 0, inputY * inputModifyFactor)));
+            }
 
             // Up/down
             Vector3 upDownVector = new Vector3 (0, 0, 0);
