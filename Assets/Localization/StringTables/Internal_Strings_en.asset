@@ -3646,5 +3646,9 @@ MonoBehaviour:
     m_Localized: This cannot be repaired.
     m_Metadata:
       m_Items: []
+  - m_Id: 89174439800094720
+    m_Localized: You never awaken.
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

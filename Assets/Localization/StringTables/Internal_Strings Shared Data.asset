@@ -3267,6 +3267,10 @@ MonoBehaviour:
     m_Key: cannotBeRepaired
     m_Metadata:
       m_Items: []
+  - m_Id: 89174439800094720
+    m_Key: youNeverAwaken
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
