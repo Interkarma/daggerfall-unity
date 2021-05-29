@@ -706,6 +706,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 if (checkItem != item && 
                     checkItem.ItemGroup == itemGroup && checkItem.GroupIndex == groupIndex &&
+                    checkItem.message == item.message &&
                     checkItem.PotionRecipeKey == item.PotionRecipeKey &&
                     checkItem.TimeForItemToDisappear == item.TimeForItemToDisappear &&
                     checkItem.IsStackable())
