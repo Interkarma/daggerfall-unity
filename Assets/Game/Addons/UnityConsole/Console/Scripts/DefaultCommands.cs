@@ -2403,7 +2403,7 @@ namespace Wenzil.Console
 
                 // Poison player
                 Poisons poisonType = (Poisons)index + 128;
-                DaggerfallWorkshop.Game.Formulas.FormulaHelper.InflictPoison(GameManager.Instance.PlayerEntity, poisonType, true);
+                FormulaHelper.InflictPoison(GameManager.Instance.PlayerEntity, GameManager.Instance.PlayerEntity, poisonType, true);
 
                 return string.Format("Player poisoned with {0}", poisonType.ToString());
             }
