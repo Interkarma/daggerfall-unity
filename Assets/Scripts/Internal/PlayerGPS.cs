@@ -290,8 +290,8 @@ namespace DaggerfallWorkshop
             DFPosition pos = CurrentMapPixel;
             if (pos.X != lastMapPixelX || pos.Y != lastMapPixelY)
             {
-                RaiseOnMapPixelChangedEvent(pos);
                 UpdateWorldInfo(pos.X, pos.Y);
+                RaiseOnMapPixelChangedEvent(pos);
 
                 // Clear non-permanent scenes from cache, unless going to/from owned ship
                 DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
