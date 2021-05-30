@@ -23,6 +23,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Game.Banking;
 
 namespace DaggerfallWorkshop.Game.Formulas
 {
@@ -1894,6 +1895,10 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int CalculateItemRepairTime(int condition, int max)
         {
+            Func<int, int, int> del;
+            if (TryGetOverride("CalculateItemRepairTime", out del))
+                return del(condition, max);
+
             int damage = max - condition;
             int repairTime = (damage * DaggerfallDateTime.SecondsPerDay / 1000);
             return Mathf.Max(repairTime, DaggerfallDateTime.SecondsPerDay);
@@ -1901,6 +1906,10 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int CalculateItemIdentifyCost(int baseItemValue, IGuild guild)
         {
+            Func<int, IGuild, int> del;
+            if (TryGetOverride("CalculateItemIdentifyCost", out del))
+                return del(baseItemValue, guild);
+
             // Free on Witches Festival
             uint minutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
@@ -1964,6 +1973,26 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             return amount;
+        }
+
+        public static int CalculateMaxBankLoan()
+        {
+            Func<int> del;
+            if (TryGetOverride("CalculateMaxBankLoan", out del))
+                return del();
+
+            //unoffical wiki says max possible loan is 1,100,000 but testing indicates otherwise
+            //rep. doesn't seem to effect cap, it's just level * 50k
+            return GameManager.Instance.PlayerEntity.Level * DaggerfallBankManager.loanMaxPerLevel;
+        }
+
+        public static int CalculateBankLoanRepayment(int amount)
+        {
+            Func<int, int> del;
+            if (TryGetOverride("CalculateBankLoanRepayment", out del))
+                return del(amount);
+
+            return (int)(amount + amount * .1);
         }
 
         public static int ApplyRegionalPriceAdjustment(int cost)
