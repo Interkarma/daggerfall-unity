@@ -1290,6 +1290,10 @@ namespace DaggerfallConnect.Arena2
                 dfLocation.Dungeon.Blocks[i].BlockName = String.Format("{0}{1:0000000}.RDB", rdbBlockLetters[dfLocation.Dungeon.Blocks[i].BlockIndex], dfLocation.Dungeon.Blocks[i].BlockNumber);
             }
 
+            // Orsinium hack to move a border block overlapping another one. Reversed engineered from classic
+            if (dfLocation.Dungeon.RecordElement.Header.LocationId == 50015)
+                dfLocation.Dungeon.Blocks[13].Z = -2;
+
             // Set dungeon flag
             dfLocation.HasDungeon = true;
         }

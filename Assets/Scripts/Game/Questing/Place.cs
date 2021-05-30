@@ -1452,15 +1452,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Get block data
                 DFBlock blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(dungeonBlock.BlockName);
 
-                // Skip misplaced overlapping N block at -1,-1 in Orsinium
-                // This must be a B block to close out dungeon on that edge, not an N block which opens dungeon to void
-                // DaggerfallDungeon skips this N block during layout, so prevent it being available to quest system
-                if (location.MapTableData.MapId == 19021260 &&
-                    dungeonBlock.X == -1 && dungeonBlock.Z == -1 && dungeonBlock.BlockName == "N0000065.RDB")
-                {
-                    continue;
-                }
-
                 // Iterate all groups
                 foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
                 {

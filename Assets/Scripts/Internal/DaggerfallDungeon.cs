@@ -111,10 +111,7 @@ namespace DaggerfallWorkshop
 
             // Perform layout
             startMarker = null;
-            if (location.MapTableData.MapId == 19021260)
-                LayoutOrsinium(ref location, importEnemies);
-            else
-                LayoutDungeon(ref location, importEnemies);
+            LayoutDungeon(location, importEnemies);
 
             // Seal location
             isSet = true;
@@ -283,7 +280,7 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
-        private void LayoutDungeon(ref DFLocation location, bool importEnemies = true)
+        private void LayoutDungeon(in DFLocation location, bool importEnemies = true)
         {
 #if SHOW_LAYOUT_TIMES
             // Start timing
@@ -336,48 +333,6 @@ namespace DaggerfallWorkshop
             long totalTime = stopwatch.ElapsedMilliseconds - startTime;
             DaggerfallUnity.LogMessage(string.Format("Time to layout dungeon: {0}ms", totalTime), true);
 #endif
-        }
-
-        // Orsinium defines two blocks at [-1,-1]
-        private void LayoutOrsinium(ref DFLocation location, bool importEnemies = true)
-        {
-            // Calculate monster power - this is a clamped 0-1 value based on player's level from 1-20
-            float monsterPower = Mathf.Clamp01(GameManager.Instance.PlayerEntity.Level / 20f);
-
-            // Create dungeon layout and handle misplaced block
-            for (int i = 0; i < summary.LocationData.Dungeon.Blocks.Length; i++)
-            {
-                DFLocation.DungeonBlock block = summary.LocationData.Dungeon.Blocks[i];
-                if (block.X == -1 && block.Z == -1 && block.BlockName == "N0000065.RDB")
-                    continue;
-
-                GameObject go = GameObjectHelper.CreateRDBBlockGameObject(
-                    block.BlockName,
-                    DungeonTextureTable,
-                    block.IsStartingBlock,
-                    Summary.DungeonType,
-                    monsterPower,
-                    RandomMonsterVariance,
-                    (int)DateTime.Now.Ticks/*Summary.ID*/,      // TODO: Add more options for seed
-                    dfUnity.Option_DungeonBlockPrefab,
-                    importEnemies);
-                go.transform.parent = this.transform;
-                go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
-
-                DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
-                if (block.IsStartingBlock)
-                    FindMarkers(daggerfallBlock, ref block, true); // Assign start marker and enter marker
-                else
-                    FindMarkers(daggerfallBlock, ref block, false); // Only find water level and castle block info from start marker
-
-                summary.LocationData.Dungeon.Blocks[i].WaterLevel = block.WaterLevel;
-                summary.LocationData.Dungeon.Blocks[i].CastleBlock = block.CastleBlock;
-
-                // Add water blocks
-                RDBLayout.AddWater(go, go.transform.position, block.WaterLevel);
-            }
-
-            RemoveOverlappingDoors();
         }
 
         // Remove duplicate/overlapping action doors in dungeons
@@ -498,15 +453,6 @@ namespace DaggerfallWorkshop
             {
                 // Get block data
                 DFBlock blockData = DaggerfallUnity.Instance.ContentReader.BlockFileReader.GetBlock(dungeonBlock.BlockName);
-
-                // Skip misplaced overlapping N block at -1,-1 in Orsinium
-                // This must be a B block to close out dungeon on that edge, not an N block which opens dungeon to void
-                // DaggerfallDungeon skips this N block during layout, so prevent it being available to quest system
-                if (summary.LocationData.MapTableData.MapId == 19021260 &&
-                    dungeonBlock.X == -1 && dungeonBlock.Z == -1 && dungeonBlock.BlockName == "N0000065.RDB")
-                {
-                    continue;
-                }
 
                 // Iterate all groups
                 foreach (DFBlock.RdbObjectRoot group in blockData.RdbBlock.ObjectRootList)
