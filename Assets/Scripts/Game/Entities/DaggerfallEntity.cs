@@ -16,6 +16,7 @@ using System.Linq;
 using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Serialization;
@@ -789,12 +790,25 @@ namespace DaggerfallWorkshop.Game.Entity
             if (otherSpellbook == null || otherSpellbook.Length == 0)
                 return;
 
-            // Migrate from old spell icon index
-            // The old icon index will be changed into a SpellIcon with a null pack key
             for (int i = 0; i < otherSpellbook.Length; i++)
             {
-                if (string.IsNullOrEmpty(otherSpellbook[i].Icon.key) && otherSpellbook[i].Icon.index == 0)
-                    otherSpellbook[i].Icon.index = otherSpellbook[i].IconIndex;
+                ref EffectBundleSettings bundleSettings = ref otherSpellbook[i];
+
+                // Migrate from old spell icon index
+                // The old icon index will be changed into a SpellIcon with a null pack key
+                if (string.IsNullOrEmpty(bundleSettings.Icon.key) && bundleSettings.Icon.index == 0)
+                    bundleSettings.Icon.index = bundleSettings.IconIndex;
+
+                // Our spell records might have changed since last load because of mods. Reassing spells based on standard spells
+                if(bundleSettings.StandardSpellIndex.HasValue)
+                {
+                    int spellIndex = bundleSettings.StandardSpellIndex.Value;
+                    if(GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(spellIndex, out SpellRecord.SpellRecordData spell))
+                    {
+                        if (!GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spell, bundleSettings.BundleType, out bundleSettings))
+                            Debug.LogError($"Failed to update spell bundle '{bundleSettings.Name}'");
+                    }
+                }
             }
 
             spellbook.AddRange(otherSpellbook);

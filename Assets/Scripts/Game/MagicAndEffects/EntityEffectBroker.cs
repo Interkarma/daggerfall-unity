@@ -861,6 +861,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 Name = spellRecordData.spellName,
                 IconIndex = spellRecordData.icon,
                 Icon = new SpellIcon(),
+                StandardSpellIndex = spellRecordData.index, 
             };
             effectBundleSettingsOut.Icon.index = effectBundleSettingsOut.IconIndex;
 
