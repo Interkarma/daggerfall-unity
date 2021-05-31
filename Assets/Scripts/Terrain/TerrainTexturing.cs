@@ -22,10 +22,11 @@ namespace DaggerfallWorkshop
     /// </summary>
     public interface ITerrainTexturing
     {
-        JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true);
-
         // Does the conversion of tilemapData require water tiles converting from 0xFF (the default)
         bool ConvertWaterTiles();
+
+        // Schedule the terrain tile generation and assignment jobs
+        JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true);
     }
 
     /// <summary>
