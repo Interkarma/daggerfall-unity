@@ -219,11 +219,13 @@ namespace DaggerfallWorkshop
         public static JobHandle ScheduleUpdateTileMapDataJob(ref MapPixelData mapPixel, JobHandle dependencies)
         {
             int tilemapDim = MapsFile.WorldMapTileDim;
+            bool convertWater = DaggerfallUnity.Instance.TerrainTexturing.ConvertWaterTiles();
             UpdateTileMapDataJob updateTileMapDataJob = new UpdateTileMapDataJob()
             {
                 tilemapData = mapPixel.tilemapData,
                 tileMap = mapPixel.tileMap,
                 tDim = tilemapDim,
+                convertWater = convertWater,
             };
             return updateTileMapDataJob.Schedule(tilemapDim * tilemapDim, 64, dependencies);
         }
@@ -335,6 +337,7 @@ namespace DaggerfallWorkshop
             public NativeArray<Color32> tileMap;
 
             public int tDim;
+            public bool convertWater;
 
             public void Execute(int index)
             {
@@ -349,7 +352,7 @@ namespace DaggerfallWorkshop
 
                 // Convert from [flip,rotate,6bit-record] => [6bit-record,flip,rotate]
                 int record;
-                if (tile == byte.MaxValue)
+                if (convertWater && tile == byte.MaxValue)
                 {   // Zeros are converted to FF so assign tiles doesn't overwrite location tiles, convert back.
                     record = 0;
                 }

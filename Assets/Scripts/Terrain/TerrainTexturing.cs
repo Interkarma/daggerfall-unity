@@ -23,6 +23,9 @@ namespace DaggerfallWorkshop
     public interface ITerrainTexturing
     {
         JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true);
+
+        // Does the conversion of tilemapData require water tiles converting from 0xFF (the default)
+        bool ConvertWaterTiles();
     }
 
     /// <summary>
@@ -48,6 +51,11 @@ namespace DaggerfallWorkshop
         public DefaultTerrainTexturing()
         {
             CreateLookupTable();
+        }
+
+        public virtual bool ConvertWaterTiles()
+        {
+            return true;
         }
 
         public virtual JobHandle ScheduleAssignTilesJob(ITerrainSampler terrainSampler, ref MapPixelData mapData, JobHandle dependencies, bool march = true)
