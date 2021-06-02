@@ -80,7 +80,7 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         IEnumerator TakeScreenshot()
         {
-            string name = DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
+            string name = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss");
             int inc = 1;
 
             if (File.Exists(Path.Combine(UnityScreenshotsPath, name + fileExtension)))
