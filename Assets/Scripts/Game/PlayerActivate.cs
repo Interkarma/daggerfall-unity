@@ -665,15 +665,15 @@ namespace DaggerfallWorkshop.Game
             };
 
             // formatting message is split into 2 parts, depending whether we got any news or not.
-            if (bulletinBoardMessage != string.Empty)
+            if (bulletinBoardMessage != null)
             {
                 tokens.AddRange(new List<TextFile.Token>
                 {
                     new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
                     new TextFile.Token(TextFile.Formatting.Text, string.Empty),
                     new TextFile.Token(TextFile.Formatting.NewLineOffset, null),
-                    new TextFile.Token(TextFile.Formatting.Text, bulletinBoardMessage),
                 });
+                tokens.AddRange(bulletinBoardMessage);
             }
 
             // Display message
