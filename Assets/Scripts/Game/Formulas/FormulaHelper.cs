@@ -1990,11 +1990,11 @@ namespace DaggerfallWorkshop.Game.Formulas
             return GameManager.Instance.PlayerEntity.Level * DaggerfallBankManager.loanMaxPerLevel;
         }
 
-        public static int CalculateBankLoanRepayment(int amount)
+        public static int CalculateBankLoanRepayment(int amount, int regionIndex)
         {
-            Func<int, int> del;
+            Func<int, int, int> del;
             if (TryGetOverride("CalculateBankLoanRepayment", out del))
-                return del(amount);
+                return del(amount, regionIndex);
 
             return (int)(amount + amount * .1);
         }

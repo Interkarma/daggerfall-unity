@@ -537,7 +537,7 @@ namespace DaggerfallWorkshop.Game.Banking
                 result = TransactionResult.LOAN_REQUEST_TOO_HIGH;
             else
             {
-                BankAccounts[regionIndex].loanTotal += FormulaHelper.CalculateBankLoanRepayment(amount);
+                BankAccounts[regionIndex].loanTotal += FormulaHelper.CalculateBankLoanRepayment(amount, regionIndex);
                 BankAccounts[regionIndex].accountGold += amount;
                 bankAccounts[regionIndex].loanDueDate = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() + loanRepayMinutes;
             }
