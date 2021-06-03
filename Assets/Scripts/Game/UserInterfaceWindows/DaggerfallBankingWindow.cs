@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Utility;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -507,7 +508,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             public override string MaxLoan()
             {
-                return DaggerfallBankManager.CalculateMaxLoan().ToString();
+                return FormulaHelper.CalculateMaxBankLoan().ToString();
             }
 
         }
