@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Michael Rauter (Nystul)
-// Contributors:    Numidium, TheExceptionist
+// Contributors:    Numidium, TheExceptionist, kaboissonneault
 // 
 // Notes:
 //
@@ -39,21 +39,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected const string greenArrowsTextureName = "INVE06I0.IMG";       // Green up/down arrows when more items available
         protected const string redArrowsTextureName = "INVE07I0.IMG";         // Red up/down arrows when no more items available
 
-        //const int maxNumTopicsShown = 13; // max number of items displayed in scrolling area of topics list
-        const int maxNumCharactersOfTopicShown = 20; // max number of characters of a topic displayed in scrolling area of topics list
-
-        //const int maxNumAnswerLinesShown = 15; // max number of lines displayed in scrolling area of answers
-
         protected Color textcolorPlayerSays = new Color(0.698f, 0.812f, 1.0f);
-
-        //Color textcolorQuestionHighlighted = new Color(0.8f, 0.9f, 1.0f);
         protected Color textcolorHighlighted = Color.white;
-
-        protected Color textcolorQuestionBackgroundModernConversationStyle = new Color(0.3f, 0.35f, 0.43f); // new Color(0.23f, 0.27f, 0.33f);
+        protected Color textcolorQuestionBackgroundModernConversationStyle = new Color(0.3f, 0.35f, 0.43f); 
         protected Color textcolorAnswerBackgroundModernConversationStyle = new Color(0.32f, 0.31f, 0.06f); //  default text r: 243 (0.95f), g: 239 (0.93f), b: 44 (0.17)
-
         protected Color textcolorCaptionGotoParentList = new Color(0.698f, 0.812f, 1.0f);
-        //Color textcolorCaptionGotoParentListHighlighted = Color.white;
 
         protected const float textScaleModernConversationStyle = 0.8f;
         protected const float textBlockSizeModernConversationStyle = 0.75f;
@@ -144,7 +134,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected Color[] colorsCategoryPeopleHighlighted;
         protected Color[] colorsCategoryThingHighlighted;
         protected Color[] colorsCategoryWorkHighlighted;
-
 
         protected Panel mainPanel;
 
@@ -414,7 +403,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             SetTalkModeWhereIs();
 
-            //UpdateButtonState();
             UpdateCheckboxes();
             UpdateScrollBarsTopic();
             UpdateScrollButtonsTopic();
@@ -603,7 +591,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Main panel
             mainPanel = DaggerfallUI.AddPanel(NativePanel, AutoSizeModes.None);
             mainPanel.BackgroundTexture = textureBackground;
-            //mainPanel.Size = new Vector2(textureBackground.width, textureBackground.height);
             mainPanel.Size = new Vector2(320, 200); // reference size is always vanilla df resolution
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.VerticalAlignment = VerticalAlignment.Middle;
@@ -624,7 +611,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.OnScroll += ListBoxTopic_OnScroll;
             listboxTopic.Position = new Vector2(6, 71);
             listboxTopic.Size = new Vector2(94, 104);
-            //listboxTopic.RowsDisplayed = maxNumTopicsShown;
             listboxTopic.MaxCharacters = -1;
             listboxTopic.RowSpacing = 0;
             listboxTopic.Name = "list_topic";
@@ -633,7 +619,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             listboxTopic.HorizontalScrollMode = ListBox.HorizontalScrollModes.PixelWise;
             listboxTopic.RectRestrictedRenderArea = new Rect(listboxTopic.Position, listboxTopic.Size);
             listboxTopic.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
-            //SetListItems(ref listboxTopic, ref listTopicLocation);
             listboxTopic.OnUseSelectedItem += ListboxTopic_OnUseSelectedItem;
             listboxTopic.OnSelectItem += ListboxTopic_OnSelectItem;
             mainPanel.Components.Add(listboxTopic);
@@ -826,24 +811,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         protected virtual void UpdateScrollBarsTopic()
         {
-            verticalScrollBarTopic.DisplayUnits = (int)listboxTopic.Size.y; //Math.Min(maxNumTopicsShown, listboxTopic.Count);
-            verticalScrollBarTopic.TotalUnits = listboxTopic.HeightContent();  //listboxTopic.Count;
+            verticalScrollBarTopic.DisplayUnits = (int)listboxTopic.Size.y;
+            verticalScrollBarTopic.TotalUnits = listboxTopic.HeightContent();
             verticalScrollBarTopic.ScrollIndex = 0;
             verticalScrollBarTopic.Update();
 
-            horizontalSliderTopic.DisplayUnits = (int)listboxTopic.Size.x; //maxNumCharactersOfTopicShown;
-            horizontalSliderTopic.TotalUnits = listboxTopic.WidthContent();  //lengthOfLongestItemInListBox;
+            horizontalSliderTopic.DisplayUnits = (int)listboxTopic.Size.x;
+            horizontalSliderTopic.TotalUnits = listboxTopic.WidthContent();
             horizontalSliderTopic.ScrollIndex = 0;
             horizontalSliderTopic.Update();
         }
 
         protected virtual void UpdateScrollBarConversation()
         {
-            verticalScrollBarConversation.DisplayUnits = (int)listboxConversation.Size.y; //Math.Max(5, listboxConversation.HeightContent() / 10);
+            verticalScrollBarConversation.DisplayUnits = (int)listboxConversation.Size.y;
             verticalScrollBarConversation.TotalUnits = listboxConversation.HeightContent();
             verticalScrollBarConversation.ScrollIndex = 0;
             if (listboxConversation.Count > 0)
-                verticalScrollBarConversation.ScrollIndex = listboxConversation.HeightContent() - (int)listboxConversation.Size.y; //listboxConversation.GetItem(listboxConversation.Count - 1).textLabel.TextHeight;
+                verticalScrollBarConversation.ScrollIndex = listboxConversation.HeightContent() - (int)listboxConversation.Size.y;
             verticalScrollBarConversation.Update();
         }
 
@@ -883,10 +868,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (item.caption == null) // this is a check to detect problems arising from old save data - where caption end up as null
                 {
                     item.caption = item.key; //  just try to take key as caption then (answers might still be broken)
-                    if (item.caption == String.Empty)
+                    if (item.caption == string.Empty)
                         item.caption = TextManager.Instance.GetLocalizedText("resolvingError");
                 }
-                else if (item.caption == String.Empty)
+                else if (item.caption == string.Empty)
                 {
                     item.caption = TextManager.Instance.GetLocalizedText("resolvingError");
                 }
@@ -894,16 +879,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (item.type == TalkManager.ListItemType.NavigationBack)
                 {
                     listboxItem.textColor = textcolorCaptionGotoParentList;
-                    //listboxItem.selectedTextColor = textcolorCaptionGotoParentListHighlighted;
                 }
             }
 
             // compute length of longest item in listbox from current list items...
-            //lengthOfLongestItemInListBox = listboxTopic.LengthOfLongestItem();
             widthOfLongestItemInListBox = listboxTopic.WidthContent();
 
             // update listboxTopic.MaxHorizontalScrollIndex            
-            //listboxTopic.MaxHorizontalScrollIndex = Math.Max(0, lengthOfLongestItemInListBox - maxNumCharactersOfTopicShown);
             listboxTopic.MaxHorizontalScrollIndex = Math.Max(0, widthOfLongestItemInListBox - (int)listboxTopic.Size.x);
             
             listboxTopic.Update();
@@ -920,15 +902,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
             {
                 listboxTopic.SelectIndex(0);
-                //listboxTopic.SelectNone();
-                //UpdateQuestion(-1); // important since it might have selected question from last double-click action when changing level of topic tree
             }
         }
 
         protected virtual void ClearListboxTopics()
         {
             listboxTopic.ClearItems();
-            //lengthOfLongestItemInListBox = 0;
             widthOfLongestItemInListBox = 0;
             listboxTopic.MaxHorizontalScrollIndex = 0;
         }
@@ -1278,7 +1257,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted            
             textLabelQuestion.textLabel.HorizontalAlignment = HorizontalAlignment.Right;
             textLabelQuestion.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;
-            //textLabelQuestion.textLabel.BackgroundColor = new Color(0.3f, 0.4f, 0.9f);
             if (DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow)
             {
                 textLabelQuestion.textLabel.TextScale = textScaleModernConversationStyle;
@@ -1289,7 +1267,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabelAnswer.selectedTextColor = textcolorHighlighted;            
             textLabelAnswer.textLabel.HorizontalAlignment = HorizontalAlignment.Left;
             textLabelAnswer.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;
-            //textLabelAnswer.textLabel.BackgroundColor = new Color(0.4f, 0.3f, 0.9f);
             if (DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow)
             {
                 textLabelAnswer.textLabel.TextScale = textScaleModernConversationStyle;
@@ -1360,11 +1337,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected virtual void VerticalScrollBarTopic_OnScroll()
         {
             // Update scroller
-            verticalScrollBarTopic.TotalUnits = listboxTopic.HeightContent(); //listboxTopic.Count;
+            verticalScrollBarTopic.TotalUnits = listboxTopic.HeightContent();
             int scrollIndex = GetSafeScrollIndex(verticalScrollBarTopic);
 
             // Update scroller buttons
-            //UpdateListScrollerButtons(verticalScrollBarTopic, scrollIndex, listboxTopic.Count, buttonTopicUp, buttonTopicDown);
             UpdateListTopicScrollerButtons(verticalScrollBarTopic, scrollIndex, listboxTopic.HeightContent(), buttonTopicUp, buttonTopicDown);
 
             listboxTopic.ScrollIndex = scrollIndex;
@@ -1374,11 +1350,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected virtual void HorizontalSliderTopic_OnScroll()
         {
             // Update scroller
-            horizontalSliderTopic.TotalUnits = widthOfLongestItemInListBox; //lengthOfLongestItemInListBox;
-            int horizontalScrollIndex = GetSafeScrollIndex(horizontalSliderTopic); // horizontalSliderTopicWindow.ScrollIndex;
+            horizontalSliderTopic.TotalUnits = widthOfLongestItemInListBox;
+            int horizontalScrollIndex = GetSafeScrollIndex(horizontalSliderTopic);
 
             // Update scroller buttons
-            //UpdateListScrollerButtonsLeftRight(horizontalScrollIndex, lengthOfLongestItemInListBox, buttonTopicLeft, buttonTopicRight);
             UpdateListTopicScrollerButtonsLeftRight(horizontalSliderTopic, horizontalScrollIndex, widthOfLongestItemInListBox, buttonTopicLeft, buttonTopicRight);
 
             listboxTopic.HorizontalScrollIndex = horizontalScrollIndex;
