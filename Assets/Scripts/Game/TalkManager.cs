@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop.Game
         NPCData npcData;
 
         // type of npc talk partners for a conversion
-        enum NPCType
+        public enum NPCType
         {
             Static,
             Mobile,
@@ -391,6 +391,30 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Returns which NPC type we're currently talking to: static, or mobile
+        /// </summary>
+        public NPCType CurrentNPCType
+        {
+            get { return currentNPCType; }
+        }
+
+        /// <summary>
+        /// Reference to the current "static" NPC. Only valid if CurrentNPCType is equal to NPCType.Static
+        /// </summary>
+        public StaticNPC StaticNPC
+        {
+            get { return lastTargetStaticNPC; }
+        }
+
+        /// <summary>
+        /// Reference to the current "mobile" NPC. Only valid if CurrentNPCType is equal to NPCType.Mobile
+        /// </summary>
+        public MobilePersonNPC MobileNPC
+        {
+            get { return lastTargetMobileNPC; }
+        }
 
         public string NameNPC
         {
