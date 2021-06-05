@@ -1289,14 +1289,12 @@ namespace DaggerfallWorkshop.Game
             return question;
         }
 
-        public string GetNewsOrRumorsForBulletinBoard()
+        public TextFile.Token[] GetNewsOrRumorsForBulletinBoard()
         {
-            string news = string.Empty;
-
             List<RumorMillEntry> validRumors = GetValidRumors(true);
 
             if (validRumors.Count == 0)
-                return news;
+                return null;
 
             // Simply use first rumor available
             RumorMillEntry validRumor = validRumors.FirstOrDefault(x => x.rumorType == RumorType.CommonRumor);
@@ -1318,10 +1316,10 @@ namespace DaggerfallWorkshop.Game
                 MacroHelper.SetFactionIdsAndRegionID(validRumor.faction1, validRumor.faction2, regionID);
                 MacroHelper.ExpandMacros(ref tokens, this);
                 MacroHelper.SetFactionIdsAndRegionID(-1, -1, -1); // Reset again so %reg macro may resolve to current region if needed
-                news = TokensToString(tokens, false);
+                return tokens;
             }
 
-            return news;
+            return null;
         }
 
         public string GetNewsOrRumors()
