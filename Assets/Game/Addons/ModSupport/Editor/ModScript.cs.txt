@@ -1,0 +1,27 @@
+using UnityEngine;
+using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
+
+namespace #SCRIPTNAME#Mod
+{
+    public class #SCRIPTNAME# : MonoBehaviour
+    {
+        private static Mod mod;
+
+        [Invoke(StateManager.StateTypes.Start, 0)]
+        public static void Init(InitParams initParams)
+        {
+            mod = initParams.Mod;
+
+            var go = new GameObject(mod.Title);
+            go.AddComponent<#SCRIPTNAME#>();
+
+            mod.IsReady = true;
+        }
+
+        private void Start()
+        {
+            
+        }
+    }
+}
