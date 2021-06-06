@@ -620,6 +620,19 @@ namespace DaggerfallWorkshop.Game.Questing
                         return false;
                 }
             }
+            // Handle guild halls
+            else if(p2 == (int)DFLocation.BuildingTypes.GuildHall)
+            {
+                if (buildingType != p2)
+                    return false;
+
+                // Accept any guild hall
+                if (p3 == 0)
+                    return true;
+
+                // Faction id must match
+                return playerEnterExit.FactionID == p3;
+            }
             else
             {
                 return buildingType == p2;
