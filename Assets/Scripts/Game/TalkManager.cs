@@ -353,6 +353,7 @@ namespace DaggerfallWorkshop.Game
         }
         // list of rumors in rumor mill
         List<RumorMillEntry> listRumorMill = new List<RumorMillEntry>();
+        List<RumorMillEntry> listQuestRumorMill = new List<RumorMillEntry>(); // Quest rumors that we haven't seen yet
 
         // questor post quest message stuff (QuestorPostsuccess, QuestorPostfailure)
         Dictionary<ulong, TextFile.Token[]> dictQuestorPostQuestMessage = new Dictionary<ulong, TextFile.Token[]>();
@@ -361,6 +362,7 @@ namespace DaggerfallWorkshop.Game
         {
             public Dictionary<ulong, QuestResources> dictQuestInfo;
             public List<RumorMillEntry> listRumorMill;
+            public List<RumorMillEntry> listQuestRumorMill;
             public Dictionary<ulong, TextFile.Token[]> dictQuestorPostQuestMessage;
             public Dictionary<int, NpcWorkEntry> npcsWithWork;
             public Dictionary<int, bool> castleNPCsSpokenTo = new Dictionary<int, bool>();
@@ -1329,6 +1331,25 @@ namespace DaggerfallWorkshop.Game
             const int outOfNewsRecordIndex = 1457;
             if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
             {
+                // Consume the quest rumor mill if we have any
+                if (DaggerfallUnity.Settings.PrioritizeQuestRumors && listQuestRumorMill.Count > 0)
+                {
+                    int questRandomIndex = UnityEngine.Random.Range(0, listQuestRumorMill.Count);
+                    RumorMillEntry questEntry = listQuestRumorMill[questRandomIndex];
+                    listQuestRumorMill.RemoveAt(questRandomIndex);
+
+                    int variant = UnityEngine.Random.Range(0, questEntry.listRumorVariants.Count);
+                    TextFile.Token[] tokens = questEntry.listRumorVariants[variant];
+
+                    // Expand tokens and reveal dialog-linked resources
+                    QuestMacroHelper macroHelper = new QuestMacroHelper();
+                    macroHelper.ExpandQuestMessage(GameManager.Instance.QuestMachine.GetQuest(questEntry.questID), ref tokens, true);
+
+                    npcData.numAnswersGivenTellMeAboutOrRumors++;
+
+                    return TokensToString(tokens);
+                }
+
                 string news = TextManager.Instance.GetLocalizedText("resolvingError");
                 List<RumorMillEntry> validRumors = GetValidRumors();
 
@@ -1488,6 +1509,12 @@ namespace DaggerfallWorkshop.Game
             }
 
             listRumorMill.Add(entry);
+
+            // Add it to the list of "quest rumors" that we need to see at least once
+            if(DaggerfallUnity.Settings.PrioritizeQuestRumors)
+            {
+                listQuestRumorMill.Add(entry);
+            }
         }
 
         public void AddQuestRumorToRumorMill(ulong questID, List<TextFile.Token[]> listTokens)
@@ -1503,6 +1530,12 @@ namespace DaggerfallWorkshop.Game
                 entry.listRumorVariants = listTokens;
 
                 listRumorMill.Add(entry);
+
+                // Add it to the list of "quest rumors" that we need to see at least once
+                if (DaggerfallUnity.Settings.PrioritizeQuestRumors)
+                {
+                    listQuestRumorMill.Add(entry);
+                }
             }
         }
 
@@ -1538,12 +1571,47 @@ namespace DaggerfallWorkshop.Game
                 entry.questID = questID;
                 entry.listRumorVariants = listRumorVariants;
                 listRumorMill.Add(entry);
+
+                // Add it to the list of "quest rumors" that we need to see at least once
+                if (DaggerfallUnity.Settings.PrioritizeQuestRumors)
+                {
+                    listQuestRumorMill.Add(entry);
+                }
             }
             else // Existing entry for questID -> replace
             {
                 entry = listRumorMill[i];
                 entry.listRumorVariants = listRumorVariants;
                 listRumorMill[i] = entry;
+
+                // Add it back to the list of "quest rumors" that we need to see at least once
+                if (DaggerfallUnity.Settings.PrioritizeQuestRumors)
+                {
+                    for (i = 0; i < listQuestRumorMill.Count; i++)
+                    {
+                        if (listQuestRumorMill[i].rumorType == RumorType.QuestProgressRumor && listQuestRumorMill[i].questID == questID)
+                        {
+                            break;
+                        }
+                    }
+
+                    // Add or replace the "quest rumors"
+                    if(i >= listQuestRumorMill.Count)
+                    {
+                        entry = new RumorMillEntry();
+                        entry.rumorType = RumorType.QuestProgressRumor;
+                        entry.questID = questID;
+                        entry.listRumorVariants = listRumorVariants;
+
+                        listQuestRumorMill.Add(entry);
+                    }
+                    else
+                    {
+                        entry = listQuestRumorMill[i];
+                        entry.listRumorVariants = listRumorVariants;
+                        listQuestRumorMill[i] = entry;
+                    }
+                }
             }
         }
 
@@ -1565,6 +1633,20 @@ namespace DaggerfallWorkshop.Game
                     i++;
                 }
             }
+
+            i = 0;
+            while (i < listQuestRumorMill.Count)
+            {
+                if (listQuestRumorMill[i].rumorType == RumorType.QuestRumorMill &&
+                    listQuestRumorMill[i].questID == questID)
+                {
+                    listQuestRumorMill.RemoveAt(i);
+                }
+                else
+                {
+                    i++;
+                }
+            }
         }
 
         public void RemoveQuestProgressRumorsFromRumorMill(ulong questID)
@@ -1579,6 +1661,20 @@ namespace DaggerfallWorkshop.Game
                     listRumorMill[i].questID == questID)
                 {
                     listRumorMill.RemoveAt(i);
+                }
+                else
+                {
+                    i++;
+                }
+            }
+
+            i = 0;
+            while (i < listQuestRumorMill.Count)
+            {
+                if (listQuestRumorMill[i].rumorType == RumorType.QuestProgressRumor &&
+                    listQuestRumorMill[i].questID == questID)
+                {
+                    listQuestRumorMill.RemoveAt(i);
                 }
                 else
                 {
@@ -2340,6 +2436,7 @@ namespace DaggerfallWorkshop.Game
             SaveDataConversation saveDataConversation = new SaveDataConversation();
             saveDataConversation.dictQuestInfo = dictQuestInfo;
             saveDataConversation.listRumorMill = listRumorMill;
+            saveDataConversation.listQuestRumorMill = listQuestRumorMill;
             saveDataConversation.dictQuestorPostQuestMessage = dictQuestorPostQuestMessage;
             saveDataConversation.npcsWithWork = npcsWithWork;
             saveDataConversation.castleNPCsSpokenTo = castleNPCsSpokenTo;
@@ -2441,6 +2538,21 @@ namespace DaggerfallWorkshop.Game
                         Debug.Log(string.Format("Save data contains orphaned rumors for quest with id {0}. Removing these rumors...", questID));
                         listRumorMill.Remove(listRumorMill[i]);
                     }
+                }
+            }
+
+            listQuestRumorMill = data.listQuestRumorMill;
+            if (listQuestRumorMill == null)
+                listQuestRumorMill = new List<RumorMillEntry>();
+
+            // Search for orphaned entries in quest rumor mill
+            for (int i = listQuestRumorMill.Count - 1; i >= 0; i--)
+            {
+                ulong questID = listQuestRumorMill[i].questID;
+                if (GameManager.Instance.QuestMachine.GetQuest(questID) == null)
+                {
+                    Debug.Log(string.Format("Save data contains orphaned rumors for quest with id {0}. Removing these rumors...", questID));
+                    listQuestRumorMill.Remove(listQuestRumorMill[i]);
                 }
             }
 
@@ -3516,6 +3628,7 @@ namespace DaggerfallWorkshop.Game
         {
             dictQuestInfo.Clear();
             listRumorMill.Clear();
+            listQuestRumorMill.Clear();
         }
 
         #endregion

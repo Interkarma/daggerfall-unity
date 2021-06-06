@@ -120,6 +120,7 @@ TerrainHeightmapPixelError=5
 SmallerDungeons=False
 CustomBooksImport=True
 AssetCacheThreshold = 25
+PrioritizeQuestRumors=False
 
 [Enhancements]
 LypyL_GameConsole=True
