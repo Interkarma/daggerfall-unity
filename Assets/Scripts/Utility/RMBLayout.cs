@@ -43,6 +43,12 @@ namespace DaggerfallWorkshop.Utility
         private static int maxLocationCacheSize = 12;
         private static List<KeyValuePair<int, DFBlock[]>> locationCache = new List<KeyValuePair<int, DFBlock[]>>();
 
+        /// <summary>Clear the location cache. Use if block data is changed dynamically.</summary>
+        public static void ClearLocationCache()
+        {
+            locationCache.Clear();
+        }
+
         #endregion
 
         // Animal sounds range. Matched to classic.
@@ -600,10 +606,11 @@ namespace DaggerfallWorkshop.Utility
 
             blocksArray = blocks.ToArray();
 
-            // Cache blocks
+#if !UNITY_EDITOR // Cache blocks for this location if not in editor
             if (locationCache.Count == maxLocationCacheSize)
                 locationCache.RemoveAt(0);
             locationCache.Add(new KeyValuePair<int, DFBlock[]>(mapId, blocksArray));
+#endif
 
             return blocksArray;
         }

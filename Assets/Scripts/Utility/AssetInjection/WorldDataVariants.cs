@@ -85,6 +85,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 locationVariants[locationKey] = variant;
 
             Debug.LogFormat("Set variant \"{0}\" for the location index \"{1}\" in region {2}", variant, locationIndex, regionIndex);
+            RMBLayout.ClearLocationCache();
             return overwrite;
         }
 
@@ -111,6 +112,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     newLocationVariants.Add(locationKey);
 
                 Debug.LogFormat("Set variant \"{0}\" for the new location \"{1}\" in region {2}", variant, locationName, regionIndex);
+                RMBLayout.ClearLocationCache();
                 return overwrite;
             }
             DaggerfallUnity.LogMessage("Failed to set a new location variant.", true);
@@ -134,6 +136,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 blockVariants[blockKey] = variant;
 
             Debug.LogFormat("Set variant \"{0}\" for the block {1} at locationKey {2}", variant, blockName, locationKey);
+            RMBLayout.ClearLocationCache();
             return overwrite;
         }
 
@@ -154,6 +157,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 buildingVariants[buildingKey] = variant;
 
             Debug.LogFormat("Set variant \"{0}\" for building {2} of {1} at locationKey {3}", variant, blockName, recordIndex, locationKey);
+            RMBLayout.ClearLocationCache();
             return overwrite;
         }
 
