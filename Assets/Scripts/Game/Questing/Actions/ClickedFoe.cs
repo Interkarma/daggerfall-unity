@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get
             {
-                return @"clicked (?<aFoe>[a-zA-Z0-9_.-]+) and at least (?<goldAmount>\d+) gold otherwise do (?<taskName>[a-zA-Z0-9_.]+)|" +
+                return @"clicked foe (?<aFoe>[a-zA-Z0-9_.-]+) and at least (?<goldAmount>\d+) gold otherwise do (?<taskName>[a-zA-Z0-9_.]+)|" +
                        @"clicked foe (?<aFoe>[a-zA-Z0-9_.-]+) say (?<id>\d+)|" +
                        @"clicked foe (?<aFoe>[a-zA-Z0-9_.-]+) say (?<idName>\w+)|" +
                        @"clicked foe (?<aFoe>[a-zA-Z0-9_.-]+)";
