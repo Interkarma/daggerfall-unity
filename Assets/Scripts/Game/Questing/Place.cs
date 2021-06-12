@@ -621,7 +621,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
             // Handle guild halls
-            else if(p2 == (int)DFLocation.BuildingTypes.GuildHall)
+            else if (p2 == (int)DFLocation.BuildingTypes.GuildHall)
             {
                 if (buildingType != p2)
                     return false;
