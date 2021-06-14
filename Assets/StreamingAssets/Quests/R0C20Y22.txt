@@ -161,9 +161,9 @@ QBN:
 Item _reward_ ruby
 Item _item_ trinket
 
-Person _questgiver_ group Questor male anyInfo 1015 rumors 1016
-Person _contact_ group Local_3.0 female
-Person _orsinium_ face 184 faction Orsinium anyInfo 1012 rumors 1013
+Person _questgiver_ group Questor anyInfo 1015 rumors 1016
+Person _contact_ group Local_3.0 remote
+Person _orsinium_ face 184 faction Orsinium remote anyInfo 1012 rumors 1013
 
 Place orcCastle permanent OrsiniumCastle3
 

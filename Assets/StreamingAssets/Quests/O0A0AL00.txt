@@ -182,8 +182,8 @@ Item _letter_ letter used 1024
 Item _note_ letter used 1019
 Item _gold_ gold range 1 to 1
 
-Person _thiefmember_ face 88 faction The_Thieves_Guild
-Person _npc_ face 218 group Group_6.0
+Person _thiefmember_ face 88 faction The_Thieves_Guild remote
+Person _npc_ face 218 group Group_6.0 female remote
 
 Place _mansion_ remote house1
 Place _dungeon_ remote dungeon

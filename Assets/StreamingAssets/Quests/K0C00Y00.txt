@@ -156,8 +156,8 @@ Item _reward_ gold
 Item _letter10_ letter used 1012
 Item _gem_ gem
 
-Person _qgiver_ group Questor male
-Person _competitor_ group Group_5.0 female
+Person _qgiver_ group Questor
+Person _competitor_ group Group_5.0 remote
 
 Place _storehouse_ remote generalstore
 

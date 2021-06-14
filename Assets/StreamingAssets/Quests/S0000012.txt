@@ -169,8 +169,8 @@ Item letter47 letter used 1017
 Item _jewelry_ trinket
 
 Person _Mynisera_ face 96 named Mynisera atHome
-Person _messenger_ face 1 faction The_Knights_of_the_Dragon
-Person _dispatcher_ faction The_Knights_of_the_Dragon
+Person _messenger_ face 1 faction The_Knights_of_the_Dragon remote
+Person _dispatcher_ faction The_Knights_of_the_Dragon remote
 Person _aubki_ named Queen_Aubk-i atHome
 
 Place _location_ remote random

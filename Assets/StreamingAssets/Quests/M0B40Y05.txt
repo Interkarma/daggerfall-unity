@@ -154,8 +154,8 @@ Message:  1080
 QBN:
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
-Person _woodsman_ face 168 group Resident2
+Person _qgiver_ group Questor
+Person _woodsman_ face 168 group Resident2 remote
 
 Place _dungeon_ remote dungeon
 Place _newdung_ remote dungeon

@@ -166,8 +166,8 @@ Item _reward_ magic_item
 Item _vampproof_ boots anyInfo 1013
 Item _letter_ letter used 1020
 
-Person _vampire_ face 40 factiontype Vampire_Clan anyInfo 1011 rumors 1012
-Person _vampname_ face 4 factiontype Vampire_Clan
+Person _vampire_ face 40 factiontype Vampire_Clan local anyInfo 1011 rumors 1012
+Person _vampname_ face 4 factiontype Vampire_Clan male remote
 
 Place _mondung_ remote dungeon8
 

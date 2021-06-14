@@ -331,9 +331,9 @@ Item _queenreward_ magic_item
 Item _traitorreward_ diamond
 
 Person _ruler_ named Queen_Akorithi atHome
-Person _questgiver_ group Questor male
-Person _target_ face 1 factiontype Knightly_Guard
-Person _enemy_ face 1 group Resident2
+Person _questgiver_ group Questor
+Person _target_ face 1 factiontype Knightly_Guard remote
+Person _enemy_ face 1 group Resident2 remote
 Person _traitor_ face 1 named Lord_K'avar
 
 Place _L.00_ remote dungeon

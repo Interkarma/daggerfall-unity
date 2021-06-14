@@ -154,10 +154,10 @@ Message:  1020
 QBN:
 Item _gold_ gold
 
-Person _betrothed_ face 1 group Group_7.0
-Person _qgiver_ group Questor male
-Person _priest_ face 201 factiontype Temple
-Person _ruler_ factiontype Province female
+Person _betrothed_ face 1 group Group_7.0 remote
+Person _qgiver_ group Questor
+Person _priest_ face 201 factiontype Temple remote
+Person _ruler_ factiontype Province remote
 
 Place _betrothedhome_ remote house2
 Place _temple_ remote temple

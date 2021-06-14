@@ -37,16 +37,13 @@ AcceptQuest:  [1002]
 <ce>                           Very good, %pct.
 <ce>                       =target_, having learned
 <ce>                  something during %g3 tenure in the
-<ce>               Brotherhood, has wisely hidden %g2-self,
-<ce>                  but we have a contact in __snitch_
-<ce> of ___snitch_, a miserable =snitch_, a
-<ce>                        snitch named _snitch_.
+<ce>                Brotherhood, has wisely hidden %g2self,
+<ce>                  but we have a contact in __snitch_,
+<ce>                 a miserable =snitch_ named _snitch_.
 <ce>                    Talk to %g2 and get =target_'s
 <ce>               location. I will expect the accounting to
 <ce>                  be accomplished, and you to be back
 <ce>                        here in =queston_ days.
-
--added town name of snitch to 1002
 
 QuestComplete:  [1004]
 <ce>                           Well done, %pct.
@@ -125,8 +122,8 @@ Message:  1013
 
 QBN:
 
-Person _qgiver_ group Questor male
-Person _snitch_ factiontype Temple male
+Person _qgiver_ group Questor
+Person _snitch_ factiontype Temple local
 
 Place _mondung_ remote dungeon
 

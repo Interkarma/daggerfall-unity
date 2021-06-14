@@ -122,7 +122,7 @@ Dagon's prey returns to Oblivion.
 QBN:
 Item _artifact_ artifact Mehrunes_Razor anyInfo 1013
 
-Person _contact_ face 239 faction The_Cabal anyInfo 1012
+Person _contact_ face 239 faction The_Cabal female remote anyInfo 1012
 
 Place _mondung_ remote dungeon
 Place _tavern_ remote tavern

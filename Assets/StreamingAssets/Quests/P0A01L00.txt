@@ -131,7 +131,7 @@ QBN:
 Item _reward_ ring
 Item _letter_ letter used QuestorOffer
 
-Person _questgiver_ factiontype Vampire_Clan female anyInfo 1010 rumors 1011
+Person _questgiver_ factiontype Vampire_Clan remote anyInfo 1010 rumors 1011
 
 Place _mondung_ remote dungeon0
 

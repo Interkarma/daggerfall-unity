@@ -115,7 +115,7 @@ Message:  1012
 
 QBN:
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 Person _cleric_ face 105 factiontype Temple
 
 Place _mondung_ remote dungeon

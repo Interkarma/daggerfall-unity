@@ -240,10 +240,10 @@ Item _letter_ letter used 1015
 Item _gold_ gold
 Item _magicsword_ magic_item
 
-Person _giver_ group Questor male anyInfo 1022 rumors 1022
-Person informant2 face 1 group Innkeeper
-Person _sister_ face 19 group Group_6.0 female
-Person _lover_ face 117 group Group_6.0 male anyInfo 1030 rumors 1030
+Person _giver_ group Questor anyInfo 1022 rumors 1022
+Person _teller_ face 1 group Innkeeper local
+Person _sister_ face 19 group Group_6.0 female local
+Person _lover_ face 117 group Group_6.0 male local anyInfo 1030 rumors 1030
 
 Place _givershouse_ local house2
 Place _sistershouse_ local house2
@@ -255,20 +255,20 @@ Clock _S.00_ 30.00:00 0 flag 9 range 0 1
 
 --	Quest start-up:
 	place item _letter_ at _givershouse_ 
-	dialog link for location _givershouse_ person informant2 
+	dialog link for location _givershouse_ person _teller_ 
 	dialog link for location _sistershouse_ person _lover_ item _letter_ 
 	dialog link for location _dungeon_ person _sister_ item _gold_ 
 	start timer _S.00_ 
 	log 1003 step 0 
 	clicked npc _giver_ say 1020 
-	place npc informant2 at _inn_ 
+	place npc _teller_ at _inn_ 
 	place npc _lover_ at _dungeon_ 
 
 _S.00_ task:
 	end quest 
 
 _S.01_ task:
-	clicked npc informant2 say 1017 
+	clicked npc _teller_ say 1017 
 	log 1010 step 1 
 
 variable _S.02_

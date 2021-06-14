@@ -132,7 +132,7 @@ Message:  1017
 
 QBN:
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _mondung_ remote dungeon
 Place tavern local tavern

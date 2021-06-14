@@ -149,8 +149,8 @@ Item _item_ large_plant
 Item _gold_ gold
 
 Person _questg_ face 4 group Questor
-Person _sister_ face 2 group Resident2
-Person _merchant_ face 1 faction The_Merchants
+Person _sister_ face 2 group Resident2 female local
+Person _merchant_ face 1 faction The_Merchants local
 
 Place _item0_ local house2
 -added underscores to item0

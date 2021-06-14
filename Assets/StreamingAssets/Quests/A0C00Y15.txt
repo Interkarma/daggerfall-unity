@@ -178,7 +178,7 @@ Item _jewelry_ trinket
 Item _gold_ gold
 
 Person _questgiver_ face 137 group Questor
-Person _pickupregion_ face 232 group Local_3.0
+Person _pickupregion_ face 232 group Local_3.0 remote
 
 Clock _traveltime_ 00:00 0 flag 1 range 1 4
 --precise timer needed due to short time limit

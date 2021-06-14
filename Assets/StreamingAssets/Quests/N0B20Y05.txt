@@ -119,8 +119,8 @@ Message:  1040
 QBN:
 Item _reward_ magic_item
 
-Person _questgiver_ group Questor male
-Person _wizard_ face 249 faction The_Mages_Guild
+Person _questgiver_ group Questor
+Person _wizard_ face 249 faction The_Mages_Guild remote
 
 Place _mondung_ remote dungeon9
 

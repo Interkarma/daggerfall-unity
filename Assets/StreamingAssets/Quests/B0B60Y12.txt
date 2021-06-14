@@ -120,9 +120,9 @@ Message:  1011
 QBN:
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
-Person _nobleman_ group Resident1 female
-Person _local_ face 1 group Resident2
+Person _qgiver_ group Questor
+Person _nobleman_ group Resident1 remote
+Person _local_ face 1 group Resident2 local
 
 Place _dungeon_ remote dungeon
 

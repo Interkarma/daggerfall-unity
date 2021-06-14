@@ -157,8 +157,8 @@ Item _reward_ gold
 Item _item_ daedra_heart anyInfo 1013
 
 Person _questgiver_ face 112 group Questor anyInfo 1012
-Person _chemist_ group Chemist female anyInfo 1011
-Person _dummydaedra_ face 102 factiontype Daedra
+Person _chemist_ group Chemist remote anyInfo 1011
+Person _dummydaedra_ face 102 factiontype Daedra female remote
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 Clock _2ndparton_ 00:00 0 flag 1 range 2 5

@@ -397,11 +397,11 @@ Item _reward2_ trinket
 Item _I.08_ item class 26 subclass 3
 Item _I.09_ item class 15 subclass 13
 
-Person _qgiver_ group Questor male
-Person _contact_ face 1 group Librarian anyInfo 1027 rumors 1028
-Person _vamp_ face 1 factiontype Vampire_Clan anyInfo 1016 rumors 1017
-Person _widow_ face 82 group Resident2 anyInfo 1018
-Person _rippername_ face 5 group Group_6.0
+Person _qgiver_ group Questor
+Person _contact_ face 1 group Librarian local anyInfo 1027 rumors 1028
+Person _vamp_ face 1 factiontype Vampire_Clan local anyInfo 1016 rumors 1017
+Person _widow_ face 82 group Resident2 female local anyInfo 1018
+Person _rippername_ face 5 group Group_6.0 male local
 
 Place _bookstore_ local house2
 Place _hookerhouse_ local tavern

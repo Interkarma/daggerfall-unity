@@ -209,9 +209,9 @@ Item _letter5_ letter used 1020
 Item _letter6_ letter used 1021
 
 Person _qgiver_ face 1 group Questor anyInfo 1030 rumors 1031
-Person _npc1_ face 4 group Local_4.0 male
-Person _npc2_ face 4 group Local_3.0 male
-Person _npc3_ face 2 group Group_6.0
+Person _npc1_ face 4 group Local_4.0 male remote
+Person _npc2_ face 4 group Local_3.0 male remote
+Person _npc3_ face 2 group Group_6.0 female remote
 
 Place _inn_ remote tavern
 

@@ -81,7 +81,7 @@ QBN:
 Item _book_ book3
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _mansion_ remote house1
 

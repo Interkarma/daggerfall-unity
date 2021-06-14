@@ -92,7 +92,7 @@ Message:  1012
 
 QBN:
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _house_ local random
 

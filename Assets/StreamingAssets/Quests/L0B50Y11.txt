@@ -13,7 +13,7 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                 We have an interesting job available
-<ce>                      %pcn. A high ranking member
+<ce>                       to a high ranking member
 <ce>                  of the Thieves Guild. This will be
 <ce>                     a tough one. Do you want it?
 
@@ -154,9 +154,9 @@ QBN:
 Item _gold_ gold
 Item _bribe3_ gold range 50 to 50
 
-Person _mistress_ face 3 named Whitka
+Person _mistress_ face 3 group Group_7.2 female local
 Person _questgiver_ face 1 group Questor
-Person _marknpc_ face 5 faction The_Thieves_Guild anyInfo 1030
+Person _marknpc_ face 5 faction The_Thieves_Guild male local anyInfo 1030
 
 Place _house_ local house2
 Place _inn_ local tavern

@@ -191,8 +191,8 @@ Item _letter_ letter used 1010
 Item _letter2_ letter used 1013
 Item _gem_ gem
 
-Person _vamp_ factiontype Vampire_Clan male
-Person _daedra_ face 1 factiontype Daedra
+Person _vamp_ factiontype Vampire_Clan local
+Person _daedra_ face 1 factiontype Daedra remote
 
 Place _mondung_ remote dungeon7
 

@@ -150,8 +150,8 @@ QBN:
 Item _potion_ Pure_water
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
-Person _mage_ face 105 faction The_Mages_Guild
+Person _qgiver_ group Questor
+Person _mage_ face 105 faction The_Mages_Guild remote
 
 Place _mguild_ remote magery
 

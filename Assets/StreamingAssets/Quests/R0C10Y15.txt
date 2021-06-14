@@ -136,8 +136,8 @@ Item _item1_ diamond
 Item _item2_ magic_item
 
 Person _questgiver_ face 136 group Questor
-Person _npc1_ group Local_3.0 female
-Person _npc2_ face 248 group Local_3.1
+Person _npc1_ group Local_3.0 remote
+Person _npc2_ face 248 group Local_3.1 remote
 
 
 Clock _1stparton_ 00:00 0 flag 1 range 1 4

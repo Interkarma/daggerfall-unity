@@ -141,9 +141,9 @@ Item _decanter_ decanter
 Item _poison_ snake_venom
 Item _gold_ gold range 1 to 1
 
-Person _darkbmember_ faction The_Dark_Brotherhood female
-Person _apothecary_ face 144 group Chemist
-Person _npc_ face 1 group Resident1
+Person _darkbmember_ faction The_Dark_Brotherhood remote
+Person _apothecary_ face 144 group Chemist remote
+Person _npc_ face 1 group Resident1 remote
 
 Place _mansion_ remote house1
 Place _apo_ remote apothecary

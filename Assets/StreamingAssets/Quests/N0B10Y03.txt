@@ -115,7 +115,7 @@ QBN:
 Item _treasure_ magic_item
 Item _potion_ gem
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _magesguild_ local magery
 

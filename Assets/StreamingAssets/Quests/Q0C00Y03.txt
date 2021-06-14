@@ -144,9 +144,9 @@ Message:  1013
 QBN:
 Item _gem_ gem
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 Person _child_ face 105 faction Children
-Person _daedra_ face 69 factiontype Daedra
+Person _daedra_ face 69 factiontype Daedra male remote
 
 Place _home_ remote house2
 

@@ -173,11 +173,11 @@ Item _artifact_ artifact Chrysamere anyInfo 1025
 Item _ingredient_ lodestone
 Item _token_ pearl
 
-Person _qgiver_ face 1 group Chemist
-Person _agent_ group Questor male
-Person _dummymage_ face 1 faction The_Mages_Guild
+Person _qgiver_ face 1 group Chemist local
+Person _agent_ group Questor
+Person _dummymage_ face 1 faction The_Mages_Guild remote
 Person _dummyorc_ face 1 named Gortwog
-Person _dummydarkb_ face 49 faction The_Dark_Brotherhood
+Person _dummydarkb_ face 49 faction The_Dark_Brotherhood remote
 
 Place _dungeon_ remote dungeon
 Place _meetingplace_ local apothecary

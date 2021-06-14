@@ -167,7 +167,7 @@ Message:  1080
 QBN:
 Item _ingredient_ organs
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _dungeon_ remote dungeon
 Place _newdung_ remote dungeon

@@ -163,10 +163,10 @@ Item _flowers_ yellow_flowers
 Item _answer_ letter used 1017
 Item _gold_ gold
 
-Person _hermit_ face 1 group Group_7.2
-Person _qgiver_ group Questor male
-Person _spouse_ group Group_7.1 female
-Person _teacher_ face 1 faction The_Academics
+Person _hermit_ face 1 group Group_7.2 remote
+Person _qgiver_ group Questor
+Person _spouse_ group Group_7.1 remote
+Person _teacher_ face 1 faction The_Academics remote
 
 Place _dungeon_ remote dungeon
 Place _school_ remote library

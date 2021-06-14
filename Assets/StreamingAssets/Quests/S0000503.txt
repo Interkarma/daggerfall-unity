@@ -167,7 +167,7 @@ Item _I.05_ gold
 Item _key_ item class 10 subclass 11
 
 Person _rebel_ face 1 named Baltham_Greyman
-Person _dummy_ face 249 group Spellcaster
+Person _dummy_ face 249 group Spellcaster remote
 
 Place _tavern_ remote tavern
 --Place aide remote dungeon

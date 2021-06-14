@@ -176,6 +176,7 @@ namespace DaggerfallWorkshop.Game.Questing
             string genderName = string.Empty;
             int faceIndex = -1;
             bool atHome = false;
+            string locationScopeName = string.Empty;
 
             base.SetResource(line);
 
@@ -187,6 +188,7 @@ namespace DaggerfallWorkshop.Game.Questing
                                      @"faction (?<factionAlliance>[a-zA-Z0-9'_.-]+)|" +
                                      @"group (?<careerAlliance>[a-zA-Z0-9'_.-]+)|" +
                                      @"(?<gender>female|male)|" +
+                                     @"(?<locationScope>local|remote)|" +
                                      @"(?<atHome>(atHome|athome))";
 
             // Try to match source line with pattern
@@ -230,6 +232,11 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (genderGroup.Success)
                         genderName = genderGroup.Value;
 
+                    // Location
+                    Group locationGroup = option.Groups["locationScope"];
+                    if (locationGroup.Success)
+                        locationScopeName = locationGroup.Value;
+
                     // At home
                     Group atHomeGroup = option.Groups["atHome"];
                     atHome = atHomeGroup.Success;
@@ -262,7 +269,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 AssignGender(genderName);
                 AssignHUDFace(faceIndex);
                 AssignDisplayName();
-                AssignHomeTown();
+                AssignHomeTown(locationScopeName);
 
                 // Is NPC at home?
                 isIndividualAtHome = atHome;
@@ -597,7 +604,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
-        void AssignHomeTown()
+        void AssignHomeTown(string scopeString)
         {
             const string houseString = "house";
 
@@ -620,11 +627,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
 
-            // For other NPCs use default scope and building type
-            Place.Scopes scope = Place.Scopes.Remote;
-            string buildingTypeString = houseString;
+            // For other NPCs use the given scope if any, else generate it at random
+            if (string.IsNullOrEmpty(scopeString))
+                scopeString = UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f ? "local" : "remote";
 
-            // Adjust scope and building type based on faction hints
+            // Adjust building type based on faction hints
+            string buildingTypeString = houseString;
             int p1 = 0, p2 = 0, p3 = 0;
             if (!string.IsNullOrEmpty(factionTableKey))
             {
@@ -632,31 +640,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 p1 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p1", factionTableKey));
                 p2 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p2", factionTableKey));
                 p3 = Parser.ParseInt(QuestMachine.Instance.FactionsTable.GetValue("p3", factionTableKey));
-
-                // Set based on parameters
-                if (p1 == 0 && p2 < -2 && p2 != -6)
-                {
-                    // From usage in the quests it appears -3 and lower are local.
-                    // Referencing quest Sx009 where player must locate and click an NPC with only a home location to go by
-                    // and K0C00Y04 where two Group_7 npcs are local.
-                    // Interkarma Note: -6 is used by Thieves Guild introduction quest O0A0AL00 and should be a remote NPC. Treating -6 as remote.
-                    scope = Place.Scopes.Local;
-                }
-                else if (p1 == 0 && p2 >= 0 && p2 <= 20 && p3 == 0)
+                if (p1 == 0 && p2 >= 0 && p2 <= 20 && p3 == 0)
                 {
                     // Set to a specific building type
                     buildingTypeString = QuestMachine.Instance.PlacesTable.GetKeyForValue("p2", p2.ToString());
                 }
             }
-
-            // Get scope string - must be "local" or "remote"
-            string scopeString = string.Empty;
-            if (scope == Place.Scopes.Local)
-                scopeString = "local";
-            else if (scope == Place.Scopes.Remote)
-                scopeString = "remote";
-            else
-                throw new Exception("AssignHomeTown() scope must be either 'local' or 'remote'.");
 
             // Create the home location - this will try to match NPC group (e.g. a Noble will select a Palace)
             try

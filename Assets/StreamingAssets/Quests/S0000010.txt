@@ -138,9 +138,8 @@ QBN:
 Item _reward_ magic_item
 Item letter14 letter used 1021
 
-Person _agentuk_ face 1 faction Agents_of_The_Underking
-Person shopkeeper1 face 1 faction The_Necromancers
---removed ? from shopkeeper1. variable names should not contain punctuation.
+Person _agentuk_ face 1 faction Agents_of_The_Underking remote
+Person _necromancer_ face 1 faction The_Necromancers remote
 
 Place _llugwych_ permanent LlugwychCastle
 Place _agentplace_ remote house2
@@ -158,7 +157,7 @@ _pcgetsgold_ task:
 	toting _reward_ and _agentuk_ clicked 
 	give pc _reward_ 
 	reveal _lysandustomb_ in province 33 at 210794 
-	change repute with shopkeeper1 by -20 
+	change repute with _necromancer_ by -20 
 	change repute with _agentuk_ by +15 
 	end quest 
 

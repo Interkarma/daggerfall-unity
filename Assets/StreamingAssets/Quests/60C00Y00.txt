@@ -142,7 +142,7 @@ Message:  1030
 QBN:
 Item _artifact_ artifact Wabbajack anyInfo 1013
 
-Person _qgfriend_ face 1 group Innkeeper anyInfo 1011 rumors 1014
+Person _qgfriend_ face 1 group Innkeeper remote anyInfo 1011 rumors 1014
 
 Place _mondung_ remote dungeon
 Place _contactdung_ remote dungeon

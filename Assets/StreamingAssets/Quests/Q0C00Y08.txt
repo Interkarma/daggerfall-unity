@@ -120,9 +120,9 @@ QBN:
 Item _mitem_ magic_item
 Item _book_ book2
 
-Person _qgiver_ group Questor male
-Person _daedra_ face 1 factiontype Daedra
-Person _contact_ face 68 group Innkeeper
+Person _qgiver_ group Questor
+Person _daedra_ face 1 factiontype Daedra local
+Person _contact_ face 68 group Innkeeper male remote
 
 
 Clock _queston_ 00:00 0 flag 17 range 1 2

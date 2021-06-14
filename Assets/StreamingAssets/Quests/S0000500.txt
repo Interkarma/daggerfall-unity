@@ -145,9 +145,9 @@ Item _letter_ letter used 1030
 Item _gold_ gold
 
 Person _traitor_ face 1 named Lord_K'avar
-Person _contact1_ face 15 group Banker
+Person _contact1_ face 15 group Banker female remote
 Person _queen_ named Queen_Akorithi atHome
-Person _contact2_ face 1 group Local_3.0
+Person _contact2_ face 1 group Local_3.0 remote
 
 Place _tavern_ remote tavern
 Place _sentinel_ permanent SentinelCastle4

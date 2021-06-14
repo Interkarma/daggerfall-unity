@@ -131,8 +131,8 @@ QBN:
 Item _artifact_ artifact Mace_of_Molag_Bal used 1013
 Item _map_ letter used 1060
 
-Person _contact_ face 233 faction The_Cabal anyInfo 1012
-Person _dummy_ face 1 group Spellcaster
+Person _contact_ face 233 faction The_Cabal remote anyInfo 1012
+Person _dummy_ face 1 group Spellcaster remote
 
 Place _mondung_ remote dungeon9
 Place _tavern_ remote tavern

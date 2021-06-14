@@ -109,7 +109,7 @@ QBN:
 Item _reward_ gold
 
 Person _questgiver_ face 112 group Questor
-Person _damsel_ face 2 group Group_6.0
+Person _damsel_ face 2 group Group_6.0 female local
 
 Place _mondung_ remote dungeon2
 

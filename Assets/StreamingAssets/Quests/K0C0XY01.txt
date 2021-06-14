@@ -193,8 +193,8 @@ Item clanfeather4 harpy_feather anyInfo 1032
 Item _letter26_ letter used 1012
 Item _jewelry_ trinket
 
-Person _qgiver_ group Questor male
-Person _contact_ face 1 faction The_Fighters_Guild
+Person _qgiver_ group Questor
+Person _contact_ face 1 faction The_Fighters_Guild remote
 
 Place _mondung_ remote dungeon10
 

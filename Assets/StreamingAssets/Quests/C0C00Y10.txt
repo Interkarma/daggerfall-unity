@@ -157,9 +157,9 @@ QBN:
 Item _talisman_ root_tendrils
 -added underscores to talisman
 
-Person _giver_ group Questor male
-Person _cousin_ group Local_3.0 female anyInfo 1012 rumors 1012
-Person _healer_ face 64 group Chemist
+Person _giver_ group Questor
+Person _cousin_ group Local_3.0 remote anyInfo 1012 rumors 1012
+Person _healer_ face 64 group Chemist remote
 
 
 Clock _questtime_ 00:00 0 flag 1 range 3 5

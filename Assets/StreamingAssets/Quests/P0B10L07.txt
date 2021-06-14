@@ -156,8 +156,8 @@ QBN:
 Item _letter_ letter used 1010
 Item _jewelry_ trinket
 
-Person _vamp_ factiontype Vampire_Clan male
-Person _knight_ face 69 factiontype Knightly_Guard
+Person _vamp_ factiontype Vampire_Clan local
+Person _knight_ face 69 factiontype Knightly_Guard male remote
 
 Place _mondung_ remote dungeon2
 

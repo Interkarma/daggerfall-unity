@@ -122,9 +122,9 @@ Message:  1020
 QBN:
 Item _money_ gold
 
-Person _child_ face 1 faction Children
+Person _child_ face 1 faction Children remote
 Person _qgiver_ face 121 group Questor
-Person _dummydarkb_ face 169 faction The_Dark_Brotherhood
+Person _dummydarkb_ face 169 faction The_Dark_Brotherhood remote
 
 Place _dbguild_ remote house1
 

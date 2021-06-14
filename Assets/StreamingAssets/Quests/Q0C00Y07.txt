@@ -110,8 +110,8 @@ Message:  1013
 QBN:
 Item _clothes_ womens_robe
 
-Person _qgiver_ group Questor male
-Person _witch_ face 1 faction The_Prostitutes
+Person _qgiver_ group Questor
+Person _witch_ face 1 faction The_Prostitutes female remote
 Person _daedra_ face 105 factiontype Daedra
 
 Place _mondung_ remote dungeon3

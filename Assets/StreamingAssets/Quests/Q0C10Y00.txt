@@ -138,7 +138,7 @@ Item _reward2_ turquoise
 Item _reward3_ jade
 --added messages 1024, 1025 and 1026 and their handling in the quest. previously you had to click the witch 3 times and turn in the items with no confirmation.
 
-Person _qgiver_ group Questor male anyInfo 1011
+Person _qgiver_ group Questor anyInfo 1011
 
 Place _dungeon1_ remote dungeon6
 Place _dungeon2_ remote dungeon12

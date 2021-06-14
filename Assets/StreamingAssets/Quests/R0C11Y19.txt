@@ -130,7 +130,7 @@ Item _item1_ gold_bar
 Item _item2_ ring
 
 Person _questgiver_ face 72 group Questor
-Person _contact_ face 80 group Pawnbroker
+Person _contact_ face 80 group Pawnbroker remote
 
 
 Clock _1stparton_ 00:00 0 flag 17 range 1 4

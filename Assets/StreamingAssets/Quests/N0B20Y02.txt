@@ -146,8 +146,8 @@ Message:  1030
 QBN:
 Item _magicitem_ magic_item
 
-Person _sleepingmage_ face 5 faction The_Mages_Guild
-Person _qgiver_ group Questor male
+Person _sleepingmage_ face 5 faction The_Mages_Guild male local
+Person _qgiver_ group Questor
 
 Place _magesguild_ local magery
 

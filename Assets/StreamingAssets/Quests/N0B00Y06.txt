@@ -148,7 +148,7 @@ QBN:
 Item _wrappings_ mummy_wrappings
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _mondung_ remote dungeon0
 

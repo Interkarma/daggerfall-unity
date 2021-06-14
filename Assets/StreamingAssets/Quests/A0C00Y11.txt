@@ -189,9 +189,9 @@ Item _gold1_ gold range 5 to 25
 Item _gold2_ gold range 10 to 50
 Item talisman talisman
 
-Person _giver_ group Questor male
-Person _cousin_ group Resident4 female anyInfo 1012 rumors 1012
-Person _healer_ face 64 group Chemist anyInfo 1040 rumors 1041
+Person _giver_ group Questor
+Person _cousin_ group Resident4 remote anyInfo 1012 rumors 1012
+Person _healer_ face 64 group Chemist remote anyInfo 1040 rumors 1041
 
 Clock _questtime_ 00:00 0 flag 1 range 3 5
 

@@ -283,9 +283,9 @@ Item research2 letter used 1016
 Item _dbgold_ gold
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
-Person _db_ face 78 faction The_Dark_Brotherhood
-Person _scholar_ factiontype Temple female anyInfo 1017
+Person _qgiver_ group Questor
+Person _db_ face 78 faction The_Dark_Brotherhood female local
+Person _scholar_ factiontype Temple remote anyInfo 1017
 
 
 Clock _queston_ 00:00 0 flag 17 range 1 2

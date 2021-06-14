@@ -105,8 +105,8 @@ QBN:
 Item _reward_ ruby
 Item _item_ ruby
 
-Person _questgiver_ group Questor male
-Person _contact_ group Local_3.0 female
+Person _questgiver_ group Questor
+Person _contact_ group Local_3.0 remote
 
 
 Clock _queston_ 00:00 0 flag 1 range 1 4

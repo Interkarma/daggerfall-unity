@@ -97,7 +97,7 @@ Message:  1080
 QBN:
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _house_ remote random
 Place _newdung_ remote dungeon

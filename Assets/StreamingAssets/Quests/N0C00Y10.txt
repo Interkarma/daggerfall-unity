@@ -164,9 +164,9 @@ Message:  1040
 QBN:
 Item _book_ book1 anyInfo 1010 used 1011
 
-Person _informant_ face 245 group Group_6.0
-Person _giver_ group Questor male
-Person _thief_ face 99 group Chemist anyInfo 1027 rumors 1027
+Person _informant_ face 245 group Group_6.0 male local
+Person _giver_ group Questor
+Person _thief_ face 99 group Chemist female local anyInfo 1027 rumors 1027
 
 Place _inn_ local tavern
 Place _store_ local weaponstore

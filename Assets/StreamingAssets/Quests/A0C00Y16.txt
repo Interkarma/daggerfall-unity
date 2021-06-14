@@ -194,12 +194,12 @@ Message:  1054
 QBN:
 Item _gold_ gold
 
-Person _questgiver_ group Questor male
-Person _missingperson_ face 1 group Group_6.0
-Person _friend1_ group Local_3.1 male
-Person _friend2_ group Local_3.1 male
-Person _friend3_ group Local_3.1 male
-Person _friend4_ group Local_4.1 male
+Person _questgiver_ group Questor
+Person _missingperson_ face 1 group Group_6.0 local
+Person _friend1_ group Local_3.1 local
+Person _friend2_ group Local_3.1 local
+Person _friend3_ group Local_3.1 local
+Person _friend4_ group Local_4.1 local
 
 Place _hidingplace_ local random
 

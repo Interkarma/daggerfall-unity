@@ -159,8 +159,8 @@ Item _heist_ ivory
 Item _reward_ gold
 
 Person _questgiver_ face 44 group Questor
-Person _contact_ face 1 group Local_3.0
-Person _dummy_ face 209 group Resident1
+Person _contact_ face 1 group Local_3.0 remote
+Person _dummy_ face 209 group Resident1 local
 
 Place _target_ local house1 anyInfo 1011 rumors 1011
 Place _safehouse_ remote house3

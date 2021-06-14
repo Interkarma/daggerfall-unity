@@ -179,8 +179,8 @@ Item _reward_ magic_item
 Item _letter_ letter used 1013
 Item letter36 letter used 1020
 
-Person _vampire_ factiontype Vampire_Clan male anyInfo 1011 rumors 1012
-Person _pawn_ group Group_5.0 female anyInfo 1014 rumors 1015
+Person _vampire_ factiontype Vampire_Clan local anyInfo 1011 rumors 1012
+Person _pawn_ group Group_5.0 remote anyInfo 1014 rumors 1015
 
 
 Clock _1stparton_ 00:00 0 flag 17 range 1 2

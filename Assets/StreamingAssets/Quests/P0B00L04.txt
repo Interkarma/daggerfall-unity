@@ -209,7 +209,7 @@ Message:  1016
 QBN:
 Item _letter_ letter used 1010
 
-Person _vamp_ factiontype Vampire_Clan male
+Person _vamp_ factiontype Vampire_Clan local
 
 Place _mondung_ remote dungeon
 

@@ -138,7 +138,7 @@ QBN:
 Item _item_ talisman
 Item _reward_ magic_item
 
-Person _questgiver_ group Questor male
+Person _questgiver_ group Questor
 
 Place _mondung_ remote dungeon
 

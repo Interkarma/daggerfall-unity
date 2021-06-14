@@ -90,8 +90,8 @@ Message:  1014
 QBN:
 Item _gold_ gold
 
-Person _traitor_ face 1 group Local_4.0
-Person _qgiver_ group Questor male
+Person _traitor_ face 1 group Local_4.0 local
+Person _qgiver_ group Questor
 
 Place _dungeon_ remote dungeon
 Place _meetingplace_ local random

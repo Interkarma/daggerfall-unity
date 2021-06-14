@@ -99,7 +99,7 @@ Message:  1020
 QBN:
 Item _reward_ gold
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _house_ local random
 

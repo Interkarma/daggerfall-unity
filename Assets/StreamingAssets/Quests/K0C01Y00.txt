@@ -191,7 +191,7 @@ Item _gem_ gem
 
 Person _qgiver_ group Questor
 Person _victim_ face 1 group Group_7.0
-Person _tg_ faction The_Thieves_Guild male
+Person _tg_ faction The_Thieves_Guild local
 
 Place _mondung_ remote dungeon
 Place _mondung2_ remote dungeon2

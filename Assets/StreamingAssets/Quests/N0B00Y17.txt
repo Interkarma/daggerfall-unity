@@ -326,9 +326,9 @@ Item _scholarreward_ magic_item
 Item _gold_ gold
 
 Person _questgiver_ face 8 group Questor
-Person _scholar_ group Chemist male
-Person _maker_ face 1 group Spellcaster
-Person _contact_ face 14 group Chemist
+Person _scholar_ group Chemist local
+Person _maker_ face 1 group Spellcaster remote
+Person _contact_ face 14 group Chemist female remote
 
 Place _scholardung_ remote dungeon
 Place _hintdung_ remote dungeon

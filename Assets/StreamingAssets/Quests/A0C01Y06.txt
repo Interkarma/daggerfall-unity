@@ -147,8 +147,8 @@ The orc shaman's chanting rises.
 QBN:
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
-Person _master_ face 1 group Group_6.0 anyInfo 1020 rumors 1021
+Person _qgiver_ group Questor
+Person _master_ face 1 group Group_6.0 local anyInfo 1020 rumors 1021
 
 Place _dungeon_ remote dungeon
 Place _meetingplace_ local tavern

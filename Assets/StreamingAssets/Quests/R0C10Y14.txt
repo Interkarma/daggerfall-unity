@@ -111,8 +111,8 @@ QBN:
 Item _reward_ gold
 Item _item_ magic_item
 
-Person _questgiver_ group Questor male
-Person _contact_ group Local_3.0
+Person _questgiver_ group Questor
+Person _contact_ group Local_3.0 remote
 --removed "female" parameter. UESP says it could be either.
 
 

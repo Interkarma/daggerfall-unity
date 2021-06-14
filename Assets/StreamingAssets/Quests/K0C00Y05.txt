@@ -207,9 +207,9 @@ Item _letter11_ letter used 1011
 -added underscores to letter11
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
-Person _knight_ face 216 faction The_Fighters_Guild
-Person _child_ faction Children
+Person _qgiver_ group Questor
+Person _knight_ face 216 faction The_Fighters_Guild remote
+Person _child_ faction Children female
 
 Place _mondung_ remote dungeon1
 Place _childlocale_ local house2

@@ -143,7 +143,7 @@ Item _weapons_ weapon
 Item _gems_ gem
 
 Person _questgiver_ face 72 group Questor
-Person _contact_ face 80 group Group_5.0
+Person _contact_ face 80 group Group_5.0 remote
 
 
 Clock _1stparton_ 00:00 0 flag 18 range 1 4

@@ -121,9 +121,9 @@ QBN:
 Item _religitem_ religious
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
-Person _priest_ group Group_5.0
-Person _enemy_ face 176 group Local_4.0
+Person _qgiver_ group Questor
+Person _priest_ group Group_5.0 local
+Person _enemy_ face 176 group Local_4.0 remote
 
 Place _goalplace_ remote house
 --without goalplace, priest would always spawn in current city. this quest depends on remote locations.

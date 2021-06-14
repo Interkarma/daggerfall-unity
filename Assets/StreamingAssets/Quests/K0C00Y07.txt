@@ -241,9 +241,9 @@ Item _gem_ gem
 Item _gold_ gold range 5 to 25
 Item _map_ letter used 1015
 
-Person _qgiver_ group Questor male
-Person _victim_ face 1 group Group_7.0
-Person _kidnapper_ face 36 faction The_Thieves_Guild
+Person _qgiver_ group Questor
+Person _victim_ face 1 group Group_7.0 local
+Person _kidnapper_ face 36 faction The_Thieves_Guild male remote
 
 Place _mondung_ remote dungeon
 

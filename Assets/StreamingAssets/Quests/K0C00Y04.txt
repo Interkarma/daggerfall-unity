@@ -218,8 +218,8 @@ Item _dueler_ letter used 1011
 Item _lovgold_ gold
 
 Person _qgiver_ group Questor
-Person _lover_ group Group_7.0
-Person _competitor_ group Group_7.1
+Person _lover_ group Group_7.0 local
+Person _competitor_ group Group_7.1 local
 --UESP suggests any gender is possible
 
 Place _arena_ local house2

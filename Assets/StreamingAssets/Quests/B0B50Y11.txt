@@ -87,9 +87,9 @@ Message:  1011
 QBN:
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
-Person _nobleman_ face 182 factiontype Province
-Person _local_ face 77 group Resident2
+Person _qgiver_ group Questor
+Person _nobleman_ face 182 factiontype Province remote
+Person _local_ face 77 group Resident2 male local
 
 Place _dungeon_ remote dungeon11
 
