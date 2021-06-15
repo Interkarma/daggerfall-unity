@@ -2086,21 +2086,6 @@ namespace DaggerfallWorkshop.Game.Formulas
         }
 
         /// <summary>
-        /// Allows loot found in containers and enemy corpses to be modified.
-        /// </summary>
-        /// <param name="lootItems">An array of the loot items to modify</param>
-        /// <returns>The array of modified loot items</returns>
-        public static DaggerfallUnityItem[] ModifyFoundLootItems(ref DaggerfallUnityItem[] lootItems)
-        {
-            Func<DaggerfallUnityItem[], DaggerfallUnityItem[]> del;
-            if (TryGetOverride("ModifyFoundLootItems", out del))
-                return del(lootItems);
-
-            // DFU does no post-processing of loot items hence return array unchanged. This function is solely for mods to override.
-            return lootItems;
-        }
-
-        /// <summary>
         /// Gets a random material based on player level.
         /// Note, this is called by default RandomArmorMaterial function.
         /// </summary>
