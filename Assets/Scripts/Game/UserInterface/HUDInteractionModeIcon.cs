@@ -104,25 +104,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 else
                 {
                     float barWidth = HUDVitals.nativeBarWidth * Scale.x;
+                    float resScale = Scale.x > 3 ? 1 : 1 / Scale.x * 3;     // Scale down at low resolutions.
 
                     PlayerActivateModes mode = GameManager.Instance.PlayerActivate.CurrentMode;
                     switch (mode)
                     {
                         case PlayerActivateModes.Steal:
                             BackgroundTexture = StealTexture;
-                            Size = stealSize * displayScale;
+                            Size = stealSize * displayScale / resScale;
                             break;
                         case PlayerActivateModes.Grab:
                             BackgroundTexture = GrabTexture;
-                            Size = grabSize * displayScale;
+                            Size = grabSize * displayScale / resScale;
                             break;
                         case PlayerActivateModes.Info:
                             BackgroundTexture = InfoTexture;
-                            Size = infoSize * displayScale;
+                            Size = infoSize * displayScale / resScale;
                             break;
                         case PlayerActivateModes.Talk:
                             BackgroundTexture = TalkTexture;
-                            Size = talkSize * displayScale;
+                            Size = talkSize * displayScale / resScale;
                             break;
                     }
                     Position = new Vector2((barWidth * 5) + (HUDVitals.borderSize * 2), Screen.height - HUDVitals.borderSize - Size.y);
