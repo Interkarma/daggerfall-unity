@@ -161,6 +161,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox interiorLightShadows;
         Checkbox exteriorLightShadows;
 
+        // Accessibility
+        Button automapTempleColor;
+        Button automapShopColor;
+        Button automapTavernColor;
+        Button automapHouseColor;
+
         #endregion
 
         #region Override Methods
@@ -223,6 +229,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddPage("interface", Interface);
             AddPage("enhancements", Enhancements);
             AddPage("video", Video);
+            AddPage("accessibility", Accessibility);
         }
 
         private void Gameplay(Panel leftPanel, Panel rightPanel)
@@ -376,6 +383,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnity.Settings.PostProcessingInRetroMode, "Off", "Posterization (full)", "Posterization (-sky)", "Palettization (full)", "Palettization (-sky)");
         }
 
+        private void Accessibility(Panel leftPanel, Panel rightPanel)
+        {
+            AddSectionTitle(leftPanel, "automap");
+            automapTempleColor = AddColorPicker(leftPanel, "automapTempleColor", DaggerfallUnity.Settings.AutomapTempleColor);
+            automapShopColor = AddColorPicker(leftPanel, "automapShopColor", DaggerfallUnity.Settings.AutomapShopColor);
+            automapTavernColor = AddColorPicker(leftPanel, "automapTavernColor", DaggerfallUnity.Settings.AutomapTavernColor);
+            automapHouseColor = AddColorPicker(leftPanel, "automapHouseColor", DaggerfallUnity.Settings.AutomapHouseColor);
+        }
+
         private void SaveSettings()
         {
             /* GamePlay */
@@ -488,6 +504,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.ExteriorLightShadows = exteriorLightShadows.IsChecked;
             DaggerfallUnity.Settings.RetroRenderingMode = retroRenderingMode.ScrollIndex;
             DaggerfallUnity.Settings.PostProcessingInRetroMode = postProcessingInRetroMode.ScrollIndex;
+
+            /* Accessibility */
+            DaggerfallUnity.Settings.AutomapTempleColor = automapTempleColor.BackgroundColor;
+            DaggerfallUnity.Settings.AutomapShopColor = automapShopColor.BackgroundColor;
+            DaggerfallUnity.Settings.AutomapTavernColor = automapTavernColor.BackgroundColor;
+            DaggerfallUnity.Settings.AutomapHouseColor = automapHouseColor.BackgroundColor;
 
             DaggerfallUnity.Settings.SaveSettings();
         }

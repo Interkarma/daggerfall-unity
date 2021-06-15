@@ -8,6 +8,7 @@ gamePlay,                                           GamePlay
 interface,                                          Interface
 enhancements,                                       Enhancements
 video,                                              Video
+accessibility,                                      Accessibility
 
 game,                                               Game
 controls,                                           Controls
@@ -19,6 +20,7 @@ gui,                                                GUI
 light,                                              Lighting
 basic,                                              Basic
 advanced,                                           Advanced
+automap,                                            Automap
 
 - Settings and tooltip descriptions
 
@@ -97,6 +99,14 @@ bowLeftHandWithSwitching,                           Equip bows in left hand only
 bowLeftHandWithSwitchingInfo,                       Equip bows in left hand and allow 1H weapon switching - switching has a short delay
 loiterLimitInHours,                                 Maximum loiter time in hours
 loiterLimitInHoursInfo,                             Change default loiter time limit in hours
+automapTempleColor,                                 Temple/guildhall color
+automapTempleColorInfo,                             The color of temples and guildhalls on the exterior automap
+automapShopColor,                                   Shop color
+automapShopColorInfo,                               The color of shops on the exterior automap
+automapTavernColor,                                 Tavern color
+automapTavernColorInfo,                             The color of taverns on the exterior automap
+automapHouseColor,                                  Residence color
+automapHouseColorInfo,                              The color of residences and others on the exterior automap
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.

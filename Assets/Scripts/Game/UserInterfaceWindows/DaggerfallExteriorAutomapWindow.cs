@@ -255,7 +255,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (AMAP00I0.IMG).");
 
             // Load caption line
-            Texture2D nativeTextureCaption = DaggerfallUI.GetTextureFromImg(nativeImgNameCaption, TextureFormat.ARGB32, true);
+            Texture2D nativeTextureCaption = DaggerfallUI.GetTextureFromImg(nativeImgNameCaption, TextureFormat.ARGB32, false);
             nativeTextureCaption.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             if (!nativeTextureCaption)
                 throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (TOWN00I0.IMG).");
@@ -264,6 +264,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rectPanelCaption.position = new Vector2(0, 200 - 10);
             rectPanelCaption.size = new Vector2(320, 10);
             panelCaption = DaggerfallUI.AddPanel(rectPanelCaption, NativePanel);
+
+            SetupCaptionColors(nativeTextureCaption);
+
+            nativeTextureCaption.Apply(false, true);
 
             // set caption line in bottom part of exterior automap window background image texture
             panelCaption.BackgroundTexture = nativeTextureCaption;
@@ -451,6 +455,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             resetZoomLevelOnNewLocation = DaggerfallUnity.Settings.ExteriorMapResetZoomLevelOnNewLocation;
 
             isSetup = true;
+        }
+
+        protected virtual void SetupCaptionColors(Texture2D textureCaption)
+        {
+            for(int i = 0; i < 5; ++i)
+            {
+                for(int j = 0; j < 5; ++j)
+                {
+                    textureCaption.SetPixel(97 + i, 3 + j, DaggerfallUnity.Settings.AutomapTempleColor);
+                    textureCaption.SetPixel(141 + i, 3 + j, DaggerfallUnity.Settings.AutomapShopColor);
+                    textureCaption.SetPixel(183 + i, 3 + j, DaggerfallUnity.Settings.AutomapTavernColor);
+                }
+            }
         }
 
         /// <summary>

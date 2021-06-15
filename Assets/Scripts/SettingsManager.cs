@@ -190,6 +190,10 @@ namespace DaggerfallWorkshop
         public bool AutomapAlwaysMaxOutSliceLevel { get; set; }
         public float ExteriorMapDefaultZoomLevel { get; set; }
         public bool ExteriorMapResetZoomLevelOnNewLocation { get; set; }
+        public Color32 AutomapTempleColor { get; set; }
+        public Color32 AutomapShopColor { get; set; }
+        public Color32 AutomapTavernColor { get; set; }
+        public Color32 AutomapHouseColor { get; set; }
 
         // [Startup]
         public int StartCellX { get; set; }
@@ -337,6 +341,10 @@ namespace DaggerfallWorkshop
             AutomapAlwaysMaxOutSliceLevel = GetBool(sectionMap, "AutomapAlwaysMaxOutSliceLevel");            
             ExteriorMapDefaultZoomLevel = GetFloat(sectionMap, "ExteriorMapDefaultZoomLevel", 4, 31);
             ExteriorMapResetZoomLevelOnNewLocation = GetBool(sectionMap, "ExteriorMapResetZoomLevelOnNewLocation");
+            AutomapTempleColor = GetColor(sectionMap, "AutomapTempleColor", DaggerfallUI.DaggerfallDefaultTempleAutomapColor);
+            AutomapShopColor = GetColor(sectionMap, "AutomapShopColor", DaggerfallUI.DaggerfallDefaultShopAutomapColor);
+            AutomapTavernColor = GetColor(sectionMap, "AutomapTavernColor", DaggerfallUI.DaggerfallDefaultTavernAutomapColor);
+            AutomapHouseColor = GetColor(sectionMap, "AutomapHouseColor", DaggerfallUI.DaggerfallDefaultHouseAutomapColor);
 
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
@@ -469,6 +477,11 @@ namespace DaggerfallWorkshop
             SetBool(sectionControls, "InstantRepairs", InstantRepairs);
             SetBool(sectionControls, "AllowMagicRepairs", AllowMagicRepairs);
             SetBool(sectionControls, "BowDrawback", BowDrawback);
+
+            SetColor(sectionMap, "AutomapTempleColor", AutomapTempleColor);
+            SetColor(sectionMap, "AutomapShopColor", AutomapShopColor);
+            SetColor(sectionMap, "AutomapTavernColor", AutomapTavernColor);
+            SetColor(sectionMap, "AutomapHouseColor", AutomapHouseColor);
 
             SetInt(sectionStartup, "StartCellX", StartCellX);
             SetInt(sectionStartup, "StartCellY", StartCellY);

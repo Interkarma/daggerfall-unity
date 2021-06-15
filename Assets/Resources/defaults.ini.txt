@@ -108,6 +108,10 @@ AutomapRememberSliceLevel=False
 AutomapAlwaysMaxOutSliceLevel=False
 ExteriorMapDefaultZoomLevel=8
 ExteriorMapResetZoomLevelOnNewLocation=True
+AutomapTempleColor=457DC3FF
+AutomapShopColor=BE5518FF
+AutomapTavernColor=557530FF
+AutomapHouseColor=453C28FF
 
 [Startup]
 StartCellX=109
