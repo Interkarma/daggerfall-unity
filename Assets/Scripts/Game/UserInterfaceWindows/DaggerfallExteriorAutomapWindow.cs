@@ -111,6 +111,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         ToolTip buttonToolTip = null;
 
+        protected Panel panelTempleColor;
+        protected Panel panelShopColor;
+        protected Panel panelTavernColor;
+
         // these boolean flags are used to indicate which mouse button was pressed over which gui button/element - these are set in the event callbacks
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
@@ -459,15 +463,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected virtual void SetupCaptionColors(Texture2D textureCaption)
         {
-            for(int i = 0; i < 5; ++i)
-            {
-                for(int j = 0; j < 5; ++j)
-                {
-                    textureCaption.SetPixel(97 + i, 3 + j, DaggerfallUnity.Settings.AutomapTempleColor);
-                    textureCaption.SetPixel(141 + i, 3 + j, DaggerfallUnity.Settings.AutomapShopColor);
-                    textureCaption.SetPixel(183 + i, 3 + j, DaggerfallUnity.Settings.AutomapTavernColor);
-                }
-            }
+            panelTempleColor = DaggerfallUI.AddPanel(new Rect(new Vector2(97, 2), new Vector2(5, 5)), panelCaption);
+            panelTempleColor.BackgroundColor = DaggerfallUnity.Settings.AutomapTempleColor;
+
+            panelShopColor = DaggerfallUI.AddPanel(new Rect(new Vector2(141, 2), new Vector2(5, 5)), panelCaption);
+            panelShopColor.BackgroundColor = DaggerfallUnity.Settings.AutomapShopColor;
+
+            panelTavernColor = DaggerfallUI.AddPanel(new Rect(new Vector2(183, 2), new Vector2(5, 5)), panelCaption);
+            panelTavernColor.BackgroundColor = DaggerfallUnity.Settings.AutomapTavernColor;
         }
 
         /// <summary>
