@@ -209,7 +209,7 @@ namespace DaggerfallWorkshop.Game
 
             // set billboard to correct race, gender and outfit variant
             Asset = GetComponentInChildren<MobilePersonAsset>();
-            Asset.SetPerson(race, gender, personOutfitVariant, IsGuard);
+            Asset.SetPerson(race, gender, personOutfitVariant, IsGuard, personFaceVariant, personFaceRecordId);
         }
 
         /// <summary>
