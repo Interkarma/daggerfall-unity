@@ -167,6 +167,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button automapTavernColor;
         Button automapHouseColor;
 
+        Button automapReset;
+
         #endregion
 
         #region Override Methods
@@ -390,6 +392,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             automapShopColor = AddColorPicker(leftPanel, "automapShopColor", DaggerfallUnity.Settings.AutomapShopColor);
             automapTavernColor = AddColorPicker(leftPanel, "automapTavernColor", DaggerfallUnity.Settings.AutomapTavernColor);
             automapHouseColor = AddColorPicker(leftPanel, "automapHouseColor", DaggerfallUnity.Settings.AutomapHouseColor);
+
+            automapReset = AddButton(leftPanel, GetText("reset"), AutomapReset_OnMouseClick);
+        }
+
+        private void AutomapReset_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            automapTempleColor.BackgroundColor = DaggerfallUI.DaggerfallDefaultTempleAutomapColor;
+            automapShopColor.BackgroundColor = DaggerfallUI.DaggerfallDefaultShopAutomapColor;
+            automapTavernColor.BackgroundColor = DaggerfallUI.DaggerfallDefaultTavernAutomapColor;
+            automapHouseColor.BackgroundColor = DaggerfallUI.DaggerfallDefaultHouseAutomapColor;
         }
 
         private void SaveSettings()
@@ -732,6 +744,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             y += itemSpacing;
             return colorPicker;
+        }
+
+        private Button AddButton(Panel panel, string label, BaseScreenComponent.OnMouseClickHandler onMouseClickHandler)
+        {
+            Button button = DaggerfallUI.AddButton(new Vector2(panel.Size.x / 2, y), new Vector2(30, 8), panel);
+            button.Label.Text = label;
+            button.OnMouseClick += onMouseClickHandler;
+            button.Outline.Enabled = true;
+            button.BackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+
+            y += itemSpacing + 2;
+
+            return button;
         }
 
         private static string GetText(string key)
