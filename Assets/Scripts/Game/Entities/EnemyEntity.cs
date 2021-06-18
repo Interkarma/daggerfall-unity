@@ -270,7 +270,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Enemy class is levelled to player and uses similar health rules
                 // City guards are 3 to 6 levels above the player
                 level = GameManager.Instance.PlayerEntity.Level;
-                if (careerIndex == (int)MobileTypes.Knight_CityWatch)
+                if (careerIndex == (int)MobileTypes.Knight_CityWatch - 128)
                     level += UnityEngine.Random.Range(3, 7);
 
                 maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
