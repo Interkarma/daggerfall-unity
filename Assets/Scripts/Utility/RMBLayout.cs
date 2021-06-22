@@ -442,10 +442,6 @@ namespace DaggerfallWorkshop.Utility
                     if (archive == TextureReader.AnimalsTextureArchive)
                         AddAnimalAudioSource(go);
 
-                    // If this is a light flat, import light prefab
-                    if (archive == TextureReader.LightsTextureArchive)
-                        AddLight(dfUnity, obj, lightsParent);
-
                     // If flat record has a non-zero faction id, then it's an exterior NPC
                     if (obj.FactionID != 0)
                     {
@@ -456,6 +452,22 @@ namespace DaggerfallWorkshop.Utility
                         // Add StaticNPC behaviour
                         StaticNPC npc = go.AddComponent<StaticNPC>();
                         npc.SetLayoutData(obj);
+                    }
+
+                    // If this is a light flat, import light prefab
+                    if (archive == TextureReader.LightsTextureArchive)
+                    {
+                        if (dfUnity.Option_CityLightPrefab == null)
+                            return;
+
+                        Vector2 size = dfUnity.MeshReader.GetScaledBillboardSize(210, obj.TextureRecord);
+                        Vector3 position = new Vector3(
+                            obj.XPos,
+                            -obj.YPos + size.y,
+                            obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
+                        position += subRecordPosition;
+
+                        GameObjectHelper.InstantiatePrefab(dfUnity.Option_CityLightPrefab.gameObject, string.Empty, lightsParent, position);
                     }
                 }
             }
