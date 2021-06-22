@@ -395,27 +395,31 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Add exterior block flats.
-        /// Batching is conditionally supported.
+        /// Add subrecord (building) exterior block flats.
         /// </summary>
         public static void AddExteriorBlockFlats(
             ref DFBlock blockData,
             Transform flatsParent,
-            DaggerfallBillboardBatch animalsBillboardBatch = null,
-            TextureAtlasBuilder miscBillboardsAtlas = null,
-            DaggerfallBillboardBatch miscBillboardsBatch = null)
+            Transform lightsParent,
+            ClimateNatureSets climateNature = ClimateNatureSets.TemperateWoodland,
+            ClimateSeason climateSeason = ClimateSeason.Summer)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
                 return;
 
-            // Add block flats
+            // Get Nature Archive
+            int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
+
             foreach (DFBlock.RmbSubRecord subRecord in blockData.RmbBlock.SubRecords)
             {
+                Vector3 subRecordPosition = new Vector3(subRecord.XPos, 0, -subRecord.ZPos) * MeshReader.GlobalScale;
+
                 foreach (DFBlock.RmbBlockFlatObjectRecord obj in subRecord.Exterior.BlockFlatObjectRecords)
                 {
-                    // Ignore lights as they are handled by AddLights()
-                    if (obj.TextureArchive == TextureReader.LightsTextureArchive)
+                    // Don't add building exterior editor flats since they can't be used by any DFU systems
+                    int archive = obj.TextureArchive;
+                    if (archive == TextureReader.EditorFlatsTextureArchive)
                         continue;
 
                     // Calculate position
@@ -424,18 +428,31 @@ namespace DaggerfallWorkshop.Utility
                         -obj.YPos + blockFlatsOffsetY,
                         obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
 
+                    billboardPosition += subRecordPosition;
+
+                    // Add natures using correct climate set archive
+                    if (archive >= (int)DFLocation.ClimateTextureSet.Nature_RainForest && archive <= (int)DFLocation.ClimateTextureSet.Nature_Mountains_Snow)
+                    {
+                        archive = natureArchive;
+                        billboardPosition.z = natureFlatsOffsetY;
+                    }
+
                     // Import custom 3d gameobject instead of flat
-                    if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent) != null)
+                    if (MeshReplacement.ImportCustomFlatGameobject(archive, obj.TextureRecord, billboardPosition, flatsParent) != null)
                         continue;
 
                     // Add standalone billboard gameobject
-                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
+                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, obj.TextureRecord, flatsParent);
                     go.transform.position = billboardPosition;
                     AlignBillboardToBase(go);
 
                     // Add animal sound
-                    if (obj.TextureArchive == TextureReader.AnimalsTextureArchive)
+                    if (archive == TextureReader.AnimalsTextureArchive)
                         AddAnimalAudioSource(go);
+
+                    // If this is a light flat, import light prefab
+                    if (archive == TextureReader.LightsTextureArchive)
+                        AddLight(dfUnity, obj, lightsParent);
 
                     // If flat record has a non-zero faction id, then it's an exterior NPC
                     if (obj.FactionID != 0)
