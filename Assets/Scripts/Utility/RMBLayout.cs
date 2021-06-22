@@ -387,6 +387,64 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Add exterior block flats.
+        /// Batching is conditionally supported.
+        /// </summary>
+        public static void AddExteriorBlockFlats(
+            ref DFBlock blockData,
+            Transform flatsParent,
+            DaggerfallBillboardBatch animalsBillboardBatch = null,
+            TextureAtlasBuilder miscBillboardsAtlas = null,
+            DaggerfallBillboardBatch miscBillboardsBatch = null)
+        {
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return;
+
+            // Add block flats
+            foreach (DFBlock.RmbSubRecord subRecord in blockData.RmbBlock.SubRecords)
+            {
+                foreach (DFBlock.RmbBlockFlatObjectRecord obj in subRecord.Exterior.BlockFlatObjectRecords)
+                {
+                    // Ignore lights as they are handled by AddLights()
+                    if (obj.TextureArchive == TextureReader.LightsTextureArchive)
+                        continue;
+
+                    // Calculate position
+                    Vector3 billboardPosition = new Vector3(
+                        obj.XPos,
+                        -obj.YPos + blockFlatsOffsetY,
+                        obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
+
+                    // Import custom 3d gameobject instead of flat
+                    if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent) != null)
+                        continue;
+
+                    // Add standalone billboard gameobject
+                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
+                    go.transform.position = billboardPosition;
+                    AlignBillboardToBase(go);
+
+                    // Add animal sound
+                    if (obj.TextureArchive == TextureReader.AnimalsTextureArchive)
+                        AddAnimalAudioSource(go);
+
+                    // If flat record has a non-zero faction id, then it's an exterior NPC
+                    if (obj.FactionID != 0)
+                    {
+                        // Add RMB data to billboard
+                        DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                        dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
+
+                        // Add StaticNPC behaviour
+                        StaticNPC npc = go.AddComponent<StaticNPC>();
+                        npc.SetLayoutData(obj);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Aligns billboard GameObject to centre of base.
         /// This is required for exterior billboard.
         /// </summary>

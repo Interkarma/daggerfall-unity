@@ -516,6 +516,9 @@ namespace DaggerfallWorkshop.Utility
             // Layout all other flats
             RMBLayout.AddMiscBlockFlats(ref blockData, flatsNode.transform, animalsBillboardBatch, miscBillboardAtlas, miscBillboardBatch);
 
+            // Layout any subrecord exterior flats
+            RMBLayout.AddExteriorBlockFlats(ref blockData, flatsNode.transform, animalsBillboardBatch, miscBillboardAtlas, miscBillboardBatch);
+
             // Add ground plane
             if (addGroundPlane)
                 RMBLayout.AddGroundPlane(ref blockData, go.transform);
