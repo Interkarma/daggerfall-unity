@@ -255,12 +255,21 @@ namespace DaggerfallWorkshop.Game.Entity
                 careerIndex = mobileEnemy.ID;
                 stats.SetPermanentFromCareer(career);
 
-                // Default to the mobile's values. Mods can adjust those values by registering to "OnLootSpawned"
-                level = mobileEnemy.Level;
-                maxHealth = Random.Range(mobileEnemy.MinHealth, mobileEnemy.MaxHealth + 1);
-                for (int i = 0; i < ArmorValues.Length; i++)
+                if (entityType == EntityTypes.EnemyMonster)
                 {
-                    ArmorValues[i] = (sbyte)(mobileEnemy.ArmorValue * 5);
+                    // Default like a monster
+                    level = mobileEnemy.Level;
+                    maxHealth = Random.Range(mobileEnemy.MinHealth, mobileEnemy.MaxHealth + 1);
+                    for (int i = 0; i < ArmorValues.Length; i++)
+                    {
+                        ArmorValues[i] = (sbyte)(mobileEnemy.ArmorValue * 5);
+                    }
+                }
+                else
+                {
+                    // Default like a class enemy
+                    level = GameManager.Instance.PlayerEntity.Level;
+                    maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
                 }
             }
             else if (entityType == EntityTypes.EnemyMonster)
