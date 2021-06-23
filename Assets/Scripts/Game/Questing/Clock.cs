@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     Group ddhhmmGroup = option.Groups["ddhhmm"];
                     Group hhmmGroup = option.Groups["hhmm"];
                     Group mmGroup = option.Groups["mm"];
-                    if (ddhhmmGroup.Success || hhmmGroup.Success | mmGroup.Success)
+                    if (ddhhmmGroup.Success || hhmmGroup.Success || mmGroup.Success)
                     {
                         // Get time value
                         int timeValue = MatchTimeValue(option.Value);
