@@ -1917,7 +1917,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void PlayCastSound(DaggerfallEntityBehaviour casterEntityBehaviour, int castSoundID, bool throttle = false)
         {
             // Throttle casting sound to once per 0.5f seconds to prevent playing overlapping effects on item equip/recast
-            if (throttle & Time.realtimeSinceStartup - timeLastCastSoundPlayed < 0.5f)
+            if (throttle && Time.realtimeSinceStartup - timeLastCastSoundPlayed < 0.5f)
                 return;
 
             if (casterEntityBehaviour)
