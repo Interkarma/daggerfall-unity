@@ -484,15 +484,15 @@ namespace DaggerfallWorkshop.Game.Items
         /// UIDs will be retained.
         /// </summary>
         /// <param name="items">Items array.</param>
-        public void Import(DaggerfallUnityItem[] items)
+        public void Import(IEnumerable<DaggerfallUnityItem> items)
         {
-            if (items == null || items.Length == 0)
+            if (items == null)
                 return;
 
             Clear();
-            for (int i = 0; i < items.Length; i++)
+            foreach (var item in items)
             {
-                AddItem(items[i]);
+                AddItem(item);
             }
         }
 
@@ -502,14 +502,14 @@ namespace DaggerfallWorkshop.Game.Items
         /// UIDs will be retained.
         /// </summary>
         /// <param name="items">Items array.</param>
-        public void AddItems(DaggerfallUnityItem[] items)
+        public void AddItems(IEnumerable<DaggerfallUnityItem> items)
         {
-            if (items == null || items.Length == 0)
+            if (items == null)
                 return;
 
-            for (int i = 0; i < items.Length; i++)
+            foreach (var item in items)
             {
-                AddItem(items[i]);
+                AddItem(item);
             }
         }
 

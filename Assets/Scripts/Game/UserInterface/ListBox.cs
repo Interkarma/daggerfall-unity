@@ -558,15 +558,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             AddItem(text, out itemOut, position, tag);
         }
 
-        public void AddItems(string[] items)
+        public void AddItems(IEnumerable<string> items)
         {
+            if (items == null)
+                return;
+
             foreach (string item in items)
                 AddItem(item);
         }
 
-        public void AddItems(TextLabel[] labels)
+        public void AddItems(IEnumerable<TextLabel> labels)
         {
-            if (labels == null || labels.Length == 0)
+            if (labels == null)
                 return;
 
             ListItem itemOut;
