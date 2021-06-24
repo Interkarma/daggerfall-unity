@@ -159,10 +159,20 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Sets NPC data from RMB layout flat record. (exterior NPCs)
+        /// Sets NPC data from RMB layout flat record (exterior NPCs).
         /// </summary>
         public void SetLayoutData(DFBlock.RmbBlockFlatObjectRecord obj)
         {
+            // Gender flag is invalid for RMB exterior NPCs: get it from FLATS.CFG instead
+            int flatID = FlatsFile.GetFlatID(obj.TextureArchive, obj.TextureRecord);
+            if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(flatID, out FlatsFile.FlatData flatCFG))
+            {
+                if (flatCFG.gender.Contains("2"))
+                    obj.Flags |= 32;
+                else
+                    obj.Flags &= 223;
+            }
+
             SetLayoutData(ref npcData,
                 obj.XPos, obj.YPos, obj.ZPos,
                 obj.Flags,
