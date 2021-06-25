@@ -2739,6 +2739,7 @@ namespace DaggerfallWorkshop.Game
                                                             npc.TextureArchive,
                                                             npc.TextureRecord,
                                                             npc.Position,
+                                                            location.LocationIndex,
                                                             buildingSummary.buildingKey);
 
                                     // Exclude children from NPCs with work

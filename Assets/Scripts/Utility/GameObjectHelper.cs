@@ -517,7 +517,7 @@ namespace DaggerfallWorkshop.Utility
             RMBLayout.AddNatureFlats(ref blockData, flatsNode.transform, natureBillboardBatch, climateNature, climateSeason);
 
             // Layout all other flats
-            RMBLayout.AddMiscBlockFlats(ref blockData, flatsNode.transform, animalsBillboardBatch, miscBillboardAtlas, miscBillboardBatch);
+            RMBLayout.AddMiscBlockFlats(ref blockData, flatsNode.transform, locationIndex, animalsBillboardBatch, miscBillboardAtlas, miscBillboardBatch);
 
             // Add ground plane
             if (addGroundPlane)
