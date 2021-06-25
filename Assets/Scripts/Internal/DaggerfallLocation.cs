@@ -428,6 +428,7 @@ namespace DaggerfallWorkshop
                         blockName,
                         x,
                         y,
+                        location.LocationIndex,
                         dfUnity.Option_RMBGroundPlane,
                         dfUnity.Option_CityBlockPrefab,
                         summary.NatureBillboardBatch,

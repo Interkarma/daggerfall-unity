@@ -138,6 +138,7 @@ namespace DaggerfallWorkshop.Game
                 obj.Resources.FlatResource.TextureArchive,
                 obj.Resources.FlatResource.TextureRecord,
                 obj.Resources.FlatResource.Position,
+                GameManager.Instance.PlayerGPS.CurrentLocation.LocationIndex,
                 0);
             npcData.context = Context.Dungeon;
         }
@@ -154,14 +155,16 @@ namespace DaggerfallWorkshop.Game
                 obj.TextureArchive,
                 obj.TextureRecord,
                 obj.Position,
+                GameManager.Instance.PlayerGPS.CurrentLocation.LocationIndex,
                 buildingKey);
             npcData.context = Context.Building;
         }
 
         /// <summary>
         /// Sets NPC data from RMB layout flat record. (exterior NPCs)
+        /// Requires locationIndex to be passed in as layout may occur without player being in the location.
         /// </summary>
-        public void SetLayoutData(DFBlock.RmbBlockFlatObjectRecord obj)
+        public void SetLayoutData(DFBlock.RmbBlockFlatObjectRecord obj, int locationIndex)
         {
             SetLayoutData(ref npcData,
                 obj.XPos, obj.YPos, obj.ZPos,
@@ -170,11 +173,12 @@ namespace DaggerfallWorkshop.Game
                 obj.TextureArchive,
                 obj.TextureRecord,
                 obj.Position,
+                locationIndex,
                 0);
             npcData.context = Context.Custom;
         }
 
-        public static void SetLayoutData(ref NPCData data, int XPos, int YPos, int ZPos, int flags, int factionId, int archive, int record, long position, int buildingKey)
+        public static void SetLayoutData(ref NPCData data, int XPos, int YPos, int ZPos, int flags, int factionId, int archive, int record, long position, int locationIndex, int buildingKey)
         {
             // Store common layout data
             data.hash = GetPositionHash(XPos, YPos, ZPos);
@@ -182,7 +186,7 @@ namespace DaggerfallWorkshop.Game
             data.factionID = factionId;
             data.billboardArchiveIndex = archive;
             data.billboardRecordIndex = record;
-            data.nameSeed = (int)position ^ buildingKey + GameManager.Instance.PlayerGPS.CurrentLocation.LocationIndex;
+            data.nameSeed = (int)position ^ buildingKey + locationIndex;
             data.gender = ((flags & 32) == 32) ? Genders.Female : Genders.Male;
             data.race = GetRaceFromFaction(factionId);
             data.buildingKey = buildingKey;
