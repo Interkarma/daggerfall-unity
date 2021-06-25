@@ -166,7 +166,7 @@ namespace DaggerfallWorkshop.Game
 
         /// <summary>
         /// Sets NPC data from RMB layout flat record. (exterior NPCs)
-        /// Requires mapID & locationIndex to be passed in as layout may occur without player being in the location.
+        /// Requires mapID and locationIndex to be passed in as layout may occur without player being in the location.
         /// </summary>
         public void SetLayoutData(DFBlock.RmbBlockFlatObjectRecord obj, int mapId, int locationIndex)
         {
@@ -260,9 +260,6 @@ namespace DaggerfallWorkshop.Game
             // Get reference to player objects holding world information
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
-
-            // Store map ID
-            npcData.mapID = playerGPS.CurrentMapID;
 
             // Store location ID (if any - not all locations carry a unique ID)
             npcData.locationID = (int)playerGPS.CurrentLocation.Exterior.ExteriorData.LocationId;
