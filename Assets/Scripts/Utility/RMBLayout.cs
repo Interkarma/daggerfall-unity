@@ -326,6 +326,7 @@ namespace DaggerfallWorkshop.Utility
         public static void AddMiscBlockFlats(
             ref DFBlock blockData,
             Transform flatsParent,
+            int mapId,
             int locationIndex,
             DaggerfallBillboardBatch animalsBillboardBatch = null,
             TextureAtlasBuilder miscBillboardsAtlas = null,
@@ -388,7 +389,7 @@ namespace DaggerfallWorkshop.Utility
 
                     // Add StaticNPC behaviour
                     StaticNPC npc = go.AddComponent<StaticNPC>();
-                    npc.SetLayoutData(obj, locationIndex);
+                    npc.SetLayoutData(obj, mapId, locationIndex);
                 }
             }
         }

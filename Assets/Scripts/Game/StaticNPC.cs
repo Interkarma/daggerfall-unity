@@ -87,9 +87,9 @@ namespace DaggerfallWorkshop.Game
             public Genders gender;
             public Races race;
             public Context context;
+            public int mapID;
 
             // Derived at runtime
-            public int mapID;
             public int locationID;
             public int buildingKey;
             public NameHelper.BankTypes nameBank;
@@ -131,6 +131,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void SetLayoutData(DFBlock.RdbObject obj)
         {
+            PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
             SetLayoutData(ref npcData,
                 obj.XPos, obj.YPos, obj.ZPos,
                 obj.Resources.FlatResource.Flags,
@@ -138,7 +139,8 @@ namespace DaggerfallWorkshop.Game
                 obj.Resources.FlatResource.TextureArchive,
                 obj.Resources.FlatResource.TextureRecord,
                 obj.Resources.FlatResource.Position,
-                GameManager.Instance.PlayerGPS.CurrentLocation.LocationIndex,
+                playerGPS.CurrentMapID,
+                playerGPS.CurrentLocation.LocationIndex,
                 0);
             npcData.context = Context.Dungeon;
         }
@@ -148,6 +150,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void SetLayoutData(DFBlock.RmbBlockPeopleRecord obj, int buildingKey = 0)
         {
+            PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
             SetLayoutData(ref npcData,
                 obj.XPos, obj.YPos, obj.ZPos,
                 obj.Flags,
@@ -155,16 +158,17 @@ namespace DaggerfallWorkshop.Game
                 obj.TextureArchive,
                 obj.TextureRecord,
                 obj.Position,
-                GameManager.Instance.PlayerGPS.CurrentLocation.LocationIndex,
+                playerGPS.CurrentMapID,
+                playerGPS.CurrentLocation.LocationIndex,
                 buildingKey);
             npcData.context = Context.Building;
         }
 
         /// <summary>
         /// Sets NPC data from RMB layout flat record. (exterior NPCs)
-        /// Requires locationIndex to be passed in as layout may occur without player being in the location.
+        /// Requires mapID & locationIndex to be passed in as layout may occur without player being in the location.
         /// </summary>
-        public void SetLayoutData(DFBlock.RmbBlockFlatObjectRecord obj, int locationIndex)
+        public void SetLayoutData(DFBlock.RmbBlockFlatObjectRecord obj, int mapId, int locationIndex)
         {
             SetLayoutData(ref npcData,
                 obj.XPos, obj.YPos, obj.ZPos,
@@ -173,12 +177,13 @@ namespace DaggerfallWorkshop.Game
                 obj.TextureArchive,
                 obj.TextureRecord,
                 obj.Position,
+                mapId,
                 locationIndex,
                 0);
             npcData.context = Context.Custom;
         }
 
-        public static void SetLayoutData(ref NPCData data, int XPos, int YPos, int ZPos, int flags, int factionId, int archive, int record, long position, int locationIndex, int buildingKey)
+        public static void SetLayoutData(ref NPCData data, int XPos, int YPos, int ZPos, int flags, int factionId, int archive, int record, long position, int mapId, int locationIndex, int buildingKey)
         {
             // Store common layout data
             data.hash = GetPositionHash(XPos, YPos, ZPos);
@@ -190,6 +195,7 @@ namespace DaggerfallWorkshop.Game
             data.gender = ((flags & 32) == 32) ? Genders.Female : Genders.Male;
             data.race = GetRaceFromFaction(factionId);
             data.buildingKey = buildingKey;
+            data.mapID = mapId;
         }
 
         /// <summary>
