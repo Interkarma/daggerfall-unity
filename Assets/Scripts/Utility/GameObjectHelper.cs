@@ -525,6 +525,9 @@ namespace DaggerfallWorkshop.Utility
             // Layout any subrecord exterior flats
             RMBLayout.AddExteriorBlockFlats(ref blockData, flatsNode.transform, lightsNode.transform, climateNature, climateSeason);
 
+            // Layout any subrecord exterior flats
+            RMBLayout.AddExteriorBlockFlats(ref blockData, flatsNode.transform, lightsNode.transform, climateNature, climateSeason);
+
             // Add ground plane
             if (addGroundPlane)
                 RMBLayout.AddGroundPlane(ref blockData, go.transform);
