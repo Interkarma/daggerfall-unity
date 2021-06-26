@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -51,7 +51,7 @@ namespace DaggerfallConnect.Arena2
             public string gender; // values are 1 for male, 2 for female. If preceded by a "?", in classic the flat would be censored in ChildGard mode.
             public int unknown2;
             public int unknown3;
-            public int faceIndex; // index of face in FACES.CIF
+            public int faceIndex; // index of face in TFAC00I0.RCI
         }
 
         #endregion
