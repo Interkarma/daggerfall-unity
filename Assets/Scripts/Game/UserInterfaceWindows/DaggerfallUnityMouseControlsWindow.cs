@@ -32,29 +32,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Fields
 
-        Color mainPanelBackgroundColor = new Color(0.0f, 0.0f, 0.0f, 1.0f);
-        Color keybindButtonBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 1.0f);
-        Color continueButtonBackgroundColor = new Color(0.5f, 0.0f, 0.0f, 1.0f);
+        protected Color mainPanelBackgroundColor = new Color(0.0f, 0.0f, 0.0f, 1.0f);
+        protected Color keybindButtonBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 1.0f);
+        protected Color continueButtonBackgroundColor = new Color(0.5f, 0.0f, 0.0f, 1.0f);
 
-        Panel mainPanel;
-        TextLabel titleLabel;
-        Button escapeKeybindButton = new Button();
-        Button consoleKeybindButton = new Button();
-        Button screenshotKeybindButton = new Button();
-        Button quickSaveKeybindButton = new Button();
-        Button quickLoadKeybindButton = new Button();
-        Button autoRunKeybindButton = new Button();
-        HorizontalSlider mouseSensitivitySlider;
-        HorizontalSlider weaponSensitivitySlider;
-        Checkbox moveSpeedCheckbox;
-        Checkbox invertMouseVerticalCheckbox;
-        Checkbox mouseSmoothingCheckbox;
-        Checkbox clickToAttackCheckbox;
-        Checkbox bowDrawbackCheckbox;
-        Checkbox toggleSneakCheckbox;
-        TextBox weaponAttackThresholdTextbox;
+        protected Panel mainPanel;
+        protected TextLabel titleLabel;
+        protected Button escapeKeybindButton = new Button();
+        protected Button consoleKeybindButton = new Button();
+        protected Button screenshotKeybindButton = new Button();
+        protected Button quickSaveKeybindButton = new Button();
+        protected Button quickLoadKeybindButton = new Button();
+        protected Button autoRunKeybindButton = new Button();
+        protected HorizontalSlider mouseSensitivitySlider;
+        protected HorizontalSlider weaponSensitivitySlider;
+        protected Checkbox moveSpeedCheckbox;
+        protected Checkbox invertMouseVerticalCheckbox;
+        protected Checkbox mouseSmoothingCheckbox;
+        protected Checkbox clickToAttackCheckbox;
+        protected Checkbox bowDrawbackCheckbox;
+        protected Checkbox toggleSneakCheckbox;
+        protected TextBox weaponAttackThresholdTextbox;
+        protected Button continueButton;
 
-        List<Button> buttonGroup = new List<Button>();
+        protected List<Button> buttonGroup = new List<Button>();
 
         bool waitingForInput = false;
 
@@ -106,7 +107,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Components.Add(titleLabel);
 
             // Continue button
-            Button continueButton = new Button();
+            continueButton = new Button();
             continueButton.Label.Text = "CONTINUE";
             continueButton.Size = new Vector2(80, 10);
             continueButton.HorizontalAlignment = HorizontalAlignment.Right;
