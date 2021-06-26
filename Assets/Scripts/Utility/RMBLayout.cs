@@ -395,6 +395,95 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Add subrecord (building) exterior block flats.
+        /// </summary>
+        public static void AddExteriorBlockFlats(
+            ref DFBlock blockData,
+            Transform flatsParent,
+            Transform lightsParent,
+            int mapId,
+            int locationIndex,
+            ClimateNatureSets climateNature = ClimateNatureSets.TemperateWoodland,
+            ClimateSeason climateSeason = ClimateSeason.Summer)
+        {
+            DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
+            if (!dfUnity.IsReady)
+                return;
+
+            // Get Nature Archive
+            int natureArchive = ClimateSwaps.GetNatureArchive(climateNature, climateSeason);
+
+            foreach (DFBlock.RmbSubRecord subRecord in blockData.RmbBlock.SubRecords)
+            {
+                Vector3 subRecordPosition = new Vector3(subRecord.XPos, 0, -subRecord.ZPos) * MeshReader.GlobalScale;
+
+                foreach (DFBlock.RmbBlockFlatObjectRecord obj in subRecord.Exterior.BlockFlatObjectRecords)
+                {
+                    // Don't add building exterior editor flats since they can't be used by any DFU systems
+                    int archive = obj.TextureArchive;
+                    if (archive == TextureReader.EditorFlatsTextureArchive)
+                        continue;
+
+                    // Calculate position
+                    Vector3 billboardPosition = new Vector3(
+                        obj.XPos,
+                        -obj.YPos + blockFlatsOffsetY,
+                        obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
+
+                    billboardPosition += subRecordPosition;
+
+                    // Add natures using correct climate set archive
+                    if (archive >= (int)DFLocation.ClimateTextureSet.Nature_RainForest && archive <= (int)DFLocation.ClimateTextureSet.Nature_Mountains_Snow)
+                    {
+                        archive = natureArchive;
+                        billboardPosition.z = natureFlatsOffsetY;
+                    }
+
+                    // Import custom 3d gameobject instead of flat
+                    if (MeshReplacement.ImportCustomFlatGameobject(archive, obj.TextureRecord, billboardPosition, flatsParent) != null)
+                        continue;
+
+                    // Add standalone billboard gameobject
+                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, obj.TextureRecord, flatsParent);
+                    go.transform.position = billboardPosition;
+                    AlignBillboardToBase(go);
+
+                    // Add animal sound
+                    if (archive == TextureReader.AnimalsTextureArchive)
+                        AddAnimalAudioSource(go);
+
+                    // If flat record has a non-zero faction id, then it's an exterior NPC
+                    if (obj.FactionID != 0)
+                    {
+                        // Add RMB data to billboard
+                        DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                        dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
+
+                        // Add StaticNPC behaviour
+                        StaticNPC npc = go.AddComponent<StaticNPC>();
+                        npc.SetLayoutData(obj, mapId, locationIndex);
+                    }
+
+                    // If this is a light flat, import light prefab
+                    if (archive == TextureReader.LightsTextureArchive)
+                    {
+                        if (dfUnity.Option_CityLightPrefab == null)
+                            return;
+
+                        Vector2 size = dfUnity.MeshReader.GetScaledBillboardSize(210, obj.TextureRecord);
+                        Vector3 position = new Vector3(
+                            obj.XPos,
+                            -obj.YPos + size.y,
+                            obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
+                        position += subRecordPosition;
+
+                        GameObjectHelper.InstantiatePrefab(dfUnity.Option_CityLightPrefab.gameObject, string.Empty, lightsParent, position);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Aligns billboard GameObject to centre of base.
         /// This is required for exterior billboard.
         /// </summary>
