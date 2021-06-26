@@ -416,6 +416,8 @@ namespace DaggerfallWorkshop.Utility
             string blockName,
             int layoutX,
             int layoutY,
+            int mapId,
+            int locationIndex,
             bool addGroundPlane = true,
             DaggerfallRMBBlock cloneFrom = null,
             DaggerfallBillboardBatch natureBillboardBatch = null,
@@ -436,6 +438,8 @@ namespace DaggerfallWorkshop.Utility
                 blockData,
                 layoutX,
                 layoutY,
+                mapId,
+                locationIndex,
                 addGroundPlane,
                 cloneFrom,
                 natureBillboardBatch,
@@ -456,6 +460,8 @@ namespace DaggerfallWorkshop.Utility
             DFBlock blockData,
             int layoutX,
             int layoutY,
+            int mapId,
+            int locationIndex,
             bool addGroundPlane = true,
             DaggerfallRMBBlock cloneFrom = null,
             DaggerfallBillboardBatch natureBillboardBatch = null,
@@ -514,7 +520,7 @@ namespace DaggerfallWorkshop.Utility
             RMBLayout.AddNatureFlats(ref blockData, flatsNode.transform, natureBillboardBatch, climateNature, climateSeason);
 
             // Layout all other flats
-            RMBLayout.AddMiscBlockFlats(ref blockData, flatsNode.transform, animalsBillboardBatch, miscBillboardAtlas, miscBillboardBatch);
+            RMBLayout.AddMiscBlockFlats(ref blockData, flatsNode.transform, mapId, locationIndex, animalsBillboardBatch, miscBillboardAtlas, miscBillboardBatch);
 
             // Add ground plane
             if (addGroundPlane)
