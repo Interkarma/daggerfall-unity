@@ -87,9 +87,9 @@ namespace DaggerfallWorkshop.Game
             public Genders gender;
             public Races race;
             public Context context;
+            public int mapID;
 
             // Derived at runtime
-            public int mapID;
             public int locationID;
             public int buildingKey;
             public NameHelper.BankTypes nameBank;
@@ -131,6 +131,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void SetLayoutData(DFBlock.RdbObject obj)
         {
+            PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
             SetLayoutData(ref npcData,
                 obj.XPos, obj.YPos, obj.ZPos,
                 obj.Resources.FlatResource.Flags,
@@ -138,6 +139,8 @@ namespace DaggerfallWorkshop.Game
                 obj.Resources.FlatResource.TextureArchive,
                 obj.Resources.FlatResource.TextureRecord,
                 obj.Resources.FlatResource.Position,
+                playerGPS.CurrentMapID,
+                playerGPS.CurrentLocation.LocationIndex,
                 0);
             npcData.context = Context.Dungeon;
         }
@@ -147,6 +150,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void SetLayoutData(DFBlock.RmbBlockPeopleRecord obj, int buildingKey = 0)
         {
+            PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
             SetLayoutData(ref npcData,
                 obj.XPos, obj.YPos, obj.ZPos,
                 obj.Flags,
@@ -154,14 +158,18 @@ namespace DaggerfallWorkshop.Game
                 obj.TextureArchive,
                 obj.TextureRecord,
                 obj.Position,
+                playerGPS.CurrentMapID,
+                playerGPS.CurrentLocation.LocationIndex,
                 buildingKey);
             npcData.context = Context.Building;
         }
 
         /// <summary>
-        /// Sets NPC data from RMB layout flat record (exterior NPCs).
+
+        /// Sets NPC data from RMB layout flat record. (exterior NPCs)
+        /// Requires mapID and locationIndex to be passed in as layout may occur without player being in the location.
         /// </summary>
-        public void SetLayoutData(DFBlock.RmbBlockFlatObjectRecord obj)
+        public void SetLayoutData(DFBlock.RmbBlockFlatObjectRecord obj, int mapId, int locationIndex)
         {
             // Gender flag is invalid for RMB exterior NPCs: get it from FLATS.CFG instead
             int flatID = FlatsFile.GetFlatID(obj.TextureArchive, obj.TextureRecord);
@@ -180,11 +188,13 @@ namespace DaggerfallWorkshop.Game
                 obj.TextureArchive,
                 obj.TextureRecord,
                 obj.Position,
+                mapId,
+                locationIndex,
                 0);
             npcData.context = Context.Custom;
         }
 
-        public static void SetLayoutData(ref NPCData data, int XPos, int YPos, int ZPos, int flags, int factionId, int archive, int record, long position, int buildingKey)
+        public static void SetLayoutData(ref NPCData data, int XPos, int YPos, int ZPos, int flags, int factionId, int archive, int record, long position, int mapId, int locationIndex, int buildingKey)
         {
             // Store common layout data
             data.hash = GetPositionHash(XPos, YPos, ZPos);
@@ -192,10 +202,11 @@ namespace DaggerfallWorkshop.Game
             data.factionID = factionId;
             data.billboardArchiveIndex = archive;
             data.billboardRecordIndex = record;
-            data.nameSeed = (int)position ^ buildingKey + GameManager.Instance.PlayerGPS.CurrentLocation.LocationIndex;
+            data.nameSeed = (int)position ^ buildingKey + locationIndex;
             data.gender = ((flags & 32) == 32) ? Genders.Female : Genders.Male;
             data.race = GetRaceFromFaction(factionId);
             data.buildingKey = buildingKey;
+            data.mapID = mapId;
         }
 
         /// <summary>
@@ -260,9 +271,6 @@ namespace DaggerfallWorkshop.Game
             // Get reference to player objects holding world information
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             PlayerGPS playerGPS = GameManager.Instance.PlayerGPS;
-
-            // Store map ID
-            npcData.mapID = playerGPS.CurrentMapID;
 
             // Store location ID (if any - not all locations carry a unique ID)
             npcData.locationID = (int)playerGPS.CurrentLocation.Exterior.ExteriorData.LocationId;
