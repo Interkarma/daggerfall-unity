@@ -665,6 +665,14 @@ namespace DaggerfallWorkshop.Utility
                                 combiner.Add(ref modelData, modelMatrix);
                             }
                         }
+                        else if (blockData.RdbBlock.ModelReferenceList[modelReference].Description == "COL")
+                        {
+                            // Add colliders to custom dungeon models added using "COL" in the World Data Editor.
+                            MeshCollider collider = standaloneObject.GetComponent<MeshCollider>();
+                            if (collider == null) collider = standaloneObject.AddComponent<MeshCollider>();
+                            MeshFilter meshFilter = standaloneObject.GetComponent<MeshFilter>();
+                            collider.sharedMesh = meshFilter.sharedMesh;
+                        }
 
                         // Add action
                         if (hasAction && standaloneObject != null)
