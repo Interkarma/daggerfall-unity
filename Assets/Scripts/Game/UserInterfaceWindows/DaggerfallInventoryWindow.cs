@@ -981,7 +981,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Update button and panel
                 ImageData image = DaggerfallUnity.Instance.ItemHelper.GetInventoryImage(item);
                 panel.BackgroundTexture = image.texture;
-                panel.Size = new Vector2(image.width, image.height);
+                if (image.width != 0 && image.height != 0)
+                    panel.Size = new Vector2(image.width, image.height);
+                else
+                    panel.Size = new Vector2(image.texture.width, image.texture.height);
                 button.ToolTipText = item.LongName;
                 button.AnimatedBackgroundTextures = (item.IsEnchanted) ? magicAnimation.animatedTextures : null;
             }
