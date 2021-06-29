@@ -348,7 +348,7 @@ namespace DaggerfallConnect.Arena2
             if (record < 0 || record >= header.RecordCount || records == null)
                 return new DFSize(0, 0);
 
-            return new DFSize(records[record].ScaleX, records[record].ScaleX);
+            return new DFSize(records[record].ScaleX, records[record].ScaleY);
         }
 
         /// <summary>
