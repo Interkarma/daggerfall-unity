@@ -599,7 +599,11 @@ namespace DaggerfallWorkshop
         {
             // Open texture file
             string path = Path.Combine(dfUnity.Arena2Path, TextureFile.IndexToFileName(archive));
-            TextureFile textureFile = new TextureFile(path, FileUsage.UseMemory, true);
+            TextureFile textureFile = new TextureFile();
+
+            // Might be updated later through texture replacement
+            if (!textureFile.Load(path, FileUsage.UseMemory, true))
+                return;
 
             // Cache size and scale for each record
             summary.RecordSizes = new Vector2[textureFile.RecordCount];
@@ -690,6 +694,37 @@ namespace DaggerfallWorkshop
                 0,
                 false,
                 true);
+
+            // Update cached record values in case of non-classic texture
+            if(summary.RecordSizes == null || summary.RecordSizes.Length == 0)
+            {
+                if(summary.ImportedTextures.Albedo != null && summary.ImportedTextures.Albedo.Length > 0)
+                {
+                    int recordCount = summary.ImportedTextures.Albedo.Length;
+
+                    // Cache size and scale for each record
+                    summary.RecordSizes = new Vector2[recordCount];
+                    summary.RecordFrames = new int[recordCount];
+                    for (int i = 0; i < recordCount; i++)
+                    {
+                        // Get size and scale of this texture
+                        Texture2D firstFrame = summary.ImportedTextures.Albedo[i][0];
+
+                        Vector2 size = new Vector2(firstFrame.width, firstFrame.height);
+
+                        // Set optional scale
+                        TextureReplacement.SetBillboardScale(archive, i, ref size);
+
+                        // Store final size and frame count
+                        summary.RecordSizes[i] = size * MeshReader.GlobalScale;
+                        summary.RecordFrames[i] = summary.ImportedTextures.Albedo[i].Length;
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"Texture archive {archive} has no valid records");
+                }
+            }
 
             // Set new enemy material
             GetComponent<MeshRenderer>().sharedMaterial = material;
