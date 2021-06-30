@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop
             get { return currentFrame; }
         }
 
-        public int FrameSpeedDivisor
+        public override int FrameSpeedDivisor
         {
             get { return frameSpeedDivisor; }
             set { frameSpeedDivisor = (value < 1) ? 1 : value; }
