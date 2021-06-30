@@ -549,7 +549,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
                 // If the archive has a Arena2 texture file, use it to get record and frame count
                 string fileName = TextureFile.IndexToFileName(archive);
-                var textureFile = new TextureFile();                
+                var textureFile = new TextureFile();
                 if (textureFile.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseMemory, true))
                 {
                     // Import all textures in this archive
@@ -583,13 +583,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     List<Texture2D[]> allEmission = importedTextures.IsEmissive ? new List<Texture2D[]>() : null;
 
                     int record = 0;
-                    while(TryImportTexture(archive, record, out Texture2D[] currentAlbedo))
+                    while (TryImportTexture(archive, record, out Texture2D[] currentAlbedo))
                     {
                         allAlbedo.Add(currentAlbedo);
 
-                        if(importedTextures.IsEmissive)
+                        if (importedTextures.IsEmissive)
                         {
-                            if(TryImportTexture(texturesPath, frame => GetName(archive, record, frame, TextureMap.Emission), out Texture2D[] currentEmissive))
+                            if (TryImportTexture(texturesPath, frame => GetName(archive, record, frame, TextureMap.Emission), out Texture2D[] currentEmissive))
                             {
                                 allEmission.Add(currentEmissive);
                             }

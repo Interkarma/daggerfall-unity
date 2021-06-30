@@ -696,9 +696,9 @@ namespace DaggerfallWorkshop
                 true);
 
             // Update cached record values in case of non-classic texture
-            if(summary.RecordSizes == null || summary.RecordSizes.Length == 0)
+            if (summary.RecordSizes == null || summary.RecordSizes.Length == 0)
             {
-                if(summary.ImportedTextures.Albedo != null && summary.ImportedTextures.Albedo.Length > 0)
+                if (summary.ImportedTextures.Albedo != null && summary.ImportedTextures.Albedo.Length > 0)
                 {
                     int recordCount = summary.ImportedTextures.Albedo.Length;
 
