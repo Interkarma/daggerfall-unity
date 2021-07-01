@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using UnityEngine.Localization.Settings;
+using static DaggerfallWorkshop.Game.UserInterface.BaseScreenComponent;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -110,6 +111,9 @@ namespace DaggerfallWorkshop.Game
         DaggerfallItemMakerWindow dfItemMakerWindow;
         DaggerfallPotionMakerWindow dfPotionMakerWindow;
         DaggerfallCourtWindow dfCourtWindow;
+
+        private List<System.Tuple<string, OnMouseClickHandler>> pauseOptionsDropdownItems
+            = new List<System.Tuple<string, OnMouseClickHandler>>();
 
         Material pixelFontMaterial;
         Material sdfFontMaterial;
@@ -724,6 +728,27 @@ namespace DaggerfallWorkshop.Game
         {
             if (Instance.uiManager != null)
                 Instance.uiManager.PostMessage(message);
+        }
+
+        /// <summary>
+        /// Registers a title and click event to add to the pause window dropdown menu
+        /// </summary>
+        /// <param name="text">The text of the dropdown button. </param>
+        /// <param name="handler">The mouse click event logic for clicking on the button.</param>
+        public void RegisterPauseOptionToDropdown(string text, OnMouseClickHandler handler)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                throw new ArgumentException("'text' cannot be null or whitespace");
+            if (handler == null)
+                throw new ArgumentNullException("handler");
+
+            pauseOptionsDropdownItems.Add(new System.Tuple<string, OnMouseClickHandler>(text, handler));
+        }
+
+        // Hide the list in order to prevent direct insertion from modders without registering
+        public System.Tuple<string, OnMouseClickHandler>[] GetPauseOptionsDropdownItems()
+        {
+            return pauseOptionsDropdownItems.ToArray();
         }
 
         public void PopupMessage(string text)

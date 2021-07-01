@@ -46,6 +46,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Setup();
 
             AddOption("Mod Settings", ModSettingsWindowOption_OnMouseClick);
+
+            foreach (var option in DaggerfallUI.Instance.GetPauseOptionsDropdownItems())
+                AddOption(option.Item1, option.Item2);
         }
 
         void Setup()
