@@ -432,7 +432,7 @@ _S.12_ task:
 
 _conhouse_ task:
 	when _S.00_ and not _S.12_ 
-	create foe _F.03_ every 10 minutes 100 times with 10% success 
+	create foe _F.03_ every 30 minutes 5 times with 10% success 
 
 _S.14_ task:
 	injured _F.03_ 
