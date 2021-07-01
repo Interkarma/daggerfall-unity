@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Panel detailBar;
         protected DaggerfallHUD hud;
         protected TextLabel versionTextLabel;
+        protected PauseOptionsDropdown dropdown;
 
         protected readonly Color versionTextColor = new Color(0.75f, 0.75f, 0.75f, 1);
         protected readonly Color versionShadowColor = new Color(0.15f, 0.15f, 0.15f, 1);
@@ -74,6 +75,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             optionsPanel.BackgroundColor = Color.black;
             optionsPanel.BackgroundTexture = nativeTexture;
             NativePanel.Components.Add(optionsPanel);
+
+            dropdown = new PauseOptionsDropdown(uiManager);
+            NativePanel.Components.Add(dropdown);
 
             // Exit game
             Button exitButton = DaggerfallUI.AddButton(new Rect(101, 4, 45, 16), optionsPanel);
