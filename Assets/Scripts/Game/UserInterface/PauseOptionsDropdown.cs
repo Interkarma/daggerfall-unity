@@ -9,9 +9,11 @@
 // Notes:
 //
 
+using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
+using DaggerfallWorkshop.Utility;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -22,7 +24,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         #region Fields
 
+        // Red up/down arrows
+        private const string redArrowsTextureName = "INVE07I0.IMG";
         private const int dropdownButtonHeight = 10;
+
+        private readonly Rect upArrowRect = new Rect(0, 0, 9, 16);
+        private readonly Rect downArrowRect = new Rect(0, 136, 9, 16);
+        private readonly DFSize arrowsFullSize = new DFSize(9, 152);
+        private Texture2D arrowUpTexture;
+        private Texture2D arrowDownTexture;
 
         private List<Button> dropdownButtons;
         private int maxTextWidth = 0;
@@ -30,9 +40,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private Panel dropdownPanel;
         private Button dropDownToggleButton;
         private IUserInterfaceManager uiManager;
-
-        private Texture2D arrowUpTexture;
-        private Texture2D arrowDownTexture;
 
         #endregion
 
@@ -53,8 +60,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void Setup()
         {
-            arrowUpTexture = Resources.Load<Texture2D>("arrow_up");
-            arrowDownTexture = Resources.Load<Texture2D>("arrow_down");
+            // Cut out red up/down arrows
+            Texture2D arrowTexture = ImageReader.GetTexture(redArrowsTextureName);
+            arrowUpTexture = ImageReader.GetSubTexture(arrowTexture, upArrowRect, arrowsFullSize);
+            arrowDownTexture = ImageReader.GetSubTexture(arrowTexture, downArrowRect, arrowsFullSize);
 
             // Drop down button
             dropDownToggleButton = DaggerfallUI.AddButton(new Rect(0, 0, 7, 7), this);
