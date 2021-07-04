@@ -112,8 +112,8 @@ namespace DaggerfallWorkshop.Game
         DaggerfallPotionMakerWindow dfPotionMakerWindow;
         DaggerfallCourtWindow dfCourtWindow;
 
-        private List<System.Tuple<string, OnMouseClickHandler>> pauseOptionsDropdownItems
-            = new List<System.Tuple<string, OnMouseClickHandler>>();
+        private List<System.Tuple<string, Action>> pauseOptionsDropdownItems
+            = new List<System.Tuple<string, Action>>();
 
         Material pixelFontMaterial;
         Material sdfFontMaterial;
@@ -734,19 +734,19 @@ namespace DaggerfallWorkshop.Game
         /// Registers a title and click event to add to the pause window dropdown menu
         /// </summary>
         /// <param name="text">The text of the dropdown button. </param>
-        /// <param name="handler">The mouse click event logic for clicking on the button.</param>
-        public void RegisterPauseOptionToDropdown(string text, OnMouseClickHandler handler)
+        /// <param name="action">The action executed for clicking on the button.</param>
+        public void RegisterPauseOptionToDropdown(string text, Action action)
         {
             if (string.IsNullOrWhiteSpace(text))
                 throw new ArgumentException("'text' cannot be null or whitespace");
-            if (handler == null)
-                throw new ArgumentNullException("handler");
+            if (action == null)
+                throw new ArgumentNullException("action");
 
-            pauseOptionsDropdownItems.Add(new System.Tuple<string, OnMouseClickHandler>(text, handler));
+            pauseOptionsDropdownItems.Add(new System.Tuple<string, Action>(text, action));
         }
 
         // Hide the list in order to prevent direct insertion from modders without registering
-        public System.Tuple<string, OnMouseClickHandler>[] GetPauseOptionsDropdownItems()
+        public System.Tuple<string, Action>[] GetPauseOptionsDropdownItems()
         {
             return pauseOptionsDropdownItems.ToArray();
         }

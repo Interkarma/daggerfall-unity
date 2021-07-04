@@ -14,6 +14,8 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -26,7 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         // Red up/down arrows
         private const string redArrowsTextureName = "INVE07I0.IMG";
-        private const int dropdownButtonHeight = 10;
+        private const int unitsDisplayed = 10;
 
         private readonly Rect upArrowRect = new Rect(0, 0, 9, 16);
         private readonly Rect downArrowRect = new Rect(0, 136, 9, 16);
@@ -34,12 +36,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private Texture2D arrowUpTexture;
         private Texture2D arrowDownTexture;
 
-        private List<Button> dropdownButtons;
+        private List<Action> clickHandlers;
         private int maxTextWidth = 0;
 
         private Panel dropdownPanel;
+        private ListBox dropdownList;
         private Button dropDownToggleButton;
         private IUserInterfaceManager uiManager;
+        private VerticalScrollBar dropdownScroller;
 
         #endregion
 
@@ -49,13 +53,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             : base()
         {
             uiManager = _uiManager;
-            dropdownButtons = new List<Button>();
+            clickHandlers = new List<Action>();
             Setup();
-
-            AddOption("Mod Settings", ModSettingsWindowOption_OnMouseClick);
-
-            foreach (var option in DaggerfallUI.Instance.GetPauseOptionsDropdownItems())
-                AddOption(option.Item1, option.Item2);
         }
 
         void Setup()
@@ -75,40 +74,93 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Dropdown options panel
             dropdownPanel = new Panel();
             dropdownPanel.Position = new Vector2(0, dropDownToggleButton.Position.y + dropDownToggleButton.Size.y);
-            dropdownPanel.Size = new Vector2(50, 30); //* dropdownPanel.Scale;
+            dropdownPanel.Size = new Vector2(50, 30);
             dropdownPanel.BackgroundColor = Color.black;
-            this.Components.Add(dropdownPanel);
             dropdownPanel.Enabled = false;
+            dropdownPanel.Outline.Enabled = true;
+            this.Components.Add(dropdownPanel);
+
+            dropdownList = new ListBox();
+            dropdownList.Position = new Vector2(2, 2);
+            dropdownList.ShadowPosition = Vector2.zero;
+            dropdownList.RowsDisplayed = unitsDisplayed;
+            SetBackground(dropdownList, Color.black, "pauseDropdownListBackgroundColor");
+            dropdownList.OnSelectItem += DropdownList_OnUseSelectedItem;
+            dropdownList.SelectedTextColor = dropdownList.TextColor;
+            dropdownList.OnScroll += DropdownList_OnScroll;
+            dropdownPanel.Components.Add(dropdownList);
+
+            AddOptions();
+            var height = dropdownList.HeightContent();
+            dropdownList.Size = new Vector2(maxTextWidth, height > 80 ? 80 : height);
+            dropdownPanel.Size = new Vector2(dropdownList.Size.x + 6, dropdownList.Size.y + 3);
+
+            dropdownScroller = new VerticalScrollBar();
+            dropdownScroller.Position = new Vector2(maxTextWidth, 2);
+            dropdownScroller.Size = new Vector2(5, dropdownPanel.Size.y - 3);
+            dropdownScroller.DisplayUnits = unitsDisplayed;
+            dropdownScroller.TotalUnits = dropdownList.Count;
+            dropdownScroller.OnScroll += SavesScroller_OnScroll;
+            dropdownPanel.Components.Add(dropdownScroller);
         }
 
         #endregion
 
-        #region Public Methods
+        #region Private Methods
 
-        public void AddOption(string text, OnMouseClickHandler onMouseClickHandler)
+        void SetBackground(BaseScreenComponent panel, Color color, string textureName)
         {
-            Button button = DaggerfallUI.AddButton(
-                new Rect(0, 1 + (dropdownButtonHeight + 1) * dropdownButtons.Count, dropdownPanel.Size.x, dropdownButtonHeight),
-                dropdownPanel);
+            if (TextureReplacement.TryImportTexture(textureName, true, out Texture2D tex))
+            {
+                panel.BackgroundTexture = tex;
+                TextureReplacement.LogLegacyUICustomizationMessage(textureName);
+            }
+            else
+                panel.BackgroundColor = color;
+        }
 
-            dropdownButtons.Add(button);
+        private void AddOptions()
+        {
+            // Add mod settings option and set that as the current max text width
+            dropdownList.AddItem("Mod Settings", out ListBox.ListItem modSettings);
+            maxTextWidth = modSettings.textLabel.TextWidth + 8;
 
-            button.BackgroundColor = new Color(0.2f, 0.2f, 0.2f, 1f);
-            button.Label.Text = text;
-            button.OnMouseClick += onMouseClickHandler;
+            clickHandlers.Add(ModSettingsWindowOption_OnClick);
 
-            if (button.Label.TextWidth > maxTextWidth)
-                maxTextWidth = button.Label.TextWidth + 8;
+            foreach (var opt in DaggerfallUI.Instance.GetPauseOptionsDropdownItems())
+            {
+                dropdownList.AddItem(opt.Item1, out ListBox.ListItem item);
+                clickHandlers.Add(opt.Item2);
 
-            dropdownPanel.Size = new Vector2(maxTextWidth, 1 + (dropdownButtonHeight + 1) * dropdownButtons.Count);
-
-            foreach (var b in dropdownButtons)
-                b.Size = new Vector2(maxTextWidth, b.Size.y);
+                if (item.textLabel.TextWidth > maxTextWidth)
+                    maxTextWidth = item.textLabel.TextWidth + 8;
+            }
         }
 
         #endregion
 
         #region Private Events
+
+        private void SavesScroller_OnScroll()
+        {
+            dropdownList.ScrollIndex = dropdownScroller.ScrollIndex;
+        }
+
+        private void DropdownList_OnScroll()
+        {
+            dropdownScroller.ScrollIndex = dropdownList.ScrollIndex;
+        }
+
+        private void DropdownList_OnUseSelectedItem()
+        {
+            int ind = dropdownList.SelectedIndex;
+
+            if (ind < 0)
+                return;
+
+            dropdownList.SelectedIndex = -1;
+            clickHandlers[ind]();
+        }
 
         private void DropdownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
@@ -120,7 +172,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 dropDownToggleButton.BackgroundTexture = arrowUpTexture;
         }
 
-        private void ModSettingsWindowOption_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        private void ModSettingsWindowOption_OnClick()
         {
             var modTitles = ModManager.Instance.Mods
                 .Where(x => x.HasSettings && x.LoadSettingsCallback != null)
