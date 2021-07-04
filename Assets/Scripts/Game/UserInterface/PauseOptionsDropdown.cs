@@ -106,6 +106,20 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
+        #region Public Methods
+
+        public void SetDropdownExpand(bool expand)
+        {
+            dropdownPanel.Enabled = expand;
+
+            if (dropdownPanel.Enabled)
+                dropDownToggleButton.BackgroundTexture = arrowDownTexture;
+            else
+                dropDownToggleButton.BackgroundTexture = arrowUpTexture;
+        }
+
+        #endregion
+
         #region Private Methods
 
         void SetBackground(BaseScreenComponent panel, Color color, string textureName)
@@ -164,12 +178,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void DropdownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            dropdownPanel.Enabled = !dropdownPanel.Enabled;
-
-            if (dropdownPanel.Enabled)
-                dropDownToggleButton.BackgroundTexture = arrowDownTexture;
-            else
-                dropDownToggleButton.BackgroundTexture = arrowUpTexture;
+            SetDropdownExpand(!dropdownPanel.Enabled);
         }
 
         private void ModSettingsWindowOption_OnClick()

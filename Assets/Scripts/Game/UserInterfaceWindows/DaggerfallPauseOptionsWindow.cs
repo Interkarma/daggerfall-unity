@@ -203,6 +203,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPop();
 
+            dropdown.SetDropdownExpand(false);
+
             if (saveSettings)
                 DaggerfallUnity.Settings.SaveSettings();
         }
