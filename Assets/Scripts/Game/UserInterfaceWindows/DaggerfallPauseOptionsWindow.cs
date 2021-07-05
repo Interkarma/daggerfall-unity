@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(optionsPanel);
 
             dropdown = new PauseOptionsDropdown(uiManager);
-            NativePanel.Components.Add(dropdown);
+            ParentPanel.Components.Add(dropdown);
 
             // Exit game
             Button exitButton = DaggerfallUI.AddButton(new Rect(101, 4, 45, 16), optionsPanel);
@@ -176,6 +176,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Scale version text based on native panel scaling
             versionTextLabel.TextScale = NativePanel.LocalScale.x * 0.75f;
+            dropdown.Scale = NativePanel.LocalScale;
 
             if (DaggerfallUI.Instance.HotkeySequenceProcessed == HotkeySequence.HotkeySequenceProcessStatus.NotFound)
             {

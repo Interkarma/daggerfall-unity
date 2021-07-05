@@ -106,6 +106,36 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
+        #region Overrides
+
+        public override void Update()
+        {
+            if (Enabled)
+                base.Update();
+
+            // Adjust scaling, size and positioning when set in the ParentPanel
+            float sx = Scale.x;
+            float sy = Scale.y;
+
+            dropDownToggleButton.Size = new Vector2(7, 7) * Scale;
+
+            dropdownList.Scale = Scale;
+            var height = dropdownList.HeightContent();
+            dropdownList.Size = new Vector2(maxTextWidth * sx, height > 70 * sy ? 70 * sy : height);
+            dropdownList.Position = new Vector2(2, 2) * Scale;
+
+            dropdownPanel.Size = new Vector2(dropdownList.Size.x + 6 * sx, dropdownList.Size.y + 3 * sy);
+            dropdownPanel.Position = new Vector2(0, dropDownToggleButton.Position.y + dropDownToggleButton.Size.y);
+
+            dropdownScroller.Size = new Vector2(5 * sx, dropdownPanel.Size.y - 3 * sy);
+            dropdownScroller.Position = new Vector2(maxTextWidth, 2) * Scale;
+
+            for (int i = 0; i < dropdownList.ListItems.Count; i++)
+                dropdownList.ListItems[i].textLabel.TextScale = sx;
+        }
+
+        #endregion
+
         #region Public Methods
 
         public void SetDropdownExpand(bool expand)
