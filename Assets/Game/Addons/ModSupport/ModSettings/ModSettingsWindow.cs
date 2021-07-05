@@ -43,7 +43,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         const float textScale                       = 0.7f;
         const int startX                            = 10;
         const int startY                            = 15;
-        const int columnHeight                      = 165;
         const int columnWidth                       = 140;
         const int columnsOffset                     = columnWidth + startX * 2;
 
@@ -64,6 +63,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         readonly Mod mod;
         readonly ModSettingsData settings;
         readonly bool liveChange;
+        readonly int columnHeight;
 
         int x = startX;
         int y = startY;
@@ -104,6 +104,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             this.mod = mod;
             this.liveChange = liveChange;
 
+            // Make room for warning label about applying settings during runtime
+            columnHeight = liveChange ? 155 : 165;
+
             settings = ModSettingsData.Make(mod);
             settings.SaveDefaults();
             settings.LoadLocalValues();
@@ -132,6 +135,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             titleLabel.Position = new Vector2(0, 3);
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.Components.Add(titleLabel);
+
+            if (liveChange)
+            {
+                // Add warning label that some settings may not be applied while game is running
+                TextLabel warningLabel = new TextLabel(DaggerfallUI.DefaultFont);
+                warningLabel.Text = TextManager.Instance.GetLocalizedText("settingsNotApplied");
+                warningLabel.Position = new Vector2(0, columnHeight + 1);
+                warningLabel.TextScale = 0.85f;
+                warningLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                warningLabel.ShadowPosition = Vector2.zero;
+                warningLabel.TextColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
+                mainPanel.Components.Add(warningLabel);
+            }
 
             // Reset button
             Button resetButton = GetButton(ModManager.GetText("reset"), HorizontalAlignment.Left, resetButtonColor);
