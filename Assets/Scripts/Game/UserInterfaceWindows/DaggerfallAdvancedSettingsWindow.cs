@@ -357,7 +357,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Advanced settings
             AddSectionTitle(rightPanel, "advanced");
-            fovSlider = AddSlider(rightPanel, "fovSlider", 60, 80, DaggerfallUnity.Settings.FieldOfView);
+            fovSlider = AddSlider(rightPanel, "fovSlider", 60, 120, DaggerfallUnity.Settings.FieldOfView);
             terrainDistance = AddSlider(rightPanel, "terrainDistance", 1, 4, DaggerfallUnity.Settings.TerrainDistance);
             shadowResolutionMode = AddSlider(rightPanel, "shadowResolutionMode",
                 DaggerfallUnity.Settings.ShadowResolutionMode, "Low", "Medium", "High", "Very High");

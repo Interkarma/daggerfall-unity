@@ -249,7 +249,7 @@ namespace DaggerfallWorkshop
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             ExclusiveFullscreen = GetBool(sectionVideo, "ExclusiveFullscreen");
             RunInBackground = GetBool(sectionVideo, "RunInBackground");
-            FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 80);
+            FieldOfView = GetInt(sectionVideo, "FieldOfView", 60, 120);
             MainFilterMode = GetInt(sectionVideo, "MainFilterMode", 0, 2);
             ShadowResolutionMode = GetInt(sectionVideo, "ShadowResolutionMode", 0, 3);
             QualityLevel = GetInt(sectionVideo, "QualityLevel", 0, 5);
