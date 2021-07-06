@@ -32,10 +32,10 @@ namespace DaggerfallWorkshop.Game
         int[] maleRedguardFaceRecordIndex = new int[] { 336, 312, 336, 312 };   // matching textures 381, 382, 383, 384 from MobilePersonBillboard class texture definition
         int[] femaleRedguardFaceRecordIndex = new int[] { 144, 144, 120, 96 };  // matching texture 395, 396, 397, 398 from MobilePersonBillboard class texture definition
 
-        int[] maleNordFaceRecordIndex = new int[] { 240, 264, 168, 216 };       // matching texture 387, 388, 389, 390 from MobilePersonBillboard class texture definition
+        int[] maleNordFaceRecordIndex = new int[] { 240, 264, 168, 192 };       // matching texture 387, 388, 389, 390 from MobilePersonBillboard class texture definition
         int[] femaleNordFaceRecordIndex = new int[] { 72, 0, 48, 72 };          // matching texture 392, 393, 451, 452 from MobilePersonBillboard class texture definition
 
-        int[] maleBretonFaceRecordIndex = new int[] { 192, 216, 240, 240 };     // matching texture 385, 386, 391, 394 from MobilePersonBillboard class texture definition
+        int[] maleBretonFaceRecordIndex = new int[] { 192, 216, 288, 240 };     // matching texture 385, 386, 391, 394 from MobilePersonBillboard class texture definition
         int[] femaleBretonFaceRecordIndex = new int[] { 72, 72, 24, 72 };       // matching texture 453, 454, 455, 456 from MobilePersonBillboard class texture definition
 
         // display races for npcs (only Breton, Redguard and Nord mobile billboards for displaying exist)
@@ -209,7 +209,7 @@ namespace DaggerfallWorkshop.Game
 
             // set billboard to correct race, gender and outfit variant
             Asset = GetComponentInChildren<MobilePersonAsset>();
-            Asset.SetPerson(race, gender, personOutfitVariant, IsGuard);
+            Asset.SetPerson(race, gender, personOutfitVariant, IsGuard, personFaceVariant, personFaceRecordId);
         }
 
         /// <summary>

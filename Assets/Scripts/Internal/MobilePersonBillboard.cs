@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop
         /// <param name="gender">Gender of target npc.</param>
         /// <param name="personVariant">Which basic outfit does the person wear.</param>
         /// <param name="isGuard">True if this npc is a city watch guard.</param>
-        public abstract void SetPerson(Races race, Genders gender, int personVariant, bool isGuard);
+        public abstract void SetPerson(Races race, Genders gender, int personVariant, bool isGuard, int personFaceVariant, int personFaceRecordId);
 
         /// <summary>
         /// Gets size of asset used by this person (i.e size of bounds). Used to adjust position on terrain.
@@ -226,7 +226,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Setup this person based on race and gender.
         /// </summary>
-        public override void SetPerson(Races race, Genders gender, int personVariant, bool isGuard)
+        public override void SetPerson(Races race, Genders gender, int personVariant, bool isGuard, int personFaceVariant, int personFaceRecordId)
         {
             // Must specify a race
             if (race == Races.None)
@@ -389,7 +389,7 @@ namespace DaggerfallWorkshop
             meshFilter.sharedMesh = mesh;
 
             // Create material
-            Material material = TextureReplacement.GetMobileBillboardMaterial(textureArchive, GetComponent<MeshFilter>(), ref importedTextures) ??
+            Material material = TextureReplacement.GetMobileBillboardMaterial(textureArchive, meshFilter, ref importedTextures) ??
                 DaggerfallUnity.Instance.MaterialReader.GetMaterialAtlas(
                 textureArchive,
                 0,
