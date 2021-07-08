@@ -139,8 +139,6 @@ namespace DaggerfallWorkshop
                 else if (summary.Archive == Utility.TextureReader.LightsTextureArchive) speed = lightFps;
                 if (meshFilter != null)
                 {
-                    summary.CurrentFrame++;
-
                     // Original Daggerfall textures
                     if (!summary.ImportedTextures.HasImportedTextures)
                     {
@@ -178,6 +176,7 @@ namespace DaggerfallWorkshop
                         if (summary.ImportedTextures.IsEmissive)
                             meshRenderer.material.SetTexture(Uniforms.EmissionMap, summary.ImportedTextures.Emission[summary.CurrentFrame]);
                     }
+                    summary.CurrentFrame++;
                 }
 
                 yield return new WaitForSeconds(1f / speed);
