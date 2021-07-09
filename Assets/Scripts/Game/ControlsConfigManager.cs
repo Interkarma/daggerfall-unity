@@ -310,6 +310,10 @@ namespace DaggerfallWorkshop.Game
                 {
                     button.Label.Text = KeyCode.None.ToString();
                     SetUnsavedBinding(action, button.Label.Text);
+
+                    if (UsingPrimary)
+                        InputManager.Instance.AddRemovedPrimaryAction(action);
+
                     checkDuplicates();
                 }
                 s.CloseWindow();

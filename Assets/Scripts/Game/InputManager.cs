@@ -62,6 +62,8 @@ namespace DaggerfallWorkshop.Game
         Dictionary<String, AxisActions> axisActionKeyDict = new Dictionary<String, AxisActions>();
         Dictionary<KeyCode, string> unknownActions = new Dictionary<KeyCode, string>();
         Dictionary<KeyCode, string> secondaryUnknownActions = new Dictionary<KeyCode, string>();
+        // Actions in the primary bindings that have been forcefully set to 'None'. Used to prevent autofilling at the start of the game.
+        HashSet<Actions> removedPrimaryActions = new HashSet<Actions>();
         // Making keys 'int' instead of AxisActions because enum keys cause GC overhead in Unity
         Dictionary<int, bool> axisActionInvertDict = new Dictionary<int, bool>();
         Dictionary<KeyCode, JoystickUIActions> joystickUIDict = new Dictionary<KeyCode, JoystickUIActions>();
@@ -131,6 +133,7 @@ namespace DaggerfallWorkshop.Game
             public Dictionary<String, AxisActions> axisActionKeyBinds;
             public Dictionary<String, String> axisActionInversions;
             public Dictionary<String, String> joystickUIKeyBinds;
+            public List<string> removedPrimaryActions;
         }
 
         #endregion
@@ -746,6 +749,11 @@ namespace DaggerfallWorkshop.Game
 
             if (code != KeyCode.None)
             {
+                // If it was previously forcefully removed in the primary
+                // bindings, remove it from the list
+                if (primary && removedPrimaryActions.Contains(action))
+                    removedPrimaryActions.Remove(action);
+
                 if (!dict.ContainsKey(code))
                 {
                     dict.Add(code, action);
@@ -793,6 +801,11 @@ namespace DaggerfallWorkshop.Game
                 joystickUIDict.Remove(code);
                 joystickUIDict.Add(code, action);
             }
+        }
+
+        public void AddRemovedPrimaryAction(Actions action)
+        {
+            removedPrimaryActions.Add(action);
         }
 
         /// <summary>
@@ -876,6 +889,7 @@ namespace DaggerfallWorkshop.Game
             keyBindsData.axisActionInversions = new Dictionary<string, string>();
             keyBindsData.joystickUIKeyBinds = new Dictionary<string, string>();
             keyBindsData.secondaryActionKeyBinds = new Dictionary<string, string>();
+            keyBindsData.removedPrimaryActions = new List<string>();
 
             foreach (var item in actionKeyDict)
             {
@@ -885,6 +899,11 @@ namespace DaggerfallWorkshop.Game
             foreach (var item in secondaryActionKeyDict)
             {
                 keyBindsData.secondaryActionKeyBinds.Add(GetKeyString(item.Key), item.Value.ToString());
+            }
+
+            foreach (var item in removedPrimaryActions)
+            {
+                keyBindsData.removedPrimaryActions.Add(item.ToString());
             }
 
             // If unknown actions were detected in this run, make sure we append them back to the settings file, so we won't break
@@ -946,7 +965,10 @@ namespace DaggerfallWorkshop.Game
         public void ResetDefaults(bool autofill = false)
         {
             if (!autofill)
+            {
                 actionKeyDict.Clear();
+                removedPrimaryActions.Clear();
+            }
 
             Action<KeyCode, Actions, bool> setBinding;
             Action<string, AxisActions> setAxisBinding;
@@ -1328,8 +1350,9 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Sets KeyCode binding only if action is missing,
-        // and its default key is not used in the primary or
-        // secondary bindings (including as modifiers in combos.)
+        // its default key is not used in the primary or
+        // secondary bindings (including as modifiers in combos),
+        // and that it wasn't forcefully removed as a primary binding.
         // This is to ensure default actions are restored if missing
         // and to push out new actions to existing keybind files
         private void TestSetBinding(KeyCode code, Actions action, bool primary = true)
@@ -1339,6 +1362,10 @@ namespace DaggerfallWorkshop.Game
 
             if (!dict.ContainsKey(code) && !alt.ContainsKey(code) && !dict.ContainsValue(action))
             {
+                // If this action in the primary bindings was forcefully removed, don't autofill
+                if (primary && removedPrimaryActions.Contains(action))
+                    return;
+
                 foreach (var mod in modifierHeldFirstDict.Keys)
                     if ((int)code == mod)
                         return;
@@ -1848,6 +1875,18 @@ namespace DaggerfallWorkshop.Game
 
             if (keyBindsData.secondaryActionKeyBinds != null)
                 LoadActionKeybinds(false, keyBindsData);
+
+            if (keyBindsData.removedPrimaryActions != null)
+            {
+                foreach (var action in keyBindsData.removedPrimaryActions)
+                {
+                    var parsed = ActionNameToEnum(action);
+
+                    // Prevent adding unknown actions, or actions already binded that were in the removed list
+                    if (parsed != Actions.Unknown && !actionKeyDict.ContainsValue(parsed) && !secondaryActionKeyDict.ContainsValue(parsed))
+                        removedPrimaryActions.Add(parsed);
+                }
+            }
 
             if (keyBindsData.axisActionKeyBinds != null)
             {
