@@ -125,7 +125,7 @@ QBN:
 Item _vamprelic_ religious anyInfo 1013 used 1015
 Item _letter_ letter used QuestorOffer
 
-Person _vampire_ factiontype Vampire_Clan female anyInfo 1011 rumors 1010
+Person _vampire_ factiontype Vampire_Clan remote anyInfo 1011 rumors 1010
 
 Place _itemdung_ remote magery
 

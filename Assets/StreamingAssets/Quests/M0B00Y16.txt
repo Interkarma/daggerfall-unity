@@ -142,9 +142,9 @@ QBN:
 Item _gold_ gold
 Item _magic_ magic_item
 
-Person _questgiver_ group Questor male
-Person _dummy_ face 9 group Noble
-Person _villager_ face 8 group Shopkeeper
+Person _questgiver_ group Questor
+Person _dummy_ face 9 group Noble remote
+Person _villager_ face 8 group Shopkeeper remote
 
 Place _mondung_ remote dungeon
 Place _newdung_ remote dungeon

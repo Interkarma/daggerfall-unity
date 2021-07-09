@@ -143,8 +143,8 @@ Message:  1061
 QBN:
 Item _I.00_ item class 10 subclass 4
 
-Person _questgiver_ group Questor male
-Person _priest_ group Cleric female
+Person _questgiver_ group Questor
+Person _priest_ group Cleric remote
 
 Place _mondung_ remote dungeon4
 

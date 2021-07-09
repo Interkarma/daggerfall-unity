@@ -123,9 +123,9 @@ Item _drugs_ drug
 Item _note_ letter used 1030
 Item _gold_ gold
 
-Person _contact1_ group Group_5.1 female
-Person _questgiver_ group Questor male
-Person _contact2_ group Local_3.0 female
+Person _contact1_ group Group_5.1 remote
+Person _questgiver_ group Questor
+Person _contact2_ group Local_3.0 remote
 
 
 Clock _qtime_ 00:00 0 flag 1 range 3 5

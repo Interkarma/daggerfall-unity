@@ -104,7 +104,7 @@ Item _weapon_ weapon
 Item _reward_ gold
 
 Person _questgiver_ face 112 group Questor
-Person _contact_ group Local_3.0 female
+Person _contact_ group Local_3.0 remote
 
 
 Clock _queston_ 00:00 0 flag 1 range 1 2

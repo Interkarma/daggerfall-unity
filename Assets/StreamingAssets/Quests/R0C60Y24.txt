@@ -176,9 +176,9 @@ Item _note_ letter used 1040
 Item _vampreward_ gold
 Item _vampitem_ magic_item
 
-Person _questgiver_ group Questor male
-Person _contact_ group Cleric female anyInfo 1015 rumors 1015
-Person _vampire_ face 1 factiontype Vampire_Clan
+Person _questgiver_ group Questor
+Person _contact_ group Cleric remote anyInfo 1015 rumors 1015
+Person _vampire_ face 1 factiontype Vampire_Clan remote
 
 Place kykosCoven permanent KykosCoven
 Place _vamphouse_ remote house1

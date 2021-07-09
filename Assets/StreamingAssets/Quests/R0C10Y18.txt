@@ -149,9 +149,9 @@ Item _item1_ religious
 Item _item2_ gem
 
 Person _questgiver_ face 140 group Questor
-Person _npc1_ group Cleric female
-Person _npc2_ face 254 group Local_3.0
-Person _P.03_ faction The_Thieves_Guild female
+Person _npc1_ group Cleric remote
+Person _npc2_ face 254 group Local_3.0 female remote
+Person _dummythief_ faction The_Thieves_Guild remote
 
 
 Clock _1stparton_ 00:00 0 flag 1 range 1 4
@@ -167,7 +167,7 @@ Foe _thief_ is Rogue
 _pcgetsgold_ task:
 	toting _item2_ and _npc2_ clicked 
 	give pc _reward_ 
-	change repute with _P.03_ by -20 
+	change repute with _dummythief_ by -20 
 	end quest 
 
 variable _pchasitem1_

@@ -114,7 +114,7 @@ Item _reward_ magic_item
 Item _item_ sapphire
 
 Person _questgiver_ face 112 group Questor
-Person _qgfriend_ group Local_3.0 female
+Person _qgfriend_ group Local_3.0 remote
 
 Place _itemdung_ remote dungeon13
 

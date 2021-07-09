@@ -141,8 +141,8 @@ Message:  1017
 QBN:
 Item _letter_ letter used 1010
 
-Person _vamp_ factiontype Vampire_Clan male
-Person _vamp2_ factiontype Vampire_Clan female
+Person _vamp_ factiontype Vampire_Clan local
+Person _vamp2_ factiontype Vampire_Clan remote
 
 
 Clock _queston_ 00:00 0 flag 1 range 1 2

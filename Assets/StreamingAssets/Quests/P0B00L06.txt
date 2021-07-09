@@ -264,9 +264,9 @@ Item letter37 letter used 1013
 Item research1 letter used 1020
 Item _mggold_ gold
 
-Person _vamp_ factiontype Vampire_Clan male
-Person _mg_ faction The_Mages_Guild male
-Person _mage_ face 1 group Group_5.1
+Person _vamp_ factiontype Vampire_Clan local
+Person _mg_ faction The_Mages_Guild local
+Person _mage_ face 1 group Group_5.1 remote
 
 Place _mondung_ remote dungeon9
 

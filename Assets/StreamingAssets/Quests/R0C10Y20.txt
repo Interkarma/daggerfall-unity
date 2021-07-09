@@ -127,7 +127,7 @@ Item _item1_ turquoise
 Item _item2_ skin
 
 Person _questgiver_ face 72 group Questor
-Person _contact_ face 80 group Chemist
+Person _contact_ face 80 group Chemist remote
 
 
 Clock _1stparton_ 00:00 0 flag 17 range 1 4

@@ -887,15 +887,15 @@ Item letter23 letter used 1050
 Item letter22 letter used 1049
 Item _reward_ trinket
 
-Person _qgiver_ group Questor male anyInfo 1011
-Person _priest_ factiontype Temple male anyInfo 1014
-Person _noble_ face 174 factiontype Knightly_Guard anyInfo 1013
-Person _merchant_ face 86 faction The_Merchants anyInfo 1012
-Person _thief_ face 190 faction The_Thieves_Guild anyInfo 1015
-Person _witness_ face 1 group Innkeeper anyInfo 1016
-Person necromancer faction The_Necromancers female
-Person underking faction Agents_of_The_Underking female
-Person _tg_ faction The_Thieves_Guild female
+Person _qgiver_ group Questor anyInfo 1011
+Person _priest_ factiontype Temple local anyInfo 1014
+Person _noble_ face 174 factiontype Knightly_Guard female local anyInfo 1013
+Person _merchant_ face 86 faction The_Merchants female local anyInfo 1012
+Person _thief_ face 190 faction The_Thieves_Guild female local anyInfo 1015
+Person _witness_ face 1 group Innkeeper local anyInfo 1016
+Person necromancer faction The_Necromancers remote
+Person underking faction Agents_of_The_Underking remote
+Person _tg_ faction The_Thieves_Guild remote
 
 Place _mondung_ remote dungeon
 Place _thiefhouse_ local house2

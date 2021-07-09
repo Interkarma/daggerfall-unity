@@ -285,10 +285,10 @@ Item _I.04_ dead_body
 Item _I.05_ dead_body
 Item _reward_ gold
 
-Person _qgiver_ group Questor male
-Person _contact_ face 1 group Librarian anyInfo 1025 rumors 1026
-Person _hooker_ face 1 faction The_Prostitutes
-Person _rippername_ face 101 group Group_6.0 anyInfo 1040 rumors 1041
+Person _qgiver_ group Questor
+Person _contact_ face 1 group Librarian local anyInfo 1025 rumors 1026
+Person _hooker_ face 1 faction The_Prostitutes local
+Person _rippername_ face 101 group Group_6.0 male local anyInfo 1040 rumors 1041
 
 Place _bookstore_ local house2
 Place _hookerhouse_ local house4

@@ -296,11 +296,11 @@ Item _item_ religious
 Item _reward_ religious
 Item _gold_ gold range 50 to 50
 
-Person _qgiver_ group Questor male
-Person _child_ face 1 faction Children
-Person _guardian_ face 1 factiontype Knightly_Guard
-Person _priest_ face 104 factiontype Temple
-Person _hooker_ face 1 faction The_Prostitutes
+Person _qgiver_ group Questor
+Person _child_ face 1 faction Children local
+Person _guardian_ face 1 factiontype Knightly_Guard local
+Person _priest_ face 104 factiontype Temple remote
+Person _hooker_ face 1 faction The_Prostitutes local
 
 Place _house_ local house2
 Place _house2_ local house2

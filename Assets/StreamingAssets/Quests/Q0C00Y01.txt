@@ -125,8 +125,8 @@ Item _document_ letter used 1012
 --added underscores to document
 Item _mitem_ magic_item
 
-Person _qgiver_ group Questor male
-Person _daedra_ face 80 factiontype Daedra
+Person _qgiver_ group Questor
+Person _daedra_ face 80 factiontype Daedra remote
 
 Place _temple_ remote temple
 

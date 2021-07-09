@@ -83,7 +83,7 @@ The Oracle has traditionally been the counselor to the monarchs of Sentinel.
 <--->
 The Oracle advised King Camaron against warring with Daggerfall.
 <--->
-King Camaron didn't the Oracle's advice against warring with Daggerfall.
+King Camaron didn't listen to the Oracle's advice against warring with Daggerfall.
 <--->
 The Oracle knew that Sentinel would lose the war with Daggerfall.
 <--->
@@ -98,7 +98,7 @@ Message:  1014
 
 Message:  1015
 <ce>                      Thank you for coming, %pcf.
-<ce>               The Oracle has foreseen the death of one
+<ce>                The Oracle has foreseen the death of one
 <ce>                   of the great nobles of __temple_,
 <ce>                      the noble _noble_, and like
 <ce>               a pebble in a still pond, %g3 death will
@@ -106,7 +106,7 @@ Message:  1015
 <ce>               speaking with %g2, but I am not permitted
 <ce>                 to enter %g3 company in _noblehouse_.
 <ce>              My mistress, the Oracle, intends to come to
-<ce>                       __temple_ to speak with %g3
+<ce>                      __temple_ to speak with %g3
 <ce>                Grace, and I last heard that she was in
 <ce>                  __oracletemple_. I am not familiar
 <ce>               with these parts, so I don't know how far
@@ -258,11 +258,11 @@ Item _gold_ gold
 Person _oracle_ face 251 named The_Oracle anyInfo 1013
 Person _acolyte_ face 5 named The_Acolyte anyInfo 1012
 -changed oracle and acolyte to Named instead of Faction to prevent dialogue beginning
-Person _noble_ face 25 factiontype Province
+Person _noble_ face 25 factiontype Province local
 Person _thd_ named Queen_Akorithi
 --%thd corrected to _thd_
 Person _love_ face 1 group Group_7.0
-Person _giver_ group Questor male
+Person _giver_ group Questor
 
 Place _mondung_ remote dungeon
 Place _temple_ local temple

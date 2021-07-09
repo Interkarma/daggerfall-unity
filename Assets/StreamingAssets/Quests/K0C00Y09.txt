@@ -172,7 +172,7 @@ QBN:
 Item _gold_ gold range 50 to 150
 Item _lessgold_ gold range 10 to 45
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _mondung_ remote dungeon
 

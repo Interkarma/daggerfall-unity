@@ -182,9 +182,9 @@ Item _gold_ gold
 Item _item_ drug
 Item _letter_ letter used 1011
 
-Person _qgiver_ group Questor male
-Person _contact_ face 1 group Innkeeper
-Person _contact2_ group Innkeeper female
+Person _qgiver_ group Questor
+Person _contact_ face 1 group Innkeeper remote
+Person _contact2_ group Innkeeper remote
 
 Place _conhouse_ remote house2
 

@@ -137,9 +137,8 @@ Item _item1_ emerald
 Item _item2_ drug
 
 Person _questgiver_ face 136 group Questor
-Person _npc1_ group Local_3.0 female
-Person _npc2_ face 248 group Shopkeeper
---removed female tag on npc1. always spawned male sprite with female name.
+Person _npc1_ group Local_3.0 remote
+Person _npc2_ face 248 group Shopkeeper remote
 
 Clock _1stparton_ 00:00 0 flag 1 range 1 4
 Clock _2ndparton_ 00:00 0 flag 1 range 1 4

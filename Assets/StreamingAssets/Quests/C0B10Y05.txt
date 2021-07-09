@@ -105,7 +105,7 @@ Item _evilitem_ weapon
 Item _gold_ gold
 
 Person _qgiver_ face 1 group Questor
-Person _custodian_ face 1 group Group_5.0
+Person _custodian_ face 1 group Group_5.0 remote
 
 Place _dungeon_ remote dungeon
 

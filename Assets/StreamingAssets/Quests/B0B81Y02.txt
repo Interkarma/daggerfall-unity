@@ -222,8 +222,8 @@ Item _I.04_ artifact Staff_of_Magnus
 Item _map_ letter used 1020
 Item _I.06_ item class 17 subclass 13
 
-Person _qgiver_ group Questor male
-Person _wizard_ face 1 group Spellcaster
+Person _qgiver_ group Questor
+Person _wizard_ face 1 group Spellcaster remote
 
 Place _dungeon_ remote dungeon
 Place _dungeon2_ remote dungeon

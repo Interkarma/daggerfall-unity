@@ -350,12 +350,12 @@ Item totemReward3 gold range 25000 to 25000
 Item totemReward4 gold range 25000 to 25000
 
 Person Brisienna face 1 named Lady_Brisienna
-Person Gothryd1 named King_Gothryd atHome
+Person _Gothryd_ named King_Gothryd atHome
 Person Eadwyre named King_Eadwyre atHome
 Person _Akorithi_ named Queen_Akorithi atHome
 Person Gortwog named Gortwog atHome
-Person _Underking_ face 1 faction Agents_of_The_Underking
-Person KingOfWorms2 named King_of_Worms atHome
+Person _Underking_ face 1 faction Agents_of_The_Underking remote
+Person _Kingoworms_ named King_of_Worms atHome
 
 Place _daggerfall_ permanent DaggerfallCastle2
 Place _tavern_ remote tavern
@@ -415,11 +415,11 @@ _S.07_ task:
 	repute with Eadwyre exceeds 15 do _S.12_ 
 	repute with Gortwog exceeds 10 do _S.15_ 
 	repute with _Underking_ exceeds 0 do _S.16_ 
-	repute with KingOfWorms2 exceeds 0 do _S.17_ 
+	repute with _Kingoworms_ exceeds 0 do _S.17_ 
 	have _totem_ set _S.27_ 
 	add Gortwog as questor 
 	add _Akorithi_ as questor 
-	add Gothryd1 as questor 
+	add _Gothryd_ as questor 
 	add Eadwyre as questor 
 	place npc Brisienna at _newplace_ 
 
@@ -519,7 +519,7 @@ BrisiennaGotTotem _S.32_
 	make _artifact4_ permanent 
 
 KingOfWormsGotTotem _S.33_
-	toting _totem_ and KingOfWorms2 clicked 
+	toting _totem_ and _Kingoworms_ clicked 
 	start quest 106 106 
 	say 1054 
 
@@ -542,7 +542,7 @@ EadwyreGotTotem _S.36_
 
 _S.37_ task:
 	when _S.46_ and _S.07_ 
-	get item _goldgoth_ from Gothryd1 
+	get item _goldgoth_ from _Gothryd_ 
 	say 1053 
 	make _goldgoth_ permanent 
 
@@ -575,9 +575,9 @@ _S.45_ task:
 	drop Brisienna as questor 
 	drop Eadwyre as questor 
 	drop Gortwog as questor 
-	drop Gothryd1 as questor 
+	drop _Gothryd_ as questor 
 	end quest 
 
 _S.46_ task:
-	toting _totem_ and Gothryd1 clicked 
+	toting _totem_ and _Gothryd_ clicked 
 	start task _S.31_ 

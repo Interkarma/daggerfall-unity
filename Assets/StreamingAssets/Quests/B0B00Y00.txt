@@ -153,8 +153,8 @@ QBN:
 Item letter31 letter used 1014
 
 Person _qgiver_ group Questor
-Person _lady_ face 2 group Noble female
-Person _vamp_ face 40 factiontype Vampire_Clan
+Person _lady_ face 2 group Noble female local
+Person _vamp_ face 40 factiontype Vampire_Clan local
 
 Place _mondung_ remote dungeon
 

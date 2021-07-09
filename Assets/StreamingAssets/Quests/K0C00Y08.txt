@@ -159,7 +159,7 @@ Item _gold_ gold
 Item _upfront_ gold range 5 to 50
 Item _book_ book2
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _mondung_ remote dungeon
 

@@ -156,10 +156,10 @@ Message:  1050
 QBN:
 Item _gold_ gold
 
-Person _questgiver_ group Questor male
-Person _mage_ faction The_Mages_Guild female
-Person _thief_ faction The_Thieves_Guild female
-Person _darkb_ faction The_Dark_Brotherhood female
+Person _questgiver_ group Questor
+Person _mage_ faction The_Mages_Guild remote
+Person _thief_ faction The_Thieves_Guild remote
+Person _darkb_ faction The_Dark_Brotherhood remote
 
 Place _destination_ remote random
 

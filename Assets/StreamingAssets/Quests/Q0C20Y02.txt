@@ -125,7 +125,7 @@ Item _reward_ gem
 Item _magicitem_ magic_item
 
 Person _questgiver_ face 112 group Questor anyInfo 1011
-Person _other_ factiontype Knightly_Guard female
+Person _other_ factiontype Knightly_Guard remote
 
 Clock _1stparton_ 00:00 0 flag 17 range 1 4
 

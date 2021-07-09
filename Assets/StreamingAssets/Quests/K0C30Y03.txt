@@ -445,14 +445,14 @@ Item _letter15_ letter used 1033
 Item _bothdorjii_ gold range 15 to 50
 Item _letter33_ gold range 20 to 40
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 Person _patsy_ face 1 factiontype Province
-Person _hooker_ face 187 faction The_Prostitutes
+Person _hooker_ face 187 faction The_Prostitutes female
 Person _gaffer_ face 73 named Chulmore_Quill
-Person _banker_ face 1 group Banker anyInfo 1015
+Person _banker_ face 1 group Banker local anyInfo 1015
 Person _guard_ face 80 factiontype Knightly_Guard
 Person _darkb_ face 81 faction The_Dark_Brotherhood
-Person _victin_ face 81 faction The_Thieves_Guild
+Person _tguild_ face 81 faction The_Thieves_Guild local
 
 Place _bank_ remote bank
 Place _house1_ remote house2

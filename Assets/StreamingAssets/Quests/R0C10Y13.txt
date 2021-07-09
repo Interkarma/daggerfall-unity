@@ -111,8 +111,8 @@ QBN:
 Item _reward_ gold
 Item _item_ trinket
 
-Person _questgiver_ group Questor male
-Person _contact_ face 1 group Local_3.0
+Person _questgiver_ group Questor
+Person _contact_ face 1 group Local_3.0 remote
 
 Place _palace_ remote palace
 

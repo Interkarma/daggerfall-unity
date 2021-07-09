@@ -144,7 +144,7 @@ Message:  1014
 
 QBN:
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 Person _contact_ face 176 group Innkeeper
 
 Place _mondung_ remote dungeon

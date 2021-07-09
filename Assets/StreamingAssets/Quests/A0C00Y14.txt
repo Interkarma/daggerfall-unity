@@ -173,7 +173,7 @@ Item _jewelry_ trinket
 Item _gold_ gold range 30 to 75
 
 Person _questgiver_ face 137 group Questor
-Person _pickuplocal_ face 232 group Local_3.0
+Person _pickuplocal_ face 232 group Local_3.0 local
 
 Clock _oneday_ 1.00:00
 --added precise timers due to short time limit

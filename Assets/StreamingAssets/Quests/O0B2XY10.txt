@@ -84,7 +84,7 @@ QBN:
 Item _potion_ Elixir_vitae
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _alchemyshop_ remote apothecary
 

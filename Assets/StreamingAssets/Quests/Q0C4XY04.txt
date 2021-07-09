@@ -120,7 +120,7 @@ QBN:
 Item _reward_ malachite
 Item _heart_ daedra_heart
 
-Person _questgiver_ group Questor male anyInfo 1011
+Person _questgiver_ group Questor anyInfo 1011
 
 Place _mondung_ remote dungeon8 anyInfo 1012
 

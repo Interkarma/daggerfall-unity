@@ -6,7 +6,7 @@
 -- QuestId: 0
 Messages: 43
 Quest: U0C00Y00
-DisplayName: Beothiah's Quest
+DisplayName: Boethiah's Quest
 -- Message panels
 QRC:
 
@@ -174,7 +174,7 @@ Item _letter_ letter used 1040
 
 -Person _questgiver_ face 112 group Questor anyInfo 1013
 Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
-Person _mfriend_ group Resident1 female
+Person _mfriend_ group Local_4.0 remote
 
 Place _mondung_ remote dungeon2
 Place _hideout_ remote dungeon6

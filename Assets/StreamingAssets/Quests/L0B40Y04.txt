@@ -109,7 +109,7 @@ QBN:
 Item _reward_ gold
 
 Person _questgiver_ face 112 group Questor
-Person _knight_ face 5 faction The_Host_of_the_Horn
+Person _knight_ face 5 faction The_Host_of_the_Horn male remote
 
 Place _mondung_ remote palace
 

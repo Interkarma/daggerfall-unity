@@ -142,7 +142,7 @@ Item _item1_ gold_bar
 Item _item2_ magic_item
 
 Person _questgiver_ face 76 group Questor
-Person _contact_ face 80 group Local_3.0
+Person _contact_ face 80 group Local_3.0 remote
 
 
 Clock _1stparton_ 00:00 0 flag 1 range 1 4

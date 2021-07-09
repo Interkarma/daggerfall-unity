@@ -135,9 +135,9 @@ QBN:
 Item _jewelry_ trinket
 Item _mitem_ magic_item
 
-Person _qgiver_ group Questor male
-Person _daedra_ face 1 factiontype Daedra
-Person _man_ faction Dancers
+Person _qgiver_ group Questor
+Person _daedra_ face 1 factiontype Daedra remote
+Person _man_ faction Dancers male remote
 --Group 7.0 wouldn't work, needed a local site. Dancers is sufficient for the quest
 
 Place _tavern_ remote tavern

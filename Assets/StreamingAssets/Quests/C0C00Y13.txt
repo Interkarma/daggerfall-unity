@@ -88,9 +88,9 @@ Message:  1011
 QBN:
 Item _religitem_ religious
 
-Person _qgiver_ group Questor male
-Person _priest_ group Group_5.0 female
-Person _enemy_ face 176 group Local_4.0
+Person _qgiver_ group Questor
+Person _priest_ group Group_5.0 remote
+Person _enemy_ face 176 group Local_4.0 remote
 
 Clock _traveltime_ 00:00 0 flag 1 range 1 2
 

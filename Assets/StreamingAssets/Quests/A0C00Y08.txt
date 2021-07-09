@@ -129,8 +129,8 @@ Message:  1033
 QBN:
 Item _gold_ gold
 
-Person _questgiver_ group Questor male anyInfo 1030 rumors 1031
-Person _darkb_ face 1 faction The_Dark_Brotherhood anyInfo 1032 rumors 1033
+Person _questgiver_ group Questor anyInfo 1030 rumors 1031
+Person _darkb_ face 1 faction The_Dark_Brotherhood remote anyInfo 1032 rumors 1033
 
 Place _place_ local random
 

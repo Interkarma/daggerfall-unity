@@ -120,9 +120,9 @@ Message:  1011
 QBN:
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
-Person _warrior_ face 219 group Group_5.0
-Person _total_ face 218 factiontype Witches_Coven
+Person _qgiver_ group Questor
+Person _warrior_ face 219 group Group_5.0 female remote
+Person _witch_ face 218 factiontype Witches_Coven female remote
 
 Place _castle_ remote house1
 
@@ -144,7 +144,7 @@ _queston_ task:
 _reward_ task:
 	when _qgclicked_ and _out_ 
 	give pc _gold_ 
-	change repute with _total_ by -5 
+	change repute with _witch_ by -5 
 	end quest 
 
 _S.02_ task:

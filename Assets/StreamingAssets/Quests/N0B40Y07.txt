@@ -152,8 +152,8 @@ Item _book_ book
 Item _spellScroll_ letter used 1030
 --added underscores to spellScroll
 
-Person _qgiver_ group Questor male
-Person _dummydaedra_ face 249 factiontype Daedra
+Person _qgiver_ group Questor
+Person _dummydaedra_ face 249 factiontype Daedra remote
 
 Place _mondung_ remote dungeon9
 Place aide remote dungeon

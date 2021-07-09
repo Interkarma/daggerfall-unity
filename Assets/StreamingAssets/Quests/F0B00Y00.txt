@@ -143,7 +143,7 @@ Item _reward_ gold
 Item _item_ scarab anyInfo 1013
 
 Person _questgiver_ face 112 group Questor
-Person _contact_ group Innkeeper female anyInfo 1011
+Person _contact_ group Innkeeper remote anyInfo 1011
 
 
 Clock _1stparton_ 00:00 0 flag 17 range 1 4

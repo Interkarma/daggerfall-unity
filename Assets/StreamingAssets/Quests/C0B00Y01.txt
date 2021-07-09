@@ -468,8 +468,8 @@ Person _contact_ face 105 group Local_3.0
 Person _priest_ face 49 group Group_5.0
 Person _prophet_ face 1 group Local_4.0 anyInfo 1009
 --changed anyInfo QuestorPostFailure to 1009
-Person _replace_ face 3 factiontype Temple anyInfo 1023
-Person _lover_ face 104 group Group_7.0 anyInfo 1017
+Person _replace_ face 3 factiontype Temple female anyInfo 1023
+Person _lover_ face 104 group Group_7.0 remote anyInfo 1017
 
 Place _mondung_ remote dungeon4
 Place _tavern_ remote tavern

@@ -105,9 +105,9 @@ QBN:
 Item _scarab_ scarab used 1012
 Item _magicitem_ magic_item
 
-Person KingOfWorms4 named King_of_Worms atHome
-Person Karolis1 face 169 named Lord_Darkworth
-Person KingOfWorms1 face 1 named King_of_Worms
+Person _kingoworms_ named King_of_Worms atHome
+Person _lichface_ face 169 named Lord_Darkworth
+Person _fakekow_ face 1 named King_of_Worms
 
 Place _sentinel_ permanent SentinelCastle
 
@@ -118,14 +118,14 @@ Foe _lich_ is Lich
 --	Quest start-up:
 	dialog link for item _magicitem_ 
 	dialog link for item _scarab_ 
-	repute with KingOfWorms4 exceeds 0 do _S.01_ 
+	repute with _kingoworms_ exceeds 0 do _S.01_ 
 
 _S.00_ task:
 	level 7 completed 
 
 variable _S.01_
 _S.02_ task:
-	clicked npc KingOfWorms4 
+	clicked npc _kingoworms_ 
 
 _S.03_ task:
 	when _S.02_ and _S.15_ 
@@ -149,7 +149,7 @@ _S.06_ task:
 	send _zombie_ every 1410 minutes with 100% success 
 
 until _S.06_ performed:
-	mute npc KingOfWorms4 
+	mute npc _kingoworms_ 
 
 _S.07_ task:
 	injured _zombie_ 
@@ -157,7 +157,7 @@ _S.07_ task:
 _S.08_ task:
 	killed 1 _lich_ 
 	setvar _killmon_
-	add Karolis1 face 
+	add _lichface_ face 
 
 variable _killmon_
 _S.10_ task:
@@ -171,8 +171,8 @@ _givereward_ task:
 	when _S.10_ and _S.08_ 
 	give pc _magicitem_ 
 	start task _S.14_ 
-	drop Karolis1 face 
-	change repute with KingOfWorms4 by +15 
+	drop _lichface_ face 
+	change repute with _kingoworms_ by +15 
 	end quest 
 
 KingOfWormsGotTotem _S.13_

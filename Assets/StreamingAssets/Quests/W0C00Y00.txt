@@ -143,8 +143,8 @@ Item _artifact_ artifact Oghma_Infinium anyInfo 1013
 Item _magic_ magic_item
 
 Person _questgiver_ face 112 group Questor anyInfo 1012
-Person _contact_ group Librarian female anyInfo 1011
-Person _enemy_ face 1 factiontype Province
+Person _contact_ group Librarian remote anyInfo 1011
+Person _enemy_ face 1 factiontype Province remote
 
 Place _palace_ remote palace
 Place _L.01_ remote dungeon

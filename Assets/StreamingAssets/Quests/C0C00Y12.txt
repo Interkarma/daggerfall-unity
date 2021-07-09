@@ -135,9 +135,9 @@ Message:  1020
 QBN:
 Item _religitem_ religious
 
-Person _qgiver_ group Questor male
-Person _thief_ face 229 faction The_Thieves_Guild anyInfo 1013 rumors 1014
-Person _decoy_ face 92 group Local_3.1
+Person _qgiver_ group Questor
+Person _thief_ face 229 faction The_Thieves_Guild male remote anyInfo 1013 rumors 1014
+Person _decoy_ face 92 group Local_3.1 male remote
 
 Place _thiefplace_ remote house2
 

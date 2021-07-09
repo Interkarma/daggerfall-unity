@@ -142,7 +142,7 @@ Item _reward_ gold
 Item _item_ trinket
 
 Person _questgiver_ face 112 group Questor
-Person _spy_ face 1 group Local_3.0 anyInfo 1011
+Person _spy_ face 1 group Local_3.0 remote anyInfo 1011
 
 Place _hidingplace_ remote random
 

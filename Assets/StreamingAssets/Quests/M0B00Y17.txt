@@ -203,10 +203,10 @@ Item _gold_ gold
 Item _letter_ letter used 1060
 Item _magic_ magic_item
 
-Person _questgiver_ group Questor male
-Person _victim_ face 1 group Group_6.0
-Person _love_ face 1 group Group_7.0
-Person _dummy_ group Noble male
+Person _questgiver_ group Questor
+Person _victim_ face 1 group Group_6.0 remote
+Person _love_ face 1 group Group_7.0 remote
+Person _dummy_ group Noble local
 
 Place _mondung_ remote dungeon6
 Place _newdung_ remote dungeon

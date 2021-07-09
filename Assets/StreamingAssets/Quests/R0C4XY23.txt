@@ -161,11 +161,11 @@ Item _reward_ ruby
 Item _item_ book2
 Item _map_ letter used 1030
 
-Person _questgiver_ group Questor male
-Person _contact_ faction Dancers
+Person _questgiver_ group Questor
+Person _contact_ faction Dancers remote
 -- Person:    1 0 -1 0 13278 0 0.
 
-Person _oblivion_ factiontype Daedra female anyInfo 1013 rumors 1014
+Person _oblivion_ factiontype Daedra remote anyInfo 1013 rumors 1014
 
 Place _skeffingcoven_ permanent SkeffingtonCoven
 

@@ -322,10 +322,10 @@ Item _aurielshield_ artifact Auriels_Shield
 Item _aurielsbow_ artifact Auriels_Bow
 Item _lordsmail_ artifact Lords_Mail
 
-Person _witch_ face 1 faction The_Glenmoril_Witches
-Person _child_ face 211 faction Children
-Person _ruler_ group Noble female
-Person _local_ face 33 group Resident2
+Person _witch_ face 1 faction The_Glenmoril_Witches remote
+Person _child_ face 211 faction Children female remote
+Person _ruler_ group Noble remote
+Person _local_ face 33 group Resident2 local
 Person _questgiver_ face 67 group Questor
 
 Place _dungeon1_ remote dungeon

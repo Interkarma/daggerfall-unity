@@ -142,7 +142,7 @@ QBN:
 Item _reward_ gold
 
 Person _questgiver_ face 112 group Questor
-Person _qgfriend_ group Local_3.0 female anyInfo 1011 rumors 1011
+Person _qgfriend_ group Local_3.0 remote anyInfo 1011 rumors 1011
 
 Place _mondung_ remote dungeon
 

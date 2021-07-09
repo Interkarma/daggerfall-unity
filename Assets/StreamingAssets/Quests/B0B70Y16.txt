@@ -128,8 +128,8 @@ Message:  1011
 
 QBN:
 
-Person _qgiver_ group Questor male
-Person _local_ face 93 group Resident2
+Person _qgiver_ group Questor
+Person _local_ face 93 group Resident2 male local
 
 Place _dungeon_ remote dungeon14
 

@@ -310,8 +310,8 @@ Person _lhotun_ named Prince_Lhotun atHome
 Person _akorithi_ named Queen_Akorithi atHome
 Person _greklith_ face 88 named Prince_Greklith atHome
 Person Vhosek face 88 named Lord_Vhosek atHome
-Person _brother_ face 5 faction Children male anyInfo 1030 rumors 1031
-Person _agentuk_ face 1 faction Agents_of_The_Underking
+Person _brother_ face 5 faction Children male remote anyInfo 1030 rumors 1031
+Person _agentuk_ face 1 faction Agents_of_The_Underking remote
 
 Place _ukcrypt_ remote dungeon11 anyInfo 1015 rumors 1016
 Place _dirennitower_ permanent DirenniTowerEntry

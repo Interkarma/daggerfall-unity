@@ -124,8 +124,8 @@ QBN:
 Item _reward_ gold
 Item _item_ drug
 
-Person _questgiver_ group Questor male anyInfo 1011
-Person _contact_ group Local_3.0 female anyInfo 1012
+Person _questgiver_ group Questor anyInfo 1011
+Person _contact_ group Local_3.0 remote anyInfo 1012
 
 
 Clock _queston_ 00:00 0 flag 1 range 1 4

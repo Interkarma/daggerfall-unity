@@ -183,9 +183,9 @@ Item _gold1_ gold
 Item _gold2_ gold
 --changed msg 1030 %g2 to %g3
 
-Person _sage_ group Cleric female anyInfo 1050 rumors 1050
-Person _giver_ group Questor male
-Person _dummy_ group Innkeeper female
+Person _sage_ group Cleric remote anyInfo 1050 rumors 1050
+Person _giver_ group Questor
+Person _dummy_ group Innkeeper remote
 
 Place _dungeon_ remote dungeon0
 

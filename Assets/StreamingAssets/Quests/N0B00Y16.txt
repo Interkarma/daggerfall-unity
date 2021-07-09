@@ -168,8 +168,8 @@ Item _crn_ item class 1 subclass 8
 Item _I.01_ wand
 
 Person _questgiver_ face 86 group Questor
-Person _merchant_ face 87 group Pawnbroker
-Person _mage_ face 1 group Spellcaster
+Person _merchant_ face 87 group Pawnbroker female local
+Person _mage_ face 1 group Spellcaster remote
 
 Place _shop_ local pawnshop
 

@@ -125,7 +125,7 @@ QBN:
 Item _religiousitem_ religious
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _temple_ remote temple
 

@@ -332,7 +332,7 @@ Item _I.01_ letter used 1017
 Item _relic_ magic_item used 1026
 
 Person _cyndassa_ named Cyndassa atHome anyInfo 1019
-Person courtier face 89 faction Court_of_Daggerfall
+Person courtier face 89 faction Court_of_Daggerfall remote
 Person _barmaid_ face 115 faction The_Daggerfall_Witches anyInfo 1020
 Person _P.03_ faction The_Sisters_of_the_Bluff female
 Person _wereBrother_ face 13 faction The_Mages_Guild anyInfo 1025 male

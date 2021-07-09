@@ -330,12 +330,12 @@ Item _blood_ werewolf_blood
 Item _map_ letter used 1060
 Item map2 letter used 1061
 
-Person _priest_ face 40 group Cleric
-Person _child_ face 1 faction Children
-Person _hunter_ face 1 factiontype Temple anyInfo 1011 rumors 1012
-Person _alchemist_ group Chemist female
-Person _father_ face 5 group Noble male anyInfo 1013 rumors 1014
-Person _local_ group Resident1 female
+Person _priest_ face 40 group Cleric remote
+Person _child_ face 1 faction Children remote
+Person _hunter_ face 1 factiontype Temple remote anyInfo 1011 rumors 1012
+Person _alchemist_ group Chemist remote
+Person _father_ face 5 group Noble male remote anyInfo 1013 rumors 1014
+Person _local_ group Resident1 remote
 
 Place _mapdung_ remote dungeon4
 Place glenmorilCoven permanent GlenmorilCoven

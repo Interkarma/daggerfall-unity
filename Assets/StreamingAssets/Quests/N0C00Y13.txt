@@ -183,7 +183,7 @@ QuestTimeLapse:  [1045]
 QBN:
 Item _ingredient_ letter used 1020
 
-Person _questgiver_ group Questor male
+Person _questgiver_ group Questor
 
 Place _dungeon_ remote dungeon
 

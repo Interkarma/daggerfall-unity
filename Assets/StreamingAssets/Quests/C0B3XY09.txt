@@ -119,7 +119,7 @@ Item _evilfocus_ religious
 Item _gold_ gold
 Item _magicitem_ magic_item
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _dungeon_ remote dungeon
 

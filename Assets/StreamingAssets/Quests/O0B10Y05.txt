@@ -113,7 +113,7 @@ QBN:
 Item _painting_ painting
 Item _gold_ gold
 
-Person _qgiver_ group Questor male
+Person _qgiver_ group Questor
 
 Place _townhouse_ remote house4
 --reverted to house4 as original

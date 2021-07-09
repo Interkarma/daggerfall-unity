@@ -179,7 +179,7 @@ Item _letter_ letter used 1040
 Item _reward_ magic_item
 
 Person _rebel_ named Baltham_Greyman
-Person _questgiver_ group Questor male
+Person _questgiver_ group Questor
 
 Place aide remote dungeon
 Place _rebelhouse_ remote house1

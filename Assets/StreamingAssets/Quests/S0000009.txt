@@ -161,8 +161,8 @@ Item _letter46_ letter used 1016
 Item _bribe_ gold
 
 Person _elysana_ named Princess_Elysana atHome
-Person _foil_ face 115 faction The_Prostitutes
-Person _contact_ group Local_3.3 female
+Person _foil_ face 115 faction The_Prostitutes female remote
+Person _contact_ group Local_3.3 remote
 Person Woodborne face 1 named Lord_Woodborne
 
 Clock _giveLetter_ 7.00:00 14.00:00
