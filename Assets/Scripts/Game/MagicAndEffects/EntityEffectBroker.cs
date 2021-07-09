@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
@@ -55,7 +56,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         readonly Dictionary<int, string> classicEffectMapping = new Dictionary<int, string>();
         readonly Dictionary<string, BaseEntityEffect> magicEffectTemplates = new Dictionary<string, BaseEntityEffect>();
         readonly Dictionary<int, BaseEntityEffect> potionEffectTemplates = new Dictionary<int, BaseEntityEffect>();
-        readonly Dictionary<int, SpellRecord.SpellRecordData> classicSpells = new Dictionary<int, SpellRecord.SpellRecordData>();
+        readonly Dictionary<int, SpellRecord.SpellRecordData> standardSpells = new Dictionary<int, SpellRecord.SpellRecordData>();
         readonly Dictionary<string, CustomSpellBundleOffer> customSpellBundleOffers = new Dictionary<string, CustomSpellBundleOffer>();
 
         #endregion
@@ -78,6 +79,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// This flag is lowered at the end of each magic update.
         /// </summary>
         public bool SyntheticTimeIncrease { get; private set; }
+
+        /// <summary>
+        /// The list of standard spells (aka circinate spells), taken from SPELLS.STD and potentially modified (or added to) by mods
+        /// </summary>
+        public IEnumerable<SpellRecord.SpellRecordData> StandardSpells
+        {
+            get { return standardSpells.Values; }
+        }
 
         #endregion
 
@@ -692,9 +701,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// <returns>True if spell found, otherwise false.</returns>
         public bool GetClassicSpellRecord(int id, out SpellRecord.SpellRecordData spellOut)
         {
-            if (classicSpells.ContainsKey(id))
+            if (standardSpells.ContainsKey(id))
             {
-                spellOut = classicSpells[id];
+                spellOut = standardSpells[id];
                 return true;
             }
 
@@ -711,20 +720,21 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// </summary>
         void RebuildClassicSpellsDict()
         {
-            classicSpells.Clear();
+            standardSpells.Clear();
 
             List<SpellRecord.SpellRecordData> spells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, DaggerfallSpellReader.DEFAULT_FILENAME));
+            TextAssetReader.Merge(spells, "SpellRecords.json", (record, data) => record.index == data["index"].AsInt64);
             foreach (SpellRecord.SpellRecordData spell in spells)
             {
                 // "Holy Touch" and "Holy Word" have same ID but different properties
                 // Not sure of best way to handle - just ignoring duplicate for now
-                if (classicSpells.ContainsKey(spell.index))
+                if (standardSpells.ContainsKey(spell.index))
                 {
                     //Debug.LogErrorFormat("RebuildClassicSpellsDict found duplicate key {0} for spell {1}. Existing spell={2}", spell.index, spell.spellName, classicSpells[spell.index].spellName);
                     continue;
                 }
 
-                classicSpells.Add(spell.index, spell);
+                standardSpells.Add(spell.index, spell);
             }
         }
 
@@ -851,6 +861,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 Name = spellRecordData.spellName,
                 IconIndex = spellRecordData.icon,
                 Icon = new SpellIcon(),
+                StandardSpellIndex = spellRecordData.index, 
             };
             effectBundleSettingsOut.Icon.index = effectBundleSettingsOut.IconIndex;
 
@@ -919,14 +930,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 effectSettings.DurationBase = effectRecordData.durationBase;
                 effectSettings.DurationPlus = effectRecordData.durationMod;
-                effectSettings.DurationPerLevel = effectRecordData.durationPerLevel;
+                effectSettings.DurationPerLevel = Math.Max(effectRecordData.durationPerLevel, 1);
             }
 
             if (supportChance)
             {
                 effectSettings.ChanceBase = effectRecordData.chanceBase;
                 effectSettings.ChancePlus = effectRecordData.chanceMod;
-                effectSettings.ChancePerLevel = effectRecordData.chancePerLevel;
+                effectSettings.ChancePerLevel = Math.Max(effectRecordData.chancePerLevel, 1);
             }
 
             if (supportMagnitude)
@@ -935,7 +946,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 effectSettings.MagnitudeBaseMax = effectRecordData.magnitudeBaseHigh;
                 effectSettings.MagnitudePlusMin = effectRecordData.magnitudeLevelBase;
                 effectSettings.MagnitudePlusMax = effectRecordData.magnitudeLevelHigh;
-                effectSettings.MagnitudePerLevel = effectRecordData.magnitudePerLevel;
+                effectSettings.MagnitudePerLevel = Math.Max(effectRecordData.magnitudePerLevel, 1);
             }
 
             return effectSettings;

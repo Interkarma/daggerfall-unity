@@ -153,6 +153,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public string Tag;
         public EffectEntry[] Effects;
         public LegacyEffectEntry[] LegacyEffects;
+        public int? StandardSpellIndex;
     }
 
     /// <summary>
