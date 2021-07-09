@@ -1277,10 +1277,13 @@ namespace DaggerfallWorkshop.Game
             foreach (Actions a in enums)
                 MapSecondaryBindings(a);
 
-            var mods = primarySecondaryKeybindDict.Keys.Where(x => (int)x >= startingComboKeyCode);
+            // Get combo codes of both primary and secondary bindings
+            var combos = actionKeyDict.Keys
+                .Concat(secondaryActionKeyDict.Keys)
+                .Where(x => (int)x >= startingComboKeyCode);
 
             modifierHeldFirstDict.Clear();
-            foreach (var key in mods)
+            foreach (var key in combos)
             {
                 modifierHeldFirstDict[(int)this.GetCombo((KeyCode)key).Item1] = false;
             }
@@ -1325,7 +1328,8 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Sets KeyCode binding only if action is missing,
-        // and its default key is not used in alternate bindings.
+        // and its default key is not used in the primary or
+        // secondary bindings (including as modifiers in combos.)
         // This is to ensure default actions are restored if missing
         // and to push out new actions to existing keybind files
         private void TestSetBinding(KeyCode code, Actions action, bool primary = true)
@@ -1333,8 +1337,12 @@ namespace DaggerfallWorkshop.Game
             var dict = primary ? actionKeyDict : secondaryActionKeyDict;
             var alt = primary ? secondaryActionKeyDict : actionKeyDict;
 
-            if (!dict.ContainsValue(action) && !alt.ContainsKey(code))
+            if (!dict.ContainsKey(code) && !alt.ContainsKey(code) && !dict.ContainsValue(action))
             {
+                foreach (var mod in modifierHeldFirstDict.Keys)
+                    if ((int)code == mod)
+                        return;
+
                 SetBinding(code, action, primary);
             }
         }
