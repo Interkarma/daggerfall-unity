@@ -67,6 +67,7 @@ namespace DaggerfallWorkshop.Game
         float strafeAngle;
         int searchMult;
         int ignoreMaskForShooting;
+        int ignoreMaskForObstacles;
         bool canAct;
         bool falls;
         bool flyerFalls;
@@ -119,6 +120,9 @@ namespace DaggerfallWorkshop.Game
 
             // Add things AI should ignore when checking for a clear path to shoot.
             ignoreMaskForShooting = ~(1 << LayerMask.NameToLayer("SpellMissiles") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
+
+            // Also ignore arrows and "Ignore Raycast" layer for obstacles
+            ignoreMaskForObstacles = ~(1 << LayerMask.NameToLayer("SpellMissiles") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
 
             lastGroundedY = transform.position.y;
 
@@ -1104,7 +1108,7 @@ namespace DaggerfallWorkshop.Game
             Vector3 p1 = transform.position + (Vector3.up * -originalHeight * 0.1388F);
             Vector3 p2 = p1 + (Vector3.up * Mathf.Min(originalHeight, doorCrouchingHeight) / 2);
 
-            if (Physics.CapsuleCast(p1, p2, controller.radius / 2, direction, out hit, checkDistance))
+            if (Physics.CapsuleCast(p1, p2, controller.radius / 2, direction, out hit, checkDistance, ignoreMaskForObstacles))
             {
                 // Debug.DrawRay(transform.position, direction, Color.red, 2.0f);
                 obstacleDetected = true;
