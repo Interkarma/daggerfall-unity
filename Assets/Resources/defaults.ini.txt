@@ -73,6 +73,7 @@ LargeHUDUndockedOffsetWeapon=False
 LargeHUDOffsetHorse=True
 CanDropQuestItems=False
 EnableQuestDebugger=False
+QuestRumorWeight = 50
 
 [Spells]
 EnableSpellLighting=True

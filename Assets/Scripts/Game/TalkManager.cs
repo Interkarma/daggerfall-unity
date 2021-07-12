@@ -1357,8 +1357,7 @@ namespace DaggerfallWorkshop.Game
                 if (validRumors.Count == 0)
                     return ExpandRandomTextRecord(outOfNewsRecordIndex);
 
-                int randomIndex = UnityEngine.Random.Range(0, validRumors.Count);
-                RumorMillEntry entry = validRumors[randomIndex];
+                RumorMillEntry entry = WeightedRandomRumor(validRumors);
                 if (entry.rumorType == RumorType.CommonRumor)
                 {
                     if (entry.listRumorVariants != null)
@@ -1399,6 +1398,32 @@ namespace DaggerfallWorkshop.Game
             }
 
             return ExpandRandomTextRecord(outOfNewsRecordIndex);
+        }
+
+        /// <summary>
+        /// Gets a random rumour weighted to quest rumours based on QuestRumorWeight in settings.ini.
+        /// Weight can range from 1 (quest rumours have same weight as ambient rumours) to 100 (max weight for quest rumours).
+        /// The default setting of 50 will select from quest rumour pool approximately twice as often as ambient rumour pool.
+        /// Even with a max setting of 100 ambient rumours will be fairly mixed in with quest rumours.
+        /// </summary>
+        /// <param name="validRumors">List populated with valid rumours.</param>
+        /// <returns>Selected RumorMillEntry based on weighted random choice.</returns>
+        protected virtual RumorMillEntry WeightedRandomRumor(List<RumorMillEntry> validRumors)
+        {
+            int questRumorWeight = DaggerfallUnity.Settings.QuestRumorWeight;
+
+            int totalWeight = 0; // this stores sum of weights of all elements before current
+            RumorMillEntry selected = validRumors[0]; // currently selected element
+            foreach (RumorMillEntry rumor in validRumors)
+            {
+                int weight = (rumor.questID != 0) ? questRumorWeight : 1;
+                int r = UnityEngine.Random.Range(0, totalWeight + weight); // random value
+                if (r >= totalWeight) // probability of this is weight/(totalWeight+weight)
+                    selected = rumor; // it is the probability of discarding last selected element and selecting current one instead
+                totalWeight += weight; // increase weight sum
+            }
+
+            return selected; // when iterations end, selected is some element of sequence. 
         }
 
         private List<RumorMillEntry> GetValidRumors(bool readingSign = false)
