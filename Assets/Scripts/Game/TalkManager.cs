@@ -1403,7 +1403,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Gets a random rumour weighted to quest rumours based on QuestRumorWeight in settings.ini.
         /// Weight can range from 1 (quest rumours have same weight as ambient rumours) to 100 (max weight for quest rumours).
-        /// The default setting of 50 will select from quest rumour pool approximately twice as often as ambient rumour pool.
+        /// The default setting of 50 will select from quest rumour pool more often while still displaying a good mix of ambient rumours.
         /// Even with a max setting of 100 ambient rumours will be fairly mixed in with quest rumours.
         /// </summary>
         /// <param name="validRumors">List populated with valid rumours.</param>
