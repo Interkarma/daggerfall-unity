@@ -159,8 +159,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 {
                     foreach (TextAsset locationReplacementJsonAsset in assets)
                     {
-                        DFLocation dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJsonAsset.text);
-                        newBlocksAssigned &= AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, ref dfLocation);
+                        if (locationReplacementJsonAsset.name.StartsWith("locationnew-"))
+                        {
+                            DFLocation dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJsonAsset.text);
+                            newBlocksAssigned &= AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, ref dfLocation);
+                        }
                     }
                 }
                 // If found any new locations for this region,
