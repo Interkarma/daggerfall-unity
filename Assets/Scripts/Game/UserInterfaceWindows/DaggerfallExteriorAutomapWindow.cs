@@ -111,6 +111,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         ToolTip buttonToolTip = null;
 
+        protected Panel panelTempleColor;
+        protected Panel panelShopColor;
+        protected Panel panelTavernColor;
+
         // these boolean flags are used to indicate which mouse button was pressed over which gui button/element - these are set in the event callbacks
         bool leftMouseDownOnPanelAutomap = false;
         bool rightMouseDownOnPanelAutomap = false;
@@ -255,7 +259,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (AMAP00I0.IMG).");
 
             // Load caption line
-            Texture2D nativeTextureCaption = DaggerfallUI.GetTextureFromImg(nativeImgNameCaption, TextureFormat.ARGB32, true);
+            Texture2D nativeTextureCaption = DaggerfallUI.GetTextureFromImg(nativeImgNameCaption, TextureFormat.ARGB32, false);
             nativeTextureCaption.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             if (!nativeTextureCaption)
                 throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (TOWN00I0.IMG).");
@@ -264,6 +268,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rectPanelCaption.position = new Vector2(0, 200 - 10);
             rectPanelCaption.size = new Vector2(320, 10);
             panelCaption = DaggerfallUI.AddPanel(rectPanelCaption, NativePanel);
+
+            SetupCaptionColors(nativeTextureCaption);
+
+            nativeTextureCaption.Apply(false, true);
 
             // set caption line in bottom part of exterior automap window background image texture
             panelCaption.BackgroundTexture = nativeTextureCaption;
@@ -451,6 +459,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             resetZoomLevelOnNewLocation = DaggerfallUnity.Settings.ExteriorMapResetZoomLevelOnNewLocation;
 
             isSetup = true;
+        }
+
+        protected virtual void SetupCaptionColors(Texture2D textureCaption)
+        {
+            panelTempleColor = DaggerfallUI.AddPanel(new Rect(new Vector2(97, 2), new Vector2(5, 5)), panelCaption);
+            panelTempleColor.BackgroundColor = DaggerfallUnity.Settings.AutomapTempleColor;
+
+            panelShopColor = DaggerfallUI.AddPanel(new Rect(new Vector2(141, 2), new Vector2(5, 5)), panelCaption);
+            panelShopColor.BackgroundColor = DaggerfallUnity.Settings.AutomapShopColor;
+
+            panelTavernColor = DaggerfallUI.AddPanel(new Rect(new Vector2(183, 2), new Vector2(5, 5)), panelCaption);
+            panelTavernColor.BackgroundColor = DaggerfallUnity.Settings.AutomapTavernColor;
         }
 
         /// <summary>

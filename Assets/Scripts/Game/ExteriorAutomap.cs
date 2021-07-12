@@ -1398,10 +1398,7 @@ namespace DaggerfallWorkshop.Game
                             // guilds
                             case 12: // guildhall
                             case 15: // temple
-                                colors[o].r = 69;
-                                colors[o].g = 125;
-                                colors[o].b = 195;
-                                colors[o].a = 255;
+                                colors[o] = DaggerfallUnity.Settings.AutomapTempleColor;
                                 break;
                             // shops
                             case 1: // alchemist
@@ -1414,16 +1411,10 @@ namespace DaggerfallWorkshop.Game
                             case 11: // library
                             case 13: // pawn shop
                             case 14: // weapon smith
-                                colors[o].r = 190;
-                                colors[o].g = 85;
-                                colors[o].b = 24;
-                                colors[o].a = 255;
+                                colors[o] = DaggerfallUnity.Settings.AutomapShopColor;
                                 break;
                             case 16: // tavern
-                                colors[o].r = 85;
-                                colors[o].g = 117;
-                                colors[o].b = 48;
-                                colors[o].a = 255;
+                                colors[o] = DaggerfallUnity.Settings.AutomapTavernColor;
                                 break;
                             // common
                             case 2: // house for sale
@@ -1437,10 +1428,7 @@ namespace DaggerfallWorkshop.Game
                             case 22: // house 5 (hedge)
                             case 23: // house 6
                             case 24: // town23
-                                colors[o].r = 69;
-                                colors[o].g = 60;
-                                colors[o].b = 40;
-                                colors[o].a = 255;
+                                colors[o] = DaggerfallUnity.Settings.AutomapHouseColor;
                                 break;
                             case 25: // ship
                             case 117: // special 1
@@ -1449,10 +1437,7 @@ namespace DaggerfallWorkshop.Game
                             case 251: // special 4
                                 if (showAll)
                                 {
-                                    colors[o].r = 69;
-                                    colors[o].g = 60;
-                                    colors[o].b = 40;
-                                    colors[o].a = 255;
+                                    colors[o] = DaggerfallUnity.Settings.AutomapHouseColor;
                                 }
                                 break;
                             case 0:
