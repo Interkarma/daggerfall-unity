@@ -70,6 +70,12 @@ namespace DaggerfallWorkshop
         /// </summary>
         public abstract bool ShootArrow { get; set; }
 
+        /// <summary>
+        /// Slow down the animation of this mobile unit by a divisor of frames per second.
+        /// Used when enemies are slowed by spells etc.
+        /// </summary>
+        public abstract int FrameSpeedDivisor { get; set; }
+
         #endregion
 
         #region Public Methods

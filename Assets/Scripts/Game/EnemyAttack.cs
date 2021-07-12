@@ -36,7 +36,6 @@ namespace DaggerfallWorkshop.Game
         EnemySenses senses;
         EnemySounds sounds;
         MobileUnit mobile;
-        DaggerfallMobileUnit dfMobile;
         DaggerfallEntityBehaviour entityBehaviour;
         int damage = 0;
 
@@ -46,7 +45,6 @@ namespace DaggerfallWorkshop.Game
             senses = GetComponent<EnemySenses>();
             sounds = GetComponent<EnemySounds>();
             mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
-            dfMobile = mobile as DaggerfallMobileUnit;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
         }
 
@@ -76,7 +74,7 @@ namespace DaggerfallWorkshop.Game
 
             // Slow down enemy frame rate based on floored speed value
             // If enemy is still at maximum speed then divisor is 1 and will experience no change to frame rate
-            dfMobile.FrameSpeedDivisor = entity.Stats.PermanentSpeed / speed;
+            mobile.FrameSpeedDivisor = entity.Stats.PermanentSpeed / speed;
 
             // Note: Speed comparison here is reversed from classic. Classic's way makes fewer attack
             // attempts at higher speeds, so it seems backwards.
