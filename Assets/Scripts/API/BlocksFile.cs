@@ -506,6 +506,14 @@ namespace DaggerfallConnect.Arena2
                 blocks[block].DFBlock.RdbBlock.ObjectRootList[4].RdbObjects[18].XPos = 640;
                 blocks[block].DFBlock.RdbBlock.ObjectRootList[5].RdbObjects[8].Resources.ModelResource.ModelIndex = 11;
             }
+            else if (block == 945 || block == 946)  // N0000022.RDB or N0000023.RDB
+            {
+                blocks[block].DFBlock.RdbBlock.ObjectRootList[2].RdbObjects = null;
+            }
+            else if (block == 958)  // N0000035.RDB
+            {
+                blocks[block].DFBlock.RdbBlock.ObjectRootList[0].RdbObjects[36].YPos = -300;
+            }
             else if (block == 1025) // W0000009.RDB
             {
                 // Add a brick wall door model
