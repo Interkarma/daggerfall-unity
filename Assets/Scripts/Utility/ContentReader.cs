@@ -189,6 +189,8 @@ namespace DaggerfallWorkshop.Utility
             if (!isReady)
                 return false;
 
+            MapDictCheck();
+
             // Get mapId from locationId
             int mapId = LocationIdToMapId(locationId);
             if (mapDict.ContainsKey(mapId))
@@ -213,6 +215,7 @@ namespace DaggerfallWorkshop.Utility
                 summaryOut = new MapSummary();
                 return false;
             }
+            MapDictCheck();
 
             int id = MapsFile.GetMapPixelID(mapPixelX, mapPixelY);
             if (mapDict.ContainsKey(id))
@@ -237,6 +240,7 @@ namespace DaggerfallWorkshop.Utility
             {
                 return false;
             }
+            MapDictCheck();
 
             int id = MapsFile.GetMapPixelID(mapPixelX, mapPixelY);
             if (mapDict.ContainsKey(id))
@@ -296,12 +300,15 @@ namespace DaggerfallWorkshop.Utility
             if (paintFileReader == null)
                 paintFileReader = new PaintFile(Path.Combine(arena2Path, PaintFile.Filename), FileUsage.UseMemory, true);
 
+            // Raise ready flag
+            isReady = true;
+        }
+
+        private void MapDictCheck()
+        {
             // Build map lookup dictionary
             if (mapDict == null && mapFileReader != null)
                 EnumerateMaps();
-
-            // Raise ready flag
-            isReady = true;
         }
 
         /// <summary>
