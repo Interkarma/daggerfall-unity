@@ -396,6 +396,7 @@ namespace DaggerfallWorkshop.Game.Utility
                     playerEnterExit.EnableExteriorParent();
                     if (streamingWorld)
                     {
+                        streamingWorld.TeleportToCoordinates(mapPixel.X, mapPixel.Y);
                         streamingWorld.SetAutoReposition(StreamingWorld.RepositionMethods.Origin, Vector3.zero);
                         streamingWorld.suppressWorld = false;
                     }
