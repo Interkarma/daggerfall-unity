@@ -119,7 +119,7 @@ _S.00_ task:
 	end quest 
 
 _S.01_ task:
-	daily from 21:00 to 23:59 
+	daily from 21:00 to 22:59
 	--changed 24:00 to 23:59. 24:00 shouldn't exist.
 	place npc _qgiver_ at _qgiverhome_ 
 
@@ -151,3 +151,16 @@ _S.08_ task:
 _mmap_ task:
 	when _questdone_ and not _S.05_ 
 	end quest 
+
+--on rare occasions, the enemies still would not spawn with the above logic.
+--A new back-up logic starting from 11PM is given below, to force an enemy
+--spawn if none has been injured by 11PM. If there's a better way to ensure
+--the enemies haven't spawned than with "injured," it would be preferable.
+
+_latehour_ task:
+	daily from 23:00 to 23:59
+	place npc _qgiver_ at _qgiverhome_ 
+
+_backupspawn_ task:
+	when _S.05_ and _latehour_ and not _S.06_
+	create foe _villains_ every 0 minutes 1 times with 100% success
