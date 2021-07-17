@@ -81,6 +81,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Properties
 
+        public List<ListItem> ListItems
+        {
+            get { return listItems; }
+        }
+
         /// <summary>
         /// Maximum length of label string.
         /// Setting to -1 allows for any length.
@@ -380,7 +385,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             highlightedIndex = -1;
             if (verticalScrollMode == VerticalScrollModes.EntryWise)
             {
-                int row = (y / (font.GlyphHeight + rowSpacing));
+                int row = (y / ((int)(font.GlyphHeight * Scale.y) + rowSpacing));
                 int index = scrollIndex + row;
                 if (index >= 0 && index < Count)
                 {
@@ -420,7 +425,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (verticalScrollMode == VerticalScrollModes.EntryWise)
             {
-                int row = (int)(clickPosition.y / (font.GlyphHeight + rowSpacing));
+                int row = (int)(clickPosition.y / ((int)(font.GlyphHeight * Scale.y) + rowSpacing));
                 int index = scrollIndex + row;
                 if (index >= 0 && index < Count)
                 {
@@ -753,7 +758,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (Count == 0)
                 return;
 
-            rowsDisplayed = (int)(Size.y / font.GlyphHeight) - 1;
+            rowsDisplayed = (int)(Size.y / (int)(font.GlyphHeight * Scale.y)) - 1;
         }
 
         public int FindIndex(string text)

@@ -46,6 +46,7 @@ OptionsLoad,          L
 OptionsControls,      N
 OptionsFullScreen,    F
 OptionsHeadBobbing,   H
+OptionsDropdown,      D
 
 -- General
 Pause,                Shift-Escape

@@ -55,6 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             OptionsControls,
             OptionsFullScreen,
             OptionsHeadBobbing,
+            OptionsDropdown,
 
             // General
             Pause,
