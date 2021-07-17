@@ -508,11 +508,15 @@ namespace DaggerfallConnect.Arena2
             }
             else if (block == 945 || block == 946)  // N0000022.RDB or N0000023.RDB
             {
-                blocks[block].DFBlock.RdbBlock.ObjectRootList[2].RdbObjects = null;
+                blocks[block].DFBlock.RdbBlock.ObjectRootList[2].RdbObjects = null; // Remove bad door
             }
             else if (block == 958)  // N0000035.RDB
             {
-                blocks[block].DFBlock.RdbBlock.ObjectRootList[0].RdbObjects[36].YPos = -300;
+                blocks[block].DFBlock.RdbBlock.ObjectRootList[0].RdbObjects[36].YPos = -300; // Correct door height
+            }
+            else if (block == 975)  // N0000052.RDB
+            {
+                blocks[block].DFBlock.RdbBlock.ObjectRootList[0].RdbObjects[24].XPos = 543; // Correct lever placement
             }
             else if (block == 1025) // W0000009.RDB
             {
