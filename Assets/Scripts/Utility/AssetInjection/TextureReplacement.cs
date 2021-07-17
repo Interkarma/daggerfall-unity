@@ -547,32 +547,63 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // Enable emission
                 ToggleEmission(material, importedTextures.IsEmissive |= emission != null);
 
-                // Load texture file to get record and frame count
+                // If the archive has a Arena2 texture file, use it to get record and frame count
                 string fileName = TextureFile.IndexToFileName(archive);
-                var textureFile = new TextureFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseMemory, true);
-
-                // Import all textures in this archive
-                importedTextures.Albedo = new Texture2D[textureFile.RecordCount][];
-                importedTextures.EmissionMaps = importedTextures.IsEmissive ? new Texture2D[textureFile.RecordCount][] : null;
-                for (int record = 0; record < textureFile.RecordCount; record++)
+                var textureFile = new TextureFile();
+                if (textureFile.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseMemory, true))
                 {
-                    int frames = textureFile.GetFrameCount(record);
-                    var frameTextures = new Texture2D[frames];
-                    var frameEmissionMaps = importedTextures.IsEmissive ? new Texture2D[frames] : null;
-
-                    for (int frame = 0; frame < frames; frame++)
+                    // Import all textures in this archive
+                    importedTextures.Albedo = new Texture2D[textureFile.RecordCount][];
+                    importedTextures.EmissionMaps = importedTextures.IsEmissive ? new Texture2D[textureFile.RecordCount][] : null;
+                    for (int record = 0; record < textureFile.RecordCount; record++)
                     {
-                        if (record != 0 || frame != 0)
-                            LoadFromCacheOrImport(archive, record, frame, importedTextures.IsEmissive, true, out tex, out emission);
+                        int frames = textureFile.GetFrameCount(record);
+                        var frameTextures = new Texture2D[frames];
+                        var frameEmissionMaps = importedTextures.IsEmissive ? new Texture2D[frames] : null;
 
-                        frameTextures[frame] = tex ?? ImageReader.GetTexture(fileName, record, frame, true);
-                        if (frameEmissionMaps != null)
-                            frameEmissionMaps[frame] = emission ?? frameTextures[frame];
+                        for (int frame = 0; frame < frames; frame++)
+                        {
+                            if (record != 0 || frame != 0)
+                                LoadFromCacheOrImport(archive, record, frame, importedTextures.IsEmissive, true, out tex, out emission);
+
+                            frameTextures[frame] = tex ?? ImageReader.GetTexture(fileName, record, frame, true);
+                            if (frameEmissionMaps != null)
+                                frameEmissionMaps[frame] = emission ?? frameTextures[frame];
+                        }
+
+                        importedTextures.Albedo[record] = frameTextures;
+                        if (importedTextures.EmissionMaps != null)
+                            importedTextures.EmissionMaps[record] = frameEmissionMaps;
+                    }
+                }
+                // Otherwise, check what files are available in the injected assets
+                else
+                {
+                    List<Texture2D[]> allAlbedo = new List<Texture2D[]>();
+                    List<Texture2D[]> allEmission = importedTextures.IsEmissive ? new List<Texture2D[]>() : null;
+
+                    int record = 0;
+                    while (TryImportTexture(archive, record, out Texture2D[] currentAlbedo))
+                    {
+                        allAlbedo.Add(currentAlbedo);
+
+                        if (importedTextures.IsEmissive)
+                        {
+                            if (TryImportTexture(texturesPath, frame => GetName(archive, record, frame, TextureMap.Emission), out Texture2D[] currentEmissive))
+                            {
+                                allEmission.Add(currentEmissive);
+                            }
+                            else
+                            {
+                                allEmission.Add(currentAlbedo);
+                            }
+                        }
+
+                        ++record;
                     }
 
-                    importedTextures.Albedo[record] = frameTextures;
-                    if (importedTextures.EmissionMaps != null)
-                        importedTextures.EmissionMaps[record] = frameEmissionMaps;
+                    importedTextures.Albedo = allAlbedo.ToArray();
+                    importedTextures.EmissionMaps = importedTextures.IsEmissive ? allEmission.ToArray() : null;
                 }
 
                 // Update UV map
