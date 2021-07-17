@@ -18,6 +18,7 @@ using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using Wenzil.Console;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Entity;
 using UnityEngine.Localization.Tables;
 
 namespace DaggerfallWorkshop.Game
@@ -331,15 +332,31 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Gets display name of an enemy from their ID.
         /// </summary>
-        /// <param name="enemyID">ID of enemy. Valid IDs are 0-42 and 128-146.</param>
+        /// <param name="enemyID">ID of enemy. Valid IDs are 0-42 and 128-146, or values registered in Daggerfallentity.CustomCareerTemplates</param>
         /// <returns>Name of enemy from localization if found, or exception if not found.</returns>
         public string GetLocalizedEnemyName(int enemyID)
         {
-            string[] enemyNames = GetLocalizedTextList("enemyNames", exception:true);
-            if (enemyID < 128)
-                return enemyNames[enemyID];
+            if (Enum.IsDefined(typeof(MobileTypes), (MobileTypes)enemyID))
+            {
+                string[] enemyNames = GetLocalizedTextList("enemyNames", exception: true);
+                if (enemyID < 128)
+                    return enemyNames[enemyID];
+                else
+                    return enemyNames[43 + enemyID - 128];
+            }
+            // Handle custom enemies
             else
-                return enemyNames[43 + enemyID - 128];
+            {
+                // TODO: maybe go through TextProvider so mods can try to offer localization?
+                DaggerfallConnect.DFCareer career = DaggerfallEntity.GetCustomCareerTemplate(enemyID);
+                if (career == null)
+                {
+                    Debug.LogError($"Enemy ID '{enemyID}' did not have a registered custom career template");
+                    return "(invalid enemy)";
+                }
+
+                return career.Name;
+            }
         }
 
         #endregion

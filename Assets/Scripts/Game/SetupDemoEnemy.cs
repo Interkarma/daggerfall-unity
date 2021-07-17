@@ -167,6 +167,23 @@ namespace DaggerfallWorkshop.Game
                         entityBehaviour.EntityType = EntityTypes.EnemyClass;
                         entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType);
                     }
+                    else if (DaggerfallEntity.GetCustomCareerTemplate(enemyIndex) != null)
+                    {
+                        // For custom enemies, we use the 7th bit to tell whether a class or monster was intended
+                        // 0-127 is monster
+                        // 128-255 is class
+                        // 256-383 is monster again
+                        // etc
+                        if ((enemyIndex & 128) != 0)
+                        {
+                            entityBehaviour.EntityType = EntityTypes.EnemyClass;
+                        }
+                        else
+                        {
+                            entityBehaviour.EntityType = EntityTypes.EnemyMonster;
+                        }
+                        entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType);
+                    }
                     else
                     {
                         entityBehaviour.EntityType = EntityTypes.None;

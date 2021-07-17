@@ -443,7 +443,7 @@ namespace Wenzil.Console
                     if (!int.TryParse(args[0], out id))
                         return "Invalid mobile ID.";
 
-                    if (!Enum.IsDefined(typeof(MobileTypes), id))
+                    if (!Enum.IsDefined(typeof(MobileTypes), id) && DaggerfallEntity.GetCustomCareerTemplate(id) == null)
                         return "Invalid mobile ID.";
 
                     int team = 0;
