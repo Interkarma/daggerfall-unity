@@ -3634,6 +3634,10 @@ MonoBehaviour:
     m_Localized: Nord
     m_Metadata:
       m_Items: []
+  - m_Id: 813
+    m_Localized: 'Note: Some changes may not be applied until you restart the game.'
+    m_Metadata:
+      m_Items: []
   - m_Id: 29516644352
     m_Localized: temple
     m_Metadata:
