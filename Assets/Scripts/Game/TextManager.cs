@@ -348,8 +348,10 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 // TODO: maybe go through TextProvider so mods can try to offer localization?
-                if (!DaggerfallEntity.CustomCareerTemplates.TryGetValue(enemyID, out DaggerfallConnect.DFCareer career))
+                DaggerfallConnect.DFCareer career = DaggerfallEntity.GetCustomCareerTemplate(enemyID);
+                if (career == null)
                 {
+                    Debug.LogError($"Enemy ID '{enemyID}' did not have a registered custom career template");
                     return "(invalid enemy)";
                 }
 

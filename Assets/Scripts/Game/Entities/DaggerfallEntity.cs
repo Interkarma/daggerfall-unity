@@ -932,21 +932,33 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Allows mods to register a DFCareer template for IDs outside of the values in MobileTypes
         /// </summary>
-        public static readonly Dictionary<int, DFCareer> CustomCareerTemplates = new Dictionary<int, DFCareer>();
+        static readonly Dictionary<int, DFCareer> CustomCareerTemplates = new Dictionary<int, DFCareer>();
 
         /// <summary>
         /// Gets the career template for a custom (ie: mod-provided) enemy type
         /// </summary>
         /// <param name="enemyId">ID, as defined in EnemyBasics.Enemies</param>
-        /// <returns></returns>
+        /// <returns>The custom DFCareer template registered for this id, or null</returns>
         public static DFCareer GetCustomCareerTemplate(int enemyId)
         {
-            if(!CustomCareerTemplates.TryGetValue(enemyId, out DFCareer value))
+            if (!CustomCareerTemplates.TryGetValue(enemyId, out DFCareer value))
             {
                 return null;
             }
 
             return value;
+        }
+
+        /// <summary>
+        /// Sets the career template for a custom (ie: mod-provided) enemy type. 
+        /// </summary>
+        /// <param name="enemyId">ID, as defined in EnemyBasics.Enemies</param>
+        /// <param name="career">The custom DFCareer template to register</param>
+        public static void RegisterCustomCareerTemplate(int enemyId, DFCareer career)
+        {
+            // Use indexer so that mods can overwrite previous values added by mods
+            // ex: mod 1 provides new enemies, mod 2 rebalances them
+            CustomCareerTemplates[enemyId] = career;
         }
 
         public static SoundClips GetRaceGenderAttackSound(Races race, Genders gender, bool isPlayerAttack = false)
