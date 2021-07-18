@@ -246,7 +246,33 @@ namespace DaggerfallWorkshop.Game.Entity
         /// </summary>
         public void SetEnemyCareer(MobileEnemy mobileEnemy, EntityTypes entityType)
         {
-            if (entityType == EntityTypes.EnemyMonster)
+            // Try custom career first
+            career = GetCustomCareerTemplate(mobileEnemy.ID);
+
+            if (career != null)
+            {
+                // Custom enemy
+                careerIndex = mobileEnemy.ID;
+                stats.SetPermanentFromCareer(career);
+
+                if (entityType == EntityTypes.EnemyMonster)
+                {
+                    // Default like a monster
+                    level = mobileEnemy.Level;
+                    maxHealth = Random.Range(mobileEnemy.MinHealth, mobileEnemy.MaxHealth + 1);
+                    for (int i = 0; i < ArmorValues.Length; i++)
+                    {
+                        ArmorValues[i] = (sbyte)(mobileEnemy.ArmorValue * 5);
+                    }
+                }
+                else
+                {
+                    // Default like a class enemy
+                    level = GameManager.Instance.PlayerEntity.Level;
+                    maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
+                }
+            }
+            else if (entityType == EntityTypes.EnemyMonster)
             {
                 careerIndex = mobileEnemy.ID;
                 career = GetMonsterCareerTemplate((MonsterCareers)careerIndex);
