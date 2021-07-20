@@ -42,11 +42,22 @@ namespace DaggerfallWorkshop.Game
         void Activate(RaycastHit hit);
     }
 
+    public class ContainerLootSpawnedEventArgs : System.EventArgs
+    {
+        public LootContainerTypes ContainerType;
+        public ItemCollection Loot;
+    }
+
     /// <summary>
     /// Example class to handle activation of doors, switches, etc. from Fire1 input.
     /// </summary>
     public class PlayerActivate : MonoBehaviour
     {
+        /// <summary>
+        /// When Loot is generated for an activated container, such as a shop shelve or a house container
+        /// </summary>
+        public static System.EventHandler<ContainerLootSpawnedEventArgs> OnLootSpawned;
+
         PlayerGPS playerGPS;
         PlayerEnterExit playerEnterExit;        // Example component to enter/exit buildings
         Camera mainCamera;
@@ -821,7 +832,10 @@ namespace DaggerfallWorkshop.Game
                 case LootContainerTypes.ShopShelves:
                     // Stock shop shelf on first access
                     if (loot.stockedDate < DaggerfallLoot.CreateStockedDate(DaggerfallUnity.Instance.WorldTime.Now))
+                    {
                         loot.StockShopShelf(playerEnterExit.BuildingDiscoveryData);
+                        OnLootSpawned?.Invoke(this, new ContainerLootSpawnedEventArgs { ContainerType = loot.ContainerType, Loot = loot.Items });
+                    }
                     // Open Trade Window if shop is open
                     if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop)
                     {
@@ -847,7 +861,10 @@ namespace DaggerfallWorkshop.Game
                     }
                     // Stock house container on first access
                     if (loot.stockedDate < DaggerfallLoot.CreateStockedDate(DaggerfallUnity.Instance.WorldTime.Now))
+                    {
                         loot.StockHouseContainer(playerEnterExit.BuildingDiscoveryData);
+                        OnLootSpawned?.Invoke(this, new ContainerLootSpawnedEventArgs { ContainerType = loot.ContainerType, Loot = loot.Items });
+                    }
                     // If no contents, do nothing
                     if (loot.Items.Count == 0)
                         return;
