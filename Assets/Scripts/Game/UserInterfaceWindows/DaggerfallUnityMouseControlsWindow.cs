@@ -45,7 +45,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Button quickLoadKeybindButton = new Button();
         protected Button autoRunKeybindButton = new Button();
         protected HorizontalSlider mouseSensitivitySlider;
-        protected HorizontalSlider weaponSensitivitySlider;
+        //protected HorizontalSlider weaponSensitivitySlider;
         protected Checkbox moveSpeedCheckbox;
         protected Checkbox invertMouseVerticalCheckbox;
         protected Checkbox mouseSmoothingCheckbox;
@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mouseSmoothingCheckbox = AddOption(20, 110, "Mouse Smoothing", DaggerfallUnity.Settings.MouseLookSmoothing);
             moveSpeedCheckbox = AddOption(20, 120, "Movement Acceleration", DaggerfallUnity.Settings.MovementAcceleration);
 
-            weaponSensitivitySlider = CreateSlider("Mouse Weapon Sensitivity", 115, 80, 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
+            //weaponSensitivitySlider = CreateSlider("Mouse Weapon Sensitivity", 115, 80, 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
             clickToAttackCheckbox = AddOption(115, 100, "Click to Attack", DaggerfallUnity.Settings.ClickToAttack);
             bowDrawbackCheckbox = AddOption(115, 110, "Bows - draw and release", DaggerfallUnity.Settings.BowDrawback);
             toggleSneakCheckbox = AddOption(115, 120, "Toggle Sneak", DaggerfallUnity.Settings.ToggleSneak);
@@ -336,7 +336,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void OnUpdateValues()
         {
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivitySlider.GetValue();
-            DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivitySlider.GetValue();
+            //DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivitySlider.GetValue();
             DaggerfallUnity.Settings.MovementAcceleration = moveSpeedCheckbox.IsChecked;
             DaggerfallUnity.Settings.InvertMouseVertical = invertMouseVerticalCheckbox.IsChecked;
             DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothingCheckbox.IsChecked;

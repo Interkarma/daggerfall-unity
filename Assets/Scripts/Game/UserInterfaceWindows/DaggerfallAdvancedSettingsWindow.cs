@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider randomDungeonTextures;
         HorizontalSlider cameraRecoilStrength;
         HorizontalSlider mouseSensitivity;
-        HorizontalSlider weaponSensitivity;
+        //HorizontalSlider weaponSensitivity;
         TextBox weaponAttackThreshold;
         HorizontalSlider soundVolume;
         HorizontalSlider musicVolume;
@@ -247,7 +247,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Controls
             AddSectionTitle(leftPanel, "controls");
             mouseSensitivity = AddSlider(leftPanel, "mouseSensitivity", 0.1f, 8.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
-            weaponSensitivity = AddSlider(leftPanel, "weaponSensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
+            //weaponSensitivity = AddSlider(leftPanel, "weaponSensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
             movementAcceleration = AddCheckbox(leftPanel, "movementAcceleration", DaggerfallUnity.Settings.MovementAcceleration);
             weaponAttackThreshold = AddTextbox(leftPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
             bowDrawback = AddCheckbox(leftPanel, "bowDrawback", DaggerfallUnity.Settings.BowDrawback);
@@ -412,7 +412,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.RandomDungeonTextures = randomDungeonTextures.ScrollIndex;
 
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivity.GetValue();
-            DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivity.GetValue();
+            //DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivity.GetValue();
             DaggerfallUnity.Settings.MovementAcceleration = movementAcceleration.IsChecked;
             float weaponAttackThresholdValue;
             if (float.TryParse(weaponAttackThreshold.Text, out weaponAttackThresholdValue))

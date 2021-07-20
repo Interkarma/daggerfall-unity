@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop.Game
         public float ChanceToBeParried = 0.1f;      // Example: Chance for player hit to be parried
         public DaggerfallMissile ArrowMissilePrefab;
 
-        float weaponSensitivity = 1.0f;             // Sensitivity of weapon swings to mouse movements
+        //float weaponSensitivity = 1.0f;             // Sensitivity of weapon swings to mouse movements
         private Gesture _gesture;
         private int _longestDim;                    // Longest screen dimension, used to compare gestures for attack
 
@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
+            //weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             player = transform.gameObject;
             playerLayerMask = ~(1 << LayerMask.NameToLayer("Player"));
@@ -770,7 +770,7 @@ namespace DaggerfallWorkshop.Game
         MouseDirections TrackMouseAttack()
         {
             // Track action for idle plus all eight mouse directions
-            var sum = _gesture.Add(InputManager.Instance.MouseX, InputManager.Instance.MouseY) * weaponSensitivity;
+            var sum = _gesture.Add(InputManager.Instance.MouseX, InputManager.Instance.MouseY);
 
             if (InputManager.Instance.UsingController)
             {
