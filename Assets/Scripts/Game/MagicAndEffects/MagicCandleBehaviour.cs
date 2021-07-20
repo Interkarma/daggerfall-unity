@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
+    [RequireComponent(typeof(Light))]
     public class MagicCandleBehaviour : MonoBehaviour
     {
         const int candleArchive = 210;
@@ -37,6 +38,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+
+            // Observe spell shadow setting
+            GetComponent<Light>().shadows = (DaggerfallUnity.Settings.EnableSpellShadows) ? LightShadows.Soft : LightShadows.None;
         }
 
         private void Update()
