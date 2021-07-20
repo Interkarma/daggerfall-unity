@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -22,8 +22,6 @@ namespace DaggerfallWorkshop.Utility
 {
     /// <summary>
     /// Moves world back to origin so central player terrain is at 0,0,0.
-    /// Currently only works on X-Z plane.
-    /// Need to review floating Y with serialization/deserialization process.
     /// </summary>
     public class FloatingOrigin : MonoBehaviour
     {
@@ -42,6 +40,7 @@ namespace DaggerfallWorkshop.Utility
         PlayerGroundMotor groundMotor = null;
         DFPosition lastMapPixel;
         DFPosition currentMapPixel;
+        float lastOffsetTime;
 
         #endregion
 
@@ -116,6 +115,15 @@ namespace DaggerfallWorkshop.Utility
                 xChange = (currentMapPixel.X - lastMapPixel.X) * (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale);
                 zChange = (currentMapPixel.Y - lastMapPixel.Y) * (MapsFile.WorldMapTerrainDim * MeshReader.GlobalScale);
             }
+
+            // Prevent rapid offset changes by enforcing a short delay before offset can trigger again
+            // This mitigates player rapidly switching offsets at boundary and triggering falling through terrain
+            const float timeDelayInSeconds = 2;
+            float elapsed = Time.realtimeSinceStartup - lastOffsetTime;
+            if (elapsed < timeDelayInSeconds)
+                return;
+            else
+                lastOffsetTime = Time.realtimeSinceStartup;
 
             // Create offset
             Vector3 offset = new Vector3(-xChange, yChange, zChange);
