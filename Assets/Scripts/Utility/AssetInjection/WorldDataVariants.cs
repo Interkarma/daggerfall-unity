@@ -221,7 +221,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static string GetBuildingVariant(int regionIndex, int locationIndex, string blockName, int recordIndex)
         {
             int locationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
-            VariantBuildingKey buildingKey = new VariantBuildingKey(lastLocationKey, blockName, recordIndex);
+            VariantBuildingKey buildingKey = new VariantBuildingKey(locationKey, blockName, recordIndex);
             return buildingVariants.ContainsKey(buildingKey) ? buildingVariants[buildingKey] : null;
         }
 
