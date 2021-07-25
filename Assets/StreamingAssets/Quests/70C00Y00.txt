@@ -86,7 +86,7 @@ _contact_ is the name of a naughty =contact_ in __contact_.
 Message:  1014
 <ce>The Sanguine Rose summons a daedra to fight for you.  A risky proposition
 <ce>                                at best.
-                                     <--->
+<--->
 <ce>The possessor of the Sanguine Rose is supposed to have the power to summon
 <ce>                    aid from the plane of Oblivion.
 
@@ -126,8 +126,9 @@ Message:  1020
 --         _contact_ occurs 5 times.
 
 QBN:
-Item _artifact_ artifact Sanguine_Rose
+Item _artifact_ artifact Sanguine_Rose anyInfo 1014
 
+Person _questgiver_ face 112 named Sanguine anyInfo 1011
 Person _contact_ face 232 faction The_Cabal remote anyInfo 1012
 
 Place _mondung_ remote dungeon4
