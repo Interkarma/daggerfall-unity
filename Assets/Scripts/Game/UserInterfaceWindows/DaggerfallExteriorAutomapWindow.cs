@@ -259,7 +259,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (AMAP00I0.IMG).");
 
             // Load caption line
-            Texture2D nativeTextureCaption = DaggerfallUI.GetTextureFromImg(nativeImgNameCaption, TextureFormat.ARGB32, false);
+            Texture2D nativeTextureCaption = DaggerfallUI.GetTextureFromImg(nativeImgNameCaption, TextureFormat.ARGB32, true);
             nativeTextureCaption.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             if (!nativeTextureCaption)
                 throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (TOWN00I0.IMG).");
@@ -270,8 +270,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             panelCaption = DaggerfallUI.AddPanel(rectPanelCaption, NativePanel);
 
             SetupCaptionColors(nativeTextureCaption);
-
-            nativeTextureCaption.Apply(false, true);
 
             // set caption line in bottom part of exterior automap window background image texture
             panelCaption.BackgroundTexture = nativeTextureCaption;
