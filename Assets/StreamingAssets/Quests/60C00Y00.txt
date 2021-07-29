@@ -145,7 +145,7 @@ Item _artifact_ artifact Wabbajack anyInfo 1013
 Person _qgfriend_ face 1 group Innkeeper remote anyInfo 1011 rumors 1014
 
 Place _mondung_ remote dungeon
-Place _contactdung_ remote dungeon
+Place _contactdung_ remote dungeon3
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 
