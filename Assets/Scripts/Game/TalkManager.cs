@@ -205,7 +205,15 @@ namespace DaggerfallWorkshop.Game
         bool sameTalkTargetAsBefore = false; // used to indicate same dialog partner / talk target as in conversation before
         bool alreadyRejectedOnce = false; // used to display a random rejection text first time when talking to an npc that dislikes pc, trying to talk a 2nd time (for same npc) pc gets msg "you get no response"
 
-        bool consoleCommandFlag_npcsKnowEverything = false; // used for console commands "npc_knowsEverything" and "npc_knowsUsual"
+        [Flags]
+        private enum NPCBehaviors : byte
+        {
+            Default = 0,
+            KnowEverything = 1,
+            AlwaysFriendly = 2
+        }
+
+        NPCBehaviors consoleCommand_NPCBehaviorOverride = NPCBehaviors.Default; // used for console commands "npc_knowsEverything" and "npc_knowsUsual"
 
         public enum KeySubjectType
         {
@@ -466,10 +474,14 @@ namespace DaggerfallWorkshop.Game
             get { return listTopicThing; }
         }
 
-        public bool ConsoleCommandFlag_npcsKnowEverything
+        public bool NPCsKnowEverything()
         {
-            get { return consoleCommandFlag_npcsKnowEverything; }
-            set { consoleCommandFlag_npcsKnowEverything = value; }
+            return (consoleCommand_NPCBehaviorOverride & NPCBehaviors.KnowEverything) != 0;
+        }
+
+        public bool NPCsAlwaysFriendly()
+        {
+            return (consoleCommand_NPCBehaviorOverride & NPCBehaviors.AlwaysFriendly) != 0;
         }
 
         public string NPCGreetingText
@@ -558,7 +570,7 @@ namespace DaggerfallWorkshop.Game
             if (!CheckNPCcanKnowAboutTellMeAboutTopic(listItem))
                 return NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
 
-            if (CheckNPCisInSameBuildingAsTopic(listItem) || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
+            if (CheckNPCisInSameBuildingAsTopic(listItem) || npcData.isSpyMaster || NPCsKnowEverything())
                 return NPCKnowledgeAboutItem.KnowsAboutItem;
 
             // Fixed from classic: an NPC belonging to an organization obviously knows about it
@@ -594,6 +606,11 @@ namespace DaggerfallWorkshop.Game
 
         int GetReactionToPlayer_0_1_2(QuestionType qt, FactionFile.SocialGroups npcSocialGroup)
         {
+            if (NPCsAlwaysFriendly())
+            {
+                return 2;
+            }
+
             int socialGroup = (int)npcSocialGroup;
             if (socialGroup >= 5)
                 socialGroup = 1; // Merchants
@@ -1349,7 +1366,7 @@ namespace DaggerfallWorkshop.Game
         public string GetNewsOrRumors()
         {
             const int outOfNewsRecordIndex = 1457;
-            if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
+            if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors || npcData.isSpyMaster || NPCsKnowEverything())
             {
                 string news = TextManager.Instance.GetLocalizedText("resolvingError");
                 List<RumorMillEntry> validRumors = GetValidRumors();
@@ -1741,7 +1758,7 @@ namespace DaggerfallWorkshop.Game
             if (dictQuestInfo.ContainsKey(listItem.questID) && dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.key))
             {
                 List<TextFile.Token[]> answers;
-                if (npcData.isSpyMaster) // Spymaster only gives "true" answers (anyinfo messages) also for %hnt2 (note: intended that consoleCommandFlag_npcsKnowEverything does not apply here)
+                if (npcData.isSpyMaster) // Spymaster only gives "true" answers (anyinfo messages) also for %hnt2 (note: intended that NPCsKnowEverything() does not apply here)
                     answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
                 else // Everybody else gives rumors here for %hnt2
                     answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].rumorsAnswers;
@@ -1802,7 +1819,7 @@ namespace DaggerfallWorkshop.Game
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
                 listItem.npcKnowledgeAboutItem = GetNPCKnowledgeAboutItem(listItem);
 
-            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem && !NPCsKnowEverything())
             {
                 // Messages if NPC doesn't know answer to give directions
                 return ExpandRandomTextRecord(answersToDirections[3 * (int)npcData.socialGroup + reactionToPlayer_0_1_2]);
@@ -2008,7 +2025,7 @@ namespace DaggerfallWorkshop.Game
 
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem ||
                 (npcData.numAnswersGivenTellMeAboutOrRumors >= maxNumAnswersNpcGivesTellMeAboutOrRumors &&
-                !CheckNPCisInSameBuildingAsTopic(listItem) && !npcData.isSpyMaster && !consoleCommandFlag_npcsKnowEverything))
+                !CheckNPCisInSameBuildingAsTopic(listItem) && !npcData.isSpyMaster && !NPCsKnowEverything()))
             {
                 // Messages if NPC doesn't know answer to non-directions question
                 return ExpandRandomTextRecord(answersToNonDirections[3 * (int)npcData.socialGroup + reactionToPlayer_0_1_2]);
@@ -3579,6 +3596,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     ConsoleCommandsDatabase.RegisterCommand(TalkNpcsKnowEverything.name, TalkNpcsKnowEverything.description, TalkNpcsKnowEverything.usage, TalkNpcsKnowEverything.Execute);
                     ConsoleCommandsDatabase.RegisterCommand(TalkNpcsKnowUsual.name, TalkNpcsKnowUsual.description, TalkNpcsKnowUsual.usage, TalkNpcsKnowUsual.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(TalkNpcBehaviorOverride.name, TalkNpcBehaviorOverride.description, TalkNpcBehaviorOverride.usage, TalkNpcBehaviorOverride.Execute);
                 }
                 catch (System.Exception ex)
                 {
@@ -3595,7 +3613,7 @@ namespace DaggerfallWorkshop.Game
 
                 public static string Execute(params string[] args)
                 {
-                    GameManager.Instance.TalkManager.ConsoleCommandFlag_npcsKnowEverything = true;
+                    GameManager.Instance.TalkManager.consoleCommand_NPCBehaviorOverride |= NPCBehaviors.KnowEverything;
                     return "NPCS know everything now";
                 }
             }
@@ -3609,8 +3627,29 @@ namespace DaggerfallWorkshop.Game
 
                 public static string Execute(params string[] args)
                 {
-                    GameManager.Instance.TalkManager.ConsoleCommandFlag_npcsKnowEverything = false;
+                    GameManager.Instance.TalkManager.consoleCommand_NPCBehaviorOverride &= ~(NPCBehaviors.KnowEverything);
                     return "NPCS know the usual stuff now";
+                }
+            }
+
+            private static class TalkNpcBehaviorOverride
+            {
+                public static readonly string name = "talk_npcBehavior";
+                public static readonly string description = "Overrides NPC behavior: 0 = default, 1 = know everything, 2 = always friendly, 3 = know everything AND always friendly";
+                public static readonly string usage = "talk_npcBehavior [mode]";
+
+                public static string Execute(params string[] args)
+                {
+                    if (args != null && args.Length == 1)
+                    {
+                        byte newMode = 0;
+                        if (byte.TryParse(args[0], out newMode))
+                        {
+                            GameManager.Instance.TalkManager.consoleCommand_NPCBehaviorOverride = (NPCBehaviors)newMode;
+                        }
+                    }
+
+                    return String.Format("NPC behaviors: " + GameManager.Instance.TalkManager.consoleCommand_NPCBehaviorOverride.ToString());
                 }
             }
         }
