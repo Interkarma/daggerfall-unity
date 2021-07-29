@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             SaveData_v1 data = (SaveData_v1)dataIn;
             personSymbol = data.personSymbol;
             foeSymbol = data.foeSymbol;
-            data.sayingID = sayingID;
+            sayingID = data.sayingID;
         }
 
         #endregion
