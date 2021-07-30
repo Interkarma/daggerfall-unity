@@ -1202,7 +1202,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     Place place = (Place)resource;
                     if (place.siteDetails.siteType == SiteTypes.Building &&
-                        place.siteDetails.mapId == location.Exterior.ExteriorData.MapId &&
+                        place.siteDetails.mapId == location.MapTableData.MapId &&
                         place.siteDetails.buildingKey == buildingSummary.buildingKey)
                         return true;
                 }
@@ -1214,7 +1214,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 foreach (SiteDetails site in activeQuestSites)
                 {
                     if (site.siteType == SiteTypes.Building &&
-                        site.mapId == location.Exterior.ExteriorData.MapId &&
+                        site.mapId == location.MapTableData.MapId &&
                         site.buildingKey == buildingSummary.buildingKey)
                         return true;
                 }
