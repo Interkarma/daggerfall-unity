@@ -298,19 +298,14 @@ namespace DaggerfallWorkshop.Game
                 this.anyInfoAnswers = null;
                 this.rumorsAnswers = null;
                 this.resourceType = QuestInfoResourceType.NotSet;
-                this.availableForDialog = true;
                 this.hasEntryInTellMeAbout = false;
                 this.questPlaceResourceHintTypeReceived = BuildingLocationHintTypeGiven.None;
-                this.dialogLinkedLocations = new List<string>();
-                this.dialogLinkedPersons = new List<string>();
-                this.dialogLinkedThings = new List<string>();
                 this.questResource = null;
             }
 
             public QuestInfoResourceType resourceType;
             public List<TextFile.Token[]> anyInfoAnswers;
             public List<TextFile.Token[]> rumorsAnswers;
-            public bool availableForDialog; // if it will show up in talk window (any dialog link for this resource will set this false, if no dialog link is present it will be set to true)
             public bool hasEntryInTellMeAbout; // if resource will get entry in section "Tell Me About" (anyInfo or rumors available)
             public bool hasEntryInWhereIs; // if resource will get entry in section "Where Is" (e.g. person resources)
             public BuildingLocationHintTypeGiven questPlaceResourceHintTypeReceived; // used if resource is place resource - indicates if an npc gave directional hints or already marked the resource on the map
@@ -1247,12 +1242,32 @@ namespace DaggerfallWorkshop.Game
             if (buildingInfo.buildingKey != 0)
             {
                 if (dictQuestInfo.ContainsKey(currentQuestionListItem.questID) && dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(currentQuestionListItem.key))
-                    dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap;
-                GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
-
-                // above line could also be done with these statements:
-                // Place place = (Place)dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key].questResource;
-                // GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey, place.SiteDetails.buildingName);
+                {
+                    QuestResourceInfo questResourceInfo = dictQuestInfo[currentQuestionListItem.questID].resourceInfo[currentQuestionListItem.key];
+                    if (questResourceInfo.resourceType == QuestInfoResourceType.Location)
+                    {
+                        // Question is about the building
+                        questResourceInfo.questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap;
+                    }
+                    else
+                    {
+                        // Question is about a person
+                        Person person = (Person)questResourceInfo.questResource;
+                        Symbol placeSymbol = person.GetAssignedPlaceSymbol();
+                        if (dictQuestInfo[currentQuestionListItem.questID].resourceInfo.ContainsKey(placeSymbol.Name))
+                        {
+                            questResourceInfo = dictQuestInfo[currentQuestionListItem.questID].resourceInfo[placeSymbol.Name];
+                            questResourceInfo.questPlaceResourceHintTypeReceived = QuestResourceInfo.BuildingLocationHintTypeGiven.LocationWasMarkedOnMap;
+                            // Add the building to dialog list if needed
+                            if (questResourceInfo.questResource.IsAvailableForDialog == false)
+                            {
+                                questResourceInfo.questResource.IsAvailableForDialog = true;
+                                AddDialogForQuestInfoResource(currentQuestionListItem.questID, questResourceInfo.questResource, QuestInfoResourceType.Location, false);
+                            }
+                        }
+                    }
+                    GameManager.Instance.PlayerGPS.DiscoverBuilding(buildingInfo.buildingKey);
+                }
             }
         }
 
@@ -2086,11 +2101,6 @@ namespace DaggerfallWorkshop.Game
             questResourceInfo.rumorsAnswers = rumorsAnswers;
             questResourceInfo.resourceType = resourceType;
 
-            // questResourceInfo.availableForDialog = true; // already set by QuestResourceInfo constructor
-
-            //if (resourceType == QuestInfoResourceType.Person && person.IsQuestor) // questors are always available for dialog
-            //    questResourceInfo.availableForDialog = true;
-
             if (questResourceInfo.anyInfoAnswers != null || questResourceInfo.rumorsAnswers != null)
                 questResourceInfo.hasEntryInTellMeAbout = true;
 
@@ -2116,7 +2126,7 @@ namespace DaggerfallWorkshop.Game
             rebuildTopicLists = true;
         }
 
-        public void DialogLinkForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, string linkedResourceName = null, QuestInfoResourceType linkedResourceType = QuestInfoResourceType.NotSet)
+        public void DialogLinkForQuestInfoResource(ulong questID, QuestResource questResource, QuestInfoResourceType resourceType)
         {
             QuestResources questResources;
             if (dictQuestInfo.ContainsKey(questID))
@@ -2129,56 +2139,25 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            QuestResourceInfo questResource;
-            if (questResources.resourceInfo.ContainsKey(resourceName))
+            QuestResourceInfo questResourceInfo;
+            if (questResources.resourceInfo.ContainsKey(questResource.Symbol.Name))
             {
-                questResource = questResources.resourceInfo[resourceName];
+                questResourceInfo = questResources.resourceInfo[questResource.Symbol.Name];
             }
             else
             {
-                Debug.Log(string.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
+                Debug.Log(string.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", questResource.Symbol.Name));
                 return;
-            }
-
-            switch (linkedResourceType)
-            {
-                case QuestInfoResourceType.NotSet:
-                    // No linked resource specified - don't create entries in linked resource lists but proceed (leave switch statement) so flag "availableForDialog" is set to false for resource
-                    break;
-                case QuestInfoResourceType.Location:
-                    if (!questResource.dialogLinkedLocations.Contains(linkedResourceName))
-                        questResource.dialogLinkedLocations.Add(linkedResourceName);
-                    break;
-                case QuestInfoResourceType.Person:
-                    if (!questResource.dialogLinkedPersons.Contains(linkedResourceName))
-                        questResource.dialogLinkedPersons.Add(linkedResourceName);
-                    break;
-                case QuestInfoResourceType.Thing:
-                    if (!questResource.dialogLinkedThings.Contains(linkedResourceName))
-                        questResource.dialogLinkedThings.Add(linkedResourceName);
-                    break;
-                default:
-                    Debug.Log("AddDialogLinkForQuestInfoResource(): unknown linked quest resource type");
-                    return;
             }
 
             // "Hide" quest resource dialog entry
-            questResource.availableForDialog = false;
-
-            if (linkedResourceName != null)
-            {
-                // "Hide" linked quest resource dialog entry as well
-                if (questResources.resourceInfo.ContainsKey(linkedResourceName))
-                    questResources.resourceInfo[linkedResourceName].availableForDialog = false;
-                else
-                    Debug.Log("AddDialogLinkForQuestInfoResource(): linked quest resource not found");
-            }
+            questResource.IsAvailableForDialog = false;
 
             // Update topic list
-            AssembleTopiclistTellMeAbout();
+            AssembleTopicLists();
         }
 
-        public void AddDialogForQuestInfoResource(ulong questID, string resourceName, QuestInfoResourceType resourceType, bool instantRebuildTopicLists = true)
+        public void AddDialogForQuestInfoResource(ulong questID, QuestResource questResource, QuestInfoResourceType resourceType, bool instantRebuildTopicLists = true)
         {
             QuestResources questResources;
             if (dictQuestInfo.ContainsKey(questID))
@@ -2191,35 +2170,35 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            if (resourceName != null)
+            if (questResource.Symbol.Name != null)
             {
                 QuestResourceInfo questResourceInfo;
-                if (questResources.resourceInfo.ContainsKey(resourceName))
+                if (questResources.resourceInfo.ContainsKey(questResource.Symbol.Name))
                 {
-                    questResourceInfo = questResources.resourceInfo[resourceName];
+                    questResourceInfo = questResources.resourceInfo[questResource.Symbol.Name];
                 }
                 else
                 {
-                    Debug.Log(string.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", resourceName));
+                    Debug.Log(string.Format("AddDialogLinkForQuestInfoResource() could not find a quest info resource with name {0}", questResource.Symbol.Name));
                     return;
                 }
 
-                questResourceInfo.availableForDialog = true;
+                questResource.IsAvailableForDialog = true;
 
                 if (questResourceInfo.hasEntryInTellMeAbout)
                 {
                     instantRebuildTopicListTellMeAbout = true;
                 }
 
-                if (questResourceInfo.resourceType == QuestInfoResourceType.Location)
+                if (resourceType == QuestInfoResourceType.Location)
                 {
                     instantRebuildTopicListLocation = true;
                 }
-                else if (questResourceInfo.resourceType == QuestInfoResourceType.Person)
+                else if (resourceType == QuestInfoResourceType.Person)
                 {
                     instantRebuildTopicListPerson = true;
                 }
-                else if (questResourceInfo.resourceType == QuestInfoResourceType.Thing)
+                else if (resourceType == QuestInfoResourceType.Thing)
                 {
                     instantRebuildTopicListThing = true;
                 }
@@ -2359,8 +2338,7 @@ namespace DaggerfallWorkshop.Game
 
                         if (questInfo.resourceInfo.ContainsKey(key))
                         {
-                            if (questInfo.resourceInfo[key].availableForDialog)
-                                pcLearnedAboutExistence = true;
+                            pcLearnedAboutExistence = place.IsAvailableForDialog;
 
                             if (questInfo.resourceInfo[key].questPlaceResourceHintTypeReceived >= QuestResourceInfo.BuildingLocationHintTypeGiven.ReceivedDirectionalHints)
                                 receivedDirectionalHints = true;
@@ -2373,7 +2351,7 @@ namespace DaggerfallWorkshop.Game
                             return true;
                         }
                     }
-                }
+               }
             }
 
             return false;
@@ -3117,7 +3095,7 @@ namespace DaggerfallWorkshop.Game
                     itemQuestTopic.caption = captionString;
                     itemQuestTopic.key = questResourceInfo.Key;
 
-                    if (questResourceInfo.Value.availableForDialog &&
+                    if (questResourceInfo.Value.questResource.IsAvailableForDialog &&
                         questResourceInfo.Value.hasEntryInTellMeAbout && // Only make it available for talk if it is not "hidden" by dialog link command
                         !dialogPartnerIsSamePersonAsPersonResource)
                         listTopicTellMeAbout.Add(itemQuestTopic);
@@ -3217,7 +3195,7 @@ namespace DaggerfallWorkshop.Game
 
                             item.key = questResourceInfo.Key;
 
-                            if (questResourceInfo.Value.availableForDialog && questResourceInfo.Value.hasEntryInWhereIs)
+                            if (place.IsAvailableForDialog && questResourceInfo.Value.hasEntryInWhereIs)
                             {
                                 if (!alreadyCreatedGeneralSubSection)
                                 {
@@ -3420,7 +3398,7 @@ namespace DaggerfallWorkshop.Game
 
                         // only make it available for talk if...
                         if (!dialogPartnerIsSamePersonAsPersonResource &&   // Dialog partner is not the same person as the person resource talked about
-                            questResourceInfo.Value.availableForDialog &&   // It is not "hidden" by dialog link command
+                            person.IsAvailableForDialog &&   				// It is not "hidden" by dialog link command
                             questResourceInfo.Value.hasEntryInWhereIs &&    // It is meant to have an entry in the where is section (currently this is always true, TODO: check if we can get rid of this)
                             IsPlayerInSameLocationWorldCell)                // If person resource is in same world map location as player
                         {

@@ -49,7 +49,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             Message message = ParentQuest.GetMessage(id);
 
-            GameManager.Instance.PlayerEntity.Notebook.AddNote(new List<TextFile.Token>(message.GetTextTokens()));
+            GameManager.Instance.PlayerEntity.Notebook.AddNote(new List<TextFile.Token>(message.GetTextTokens(-1, false)));
 
             SetComplete();
         }

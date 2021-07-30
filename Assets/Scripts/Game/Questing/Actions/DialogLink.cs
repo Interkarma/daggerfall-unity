@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -67,47 +67,18 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get related Item resource
             Item item = ParentQuest.GetItem(itemSymbol);
 
-            string namePlace = "", namePerson = "", nameItem = "";
-
             // first create dialog link for just the separated resources (which will hide them)
             if (place != null)
             {
-                /*
-                namePlace = place.SiteDetails.buildingName; // use building name as default
-                if (namePlace == null) // no building?
-                    namePlace = place.SiteDetails.locationName; // use dungeon name
-                */
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, place.Symbol.Name, TalkManager.QuestInfoResourceType.Location);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, place, TalkManager.QuestInfoResourceType.Location);
             }
             if (person != null)
             {
-                namePerson = person.DisplayName;
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, person.Symbol.Name, TalkManager.QuestInfoResourceType.Person);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, person, TalkManager.QuestInfoResourceType.Person);
             }
             if (item != null)
             {
-                nameItem = item.DaggerfallUnityItem.ItemName;
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, item.Symbol.Name, TalkManager.QuestInfoResourceType.Thing);
-            }
-
-            // then create dialog links between the resources
-            if ((place != null) && (person != null))
-            {
-                // register both links (location -> person as well as person -> location)
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location, namePerson, TalkManager.QuestInfoResourceType.Person);
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePerson, TalkManager.QuestInfoResourceType.Person, namePlace, TalkManager.QuestInfoResourceType.Location);
-            }
-            if ((place != null) && (item != null))
-            {
-                // register both links (location -> item as well as item -> location)
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePlace, TalkManager.QuestInfoResourceType.Location, nameItem, TalkManager.QuestInfoResourceType.Thing);
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, nameItem, TalkManager.QuestInfoResourceType.Thing, namePlace, TalkManager.QuestInfoResourceType.Location);
-            }
-            if ((person != null) && (item != null))
-            {
-                // register both links (person -> item as well as item -> person)
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, namePerson, TalkManager.QuestInfoResourceType.Person, nameItem, TalkManager.QuestInfoResourceType.Thing);
-                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, nameItem, TalkManager.QuestInfoResourceType.Thing, namePerson, TalkManager.QuestInfoResourceType.Person);
+                GameManager.Instance.TalkManager.DialogLinkForQuestInfoResource(ParentQuest.UID, item, TalkManager.QuestInfoResourceType.Thing);
             }
 
             SetComplete();
