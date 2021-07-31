@@ -290,9 +290,12 @@ namespace DaggerfallWorkshop.Game.Questing
             // Store this person in quest as last Person encountered
             // This will be used for subsequent pronoun macros, etc.
             ParentQuest.LastResourceReferenced = this;
-            Place homePlace = GetHomePlace();
-            if (homePlace != null)
-                ParentQuest.LastPlaceReferenced = homePlace;
+
+            Place dialogPlace = GetDialogPlace();
+            if (dialogPlace != null)
+            {
+                ParentQuest.LastPlaceReferenced = dialogPlace;
+            }
 
             textOut = string.Empty;
             bool result = true;
@@ -302,16 +305,16 @@ namespace DaggerfallWorkshop.Game.Questing
                     textOut = displayName;
                     break;
 
-                case MacroTypes.NameMacro2:             // Home building name
-                    textOut = GetHomeBuildingName();
+                case MacroTypes.NameMacro2:             // building name
+                    textOut = (dialogPlace != null ? dialogPlace.SiteDetails.buildingName : BLANK);
                     break;
 
-                case MacroTypes.NameMacro3:             // Home town name
-                    textOut = GetHomePlaceLocationName();
+                case MacroTypes.NameMacro3:             // town name
+                    textOut = (dialogPlace != null ? dialogPlace.SiteDetails.locationName : BLANK);
                     break;
 
-                case MacroTypes.NameMacro4:             // Home region name
-                    textOut = GetHomePlaceRegionName();
+                case MacroTypes.NameMacro4:             // region name
+                    textOut = (dialogPlace != null ? dialogPlace.SiteDetails.regionName : BLANK);
                     break;
 
                 case MacroTypes.DetailsMacro:           // Details macro
@@ -419,6 +422,20 @@ namespace DaggerfallWorkshop.Game.Questing
             assignedToHome = true;
 
             return true;
+        }
+
+        /// <summary>
+        /// Gets best Place resource for use in dialog.
+        /// </summary>
+        /// <returns>Assigned Place resource or Home Place resource if not assigned.</returns>
+        public Place GetDialogPlace()
+        {
+            if (lastAssignedPlaceSymbol != null)
+            {
+                return ParentQuest.GetPlace(lastAssignedPlaceSymbol);
+            }
+
+            return GetHomePlace();
         }
 
         /// <summary>
