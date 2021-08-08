@@ -627,9 +627,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
 
-            // For other NPCs use the given scope if any, else generate it at random
-            if (string.IsNullOrEmpty(scopeString))
+            // For other NPCs use the given scope if any, else generate it at random - but never use local if no buildings in current location
+            if (string.IsNullOrEmpty(scopeString) && (GameManager.Instance.PlayerGPS.HasCurrentLocation && GameManager.Instance.PlayerGPS.CurrentLocation.Exterior.BuildingCount > 0))
                 scopeString = UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f ? "local" : "remote";
+            else
+                scopeString = "remote";
 
             // Adjust building type based on faction hints
             string buildingTypeString = houseString;
