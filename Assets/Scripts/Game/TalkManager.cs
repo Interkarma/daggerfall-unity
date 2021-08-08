@@ -2956,7 +2956,8 @@ namespace DaggerfallWorkshop.Game
             {
                 QuestResource questResource = quest.GetResource(item.key);
                 Person person = (Person)questResource;
-                if (person.HomeRegionName != GameManager.Instance.PlayerGPS.CurrentRegionName)
+                if (person.HomeRegionIndex != -1 &&
+                    person.HomeRegionName != GameManager.Instance.PlayerGPS.CurrentRegionName)
                     return false;
             }
 
@@ -2999,6 +3000,10 @@ namespace DaggerfallWorkshop.Game
             {
                 place = person.GetHomePlace(); // get home place if no assigned place was found
             }
+
+            // Some individuals such as The Underking have no assigned place
+            if (place == null)
+                return false;
 
             if (place.SiteDetails.regionName != GameManager.Instance.PlayerGPS.CurrentRegionName)
                 return false;

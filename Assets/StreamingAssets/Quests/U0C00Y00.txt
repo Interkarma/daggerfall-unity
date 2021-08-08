@@ -76,17 +76,17 @@ It's a tragedy for all of %reg. What monster would've killed =monster_?
 Message:  1011
 _qgfriend_ is the name of that tough-talking =qgfriend_ over at __qgfriend_.
 <--->
-that's the name of that bully at __qgfriend_, off over to the %di.
+That's the name of that bully at __qgfriend_, off over to the %di.
 
 Message:  1012
 _qgfriend_ is one of the Daedra Prince Boethiah's agents in Tamriel.
 <--->
 _qgfriend_ is a mean-spirited bully who works for the Daedra Prince Boethiah.
 
--Message:  1013
--Boethiah is the Daedra Prince of Cruelty and Torture. Not a nice lady.
--<--->
--She's a Prince of Oblivion, one of the Daedric Regents, and a real killer.
+Message:  1013
+Boethiah is the Daedra Prince of Cruelty and Torture. Not a nice lady.
+<--->
+She's a Prince of Oblivion, one of the Daedric Regents, and a real killer.
 
 Message:  1014
 _artifact_ protects it's wearer from many kinds of harm. Fire and life draining are the two commonly known.
@@ -172,7 +172,7 @@ QBN:
 Item _artifact_ artifact Ebony_Mail anyInfo 1014
 Item _letter_ letter used 1040
 
--Person _questgiver_ face 112 group Questor anyInfo 1013
+Person _questgiver_ face 112 named Boethiah anyInfo 1013
 Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
 Person _mfriend_ group Local_4.0 remote
 

@@ -142,7 +142,7 @@ QBN:
 Item _artifact_ artifact Oghma_Infinium anyInfo 1013
 Item _magic_ magic_item
 
-Person _questgiver_ face 112 group Questor anyInfo 1012
+Person _questgiver_ face 112 named Hermaeus_Mora anyInfo 1012
 Person _contact_ group Librarian remote anyInfo 1011
 Person _enemy_ face 1 factiontype Province remote
 
