@@ -225,9 +225,21 @@ namespace DaggerfallWorkshop
         #region Material Creation
 
         /// <summary>
+        /// Creates a new transparent cutout billboard material for mobiles, misc. objects, etc.
+        /// </summary>
+        /// <returns>Material using Daggerfall/Billboard shader.</returns>
+        public static Material CreateBillboardMaterial()
+        {
+            Shader shader = Shader.Find(_DaggerfallBillboardShaderName);
+            Material material = new Material(shader);
+
+            return material;
+        }
+
+        /// <summary>
         /// Creates new Standard material with default properties suitable for most Daggerfall textures.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Material using Standard shader.</returns>
         public static Material CreateStandardMaterial(
             CustomBlendMode blendMode = CustomBlendMode.Opaque,
             CustomSmoothnessMapChannel smoothnessChannel = CustomSmoothnessMapChannel.AlbedoAlpha,
@@ -395,7 +407,7 @@ namespace DaggerfallWorkshop
 
                 // Create material
                 if (isBillboard)
-                    material = CreateStandardMaterial(CustomBlendMode.Cutout);
+                    material = CreateBillboardMaterial();
                 else
                     material = CreateStandardMaterial();
 
@@ -520,7 +532,7 @@ namespace DaggerfallWorkshop
             // Create material
             Material material;
             if (isBillboard)
-                material = CreateStandardMaterial(CustomBlendMode.Cutout);
+                material = CreateBillboardMaterial();
             else
                 material = CreateStandardMaterial();
 
