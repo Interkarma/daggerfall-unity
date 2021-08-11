@@ -128,6 +128,7 @@ namespace DaggerfallWorkshop
 
         // Shader names
         public const string _StandardShaderName = "Standard";
+        public const string _DaggerfallDefaultShaderName = "Daggerfall/Default";
         public const string _DaggerfallTilemapShaderName = "Daggerfall/Tilemap";
         public const string _DaggerfallTilemapTextureArrayShaderName = "Daggerfall/TilemapTextureArray";
         public const string _DaggerfallBillboardShaderName = "Daggerfall/Billboard";
@@ -223,6 +224,18 @@ namespace DaggerfallWorkshop
         #endregion
 
         #region Material Creation
+
+        /// <summary>
+        /// Creates a new default material for world geometry.
+        /// </summary>
+        /// <returns>Material using Daggerfall/Default shader.</returns>
+        public static Material CreateDefaultMaterial()
+        {
+            Shader shader = Shader.Find(_DaggerfallDefaultShaderName);
+            Material material = new Material(shader);
+
+            return material;
+        }
 
         /// <summary>
         /// Creates a new transparent cutout billboard material for mobiles, misc. objects, etc.
@@ -409,7 +422,7 @@ namespace DaggerfallWorkshop
                 if (isBillboard)
                     material = CreateBillboardMaterial();
                 else
-                    material = CreateStandardMaterial();
+                    material = CreateDefaultMaterial();
 
                 // Setup material
                 material.name = FormatName(archive, record);
@@ -534,7 +547,7 @@ namespace DaggerfallWorkshop
             if (isBillboard)
                 material = CreateBillboardMaterial();
             else
-                material = CreateStandardMaterial();
+                material = CreateDefaultMaterial();
 
             // Create settings
             GetTextureSettings settings = TextureReader.CreateTextureSettings(archive, 0, 0, alphaIndex, border, dilate);
