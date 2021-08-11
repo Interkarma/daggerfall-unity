@@ -643,9 +643,10 @@ namespace Wenzil.Console
         private static class SetWalkSpeed
         {
             public static readonly string name = "set_walkspeed";
+            public static readonly string uid = "speedmod_uid";
             public static readonly string error = "Failed to set walk speed - invalid setting or PlayerMotor object not found";
-            public static readonly string description = "Set walk speed by multiplying current walk speed by inserted percentage. Set to -1 to disable or enable speed overrides. Set to -2 to clear out all speed modifiers";
-            public static readonly string usage = "set_walkspeed [#]";
+            public static readonly string description = "Set or update walk speed by multiplying current walk speed by inserted percentage. To update existing modifier, put in its UID after the updated speed value. Set to -1 to disable or enable speed overrides. Set to -2 to clear out all speed modifiers";
+            public static readonly string usage = "set_walkspeed [#] [uid]";
 
             public static string Execute(params string[] args)
             {
@@ -691,20 +692,36 @@ namespace Wenzil.Console
                     speedChanger.ResetSpeed(true, false);
                     return string.Format("Walk speed modifiers cleared. Walk speed is " + speedChanger.RefreshWalkSpeed().ToString()); 
                 }
+                else if (args.Count() == 2)
+                {
+                    string uidUpdate;
+                    uidUpdate = args[1].ToString();
+
+                    if (uidUpdate != "")
+                    {
+                        if (speedChanger.WalkSpeedModifierList.ContainsKey(uidUpdate))
+                        {
+                            speedChanger.ModifySpeedMod(uidUpdate, speed, false);
+                            return string.Format("Walk speed modifier updated (UID: " + uidUpdate + "). Walk speed is " + speedChanger.RefreshWalkSpeed().ToString());
+                        }
+                        return string.Format("Walk speed modifier list does not contain modifer" + uidUpdate + ". Ensure you have an existing UID speed modifier value.");
+                    }
+                    return string.Format("Insert existing modifier UID value to update your walk speed modifier");
+                }
                 else
                 {
                     speedChanger.AddWalkSpeedMod(out UID, speed);
                     return string.Format("Walk speed Modifier added (UID: " + UID + "). Walk speed is " + speedChanger.RefreshWalkSpeed().ToString());
                 }
-
             }
         }
 
         private static class SetRunSpeed
         {
             public static readonly string name = "set_runspeed";
+            public static readonly string uid = "speedmod_uid";
             public static readonly string error = "Failed to set run speed - invalid setting or PlayerMotor object not found.";
-            public static readonly string description = "Set run speed by multiplying current run speed by inserted percentage. Set to -1 to disable or enable speed overrides. Set to -2 to clear out all speed modifiers";
+            public static readonly string description = "Set run speed by multiplying current run speed by inserted percentage. To update existing modifier, put in its UID after the updated speed value. Set to -1 to disable or enable speed overrides. Set to -2 to clear out all speed modifiers";
             public static readonly string usage = "set_runspeed [#]";
 
             public static string Execute(params string[] args)
@@ -751,6 +768,22 @@ namespace Wenzil.Console
                 {
                     speedChanger.ResetSpeed(false, true);
                     return string.Format("Run speed modifiers cleared. Run speed is " + speedChanger.RefreshRunSpeed().ToString());
+                }
+                else if (args.Count() == 2)
+                {
+                    string uidUpdate;
+                    uidUpdate = args[1].ToString();
+
+                    if (uidUpdate != "")
+                    {
+                        if (speedChanger.RunSpeedModifierList.ContainsKey(uidUpdate))
+                        {
+                            speedChanger.ModifySpeedMod(uidUpdate, speed, true);
+                            return string.Format("Walk speed modifier updated (UID: " + uidUpdate + "). Walk speed is " + speedChanger.RefreshRunSpeed().ToString());
+                        }
+                        return string.Format("Walk speed modifier list does not contain modifer" + uidUpdate + ". Ensure you have an existing UID speed modifier value.");
+                    }
+                    return string.Format("Insert existing modifier UID value to update your walk speed modifier");
                 }
                 else
                 {

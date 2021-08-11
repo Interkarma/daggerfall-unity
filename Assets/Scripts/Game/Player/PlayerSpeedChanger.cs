@@ -35,10 +35,12 @@ namespace DaggerfallWorkshop.Game
 
         public bool walkSpeedOverride = true;
         private float currentWalkSpeed = 0;
+        public Dictionary<string, float> WalkSpeedModifierList { get { return walkSpeedModifierList; } private set { ; }  }
         private Dictionary<string, float> walkSpeedModifierList = new Dictionary<string, float>();
 
         public bool runSpeedOverride = true;
         private float currentRunSpeed = 0;
+        public Dictionary<string, float> RunSpeedModifierList { get { return runSpeedModifierList; } private set {; } }
         private Dictionary<string, float> runSpeedModifierList = new Dictionary<string, float>();
 
         public delegate bool CanPlayerRun();
@@ -214,6 +216,36 @@ namespace DaggerfallWorkshop.Game
             updateRunSpeed = refreshRunSpeed;
 
             return added;
+        }
+
+        public bool ModifySpeedMod(string UUID, float updatedSpeed, bool modifyRunSpeed = false, bool refreshSpeed = true)
+        {
+            //setup false bool for manipulation.
+            bool modified = false;
+
+            //if there is no uuid put in, return false as error catching.
+            if (UUID == "" || UUID == null)
+                return modified;
+
+            //if there is a modifier put in, see if dictionary contains it in the unique keys, and then modify it and return true.
+            if (!modifyRunSpeed && walkSpeedModifierList.ContainsKey(UUID))
+            {
+                walkSpeedModifierList[UUID] = updatedSpeed;
+                modified = true;
+            }
+
+            //if there is a modifier put in, see if dictionary contains it in the unique keys, and then modify it and return true.
+            if (modifyRunSpeed && runSpeedModifierList.ContainsKey(UUID))
+            {
+                runSpeedModifierList[UUID] = updatedSpeed;
+                modified = true;
+            }
+
+            //trigger an update to the walk speed loop to push updated walk speed value.
+            updateWalkSpeed = refreshSpeed;
+            updateRunSpeed = refreshSpeed;
+
+            return modified;
         }
 
         /// <summary>
