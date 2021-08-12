@@ -5,7 +5,7 @@
 // Contact:         Gavin Clayton (interkarma@dfworkshop.net)
 // Project Page:    https://github.com/Interkarma/daggerfall-unity
 
-// Shader used by unmodded game or simple material mods not wanting to use Standard shader or PBR workflow
+// Shader used by unmodded game or mods not wanting to use Standard shader or PBR workflow
 // Mods requiring a full PBR workflow or more features should use Standard or a custom shader
 Shader "Daggerfall/Default" {
     Properties {
