@@ -1940,16 +1940,16 @@ MonoBehaviour:
   SnowShadowStrength: 0.25
   WinterShadowStrength: 0.8
   SunnyFogSettings:
-    fogMode: 1
-    density: 0
+    fogMode: 2
+    density: 0.0005
     startDistance: 0
-    endDistance: 2400
+    endDistance: 0
     excludeSkybox: 1
   OvercastFogSettings:
-    fogMode: 1
-    density: 0
+    fogMode: 2
+    density: 0.0008
     startDistance: 0
-    endDistance: 2400
+    endDistance: 0
     excludeSkybox: 1
   RainyFogSettings:
     fogMode: 2
