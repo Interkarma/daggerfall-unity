@@ -1807,7 +1807,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
       propertyPath: LightCurve.m_Curve.Array.data[2].value
-      value: 0.92
+      value: 0.96
       objectReference: {fileID: 0}
     - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
       propertyPath: LightCurve.m_Curve.Array.data[3].value
@@ -1815,7 +1815,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
       propertyPath: LightCurve.m_Curve.Array.data[1].inSlope
-      value: 2.5523808
+      value: 2.6095238
       objectReference: {fileID: 0}
     - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
       propertyPath: LightCurve.m_Curve.Array.data[2].inSlope
@@ -1823,7 +1823,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
       propertyPath: LightCurve.m_Curve.Array.data[3].inSlope
-      value: -2.5523813
+      value: -2.609524
       objectReference: {fileID: 0}
     - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
       propertyPath: LightCurve.m_Curve.Array.data[1].inWeight
@@ -1831,7 +1831,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
       propertyPath: LightCurve.m_Curve.Array.data[1].outSlope
-      value: 2.5523808
+      value: 2.6095238
       objectReference: {fileID: 0}
     - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
       propertyPath: LightCurve.m_Curve.Array.data[2].outSlope
@@ -1843,7 +1843,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
       propertyPath: LightCurve.m_Curve.Array.data[3].outSlope
-      value: -2.5523813
+      value: -2.609524
       objectReference: {fileID: 0}
     - target: {fileID: 11465426, guid: 123a5f4168e694248826db758d6e76dd, type: 3}
       propertyPath: LightCurve.m_Curve.Array.data[1].outWeight
