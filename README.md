@@ -40,7 +40,7 @@
 + [Twitter](https://twitter.com/gav_clayton) - *Follow lead developer on Twitter for more news*
 
 ## Versions
-+ *Daggerfall Unity* - v0.11.x
++ *Daggerfall Unity* - v0.12.x
 + *Daggerfall Tools for Unity* - v1.9.x
 + *Required Unity3D version* - 2019.4.28f1 LTS
 
