@@ -800,6 +800,36 @@ PrefabInstance:
       propertyPath: InteriorParent
       value: 
       objectReference: {fileID: 1551452250}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 3}
+      propertyPath: InteriorAmbientLight_AmbientOnly.b
+      value: 0.8235294
+      objectReference: {fileID: 0}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 3}
+      propertyPath: InteriorAmbientLight_AmbientOnly.g
+      value: 0.8235294
+      objectReference: {fileID: 0}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 3}
+      propertyPath: InteriorAmbientLight_AmbientOnly.r
+      value: 0.8235294
+      objectReference: {fileID: 0}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 3}
+      propertyPath: InteriorNightAmbientLight_AmbientOnly.b
+      value: 0.49019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 3}
+      propertyPath: InteriorNightAmbientLight_AmbientOnly.g
+      value: 0.49019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 114374306957635026, guid: 53a45b46ca97a974f8e677f68c2a85e6,
+        type: 3}
+      propertyPath: InteriorNightAmbientLight_AmbientOnly.r
+      value: 0.49019608
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
 --- !u!1 &348738038

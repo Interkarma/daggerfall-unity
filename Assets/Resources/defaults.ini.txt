@@ -21,6 +21,7 @@ ShadowResolutionMode=0
 DungeonLightShadows=False
 InteriorLightShadows=True
 ExteriorLightShadows=True
+AmbientLitInteriors=False
 MobileNPCShadows=False
 GeneralBillboardShadows=False
 DungeonShadowDistance=20.0

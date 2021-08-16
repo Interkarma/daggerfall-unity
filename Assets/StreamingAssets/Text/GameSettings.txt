@@ -167,6 +167,8 @@ interiorLightShadows,                               Interior Light Shadows
 interiorLightShadowsInfo,                           Interior lights cast shadows
 exteriorLightShadows,                               Exterior Light Shadows
 exteriorLightShadowsInfo,                           Exterior sunlight casts shadows
+ambientLitInteriors,                                Ambient Lit Interiors
+ambientLitInteriorsInfo,                            Use ambient lighting only for higher performance interiors
 retroRenderingMode,                                 Retro Rendering Mode
 retroRenderingModeInfo,                             3D world rendered at low resolution while UI remains at set resolution
 postProcessingInRetroMode,                          Retro Rendering Postprocessing
