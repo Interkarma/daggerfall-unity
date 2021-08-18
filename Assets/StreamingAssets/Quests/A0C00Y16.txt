@@ -205,6 +205,7 @@ Place _hidingplace_ local random
 
 Clock _S.16_ 2.00:00
 --removed flags to make exact two days
+
 Clock _delay_ 00:00
 
 Foe _F.00_ is 3 Barbarian
@@ -294,7 +295,7 @@ _yes_ task:
 
 _givereward_ task:
 	when _yes_ and _S.18_ 
-	start timer _delay_ -- otherwise gold message is displayed before gratitude message, which seems erroneous
+	start timer _delay_
 
 _delay_ task:
 	give pc _gold_ 
