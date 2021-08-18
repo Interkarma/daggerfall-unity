@@ -148,6 +148,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             // Roll bonus pool for player to distribute
             // Using maxBonusPool + 1 for inclusive range
+            UnityEngine.Random.InitState(Time.frameCount);
             return UnityEngine.Random.Range(minBonusPool, maxBonusPool + 1);
         }
 
