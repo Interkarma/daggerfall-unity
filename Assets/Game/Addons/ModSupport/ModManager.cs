@@ -1051,6 +1051,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         continue;
                     }
 
+                    if (!target.Enabled)
+                    {
+                        errorMessages.Add(string.Format(GetText("dependencyNotEnabled"), dependency.Name));
+                        continue;
+                    }
+
                     // Check load order priority
                     if (!dependency.IsPeer && mod.LoadPriority < target.LoadPriority)
                     {
