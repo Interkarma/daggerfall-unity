@@ -627,9 +627,25 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
 
-            // For other NPCs use the given scope if any, else generate it at random
+            // If this is an individual NPC who is not at home, don't place for now
+            // as this has to be done by the "place _person_ at" command
+            if (IsIndividualNPC)
+                return;
+
+            // For other NPCs use the given scope if any 
             if (string.IsNullOrEmpty(scopeString))
-                scopeString = UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f ? "local" : "remote";
+            {
+                // Else generate it at random only if there are local buildings
+                if (GameManager.Instance.PlayerGPS.HasCurrentLocation &&
+                    GameManager.Instance.PlayerGPS.CurrentLocation.Exterior.BuildingCount > 0)
+                {
+                    scopeString = UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f ? "local" : "remote";
+                }
+                else
+                {
+                    scopeString = "remote";
+                }
+            }
 
             // Adjust building type based on faction hints
             string buildingTypeString = houseString;

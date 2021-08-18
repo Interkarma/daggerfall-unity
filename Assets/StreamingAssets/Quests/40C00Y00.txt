@@ -328,13 +328,13 @@ Message:  1050
 --           _staff_ occurs 40 times.
 
 QBN:
-Item _artifact_ artifact Skeletons_Key used 1014
+Item _artifact_ artifact Skeletons_Key anyInfo 1014
 Item _bow_ artifact Auriels_Bow
 Item _ring_ artifact Warlocks_Ring
 Item _staff_ artifact Staff_of_Magnus
 Item _letter_ letter used 1016
 
-Person _questgiver_ face 112 group Questor anyInfo 1013
+Person _questgiver_ face 112 named Nocturnal anyInfo 1013
 Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
 
 Place _mondung_ remote dungeon

@@ -318,9 +318,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Get rects
             float leftTextureWidth = hScrollThumbLeft.width * LocalScale.x;
             float rightTextureWidth = hScrollThumbRight.width * LocalScale.x;
-            Rect leftRect = new Rect(totalRect.x + thumbX, totalRect.y, leftTextureWidth, totalRect.height);
-            Rect bodyRect = new Rect(leftRect.xMax, totalRect.y, thumbWidth - leftTextureWidth - rightTextureWidth, totalRect.height);
-            Rect rightRect = new Rect(bodyRect.xMax, totalRect.y, rightTextureWidth, totalRect.height);
+            Rect leftRect = new Rect((int)(totalRect.x + thumbX), (int)totalRect.y, (int)leftTextureWidth, (int)totalRect.height);
+            Rect bodyRect = new Rect((int)leftRect.xMax, (int)totalRect.y, (int)(thumbWidth - leftTextureWidth - rightTextureWidth), (int)totalRect.height);
+            Rect rightRect = new Rect((int)bodyRect.xMax, (int)totalRect.y, (int)rightTextureWidth, (int)totalRect.height);
 
             // Draw thumb texture slices in screen space
             Color color = GUI.color;
