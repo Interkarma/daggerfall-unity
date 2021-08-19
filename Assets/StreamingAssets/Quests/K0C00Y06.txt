@@ -135,7 +135,7 @@ _thief_, well, %g's a retired jewel thief. Or semi-retired, as I understand.
 <--->
 _thief_ used to be quite a jewel thief in __thiefhome_ once upon a time.
 <--->
-Someone told me that _thief_ lurks about _thiefhouse_ this time everyday.
+Someone told me that _thief_ lurks about _thiefhome_ this time everyday.
 <--->
 _merchant_ doesn't believe that _thief_ has reformed %g3 life at all.
 <--->
@@ -283,7 +283,7 @@ Dear %pcn,
       Perhaps it would interest you to know
  that there is at least one person who doesn't
  think you did it. Or maybe I should say
- two people in __thiefhouse_
+ two people in __thiefhome_
  don't think you did it. Me and the one who
  did it -- a =thief_ who
  did do the burglary.
@@ -379,7 +379,7 @@ Message:  1032
  from an anonymous source identifying
  someone named _thief_
  as a notorious jewel-thief living right
- in __thiefhouse_. Even if %g
+ in __thiefhome_. Even if %g
  didn't actually rob __qgiver_,
  a conference may reveal who did.
 
