@@ -1,10 +1,4 @@
--- Quest: C:\QUESTS\WORKING\A0C00Y16.Qbn.
--- StartsBy: NPC
--- Questee: anyone
--- Questor: peasant
--- Repute: 0
--- QuestId: 16
--- Edited for Daggerfall Unity by Jay_H
+-- Edited for Daggerfall Unity by Jay_H and Mundifex
 Messages: 55
 Quest: A0C00Y16
 DisplayName: Missing Person Case
@@ -170,36 +164,16 @@ Message:  1054
 <ce>                      you made that Smiley suffer,
 <ce>                         %pcn. This is a day of
 <ce>                          great sorrow for me.
- 
-
--- Symbols used in the QRC file:
---
---                %g occurs 20 times.
---               %g2 occurs 17 times.
---               %g3 occurs 1 time.
---              %oth occurs 2 times.
---              %pcf occurs 1 time.
---              %pcn occurs 4 times.
---              %qdt occurs 1 time.
---               %ra occurs 5 times.
---  __missingperson_ occurs 1 time.
---         _friend1_ occurs 5 times.
---         _friend2_ occurs 3 times.
---         _friend3_ occurs 3 times.
---         _friend4_ occurs 1 time.
---            _gold_ occurs 7 times.
---   _missingperson_ occurs 26 times.
---      _questgiver_ occurs 10 times.
 
 QBN:
 Item _gold_ gold
 
 Person _questgiver_ group Questor
-Person _missingperson_ face 1 group Group_6.0 local
-Person _friend1_ group Local_3.1 local
-Person _friend2_ group Local_3.1 local
-Person _friend3_ group Local_3.1 local
-Person _friend4_ group Local_4.1 local
+Person _missingperson_ face 1 group Group_6.0
+Person _friend1_ group Local_3.1
+Person _friend2_ group Local_3.1
+Person _friend3_ group Local_3.1
+Person _friend4_ group Local_4.1
 
 Place _hidingplace_ local random
 
@@ -217,11 +191,7 @@ Foe _F.00_ is 3 Barbarian
 	start timer _S.16_ 
 	log 1010 step 0 
 	pick one of _S.00_ _S.02_ _S.03_ _S.01_ 
-	create npc _friend4_ 
-	create npc _friend2_ 
-	create npc _friend3_ 
-	create npc _friend1_ 
-	
+
 _S.00_ task:
 	place npc _missingperson_ at _hidingplace_ 
 
@@ -255,7 +225,7 @@ _S.10_ task:
 
 _S.11_ task:
 	when _S.01_ and _S.07_ 
-	create foe _F.00_ every 1 minutes 1 times with 100% success 
+	create foe _F.00_ every 0 minutes 1 times with 100% success 
 	say 1024 
 
 _S.12_ task:
@@ -329,4 +299,4 @@ _S.27_ task:
 _S.28_ task:
 	when _S.18_ and _S.22_ 
 	say 1050 
---removed unnecessary check. quest can remained "unsolved" after unexpectedly finding the quarry and returning to QG.
+--removed unnecessary check. quest could otherwise remain "unsolved" after unexpectedly finding the quarry and returning to QG.
