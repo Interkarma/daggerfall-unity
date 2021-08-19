@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private Texture2D arrowUpTexture;
         private Texture2D arrowDownTexture;
 
+        private List<ListBox.ListItem> listItems;
         private List<Action> clickHandlers;
         private int maxTextWidth = 0;
 
@@ -130,8 +131,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             dropdownScroller.Size = new Vector2(5 * sx, dropdownPanel.Size.y - 3 * sy);
             dropdownScroller.Position = new Vector2(maxTextWidth, 2) * Scale;
 
-            for (int i = 0; i < dropdownList.ListItems.Count; i++)
-                dropdownList.ListItems[i].textLabel.TextScale = sx;
+            for (int i = 0; i < listItems.Count; i++)
+                listItems[i].textLabel.TextScale = sx;
         }
 
         #endregion
@@ -179,6 +180,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (item.textLabel.TextWidth > maxTextWidth)
                     maxTextWidth = item.textLabel.TextWidth + 8;
             }
+
+            listItems = dropdownList.ListItems;
         }
 
         #endregion

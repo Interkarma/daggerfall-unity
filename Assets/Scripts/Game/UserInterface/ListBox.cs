@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.UserInterface
@@ -83,7 +84,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public List<ListItem> ListItems
         {
-            get { return listItems; }
+            // Create a shallow copy to keep record list unmodified
+            get { return listItems.ToList(); }
         }
 
         /// <summary>
