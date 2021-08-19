@@ -76,7 +76,7 @@ On %qdt,
 
 Message:  1021
 <ce>                  You're looking for _missingperson_?
-<ce>                Well, %g is hiding in __missingperson_,
+<ce>                Well, %g is hiding in _hidingplace_,
 <ce>                      but don't tell _questgiver_.
 <ce>                      _missingperson_ has sworn to
 <ce>                      never speak to _questgiver_
@@ -206,6 +206,8 @@ Place _hidingplace_ local random
 Clock _S.16_ 2.00:00
 --removed flags to make exact two days
 
+Clock _delay_ 00:00
+
 Foe _F.00_ is 3 Barbarian
 
 --	Quest start-up:
@@ -228,11 +230,9 @@ variable _S.02_
 variable _S.03_
 _S.04_ task:
 	clicked npc _friend1_ 
-	add dialog for person _friend3_ 
 
 _S.05_ task:
 	clicked npc _friend2_ 
-	add dialog for person _friend4_ 
 
 _S.06_ task:
 	clicked npc _friend3_ 
@@ -242,6 +242,7 @@ _S.07_ task:
 
 _S.08_ task:
 	when _S.00_ and _S.04_ 
+	add dialog for location _hidingplace_
 	say 1021 
 
 _S.09_ task:
@@ -259,10 +260,12 @@ _S.11_ task:
 
 _S.12_ task:
 	when not _S.00_ and _S.04_ 
+	add dialog for person _friend3_
 	say 1031 
 
 _S.13_ task:
 	when not _S.02_ and _S.05_ 
+	add dialog for person _friend4_
 	say 1032 
 
 _S.14_ task:
@@ -292,9 +295,11 @@ _yes_ task:
 
 _givereward_ task:
 	when _yes_ and _S.18_ 
+	start timer _delay_
+
+_delay_ task:
 	give pc _gold_ 
 	end quest 
---removed unnecessary delay
 
 _S.22_ task:
 	clicked npc _missingperson_ 
