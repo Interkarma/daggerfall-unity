@@ -165,7 +165,6 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-
         /// Sets NPC data from RMB layout flat record. (exterior NPCs)
         /// Requires mapID and locationIndex to be passed in as layout may occur without player being in the location.
         /// </summary>
