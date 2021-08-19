@@ -495,10 +495,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
 
-            // Hot-remove resource is player already at this Place and resource was moved elsewhere
+            // Hot-remove resource if moved somewhere player is not
             if (!IsPlayerHere() && resource.QuestResourceBehaviour)
             {
-                resource.QuestResourceBehaviour.gameObject.SetActive(false);
+                GameObject.Destroy(resource.QuestResourceBehaviour.gameObject);
             }
         }
 
