@@ -134,11 +134,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 sender.CloseWindow();
                 ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.AcceptQuest);
                 QuestMachine.Instance.StartQuest(offeredQuest);
-
-                // Assign QuestResourceBehaviour to questor NPC - this will be last NPC clicked
-                // This will ensure quests actions like "hide npc" will operate on questor at quest startup
-                if (QuestMachine.Instance.LastNPCClicked != null)
-                    QuestMachine.Instance.LastNPCClicked.AssignQuestResourceBehaviour();
             }
             else
             {
