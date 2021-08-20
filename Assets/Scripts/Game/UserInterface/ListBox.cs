@@ -389,36 +389,37 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
-        private int FindNextEnabled(int currentIndex, bool previous)
+        private int FindPreviousEnabled(int currentIndex)
         {
             int val = currentIndex;
 
-            if (previous)
+            do
             {
-                do
-                {
-                    // If the first index is disabled, stay where we are
-                    if (val - 1 == 0 && !listItems[0].Enabled)
-                        return val;
+                // If the first index is disabled, stay where we are
+                if (val - 1 == 0 && !listItems[0].Enabled)
+                    return val;
 
-                    if (val > 0)
-                        val--;
-                } while (!listItems[val].Enabled && val > 0);
-            }
-            else
+                if (val > 0)
+                    val--;
+            } while (!listItems[val].Enabled && val > 0);
+
+            return val;
+        }
+
+        private int FindNextEnabled(int currentIndex)
+        {
+            int val = currentIndex;
+            int last = listItems.Count - 1;
+
+            do
             {
-                int last = listItems.Count - 1;
+                // If the last index is disabled, stay where we are
+                if (val + 1 == last && !listItems[last].Enabled)
+                    return val;
 
-                do
-                {
-                    // If the last index is disabled, stay where we are
-                    if (val + 1 == last && !listItems[last].Enabled)
-                        return val;
-
-                    if (val < last)
-                        val++;
-                } while (!listItems[val].Enabled && val < last);
-            }
+                if (val < last)
+                    val++;
+            } while (!listItems[val].Enabled && val < last);
 
             return val;
         }
@@ -706,7 +707,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (selectedIndex > 0)
             {
-                selectedIndex = FindNextEnabled(selectedIndex, true);
+                selectedIndex = FindPreviousEnabled(selectedIndex);
                 if (verticalScrollMode == VerticalScrollModes.EntryWise)
                 {
                     if (selectedIndex < scrollIndex)
@@ -723,7 +724,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (selectedIndex < listItems.Count - 1)
             {
-                selectedIndex = FindNextEnabled(selectedIndex, false);
+                selectedIndex = FindNextEnabled(selectedIndex);
                 if (verticalScrollMode == VerticalScrollModes.EntryWise)
                 {
                     if (selectedIndex > scrollIndex + (rowsDisplayed - 1))
