@@ -64,10 +64,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             public TextLabel textLabel;
             public Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
+            public Color disabledTextColor = DaggerfallUI.DaggerfallDisabledTextColor;
             public Color selectedTextColor = DaggerfallUI.DaggerfallDefaultSelectedTextColor;
             public Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
             public Color selectedShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
             public Color highlightedTextColor = DaggerfallUI.DaggerfallAlternateHighlightTextColor;
+            public Color highlightedDisabledTextColor = DaggerfallUI.DaggerfallHighlightDisabledTextColor;
             public Color highlightedSelectedTextColor = DaggerfallUI.DaggerfallBrighterSelectedTextColor;
             public object tag;
 
@@ -371,13 +373,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else if (i == highlightedIndex)
             {
-                label.TextColor = listItems[i].highlightedTextColor;
+                label.TextColor = listItems[i].Enabled ?
+                    listItems[i].highlightedTextColor
+                    : listItems[i].highlightedDisabledTextColor;
                 label.ShadowPosition = shadowPosition;
                 label.ShadowColor = listItems[i].shadowColor;
             }
             else
             {
-                label.TextColor = listItems[i].textColor;
+                label.TextColor = listItems[i].Enabled ?
+                    listItems[i].textColor
+                    : listItems[i].disabledTextColor;
                 label.ShadowPosition = shadowPosition;
                 label.ShadowColor = listItems[i].shadowColor;
             }
@@ -774,7 +780,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void UseSelectedItem()
         {
-            if (listItems[selectedIndex].Enabled)
+            if (selectedIndex > -1 && selectedIndex < listItems.Count && listItems[selectedIndex].Enabled)
                 RaiseOnUseItemEvent();
         }
 
