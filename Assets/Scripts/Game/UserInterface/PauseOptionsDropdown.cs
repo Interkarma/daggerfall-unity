@@ -206,7 +206,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             dropdownList.SelectedIndex = -1;
-            clickHandlers[ind]();
+
+            if (listItems[ind].Enabled)
+                clickHandlers[ind]();
         }
 
         private void DropdownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
