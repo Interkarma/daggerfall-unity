@@ -1,0 +1,17 @@
+-- List of ambient sounds played in dungeons.
+-- Names correspond to those found in SoundClips
+-- Repeats are acceptable, and increase the "weight" of that entry being selected.
+AmbientDripShort
+AmbientDripLong
+AmbientWindMoan
+AmbientWindMoanDeep
+AmbientDoorOpen
+AmbientGrind
+AmbientStrumming
+AmbientWindBlow1
+AmbientWindBlow1a
+AmbientWindBlow1b
+AmbientMonsterRoar
+AmbientGoldPieces
+AmbientBirdCall
+AmbientDoorClose

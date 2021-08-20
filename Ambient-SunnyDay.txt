@@ -1,0 +1,5 @@
+-- List of ambient sounds played durring sunny weather
+-- Names correspond to those found in SoundClips
+-- Repeats are acceptable, and increase the "weight" of that entry being selected.
+BirdCall1
+BirdCall2

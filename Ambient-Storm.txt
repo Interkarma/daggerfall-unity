@@ -1,0 +1,6 @@
+-- List of ambient sounds played during storms
+-- Names correspond to those found in SoundClips
+-- Repeats are acceptable, and increase the "weight" of that entry being selected.
+StormLightningShort
+StormLightningThunder
+StormThunderRoll

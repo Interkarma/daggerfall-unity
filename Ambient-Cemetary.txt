@@ -1,0 +1,6 @@
+-- List of ambient sounds played near cemetaries.
+-- Names correspond to those found in SoundClips
+-- Repeats are acceptable, and increase the "weight" of that entry being selected.
+AmbientDistantHowl
+AmbientCreepyBirdCall
+AmbientCreepyBirdCall
