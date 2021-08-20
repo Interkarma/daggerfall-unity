@@ -60,10 +60,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void Setup()
         {
-            // Cut out red up/down arrows
-            Texture2D arrowTexture = ImageReader.GetTexture(redArrowsTextureName);
-            arrowUpTexture = ImageReader.GetSubTexture(arrowTexture, upArrowRect, arrowsFullSize);
-            arrowDownTexture = ImageReader.GetSubTexture(arrowTexture, downArrowRect, arrowsFullSize);
+            arrowUpTexture = Resources.Load<Texture2D>("chevron_up");
+            arrowDownTexture = Resources.Load<Texture2D>("chevron_down");
 
             // Drop down button
             dropDownToggleButton = DaggerfallUI.AddButton(new Rect(0, 0, 7, 7), this);
