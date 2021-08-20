@@ -4,13 +4,15 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Allofich
+// Contributors:    Allofich, JaceyS
 // 
 // Notes:
 //
 
 using UnityEngine;
+using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 namespace DaggerfallWorkshop.Game
@@ -42,12 +44,17 @@ namespace DaggerfallWorkshop.Game
         //private Coroutine relativePositionCoroutine = null;
 
         SoundClips[] ambientSounds;
-        SoundClips[] cemeteryAmbientSounds = new SoundClips[]
-            {
-                SoundClips.AmbientDistantHowl,
-                SoundClips.AmbientCreepyBirdCall,
-                SoundClips.AmbientCreepyBirdCall
-            };
+
+        const string tablesFolderName = "Tables";
+        string tablesFolderPath = Path.Combine(Application.streamingAssetsPath, tablesFolderName);
+        const string cemetaryFileName = "Ambient-Cemetary.txt";
+        const string dungeonFileName = "Ambient-Dungeon.txt";
+        const string stormFileName = "Ambient-Storm.txt";
+        const string sunnyDayFileName = "Ambient-SunnyDay.txt";
+        SoundClips[] cemeteryAmbientSounds;
+        SoundClips[] dungeonAmbientSounds;
+        SoundClips[] stormAmbientSounds;
+        SoundClips[] sunnyDayAmbientSounds;
         AudioClip rainLoop;
         AudioClip cricketsLoop;
 
@@ -80,6 +87,12 @@ namespace DaggerfallWorkshop.Game
             dfAudioSource = GetComponent<DaggerfallAudioSource>();
             loopAudioSource = GetNewAudioSource();
             ambientAudioSource = GetNewAudioSource();
+
+
+            cemeteryAmbientSounds = GetAmbientTable(cemetaryFileName);
+            dungeonAmbientSounds = GetAmbientTable(dungeonFileName);
+            stormAmbientSounds = GetAmbientTable(stormFileName);
+            sunnyDayAmbientSounds = GetAmbientTable(sunnyDayFileName);
 
             ApplyPresets();
             StartWaiting();
@@ -416,41 +429,18 @@ namespace DaggerfallWorkshop.Game
             {
                 case AmbientSoundPresets.Dungeon:
                     // Set dungeon one-shots
-                    ambientSounds = new SoundClips[] {
-                        SoundClips.AmbientDripShort,
-                        SoundClips.AmbientDripLong,
-                        SoundClips.AmbientWindMoan,
-                        SoundClips.AmbientWindMoanDeep,
-                        SoundClips.AmbientDoorOpen,
-                        SoundClips.AmbientGrind,
-                        SoundClips.AmbientStrumming,
-                        SoundClips.AmbientWindBlow1,
-                        SoundClips.AmbientWindBlow1a,
-                        SoundClips.AmbientWindBlow1b,
-                        SoundClips.AmbientMonsterRoar,
-                        SoundClips.AmbientGoldPieces,
-                        SoundClips.AmbientBirdCall,
-                        SoundClips.AmbientDoorClose,
-                    };
+                    ambientSounds = dungeonAmbientSounds;
                     AmbientInteriorPresets();
                     break;
 
                 case AmbientSoundPresets.Storm:
                     // Set storm one-shots
-                    ambientSounds = new SoundClips[] {
-                        SoundClips.StormLightningShort,
-                        SoundClips.StormLightningThunder,
-                        SoundClips.StormThunderRoll,
-                    };
+                    ambientSounds = stormAmbientSounds;
                     AmbientExteriorPresets();
                     break;
 
                 case AmbientSoundPresets.SunnyDay:
-                    ambientSounds = new SoundClips[]
-                    {
-                        SoundClips.BirdCall1,
-                        SoundClips.BirdCall2,
-                    };
+                    ambientSounds = sunnyDayAmbientSounds;
                     AmbientExteriorPresets();
                     break;
 
@@ -474,6 +464,31 @@ namespace DaggerfallWorkshop.Game
         {
             // Narroer spread angle because of lesser environment reverberation
             ambientAudioSource.spread = 15f;
+        }
+
+        private SoundClips[] GetAmbientTable(string filename)
+        {
+            string[] rawTable = new string[0];
+            List<SoundClips> list = new List<SoundClips>();
+            string path = Path.Combine(tablesFolderPath, filename);
+            if (!File.Exists(path))
+            {
+                Debug.LogFormat("Table filename path {0} not found.", path);
+            }
+            else
+            {
+                rawTable = File.ReadAllLines(path);
+            }
+            //convert the array of strings into a List of SoundClips
+            foreach (string entry in rawTable) {
+                if (!entry.StartsWith("--")){
+                    SoundClips clip = (SoundClips)System.Enum.Parse(typeof(SoundClips), entry);
+                    list?.Add(clip);
+                }
+            }
+            //convert the List to an array for output
+            SoundClips[] outputTable = list.ToArray();
+            return outputTable;
         }
 
         #endregion
