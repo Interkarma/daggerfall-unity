@@ -153,7 +153,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Private Methods
 
-        void SetBackground(BaseScreenComponent panel, Color color, string textureName)
+        private bool HasApplicableMods()
+        {
+            foreach (var m in ModManager.Instance.Mods)
+            {
+                if (m.HasSettings && m.LoadSettingsCallback != null)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void SetBackground(BaseScreenComponent panel, Color color, string textureName)
         {
             if (TextureReplacement.TryImportTexture(textureName, true, out Texture2D tex))
             {
@@ -169,6 +180,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Add mod settings option and set that as the current max text width
             dropdownList.AddItem("Mod Settings", out ListBox.ListItem modSettings);
             maxTextWidth = modSettings.textLabel.TextWidth + 8;
+            modSettings.Enabled = HasApplicableMods();
 
             clickHandlers.Add(ModSettingsWindowOption_OnClick);
 
@@ -182,6 +194,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             listItems = dropdownList.ListItems;
+            // Select nothing, so if the first option is disabled, the selectedIndex
+            // will be -1 and won't interfere with the default disabled colors
+            dropdownList.SelectNone();
         }
 
         #endregion
