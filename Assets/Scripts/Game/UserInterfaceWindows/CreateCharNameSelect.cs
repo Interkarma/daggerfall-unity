@@ -104,9 +104,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            // Disable random name button only for Argonians because their race id
-            // would give them Imperial names from namegen
-            randomNameButton.Enabled = raceTemplate.ID != (int) Races.Argonian;
+            randomNameButton.Enabled = true;
 
             // Randomise DFRandom seed from System.Random
             // A bit of a hack but better than starting with a seed of 0 every time
