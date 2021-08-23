@@ -233,7 +233,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 position.x = 0;
             // resize panel to where user clicked
             soundBar.Size = new Vector2(position.x, 3.5f);
-            DaggerfallUnity.Settings.SoundVolume = (position.x / barMaxLength);
+            DaggerfallUnity.Settings.SoundVolume = (float)Math.Round((position.x / barMaxLength), 2);
             if (!saveSettings)
                 saveSettings = true;
         }
@@ -247,7 +247,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 position.x = 0;
             // resize panel to where user clicked
             musicBar.Size = new Vector2(position.x, 3.5f);
-            DaggerfallUnity.Settings.MusicVolume = (position.x / barMaxLength);
+            DaggerfallUnity.Settings.MusicVolume = (float)Math.Round((position.x / barMaxLength), 2);
             if (!saveSettings)
                 saveSettings = true;
         }
