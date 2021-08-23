@@ -395,13 +395,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             do
             {
-                // If the first index is disabled, stay where we are
-                if (val - 1 == 0 && !listItems[0].Enabled)
-                    return val;
-
                 if (val > 0)
                     val--;
             } while (!listItems[val].Enabled && val > 0);
+
+            // From our current index, if everything previous to us was disabled, return to where we currently are
+            if (!listItems[val].Enabled)
+                return currentIndex;
 
             return val;
         }
@@ -413,13 +413,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             do
             {
-                // If the last index is disabled, stay where we are
-                if (val + 1 == last && !listItems[last].Enabled)
-                    return val;
-
                 if (val < last)
                     val++;
             } while (!listItems[val].Enabled && val < last);
+
+            // From our current index, if everything next of us was disabled, return to where we currently are
+            if (!listItems[val].Enabled)
+                return currentIndex;
 
             return val;
         }
