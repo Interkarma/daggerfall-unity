@@ -153,6 +153,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private bool HasApplicableMods()
         {
+            if (ModManager.Instance == null)
+                return false;
+
             foreach (var m in ModManager.Instance.Mods)
             {
                 if (m.HasSettings && m.LoadSettingsCallback != null)
