@@ -830,7 +830,8 @@ PrefabInstance:
       propertyPath: InteriorNightAmbientLight_AmbientOnly.r
       value: 0.49019608
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114256515049101184, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
 --- !u!1 &348738038
 GameObject:
