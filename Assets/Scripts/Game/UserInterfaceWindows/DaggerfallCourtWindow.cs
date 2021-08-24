@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         // From FALL.EXE offset 0x1B34E0
         // Vanilla unused crime values adjusted below by adding reasonable values for any zeros and a column for loan default crime.
-        // Mnemonics                        TryB&E  Tressp  B&E Assault  Murder  TaxEv CrimCon Vagrant Smuggle Pirate HiTre PickP Theft Treason LoanD
+        // Mnemonics                                  TryB&E  Tressp  B&E Assault  Murder  TaxEv CrimCon Vagrant Smuggle Pirate HiTre PickP Theft Treason LoanD
         protected byte[] PenaltyPerLegalRepPoint  = {  0x05,  0x05,  0x06,  0x06,   0x0A,   0x05,  0x05,  0x03,  0x08,  0x08, 0x09,  0x06,  0x00,  0x08,  0x00 };
         protected short[] BasePenaltyAmounts      = { 0x12C,  0xC8, 0x258, 0x3E8, 0x2710,   0xC8, 0x1F4,  0x64, 0x1F4, 0x1F4, 0x4B0, 0xC8,  0xC8,  0x3E8, 0x64 };
         protected short[] MinimumPenaltyAmounts   = {  0x32,  0x0A,  0x50,  0x0A, 0x2328,   0x0A,  0x0A,  0x02,  0x0A,  0x0A, 0xA0,  0x05,  0x05,  0x0A,  0x04 };
