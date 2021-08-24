@@ -13,7 +13,6 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Weather;
 using DaggerfallWorkshop.Utility;
 using UnityEngine;
-using UnityEngine.PostProcessing;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 
@@ -90,7 +89,7 @@ namespace DaggerfallWorkshop.Game
         DFLocation.ClimateBaseType lastRespawnClimate = DFLocation.ClimateBaseType.None;
 
         // used to set post processing fog settings (excludeSkybox setting)
-        private PostProcessingBehaviour postProcessingBehaviour;
+        //private PostProcessingBehaviour postProcessingBehaviour;
 
         public bool IsRaining { get; private set; }
 
@@ -130,13 +129,13 @@ namespace DaggerfallWorkshop.Game
             _dfUnity = DaggerfallUnity.Instance;
             _weatherTable = WeatherTable.ParseJsonTable();
 
-            postProcessingBehaviour = Camera.main.GetComponent<PostProcessingBehaviour>();
-            if (postProcessingBehaviour != null)
-            {
-                var fogSettings = postProcessingBehaviour.profile.fog.settings;
-                fogSettings.excludeSkybox = true;
-                postProcessingBehaviour.profile.fog.settings = fogSettings;              
-            }
+            //postProcessingBehaviour = Camera.main.GetComponent<PostProcessingBehaviour>();
+            //if (postProcessingBehaviour != null)
+            //{
+            //    var fogSettings = postProcessingBehaviour.profile.fog.settings;
+            //    fogSettings.excludeSkybox = true;
+            //    postProcessingBehaviour.profile.fog.settings = fogSettings;              
+            //}
             
             if (DaggerfallUnity.Settings.AssetInjection)
                 AddWindZone();
@@ -200,12 +199,12 @@ namespace DaggerfallWorkshop.Game
             {
                 //                RenderSettings.fogColor = Color.gray;
 
-                if (postProcessingBehaviour != null)
-                {
-                    var fogPostProcess = postProcessingBehaviour.profile.fog.settings;
-                    fogPostProcess.excludeSkybox = false;
-                    postProcessingBehaviour.profile.fog.settings = fogPostProcess;
-                }
+                //if (postProcessingBehaviour != null)
+                //{
+                //    var fogPostProcess = postProcessingBehaviour.profile.fog.settings;
+                //    fogPostProcess.excludeSkybox = false;
+                //    postProcessingBehaviour.profile.fog.settings = fogPostProcess;
+                //}
             }
             else
             {                
@@ -214,12 +213,12 @@ namespace DaggerfallWorkshop.Game
                 // also blend with climate so climates end up having faint 'tints' to them
                 //                RenderSettings.fogColor = Color.clear;
 
-                if (postProcessingBehaviour != null)
-                {
-                    var fogPostProcess = postProcessingBehaviour.profile.fog.settings;
-                    fogPostProcess.excludeSkybox = true;
-                    postProcessingBehaviour.profile.fog.settings = fogPostProcess;
-                }
+                //if (postProcessingBehaviour != null)
+                //{
+                //    var fogPostProcess = postProcessingBehaviour.profile.fog.settings;
+                //    fogPostProcess.excludeSkybox = true;
+                //    postProcessingBehaviour.profile.fog.settings = fogPostProcess;
+                //}
             }
         }
 
