@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -26,39 +27,39 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public class DaggerfallCourtWindow : DaggerfallPopupWindow
     {
-        const string nativeImgName = "CORT01I0.IMG";
-        const string nativeImgName2 = "PRIS00I0.IMG";
-        const int courtTextTG = 550;
-        const int courtTextDB = 551;
-        const int courtTextStart = 8050;
-        const int courtTextFoundGuilty = 8055;
-        const int courtTextExecuted = 8060;
-        const int courtTextFreeToGo = 8062;
-        const int courtTextBanished = 8063;
-        const int courtTextHowConvince = 8064;
+        protected const string nativeImgName = "CORT01I0.IMG";
+        protected const string nativeImgName2 = "PRIS00I0.IMG";
+        protected const int courtTextTG = 550;
+        protected const int courtTextDB = 551;
+        protected const int courtTextStart = 8050;
+        protected const int courtTextFoundGuilty = 8055;
+        protected const int courtTextExecuted = 8060;
+        protected const int courtTextFreeToGo = 8062;
+        protected const int courtTextBanished = 8063;
+        protected const int courtTextHowConvince = 8064;
 
-        Texture2D nativeTexture;
-        Panel courtPanel = new Panel();
-        Entity.PlayerEntity playerEntity;
-        TextLabel daysUntilFreedomLabel;
-        int regionIndex;
-        int punishmentType;
-        int fine;
-        int daysInPrison;
-        int daysInPrisonLeft;
-        int state;
-        bool repositionPlayer;
+        protected Texture2D nativeTexture;
+        protected Panel courtPanel = new Panel();
+        protected Entity.PlayerEntity playerEntity;
+        protected TextLabel daysUntilFreedomLabel;
+        protected int regionIndex;
+        protected int punishmentType;
+        protected int fine;
+        protected int daysInPrison;
+        protected int daysInPrisonLeft;
+        protected int state;
+        protected bool repositionPlayer;
 
-        float prisonUpdateTimer = 0f;
-        float prisonUpdateInterval = 0.3f; // Approximated to classic based on measuring a video recording.
+        protected float prisonUpdateTimer = 0f;
+        protected float prisonUpdateInterval = 0.3f; // Approximated to classic based on measuring a video recording.
 
         // From FALL.EXE offset 0x1B34E0
         // Vanilla unused crime values adjusted below by adding reasonable values for any zeros and a column for loan default crime.
         // Mnemonics                        TryB&E  Tressp  B&E Assault  Murder  TaxEv CrimCon Vagrant Smuggle Pirate HiTre PickP Theft Treason LoanD
-        byte[] PenaltyPerLegalRepPoint  = {  0x05,  0x05,  0x06,  0x06,   0x0A,   0x05,  0x05,  0x03,  0x08,  0x08, 0x09,  0x06,  0x00,  0x08,  0x00 };
-        short[] BasePenaltyAmounts      = { 0x12C,  0xC8, 0x258, 0x3E8, 0x2710,   0xC8, 0x1F4,  0x64, 0x1F4, 0x1F4, 0x4B0, 0xC8,  0xC8,  0x3E8, 0x64 };
-        short[] MinimumPenaltyAmounts   = {  0x32,  0x0A,  0x50,  0x0A, 0x2328,   0x0A,  0x0A,  0x02,  0x0A,  0x0A, 0xA0,  0x05,  0x05,  0x0A,  0x04 };
-        short[] MaximumPenaltyAmounts   = { 0x3E8, 0x320, 0x4B0, 0x5DC, 0x2EE0, 0x2EE0, 0x5DC, 0x2BC, 0x5DC, 0x5DC, 0x7D0, 0x3E8, 0x3E8, 0x5DC, 0x2BC };
+        protected byte[] PenaltyPerLegalRepPoint  = {  0x05,  0x05,  0x06,  0x06,   0x0A,   0x05,  0x05,  0x03,  0x08,  0x08, 0x09,  0x06,  0x00,  0x08,  0x00 };
+        protected short[] BasePenaltyAmounts      = { 0x12C,  0xC8, 0x258, 0x3E8, 0x2710,   0xC8, 0x1F4,  0x64, 0x1F4, 0x1F4, 0x4B0, 0xC8,  0xC8,  0x3E8, 0x64 };
+        protected short[] MinimumPenaltyAmounts   = {  0x32,  0x0A,  0x50,  0x0A, 0x2328,   0x0A,  0x0A,  0x02,  0x0A,  0x0A, 0xA0,  0x05,  0x05,  0x0A,  0x04 };
+        protected short[] MaximumPenaltyAmounts   = { 0x3E8, 0x320, 0x4B0, 0x5DC, 0x2EE0, 0x2EE0, 0x5DC, 0x2BC, 0x5DC, 0x5DC, 0x7D0, 0x3E8, 0x3E8, 0x5DC, 0x2BC };
 
         public int PunishmentType { get { return punishmentType; } }
         public int Fine { get { return fine; } }
@@ -99,6 +100,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
+            HandleCourtLogic();
+        }
+
+        protected virtual void HandleCourtLogic()
+        {
             // Close immediately if no crime assigned to player
             if (playerEntity.CrimeCommitted == Entity.PlayerEntity.Crimes.None)
             {
@@ -126,8 +132,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (threshold2 > 75)
                         threshold2 = 75;
                 }
-                if (Dice100.FailedRoll(threshold2) &&
-                    Dice100.FailedRoll(threshold1))
+                if (Dice100.FailedRoll(threshold2) &&  Dice100.FailedRoll(threshold1))
                     punishmentType = 2; // fine/prison
                 else
                     punishmentType = 0; // banishment or execution
@@ -171,7 +176,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (crimeType == 4 || crimeType == 3) // Assault or murder
                 {
                     // If player is a member of the Dark Brotherhood, they may be rescued for a violent crime
-                    Guilds.IGuild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Dark_Brotherhood);
+                    IGuild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Dark_Brotherhood);
                     if (guild.IsMember())
                     {
                         if (guild.Rank >= UnityEngine.Random.Range(0, 20))
@@ -192,7 +197,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (crimeType <= 2 || crimeType == 11) // Attempted breaking and entering, trespassing, breaking and entering, pickpocketing
                 {
                     // If player is a member of the Thieves Guild, they may be rescued for a thieving crime
-                    Guilds.IGuild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Thieves_Guild);
+                    IGuild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Thieves_Guild);
                     if (guild.IsMember())
                     {
                         if (guild.Rank >= UnityEngine.Random.Range(0, 20))
@@ -313,7 +318,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        private void GuiltyNotGuilty_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void GuiltyNotGuilty_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             sender.CloseWindow();
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Guilty)
@@ -361,7 +366,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Update();
         }
 
-        private void DebateLie_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
+        protected virtual void DebateLie_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             sender.CloseWindow();
             int playerSkill = 0;
@@ -502,7 +507,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 OnEndPrisonTime();
         }
 
-        private void SwitchToPrisonScreen()
+        protected virtual void SwitchToPrisonScreen()
         {
             // Load native texture
             nativeTexture = DaggerfallUI.GetTextureFromImg(nativeImgName2);
