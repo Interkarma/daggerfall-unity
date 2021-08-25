@@ -59,6 +59,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             base.Update(caller);
 
+            // Popup saying message
+            if (sayingID != 0)
+                ParentQuest.ShowMessagePopup(sayingID, true);
+
             // Add related Person or Foe resource
             if (personSymbol != null && !string.IsNullOrEmpty(personSymbol.Name))
             {
@@ -72,10 +76,6 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 if (foe != null)
                     DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.AddFace(foe);
             }
-
-            // Popup saying message
-            if (sayingID != 0)
-                ParentQuest.ShowMessagePopup(sayingID);
 
             SetComplete();
         }
