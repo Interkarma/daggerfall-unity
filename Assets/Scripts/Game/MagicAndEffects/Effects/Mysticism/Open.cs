@@ -22,10 +22,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public static readonly string EffectKey = "Open";
 
-        int forcedRoundsRemaining = 1;
-        bool awakeAlert = true;
-        bool castByItem = false;
-        bool castBySkeletonKey = false;
+        protected int forcedRoundsRemaining = 1;
+        protected bool awakeAlert = true;
+        protected bool castByItem = false;
+        protected bool castBySkeletonKey = false;
 
         public override void SetProperties()
         {
@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
         }
 
-        void StartWaitingForDoor()
+        protected virtual void StartWaitingForDoor()
         {
             // Do nothing if spell chance fails
             // Always succeeds chance roll when cast by item but still subject to level vs. door requirement
@@ -104,7 +104,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// This effect will automatically open door if closed when spell triggered.
         /// </summary>
         /// <param name="actionDoor">DaggerfallActionDoor activated by entity.</param>
-        public void TriggerOpenEffect(DaggerfallActionDoor actionDoor)
+        public virtual void TriggerOpenEffect(DaggerfallActionDoor actionDoor)
         {
             if (forcedRoundsRemaining == 0)
                 return;
@@ -138,13 +138,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// <summary>
         /// Cancel effect.
         /// </summary>
-        public void CancelEffect()
+        public virtual void CancelEffect()
         {
             forcedRoundsRemaining = 0;
             ResignAsIncumbent();
         }
 
-        void CheckCastByItem()
+        protected virtual void CheckCastByItem()
         {
             castByItem = ParentBundle.castByItem != null;
 
