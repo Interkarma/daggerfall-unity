@@ -20,7 +20,6 @@
 
 ## An Open Platform
 
-+ [Daggerfall Tools for Unity](http://www.dfworkshop.net/projects/daggerfall-tools-for-unity/features/)
 + Open source under MIT license
 + Quality contributions are welcome
 + Newcomers welcome and helped to learn
