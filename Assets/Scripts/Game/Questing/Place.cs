@@ -1201,6 +1201,15 @@ namespace DaggerfallWorkshop.Game.Questing
                 foreach (QuestResource resource in parentQuestPlaceResources)
                 {
                     Place place = (Place)resource;
+
+                    // Exclude guild halls from same-building check as this breaks guild quests assigned to same building as questor
+                    // For example, N0B10Y03 questor is assigned to home guild and quest hosts action in same building
+                    // There can only be one guild hall of a type within a single location, so the same-building check isn't generally helpful in these cases anyway
+                    // The same-building check is more for preventing duplicates in quests requiring multiple local taverns, homes, etc.
+                    if (buildingSummary.BuildingType == DFLocation.BuildingTypes.GuildHall)
+                        continue;
+
+                    // Check for same-building match
                     if (place.siteDetails.siteType == SiteTypes.Building &&
                         place.siteDetails.mapId == location.MapTableData.MapId &&
                         place.siteDetails.buildingKey == buildingSummary.buildingKey)
