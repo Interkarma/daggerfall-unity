@@ -179,7 +179,7 @@ Person _dummymage_ face 1 faction The_Mages_Guild remote
 Person _dummyorc_ face 1 named Gortwog
 Person _dummydarkb_ face 49 faction The_Dark_Brotherhood remote
 
-Place _dungeon_ remote dungeon
+Place _dungeon_ remote dungeon7
 Place _meetingplace_ local apothecary
 
 Clock _extratime_ 00:30 0 flag 1 range 0 1

@@ -147,7 +147,7 @@ QBN:
 Person _qgiver_ group Questor
 Person _contact_ face 176 group Innkeeper
 
-Place _mondung_ remote dungeon
+Place _mondung_ remote dungeon8
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 
