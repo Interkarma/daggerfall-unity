@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private Texture2D arrowUpTexture;
         private Texture2D arrowDownTexture;
 
+        private List<ListBox.ListItem> listItems;
         private List<Action> clickHandlers;
         private int maxTextWidth = 0;
 
@@ -59,10 +60,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void Setup()
         {
-            // Cut out red up/down arrows
-            Texture2D arrowTexture = ImageReader.GetTexture(redArrowsTextureName);
-            arrowUpTexture = ImageReader.GetSubTexture(arrowTexture, upArrowRect, arrowsFullSize);
-            arrowDownTexture = ImageReader.GetSubTexture(arrowTexture, downArrowRect, arrowsFullSize);
+            arrowUpTexture = Resources.Load<Texture2D>("chevron_up");
+            arrowDownTexture = Resources.Load<Texture2D>("chevron_down");
 
             // Drop down button
             dropDownToggleButton = DaggerfallUI.AddButton(new Rect(0, 0, 7, 7), this);
@@ -130,8 +129,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             dropdownScroller.Size = new Vector2(5 * sx, dropdownPanel.Size.y - 3 * sy);
             dropdownScroller.Position = new Vector2(maxTextWidth, 2) * Scale;
 
-            for (int i = 0; i < dropdownList.ListItems.Count; i++)
-                dropdownList.ListItems[i].textLabel.TextScale = sx;
+            for (int i = 0; i < listItems.Count; i++)
+                listItems[i].textLabel.TextScale = sx;
         }
 
         #endregion
@@ -152,7 +151,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Private Methods
 
-        void SetBackground(BaseScreenComponent panel, Color color, string textureName)
+        private bool HasApplicableMods()
+        {
+            if (ModManager.Instance == null)
+                return false;
+
+            foreach (var m in ModManager.Instance.Mods)
+            {
+                if (m.HasSettings && m.LoadSettingsCallback != null)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void SetBackground(BaseScreenComponent panel, Color color, string textureName)
         {
             if (TextureReplacement.TryImportTexture(textureName, true, out Texture2D tex))
             {
@@ -168,6 +181,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Add mod settings option and set that as the current max text width
             dropdownList.AddItem("Mod Settings", out ListBox.ListItem modSettings);
             maxTextWidth = modSettings.textLabel.TextWidth + 8;
+            modSettings.Enabled = HasApplicableMods();
 
             clickHandlers.Add(ModSettingsWindowOption_OnClick);
 
@@ -179,6 +193,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (item.textLabel.TextWidth > maxTextWidth)
                     maxTextWidth = item.textLabel.TextWidth + 8;
             }
+
+            listItems = dropdownList.ListItems;
+            // Select nothing, so if the first option is disabled, the selectedIndex
+            // will be -1 and won't interfere with the default disabled colors
+            dropdownList.SelectNone();
         }
 
         #endregion
@@ -203,7 +222,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
 
             dropdownList.SelectedIndex = -1;
-            clickHandlers[ind]();
+
+            if (listItems[ind].Enabled)
+                clickHandlers[ind]();
         }
 
         private void DropdownButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
