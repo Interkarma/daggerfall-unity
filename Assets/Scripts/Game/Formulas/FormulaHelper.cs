@@ -1539,6 +1539,10 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int SavingThrow(IEntityEffect sourceEffect, DaggerfallEntity target)
         {
+            Func<IEntityEffect, DaggerfallEntity, int> del;
+            if (TryGetOverride("SavingThrowSpellEffect", out del))
+                return del(sourceEffect, target);
+
             if (sourceEffect == null || sourceEffect.ParentBundle == null)
                 return 100;
 
