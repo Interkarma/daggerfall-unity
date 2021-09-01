@@ -303,8 +303,8 @@ _delay_ task:
 
 _S.22_ task:
 	clicked npc _missingperson_ 
-	hide npc _missingperson_ 
 	add _missingperson_ face saying 1040 
+	hide npc _missingperson_ 
 
 _S.23_ task:
 	when _S.22_ and _S.18_ 
