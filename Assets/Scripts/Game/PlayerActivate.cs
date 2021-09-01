@@ -234,6 +234,7 @@ namespace DaggerfallWorkshop.Game
             // Do nothing further if player has spell ready to cast as activate button is now used to fire spell
             // The exception is a readied touch spell where player can activate doors, etc.
             // Touch spells only fire once a target entity is in range
+            bool touchCastPending = false;
             if (GameManager.Instance.PlayerEffectManager)
             {
                 // Handle pending spell cast
@@ -245,6 +246,10 @@ namespace DaggerfallWorkshop.Game
                     {
                         castPending = true;
                         return;
+                    }
+                    else
+                    {
+                        touchCastPending = true;
                     }
                 }
 
@@ -395,18 +400,22 @@ namespace DaggerfallWorkshop.Game
                         ActivateStaticNPC(hit, npc);
                     }
 
-                    // Check for mobile NPC hit
-                    MobilePersonNPC mobileNpc = null;
-                    if (MobilePersonMotorCheck(hit, out mobileNpc))
+                    // Avoid non-action interactions while a Touch cast is readied
+                    if (!touchCastPending)
                     {
-                        ActivateMobileNPC(hit, mobileNpc);
-                    }
+                        // Check for mobile NPC hit
+                        MobilePersonNPC mobileNpc;
+                        if (MobilePersonMotorCheck(hit, out mobileNpc))
+                        {
+                            ActivateMobileNPC(hit, mobileNpc);
+                        }
 
-                    // Check for mobile enemy hit
-                    DaggerfallEntityBehaviour mobileEnemyBehaviour;
-                    if (MobileEnemyCheck(hit, out mobileEnemyBehaviour))
-                    {
-                        ActivateMobileEnemy(hit, mobileEnemyBehaviour);
+                        // Check for mobile enemy hit
+                        DaggerfallEntityBehaviour mobileEnemyBehaviour;
+                        if (MobileEnemyCheck(hit, out mobileEnemyBehaviour))
+                        {
+                            ActivateMobileEnemy(hit, mobileEnemyBehaviour);
+                        }
                     }
 
                     // Check for functional interior furniture: Ladders, Bookshelves.
