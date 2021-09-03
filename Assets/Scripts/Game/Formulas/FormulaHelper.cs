@@ -1520,6 +1520,9 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (savingThrow >= 100)
                 return 0;
 
+            // Increase saving throw by MagicResist, equal to LiveWillpower / 10 (rounded down)
+            savingThrow += target.MagicResist;
+
             savingThrow = Mathf.Clamp(savingThrow, 5, 95);
 
             int percentDamageOrDuration = 100;
