@@ -1353,6 +1353,9 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             const int youAreNowAMasterOfTextID = 4020;
 
+            if (GameManager.Instance.PlayerDeath.DeathInProgress)
+                return;
+
             DaggerfallDateTime now = DaggerfallUnity.Instance.WorldTime.Now;
             if ((now.ToClassicDaggerfallTime() - timeOfLastSkillIncreaseCheck) <= 360)
                 return;

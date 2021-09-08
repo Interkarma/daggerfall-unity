@@ -13,6 +13,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
@@ -44,6 +45,8 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallDefaultTextColor = new Color32(243, 239, 44, 255);
         public static Color DaggerfallDefaultInputTextColor = new Color32(227, 223, 0, 255);
         public static Color DaggerfallHighlightTextColor = new Color32(219, 130, 40, 255);
+        public static Color DaggerfallDisabledTextColor = new Color32(128, 128, 128, 255);
+        public static Color DaggerfallHighlightDisabledTextColor = DaggerfallDisabledTextColor;
         public static Color DaggerfallAlternateHighlightTextColor = new Color32(255, 130, 40, 255);
         public static Color DaggerfallQuestionTextColor = new Color(0.698f, 0.812f, 1.0f);
         public static Color DaggerfallAnswerTextColor = DaggerfallDefaultInputTextColor;
@@ -749,10 +752,12 @@ namespace DaggerfallWorkshop.Game
             pauseOptionsDropdownItems.Add(new System.Tuple<string, Action>(text, action));
         }
 
-        // Hide the list in order to prevent direct insertion from modders without registering
-        public System.Tuple<string, Action>[] GetPauseOptionsDropdownItems()
+        /// <summary>
+        /// Returns shallow copied list of registered dropdown items in alphabetical order
+        /// </summary>
+        public IEnumerable<System.Tuple<string, Action>> GetPauseOptionsDropdownItems()
         {
-            return pauseOptionsDropdownItems.ToArray();
+            return pauseOptionsDropdownItems.OrderBy(it => it.Item1);
         }
 
         public void PopupMessage(string text)

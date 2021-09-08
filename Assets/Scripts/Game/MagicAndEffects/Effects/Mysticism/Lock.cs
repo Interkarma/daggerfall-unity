@@ -22,8 +22,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public static readonly string EffectKey = "Lock";
 
-        int forcedRoundsRemaining = 1;
-        bool awakeAlert = true;
+        protected int forcedRoundsRemaining = 1;
+        protected bool awakeAlert = true;
 
         public override void SetProperties()
         {
@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
         }
 
-        void StartWaitingForDoor()
+        protected virtual void StartWaitingForDoor()
         {
             // Do nothing if failed
             if (!ChanceSuccess)
@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         /// This effect will automatically close door if open when spell triggered.
         /// </summary>
         /// <param name="actionDoor">DaggerfallActionDoor activated by entity.</param>
-        public void TriggerLockEffect(DaggerfallActionDoor actionDoor)
+        public virtual void TriggerLockEffect(DaggerfallActionDoor actionDoor)
         {
             if (forcedRoundsRemaining == 0)
                 return;

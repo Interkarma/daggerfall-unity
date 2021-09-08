@@ -446,7 +446,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>Gets current item condition as a percentage of max.</summary>
         public int ConditionPercentage
         {
-            get { return 100 * currentCondition / maxCondition; }
+            get { return maxCondition > 0 ? 100 * currentCondition / maxCondition : 100; }
         }
 
         #endregion

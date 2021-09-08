@@ -495,10 +495,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
 
-            // Hot-remove resource is player already at this Place and resource was moved elsewhere
+            // Hot-remove resource if moved somewhere player is not
             if (!IsPlayerHere() && resource.QuestResourceBehaviour)
             {
-                resource.QuestResourceBehaviour.gameObject.SetActive(false);
+                GameObject.Destroy(resource.QuestResourceBehaviour.gameObject);
             }
         }
 
@@ -1201,8 +1201,17 @@ namespace DaggerfallWorkshop.Game.Questing
                 foreach (QuestResource resource in parentQuestPlaceResources)
                 {
                     Place place = (Place)resource;
+
+                    // Exclude guild halls from same-building check as this breaks guild quests assigned to same building as questor
+                    // For example, N0B10Y03 questor is assigned to home guild and quest hosts action in same building
+                    // There can only be one guild hall of a type within a single location, so the same-building check isn't generally helpful in these cases anyway
+                    // The same-building check is more for preventing duplicates in quests requiring multiple local taverns, homes, etc.
+                    if (buildingSummary.BuildingType == DFLocation.BuildingTypes.GuildHall)
+                        continue;
+
+                    // Check for same-building match
                     if (place.siteDetails.siteType == SiteTypes.Building &&
-                        place.siteDetails.mapId == location.Exterior.ExteriorData.MapId &&
+                        place.siteDetails.mapId == location.MapTableData.MapId &&
                         place.siteDetails.buildingKey == buildingSummary.buildingKey)
                         return true;
                 }
@@ -1214,7 +1223,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 foreach (SiteDetails site in activeQuestSites)
                 {
                     if (site.siteType == SiteTypes.Building &&
-                        site.mapId == location.Exterior.ExteriorData.MapId &&
+                        site.mapId == location.MapTableData.MapId &&
                         site.buildingKey == buildingSummary.buildingKey)
                         return true;
                 }

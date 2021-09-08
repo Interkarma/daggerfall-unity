@@ -166,7 +166,7 @@ A0C00Y11, Commoners, M, 0, 0, Passed
 A0C00Y12, Commoners, M, 0, 0, Passed
 A0C00Y14, Commoners, N, 0, 0, Passed
 A0C00Y15, Commoners, N, 0, 0, Passed
--A0C00Y16, Commoners, M, 0, 0, FAILED. _hidingplace_ not marked on map when player asks about _missingperson_. Can be found from debug marker.
+A0C00Y16, Commoners, M, 0, 0, enabled for testing
 A0C00Y17, Commoners, M, 0, 0, Passed
 A0C01Y01, Commoners, N, 0, 1, Passed
 A0C01Y03, Commoners, M, 0, 1, Passed
@@ -184,7 +184,7 @@ K0C00Y02, Merchants, N, 0, 0, Passed
 K0C00Y03, Merchants, M, 0, 0, Passed
 K0C00Y04, Merchants, M, 0, 0, Passed
 K0C00Y05, Merchants, M, 0, 0, Passed
--K0C00Y06, Merchants, M, 0, 0, "A Mix-Up", tons of branching paths to test, NPCs wouldn't always show up in correct buildings
+K0C00Y06, Merchants, M, 0, 0, enabled for testing
 K0C00Y07, Merchants, M, 0, 0, Passed
 K0C00Y08, Merchants, M, 0, 0, Passed
 K0C00Y09, Merchants, M, 0, 0, Passed

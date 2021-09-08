@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop.Game
 
         private bool IgnoreHumanSounds()
         {
-            if (mobile.Enemy.ID > 127 && mobile.Enemy.ID != 146 && MuteHumanSounds)
+            if (mobile.Enemy.ID > 127 && mobile.Enemy.ID < 146 && MuteHumanSounds)
                 return true;
             else
                 return false;

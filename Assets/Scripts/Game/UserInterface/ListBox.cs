@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.UserInterface
@@ -63,12 +64,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             public TextLabel textLabel;
             public Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
+            public Color disabledTextColor = DaggerfallUI.DaggerfallDisabledTextColor;
             public Color selectedTextColor = DaggerfallUI.DaggerfallDefaultSelectedTextColor;
             public Color shadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
             public Color selectedShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
             public Color highlightedTextColor = DaggerfallUI.DaggerfallAlternateHighlightTextColor;
+            public Color highlightedDisabledTextColor = DaggerfallUI.DaggerfallHighlightDisabledTextColor;
             public Color highlightedSelectedTextColor = DaggerfallUI.DaggerfallBrighterSelectedTextColor;
             public object tag;
+
+            public bool Enabled { get => textLabel.Enabled; set { textLabel.Enabled = value; } }
 
             public ListItem(TextLabel textLabel)
             {
@@ -83,7 +88,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public List<ListItem> ListItems
         {
-            get { return listItems; }
+            // Create a shallow copy to keep record list unmodified
+            get { return listItems.ToList(); }
         }
 
         /// <summary>
@@ -367,17 +373,57 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else if (i == highlightedIndex)
             {
-                label.TextColor = listItems[i].highlightedTextColor;
+                label.TextColor = listItems[i].Enabled ?
+                    listItems[i].highlightedTextColor
+                    : listItems[i].highlightedDisabledTextColor;
                 label.ShadowPosition = shadowPosition;
                 label.ShadowColor = listItems[i].shadowColor;
             }
             else
             {
-                label.TextColor = listItems[i].textColor;
+                label.TextColor = listItems[i].Enabled ?
+                    listItems[i].textColor
+                    : listItems[i].disabledTextColor;
                 label.ShadowPosition = shadowPosition;
                 label.ShadowColor = listItems[i].shadowColor;
             }
         }
+
+        private int FindPreviousEnabled(int currentIndex)
+        {
+            int val = currentIndex;
+
+            do
+            {
+                if (val > 0)
+                    val--;
+            } while (!listItems[val].Enabled && val > 0);
+
+            // From our current index, if everything previous to us was disabled, return to where we currently are
+            if (!listItems[val].Enabled)
+                return currentIndex;
+
+            return val;
+        }
+
+        private int FindNextEnabled(int currentIndex)
+        {
+            int val = currentIndex;
+            int last = listItems.Count - 1;
+
+            do
+            {
+                if (val < last)
+                    val++;
+            } while (!listItems[val].Enabled && val < last);
+
+            // From our current index, if everything next of us was disabled, return to where we currently are
+            if (!listItems[val].Enabled)
+                return currentIndex;
+
+            return val;
+        }
+
         protected override void MouseMove(int x, int y)
         {
             if (listItems.Count == 0)
@@ -423,14 +469,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (listItems.Count == 0)
                 return;
 
+            int selected = -1;
+
             if (verticalScrollMode == VerticalScrollModes.EntryWise)
             {
                 int row = (int)(clickPosition.y / ((int)(font.GlyphHeight * Scale.y) + rowSpacing));
                 int index = scrollIndex + row;
-                if (index >= 0 && index < Count)
+                if (index >= 0 && index < Count && listItems[index].Enabled)
                 {
-                    selectedIndex = index;
-                    RaiseOnSelectItemEvent();
+                    selected = index;
                 }
             }
             else if (verticalScrollMode == VerticalScrollModes.PixelWise)
@@ -441,15 +488,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     yNextItem = yCurrentItem + listItems[i].textLabel.TextHeight + rowSpacing;
                     int y = scrollIndex + (int)(clickPosition.y);
-                    if (y >= yCurrentItem - rowSpacing * 0.5 && y < yNextItem - rowSpacing * 0.5)
+                    if (y >= yCurrentItem - rowSpacing * 0.5 && y < yNextItem - rowSpacing * 0.5 && listItems[i].Enabled)
                     {
-                        selectedIndex = i;
-                        RaiseOnSelectItemEvent();
+                        selected = i;
                         break;
                     }
                     yCurrentItem = yNextItem;
                 }
-                
+            }
+
+            if (selected > -1)
+            {
+                selectedIndex = selected;
+                RaiseOnSelectItemEvent();
             }
         }
 
@@ -656,7 +707,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (selectedIndex > 0)
             {
-                selectedIndex--;
+                selectedIndex = FindPreviousEnabled(selectedIndex);
                 if (verticalScrollMode == VerticalScrollModes.EntryWise)
                 {
                     if (selectedIndex < scrollIndex)
@@ -673,7 +724,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (selectedIndex < listItems.Count - 1)
             {
-                selectedIndex++;
+                selectedIndex = FindNextEnabled(selectedIndex);
                 if (verticalScrollMode == VerticalScrollModes.EntryWise)
                 {
                     if (selectedIndex > scrollIndex + (rowsDisplayed - 1))
@@ -709,8 +760,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (index < 0 || index >= listItems.Count)
                 return;
 
-            selectedIndex = index;
-            RaiseOnSelectItemEvent();
+            if (listItems[index].Enabled)
+            {
+                selectedIndex = index;
+                RaiseOnSelectItemEvent();
+            }
         }
 
         public void SelectNone()
@@ -727,7 +781,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void UseSelectedItem()
         {
-            RaiseOnUseItemEvent();
+            if (selectedIndex > -1 && selectedIndex < listItems.Count && listItems[selectedIndex].Enabled)
+                RaiseOnUseItemEvent();
         }
 
         public void ScrollUp()

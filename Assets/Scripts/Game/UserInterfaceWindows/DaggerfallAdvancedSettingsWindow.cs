@@ -828,12 +828,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
          private void MusicVolume_OnScroll()
         {
-            DaggerfallUnity.Settings.MusicVolume = musicVolume.GetValue();
+            DaggerfallUnity.Settings.MusicVolume = musicVolume.GetValue() / 100f;
         }
 
         private void SoundVolume_OnScroll()
         {
-            DaggerfallUnity.Settings.SoundVolume = soundVolume.GetValue();
+            DaggerfallUnity.Settings.SoundVolume = soundVolume.GetValue() / 100f;
             if (dfAudioSource)
                 dfAudioSource.AudioSource.volume = 1.0f * DaggerfallUnity.Settings.SoundVolume;
         }

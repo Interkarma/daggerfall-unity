@@ -63,6 +63,7 @@ titleOrDescriptionMissing,  Title and Description are mandatory fields.
 
 dependencyErrorMessage,                 One or more mods might not work correctly:
 dependencyIsMissing,                    Failed to retrieve mod {0}
+dependencyNotEnabled,                   Mod dependency {0} is not enabled
 dependencyWithIncorrectPosition,        {0} must be positioned above in the load order
 dependencyWithIncompatibleVersion,      {0} has version {1} but {2} or higher is requested
 sortModsQuestion,                       Do you want to sort mods automatically?

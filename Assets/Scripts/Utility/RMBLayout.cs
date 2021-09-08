@@ -643,6 +643,11 @@ namespace DaggerfallWorkshop.Utility
                     if (!contentReader.GetBlock(blockName, out block))
                         throw new Exception("GetCompleteBuildingData() could not read block " + blockName);
 
+                    // Make a copy of the building data array for our block copy since we're modifying it
+                    DFLocation.BuildingData[] buildingArray = new DFLocation.BuildingData[block.RmbBlock.FldHeader.BuildingDataList.Length];
+                    Array.Copy(block.RmbBlock.FldHeader.BuildingDataList, buildingArray, block.RmbBlock.FldHeader.BuildingDataList.Length);
+                    block.RmbBlock.FldHeader.BuildingDataList = buildingArray;
+
                     // Assign building data for this block
                     BuildingReplacementData buildingReplacementData;
                     for (int i = 0; i < block.RmbBlock.SubRecords.Length; i++)

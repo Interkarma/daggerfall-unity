@@ -148,6 +148,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             // Roll bonus pool for player to distribute
             // Using maxBonusPool + 1 for inclusive range
+            UnityEngine.Random.InitState(Time.frameCount);
             return UnityEngine.Random.Range(minBonusPool, maxBonusPool + 1);
         }
 
@@ -1519,6 +1520,9 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (savingThrow >= 100)
                 return 0;
 
+            // Increase saving throw by MagicResist, equal to LiveWillpower / 10 (rounded down)
+            savingThrow += target.MagicResist;
+
             savingThrow = Mathf.Clamp(savingThrow, 5, 95);
 
             int percentDamageOrDuration = 100;
@@ -1538,6 +1542,10 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int SavingThrow(IEntityEffect sourceEffect, DaggerfallEntity target)
         {
+            Func<IEntityEffect, DaggerfallEntity, int> del;
+            if (TryGetOverride("SavingThrowSpellEffect", out del))
+                return del(sourceEffect, target);
+
             if (sourceEffect == null || sourceEffect.ParentBundle == null)
                 return 100;
 

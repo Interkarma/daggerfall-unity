@@ -702,6 +702,13 @@ namespace DaggerfallWorkshop.Game.Questing
             quests.Add(quest.UID, quest);            
 
             RaiseOnQuestStartedEvent(quest);
+
+            // Assign QuestResourceBehaviour to questor NPC - this will be last NPC clicked
+            // This will ensure quests actions like "hide npc" will operate on questor at quest startup
+            if (LastNPCClicked != null)
+            {
+                LastNPCClicked.AssignQuestResourceBehaviour();
+            }
         }
 
         /// <summary>
