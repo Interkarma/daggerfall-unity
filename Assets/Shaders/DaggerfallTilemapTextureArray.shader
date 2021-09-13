@@ -34,7 +34,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 		CGPROGRAM
 
 		#pragma target 3.5
-		#pragma surface surf Standard
+		#pragma surface surf Lambert
 		#pragma glsl
 
 		//#pragma shader_feature _NORMALMAP
@@ -82,7 +82,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 			return 0.5 * log2(d) + MIPMAP_BIAS;
 		}
 
-		void surf (Input IN, inout SurfaceOutputStandard o)
+		void surf (Input IN, inout SurfaceOutput o)
 		{
 			// Get offset to tile in atlas
 			uint index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex + 0.5;
@@ -106,5 +106,5 @@ Shader "Daggerfall/TilemapTextureArray" {
 		}
 		ENDCG
 	}
-	FallBack "Standard"
+	FallBack "Mobile/VertexLit"
 }

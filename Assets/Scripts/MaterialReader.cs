@@ -128,6 +128,7 @@ namespace DaggerfallWorkshop
 
         // Shader names
         public const string _StandardShaderName = "Standard";
+        public const string _DaggerfallDefaultShaderName = "Daggerfall/Default";
         public const string _DaggerfallTilemapShaderName = "Daggerfall/Tilemap";
         public const string _DaggerfallTilemapTextureArrayShaderName = "Daggerfall/TilemapTextureArray";
         public const string _DaggerfallBillboardShaderName = "Daggerfall/Billboard";
@@ -225,9 +226,33 @@ namespace DaggerfallWorkshop
         #region Material Creation
 
         /// <summary>
+        /// Creates a new default material for world geometry.
+        /// </summary>
+        /// <returns>Material using Daggerfall/Default shader.</returns>
+        public static Material CreateDefaultMaterial()
+        {
+            Shader shader = Shader.Find(_DaggerfallDefaultShaderName);
+            Material material = new Material(shader);
+
+            return material;
+        }
+
+        /// <summary>
+        /// Creates a new transparent cutout billboard material for mobiles, misc. objects, etc.
+        /// </summary>
+        /// <returns>Material using Daggerfall/Billboard shader.</returns>
+        public static Material CreateBillboardMaterial()
+        {
+            Shader shader = Shader.Find(_DaggerfallBillboardShaderName);
+            Material material = new Material(shader);
+
+            return material;
+        }
+
+        /// <summary>
         /// Creates new Standard material with default properties suitable for most Daggerfall textures.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Material using Standard shader.</returns>
         public static Material CreateStandardMaterial(
             CustomBlendMode blendMode = CustomBlendMode.Opaque,
             CustomSmoothnessMapChannel smoothnessChannel = CustomSmoothnessMapChannel.AlbedoAlpha,
@@ -395,9 +420,9 @@ namespace DaggerfallWorkshop
 
                 // Create material
                 if (isBillboard)
-                    material = CreateStandardMaterial(CustomBlendMode.Cutout);
+                    material = CreateBillboardMaterial();
                 else
-                    material = CreateStandardMaterial();
+                    material = CreateDefaultMaterial();
 
                 // Setup material
                 material.name = FormatName(archive, record);
@@ -520,9 +545,9 @@ namespace DaggerfallWorkshop
             // Create material
             Material material;
             if (isBillboard)
-                material = CreateStandardMaterial(CustomBlendMode.Cutout);
+                material = CreateBillboardMaterial();
             else
-                material = CreateStandardMaterial();
+                material = CreateDefaultMaterial();
 
             // Create settings
             GetTextureSettings settings = TextureReader.CreateTextureSettings(archive, 0, 0, alphaIndex, border, dilate);

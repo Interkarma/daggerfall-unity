@@ -1206,9 +1206,17 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         private static Material MakeBillboardMaterial(string renderMode = null)
         {
-            return MaterialReader.CreateStandardMaterial(renderMode != null && Enum.IsDefined(customBlendModeType, renderMode) ?
+            // Parse blendMode from string or use Cutout if no custom blendMode specified
+            MaterialReader.CustomBlendMode blendMode =
+                renderMode != null && Enum.IsDefined(customBlendModeType, renderMode) ?
                 (MaterialReader.CustomBlendMode)Enum.Parse(customBlendModeType, renderMode) :
-                MaterialReader.CustomBlendMode.Cutout);
+                MaterialReader.CustomBlendMode.Cutout;
+
+            // Use Daggerfall/Billboard material for standard cutout billboards or create a Standard material if using any other custom blendMode
+            if (blendMode == MaterialReader.CustomBlendMode.Cutout)
+                return MaterialReader.CreateBillboardMaterial();
+            else
+                return MaterialReader.CreateStandardMaterial(blendMode);
         }
 
         private static bool MakeName(ImageData imageData, DyeColors dyeColor, out string directory, out string name)

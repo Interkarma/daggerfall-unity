@@ -380,7 +380,7 @@ namespace DaggerfallWorkshop
             meshRenderer = GetComponent<MeshRenderer>();
 
             // Create material
-            Material material = MaterialReader.CreateStandardMaterial(MaterialReader.CustomBlendMode.Cutout);
+            Material material = MaterialReader.CreateBillboardMaterial();
             material.mainTexture = texture;
 
             // Create mesh

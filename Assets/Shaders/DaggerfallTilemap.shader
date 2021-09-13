@@ -34,7 +34,7 @@ Shader "Daggerfall/Tilemap" {
 		
 		CGPROGRAM
 		#pragma target 3.0
-		#pragma surface surf Standard
+		#pragma surface surf Lambert
 		#pragma glsl
 
 		sampler2D _TileAtlasTex;
@@ -52,7 +52,7 @@ Shader "Daggerfall/Tilemap" {
 			float2 uv_BumpMap;
 		};
 
-		void surf (Input IN, inout SurfaceOutputStandard o)
+		void surf (Input IN, inout SurfaceOutput o)
 		{
 			// Get offset to tile in atlas
 			int index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex + 0.5;
@@ -71,9 +71,8 @@ Shader "Daggerfall/Tilemap" {
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;
 			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
-			o.Metallic = 0;
 		}
 		ENDCG
 	} 
-	FallBack "Standard"
+	FallBack "Mobile/VertexLit"
 }

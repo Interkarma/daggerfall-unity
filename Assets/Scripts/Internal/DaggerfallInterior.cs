@@ -658,7 +658,7 @@ namespace DaggerfallWorkshop
                 }
 
                 // Add point lights
-                if (obj.TextureArchive == TextureReader.LightsTextureArchive)
+                if (obj.TextureArchive == TextureReader.LightsTextureArchive && !DaggerfallUnity.Settings.AmbientLitInteriors)
                 {
                     AddLight(obj, go.transform);
                 }
