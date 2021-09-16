@@ -150,7 +150,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InputManager.Instance.GetMouseButton(0) && colorPreview.MouseOverComponent)
             {
                 if (!draggingThumb)
+                {
+                    // Ensures button pressed while window is being opened is not detected as first click
+                    if (!InputManager.Instance.GetMouseButtonDown(0))
+                        return;
+
                     draggingThumb = true;
+                }
 
                 Vector2 position = colorPreview.ScaledMousePosition;
                 crosshair.Position = position - crosshair.Size / 2;
