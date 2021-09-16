@@ -86,11 +86,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             var hexSymbol = new TextLabel();
             hexSymbol.Text = "#";
-            hexSymbol.Position = new Vector2(5, 20);
+            hexSymbol.Position = new Vector2(5, 30);
             pickerPanel.Components.Add(hexSymbol);
 
             hexColor = new TextBox();
-            hexColor.Position = new Vector2(5 + hexSymbol.Size.x, 20);
+            hexColor.Position = new Vector2(5 + hexSymbol.Size.x, 30);
             hexColor.MaxCharacters = 8;
             hexColor.Scale = new Vector2(10, 10);
             hexColor.OnType += HexColor_OnType;
@@ -98,13 +98,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             rgbaColor = new TextLabel();
             rgbaColor.TextScale = textScale;
-            rgbaColor.Position = new Vector2(5, 40);
+            rgbaColor.Position = new Vector2(5, 55);
             pickerPanel.Components.Add(rgbaColor);
 
             hsvColor = new TextLabel();
             hsvColor.TextScale = textScale;
-            hsvColor.Position = new Vector2(5, 45);
+            hsvColor.Position = new Vector2(5, 60);
             pickerPanel.Components.Add(hsvColor);
+
+            Button okButton = new Button();
+            okButton.Label.Text = "OK";
+            okButton.Size = new Vector2(39, 22);
+            okButton.Position = new Vector2((panelWidth - colorPreviewWidth) / (float)2 - okButton.Size.x / 2, 75);
+            okButton.OnMouseClick += OkButton_OnMouseClick;
+            pickerPanel.Components.Add(okButton);
 
             colorPreview = new Panel();
             colorPreview.Size = new Vector2(colorPreviewWidth, colorPreviewHeight);
@@ -190,11 +197,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ConfirmColorPicked(Color color)
         {
             pickerPanel.BackgroundColor = color;
-
-            if (sender != null)
-                sender.BackgroundColor = color;
-
-            RaiseOnColorPickedEvent();
         }
 
         #endregion
@@ -251,7 +253,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             float h, s, v;
             Color.RGBToHSV(color, out h, out s, out v);
-            return string.Format("HSV({0}, {1}, {2})", h, s , v);
+            return string.Format("HSV({0}, {1}, {2})", h, s, v);
         }
 
         private static Color GetPixel(Texture2D tex, Vector2 position)
@@ -285,6 +287,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rgbaColor.Text = color.ToString();
             hsvColor.Text = GetHSV(color);
             ConfirmColorPicked(color);
+        }
+
+        private void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (this.sender != null)
+                this.sender.BackgroundColor = pickerPanel.BackgroundColor;
+
+            RaiseOnColorPickedEvent();
+            CloseWindow();
         }
 
         public delegate void OnColorPickedEventHandler(Color color);
