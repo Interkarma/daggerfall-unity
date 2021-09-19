@@ -788,6 +788,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 10800000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
+      propertyPath: m_Range
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 10800000, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
+      propertyPath: m_Intensity
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 11400008, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
       propertyPath: DungeonParent
       value: 
