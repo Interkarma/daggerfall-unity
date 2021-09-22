@@ -241,7 +241,7 @@ Shader "Hidden/PostProcessing/Uber"
                 }
                 #endif
 
-                output.rgb = Dither(output.rgb, i.texcoord);
+                //output.rgb = Dither(output.rgb, i.texcoord);
             }
             #else
             {

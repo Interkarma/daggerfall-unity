@@ -86,7 +86,7 @@ Shader "Hidden/PostProcessing/FinalPass"
             }
             #endif
 
-            color.rgb = Dither(color.rgb, i.texcoord);
+            //color.rgb = Dither(color.rgb, i.texcoord);
             return color;
         }
 
