@@ -29,6 +29,7 @@ InteriorShadowDistance=30.0
 ExteriorShadowDistance=90.0
 EnableTextureArrays=True
 RandomDungeonTextures=0
+Antialiasing=0
 
 [Audio]
 AlternateMusic=False

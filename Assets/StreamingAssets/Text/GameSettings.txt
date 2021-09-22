@@ -155,6 +155,8 @@ guiFilterMode,                                      GUI Filter
 guiFilterModeInfo,                                  Filter for HUD images
 videoFilterMode,                                    Video Filter
 videoFilterModeInfo,                                Filter for movies
+antiAliasingMethod,                                 Anti-aliasing Method
+antiAliasingMethodInfo,                             Select anti-aliasing method
 fovSlider,                                          Field Of View   
 fovSliderInfo,                                      The observable world that is seen at any given moment
 terrainDistance,                                    Terrain Distance

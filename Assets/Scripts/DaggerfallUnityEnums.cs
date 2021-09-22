@@ -771,4 +771,12 @@ namespace DaggerfallWorkshop
         Internal,
         TextRSC,
     }
+
+    public enum AntiAliasingMethods
+    {
+        None = 0,   // No anti-aliasing
+        FXAA = 1,   // Fast approximate anti-aliasing (FXAA)
+        SMAA = 2,   // Subpixel morphilogical anti-aliasing (SMAA)
+        TAA = 3,    // Temporal anti-aliasing (TAA)
+    }
 }
