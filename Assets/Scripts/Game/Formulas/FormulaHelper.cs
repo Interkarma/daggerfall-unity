@@ -2532,9 +2532,9 @@ namespace DaggerfallWorkshop.Game.Formulas
             int cost = 0;
             int skill = 50; // 50 is used for item enchantments
             
-            for (int i = 0; i < spell.effects.Length; ++i)
+            for (int i = 0; i < 3; ++i)
             {
-                if (spell.effects[i].type != -1)
+                if (i < spell.effects.Length && spell.effects[i].type != -1)
                 {
                     // Get the coefficients applied to settings for this effect and copy them into the temporary variable
                     ushort[] coefficientsForThisEffect = new ushort[4];
