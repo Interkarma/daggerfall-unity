@@ -1004,11 +1004,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             if (File.Exists(path))
             {
+                // Create texture
+                if (encodeAsNormalMap)
+                    tex = new Texture2D(4, 4, TextureFormat.R8, mipMaps, true);         // Create normal map textures as R8 linear format
+                else
+                    tex = new Texture2D(4, 4, TextureFormat, mipMaps);                  // Create other texture as ARGB32 or DXT5 based on CompressModdedTextures setting
+
                 // Load texture file
-                // Never compress encodeAsNormalMap input textures to DXT5 sRGB that are intended to be encoded from ARGB32 to DXTnm or it throws error and is ignored by SetPixels32() in that step
-                // Only RGBA32 and ARGB32 formats can be used with SetPixels32 - https://docs.unity3d.com/ScriptReference/Texture2D.SetPixels32.html
-                tex = new Texture2D(4, 4, (encodeAsNormalMap) ? TextureFormat.ARGB32 : TextureFormat, mipMaps);
-                if (!tex.LoadImage(File.ReadAllBytes(path), readOnly && !encodeAsNormalMap))
+                if (!tex.LoadImage(File.ReadAllBytes(path), readOnly))
                     Debug.LogErrorFormat(loadError, path);
 
                 // Disable texture compression if previously enabled and injected texture's width or height fall below retroThreshold
@@ -1023,19 +1026,6 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     if (!tex.LoadImage(File.ReadAllBytes(path), readOnly && !encodeAsNormalMap))
                         Debug.LogErrorFormat(loadError, path);
                     Texture.Destroy(oldTex);
-                }
-
-                if (encodeAsNormalMap)
-                {
-                    // RGBA to DXTnm
-                    Color32[] colours = tex.GetPixels32();
-                    for (int i = 0; i < colours.Length; i++)
-                    {
-                        colours[i].a = colours[i].r;
-                        colours[i].r = colours[i].b = colours[i].g;
-                    }
-                    tex.SetPixels32(colours);
-                    tex.Apply(true, readOnly);
                 }
 
 #if DEBUG_TEXTURE_FORMAT
