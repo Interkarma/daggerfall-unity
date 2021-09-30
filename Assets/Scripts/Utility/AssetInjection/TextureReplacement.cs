@@ -347,13 +347,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         /// <param name="relPath">Relative path to file from <see cref="TexturesPath"/>.</param>
         /// <param name="mipMaps">Enable mipmaps?</param>
-        /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
+        /// <param name="isLinear">This is a linear texture such as a normal map.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture exists and has been imported.</returns>
         [Obsolete("Use overload that accepts readOnly flag.")]
-        public static bool TryImportTextureFromLooseFiles(string relPath, bool mipMaps, bool encodeAsNormalMap, out Texture2D tex)
+        public static bool TryImportTextureFromLooseFiles(string relPath, bool mipMaps, bool isLinear, out Texture2D tex)
         {
-            return TryImportTextureFromLooseFiles(Path.Combine(texturesPath, relPath), mipMaps, encodeAsNormalMap, false, out tex);
+            return TryImportTextureFromLooseFiles(Path.Combine(texturesPath, relPath), mipMaps, isLinear, false, out tex);
         }
 
         /// <summary>
@@ -361,13 +361,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         /// <param name="path">Path to texture file, full or relative to <see cref="TexturesPath"/>.</param>
         /// <param name="mipMaps">Enable mipmaps?</param>
-        /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
+        /// <param name="isLinear">This is a linear texture such as a normal map.</param>
         /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture exists and has been imported.</returns>
-        public static bool TryImportTextureFromLooseFiles(string path, bool mipMaps, bool encodeAsNormalMap, bool readOnly, out Texture2D tex)
+        public static bool TryImportTextureFromLooseFiles(string path, bool mipMaps, bool isLinear, bool readOnly, out Texture2D tex)
         {
-            return TryImportTextureFromDisk(Path.IsPathRooted(path) ? path : Path.Combine(texturesPath, path), mipMaps, encodeAsNormalMap, readOnly, out tex);
+            return TryImportTextureFromDisk(Path.IsPathRooted(path) ? path : Path.Combine(texturesPath, path), mipMaps, isLinear, readOnly, out tex);
         }
 
         /// <summary>
@@ -376,14 +376,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="directory">Full path to texture file.</param>
         /// <param name="fileName">Name of texture file.</param>
         /// <param name="mipMaps">Enable mipmaps?</param>
-        /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
+        /// <param name="isLinear">This is a linear texture such as a normal map.</param>
         /// <param name="tex">Imported texture.</param>
         /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <returns>True if texture exists and has been imported.</returns>
         [Obsolete("Use TryImportTextureFromLooseFiles()")]
-        public static bool TryImportTextureFromDisk(string path, bool mipMaps, bool encodeAsNormalMap, out Texture2D tex, bool readOnly = true)
+        public static bool TryImportTextureFromDisk(string path, bool mipMaps, bool isLinear, out Texture2D tex, bool readOnly = true)
         {
-            return TryImportTextureFromLooseFiles(path, mipMaps, encodeAsNormalMap, readOnly, out tex);
+            return TryImportTextureFromLooseFiles(path, mipMaps, isLinear, readOnly, out tex);
         }
 
         #endregion
@@ -990,11 +990,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="directory">Full path to texture file.</param>
         /// <param name="fileName">Name of texture file.</param>
         /// <param name="mipMaps">Enable mipmaps?</param>
-        /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
+        /// <param name="isLinear">This is a linear texture such as a normal map.</param>
         /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture exists and has been imported.</returns>
-        private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool encodeAsNormalMap, bool readOnly, out Texture2D tex)
+        private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool isLinear, bool readOnly, out Texture2D tex)
         {
             const int retroThreshold = 256; // Imported textures with a width or height below this threshold will never be compressed to preserve retro appearance
             const string loadError = "Failed to import texture data at {0}";
@@ -1004,13 +1004,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             if (File.Exists(path))
             {
-                // Create texture
-                if (encodeAsNormalMap)
-                    tex = new Texture2D(4, 4, TextureFormat.R8, mipMaps, true);         // Create normal map textures as R8 linear format
-                else
-                    tex = new Texture2D(4, 4, TextureFormat, mipMaps);                  // Create other texture as ARGB32 or DXT5 based on CompressModdedTextures setting
-
                 // Load texture file
+                tex = new Texture2D(4, 4, TextureFormat, mipMaps, isLinear);
                 if (!tex.LoadImage(File.ReadAllBytes(path), readOnly))
                     Debug.LogErrorFormat(loadError, path);
 
@@ -1022,8 +1017,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (tex.format == TextureFormat.DXT5 && tex.width < retroThreshold && tex.height < retroThreshold)
                 {
                     Texture2D oldTex = tex;
-                    tex = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, mipMaps);
-                    if (!tex.LoadImage(File.ReadAllBytes(path), readOnly && !encodeAsNormalMap))
+                    tex = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, mipMaps, isLinear);
+                    if (!tex.LoadImage(File.ReadAllBytes(path), readOnly))
                         Debug.LogErrorFormat(loadError, path);
                     Texture.Destroy(oldTex);
                 }
