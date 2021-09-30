@@ -996,6 +996,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture exists and has been imported.</returns>
         private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool encodeAsNormalMap, bool readOnly, out Texture2D tex)
         {
+            const int retroThreshold = 256; // Imported textures with a width or height below this threshold will never be compressed to preserve retro appearance
+            const string loadError = "Failed to import texture data at {0}";
+
             if (!path.EndsWith(extension))
                 path += extension;
 
@@ -1004,7 +1007,21 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // Load texture file
                 tex = new Texture2D(4, 4, TextureFormat, mipMaps);
                 if (!tex.LoadImage(File.ReadAllBytes(path), readOnly && !encodeAsNormalMap))
-                    Debug.LogErrorFormat("Failed to import texture data at {0}", path);
+                    Debug.LogErrorFormat(loadError, path);
+
+                // Disable texture compression if previously enabled and injected texture's width or height fall below retroThreshold
+                // This is to handle retro-sized textures that typically fall below 256 pixel dimension and do NOT play nice with lossy compression
+                // Switching texture format requires reloading texture to new format as size of input texture is not known until after tex.LoadImage() is called and old texture is not readable to copy pixels
+                // This only affects small replacement textures below threshold and caching means they're recreated with new format with minimal performance loss
+                // Old texture is destroyed
+                if (tex.format == TextureFormat.DXT5 && tex.width < retroThreshold && tex.height < retroThreshold)
+                {
+                    Texture2D oldTex = tex;
+                    tex = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, mipMaps);
+                    if (!tex.LoadImage(File.ReadAllBytes(path), readOnly && !encodeAsNormalMap))
+                        Debug.LogErrorFormat(loadError, path);
+                    Texture.Destroy(oldTex);
+                }
 
                 if (encodeAsNormalMap)
                 {
