@@ -1005,7 +1005,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (File.Exists(path))
             {
                 // Load texture file
-                tex = new Texture2D(4, 4, TextureFormat, mipMaps);
+                // Never compress encodeAsNormalMap input textures to DXT5 sRGB that are intended to be encoded from ARGB32 to DXTnm or it throws error and is ignored by SetPixels32() in that step
+                // Only RGBA32 and ARGB32 formats can be used with SetPixels32 - https://docs.unity3d.com/ScriptReference/Texture2D.SetPixels32.html
+                tex = new Texture2D(4, 4, (encodeAsNormalMap) ? TextureFormat.ARGB32 : TextureFormat, mipMaps);
                 if (!tex.LoadImage(File.ReadAllBytes(path), readOnly && !encodeAsNormalMap))
                     Debug.LogErrorFormat(loadError, path);
 
