@@ -15,7 +15,7 @@ Shader "Daggerfall/Default" {
         _EmissionMap("Emission Map", 2D) = "white" {}
         _EmissionColor("Emission Color", Color) = (0,0,0)
         _ParallaxMap ("Heightmap (R)", 2D) = "black" {}
-        _Parallax ("Height", Range (0.005, 0.08)) = 0.04
+        _Parallax ("Height", Range (0.005, 0.08)) = 0.05
     }
     SubShader {
         Tags { "RenderType" = "Opaque" }
@@ -59,30 +59,24 @@ Shader "Daggerfall/Default" {
 
     	void surf (Input IN, inout SurfaceOutput o)
     	{
-            // Adjust input UVs for Parallax (height) map offsets - uses R channel for height data
+            // Get parallax offset
+            float2 parallaxOffset = 0;
             #ifdef _PARALLAXMAP
-                half h = tex2D(_ParallaxMap, IN.uv_ParallaxMap).r;
-                float2 offset = ParallaxOffset(h, _Parallax, IN.viewDir);
-                IN.uv_MainTex += offset;
-                #ifdef _NORMALMAP
-                    IN.uv_BumpMap += offset;
-                #endif
-                #ifdef _EMISSION
-                    IN.uv_EmissionMap += offset;
-                #endif
+                half height = tex2D(_ParallaxMap, IN.uv_ParallaxMap).r;
+                parallaxOffset = ParallaxOffset(height, _Parallax, IN.viewDir);
             #endif
 
             // Albedo (colour) map
-            half4 albedo = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+            half4 albedo = tex2D(_MainTex, IN.uv_MainTex + parallaxOffset) * _Color;
 
             // Normal map
             #ifdef _NORMALMAP
-                o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
+                o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap + parallaxOffset));
             #endif
 
             // Emission map
             #ifdef _EMISSION
-                half3 emission = tex2D(_EmissionMap, IN.uv_EmissionMap).rgb * _EmissionColor;
+                half3 emission = tex2D(_EmissionMap, IN.uv_EmissionMap + parallaxOffset).rgb * _EmissionColor;
                 o.Albedo = albedo.rgb - emission; // Emission cancels out other lights
                 o.Emission = emission;
             #else
