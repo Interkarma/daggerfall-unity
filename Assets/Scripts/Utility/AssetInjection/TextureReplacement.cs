@@ -335,7 +335,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 string path = Path.Combine(texturesPath, GetName(archive, record, frame, textureMap));
-                return TryImportTextureFromDisk(path, true, textureMap == TextureMap.Normal, readOnly, out tex);
+                bool isLinear = textureMap == TextureMap.Normal || textureMap == TextureMap.Height;
+                return TryImportTextureFromDisk(path, true, isLinear, readOnly, out tex);
             }
 
             tex = null;
