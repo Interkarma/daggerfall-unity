@@ -46,6 +46,7 @@ namespace DaggerfallWorkshop
         internal static readonly int SmoothnessTextureChannel       = Shader.PropertyToID("_SmoothnessTextureChannel");           
         internal static readonly int Metallic                       = Shader.PropertyToID("_Metallic");    
         internal static readonly int MetallicGlossMap               = Shader.PropertyToID("_MetallicGlossMap");
+        internal static readonly int Smoothness                     = Shader.PropertyToID("_Smoothness");
         internal static readonly int BumpMap                        = Shader.PropertyToID("_BumpMap");
         internal static readonly int HeightMap                      = Shader.PropertyToID("_ParallaxMap");
         internal static readonly int EmissionColor                  = Shader.PropertyToID("_EmissionColor");

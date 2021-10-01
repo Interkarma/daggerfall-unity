@@ -335,7 +335,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 string path = Path.Combine(texturesPath, GetName(archive, record, frame, textureMap));
-                bool isLinear = textureMap == TextureMap.Normal || textureMap == TextureMap.Height;
+                bool isLinear = textureMap == TextureMap.Normal || textureMap == TextureMap.Height || textureMap == TextureMap.MetallicGloss;
                 return TryImportTextureFromDisk(path, true, isLinear, readOnly, out tex);
             }
 
@@ -407,6 +407,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 metallicGloss.filterMode = MainFilterMode;
                 material.EnableKeyword(KeyWords.MetallicGlossMap);
                 material.SetTexture(Uniforms.MetallicGlossMap, metallicGloss);
+                material.SetFloat(Uniforms.Smoothness, 0.35f);
             }
 
             // Height Map
