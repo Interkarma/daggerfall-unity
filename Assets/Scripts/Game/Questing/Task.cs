@@ -95,6 +95,11 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return globalVarLink; }
         }
 
+        public List<IQuestAction> Actions
+        {
+            get { return actions; }
+        }
+
         #endregion
 
         #region Enumerations
