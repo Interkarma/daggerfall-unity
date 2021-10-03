@@ -65,19 +65,20 @@ Shader "Daggerfall/Default" {
             #ifdef _PARALLAXMAP
                 half height = tex2D(_ParallaxMap, IN.uv_MainTex).r;
                 parallaxOffset = ParallaxOffset(height, _Parallax, IN.viewDir);
+                IN.uv_MainTex += parallaxOffset;
             #endif
 
             // Albedo (colour) map
-            half4 albedo = tex2D(_MainTex, IN.uv_MainTex + parallaxOffset) * _Color;
+            half4 albedo = tex2D(_MainTex, IN.uv_MainTex) * _Color;
 
             // Normal map
             #ifdef _NORMALMAP
-                o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_MainTex + parallaxOffset));
+                o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_MainTex));
             #endif
 
             // Emission map
             #ifdef _EMISSION
-                half3 emission = tex2D(_EmissionMap, IN.uv_MainTex + parallaxOffset).rgb * _EmissionColor;
+                half3 emission = tex2D(_EmissionMap, IN.uv_MainTex).rgb * _EmissionColor;
                 o.Albedo = albedo.rgb - emission; // Emission cancels out other lights
                 o.Emission = emission;
             #else
@@ -86,7 +87,7 @@ Shader "Daggerfall/Default" {
 
             // Very rough approximation of metallic map using gloss and specular
             #ifdef _METALLICGLOSSMAP
-                half4 metallicMap = tex2D(_MetallicGlossMap, IN.uv_MainTex + parallaxOffset);
+                half4 metallicMap = tex2D(_MetallicGlossMap, IN.uv_MainTex);
                 o.Gloss = 1 - metallicMap.r;
                 o.Specular = _Smoothness;
             #endif
