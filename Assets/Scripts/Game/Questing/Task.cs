@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game.Questing
             get { return globalVarLink; }
         }
 
-        public List<IQuestAction> Actions
+        public IEnumerable<IQuestAction> Actions
         {
             get { return actions; }
         }
