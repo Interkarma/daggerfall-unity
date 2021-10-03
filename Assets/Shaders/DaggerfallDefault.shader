@@ -52,19 +52,9 @@ Shader "Daggerfall/Default" {
 
     	struct Input {
             float2 uv_MainTex;
-            #ifdef _NORMALMAP
-                float2 uv_BumpMap;
-            #endif
-            #ifdef _EMISSION
-                float2 uv_EmissionMap;
-            #endif
             #ifdef _PARALLAXMAP
                 float3 viewDir;
-                float2 uv_ParallaxMap;
                 float _Parallax;
-            #endif
-            #ifdef _METALLICGLOSSMAP
-                float2 uv_MetallicGlossMap;
             #endif
     	};
 
@@ -73,7 +63,7 @@ Shader "Daggerfall/Default" {
             // Get parallax offset
             float2 parallaxOffset = 0;
             #ifdef _PARALLAXMAP
-                half height = tex2D(_ParallaxMap, IN.uv_ParallaxMap).r;
+                half height = tex2D(_ParallaxMap, IN.uv_MainTex).r;
                 parallaxOffset = ParallaxOffset(height, _Parallax, IN.viewDir);
             #endif
 
@@ -82,12 +72,12 @@ Shader "Daggerfall/Default" {
 
             // Normal map
             #ifdef _NORMALMAP
-                o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap + parallaxOffset));
+                o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_MainTex + parallaxOffset));
             #endif
 
             // Emission map
             #ifdef _EMISSION
-                half3 emission = tex2D(_EmissionMap, IN.uv_EmissionMap + parallaxOffset).rgb * _EmissionColor;
+                half3 emission = tex2D(_EmissionMap, IN.uv_MainTex + parallaxOffset).rgb * _EmissionColor;
                 o.Albedo = albedo.rgb - emission; // Emission cancels out other lights
                 o.Emission = emission;
             #else
@@ -96,7 +86,7 @@ Shader "Daggerfall/Default" {
 
             // Very rough approximation of metallic map using gloss and specular
             #ifdef _METALLICGLOSSMAP
-                half4 metallicMap = tex2D(_MetallicGlossMap, IN.uv_MetallicGlossMap + parallaxOffset);
+                half4 metallicMap = tex2D(_MetallicGlossMap, IN.uv_MainTex + parallaxOffset);
                 o.Gloss = 1 - metallicMap.r;
                 o.Specular = _Smoothness;
             #endif
