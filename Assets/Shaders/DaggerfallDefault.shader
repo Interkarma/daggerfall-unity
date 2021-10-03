@@ -61,11 +61,9 @@ Shader "Daggerfall/Default" {
     	void surf (Input IN, inout SurfaceOutput o)
     	{
             // Get parallax offset
-            float2 parallaxOffset = 0;
             #ifdef _PARALLAXMAP
                 half height = tex2D(_ParallaxMap, IN.uv_MainTex).r;
-                parallaxOffset = ParallaxOffset(height, _Parallax, IN.viewDir);
-                IN.uv_MainTex += parallaxOffset;
+                IN.uv_MainTex += ParallaxOffset(height, _Parallax, IN.viewDir);
             #endif
 
             // Albedo (colour) map
