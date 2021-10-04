@@ -26,11 +26,12 @@ Shader "Daggerfall/Default" {
 
         CGPROGRAM
         #pragma target 3.0
-        #pragma surface surf BlinnPhong
+        #pragma surface surf BlinnPhong vertex:vert
         #pragma multi_compile_local __ _NORMALMAP
         #pragma multi_compile_local __ _EMISSION
         #pragma multi_compile_local __ _PARALLAXMAP
         #pragma multi_compile_local __ _METALLICGLOSSMAP
+        #pragma multi_compile_local __ _COLORBOOST
 
         half4 _Color;
         sampler2D _MainTex;
@@ -56,7 +57,18 @@ Shader "Daggerfall/Default" {
                 float3 viewDir;
                 float _Parallax;
             #endif
+            #ifdef _COLORBOOST
+                float3 viewPos;
+            #endif
     	};
+
+        void vert(inout appdata_full v, out Input o)
+        {
+            UNITY_INITIALIZE_OUTPUT(Input, o);
+            #ifdef _COLORBOOST
+                o.viewPos = UnityObjectToViewPos(v.vertex);
+            #endif
+        }
 
     	void surf (Input IN, inout SurfaceOutput o)
     	{
@@ -92,6 +104,18 @@ Shader "Daggerfall/Default" {
 
             // Assign alpha
             o.Alpha = albedo.a;
+
+            // ColorBoost
+            #ifdef _COLORBOOST
+                float boost = 0;
+                float k = length(IN.viewPos);
+                if (k < 25) // Operates up to 25m
+                {
+                    float boostDistance = 1 - k * 0.04; // 1/25=0.04 (multiplication is faster than division)
+                    o.Albedo.rgb += o.Albedo.rgb * (boost * boostDistance);
+                    //o.Albedo.rgb += float3(1,0,0) * (boost * boostDistance);
+                }
+            #endif
     	}
     	ENDCG
     } 

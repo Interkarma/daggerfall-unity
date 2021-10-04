@@ -234,6 +234,7 @@ namespace DaggerfallWorkshop
         {
             Shader shader = Shader.Find(_DaggerfallDefaultShaderName);
             Material material = new Material(shader);
+            //material.EnableKeyword("_COLORBOOST");
 
             return material;
         }
