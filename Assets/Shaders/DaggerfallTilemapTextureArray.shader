@@ -101,7 +101,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 			o.Alpha = c.a;
 			
 			#ifdef _NORMALMAP
-				o.Normal = UnpackNormal(UNITY_SAMPLE_TEX2DARRAY_SAMPLER_LOD(_TileNormalMapTexArr, _TileTexArr, uv3, mipMapLevel));
+				o.Normal = UnpackNormal(UNITY_SAMPLE_TEX2DARRAY_SAMPLER_LOD(_TileNormalMapTexArr, _TileNormalMapTexArr, uv3, mipMapLevel));
 			#endif
 		}
 		ENDCG

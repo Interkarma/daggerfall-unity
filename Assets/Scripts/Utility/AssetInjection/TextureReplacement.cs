@@ -1090,6 +1090,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     if (!fallback)
                     {
                         fallback = new Texture2D(textureArray.width, textureArray.height, textureArray.format, mipMaps, IsLinearTextureMap(textureMap));
+                        fallback.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
                         Color32[] colors = new Color32[fallback.width * fallback.height];
                         for (int i = 0; i < colors.Length; i++)
                             colors[i] = fallbackColor.Value;
@@ -1106,6 +1107,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         return false;
 
                     textureArray = new Texture2DArray(tex.width, tex.height, depth, tex.format, mipMaps = tex.mipmapCount > 1, IsLinearTextureMap(textureMap));
+                    textureArray.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
                 }
 
                 if (tex.width == textureArray.width && tex.height == textureArray.height && tex.format == textureArray.format)
