@@ -981,11 +981,12 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DyeColors.</returns>
         public DyeColors GetDyeColor(DaggerfallUnityItem item)
         {
-
             if (item.ItemGroup == ItemGroups.Weapons)
                 return GetWeaponDyeColor((WeaponMaterialTypes)item.nativeMaterialValue);
             else if (item.ItemGroup == ItemGroups.Armor)
                 return GetArmorDyeColor((ArmorMaterialTypes)item.nativeMaterialValue);
+            else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
+                return ItemBuilder.RandomClothingDye();
             else
                 return item.dyeColor;
         }
