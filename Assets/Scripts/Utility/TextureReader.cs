@@ -737,11 +737,7 @@ namespace DaggerfallWorkshop.Utility
             // Try to import whole texture array
             Texture2DArray textureArray;
             if (TextureReplacement.TryImportTextureArray(archive, numSlices, textureMap, null, out textureArray))
-            {
-                textureArray.wrapMode = TextureWrapMode.Clamp;
-                textureArray.anisoLevel = 8;
                 return textureArray;
-            }
 
             // Only use Color32 fallback loader for albedo texture
             if (textureMap != TextureMap.Albedo)
