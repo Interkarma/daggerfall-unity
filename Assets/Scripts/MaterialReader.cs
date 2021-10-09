@@ -700,9 +700,6 @@ namespace DaggerfallWorkshop
             Texture2DArray textureArrayTerrainTilesParallaxMap = textureReader.GetTerrainTextureArray(archive, TextureMap.Height);
             Texture2DArray textureArrayTerrainTilesMetallicGloss = textureReader.GetTerrainTextureArray(archive, TextureMap.MetallicGloss);
             textureArrayTerrainTiles.filterMode = MainFilterMode;
-            textureArrayTerrainTilesNormalMap.filterMode = MainFilterMode;
-            textureArrayTerrainTilesParallaxMap.filterMode = MainFilterMode;
-            textureArrayTerrainTilesMetallicGloss.filterMode = MainFilterMode;
 
             Shader shader = Shader.Find(_DaggerfallTilemapTextureArrayShaderName);
             Material material = new Material(shader);
@@ -714,12 +711,14 @@ namespace DaggerfallWorkshop
                 // If normal map texture array was loaded successfully enable _NORMALMAP in shader and set texture
                 material.SetTexture(TileTexArrUniforms.TileNormalMapTexArr, textureArrayTerrainTilesNormalMap);
                 material.EnableKeyword(KeyWords.NormalMap);
+                textureArrayTerrainTilesNormalMap.filterMode = MainFilterMode;
             }
             if (textureArrayTerrainTilesParallaxMap != null)
             {
                 // If parallax map texture array was loaded successfully enable _PARALLAXMAP in shader and set texture
                 material.SetTexture(TileTexArrUniforms.TileParallaxMapTexArr, textureArrayTerrainTilesParallaxMap);
                 material.EnableKeyword(KeyWords.HeightMap);
+                textureArrayTerrainTilesParallaxMap.filterMode = MainFilterMode;
             }
             if (textureArrayTerrainTilesMetallicGloss != null)
             {
@@ -727,6 +726,7 @@ namespace DaggerfallWorkshop
                 material.SetTexture(TileTexArrUniforms.TileMetallicGlossMapTexArr, textureArrayTerrainTilesMetallicGloss);
                 material.EnableKeyword(KeyWords.MetallicGlossMap);
                 material.SetFloat(Uniforms.Smoothness, 0.35f);
+                textureArrayTerrainTilesMetallicGloss.filterMode = MainFilterMode;
             }
 
             CachedMaterial newcm = new CachedMaterial()
