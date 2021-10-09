@@ -719,222 +719,51 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Gets terrain albedo texture array containing each terrain tile in a seperate array slice.        
+        /// Gets terrain texture array containing each terrain tile texture in a seperate array slice.        
         /// </summary>
         /// <param name="archive">Archive index.</param>
-        /// <param name="stayReadable">Texture should stay readable.</param>
-        /// <returns>Texture2DArray or null</returns>
-        public Texture2DArray GetTerrainAlbedoTextureArray(
-            int archive,
-            bool stayReadable = false)
+        /// <param name="textureMap">The texture type.</param>
+        /// <returns>Texture2DArray or null.</returns>
+        public Texture2DArray GetTerrainTextureArray(int archive, TextureMap textureMap)
         {
             // Load texture file and check count matches terrain tiles
             TextureFile textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
             int numSlices = 0;
             if (textureFile.RecordCount == 56)
-            {
                 numSlices = textureFile.RecordCount;
-            }
             else
-            {
                 return null;
-            }
 
+            // Try to import whole texture array
             Texture2DArray textureArray;
-            if (!stayReadable && TextureReplacement.TryImportTextureArray(archive, numSlices, TextureMap.Albedo, null, out textureArray))
+            if (TextureReplacement.TryImportTextureArray(archive, numSlices, textureMap, null, out textureArray))
+            {
+                textureArray.wrapMode = TextureWrapMode.Clamp;
+                textureArray.anisoLevel = 8;
                 return textureArray;
+            }
 
-            Texture2D albedoMap;
-            if (TextureReplacement.TryImportTexture(archive, 0, 0, out albedoMap))
-            {
-                textureArray = new Texture2DArray(albedoMap.width, albedoMap.height, numSlices, TextureFormat.ARGB32, MipMaps);
-            }
+            // Try to import first replacement texture for tile archive to determine width and height of replacement texture set (must be the same for all replacement textures for Texture2DArray)
+            Texture2D texture;
+            if (TextureReplacement.TryImportTexture(archive, 0, 0, out texture))
+                textureArray = new Texture2DArray(texture.width, texture.height, numSlices, TextureFormat.ARGB32, MipMaps, TextureReplacement.IsLinearTextureMap(textureMap));
             else
-            {
-                textureArray = new Texture2DArray(textureFile.GetWidth(0), textureFile.GetWidth(1), numSlices, TextureFormat.ARGB32, MipMaps);
-            }
+                textureArray = new Texture2DArray(textureFile.GetWidth(0), textureFile.GetHeight(0), numSlices, TextureFormat.ARGB32, MipMaps, TextureReplacement.IsLinearTextureMap(textureMap));
 
             // Rollout tiles into texture array
             for (int record = 0; record < textureFile.RecordCount; record++)
             {
-                Color32[] albedo;
-
-                if (TextureReplacement.TryImportTexture(archive, record, 0, out albedoMap))
-                {
-                    // Import custom texture
-                    albedo = albedoMap.GetPixels32();
-                }
+                DFSize sz;
+                Color32[] colors;
+                if (TextureReplacement.TryImportTexture(archive, record, 0, out texture))
+                    colors = texture.GetPixels32();                                 // Import custom texture
                 else
-                {
-                    // Create base image with gutter
-                    DFSize sz;
-                    albedo = textureFile.GetColor32(record, 0, -1, 0, out sz);
-                }
+                    colors = textureFile.GetColor32(record, 0, -1, 0, out sz);      // Create base image with gutter
 
                 // Insert into texture array
-                textureArray.SetPixels32(albedo, record, 0);
+                textureArray.SetPixels32(colors, record, 0);
             }
-            textureArray.Apply(true, !stayReadable);
-
-            // Change settings for these textures
-            textureArray.wrapMode = TextureWrapMode.Clamp;
-            textureArray.anisoLevel = 8;
-
-            return textureArray;
-        }
-
-
-        /// <summary>
-        /// Gets terrain normal map texture array containing each terrain tile in a seperate array slice.        
-        /// </summary>
-        /// <param name="archive">Archive index.</param>
-        /// <param name="stayReadable">Texture should stay readable.</param>
-        /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
-        /// <returns>Texture2DArray or null</returns>
-        public Texture2DArray GetTerrainNormalMapTextureArray(
-            int archive,
-            bool stayReadable = false,
-            SupportedAlphaTextureFormats alphaFormat = SupportedAlphaTextureFormats.ARGB32)
-        {
-            // Load texture file and check count matches terrain tiles
-            TextureFile textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
-            int numSlices = 0;
-            if (textureFile.RecordCount == 56)
-            {
-                numSlices = textureFile.RecordCount;
-            }
-            else
-            {
-                return null;
-            }
-
-            Texture2DArray textureArray;
-            if (!stayReadable && TextureReplacement.TryImportTextureArray(archive, numSlices, TextureMap.Normal, null, out textureArray))
-                return textureArray;
-
-            int width;
-            int height;
-
-            // try to import first replacement texture for tile archive to determine width and height of replacement texture set (must be the same for all replacement textures for Texture2DArray)
-            Texture2D normalMap;
-            if (TextureReplacement.TryImportTexture(archive, 0, 0, TextureMap.Normal, false, out normalMap))
-            {
-                width = normalMap.width;
-                height = normalMap.height;
-            }
-            else
-            {
-                return null;
-            }
-
-            textureArray = new Texture2DArray(width, height, numSlices, ParseTextureFormat(alphaFormat), MipMaps);
-
-            // Rollout tiles into texture array
-            for (int record = 0; record < textureFile.RecordCount; record++)
-            {
-                // Import custom texture(s)
-                if (!TextureReplacement.TryImportTexture(archive, record, 0, TextureMap.Normal, false, out normalMap))
-                {
-                    // if current texture does not exist
-                    Debug.LogErrorFormat("Terrain: imported archive {0} does not contain normal for record {1}.", archive, record);
-                    return null;
-                }
-
-                // enforce that all custom normal map textures have the same dimension (requirement of Texture2DArray)
-                if ((normalMap.width != width) || (normalMap.height != height))
-                {
-                    Debug.LogErrorFormat("Terrain: failed to inject normal maps for archive {0}, incorrect size at record {1}.", archive, record);
-                    return null;
-                }
-
-                // Insert into texture array
-                textureArray.SetPixels32(normalMap.GetPixels32(), record, 0);
-            }
-            textureArray.Apply(true, !stayReadable);
-
-            // Change settings for these textures
-            textureArray.wrapMode = TextureWrapMode.Clamp;
-            textureArray.anisoLevel = 8;
-
-            return textureArray;
-        }
-
-        /// <summary>
-        /// Gets terrain metallic gloss map texture array containing each terrain tile in a seperate array slice.        
-        /// </summary>
-        /// <param name="archive">Archive index.</param>
-        /// <param name="stayReadable">Texture should stay readable.</param>
-        /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
-        /// <returns>Texture2DArray or null</returns>
-        public Texture2DArray GetTerrainMetallicGlossMapTextureArray(
-            int archive,
-            bool stayReadable = false)
-        {
-            Color32 defaultMetallicGlossColor = new Color32(0, 0, 0, 255);
-            Color32[] defaultMetallicGlossMap;
-
-            // Load texture file and check count matches terrain tiles
-            TextureFile textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
-            int numSlices = 0;
-            if (textureFile.RecordCount == 56)
-            {
-                numSlices = textureFile.RecordCount;
-            }
-            else
-            {
-                return null;
-            }
-
-            Texture2DArray textureArray;
-            if (!stayReadable && TextureReplacement.TryImportTextureArray(archive, numSlices, TextureMap.MetallicGloss, defaultMetallicGlossColor, out textureArray))
-                return textureArray;
-
-            int width;
-            int height;
-
-            // try to import first replacement texture for tile archive to determine width and height of replacement texture set (must be the same for all replacement textures for Texture2DArray)
-            Texture2D metallicGlossMap;
-            if (TextureReplacement.TryImportTexture(archive, 0, 0, TextureMap.MetallicGloss, false, out metallicGlossMap))
-            {                
-                width = metallicGlossMap.width;
-                height = metallicGlossMap.height;                
-            }
-            else
-            {
-                // create default texture array (1x1 texture)
-                width = 1;
-                height = 1;
-            }
-
-            textureArray = new Texture2DArray(width, height, numSlices, TextureFormat.ARGB32, MipMaps);
-
-            defaultMetallicGlossMap = new Color32[width*height];
-            for (int i = 0; i < width * height; i++)
-            {
-                defaultMetallicGlossMap[i] = defaultMetallicGlossColor;
-            }        
-
-            // Rollout tiles into texture array
-            for (int record = 0; record < textureFile.RecordCount; record++)
-            {
-                // Import custom texture(s)
-                if (!TextureReplacement.TryImportTexture(archive, record, 0, TextureMap.MetallicGloss, false, out metallicGlossMap))
-                {
-                    metallicGlossMap = new Texture2D(width, height, TextureFormat.ARGB32, MipMaps);
-                    metallicGlossMap.SetPixels32(defaultMetallicGlossMap);
-                }
-
-                // enforce that all custom metallicgloss map textures have the same dimension (requirement of Texture2DArray)
-                if ((metallicGlossMap.width != width) || (metallicGlossMap.height != height))
-                {
-                    Debug.LogErrorFormat("Terrain: failed to inject metallicgloss maps for archive {0}, incorrect size at record {1}.", archive, record);
-                    return null;
-                }
-
-                // Insert into texture array
-                textureArray.SetPixels32(metallicGlossMap.GetPixels32(), record, 0);
-            }
-            textureArray.Apply(true, !stayReadable);
+            textureArray.Apply(true);
 
             // Change settings for these textures
             textureArray.wrapMode = TextureWrapMode.Clamp;

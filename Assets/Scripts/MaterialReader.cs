@@ -73,6 +73,7 @@ namespace DaggerfallWorkshop
     {
         internal static readonly int TileTexArr                     = Shader.PropertyToID("_TileTexArr");
         internal static readonly int TileNormalMapTexArr            = Shader.PropertyToID("_TileNormalMapTexArr");
+        internal static readonly int TileParallaxMapTexArr          = Shader.PropertyToID("_TileParallaxMapTexArr");
         internal static readonly int TileMetallicGlossMapTexArr     = Shader.PropertyToID("_TileMetallicGlossMapTexArr");
         internal static readonly int TilemapTex                     = Shader.PropertyToID("_TilemapTex");
     }
@@ -694,9 +695,9 @@ namespace DaggerfallWorkshop
             }
 
             // Generate texture array
-            Texture2DArray textureArrayTerrainTiles = textureReader.GetTerrainAlbedoTextureArray(archive);
-            Texture2DArray textureArrayTerrainTilesNormalMap = textureReader.GetTerrainNormalMapTextureArray(archive);
-            Texture2DArray textureArrayTerrainTilesMetallicGloss = textureReader.GetTerrainMetallicGlossMapTextureArray(archive);
+            Texture2DArray textureArrayTerrainTiles = textureReader.GetTerrainTextureArray(archive, TextureMap.Albedo);
+            Texture2DArray textureArrayTerrainTilesNormalMap = textureReader.GetTerrainTextureArray(archive, TextureMap.Normal);
+            Texture2DArray textureArrayTerrainTilesMetallicGloss = textureReader.GetTerrainTextureArray(archive, TextureMap.MetallicGloss);
             textureArrayTerrainTiles.filterMode = MainFilterMode;
 
             Shader shader = Shader.Find(_DaggerfallTilemapTextureArrayShaderName);
