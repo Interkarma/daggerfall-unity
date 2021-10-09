@@ -23,7 +23,7 @@ Shader "Daggerfall/TilemapTextureArray" {
         _TileTexArr("Tile Texture Array", 2DArray) = "white" {}
         _TileNormalMapTexArr("Tileset NormalMap Texture Array (RGBA)", 2DArray) = "bump" {}
         _TileParallaxMapTexArr("Tileset ParallaxMap Texture Array (R)", 2DArray) = "black" {}
-        _Parallax("Parallax Scale", Range (0.005, 0.08)) = 0.05
+        _Parallax("Parallax Scale", Range (0.005, 0.08)) = 0.01
         _TileMetallicGlossMapTexArr("Tileset MetallicGlossMap Texture Array (R)", 2DArray) = "black" {}
         _Smoothness("Smoothness", Range (0, 1)) = 0
         _TilemapTex("Tilemap (R)", 2D) = "red" {}
@@ -36,7 +36,7 @@ Shader "Daggerfall/TilemapTextureArray" {
         
         CGPROGRAM
         #pragma target 3.5
-        #pragma surface surf Lambert
+        #pragma surface surf BlinnPhong
         #pragma glsl
         #pragma multi_compile_local __ _NORMALMAP
         #pragma multi_compile_local __ _PARALLAXMAP
@@ -108,14 +108,27 @@ Shader "Daggerfall/TilemapTextureArray" {
             // Get mipmap level
             float mipMapLevel = GetMipLevel(unwrappedUV, _TileTexArr_TexelSize);
 
+            // Get parallax offset
+            #ifdef _PARALLAXMAP
+                half height = UNITY_SAMPLE_TEX2DARRAY_SAMPLER_LOD(_TileParallaxMapTexArr, _TileParallaxMapTexArr, uv3, mipMapLevel).r;
+                uv3.xy += ParallaxOffset(height, _Parallax, IN.viewDir);
+            #endif
+
             // Albedo (colour) map
-            half4 c = UNITY_SAMPLE_TEX2DARRAY_SAMPLER_LOD(_TileTexArr, _TileTexArr, uv3, mipMapLevel);
-            o.Albedo = c.rgb;
-            o.Alpha = c.a;
+            half4 albedo = UNITY_SAMPLE_TEX2DARRAY_SAMPLER_LOD(_TileTexArr, _TileTexArr, uv3, mipMapLevel);
+            o.Albedo = albedo.rgb;
+            o.Alpha = albedo.a;
 
             // Normal map
             #ifdef _NORMALMAP
                 o.Normal = UnpackNormal(UNITY_SAMPLE_TEX2DARRAY_SAMPLER_LOD(_TileNormalMapTexArr, _TileNormalMapTexArr, uv3, mipMapLevel));
+            #endif
+
+            // Very rough approximation of metallic map using gloss and specular
+            #ifdef _METALLICGLOSSMAP
+                half4 metallicMap = UNITY_SAMPLE_TEX2DARRAY_SAMPLER_LOD(_TileMetallicGlossMapTexArr, _TileMetallicGlossMapTexArr, uv3, mipMapLevel);
+                o.Gloss = 1 - metallicMap.r;
+                o.Specular = _Smoothness;
             #endif
         }
         ENDCG
