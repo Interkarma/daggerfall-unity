@@ -743,6 +743,10 @@ namespace DaggerfallWorkshop.Utility
                 return textureArray;
             }
 
+            // Only use Color32 fallback loader for albedo texture
+            if (textureMap != TextureMap.Albedo)
+                return null;
+
             // Try to import first replacement texture for tile archive to determine width and height of replacement texture set (must be the same for all replacement textures for Texture2DArray)
             Texture2D texture;
             if (TextureReplacement.TryImportTexture(archive, 0, 0, out texture))
