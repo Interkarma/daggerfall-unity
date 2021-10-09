@@ -55,7 +55,6 @@ Shader "Daggerfall/Default" {
             float2 uv_MainTex;
             #ifdef _PARALLAXMAP
                 float3 viewDir;
-                float _Parallax;
             #endif
             #ifdef _COLORBOOST
                 float3 viewPos;
