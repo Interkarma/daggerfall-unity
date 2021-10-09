@@ -20,9 +20,12 @@ Shader "Daggerfall/TilemapTextureArray" {
         [HideInInspector] _SplatTex0("Layer 0 (R)", 2D) = "white" {}
 
         // These params are used for our shader
-        _TileTexArr("Tile Texture Array", 2DArray) = "" {}
-        _TileNormalMapTexArr("Tileset NormalMap Texture Array (RGBA)", 2DArray) = "" {}
-        _TileMetallicGlossMapTexArr ("Tileset MetallicGlossMap Texture Array (RGBA)", 2DArray) = "" {}
+        _TileTexArr("Tile Texture Array", 2DArray) = "white" {}
+        _TileNormalMapTexArr("Tileset NormalMap Texture Array (RGBA)", 2DArray) = "bump" {}
+        _TileParallaxMapTexArr("Tileset ParallaxMap Texture Array (R)", 2DArray) = "black" {}
+        _Parallax("Parallax Scale", Range (0.005, 0.08)) = 0.05
+        _TileMetallicGlossMapTexArr("Tileset MetallicGlossMap Texture Array (R)", 2DArray) = "black" {}
+        _Smoothness("Smoothness", Range (0, 1)) = 0
         _TilemapTex("Tilemap (R)", 2D) = "red" {}
         _TilemapDim("Tilemap Dimension (in tiles)", Int) = 128
         _MaxIndex("Max Tileset Index", Int) = 255
@@ -36,10 +39,20 @@ Shader "Daggerfall/TilemapTextureArray" {
         #pragma surface surf Lambert
         #pragma glsl
         #pragma multi_compile_local __ _NORMALMAP
+        #pragma multi_compile_local __ _PARALLAXMAP
+        #pragma multi_compile_local __ _METALLICGLOSSMAP
 
         UNITY_DECLARE_TEX2DARRAY(_TileTexArr);
         #ifdef _NORMALMAP
             UNITY_DECLARE_TEX2DARRAY(_TileNormalMapTexArr);
+        #endif
+        #ifdef _PARALLAXMAP
+            UNITY_DECLARE_TEX2DARRAY(_TileParallaxMapTexArr);
+            float _Parallax;
+        #endif
+        #ifdef _METALLICGLOSSMAP
+            UNITY_DECLARE_TEX2DARRAY(_TileMetallicGlossMapTexArr);
+            float _Smoothness;
         #endif
 
         sampler2D _TilemapTex;
@@ -49,7 +62,10 @@ Shader "Daggerfall/TilemapTextureArray" {
 
         struct Input
         {
-            float2 uv_MainTex : TEXCOORD0;
+            float2 uv_MainTex;
+            #ifdef _PARALLAXMAP
+                float3 viewDir;
+            #endif
         };
 
         // compute all 4 posible configurations of terrain tiles (normal, rotated, flipped, rotated and flipped)
@@ -96,7 +112,8 @@ Shader "Daggerfall/TilemapTextureArray" {
             half4 c = UNITY_SAMPLE_TEX2DARRAY_SAMPLER_LOD(_TileTexArr, _TileTexArr, uv3, mipMapLevel);
             o.Albedo = c.rgb;
             o.Alpha = c.a;
-            
+
+            // Normal map
             #ifdef _NORMALMAP
                 o.Normal = UnpackNormal(UNITY_SAMPLE_TEX2DARRAY_SAMPLER_LOD(_TileNormalMapTexArr, _TileNormalMapTexArr, uv3, mipMapLevel));
             #endif

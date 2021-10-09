@@ -697,8 +697,12 @@ namespace DaggerfallWorkshop
             // Generate texture array
             Texture2DArray textureArrayTerrainTiles = textureReader.GetTerrainTextureArray(archive, TextureMap.Albedo);
             Texture2DArray textureArrayTerrainTilesNormalMap = textureReader.GetTerrainTextureArray(archive, TextureMap.Normal);
+            Texture2DArray textureArrayTerrainTilesParallaxMap = textureReader.GetTerrainTextureArray(archive, TextureMap.Height);
             Texture2DArray textureArrayTerrainTilesMetallicGloss = textureReader.GetTerrainTextureArray(archive, TextureMap.MetallicGloss);
             textureArrayTerrainTiles.filterMode = MainFilterMode;
+            textureArrayTerrainTilesNormalMap.filterMode = MainFilterMode;
+            textureArrayTerrainTilesParallaxMap.filterMode = MainFilterMode;
+            textureArrayTerrainTilesMetallicGloss.filterMode = MainFilterMode;
 
             Shader shader = Shader.Find(_DaggerfallTilemapTextureArrayShaderName);
             Material material = new Material(shader);
@@ -707,14 +711,22 @@ namespace DaggerfallWorkshop
             material.SetTexture(TileTexArrUniforms.TileTexArr, textureArrayTerrainTiles);
             if (textureArrayTerrainTilesNormalMap != null)
             {
-                // if normal map texture array was loaded successfully enable normalmap in shader and set texture
+                // If normal map texture array was loaded successfully enable _NORMALMAP in shader and set texture
                 material.SetTexture(TileTexArrUniforms.TileNormalMapTexArr, textureArrayTerrainTilesNormalMap);
                 material.EnableKeyword(KeyWords.NormalMap);
             }
+            if (textureArrayTerrainTilesParallaxMap != null)
+            {
+                // If parallax map texture array was loaded successfully enable _PARALLAXMAP in shader and set texture
+                material.SetTexture(TileTexArrUniforms.TileParallaxMapTexArr, textureArrayTerrainTilesParallaxMap);
+                material.EnableKeyword(KeyWords.HeightMap);
+            }
             if (textureArrayTerrainTilesMetallicGloss != null)
             {
-                // if metallic gloss map texture array was loaded successfully set texture (should always contain a valid texture array - since it defaults to 1x1 textures)
+                // If metallic gloss map texture array was loaded successfully enable _METALLICGLOSSMAP in shader and set texture
                 material.SetTexture(TileTexArrUniforms.TileMetallicGlossMapTexArr, textureArrayTerrainTilesMetallicGloss);
+                material.EnableKeyword(KeyWords.MetallicGlossMap);
+                material.SetFloat(Uniforms.Smoothness, 0.35f);
             }
 
             CachedMaterial newcm = new CachedMaterial()
