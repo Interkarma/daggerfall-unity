@@ -303,16 +303,6 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 result = (itemKey != -1) ? ItemBuilder.CreatePotion(itemKey) : ItemBuilder.CreateRandomPotion();
             }
-            else if (itemClass == (int)ItemGroups.MensClothing)
-            {
-                Array values = DaggerfallUnity.Instance.ItemHelper.GetEnumArray((ItemGroups)itemClass);
-                result = ItemBuilder.CreateMensClothing((MensClothing)values.GetValue(itemSubClass), GameManager.Instance.PlayerEntity.Race, -1, ItemBuilder.RandomClothingDye());
-            }
-            else if (itemClass == (int)ItemGroups.WomensClothing)
-            {
-                Array values = DaggerfallUnity.Instance.ItemHelper.GetEnumArray((ItemGroups)itemClass);
-                result = ItemBuilder.CreateWomensClothing((WomensClothing)values.GetValue(itemSubClass), GameManager.Instance.PlayerEntity.Race, -1, ItemBuilder.RandomClothingDye());
-            }
             else
             {
                 // Handle random subclass
@@ -325,6 +315,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Create item
                 result = new DaggerfallUnityItem((ItemGroups)itemClass, itemSubClass);
             }
+            
+            // Randomise clothing dye
+            if (result.IsClothing)
+                result.dyeColor = ItemBuilder.RandomClothingDye();
 
             // Link item to quest
             result.LinkQuestItem(ParentQuest.UID, Symbol.Clone());
