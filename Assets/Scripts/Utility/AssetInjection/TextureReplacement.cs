@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Rendering;
 using DaggerfallConnect;
@@ -93,6 +94,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static readonly string cifRciPath = Path.Combine(texturesPath, "CifRci");
 
         static readonly Type customBlendModeType = typeof(MaterialReader.CustomBlendMode);
+        static readonly int ihdrIdentifier = ToInt(Encoding.UTF8.GetBytes("IHDR"), 0);
 
         #endregion
 
@@ -1010,31 +1012,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool isLinear, bool readOnly, out Texture2D tex)
         {
             const int retroThreshold = 256; // Imported textures with a width or height below this threshold will never be compressed to preserve retro appearance
-            const string loadError = "Failed to import texture data at {0}";
 
             if (!path.EndsWith(extension))
                 path += extension;
 
             if (File.Exists(path))
             {
-                // Load texture file
-                tex = new Texture2D(4, 4, TextureFormat, mipMaps, isLinear);
-                if (!tex.LoadImage(File.ReadAllBytes(path), readOnly))
-                    Debug.LogErrorFormat(loadError, path);
+                byte[] bytes = File.ReadAllBytes(path);
+                Vector2Int resolution = FindPngResolution(bytes) ?? throw new Exception($"Failed to find PNG resolution for {path}");
+                TextureFormat textureFormat = resolution.x < retroThreshold && resolution.y < retroThreshold ? TextureFormat.ARGB32 : TextureFormat;
 
-                // Disable texture compression if previously enabled and injected texture's width or height fall below retroThreshold
-                // This is to handle retro-sized textures that typically fall below 256 pixel dimension and do NOT play nice with lossy compression
-                // Switching texture format requires reloading texture to new format as size of input texture is not known until after tex.LoadImage() is called and old texture is not readable to copy pixels
-                // This only affects small replacement textures below threshold and caching means they're recreated with new format with minimal performance loss
-                // Old texture is destroyed
-                if (tex.format == TextureFormat.DXT5 && tex.width < retroThreshold && tex.height < retroThreshold)
-                {
-                    Texture2D oldTex = tex;
-                    tex = new Texture2D(tex.width, tex.height, TextureFormat.ARGB32, mipMaps, isLinear);
-                    if (!tex.LoadImage(File.ReadAllBytes(path), readOnly))
-                        Debug.LogErrorFormat(loadError, path);
-                    Texture.Destroy(oldTex);
-                }
+                tex = new Texture2D(4, 4, textureFormat, mipMaps, isLinear);
+                if (!tex.LoadImage(bytes, readOnly))
+                    Debug.LogError($"Failed to import texture data at {path}");
 
 #if DEBUG_TEXTURE_FORMAT
                 Debug.LogFormat("{0}: format: {1}, mipmaps: {2}, mipmaps count: {3}", Path.GetFileName(path), tex.format, mipMaps, tex.mipmapCount);
@@ -1264,6 +1254,41 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     name = null;
                     return false;
             }
+        }
+
+        /// <summary>
+        /// Finds the resolution of a png image from its byte array content.
+        /// </summary>
+        /// <param name="bytes">Content of png file.</param>
+        /// <returns>Vector where x is the width and y is the height.</returns>
+        private static Vector2Int? FindPngResolution(byte[] bytes)
+        {
+            // Specifications: http://www.libpng.org/pub/png/spec/iso/index-object.html#11IHDR
+            // The IHDR chunk shall be the first chunk in the PNG datastream. It contains:
+            // Width	4 bytes
+            // Height	4 bytes
+
+            const int widthOffset = 1 * 4;
+            const int heightOffset = 2 * 4;
+
+            for (int i = 0; i <= bytes.Length - 12; i += 4)
+            {
+                if (ToInt(bytes, i) == ihdrIdentifier)
+                    return new Vector2Int(ToInt(bytes, i + widthOffset), ToInt(bytes, i + heightOffset));
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Converts four bytes to int (big endian).
+        /// </summary>
+        /// <param name="bytes">Array of bytes.</param>
+        /// <param name="startIndex">Start index in the array.</param>
+        /// <returns>Int value.</returns>
+        private static int ToInt(byte[] bytes, int startIndex)
+        {
+            return (bytes[startIndex] << 24) | (bytes[startIndex + 1] << 16) | (bytes[startIndex + 2] << 8) | bytes[startIndex + 3];
         }
 
         #endregion
