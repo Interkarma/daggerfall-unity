@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game
         PlayerEntity playerEntity;
         Light torchLight;
         float torchIntensity;
-        float intensityMod = 1f;
+        float intensityMod = 1.5f;
         float tickTimeBuffer = 0f;
         float tickTimeInterval = 20f;
         float guttering = 0;
@@ -88,12 +88,12 @@ namespace DaggerfallWorkshop.Game
                     if (lightSource.currentCondition < 3)
                     {
                         // Give warning signs if running low of fuel
-                        intensityMod = 0.6f + (Mathf.Cos(guttering) * 0.2f);
+                        intensityMod = 1f + (Mathf.Cos(guttering) * 0.2f);
                         guttering += Random.Range(-0.02f, 0.06f);
                     }
                     else
                     {
-                        intensityMod = 1;
+                        intensityMod = 1.5f;
                         guttering = 0;
                     }
                 }
