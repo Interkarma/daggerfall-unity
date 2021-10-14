@@ -233,6 +233,9 @@ namespace DaggerfallWorkshop.Game.Utility
                             break;
                     }
                 }
+
+                // Ambient Occlusion
+                GameManager.Instance.TryUpateAmbientOcclusionIntensity();
             }
 
             InputManager.Instance.JoystickCursorSensitivity = DaggerfallUnity.Settings.JoystickCursorSensitivity;

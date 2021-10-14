@@ -110,6 +110,7 @@ namespace DaggerfallWorkshop
         public int CursorWidth { get; set; }
         public int CursorHeight { get; set; }
         public int Antialiasing { get; set; }
+        public float AmbientOcclusionIntensity { get; set; }
 
         // [Audio]
         public string SoundFont { get; set; }
@@ -272,6 +273,7 @@ namespace DaggerfallWorkshop
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
             Antialiasing = GetInt(sectionVideo, "Antialiasing", 0, 3);
+            AmbientOcclusionIntensity = GetFloat(sectionVideo, "AmbientOcclusionIntensity", 0, 4);
 
             SoundFont = GetString(sectionAudio, "SoundFont");
             AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
@@ -417,6 +419,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
             SetInt(sectionVideo, "Antialiasing", Antialiasing);
+            SetFloat(sectionVideo, "AmbientOcclusionIntensity", AmbientOcclusionIntensity);
 
             SetString(sectionAudio, "SoundFont", SoundFont);
             SetBool(sectionAudio, "AlternateMusic", AlternateMusic);

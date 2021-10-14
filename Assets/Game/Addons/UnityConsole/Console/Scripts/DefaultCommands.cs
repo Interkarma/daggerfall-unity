@@ -119,6 +119,8 @@ namespace Wenzil.Console
 
             ConsoleCommandsDatabase.RegisterCommand(SummonDaedra.name, SummonDaedra.description, SummonDaedra.usage, SummonDaedra.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ChangeModSettings.name, ChangeModSettings.description, ChangeModSettings.usage, ChangeModSettings.Execute);
+
+            ConsoleCommandsDatabase.RegisterCommand(SetAmbientOcclusionIntensity.name, SetAmbientOcclusionIntensity.description, SetAmbientOcclusionIntensity.usage, SetAmbientOcclusionIntensity.Execute);
         }
 
         private static class DumpRegion
@@ -2740,6 +2742,29 @@ namespace Wenzil.Console
                 for (int i = 1; i <= n; i++)
                     DaggerfallUI.Instance.PopupMessage("message " + i);
                 return "Finished";
+            }
+        }
+
+        private static class SetAmbientOcclusionIntensity
+        {
+            public static readonly string name = "aointensity";
+            public static readonly string description = "Sets the Ambient Occlusion intensity to a value between 0.0 and 4.0.";
+            public static readonly string usage = "aointensity {intensity} (e.g. aointensity 0.8)";
+
+            public static string Execute(params string[] args)
+            {
+                if (args == null || args.Length < 1)
+                    return usage;
+
+                float intensity = 0;
+                bool result = float.TryParse(args[0], out intensity);
+                if (!result || intensity < 0 || intensity > 4)
+                    return description;
+
+                DaggerfallUnity.Settings.AmbientOcclusionIntensity = intensity;
+                GameManager.Instance.TryUpateAmbientOcclusionIntensity();
+
+                return string.Format("Set Ambient Occlusion Intensity to {0}", intensity);
             }
         }
 

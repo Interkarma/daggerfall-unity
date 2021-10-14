@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using UnityEngine.Rendering.PostProcessing;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -94,6 +95,7 @@ namespace DaggerfallWorkshop.Game
         TalkManager talkManager = null;
         GuildManager guildManager = null;
         QuestListsManager questListsManager = null;
+        PostProcessVolume postProcessVolume = null;
 
         #endregion
 
@@ -380,6 +382,12 @@ namespace DaggerfallWorkshop.Game
         {
             get { return (questListsManager != null) ? questListsManager : questListsManager = new QuestListsManager(); }
             set { questListsManager = value; }
+        }
+
+        public PostProcessVolume PostProcessVolume
+        {
+            get { return (postProcessVolume) ? postProcessVolume : postProcessVolume = GetMonoBehaviour<PostProcessVolume>(); }
+            set { postProcessVolume = value; }
         }
 
         public bool IsPlayerOnHUD
@@ -794,6 +802,29 @@ namespace DaggerfallWorkshop.Game
                     {
                         enemyMotor.IsHostile = true;
                     }
+                }
+            }
+        }
+
+        public void TryUpateAmbientOcclusionIntensity()
+        {
+            PostProcessVolume volume = GameManager.Instance.PostProcessVolume;
+            if (!volume)
+                return;
+
+            AmbientOcclusion ambientOcclusion = null;
+            if (volume.profile.TryGetSettings(out ambientOcclusion))
+            {
+                if (DaggerfallUnity.Settings.AmbientOcclusionIntensity == 0)
+                {
+                    // Disable AO when intensity is set to 0
+                    ambientOcclusion.enabled.value = false;
+                }
+                else
+                {
+                    // Enable AO when intensity is greater than 0 and assign intensity from settings
+                    ambientOcclusion.enabled.value = true;
+                    ambientOcclusion.intensity.value = DaggerfallUnity.Settings.AmbientOcclusionIntensity;
                 }
             }
         }
