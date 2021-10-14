@@ -2763,6 +2763,7 @@ namespace Wenzil.Console
 
                 DaggerfallUnity.Settings.AmbientOcclusionIntensity = intensity;
                 GameManager.Instance.TryUpateAmbientOcclusionIntensity();
+                DaggerfallUnity.Settings.SaveSettings();
 
                 return string.Format("Set Ambient Occlusion Intensity to {0}", intensity);
             }
