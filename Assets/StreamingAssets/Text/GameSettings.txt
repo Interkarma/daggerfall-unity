@@ -9,6 +9,7 @@ interface,                                          Interface
 enhancements,                                       Enhancements
 video,                                              Video
 accessibility,                                      Accessibility
+effects,                                            Effects
 
 game,                                               Game
 controls,                                           Controls
@@ -21,6 +22,8 @@ light,                                              Lighting
 basic,                                              Basic
 advanced,                                           Advanced
 automap,                                            Automap
+postProcessing,                                     Post Processing
+retroRendering,                                     Retro Rendering
 
 - Settings and tooltip descriptions
 

@@ -44,7 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly Vector2 offset = new Vector2(10, 20);
         const float columnHeight = 140;
 
-        const int topBarButtonsLength = 60;
+        const int topBarButtonsLength = 53;
 
         const float itemTextScale = 0.9f;
         const float sectionSpacing = 12f;
@@ -234,6 +234,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddPage("interface", Interface);
             AddPage("enhancements", Enhancements);
             AddPage("video", Video);
+            AddPage("effects", Effects);
             AddPage("accessibility", Accessibility);
         }
 
@@ -366,9 +367,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainFilterMode = AddSlider(leftPanel, "mainFilterMode", DaggerfallUnity.Settings.MainFilterMode, filterModes);
             guiFilterMode = AddSlider(leftPanel, "guiFilterMode", DaggerfallUnity.Settings.GUIFilterMode, filterModes);
             videoFilterMode = AddSlider(leftPanel, "videoFilterMode", DaggerfallUnity.Settings.VideoFilterMode, filterModes);
-            string[] antiAliasingMethods = new string[] { "None", "FXAA", "SMAA", "TAA" };
-            antiAliasingMethod = AddSlider(leftPanel, "antiAliasingMethod", DaggerfallUnity.Settings.Antialiasing, antiAliasingMethods);
-            ambientOcclusionIntensity = AddSlider(leftPanel, "ambientOcclusionIntensity", 0, 4, DaggerfallUnity.Settings.AmbientOcclusionIntensity);
 
             y = 0;
 
@@ -388,10 +386,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? "Enabled" : "Disabled";
             AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
-            retroRenderingMode = AddSlider(rightPanel, "retroRenderingMode",
-                DaggerfallUnity.Settings.RetroRenderingMode, "Off", "320x200", "640x400");
-            postProcessingInRetroMode = AddSlider(rightPanel, "postProcessingInRetroMode",
-                DaggerfallUnity.Settings.PostProcessingInRetroMode, "Off", "Posterization (full)", "Posterization (-sky)", "Palettization (full)", "Palettization (-sky)");
         }
 
         private void Accessibility(Panel leftPanel, Panel rightPanel)
@@ -403,6 +397,24 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             automapHouseColor = AddColorPicker(leftPanel, "automapHouseColor", DaggerfallUnity.Settings.AutomapHouseColor);
 
             automapReset = AddButton(leftPanel, GetText("reset"), AutomapReset_OnMouseClick);
+        }
+
+        private void Effects(Panel leftPanel, Panel rightPanel)
+        {
+            // Post Processing settings
+            AddSectionTitle(leftPanel, "postProcessing");
+            string[] antiAliasingMethods = new string[] { "None", "FXAA", "SMAA", "TAA" };
+            antiAliasingMethod = AddSlider(leftPanel, "antiAliasingMethod", DaggerfallUnity.Settings.Antialiasing, antiAliasingMethods);
+            ambientOcclusionIntensity = AddSlider(leftPanel, "ambientOcclusionIntensity", 0, 4, DaggerfallUnity.Settings.AmbientOcclusionIntensity);
+
+            y = 0;
+
+            // Retro Rendering settings
+            AddSectionTitle(rightPanel, "retroRendering");
+            retroRenderingMode = AddSlider(rightPanel, "retroRenderingMode",
+                DaggerfallUnity.Settings.RetroRenderingMode, "Off", "320x200", "640x400");
+            postProcessingInRetroMode = AddSlider(rightPanel, "postProcessingInRetroMode",
+                DaggerfallUnity.Settings.PostProcessingInRetroMode, "Off", "Posterization (full)", "Posterization (-sky)", "Palettization (full)", "Palettization (-sky)");
         }
 
         private void AutomapReset_OnMouseClick(BaseScreenComponent sender, Vector2 position)
