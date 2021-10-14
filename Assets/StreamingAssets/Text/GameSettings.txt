@@ -157,6 +157,8 @@ videoFilterMode,                                    Video Filter
 videoFilterModeInfo,                                Filter for movies
 antiAliasingMethod,                                 Anti-aliasing Method
 antiAliasingMethodInfo,                             Select anti-aliasing method
+ambientOcclusionIntensity,                          Ambient Occlusion intensity
+ambientOcclusionIntensityInfo,                      Set intensity of AO postprocess effect
 fovSlider,                                          Field Of View   
 fovSliderInfo,                                      The observable world that is seen at any given moment
 terrainDistance,                                    Terrain Distance

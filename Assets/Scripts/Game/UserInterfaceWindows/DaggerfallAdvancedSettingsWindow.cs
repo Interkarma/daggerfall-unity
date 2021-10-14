@@ -162,6 +162,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox exteriorLightShadows;
         Checkbox ambientLitInteriors;
         HorizontalSlider antiAliasingMethod;
+        HorizontalSlider ambientOcclusionIntensity;
 
         // Accessibility
         Button automapTempleColor;
@@ -367,6 +368,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             videoFilterMode = AddSlider(leftPanel, "videoFilterMode", DaggerfallUnity.Settings.VideoFilterMode, filterModes);
             string[] antiAliasingMethods = new string[] { "None", "FXAA", "SMAA", "TAA" };
             antiAliasingMethod = AddSlider(leftPanel, "antiAliasingMethod", DaggerfallUnity.Settings.Antialiasing, antiAliasingMethods);
+            ambientOcclusionIntensity = AddSlider(leftPanel, "ambientOcclusionIntensity", 0, 4, DaggerfallUnity.Settings.AmbientOcclusionIntensity);
 
             y = 0;
 
@@ -515,6 +517,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.GUIFilterMode = guiFilterMode.ScrollIndex;
             DaggerfallUnity.Settings.VideoFilterMode = videoFilterMode.ScrollIndex;
             DaggerfallUnity.Settings.Antialiasing = antiAliasingMethod.ScrollIndex;
+            DaggerfallUnity.Settings.AmbientOcclusionIntensity = ambientOcclusionIntensity.Value / 10f;
 
             DaggerfallUnity.Settings.FieldOfView = fovSlider.Value;
             DaggerfallUnity.Settings.TerrainDistance = terrainDistance.Value;
