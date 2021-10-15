@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop
 
         const string sectionDaggerfall = "Daggerfall";
         const string sectionVideo = "Video";
-        const string sectionPostprocessing = "Postprocessing";
+        const string sectionEffects = "Effects";
         const string sectionAudio = "Audio";
         const string sectionChildGuard = "ChildGuard";
         const string sectionGUI = "GUI";
@@ -110,8 +110,13 @@ namespace DaggerfallWorkshop
         public int RandomDungeonTextures { get; set; }
         public int CursorWidth { get; set; }
         public int CursorHeight { get; set; }
-        // [Postprocessing]
-        public int Antialiasing { get; set; }
+
+        // [Effects]
+        public bool AntialiasingEnabled { get; set; }
+        public int AntialiasingMethod { get; set; }
+        public bool AntialiasingFXAAFastMode { get; set; }
+        public int AntialiasingSMAAQuality { get; set; }
+        public float AntialiasingTAASharpness { get; set; }
         public float AmbientOcclusionIntensity { get; set; }
 
         // [Audio]
@@ -275,8 +280,12 @@ namespace DaggerfallWorkshop
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
 
-            Antialiasing = GetInt(sectionPostprocessing, "Antialiasing", 0, 3);
-            AmbientOcclusionIntensity = GetFloat(sectionPostprocessing, "AmbientOcclusionIntensity", 0, 4);
+            AntialiasingEnabled = GetBool(sectionEffects, "AntialiasingEnabled");
+            AntialiasingMethod = GetInt(sectionEffects, "AntialiasingMethod", 0, 2);
+            AntialiasingFXAAFastMode = GetBool(sectionEffects, "AntialiasingFXAAFastMode");
+            AntialiasingSMAAQuality = GetInt(sectionEffects, "AntialiasingSMAAQuality", 0, 2);
+            AntialiasingTAASharpness = GetFloat(sectionEffects, "AntialiasingTAASharpness", 0.0f, 3.0f);
+            AmbientOcclusionIntensity = GetFloat(sectionEffects, "AmbientOcclusionIntensity", 0, 4);
 
             SoundFont = GetString(sectionAudio, "SoundFont");
             AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
@@ -422,8 +431,12 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
 
-            SetInt(sectionPostprocessing, "Antialiasing", Antialiasing);
-            SetFloat(sectionPostprocessing, "AmbientOcclusionIntensity", AmbientOcclusionIntensity);
+            SetBool(sectionEffects, "AntialiasingEnabled", AntialiasingEnabled);
+            SetInt(sectionEffects, "AntialiasingMethod", AntialiasingMethod);
+            SetBool(sectionEffects, "AntialiasingFXAAFastMode", AntialiasingFXAAFastMode);
+            SetInt(sectionEffects, "AntialiasingSMAAQuality", AntialiasingSMAAQuality);
+            SetFloat(sectionEffects, "AntialiasingTAASharpness", AntialiasingTAASharpness);
+            SetFloat(sectionEffects, "AmbientOcclusionIntensity", AmbientOcclusionIntensity);
 
             SetString(sectionAudio, "SoundFont", SoundFont);
             SetBool(sectionAudio, "AlternateMusic", AlternateMusic);

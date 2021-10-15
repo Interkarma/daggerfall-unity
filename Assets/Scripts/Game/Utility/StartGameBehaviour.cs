@@ -212,30 +212,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
                     mouseLook.joystickSensitivityScale = DaggerfallUnity.Settings.JoystickLookSensitivity;
                 }
-
-                // Anti-aliasing method
-                PostProcessLayer postProcessLayer = camera.GetComponent<PostProcessLayer>();
-                if (postProcessLayer)
-                {
-                    switch((AntiAliasingMethods)DaggerfallUnity.Settings.Antialiasing)
-                    {
-                        case AntiAliasingMethods.None:
-                            postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.None;
-                            break;
-                        case AntiAliasingMethods.FXAA:
-                            postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.FastApproximateAntialiasing;
-                            break;
-                        case AntiAliasingMethods.SMAA:
-                            postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.SubpixelMorphologicalAntialiasing;
-                            break;
-                        case AntiAliasingMethods.TAA:
-                            postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.TemporalAntialiasing;
-                            break;
-                    }
-                }
-
-                // Ambient Occlusion
-                GameManager.Instance.TryUpateAmbientOcclusionIntensity();
             }
 
             InputManager.Instance.JoystickCursorSensitivity = DaggerfallUnity.Settings.JoystickCursorSensitivity;

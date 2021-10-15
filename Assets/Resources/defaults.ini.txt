@@ -30,8 +30,12 @@ ExteriorShadowDistance=90.0
 EnableTextureArrays=True
 RandomDungeonTextures=0
 
-[Postprocessing]
-Antialiasing=0
+[Effects]
+AntialiasingEnabled=False
+AntialiasingMethod=0
+AntialiasingFXAAFastMode=False
+AntialiasingSMAAQuality=1
+AntialiasingTAASharpness=0.25
 AmbientOcclusionIntensity=0
 
 [Audio]

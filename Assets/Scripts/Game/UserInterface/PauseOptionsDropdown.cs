@@ -184,11 +184,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             modSettings.Enabled = HasApplicableMods();
             clickHandlers.Add(ModSettingsWindowOption_OnClick);
 
-            // Add postprocessing option
-            dropdownList.AddItem(TextManager.Instance.GetLocalizedText("postProcessingSettings"), out ListBox.ListItem postProcessingSettings);
-            UpdateMaxWidth(postProcessingSettings.textLabel.TextWidth);
-            postProcessingSettings.Enabled = true;
-            clickHandlers.Add(PostProcessingSettingsWindowOption_OnClick);
+            // Add game effects  option
+            dropdownList.AddItem(TextManager.Instance.GetLocalizedText("gameEffectsSettings"), out ListBox.ListItem gameEffectsSettings);
+            UpdateMaxWidth(gameEffectsSettings.textLabel.TextWidth);
+            gameEffectsSettings.Enabled = true;
+            clickHandlers.Add(GameEffectsWindowOption_OnClick);
 
             foreach (var opt in DaggerfallUI.Instance.GetPauseOptionsDropdownItems())
             {
@@ -261,9 +261,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             uiManager.PushWindow(listPicker);
         }
 
-        private void PostProcessingSettingsWindowOption_OnClick()
+        private void GameEffectsWindowOption_OnClick()
         {
-            uiManager.PushWindow(new PostProcessingConfigWindow(uiManager));
+            uiManager.PushWindow(new GameEffectsConfigWindow(uiManager));
         }
 
         #endregion

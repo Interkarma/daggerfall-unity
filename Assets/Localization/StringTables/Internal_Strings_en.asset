@@ -3659,7 +3659,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 139512661704720384
-    m_Localized: Postprocessing Settings
+    m_Localized: Effect Settings
     m_Metadata:
       m_Items: []
   - m_Id: 139539947254464512
@@ -3684,6 +3684,10 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 139540168873099264
     m_Localized: Depth of Field
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139568836047552512
+    m_Localized: Give a smoother appearance
     m_Metadata:
       m_Items: []
   references:

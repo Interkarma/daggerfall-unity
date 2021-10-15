@@ -3280,7 +3280,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 139512661704720384
-    m_Key: postProcessingSettings
+    m_Key: gameEffectsSettings
     m_Metadata:
       m_Items: []
   - m_Id: 139539947254464512
@@ -3305,6 +3305,10 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 139540168873099264
     m_Key: depthOfField
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139568836047552512
+    m_Key: antialiasingTip
     m_Metadata:
       m_Items: []
   m_Metadata:
