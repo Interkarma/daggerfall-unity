@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop
 
         const string sectionDaggerfall = "Daggerfall";
         const string sectionVideo = "Video";
+        const string sectionPostprocessing = "Postprocessing";
         const string sectionAudio = "Audio";
         const string sectionChildGuard = "ChildGuard";
         const string sectionGUI = "GUI";
@@ -109,6 +110,7 @@ namespace DaggerfallWorkshop
         public int RandomDungeonTextures { get; set; }
         public int CursorWidth { get; set; }
         public int CursorHeight { get; set; }
+        // [Postprocessing]
         public int Antialiasing { get; set; }
         public float AmbientOcclusionIntensity { get; set; }
 
@@ -272,8 +274,9 @@ namespace DaggerfallWorkshop
             ExteriorShadowDistance = GetFloat(sectionVideo, "ExteriorShadowDistance", 0.1f, 150.0f);
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
-            Antialiasing = GetInt(sectionVideo, "Antialiasing", 0, 3);
-            AmbientOcclusionIntensity = GetFloat(sectionVideo, "AmbientOcclusionIntensity", 0, 4);
+
+            Antialiasing = GetInt(sectionPostprocessing, "Antialiasing", 0, 3);
+            AmbientOcclusionIntensity = GetFloat(sectionPostprocessing, "AmbientOcclusionIntensity", 0, 4);
 
             SoundFont = GetString(sectionAudio, "SoundFont");
             AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
@@ -418,8 +421,9 @@ namespace DaggerfallWorkshop
             SetFloat(sectionVideo, "ExteriorShadowDistance", ExteriorShadowDistance);
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
-            SetInt(sectionVideo, "Antialiasing", Antialiasing);
-            SetFloat(sectionVideo, "AmbientOcclusionIntensity", AmbientOcclusionIntensity);
+
+            SetInt(sectionPostprocessing, "Antialiasing", Antialiasing);
+            SetFloat(sectionPostprocessing, "AmbientOcclusionIntensity", AmbientOcclusionIntensity);
 
             SetString(sectionAudio, "SoundFont", SoundFont);
             SetBool(sectionAudio, "AlternateMusic", AlternateMusic);

@@ -3275,6 +3275,38 @@ MonoBehaviour:
     m_Key: youNeverAwaken
     m_Metadata:
       m_Items: []
+  - m_Id: 139512620797673472
+    m_Key: modSettings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139512661704720384
+    m_Key: postProcessingSettings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139539947254464512
+    m_Key: antialiasing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139539989004566528
+    m_Key: ambientOcclusion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540048576266240
+    m_Key: bloom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540070931906560
+    m_Key: motionBlur
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540118281404416
+    m_Key: vignette
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540168873099264
+    m_Key: depthOfField
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

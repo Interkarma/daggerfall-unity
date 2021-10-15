@@ -179,11 +179,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void AddOptions()
         {
             // Add mod settings option and set that as the current max text width
-            dropdownList.AddItem("Mod Settings", out ListBox.ListItem modSettings);
-            maxTextWidth = modSettings.textLabel.TextWidth + 8;
+            dropdownList.AddItem(TextManager.Instance.GetLocalizedText("modSettings"), out ListBox.ListItem modSettings);
+            UpdateMaxWidth(modSettings.textLabel.TextWidth);
             modSettings.Enabled = HasApplicableMods();
-
             clickHandlers.Add(ModSettingsWindowOption_OnClick);
+
+            // Add postprocessing option
+            dropdownList.AddItem(TextManager.Instance.GetLocalizedText("postProcessingSettings"), out ListBox.ListItem postProcessingSettings);
+            UpdateMaxWidth(postProcessingSettings.textLabel.TextWidth);
+            postProcessingSettings.Enabled = true;
+            clickHandlers.Add(PostProcessingSettingsWindowOption_OnClick);
 
             foreach (var opt in DaggerfallUI.Instance.GetPauseOptionsDropdownItems())
             {
@@ -198,6 +203,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Select nothing, so if the first option is disabled, the selectedIndex
             // will be -1 and won't interfere with the default disabled colors
             dropdownList.SelectNone();
+        }
+
+        void UpdateMaxWidth(int itemWidth)
+        {
+            if (itemWidth > maxTextWidth)
+                maxTextWidth = itemWidth + 8;
         }
 
         #endregion
@@ -248,6 +259,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             };
 
             uiManager.PushWindow(listPicker);
+        }
+
+        private void PostProcessingSettingsWindowOption_OnClick()
+        {
+            uiManager.PushWindow(new PostProcessingConfigWindow(uiManager));
         }
 
         #endregion

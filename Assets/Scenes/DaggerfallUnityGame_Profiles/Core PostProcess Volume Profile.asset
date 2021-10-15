@@ -22,7 +22,7 @@ MonoBehaviour:
   sampleCount:
     overrideState: 0
     value: 10
---- !u!114 &-7124984081457023858
+--- !u!114 &-6324115178105651215
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -39,10 +39,10 @@ MonoBehaviour:
     overrideState: 1
     value: 0
   mode:
-    overrideState: 1
-    value: 0
+    overrideState: 0
+    value: 1
   intensity:
-    overrideState: 1
+    overrideState: 0
     value: 0
   color:
     overrideState: 0
@@ -66,10 +66,10 @@ MonoBehaviour:
     overrideState: 0
     value: 0
   radius:
-    overrideState: 1
+    overrideState: 0
     value: 0.25
   quality:
-    overrideState: 1
+    overrideState: 0
     value: 2
 --- !u!114 &-5774686325325507423
 MonoBehaviour:
@@ -175,7 +175,7 @@ MonoBehaviour:
   m_Name: Core PostProcess Volume Profile
   m_EditorClassIdentifier: 
   settings:
-  - {fileID: -7124984081457023858}
+  - {fileID: -6324115178105651215}
   - {fileID: -8529822672293934451}
   - {fileID: -5774686325325507423}
   - {fileID: 2024571710130345479}

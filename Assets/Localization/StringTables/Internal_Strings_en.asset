@@ -3654,5 +3654,37 @@ MonoBehaviour:
     m_Localized: You never awaken.
     m_Metadata:
       m_Items: []
+  - m_Id: 139512620797673472
+    m_Localized: Mod Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139512661704720384
+    m_Localized: Postprocessing Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139539947254464512
+    m_Localized: Antialiasing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139539989004566528
+    m_Localized: Ambient Occlusion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540048576266240
+    m_Localized: Bloom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540070931906560
+    m_Localized: Motion Blur
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540118281404416
+    m_Localized: Vignette
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540168873099264
+    m_Localized: Depth of Field
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

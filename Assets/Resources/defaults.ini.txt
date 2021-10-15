@@ -29,6 +29,8 @@ InteriorShadowDistance=30.0
 ExteriorShadowDistance=90.0
 EnableTextureArrays=True
 RandomDungeonTextures=0
+
+[Postprocessing]
 Antialiasing=0
 AmbientOcclusionIntensity=0
 
