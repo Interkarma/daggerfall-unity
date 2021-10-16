@@ -86,6 +86,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected void AddConfigPages()
         {
             AddConfigPage(new AntialiasingConfigPage());
+            AddConfigPage(new AmbientOcclusionConfigPage());
 
             effectList.SelectedIndex = 0;
         }
