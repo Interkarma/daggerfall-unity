@@ -21,9 +21,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Rects
 
         protected Vector2 mainPanelSize = new Vector2(200, 141);
-        protected readonly Vector2 settingsStartPos = new Vector2(2, 18);
-        protected Rect effectListPanelRect = new Rect(2, 2, 60, 137);
+        protected readonly Vector2 settingsStartPos = new Vector2(2, 10);
+        protected Rect effectListPanelRect = new Rect(2, 2, 60, 128);
         protected Rect effectPanelRect = new Rect(63, 2, 135, 137);
+        protected Rect resetDefaultsButtonRect = new Rect(2, 131, 60, 8);
         protected Rect aboutPanelRect = new Rect(0, 0, 135, 6);
         protected int yIncrement = 12;
 
@@ -33,6 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected Panel mainPanel = new Panel();
         protected ListBox effectList = new ListBox();
+        protected Button resetDefaultsButton = new Button();
 
         protected Color mainPanelBackgroundColor = new Color(0.0f, 0.0f, 0.0f, 0.2f);
         protected Color effectListBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.6f);
@@ -89,10 +91,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             effectList.TextColor = effectListTextColor;
             effectList.BackgroundColor = effectListBackgroundColor;
             effectList.ShadowPosition = Vector2.zero;
-            effectList.RowsDisplayed = 17;
+            effectList.RowsDisplayed = 16;
             effectList.OnSelectItem += EffectList_OnSelectItem;
             mainPanel.Components.Add(effectList);
             AddEffects();
+
+            // Reset page defaults button
+            resetDefaultsButton.Position = resetDefaultsButtonRect.position;
+            resetDefaultsButton.Size = resetDefaultsButtonRect.size;
+            resetDefaultsButton.BackgroundColor = Color.gray;
+            resetDefaultsButton.Label.TextScale = 0.75f;
+            resetDefaultsButton.Label.Text = TextManager.Instance.GetLocalizedText("setPageDefaults");
+            resetDefaultsButton.OnMouseClick += ResetDefaultsButton_OnMouseClick;
+            mainPanel.Components.Add(resetDefaultsButton);
 
             IsSetup = true;
             RefreshSettingsPages();
@@ -171,25 +182,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        void AddTitle(Panel parent, string text)
+        private void ResetDefaultsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            TextLabel label = new TextLabel();
-            label.Text = text;
-            label.HorizontalAlignment = HorizontalAlignment.Center;
-            label.VerticalAlignment = VerticalAlignment.Top;
-            label.Font = DaggerfallUI.TitleFont;
-            label.TextScale = 0.75f;
-            parent.Components.Add(label);
+            // TEMP: Going to split each effect page into their own class and call virtual methods instead
+            string selectedKey = effectList.GetItem(effectList.SelectedIndex).tag as string;
+            if (selectedKey == "antialiasing")
+                AntialiasingSetDefaults();
         }
 
-        void AddAboutPanel(Panel parent, string text)
+        void AddTipPanel(Panel parent, string text)
         {
             Panel panel = new Panel();
             panel.EnableBorder = true;
             panel.BackgroundColor = aboutPanelBackgroundColor;
             panel.Position = aboutPanelRect.position;
             panel.Size = aboutPanelRect.size;
-            panel.VerticalAlignment = VerticalAlignment.Bottom;
+            panel.VerticalAlignment = VerticalAlignment.Top;
             parent.Components.Add(panel);
 
             TextLabel label = new TextLabel();
@@ -270,8 +278,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Panel parent = effectPanelDict[antialiasingKey];
 
             // About this effect
-            AddTitle(parent, TextManager.Instance.GetLocalizedText("antialiasing"));
-            AddAboutPanel(parent, TextManager.Instance.GetLocalizedText("antialiasingTip"));
+            AddTipPanel(parent, TextManager.Instance.GetLocalizedText("antialiasingTip"));
 
             // Method slider
             string[] antiAliasingMethods = new string[]
@@ -307,6 +314,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             taaSharpnessSlider.OnScroll += TaaSharpnessSlider_OnScroll;
             taaSharpnessSlider.SetIndicator(0.0f, 3.0f, DaggerfallUnity.Settings.AntialiasingTAASharpness);
             StyleIndicator(taaSharpnessSlider);
+        }
+
+        void AntialiasingSetDefaults()
+        {
+            Debug.Log("AA set defaults");
         }
 
         void AntialiasingReadSettings()

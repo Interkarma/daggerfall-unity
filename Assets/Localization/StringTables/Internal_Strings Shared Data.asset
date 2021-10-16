@@ -3363,6 +3363,10 @@ MonoBehaviour:
     m_Key: disabled
     m_Metadata:
       m_Items: []
+  - m_Id: 139937463741464576
+    m_Key: setPageDefaults
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
