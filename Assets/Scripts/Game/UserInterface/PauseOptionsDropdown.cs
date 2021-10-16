@@ -46,6 +46,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private IUserInterfaceManager uiManager;
         private VerticalScrollBar dropdownScroller;
 
+        GameEffectsConfigWindow gameEffectsConfigWindow;
+
         #endregion
 
         #region Constructor and Setup
@@ -263,7 +265,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         private void GameEffectsWindowOption_OnClick()
         {
-            uiManager.PushWindow(new GameEffectsConfigWindow(uiManager));
+            // Only create window once
+            if (gameEffectsConfigWindow == null)
+                gameEffectsConfigWindow = new GameEffectsConfigWindow(uiManager);
+
+            uiManager.PushWindow(gameEffectsConfigWindow);
         }
 
         #endregion

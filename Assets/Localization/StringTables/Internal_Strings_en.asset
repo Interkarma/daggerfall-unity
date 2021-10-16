@@ -3690,5 +3690,57 @@ MonoBehaviour:
     m_Localized: Give a smoother appearance
     m_Metadata:
       m_Items: []
+  - m_Id: 139890483510132736
+    m_Localized: Enable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890710237429760
+    m_Localized: FXAA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890732182028288
+    m_Localized: SMAA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890774120873984
+    m_Localized: TAA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890887878787072
+    m_Localized: None
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891519062818816
+    m_Localized: Method
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891615737331712
+    m_Localized: FXAA Fast Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891777205452800
+    m_Localized: Low
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891795018661888
+    m_Localized: Medium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891818804559872
+    m_Localized: High
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891956226736128
+    m_Localized: SMAA Quality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891991572135936
+    m_Localized: TAA Sharpness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139920121422692352
+    m_Localized: Disabled
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

@@ -3311,6 +3311,58 @@ MonoBehaviour:
     m_Key: antialiasingTip
     m_Metadata:
       m_Items: []
+  - m_Id: 139890483510132736
+    m_Key: enable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890710237429760
+    m_Key: fxaa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890732182028288
+    m_Key: smaa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890774120873984
+    m_Key: taa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890887878787072
+    m_Key: none
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891519062818816
+    m_Key: method
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891615737331712
+    m_Key: fxaaFastMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891777205452800
+    m_Key: low
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891795018661888
+    m_Key: medium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891818804559872
+    m_Key: high
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891956226736128
+    m_Key: smaaQuality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891991572135936
+    m_Key: taaSharpness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139920121422692352
+    m_Key: disabled
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

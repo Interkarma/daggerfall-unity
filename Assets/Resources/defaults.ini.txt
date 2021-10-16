@@ -31,11 +31,10 @@ EnableTextureArrays=True
 RandomDungeonTextures=0
 
 [Effects]
-AntialiasingEnabled=False
 AntialiasingMethod=0
 AntialiasingFXAAFastMode=False
 AntialiasingSMAAQuality=1
-AntialiasingTAASharpness=0.25
+AntialiasingTAASharpness=0.3
 AmbientOcclusionIntensity=0
 
 [Audio]

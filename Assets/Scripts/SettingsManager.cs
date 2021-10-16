@@ -112,7 +112,6 @@ namespace DaggerfallWorkshop
         public int CursorHeight { get; set; }
 
         // [Effects]
-        public bool AntialiasingEnabled { get; set; }
         public int AntialiasingMethod { get; set; }
         public bool AntialiasingFXAAFastMode { get; set; }
         public int AntialiasingSMAAQuality { get; set; }
@@ -280,8 +279,7 @@ namespace DaggerfallWorkshop
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
 
-            AntialiasingEnabled = GetBool(sectionEffects, "AntialiasingEnabled");
-            AntialiasingMethod = GetInt(sectionEffects, "AntialiasingMethod", 0, 2);
+            AntialiasingMethod = GetInt(sectionEffects, "AntialiasingMethod", 0, 3);
             AntialiasingFXAAFastMode = GetBool(sectionEffects, "AntialiasingFXAAFastMode");
             AntialiasingSMAAQuality = GetInt(sectionEffects, "AntialiasingSMAAQuality", 0, 2);
             AntialiasingTAASharpness = GetFloat(sectionEffects, "AntialiasingTAASharpness", 0.0f, 3.0f);
@@ -431,7 +429,6 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
 
-            SetBool(sectionEffects, "AntialiasingEnabled", AntialiasingEnabled);
             SetInt(sectionEffects, "AntialiasingMethod", AntialiasingMethod);
             SetBool(sectionEffects, "AntialiasingFXAAFastMode", AntialiasingFXAAFastMode);
             SetInt(sectionEffects, "AntialiasingSMAAQuality", AntialiasingSMAAQuality);

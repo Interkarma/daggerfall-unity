@@ -93,6 +93,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             effectList.OnSelectItem += EffectList_OnSelectItem;
             mainPanel.Components.Add(effectList);
             AddEffects();
+
+            IsSetup = true;
+            RefreshSettingsPages();
+        }
+
+        protected void RefreshSettingsPages()
+        {
+            AntialiasingReadSettings();
+        }
+
+        public override void OnPush()
+        {
+            base.OnPush();
+
+            if (IsSetup)
+                RefreshSettingsPages();
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            DaggerfallUnity.Settings.SaveSettings();
         }
 
         #endregion
@@ -141,7 +164,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Enable just the panel selected
             string selectedKey = effectList.GetItem(effectList.SelectedIndex).tag as string;
-            foreach(var item in effectPanelDict.Values)
+            foreach (var item in effectPanelDict.Values)
             {
                 string tag = item.Tag as string;
                 item.Enabled = tag == selectedKey;
@@ -227,9 +250,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void StyleIndicator(HorizontalSlider slider)
         {
-            const int indicatorOffset = 2;
-
-            slider.IndicatorOffset = indicatorOffset;
+            slider.IndicatorOffset = 2;
             slider.Indicator.TextColor = Color.white;
             slider.Indicator.ShadowPosition = Vector2.zero;
         }
@@ -238,7 +259,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Antialising Settings
 
-        Checkbox antialiasingEnabledCheckbox;
         HorizontalSlider antialiasingMethodSlider;
         Checkbox fxaaFastMostCheckbox;
         HorizontalSlider smaaQualitySlider;
@@ -253,44 +273,72 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddTitle(parent, TextManager.Instance.GetLocalizedText("antialiasing"));
             AddAboutPanel(parent, TextManager.Instance.GetLocalizedText("antialiasingTip"));
 
-            // Enable toggle
-            antialiasingEnabledCheckbox = AddCheckbox(parent, "Enable", ref pos);
-            antialiasingEnabledCheckbox.OnToggleState += antialiasingEnabledCheckbox_Toggle;
-
             // Method slider
-            string[] antiAliasingMethods = new string[] { "FXAA", "SMAA", "TAA" };
-            antialiasingMethodSlider = AddSlider(parent, "Method", antiAliasingMethods.Length, ref pos);
-            antialiasingMethodSlider.SetIndicator(antiAliasingMethods, 0);
+            string[] antiAliasingMethods = new string[]
+            {
+                TextManager.Instance.GetLocalizedText("none"),
+                TextManager.Instance.GetLocalizedText("fxaa"),
+                TextManager.Instance.GetLocalizedText("smaa"),
+                TextManager.Instance.GetLocalizedText("taa")
+            };
+            antialiasingMethodSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("method"), antiAliasingMethods.Length, ref pos);
+            antialiasingMethodSlider.OnScroll += AntialiasingMethodSlider_OnScroll;
+            antialiasingMethodSlider.SetIndicator(antiAliasingMethods, DaggerfallUnity.Settings.AntialiasingMethod);
             StyleIndicator(antialiasingMethodSlider);
 
             // FXAA Fast Mode toggle
-            fxaaFastMostCheckbox = AddCheckbox(parent, "FXAA Fast Mode", ref pos);
+            fxaaFastMostCheckbox = AddCheckbox(parent, TextManager.Instance.GetLocalizedText("fxaaFastMode"), ref pos);
             fxaaFastMostCheckbox.OnToggleState += FxaaFastMostCheckbox_OnToggleState;
 
             // SMAA Quality slider
-            string[] smaaQuality = new string[] { "Low", "Medium", "High" };
-            smaaQualitySlider = AddSlider(parent, "SMAA Quality", smaaQuality.Length, ref pos);
-            smaaQualitySlider.SetIndicator(smaaQuality, 0);
+            string[] smaaQuality = new string[]
+            {
+                TextManager.Instance.GetLocalizedText("low"),
+                TextManager.Instance.GetLocalizedText("medium"),
+                TextManager.Instance.GetLocalizedText("high")
+            };
+            smaaQualitySlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("smaaQuality"), smaaQuality.Length, ref pos);
+            smaaQualitySlider.OnScroll += SmaaQualitySlider_OnScroll;
+            smaaQualitySlider.SetIndicator(smaaQuality, DaggerfallUnity.Settings.AntialiasingSMAAQuality);
             StyleIndicator(smaaQualitySlider);
 
             // TAA Sharpness slider
-            taaSharpnessSlider = AddSlider(parent, "TAA Sharpness", 30, ref pos);
-            taaSharpnessSlider.SetIndicator(0.0f, 3.0f, 0.0f);
+            taaSharpnessSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("taaSharpness"), 30, ref pos);
+            taaSharpnessSlider.OnScroll += TaaSharpnessSlider_OnScroll;
+            taaSharpnessSlider.SetIndicator(0.0f, 3.0f, DaggerfallUnity.Settings.AntialiasingTAASharpness);
             StyleIndicator(taaSharpnessSlider);
         }
 
-        protected void antialiasingEnabledCheckbox_Toggle()
+        void AntialiasingReadSettings()
         {
-            DaggerfallUnity.Settings.AntialiasingEnabled = antialiasingEnabledCheckbox.IsChecked;
-            if (antialiasingEnabledCheckbox.IsChecked)
-                Debug.LogFormat("Toggle AA enable");
-            else
-                Debug.LogFormat("Toggle AA disable");
+            antialiasingMethodSlider.ScrollIndex = DaggerfallUnity.Settings.AntialiasingMethod;
+            fxaaFastMostCheckbox.IsChecked = DaggerfallUnity.Settings.AntialiasingFXAAFastMode;
+            smaaQualitySlider.ScrollIndex = DaggerfallUnity.Settings.AntialiasingSMAAQuality;
+            taaSharpnessSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.AntialiasingTAASharpness * 10);
+        }
+
+        private void AntialiasingMethodSlider_OnScroll()
+        {
+            DaggerfallUnity.Settings.AntialiasingMethod = antialiasingMethodSlider.ScrollIndex;
+            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
         }
 
         private void FxaaFastMostCheckbox_OnToggleState()
         {
-            
+            DaggerfallUnity.Settings.AntialiasingFXAAFastMode = fxaaFastMostCheckbox.IsChecked;
+            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+        }
+
+        private void SmaaQualitySlider_OnScroll()
+        {
+            DaggerfallUnity.Settings.AntialiasingSMAAQuality = smaaQualitySlider.ScrollIndex;
+            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+        }
+
+        private void TaaSharpnessSlider_OnScroll()
+        {
+            DaggerfallUnity.Settings.AntialiasingTAASharpness = taaSharpnessSlider.ScrollIndex / 10f;
+            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
         }
 
         #endregion
