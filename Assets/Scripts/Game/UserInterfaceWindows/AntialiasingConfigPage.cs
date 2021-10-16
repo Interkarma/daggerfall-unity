@@ -19,7 +19,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string key = "antialiasing";
 
         HorizontalSlider antialiasingMethodSlider;
-        Checkbox fxaaFastMostCheckbox;
+        Checkbox fxaaFastModeCheckbox;
         HorizontalSlider smaaQualitySlider;
         HorizontalSlider taaSharpnessSlider;
 
@@ -48,8 +48,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             StyleIndicator(antialiasingMethodSlider);
 
             // FXAA Fast Mode toggle
-            fxaaFastMostCheckbox = AddCheckbox(parent, TextManager.Instance.GetLocalizedText("fxaaFastMode"), ref pos);
-            fxaaFastMostCheckbox.OnToggleState += FxaaFastMostCheckbox_OnToggleState;
+            fxaaFastModeCheckbox = AddCheckbox(parent, TextManager.Instance.GetLocalizedText("fxaaFastMode"), ref pos);
+            fxaaFastModeCheckbox.OnToggleState += FxaaFastMostCheckbox_OnToggleState;
 
             // SMAA Quality slider
             string[] smaaQuality = new string[]
@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void ReadSettings()
         {
             antialiasingMethodSlider.ScrollIndex = DaggerfallUnity.Settings.AntialiasingMethod;
-            fxaaFastMostCheckbox.IsChecked = DaggerfallUnity.Settings.AntialiasingFXAAFastMode;
+            fxaaFastModeCheckbox.IsChecked = DaggerfallUnity.Settings.AntialiasingFXAAFastMode;
             smaaQualitySlider.ScrollIndex = DaggerfallUnity.Settings.AntialiasingSMAAQuality;
             taaSharpnessSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.AntialiasingTAASharpness * 10);
         }
@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void FxaaFastMostCheckbox_OnToggleState()
         {
-            DaggerfallUnity.Settings.AntialiasingFXAAFastMode = fxaaFastMostCheckbox.IsChecked;
+            DaggerfallUnity.Settings.AntialiasingFXAAFastMode = fxaaFastModeCheckbox.IsChecked;
             GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
         }
 

@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
     public abstract class GameEffectConfigPage : IGameEffectConfigPage
     {
-        protected Rect aboutPanelRect = new Rect(0, 0, 135, 6);
+        protected Rect aboutPanelRect = new Rect(0, 0, 145, 6);
         protected readonly Vector2 settingsStartPos = new Vector2(2, 10);
         protected int yIncrement = 12;
 

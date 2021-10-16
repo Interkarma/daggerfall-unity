@@ -18,6 +18,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         const string key = "ambientOcclusion";
 
+        Checkbox enableCheckbox;
+        HorizontalSlider aoMethodSlider;
+        HorizontalSlider intensitySlider;
+        HorizontalSlider thicknessSlider;
+        HorizontalSlider radiusSlider;
+        HorizontalSlider qualitySlider;
+        Panel method0Panel = new Panel();
+        Panel method1Panel = new Panel();
+
         public override string Key => key;
 
         public override string Title => TextManager.Instance.GetLocalizedText(Key);
@@ -28,6 +37,56 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // About this effect
             AddTipPanel(parent, TextManager.Instance.GetLocalizedText("ambientOcclusionTip"));
+
+            // Enable toggle
+            enableCheckbox = AddCheckbox(parent, TextManager.Instance.GetLocalizedText("enable"), ref pos);
+            enableCheckbox.OnToggleState += EnableCheckbox_OnToggleState;
+
+            // Method slider
+            string[] aoMethods = GetSupportedMethods();
+            aoMethodSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("method"), aoMethods.Length, ref pos);
+            aoMethodSlider.OnScroll += AoMethodSlider_OnScroll;
+            aoMethodSlider.SetIndicator(aoMethods, 0);
+            StyleIndicator(aoMethodSlider);
+
+            // Intensity slider
+            intensitySlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("intensity"), 40, ref pos);
+            intensitySlider.OnScroll += IntensitySlider_OnScroll;
+            intensitySlider.SetIndicator(0.0f, 4.0f, 0);
+            StyleIndicator(intensitySlider);
+
+            // Setup two panels to hold settings unique to each method
+            method0Panel.Position = method1Panel.Position = pos;
+            parent.Components.Add(method0Panel);
+            parent.Components.Add(method1Panel);
+
+            // Method0 - Radius slider
+            pos = Vector2.zero;
+            radiusSlider = AddSlider(method0Panel, TextManager.Instance.GetLocalizedText("radius"), 20, ref pos);
+            radiusSlider.OnScroll += IntensitySlider_OnScroll;
+            radiusSlider.SetIndicator(0.0f, 2.0f, 0);
+            StyleIndicator(radiusSlider);
+
+            // Method0 - Quality slider
+            string[] qualityLevels = new string[]
+            {
+                TextManager.Instance.GetLocalizedText("lowest"),
+                TextManager.Instance.GetLocalizedText("low"),
+                TextManager.Instance.GetLocalizedText("medium"),
+                TextManager.Instance.GetLocalizedText("high"),
+                TextManager.Instance.GetLocalizedText("ultra")
+            };
+            qualitySlider = AddSlider(method0Panel, TextManager.Instance.GetLocalizedText("quality"), aoMethods.Length, ref pos);
+            qualitySlider.OnScroll += QualitySlider_OnScroll;
+            qualitySlider.SetIndicator(qualityLevels, 0);
+            StyleIndicator(qualitySlider);
+
+            // Method1 - Thickness slider
+            pos = Vector2.zero;
+            thicknessSlider = AddSlider(method1Panel, TextManager.Instance.GetLocalizedText("thickness"), 100, ref pos);
+            thicknessSlider.SetIndicator(0.0f, 10.0f, 0);
+            thicknessSlider.OnScroll += ThicknessSlider_OnScroll;
+            StyleIndicator(thicknessSlider);
         }
 
         public override void ReadSettings()
@@ -35,6 +94,60 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         public override void SetDefaults()
+        {
+        }
+
+        string[] GetSupportedMethods()
+        {
+            string[] methods;
+            if (SystemInfo.graphicsShaderLevel >= 45)
+            {
+                methods = new string[]
+                {
+                    TextManager.Instance.GetLocalizedText("scalableAmbient"),
+                    TextManager.Instance.GetLocalizedText("multiScaleVolumetric")
+                };
+            }
+            else
+            {
+                methods = new string[]
+                {
+                    TextManager.Instance.GetLocalizedText("scalableAmbient"),
+                };
+            }
+
+            return methods;
+        }
+
+        private void EnableCheckbox_OnToggleState()
+        {
+        }
+
+        private void AoMethodSlider_OnScroll()
+        {
+            // Toggle panels based on method
+            switch (aoMethodSlider.ScrollIndex)
+            {
+                case 0:
+                    method0Panel.Enabled = true;
+                    method1Panel.Enabled = false;
+                break;
+                case 1:
+                    method0Panel.Enabled = false;
+                    method1Panel.Enabled = true;
+                    break;
+            }
+        }
+
+        private void IntensitySlider_OnScroll()
+        {
+        }
+
+        private void QualitySlider_OnScroll()
+        {
+        }
+
+        private void ThicknessSlider_OnScroll()
         {
         }
     }

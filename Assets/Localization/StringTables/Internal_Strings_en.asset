@@ -3750,5 +3750,45 @@ MonoBehaviour:
     m_Localized: Darkens creases and holes
     m_Metadata:
       m_Items: []
+  - m_Id: 140247721135325184
+    m_Localized: Scalable Ambient Obscurance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140247780572807168
+    m_Localized: Multi Scale Volumetric Obscurance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140248694163521536
+    m_Localized: Scalable Ambient
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140248777965715456
+    m_Localized: MultiScale Volumetric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140250765390528512
+    m_Localized: Intensity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140251827304415232
+    m_Localized: Lowest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140251894765600768
+    m_Localized: Ultra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140252674658680832
+    m_Localized: Radius
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140252700298461184
+    m_Localized: Quality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140260082650988544
+    m_Localized: Thickness
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

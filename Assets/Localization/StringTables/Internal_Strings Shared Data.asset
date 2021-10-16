@@ -3371,6 +3371,46 @@ MonoBehaviour:
     m_Key: ambientOcclusionTip
     m_Metadata:
       m_Items: []
+  - m_Id: 140247721135325184
+    m_Key: scalableAmbientObscurance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140247780572807168
+    m_Key: multiScaleVolumetricObscurance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140248694163521536
+    m_Key: scalableAmbient
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140248777965715456
+    m_Key: multiScaleVolumetric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140250765390528512
+    m_Key: intensity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140251827304415232
+    m_Key: lowest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140251894765600768
+    m_Key: ultra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140252674658680832
+    m_Key: radius
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140252700298461184
+    m_Key: quality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140260082650988544
+    m_Key: thickness
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
