@@ -9,7 +9,6 @@
 // Notes:
 //
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.UserInterface;
@@ -18,19 +17,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     public class GameEffectsConfigWindow : DaggerfallPopupWindow
     {
-        #region UI Rects
-
         protected Vector2 mainPanelSize = new Vector2(200, 141);
-        protected readonly Vector2 settingsStartPos = new Vector2(2, 10);
         protected Rect effectListPanelRect = new Rect(2, 2, 60, 128);
         protected Rect effectPanelRect = new Rect(63, 2, 135, 137);
         protected Rect resetDefaultsButtonRect = new Rect(2, 131, 60, 8);
-        protected Rect aboutPanelRect = new Rect(0, 0, 135, 6);
-        protected int yIncrement = 12;
-
-        #endregion
-
-        #region UI Controls
 
         protected Panel mainPanel = new Panel();
         protected ListBox effectList = new ListBox();
@@ -40,36 +30,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Color effectListBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.6f);
         protected Color effectListTextColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
         protected Color effectPanelBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.6f);
-        protected Color aboutPanelBackgroundColor = new Color(0.4f, 0.4f, 0.4f, 0.65f);
-        protected Color aboutPanelTextColor = Color.cyan;
-        protected Color aboutPanelTextShadowColor = Color.cyan / 2;
 
-        #endregion
+        Dictionary<string, ConfigPageEntry> effectPagesDict = new Dictionary<string, ConfigPageEntry>();
 
-        #region Fields
-
-        // Keys used for text and list item selection
-        const string antialiasingKey = "antialiasing";
-        const string ambientOcclusionKey = "ambientOcclusion";
-        const string bloomKey = "bloom";
-        const string motionBlurKey = "motionBlur";
-        const string vignetteKey = "vignette";
-        const string depthOfFieldKey = "depthOfField";
-
-        Dictionary<string, Panel> effectPanelDict = new Dictionary<string, Panel>();
-
-        #endregion
-
-        #region Constructors
+        protected struct ConfigPageEntry
+        {
+            public Panel panel;
+            public IGameEffectConfigPage page;
+        }
 
         public GameEffectsConfigWindow(IUserInterfaceManager uiManager, DaggerfallBaseWindow previous = null)
             : base(uiManager, previous)
         {
         }
-
-        #endregion
-
-        #region Setup Methods
 
         protected override void Setup()
         {
@@ -94,7 +67,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             effectList.RowsDisplayed = 16;
             effectList.OnSelectItem += EffectList_OnSelectItem;
             mainPanel.Components.Add(effectList);
-            AddEffects();
 
             // Reset page defaults button
             resetDefaultsButton.Position = resetDefaultsButtonRect.position;
@@ -106,20 +78,42 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Components.Add(resetDefaultsButton);
 
             IsSetup = true;
-            RefreshSettingsPages();
+
+            AddConfigPages();
+            RefreshPageSettings();
         }
 
-        protected void RefreshSettingsPages()
+        protected void AddConfigPages()
         {
-            AntialiasingReadSettings();
+            AddConfigPage(new AntialiasingConfigPage());
+
+            effectList.SelectedIndex = 0;
+        }
+
+        protected void AddConfigPage(IGameEffectConfigPage page)
+        {
+            // Create panel to home config page
+            Panel panel = new Panel();
+            panel.Position = effectPanelRect.position;
+            panel.Size = effectPanelRect.size;
+            panel.BackgroundColor = effectPanelBackgroundColor;
+            panel.Enabled = false;
+            panel.Tag = page.Key;
+            mainPanel.Components.Add(panel);
+
+            // Setup config page
+            page.Setup(panel);
+
+            // Add page to select from list
+            effectPagesDict.Add(page.Key, new ConfigPageEntry() { panel = panel, page = page });
+            effectList.AddItem(page.Title, -1, page.Key);
         }
 
         public override void OnPush()
         {
             base.OnPush();
 
-            if (IsSetup)
-                RefreshSettingsPages();
+            RefreshPageSettings();
         }
 
         public override void OnPop()
@@ -129,268 +123,40 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.SaveSettings();
         }
 
-        #endregion
-
         #region Private Methods
 
-        void AddEffects()
+        protected void RefreshPageSettings()
         {
-            effectList.ClearItems();
-            effectPanelDict.Clear();
-            AddEffectPanel(antialiasingKey, AntialiasingSettings);
-            AddEffectPanel(ambientOcclusionKey, AmbientOcclusionSettings);
-            AddEffectPanel(bloomKey, BloomSettings);
-            AddEffectPanel(motionBlurKey, MotionBlurSettings);
-            AddEffectPanel(vignetteKey, VignetteSettings);
-            AddEffectPanel(depthOfFieldKey, DepthOfFieldSettings);
-
-            effectList.SelectedIndex = 0;
-        }
-
-        void AddEffectPanel(string key, Action settingsMethod)
-        {
-            // Add panel to home effect settings
-            Panel panel = new Panel();
-            panel.Position = effectPanelRect.position;
-            panel.Size = effectPanelRect.size;
-            panel.BackgroundColor = effectPanelBackgroundColor;
-            panel.Enabled = false;
-            panel.Tag = key;
-            mainPanel.Components.Add(panel);
-
-            // Add item to select panel from list
-            effectPanelDict.Add(key, panel);
-            effectList.AddItem(TextManager.Instance.GetLocalizedText(key), -1, key);
-
-            // Configure settings for this effect panel
-            if (settingsMethod != null)
-                settingsMethod();
+            if (IsSetup)
+            {
+                foreach (var entry in effectPagesDict.Values)
+                {
+                    entry.page.ReadSettings();
+                }
+            }
         }
 
         private void EffectList_OnSelectItem()
         {
-            // Do nothing if event fires before setup or nothing actually selected
-            if (effectPanelDict.Count == 0)
-                return;
-
-            // Enable just the panel selected
-            string selectedKey = effectList.GetItem(effectList.SelectedIndex).tag as string;
-            foreach (var item in effectPanelDict.Values)
+            if (IsSetup)
             {
-                string tag = item.Tag as string;
-                item.Enabled = tag == selectedKey;
+                string selectedKey = effectList.GetItem(effectList.SelectedIndex).tag as string;
+                foreach (var entry in effectPagesDict.Values)
+                {
+                    entry.panel.Enabled = selectedKey == entry.page.Key;
+                }
             }
         }
 
         private void ResetDefaultsButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            // TEMP: Going to split each effect page into their own class and call virtual methods instead
-            string selectedKey = effectList.GetItem(effectList.SelectedIndex).tag as string;
-            if (selectedKey == "antialiasing")
-                AntialiasingSetDefaults();
-        }
-
-        void AddTipPanel(Panel parent, string text)
-        {
-            Panel panel = new Panel();
-            panel.EnableBorder = true;
-            panel.BackgroundColor = aboutPanelBackgroundColor;
-            panel.Position = aboutPanelRect.position;
-            panel.Size = aboutPanelRect.size;
-            panel.VerticalAlignment = VerticalAlignment.Top;
-            parent.Components.Add(panel);
-
-            TextLabel label = new TextLabel();
-            label.Text = text;
-            label.TextColor = aboutPanelTextColor;
-            label.ShadowColor = aboutPanelTextShadowColor;
-            label.HorizontalAlignment = HorizontalAlignment.Center;
-            label.VerticalAlignment = VerticalAlignment.Middle;
-            label.TextScale = 0.75f;
-            panel.Components.Add(label);
-        }
-
-        TextLabel AddLabel(Panel parent, string text, ref Vector2 position)
-        {
-            TextLabel label = new TextLabel();
-            label.Text = text;
-            label.Position = position;
-            parent.Components.Add(label);
-
-            return label;
-        }
-
-        Checkbox AddCheckbox(Panel parent, string label, ref Vector2 position)
-        {
-            Checkbox check = new Checkbox();
-            check.Label.Text = label;
-            check.IsChecked = false;
-            check.Position = position;
-            parent.Components.Add(check);
-            position.y += yIncrement;
-
-            return check;
-        }
-
-        HorizontalSlider AddSlider(Panel parent, string label, int count, ref Vector2 position)
-        {
-            const int sliderWidth = 70;
-            const int sliderHeight = 6;
-
-            // Slider label
-            AddLabel(parent, label, ref position);
-            position.y += 6;
-
-            // Slider
-            HorizontalSlider slider = new HorizontalSlider();
-            slider.Size = new Vector2(sliderWidth, sliderHeight);
-            slider.Position = position;
-            slider.BackgroundColor = Color.black;
-            slider.TotalUnits = count;
-            slider.DisplayUnits = count;
-            slider.ScrollIndex = 0;
-            parent.Components.Add(slider);
-
-            position.y += yIncrement;
-
-            return slider;
-        }
-
-        void StyleIndicator(HorizontalSlider slider)
-        {
-            slider.IndicatorOffset = 2;
-            slider.Indicator.TextColor = Color.white;
-            slider.Indicator.ShadowPosition = Vector2.zero;
-        }
-
-        #endregion
-
-        #region Antialising Settings
-
-        HorizontalSlider antialiasingMethodSlider;
-        Checkbox fxaaFastMostCheckbox;
-        HorizontalSlider smaaQualitySlider;
-        HorizontalSlider taaSharpnessSlider;
-
-        protected void AntialiasingSettings()
-        {
-            Vector2 pos = settingsStartPos;
-            Panel parent = effectPanelDict[antialiasingKey];
-
-            // About this effect
-            AddTipPanel(parent, TextManager.Instance.GetLocalizedText("antialiasingTip"));
-
-            // Method slider
-            string[] antiAliasingMethods = new string[]
+            if (IsSetup)
             {
-                TextManager.Instance.GetLocalizedText("none"),
-                TextManager.Instance.GetLocalizedText("fxaa"),
-                TextManager.Instance.GetLocalizedText("smaa"),
-                TextManager.Instance.GetLocalizedText("taa")
-            };
-            antialiasingMethodSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("method"), antiAliasingMethods.Length, ref pos);
-            antialiasingMethodSlider.OnScroll += AntialiasingMethodSlider_OnScroll;
-            antialiasingMethodSlider.SetIndicator(antiAliasingMethods, DaggerfallUnity.Settings.AntialiasingMethod);
-            StyleIndicator(antialiasingMethodSlider);
-
-            // FXAA Fast Mode toggle
-            fxaaFastMostCheckbox = AddCheckbox(parent, TextManager.Instance.GetLocalizedText("fxaaFastMode"), ref pos);
-            fxaaFastMostCheckbox.OnToggleState += FxaaFastMostCheckbox_OnToggleState;
-
-            // SMAA Quality slider
-            string[] smaaQuality = new string[]
-            {
-                TextManager.Instance.GetLocalizedText("low"),
-                TextManager.Instance.GetLocalizedText("medium"),
-                TextManager.Instance.GetLocalizedText("high")
-            };
-            smaaQualitySlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("smaaQuality"), smaaQuality.Length, ref pos);
-            smaaQualitySlider.OnScroll += SmaaQualitySlider_OnScroll;
-            smaaQualitySlider.SetIndicator(smaaQuality, DaggerfallUnity.Settings.AntialiasingSMAAQuality);
-            StyleIndicator(smaaQualitySlider);
-
-            // TAA Sharpness slider
-            taaSharpnessSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("taaSharpness"), 30, ref pos);
-            taaSharpnessSlider.OnScroll += TaaSharpnessSlider_OnScroll;
-            taaSharpnessSlider.SetIndicator(0.0f, 3.0f, DaggerfallUnity.Settings.AntialiasingTAASharpness);
-            StyleIndicator(taaSharpnessSlider);
-        }
-
-        void AntialiasingSetDefaults()
-        {
-            Debug.Log("AA set defaults");
-        }
-
-        void AntialiasingReadSettings()
-        {
-            antialiasingMethodSlider.ScrollIndex = DaggerfallUnity.Settings.AntialiasingMethod;
-            fxaaFastMostCheckbox.IsChecked = DaggerfallUnity.Settings.AntialiasingFXAAFastMode;
-            smaaQualitySlider.ScrollIndex = DaggerfallUnity.Settings.AntialiasingSMAAQuality;
-            taaSharpnessSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.AntialiasingTAASharpness * 10);
-        }
-
-        private void AntialiasingMethodSlider_OnScroll()
-        {
-            DaggerfallUnity.Settings.AntialiasingMethod = antialiasingMethodSlider.ScrollIndex;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
-        }
-
-        private void FxaaFastMostCheckbox_OnToggleState()
-        {
-            DaggerfallUnity.Settings.AntialiasingFXAAFastMode = fxaaFastMostCheckbox.IsChecked;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
-        }
-
-        private void SmaaQualitySlider_OnScroll()
-        {
-            DaggerfallUnity.Settings.AntialiasingSMAAQuality = smaaQualitySlider.ScrollIndex;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
-        }
-
-        private void TaaSharpnessSlider_OnScroll()
-        {
-            DaggerfallUnity.Settings.AntialiasingTAASharpness = taaSharpnessSlider.ScrollIndex / 10f;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
-        }
-
-        #endregion
-
-        #region Ambient Occlusion Settings
-
-        protected void AmbientOcclusionSettings()
-        {
-        }
-
-        #endregion
-
-        #region Bloom Settings
-
-        protected void BloomSettings()
-        {
-        }
-
-        #endregion
-
-        #region Motion Blur Settings
-
-        protected void MotionBlurSettings()
-        {
-        }
-
-        #endregion
-
-        #region Vignette Settings
-
-        protected void VignetteSettings()
-        {
-        }
-
-        #endregion
-
-        #region Depth of Field Settings
-
-        protected void DepthOfFieldSettings()
-        {
+                string selectedKey = effectList.GetItem(effectList.SelectedIndex).tag as string;
+                ConfigPageEntry configPageEntry = effectPagesDict[selectedKey];
+                configPageEntry.page.SetDefaults();
+                configPageEntry.page.ReadSettings();
+            }
         }
 
         #endregion
