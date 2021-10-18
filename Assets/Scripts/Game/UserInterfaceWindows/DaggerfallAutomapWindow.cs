@@ -897,19 +897,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 Vector2 bias = mousePosition - oldMousePosition;
 
-                switch (automapViewMode)
+                if (bias != Vector2.zero)
                 {
-                    case AutomapViewMode.View2D:
-                    default:
-                        ActionRotateCamera(+dragRotateSpeedInTopView * bias.x);
-                        break;
-                    case AutomapViewMode.View3D:
-                        ActionRotate(dragRotateSpeedInView3D * bias.x);
-                        ActionrotateCameraOnCameraYZplaneAroundObject(-dragRotateCameraOnCameraYZplaneAroundObjectSpeedInView3D * bias.y);
-                        break;
+                    switch (automapViewMode)
+                    {
+                        case AutomapViewMode.View2D:
+                        default:
+                            ActionRotateCamera(+dragRotateSpeedInTopView * bias.x, false);
+                            break;
+                        case AutomapViewMode.View3D:
+                            ActionRotate(dragRotateSpeedInView3D * bias.x, false);
+                            ActionrotateCameraOnCameraYZplaneAroundObject(-dragRotateCameraOnCameraYZplaneAroundObjectSpeedInView3D * bias.y, false);
+                            break;
+                    }
+                    UpdateAutomapView();
                 }
-
-                UpdateAutomapView();
                 oldMousePosition = mousePosition;
             }
 
@@ -1484,7 +1486,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// action for rotating camera around rotation axis about a certain rotationAmount
         /// </summary>
-        private void ActionRotate(float rotationAmount)
+        private void ActionRotate(float rotationAmount, bool updateView = true)
         {
             Vector3 rotationPivotAxisPosition;
             switch (automapViewMode)
@@ -1500,13 +1502,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
             }
             cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
-            UpdateAutomapView();
+            if (updateView)
+                UpdateAutomapView();
         }
 
         /// <summary>
         /// action for rotating camera on camera YZ-plane around object about a certain rotationAmount
         /// </summary>
-        private void ActionrotateCameraOnCameraYZplaneAroundObject(float rotationAmount)
+        private void ActionrotateCameraOnCameraYZplaneAroundObject(float rotationAmount, bool updateView = true)
         {
             if (automapViewMode == AutomapViewMode.View3D)
             {
@@ -1519,7 +1522,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     float rotateBack = Vector3.SignedAngle(transformedUp, Vector3.ProjectOnPlane(transformedUp, Vector3.up), cameraAutomap.transform.right);
                     cameraAutomap.transform.RotateAround(rotationPoint, cameraAutomap.transform.right, rotateBack);
                 }
-                UpdateAutomapView(); 
+                if (updateView)
+                    UpdateAutomapView(); 
             }
         }
 
@@ -1527,7 +1531,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// action for changing camera rotation around y axis
         /// </summary>
         /// <param name="rotationSpeed"> amount used for rotation </param>
-        private void ActionRotateCamera(float rotationAmount)
+        private void ActionRotateCamera(float rotationAmount, bool updateView = true)
         {
             //cameraAutomap.transform.Rotate(0.0f, rotationAmount * Time.unscaledDeltaTime, 0.0f, Space.World);
             Vector3 vecRotationCenter = cameraAutomap.transform.position;
@@ -1547,7 +1551,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //        break;
             //}
 
-            UpdateAutomapView();
+            if (updateView)
+                UpdateAutomapView();
         }
 
         /// <summary>
