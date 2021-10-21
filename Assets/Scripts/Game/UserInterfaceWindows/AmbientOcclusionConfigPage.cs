@@ -46,13 +46,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             string[] aoMethods = GetSupportedMethods();
             aoMethodSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("method"), aoMethods.Length, ref pos);
             aoMethodSlider.OnScroll += AoMethodSlider_OnScroll;
-            aoMethodSlider.SetIndicator(aoMethods, 0);
+            aoMethodSlider.SetIndicator(aoMethods, DaggerfallUnity.Settings.AmbientOcclusionMethod);
             StyleIndicator(aoMethodSlider);
 
             // Intensity slider
             intensitySlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("intensity"), 40, ref pos);
             intensitySlider.OnScroll += IntensitySlider_OnScroll;
-            intensitySlider.SetIndicator(0.0f, 4.0f, 0);
+            intensitySlider.SetIndicator(0.0f, 4.0f, DaggerfallUnity.Settings.AmbientOcclusionIntensity);
             StyleIndicator(intensitySlider);
 
             // Setup two panels to hold settings unique to each method
@@ -63,8 +63,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Method0 - Radius slider
             pos = Vector2.zero;
             radiusSlider = AddSlider(method0Panel, TextManager.Instance.GetLocalizedText("radius"), 20, ref pos);
-            radiusSlider.OnScroll += IntensitySlider_OnScroll;
-            radiusSlider.SetIndicator(0.0f, 2.0f, 0);
+            radiusSlider.OnScroll += RadiusSlider_OnScroll; ;
+            radiusSlider.SetIndicator(0.0f, 2.0f, DaggerfallUnity.Settings.AmbientOcclusionRadius);
             StyleIndicator(radiusSlider);
 
             // Method0 - Quality slider
@@ -78,23 +78,35 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             };
             qualitySlider = AddSlider(method0Panel, TextManager.Instance.GetLocalizedText("quality"), aoMethods.Length, ref pos);
             qualitySlider.OnScroll += QualitySlider_OnScroll;
-            qualitySlider.SetIndicator(qualityLevels, 0);
+            qualitySlider.SetIndicator(qualityLevels, DaggerfallUnity.Settings.AmbientOcclusionQuality);
             StyleIndicator(qualitySlider);
 
             // Method1 - Thickness slider
             pos = Vector2.zero;
             thicknessSlider = AddSlider(method1Panel, TextManager.Instance.GetLocalizedText("thickness"), 100, ref pos);
-            thicknessSlider.SetIndicator(0.0f, 10.0f, 0);
+            thicknessSlider.SetIndicator(0.0f, 10.0f, DaggerfallUnity.Settings.AmbientOcclusionThickness);
             thicknessSlider.OnScroll += ThicknessSlider_OnScroll;
             StyleIndicator(thicknessSlider);
         }
 
         public override void ReadSettings()
         {
+            enableCheckbox.IsChecked = DaggerfallUnity.Settings.AmbientOcclusionEnable;
+            aoMethodSlider.ScrollIndex = SystemInfo.graphicsShaderLevel >= 45 ? DaggerfallUnity.Settings.AmbientOcclusionMethod : 0;
+            intensitySlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.AmbientOcclusionIntensity * 10);
+            thicknessSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.AmbientOcclusionThickness * 10);
+            radiusSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.AmbientOcclusionRadius * 10);
+            qualitySlider.ScrollIndex = DaggerfallUnity.Settings.AmbientOcclusionQuality;
         }
 
         public override void SetDefaults()
         {
+            DaggerfallUnity.Settings.AmbientOcclusionEnable = false;
+            DaggerfallUnity.Settings.AmbientOcclusionMethod = 0;
+            DaggerfallUnity.Settings.AmbientOcclusionIntensity = 1.5f;
+            DaggerfallUnity.Settings.AmbientOcclusionThickness = 1.0f;
+            DaggerfallUnity.Settings.AmbientOcclusionRadius = 0.3f;
+            DaggerfallUnity.Settings.AmbientOcclusionQuality = 2;
         }
 
         string[] GetSupportedMethods()
@@ -121,6 +133,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void EnableCheckbox_OnToggleState()
         {
+            DaggerfallUnity.Settings.AmbientOcclusionEnable = enableCheckbox.IsChecked;
+            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
         }
 
         private void AoMethodSlider_OnScroll()
@@ -137,18 +151,33 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     method1Panel.Enabled = true;
                     break;
             }
+
+            DaggerfallUnity.Settings.AmbientOcclusionMethod = aoMethodSlider.ScrollIndex;
+            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
         }
 
         private void IntensitySlider_OnScroll()
         {
+            DaggerfallUnity.Settings.AmbientOcclusionIntensity = intensitySlider.ScrollIndex / 10f;
+            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
         }
 
         private void QualitySlider_OnScroll()
         {
+            DaggerfallUnity.Settings.AmbientOcclusionQuality = qualitySlider.ScrollIndex;
+            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
         }
 
         private void ThicknessSlider_OnScroll()
         {
+            DaggerfallUnity.Settings.AmbientOcclusionThickness = thicknessSlider.ScrollIndex / 10f;
+            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+        }
+
+        private void RadiusSlider_OnScroll()
+        {
+            DaggerfallUnity.Settings.AmbientOcclusionRadius = radiusSlider.ScrollIndex / 10f;
+            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
         }
     }
 }
