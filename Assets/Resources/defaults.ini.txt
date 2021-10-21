@@ -35,7 +35,12 @@ AntialiasingMethod=0
 AntialiasingFXAAFastMode=False
 AntialiasingSMAAQuality=1
 AntialiasingTAASharpness=0.3
-AmbientOcclusionIntensity=0
+AmbientOcclusionEnable=False
+AmbientOcclusionMethod=0
+AmbientOcclusionIntensity=1.5
+AmbientOcclusionThickness=1.0
+AmbientOcclusionRadius=0.4
+AmbientOcclusionQuality=2
 
 [Audio]
 AlternateMusic=False

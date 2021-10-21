@@ -116,7 +116,12 @@ namespace DaggerfallWorkshop
         public bool AntialiasingFXAAFastMode { get; set; }
         public int AntialiasingSMAAQuality { get; set; }
         public float AntialiasingTAASharpness { get; set; }
+        public bool AmbientOcclusionEnable { get; set; }
+        public int AmbientOcclusionMethod { get; set; }
         public float AmbientOcclusionIntensity { get; set; }
+        public float AmbientOcclusionThickness { get; set; }
+        public float AmbientOcclusionRadius { get; set; }
+        public int AmbientOcclusionQuality { get; set; }
 
         // [Audio]
         public string SoundFont { get; set; }
@@ -283,7 +288,12 @@ namespace DaggerfallWorkshop
             AntialiasingFXAAFastMode = GetBool(sectionEffects, "AntialiasingFXAAFastMode");
             AntialiasingSMAAQuality = GetInt(sectionEffects, "AntialiasingSMAAQuality", 0, 2);
             AntialiasingTAASharpness = GetFloat(sectionEffects, "AntialiasingTAASharpness", 0.0f, 3.0f);
-            AmbientOcclusionIntensity = GetFloat(sectionEffects, "AmbientOcclusionIntensity", 0, 4);
+            AmbientOcclusionEnable = GetBool(sectionEffects, "AmbientOcclusionEnable");
+            AmbientOcclusionMethod = GetInt(sectionEffects, "AmbientOcclusionMethod", 0, 1);
+            AmbientOcclusionIntensity = GetFloat(sectionEffects, "AmbientOcclusionIntensity", 0.0f, 4.0f);
+            AmbientOcclusionThickness = GetFloat(sectionEffects, "AmbientOcclusionThickness", 1.0f, 10.0f);
+            AmbientOcclusionRadius = GetFloat(sectionEffects, "AmbientOcclusionRadius", 0.0f, 2.0f);
+            AmbientOcclusionQuality = GetInt(sectionEffects, "AmbientOcclusionQuality", 0, 5);
 
             SoundFont = GetString(sectionAudio, "SoundFont");
             AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
@@ -433,7 +443,12 @@ namespace DaggerfallWorkshop
             SetBool(sectionEffects, "AntialiasingFXAAFastMode", AntialiasingFXAAFastMode);
             SetInt(sectionEffects, "AntialiasingSMAAQuality", AntialiasingSMAAQuality);
             SetFloat(sectionEffects, "AntialiasingTAASharpness", AntialiasingTAASharpness);
+            SetBool(sectionEffects, "AmbientOcclusionEnable", AmbientOcclusionEnable);
+            SetInt(sectionEffects, "AmbientOcclusionMethod", AmbientOcclusionMethod);
             SetFloat(sectionEffects, "AmbientOcclusionIntensity", AmbientOcclusionIntensity);
+            SetFloat(sectionEffects, "AmbientOcclusionThickness", AmbientOcclusionThickness);
+            SetFloat(sectionEffects, "AmbientOcclusionRadius", AmbientOcclusionRadius);
+            SetInt(sectionEffects, "AmbientOcclusionQuality", AmbientOcclusionQuality);
 
             SetString(sectionAudio, "SoundFont", SoundFont);
             SetBool(sectionAudio, "AlternateMusic", AlternateMusic);
