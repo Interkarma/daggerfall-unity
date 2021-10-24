@@ -23,7 +23,7 @@ namespace DaggerfallWorkshop.Game
         public UnderwaterFog()
         {
             mainCamera = GameManager.Instance.MainCamera;
-            waterFogColor = new Color32(14, 25, 21, 255)
+            waterFogColor = new Color32(14, 25, 21, 255);
             fogDensityMin = 0f;
             fogDensityMax = 0.23f;
             // get initial (backup) values - will be overwritten (this is just a safety net mechanism so we start out with some values)
