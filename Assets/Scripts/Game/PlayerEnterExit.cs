@@ -297,6 +297,14 @@ namespace DaggerfallWorkshop.Game
             set { SetExteriorDoors(value); }
         }
 
+        /// <summary>
+        /// Gets instance of UnderwaterFog controlling fog when below the surface of dungeon water.
+        /// </summary>
+        public UnderwaterFog UnderwaterFog
+        {
+            get { return underwaterFog; }
+        }
+
         void Awake()
         {
             dfUnity = DaggerfallUnity.Instance;
