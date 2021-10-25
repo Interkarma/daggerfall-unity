@@ -772,11 +772,34 @@ namespace DaggerfallWorkshop
         TextRSC,
     }
 
+    /// <summary>
+    /// Antialiasing methods supported by core.
+    /// </summary>
     public enum AntiAliasingMethods
     {
         None = 0,   // No anti-aliasing
         FXAA = 1,   // Fast approximate anti-aliasing (FXAA)
         SMAA = 2,   // Subpixel morphilogical anti-aliasing (SMAA)
         TAA = 3,    // Temporal anti-aliasing (TAA)
+    }
+
+    /// <summary>
+    /// Core game effects settings groups for deploying some or all settings.
+    /// </summary>
+    [Flags]
+    public enum CoreGameEffectSettingsGroups
+    {
+        Nothing = 0,
+        Antialiasing = 1,
+        AmbientOcclusion = 2,
+        Bloom = 4,
+        MotionBlur = 8,
+        Vignette = 16,
+        DepthOfField = 32,
+        Dither = 64,
+        Reserved128 = 128,
+        Reserved256 = 256,
+        Reserved512 = 512,
+        Everything = 0xffff,
     }
 }

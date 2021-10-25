@@ -99,6 +99,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             qualitySlider.ScrollIndex = DaggerfallUnity.Settings.AmbientOcclusionQuality;
         }
 
+        public override void DeploySettings()
+        {
+            GameManager.Instance.StartGameBehaviour.DeployCoreGameEffectSettings(CoreGameEffectSettingsGroups.AmbientOcclusion);
+        }
+
         public override void SetDefaults()
         {
             DaggerfallUnity.Settings.AmbientOcclusionEnable = false;
@@ -134,7 +139,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void EnableCheckbox_OnToggleState()
         {
             DaggerfallUnity.Settings.AmbientOcclusionEnable = enableCheckbox.IsChecked;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+            DeploySettings();
         }
 
         private void AoMethodSlider_OnScroll()
@@ -153,31 +158,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             DaggerfallUnity.Settings.AmbientOcclusionMethod = aoMethodSlider.ScrollIndex;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+            DeploySettings();
         }
 
         private void IntensitySlider_OnScroll()
         {
             DaggerfallUnity.Settings.AmbientOcclusionIntensity = intensitySlider.ScrollIndex / 10f;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+            DeploySettings();
         }
 
         private void QualitySlider_OnScroll()
         {
             DaggerfallUnity.Settings.AmbientOcclusionQuality = qualitySlider.ScrollIndex;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+            DeploySettings();
         }
 
         private void ThicknessSlider_OnScroll()
         {
             DaggerfallUnity.Settings.AmbientOcclusionThickness = thicknessSlider.ScrollIndex / 10f;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+            DeploySettings();
         }
 
         private void RadiusSlider_OnScroll()
         {
             DaggerfallUnity.Settings.AmbientOcclusionRadius = radiusSlider.ScrollIndex / 10f;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+            DeploySettings();
         }
     }
 }

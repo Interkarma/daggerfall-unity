@@ -55,6 +55,8 @@ namespace DaggerfallWorkshop.Game.Utility
         GameObject player;
         PlayerEnterExit playerEnterExit;
         StartMethods lastStartMethod;
+        PostProcessLayer postProcessLayer;
+        PostProcessVolume postProcessVolume;
 
         #endregion
 
@@ -214,7 +216,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 }
             }
 
-            DeployGameEffectSettings();
+            DeployCoreGameEffectSettings(CoreGameEffectSettingsGroups.Everything);
 
             InputManager.Instance.JoystickCursorSensitivity = DaggerfallUnity.Settings.JoystickCursorSensitivity;
 
@@ -853,33 +855,61 @@ namespace DaggerfallWorkshop.Game.Utility
             }
         }
 
-        public void DeployGameEffectSettings()
+        public void DeployCoreGameEffectSettings(CoreGameEffectSettingsGroups groups)
         {
-            PostProcessLayer postProcessLayer = GameManager.Instance.MainCamera.GetComponent<PostProcessLayer>();
+            // Get layer
             if (!postProcessLayer)
             {
-                Debug.LogError("Could not locate PostProcessLayer on MainCamera");
-                return;
+                postProcessLayer = GameManager.Instance.MainCamera.GetComponent<PostProcessLayer>();
+                if (!postProcessLayer)
+                {
+                    Debug.LogError("Could not locate PostProcessLayer on MainCamera");
+                    return;
+                }
+            }
+
+            // Get volume
+            if (!postProcessVolume)
+            {
+                postProcessVolume = GameManager.Instance.PostProcessVolume;
+                if (!postProcessVolume)
+                {
+                    Debug.LogError("Could not locate PostProcessVolume in scene");
+                    return;
+                }
             }
 
             // Antialiasing
-            switch ((AntiAliasingMethods)DaggerfallUnity.Settings.AntialiasingMethod)
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.Antialiasing))
             {
-                case AntiAliasingMethods.None:
-                    postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.None;
-                    break;
-                case AntiAliasingMethods.FXAA:
-                    postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.FastApproximateAntialiasing;
-                    postProcessLayer.fastApproximateAntialiasing.fastMode = DaggerfallUnity.Settings.AntialiasingFXAAFastMode;
-                    break;
-                case AntiAliasingMethods.SMAA:
-                    postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.SubpixelMorphologicalAntialiasing;
-                    postProcessLayer.subpixelMorphologicalAntialiasing.quality = (SubpixelMorphologicalAntialiasing.Quality)DaggerfallUnity.Settings.AntialiasingSMAAQuality;
-                    break;
-                case AntiAliasingMethods.TAA:
-                    postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.TemporalAntialiasing;
-                    postProcessLayer.temporalAntialiasing.sharpness = DaggerfallUnity.Settings.AntialiasingTAASharpness;
-                    break;
+                switch ((AntiAliasingMethods)DaggerfallUnity.Settings.AntialiasingMethod)
+                {
+                    case AntiAliasingMethods.None:
+                        postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.None;
+                        break;
+                    case AntiAliasingMethods.FXAA:
+                        postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.FastApproximateAntialiasing;
+                        postProcessLayer.fastApproximateAntialiasing.fastMode = DaggerfallUnity.Settings.AntialiasingFXAAFastMode;
+                        break;
+                    case AntiAliasingMethods.SMAA:
+                        postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.SubpixelMorphologicalAntialiasing;
+                        postProcessLayer.subpixelMorphologicalAntialiasing.quality = (SubpixelMorphologicalAntialiasing.Quality)DaggerfallUnity.Settings.AntialiasingSMAAQuality;
+                        break;
+                    case AntiAliasingMethods.TAA:
+                        postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.TemporalAntialiasing;
+                        postProcessLayer.temporalAntialiasing.sharpness = DaggerfallUnity.Settings.AntialiasingTAASharpness;
+                        break;
+                }
+            }
+
+            // Ambient Occlusion
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.AmbientOcclusion))
+            {
+                AmbientOcclusion ambientOcclusionSettings;
+                if (postProcessVolume.profile.TryGetSettings<AmbientOcclusion>(out ambientOcclusionSettings))
+                {
+                    ambientOcclusionSettings.enabled.value = DaggerfallUnity.Settings.AmbientOcclusionEnable;
+                }
             }
         }
 

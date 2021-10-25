@@ -23,6 +23,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         string Title { get; }
         void Setup(Panel parent);
         void ReadSettings();
+        void DeploySettings();
         void SetDefaults();
     }
 
@@ -40,6 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public abstract string Title { get; }
         public abstract void Setup(Panel parent);
         public abstract void ReadSettings();
+        public abstract void DeploySettings();
         public abstract void SetDefaults();
 
         #region Helpers

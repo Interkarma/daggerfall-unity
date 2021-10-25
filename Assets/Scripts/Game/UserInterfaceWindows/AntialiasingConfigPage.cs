@@ -78,37 +78,42 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             taaSharpnessSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.AntialiasingTAASharpness * 10);
         }
 
+        public override void DeploySettings()
+        {
+            GameManager.Instance.StartGameBehaviour.DeployCoreGameEffectSettings(CoreGameEffectSettingsGroups.Antialiasing);
+        }
+
         public override void SetDefaults()
         {
             DaggerfallUnity.Settings.AntialiasingMethod = (int)AntiAliasingMethods.None;
             DaggerfallUnity.Settings.AntialiasingFXAAFastMode = false;
             DaggerfallUnity.Settings.AntialiasingSMAAQuality = 1;
             DaggerfallUnity.Settings.AntialiasingTAASharpness = 0.3f;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+            DeploySettings();
         }
 
         private void AntialiasingMethodSlider_OnScroll()
         {
             DaggerfallUnity.Settings.AntialiasingMethod = antialiasingMethodSlider.ScrollIndex;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+            DeploySettings();
         }
 
         private void FxaaFastMostCheckbox_OnToggleState()
         {
             DaggerfallUnity.Settings.AntialiasingFXAAFastMode = fxaaFastModeCheckbox.IsChecked;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+            DeploySettings();
         }
 
         private void SmaaQualitySlider_OnScroll()
         {
             DaggerfallUnity.Settings.AntialiasingSMAAQuality = smaaQualitySlider.ScrollIndex;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+            DeploySettings();
         }
 
         private void TaaSharpnessSlider_OnScroll()
         {
             DaggerfallUnity.Settings.AntialiasingTAASharpness = taaSharpnessSlider.ScrollIndex / 10f;
-            GameManager.Instance.StartGameBehaviour.DeployGameEffectSettings();
+            DeploySettings();
         }
     }
 }
