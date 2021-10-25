@@ -84,7 +84,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Method1 - Thickness slider
             pos = Vector2.zero;
             thicknessSlider = AddSlider(method1Panel, TextManager.Instance.GetLocalizedText("thickness"), 100, ref pos);
-            thicknessSlider.SetIndicator(0.0f, 10.0f, DaggerfallUnity.Settings.AmbientOcclusionThickness);
+            thicknessSlider.SetIndicator(1.0f, 10.0f, DaggerfallUnity.Settings.AmbientOcclusionThickness);
             thicknessSlider.OnScroll += ThicknessSlider_OnScroll;
             StyleIndicator(thicknessSlider);
         }
@@ -175,7 +175,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void ThicknessSlider_OnScroll()
         {
-            DaggerfallUnity.Settings.AmbientOcclusionThickness = thicknessSlider.ScrollIndex / 10f;
+            DaggerfallUnity.Settings.AmbientOcclusionThickness = thicknessSlider.ScrollIndex / 10f + 1f;
             DeploySettings();
         }
 

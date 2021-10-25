@@ -909,6 +909,16 @@ namespace DaggerfallWorkshop.Game.Utility
                 if (postProcessVolume.profile.TryGetSettings<AmbientOcclusion>(out ambientOcclusionSettings))
                 {
                     ambientOcclusionSettings.enabled.value = DaggerfallUnity.Settings.AmbientOcclusionEnable;
+                    ambientOcclusionSettings.mode.overrideState = true;
+                    ambientOcclusionSettings.mode.value = (AmbientOcclusionMode)DaggerfallUnity.Settings.AmbientOcclusionMethod;
+                    ambientOcclusionSettings.intensity.overrideState = true;
+                    ambientOcclusionSettings.intensity.value = DaggerfallUnity.Settings.AmbientOcclusionIntensity;
+                    ambientOcclusionSettings.radius.overrideState = true;
+                    ambientOcclusionSettings.radius.value = DaggerfallUnity.Settings.AmbientOcclusionRadius;
+                    ambientOcclusionSettings.quality.overrideState = true;
+                    ambientOcclusionSettings.quality.value = (AmbientOcclusionQuality)DaggerfallUnity.Settings.AmbientOcclusionQuality;
+                    ambientOcclusionSettings.thicknessModifier.overrideState = true;
+                    ambientOcclusionSettings.thicknessModifier.value = DaggerfallUnity.Settings.AmbientOcclusionThickness;
                 }
             }
         }
