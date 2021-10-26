@@ -2577,6 +2577,7 @@ namespace DaggerfallWorkshop.Game
 
                 Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
                 Material automapMaterial = new Material(Shader.Find("Daggerfall/Automap"));
+                automapMaterial.SetColor("_WaterColor", GameManager.Instance.PlayerEnterExit.UnderwaterFog.waterMapColor);
 
                 OnInjectMeshAndMaterialProperties(playerIsInsideBuilding, playerAdvancedPos, automapMaterial, resetDiscoveryState);
             }
