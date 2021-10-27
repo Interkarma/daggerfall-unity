@@ -921,6 +921,24 @@ namespace DaggerfallWorkshop.Game.Utility
                     ambientOcclusionSettings.thicknessModifier.value = DaggerfallUnity.Settings.AmbientOcclusionThickness;
                 }
             }
+
+            // Bloom
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.Bloom))
+            {
+                Bloom bloomSettings;
+                if (postProcessVolume.profile.TryGetSettings<Bloom>(out bloomSettings))
+                {
+                    bloomSettings.enabled.value = DaggerfallUnity.Settings.BloomEnable;
+                    bloomSettings.intensity.overrideState = true;
+                    bloomSettings.intensity.value = DaggerfallUnity.Settings.BloomIntensity;
+                    bloomSettings.threshold.overrideState = true;
+                    bloomSettings.threshold.value = DaggerfallUnity.Settings.BloomThreshold;
+                    bloomSettings.diffusion.overrideState = true;
+                    bloomSettings.diffusion.value = DaggerfallUnity.Settings.BloomDiffusion;
+                    bloomSettings.fastMode.overrideState = true;
+                    bloomSettings.fastMode.value = DaggerfallUnity.Settings.BloomFastMode;
+                }
+            }
         }
 
         #endregion

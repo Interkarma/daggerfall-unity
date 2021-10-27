@@ -3411,6 +3411,22 @@ MonoBehaviour:
     m_Key: thickness
     m_Metadata:
       m_Items: []
+  - m_Id: 143983971784736768
+    m_Key: bloomTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143984810309992448
+    m_Key: threshold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143985154641379328
+    m_Key: diffusion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143985842813419520
+    m_Key: bloomFastMode
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

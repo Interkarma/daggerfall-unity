@@ -301,7 +301,7 @@ namespace DaggerfallWorkshop
             AmbientOcclusionQuality = GetInt(sectionEffects, "AmbientOcclusionQuality", 0, 5);
             BloomEnable = GetBool(sectionEffects, "BloomEnable");
             BloomIntensity = GetFloat(sectionEffects, "BloomIntensity", 0, 50);
-            BloomThreshold = GetFloat(sectionEffects, "BloomThreshold", 1, 10);
+            BloomThreshold = GetFloat(sectionEffects, "BloomThreshold", 0.1f, 10);
             BloomDiffusion = GetFloat(sectionEffects, "BloomDiffusion", 1, 10);
             BloomFastMode = GetBool(sectionEffects, "BloomFastMode");
 

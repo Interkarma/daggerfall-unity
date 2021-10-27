@@ -3790,5 +3790,21 @@ MonoBehaviour:
     m_Localized: Thickness
     m_Metadata:
       m_Items: []
+  - m_Id: 143983971784736768
+    m_Localized: Make bright areas glow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143984810309992448
+    m_Localized: Threshold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143985154641379328
+    m_Localized: Diffusion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143985842813419520
+    m_Localized: Bloom fast mode
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
