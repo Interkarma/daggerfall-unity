@@ -41,6 +41,11 @@ AmbientOcclusionIntensity=1.5
 AmbientOcclusionThickness=1.0
 AmbientOcclusionRadius=0.4
 AmbientOcclusionQuality=2
+BloomEnable=False
+BloomIntensity=0
+BloomThreshold=1
+BloomDiffusion=7
+BloomFastMode=False
 
 [Audio]
 AlternateMusic=False

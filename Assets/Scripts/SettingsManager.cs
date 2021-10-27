@@ -122,6 +122,11 @@ namespace DaggerfallWorkshop
         public float AmbientOcclusionThickness { get; set; }
         public float AmbientOcclusionRadius { get; set; }
         public int AmbientOcclusionQuality { get; set; }
+        public bool BloomEnable { get; set; }
+        public float BloomIntensity { get; set; }
+        public float BloomThreshold { get; set; }
+        public float BloomDiffusion { get; set; }
+        public bool BloomFastMode { get; set; }
 
         // [Audio]
         public string SoundFont { get; set; }
@@ -294,6 +299,11 @@ namespace DaggerfallWorkshop
             AmbientOcclusionThickness = GetFloat(sectionEffects, "AmbientOcclusionThickness", 1.0f, 10.0f);
             AmbientOcclusionRadius = GetFloat(sectionEffects, "AmbientOcclusionRadius", 0.0f, 2.0f);
             AmbientOcclusionQuality = GetInt(sectionEffects, "AmbientOcclusionQuality", 0, 5);
+            BloomEnable = GetBool(sectionEffects, "BloomEnable");
+            BloomIntensity = GetFloat(sectionEffects, "BloomIntensity", 0, 50);
+            BloomThreshold = GetFloat(sectionEffects, "BloomThreshold", 1, 10);
+            BloomDiffusion = GetFloat(sectionEffects, "BloomDiffusion", 1, 10);
+            BloomFastMode = GetBool(sectionEffects, "BloomFastMode");
 
             SoundFont = GetString(sectionAudio, "SoundFont");
             AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
@@ -449,6 +459,11 @@ namespace DaggerfallWorkshop
             SetFloat(sectionEffects, "AmbientOcclusionThickness", AmbientOcclusionThickness);
             SetFloat(sectionEffects, "AmbientOcclusionRadius", AmbientOcclusionRadius);
             SetInt(sectionEffects, "AmbientOcclusionQuality", AmbientOcclusionQuality);
+            SetBool(sectionEffects, "BloomEnable", BloomEnable);
+            SetFloat(sectionEffects, "BloomIntensity", BloomIntensity);
+            SetFloat(sectionEffects, "BloomThreshold", BloomThreshold);
+            SetFloat(sectionEffects, "BloomDiffusion", BloomDiffusion);
+            SetBool(sectionEffects, "BloomFastMode", BloomFastMode);
 
             SetString(sectionAudio, "SoundFont", SoundFont);
             SetBool(sectionAudio, "AlternateMusic", AlternateMusic);
