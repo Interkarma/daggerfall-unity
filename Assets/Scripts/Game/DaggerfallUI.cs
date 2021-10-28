@@ -118,6 +118,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallItemMakerWindow dfItemMakerWindow;
         DaggerfallPotionMakerWindow dfPotionMakerWindow;
         DaggerfallCourtWindow dfCourtWindow;
+        GameEffectsConfigWindow gameEffectsConfigWindow;
 
         private List<System.Tuple<string, Action>> pauseOptionsDropdownItems
             = new List<System.Tuple<string, Action>>();
@@ -268,6 +269,11 @@ namespace DaggerfallWorkshop.Game
             get { return dfCourtWindow; }
         }
 
+        public GameEffectsConfigWindow GameEffectsConfigWindow
+        {
+            get { return gameEffectsConfigWindow; }
+        }
+
         public DaggerfallSpellMakerWindow DfSpellMakerWindow
         {
             get { return dfSpellMakerWindow; }
@@ -321,6 +327,11 @@ namespace DaggerfallWorkshop.Game
 
             // Create 8x scale paper doll renderer
             paperDollRenderer = new PaperDollRenderer(8);
+
+            // Create persistent Game Effects window
+            // This window isn't intended to be replaced by mods - rather mods should plug in custom pages implementing IGameEffectConfigPage
+            // Mods should register their custom pages using gameEffectsConfigWindow.OnRegisterCustomPages event
+            gameEffectsConfigWindow = new GameEffectsConfigWindow((IUserInterfaceManager)uiManager);
 
             SetupSingleton();
         }

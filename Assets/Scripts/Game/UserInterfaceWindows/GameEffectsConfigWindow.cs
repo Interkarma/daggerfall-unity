@@ -79,11 +79,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             IsSetup = true;
 
-            AddConfigPages();
+            AddCorePages();
+            RaiseOnRegisterCustomPages();
             RefreshPageSettings();
         }
 
-        protected void AddConfigPages()
+        protected void AddCorePages()
         {
             AddConfigPage(new AntialiasingConfigPage());
             AddConfigPage(new AmbientOcclusionConfigPage());
@@ -92,7 +93,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             effectList.SelectedIndex = 0;
         }
 
-        protected void AddConfigPage(IGameEffectConfigPage page)
+        public void AddConfigPage(IGameEffectConfigPage page)
         {
             // Create panel to home config page
             Panel panel = new Panel();
@@ -123,6 +124,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.OnPop();
 
             DaggerfallUnity.Settings.SaveSettings();
+        }
+
+        /// <summary>
+        /// Event raised when when window is ready for custom pages to be added.
+        /// </summary>
+        public delegate void OnRegisterCustomPagesHandler();
+        public event OnRegisterCustomPagesHandler OnRegisterCustomPages;
+        protected virtual void RaiseOnRegisterCustomPages()
+        {
+            OnRegisterCustomPages?.Invoke();
         }
 
         #region Private Methods
