@@ -2394,6 +2394,10 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <param name="enchantingItem">True if the method is used from the magic item maker.</param>
         public static int CalculateCastingCost(SpellRecord.SpellRecordData spell, bool enchantingItem= true)
         {
+            Func<SpellRecord.SpellRecordData, bool, int> del;
+            if (TryGetOverride("CalculateCastingCost", out del))
+                return del(spell, enchantingItem);
+
             // Indices into effect settings array for each effect and its subtypes
             byte[] effectIndices = {    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Paralysis
                                         0x01, 0x02, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Continuous Damage
@@ -2530,7 +2534,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             
             for (int i = 0; i < 3; ++i)
             {
-                if (spell.effects[i].type != -1)
+                if (i < spell.effects.Length && spell.effects[i].type != -1)
                 {
                     // Get the coefficients applied to settings for this effect and copy them into the temporary variable
                     ushort[] coefficientsForThisEffect = new ushort[4];
