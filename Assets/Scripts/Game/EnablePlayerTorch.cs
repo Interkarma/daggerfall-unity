@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.Game
         Light torchLight;
         float torchIntensity;
         float defaultTorchIntensity = 0.75f;
-        float itemBasedTorchIntensity = 1.5f;
+        float itemBasedTorchIntensity = 1.25f;
         float tickTimeBuffer = 0f;
         float tickTimeInterval = 20f;
         float guttering = 0;
@@ -90,7 +90,7 @@ namespace DaggerfallWorkshop.Game
                     if (lightSource.currentCondition < 3)
                     {
                         // Give warning signs if running low of fuel
-                        intensityMod = 1f + (Mathf.Cos(guttering) * 0.2f);
+                        intensityMod = 0.85f + (Mathf.Cos(guttering) * 0.2f);
                         guttering += Random.Range(-0.02f, 0.06f);
                     }
                     else
