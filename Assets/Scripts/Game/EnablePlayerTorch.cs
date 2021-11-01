@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game
         PlayerEntity playerEntity;
         Light torchLight;
         float torchIntensity;
-        float defaultTorchIntensity = 0.75f;
+        float defaultTorchIntensity = 1.0f;
         float itemBasedTorchIntensity = 1.25f;
         float tickTimeBuffer = 0f;
         float tickTimeInterval = 20f;
