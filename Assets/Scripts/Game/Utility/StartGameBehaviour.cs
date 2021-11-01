@@ -939,6 +939,20 @@ namespace DaggerfallWorkshop.Game.Utility
                     bloomSettings.fastMode.value = DaggerfallUnity.Settings.BloomFastMode;
                 }
             }
+
+            // Motion Blur
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.MotionBlur))
+            {
+                MotionBlur motionBlurSettings;
+                if (postProcessVolume.profile.TryGetSettings<MotionBlur>(out motionBlurSettings))
+                {
+                    motionBlurSettings.enabled.value = DaggerfallUnity.Settings.MotionBlurEnable;
+                    motionBlurSettings.shutterAngle.overrideState = true;
+                    motionBlurSettings.shutterAngle.value = DaggerfallUnity.Settings.MotionBlurShutterAngle;
+                    motionBlurSettings.sampleCount.overrideState = true;
+                    motionBlurSettings.sampleCount.value = DaggerfallUnity.Settings.MotionBlurSampleCount;
+                }
+            }
         }
 
         #endregion

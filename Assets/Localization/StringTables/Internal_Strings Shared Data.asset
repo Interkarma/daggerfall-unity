@@ -3427,6 +3427,18 @@ MonoBehaviour:
     m_Key: bloomFastMode
     m_Metadata:
       m_Items: []
+  - m_Id: 145710830377517056
+    m_Key: motionBlurTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145711252039286784
+    m_Key: shutterAngle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145711321710870528
+    m_Key: sampleCount
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

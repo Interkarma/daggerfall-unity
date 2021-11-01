@@ -3806,5 +3806,17 @@ MonoBehaviour:
     m_Localized: Bloom fast mode
     m_Metadata:
       m_Items: []
+  - m_Id: 145710830377517056
+    m_Localized: Simulates objects moving faster than camera exposure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145711252039286784
+    m_Localized: Shutter Angle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145711321710870528
+    m_Localized: Sample Count
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
