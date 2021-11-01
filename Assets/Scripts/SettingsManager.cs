@@ -133,6 +133,8 @@ namespace DaggerfallWorkshop
         public bool VignetteEnable { get; set; }
         public float VignetteIntensity { get; set; }
         public float VignetteSmoothness { get; set; }
+        public float VignetteRoundness { get; set; }
+        public bool VignetteRounded { get; set; }
         public bool DepthOfFieldEnable { get; set; }
         public float DepthOfFieldFocusDistance { get; set; }
         public float DepthOfFieldAperture { get; set; }
@@ -322,6 +324,8 @@ namespace DaggerfallWorkshop
             VignetteEnable = GetBool(sectionEffects, "VignetteEnable");
             VignetteIntensity = GetFloat(sectionEffects, "VignetteIntensity", 0.0f, 1.0f);
             VignetteSmoothness = GetFloat(sectionEffects, "VignetteSmoothness", 0.0f, 1.0f);
+            VignetteRoundness = GetFloat(sectionEffects, "VignetteRoundness", 0.0f, 1.0f);
+            VignetteRounded = GetBool(sectionEffects, "VignetteRounded");
             DepthOfFieldEnable = GetBool(sectionEffects, "DepthOfFieldEnable");
             DepthOfFieldFocusDistance = GetFloat(sectionEffects, "DepthOfFieldFocusDistance", 0.1f, 100.0f);
             DepthOfFieldAperture = GetFloat(sectionEffects, "DepthOfFieldAperture", 0.1f, 32.0f);
@@ -494,6 +498,8 @@ namespace DaggerfallWorkshop
             SetBool(sectionEffects, "VignetteEnable", VignetteEnable);
             SetFloat(sectionEffects, "VignetteIntensity", VignetteIntensity);
             SetFloat(sectionEffects, "VignetteSmoothness", VignetteSmoothness);
+            SetFloat(sectionEffects, "VignetteRoundness", VignetteRoundness);
+            SetBool(sectionEffects, "VignetteRounded", VignetteRounded);
             SetBool(sectionEffects, "DepthOfFieldEnable", DepthOfFieldEnable);
             SetFloat(sectionEffects, "DepthOfFieldFocusDistance", DepthOfFieldFocusDistance);
             SetFloat(sectionEffects, "DepthOfFieldAperture", DepthOfFieldAperture);

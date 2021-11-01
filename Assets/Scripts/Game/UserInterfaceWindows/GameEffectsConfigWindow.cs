@@ -90,6 +90,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddConfigPage(new AmbientOcclusionConfigPage());
             AddConfigPage(new BloomConfigPage());
             AddConfigPage(new MotionBlurConfigPage());
+            AddConfigPage(new VignetteConfigPage());
 
             effectList.SelectedIndex = 0;
         }

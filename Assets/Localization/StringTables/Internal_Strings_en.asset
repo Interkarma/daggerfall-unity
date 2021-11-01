@@ -3818,5 +3818,21 @@ MonoBehaviour:
     m_Localized: Sample Count
     m_Metadata:
       m_Items: []
+  - m_Id: 145743292109438976
+    m_Localized: Darken towards the edges of screen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145743678983651328
+    m_Localized: Smoothness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145749012594835456
+    m_Localized: Roundness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145749042349228032
+    m_Localized: Rounded
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

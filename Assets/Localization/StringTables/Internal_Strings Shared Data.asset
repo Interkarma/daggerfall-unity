@@ -3439,6 +3439,22 @@ MonoBehaviour:
     m_Key: sampleCount
     m_Metadata:
       m_Items: []
+  - m_Id: 145743292109438976
+    m_Key: vignetteTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145743678983651328
+    m_Key: smoothness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145749012594835456
+    m_Key: roundness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145749042349228032
+    m_Key: rounded
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

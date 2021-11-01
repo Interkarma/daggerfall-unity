@@ -953,6 +953,24 @@ namespace DaggerfallWorkshop.Game.Utility
                     motionBlurSettings.sampleCount.value = DaggerfallUnity.Settings.MotionBlurSampleCount;
                 }
             }
+
+            // Vignette
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.Vignette))
+            {
+                Vignette vignetteSettings;
+                if (postProcessVolume.profile.TryGetSettings<Vignette>(out vignetteSettings))
+                {
+                    vignetteSettings.enabled.value = DaggerfallUnity.Settings.VignetteEnable;
+                    vignetteSettings.intensity.overrideState = true;
+                    vignetteSettings.intensity.value = DaggerfallUnity.Settings.VignetteIntensity;
+                    vignetteSettings.smoothness.overrideState = true;
+                    vignetteSettings.smoothness.value = DaggerfallUnity.Settings.VignetteSmoothness;
+                    vignetteSettings.roundness.overrideState = true;
+                    vignetteSettings.roundness.value = DaggerfallUnity.Settings.VignetteRoundness;
+                    vignetteSettings.rounded.overrideState = true;
+                    vignetteSettings.rounded.value = DaggerfallUnity.Settings.VignetteRounded;
+                }    
+            }
         }
 
         #endregion
