@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUnity.Settings.AmbientOcclusionEnable = false;
             DaggerfallUnity.Settings.AmbientOcclusionMethod = 0;
-            DaggerfallUnity.Settings.AmbientOcclusionIntensity = 1.5f;
+            DaggerfallUnity.Settings.AmbientOcclusionIntensity = 1.2f;
             DaggerfallUnity.Settings.AmbientOcclusionThickness = 1.0f;
             DaggerfallUnity.Settings.AmbientOcclusionRadius = 0.3f;
             DaggerfallUnity.Settings.AmbientOcclusionQuality = 2;
