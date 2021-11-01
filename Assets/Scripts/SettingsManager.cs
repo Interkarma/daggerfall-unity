@@ -127,6 +127,18 @@ namespace DaggerfallWorkshop
         public float BloomThreshold { get; set; }
         public float BloomDiffusion { get; set; }
         public bool BloomFastMode { get; set; }
+        public bool MotionBlurEnable { get; set; }
+        public int MotionBlurShutterAngle { get; set; }
+        public int MotionBlurSampleCount { get; set; }
+        public bool VignetteEnable { get; set; }
+        public float VignetteIntensity { get; set; }
+        public float VignetteSmoothness { get; set; }
+        public bool DepthOfFieldEnable { get; set; }
+        public float DepthOfFieldFocusDistance { get; set; }
+        public float DepthOfFieldAperture { get; set; }
+        public int DepthOfFieldFocalLength { get; set; }
+        public int DepthOfFieldMaxBlurSize { get; set; }
+        public bool DitherEnable { get; set; }
 
         // [Audio]
         public string SoundFont { get; set; }
@@ -304,6 +316,18 @@ namespace DaggerfallWorkshop
             BloomThreshold = GetFloat(sectionEffects, "BloomThreshold", 0.1f, 10);
             BloomDiffusion = GetFloat(sectionEffects, "BloomDiffusion", 1, 10);
             BloomFastMode = GetBool(sectionEffects, "BloomFastMode");
+            MotionBlurEnable = GetBool(sectionEffects, "MotionBlurEnable");
+            MotionBlurShutterAngle = GetInt(sectionEffects, "MotionBlurShutterAngle", 0, 360);
+            MotionBlurSampleCount = GetInt(sectionEffects, "MotionBlurSampleCount", 4, 32);
+            VignetteEnable = GetBool(sectionEffects, "VignetteEnable");
+            VignetteIntensity = GetFloat(sectionEffects, "VignetteIntensity", 0.0f, 1.0f);
+            VignetteSmoothness = GetFloat(sectionEffects, "VignetteSmoothness", 0.0f, 1.0f);
+            DepthOfFieldEnable = GetBool(sectionEffects, "DepthOfFieldEnable");
+            DepthOfFieldFocusDistance = GetFloat(sectionEffects, "DepthOfFieldFocusDistance", 0.1f, 100.0f);
+            DepthOfFieldAperture = GetFloat(sectionEffects, "DepthOfFieldAperture", 0.1f, 32.0f);
+            DepthOfFieldFocalLength = GetInt(sectionEffects, "DepthOfFieldFocalLength", 0, 300);
+            DepthOfFieldMaxBlurSize = GetInt(sectionEffects, "DepthOfFieldMaxBlurSize", 0, 3);
+            DitherEnable = GetBool(sectionEffects, "DitherEnable");
 
             SoundFont = GetString(sectionAudio, "SoundFont");
             AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
@@ -464,6 +488,18 @@ namespace DaggerfallWorkshop
             SetFloat(sectionEffects, "BloomThreshold", BloomThreshold);
             SetFloat(sectionEffects, "BloomDiffusion", BloomDiffusion);
             SetBool(sectionEffects, "BloomFastMode", BloomFastMode);
+            SetBool(sectionEffects, "MotionBlurEnable", MotionBlurEnable);
+            SetInt(sectionEffects, "MotionBlurShutterAngle", MotionBlurShutterAngle);
+            SetInt(sectionEffects, "MotionBlurSampleCount", MotionBlurSampleCount);
+            SetBool(sectionEffects, "VignetteEnable", VignetteEnable);
+            SetFloat(sectionEffects, "VignetteIntensity", VignetteIntensity);
+            SetFloat(sectionEffects, "VignetteSmoothness", VignetteSmoothness);
+            SetBool(sectionEffects, "DepthOfFieldEnable", DepthOfFieldEnable);
+            SetFloat(sectionEffects, "DepthOfFieldFocusDistance", DepthOfFieldFocusDistance);
+            SetFloat(sectionEffects, "DepthOfFieldAperture", DepthOfFieldAperture);
+            SetInt(sectionEffects, "DepthOfFieldFocalLength", DepthOfFieldFocalLength);
+            SetInt(sectionEffects, "DepthOfFieldMaxBlurSize", DepthOfFieldMaxBlurSize);
+            SetBool(sectionEffects, "DitherEnable", DitherEnable);
 
             SetString(sectionAudio, "SoundFont", SoundFont);
             SetBool(sectionAudio, "AlternateMusic", AlternateMusic);

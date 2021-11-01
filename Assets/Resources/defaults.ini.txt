@@ -46,6 +46,18 @@ BloomIntensity=5
 BloomThreshold=0.7
 BloomDiffusion=6
 BloomFastMode=False
+MotionBlurEnable=False
+MotionBlurShutterAngle=270
+MotionBlurSampleCount=8
+VignetteEnable=False
+VignetteIntensity=0.25
+VignetteSmoothness=0.1
+DepthOfFieldEnable=False
+DepthOfFieldFocusDistance=10
+DepthOfFieldAperture=5.6
+DepthOfFieldFocalLength=50
+DepthOfFieldMaxBlurSize=1
+DitherEnable=False
 
 [Audio]
 AlternateMusic=False
