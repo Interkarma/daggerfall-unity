@@ -3487,6 +3487,14 @@ MonoBehaviour:
     m_Key: veryLarge
     m_Metadata:
       m_Items: []
+  - m_Id: 146440148502200320
+    m_Key: ditherTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146441159413350400
+    m_Key: dither
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

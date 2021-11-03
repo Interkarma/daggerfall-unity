@@ -3866,5 +3866,13 @@ MonoBehaviour:
     m_Localized: Very Large
     m_Metadata:
       m_Items: []
+  - m_Id: 146440148502200320
+    m_Localized: Apply noise to reduce large-scale patterns like color banding
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146441159413350400
+    m_Localized: Dither
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

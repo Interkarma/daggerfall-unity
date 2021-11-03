@@ -92,6 +92,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddConfigPage(new MotionBlurConfigPage());
             AddConfigPage(new VignetteConfigPage());
             AddConfigPage(new DepthOfFieldConfigPage());
+            AddConfigPage(new DitherConfigPage());
 
             effectList.SelectedIndex = 0;
         }
