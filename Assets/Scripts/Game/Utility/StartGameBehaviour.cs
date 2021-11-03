@@ -971,6 +971,24 @@ namespace DaggerfallWorkshop.Game.Utility
                     vignetteSettings.rounded.value = DaggerfallUnity.Settings.VignetteRounded;
                 }    
             }
+
+            // Depth of Field
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.DepthOfField))
+            {
+                DepthOfField depthOfFieldSettings;
+                if (postProcessVolume.profile.TryGetSettings<DepthOfField>(out depthOfFieldSettings))
+                {
+                    depthOfFieldSettings.enabled.value = DaggerfallUnity.Settings.DepthOfFieldEnable;
+                    depthOfFieldSettings.focusDistance.overrideState = true;
+                    depthOfFieldSettings.focusDistance.value = DaggerfallUnity.Settings.DepthOfFieldFocusDistance;
+                    depthOfFieldSettings.aperture.overrideState = true;
+                    depthOfFieldSettings.aperture.value = DaggerfallUnity.Settings.DepthOfFieldAperture;
+                    depthOfFieldSettings.focalLength.overrideState = true;
+                    depthOfFieldSettings.focalLength.value = DaggerfallUnity.Settings.DepthOfFieldFocalLength;
+                    depthOfFieldSettings.kernelSize.overrideState = true;
+                    depthOfFieldSettings.kernelSize.value = (KernelSize)DaggerfallUnity.Settings.DepthOfFieldMaxBlurSize;
+                }
+            }
         }
 
         #endregion

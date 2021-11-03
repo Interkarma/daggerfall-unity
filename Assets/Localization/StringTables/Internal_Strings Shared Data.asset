@@ -3455,6 +3455,38 @@ MonoBehaviour:
     m_Key: rounded
     m_Metadata:
       m_Items: []
+  - m_Id: 146429451995201536
+    m_Key: depthOfFieldTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146429565677617152
+    m_Key: focusDistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430048924352512
+    m_Key: aperture
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430097972543488
+    m_Key: focalLength
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430149025611776
+    m_Key: maxBlurSize
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430471823441920
+    m_Key: small
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430498352414720
+    m_Key: large
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430568518926336
+    m_Key: veryLarge
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

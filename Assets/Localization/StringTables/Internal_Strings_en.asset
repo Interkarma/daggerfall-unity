@@ -3834,5 +3834,37 @@ MonoBehaviour:
     m_Localized: Rounded
     m_Metadata:
       m_Items: []
+  - m_Id: 146429451995201536
+    m_Localized: Simulates focus of camera lens
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146429565677617152
+    m_Localized: Focus Distance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430048924352512
+    m_Localized: Aperture
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430097972543488
+    m_Localized: Focal Length
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430149025611776
+    m_Localized: Max Blur Size
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430471823441920
+    m_Localized: Small
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430498352414720
+    m_Localized: Large
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430568518926336
+    m_Localized: Very Large
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
