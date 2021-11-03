@@ -989,6 +989,16 @@ namespace DaggerfallWorkshop.Game.Utility
                     depthOfFieldSettings.kernelSize.value = (KernelSize)DaggerfallUnity.Settings.DepthOfFieldMaxBlurSize;
                 }
             }
+
+            // Dither
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.Dither))
+            {
+                const string ditherKeyword = "_PPV2_DITHER_ON";
+                if (DaggerfallUnity.Settings.DitherEnable)
+                    Shader.EnableKeyword(ditherKeyword);
+                else
+                    Shader.DisableKeyword(ditherKeyword);
+            }
         }
 
         #endregion

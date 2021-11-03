@@ -10,6 +10,7 @@ Shader "Hidden/PostProcessing/Uber"
         #pragma multi_compile __ VIGNETTE
         #pragma multi_compile __ GRAIN
         #pragma multi_compile __ FINALPASS
+        #pragma shader_feature _PPV2_DITHER_ON
         // the following keywords are handled in API specific SubShaders below
         // #pragma multi_compile __ COLOR_GRADING_LDR_2D COLOR_GRADING_HDR_2D COLOR_GRADING_HDR_3D
         // #pragma multi_compile __ STEREO_INSTANCING_ENABLED STEREO_DOUBLEWIDE_TARGET
@@ -241,7 +242,9 @@ Shader "Hidden/PostProcessing/Uber"
                 }
                 #endif
 
-                //output.rgb = Dither(output.rgb, i.texcoord);
+                #ifdef _PPV2_DITHER_ON
+                    output.rgb = Dither(output.rgb, i.texcoord);
+                #endif
             }
             #else
             {
