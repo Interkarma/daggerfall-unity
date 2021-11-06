@@ -17,7 +17,7 @@ Shader "Daggerfall/Billboard" {
         _EmissionColor("Emission Color", Color) = (0,0,0)
     }
     SubShader {
-        Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" "PreviewType" = "Plane" "CanUseSpriteAtlas" = "True" }
+        Tags { "IgnoreProjector" = "True" "RenderType" = "Transparent" "PreviewType" = "Plane" "CanUseSpriteAtlas" = "True" }
         LOD 200
         
         CGPROGRAM
@@ -63,5 +63,5 @@ Shader "Daggerfall/Billboard" {
         }
         ENDCG
     } 
-    FallBack "Transparent/VertexLit"
+    FallBack "Diffuse"
 }
