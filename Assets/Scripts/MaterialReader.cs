@@ -135,6 +135,7 @@ namespace DaggerfallWorkshop
         public const string _DaggerfallTilemapTextureArrayShaderName = "Daggerfall/TilemapTextureArray";
         public const string _DaggerfallBillboardShaderName = "Daggerfall/Billboard";
         public const string _DaggerfallBillboardBatchShaderName = "Daggerfall/BillboardBatch";
+        public const string _DaggerfallBillboardBatchNoShadowsShaderName = "Daggerfall/BillboardBatchNoShadows";
         public const string _DaggerfallGhostShaderName = "Daggerfall/GhostShader";
         public const string _DaggerfallPixelFontShaderName = "Daggerfall/PixelFont";
         public const string _DaggerfallSDFFontShaderName = "Daggerfall/SDFFont";

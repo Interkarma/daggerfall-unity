@@ -207,7 +207,9 @@ namespace DaggerfallWorkshop
 
             // Create local material
             // TODO: This should be created by MaterialReader
-            Shader shader = Shader.Find(MaterialReader._DaggerfallBillboardBatchShaderName);
+            Shader shader = (DaggerfallUnity.Settings.NatureBillboardShadows) ?
+                Shader.Find(MaterialReader._DaggerfallBillboardBatchShaderName) :
+                Shader.Find(MaterialReader._DaggerfallBillboardBatchNoShadowsShaderName);
             Material atlasMaterial = new Material(shader);
             atlasMaterial.mainTexture = albedoMap;
 
@@ -264,7 +266,9 @@ namespace DaggerfallWorkshop
             customMaterial = material;
 
             // Create local material from source
-            Shader shader = Shader.Find(MaterialReader._DaggerfallBillboardBatchShaderName);
+            Shader shader = (DaggerfallUnity.Settings.NatureBillboardShadows) ?
+                Shader.Find(MaterialReader._DaggerfallBillboardBatchShaderName) :
+                Shader.Find(MaterialReader._DaggerfallBillboardBatchNoShadowsShaderName);
             Material atlasMaterial = new Material(shader);
             atlasMaterial.mainTexture = customMaterial.mainTexture;
 
