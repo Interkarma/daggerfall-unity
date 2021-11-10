@@ -13,14 +13,11 @@ Shader "Daggerfall/PostProcess/ColorBoost"
         TEXTURE2D_SAMPLER2D(_CameraDepthTexture, sampler_CameraDepthTexture);
         TEXTURE2D_SAMPLER2D(_CameraGBufferTexture0, sampler_CameraGBufferTexture0);
 
-        //float _Radius;
-        //float _Intensity;
+        float _Radius;
+        float _Intensity;
 
         float4 Frag(VaryingsDefault i) : SV_Target
         {
-            float radius = 30;
-            float intensity = 0.7;
-
             float4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
             float depth = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, i.texcoord));
             float4 diffuse = SAMPLE_TEXTURE2D(_CameraGBufferTexture0, sampler_CameraGBufferTexture0, i.texcoord);
@@ -30,10 +27,10 @@ Shader "Daggerfall/PostProcess/ColorBoost"
                 return color;
 
             // Lerp towards unlit diffuse colour based on distance and intensity settings
-            if (depth < radius)
+            if (depth < _Radius)
             {
-                float distance = 1 - depth / radius;
-                color.rgb = lerp(color.rgb, diffuse.rgb, distance * intensity);
+                float distance = 1 - depth / _Radius;
+                color.rgb = lerp(color.rgb, diffuse.rgb, distance * _Intensity);
             }
 
             return color;

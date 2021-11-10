@@ -144,10 +144,10 @@ namespace DaggerfallWorkshop
         public bool DitherEnable { get; set; }
         public bool ColorBoostEnable { get; set; }
         public float ColorBoostRadius { get; set; }
-        public float ColorBoostStrength { get; set; }
-        public float ColorBoostDungeonIntensity { get; set; }
-        public float ColorBoostExteriorIntensity { get; set; }
-        public float ColorBoostInteriorIntensity { get; set; }
+        public float ColorBoostIntensity { get; set; }
+        public float ColorBoostDungeonScale { get; set; }
+        public float ColorBoostExteriorScale { get; set; }
+        public float ColorBoostInteriorScale { get; set; }
 
         // [Audio]
         public string SoundFont { get; set; }
@@ -342,10 +342,10 @@ namespace DaggerfallWorkshop
             DitherEnable = GetBool(sectionEffects, "DitherEnable");
             ColorBoostEnable = GetBool(sectionEffects, "ColorBoostEnable");
             ColorBoostRadius = GetFloat(sectionEffects, "ColorBoostRadius", 0.1f, 50);
-            ColorBoostStrength = GetFloat(sectionEffects, "ColorBoostStrength", 0.0f, 1.0f);
-            ColorBoostDungeonIntensity = GetFloat(sectionEffects, "ColorBoostDungeonIntensity", 0.0f, 1.0f);
-            ColorBoostExteriorIntensity = GetFloat(sectionEffects, "ColorBoostExteriorIntensity", 0.0f, 1.0f);
-            ColorBoostInteriorIntensity = GetFloat(sectionEffects, "ColorBoostInteriorIntensity", 0.0f, 1.0f);
+            ColorBoostIntensity = GetFloat(sectionEffects, "ColorBoostIntensity", 0.0f, 1.0f);
+            ColorBoostDungeonScale = GetFloat(sectionEffects, "ColorBoostDungeonScale", 0.0f, 1.0f);
+            ColorBoostExteriorScale = GetFloat(sectionEffects, "ColorBoostExteriorScale", 0.0f, 1.0f);
+            ColorBoostInteriorScale = GetFloat(sectionEffects, "ColorBoostInteriorScale", 0.0f, 1.0f);
 
             SoundFont = GetString(sectionAudio, "SoundFont");
             AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
@@ -523,10 +523,10 @@ namespace DaggerfallWorkshop
             SetBool(sectionEffects, "DitherEnable", DitherEnable);
             SetBool(sectionEffects, "ColorBoostEnable", ColorBoostEnable);
             SetFloat(sectionEffects, "ColorBoostRadius", ColorBoostRadius);
-            SetFloat(sectionEffects, "ColorBoostStrength", ColorBoostStrength);
-            SetFloat(sectionEffects, "ColorBoostDungeonIntensity", ColorBoostDungeonIntensity);
-            SetFloat(sectionEffects, "ColorBoostExteriorIntensity", ColorBoostExteriorIntensity);
-            SetFloat(sectionEffects, "ColorBoostInteriorIntensity", ColorBoostInteriorIntensity);
+            SetFloat(sectionEffects, "ColorBoostIntensity", ColorBoostIntensity);
+            SetFloat(sectionEffects, "ColorBoostDungeonScale", ColorBoostDungeonScale);
+            SetFloat(sectionEffects, "ColorBoostExteriorScale", ColorBoostExteriorScale);
+            SetFloat(sectionEffects, "ColorBoostInteriorScale", ColorBoostInteriorScale);
 
             SetString(sectionAudio, "SoundFont", SoundFont);
             SetBool(sectionAudio, "AlternateMusic", AlternateMusic);

@@ -63,10 +63,10 @@ DepthOfFieldMaxBlurSize=1
 DitherEnable=False
 ColorBoostEnable=False
 ColorBoostRadius=25
-ColorBoostStrength=1.0
-ColorBoostDungeonIntensity=0.5
-ColorBoostExteriorIntensity=0.1
-ColorBoostInteriorIntensity=0.1
+ColorBoostIntensity=1.0
+ColorBoostDungeonScale=0.5
+ColorBoostExteriorScale=0.1
+ColorBoostInteriorScale=0.1
 
 [Audio]
 AlternateMusic=False
