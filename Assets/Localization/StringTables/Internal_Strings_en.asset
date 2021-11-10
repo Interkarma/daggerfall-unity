@@ -3882,5 +3882,17 @@ MonoBehaviour:
     m_Localized: Brightens colors near camera
     m_Metadata:
       m_Items: []
+  - m_Id: 149306996474265600
+    m_Localized: Dungeon Scale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149307017856827392
+    m_Localized: Interior Scale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149307053571325952
+    m_Localized: Exterior Scale
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

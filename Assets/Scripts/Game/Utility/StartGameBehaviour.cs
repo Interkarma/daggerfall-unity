@@ -1007,6 +1007,16 @@ namespace DaggerfallWorkshop.Game.Utility
                 if (postProcessVolume.profile.TryGetSettings<ColorBoost>(out colorBoostSettings))
                 {
                     colorBoostSettings.enabled.value = DaggerfallUnity.Settings.ColorBoostEnable;
+                    colorBoostSettings.radius.overrideState = true;
+                    colorBoostSettings.radius.value = DaggerfallUnity.Settings.ColorBoostRadius;
+                    colorBoostSettings.globalIntensity.overrideState = true;
+                    colorBoostSettings.globalIntensity.value = DaggerfallUnity.Settings.ColorBoostIntensity;
+                    colorBoostSettings.dungeonScale.overrideState = true;
+                    colorBoostSettings.dungeonScale.value = DaggerfallUnity.Settings.ColorBoostDungeonScale;
+                    colorBoostSettings.interiorScale.overrideState = true;
+                    colorBoostSettings.interiorScale.value = DaggerfallUnity.Settings.ColorBoostInteriorScale;
+                    colorBoostSettings.exteriorScale.overrideState = true;
+                    colorBoostSettings.exteriorScale.value = DaggerfallUnity.Settings.ColorBoostExteriorScale;
                 }
             }
         }

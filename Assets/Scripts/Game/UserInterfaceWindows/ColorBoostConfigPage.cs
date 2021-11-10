@@ -19,6 +19,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string key = "colorBoost";
 
         Checkbox enableCheckbox;
+        HorizontalSlider radiusSlider;
+        HorizontalSlider intensitySlider;
+        HorizontalSlider dungeonScaleSlider;
+        HorizontalSlider interiorScaleSlider;
+        HorizontalSlider exteriorScaleSlider;
 
         public override string Key => key;
 
@@ -34,11 +39,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Enable toggle
             enableCheckbox = AddCheckbox(parent, TextManager.Instance.GetLocalizedText("enable"), ref pos);
             enableCheckbox.OnToggleState += EnableCheckbox_OnToggleState;
+
+            // Radius slider
+            radiusSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("radius"), 500, ref pos);
+            radiusSlider.OnScroll += RadiusSlider_OnScroll;
+            radiusSlider.SetIndicator(0.1f, 50.0f, DaggerfallUnity.Settings.ColorBoostRadius);
+            StyleIndicator(radiusSlider);
+
+            // Intensity slider
+            intensitySlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("intensity"), 10, ref pos);
+            intensitySlider.OnScroll += IntensitySlider_OnScroll;
+            intensitySlider.SetIndicator(0.0f, 1.0f, DaggerfallUnity.Settings.ColorBoostIntensity);
+            StyleIndicator(intensitySlider);
+
+            // Dungeon Scale slider
+            dungeonScaleSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("dungeonScale"), 10, ref pos);
+            dungeonScaleSlider.OnScroll += DungeonScaleSlider_OnScroll;
+            dungeonScaleSlider.SetIndicator(0.0f, 1.0f, DaggerfallUnity.Settings.ColorBoostDungeonScale);
+            StyleIndicator(dungeonScaleSlider);
+
+            // Interior Scale slider
+            interiorScaleSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("interiorScale"), 10, ref pos);
+            interiorScaleSlider.OnScroll += InteriorScaleSlider_OnScroll;
+            interiorScaleSlider.SetIndicator(0.0f, 1.0f, DaggerfallUnity.Settings.ColorBoostInteriorScale);
+            StyleIndicator(interiorScaleSlider);
+
+            // Exterior Scale slider
+            exteriorScaleSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("exteriorScale"), 10, ref pos);
+            exteriorScaleSlider.OnScroll += ExteriorScaleSlider_OnScroll;
+            exteriorScaleSlider.SetIndicator(0.0f, 1.0f, DaggerfallUnity.Settings.ColorBoostExteriorScale);
+            StyleIndicator(exteriorScaleSlider);
         }
 
         public override void ReadSettings()
         {
             enableCheckbox.IsChecked = DaggerfallUnity.Settings.ColorBoostEnable;
+            radiusSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.ColorBoostRadius * 10);
+            intensitySlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.ColorBoostIntensity * 10);
+            dungeonScaleSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.ColorBoostDungeonScale * 10);
+            interiorScaleSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.ColorBoostInteriorScale * 10);
+            exteriorScaleSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.ColorBoostExteriorScale * 10);
         }
 
         public override void DeploySettings()
@@ -49,11 +89,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void SetDefaults()
         {
             DaggerfallUnity.Settings.ColorBoostEnable = false;
+            DaggerfallUnity.Settings.ColorBoostRadius = 25.0f;
+            DaggerfallUnity.Settings.ColorBoostIntensity = 1.0f;
+            DaggerfallUnity.Settings.ColorBoostDungeonScale = 0.5f;
+            DaggerfallUnity.Settings.ColorBoostInteriorScale = 0.1f;
+            DaggerfallUnity.Settings.ColorBoostExteriorScale = 0.1f;
         }
 
         private void EnableCheckbox_OnToggleState()
         {
             DaggerfallUnity.Settings.ColorBoostEnable = enableCheckbox.IsChecked;
+            DeploySettings();
+        }
+
+        private void RadiusSlider_OnScroll()
+        {
+            DaggerfallUnity.Settings.ColorBoostRadius = radiusSlider.ScrollIndex / 10f + 0.1f;
+            DeploySettings();
+        }
+
+        private void IntensitySlider_OnScroll()
+        {
+            DaggerfallUnity.Settings.ColorBoostIntensity = intensitySlider.ScrollIndex / 10f;
+            DeploySettings();
+        }
+
+        private void DungeonScaleSlider_OnScroll()
+        {
+            DaggerfallUnity.Settings.ColorBoostDungeonScale = dungeonScaleSlider.ScrollIndex / 10f;
+            DeploySettings();
+        }
+
+        private void InteriorScaleSlider_OnScroll()
+        {
+            DaggerfallUnity.Settings.ColorBoostInteriorScale = interiorScaleSlider.ScrollIndex / 10f;
+            DeploySettings();
+        }
+
+        private void ExteriorScaleSlider_OnScroll()
+        {
+            DaggerfallUnity.Settings.ColorBoostExteriorScale = exteriorScaleSlider.ScrollIndex / 10f;
             DeploySettings();
         }
     }
