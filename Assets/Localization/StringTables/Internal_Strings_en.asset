@@ -3874,5 +3874,13 @@ MonoBehaviour:
     m_Localized: Dither
     m_Metadata:
       m_Items: []
+  - m_Id: 149035488581533696
+    m_Localized: ColorBoost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149035515697709056
+    m_Localized: Brightens colors near camera
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

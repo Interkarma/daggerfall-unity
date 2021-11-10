@@ -797,7 +797,7 @@ namespace DaggerfallWorkshop
         Vignette = 16,
         DepthOfField = 32,
         Dither = 64,
-        Reserved128 = 128,
+        ColorBoost = 128,
         Reserved256 = 256,
         Reserved512 = 512,
         Everything = 0xffff,

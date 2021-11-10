@@ -180,6 +180,7 @@ MonoBehaviour:
   - {fileID: -5774686325325507423}
   - {fileID: 2024571710130345479}
   - {fileID: -3009255097379322914}
+  - {fileID: 6640459497142437568}
 --- !u!114 &2024571710130345479
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -208,3 +209,25 @@ MonoBehaviour:
   kernelSize:
     overrideState: 0
     value: 1
+--- !u!114 &6640459497142437568
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69a00c935c643ab47b183412f862dc68, type: 3}
+  m_Name: ColorBoost
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 0
+  radius:
+    overrideState: 0
+    value: 1
+  dungeonBoostIntensity:
+    overrideState: 0
+    value: 3

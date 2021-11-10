@@ -3495,6 +3495,14 @@ MonoBehaviour:
     m_Key: dither
     m_Metadata:
       m_Items: []
+  - m_Id: 149035488581533696
+    m_Key: colorBoost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149035515697709056
+    m_Key: colorBoostTip
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

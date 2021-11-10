@@ -61,6 +61,12 @@ DepthOfFieldAperture=5.0
 DepthOfFieldFocalLength=50
 DepthOfFieldMaxBlurSize=1
 DitherEnable=False
+ColorBoostEnable=False
+ColorBoostRadius=25
+ColorBoostStrength=1.0
+ColorBoostDungeonIntensity=0.5
+ColorBoostExteriorIntensity=0.1
+ColorBoostInteriorIntensity=0.1
 
 [Audio]
 AlternateMusic=False

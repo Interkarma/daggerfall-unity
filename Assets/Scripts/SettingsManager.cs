@@ -142,6 +142,12 @@ namespace DaggerfallWorkshop
         public int DepthOfFieldFocalLength { get; set; }
         public int DepthOfFieldMaxBlurSize { get; set; }
         public bool DitherEnable { get; set; }
+        public bool ColorBoostEnable { get; set; }
+        public float ColorBoostRadius { get; set; }
+        public float ColorBoostStrength { get; set; }
+        public float ColorBoostDungeonIntensity { get; set; }
+        public float ColorBoostExteriorIntensity { get; set; }
+        public float ColorBoostInteriorIntensity { get; set; }
 
         // [Audio]
         public string SoundFont { get; set; }
@@ -334,6 +340,12 @@ namespace DaggerfallWorkshop
             DepthOfFieldFocalLength = GetInt(sectionEffects, "DepthOfFieldFocalLength", 0, 300);
             DepthOfFieldMaxBlurSize = GetInt(sectionEffects, "DepthOfFieldMaxBlurSize", 0, 3);
             DitherEnable = GetBool(sectionEffects, "DitherEnable");
+            ColorBoostEnable = GetBool(sectionEffects, "ColorBoostEnable");
+            ColorBoostRadius = GetFloat(sectionEffects, "ColorBoostRadius", 0.1f, 50);
+            ColorBoostStrength = GetFloat(sectionEffects, "ColorBoostStrength", 0.0f, 1.0f);
+            ColorBoostDungeonIntensity = GetFloat(sectionEffects, "ColorBoostDungeonIntensity", 0.0f, 1.0f);
+            ColorBoostExteriorIntensity = GetFloat(sectionEffects, "ColorBoostExteriorIntensity", 0.0f, 1.0f);
+            ColorBoostInteriorIntensity = GetFloat(sectionEffects, "ColorBoostInteriorIntensity", 0.0f, 1.0f);
 
             SoundFont = GetString(sectionAudio, "SoundFont");
             AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
@@ -509,6 +521,12 @@ namespace DaggerfallWorkshop
             SetInt(sectionEffects, "DepthOfFieldFocalLength", DepthOfFieldFocalLength);
             SetInt(sectionEffects, "DepthOfFieldMaxBlurSize", DepthOfFieldMaxBlurSize);
             SetBool(sectionEffects, "DitherEnable", DitherEnable);
+            SetBool(sectionEffects, "ColorBoostEnable", ColorBoostEnable);
+            SetFloat(sectionEffects, "ColorBoostRadius", ColorBoostRadius);
+            SetFloat(sectionEffects, "ColorBoostStrength", ColorBoostStrength);
+            SetFloat(sectionEffects, "ColorBoostDungeonIntensity", ColorBoostDungeonIntensity);
+            SetFloat(sectionEffects, "ColorBoostExteriorIntensity", ColorBoostExteriorIntensity);
+            SetFloat(sectionEffects, "ColorBoostInteriorIntensity", ColorBoostInteriorIntensity);
 
             SetString(sectionAudio, "SoundFont", SoundFont);
             SetBool(sectionAudio, "AlternateMusic", AlternateMusic);

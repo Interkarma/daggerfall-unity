@@ -999,6 +999,16 @@ namespace DaggerfallWorkshop.Game.Utility
                 else
                     Shader.DisableKeyword(ditherKeyword);
             }
+
+            // ColorBoost
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.ColorBoost))
+            {
+                ColorBoost colorBoostSettings;
+                if (postProcessVolume.profile.TryGetSettings<ColorBoost>(out colorBoostSettings))
+                {
+                    colorBoostSettings.enabled.value = DaggerfallUnity.Settings.ColorBoostEnable;
+                }
+            }
         }
 
         #endregion
