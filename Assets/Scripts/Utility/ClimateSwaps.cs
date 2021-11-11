@@ -244,7 +244,10 @@ namespace DaggerfallWorkshop.Utility
             if (archive == 36 && record == 2 ||
                 archive == 151 && record == 3 ||
                 archive == 154 && record == 3 ||
-                archive == 351 && record == 3)
+                archive == 351 && record == 3 ||
+                archive == 171 && record == 2 ||
+                archive == 172 && record == 3 ||
+                archive == 173 && record == 3)
                 return true;
 
             // Normalise archive index
