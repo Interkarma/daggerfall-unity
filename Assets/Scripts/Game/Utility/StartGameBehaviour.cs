@@ -1017,6 +1017,8 @@ namespace DaggerfallWorkshop.Game.Utility
                     colorBoostSettings.interiorScale.value = DaggerfallUnity.Settings.ColorBoostInteriorScale;
                     colorBoostSettings.exteriorScale.overrideState = true;
                     colorBoostSettings.exteriorScale.value = DaggerfallUnity.Settings.ColorBoostExteriorScale;
+                    colorBoostSettings.dungeonFalloff.overrideState = true;
+                    colorBoostSettings.dungeonFalloff.value = DaggerfallUnity.Settings.ColorBoostDungeonFalloff;
                 }
             }
         }

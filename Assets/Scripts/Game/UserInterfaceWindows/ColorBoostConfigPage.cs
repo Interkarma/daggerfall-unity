@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider dungeonScaleSlider;
         HorizontalSlider interiorScaleSlider;
         HorizontalSlider exteriorScaleSlider;
+        HorizontalSlider dungeonFalloffSlider;
 
         public override string Key => key;
 
@@ -69,6 +70,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exteriorScaleSlider.OnScroll += ExteriorScaleSlider_OnScroll;
             exteriorScaleSlider.SetIndicator(0.0f, 1.0f, DaggerfallUnity.Settings.ColorBoostExteriorScale);
             StyleIndicator(exteriorScaleSlider);
+
+            // Dungeon falloff
+            dungeonFalloffSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("dungeonFalloff"), 40, ref pos);
+            dungeonFalloffSlider.OnScroll += DungeonFalloffSlider_OnScroll;
+            dungeonFalloffSlider.SetIndicator(0.0f, 4.0f, DaggerfallUnity.Settings.ColorBoostDungeonFalloff);
+            StyleIndicator(dungeonFalloffSlider);
         }
 
         public override void ReadSettings()
@@ -79,6 +86,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             dungeonScaleSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.ColorBoostDungeonScale * 10);
             interiorScaleSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.ColorBoostInteriorScale * 10);
             exteriorScaleSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.ColorBoostExteriorScale * 10);
+            dungeonFalloffSlider.Value = Mathf.RoundToInt(DaggerfallUnity.Settings.ColorBoostDungeonFalloff * 10);
         }
 
         public override void DeploySettings()
@@ -94,6 +102,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.ColorBoostDungeonScale = 0.5f;
             DaggerfallUnity.Settings.ColorBoostInteriorScale = 0.1f;
             DaggerfallUnity.Settings.ColorBoostExteriorScale = 0.1f;
+            DaggerfallUnity.Settings.ColorBoostDungeonFalloff = 0.0f;
         }
 
         private void EnableCheckbox_OnToggleState()
@@ -129,6 +138,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ExteriorScaleSlider_OnScroll()
         {
             DaggerfallUnity.Settings.ColorBoostExteriorScale = exteriorScaleSlider.ScrollIndex / 10f;
+            DeploySettings();
+        }
+
+        private void DungeonFalloffSlider_OnScroll()
+        {
+            DaggerfallUnity.Settings.ColorBoostDungeonFalloff = dungeonFalloffSlider.ScrollIndex / 10f;
             DeploySettings();
         }
     }

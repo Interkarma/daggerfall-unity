@@ -67,6 +67,7 @@ ColorBoostIntensity=1.0
 ColorBoostDungeonScale=0.5
 ColorBoostExteriorScale=0.1
 ColorBoostInteriorScale=0.1
+ColorBoostDungeonFalloff=0.0
 
 [Audio]
 AlternateMusic=False

@@ -17,10 +17,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     public class GameEffectsConfigWindow : DaggerfallPopupWindow
     {
-        protected Vector2 mainPanelSize = new Vector2(210, 141);
-        protected Rect effectListPanelRect = new Rect(2, 2, 60, 128);
-        protected Rect effectPanelRect = new Rect(63, 2, 145, 137);
-        protected Rect resetDefaultsButtonRect = new Rect(2, 131, 60, 8);
+        protected Vector2 mainPanelSize = new Vector2(210, 150);
+        protected Rect effectListPanelRect = new Rect(2, 2, 60, 137);
+        protected Rect effectPanelRect = new Rect(63, 2, 145, 146);
+        protected Rect resetDefaultsButtonRect = new Rect(2, 140, 60, 8);
 
         protected Panel mainPanel = new Panel();
         protected ListBox effectList = new ListBox();

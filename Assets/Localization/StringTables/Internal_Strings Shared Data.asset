@@ -3515,6 +3515,10 @@ MonoBehaviour:
     m_Key: exteriorScale
     m_Metadata:
       m_Items: []
+  - m_Id: 149691213657948160
+    m_Key: dungeonFalloff
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

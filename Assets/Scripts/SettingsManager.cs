@@ -148,6 +148,7 @@ namespace DaggerfallWorkshop
         public float ColorBoostDungeonScale { get; set; }
         public float ColorBoostExteriorScale { get; set; }
         public float ColorBoostInteriorScale { get; set; }
+        public float ColorBoostDungeonFalloff { get; set; }
 
         // [Audio]
         public string SoundFont { get; set; }
@@ -346,6 +347,7 @@ namespace DaggerfallWorkshop
             ColorBoostDungeonScale = GetFloat(sectionEffects, "ColorBoostDungeonScale", 0.0f, 1.0f);
             ColorBoostExteriorScale = GetFloat(sectionEffects, "ColorBoostExteriorScale", 0.0f, 1.0f);
             ColorBoostInteriorScale = GetFloat(sectionEffects, "ColorBoostInteriorScale", 0.0f, 1.0f);
+            ColorBoostDungeonFalloff = GetFloat(sectionEffects, "ColorBoostDungeonFalloff", 0.0f, 4.0f);
 
             SoundFont = GetString(sectionAudio, "SoundFont");
             AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
@@ -527,6 +529,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionEffects, "ColorBoostDungeonScale", ColorBoostDungeonScale);
             SetFloat(sectionEffects, "ColorBoostExteriorScale", ColorBoostExteriorScale);
             SetFloat(sectionEffects, "ColorBoostInteriorScale", ColorBoostInteriorScale);
+            SetFloat(sectionEffects, "ColorBoostDungeonFalloff", ColorBoostDungeonFalloff);
 
             SetString(sectionAudio, "SoundFont", SoundFont);
             SetBool(sectionAudio, "AlternateMusic", AlternateMusic);
