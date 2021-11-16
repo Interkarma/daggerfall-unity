@@ -3519,6 +3519,30 @@ MonoBehaviour:
     m_Key: dungeonFalloff
     m_Metadata:
       m_Items: []
+  - m_Id: 151165478580273152
+    m_Key: retroMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151165508007510016
+    m_Key: retroModeTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176764189851648
+    m_Key: mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176803574366208
+    m_Key: retroModeOff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176822322905088
+    m_Key: retroMode320x200
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176851188105216
+    m_Key: retroMode640x400
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

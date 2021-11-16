@@ -1021,6 +1021,12 @@ namespace DaggerfallWorkshop.Game.Utility
                     colorBoostSettings.dungeonFalloff.value = DaggerfallUnity.Settings.ColorBoostDungeonFalloff;
                 }
             }
+
+            // Retro Mode
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.RetroMode))
+            {
+                GameManager.Instance.RetroRenderer.UpdateSettings();
+            }
         }
 
         #endregion

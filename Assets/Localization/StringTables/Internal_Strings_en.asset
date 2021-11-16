@@ -3898,5 +3898,29 @@ MonoBehaviour:
     m_Localized: Dungeon Falloff
     m_Metadata:
       m_Items: []
+  - m_Id: 151165478580273152
+    m_Localized: Retro Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151165508007510016
+    m_Localized: Renders world at lower resolutions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176764189851648
+    m_Localized: Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176803574366208
+    m_Localized: Off
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176822322905088
+    m_Localized: 320x200
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176851188105216
+    m_Localized: 640x400
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

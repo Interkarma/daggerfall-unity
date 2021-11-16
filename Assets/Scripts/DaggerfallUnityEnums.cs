@@ -798,7 +798,7 @@ namespace DaggerfallWorkshop
         DepthOfField = 32,
         Dither = 64,
         ColorBoost = 128,
-        Reserved256 = 256,
+        RetroMode = 256,
         Reserved512 = 512,
         Everything = 0xffff,
     }

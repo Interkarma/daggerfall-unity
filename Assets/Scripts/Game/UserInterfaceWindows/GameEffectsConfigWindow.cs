@@ -94,6 +94,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddConfigPage(new DepthOfFieldConfigPage());
             AddConfigPage(new DitherConfigPage());
             AddConfigPage(new ColorBoostConfigPage());
+            AddConfigPage(new RetroModeConfigPage());
 
             effectList.SelectedIndex = 0;
         }

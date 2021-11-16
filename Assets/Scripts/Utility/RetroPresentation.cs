@@ -20,16 +20,9 @@ namespace DaggerfallWorkshop.Utility
     {
         public RenderTexture RetroPresentationSource;
 
-        private void Start()
-        {
-            // Disable self if retro mode not enabled
-            if (DaggerfallUnity.Settings.RetroRenderingMode == 0)
-                gameObject.SetActive(false);
-        }
-
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
-            if (RetroPresentationSource)
+            if (RetroPresentationSource && DaggerfallUnity.Settings.RetroRenderingMode != 0)
             {
                 // Present retro render
                 Graphics.Blit(RetroPresentationSource, null as RenderTexture);
