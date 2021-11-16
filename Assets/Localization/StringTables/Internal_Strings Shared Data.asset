@@ -3543,6 +3543,30 @@ MonoBehaviour:
     m_Key: retroMode640x400
     m_Metadata:
       m_Items: []
+  - m_Id: 151241473442201600
+    m_Key: off
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241511664893952
+    m_Key: posterizationFull
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241573350522880
+    m_Key: posterizationMinusSky
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241624562974720
+    m_Key: palettizationFull
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241696348487680
+    m_Key: palettizationMinusSky
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241760991100928
+    m_Key: postProcess
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

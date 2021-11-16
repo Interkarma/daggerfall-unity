@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Utility
         private const string ExcludeSkyKeyword = "EXCLUDE_SKY";
 
         DaggerfallSky sky;
+        RetroPresentation retroPresenter;
         RenderTexture retroTexture;
         int retroMode;
         private bool enablePostprocessing = true;
@@ -366,6 +367,7 @@ namespace DaggerfallWorkshop.Utility
         private void Start()
         {
             sky = GameManager.Instance.SkyRig.GetComponent<DaggerfallSky>();
+            retroPresenter = GameManager.Instance.RetroPresenter;
         }
 
         public void UpdateSettings()
@@ -373,6 +375,10 @@ namespace DaggerfallWorkshop.Utility
             retroMode = DaggerfallUnity.Settings.RetroRenderingMode;
             UpdateRenderTarget();
             UpdateDepthProcessMaterial();
+            if (retroPresenter)
+                retroPresenter.gameObject.SetActive(retroMode != 0);
+            if (sky && sky.SkyCamera && retroMode == 0)
+                sky.SkyCamera.targetTexture = null;
         }
 
         public void UpdateDepthProcessMaterial()

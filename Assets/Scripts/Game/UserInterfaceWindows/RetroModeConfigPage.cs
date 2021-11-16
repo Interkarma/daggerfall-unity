@@ -19,6 +19,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string key = "retroMode";
 
         HorizontalSlider modeSlider;
+        HorizontalSlider postProcessSlider;
 
         public override string Key => key;
 
@@ -42,11 +43,26 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             modeSlider.OnScroll += ModeSlider_OnScroll;
             modeSlider.SetIndicator(modes, DaggerfallUnity.Settings.RetroRenderingMode);
             StyleIndicator(modeSlider);
+
+            // PostProcess Slider
+            string[] postProcessModes = new string[]
+            {
+                TextManager.Instance.GetLocalizedText("off"),
+                TextManager.Instance.GetLocalizedText("posterizationFull"),
+                TextManager.Instance.GetLocalizedText("posterizationMinusSky"),
+                TextManager.Instance.GetLocalizedText("palettizationFull"),
+                TextManager.Instance.GetLocalizedText("palettizationMinusSky"),
+            };
+            postProcessSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("postProcess"), postProcessModes.Length, ref pos);
+            postProcessSlider.OnScroll += PostProcessSlider_OnScroll;
+            postProcessSlider.SetIndicator(postProcessModes, DaggerfallUnity.Settings.PostProcessingInRetroMode);
+            StyleIndicator(postProcessSlider);
         }
 
         public override void ReadSettings()
         {
             modeSlider.ScrollIndex = DaggerfallUnity.Settings.RetroRenderingMode;
+            postProcessSlider.ScrollIndex = DaggerfallUnity.Settings.PostProcessingInRetroMode;
         }
 
         public override void DeploySettings()
@@ -57,11 +73,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void SetDefaults()
         {
             DaggerfallUnity.Settings.RetroRenderingMode = 0;
+            DaggerfallUnity.Settings.PostProcessingInRetroMode = 0;
         }
 
         private void ModeSlider_OnScroll()
         {
             DaggerfallUnity.Settings.RetroRenderingMode = modeSlider.ScrollIndex;
+            DeploySettings();
+        }
+
+        private void PostProcessSlider_OnScroll()
+        {
+            DaggerfallUnity.Settings.PostProcessingInRetroMode = postProcessSlider.ScrollIndex;
             DeploySettings();
         }
     }

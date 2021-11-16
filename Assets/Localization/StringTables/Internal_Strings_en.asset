@@ -3922,5 +3922,29 @@ MonoBehaviour:
     m_Localized: 640x400
     m_Metadata:
       m_Items: []
+  - m_Id: 151241473442201600
+    m_Localized: Off
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241511664893952
+    m_Localized: Posterization (full)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241573350522880
+    m_Localized: Posterization (-sky)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241624562974720
+    m_Localized: Palettization (full)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241696348487680
+    m_Localized: Palettization (-sky)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241760991100928
+    m_Localized: Postprocess
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
