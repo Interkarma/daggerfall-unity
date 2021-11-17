@@ -20,6 +20,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         HorizontalSlider modeSlider;
         HorizontalSlider postProcessSlider;
+        Checkbox correctAspectCheckbox;
 
         public override string Key => key;
 
@@ -57,12 +58,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             postProcessSlider.OnScroll += PostProcessSlider_OnScroll;
             postProcessSlider.SetIndicator(postProcessModes, DaggerfallUnity.Settings.PostProcessingInRetroMode);
             StyleIndicator(postProcessSlider);
+
+            // 4:3 Aspect Correct toggle
+            correctAspectCheckbox = AddCheckbox(parent, TextManager.Instance.GetLocalizedText("retroModeCorrectAspect"), ref pos);
+            correctAspectCheckbox.OnToggleState += CorrectAspectCheckbox_OnToggleState;
         }
 
         public override void ReadSettings()
         {
             modeSlider.ScrollIndex = DaggerfallUnity.Settings.RetroRenderingMode;
             postProcessSlider.ScrollIndex = DaggerfallUnity.Settings.PostProcessingInRetroMode;
+            correctAspectCheckbox.IsChecked = DaggerfallUnity.Settings.RetroModeCorrectAspect;
         }
 
         public override void DeploySettings()
@@ -74,6 +80,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUnity.Settings.RetroRenderingMode = 0;
             DaggerfallUnity.Settings.PostProcessingInRetroMode = 0;
+            DaggerfallUnity.Settings.RetroModeCorrectAspect = false;
         }
 
         private void ModeSlider_OnScroll()
@@ -85,6 +92,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void PostProcessSlider_OnScroll()
         {
             DaggerfallUnity.Settings.PostProcessingInRetroMode = postProcessSlider.ScrollIndex;
+            DeploySettings();
+        }
+
+        private void CorrectAspectCheckbox_OnToggleState()
+        {
+            DaggerfallUnity.Settings.RetroModeCorrectAspect = correctAspectCheckbox.IsChecked;
             DeploySettings();
         }
     }

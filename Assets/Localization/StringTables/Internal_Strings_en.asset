@@ -3946,5 +3946,9 @@ MonoBehaviour:
     m_Localized: Postprocess
     m_Metadata:
       m_Items: []
+  - m_Id: 151842471546208256
+    m_Localized: 4:3 Aspect Ratio
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

@@ -44,6 +44,10 @@ namespace DaggerfallWorkshop.Utility
                 SetRetroAspectViewport();
                 return;
             }
+            else
+            {
+                DaggerfallUI.Instance.CustomScreenRect = null;
+            }
 
             // Change viewport when large HUD is docked
             // When not using docked the large HUD is just an overlay of variable size and main viewport does not change
