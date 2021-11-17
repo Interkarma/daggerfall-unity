@@ -21,6 +21,7 @@ namespace DaggerfallWorkshop.Utility
     public class ViewportChanger : MonoBehaviour
     {
         public bool isRetroPresenter = false;
+        public Camera retroClearerCamera;
 
         Rect standardViewportRect = new Rect(0, 0, 1, 1);
         Rect lastViewportRect;
@@ -36,6 +37,13 @@ namespace DaggerfallWorkshop.Utility
             // HUD must be created
             if (DaggerfallUI.Instance.DaggerfallHUD == null)
                 return;
+
+            // Offload when using retro aspect
+            if (isRetroPresenter && DaggerfallUnity.Settings.RetroModeCorrectAspect)
+            {
+                SetRetroAspectViewport();
+                return;
+            }
 
             // Change viewport when large HUD is docked
             // When not using docked the large HUD is just an overlay of variable size and main viewport does not change
@@ -79,6 +87,40 @@ namespace DaggerfallWorkshop.Utility
 
                 lastViewportRect = rect;
             }
+        }
+
+        void SetRetroAspectViewport()
+        {
+            // Classic rendered at 320x200 (Mode13h/16:10) but was typically displayed on 4:3 monitors (e.g. 320x240)
+            // In this environment display output signal was stretched 20% higher in vertical dimension
+            // This setting scales output viewport to simulate resulting aspect ratio in this environment
+            // Works from ideal 16:10 > 4:3 upscale (1600x1200 or 5x width, 6x height, 20% higher) and ratios into actual screen area
+
+            // Start with screen height at 6x classic to get a ratio
+            float heightRatio = Screen.height / 6f / 200f;
+
+            // Then determine 5x classic width at this ratio
+            int viewWidth = (int)(320f * 5f * heightRatio);
+
+            // Get pillarbox width offset to centre viewport horizontally
+            int pillarWidth = (Screen.width - viewWidth) / 2;
+
+            // Set final viewport area
+            float x = (float)pillarWidth / Screen.width;
+            float h = 1 - x * 2;
+            Rect rect = new Rect(x, 0f, h, 1.0f);
+
+            // Get screen rect and pass over to UI so it can treat this viewport as entire screen space
+            Rect adjustedScreenRect = new Rect(pillarWidth, 0, Screen.width - pillarWidth * 2, Screen.height);
+            DaggerfallUI.Instance.CustomScreenRect = adjustedScreenRect;
+
+            // After adjusting output viewport pillarbox bars won't be cleared automatically
+            // Use camera with -1 depth covering entire viewport to clear black first
+            // This camera renders nothing, just clears screen black before custom viewport drawn centred in screen
+            if (retroClearerCamera && !retroClearerCamera.gameObject.activeSelf)
+                retroClearerCamera.gameObject.SetActive(true);
+
+            SetViewport(rect);
         }
     }
 }

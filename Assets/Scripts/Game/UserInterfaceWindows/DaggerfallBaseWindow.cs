@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel nativePanel = new Panel();
 
         protected ToolTip defaultToolTip = null;
+        protected bool allowFreeScaling = true;
 
         public DaggerfallBaseWindow(IUserInterfaceManager uiManager, int screenWidth = 320, int screenHeight = 200)
             : base(uiManager)
@@ -45,12 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             nativePanel.VerticalAlignment = VerticalAlignment.Middle;
             nativePanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
             nativePanel.Size = new Vector2(screenWidth, screenHeight);
-
-            // Set native panel scaling mode
-            if (DaggerfallUnity.Settings.FreeScaling)
-                nativePanel.AutoSize = AutoSizeModes.ScaleFreely;
-            else
-                nativePanel.AutoSize = AutoSizeModes.ScaleToFit;
+            nativePanel.AutoSize = AutoSizeModes.ScaleToFit;
 
             // Setup default tooltip
             if (DaggerfallUnity.Settings.EnableToolTips)
@@ -86,6 +82,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
                 return;
+
+            // Handle retro mode UI scaling
+            if (DaggerfallUnity.Settings.RetroRenderingMode != 0 && DaggerfallUnity.Settings.RetroModeCorrectAspect && allowFreeScaling)
+                nativePanel.AutoSize = AutoSizeModes.ScaleFreely;
+            else
+                nativePanel.AutoSize = AutoSizeModes.ScaleToFit;
 
             // Must be setup
             if (!isSetup)

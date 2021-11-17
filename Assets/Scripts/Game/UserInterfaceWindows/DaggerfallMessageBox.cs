@@ -204,6 +204,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             base.Setup();
 
+            allowFreeScaling = false;
+
             messagePanel.HorizontalAlignment = HorizontalAlignment.Center;
 
             if (customYPos > -1)

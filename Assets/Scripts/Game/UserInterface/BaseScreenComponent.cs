@@ -1138,10 +1138,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else
             {
-                if (rootSize == Vector2.zero)
-                    parentRect = new Rect(0, 0, Screen.width, Screen.height);
+                if (DaggerfallUI.Instance.CustomScreenRect != null)
+                {
+                    parentRect = DaggerfallUI.Instance.CustomScreenRect.Value;
+                }
                 else
-                    parentRect = new Rect(0, 0, rootSize.x, rootSize.y);
+                {
+                    if (rootSize == Vector2.zero)
+                        parentRect = new Rect(0, 0, Screen.width, Screen.height);
+                    else
+                        parentRect = new Rect(0, 0, rootSize.x, rootSize.y);
+                }
             }
 
             return parentRect;

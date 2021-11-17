@@ -86,6 +86,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected void AddCorePages()
         {
+            AddConfigPage(new RetroModeConfigPage());
+            AddConfigPage(new ColorBoostConfigPage());
             AddConfigPage(new AntialiasingConfigPage());
             AddConfigPage(new AmbientOcclusionConfigPage());
             AddConfigPage(new BloomConfigPage());
@@ -93,9 +95,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddConfigPage(new VignetteConfigPage());
             AddConfigPage(new DepthOfFieldConfigPage());
             AddConfigPage(new DitherConfigPage());
-            AddConfigPage(new ColorBoostConfigPage());
-            AddConfigPage(new RetroModeConfigPage());
-
+            
             effectList.SelectedIndex = 0;
         }
 

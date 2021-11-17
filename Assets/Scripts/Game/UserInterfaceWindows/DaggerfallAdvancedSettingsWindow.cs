@@ -109,7 +109,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button toolTipBackgroundColor;
         Checkbox crosshair;
         Checkbox vitalsIndicators;
-        Checkbox freeScaling;
         Checkbox arrowCounter;
         HorizontalSlider interactionModeIcon;
         Checkbox showQuestJournalClocksAsCountdown;
@@ -155,8 +154,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider fovSlider;
         HorizontalSlider terrainDistance;
         HorizontalSlider shadowResolutionMode;
-        HorizontalSlider retroRenderingMode;
-        HorizontalSlider postProcessingInRetroMode;
         Checkbox dungeonLightShadows;
         Checkbox interiorLightShadows;
         Checkbox exteriorLightShadows;
@@ -180,6 +177,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             AllowCancel = false;
+            allowFreeScaling = false;
             ParentPanel.BackgroundColor = Color.clear;
 
             gameObject = new GameObject();
@@ -297,7 +295,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // GUI
             AddSectionTitle(rightPanel, "gui");
-            freeScaling = AddCheckbox(rightPanel, "freeScaling", DaggerfallUnity.Settings.FreeScaling);
             showQuestJournalClocksAsCountdown = AddCheckbox(rightPanel, "showQuestJournalClocksAsCountdown", DaggerfallUnity.Settings.ShowQuestJournalClocksAsCountdown);
             inventoryInfoPanel = AddCheckbox(rightPanel, "inventoryInfoPanel", DaggerfallUnity.Settings.EnableInventoryInfoPanel);
             enhancedItemLists = AddCheckbox(rightPanel, "enhancedItemLists", DaggerfallUnity.Settings.EnableEnhancedItemLists);
@@ -383,12 +380,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
                 textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? "Enabled" : "Disabled";
             AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
-
-            // Retro Rendering settings
-            retroRenderingMode = AddSlider(rightPanel, "retroRenderingMode",
-                DaggerfallUnity.Settings.RetroRenderingMode, "Off", "320x200", "640x400");
-            postProcessingInRetroMode = AddSlider(rightPanel, "postProcessingInRetroMode",
-                DaggerfallUnity.Settings.PostProcessingInRetroMode, "Off", "Posterization (full)", "Posterization (-sky)", "Palettization (full)", "Palettization (-sky)");
         }
 
         private void Accessibility(Panel leftPanel, Panel rightPanel)
@@ -445,7 +436,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.EnableVitalsIndicators = vitalsIndicators.IsChecked;
             DaggerfallUnity.Settings.EnableArrowCounter = arrowCounter.IsChecked;
 
-            DaggerfallUnity.Settings.FreeScaling = freeScaling.IsChecked;
             DaggerfallUnity.Settings.ShowQuestJournalClocksAsCountdown = showQuestJournalClocksAsCountdown.IsChecked;
             DaggerfallUnity.Settings.EnableInventoryInfoPanel = inventoryInfoPanel.IsChecked;
             DaggerfallUnity.Settings.EnableEnhancedItemLists = enhancedItemLists.IsChecked;
@@ -521,8 +511,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.InteriorLightShadows = interiorLightShadows.IsChecked;
             DaggerfallUnity.Settings.ExteriorLightShadows = exteriorLightShadows.IsChecked;
             DaggerfallUnity.Settings.AmbientLitInteriors = ambientLitInteriors.IsChecked;
-            DaggerfallUnity.Settings.RetroRenderingMode = retroRenderingMode.ScrollIndex;
-            DaggerfallUnity.Settings.PostProcessingInRetroMode = postProcessingInRetroMode.ScrollIndex;
 
             /* Accessibility */
             DaggerfallUnity.Settings.AutomapTempleColor = automapTempleColor.BackgroundColor;
