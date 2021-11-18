@@ -109,10 +109,15 @@ namespace DaggerfallWorkshop.Utility
             // Get pillarbox width offset to centre viewport horizontally
             int pillarWidth = (Screen.width - viewWidth) / 2;
 
+            // Handle docked large HUD
+            float hudHeight = DaggerfallUnity.Settings.LargeHUD && DaggerfallUnity.Settings.LargeHUDDocked
+                                ? DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight / Screen.height
+                                : 0;
+
             // Set final viewport area
             float x = (float)pillarWidth / Screen.width;
             float h = 1 - x * 2;
-            Rect rect = new Rect(x, 0f, h, 1.0f);
+            Rect rect = new Rect(x, hudHeight, h, 1.0f - hudHeight);
 
             // Get screen rect and pass over to UI so it can treat this viewport as entire screen space
             Rect adjustedScreenRect = new Rect(pillarWidth, 0, Screen.width - pillarWidth * 2, Screen.height);
