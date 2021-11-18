@@ -70,6 +70,7 @@ namespace DaggerfallWorkshop.Game
         float animTickTime;
         Rect curAnimRect;
         float weaponOffsetHeight;
+        Rect screenRect;
 
         readonly Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
         Texture2D curCustomTexture;
@@ -97,6 +98,11 @@ namespace DaggerfallWorkshop.Game
             bool updateWeapon = false;
             GUI.depth = 1;
 
+            if (DaggerfallUI.Instance.CustomScreenRect != null)
+                screenRect = DaggerfallUI.Instance.CustomScreenRect.Value;
+            else
+                screenRect = new Rect(0, 0, Screen.width, Screen.height);
+
             // Must be ready and not loading the game
             if (!ReadyCheck() || WeaponType == WeaponTypes.None || GameManager.IsGamePaused || SaveLoadManager.Instance.LoadInProgress)
                 return;
@@ -122,15 +128,15 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Update weapon when resolution or large HUD state changes
-            if (Screen.width != lastScreenWidth ||
-                Screen.height != lastScreenHeight ||
+            if (screenRect.width != lastScreenWidth ||
+                screenRect.height != lastScreenHeight ||
                 DaggerfallUnity.Settings.LargeHUD != lastLargeHUDSetting ||
                 DaggerfallUnity.Settings.LargeHUDDocked != lastLargeHUDDockSetting ||
                 GameManager.Instance.WeaponManager.Sheathed != lastSheathed ||
                 weaponOffsetHeight != lastWeaponOffsetHeight)
             {
-                lastScreenWidth = Screen.width;
-                lastScreenHeight = Screen.height;
+                lastScreenWidth = screenRect.width;
+                lastScreenHeight = screenRect.height;
                 lastLargeHUDSetting = DaggerfallUnity.Settings.LargeHUD;
                 lastLargeHUDDockSetting = DaggerfallUnity.Settings.LargeHUDDocked;
                 lastSheathed = GameManager.Instance.WeaponManager.Sheathed;
@@ -321,8 +327,8 @@ namespace DaggerfallWorkshop.Game
                 int height = weaponIndices[weaponAnimRecordIndex].height;
 
                 // Get weapon scale
-                weaponScaleX = (float)Screen.width / (float)nativeScreenWidth;
-                weaponScaleY = (float)Screen.height / (float)nativeScreenHeight;
+                weaponScaleX = (float)screenRect.width / (float)nativeScreenWidth;
+                weaponScaleY = (float)screenRect.height / (float)nativeScreenHeight;
 
                 // Adjust scale to be slightly larger when not using point filtering
                 // This reduces the effect of filter shrink at edge of display
@@ -361,8 +367,8 @@ namespace DaggerfallWorkshop.Game
         private void AlignLeft(WeaponAnimation anim, int width, int height)
         {
             weaponPosition = new Rect(
-                Screen.width * anim.Offset,
-                Screen.height - height * weaponScaleY - weaponOffsetHeight,
+                screenRect.x + screenRect.width * anim.Offset,
+                screenRect.y + screenRect.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }
@@ -370,8 +376,8 @@ namespace DaggerfallWorkshop.Game
         private void AlignCenter(WeaponAnimation anim, int width, int height)
         {
             weaponPosition = new Rect(
-                Screen.width / 2f - (width * weaponScaleX) / 2f,
-                Screen.height - height * weaponScaleY - weaponOffsetHeight,
+                screenRect.x + screenRect.width / 2f - (width * weaponScaleX) / 2f,
+                screenRect.y + screenRect.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }
@@ -386,8 +392,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             weaponPosition = new Rect(
-                Screen.width * (1f - anim.Offset) - width * weaponScaleX,
-                Screen.height - height * weaponScaleY - weaponOffsetHeight,
+                screenRect.x + screenRect.width * (1f - anim.Offset) - width * weaponScaleX,
+                screenRect.y + screenRect.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }
