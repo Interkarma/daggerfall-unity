@@ -464,10 +464,17 @@ namespace DaggerfallWorkshop
             // Create loose object description
             LooseObjectDesc desc = new LooseObjectDesc();
             desc.gameObject = gameObject;
+
             if (mapPixelX == -1)
                 desc.mapPixelX = MapPixelX;
+            else
+                desc.mapPixelX = mapPixelX;
+
             if (mapPixelY == -1)
                 desc.mapPixelY = MapPixelY;
+            else
+                desc.mapPixelY = mapPixelY;
+
             desc.statefulObj = statefulObj;
             looseObjectsList.Add(desc);
 
