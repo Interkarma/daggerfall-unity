@@ -38,8 +38,8 @@ namespace DaggerfallWorkshop.Utility
             if (DaggerfallUI.Instance.DaggerfallHUD == null)
                 return;
 
-            // Offload when using retro aspect
-            if (isRetroPresenter && DaggerfallUnity.Settings.RetroModeCorrectAspect)
+            // Offload when using retro aspect correction
+            if (isRetroPresenter && DaggerfallUnity.Settings.RetroModeAspectCorrection != 0)
             {
                 SetRetroAspectViewport();
                 return;
@@ -95,16 +95,32 @@ namespace DaggerfallWorkshop.Utility
 
         void SetRetroAspectViewport()
         {
-            // Classic rendered at 320x200 (Mode13h/16:10) but was typically displayed on 4:3 monitors (e.g. 320x240)
-            // In this environment display output signal was stretched 20% higher in vertical dimension
-            // This setting scales output viewport to simulate resulting aspect ratio in this environment
-            // Works from ideal 16:10 > 4:3 upscale (1600x1200 or 5x width, 6x height, 20% higher) and ratios into actual screen area
+            float heightRatio = 0;
+            int viewWidth = 0;
+            RetroModeAspects aspect = (RetroModeAspects)DaggerfallUnity.Settings.RetroModeAspectCorrection;
+            if (aspect == RetroModeAspects.FourThree)
+            {
+                // Classic rendered at 320x200 (Mode13h/16:10) but was typically displayed on 4:3 monitors (e.g. 320x240)
+                // In this environment display output signal was stretched 20% higher in vertical dimension
+                // This setting scales output viewport to simulate resulting aspect ratio in this environment
+                // Works from ideal 16:10 > 4:3 upscale (1600x1200 or 5x width, 6x height, 20% higher) and ratios into actual screen area
 
-            // Start with screen height at 6x classic to get a ratio
-            float heightRatio = Screen.height / 6f / 200f;
+                // Start with screen height at 6x classic to get a ratio
+                heightRatio = Screen.height / 6f / 200f;
 
-            // Then determine 5x classic width at this ratio
-            int viewWidth = (int)(320f * 5f * heightRatio);
+                // Then determine 5x classic width at this ratio
+                viewWidth = (int)(320f * 5f * heightRatio);
+            }
+            else if (aspect == RetroModeAspects.SixteenTen)
+            {
+                // Upscale 320x200 6x in both dimensions to 1920x1200, a very common 16:10 resolution, then ratio into actual screen area
+
+                // Start with screen height at 6x classic to get a ratio
+                heightRatio = Screen.height / 6f / 200f;
+
+                // Then determine 6x classic width at this ratio
+                viewWidth = (int)(320f * 6f * heightRatio);
+            }
 
             // Get pillarbox width offset to centre viewport horizontally
             int pillarWidth = (Screen.width - viewWidth) / 2;

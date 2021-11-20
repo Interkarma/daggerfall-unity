@@ -84,7 +84,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             // Handle retro mode UI scaling
-            if (DaggerfallUnity.Settings.RetroRenderingMode != 0 && DaggerfallUnity.Settings.RetroModeCorrectAspect && allowFreeScaling)
+            if (DaggerfallUnity.Settings.RetroRenderingMode != 0 && DaggerfallUnity.Settings.RetroModeAspectCorrection != 0 && allowFreeScaling)
                 nativePanel.AutoSize = AutoSizeModes.ScaleFreely;
             else
                 nativePanel.AutoSize = AutoSizeModes.ScaleToFit;

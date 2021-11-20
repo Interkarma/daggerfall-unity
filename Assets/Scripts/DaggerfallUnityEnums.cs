@@ -784,6 +784,16 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
+    /// Retro Mode supported aspect ratio corrections.
+    /// </summary>
+    public enum RetroModeAspects
+    {
+        Off = 0,                // No aspect correction in retro mode
+        FourThree = 1,          // 4:3 aspect correction in retro mode
+        SixteenTen = 2,         // 16:10 aspect correction in retro mode
+    }
+
+    /// <summary>
     /// Core game effects settings groups for deploying some or all settings.
     /// </summary>
     [Flags]

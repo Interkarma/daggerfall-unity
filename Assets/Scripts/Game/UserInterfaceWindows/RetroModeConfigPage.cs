@@ -20,7 +20,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         HorizontalSlider modeSlider;
         HorizontalSlider postProcessSlider;
-        Checkbox correctAspectCheckbox;
+        Checkbox aspectCorrectionOff;
+        Checkbox aspectCorrectionFourThree;
+        Checkbox aspectCorrectionSixteenTen;
 
         public override string Key => key;
 
@@ -59,16 +61,42 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             postProcessSlider.SetIndicator(postProcessModes, DaggerfallUnity.Settings.PostProcessingInRetroMode);
             StyleIndicator(postProcessSlider);
 
-            // 4:3 Aspect Correct toggle
-            correctAspectCheckbox = AddCheckbox(parent, TextManager.Instance.GetLocalizedText("retroModeCorrectAspect"), ref pos);
-            correctAspectCheckbox.OnToggleState += CorrectAspectCheckbox_OnToggleState;
+            // Aspect Correction Checkboxes
+            // Not using a slider as the sudden rescale in UI can cause aspect to bounce back and forth based on mouse position while dragging slider thumb
+            AddLabel(parent, TextManager.Instance.GetLocalizedText("retroModeAspectCorrection"), ref pos);
+            pos.y += yIncrement;
+            aspectCorrectionOff = AddCheckbox(parent, TextManager.Instance.GetLocalizedText("off"), ref pos);
+            aspectCorrectionOff.OnToggleState += AspectCorrectionOff_OnToggleState;
+            aspectCorrectionFourThree = AddCheckbox(parent, TextManager.Instance.GetLocalizedText("FourThree"), ref pos);
+            aspectCorrectionFourThree.OnToggleState += AspectCorrectionFourThree_OnToggleState;
+            aspectCorrectionSixteenTen = AddCheckbox(parent, TextManager.Instance.GetLocalizedText("SixteenTen"), ref pos);
+            aspectCorrectionSixteenTen.OnToggleState += AspectCorrectionSixteenTen_OnToggleState;
+            UpdateAspectButtons();
+        }
+
+        void UpdateAspectButtons()
+        {
+            // Fake radio buttons
+            aspectCorrectionOff.IsChecked = aspectCorrectionFourThree.IsChecked = aspectCorrectionSixteenTen.IsChecked = false;
+            switch((RetroModeAspects)DaggerfallUnity.Settings.RetroModeAspectCorrection)
+            {
+                case RetroModeAspects.Off:
+                    aspectCorrectionOff.IsChecked = true;
+                    break;
+                case RetroModeAspects.FourThree:
+                    aspectCorrectionFourThree.IsChecked = true;
+                    break;
+                case RetroModeAspects.SixteenTen:
+                    aspectCorrectionSixteenTen.IsChecked = true;
+                    break;
+            }
         }
 
         public override void ReadSettings()
         {
             modeSlider.ScrollIndex = DaggerfallUnity.Settings.RetroRenderingMode;
             postProcessSlider.ScrollIndex = DaggerfallUnity.Settings.PostProcessingInRetroMode;
-            correctAspectCheckbox.IsChecked = DaggerfallUnity.Settings.RetroModeCorrectAspect;
+            UpdateAspectButtons();
         }
 
         public override void DeploySettings()
@@ -80,7 +108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUnity.Settings.RetroRenderingMode = 0;
             DaggerfallUnity.Settings.PostProcessingInRetroMode = 0;
-            DaggerfallUnity.Settings.RetroModeCorrectAspect = false;
+            DaggerfallUnity.Settings.RetroModeAspectCorrection = 0;
         }
 
         private void ModeSlider_OnScroll()
@@ -95,9 +123,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DeploySettings();
         }
 
-        private void CorrectAspectCheckbox_OnToggleState()
+        private void AspectCorrectionOff_OnToggleState()
         {
-            DaggerfallUnity.Settings.RetroModeCorrectAspect = correctAspectCheckbox.IsChecked;
+            aspectCorrectionOff.IsChecked = true;
+            aspectCorrectionFourThree.IsChecked = false;
+            aspectCorrectionSixteenTen.IsChecked = false;
+            DaggerfallUnity.Settings.RetroModeAspectCorrection = (int)RetroModeAspects.Off;
+            DeploySettings();
+        }
+
+        private void AspectCorrectionFourThree_OnToggleState()
+        {
+            aspectCorrectionOff.IsChecked = false;
+            aspectCorrectionFourThree.IsChecked = true;
+            aspectCorrectionSixteenTen.IsChecked = false;
+            DaggerfallUnity.Settings.RetroModeAspectCorrection = (int)RetroModeAspects.FourThree;
+            DeploySettings();
+        }
+
+        private void AspectCorrectionSixteenTen_OnToggleState()
+        {
+            aspectCorrectionOff.IsChecked = false;
+            aspectCorrectionFourThree.IsChecked = false;
+            aspectCorrectionSixteenTen.IsChecked = true;
+            DaggerfallUnity.Settings.RetroModeAspectCorrection = (int)RetroModeAspects.SixteenTen;
             DeploySettings();
         }
     }

@@ -3947,7 +3947,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 151842471546208256
-    m_Localized: 4:3 Aspect Ratio
+    m_Localized: Aspect Ratio Correction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152696194707243008
+    m_Localized: 4:3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152696235748507648
+    m_Localized: 16:10
     m_Metadata:
       m_Items: []
   references:

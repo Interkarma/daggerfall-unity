@@ -88,7 +88,7 @@ namespace DaggerfallWorkshop
         public int RetroRenderingMode { get; set; }
         public int PostProcessingInRetroMode { get; set; }
         public bool UseMipMapsInRetroMode { get; set; }
-        public bool RetroModeCorrectAspect { get; set; }
+        public int RetroModeAspectCorrection { get; set; }
         public int PalettizationLUTShift { get; set; }
         public bool VSync { get; set; }
         public int TargetFrameRate { get; set; }
@@ -289,7 +289,7 @@ namespace DaggerfallWorkshop
             RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
             PostProcessingInRetroMode = GetInt(sectionVideo, "PostProcessingInRetroMode");
             UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
-            RetroModeCorrectAspect = GetBool(sectionVideo, "RetroModeCorrectAspect");
+            RetroModeAspectCorrection = GetInt(sectionVideo, "RetroModeAspectCorrection", 0, 2);
             PalettizationLUTShift = GetInt(sectionVideo, "PalettizationLUTShift");
             VSync = GetBool(sectionVideo, "VSync");
             TargetFrameRate = GetInt(sectionVideo, "TargetFrameRate", 0, 300);
@@ -471,7 +471,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "RetroRenderingMode", RetroRenderingMode);
             SetInt(sectionVideo, "PostProcessingInRetroMode", PostProcessingInRetroMode);
             SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
-            SetBool(sectionVideo, "RetroModeCorrectAspect", RetroModeCorrectAspect);
+            SetInt(sectionVideo, "RetroModeAspectCorrection", RetroModeAspectCorrection);
             SetInt(sectionVideo, "PalettizationLUTShift", PalettizationLUTShift);
             SetBool(sectionVideo, "VSync", VSync);
             SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
