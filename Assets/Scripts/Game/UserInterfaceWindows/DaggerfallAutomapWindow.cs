@@ -1078,12 +1078,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (oldPositionNativePanel != NativePanel.Rectangle)
             {
                 // get panelRenderAutomap position and size from dummyPanelAutomap rectangle
-                panelRenderAutomap.Position = dummyPanelAutomap.Rectangle.position;
+                if (DaggerfallUI.Instance.CustomScreenRect == null)
+                    panelRenderAutomap.Position = dummyPanelAutomap.Rectangle.position;
+                else
+                    panelRenderAutomap.Position = new Vector2(dummyPanelAutomap.Position.x, dummyPanelAutomap.Position.y) * NativePanel.LocalScale;
                 //panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.InteriorWidth, dummyPanelAutomap.InteriorHeight);
                 panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.Rectangle.width, dummyPanelAutomap.Rectangle.height);
 
                 // get panelRenderOverlay position and size from dummyPanelOverlay rectangle
-                panelRenderOverlay.Position = dummyPanelOverlay.Rectangle.position;
+                if (DaggerfallUI.Instance.CustomScreenRect == null)
+                    panelRenderOverlay.Position = dummyPanelOverlay.Rectangle.position;
+                else
+                    panelRenderOverlay.Position = new Vector2(dummyPanelOverlay.Position.x, dummyPanelOverlay.Position.y) * NativePanel.LocalScale;
                 panelRenderOverlay.Size = new Vector2(dummyPanelOverlay.Rectangle.width, dummyPanelOverlay.Rectangle.height);
 
                 //Debug.Log(String.Format("dummy panel size: {0}, {1}; {2}, {3}; {4}, {5}; {6}, {7}\n", NativePanel.InteriorWidth, NativePanel.InteriorHeight, ParentPanel.InteriorWidth, ParentPanel.InteriorHeight, dummyPanelAutomap.InteriorWidth, dummyPanelAutomap.InteriorHeight, parentPanel.InteriorWidth, parentPanel.InteriorHeight));

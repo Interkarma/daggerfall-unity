@@ -941,7 +941,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (oldPositionNativePanel != NativePanel.Rectangle)
             {
                 // get panelRenderAutomap position and size from dummyPanelAutomap rectangle
-                panelRenderAutomap.Position = dummyPanelAutomap.Rectangle.position;
+                if (DaggerfallUI.Instance.CustomScreenRect == null)
+                    panelRenderAutomap.Position = dummyPanelAutomap.Rectangle.position;
+                else
+                    panelRenderAutomap.Position = new Vector2(dummyPanelAutomap.Position.x, dummyPanelAutomap.Position.y) * NativePanel.LocalScale;
                 //panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.InteriorWidth, dummyPanelAutomap.InteriorHeight);
                 panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.Rectangle.width, dummyPanelAutomap.Rectangle.height);
 
