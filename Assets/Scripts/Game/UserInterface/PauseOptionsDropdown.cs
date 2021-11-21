@@ -145,11 +145,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 dropDownToggleButton.BackgroundTexture = arrowDownTexture;
             else
                 dropDownToggleButton.BackgroundTexture = arrowUpTexture;
+
+            HideOverlappingHUDElements(expand);
         }
 
         #endregion
 
         #region Private Methods
+
+        void HideOverlappingHUDElements(bool hide)
+        {
+            if (DaggerfallUI.Instance.DaggerfallHUD == null)
+                return;
+
+            // Spell icons can overlap pause options dropdown - disable this HUD element while dropdown is open
+            DaggerfallUI.Instance.DaggerfallHUD.ActiveSpells.Enabled = !hide;
+        }
 
         private bool HasApplicableMods()
         {
