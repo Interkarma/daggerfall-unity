@@ -345,9 +345,9 @@ namespace DaggerfallWorkshop
             ColorBoostEnable = GetBool(sectionEffects, "ColorBoostEnable");
             ColorBoostRadius = GetFloat(sectionEffects, "ColorBoostRadius", 0.1f, 50);
             ColorBoostIntensity = GetFloat(sectionEffects, "ColorBoostIntensity", 0.0f, 1.0f);
-            ColorBoostDungeonScale = GetFloat(sectionEffects, "ColorBoostDungeonScale", 0.0f, 1.0f);
-            ColorBoostExteriorScale = GetFloat(sectionEffects, "ColorBoostExteriorScale", 0.0f, 1.0f);
-            ColorBoostInteriorScale = GetFloat(sectionEffects, "ColorBoostInteriorScale", 0.0f, 1.0f);
+            ColorBoostDungeonScale = GetFloat(sectionEffects, "ColorBoostDungeonScale", 0.0f, 4.0f);
+            ColorBoostExteriorScale = GetFloat(sectionEffects, "ColorBoostExteriorScale", 0.0f, 4.0f);
+            ColorBoostInteriorScale = GetFloat(sectionEffects, "ColorBoostInteriorScale", 0.0f, 4.0f);
             ColorBoostDungeonFalloff = GetFloat(sectionEffects, "ColorBoostDungeonFalloff", 0.0f, 4.0f);
 
             SoundFont = GetString(sectionAudio, "SoundFont");

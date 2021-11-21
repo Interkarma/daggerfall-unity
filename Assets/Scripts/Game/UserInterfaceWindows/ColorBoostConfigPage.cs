@@ -54,21 +54,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             StyleIndicator(intensitySlider);
 
             // Dungeon Scale slider
-            dungeonScaleSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("dungeonScale"), 10, ref pos);
+            dungeonScaleSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("dungeonScale"), 40, ref pos);
             dungeonScaleSlider.OnScroll += DungeonScaleSlider_OnScroll;
-            dungeonScaleSlider.SetIndicator(0.0f, 1.0f, DaggerfallUnity.Settings.ColorBoostDungeonScale);
+            dungeonScaleSlider.SetIndicator(0.0f, 4.0f, DaggerfallUnity.Settings.ColorBoostDungeonScale);
             StyleIndicator(dungeonScaleSlider);
 
             // Interior Scale slider
-            interiorScaleSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("interiorScale"), 10, ref pos);
+            interiorScaleSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("interiorScale"), 40, ref pos);
             interiorScaleSlider.OnScroll += InteriorScaleSlider_OnScroll;
-            interiorScaleSlider.SetIndicator(0.0f, 1.0f, DaggerfallUnity.Settings.ColorBoostInteriorScale);
+            interiorScaleSlider.SetIndicator(0.0f, 4.0f, DaggerfallUnity.Settings.ColorBoostInteriorScale);
             StyleIndicator(interiorScaleSlider);
 
             // Exterior Scale slider
-            exteriorScaleSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("exteriorScale"), 10, ref pos);
+            exteriorScaleSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("exteriorScale"), 40, ref pos);
             exteriorScaleSlider.OnScroll += ExteriorScaleSlider_OnScroll;
-            exteriorScaleSlider.SetIndicator(0.0f, 1.0f, DaggerfallUnity.Settings.ColorBoostExteriorScale);
+            exteriorScaleSlider.SetIndicator(0.0f, 4.0f, DaggerfallUnity.Settings.ColorBoostExteriorScale);
             StyleIndicator(exteriorScaleSlider);
 
             // Dungeon falloff
@@ -99,9 +99,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.ColorBoostEnable = false;
             DaggerfallUnity.Settings.ColorBoostRadius = 25.0f;
             DaggerfallUnity.Settings.ColorBoostIntensity = 1.0f;
-            DaggerfallUnity.Settings.ColorBoostDungeonScale = 0.5f;
-            DaggerfallUnity.Settings.ColorBoostInteriorScale = 0.1f;
-            DaggerfallUnity.Settings.ColorBoostExteriorScale = 0.1f;
+            DaggerfallUnity.Settings.ColorBoostDungeonScale = 1.5f;
+            DaggerfallUnity.Settings.ColorBoostInteriorScale = 0.5f;
+            DaggerfallUnity.Settings.ColorBoostExteriorScale = 0.2f;
             DaggerfallUnity.Settings.ColorBoostDungeonFalloff = 0.0f;
         }
 
