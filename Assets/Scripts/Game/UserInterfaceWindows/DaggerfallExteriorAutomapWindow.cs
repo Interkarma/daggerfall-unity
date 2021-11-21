@@ -104,6 +104,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel panelRenderAutomap = null; // level geometry is rendered into this panel
         Rect oldPositionNativePanel;
         Vector2 oldMousePosition; // old mouse position used to determine offset of mouse movement since last time used for for drag and drop functionality
+        Rect? oldCustomScreenRect = null;
 
         Panel dummyPanelCompass = null; // used to determine correct compass position
 
@@ -938,13 +939,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ResizeGUIelementsOnDemand()
         {
-            if (oldPositionNativePanel != NativePanel.Rectangle)
+            if (oldPositionNativePanel != NativePanel.Rectangle || oldCustomScreenRect != DaggerfallUI.Instance.CustomScreenRect)
             {
                 // get panelRenderAutomap position and size from dummyPanelAutomap rectangle
                 if (DaggerfallUI.Instance.CustomScreenRect == null)
                     panelRenderAutomap.Position = dummyPanelAutomap.Rectangle.position;
                 else
-                    panelRenderAutomap.Position = new Vector2(dummyPanelAutomap.Position.x, dummyPanelAutomap.Position.y) * NativePanel.LocalScale;
+                    panelRenderAutomap.Position = dummyPanelAutomap.ScreenToLocal(dummyPanelAutomap.Rectangle.position);
                 //panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.InteriorWidth, dummyPanelAutomap.InteriorHeight);
                 panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.Rectangle.width, dummyPanelAutomap.Rectangle.height);
 
@@ -961,6 +962,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 compass.Scale = scale;
 
                 oldPositionNativePanel = NativePanel.Rectangle;
+                oldCustomScreenRect = DaggerfallUI.Instance.CustomScreenRect;
             }
         }
 
