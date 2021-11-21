@@ -50,9 +50,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.BackgroundColor = Color.clear;
 
             // Main panel
-            bool largeHUDEnabled = DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Enabled;
             mainPanel.HorizontalAlignment = HorizontalAlignment.Right;
-            mainPanel.VerticalAlignment = (largeHUDEnabled) ? VerticalAlignment.Top : VerticalAlignment.Middle; // Top-align when large HUD enabled to avoid overlap
             mainPanel.Size = mainPanelSize;
             mainPanel.Outline.Enabled = true;
             mainPanel.BackgroundColor = mainPanelBackgroundColor;
@@ -121,6 +119,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPush()
         {
             base.OnPush();
+
+            bool largeHUDEnabled = DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Enabled;
+            mainPanel.VerticalAlignment = (largeHUDEnabled) ? VerticalAlignment.Top : VerticalAlignment.Middle; // Top-align when large HUD enabled to avoid overlap
 
             RefreshPageSettings();
         }
