@@ -4,7 +4,7 @@ using UnityEngine.Rendering.PostProcessing;
 using DaggerfallWorkshop.Game;
 
 [Serializable]
-[PostProcess(typeof(ColorBoostRenderer), PostProcessEvent.BeforeStack, "Daggerfall/PostProcess/ColorBoost")]
+[PostProcess(typeof(ColorBoostRenderer), PostProcessEvent.BeforeTransparent, "Daggerfall/PostProcess/ColorBoost")]
 public sealed class ColorBoost : PostProcessEffectSettings
 {
     [Range(0.1f, 50f), Tooltip("Radius")]
