@@ -261,6 +261,8 @@ _S.17_ task:
 _goout_ task:
 	remove log step 0
 	remove log step 1
+	drop _rebel_ face
+	take _item_ from pc
 	start timer _outgoing_
 --go out task added to ensure you can fail the quest without triggering Part 3.
 --any time you're victorious and leave the tower, Part 3 should trigger.
