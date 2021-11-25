@@ -932,6 +932,13 @@ namespace DaggerfallWorkshop
                     // Spawn billboard gameobject
                     go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
 
+                    // Handle non-classic textures, which may not have had their collision component added
+                    if(!go.GetComponent<Collider>())
+                    {
+                        Collider col = go.AddComponent<BoxCollider>();
+                        col.isTrigger = true;
+                    }
+
                     // Set position
                     DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
                     go.transform.position = billboardPosition;
