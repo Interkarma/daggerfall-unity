@@ -46,7 +46,7 @@ Person _gothryd_ named King_Gothryd atHome
 Person _eadwyre_ named King_Eadwyre atHome
 Person _akorithi_ face 240 named Queen_Akorithi atHome
 Person _magesguild_ face 97 faction The_Mages_Guild remote
-Person _fightersguild_ face 72 faction The_Fighters_Guild local
+Person _fightersguild_ face 72 faction The_Fighters_Guild remote
 Person _thievesguild_ face 1 faction The_Thieves_Guild remote
 Person _darkbrother_ face 201 faction The_Dark_Brotherhood remote
 Person _kynareth_ face 1 faction The_Temple_of_Kynareth remote
@@ -60,7 +60,7 @@ Person _zen_ face 1 faction The_Resolution_of_Z'en remote
 Person _merchants_ face 1 faction The_Merchants remote
 
 
-Clock _delay_ 00:01 0 flag 1 range 0 1
+Clock _delay_ 00:00
 
 
 --	Quest start-up:
