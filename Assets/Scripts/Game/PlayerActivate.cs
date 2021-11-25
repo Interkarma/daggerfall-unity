@@ -1001,17 +1001,7 @@ namespace DaggerfallWorkshop.Game
             if (openEffect == null)
                 return false;
 
-            // Cancel effect
-            openEffect.CancelEffect();
-
-            // Player level must meet or exceed lock level for success
-            if (GameManager.Instance.PlayerEntity.Level < buildingLockValue)
-            {
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("openFailed"), 1.5f);
-                return false;
-            }
-
-            return true;
+            return openEffect.TriggerExteriorOpenEffect(buildingLockValue); 
         }
 
         /// <summary>
