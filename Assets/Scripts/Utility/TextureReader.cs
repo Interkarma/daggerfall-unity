@@ -206,47 +206,60 @@ namespace DaggerfallWorkshop.Utility
             if (DaggerfallUnity.Settings.RetroRenderingMode > 0 && !DaggerfallUnity.Settings.UseMipMapsInRetroMode)
                 mipMaps = false;
 
+            bool hasReferenceTexture;
+
             // Assign texture file
             TextureFile textureFile;
             if (settings.textureFile == null)
-                textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
+            {
+                textureFile = new TextureFile();
+                hasReferenceTexture = textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
+            }
             else
+            {
                 textureFile = settings.textureFile;
+                hasReferenceTexture = true;
+            }
 
             // Get starting DFBitmap
-            DFSize sz;
-            DFBitmap srcBitmap = textureFile.GetDFBitmap(settings.record, settings.frame);
+            DFSize sz = null;
+            DFBitmap srcBitmap = hasReferenceTexture ? textureFile.GetDFBitmap(settings.record, settings.frame) : null;
 
             // Get albedo Color32 array
-            Color32[] albedoColors;
-            if (isSpectral)
-            {
-                // Adjust source bitmap to set spectral grays
-                // 180 = transparency amount (~70% visible)
-                SetSpectral(ref srcBitmap);
-                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz, spectralEyesPatched, 180);
+            Color32[] albedoColors = null;
+
+            if (hasReferenceTexture)
+            {                
+                if (isSpectral)
+                {
+                    // Adjust source bitmap to set spectral grays
+                    // 180 = transparency amount (~70% visible)
+                    SetSpectral(ref srcBitmap);
+                    albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz, spectralEyesPatched, 180);
+                }
+                else
+                {
+                    // Read direct from source bitmap
+                    albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz);
+                }
+
+                // Sharpen source image
+                if (settings.sharpen)
+                    albedoColors = ImageProcessing.Sharpen(ref albedoColors, sz.Width, sz.Height);
+
+                // Dilate edges
+                if (settings.borderSize > 0 && settings.dilate && !settings.copyToOppositeBorder)
+                    ImageProcessing.DilateColors(ref albedoColors, sz);
+
+                // Copy to opposite border
+                if (settings.borderSize > 0 && settings.copyToOppositeBorder)
+                    ImageProcessing.WrapBorder(ref albedoColors, sz, settings.borderSize);
             }
-            else
-            {
-                // Read direct from source bitmap
-                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz);
-            }
-
-            // Sharpen source image
-            if (settings.sharpen)
-                albedoColors = ImageProcessing.Sharpen(ref albedoColors, sz.Width, sz.Height);
-
-            // Dilate edges
-            if (settings.borderSize > 0 && settings.dilate && !settings.copyToOppositeBorder)
-                ImageProcessing.DilateColors(ref albedoColors, sz);
-
-            // Copy to opposite border
-            if (settings.borderSize > 0 && settings.copyToOppositeBorder)
-                ImageProcessing.WrapBorder(ref albedoColors, sz, settings.borderSize);
 
             // Set albedo texture
             Texture2D albedoMap;
-            if (!TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Albedo, textureImport, !settings.stayReadable, out albedoMap))
+            bool albedoImported = TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Albedo, textureImport, !settings.stayReadable, out albedoMap);
+            if (!albedoImported && hasReferenceTexture)
             {
                 // Create albedo texture
                 albedoMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
@@ -263,7 +276,7 @@ namespace DaggerfallWorkshop.Utility
             // Set normal texture (always import normal if present on disk)
             Texture2D normalMap = null;
             bool normalMapImported = TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Normal, textureImport, !settings.stayReadable, out normalMap);
-            if (!normalMapImported && settings.createNormalMap && textureFile.SolidType == TextureFile.SolidTypes.None)
+            if (!normalMapImported && settings.createNormalMap && hasReferenceTexture && textureFile.SolidType == TextureFile.SolidTypes.None)
             {
                 // Create normal texture - must be ARGB32
                 // Normal maps are bypassed for solid-colour textures
@@ -288,9 +301,12 @@ namespace DaggerfallWorkshop.Utility
                 if (settings.createEmissionMap || (settings.autoEmission && isEmissive) && !isWindow)
                 {
                     if (settings.archive != FireWallsArchive)
+                    {
                         // Just reuse albedo map for basic colour emission
                         emissionMap = albedoMap;
-                    else
+                        resultEmissive = true;
+                    }
+                    else if (hasReferenceTexture)
                     {
                         // Mantellan Crux fire walls - lessen stroboscopic effect
                         Color fireColor = new Color(0.706f, 0.271f, 0.086f); // Average of dim frame (0)
@@ -300,12 +316,12 @@ namespace DaggerfallWorkshop.Utility
                         emissionMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
                         emissionMap.SetPixels32(firewallEmissionColors);
                         emissionMap.Apply(true, !settings.stayReadable);
-                    }
-                    resultEmissive = true;
+                        resultEmissive = true;
+                    }                    
                 }
 
                 // Windows need special handling as only glass parts are emissive
-                if ((settings.createEmissionMap || settings.autoEmissionForWindows) && isWindow)
+                if ((settings.createEmissionMap || settings.autoEmissionForWindows) && isWindow && hasReferenceTexture)
                 {
                     // Create custom emission texture for glass area of windows
                     Color32[] emissionColors = textureFile.GetWindowColors32(srcBitmap);
@@ -316,7 +332,7 @@ namespace DaggerfallWorkshop.Utility
                 }
 
                 // Spectral need special handling as only eye parts are emissive
-                if ((settings.createEmissionMap || settings.autoEmission) && isSpectral)
+                if ((settings.createEmissionMap || settings.autoEmission) && isSpectral && hasReferenceTexture)
                 {
                     Color eyeEmission = Color.red;
                     Color bodyEmission = Color.black;// new Color(0.1f, 0.1f, 0.1f);
@@ -344,13 +360,27 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Shrink UV rect to compensate for internal border
-            float ru = 1f / sz.Width;
-            float rv = 1f / sz.Height;
-            results.singleRect = new Rect(
-                settings.borderSize * ru,
-                settings.borderSize * rv,
-                (sz.Width - settings.borderSize * 2) * ru,
-                (sz.Height - settings.borderSize * 2) * rv);
+            if (hasReferenceTexture)
+            {
+                float ru = 1f / sz.Width;
+                float rv = 1f / sz.Height;
+                results.singleRect = new Rect(
+                    settings.borderSize * ru,
+                    settings.borderSize * rv,
+                    (sz.Width - settings.borderSize * 2) * ru,
+                    (sz.Height - settings.borderSize * 2) * rv);
+            }
+            else
+            {
+                // Use the albedo's sizes as a fallback
+                float ru = 1f / albedoMap.width;
+                float rv = 1f / albedoMap.height;
+                results.singleRect = new Rect(
+                    settings.borderSize * ru,
+                    settings.borderSize * rv,
+                    (albedoMap.width - settings.borderSize * 2) * ru,
+                    (albedoMap.height - settings.borderSize * 2) * rv);
+            }
 
             // Store results
             results.albedoMap = albedoMap;
@@ -358,7 +388,7 @@ namespace DaggerfallWorkshop.Utility
             results.emissionMap = emissionMap;
             results.isWindow = isWindow;
             results.isEmissive = resultEmissive;
-            results.textureFile = textureFile;
+            results.textureFile = hasReferenceTexture ? textureFile : null;
 
             return results;
         }

@@ -420,7 +420,7 @@ namespace DaggerfallWorkshop
                 }
 
                 // Get texture
-                results = textureReader.GetTexture2D(settings, AlphaTextureFormat, TextureImport.LooseFiles);
+                results = textureReader.GetTexture2D(settings, AlphaTextureFormat, TextureImport.AllLocations);
 
                 // Create material
                 if (isBillboard)
@@ -463,13 +463,32 @@ namespace DaggerfallWorkshop
 
             }
 
+            Vector2[] recordSizes;
+            Vector2[] recordScales;
+            Vector2[] recordOffsets;
+            int singleFrameCount;
+
             // Setup cached material
-            DFSize size = results.textureFile.GetSize(record);
-            DFSize scale = results.textureFile.GetScale(record);
-            DFPosition offset = results.textureFile.GetOffset(record);
-            Vector2[] recordSizes = new Vector2[1] { new Vector2(size.Width, size.Height) };
-            Vector2[] recordScales = new Vector2[1] { new Vector2(scale.Width, scale.Height) };
-            Vector2[] recordOffsets = new Vector2[1] { new Vector2(offset.X, offset.Y) };
+            if (results.textureFile != null)
+            {
+                DFSize size = results.textureFile.GetSize(record);
+                DFSize scale = results.textureFile.GetScale(record);
+                DFPosition offset = results.textureFile.GetOffset(record);
+                recordSizes = new Vector2[1] { new Vector2(size.Width, size.Height) };
+                recordScales = new Vector2[1] { new Vector2(scale.Width, scale.Height) };
+                recordOffsets = new Vector2[1] { new Vector2(offset.X, offset.Y) };
+                singleFrameCount = results.textureFile.GetFrameCount(record);
+            }
+            else
+            {
+                // If we have no texture file, this means this is a non-classic texture
+                // Just use the albedo texture directly
+                recordSizes = new Vector2[1] { new Vector2(results.albedoMap.width, results.albedoMap.height) };
+                recordScales = new Vector2[1] { new Vector2(1.0f, 1.0f) };
+                recordOffsets = new Vector2[1] { new Vector2(0.0f, 0.0f) };
+                singleFrameCount = 1;
+            }
+
             CachedMaterial newcm = new CachedMaterial()
             {
                 key = key,
@@ -484,7 +503,7 @@ namespace DaggerfallWorkshop
                 recordSizes = recordSizes,
                 recordScales = recordScales,
                 recordOffsets = recordOffsets,
-                singleFrameCount = results.textureFile.GetFrameCount(record),
+                singleFrameCount = singleFrameCount,
                 framesPerSecond = archive == FireWallsArchive ? 5 : 0, // Slow down fire walls
             };
             materialDict.Add(key, newcm);
