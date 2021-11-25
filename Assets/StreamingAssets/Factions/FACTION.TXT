@@ -204,7 +204,7 @@ maxf: 70
 	enemy: 25
 	face: -1
 	race: -1
-	flat: 175 2
+	flat: 175 1
 	sgroup: 6
 	ggroup: 2
 	minf: 20
