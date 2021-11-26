@@ -13,16 +13,16 @@ public sealed class ColorBoost : PostProcessEffectSettings
     [Range(0f, 1f), Tooltip("Global Intensity")]
     public FloatParameter globalIntensity = new FloatParameter { value = 1.0f };
 
-    [Range(0f, 4f), Tooltip("Dungeon Scale")]
+    [Range(0f, 8f), Tooltip("Dungeon Scale")]
     public FloatParameter dungeonScale = new FloatParameter { value = 1.5f };
 
-    [Range(0f, 4f), Tooltip("Exterior Scale")]
+    [Range(0f, 8f), Tooltip("Exterior Scale")]
     public FloatParameter exteriorScale = new FloatParameter { value = 0.2f };
 
-    [Range(0f, 4f), Tooltip("Interior Scale")]
+    [Range(0f, 8f), Tooltip("Interior Scale")]
     public FloatParameter interiorScale = new FloatParameter { value = 0.5f };
 
-    [Range(0f, 4f), Tooltip("Dungeon Falloff")]
+    [Range(0f, 8f), Tooltip("Dungeon Falloff")]
     public FloatParameter dungeonFalloff = new FloatParameter { value = 0.0f };
 }
 
