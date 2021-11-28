@@ -2538,6 +2538,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1374841684}
     m_Modifications:
+    - target: {fileID: 100000, guid: 121467206f5a86740875d0647bdea509, type: 3}
+      propertyPath: m_Name
+      value: SkyRig
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 121467206f5a86740875d0647bdea509, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -2568,6 +2572,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 121467206f5a86740875d0647bdea509, type: 3}
       propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 121467206f5a86740875d0647bdea509, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 121467206f5a86740875d0647bdea509, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 121467206f5a86740875d0647bdea509, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
