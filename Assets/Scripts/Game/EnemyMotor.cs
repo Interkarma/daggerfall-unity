@@ -205,6 +205,16 @@ namespace DaggerfallWorkshop.Game
 
             return transform.position;
         }
+
+        /// <summary>
+        /// Call this when floating origin ticks on Y to ensure enemy doesn't die from large "grounded" difference
+        /// </summary>
+        /// <param name="y">Amount to increment to fallstart</param>
+        public void AdjustLastGrounded(float y)
+        {
+            lastGroundedY += y;
+        }
+
         #endregion
 
         #region Private Methods
