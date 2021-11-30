@@ -689,8 +689,10 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
 #if UNITY_EDITOR
+                    DaggerfallUnity.Settings.SaveSettings();
                     UnityEditor.EditorApplication.isPlaying = false;
 #else
+                    DaggerfallUnity.Settings.SaveSettings();
                     Application.Quit();
 #endif
                     break;
