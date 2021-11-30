@@ -125,6 +125,11 @@ namespace DaggerfallWorkshop.Utility
                 // Offset streaming world
                 OffsetChildren(StreamingWorld.StreamingTarget.gameObject, offset);
 
+                // Offset loaded enemies
+                // Not that many in DFU, but it happens in mods
+                foreach (EnemyMotor enemy in FindObjectsOfType<EnemyMotor>())
+                    enemy.AdjustLastGrounded(offset.y);
+
                 // Raise event
                 RaiseOnPositionUpdateEvent(offset);
             }
