@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Components.Add(compassPanel);
 
             // Head
-            headPanel.BackgroundTextureLayout = BackgroundLayout.ScaleToFit;
+            headPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
             headPanel.OnMouseClick += HeadPanel_OnMouseClick;
             headPanel.OnRightMouseClick += HeadPanel_OnMouseClick;
             Components.Add(headPanel);
