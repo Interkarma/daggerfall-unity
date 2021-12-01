@@ -138,10 +138,11 @@ namespace DaggerfallWorkshop.Game
         {
             Locale selectedLocale = null;
             var op = LocalizationSettings.SelectedLocaleAsync;
+            op.WaitForCompletion();
             if (op.IsDone)
                 selectedLocale = op.Result;
             else
-                op.Completed += (o) => selectedLocale = o.Result;
+                Debug.LogError("HasLocalizedFont() failed LocalizationSettings.SelectedLocaleAsync operation");
 
             return (selectedLocale != null) ? localizedFonts.ContainsKey(GetLocaleFontKey(selectedLocale, fontName)) : false;
         }
@@ -173,10 +174,11 @@ namespace DaggerfallWorkshop.Game
         {
             Locale selectedLocale = null;
             var op = LocalizationSettings.SelectedLocaleAsync;
+            op.WaitForCompletion();
             if (op.IsDone)
                 selectedLocale = op.Result;
             else
-                op.Completed += (o) => selectedLocale = o.Result;
+                Debug.LogError("GetLocalizedFont() failed LocalizationSettings.SelectedLocaleAsync operation");
 
             return (selectedLocale != null) ? GetLocalizedFont(selectedLocale, fontName) : null;
         }
