@@ -1,11 +1,11 @@
 {
   "dependencies": {
     "com.unity.addressables": {
-      "version": "1.17.17",
+      "version": "1.19.11",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.scriptablebuildpipeline": "1.17.0",
+        "com.unity.scriptablebuildpipeline": "1.19.3",
         "com.unity.modules.assetbundle": "1.0.0",
         "com.unity.modules.imageconversion": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0",
@@ -54,11 +54,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.localization": {
-      "version": "0.8.1-preview",
+      "version": "1.0.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.addressables": "1.7.5",
+        "com.unity.addressables": "1.19.9",
         "com.unity.nuget.newtonsoft-json": "2.0.0"
       },
       "url": "https://packages.unity.com"
@@ -79,7 +79,7 @@
       }
     },
     "com.unity.scriptablebuildpipeline": {
-      "version": "1.17.0",
+      "version": "1.19.3",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
