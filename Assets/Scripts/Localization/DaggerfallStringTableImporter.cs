@@ -459,8 +459,6 @@ namespace DaggerfallWorkshop.Localization
 
         /// <summary>
         /// Copy to import TEXT.RSC from classic game data into specified StringTable.
-        /// Default EN DFU uses TEXT.RSC directly, but can use translated string tables.
-        /// TEXT.RSC might be migrated to a full internal string table in future.
         /// </summary>
         /// <param name="target">Target string table collection name.</param>
         /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
