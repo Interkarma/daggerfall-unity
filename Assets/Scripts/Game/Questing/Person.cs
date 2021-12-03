@@ -371,7 +371,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get flat caption for this ID, e.g. "young lady in green", or fallback to race
             FlatsFile.FlatData flatCFG;
             if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(flatID, out flatCFG))
-                return flatCFG.caption;
+                return TextManager.Instance.GetLocalizedText(flatID.ToString(), TextCollections.TextFlats);
             else
                 return RaceTemplate.GetRaceDictionary()[(int)race].Name;
         }

@@ -252,6 +252,14 @@ namespace DaggerfallWorkshop.Game
                 case TextCollections.TextRSC:
                     collectionName = runtimeRSCStrings;
                     break;
+
+                case TextCollections.TextBOK:
+                    collectionName = runtimeBOKStrings;
+                    break;
+
+                case TextCollections.TextFlats:
+                    collectionName = runtimeFlatStrings;
+                    break;
             }
 
             return collectionName;

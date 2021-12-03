@@ -770,6 +770,8 @@ namespace DaggerfallWorkshop
     {
         Internal,
         TextRSC,
+        TextBOK,
+        TextFlats,
     }
 
     /// <summary>
