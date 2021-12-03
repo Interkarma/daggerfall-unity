@@ -458,7 +458,7 @@ namespace DaggerfallWorkshop.Localization
         }
 
         /// <summary>
-        /// Copy to import TEXT.RSC from classic game data into specified StringTable.
+        /// Imports TEXT.RSC strings from classic game data into specified StringTable.
         /// </summary>
         /// <param name="target">Target string table collection name.</param>
         /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
@@ -566,6 +566,81 @@ namespace DaggerfallWorkshop.Localization
             EditorUtility.SetDirty(targetCollection.SharedData);
 
             Debug.LogFormat("Source collection TEXT.RSC has a total of {0} entries.\nTarget collection '{1}' received {2} new entries, {3} entries were overwritten.", totalSourceEntries, target, copiedNew, copiedOverwrite);
+        }
+
+        /// <summary>
+        /// Imports FLATS.CFG EN strings from embedded classic game data into specified StringTable.
+        /// </summary>
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
+        public static void CopyTextFlatsToStringTable(string target, bool overwriteExistingKeys)
+        {
+            // Use default Internal_Flat collection with EN locale code as source
+            // Note: Internal_Flats is reserved for future use
+            string sourceCollectionName = TextManager.defaultInternalFlatsCollectionName;
+
+            // Target cannot be same as default
+            if (string.Compare(target, sourceCollectionName, true) == 0)
+            {
+                Debug.LogError("CopyTextFlatsToStringTable() target cannot be same as default");
+                return;
+            }
+
+            // Load default FLATS.CFG file
+            FlatsFile flatsFile = new FlatsFile(System.IO.Path.Combine(DaggerfallUnity.Instance.Arena2Path, FlatsFile.Filename), DaggerfallConnect.FileUsage.UseMemory, true);
+            if (flatsFile == null)
+            {
+                Debug.LogError("CopyTextFlatsToStringTable() could not find default FLATS.CFG file");
+                return;
+            }
+
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopyTextFlatsToStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
+
+            // Copy source strings to all tables in target collection
+            int totalSourceEntries = flatsFile.FlatsDict.Count;
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                foreach (var item in flatsFile.FlatsDict)
+                {
+                    string key = item.Key.ToString();
+                    string text = item.Value.caption;
+
+                    var targetEntry = targetTable.GetEntry(key);
+                    if (targetEntry == null)
+                    {
+                        targetTable.AddEntry(key, text);
+                        copiedNew++;
+                    }
+                    else if (targetEntry != null && overwriteExistingKeys)
+                    {
+                        if (targetTable.RemoveEntry(key))
+                        {
+                            targetTable.AddEntry(key, text);
+                            copiedOverwrite++;
+                        }
+                        else
+                        {
+                            Debug.LogErrorFormat("CopyTextFlatsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
+                        }
+                    }
+                }
+
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
+            }
+
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Source collection FLATS.CFG has a total of {0} entries.\nTarget collection '{1}' received {2} new entries, {3} entries were overwritten.", totalSourceEntries, target, copiedNew, copiedOverwrite);
         }
 
         static void SplitQuestionnaireRecord(string text, string key, StringTable targetTable, bool overwriteExistingKeys, ref int copiedNew, ref int copiedOverwrite)

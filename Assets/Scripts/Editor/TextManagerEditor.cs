@@ -87,7 +87,7 @@ namespace DaggerfallWorkshop
                 DaggerfallStringTableImporter.CopyInternalStringTable(tableCopyTargetInternalStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
                 DaggerfallStringTableImporter.CopyTextRSCToStringTable(tableCopyTargetRSCStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
                 //DaggerfallStringTableImporter.CopyTextBOKToStringTable(tableCopyTargetBOKStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
-                //DaggerfallStringTableImporter.CopyTextFlatToStringTable(tableCopyTargetFlatStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
+                DaggerfallStringTableImporter.CopyTextFlatsToStringTable(tableCopyTargetFlatStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
             }
         }
     }
