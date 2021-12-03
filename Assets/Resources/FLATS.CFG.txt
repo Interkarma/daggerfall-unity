@@ -1392,7 +1392,7 @@ Lady Bridwell
 0
 
 357 7
-Prince Lhotuu
+Prince Lhotun
 1
 0
 0
@@ -1406,35 +1406,35 @@ Lady Northbridge
 493
 
 357 15
-Queen Akouithi
+Queen Akorithi
 2
 0
 0
 0
 
 357 1
-Prince Guelelith
+Prince Greklith
 1
 0
 0
 0
 
 346 17
-princess Elysana
+Princess Elysana
 2
 0
 0
 0
 
 346 0
-Princess Mougiah
+Princess Morgiah
 2
 0
 0
 0
 
 346 22
-Queen Baueuziah
+Queen Barenziah
 2
 0
 0
@@ -1490,7 +1490,7 @@ Gortwog
 0
 
 182 46 
-Lord Woodbourne 
+Lord Woodborne
 1
 0
 0
