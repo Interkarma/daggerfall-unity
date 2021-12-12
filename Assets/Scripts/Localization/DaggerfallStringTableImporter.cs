@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -579,6 +580,10 @@ namespace DaggerfallWorkshop.Localization
             // Note: Internal_Flats is reserved for future use
             string sourceCollectionName = TextManager.defaultInternalFlatsCollectionName;
 
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
+
             // Target cannot be same as default
             if (string.Compare(target, sourceCollectionName, true) == 0)
             {
@@ -587,7 +592,7 @@ namespace DaggerfallWorkshop.Localization
             }
 
             // Load default FLATS.CFG file
-            FlatsFile flatsFile = new FlatsFile(System.IO.Path.Combine(DaggerfallUnity.Instance.Arena2Path, FlatsFile.Filename), DaggerfallConnect.FileUsage.UseMemory, true);
+            FlatsFile flatsFile = new FlatsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, FlatsFile.Filename), DaggerfallConnect.FileUsage.UseMemory, true);
             if (flatsFile == null)
             {
                 Debug.LogError("CopyTextFlatsToStringTable() could not find default FLATS.CFG file");
