@@ -3005,15 +3005,20 @@ namespace DaggerfallWorkshop.Game
             // If not looking for a local building, then player must be looking for a quest person or a quest location
             Quest quest = GameManager.Instance.QuestMachine.GetQuest(item.questID);
             QuestResource questResource = quest.GetResource(item.key);
-            Person person = (Person)questResource;
-            Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
-            Place place;
+            Person person = null;
+            Symbol assignedPlaceSymbol = null;
+            Place place = null;
 
+            if (questResource is Person)
+            {
+                person = (Person)questResource;
+                assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
+            }
             if (assignedPlaceSymbol != null)
             {
                 place = quest.GetPlace(assignedPlaceSymbol);  // Gets actual place resource
             }
-            else
+            else if (person != null)
             {
                 place = person.GetHomePlace(); // get home place if no assigned place was found
             }
