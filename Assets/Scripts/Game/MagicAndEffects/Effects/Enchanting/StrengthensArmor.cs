@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using DaggerfallConnect.FallExe;
@@ -21,8 +21,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public static readonly string EffectKey = EnchantmentTypes.StrengthensArmor.ToString();
 
-        const int enchantCost = 700;
-        const int increaseArmorValue = -5;          // Lower armor value equals a stronger armor rating
+        // [OSORKON] I greatly increased enchantCost from vanilla's 700 and boosted Armor increase by 2.
+        const int enchantCost = 15000;
+        const int increaseArmorValue = -7;          // Lower armor value equals a stronger armor rating
 
         public override void SetProperties()
         {

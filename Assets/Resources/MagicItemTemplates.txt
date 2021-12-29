@@ -521,14 +521,14 @@
     },
     {
         "index": 624,
-        "name": "Silent %it",
+        "name": "Spirit Soothing %it",
         "type": "RegularMagicItem",
         "group": 0,
         "groupIndex": 0,
         "enchantments": [
             {
                 "type": "CastWhenUsed",
-                "param": 23
+                "param": 98
             },
             {
                 "type": "None",
@@ -567,7 +567,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 700,
         "material": 0
     },
@@ -619,20 +619,20 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 1000,
         "value": 400,
         "material": 0
     },
     {
         "index": 748,
-        "name": "%it of Wildfire",
+        "name": "%it of Arcane Ward",
         "type": "RegularMagicItem",
         "group": 0,
         "groupIndex": 0,
         "enchantments": [
             {
                 "type": "CastWhenUsed",
-                "param": 33
+                "param": 39
             },
             {
                 "type": "None",
@@ -671,7 +671,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 800,
         "material": 0
     },
@@ -723,7 +723,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 850,
         "material": 0
     },
@@ -775,7 +775,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 350,
         "material": 0
     },
@@ -827,7 +827,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 300,
         "material": 0
     },
@@ -879,7 +879,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 500,
         "material": 0
     },
@@ -931,7 +931,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 450,
         "material": 0
     },
@@ -983,7 +983,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 2500,
         "value": 1500,
         "material": 0
     },
@@ -1035,7 +1035,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 900,
         "material": 0
     },
@@ -1087,7 +1087,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 300,
         "material": 0
     },
@@ -1139,20 +1139,20 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 1000,
         "value": 300,
         "material": 0
     },
     {
         "index": 1368,
-        "name": "%it of Magicka",
+        "name": "%it of Rebounding",
         "type": "RegularMagicItem",
-        "group": 1,
+        "group": 0,
         "groupIndex": 0,
         "enchantments": [
             {
-                "type": "AbsorbsSpells",
-                "param": -1
+                "type": "CastWhenUsed",
+                "param": 30
             },
             {
                 "type": "None",
@@ -1191,7 +1191,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 600,
         "material": 0
     },
@@ -1243,7 +1243,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 250,
         "material": 0
     },
@@ -1295,7 +1295,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 550,
         "material": 0
     },
@@ -1347,7 +1347,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 650,
         "material": 0
     },
@@ -1399,20 +1399,20 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 650,
         "material": 0
     },
     {
         "index": 1678,
-        "name": "Cursing %it",
+        "name": "%it of Domestication",
         "type": "RegularMagicItem",
-        "group": 2,
+        "group": 0,
         "groupIndex": 0,
         "enchantments": [
             {
-                "type": "CastWhenStrikes",
-                "param": 50
+                "type": "CastWhenUsed",
+                "param": 99
             },
             {
                 "type": "None",
@@ -1451,7 +1451,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 500,
         "material": 0
     },
@@ -1503,20 +1503,20 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 850,
         "material": 0
     },
     {
         "index": 1802,
-        "name": "%it of Venom Spitting",
+        "name": "%it of Teleportation",
         "type": "RegularMagicItem",
         "group": 0,
         "groupIndex": 0,
         "enchantments": [
             {
-                "type": "EnhancesSkill",
-                "param": 7
+                "type": "CastWhenUsed",
+                "param": 94
             },
             {
                 "type": "None",
@@ -1555,7 +1555,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 500,
         "material": 0
     },
@@ -1607,7 +1607,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 1000,
         "material": 0
     },
@@ -1659,7 +1659,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 900,
         "material": 0
     },
@@ -1711,13 +1711,13 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 900,
         "material": 0
     },
     {
         "index": 2050,
-        "name": "Deadman's %it",
+        "name": "%it of Pyromania",
         "type": "RegularMagicItem",
         "group": 0,
         "groupIndex": 0,
@@ -1763,7 +1763,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 800,
         "material": 0
     },
@@ -1815,7 +1815,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 550,
         "material": 0
     },
@@ -1867,7 +1867,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 1000,
         "value": 750,
         "material": 0
     },
@@ -1919,20 +1919,20 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 500,
         "material": 0
     },
     {
         "index": 2298,
-        "name": "%it of Iron Will",
+        "name": "Calming %it",
         "type": "RegularMagicItem",
-        "group": 1,
+        "group": 0,
         "groupIndex": 0,
         "enchantments": [
             {
-                "type": "CastWhenHeld",
-                "param": 84
+                "type": "CastWhenUsed",
+                "param": 91
             },
             {
                 "type": "None",
@@ -1971,7 +1971,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 400,
         "material": 0
     },
@@ -2023,7 +2023,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 1000,
         "value": 400,
         "material": 0
     },
@@ -2075,20 +2075,20 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 1000,
         "value": 700,
         "material": 0
     },
     {
         "index": 2484,
-        "name": "%it of Fortitude",
+        "name": "Beguiling %it",
         "type": "RegularMagicItem",
-        "group": 1,
+        "group": 0,
         "groupIndex": 0,
         "enchantments": [
             {
-                "type": "CastWhenHeld",
-                "param": 87
+                "type": "CastWhenUsed",
+                "param": 90
             },
             {
                 "type": "None",
@@ -2127,7 +2127,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 400,
         "material": 0
     },
@@ -2179,7 +2179,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 1000,
         "value": 350,
         "material": 0
     },
@@ -2231,7 +2231,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 1000,
         "value": 400,
         "material": 0
     },
@@ -2283,7 +2283,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 1200,
         "value": 700,
         "material": 0
     },
@@ -2335,13 +2335,13 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 650,
         "material": 0
     },
     {
         "index": 2794,
-        "name": "%it of Paralysis",
+        "name": "Medusa's %it",
         "type": "RegularMagicItem",
         "group": 0,
         "groupIndex": 0,
@@ -2387,7 +2387,7 @@
                 "param": -1
             }
         ],
-        "uses": 1500,
+        "uses": 500,
         "value": 600,
         "material": 0
     },

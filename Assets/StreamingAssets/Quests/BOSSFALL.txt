@@ -1,0 +1,30 @@
+Quest: BOSSFALL
+QRC:
+QuestLogEntry:  [1010]
+<ce>                          Welcome to Bossfall!
+<ce>             
+<ce>            Your Ebony Dagger is very fragile. Use it wisely.
+<ce>          
+<ce>            Gold and high tier materials are quite rare. You
+<ce>               can, however, find Daedric items anywhere.
+<ce>         
+<ce>         Spellcasters hurl all types of lethal magic. Oblivion
+<ce>                        welcomes the unprepared.
+<ce>
+<ce>         Some monsters are immune to certain types of weapons.
+<ce>          Punching iron or stone will only injure your fist.
+<ce>
+<ce>          You may have heard whispers of the dreaded Vampires.
+<ce>            Their bloodlust drives them to unearthly speeds.
+<ce>             You will need a horse to escape their hunger.
+<ce>
+<ce>         Greater enemies than Vampires lurk in dungeon depths.
+<ce>        Their ill-gotten wealth rivals the splendor of Wayrest,
+<ce>         but their ancient souls pulse with powers unknown...
+<ce>
+<ce>                             Good luck.
+
+QBN:
+--	Quest start-up:
+	say 1010
+	end quest

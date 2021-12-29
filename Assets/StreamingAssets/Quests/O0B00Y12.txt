@@ -4,6 +4,7 @@
 -- Questor: thief
 -- Repute: 0
 -- QuestId: 12
+-- Edited for Bossfall by Osorkon, replaced Assassins with non-boss enemies
 Messages: 36
 Quest: O0B00Y12
 DisplayName: Drugs Delivery
@@ -131,7 +132,7 @@ Person _contact2_ group Local_3.0 remote
 Clock _qtime_ 00:00 0 flag 1 range 3 5
 Clock _S.01_ 1.00:00 2.18:40
 
-Foe _enemy_ is Assassin
+Foe _enemy_ is Thief
 
 --	Quest start-up:
 	start timer _S.01_ 

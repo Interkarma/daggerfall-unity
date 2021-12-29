@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors: InconsolableCellist
 //
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using System;
@@ -39,7 +39,7 @@ namespace DaggerfallWorkshop.Game.Items
         // This array is used to pick random material values.
         // The array is traversed, subtracting each value from a sum until the sum is less than the next value.
         // Steel through Daedric, or Iron if sum is less than the first value.
-        public static readonly byte[] materialsByModifier = { 64, 128, 10, 21, 13, 8, 5, 3, 2, 5 };
+        public static readonly short[] materialsByModifier = { 327, 654, 8, 12, 8, 5, 4, 3, 2, 1 };
 
         // Weight multipliers by material type. Iron through Daedric. Weight is baseWeight * value / 4.
         static readonly short[] weightMultipliersByMaterial = { 4, 5, 4, 4, 3, 4, 4, 2, 4, 5 };
@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.Items
         static readonly short[] valueMultipliersByMaterial = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 };
 
         // Condition multipliers by material type. Iron through Daedric. MaxCondition is baseMaxCondition * value / 4.
-        static readonly short[] conditionMultipliersByMaterial = { 4, 6, 6, 8, 12, 16, 20, 24, 28, 32 };
+        static readonly short[] conditionMultipliersByMaterial = { 2, 3, 2, 2, 2, 1, 1, 1, 1, 1 };
 
         // Enchantment point/gold value data for item powers
         static readonly int[] extraSpellPtsEnchantPts = { 0x1F4, 0x1F4, 0x1F4, 0x1F4, 0xC8, 0xC8, 0xC8, 0x2BC, 0x320, 0x384, 0x3E8 };
@@ -279,7 +279,47 @@ namespace DaggerfallWorkshop.Game.Items
             int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.ReligiousItems, groupIndex);
 
+            if (newItem.IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_water))
+            {
+                return CreateHolyWater();
+            }
+            else if (newItem.IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_dagger))
+            {
+                return CreateHolyDagger();
+            }
+            else if (newItem.IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_tome))
+            {
+                return CreateHolyTome();
+            }
+
             return newItem;
+        }
+
+        public static DaggerfallUnityItem CreateHolyWater()
+        {
+            DaggerfallUnityItem holyWater = new DaggerfallUnityItem(ItemGroups.ReligiousItems, 4);
+            holyWater.legacyMagic = new DaggerfallEnchantment[] { new DaggerfallEnchantment() { type = EnchantmentTypes.CastWhenUsed, param = 58 } };
+            holyWater.IdentifyItem();
+
+            return holyWater;
+        }
+
+        public static DaggerfallUnityItem CreateHolyDagger()
+        {
+            DaggerfallUnityItem holyDagger = new DaggerfallUnityItem(ItemGroups.ReligiousItems, 11);
+            holyDagger.legacyMagic = new DaggerfallEnchantment[] { new DaggerfallEnchantment() { type = EnchantmentTypes.CastWhenUsed, param = 58 } };
+            holyDagger.IdentifyItem();
+
+            return holyDagger;
+        }
+
+        public static DaggerfallUnityItem CreateHolyTome()
+        {
+            DaggerfallUnityItem holyTome = new DaggerfallUnityItem(ItemGroups.ReligiousItems, 12);
+            holyTome.legacyMagic = new DaggerfallEnchantment[] { new DaggerfallEnchantment() { type = EnchantmentTypes.CastWhenUsed, param = 57 } };
+            holyTome.IdentifyItem();
+
+            return holyTome;
         }
 
         public static DaggerfallUnityItem CreateRandomlyFilledSoulTrap()
@@ -300,7 +340,7 @@ namespace DaggerfallWorkshop.Game.Items
             DaggerfallUnityItem newItem = CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
             newItem.TrappedSoulType = soul;
             MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[(int)soul];
-            newItem.value = 5000 + mobileEnemy.SoulPts;
+            newItem.value = mobileEnemy.SoulPts;
 
             return newItem;
         }
@@ -358,7 +398,7 @@ namespace DaggerfallWorkshop.Game.Items
 
             if (weapon == Weapons.Arrow)
             {   // Handle arrows
-                newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
+                newItem.stackCount = UnityEngine.Random.Range(1, 30 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
             }
             else
@@ -388,13 +428,13 @@ namespace DaggerfallWorkshop.Game.Items
                 newItem = CreateItem(ItemGroups.Weapons, customItemTemplates[groupIndex - enumArray.Length]);
  
             // Random weapon material
-            WeaponMaterialTypes material = FormulaHelper.RandomMaterial(playerLevel);
+            WeaponMaterialTypes material = FormulaHelper.RandomMaterial(10);
             ApplyWeaponMaterial(newItem, material);
 
             // Handle arrows
             if (groupIndex == 18)
             {
-                newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
+                newItem.stackCount = UnityEngine.Random.Range(1, 30 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
                 newItem.nativeMaterialValue = 0; // Arrows don't have a material
             }
@@ -455,7 +495,7 @@ namespace DaggerfallWorkshop.Game.Items
             else
                 newItem = CreateItem(ItemGroups.Armor, customItemTemplates[groupIndex - enumArray.Length]);
 
-            ApplyArmorSettings(newItem, gender, race, FormulaHelper.RandomArmorMaterial(playerLevel));
+            ApplyArmorSettings(newItem, gender, race, FormulaHelper.RandomArmorMaterial(10));
 
             return newItem;
         }
@@ -510,7 +550,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomMagicItem(int playerLevel, Genders gender, Races race)
         {
-            return CreateRegularMagicItem(chooseAtRandom, playerLevel, gender, race);
+            return CreateRegularMagicItem(chooseAtRandom, 10, gender, race);
         }
 
         /// <summary>
@@ -558,18 +598,25 @@ namespace DaggerfallWorkshop.Game.Items
             // Create the base item
             if (group == ItemGroups.Weapons)
             {
-                newItem = CreateRandomWeapon(playerLevel);
+                newItem = CreateRandomWeapon(10);
 
                 // No arrows as enchanted items
                 while (newItem.GroupIndex == 18)
-                    newItem = CreateRandomWeapon(playerLevel);
+                    newItem = CreateRandomWeapon(10);
             }
             else if (group == ItemGroups.Armor)
-                newItem = CreateRandomArmor(playerLevel, gender, race);
+                newItem = CreateRandomArmor(10, gender, race);
             else if (group == ItemGroups.MensClothing || group == ItemGroups.WomensClothing)
                 newItem = CreateRandomClothing(gender, race);
             else if (group == ItemGroups.ReligiousItems)
+            {
                 newItem = CreateRandomReligiousItem();
+
+                // [OSORKON] No Holy Water/Holy Daggers/Holy Tomes as regular enchanted items - I
+                // want these Holy items to have custom enchantments I add elsewhere.
+                while (newItem.GroupIndex == 4 || newItem.GroupIndex == 11 || newItem.GroupIndex == 12)
+                    newItem = CreateRandomReligiousItem();
+            }
             else if (group == ItemGroups.Gems)
                 newItem = CreateRandomGem();
             else // Only other possibility is jewellery
@@ -642,7 +689,7 @@ namespace DaggerfallWorkshop.Game.Items
         {
             item.value *= 3 * valueMultipliersByMaterial[(int)material];
             item.weightInKg = CalculateWeightForMaterial(item, material);
-            item.maxCondition = item.maxCondition * conditionMultipliersByMaterial[(int)material] / 4;
+            item.maxCondition = item.maxCondition * conditionMultipliersByMaterial[(int)material];
             item.currentCondition = item.maxCondition;
 
             return item;

@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using System;
@@ -24,9 +24,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         // Classic potion recipe mapping to DFU recipe keys:
         //  Stamina, Orc Strength, Healing, Waterwalking, Restore Power, Resist Fire, Resist Frost, Resist Shock, Cure Disease, Slow Falling,
-        //  Water Breathing, Heal True, Levitation, Resist Poison, Free Action, Cure Poison, Chameleon Form, Shadow Form, Invisibility, Purification
+        //  Water Breathing, Heal True, Levitation, Resist Poison, Free Action, Cure Poison, Chameleon Form, Shadow Form, Invisibility, Purification, BOSSFALL Dispel Magic
         public static readonly int[] classicRecipeKeys = { 221871, 239524, 4975678, 5017404, 5188896, 111516185, 4826108, 216843, 224588, 220192,
-                                                           240081, 4937012, 228890, 221117, 4870452, 5361377, 112080144, 4842851, 4815872, 2031019196 };
+                                                           240081, 4937012, 228890, 221117, 4870452, 5361377, 112080144, 4842851, 4815872, 2031019196, 5189333 };
 
         #region Fields
 
@@ -220,6 +220,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             if (string.IsNullOrEmpty(DisplayNameKey))
                 return TextManager.Instance.GetLocalizedText("unknownPowers");
+            else if (DisplayNameKey == "dispelMagic")
+                return "Dispel Magic";
             else
                 return TextManager.Instance.GetLocalizedText(DisplayNameKey);
         }

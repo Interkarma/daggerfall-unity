@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Allofich
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -25,8 +25,11 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(EnemySenses))]
     public class EnemyAttack : MonoBehaviour
     {
-        public const float minRangedDistance = 240 * MeshReader.GlobalScale; // 6m
-        public const float maxRangedDistance = 2048 * MeshReader.GlobalScale; // 51.2m
+        // [OSORKON] I reduced the minRangedDistance by 60 and doubled the maxRangedDistance. I got annoyed at
+        // how easy it was to kite enemies at long range without them ever shooting back. Enemies will also fire
+        // arrows and spells at the normal Enhanced AI "stopDistance" instead of standing there staring at you.
+        public const float minRangedDistance = 180 * MeshReader.GlobalScale; // 6m
+        public const float maxRangedDistance = 4096 * MeshReader.GlobalScale; // 51.2m
         public float MeleeDistance = 2.25f;                // Maximum distance for melee attack
         public float ClassicMeleeDistanceVsAI = 1.5f;      // Maximum distance for melee attack vs other AI in classic AI mode
         public float MeleeTimer = 0;                       // Must be 0 for a melee attack or touch spell to be done
@@ -113,8 +116,9 @@ namespace DaggerfallWorkshop.Game
 
         public void ResetMeleeTimer()
         {
-            MeleeTimer = Random.Range(1500, 3000 + 1);
-            MeleeTimer -= 50 * (GameManager.Instance.PlayerEntity.Level - 10);
+            // [OSORKON] I increased the range up and down by 500 and removed MeleeTimer variation by player level. Enemies
+            // attack on average as fast as they do at a vanilla player level of 10, but with greater random variation.
+            MeleeTimer = UnityEngine.Random.Range(1000, 3500 + 1);
 
             // Note: In classic, what happens here is
             // meleeTimer += 450 * (enemydata[130] - 2);
@@ -343,8 +347,12 @@ namespace DaggerfallWorkshop.Game
                     float KnockbackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
                     KnockbackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
 
-                    if (KnockbackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
-                        KnockbackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
+                    // [OSORKON] I changed KnockbackSpeed from 15 to 12 here. This lowers the minimum speed at which enemies
+                    // fly backwards. I changed this very early on when I didn't really know what I was doing, and I am not
+                    // sure even now if this change was necessary. Regardless, knockbacks are now at a level I'm comfortable
+                    // with, so there's no need for me to change this further.
+                    if (KnockbackSpeed < (12 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
+                        KnockbackSpeed = (12 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
                     targetMotor.KnockbackSpeed = KnockbackSpeed;
                     targetMotor.KnockbackDirection = direction;
                 }

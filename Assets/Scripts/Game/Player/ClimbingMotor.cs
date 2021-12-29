@@ -1,3 +1,5 @@
+// All additions or modifications that differ from the source code found at https://github.com/Interkarma/daggerfall-unity copyright (c) 2021-2022 Osorkon
+
 using UnityEngine;
 using System;
 using System.Collections;
@@ -74,13 +76,13 @@ namespace DaggerfallWorkshop.Game
         // how long it takes before we try to regain hold if slipping
         private readonly float regainHoldSkillCheckFrequency = 5; 
         // minimum percent chance to regain hold per skill check if slipping, gets closer to 100 with higher skill
-        private const int regainHoldMinChance = 20;
+        private const int regainHoldMinChance = 0;
         // minimum percent chance to start climbing
-        private const int startClimbMinChance = 70;
+        private const int startClimbMinChance = 0;
         // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
-        private const int continueClimbMinChance = 50;
+        private const int continueClimbMinChance = 0;
         // minimum percent chance to grab a wall while falling
-        private const int graspWallMinChance = 40;
+        private const int graspWallMinChance = 0;
 
         public bool IsClimbing
         {
@@ -333,7 +335,7 @@ namespace DaggerfallWorkshop.Game
                 else if (releasedFromCeiling)
                 {
                     startClimbHorizontalTolerance = 0.90f;
-                    startClimbSkillCheckFrequency = 0;
+                    startClimbSkillCheckFrequency = 5;
                 }
                 else
                 {   // least leniency because we want climbing to be very intentional here
@@ -505,8 +507,6 @@ namespace DaggerfallWorkshop.Game
                     {
                         // TODO: devise horizontal distance-based solution to terminate forward movement
                         // It may fix the problem of climbing to the top of gabled roofs.
-                        if (!overrideSkillCheck)
-                            overrideSkillCheck = !hitSomethingInFront;
                         moveDirection.y = Vector3.up.y * climbScalar;
                     }
                     else if (movedBackward)

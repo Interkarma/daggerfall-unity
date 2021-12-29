@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -60,20 +60,25 @@ namespace DaggerfallWorkshop.Game.Entity
         bool suppressInfighting = false;
 
         // From FALL.EXE offset 0x1C0F14
-        static byte[] ImpSpells            = { 0x07, 0x0A, 0x1D, 0x2C };
-        static byte[] GhostSpells          = { 0x22 };
-        static byte[] OrcShamanSpells      = { 0x06, 0x07, 0x16, 0x19, 0x1F };
-        static byte[] WraithSpells         = { 0x1C, 0x1F };
-        static byte[] FrostDaedraSpells    = { 0x10, 0x14 };
-        static byte[] FireDaedraSpells     = { 0x0E, 0x19 };
-        static byte[] DaedrothSpells       = { 0x16, 0x17, 0x1F };
-        static byte[] VampireSpells        = { 0x33 };
-        static byte[] SeducerSpells        = { 0x34, 0x43 };
-        static byte[] VampireAncientSpells = { 0x08, 0x32 };
-        static byte[] DaedraLordSpells     = { 0x08, 0x0A, 0x0E, 0x3C, 0x43 };
-        static byte[] LichSpells           = { 0x08, 0x0A, 0x0E, 0x22, 0x3C };
-        static byte[] AncientLichSpells    = { 0x08, 0x0A, 0x0E, 0x1D, 0x1F, 0x22, 0x3C };
-        static byte[][] EnemyClassSpells   = { FrostDaedraSpells, DaedrothSpells, OrcShamanSpells, VampireAncientSpells, DaedraLordSpells, LichSpells, AncientLichSpells };
+
+        // [OSORKON] The hexadecimal numbers are referenced in classic Daggerfall's SPELL.STD file, which has a
+        // list of 99 or so different spells. Changing enemy spells is super easy - all you have to do is find the hex
+        // number for that spell effect and plug that into the correct array. I used UESP's SPELL.STD page for reference.
+        // I greatly increased enemy spell variety, as knowing what spells to expect takes most of the challenge away.
+        // I didn't change Frost or Fire Daedra spells much - I added Frostbite to Frost Daedra spells and God's Fire
+        // to Fire Daedra spells.
+        static byte[] ImpSpells            = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
+        static byte[] OrcShamanSpells      = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
+        static byte[] WraithSpells         = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
+        static byte[] FrostDaedraSpells    = { 0x10, 0x14, 0x03 };
+        static byte[] FireDaedraSpells     = { 0x0E, 0x19, 0x20 };
+        static byte[] DaedrothSpells       = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
+        static byte[] VampireSpells        = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
+        static byte[] SeducerSpells        = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
+        static byte[] DaedraLordSpells     = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
+        static byte[] LichSpells           = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
+        static byte[] AncientLichSpells    = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
+        static byte[][] EnemyClassSpells   = { FrostDaedraSpells, DaedrothSpells, OrcShamanSpells, DaedraLordSpells, LichSpells, AncientLichSpells };
 
         #endregion
 
@@ -258,19 +263,154 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (entityType == EntityTypes.EnemyMonster)
                 {
                     // Default like a monster
-                    level = mobileEnemy.Level;
+
+                    // [OSORKON] If mods ever add custom monsters their level will vary up and
+                    // down a bit, just like regular BOSSFALL monsters.
+                    level = mobileEnemy.Level + UnityEngine.Random.Range(-2, 2 + 1);
+
+                    // [OSORKON] I don't know what would happen if their level was 0 or less. I
+                    // don't particularly want to find out.
+                    if (level < 1)
+                    {
+                        level = 1;
+                    }
+
                     maxHealth = Random.Range(mobileEnemy.MinHealth, mobileEnemy.MaxHealth + 1);
                     for (int i = 0; i < ArmorValues.Length; i++)
                     {
                         ArmorValues[i] = (sbyte)(mobileEnemy.ArmorValue * 5);
                     }
                 }
-                else
+                // [OSORKON] If mods ever add custom class enemies they will be unleveled starting
+                // at player level 7, just like regular BOSSFALL class enemies.
+                else if (GameManager.Instance.PlayerEntity.Level > 6)
                 {
                     // Default like a class enemy
-                    level = GameManager.Instance.PlayerEntity.Level;
-                    maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
+                    int roll = Dice100.Roll();
+
+                    if (roll > 0)
+                    {
+                        if (roll > 1)
+                        {
+                            if (roll > 2)
+                            {
+                                if (roll > 3)
+                                {
+                                    if (roll > 6)
+                                    {
+                                        if (roll > 11)
+                                        {
+                                            if (roll > 20)
+                                            {
+                                                if (roll > 33)
+                                                {
+                                                    if (roll > 50)
+                                                    {
+                                                        if (roll > 67)
+                                                        {
+                                                            if (roll > 80)
+                                                            {
+                                                                if (roll > 89)
+                                                                {
+                                                                    if (roll > 94)
+                                                                    {
+                                                                        if (roll > 97)
+                                                                        {
+                                                                            if (roll > 98)
+                                                                            {
+                                                                                if (roll > 99)
+                                                                                {
+                                                                                    level = UnityEngine.Random.Range(18, 20 + 1);
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    level = 17;
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                level = 16;
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            level = 15;
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        level = 14;
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    level = 13;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                level = 12;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            level = 11;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        level = 10;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    level = 9;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                level = 8;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            level = 7;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        level = 6;
+                                    }
+                                }
+                                else
+                                {
+                                    level = 5;
+                                }
+                            }
+                            else
+                            {
+                                level = 4;
+                            }
+                        }
+                        else
+                        {
+                            level = UnityEngine.Random.Range(1, 3 + 1);
+                        }
+                    }
                 }
+                // [OSORKON] If player is level 6 or less class enemies will be within 2 levels of the
+                // player, just like regular BOSSFALL class enemies. Their level can't go below 1.
+                else
+                {
+                    level = GameManager.Instance.PlayerEntity.Level + UnityEngine.Random.Range(-2, 2 + 1);
+
+                    if (level < 1)
+                    {
+                        level = 1;
+                    }
+                }
+
+                maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
             }
             else if (entityType == EntityTypes.EnemyMonster)
             {
@@ -280,7 +420,52 @@ namespace DaggerfallWorkshop.Game.Entity
 
                 // Enemy monster has predefined level, health and armor values.
                 // Armor values can be modified below by equipment.
-                level = mobileEnemy.Level;
+
+                // [OSORKON] Enemy monster levels vary up and down a bit. This affects their accuracy,
+                // dodging, and spell effectiveness, but doesn't change their armor or HP.
+                level = mobileEnemy.Level + UnityEngine.Random.Range(-2, 2 + 1);
+
+                // [OSORKON] Non-boss monster levels can't go below 1 and are capped at 20. Only Daedra
+                // Seducers are potentially affected by the level 20 cap.
+                if (level < 1)
+                {
+                    level = 1;
+                }
+                if (level > 20)
+                {
+                    level = 20;
+                }
+
+                // [OSORKON] This list manually sets boss levels. It doesn't change their armor or HP.
+                if (careerIndex == (int)MobileTypes.Vampire)
+                {
+                    level = UnityEngine.Random.Range(21, 25 + 1);
+                }
+                else if (careerIndex == (int)MobileTypes.Lich)
+                {
+                    level = UnityEngine.Random.Range(21, 25 + 1);
+                }
+                else if (careerIndex == (int)MobileTypes.Dragonling_Alternate)
+                {
+                    level = UnityEngine.Random.Range(21, 30 + 1);
+                }
+                else if (careerIndex == (int)MobileTypes.OrcWarlord)
+                {
+                    level = UnityEngine.Random.Range(21, 30 + 1);
+                }
+                else if (careerIndex == (int)MobileTypes.VampireAncient)
+                {
+                    level = UnityEngine.Random.Range(26, 30 + 1);
+                }
+                else if (careerIndex == (int)MobileTypes.DaedraLord)
+                {
+                    level = UnityEngine.Random.Range(26, 30 + 1);
+                }
+                else if (careerIndex == (int)MobileTypes.AncientLich)
+                {
+                    level = UnityEngine.Random.Range(26, 30 + 1);
+                }
+
                 maxHealth = UnityEngine.Random.Range(mobileEnemy.MinHealth, mobileEnemy.MaxHealth + 1);
                 for (int i = 0; i < ArmorValues.Length; i++)
                 {
@@ -293,13 +478,151 @@ namespace DaggerfallWorkshop.Game.Entity
                 career = GetClassCareerTemplate((ClassCareers)careerIndex);
                 stats.SetPermanentFromCareer(career);
 
+                // [OSORKON] This formula is responsible for BOSSFALL's unleveled class enemies. Their
+                // levels are weighted to usually be around 10. Level 1 and 20 enemies are very rare.
+                // Class enemies are unleveled once player is at least level 7.
+                if (GameManager.Instance.PlayerEntity.Level > 6)
+                {
+                    int roll = Dice100.Roll();
+
+                    if (roll > 0)
+                    {
+                        if (roll > 1)
+                        {
+                            if (roll > 2)
+                            {
+                                if (roll > 3)
+                                {
+                                    if (roll > 6)
+                                    {
+                                        if (roll > 11)
+                                        {
+                                            if (roll > 20)
+                                            {
+                                                if (roll > 33)
+                                                {
+                                                    if (roll > 50)
+                                                    {
+                                                        if (roll > 67)
+                                                        {
+                                                            if (roll > 80)
+                                                            {
+                                                                if (roll > 89)
+                                                                {
+                                                                    if (roll > 94)
+                                                                    {
+                                                                        if (roll > 97)
+                                                                        {
+                                                                            if (roll > 98)
+                                                                            {
+                                                                                if (roll > 99)
+                                                                                {
+                                                                                    level = UnityEngine.Random.Range(18, 20 + 1);
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    level = 17;
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                level = 16;
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            level = 15;
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        level = 14;
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    level = 13;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                level = 12;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            level = 11;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        level = 10;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    level = 9;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                level = 8;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            level = 7;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        level = 6;
+                                    }
+                                }
+                                else
+                                {
+                                    level = 5;
+                                }
+                            }
+                            else
+                            {
+                                level = 4;
+                            }
+                        }
+                        else
+                        {
+                            level = UnityEngine.Random.Range(1, 3 + 1);
+                        }
+                    }
+                }
+                // [OSORKON] If player is level 6 or lower, all class enemies will be within 2 levels of the
+                // player. Their level can't go below 1.
+                else
+                {
+                    level = GameManager.Instance.PlayerEntity.Level + UnityEngine.Random.Range(-2, 2 + 1);
+
+                    if (level < 1)
+                    {
+                        level = 1;
+                    }
+                }
+
                 // Enemy class is levelled to player and uses similar health rules
                 // City guards are 3 to 6 levels above the player
-                level = GameManager.Instance.PlayerEntity.Level;
+
+                // [OSORKON] Guard levels are buffed compared to vanilla DFU. They can get a 10 level boost. HALT!
                 if (careerIndex == (int)MobileTypes.Knight_CityWatch - 128)
-                    level += UnityEngine.Random.Range(3, 7);
+                    level += UnityEngine.Random.Range(0, 10 + 1);
+
+                // [OSORKON] This manually sets Assassins to boss levels, but only if player is at least level 7.
+                if (GameManager.Instance.PlayerEntity.Level > 6 && careerIndex == (int)MobileTypes.Assassin - 128)
+                    level = UnityEngine.Random.Range(21, 30 + 1);
 
                 maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
+
+                // [OSORKON] Once player is at least level 7, Assassin HP is set to their boss range.
+                if (GameManager.Instance.PlayerEntity.Level > 6 && careerIndex == (int)MobileTypes.Assassin - 128)
+                    maxHealth = UnityEngine.Random.Range(100, 300 + 1);
             }
             else
             {
@@ -314,10 +637,12 @@ namespace DaggerfallWorkshop.Game.Entity
             minMetalToHit = mobileEnemy.MinMetalToHit;
             team = mobileEnemy.Team;
 
-            short skillsLevel = (short)((level * 5) + 30);
-            if (skillsLevel > 100)
+            // [OSORKON] BOSSFALL enemies scale up in skill faster - vanilla scales by 5/level.
+            // BOSSFALL enemies have a higher skill cap of 180, compared to vanilla's 100.
+            short skillsLevel = (short)((level * 7) + 30);
+            if (skillsLevel > 180)
             {
-                skillsLevel = 100;
+                skillsLevel = 180;
             }
 
             for (int i = 0; i <= DaggerfallSkills.Count; i++)
@@ -329,59 +654,43 @@ namespace DaggerfallWorkshop.Game.Entity
             DaggerfallLoot.GenerateItems(mobileEnemy.LootTableKey, items);
 
             // Enemy classes and some monsters use equipment
-            if (careerIndex == (int)MonsterCareers.Orc || careerIndex == (int)MonsterCareers.OrcShaman)
+
+            // [OSORKON] This check is responsible for high level enemy loot scaling to their level. If I didn't
+            // make bosses and high level monsters use this, all enemy loot would be generated by loot table key
+            // only, which does not scale with enemy level. I plan on refining this system in v1.3.
+            if (entityType == EntityTypes.EnemyClass || careerIndex == (int)MonsterCareers.OrcSergeant
+                || careerIndex == (int)MonsterCareers.OrcShaman || careerIndex == (int)MonsterCareers.OrcWarlord
+                || careerIndex == (int)MonsterCareers.FrostDaedra || careerIndex == (int)MonsterCareers.FireDaedra
+                || careerIndex == (int)MonsterCareers.Daedroth || careerIndex == (int)MonsterCareers.Vampire
+                || careerIndex == (int)MonsterCareers.DaedraSeducer || careerIndex == (int)MonsterCareers.VampireAncient
+                || careerIndex == (int)MonsterCareers.DaedraLord || careerIndex == (int)MonsterCareers.Lich
+                || careerIndex == (int)MonsterCareers.AncientLich || careerIndex == (int)MonsterCareers.Dragonling_Alternate)
             {
-                SetEnemyEquipment(0);
-            }
-            else if (careerIndex == (int)MonsterCareers.Centaur || careerIndex == (int)MonsterCareers.OrcSergeant)
-            {
-                SetEnemyEquipment(1);
-            }
-            else if (careerIndex == (int)MonsterCareers.OrcWarlord)
-            {
-                SetEnemyEquipment(2);
-            }
-            else if (entityType == EntityTypes.EnemyClass)
-            {
-                SetEnemyEquipment(UnityEngine.Random.Range(0, 2)); // 0 or 1
+                // [OSORKON] I added 1 to the maximum range. There are 3 possible variants and the third is never
+                // used for enemy classes in vanilla. Adds more variety.
+                SetEnemyEquipment(UnityEngine.Random.Range(0, 2 + 1));
             }
 
             // Assign spell lists
             if (entityType == EntityTypes.EnemyMonster)
             {
-                if (careerIndex == (int)MonsterCareers.Imp)
+                // [OSORKON] I condensed the vanilla if/else if list, all monsters use the same spells in BOSSFALL.
+                //  No need for extra checks. The only exceptions are Frost/Fire Daedra, who do use different spell lists.
+                if (careerIndex == (int)MonsterCareers.Imp || careerIndex == (int)MonsterCareers.OrcShaman
+                    || careerIndex == (int)MonsterCareers.Wraith || careerIndex == (int)MonsterCareers.Daedroth
+                    || careerIndex == (int)MonsterCareers.Vampire || careerIndex == (int)MonsterCareers.DaedraSeducer
+                    || careerIndex == (int)MonsterCareers.DaedraLord || careerIndex == (int)MonsterCareers.Lich
+                    || careerIndex == (int)MonsterCareers.AncientLich)
                     SetEnemySpells(ImpSpells);
-                else if (careerIndex == (int)MonsterCareers.Ghost)
-                    SetEnemySpells(GhostSpells);
-                else if (careerIndex == (int)MonsterCareers.OrcShaman)
-                    SetEnemySpells(OrcShamanSpells);
-                else if (careerIndex == (int)MonsterCareers.Wraith)
-                    SetEnemySpells(WraithSpells);
                 else if (careerIndex == (int)MonsterCareers.FrostDaedra)
                     SetEnemySpells(FrostDaedraSpells);
                 else if (careerIndex == (int)MonsterCareers.FireDaedra)
                     SetEnemySpells(FireDaedraSpells);
-                else if (careerIndex == (int)MonsterCareers.Daedroth)
-                    SetEnemySpells(DaedrothSpells);
-                else if (careerIndex == (int)MonsterCareers.Vampire)
-                    SetEnemySpells(VampireSpells);
-                else if (careerIndex == (int)MonsterCareers.DaedraSeducer)
-                    SetEnemySpells(SeducerSpells);
-                else if (careerIndex == (int)MonsterCareers.VampireAncient)
-                    SetEnemySpells(VampireAncientSpells);
-                else if (careerIndex == (int)MonsterCareers.DaedraLord)
-                    SetEnemySpells(DaedraLordSpells);
-                else if (careerIndex == (int)MonsterCareers.Lich)
-                    SetEnemySpells(LichSpells);
-                else if (careerIndex == (int)MonsterCareers.AncientLich)
-                    SetEnemySpells(AncientLichSpells);
             }
             else if (entityType == EntityTypes.EnemyClass && (mobileEnemy.CastsMagic))
             {
-                int spellListLevel = level / 3;
-                if (spellListLevel > 6)
-                    spellListLevel = 6;
-                SetEnemySpells(EnemyClassSpells[spellListLevel]);
+                // [OSORKON] I set enemy classes to use the same expanded spell list as enemy monsters.
+                SetEnemySpells(AncientLichSpells);
             }
 
             // Chance of adding map
@@ -400,66 +709,80 @@ namespace DaggerfallWorkshop.Game.Entity
             FillVitalSigns();
         }
 
+        // [OSORKON] I greatly condensed this entire function, as most of the checks were made redundant by
+        // changes I made elsewhere. Enemy armor no longer varies with their equipment, so I didn't
+        // need the for loops vanilla had here.
         public void SetEnemyEquipment(int variant)
         {
             // Assign the enemies starting equipment.
             AssignEnemyEquipment(GameManager.Instance.PlayerEntity, this, variant);
 
-            // Initialize armor values to 100 (no armor)
-            for (int i = 0; i < ArmorValues.Length; i++)
-            {
-                ArmorValues[i] = 100;
-            }
-            // Calculate armor values from equipment
-            for (int i = (int)Game.Items.EquipSlots.Head; i < (int)Game.Items.EquipSlots.Feet; i++)
-            {
-                Items.DaggerfallUnityItem item = ItemEquipTable.GetItem((Items.EquipSlots)i);
-                if (item != null && item.ItemGroup == Game.Items.ItemGroups.Armor)
-                {
-                    UpdateEquippedArmorValues(item, true);
-                }
-            }
-
             if (entityType == EntityTypes.EnemyClass)
             {
-                // Clamp to maximum armor value of 60. In classic this also applies for monsters.
-                // Note: Classic sets the value to 60 if it is > 50, which seems like an oversight.
+                // [OSORKON] This sets class enemy armor depending on their level. Setting this up to work properly
+                // gave me endless headaches - I called MobileEnemy.Level in v1.1, which refers to ArmorValue
+                // in EnemyBasics. Unfortunately, class enemies don't have an ArmorValue in EnemyBasics, so v1.1
+                // class enemy armor didn't vary by their level. I eventually figured out the proper "level" object
+                // to call. Live and learn...
                 for (int i = 0; i < ArmorValues.Length; i++)
                 {
-                    if (ArmorValues[i] > 60)
-                    {
-                        ArmorValues[i] = 60;
-                    }
-                }
-            }
-            else
-            {
-                // Note: In classic, the above applies for equipment-using monsters as well as enemy classes.
-                // The resulting armor values are often 60. Due to the +40 to hit against monsters this makes
-                // monsters with equipment very easy to hit, and 60 is a worse value than any value monsters
-                // have in their definition. To avoid this, in DF Unity the equipment values are only used if
-                // they are better than the value in the definition.
-                for (int i = 0; i < ArmorValues.Length; i++)
-                {
-                    if (ArmorValues[i] > (sbyte)(mobileEnemy.ArmorValue * 5))
-                    {
-                        ArmorValues[i] = (sbyte)(mobileEnemy.ArmorValue * 5);
-                    }
-                }
-            }
-        }
+                    ArmorValues[i] = (sbyte)(60 - (level * 2));
 
+                    // [OSORKON] Once player is at least level 7, Assassins have boss armor. I botched this in v1.1,
+                    // as I forgot player gets +40 to hit against monsters (but not classes) and set Assassin armor
+                    // to a ridiculous -40. Fortunately I noticed the inconsistency and corrected it in v1.2.
+                    if (GameManager.Instance.PlayerEntity.Level > 6 && careerIndex == (int)MobileTypes.Assassin - 128)
+                    {
+                        ArmorValues[i] = 0;
+                    }
+                }
+            }
+
+        }
         public void SetEnemySpells(byte[] spellList)
         {
             // Enemies don't follow same rule as player for maximum spell points
-            MaxMagicka = 10 * level + 100;
+
+            // [OSORKON] For whatever reason, enemy spell costs in vanilla vary depending on player
+            // spell skill level, which makes it impossible to precisely set how many spells an enemy
+            // could cast - and that's exactly what I wanted to do. I solved this problem by manually
+            // setting how much magicka each enemy spell would cost in a different script. Once I did
+            // that, I could precisely manage how many spells enemies could cast. This list sets enemy
+            // mana pools, each spell costs 5 mana. Bosses above level 25 have effectively infinite mana.
+            if (level > 0 && level < 8)
+            {
+                MaxMagicka = 9;
+            }
+            else if (level >= 8 && level < 13)
+            {
+                MaxMagicka = 14;
+            }
+            else if (level >= 13 && level < 16)
+            {
+                MaxMagicka = 19;
+            }
+            else if (level >= 16 && level < 18)
+            {
+                MaxMagicka = 24;
+            }
+            else if (level >= 18 && level < 20)
+            {
+                MaxMagicka = 29;
+            }
+            else if (level == 20)
+            {
+                MaxMagicka = 39;
+            }
+            else if (level >= 21 && level < 26)
+            {
+                MaxMagicka = 149;
+            }
+            else if (level >= 26)
+            {
+                MaxMagicka = 100000;
+            }
+            
             currentMagicka = MaxMagicka;
-            skills.SetPermanentSkillValue(DFCareer.Skills.Destruction, 80);
-            skills.SetPermanentSkillValue(DFCareer.Skills.Restoration, 80);
-            skills.SetPermanentSkillValue(DFCareer.Skills.Illusion, 80);
-            skills.SetPermanentSkillValue(DFCareer.Skills.Alteration, 80);
-            skills.SetPermanentSkillValue(DFCareer.Skills.Thaumaturgy, 80);
-            skills.SetPermanentSkillValue(DFCareer.Skills.Mysticism, 80);
 
             // Add spells to enemy from standard list
             foreach (byte spellID in spellList)
@@ -546,12 +869,18 @@ namespace DaggerfallWorkshop.Game.Entity
             {
                 switch (careerIndex)
                 {   // BCHG: classic uses Ettiquette for all
+
+                    // [OSORKON] I added Sorcerers, Barbarians, and Rangers to the Streetwise list. Now class
+                    // enemies are half pacified by Streetwise and the other half Etiquette. I like balance.
                     case (int)ClassCareers.Burglar:
                     case (int)ClassCareers.Rogue:
                     case (int)ClassCareers.Acrobat:
                     case (int)ClassCareers.Thief:
                     case (int)ClassCareers.Assassin:
                     case (int)ClassCareers.Nightblade:
+                    case (int)ClassCareers.Sorcerer:
+                    case (int)ClassCareers.Barbarian:
+                    case (int)ClassCareers.Ranger:
                         return DFCareer.Skills.Streetwise;
                     default:
                         return DFCareer.Skills.Etiquette;
@@ -611,17 +940,9 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public int GetWeightInClassicUnits()
         {
-            int itemWeightsClassic = (int)(Items.GetWeight() * 4);
-            int baseWeight;
-
-            if (entityType == EntityTypes.EnemyMonster)
-                baseWeight = mobileEnemy.Weight;
-            else if (mobileEnemy.Gender == MobileGender.Female)
-                baseWeight = 240;
-            else
-                baseWeight = 350;
-
-            return itemWeightsClassic + baseWeight;
+            // [OSORKON] I greatly condensed this function. In combination with changes I made elsewhere, this
+            // heavily nerfs knockback stunlocks with high damage attacks combined with high player SPD. 
+            return 100000;
         }
 
         #endregion

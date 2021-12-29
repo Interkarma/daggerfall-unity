@@ -5,6 +5,7 @@
 -- Repute: 21
 -- QuestId: 19
 -- Edited for Daggerfall Unity by Jay_H
+-- Edited for Bossfall by Osorkon, replaced Assassins with non-boss enemies
 Messages: 72
 Quest: M0B21Y19
 DisplayName: Standard Protection
@@ -210,9 +211,9 @@ Clock _qtime_ 00:00 0 flag 1 range 2 5
 Clock _S.03_ 10.00:00 20.20:00
 Clock _S.04_ 00:00 0 flag 1 range 0 5
 
-Foe _enemy_ is Assassin
+Foe _enemy_ is Archer
 Foe _F.01_ is Nightblade
-Foe _F.02_ is 4 Assassin
+Foe _F.02_ is 4 Rogue
 
 --	Quest start-up:
 	dialog link for location _daughterhouse_ person _daughter_ 

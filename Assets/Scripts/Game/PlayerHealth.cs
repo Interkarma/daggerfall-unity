@@ -1,12 +1,12 @@
-﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -48,8 +48,10 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         void ApplyPlayerFallDamage(float fallDistance)
         {
-            const float threshold = 5f;
-            const float HPPerMetre = 5f;
+            // [OSORKON] Fall damage doubled, starts at lower heights. Falling 2 blocks is 25 damage. Damage then increases
+            // by 10 per metre fallen.
+            const float threshold = 3.8f;
+            const float HPPerMetre = 10f;
 
             if (entityBehaviour)
             {

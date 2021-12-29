@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Numidium
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -1019,57 +1019,101 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         void InitializeAdjustmentDict()
         {
+            // [OSORKON] A super-powered custom character is practically essential to surviving BOSSFALL. I rebalanced
+            // all costs with that in mind. Certain restrictions are nearly impossible to succeed with, and their costs
+            // have been adjusted accordingly. I also want player to easily be able to use all Bonuses to Hit and a few
+            // Weapon Expertises. Overall, most advantages are much cheaper and most disadvantages drop the difficulty
+            // dagger far more - with the notable exceptions of Resistances/Immunities/Spell Absorption, which I think
+            // are OP. Resistances/Immunities are way more expensive and Spell Absorption (in all its forms) is too
+            // expensive to use. Also, default HP/level for custom classes has been raised to 20 rather than 8.
             difficultyDict = new Dictionary<string, int> {
                 { HardStrings.acuteHearing, 1 },
-                { HardStrings.adrenalineRush, 4 },
-                { HardStrings.athleticism, 4 },
-                { HardStrings.bonusToHit + HardStrings.animals, 6 },
+                // [OSORKON] Reduced from vanilla's 4.
+                { HardStrings.adrenalineRush, 1 },
+                // [OSORKON] Reduced from vanilla's 4.
+                { HardStrings.athleticism, 2 },
+                // [OSORKON] Reduced from vanilla's 6.
+                { HardStrings.bonusToHit + HardStrings.animals, 3 },
                 { HardStrings.bonusToHit + HardStrings.daedra, 3 },
-                { HardStrings.bonusToHit + HardStrings.humanoid, 6 },
-                { HardStrings.bonusToHit + HardStrings.undead, 6 },
+                // [OSORKON] Reduced from vanilla's 6.
+                { HardStrings.bonusToHit + HardStrings.humanoid, 3 },
+                // [OSORKON] Reduced from vanilla's 6.
+                { HardStrings.bonusToHit + HardStrings.undead, 3 },
                 { HardStrings.expertiseIn, 2 },
-                { HardStrings.immunity, 10 },
+                // [OSORKON] Increased from vanilla's 10. I think too many immunities make the game too easy.
+                { HardStrings.immunity, 28 },
                 { HardStrings.increasedMagery + HardStrings.intInSpellPoints, 2 },
-                { HardStrings.increasedMagery + HardStrings.intInSpellPoints15, 4 },
+                // [OSORKON] Slightly increased from vanilla's 4.
+                { HardStrings.increasedMagery + HardStrings.intInSpellPoints15, 5 },
                 { HardStrings.increasedMagery + HardStrings.intInSpellPoints175, 6 },
-                { HardStrings.increasedMagery + HardStrings.intInSpellPoints2, 8 },
+                // [OSORKON] Reduced from vanilla's 8.
+                { HardStrings.increasedMagery + HardStrings.intInSpellPoints2, 7},
                 { HardStrings.increasedMagery + HardStrings.intInSpellPoints3, 10 },
                 { HardStrings.rapidHealing + HardStrings.general, 4 },
                 { HardStrings.rapidHealing + HardStrings.inDarkness, 3 },
-                { HardStrings.rapidHealing + HardStrings.inLight, 2 },
-                { HardStrings.regenerateHealth + HardStrings.general, 14 },
-                { HardStrings.regenerateHealth + HardStrings.inDarkness, 10 },
-                { HardStrings.regenerateHealth + HardStrings.inLight, 6 },
-                { HardStrings.regenerateHealth + HardStrings.whileImmersed, 2 },
-                { HardStrings.resistance, 5 },
-                { HardStrings.spellAbsorption + HardStrings.general, 14 },
-                { HardStrings.spellAbsorption + HardStrings.inDarkness, 12 },
-                { HardStrings.spellAbsorption + HardStrings.inLight, 8 },
+                // [OSORKON] Reduced from vanilla's 2.
+                { HardStrings.rapidHealing + HardStrings.inLight, 1 },
+                // [OSORKON] Reduced from vanilla's 14. Doesn't do much at higher HP.
+                { HardStrings.regenerateHealth + HardStrings.general, 6 },
+                // [OSORKON] Reduced from vanilla's 10. Doesn't do much at higher HP.
+                { HardStrings.regenerateHealth + HardStrings.inDarkness, 5 },
+                // [OSORKON] Reduced from vanilla's 6. Doesn't do much at higher HP.
+                { HardStrings.regenerateHealth + HardStrings.inLight, 2 },
+                // [OSORKON] Reduced from vanilla's 2.
+                { HardStrings.regenerateHealth + HardStrings.whileImmersed, 1 },
+                // [OSORKON] Increased from vanilla's 5. I think too many resistances make the game too easy.
+                { HardStrings.resistance, 14 },
+                // [OSORKON] Until I get around to reworking Spell Absorption, these 3 advantages are non-useable.
+                { HardStrings.spellAbsorption + HardStrings.general, 400 },
+                { HardStrings.spellAbsorption + HardStrings.inDarkness, 400 },
+                { HardStrings.spellAbsorption + HardStrings.inLight, 400 },
                 { HardStrings.criticalWeakness, -14 },
-                { HardStrings.damage + HardStrings.fromHolyPlaces, -6 },
-                { HardStrings.damage + HardStrings.fromSunlight, -10 },
+                // [OSORKON] Increased from vanilla's -6.
+                { HardStrings.damage + HardStrings.fromHolyPlaces, -7 },
+                // [OSORKON] Increased from vanilla's -10. It's a crippling disadvantage.
+                { HardStrings.damage + HardStrings.fromSunlight, -28 },
                 { HardStrings.darknessPoweredMagery + HardStrings.lowerMagicAbilityDaylight, -7 },
-                { HardStrings.darknessPoweredMagery + HardStrings.unableToUseMagicInDaylight, -10 },
-                { HardStrings.forbiddenArmorType + HardStrings.chain, -2 },
-                { HardStrings.forbiddenArmorType + HardStrings.leather, -1 },
-                { HardStrings.forbiddenArmorType + HardStrings.plate, -5 },
-                { HardStrings.forbiddenMaterial + HardStrings.adamantium, -5 },
-                { HardStrings.forbiddenMaterial + HardStrings.daedric, -2 },
-                { HardStrings.forbiddenMaterial + HardStrings.dwarven, -7 },
-                { HardStrings.forbiddenMaterial + HardStrings.ebony, -5 },
-                { HardStrings.forbiddenMaterial + HardStrings.elven, -9 },
-                { HardStrings.forbiddenMaterial + HardStrings.iron, -1 },
+                // [OSORKON] Increased from vanilla's -10. It's a crippling disadvantage with certain popular mods.
+                { HardStrings.darknessPoweredMagery + HardStrings.unableToUseMagicInDaylight, -14 },
+                // [OSORKON] Increased from vanilla's -2. I assume player is using RPR:I which has good chain armor.
+                { HardStrings.forbiddenArmorType + HardStrings.chain, -14 },
+                // [OSORKON] Increased from vanilla's -1. I assume player is using RPR:I which has good leather armor.
+                { HardStrings.forbiddenArmorType + HardStrings.leather, -7 },
+                // [OSORKON] Increased from vanilla's -5. It's a crippling disadvantage.
+                { HardStrings.forbiddenArmorType + HardStrings.plate, -28 },
+                // [OSORKON] Increased from vanilla's -5. Forbidden materials in BOSSFALL can be very difficult.
+                { HardStrings.forbiddenMaterial + HardStrings.adamantium, -8 },
+                // [OSORKON] Increased from vanilla's -2. It's a crippling disadvantage.
+                { HardStrings.forbiddenMaterial + HardStrings.daedric, -28 },
+                // [OSORKON] Reduced from vanilla's -7. Dwarven isn't as common in BOSSFALL compared to vanilla.
+                { HardStrings.forbiddenMaterial + HardStrings.dwarven, -4 },
+                // [OSORKON] Increased from vanilla's -5. The Ebony Dagger is a must-have.
+                { HardStrings.forbiddenMaterial + HardStrings.ebony, -10 },
+                // [OSORKON] Reduced from vanilla's -9. Elven isn't as common in BOSSFALL compared to vanilla.
+                { HardStrings.forbiddenMaterial + HardStrings.elven, -2 },
+                // [OSORKON] Increased from vanilla's -1. Forbidden Iron would make the early game extremely difficult.
+                { HardStrings.forbiddenMaterial + HardStrings.iron, -14 },
                 { HardStrings.forbiddenMaterial + HardStrings.mithril, -6 },
-                { HardStrings.forbiddenMaterial + HardStrings.orcish, -3 },
-                { HardStrings.forbiddenMaterial + HardStrings.silver, -6 },
-                { HardStrings.forbiddenMaterial + HardStrings.steel, -10 },
-                { HardStrings.forbiddenShieldTypes, -1 },
-                { HardStrings.forbiddenWeaponry, -2 },
-                { HardStrings.inabilityToRegen, -14 },
-                { HardStrings.lightPoweredMagery + HardStrings.lowerMagicAbilityDarkness, -10 },
-                { HardStrings.lightPoweredMagery + HardStrings.unableToUseMagicInDarkness, -14 },
-                { HardStrings.lowTolerance, -5 },
-                { HardStrings.phobia, -4 }
+                // [OSORKON] Increased from vanilla's -3. Player needs high-tier materials to effectively fight bosses.
+                { HardStrings.forbiddenMaterial + HardStrings.orcish, -12 },
+                // [OSORKON] Increased from vanilla's -6. A crippling disadvantage - some enemies are immune to everything but Silver.
+                { HardStrings.forbiddenMaterial + HardStrings.silver, -28 },
+                // [OSORKON] Increased from vanilla's -10. Forbidden Steel would be nearly impossible in BOSSFALL.
+                { HardStrings.forbiddenMaterial + HardStrings.steel, -42 },
+                // [OSORKON] Increased from vanilla's -1. Shields are difficult to live without.
+                { HardStrings.forbiddenShieldTypes, -3 },
+                // [OSORKON] Increased from vanilla's -2. Very difficult in BOSSFALL as some enemies have custom weapon immunities.
+                { HardStrings.forbiddenWeaponry, -7 },
+                // [OSORKON] Increased from vanilla's -14. A crippling disadvantage.
+                { HardStrings.inabilityToRegen, -28 },
+                // [OSORKON] Increased from vanilla's -10. A very difficult disadvantage.
+                { HardStrings.lightPoweredMagery + HardStrings.lowerMagicAbilityDarkness, -14 },
+                // [OSORKON] Increased from vanilla's -14. A crippling disadvantage.
+                { HardStrings.lightPoweredMagery + HardStrings.unableToUseMagicInDarkness, -28 },
+                // [OSORKON] Increased from vanilla's -5. Quite difficult due to BOSSFALL's increased enemy spell variety.
+                { HardStrings.lowTolerance, -7 },
+                // [OSORKON] Increased from vanilla's -4. Quite difficult with BOSSFALL's increased enemy damage and armor.
+                { HardStrings.phobia, -14}
             };
         }
 

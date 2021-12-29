@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -73,6 +73,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
         Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
         Color secondaryTextColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
+        // [OSORKON] This solid red color is for the "Bossfall" title text on start-up. Looks properly dangerous.
+        Color tertiaryTextColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
 
         #endregion
 
@@ -440,15 +442,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Add title text
             TextLabel titleLabel = new TextLabel(DaggerfallUI.Instance.Font2);
-            titleLabel.Text = "Daggerfall Unity";
+            // [OSORKON] I don't want people playing BOSSFALL and mistakenly thinking it's vanilla DFU - in case
+            // there's a bug, I want people to know they're playing BOSSFALL and not to waste anyone else's time.
+            // I also want to spread awareness of the name.
+            titleLabel.Text = "Bossfall";
             titleLabel.Position = new Vector2(0, 15);
             titleLabel.TextScale = 1.4f;
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            // [OSORKON] This changes the "Bossfall" string to an intimidating shade of red.
+            titleLabel.TextColor = tertiaryTextColor;
             optionsPanel.Components.Add(titleLabel);
 
             // Add version text
             TextLabel versionLabel = new TextLabel(DaggerfallUI.DefaultFont);
-            versionLabel.Text = string.Format("{0} v{1}", char.ToUpper(VersionInfo.DaggerfallUnityStatus[0]) + VersionInfo.DaggerfallUnityStatus.Substring(1), VersionInfo.DaggerfallUnityVersion);
+            // [OSORKON] The BOSSFALL version number. "1.2.1" is the actual BOSSFALL version and the ".0134" string
+            // is the DFU version number. Makes versioning a bit clearer so people know what DFU version I'm using.
+            versionLabel.Text = "1.2.1.0134";
             versionLabel.Position = new Vector2(0, 40);
             versionLabel.TextScale = 1.0f;
             versionLabel.HorizontalAlignment = HorizontalAlignment.Center;

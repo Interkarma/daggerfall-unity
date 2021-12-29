@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Numidium
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -28,7 +28,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         const int maxHpPerLevel = 30;
         const int minHpPerLevel = 4;
-        const int defaultHpPerLevel = 8;
+
+        // [OSORKON] I recommend a minimum of 20 HP/level to survive BOSSFALL's increased difficulty, and I don't want to
+        // force player to take a Critical Weakness just to get their HP/level to where I recommend.
+        const int defaultHpPerLevel = 20;
         const int minDifficultyPoints = -12;
         const int maxDifficultyPoints = 40;
 
@@ -453,7 +456,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             } 
             else
             {
-                difficultyPoints = -(2 * (defaultHpPerLevel - createdClass.HitPointsPerLevel)); // -2 pts for each hp below default
+                // [OSORKON] Dropping HP below default now drops the difficulty dagger by 4 points rather than 2. I don't
+                // recommend doing this, as anything below 20/HP Level will make the end game much more difficult.
+                difficultyPoints = -(4 * (defaultHpPerLevel - createdClass.HitPointsPerLevel)); // -2 pts for each hp below default
             }
 
             // adjustments for special advantages/disadvantages

@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Numidium, Hazelnut
 //
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -69,7 +69,9 @@ namespace DaggerfallWorkshop.Game
         bool isBowSoundFinished = false;
         Hand lastAttackHand = Hand.None;
         float cooldownTime = 0.0f;                  // Wait for weapon cooldown
-        int swingWeaponFatigueLoss = 11;            // According to DF Chronicles and verified in classic
+
+        // [OSORKON] I tripled swingWeaponFatigueLoss. Life-and-death fights would drain energy very fast.
+        int swingWeaponFatigueLoss = 33;            // According to DF Chronicles and verified in classic
 
         bool usingRightHand = true;
         bool holdingShield = false;
@@ -579,8 +581,12 @@ namespace DaggerfallWorkshop.Game
                                 float KnockbackSpeed = (tenTimesDamage / enemyWeight) * (twoTimesDamage - (knockBackAmount / 256));
                                 KnockbackSpeed /= (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10);
 
-                                if (KnockbackSpeed < (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
-                                    KnockbackSpeed = (15 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
+                                // [OSORKON] I changed KnockbackSpeed from 15 to 12 here. This lowers the minimum speed at which enemies
+                                // fly backwards. I changed this very early on when I didn't really know what I was doing, and I am not
+                                // sure even now if this change was necessary. Regardless, knockbacks are now at a level I'm comfortable
+                                // with, so there's no need for me to change this further.
+                                if (KnockbackSpeed < (12 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
+                                    KnockbackSpeed = (12 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
                                 enemyMotor.KnockbackSpeed = KnockbackSpeed;
                                 enemyMotor.KnockbackDirection = direction;
                             }

@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Allofich
 // Contributors:
 //
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (C) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -56,10 +56,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // From FALL.EXE offset 0x1B34E0
         // Vanilla unused crime values adjusted below by adding reasonable values for any zeros and a column for loan default crime.
         // Mnemonics                                  TryB&E  Tressp  B&E Assault  Murder  TaxEv CrimCon Vagrant Smuggle Pirate HiTre PickP Theft Treason LoanD
-        protected byte[] PenaltyPerLegalRepPoint  = {  0x05,  0x05,  0x06,  0x06,   0x0A,   0x05,  0x05,  0x03,  0x08,  0x08, 0x09,  0x06,  0x00,  0x08,  0x00 };
-        protected short[] BasePenaltyAmounts      = { 0x12C,  0xC8, 0x258, 0x3E8, 0x2710,   0xC8, 0x1F4,  0x64, 0x1F4, 0x1F4, 0x4B0, 0xC8,  0xC8,  0x3E8, 0x64 };
-        protected short[] MinimumPenaltyAmounts   = {  0x32,  0x0A,  0x50,  0x0A, 0x2328,   0x0A,  0x0A,  0x02,  0x0A,  0x0A, 0xA0,  0x05,  0x05,  0x0A,  0x04 };
-        protected short[] MaximumPenaltyAmounts   = { 0x3E8, 0x320, 0x4B0, 0x5DC, 0x2EE0, 0x2EE0, 0x5DC, 0x2BC, 0x5DC, 0x5DC, 0x7D0, 0x3E8, 0x3E8, 0x5DC, 0x2BC };
+        protected short[] PenaltyPerLegalRepPoint  = {  0x05,  0x05,  0x06,  0x06, 0xE10,   0x05,  0x05,  0x03,  0x08,  0x08, 0x09,  0x06,  0x00,  0x08,  0x00 };
+        protected int[] BasePenaltyAmounts      = { 0x12C,     0xC8, 0x258, 0x3E8, 0x00,    0xC8, 0x1F4,  0x64, 0x1F4, 0x1F4, 0x4B0, 0xC8,  0xC8,  0x3E8, 0x64 };
+        protected int[] MinimumPenaltyAmounts   = {  0x32,     0x0A,  0x50,  0x0A, 0x1D4C0, 0x0A,  0x0A,  0x02,  0x0A,  0x0A, 0xA0,  0x05,  0x05,  0x0A,  0x04 };
+        protected int[] MaximumPenaltyAmounts   = { 0x3E8,   0x320, 0x4B0, 0x5DC, 0x57E40, 0x2EE0, 0x5DC, 0x2BC, 0x5DC, 0x5DC, 0x7D0, 0x3E8, 0x3E8, 0x5DC, 0x2BC };
 
         public int PunishmentType { get { return punishmentType; } }
         public int Fine { get { return fine; } }
@@ -119,20 +119,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 int crimeType = (int)playerEntity.CrimeCommitted - 1;
                 int legalRep = playerEntity.RegionData[regionIndex].LegalRep;
 
-                // Get whether punishment is normal (fine/prison) or a severe punishment (banishment/execution)
-                int threshold1 = 0;
-                int threshold2 = 0;
-
-                if (legalRep < 0)
-                {
-                    threshold1 = -legalRep;
-                    if (threshold1 > 75)
-                        threshold1 = 75;
-                    threshold2 = -legalRep / 2;
-                    if (threshold2 > 75)
-                        threshold2 = 75;
-                }
-                if (Dice100.FailedRoll(threshold2) &&  Dice100.FailedRoll(threshold1))
+                if (UnityEngine.Random.Range (0, 3 + 1) > 0)
                     punishmentType = 2; // fine/prison
                 else
                     punishmentType = 0; // banishment or execution
@@ -159,7 +146,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 for (int i = 0; i < penaltyAmount; i++)
                 {
                     if ((DFRandom.rand() & 1) != 0)
-                        fine += 40;
+                        fine += 80;
                     else
                         daysInPrison += 3;
                 }
@@ -179,7 +166,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     IGuild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Dark_Brotherhood);
                     if (guild.IsMember())
                     {
-                        if (guild.Rank >= UnityEngine.Random.Range(0, 20))
+                        if (guild.Rank >= UnityEngine.Random.Range(0, 13 + 1))
                         {
                             messageBox = new DaggerfallMessageBox(uiManager, this, false, 149);
                             messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextDB));
@@ -298,7 +285,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (playerEntity.InPrison)
                 {
                     if (Input.GetKey(exitKey)) // Speed up prison day countdown. Not in classic.
-                        prisonUpdateInterval = 0.001f;
+                        prisonUpdateInterval = 0.0001f;
                     else
                         prisonUpdateInterval = 0.3f;
 

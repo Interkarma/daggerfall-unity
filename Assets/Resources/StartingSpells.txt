@@ -38,6 +38,10 @@
                 "SpellName": "Chameleon"
             },
             {
+                "SpellID": 97,
+                "SpellName": "Balyna's Balm"
+            },
+            {
                 "SpellID": 37,
                 "SpellName": "Slowfalling"
             }

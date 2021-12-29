@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Numidium
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -376,8 +376,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Deduct spellpoint cost from entity if not free (magic item, innate ability)
-            if (!readySpellDoesNotCostSpellPoints)
+            if (IsPlayerEntity && !readySpellDoesNotCostSpellPoints)
                 entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
+            else if (!IsPlayerEntity && !readySpellDoesNotCostSpellPoints)
+                entityBehaviour.Entity.DecreaseMagicka(5);
 
             // Clear ready spell and reset casting - do not store last spell for no anim spells (prevent spamming)
             RaiseOnCastReadySpell(readySpell);
@@ -413,8 +415,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Deduct spellpoint cost from entity if not free (magic item, innate ability)
-            if (!readySpellDoesNotCostSpellPoints)
+            if (IsPlayerEntity && !readySpellDoesNotCostSpellPoints)
                 entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
+            else if (!IsPlayerEntity && !readySpellDoesNotCostSpellPoints)
+                entityBehaviour.Entity.DecreaseMagicka(5);
 
             // Play casting animation based on element type
             // Spell is released by event handler PlayerSpellCasting_OnReleaseFrame
@@ -1185,7 +1189,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             // Cannot reflect bundle more than once
             // Could increase this later to allow for limited "reflect volleys" with two reflecting entities and first one to fail save cops the spell
-            if (sourceBundle.ReflectedCount > 0)
+            if (sourceBundle.ReflectedCount > 100)
                 return false;
 
             // Entity must be reflecting

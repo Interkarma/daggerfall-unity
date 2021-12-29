@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using System;
@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Formulas;
 using UnityEngine;
 
@@ -651,7 +652,7 @@ namespace DaggerfallWorkshop.Game.Items
         // Horses, carts, arrows and maps are not counted against encumbrance.
         public float EffectiveUnitWeightInKg()
         {
-            if (ItemGroup == ItemGroups.Transportation || TemplateIndex == (int)Weapons.Arrow ||
+            if (ItemGroup == ItemGroups.Transportation ||
                 IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Map))
                 return 0f;
             return weightInKg;
@@ -1047,13 +1048,13 @@ namespace DaggerfallWorkshop.Game.Items
             switch (TemplateIndex)
             {
                 case (int)Armor.Buckler:
-                    return 1;
-                case (int)Armor.Round_Shield:
                     return 2;
-                case (int)Armor.Kite_Shield:
-                    return 3;
-                case (int)Armor.Tower_Shield:
+                case (int)Armor.Round_Shield:
                     return 4;
+                case (int)Armor.Kite_Shield:
+                    return 6;
+                case (int)Armor.Tower_Shield:
+                    return 8;
 
                 default:
                     return 0;

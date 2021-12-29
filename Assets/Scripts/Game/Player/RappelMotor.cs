@@ -1,3 +1,5 @@
+// All additions or modifications that differ from the source code found at https://github.com/Interkarma/daggerfall-unity copyright (c) 2021-2022 Osorkon
+
 using DaggerfallConnect;
 using System;
 using System.Collections.Generic;
@@ -189,7 +191,6 @@ namespace DaggerfallWorkshop.Game
             // Rappel swooping
             if (rappelStage == RappelStage.Swooping) 
             {
-                player.TallySkill(DFCareer.Skills.Climbing, 1);
                 Vector3 swoopDirection = grappleDirection;
                 // if we are rappelling under to ceiling, grappledirection is different so use adjacentSurfaceRay
                 // direction to get right direction to go under the ceiling.

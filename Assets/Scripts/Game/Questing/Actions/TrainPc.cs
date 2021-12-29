@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: kaboissonneault (kaboissonneault@gmail.com)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using System;
@@ -82,7 +82,10 @@ namespace DaggerfallWorkshop.Game.Questing
             now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
             playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
             int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skill);
-            short tallyAmount = (short)(UnityEngine.Random.Range(10, 20 + 1) * skillAdvancementMultiplier);
+
+            // [OSORKON] I replaced the random range with 8, which matches what I did to guild training services.
+            // BOSSFALL training is roughly half as effective as vanilla's.
+            short tallyAmount = (short)(8 * skillAdvancementMultiplier);
             playerEntity.TallySkill(skill, tallyAmount);
         }
 

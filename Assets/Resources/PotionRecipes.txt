@@ -862,5 +862,30 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "Dispel Magic",
+            "recipes": [
+                {
+                    "ingredients": [
+                        {
+                            "id": 59,
+                            "name": "Pure Water"
+                        },
+                        {
+                            "id": 33,
+                            "name": "Werewolf's Blood"
+                        },
+                        {
+                            "id": 73,
+                            "name": "Silver"
+                        },
+			{
+			    "id": 55,
+			    "name": "Holy Relic"
+			}
+                    ]
+                }
+            ]
         }
 ]

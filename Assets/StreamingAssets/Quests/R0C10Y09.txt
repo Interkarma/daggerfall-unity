@@ -4,6 +4,7 @@
 -- Questor: royalty
 -- Repute: 10
 -- QuestId: 9
+-- Edited for Bossfall by Osorkon, replaced Assassins with non-boss enemies
 Messages: 21
 Quest: R0C10Y09
 DisplayName: The Procurer
@@ -148,7 +149,7 @@ Place _hidingplace_ remote random
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 
-Foe _F.00_ is Assassin
+Foe _F.00_ is Burglar
 
 --	Quest start-up:
 	start timer _1stparton_ 

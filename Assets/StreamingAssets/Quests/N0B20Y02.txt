@@ -5,6 +5,7 @@
 -- Repute: 20
 -- QuestId: 2
 -- Edited for Daggerfall Unity by Jay_H
+-- Edited for Bossfall by Osorkon, replaced Assassins with non-boss enemies
 Messages: 31
 Quest: N0B20Y02
 DisplayName: Protect an Honored Mage
@@ -158,7 +159,7 @@ Clock _S.12_ 03:00
 
 Foe _F.00_ is 3 Nightblade
 Foe _mage_ is Mage
-Foe _F.02_ is 2 Assassin
+Foe _F.02_ is 2 Spellsword
 Foe _F.03_ is Knight
 Foe _F.04_ is Battle_mage
 

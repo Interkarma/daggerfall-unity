@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Allofich, Hazelnut
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -179,7 +179,37 @@ namespace DaggerfallWorkshop
 
                 if (itemGroup != ItemGroups.Furniture && itemGroup != ItemGroups.UselessItems1)
                 {
-                    if (itemGroup == ItemGroups.Books)
+                    // [OSORKON] I thought General Stores and Pawn Shops stocked too many books. This check greatly
+                    // reduces generated books in those types of stores. The amount of books generated depends on
+                    // shop quality - as quality rises, they may stock more books and have greater chances to do so.
+                    // General Stores and Pawn Shops below average store quality will never stock any books.
+                    if (itemGroup == ItemGroups.Books && buildingType != DFLocation.BuildingTypes.Bookseller
+                        && buildingType != DFLocation.BuildingTypes.Library)
+                    {
+                        if (Dice100.SuccessRoll(5) && shopQuality > 7)
+                        {
+                            items.AddItem(ItemBuilder.CreateRandomBook());
+                        }
+                        if (Dice100.SuccessRoll(15) && shopQuality > 13)
+                        {
+                            items.AddItem(ItemBuilder.CreateRandomBook());
+                        }
+                        if (Dice100.SuccessRoll(25) && shopQuality > 17)
+                        {
+                            items.AddItem(ItemBuilder.CreateRandomBook());
+                        }
+                    }
+                    // [OSORKON] I thought Booksellers didn't stock enough books. This new check greatly increases
+                    // the amount of books on Bookseller shelves.
+                    else if (itemGroup == ItemGroups.Books && buildingType == DFLocation.BuildingTypes.Bookseller)
+                    {
+                        int bookMod = (shopQuality + (UnityEngine.Random.Range(-5, 5 + 1)));
+                        for (int j = 0; j <= bookMod; ++j)
+                        {
+                            items.AddItem(ItemBuilder.CreateRandomBook());
+                        }
+                    }
+                    else if (itemGroup == ItemGroups.Books)
                     {
                         int qualityMod = (shopQuality + 3) / 5;
                         if (qualityMod >= 4)
@@ -203,9 +233,12 @@ namespace DaggerfallWorkshop
                                 {
                                     DaggerfallUnityItem item = null;
                                     if (itemGroup == ItemGroups.Weapons)
-                                        item = ItemBuilder.CreateWeapon(j + Weapons.Dagger, FormulaHelper.RandomMaterial(playerEntity.Level));
+
+                                        // [OSORKON] I replaced "playerEntity.Level" in RandomMaterial with 10. This unlevels loot.
+                                        item = ItemBuilder.CreateWeapon(j + Weapons.Dagger, FormulaHelper.RandomMaterial(10));
                                     else if (itemGroup == ItemGroups.Armor)
-                                        item = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, j + Armor.Cuirass, FormulaHelper.RandomArmorMaterial(playerEntity.Level));
+                                        // [OSORKON] I replaced "playerEntity.Level" in RandomArmorMaterial with 10. This unlevels loot.
+                                        item = ItemBuilder.CreateArmor(playerEntity.Gender, playerEntity.Race, j + Armor.Cuirass, FormulaHelper.RandomArmorMaterial(10));
                                     else if (itemGroup == ItemGroups.MensClothing)
                                     {
                                         item = ItemBuilder.CreateMensClothing(j + MensClothing.Straps, playerEntity.Race);
@@ -218,13 +251,31 @@ namespace DaggerfallWorkshop
                                     }
                                     else if (itemGroup == ItemGroups.MagicItems)
                                     {
-                                        item = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                                        // [OSORKON] I replaced "playerEntity.Level" in CreateRandomMagicItem with 10. This unlevels loot.
+                                        item = ItemBuilder.CreateRandomMagicItem(10, playerEntity.Gender, playerEntity.Race);
                                     }
                                     else
                                     {
                                         item = new DaggerfallUnityItem(itemGroup, j);
                                         if (DaggerfallUnity.Settings.PlayerTorchFromItems && item.IsOfTemplate(ItemGroups.UselessItems2, (int)UselessItems2.Oil))
                                             item.stackCount = Random.Range(5, 20 + 1);  // Shops stock 5-20 bottles
+
+                                        // [OSORKON] These checks create Holy items with custom enchantments. Only Pawn
+                                        // Shops will ever stock them. If the Pawn Shop message is "better appointed than most"
+                                        // Holy Water may be on the shelf. If the Pawn Shop message is "incense and soft music"
+                                        // Holy Water, Holy Daggers, and Holy Tomes may be on the shelf.
+                                        if (item.IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_water))
+                                        {
+                                            item = ItemBuilder.CreateHolyWater();
+                                        }
+                                        else if (item.IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_dagger))
+                                        {
+                                            item = ItemBuilder.CreateHolyDagger();
+                                        }
+                                        else if (item.IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_tome))
+                                        {
+                                            item = ItemBuilder.CreateHolyTome();
+                                        }
                                     }
                                     items.AddItem(item);
                                 }
@@ -245,12 +296,14 @@ namespace DaggerfallWorkshop
                                     // Setup specific group stats
                                     if (itemGroup == ItemGroups.Weapons)
                                     {
-                                        WeaponMaterialTypes material = FormulaHelper.RandomMaterial(playerEntity.Level);
+                                        // [OSORKON] I replaced "playerEntity.Level" in RandomMaterial with 10. This unlevels loot.
+                                        WeaponMaterialTypes material = FormulaHelper.RandomMaterial(10);
                                         ItemBuilder.ApplyWeaponMaterial(item, material);
                                     }
                                     else if (itemGroup == ItemGroups.Armor)
                                     {
-                                        ArmorMaterialTypes material = FormulaHelper.RandomArmorMaterial(playerEntity.Level);
+                                        // [OSORKON] I replaced "playerEntity.Level" in RandomArmorMaterial with 10. This unlevels loot.
+                                        ArmorMaterialTypes material = FormulaHelper.RandomArmorMaterial(10);
                                         ItemBuilder.ApplyArmorSettings(item, playerEntity.Gender, playerEntity.Race, material);
                                     }
 
@@ -318,7 +371,8 @@ namespace DaggerfallWorkshop
                     {
                         if (itemGroup == ItemGroups.MagicItems)
                         {
-                            item = ItemBuilder.CreateRandomMagicItem(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                            // [OSORKON] I replaced "playerEntity.Level" in CreateRandomMagicItem with 10. This unlevels loot.
+                            item = ItemBuilder.CreateRandomMagicItem(10, playerEntity.Gender, playerEntity.Race);
                         }
                         else if (itemGroup == ItemGroups.Books)
                         {
@@ -327,13 +381,31 @@ namespace DaggerfallWorkshop
                         else
                         {
                             if (itemGroup == ItemGroups.Weapons)
-                                item = ItemBuilder.CreateRandomWeapon(playerEntity.Level);
+                                // [OSORKON] I replaced "playerEntity.Level" in CreateRandomWeapon with 10. This unlevels loot.
+                                item = ItemBuilder.CreateRandomWeapon(10);
                             else if (itemGroup == ItemGroups.Armor)
-                                item = ItemBuilder.CreateRandomArmor(playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                                // [OSORKON] I replaced "playerEntity.Level" in CreateRandomArmor with 10. This unlevels loot.
+                                item = ItemBuilder.CreateRandomArmor(10, playerEntity.Gender, playerEntity.Race);
                             else
                             {
                                 System.Array enumArray = DaggerfallUnity.Instance.ItemHelper.GetEnumArray(itemGroup);
                                 item = new DaggerfallUnityItem(itemGroup, Random.Range(0, enumArray.Length));
+
+                                // [OSORKON] These checks create Holy items with custom enchantments. I don't know which 
+                                // building types can generate religious items, so I can't tell you where to look. I know
+                                // they can generate in some taverns, but I never checked anything beyond that.
+                                if (item.IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_water))
+                                {
+                                    item = ItemBuilder.CreateHolyWater();
+                                }
+                                else if (item.IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_dagger))
+                                {
+                                    item = ItemBuilder.CreateHolyDagger();
+                                }
+                                else if (item.IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_tome))
+                                {
+                                    item = ItemBuilder.CreateHolyTome();
+                                }
                             }
                         }
                     }

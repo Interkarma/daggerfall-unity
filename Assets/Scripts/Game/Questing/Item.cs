@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com), Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using System;
@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.FallExe;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Game.Utility;
 
 /*Example patterns:
  * 
@@ -291,7 +292,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (itemClass == (int)ItemGroups.MagicItems)
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-                result = ItemBuilder.CreateRegularMagicItem(itemSubClass, playerEntity.Level, playerEntity.Gender, playerEntity.Race);
+                result = ItemBuilder.CreateRegularMagicItem(itemSubClass, 10, playerEntity.Gender, playerEntity.Race);
             }
             // Handle books
             else if (itemClass == (int)ItemGroups.Books)
@@ -315,7 +316,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Create item
                 result = new DaggerfallUnityItem((ItemGroups)itemClass, itemSubClass);
             }
-            
+
             // Randomise clothing dye
             if (result.IsClothing)
                 result.dyeColor = ItemBuilder.RandomClothingDye();
@@ -345,7 +346,74 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
-                int playerMod = (playerEntity.Level / 2) + 1;
+                int roll = Dice100.Roll();
+                int playerMod = 0;
+
+                if (roll > 80)
+                {
+                    if (roll > 85)
+                    {
+                        if (roll > 88)
+                        {
+                            if (roll > 91)
+                            {
+                                if (roll > 94)
+                                {
+                                    if (roll > 96)
+                                    {
+                                        if (roll > 97)
+                                        {
+                                            if (roll > 98)
+                                            {
+                                                if (roll > 99)
+                                                {
+                                                    playerMod = 10;
+                                                }
+                                                else
+                                                {
+                                                    playerMod = 9;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                playerMod = 8;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            playerMod = 7;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        playerMod = 6;
+                                    }
+                                }
+                                else
+                                {
+                                    playerMod = 5;
+                                }
+                            }
+                            else
+                            {
+                                playerMod = 4;
+                            }
+                        }
+                        else
+                        {
+                            playerMod = 3;
+                        }
+                    }
+                    else
+                    {
+                        playerMod = 2;
+                    }
+                }
+                else
+                {
+                    playerMod = 1;
+                }
+
                 int factionMod = 50;
                 IGuild guild = null;
                 if (ParentQuest.FactionId != 0)
@@ -367,7 +435,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 PlayerGPS gps = GameManager.Instance.PlayerGPS;
                 int regionPriceMod = playerEntity.RegionData[gps.CurrentRegionIndex].PriceAdjustment / 2;
-                amount = UnityEngine.Random.Range(150 * playerMod, (200 * playerMod) + 1) * (regionPriceMod + 500) / 1000 * (factionMod + 50) / 100;
+                amount = UnityEngine.Random.Range(10 * playerMod, (200 * playerMod) + 1) * (regionPriceMod + 500) / 1000 * (factionMod + 50) / 100;
 
                 if (guild != null)
                     amount = guild.AlterReward(amount);

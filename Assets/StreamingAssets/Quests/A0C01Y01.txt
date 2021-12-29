@@ -5,6 +5,7 @@
 -- Repute: 01
 -- QuestId: 1
 -- Edited for Daggerfall Unity by Jay_H
+-- Edited for Bossfall by Osorkon, replaced Assassins with non-boss enemies
 Messages: 14
 Quest: A0C01Y01
 DisplayName: The Bodyguard
@@ -106,7 +107,7 @@ Place _qgiverhome_ local house2
 Clock _S.00_ 1.03:00
 --removed flags to make time limit exact
 
-Foe _villains_ is 2 Assassin
+Foe _villains_ is 2 Rogue
 
 --	Quest start-up:
 	start timer _S.00_ 

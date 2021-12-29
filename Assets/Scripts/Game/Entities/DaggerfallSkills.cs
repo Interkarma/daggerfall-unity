@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -27,8 +27,8 @@ namespace DaggerfallWorkshop.Game.Entity
         public const int PrimarySkillsCount = 3;
         public const int MajorSkillsCount = 3;
         public const int MinorSkillsCount = 6;
-        const int minDefaultValue = 3;
-        const int maxDefaultValue = 6;
+        const int minDefaultValue = 1;
+        const int maxDefaultValue = 4;
 
         // Current permanent skill values
         [SerializeField] short Medical;
@@ -487,13 +487,14 @@ namespace DaggerfallWorkshop.Game.Entity
             switch (skill)
             {
                 case DFCareer.Skills.Medical:
-                    return 12;
+                    return 16;
                 case DFCareer.Skills.Etiquette:
                 case DFCareer.Skills.Streetwise:
                     return 1;
                 case DFCareer.Skills.Jumping:
-                    return 5;
+                    return 20;
                 case DFCareer.Skills.Orcish:
+                    return 2;
                 case DFCareer.Skills.Harpy:
                 case DFCareer.Skills.Giantish:
                 case DFCareer.Skills.Dragonish:
@@ -502,45 +503,41 @@ namespace DaggerfallWorkshop.Game.Entity
                 case DFCareer.Skills.Spriggan:
                 case DFCareer.Skills.Centaurian:
                 case DFCareer.Skills.Impish:
-                    return 15;
+                    return 1;
                 case DFCareer.Skills.Lockpicking:
                     return 2;
                 case DFCareer.Skills.Mercantile:
-                    return 1;
+                    return 9;
                 case DFCareer.Skills.Pickpocket:
+                    return 2;
                 case DFCareer.Skills.Stealth:
-                    return 2;
+                    return 12;
                 case DFCareer.Skills.Swimming:
-                    return 1;
-                case DFCareer.Skills.Climbing:
                     return 2;
+                case DFCareer.Skills.Climbing:
+                    return 20;
                 case DFCareer.Skills.Backstabbing:
-                    return 1;
+                    return 3;
                 case DFCareer.Skills.Dodging:
-                    return 4;
+                    return 24;
                 case DFCareer.Skills.Running:
                     return 50;
                 case DFCareer.Skills.Destruction:
-                    return 1;
                 case DFCareer.Skills.Restoration:
-                    return 2;
                 case DFCareer.Skills.Illusion:
                 case DFCareer.Skills.Alteration:
-                    return 1;
                 case DFCareer.Skills.Thaumaturgy:
-                    return 2;
                 case DFCareer.Skills.Mysticism:
-                    return 1;
+                    return 8;
                 case DFCareer.Skills.ShortBlade:
                 case DFCareer.Skills.LongBlade:
                 case DFCareer.Skills.HandToHand:
                 case DFCareer.Skills.Axe:
                 case DFCareer.Skills.BluntWeapon:
-                    return 2;
                 case DFCareer.Skills.Archery:
-                    return 1;
+                    return 12;
                 case DFCareer.Skills.CriticalStrike:
-                    return 8;
+                    return 48;
                 default:
                     return 0;
             }

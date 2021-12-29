@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Allofich
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -486,9 +486,15 @@ namespace DaggerfallWorkshop.Game
                             {
                                 motor.IsHostile = false;
                                 DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("languagePacified").Replace("%e", enemyEntity.Name).Replace("%s", languageSkill.ToString()), 5);
-                                player.TallySkill(languageSkill, 3);    // BCHG: increased skill uses from 1 in classic on success to make raising language skills easier
+
+                                // [OSORKON] I lowered TallySkill from 3 to 1. As far as I'm aware, no other skills tally more
+                                // than 1 on success. BOSSFALL greatly increases speed at which language skills level anyway.
+                                player.TallySkill(languageSkill, 1);    // BCHG: increased skill uses from 1 in classic on success to make raising language skills easier
                             }
-                            else if (languageSkill != DFCareer.Skills.Etiquette && languageSkill != DFCareer.Skills.Streetwise)
+                            else
+                                // [OSORKON] I removed the conditions that excluded Etiquette and Streetwise from getting tallies
+                                // if enemy pacification wasn't successful. Player will notice Etiquette and Streetwise increasing
+                                // at a much faster rate. All language skills now function the same way. I like consistency.
                                 player.TallySkill(languageSkill, 1);
                         }
                     }

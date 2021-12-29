@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Allofich, Numidium, TheLacus
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -72,7 +72,8 @@ namespace DaggerfallWorkshop.Game
         float clickDelay = 0;
         float clickDelayStartTime = 0;
 
-        const float RayDistance = 3072 * MeshReader.GlobalScale;    // Classic's farthest view distance (outside, clear weather).
+        // [OSORKON] I doubled the RayDistance. I wanted to identify buildings from farther distances.
+        const float RayDistance = 6144 * MeshReader.GlobalScale;    // Classic's farthest view distance (outside, clear weather).
                                                                     // This is needed for using "Info" mode and clicking on buildings, which can
                                                                     // be done in classic for as far as the view distance.
 
@@ -1001,7 +1002,7 @@ namespace DaggerfallWorkshop.Game
             if (openEffect == null)
                 return false;
 
-            return openEffect.TriggerExteriorOpenEffect(buildingLockValue); 
+            return openEffect.TriggerExteriorOpenEffect(buildingLockValue);
         }
 
         /// <summary>
@@ -1545,9 +1546,14 @@ namespace DaggerfallWorkshop.Game
 
             if (Dice100.SuccessRoll(chance))
             {
-                if (Dice100.FailedRoll(33))
+                // [OSORKON] I moved the FailedRoll from 33 to 90. If player succeeds Pickpocket skill check,
+                // they will find gold 10% of the time. I greatly increased the player's potential haul, so
+                // for balance I thought I should make finding gold much rarer.
+                if (Dice100.FailedRoll(90))
                 {
-                    int pinchedGoldPieces = Random.Range(0, 6) + 1;
+                    // [OSORKON] Player can pilfer up to 100 gold pieces instead of 5. I made the check use two
+                    // Random.Range rolls to reduce the likelihood of extremely high or low rolls.
+                    int pinchedGoldPieces = Random.Range(0, 50) + Random.Range(0, 51) + 1;
                     player.GoldPieces += pinchedGoldPieces;
                     string gotGold;
                     if (pinchedGoldPieces == 1)
@@ -1567,6 +1573,11 @@ namespace DaggerfallWorkshop.Game
                 {
                     string noGoldFound = DaggerfallUnity.Instance.TextProvider.GetRandomText(foundNothingValuableTextId);
                     DaggerfallUI.MessageBox(noGoldFound, true);
+
+                    // [OSORKON] Because finding gold is much rarer, I thought I should tally CrimeGuildRequirements even if
+                    // player passes the Pickpocketing skill check but finds no gold. It would be a tedious grind to the Thieves
+                    // Guild initiation letter otherwise. It's now significantly easier than vanilla to reach the required tally.
+                    player.TallyCrimeGuildRequirements(true, 1);
                 }
             }
             else

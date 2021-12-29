@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (C) 2021-2022 Osorkon
 //
 
 using System;
@@ -184,23 +184,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             -30,     //OrcShaman
             -30,     //Gargoyle
             -300,    //Wraith
-            -10,     //OrcWarlord
+
+            // [OSORKON] I greatly increased OrcWarlord soul gem Enchantment Point value.
+            -15000,  //OrcWarlord
             -500,    //FrostDaedra
             -500,    //FireDaedra
             -100,    //Daedroth
-            -700,    //Vampire
+
+            // [OSORKON] I greatly increased Vampire soul gem Enchantment Point value.
+            -7500,   //Vampire
             -1500,   //DaedraSeducer
-            -1000,   //VampireAncient
-            -8000,   //DaedraLord
-            -1000,   //Lich
-            -2500,   //AncientLich
+
+            // [OSORKON] I greatly increased VampireAncient/DaedraLord/Lich/AncientLich soul gem Enchantment Point value.
+            -15000,  //VampireAncient
+            -15000,  //DaedraLord
+            -7500,   //Lich
+            -15000,  //AncientLich
             -0,      //Dragonling (no soul, general spawn)
             -300,    //FireAtronach
             -300,    //IronAtronach
             -300,    //FleshAtronach
             -300,    //IceAtronach
             -0,      //Horse_Invalid
-            -5000,   //Dragonling_Alternate (has soul, quest spawn only)
+
+            // [OSORKON] I greatly increased Dragonling_Alternate soul gem Enchantment Point value.
+            -15000,  //Dragonling_Alternate (has soul, quest spawn only)
             -100,    //Dreugh
             -100,    //Lamia
         };

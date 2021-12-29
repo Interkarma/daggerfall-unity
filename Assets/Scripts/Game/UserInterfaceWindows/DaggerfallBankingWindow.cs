@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com)
 // Contributors:    Hazelnut
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -399,12 +399,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void LoanBorrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-            if (DaggerfallBankManager.HasDefaulted(regionIndex))
+            if (DaggerfallBankManager.HasDefaultedAnywhere())
             {
                 GeneratePopup(TransactionResult.ALREADY_DEFAULTED);
                 ToggleTransactionInput(TransactionType.None);
             }
-            else if (DaggerfallBankManager.HasLoan(regionIndex))
+            else if (DaggerfallBankManager.HasLoanAnywhere())
             {
                 GeneratePopup(TransactionResult.ALREADY_HAVE_LOAN);
                 ToggleTransactionInput(TransactionType.None);

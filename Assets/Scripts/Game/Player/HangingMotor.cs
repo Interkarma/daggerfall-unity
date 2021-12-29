@@ -1,3 +1,5 @@
+// All additions or modifications that differ from the source code found at https://github.com/Interkarma/daggerfall-unity copyright (c) 2021-2022 Osorkon
+
 using System;
 using UnityEngine;
 
@@ -40,9 +42,9 @@ namespace DaggerfallWorkshop.Game
         // maximum chances we have to regain our grip
         private const int chancesToRegainGrip = 3;
         // minimum percent chance to regain hold per skill check if losing grip
-        private const int regainHoldMinChance = 100;
+        private const int regainHoldMinChance = 0;
         // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
-        private const int continueHangMinChance = 100;
+        private const int continueHangMinChance = 0;
 
         public bool IsHanging { get; private set; }
         public bool IsWithinHangingDistance { get; private set; }

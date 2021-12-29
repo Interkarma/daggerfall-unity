@@ -1,3 +1,5 @@
+// All additions or modifications that differ from the source code found at https://github.com/Interkarma/daggerfall-unity copyright (c) 2021-2022 Osorkon
+
 using UnityEngine;
 
 namespace DaggerfallWorkshop.Game
@@ -11,7 +13,7 @@ namespace DaggerfallWorkshop.Game
         public float jumpSpeed = 4.5f;
         public float gravity = 20.0f;
         public float crouchingJumpDelta = 0.8f;
-        public float fallingDamageThreshold = 5.0f;
+        public float fallingDamageThreshold = 3.8f;
         public bool airControl = false;
 
         PlayerMotor playerMotor;

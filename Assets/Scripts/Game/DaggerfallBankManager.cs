@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com)
 // Contributors:    Hazelnut
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -207,12 +207,34 @@ namespace DaggerfallWorkshop.Game.Banking
             return BankAccounts[regionIndex].loanTotal > 0;
         }
 
+        public static bool HasLoanAnywhere()
+        {
+            for (int i = 0; i < BankAccounts.Length; i++)
+            {
+                if (BankAccounts[i].loanTotal > 0)
+                    return true;
+            }
+
+            return false;
+        }
+
         public static bool HasDefaulted(int regionIndex)
         {
             if (!ValidateRegion(regionIndex))
                 return false;
 
             return BankAccounts[regionIndex].hasDefaulted;
+        }
+
+        public static bool HasDefaultedAnywhere()
+        {
+            for (int i = 0; i < BankAccounts.Length; i++)
+            {
+                if (BankAccounts[i].hasDefaulted)
+                    return true;
+            }
+
+            return false;
         }
 
         public static void SetDefaulted(int regionIndex, bool defaulted)

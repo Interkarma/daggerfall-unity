@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Lypyl (lypyl@dfworkshop.net)
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -501,37 +501,14 @@ namespace DaggerfallWorkshop.Utility
             // Seed random generator
             UnityEngine.Random.InitState(seed);
 
-            bool alternateRandomEnemySelection = DaggerfallUnity.Settings.AlternateRandomEnemySelection;
-
-            if (!alternateRandomEnemySelection) // Classic enemy selection
+            // [OSORKON] BOSSFALL ignores "Alternate Enemy Selection" and picks random enemies regardless
+            // of setting used. I condensed this function to remove unnecessary checks and array generation. I also
+            // removed other vanilla functions from this script that were no longer used.
+            for (int i = 0; i < editorObjects.Length; i++)
             {
-                // Set up enemy lists used by classic
-                DFRandom.srand(GameManager.Instance.PlayerGPS.CurrentLocation.Dungeon.RecordElement.Header.LocationId);
-                MobileTypes[] DungeonWaterEnemiesToPlace = new MobileTypes[256];
-                MobileTypes[] DungeonNonWaterEnemiesToPlace = new MobileTypes[256];
-
-                for (int i = 0; i < 256; ++i)
-                    DungeonNonWaterEnemiesToPlace[i] = ChooseRandomEnemyType(RandomEncounters.EncounterTables[(int)dungeonType]);
-                for (int i = 0; i < 256; ++i)
-                    DungeonWaterEnemiesToPlace[i] = ChooseRandomEnemyType(RandomEncounters.EncounterTables[19]);
-
-                // Iterate editor flats for enemies
-                for (int i = 0; i < editorObjects.Length; i++)
-                {
-                    // Add random enemy objects
-                    if (editorObjects[i].Resources.FlatResource.TextureRecord == randomMonsterFlatIndex)
-                        AddRandomRDBEnemyClassic(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform, ref blockData, startMarkers, serialize, DungeonWaterEnemiesToPlace, DungeonNonWaterEnemiesToPlace);
-                }
-            }
-            else // Alternate enemy selection (more randomized)
-            {
-                // Iterate editor flats for enemies
-                for (int i = 0; i < editorObjects.Length; i++)
-                {
-                    // Add random enemy objects
-                    if (editorObjects[i].Resources.FlatResource.TextureRecord == randomMonsterFlatIndex)
-                        AddRandomRDBEnemy(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform, ref blockData, startMarkers, serialize);
-                }
+                // Add random enemy objects
+                if (editorObjects[i].Resources.FlatResource.TextureRecord == randomMonsterFlatIndex)
+                    AddRandomRDBEnemy(editorObjects[i], dungeonType, monsterPower, monsterVariance, randomEnemiesNode.transform, ref blockData, startMarkers, serialize);
             }
         }
 
@@ -1349,21 +1326,13 @@ namespace DaggerfallWorkshop.Utility
                     table = RandomEncounters.EncounterTables[19]; // underwater encounter table
                 }
 
-                // Get base monster index into table
-                int baseMonsterIndex = (int)(table.Enemies.Length * monsterPower);
-
-                // Set min index
-                int minMonsterIndex = baseMonsterIndex - monsterVariance;
-                if (minMonsterIndex < 0)
-                    minMonsterIndex = 0;
-
-                // Set max index
-                int maxMonsterIndex = baseMonsterIndex + monsterVariance;
-                if (maxMonsterIndex >= table.Enemies.Length)
-                    maxMonsterIndex = table.Enemies.Length - 1;
-
-                // Get random monster from table
-                MobileTypes type = table.Enemies[UnityEngine.Random.Range(minMonsterIndex, maxMonsterIndex + 1)];
+                // [OSORKON] This function is responsible for BOSSFALL's increased enemy variety. I removed all variations
+                // based on player level, monsterPower, and monsterVariance. Now it simply returns a random enemy from
+                // the environment's encounter table found in RandomEncounters. I want BOSSFALL to work even if the
+                // player is using another mod's encounter tables, so the maximum range is the length of the table rather
+                // than BOSSFALL's encounter table length of 100. The range is not inclusive but the Length is always 1
+                // more than the array's maximum index value. Thus, the range covers the entire table.
+                MobileTypes type = table.Enemies[UnityEngine.Random.Range(0, (int)table.Enemies.Length)];
 
                 // Create unique LoadID for save sytem
                 ulong loadID = 0;
@@ -1379,101 +1348,6 @@ namespace DaggerfallWorkshop.Utility
             {
                 DaggerfallUnity.LogMessage(string.Format("RDBLayout: Dungeon type {0} is out of range or unknown.", dungeonType), true);
             }
-        }
-
-        private static void AddRandomRDBEnemyClassic(
-            DFBlock.RdbObject obj,
-            DFRegion.DungeonTypes dungeonType,
-            float monsterPower,
-            int monsterVariance,
-            Transform parent,
-            ref DFBlock blockData,
-            GameObject[] startMarkers,
-            bool serialize,
-            MobileTypes[] DungeonWaterEnemiesToPlace,
-            MobileTypes[] DungeonNonWaterEnemiesToPlace)
-        {
-            // Get dungeon type index
-            int dungeonIndex = (int)dungeonType;
-            if (dungeonIndex < RandomEncounters.EncounterTables.Length)
-            {
-                // Get water level from start marker if it exists
-                DaggerfallBillboard dfBillboard;
-                if (startMarkers.Length > 0)
-                    dfBillboard = startMarkers[0].GetComponent<DaggerfallBillboard>();
-                else
-                    dfBillboard = null;
-
-                int waterLevel = 10000;
-                if (dfBillboard != null)
-                    waterLevel = dfBillboard.Summary.WaterLevel;
-
-                // Get encounter table
-                // Use water encounter table if the marker is under the water level
-                // These are classic values, so a greater y value means elevation is lower
-                bool usingWaterEnemies = false;
-                if (waterLevel < obj.YPos)
-                    usingWaterEnemies = true;
-
-                // Create unique LoadID for save sytem
-                ulong loadID = 0;
-                if (serialize)
-                    loadID = (ulong)(blockData.Position + obj.Position);
-
-                int slot = obj.Resources.FlatResource.Flags;
-                if (slot == 0)
-                    slot = UnityEngine.Random.Range(1, 7);
-
-                MobileTypes type;
-                if (usingWaterEnemies)
-                    type = DungeonWaterEnemiesToPlace[slot];
-                else
-                    type = DungeonNonWaterEnemiesToPlace[slot];
-
-                byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
-
-                // Add enemy
-                AddEnemy(obj, type, parent, loadID, classicSpawnDistanceType, false, waterLevel);
-            }
-            else
-            {
-                DaggerfallUnity.LogMessage(string.Format("RDBLayout: Dungeon type {0} is out of range or unknown.", dungeonType), true);
-            }
-        }
-
-        // Recreation of how classic chooses an enemy type from the random encounter tables
-        private static MobileTypes ChooseRandomEnemyType(RandomEncounterTable table)
-        {
-            int playerLevel = GameManager.Instance.PlayerEntity.Level;
-            int minTableIndex = 0;
-            int maxTableIndex = table.Enemies.Length;
-
-            int random = DFRandom.random_range_inclusive(1, 100);
-            if (random > 95 && playerLevel <= 5)
-            {
-                maxTableIndex = playerLevel + 2;
-            }
-            else if (random > 80)
-            {
-                maxTableIndex = playerLevel + 1;
-            }
-            else
-            {
-                minTableIndex = playerLevel - 3;
-                maxTableIndex = playerLevel + 3;
-            }
-            if (minTableIndex < 0)
-            {
-                minTableIndex = 0;
-                maxTableIndex = 5;
-            }
-            else if (maxTableIndex > 19)
-            {
-                minTableIndex = 14;
-                maxTableIndex = 19;
-            }
-
-            return table.Enemies[DFRandom.random_range_inclusive(minTableIndex, maxTableIndex)];
         }
 
         private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, GameObject[] startMarkers, bool serialize)

@@ -13,6 +13,7 @@
 -- minReq:      minimum requirement to be offered the quest: (val < 10) = guild rank / player level, or (val >= 10) = min reputation
 -- flag:        0 = nothing, X = adult/nudity, 1 = one time quest
 -- notes:
+-- Edited for Bossfall by Osorkon (added BOSSFALL tutorial quest)
 -   "reward bug" is a script error where reward is given before quest completed
 -   "questor clear bug" is a script error where clicking on questor will cause quest to end immediately after target complete
 -   "no hot-placement" is a DFU bug where resources cannot be placed to an active interior/dungeon. Need to exit and re-enter interior
@@ -255,3 +256,5 @@ R0C60Y24, Nobility, M, 6, 0, Passed
 -X0C00Y00, Oblivion, 0, 0,
 -Y0C00Y00, Oblivion, 0, 0,
 -Z0C00Y00, Oblivion, 0, 0,
+
+BOSSFALL, InitAtGameStart, N, 0, 0, Bossfall tutorial

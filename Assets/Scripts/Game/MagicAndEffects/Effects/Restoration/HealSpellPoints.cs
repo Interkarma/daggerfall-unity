@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using DaggerfallWorkshop.Game.Entity;
@@ -35,7 +35,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void SetPotionProperties()
         {
             // Magnitude 5-5 + 4-4 per 1 levels
-            EffectSettings restorePowerSettings = SetEffectMagnitude(DefaultEffectSettings(), 5, 5, 4, 4, 1);
+
+            // [OSORKON] I set Restore Power potions to heal 50 Magicka per potion and no longer scale
+            // with player level. Vanilla potions were practically useless early game.
+            EffectSettings restorePowerSettings = SetEffectMagnitude(DefaultEffectSettings(), 50, 50, 0, 0, 1);
             PotionRecipe restorePower = new PotionRecipe(
                 "restorePower",
                 75,

@@ -4,6 +4,7 @@
 -- Questor: peasant
 -- Repute: 0
 -- QuestId: 17
+-- Edited for Bossfall by Osorkon, replaced Assassins with non-boss enemies
 Messages: 51
 Quest: A0C00Y17
 DisplayName: The Escort
@@ -169,7 +170,7 @@ Clock _extratime_ 03:00 0 flag 1 range 0 1
 Foe _mages_ is 2 Mage
 Foe _F.01_ is 2 Thief
 Foe _guards_ is 2 Warrior
-Foe _F.03_ is 2 Assassin
+Foe _F.03_ is 2 Nightblade
 
 --	Quest start-up:
 	start timer _traveltime_ 

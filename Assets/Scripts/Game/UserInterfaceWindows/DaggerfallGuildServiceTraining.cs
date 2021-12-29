@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using System.Collections.Generic;
@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
             playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
             int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
-            short tallyAmount = (short)(UnityEngine.Random.Range(10, 20 + 1) * skillAdvancementMultiplier);
+            short tallyAmount = (short)(8 * skillAdvancementMultiplier);
             playerEntity.TallySkill(skillToTrain, tallyAmount);
             DaggerfallUI.MessageBox(TrainSkillId);
         }

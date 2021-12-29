@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Numidium
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (C) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -304,10 +304,10 @@ namespace DaggerfallWorkshop.Game.Entity
             if (GameManager.ClassicUpdate && playerMotor)
             {
                 // Tally running skill. Running tallies so quickly in classic that it might be a bug or oversight.
-                // Here we use a rate of 1/4 that observed for classic.
+                // Here we use a rate of 1/4 that observed for classic. [OSORKON] I greatly increased this in BOSSFALL.
                 if (playerMotor.IsRunning && !playerMotor.IsRiding)
                 {
-                    if (runningTallyCounter == 3)
+                    if (runningTallyCounter == 20)
                     {
                         TallySkill(DFCareer.Skills.Running, 1);
                         runningTallyCounter = 0;
@@ -2274,7 +2274,7 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         // Values after index 0 are from FALL.EXE. It does not seem to have a valid value for the last crime "Treason," so just using half of "High Treason" value here.
-        readonly short[] reputationLossPerCrime = { 0x00, 0x0A, 0x05, 0x0A, 0x08, 0x14, 0x0A, 0x02, 0x01, 0x02, 0x02, 0x4B, 0x02, 0x08, 0x24, 0x0A };
+        readonly short[] reputationLossPerCrime = { 0x00, 0x05, 0x03, 0x0A, 0x0C, 0x32, 0x1E, 0x02, 0x01, 0x0C, 0x14, 0x64, 0x01, 0x06, 0x32, 0x1E };
 
         public void LowerRepForCrime()
         {

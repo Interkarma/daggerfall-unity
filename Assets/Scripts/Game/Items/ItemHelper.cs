@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors: Numidium
 //
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using System;
@@ -1274,7 +1274,7 @@ namespace DaggerfallWorkshop.Game.Items
             else
             {
                 // Custom classes only get an iron longsword
-                items.AddItem(ItemBuilder.CreateWeapon(Weapons.Longsword, WeaponMaterialTypes.Iron));
+                items.AddItem(ItemBuilder.CreateWeapon(Weapons.Longsword, WeaponMaterialTypes.Steel));
             }
 
             // Add some starting gold
@@ -1292,14 +1292,12 @@ namespace DaggerfallWorkshop.Game.Items
 
         public void AssignEnemyStartingEquipment(PlayerEntity player, EnemyEntity enemyEntity, int variant)
         {
-            int itemLevel = player.Level;
+            int itemLevel = enemyEntity.Level;
             Genders playerGender = player.Gender;
             Races race = player.Race;
             int chance = 0;
 
             // City watch never have items above iron or steel
-            if (enemyEntity.EntityType == EntityTypes.EnemyClass && enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
-                itemLevel = 1;
 
             if (variant == 0)
             {
@@ -1383,6 +1381,13 @@ namespace DaggerfallWorkshop.Game.Items
                 enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
                 enemyEntity.Items.AddItem(armor);
             }
+            // [OSORKON] I added gauntlets to enemy equipment chances, never made sense to me why they were missing.
+            if (Dice100.SuccessRoll(chance))
+            {
+                DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Gauntlets, FormulaHelper.RandomArmorMaterial(itemLevel));
+                enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
+                enemyEntity.Items.AddItem(armor);
+            }
 
             // Chance for poisoned weapon
             if (player.Level > 1)
@@ -1393,12 +1398,12 @@ namespace DaggerfallWorkshop.Game.Items
                 {
                     int chanceToPoison = 5;
                     if (enemyEntity.MobileEnemy.ID == (int)MobileTypes.Assassin)
-                        chanceToPoison = 60;
+                        chanceToPoison = 100;
 
                     if (Dice100.SuccessRoll(chanceToPoison))
                     {
                         // Apply poison
-                        weapon.poisonType = (Items.Poisons)UnityEngine.Random.Range(128, 135 + 1);
+                        weapon.poisonType = (Items.Poisons)UnityEngine.Random.Range(128, 139 + 1);
                     }
                 }
             }
