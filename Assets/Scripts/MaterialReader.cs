@@ -28,54 +28,54 @@ namespace DaggerfallWorkshop
 {
     #region Uniforms
 
-    internal static class KeyWords
+    public static class KeyWords
     {       
-        internal const string CutOut                                = "_ALPHATEST_ON";
-        internal const string Fade                                  = "_ALPHABLEND_ON";
-        internal const string Transparent                           = "_ALPHAPREMULTIPLY_ON";
-        internal const string NormalMap                             = "_NORMALMAP";
-        internal const string HeightMap                             = "_PARALLAXMAP";
-        internal const string Emission                              = "_EMISSION";
-        internal const string MetallicGlossMap                      = "_METALLICGLOSSMAP";
+        public const string CutOut                                = "_ALPHATEST_ON";
+        public const string Fade                                  = "_ALPHABLEND_ON";
+        public const string Transparent                           = "_ALPHAPREMULTIPLY_ON";
+        public const string NormalMap                             = "_NORMALMAP";
+        public const string HeightMap                             = "_PARALLAXMAP";
+        public const string Emission                              = "_EMISSION";
+        public const string MetallicGlossMap                      = "_METALLICGLOSSMAP";
     }
 
-    internal static class Uniforms
+    public static class Uniforms
     {
-        internal static readonly int MainTex                        = Shader.PropertyToID("_MainTex");
-        internal static readonly int Glossiness                     = Shader.PropertyToID("_Glossiness");
-        internal static readonly int SmoothnessTextureChannel       = Shader.PropertyToID("_SmoothnessTextureChannel");           
-        internal static readonly int Metallic                       = Shader.PropertyToID("_Metallic");    
-        internal static readonly int MetallicGlossMap               = Shader.PropertyToID("_MetallicGlossMap");
-        internal static readonly int Smoothness                     = Shader.PropertyToID("_Smoothness");
-        internal static readonly int BumpMap                        = Shader.PropertyToID("_BumpMap");
-        internal static readonly int HeightMap                      = Shader.PropertyToID("_ParallaxMap");
-        internal static readonly int EmissionColor                  = Shader.PropertyToID("_EmissionColor");
-        internal static readonly int EmissionMap                    = Shader.PropertyToID("_EmissionMap");
-        internal static readonly int Mode                           = Shader.PropertyToID("_Mode");
-        internal static readonly int SrcBlend                       = Shader.PropertyToID("_SrcBlend");
-        internal static readonly int DstBlend                       = Shader.PropertyToID("_DstBlend");
-        internal static readonly int ZWrite                         = Shader.PropertyToID("_ZWrite");
+        public static readonly int MainTex                        = Shader.PropertyToID("_MainTex");
+        public static readonly int Glossiness                     = Shader.PropertyToID("_Glossiness");
+        public static readonly int SmoothnessTextureChannel       = Shader.PropertyToID("_SmoothnessTextureChannel");           
+        public static readonly int Metallic                       = Shader.PropertyToID("_Metallic");    
+        public static readonly int MetallicGlossMap               = Shader.PropertyToID("_MetallicGlossMap");
+        public static readonly int Smoothness                     = Shader.PropertyToID("_Smoothness");
+        public static readonly int BumpMap                        = Shader.PropertyToID("_BumpMap");
+        public static readonly int HeightMap                      = Shader.PropertyToID("_ParallaxMap");
+        public static readonly int EmissionColor                  = Shader.PropertyToID("_EmissionColor");
+        public static readonly int EmissionMap                    = Shader.PropertyToID("_EmissionMap");
+        public static readonly int Mode                           = Shader.PropertyToID("_Mode");
+        public static readonly int SrcBlend                       = Shader.PropertyToID("_SrcBlend");
+        public static readonly int DstBlend                       = Shader.PropertyToID("_DstBlend");
+        public static readonly int ZWrite                         = Shader.PropertyToID("_ZWrite");
 
-        internal static readonly int[] Textures = new int[]
+        public static readonly int[] Textures = new int[]
         {
             MainTex, EmissionMap, BumpMap, HeightMap, MetallicGlossMap
         };
     }
 
-    internal static class TileUniforms
+    public static class TileUniforms
     {
-        internal static readonly int TileAtlasTex                   = Shader.PropertyToID("_TileAtlasTex");
-        internal static readonly int TilemapTex                     = Shader.PropertyToID("_TilemapTex");
-        internal static readonly int TilemapDim                     = Shader.PropertyToID("_TilemapDim");
+        public static readonly int TileAtlasTex                   = Shader.PropertyToID("_TileAtlasTex");
+        public static readonly int TilemapTex                     = Shader.PropertyToID("_TilemapTex");
+        public static readonly int TilemapDim                     = Shader.PropertyToID("_TilemapDim");
     }
 
-    internal static class TileTexArrUniforms
+    public static class TileTexArrUniforms
     {
-        internal static readonly int TileTexArr                     = Shader.PropertyToID("_TileTexArr");
-        internal static readonly int TileNormalMapTexArr            = Shader.PropertyToID("_TileNormalMapTexArr");
-        internal static readonly int TileParallaxMapTexArr          = Shader.PropertyToID("_TileParallaxMapTexArr");
-        internal static readonly int TileMetallicGlossMapTexArr     = Shader.PropertyToID("_TileMetallicGlossMapTexArr");
-        internal static readonly int TilemapTex                     = Shader.PropertyToID("_TilemapTex");
+        public static readonly int TileTexArr                     = Shader.PropertyToID("_TileTexArr");
+        public static readonly int TileNormalMapTexArr            = Shader.PropertyToID("_TileNormalMapTexArr");
+        public static readonly int TileParallaxMapTexArr          = Shader.PropertyToID("_TileParallaxMapTexArr");
+        public static readonly int TileMetallicGlossMapTexArr     = Shader.PropertyToID("_TileMetallicGlossMapTexArr");
+        public static readonly int TilemapTex                     = Shader.PropertyToID("_TilemapTex");
     }
 
     #endregion
@@ -420,7 +420,7 @@ namespace DaggerfallWorkshop
                 }
 
                 // Get texture
-                results = textureReader.GetTexture2D(settings, AlphaTextureFormat, TextureImport.LooseFiles);
+                results = textureReader.GetTexture2D(settings, AlphaTextureFormat, TextureImport.AllLocations);
 
                 // Create material
                 if (isBillboard)
@@ -463,13 +463,32 @@ namespace DaggerfallWorkshop
 
             }
 
+            Vector2[] recordSizes;
+            Vector2[] recordScales;
+            Vector2[] recordOffsets;
+            int singleFrameCount;
+
             // Setup cached material
-            DFSize size = results.textureFile.GetSize(record);
-            DFSize scale = results.textureFile.GetScale(record);
-            DFPosition offset = results.textureFile.GetOffset(record);
-            Vector2[] recordSizes = new Vector2[1] { new Vector2(size.Width, size.Height) };
-            Vector2[] recordScales = new Vector2[1] { new Vector2(scale.Width, scale.Height) };
-            Vector2[] recordOffsets = new Vector2[1] { new Vector2(offset.X, offset.Y) };
+            if (results.textureFile != null)
+            {
+                DFSize size = results.textureFile.GetSize(record);
+                DFSize scale = results.textureFile.GetScale(record);
+                DFPosition offset = results.textureFile.GetOffset(record);
+                recordSizes = new Vector2[1] { new Vector2(size.Width, size.Height) };
+                recordScales = new Vector2[1] { new Vector2(scale.Width, scale.Height) };
+                recordOffsets = new Vector2[1] { new Vector2(offset.X, offset.Y) };
+                singleFrameCount = results.textureFile.GetFrameCount(record);
+            }
+            else
+            {
+                // If we have no texture file, this means this is a non-classic texture
+                // Just use the albedo texture directly
+                recordSizes = new Vector2[1] { new Vector2(results.albedoMap.width, results.albedoMap.height) };
+                recordScales = new Vector2[1] { new Vector2(1.0f, 1.0f) };
+                recordOffsets = new Vector2[1] { new Vector2(0.0f, 0.0f) };
+                singleFrameCount = 1;
+            }
+
             CachedMaterial newcm = new CachedMaterial()
             {
                 key = key,
@@ -484,7 +503,7 @@ namespace DaggerfallWorkshop
                 recordSizes = recordSizes,
                 recordScales = recordScales,
                 recordOffsets = recordOffsets,
-                singleFrameCount = results.textureFile.GetFrameCount(record),
+                singleFrameCount = singleFrameCount,
                 framesPerSecond = archive == FireWallsArchive ? 5 : 0, // Slow down fire walls
             };
             materialDict.Add(key, newcm);

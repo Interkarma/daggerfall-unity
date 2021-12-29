@@ -83,6 +83,7 @@ namespace DaggerfallWorkshop.Game
         UserInterfaceManager uiManager = new UserInterfaceManager();
         UserInterfaceRenderTarget customRenderTarget = null;
         Vector2? customMousePosition = null;
+        Rect? customScreenRect = null;
 
         SpellIconCollection spellIconCollection;
 
@@ -163,6 +164,16 @@ namespace DaggerfallWorkshop.Game
         {
             get { return customMousePosition; }
             set { customMousePosition = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets custom screen rect.
+        /// This will be used instead of actual screen area when determining controls root size.
+        /// </summary>
+        public Rect? CustomScreenRect
+        {
+            get { return customScreenRect; }
+            set { customScreenRect = value; }
         }
 
         public AudioSource AudioSource
@@ -678,8 +689,10 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case DaggerfallUIMessages.dfuiExitGame:
 #if UNITY_EDITOR
+                    DaggerfallUnity.Settings.SaveSettings();
                     UnityEditor.EditorApplication.isPlaying = false;
 #else
+                    DaggerfallUnity.Settings.SaveSettings();
                     Application.Quit();
 #endif
                     break;

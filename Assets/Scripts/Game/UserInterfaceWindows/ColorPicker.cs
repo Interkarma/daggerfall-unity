@@ -19,8 +19,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region Fields & Properties
 
         const int numberOfColors = 360;
-        const int colorPreviewWidth = 400;
-        const int colorPreviewHeight = 200;
+        const int panelWidth = 280;
+        const int panelheight = 120;
+        const int colorPreviewWidth = (int)((float)panelWidth / 3 * 2);
+        const int colorPreviewHeight = (int)((float)panelheight / 4 * 3);
+        const float textScale = 0.6f;
 
         Panel pickerPanel;
 
@@ -74,48 +77,58 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.BackgroundColor = Color.clear;
 
             pickerPanel = new Panel();
-            pickerPanel.Size = new Vector2(600, 250);
+            pickerPanel.Size = new Vector2(panelWidth, panelheight);
             pickerPanel.HorizontalAlignment = HorizontalAlignment.Center;
             pickerPanel.VerticalAlignment = VerticalAlignment.Middle;
             pickerPanel.BackgroundColor = new Color(0, 0, 0, 0.7f);
             pickerPanel.Outline.Enabled = true;
-            ParentPanel.Components.Add(pickerPanel);
+            NativePanel.Components.Add(pickerPanel);
 
             var hexSymbol = new TextLabel();
             hexSymbol.Text = "#";
-            hexSymbol.Position = new Vector2(20, 140);
+            hexSymbol.Position = new Vector2(5, 30);
             pickerPanel.Components.Add(hexSymbol);
 
             hexColor = new TextBox();
-            hexColor.Position = new Vector2(20 + hexSymbol.Size.x, 140);
+            hexColor.Position = new Vector2(5 + hexSymbol.Size.x, 30);
             hexColor.MaxCharacters = 8;
+            hexColor.Scale = new Vector2(10, 10);
             hexColor.OnType += HexColor_OnType;
             pickerPanel.Components.Add(hexColor);
 
             rgbaColor = new TextLabel();
-            rgbaColor.Position = new Vector2(20, 150);
+            rgbaColor.TextScale = textScale;
+            rgbaColor.Position = new Vector2(5, 55);
             pickerPanel.Components.Add(rgbaColor);
 
             hsvColor = new TextLabel();
-            hsvColor.Position = new Vector2(20, 160);
+            hsvColor.TextScale = textScale;
+            hsvColor.Position = new Vector2(5, 60);
             pickerPanel.Components.Add(hsvColor);
+
+            Button okButton = new Button();
+            okButton.Label.Text = "OK";
+            okButton.Size = new Vector2(39, 22);
+            okButton.Position = new Vector2((panelWidth - colorPreviewWidth) / (float)2 - okButton.Size.x / 2, 75);
+            okButton.OnMouseClick += OkButton_OnMouseClick;
+            pickerPanel.Components.Add(okButton);
 
             colorPreview = new Panel();
             colorPreview.Size = new Vector2(colorPreviewWidth, colorPreviewHeight);
             colorPreview.HorizontalAlignment = HorizontalAlignment.Right;
-            colorPreview.Position = new Vector2(0, 1);
+            colorPreview.Position = new Vector2(0, 0);
             pickerPanel.Components.Add(colorPreview);
 
             var crosshairTex = Resources.Load<Texture2D>("Crosshair");
             crosshair = new Panel();
             crosshair.BackgroundTexture = crosshairTex;
-            crosshair.Size = new Vector2(crosshairTex.width, crosshairTex.height);
+            crosshair.Size = new Vector2(crosshairTex.width, crosshairTex.height) * 0.5f;
             colorPreview.Components.Add(crosshair);
 
             slider = new HorizontalSlider();
             slider.HorizontalAlignment = HorizontalAlignment.Right;
-            slider.Position = new Vector2(0, 220);
-            slider.Size = new Vector2(400.0f, 10.0f);
+            slider.Position = new Vector2(0, colorPreviewHeight + 5);
+            slider.Size = new Vector2(colorPreview.Size.x, 10);
             slider.DisplayUnits = 50;
             slider.TotalUnits = slider.DisplayUnits + colors.Length - 1;
             slider.BackgroundTexture = GetSliderBackground(colors);
@@ -137,10 +150,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (InputManager.Instance.GetMouseButton(0) && colorPreview.MouseOverComponent)
             {
                 if (!draggingThumb)
+                {
+                    // Ensures button pressed while window is being opened is not detected as first click
+                    if (!InputManager.Instance.GetMouseButtonDown(0))
+                        return;
+
                     draggingThumb = true;
+                }
 
                 Vector2 position = colorPreview.ScaledMousePosition;
-                crosshair.Position = position;
+                crosshair.Position = position - crosshair.Size / 2;
 
                 Color color = GetPixel(colorPreview.BackgroundTexture, position);
                 hexColor.Text = ColorUtility.ToHtmlStringRGBA(color);
@@ -184,11 +203,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ConfirmColorPicked(Color color)
         {
             pickerPanel.BackgroundColor = color;
-
-            if (sender != null)
-                sender.BackgroundColor = color;
-
-            RaiseOnColorPickedEvent();
         }
 
         #endregion
@@ -245,7 +259,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             float h, s, v;
             Color.RGBToHSV(color, out h, out s, out v);
-            return string.Format("HSV({0}, {1}, {2})", h, s , v);
+            return string.Format("HSV({0}, {1}, {2})", h, s, v);
         }
 
         private static Color GetPixel(Texture2D tex, Vector2 position)
@@ -279,6 +293,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rgbaColor.Text = color.ToString();
             hsvColor.Text = GetHSV(color);
             ConfirmColorPicked(color);
+        }
+
+        private void OkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            if (this.sender != null)
+                this.sender.BackgroundColor = pickerPanel.BackgroundColor;
+
+            RaiseOnColorPickedEvent();
+            CloseWindow();
         }
 
         public delegate void OnColorPickedEventHandler(Color color);

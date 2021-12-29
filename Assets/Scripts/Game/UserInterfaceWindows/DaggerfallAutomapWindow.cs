@@ -129,6 +129,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel panelRenderOverlay = null; // used for overlays rendering (micro-map)
         Rect oldPositionNativePanel;
         Vector2 oldMousePosition; // old mouse position used to determine offset of mouse movement since last time used for for drag and drop functionality
+        Rect? oldCustomScreenRect = null;
 
         Panel dummyPanelCompass = null; // used to determine correct compass position
 
@@ -1075,15 +1076,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ResizeGUIelementsOnDemand()
         {
-            if (oldPositionNativePanel != NativePanel.Rectangle)
+            if (oldPositionNativePanel != NativePanel.Rectangle || oldCustomScreenRect != DaggerfallUI.Instance.CustomScreenRect)
             {
                 // get panelRenderAutomap position and size from dummyPanelAutomap rectangle
-                panelRenderAutomap.Position = dummyPanelAutomap.Rectangle.position;
+                if (DaggerfallUI.Instance.CustomScreenRect == null)
+                    panelRenderAutomap.Position = dummyPanelAutomap.Rectangle.position;
+                else
+                    panelRenderAutomap.Position = dummyPanelAutomap.ScreenToLocal(dummyPanelAutomap.Rectangle.position);
                 //panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.InteriorWidth, dummyPanelAutomap.InteriorHeight);
                 panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.Rectangle.width, dummyPanelAutomap.Rectangle.height);
 
                 // get panelRenderOverlay position and size from dummyPanelOverlay rectangle
-                panelRenderOverlay.Position = dummyPanelOverlay.Rectangle.position;
+                if (DaggerfallUI.Instance.CustomScreenRect == null)
+                    panelRenderOverlay.Position = dummyPanelOverlay.Rectangle.position;
+                else
+                    panelRenderAutomap.Position = dummyPanelAutomap.ScreenToLocal(dummyPanelAutomap.Rectangle.position);
                 panelRenderOverlay.Size = new Vector2(dummyPanelOverlay.Rectangle.width, dummyPanelOverlay.Rectangle.height);
 
                 //Debug.Log(String.Format("dummy panel size: {0}, {1}; {2}, {3}; {4}, {5}; {6}, {7}\n", NativePanel.InteriorWidth, NativePanel.InteriorHeight, ParentPanel.InteriorWidth, ParentPanel.InteriorHeight, dummyPanelAutomap.InteriorWidth, dummyPanelAutomap.InteriorHeight, parentPanel.InteriorWidth, parentPanel.InteriorHeight));
@@ -1099,6 +1106,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 compass.Scale = scale;
 
                 oldPositionNativePanel = NativePanel.Rectangle;
+                oldCustomScreenRect = DaggerfallUI.Instance.CustomScreenRect;
             }
         }
 

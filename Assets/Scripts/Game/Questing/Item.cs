@@ -315,6 +315,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Create item
                 result = new DaggerfallUnityItem((ItemGroups)itemClass, itemSubClass);
             }
+            
+            // Randomise clothing dye
+            if (result.IsClothing)
+                result.dyeColor = ItemBuilder.RandomClothingDye();
 
             // Link item to quest
             result.LinkQuestItem(ParentQuest.UID, Symbol.Clone());

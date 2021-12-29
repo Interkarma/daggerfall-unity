@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 videoPlayer.playOnAwake = false;
             }
 
-            ScaleMode = DaggerfallUnity.Settings.FreeScaling ? ScaleMode.StretchToFill : ScaleMode.ScaleToFit;
+            ScaleMode = DaggerfallUnity.Settings.RetroRenderingMode != 0 && DaggerfallUnity.Settings.RetroModeAspectCorrection != 0 ? ScaleMode.StretchToFill : ScaleMode.ScaleToFit;
         }
 
         /// <summary>

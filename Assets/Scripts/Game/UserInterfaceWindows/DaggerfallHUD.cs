@@ -223,11 +223,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             breathBar.Scale = NativePanel.LocalScale;
             crosshair.CrosshairScale = CrosshairScale;
             interactionModeIcon.Scale = NativePanel.LocalScale;
+            arrowCountTextLabel.Scale = NativePanel.LocalScale;
 
             // Align compass to screen panel
             Rect screenRect = ParentPanel.Rectangle;
-            float compassX = screenRect.width - (compass.Size.x);
-            float compassY = screenRect.height - (compass.Size.y);
+            float compassX = screenRect.x + screenRect.width - (compass.Size.x);
+            float compassY = screenRect.y + screenRect.height - (compass.Size.y);
             compass.Position = new Vector2(compassX, compassY);
 
             // Update midscreen text timer and remove once complete
@@ -253,9 +254,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Arrow count label position is offset to left of compass and centred relative to compass height
                     // This is done every frame to handle adaptive resolutions
-                    Vector2 arrowLabelPos = compass.Position;
-                    arrowLabelPos.x -= arrowCountTextLabel.TextWidth;
-                    arrowLabelPos.y += compass.Size.y / 2 - arrowCountTextLabel.TextHeight / 2;
+                    Vector2 arrowLabelPos = new Vector2(screenRect.width, screenRect.height);
+                    arrowLabelPos.x -= compass.Size.x + arrowCountTextLabel.TextWidth + 8;
+                    arrowLabelPos.y -= compass.Size.y / 2 + arrowCountTextLabel.TextHeight / 2;
 
                     DaggerfallUnityItem arrows = GameManager.Instance.PlayerEntity.Items.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow, allowQuestItem: false, priorityToConjured: true);
                     arrowCountTextLabel.Text = (arrows != null) ? arrows.stackCount.ToString() : "0";

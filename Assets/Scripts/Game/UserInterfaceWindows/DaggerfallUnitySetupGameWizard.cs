@@ -135,6 +135,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void Setup()
         {
             AllowCancel = false;
+            allowFreeScaling = false;
             LoadResources();
 
             // Add exit button

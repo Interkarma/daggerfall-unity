@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Utility
         private const string ExcludeSkyKeyword = "EXCLUDE_SKY";
 
         DaggerfallSky sky;
+        RetroPresentation retroPresenter;
         RenderTexture retroTexture;
         int retroMode;
         private bool enablePostprocessing = true;
@@ -365,16 +366,23 @@ namespace DaggerfallWorkshop.Utility
 
         private void Start()
         {
-            // Get retro mode and do nothing further if disabled
-            retroMode = DaggerfallUnity.Settings.RetroRenderingMode;
-            if (retroMode == 0)
-                return;
-
-            // Get sky reference
             sky = GameManager.Instance.SkyRig.GetComponent<DaggerfallSky>();
+            retroPresenter = GameManager.Instance.RetroPresenter;
+        }
 
+        public void UpdateSettings()
+        {
+            retroMode = DaggerfallUnity.Settings.RetroRenderingMode;
             UpdateRenderTarget();
+            UpdateDepthProcessMaterial();
+            if (retroPresenter)
+                retroPresenter.gameObject.SetActive(retroMode != 0);
+            if (sky && sky.SkyCamera && retroMode == 0)
+                sky.SkyCamera.targetTexture = null;
+        }
 
+        public void UpdateDepthProcessMaterial()
+        {
             // Get depth process material
             Shader shader;
             switch (DaggerfallUnity.Settings.PostProcessingInRetroMode)
@@ -390,10 +398,10 @@ namespace DaggerfallWorkshop.Utility
                     postprocessMaterial = GetPosterizationMaterial(true);
                     break;
                 case 3:
-                    postprocessMaterial = GetPalettizationMaerial(false);
+                    postprocessMaterial = GetPalettizationMaterial(false);
                     break;
                 case 4:
-                    postprocessMaterial = GetPalettizationMaerial(true);
+                    postprocessMaterial = GetPalettizationMaterial(true);
                     break;
             }
             if (!postprocessMaterial)
@@ -405,6 +413,13 @@ namespace DaggerfallWorkshop.Utility
 
         public void UpdateRenderTarget()
         {
+            // Disable retro target texture when retro mode disabled
+            if (DaggerfallUnity.Settings.RetroRenderingMode == 0)
+            {
+                GameManager.Instance.MainCamera.targetTexture = null;
+                return;
+            }
+
             // Unity viewport rect does not work with target render textures
             // Need to set new target with custom size when using a docked large HUD
             if (DaggerfallUnity.Settings.LargeHUD && DaggerfallUnity.Settings.LargeHUDDocked)
@@ -445,7 +460,7 @@ namespace DaggerfallWorkshop.Utility
             return material;
         }
 
-        private Material GetPalettizationMaerial(bool excludeSky)
+        private Material GetPalettizationMaterial(bool excludeSky)
         {
             Shader shader = Shader.Find(MaterialReader._DaggerfallRetroPalettizationShaderName);
             if (!shader)

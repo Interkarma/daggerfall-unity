@@ -250,6 +250,9 @@ namespace DaggerfallWorkshop
             if (!westTexture || !eastTexture)
                 return;
 
+            // Always follow main camera viewport
+            myCamera.rect = mainCamera.rect;
+
             GL.PushMatrix();
             GL.LoadPixelMatrix(0, Screen.width, Screen.height, 0);
 

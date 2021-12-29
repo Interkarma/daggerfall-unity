@@ -88,6 +88,7 @@ namespace DaggerfallWorkshop
         public int RetroRenderingMode { get; set; }
         public int PostProcessingInRetroMode { get; set; }
         public bool UseMipMapsInRetroMode { get; set; }
+        public int RetroModeAspectCorrection { get; set; }
         public int PalettizationLUTShift { get; set; }
         public bool VSync { get; set; }
         public int TargetFrameRate { get; set; }
@@ -165,7 +166,6 @@ namespace DaggerfallWorkshop
         public string InteractionModeIcon { get; set; }
         public bool SwapHealthAndFatigueColors { get; set; }
         public float DimAlphaStrength { get; set; }
-        public bool FreeScaling { get; set; }
         public bool EnableToolTips { get; set; }
         public float ToolTipDelayInSeconds { get; set; }
         public Color32 ToolTipBackgroundColor { get; set; }
@@ -289,6 +289,7 @@ namespace DaggerfallWorkshop
             RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
             PostProcessingInRetroMode = GetInt(sectionVideo, "PostProcessingInRetroMode");
             UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
+            RetroModeAspectCorrection = GetInt(sectionVideo, "RetroModeAspectCorrection", 0, 2);
             PalettizationLUTShift = GetInt(sectionVideo, "PalettizationLUTShift");
             VSync = GetBool(sectionVideo, "VSync");
             TargetFrameRate = GetInt(sectionVideo, "TargetFrameRate", 0, 300);
@@ -344,10 +345,10 @@ namespace DaggerfallWorkshop
             ColorBoostEnable = GetBool(sectionEffects, "ColorBoostEnable");
             ColorBoostRadius = GetFloat(sectionEffects, "ColorBoostRadius", 0.1f, 50);
             ColorBoostIntensity = GetFloat(sectionEffects, "ColorBoostIntensity", 0.0f, 1.0f);
-            ColorBoostDungeonScale = GetFloat(sectionEffects, "ColorBoostDungeonScale", 0.0f, 1.0f);
-            ColorBoostExteriorScale = GetFloat(sectionEffects, "ColorBoostExteriorScale", 0.0f, 1.0f);
-            ColorBoostInteriorScale = GetFloat(sectionEffects, "ColorBoostInteriorScale", 0.0f, 1.0f);
-            ColorBoostDungeonFalloff = GetFloat(sectionEffects, "ColorBoostDungeonFalloff", 0.0f, 4.0f);
+            ColorBoostDungeonScale = GetFloat(sectionEffects, "ColorBoostDungeonScale", 0.0f, 8.0f);
+            ColorBoostExteriorScale = GetFloat(sectionEffects, "ColorBoostExteriorScale", 0.0f, 8.0f);
+            ColorBoostInteriorScale = GetFloat(sectionEffects, "ColorBoostInteriorScale", 0.0f, 8.0f);
+            ColorBoostDungeonFalloff = GetFloat(sectionEffects, "ColorBoostDungeonFalloff", 0.0f, 8.0f);
 
             SoundFont = GetString(sectionAudio, "SoundFont");
             AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
@@ -361,7 +362,6 @@ namespace DaggerfallWorkshop
             InteractionModeIcon = GetString(sectionGUI, "InteractionModeIcon");
             SwapHealthAndFatigueColors = GetBool(sectionGUI, "SwapHealthAndFatigueColors");
             DimAlphaStrength = GetFloat(sectionGUI, "DimAlphaStrength", 0, 1);
-            FreeScaling = GetBool(sectionGUI, "FreeScaling");
             EnableToolTips = GetBool(sectionGUI, "EnableToolTips");
             ToolTipDelayInSeconds = GetFloat(sectionGUI, "ToolTipDelayInSeconds", 0, 10);
             ToolTipBackgroundColor = GetColor(sectionGUI, "ToolTipBackgroundColor", DaggerfallUI.DaggerfallUnityDefaultToolTipBackgroundColor);
@@ -471,6 +471,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionVideo, "RetroRenderingMode", RetroRenderingMode);
             SetInt(sectionVideo, "PostProcessingInRetroMode", PostProcessingInRetroMode);
             SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
+            SetInt(sectionVideo, "RetroModeAspectCorrection", RetroModeAspectCorrection);
             SetInt(sectionVideo, "PalettizationLUTShift", PalettizationLUTShift);
             SetBool(sectionVideo, "VSync", VSync);
             SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
@@ -543,7 +544,6 @@ namespace DaggerfallWorkshop
             SetString(sectionGUI, "InteractionModeIcon", InteractionModeIcon);
             SetBool(sectionGUI, "SwapHealthAndFatigueColors", SwapHealthAndFatigueColors);
             SetFloat(sectionGUI, "DimAlphaStrength", DimAlphaStrength);
-            SetBool(sectionGUI, "FreeScaling", FreeScaling);
             SetBool(sectionGUI, "EnableToolTips", EnableToolTips);
             SetFloat(sectionGUI, "ToolTipDelayInSeconds", ToolTipDelayInSeconds);
             SetColor(sectionGUI, "ToolTipBackgroundColor", ToolTipBackgroundColor);

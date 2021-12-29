@@ -37,11 +37,11 @@ Shader "Daggerfall/PostProcess/ColorBoost"
             if (length(diffuse.rgb) == 0)
                 return color;
 
-            // Lerp towards unlit diffuse colour based on distance and intensity settings
+            // Increase brightness of local colour based on distance and intensity settings
             if (depth < _Radius)
             {
                 float falloff = 1 - saturate(depth / _Radius);
-                color.rgb = lerp(color.rgb, diffuse.rgb, falloff * _Intensity);
+                color.rgb += color.rgb * _Intensity * falloff;
             }
 
             return color;

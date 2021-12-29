@@ -136,6 +136,31 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         }
 
         /// <summary>
+        /// Called by entity holding Open incumbent when they activate an exterior door.
+        /// For player this is called by PlayerActivate when opening/closing a door.
+        /// Enemies cannot use Lock/Open effects at this time.
+        /// For the classic effect, the player's level is always checked, even for the Skeleton Key
+        /// </summary>
+        /// <param name="actionDoor">DaggerfallActionDoor activated by entity.</param>
+        /// <returns>True if the door was opened, falsed otherwise</returns>
+        public virtual bool TriggerExteriorOpenEffect(int buildingLockValue)
+        {
+            bool success = true;
+            
+            // Player level must meet or exceed lock level for success
+            if (GameManager.Instance.PlayerEntity.Level < buildingLockValue)
+            {
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("openFailed"), 1.5f);
+                success = false;
+            }
+
+            // Cancel effect
+            CancelEffect();
+
+            return success;
+        }
+
+        /// <summary>
         /// Cancel effect.
         /// </summary>
         public virtual void CancelEffect()

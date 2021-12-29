@@ -73,8 +73,6 @@ interactionModeIcon,                                Interaction Mode Icon
 interactionModeIconInfo,                            Style of context icon for interaction mode
 arrowCounter,                                       Arrow counter
 arrowCounterInfo,                                   Enable an arrow counter on the HUD when using bows
-freeScaling,                                        Free scaling
-freeScalingInfo,                                    UI is stretched as required to fill entire viewport with no regard to aspect ratio
 showQuestJournalClocksAsCountdown,                  Countdown quest journal clocks
 showQuestJournalClocksAsCountdownInfo,              Show the remaining time instead of the time from start
 inventoryInfoPanel,                                 Inventory Info Panel
@@ -173,10 +171,6 @@ exteriorLightShadows,                               Exterior Light Shadows
 exteriorLightShadowsInfo,                           Exterior sunlight casts shadows
 ambientLitInteriors,                                Ambient Lit Interiors
 ambientLitInteriorsInfo,                            Use ambient lighting only for higher performance interiors
-retroRenderingMode,                                 Retro Rendering Mode
-retroRenderingModeInfo,                             3D world rendered at low resolution while UI remains at set resolution
-postProcessingInRetroMode,                          Retro Rendering Postprocessing
-postProcessingInRetroModeInfo,                      Color palette emulation (Posterization=fast Palettization=accurate)
 
 - Options shared among sliders. Missing keys use default text.
 
