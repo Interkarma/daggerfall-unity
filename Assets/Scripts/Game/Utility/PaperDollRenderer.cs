@@ -415,7 +415,8 @@ namespace DaggerfallWorkshop.Game.Utility
             foreach (var item in orderedItems)
             {
                 if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing ||
-                    item.ItemGroup == ItemGroups.Armor || item.ItemGroup == ItemGroups.Weapons)
+                    item.ItemGroup == ItemGroups.Armor || item.ItemGroup == ItemGroups.Weapons || 
+					item.ItemGroup == ItemGroups.Jewellery)
                 {
                     BlitItem(item);
                 }
