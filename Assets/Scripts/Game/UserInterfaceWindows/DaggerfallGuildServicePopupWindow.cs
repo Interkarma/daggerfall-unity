@@ -235,6 +235,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 for (int i = 0; i <= numOfItems; i++)
                 {
                     // Create magic item which is already identified
+
+                    // [OSORKON] I replaced playerEntity.Level with 10. This unlevels loot.
                     DaggerfallUnityItem magicItem = ItemBuilder.CreateRandomMagicItem(10, playerEntity.Gender, playerEntity.Race);
                     magicItem.IdentifyItem();
                     items.AddItem(magicItem);
@@ -251,6 +253,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     {
                         // Empty soul trap
                         magicItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
+
+                        // [OSORKON] This sets the value of empty Soul Gems to 50,000 gold. I thought Soul
+                        // Gems were too cheap.
                         magicItem.value = 50000;
                         magicItem.TrappedSoulType = MobileTypes.None;
                     }

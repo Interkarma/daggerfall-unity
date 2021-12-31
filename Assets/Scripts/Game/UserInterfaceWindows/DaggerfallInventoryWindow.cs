@@ -6,7 +6,7 @@
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors: InconsolableCellist, Hazelnut, Numidium
 //
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using UnityEngine;

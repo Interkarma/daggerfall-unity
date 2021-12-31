@@ -123,6 +123,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
             playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
             int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
+
+            // [OSORKON] I replaced vanilla's random range with 8. This roughly halves training effectiveness.
             short tallyAmount = (short)(8 * skillAdvancementMultiplier);
             playerEntity.TallySkill(skillToTrain, tallyAmount);
             DaggerfallUI.MessageBox(TrainSkillId);

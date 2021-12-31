@@ -292,6 +292,8 @@ namespace DaggerfallWorkshop.Game.Questing
             if (itemClass == (int)ItemGroups.MagicItems)
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+
+                // [OSORKON] I changed playerLevel to 10. This unlevels loot.
                 result = ItemBuilder.CreateRegularMagicItem(itemSubClass, 10, playerEntity.Gender, playerEntity.Race);
             }
             // Handle books
@@ -346,9 +348,16 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
+                // [OSORKON] This is a crude implementation of unleveled gold rewards for quests. Usually
+                // player will get very little, but good rewards occur often enough to keep things interesting.
+                // Player level no longer affects gold rewards at all. I'd like to refine this further in
+                // BOSSFALL v1.3 as I think high gold rewards happen too often.
                 int roll = Dice100.Roll();
-                int playerMod = 0;
+                int playerMod;
 
+                // [OSORKON] 20% of the time playerMod will equal something higher than 1. The playerMod is
+                // then multiplied by the base gold reward. Quests can be quite lucrative at any level.
+                // High playerMod values are relatively rare.
                 if (roll > 80)
                 {
                     if (roll > 85)
@@ -435,6 +444,10 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 PlayerGPS gps = GameManager.Instance.PlayerGPS;
                 int regionPriceMod = playerEntity.RegionData[gps.CurrentRegionIndex].PriceAdjustment / 2;
+
+                // [OSORKON] I changed the minimum range value from 150 * playerMod to 10 * playerMod. This may
+                // be too low. Occasionally player will get offered sub-50 gold for a dungeon quest, which 
+                // seems ridiculous. I want to refine this system in BOSSFALL v1.3.
                 amount = UnityEngine.Random.Range(10 * playerMod, (200 * playerMod) + 1) * (regionPriceMod + 500) / 1000 * (factionMod + 50) / 100;
 
                 if (guild != null)

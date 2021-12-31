@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public static readonly string EffectKey = EnchantmentTypes.RepairsObjects.ToString();
 
-        const int conditionPerRounds = 400;
+        const int conditionPerRounds = 4;
         const int conditionAmount = 1;
         const int enchantCost = 900;
 
@@ -30,6 +30,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ShowSpellIcon = false;
+
+            // [OSORKON] I removed the "properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;"
+            // line. This effect is no longer available from the Item Maker - it effectively negates my
+            // equipment durability nerfs, and I didn't like that.
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held;
         }

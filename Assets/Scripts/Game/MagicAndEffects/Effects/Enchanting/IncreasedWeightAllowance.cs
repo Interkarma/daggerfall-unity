@@ -99,6 +99,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         static short[] classicParamCosts =
         {
+            // [OSORKON] I increased costs from 400 and 600 to 4000 and 6000, respectively. I
+            // thought these effects were too cheap.
             4000,    //25% additional
             6000,    //50% additional
         };

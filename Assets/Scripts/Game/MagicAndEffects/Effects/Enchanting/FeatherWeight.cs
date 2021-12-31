@@ -22,6 +22,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public static readonly string EffectKey = EnchantmentTypes.FeatherWeight.ToString();
 
+        // [OSORKON] I increased the enchantCost from 100 to 1000. I thought this effect was too cheap.
         const int enchantCost = 1000;
         const float weightValue = 0.25f;
 

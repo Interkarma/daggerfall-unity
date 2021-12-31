@@ -25,6 +25,7 @@ namespace DaggerfallWorkshop.Game.Guilds
     {
         #region Constants
 
+        // [OSORKON] I moved defaultTrainingMax from 50 to 94. Player can now train up to skill level 95.
         public const int defaultTrainingMax = 94;
         public const int memberTrainingCost = 100;
         public const int nonMemberTrainingCost = 400;

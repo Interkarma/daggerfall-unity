@@ -27,6 +27,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ShowSpellIcon = false;
+
+            // [OSORKON] I removed the "properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;"
+            // line. The Item Maker doesn't offer this effect anymore. Until I get around to reworking this
+            // effect, it is no longer available to the player. Too OP.
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held;
         }

@@ -399,11 +399,23 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void LoanBorrowButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+
+            // [OSORKON] My new HasDefaultedAnywhere bool checks if player has ever defaulted on
+            // a loan from any region. If they have, no bank will ever lend money to the player.
+            // This is permanent, barring starting a new game. I don't think this is unreasonable,
+            // especially with the frequent loan reminders the game already gives you.
             if (DaggerfallBankManager.HasDefaultedAnywhere())
             {
                 GeneratePopup(TransactionResult.ALREADY_DEFAULTED);
                 ToggleTransactionInput(TransactionType.None);
             }
+
+            // [OSORKON] My new HasLoanAnywhere bool checks if the player has an unpaid loan from any
+            // region. If they do, the player cannot get another loan from any region's bank until they
+            // repay their first loan. This removes the enormous vanilla exploit of borrowing larger and
+            // larger sums from different regions, moving to another region, and never repaying anything
+            // with no consequences (as long as player avoids regions they've defaulted in). This exploit
+            // to get essentially unlimited free money irritated me, so I put this new bool in.
             else if (DaggerfallBankManager.HasLoanAnywhere())
             {
                 GeneratePopup(TransactionResult.ALREADY_HAVE_LOAN);

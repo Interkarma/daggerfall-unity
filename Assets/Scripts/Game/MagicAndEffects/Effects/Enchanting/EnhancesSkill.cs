@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public static readonly string EffectKey = EnchantmentTypes.EnhancesSkill.ToString();
 
+        // [OSORKON] I increased the enchantCost from 900 to 9000. I thought this effect was too cheap.
         const int enchantCost = 9000;
         const int modAmount = 15;
 

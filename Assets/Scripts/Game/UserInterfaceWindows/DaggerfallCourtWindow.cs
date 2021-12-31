@@ -55,6 +55,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         // From FALL.EXE offset 0x1B34E0
         // Vanilla unused crime values adjusted below by adding reasonable values for any zeros and a column for loan default crime.
+
+        // [OSORKON] I greatly increased penalties for a murder conviction. I also changed "byte" to "short"
+        // on PenaltyPerLegalRepPoint and "short" to "int" on the other three. No mods try to reference these
+        // numbers so AFAIK my change doesn't break any mod functionality. If that situation ever arises I'll
+        // have to revert my changes and do something different. I don't want to unnecessarily break anything.
+
         // Mnemonics                                  TryB&E  Tressp  B&E Assault  Murder  TaxEv CrimCon Vagrant Smuggle Pirate HiTre PickP Theft Treason LoanD
         protected short[] PenaltyPerLegalRepPoint  = {  0x05,  0x05,  0x06,  0x06, 0xE10,   0x05,  0x05,  0x03,  0x08,  0x08, 0x09,  0x06,  0x00,  0x08,  0x00 };
         protected int[] BasePenaltyAmounts      = { 0x12C,     0xC8, 0x258, 0x3E8, 0x00,    0xC8, 0x1F4,  0x64, 0x1F4, 0x1F4, 0x4B0, 0xC8,  0xC8,  0x3E8, 0x64 };
@@ -119,6 +125,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 int crimeType = (int)playerEntity.CrimeCommitted - 1;
                 int legalRep = playerEntity.RegionData[regionIndex].LegalRep;
 
+                // [OSORKON] I removed some of what vanilla had here. I wanted banishment to be less likely
+                // with severe crimes, as it isn't much of a punishment. Now there's a 75% chance player
+                // will get a fine and prison time and a 25% chance of banishment. This applies to every crime. 
                 if (UnityEngine.Random.Range (0, 3 + 1) > 0)
                     punishmentType = 2; // fine/prison
                 else
@@ -146,6 +155,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 for (int i = 0; i < penaltyAmount; i++)
                 {
                     if ((DFRandom.rand() & 1) != 0)
+
+                        // [OSORKON] I doubled fines. I did this to inflict harsher punishments for murder.
                         fine += 80;
                     else
                         daysInPrison += 3;
@@ -166,7 +177,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     IGuild guild = GameManager.Instance.GuildManager.GetGuild((int)FactionFile.FactionIDs.The_Dark_Brotherhood);
                     if (guild.IsMember())
                     {
-                        if (guild.Rank >= UnityEngine.Random.Range(0, 13 + 1))
+                        // [OSORKON] I lowered the maximum range from 20 to 14. This greatly increases the
+                        // chance of the Dark Brotherhood averting player's murder/assault conviction. I
+                        // wanted to balance out my harsher punishments for murder.
+                        if (guild.Rank >= UnityEngine.Random.Range(0, 14))
                         {
                             messageBox = new DaggerfallMessageBox(uiManager, this, false, 149);
                             messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(courtTextDB));
@@ -285,6 +299,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (playerEntity.InPrison)
                 {
                     if (Input.GetKey(exitKey)) // Speed up prison day countdown. Not in classic.
+
+                        // [OSORKON] I changed the prisonUpdateInterval from 0.001f to 0.0001f. If the player
+                        // gets stuck with a murder conviction I don't want them staring at the prison
+                        // screen for too long. I think this interval is tied to the game's framerate (I
+                        // have a target framerate of 60 and I never experienced the 10x faster countdown)
+                        // so if the game's target framerate is a low value this change might not do much.
                         prisonUpdateInterval = 0.0001f;
                     else
                         prisonUpdateInterval = 0.3f;

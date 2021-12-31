@@ -258,6 +258,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void Spinner_OnDownButtonClicked()
         {
+            // [OSORKON] I changed the minimum stat value to 1 rather than 10. I did this very early
+            // on when I wanted to drop my Luck attribute to 1 so I could get the hardest result possible
+            // from the "Unleveled Loot" mod. My later changes made my use of "Unleveled Loot" unnecessary,
+            // but this change remains. Don't try this - dropping an attribute to 1 is suicidal.
             const int minFreeEditValue = 1;
 
             // Get working stat value
