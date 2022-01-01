@@ -191,6 +191,10 @@ namespace DaggerfallWorkshop.Game
             // Rappel swooping
             if (rappelStage == RappelStage.Swooping) 
             {
+                // [OSORKON] I removed the "player.TallySkill(DFCareer.Skills.Climbing, 1);" line. In my
+                // experience, Rappel mode gives player a ton of Climbing skill tallies and could be abused to
+                // rapidly level the skill, so Rappel mode no longer gives any Climbing skill tallies.
+
                 Vector3 swoopDirection = grappleDirection;
                 // if we are rappelling under to ceiling, grappledirection is different so use adjacentSurfaceRay
                 // direction to get right direction to go under the ceiling.

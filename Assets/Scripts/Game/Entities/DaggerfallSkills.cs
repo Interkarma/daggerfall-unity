@@ -27,6 +27,10 @@ namespace DaggerfallWorkshop.Game.Entity
         public const int PrimarySkillsCount = 3;
         public const int MajorSkillsCount = 3;
         public const int MinorSkillsCount = 6;
+
+        // [OSORKON] This changes what level Miscellaneous Skills start at. They now start at skill
+        // levels 1-4 rather than vanilla's 3-6. Why have a 1-100 skill range where 1 and 2 are never
+        // used? That didn't make sense to me, so I lowered Miscellaneous Skill starting levels.
         const int minDefaultValue = 1;
         const int maxDefaultValue = 4;
 
@@ -484,17 +488,39 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public static int GetAdvancementMultiplier(DFCareer.Skills skill)
         {
+            // [OSORKON] Most skills in BOSSFALL are much harder to level, as I favor longer playthroughs
+            // and I thought most skills (especially weapon and spell skills) were much too easy to raise.
+            // I doubt most people want to play with Skill Difficulty = Extreme, especially if they don't
+            // have a lot of time, so at the moment I don't have very high hopes for BOSSFALL's popularity.
+            // This is, however, the way I prefer to play, and for now that's the way it will stay. I did
+            // counterbalance the increased skill difficulty by increasing the Training cap to 95, though.
             switch (skill)
             {
+                // [OSORKON] Raised Medical from vanilla's 12. I don't know if this change is necessary.
+                // I'll have to test a longer playthrough and see if Medical levels too slowly.
                 case DFCareer.Skills.Medical:
                     return 16;
                 case DFCareer.Skills.Etiquette:
                 case DFCareer.Skills.Streetwise:
                     return 1;
+
+                // [OSORKON] Greatly raised Jumping from vanilla's 5. Unfortunately the fastest way
+                // to level this skill is jumping in a doorway with the "Jumping" spell active. I'll
+                // never try to nerf that particular behavior, so to compensate for this skill's
+                // cheesy training method I made the skill extremely hard to level.
                 case DFCareer.Skills.Jumping:
                     return 20;
+
+                // [OSORKON] Greatly lowered Orcish from vanilla's 15. Orcs appear quite frequently
+                // compared to the other monsters with languages so Orcish is 2 rather than 1.
                 case DFCareer.Skills.Orcish:
                     return 2;
+
+                // [OSORKON] Greatly lowered monster language difficulty from vanilla's 15. I play "linguist"
+                // characters so my weapon and spell skills start off very low. I do this to make the
+                // game as hard as possible. Unfortunately, monster language skills were impossible to level
+                // past vanilla's level 50 skill training cap, which was a hard limit to my character's
+                // progression. I fixed that obstacle by greatly reducing monster language skill difficulty.
                 case DFCareer.Skills.Harpy:
                 case DFCareer.Skills.Giantish:
                 case DFCareer.Skills.Dragonish:
@@ -506,22 +532,58 @@ namespace DaggerfallWorkshop.Game.Entity
                     return 1;
                 case DFCareer.Skills.Lockpicking:
                     return 2;
+
+                // [OSORKON] Greatly increased Mercantile from vanilla's 1. I play with "Climates & Calories"
+                // and that mod requires a lot of little purchases, which raises this skill very quickly.
+                // Because it's so easy to train, I made it much harder to level.
                 case DFCareer.Skills.Mercantile:
                     return 9;
                 case DFCareer.Skills.Pickpocket:
                     return 2;
+
+                // [OSORKON] This skill will skyrocket in vanilla whenever player is around enemies (basically
+                // all the time). Because it's so easy to train, I made it much harder to level. With the
+                // excellent "Skulduggery" mod, Stealth becomes extremely hard to level. I don't know if I've
+                // found the right balance for the Stealth skill yet.
                 case DFCareer.Skills.Stealth:
                     return 12;
+
+                // [OSORKON] Doubled from vanilla's 1. Not sure if this change is necessary, as there's no
+                // cheesy way to level this skill. I may revert this change later.
                 case DFCareer.Skills.Swimming:
                     return 2;
+
+                // [OSORKON] Greatly increased from vanilla's 2. Now that I think about it, I may have gone
+                // way overboard, as I removed cheesy ways to level the skill - Rappel mode no longer gives
+                // Climbing skill tallies. Without that easy method of leveling Climbing, 20 may be too high.
                 case DFCareer.Skills.Climbing:
                     return 20;
+
+                // [OSORKON] Tripled from vanilla's 1. This skill is hard to exercise as Backstabbing is
+                // quite difficult to do (unless player has a long-lasting Invisibility True spell). I may
+                // revert this change later.
                 case DFCareer.Skills.Backstabbing:
                     return 3;
+
+                // [OSORKON] Greatly increased from vanilla's 4. It was even higher in BOSSFALL v1.1 but
+                // I'm still not sure it's where I want. I'll have to test Dodging with a longer
+                // playthrough and see if it levels too slowly.
                 case DFCareer.Skills.Dodging:
                     return 24;
+
+                // [OSORKON] In BOSSFALL v1.1 I set Running to 400. This had disastrous results as there is a
+                // skill tally limit of 20,000 set in another script. That same skill tally limit is defined as
+                // a "short" (a 16-bit integer) which means its maximum value is 32,767. I tried raising the
+                // skill tally cap to 32,767 but that still wasn't enough for Running to level up at higher
+                // Running skill levels - I effectively broke the skill. Fortunately, I discovered another method
+                // to make Running progression more difficult. Thus, Running difficulty in this script is unchanged
+                // from vanilla, but it will now level up roughly 7 times slower.
                 case DFCareer.Skills.Running:
                     return 50;
+
+                // [OSORKON] All spells greatly increased from vanilla's 1 and 2. Thaumaturgy and Restoration
+                // no longer level slower than the rest. 8 may be too high - I'll revisit skill difficulty in
+                // a later version of BOSSFALL.
                 case DFCareer.Skills.Destruction:
                 case DFCareer.Skills.Restoration:
                 case DFCareer.Skills.Illusion:
@@ -529,6 +591,10 @@ namespace DaggerfallWorkshop.Game.Entity
                 case DFCareer.Skills.Thaumaturgy:
                 case DFCareer.Skills.Mysticism:
                     return 8;
+
+                // [OSORKON] All weapons greatly increased from vanilla's 1 and 2. Archery no longer levels
+                // faster than the rest. I have a feeling 12 is too high, but I haven't taken the time to do
+                // a longer playthrough to find out for sure.
                 case DFCareer.Skills.ShortBlade:
                 case DFCareer.Skills.LongBlade:
                 case DFCareer.Skills.HandToHand:
@@ -536,6 +602,9 @@ namespace DaggerfallWorkshop.Game.Entity
                 case DFCareer.Skills.BluntWeapon:
                 case DFCareer.Skills.Archery:
                     return 12;
+
+                // [OSORKON] Greatly increased from vanilla's 8. I'm pretty sure I set this way too high, and
+                // I'll likely lower it at a later date. 
                 case DFCareer.Skills.CriticalStrike:
                     return 48;
                 default:

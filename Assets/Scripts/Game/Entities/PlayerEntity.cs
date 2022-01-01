@@ -304,9 +304,11 @@ namespace DaggerfallWorkshop.Game.Entity
             if (GameManager.ClassicUpdate && playerMotor)
             {
                 // Tally running skill. Running tallies so quickly in classic that it might be a bug or oversight.
-                // Here we use a rate of 1/4 that observed for classic. [OSORKON] I greatly increased this in BOSSFALL.
+                // Here we use a rate of 1/4 that observed for classic.
                 if (playerMotor.IsRunning && !playerMotor.IsRiding)
                 {
+                    // [OSORKON] I greatly increased the runningTallyCounter from vanilla's 3.
+                    // The Running skill now levels roughly 7 times slower.
                     if (runningTallyCounter == 20)
                     {
                         TallySkill(DFCareer.Skills.Running, 1);
@@ -2274,6 +2276,9 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         // Values after index 0 are from FALL.EXE. It does not seem to have a valid value for the last crime "Treason," so just using half of "High Treason" value here.
+
+        // [OSORKON] I adjusted most of this array's values. Murder and debt default now lower legal
+        // reputation much more than vanilla. Some other crimes are less reputation-damaging.
         readonly short[] reputationLossPerCrime = { 0x00, 0x05, 0x03, 0x0A, 0x0C, 0x32, 0x1E, 0x02, 0x01, 0x0C, 0x14, 0x64, 0x01, 0x06, 0x32, 0x1E };
 
         public void LowerRepForCrime()

@@ -13,6 +13,9 @@ namespace DaggerfallWorkshop.Game
         public float jumpSpeed = 4.5f;
         public float gravity = 20.0f;
         public float crouchingJumpDelta = 0.8f;
+
+        // [OSORKON] I moved fallingDamageThreshold from 5.0f to 3.8f. In BOSSFALL falling damage
+        // starts at lower heights.
         public float fallingDamageThreshold = 3.8f;
         public bool airControl = false;
 
