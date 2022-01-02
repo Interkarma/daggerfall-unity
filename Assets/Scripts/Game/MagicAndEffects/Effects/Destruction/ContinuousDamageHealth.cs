@@ -27,9 +27,23 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(1, 0);
+
+            // [OSORKON] I don't know how to remove specific spells from the circinate spell list at
+            // Mage Guilds and Julianos temples, so Wildfire is still available for purchase. As
+            // a crude workaround, I commented out the line below. Now Wildfire does impact damage
+            // but nothing over time, as it's still OP at high player levels. I'm sure there's a
+            // way to remove Wildfire, but it's pretty low on my priority list.
+            // properties.SupportDuration = true;
+
             properties.SupportMagnitude = true;
             properties.AllowedTargets = EntityEffectBroker.TargetFlags_Other;
             properties.AllowedElements = EntityEffectBroker.ElementFlags_All;
+
+            // [OSORKON] I commented out the line below, so Continuous Damage - Health is no longer
+            // a selectable effect from the Spell Maker. This effect is ridiculously OP at higher
+            // player levels and was one of the first effects to get removed.
+            // properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
+
             properties.MagicSkill = DFCareer.MagicSkills.Destruction;
             properties.DurationCosts = MakeEffectCosts(28, 8);
             properties.MagnitudeCosts = MakeEffectCosts(40, 28);

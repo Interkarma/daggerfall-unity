@@ -24,7 +24,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
     {
         // Classic potion recipe mapping to DFU recipe keys:
         //  Stamina, Orc Strength, Healing, Waterwalking, Restore Power, Resist Fire, Resist Frost, Resist Shock, Cure Disease, Slow Falling,
-        //  Water Breathing, Heal True, Levitation, Resist Poison, Free Action, Cure Poison, Chameleon Form, Shadow Form, Invisibility, Purification, BOSSFALL Dispel Magic
+        //  Water Breathing, Heal True, Levitation, Resist Poison, Free Action, Cure Poison, Chameleon Form, Shadow Form, Invisibility, Purification
+
+        // [OSORKON] I added "5189333" at the end of this array. This number is the classicRecipeKey for the
+        // Dispel Magic potion I added, and this addition was necessary to include the Dispel Magic potion and
+        // potion recipe in regular loot generation.
         public static readonly int[] classicRecipeKeys = { 221871, 239524, 4975678, 5017404, 5188896, 111516185, 4826108, 216843, 224588, 220192,
                                                            240081, 4937012, 228890, 221117, 4870452, 5361377, 112080144, 4842851, 4815872, 2031019196, 5189333 };
 
@@ -220,6 +224,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             if (string.IsNullOrEmpty(DisplayNameKey))
                 return TextManager.Instance.GetLocalizedText("unknownPowers");
+
+            // [OSORKON] I added this "else if" statement. BOSSFALL's new Dispel Magic potion doesn't
+            // have a string in GetLocalizedText for its DisplayNameKey, so I manually added it here.
             else if (DisplayNameKey == "dispelMagic")
                 return "Dispel Magic";
             else

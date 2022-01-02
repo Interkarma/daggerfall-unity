@@ -75,6 +75,10 @@ namespace DaggerfallWorkshop.Game.Items
         /// U, 3, 2
         /// </summary>
         public static LootChanceMatrix[] DefaultLootTables = {
+
+            // [OSORKON] I set most MinGold to 1. After I did this, I realized any LootChanceMatrix changes I
+            // made would be overwritten by "Roleplay and Realism: Items", so I stopped at the MinGold changes.
+
             new LootChanceMatrix() {key = "-", MinGold = 0, MaxGold = 0, P1 = 0, P2 = 0, C1 = 0, C2 = 0, C3 = 0, M1 = 0, AM = 0, WP = 0, MI = 0, CL = 0, BK = 0, M2 = 0, RL = 0 },
             new LootChanceMatrix() {key = "A", MinGold = 1, MaxGold = 10, P1 = 0, P2 = 0, C1 = 0, C2 = 0, C3 = 0, M1 = 0, AM = 5, WP = 5, MI = 2, CL = 4, BK = 0, M2 = 2, RL = 0 },
             // Chronicles says B has 10 for Warm Plant and Misc. Monster, but in FALL.EXE it is Temperate Plant and Warm Plant.
@@ -139,6 +143,13 @@ namespace DaggerfallWorkshop.Game.Items
             "N", // Barbarian Stronghold
             "M", // Volcanic Caves
             "L", // Scorpion Nest
+
+            // [OSORKON] I changed Cemetery lootTableKeys from "N" to "Q". Cemetery loot piles from
+            // lootTableKeys "N" with RPR:I were far too lucrative, and "Q" with RPR:I is much less
+            // profitable. If player isn't using RPR:I table "Q" generates better loot than table "N",
+            // so in unmodded BOSSFALL Cemeteries generate better loot piles than vanilla DFU. I assume
+            // most players are going to be using RPR:I so I don't think this is an issue.
+
             "Q", // Cemetery
             };
 
@@ -192,6 +203,13 @@ namespace DaggerfallWorkshop.Game.Items
 
             // Random gold
 
+            // [OSORKON] I removed vanilla's formula for gold generation based on player level and replaced
+            // it with this awkward-looking formula. This randomly generates gold amounts that don't vary
+            // based on player level. When a gold pile is generated on an enemy or in a loot container there's
+            // a 20% chance of the playerMod being above 1. The playerMod is then multiplied by a number
+            // between MinGold and MaxGold. The playerMod can be as high as 20 and the MinGold and MaxGold
+            // values come from the lootChanceMatrix array (the exact values used depend on the loot table key
+            // for the enemy or location), so the gold pile can be quite large. Huge gold piles are fairly rare.
             int roll = Dice100.Roll();
             int playerMod = 0;
 
@@ -261,6 +279,7 @@ namespace DaggerfallWorkshop.Game.Items
             }
 
             int goldCount = Random.Range(matrix.MinGold, matrix.MaxGold + 1) * playerMod;
+
             if (goldCount > 0)
             {
                 items.Add(ItemBuilder.CreateGoldPieces(goldCount));
@@ -270,6 +289,7 @@ namespace DaggerfallWorkshop.Game.Items
             chance = matrix.WP;
             while (Dice100.SuccessRoll((int)chance))
             {
+                // [OSORKON] I replaced playerEntity.Level with 10. This unlevels loot.
                 items.Add(ItemBuilder.CreateRandomWeapon(10));
                 chance *= 0.5f;
             }
@@ -278,11 +298,19 @@ namespace DaggerfallWorkshop.Game.Items
             chance = matrix.AM;
             while (Dice100.SuccessRoll((int)chance))
             {
+                // [OSORKON] I replaced playerEntity.Level with 10. This unlevels loot.
                 items.Add(ItemBuilder.CreateRandomArmor(10, playerEntity.Gender, playerEntity.Race));
                 chance *= 0.5f;
             }
 
             // Random ingredients
+
+            // [OSORKON] I replaced playerEntity.Level with 10. I thought I was unleveling ingredient
+            // generation, but they're not generated like weapons or armor. What I actually did was
+            // set most ingredients to always generate as if the player was level 10, as I didn't change
+            // the base ingredient generation formula to compensate (as I did for weapons, armor, and
+            // magic items). Thus, most ingredients are not unleveled. I want to revisit ingredient
+            // generation and do it correctly in a future version of BOSSFALL.
             RandomIngredient(matrix.C1 * 10, ItemGroups.CreatureIngredients1, items);
             RandomIngredient(matrix.C2 * 10, ItemGroups.CreatureIngredients2, items);
             RandomIngredient(matrix.C3, ItemGroups.CreatureIngredients3, items);
@@ -295,6 +323,7 @@ namespace DaggerfallWorkshop.Game.Items
             chance = matrix.MI;
             while (Dice100.SuccessRoll((int)chance))
             {
+                // [OSORKON] I replaced playerEntity.Level with 10. This unlevels loot.
                 items.Add(ItemBuilder.CreateRandomMagicItem(10, playerEntity.Gender, playerEntity.Race));
                 chance *= 0.5f;
             }

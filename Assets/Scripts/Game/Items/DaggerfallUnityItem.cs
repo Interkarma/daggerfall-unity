@@ -17,11 +17,8 @@ using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
-using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
-using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Formulas;
-using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -652,6 +649,11 @@ namespace DaggerfallWorkshop.Game.Items
         // Horses, carts, arrows and maps are not counted against encumbrance.
         public float EffectiveUnitWeightInKg()
         {
+            // [OSORKON] I removed "TemplateIndex == (int)Weapons.Arrow" from this conditional. This makes
+            // arrows actually weigh something. If player is using "Roleplay and Realism: Items", arrow
+            // weights are too high for my taste. RPR:I sets arrows to 0.1 kg and I set arrows to 0.05 kg,
+            // but RPR:I's weight takes precedence. I wish this wasn't the case, but unless I make BOSSFALL
+            // into a .dfmod I don't have an easy way to work around this.
             if (ItemGroup == ItemGroups.Transportation ||
                 IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Map))
                 return 0f;
@@ -1047,6 +1049,8 @@ namespace DaggerfallWorkshop.Game.Items
         {
             switch (TemplateIndex)
             {
+                // [OSORKON] I doubled every shield's armor value. BOSSFALL enemies are much
+                // more accurate than vanilla, so I raised shield armor to partially compensate.
                 case (int)Armor.Buckler:
                     return 2;
                 case (int)Armor.Round_Shield:
