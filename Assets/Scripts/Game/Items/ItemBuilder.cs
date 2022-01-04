@@ -9,18 +9,17 @@
 // Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
-using DaggerfallWorkshop.Game.Utility;
-using DaggerfallWorkshop.Game.Formulas;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -39,6 +38,31 @@ namespace DaggerfallWorkshop.Game.Items
         // This array is used to pick random material values.
         // The array is traversed, subtracting each value from a sum until the sum is less than the next value.
         // Steel through Daedric, or Iron if sum is less than the first value.
+
+        // [OSORKON] This materialsByModifier array sets item material generation probabilities. I changed this
+        // array to be a "short" instead of a "byte" so I could put elements higher than 255 in the array. Now
+        // that I'm more familiar with DFU code I realize this change isn't necessary as I could use FormulaHelper
+        // functions to implement unleveled loot. The only mod I can think of that would be negatively impacted
+        // by my "short" change is "Unleveled Loot", which I already listed as a Known Conflicting Mod, but if I
+        // find that I've broken other mods I'll undo my changes in this script and move them to FormulaHelper.
+
+        // [OSORKON] If you are already familiar with how item materials are generated in vanilla DFU, you likely
+        // won't learn anything from my long paragraph immediately below. I wrote this long comment because I had
+        // a very hard time figuring out precisely how item materials were generated even after I read the vanilla
+        // comments and an explanation on the forums. If anybody else is as confused as I initially was, hopefully
+        // my extended paragraph will help make item material generation clearer. This explanation is for BOSSFALL
+        // loot generation - the numbers I use are different from vanilla DFU, but the process is similar.
+
+        // [OSORKON] In BOSSFALL when a weapon or plate armor item is generated from a loot pile or an enemy
+        // below level 16, a function in FormulaHelper generates a random number from 0 to 1024. A result of
+        // 327 or less generates an Iron item, while a result of 328 to 981 or less generates a Steel item.
+        // A result of 982 to 1024 generates Silver through Daedric - as material tier increases, generation
+        // chance decreases, and a result of 1024 is required to generate a Daedric item. The random number
+        // from FormulaHelper is not changed by player level or any other player-dependent factors, which results
+        // in BOSSFALL's unleveled static drop chances for all materials. Once the enemy is level 16 or higher,
+        // progressively higher values (50 * (enemy Level - 15)) are added to the FormulaHelper random number,
+        // which often results in a value higher than 1024. If the value is higher than 1024, a Daedric item
+        // will be generated.
         public static readonly short[] materialsByModifier = { 327, 654, 8, 12, 8, 5, 4, 3, 2, 1 };
 
         // Weight multipliers by material type. Iron through Daedric. Weight is baseWeight * value / 4.
@@ -48,6 +72,11 @@ namespace DaggerfallWorkshop.Game.Items
         static readonly short[] valueMultipliersByMaterial = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 };
 
         // Condition multipliers by material type. Iron through Daedric. MaxCondition is baseMaxCondition * value / 4.
+
+        // [OSORKON] I greatly reduced all the values in this array. MaxCondition is baseMaxCondition * value.
+        // BOSSFALL heavily nerfs most item durabilities, and durability decreases as material tier increases.
+        // I want high tier materials to be treated like the powerful weapons they are - very useful, but they
+        // won't last long. I think that makes it more exciting when the player finds something good.
         static readonly short[] conditionMultipliersByMaterial = { 2, 3, 2, 2, 2, 1, 1, 1, 1, 1 };
 
         // Enchantment point/gold value data for item powers
@@ -279,6 +308,8 @@ namespace DaggerfallWorkshop.Game.Items
             int groupIndex = UnityEngine.Random.Range(0, enumArray.Length);
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.ReligiousItems, groupIndex);
 
+            // [OSORKON] If specific Holy items are created, hand off to the new functions I added to
+            // put custom enchantments on the item.
             if (newItem.IsOfTemplate(ItemGroups.ReligiousItems, (int)ReligiousItems.Holy_water))
             {
                 return CreateHolyWater();
@@ -295,6 +326,7 @@ namespace DaggerfallWorkshop.Game.Items
             return newItem;
         }
 
+        // [OSORKON] This new function creates Holy Water that casts Holy Word on use.
         public static DaggerfallUnityItem CreateHolyWater()
         {
             DaggerfallUnityItem holyWater = new DaggerfallUnityItem(ItemGroups.ReligiousItems, 4);
@@ -304,6 +336,7 @@ namespace DaggerfallWorkshop.Game.Items
             return holyWater;
         }
 
+        // [OSORKON] This new function creates a Holy Dagger that casts Holy Word on use.
         public static DaggerfallUnityItem CreateHolyDagger()
         {
             DaggerfallUnityItem holyDagger = new DaggerfallUnityItem(ItemGroups.ReligiousItems, 11);
@@ -313,6 +346,7 @@ namespace DaggerfallWorkshop.Game.Items
             return holyDagger;
         }
 
+        // [OSORKON] This new function creates a Holy Tome that casts Banish Daedra on use.
         public static DaggerfallUnityItem CreateHolyTome()
         {
             DaggerfallUnityItem holyTome = new DaggerfallUnityItem(ItemGroups.ReligiousItems, 12);
@@ -340,6 +374,9 @@ namespace DaggerfallWorkshop.Game.Items
             DaggerfallUnityItem newItem = CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
             newItem.TrappedSoulType = soul;
             MobileEnemy mobileEnemy = GameObjectHelper.EnemyDict[(int)soul];
+
+            // [OSORKON] Soul Gems are now worth enemy SoulPts and nothing more. I also changed all enemy
+            // SoulPts values in the EnemyBasics script. In BOSSFALL Soul Gems are very expensive.
             newItem.value = mobileEnemy.SoulPts;
 
             return newItem;
@@ -398,6 +435,9 @@ namespace DaggerfallWorkshop.Game.Items
 
             if (weapon == Weapons.Arrow)
             {   // Handle arrows
+
+                // [OSORKON] I changed the maximum value from 20 to 30. Arrows now spawned with this function
+                // generate in stacks of up to 30.
                 newItem.stackCount = UnityEngine.Random.Range(1, 30 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
             }
@@ -428,12 +468,16 @@ namespace DaggerfallWorkshop.Game.Items
                 newItem = CreateItem(ItemGroups.Weapons, customItemTemplates[groupIndex - enumArray.Length]);
  
             // Random weapon material
+
+            // [OSORKON] I changed playerLevel to 10. This unlevels loot.
             WeaponMaterialTypes material = FormulaHelper.RandomMaterial(10);
             ApplyWeaponMaterial(newItem, material);
 
             // Handle arrows
             if (groupIndex == 18)
             {
+                // [OSORKON] I changed the maximum value from 20 to 30. Now arrows generated in shops and on
+                // enemies spawn in stacks of up to 30.
                 newItem.stackCount = UnityEngine.Random.Range(1, 30 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
                 newItem.nativeMaterialValue = 0; // Arrows don't have a material
@@ -495,6 +539,7 @@ namespace DaggerfallWorkshop.Game.Items
             else
                 newItem = CreateItem(ItemGroups.Armor, customItemTemplates[groupIndex - enumArray.Length]);
 
+            // [OSORKON] I changed playerLevel to 10. This unlevels loot.
             ApplyArmorSettings(newItem, gender, race, FormulaHelper.RandomArmorMaterial(10));
 
             return newItem;
@@ -550,6 +595,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomMagicItem(int playerLevel, Genders gender, Races race)
         {
+            // [OSORKON] I replaced playerLevel with 10. This unlevels loot.
             return CreateRegularMagicItem(chooseAtRandom, 10, gender, race);
         }
 
@@ -598,13 +644,18 @@ namespace DaggerfallWorkshop.Game.Items
             // Create the base item
             if (group == ItemGroups.Weapons)
             {
+                // [OSORKON] I replaced playerLevel with 10. This unlevels loot.
                 newItem = CreateRandomWeapon(10);
 
                 // No arrows as enchanted items
                 while (newItem.GroupIndex == 18)
+
+                    // [OSORKON] I replaced playerLevel with 10. This unlevels loot.
                     newItem = CreateRandomWeapon(10);
             }
             else if (group == ItemGroups.Armor)
+
+                // [OSORKON] I replaced playerLevel with 10. This unlevels loot.
                 newItem = CreateRandomArmor(10, gender, race);
             else if (group == ItemGroups.MensClothing || group == ItemGroups.WomensClothing)
                 newItem = CreateRandomClothing(gender, race);
@@ -612,8 +663,8 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 newItem = CreateRandomReligiousItem();
 
-                // [OSORKON] No Holy Water/Holy Daggers/Holy Tomes as regular enchanted items - I
-                // want these Holy items to have custom enchantments I add elsewhere.
+                // [OSORKON] No Holy Water/Daggers/Tomes as regular enchanted items - I
+                // want these Holy items to have custom enchantments I add elsewhere in this script.
                 while (newItem.GroupIndex == 4 || newItem.GroupIndex == 11 || newItem.GroupIndex == 12)
                     newItem = CreateRandomReligiousItem();
             }
@@ -689,6 +740,9 @@ namespace DaggerfallWorkshop.Game.Items
         {
             item.value *= 3 * valueMultipliersByMaterial[(int)material];
             item.weightInKg = CalculateWeightForMaterial(item, material);
+
+            // [OSORKON] I replaced "[(int)material] / 4" with "[(int)material]". Base maxCondition is now
+            // (item.maxCondition * conditionMultipliersByMaterial).
             item.maxCondition = item.maxCondition * conditionMultipliersByMaterial[(int)material];
             item.currentCondition = item.maxCondition;
 

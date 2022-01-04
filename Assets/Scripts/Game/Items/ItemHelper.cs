@@ -9,24 +9,20 @@
 // Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
+using DaggerfallConnect.Arena2;
+using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Utility.AssetInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using DaggerfallConnect;
-using DaggerfallConnect.Save;
-using DaggerfallConnect.Arena2;
-using DaggerfallConnect.FallExe;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.MagicAndEffects;
-using DaggerfallWorkshop.Game.Questing;
-using DaggerfallWorkshop.Game.Player;
-using DaggerfallWorkshop.Game.Serialization;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
-using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Utility.AssetInjection;
-using DaggerfallWorkshop.Game.Utility;
-using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -1274,6 +1270,9 @@ namespace DaggerfallWorkshop.Game.Items
             else
             {
                 // Custom classes only get an iron longsword
+
+                // [OSORKON] I changed "Iron" to "Steel". Custom classes now start with a Steel longsword.
+                // Most enemies have better armor and I don't want the very early game to be impossible.
                 items.AddItem(ItemBuilder.CreateWeapon(Weapons.Longsword, WeaponMaterialTypes.Steel));
             }
 
@@ -1292,12 +1291,23 @@ namespace DaggerfallWorkshop.Game.Items
 
         public void AssignEnemyStartingEquipment(PlayerEntity player, EnemyEntity enemyEntity, int variant)
         {
+            // [OSORKON] I changed "player.Level" to "enemyEntity.Level". If the enemy uses equipment, said
+            // equipment will now scale with the enemy's level. This change is vital to BOSSFALL's design
+            // philosophy. If I wanted an enemy to drop good loot I gave them equipment generated with this
+            // function (which is done in the EnemyEntity script). Since equipment quality scales with enemy
+            // level high level enemies are usually quite rewarding, which is one of BOSSFALL's main goals.
             int itemLevel = enemyEntity.Level;
             Genders playerGender = player.Gender;
             Races race = player.Race;
             int chance = 0;
 
             // City watch never have items above iron or steel
+
+            // [OSORKON] I commented out the two lines below. Since Guards are ridiculously powerful in BOSSFALL,
+            // I want them to be rewarding if the player manages to best them. They wouldn't be if they only
+            // dropped Iron or Steel.
+            // if (enemyEntity.EntityType == EntityTypes.EnemyClass && enemyEntity.MobileEnemy.ID == (int)MobileTypes.Knight_CityWatch)
+            //    itemLevel = 1;
 
             if (variant == 0)
             {
@@ -1381,7 +1391,8 @@ namespace DaggerfallWorkshop.Game.Items
                 enemyEntity.ItemEquipTable.EquipItem(armor, true, false);
                 enemyEntity.Items.AddItem(armor);
             }
-            // [OSORKON] I added gauntlets to enemy equipment chances, never made sense to me why they were missing.
+            // [OSORKON] Any enemy that uses equipment now has a chance to drop gauntlets. Without my addition,
+            // good gauntlets can be very difficult to find.
             if (Dice100.SuccessRoll(chance))
             {
                 DaggerfallUnityItem armor = ItemBuilder.CreateArmor(playerGender, race, Armor.Gauntlets, FormulaHelper.RandomArmorMaterial(itemLevel));
@@ -1398,11 +1409,15 @@ namespace DaggerfallWorkshop.Game.Items
                 {
                     int chanceToPoison = 5;
                     if (enemyEntity.MobileEnemy.ID == (int)MobileTypes.Assassin)
+
+                        // [OSORKON] Assassins will always have a poisoned weapon.
                         chanceToPoison = 100;
 
                     if (Dice100.SuccessRoll(chanceToPoison))
                     {
                         // Apply poison
+
+                        // [OSORKON] I changed "135" to "139". Drugs can now be weapon poisons. Adds more variety.
                         weapon.poisonType = (Items.Poisons)UnityEngine.Random.Range(128, 139 + 1);
                     }
                 }
