@@ -79,13 +79,17 @@ namespace DaggerfallWorkshop.Game
 
         // [OSORKON] Changing the Climbing skill check in FormulaHelper to be more difficult didn't have the
         // results I wanted - I could still climb anything at low Climbing skill levels and practically never fall.
-        // I then moved to this script and changed regainHoldMinChance, startClimbMinChance, continueClimbMinChance,
-        // and graspWallMinChance to 0. Finally, some results. With Advanced Climbing off Climbing was impossible
-        // at low skill levels, but Advanced Climbing still refused to change. The skill check was bypassed in
-        // another part of this script.
+        // I then moved to this script and changed regainHoldMinChance, continueClimbMinChance, and graspWallMinChance
+        // to 0. Finally, some results. With Advanced Climbing off Climbing was impossible at low skill levels, but
+        // Advanced Climbing still refused to change. The skill check was bypassed in another part of this script.
         private const int regainHoldMinChance = 0;
-        // minimum percent chance to start climbing
-        private const int startClimbMinChance = 0;
+
+        // [OSORKON] I tried setting startClimbMinChance to 0 but this had the unintended side effect of seemingly
+        // racking up Climbing skill tallies very rapidly when player is facing a wall trying to start climbing. I
+        // think if the player has a low Climbing skill and startClimbMinChance is 0, the game runs Climbing skill
+        // checks very rapidly until a check succeeds, leading to rapid skill tallies. I don't want there to be a
+        // cheesy way to level the skill so I set startClimbMinChance to 75.
+        private const int startClimbMinChance = 75;
         // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
         private const int continueClimbMinChance = 0;
         // minimum percent chance to grab a wall while falling

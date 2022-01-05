@@ -2306,8 +2306,11 @@ namespace DaggerfallWorkshop.Utility
             // Assassin
 
             // [OSORKON] The third easiest boss of the game, tougher than a Lich but not as tough as an Alternate Dragonling.
-            // Assassins move extremely fast. If player is level 1-6, Assassins don't have boss stats and their level, armor, HP,
-            // and damage scales with player's level. At player level 7+ Assassins will be Level 21-30, have -4 Armor, 100-300 HP,
+            // Assassins move extremely fast. Privateer's Hold is a Human Stronghold dungeon type, and Assassins are the bosses
+            // of that dungeon type. Thus, Assassins can rarely spawn in Privateer's Hold, and I don't want an unlucky player
+            // running into a boss that early on. To avoid that extremely frustrating scenario, Assassins follow standard class
+            // enemy unleveling rules. If player is level 1-6, Assassins don't have boss stats and their level, armor, HP,
+            // and damage scales with player's level. At player level 7+ Assassins will be Level 21-30, have -8 Armor, 100-300 HP,
             // and deal around 39-67 damage. Always wields a poisoned weapon unless player is level 1. Once player is level 7
             // Assassins will likely drop good loot and their poison will bypass player's Poison Immunity. They are very rare.
             new MobileEnemy()
@@ -2561,10 +2564,10 @@ namespace DaggerfallWorkshop.Utility
             // [OSORKON] Guards move very fast. Their level sort of scales with player's level until player is level 7 - I say
             // "sort of" because they always get a random level boost of 0 to 10 at any player level, so "scales" is not very
             // accurate as their level will vary wildly. Once player is level 7 Guards can be levels 1-30 but on average will
-            // be around level 15. Their damage, armor, and loot quality scales with their level. If you're not using "Roleplay and
-            // Realism: Items" Guards carry weapons of any material and will likely drop a ton of Daedric at high levels. Their
-            // armor isn't changed by their equipment - it scales with their level - and they do incredible damage at higher levels.
-            // HP unchanged from vanilla. They will also happily riddle you with arrows. Lawbreakers beware! And by the way... HALT!
+            // be around level 15. If you're not using "Roleplay and Realism: Items" Guard equipment scales with their level, which
+            // means Guards will likely drop a ton of Daedric once player is level 7. Their armor isn't changed by their equipment -
+            // it scales with their level - and they can do incredible damage at higher levels. HP unchanged from vanilla. They will
+            // also happily riddle you with arrows. Lawbreakers beware! And by the way... HALT!
             new MobileEnemy()
             {
                 ID = 146,

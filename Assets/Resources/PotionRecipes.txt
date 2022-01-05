@@ -1,4 +1,4 @@
-﻿[
+[
         {
             "name": "Stamina",
             "recipes": [
@@ -880,10 +880,10 @@
                             "id": 73,
                             "name": "Silver"
                         },
-			{
-			    "id": 55,
-			    "name": "Holy Relic"
-			}
+			            {
+			                "id": 55,
+			                "name": "Holy Relic"
+			            }
                     ]
                 }
             ]

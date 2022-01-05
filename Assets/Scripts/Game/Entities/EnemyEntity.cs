@@ -9,15 +9,14 @@
 // Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
-using UnityEngine;
 using DaggerfallConnect;
-using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect.Save;
-using DaggerfallConnect.FallExe;
+using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Utility;
-using DaggerfallWorkshop.Game.Items;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Entity
 {
@@ -397,20 +396,25 @@ namespace DaggerfallWorkshop.Game.Entity
                             level = UnityEngine.Random.Range(1, 3 + 1);
                         }
                     }
+
+                    // [OSORKON] Custom class enemy health works the same as vanilla.
+                    maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
                 }
-                // [OSORKON] If player is level 6 or less class enemies will be within 2 levels of the
-                // player, just like regular BOSSFALL class enemies. Their level can't go below 1.
                 else
                 {
+                    // [OSORKON] If player is level 6 or less custom class enemies will be within 2 levels
+                    // of the player, just like regular BOSSFALL class enemies.
                     level = GameManager.Instance.PlayerEntity.Level + UnityEngine.Random.Range(-2, 2 + 1);
 
+                    // [OSORKON] I don't want custom class enemy levels to go below 1.
                     if (level < 1)
                     {
                         level = 1;
                     }
-                }
 
-                maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
+                    // [OSORKON] Custom class enemy health works the same as vanilla.
+                    maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
+                }
             }
             else if (entityType == EntityTypes.EnemyMonster)
             {
@@ -746,7 +750,7 @@ namespace DaggerfallWorkshop.Game.Entity
             // [OSORKON] For whatever reason, enemy spell costs in vanilla vary depending on player
             // spell skill level, which makes it impossible to precisely set how many spells an enemy
             // could cast - and that's exactly what I wanted to do. I solved this problem by manually
-            // setting how much magicka each enemy spell would cost in a different script. Once I did
+            // setting how much magicka each enemy spell would cost in EntityEffectManager. Once I did
             // that, I could precisely manage how many spells enemies could cast. This list sets enemy
             // mana pools, each spell costs 5 mana. Bosses above level 25 have effectively infinite mana.
             if (level > 0 && level < 8)
