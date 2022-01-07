@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Hazelnut
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using System;
@@ -230,6 +230,9 @@ namespace DaggerfallWorkshop
         public int[] SeducerTransform1Frames;       // Animation sequence to play when Seducer crouches and grows wings
         public int[] SeducerTransform2Frames;       // Animation sequence to play when Seducer stands and spreads wings
         public MobileTeams Team;                    // Team that this enemy uses if enemy in-fighting is on
+
+        // [OSORKON] Added this to greatly reduce unnecessary movespeed checks in EnemyMotor script. Doesn't break any mods.
+        public float MoveSpeed;
     }
 
     /// <summary>

@@ -1047,18 +1047,52 @@ namespace DaggerfallWorkshop.Game.Items
 
         public virtual int GetShieldArmorValue()
         {
+            // [OSORKON] I rewrote most of this function to make shields of high tier materials actually useful.
+            // Leather/Chain/Steel/Silver shield armor unchanged from vanilla. An Iron shield grants 1 less armor
+            // than vanilla, an Elven shield grants 1 more armor than vanilla, a Dwarven shield grants 2 more armor
+            // than vanilla,... a Daedric shield grants 6 more armor than vanilla.
+            int shieldMaterialModifier;
+
+            switch (nativeMaterialValue)
+            {
+                case (int)ArmorMaterialTypes.Iron:
+                    shieldMaterialModifier = -1;
+                    break;
+                case (int)ArmorMaterialTypes.Elven:
+                    shieldMaterialModifier = 1;
+                    break;
+                case (int)ArmorMaterialTypes.Dwarven:
+                    shieldMaterialModifier = 2;
+                    break;
+                case (int)ArmorMaterialTypes.Mithril:
+                case (int)ArmorMaterialTypes.Adamantium:
+                    shieldMaterialModifier = 3;
+                    break;
+                case (int)ArmorMaterialTypes.Ebony:
+                    shieldMaterialModifier = 4;
+                    break;
+                case (int)ArmorMaterialTypes.Orcish:
+                    shieldMaterialModifier = 5;
+                    break;
+                case (int)ArmorMaterialTypes.Daedric:
+                    shieldMaterialModifier = 6;
+                    break;
+
+                default:
+                    shieldMaterialModifier = 0;
+                    break;
+            }
+
             switch (TemplateIndex)
             {
-                // [OSORKON] I doubled every shield's armor value. BOSSFALL enemies are much
-                // more accurate than vanilla, so I raised shield armor to partially compensate.
                 case (int)Armor.Buckler:
-                    return 2;
+                    return 1 + shieldMaterialModifier;
                 case (int)Armor.Round_Shield:
-                    return 4;
+                    return 2 + shieldMaterialModifier;
                 case (int)Armor.Kite_Shield:
-                    return 6;
+                    return 3 + shieldMaterialModifier;
                 case (int)Armor.Tower_Shield:
-                    return 8;
+                    return 4 + shieldMaterialModifier;
 
                 default:
                     return 0;

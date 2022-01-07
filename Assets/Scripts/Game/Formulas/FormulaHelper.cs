@@ -3018,25 +3018,42 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("RandomMaterial", out del))
                 return del(playerLevel);
 
-            // [OSORKON] This new formula is responsible for BOSSFALL's unleveled loot. I searched
-            // for every script that called RandomMaterial and replaced playerLevel with 10. In BOSSFALL v1.1
-            // enemies started getting increased chances for good loot at enemy level 11 and above - in v1.2 I
-            // start scaling for better loot at enemy level 16 and above. To balance that out, I increased the
-            // multiplier from v1.1's 32 to 50. In v1.2, regular enemies have slightly less good loot drops, but
-            // bosses have much greater chances to drop good loot.
+            // [OSORKON] If you are already familiar with how item materials are generated in vanilla DFU, you likely
+            // won't learn anything from my long paragraph immediately below. I wrote this long comment because I had
+            // a very hard time figuring out precisely how item materials were generated even after I read the vanilla
+            // comments and an explanation on the forums. If anybody else is as confused as I initially was, hopefully
+            // my extended paragraph will help make item material generation clearer. This explanation is for BOSSFALL
+            // loot generation - the numbers I use are different from vanilla DFU, but the process is similar.
+
+            // [OSORKON] In BOSSFALL when a weapon or plate armor item is generated from a loot pile or an enemy
+            // below level 16, this function generates a random number from 0 to 1024. A result of 327 or less generates
+            // an Iron item, while a result of 328 to 981 or less generates a Steel item. A result of 982 to 1024
+            // generates Silver through Daedric - as material tier increases, generation chance decreases, and a result
+            // of 1024 is required to generate a Daedric item. The random number from this function is not changed by
+            // player level or any other player-dependent factors, which results in BOSSFALL's unleveled static drop
+            // chances for all materials. Once the enemy is level 16 or higher, progressively higher values
+            // (50 * (enemy Level - 15)) are added to the random number from this function, which often results in a
+            // value higher than 1024. If the value is higher than 1024, a Daedric item will be generated.
+
+            // [OSORKON] Each element in this array represents a weapon material, Iron through Daedric. Materials have
+            // a (element / 1025) percent chance of being generated, unless this function is generating items for an
+            // enemy above level 15. In that case high tier material generation is more likely, as described above.
+            short[] materialProbability = { 327, 654, 8, 12, 8, 5, 4, 3, 2, 1 };
+
+            // [OSORKON] This new formula is responsible for BOSSFALL's unleveled loot. The playerLevel variable is still
+            // present here but in most other functions that call RandomMaterial playerLevel has been replaced with 10.
             int levelModifier = (playerLevel - 15) * 50;
 
-            // [OSORKON] Without this check, enemies below level 15 would never drop anything but Iron and
-            // Steel. I want the player to (rarely) find great loot anywhere.
+            // [OSORKON] Without this check, enemies below level 15 would never drop anything but Iron and Steel. I want
+            // the player to (rarely) find great loot anywhere.
             if (levelModifier < 0)
             {
                 levelModifier = 0;
             }
 
-            // [OSORKON] I increased the maximum range from vanilla's 256 to 1024. With that increase, I made high tier
-            // materials quite rare. In BOSSFALL v1.1 I failed to include the +1 modifier at the end, which had
-            // embarrassing results. Enemies below level 11, loot piles, and stores never generated Daedric items.
-            // *facepalm*
+            // [OSORKON] I increased the maximum range from vanilla's 256 to 1024. In BOSSFALL v1.1 I failed to include
+            // the +1 modifier at the end, which had embarrassing results. Enemies below level 11, loot piles, and stores
+            // never generated Daedric items. *facepalm*
             int randomModifier = UnityEngine.Random.Range(0, 1024 + 1);
 
             int combinedModifiers = levelModifier + randomModifier;
@@ -3047,9 +3064,13 @@ namespace DaggerfallWorkshop.Game.Formulas
             int material = 0; // initialize to iron
 
             // The higher combinedModifiers is, the higher the material
-            while (ItemBuilder.materialsByModifier[material] < combinedModifiers)
+
+            // [OSORKON] I changed this "while" to use an array declared in this function rather than call one from
+            // ItemBuilder. I did this so I could modify the array's elements without changing any vanilla values. I
+            // don't want to break any mods that call the vanilla array.
+            while (materialProbability[material] < combinedModifiers)
             {
-                combinedModifiers -= ItemBuilder.materialsByModifier[material++];
+                combinedModifiers -= materialProbability[material++];
             }
 
             return (WeaponMaterialTypes)(material);

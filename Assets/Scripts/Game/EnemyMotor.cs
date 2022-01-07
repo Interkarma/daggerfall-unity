@@ -74,6 +74,15 @@ namespace DaggerfallWorkshop.Game
         float lastGroundedY;                        // Used for fall damage
         float originalHeight;
 
+        // [OSORKON] These bools are used for custom enemy AI and boss proximity warning HUD messages.
+        bool prefersBow;
+        bool alwaysCharges;
+        bool isBoss;
+        bool isPowerfulBoss;
+        bool shownBossWarning;
+        bool shownPowerfulBossWarning;
+
+
         EnemySenses senses;
         Vector3 destination;
         Vector3 detourDestination;
@@ -128,6 +137,38 @@ namespace DaggerfallWorkshop.Game
 
             // Get original height, before any height adjustments
             originalHeight = controller.height;
+
+            // [OSORKON] If enemy is an Archer or Ranger prefersBow is true. Only needs to be checked once.
+            if (mobile.Enemy.ID == 141 || mobile.Enemy.ID == 142)
+            {
+                prefersBow = true;
+            }
+
+            // [OSORKON] If enemy is non-sentient or very stupid alwaysCharges is true. Only needs to be checked once.
+            if (mobile.Enemy.ID == 32 || mobile.Enemy.ID == 33)
+            {
+                 alwaysCharges = false;
+            }
+            else if (mobile.Enemy.Affinity == MobileAffinity.Animal || mobile.Enemy.Affinity == MobileAffinity.Undead)
+            {
+                alwaysCharges = true;
+            }
+            else if (mobile.Enemy.ID == 11 || mobile.Enemy.ID == 16 || mobile.Enemy.ID == 22 || mobile.Enemy.ID == 143)
+            {
+                alwaysCharges = true;
+            }
+
+            // [OSORKON] If enemy is an OrcWarlord/Vampire/Lich/Alternate_Dragonling isBoss is true. Only needs to be checked once.
+            if (mobile.Enemy.ID == 24 || mobile.Enemy.ID == 28 || mobile.Enemy.ID == 32 || mobile.Enemy.ID == 40)
+            {
+                isBoss = true;
+            }
+
+            // [OSORKON] If enemy is a VampireAncient/DaedraLord/AncientLich isPowerfulBoss is true. Only needs to be checked once.
+            if (mobile.Enemy.ID == 30 || mobile.Enemy.ID == 31 || mobile.Enemy.ID == 33)
+            {
+                isPowerfulBoss = true;
+            }
         }
 
         void FixedUpdate()
@@ -152,6 +193,27 @@ namespace DaggerfallWorkshop.Game
             UpdateToIdleOrMoveAnim();
             OpenDoors();
             HeightAdjust();
+
+            // [OSORKON] This checks for nearby bosses and creates warning HUD messages. Detection radius is
+            // roughly classic despawn distance. Assassins won't trigger warning messages - they're too stealthy
+            // to detect. The three toughest bosses (Daedra Lord, Vampire Ancient, Ancient Lich) get a unique HUD
+            // message. The HUD message appears once per boss.
+            if (isBoss && !shownBossWarning)
+            {
+                if (senses.DistanceToPlayer < 25.6f)
+                {
+                    DaggerfallUI.AddHUDText("You sense a boss nearby.");
+                    shownBossWarning = true;
+                }
+            }
+            else if (isPowerfulBoss && !shownPowerfulBossWarning)
+            {
+                if (senses.DistanceToPlayer < 25.6f)
+                {
+                    DaggerfallUI.AddHUDText("You sense a powerful boss nearby.");
+                    shownPowerfulBossWarning = true;
+                }
+            }
         }
         #endregion
 
@@ -213,37 +275,6 @@ namespace DaggerfallWorkshop.Game
         public void AdjustLastGrounded(float y)
         {
             lastGroundedY += y;
-        }
-
-        // [OSORKON] This new bool returns true if enemy is an Archer or Ranger.
-        public bool PrefersBow()
-        {
-            if (mobile.Enemy.ID == 141 || mobile.Enemy.ID == 142)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        // [OSORKON] This new bool returns true if enemy is non-sentient or very stupid. Animals, Undead (except for
-        // Vampire/Vampire Ancient/Lich/Ancient Lich), Slaughterfish, Giants, Gargoyles, and Barbarians will always charge.
-        public bool AlwaysCharges()
-        {
-            if (mobile.Enemy.ID == 32 || mobile.Enemy.ID == 33)
-            {
-                return false;
-            }
-            else if (mobile.Enemy.Affinity == MobileAffinity.Animal || mobile.Enemy.Affinity == MobileAffinity.Undead)
-            {
-                return true;
-            }
-            else if (mobile.Enemy.ID == 11 || mobile.Enemy.ID == 16 || mobile.Enemy.ID == 22 || mobile.Enemy.ID == 143)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         #endregion
@@ -440,46 +471,13 @@ namespace DaggerfallWorkshop.Game
             // Monster speed of movement follows the same formula as for when the player walks
             float moveSpeed = (entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
 
-            // [OSORKON] I manually set enemy move speed by ID with this list. I put the most common enemies
-            // at the beginning to reduce unnecessary checks. Compared to vanilla DFU, most enemies are much faster.
-            // Top Running speed (with 100 SPD/Running skill) is ~11.7f, so only Vampire Ancients can outrun the
-            // fastest player.
-            if (mobile.Enemy.ID == 0 || mobile.Enemy.ID == 16 || mobile.Enemy.ID == 143 || mobile.Enemy.ID == 134)
-                moveSpeed = 7f;
-            else if (mobile.Enemy.ID == 3 || mobile.Enemy.ID == 137 || mobile.Enemy.ID == 146)
-                moveSpeed = 8.5f;
-            else if (mobile.Enemy.ID == 4 || mobile.Enemy.ID == 8 || mobile.Enemy.ID == 14 || mobile.Enemy.ID == 20
-                     || mobile.Enemy.ID == 26 || mobile.Enemy.ID == 29 || mobile.Enemy.ID == 31 || mobile.Enemy.ID == 35
-                     || mobile.Enemy.ID == 140 || mobile.Enemy.ID == 129)
-                moveSpeed = 7.5f;
-            else if (mobile.Enemy.ID == 7 || mobile.Enemy.ID == 25 || mobile.Enemy.ID == 145)
-                moveSpeed = 5f;
-            else if (mobile.Enemy.ID == 5 || mobile.Enemy.ID == 13 || mobile.Enemy.ID == 34 || mobile.Enemy.ID == 135
-                     || mobile.Enemy.ID == 136 || mobile.Enemy.ID == 138 || mobile.Enemy.ID == 133)
-                moveSpeed = 8f;
-            else if (mobile.Enemy.ID == 23 || mobile.Enemy.ID == 32 || mobile.Enemy.ID == 42 || mobile.Enemy.ID == 132
-                     || mobile.Enemy.ID == 128 || mobile.Enemy.ID == 131)
-                moveSpeed = 4f;
-            else if (mobile.Enemy.ID == 1 || mobile.Enemy.ID == 15 || mobile.Enemy.ID == 130)
-                moveSpeed = 6f;
-            else if (mobile.Enemy.ID == 12 || mobile.Enemy.ID == 21 || mobile.Enemy.ID == 144)
-                moveSpeed = 5.75f;
-            else if (mobile.Enemy.ID == 2 || mobile.Enemy.ID == 17 || mobile.Enemy.ID == 36 || mobile.Enemy.ID == 37
-                     || mobile.Enemy.ID == 38)
-                moveSpeed = 3f;
-            else if (mobile.Enemy.ID == 6 || mobile.Enemy.ID == 9)
-                moveSpeed = 9f;
-            else if (mobile.Enemy.ID == 18 || mobile.Enemy.ID == 19 || mobile.Enemy.ID == 41)
-                moveSpeed = 3.5f;
-            else if (mobile.Enemy.ID == 10 || mobile.Enemy.ID == 11 || mobile.Enemy.ID == 22 || mobile.Enemy.ID == 33
-                     || mobile.Enemy.ID == 141 || mobile.Enemy.ID == 142)
-                moveSpeed = 4.5f;
-            else if (mobile.Enemy.ID == 24 || mobile.Enemy.ID == 27)
-                moveSpeed = 6.5f;
-            else if (mobile.Enemy.ID == 28 || mobile.Enemy.ID == 40 || mobile.Enemy.ID == 139)
-                moveSpeed = 10f;
-            else if (mobile.Enemy.ID == 30)
-                moveSpeed = 12f;
+            // [OSORKON] Use MoveSpeed value from EnemyBasics for enemy moveSpeed. I kept the above vanilla moveSpeed
+            // formula and added the != 0 check because "Meaner Monsters" and any future mods that add enemies won't
+            // have anything in the MoveSpeed field as that field is not in vanilla DFU code. I don't want to break mods.
+            if (mobile.Enemy.MoveSpeed != 0)
+            {
+                moveSpeed = mobile.Enemy.MoveSpeed;
+            }
 
             // Get isPlayingOneShot for use below
             bool isPlayingOneShot = mobile.IsPlayingOneShot();
@@ -487,8 +485,8 @@ namespace DaggerfallWorkshop.Game
             // Reduced speed if playing a one-shot animation with enhanced AI
 
             // [OSORKON] I removed the below check that was in vanilla. Now Vampire Ancients can run down the player and
-            // hit them instead of slowing down when attacking. To balance this out, I added pacification, dispel,
-            // and teleport magical items to give player a fighting chance.
+            // hit them instead of slowing down when attacking. To balance this out, I added Pacification, Dispel,
+            // and Teleport magical items to give player a fighting chance.
 
             // if (isPlayingOneShot && DaggerfallUnity.Settings.EnhancedCombatAI)
             //    moveSpeed /= attackSpeedDivisor;
@@ -533,7 +531,7 @@ namespace DaggerfallWorkshop.Game
 
             // [OSORKON] If enemy is an Archer or Ranger, I never want them to move in to attack. I put these bool
             // settings here, as that influences what decisions are made a few lines down.
-            if (PrefersBow())
+            if (prefersBow)
             {
                 retreating = true;
                 pursuing = false;
@@ -1293,7 +1291,7 @@ namespace DaggerfallWorkshop.Game
             // Classic always attacks
 
             // [OSORKON] If enemy is the type to always charge, they'll always move in to attack.
-            if (!DaggerfallUnity.Settings.EnhancedCombatAI || AlwaysCharges())
+            if (!DaggerfallUnity.Settings.EnhancedCombatAI || alwaysCharges)
             {
                 moveInForAttack = true;
                 return;
@@ -1309,9 +1307,9 @@ namespace DaggerfallWorkshop.Game
             // No retreat if enemy is paralyzed
             if (senses.Target != null)
             {
-                // [OSORKON] The new !PrefersBow check ensures Archers/Rangers never move in to melee range, even
+                // [OSORKON] The new !prefersBow check ensures Archers/Rangers never move in to melee range, even
                 // if player is incapacitated or unaware.
-                if (!PrefersBow())
+                if (!prefersBow)
                 {
                     EntityEffectManager targetEffectManager = senses.Target.GetComponent<EntityEffectManager>();
                     if (targetEffectManager.FindIncumbentEffect<MagicAndEffects.MagicEffects.Paralyze>() != null)
@@ -1360,7 +1358,7 @@ namespace DaggerfallWorkshop.Game
 
             // [OSORKON] If enemy is not an Archer or Ranger, proceed as normal. If they are, moveInForAttack will
             // always be false.
-            if (!PrefersBow())
+            if (!prefersBow)
             {
                 moveInForAttack = roll > 4;
             }
@@ -1376,7 +1374,7 @@ namespace DaggerfallWorkshop.Game
 
                 // [OSORKON] This check is necessary for TakeAction to do what I want. Without this custom multiplier, Archers
                 // and Rangers usually won't begin retreating until player is right in front of them.
-                if (PrefersBow())
+                if (prefersBow)
                     retreatDistanceMultiplier = 2.75f;
 
                 if (!DaggerfallUnity.Settings.EnhancedCombatAI)

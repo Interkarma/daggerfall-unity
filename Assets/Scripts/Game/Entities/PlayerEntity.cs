@@ -307,9 +307,9 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Here we use a rate of 1/4 that observed for classic.
                 if (playerMotor.IsRunning && !playerMotor.IsRiding)
                 {
-                    // [OSORKON] I greatly increased the runningTallyCounter from vanilla's 3.
-                    // The Running skill now levels roughly 7 times slower.
-                    if (runningTallyCounter == 20)
+                    // [OSORKON] I increased the runningTallyCounter from vanilla's 3.
+                    // Running now levels slower than vanilla.
+                    if (runningTallyCounter == 5)
                     {
                         TallySkill(DFCareer.Skills.Running, 1);
                         runningTallyCounter = 0;

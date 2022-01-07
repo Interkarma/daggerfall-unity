@@ -236,7 +236,8 @@ namespace DaggerfallWorkshop.Utility
         // and low level. As spawn frequency falls, monster Armor, HP, Level, and damage smoothly rise. Rare enemies
         // are very dangerous compared to vanilla. HP doesn't follow the standard xd8 + 10 pattern - all monsters
         // have MaxHealth of (MinHealth * 3). Non-boss human HP is unchanged. All non-boss monsters (except for those
-        // with Bonus To Hit: Humanoids) have a minimum damage of 1. Empty soul gems cost 50,000 gold so I added 50,000
+        // with Bonus To Hit: Humanoids) have a minimum damage of 1. Added a new MoveSpeed field to every enemy to
+        // greatly reduce movespeed checks done in EnemyMotor. Empty soul gems cost 50,000 gold so I added 50,000
         // to all SoulPts for consistency otherwise filled soul gems would be too cheap. Finally, I set every
         // MinMetalToHit to None. Custom immunities are added in the CalculateAttackDamage function in FormulaHelper.
         public static MobileEnemy[] Enemies = new MobileEnemy[]
@@ -258,10 +259,10 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyRatAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Slightly less damage and armor than vanilla, similar HP. They move much faster.
-                // Rats are very common in dungeons, outside they prefer temperate climates. Rats are rare in
-                // the wilderness during the day and are fairly common at night. They can only transmit the
-                // Plague, and they always charge. They never appear in towns at night.
+                // [OSORKON] Slightly less damage and armor than vanilla, similar HP. They move somewhat fast.
+                // Rats are very common in dungeons, outside they prefer temperate climates. Rats are rare in the
+                // wilderness during the day and are fairly common at night. They can only transmit the Plague
+                // and they always charge. They never appear in towns at night.
                 MinDamage = 1,
                 MaxDamage = 3,
                 MinHealth = 6,
@@ -274,6 +275,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3, 4, 5 },
                 Team = MobileTeams.Vermin,
+                MoveSpeed = 6.5f,
             },
 
             // Imp
@@ -295,7 +297,7 @@ namespace DaggerfallWorkshop.Utility
                 MinMetalToHit = WeaponMaterialTypes.None,
 
                 // [OSORKON] Much less damage and armor, slightly more HP. Their spells are a lot nastier and
-                // they move a bit faster. They are never found outside and are only present in a few dungeon
+                // they move somewhat slowly. They are never found outside and are only present in a few dungeon
                 // types. I figure they are familiars to spellcasters and don't wander around on their own.
                 MinDamage = 1,
                 MaxDamage = 10,
@@ -312,6 +314,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3, 1 },
                 SpellAnimFrames = new int[] { 0, 1, 2, 3, 1 },
                 Team = MobileTeams.Magic,
+                MoveSpeed = 5.5f,
             },
 
             // Spriggan
@@ -352,6 +355,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 51000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, 3, 3, 3 },
                 Team = MobileTeams.Spriggans,
+                MoveSpeed = 3f,
             },
 
             // Giant Bat
@@ -386,6 +390,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, 3 },
                 Team = MobileTeams.Vermin,
+                MoveSpeed = 8f,
             },
 
             // Grizzly Bear
@@ -405,7 +410,7 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyBearAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Less damage, much more HP. They move faster. They are only in Natural Cave
+                // [OSORKON] Less damage, much more HP. They move somewhat fast. They are only in Natural Cave
                 // dungeon types. Bears love mountain and woodland wilderness, day or night. They always charge.
                 MinDamage = 1,
                 MaxDamage = 6,
@@ -423,6 +428,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3, 0 },
                 Team = MobileTeams.Bears,
+                MoveSpeed = 6.75f,
             },
 
             // Sabertooth Tiger
@@ -442,8 +448,8 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyTigerAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much less damage, much more HP and armor. They move a lot quicker. Never in any
-                // dungeons and only outside in tropical climates. Not as active at night. They always charge.
+                // [OSORKON] Much less damage, much more HP and armor. They move fast. Never in any dungeons
+                // and only outside in tropical climates. Not as active at night. They always charge.
                 MinDamage = 1,
                 MaxDamage = 7,
                 MinDamage2 = 1,
@@ -460,6 +466,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3, 4, 5 },
                 Team = MobileTeams.Tigers,
+                MoveSpeed = 7.25f,
             },
 
             // Spider
@@ -494,6 +501,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, 3, 4, 5 },
                 Team = MobileTeams.Spiders,
+                MoveSpeed = 8f,
             },
 
             // Orc
@@ -514,7 +522,7 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyOrcAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much more damage and HP. They move a bit faster. Orcs don't wield weapons anymore - they
+                // [OSORKON] Much more damage and HP. They move somewhat slowly. Orcs don't wield weapons anymore - they
                 // carried way too much loot in vanilla. They prefer tropical climates, day or night, and are only in
                 // Orc Stronghold dungeon types. They never appear in towns at night.
                 MinDamage = 1,
@@ -532,6 +540,7 @@ namespace DaggerfallWorkshop.Utility
                 ChanceForAttack2 = 50,
                 PrimaryAttackAnimFrames2 = new int[] { 4, -1, 5, 0 },
                 Team = MobileTeams.Orcs,
+                MoveSpeed = 5f,
             },
 
             // Centaur
@@ -570,6 +579,7 @@ namespace DaggerfallWorkshop.Utility
                 ChanceForAttack2 = 50,
                 PrimaryAttackAnimFrames2 = new int[] { 0, 1, 1, 1, 2, -1, 3, 3, 2, 1, 1, -1, 2, 3, 3, 4 },
                 Team = MobileTeams.Centaurs,
+                MoveSpeed = 7f,
             },
 
             // Werewolf
@@ -609,6 +619,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 51000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, -1, 2 },
                 Team = MobileTeams.Werecreatures,
+                MoveSpeed = 8f,
             },
 
             // Nymph
@@ -629,8 +640,8 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyNymphAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] More damage, less HP and much less Armor. They move somewhat slowly. They're
-                // only found in Natural Cave dungeon types and are common outside in tropical daytime wilderness.
+                // [OSORKON] More damage, less HP and much less Armor. They move slowly. They're only found
+                // in Natural Cave dungeon types and are common outside in tropical daytime wilderness.
                 // They never spawn outside at night.
                 MinDamage = 1,
                 MaxDamage = 10,
@@ -645,6 +656,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 60000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, 3, 4, -1, 5 },
                 Team = MobileTeams.Nymphs,
+                MoveSpeed = 4.5f,
             },
 
             // Slaughterfish
@@ -664,8 +676,8 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyEelAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Slightly less damage, slightly more HP and armor. They swim rather slowly.
-                // Only found underwater. They always charge.
+                // [OSORKON] Slightly less damage, slightly more HP and armor. They swim slowly. Only found
+                // underwater. They always charge.
                 MinDamage = 1,
                 MaxDamage = 12,
                 MinHealth = 20,
@@ -682,6 +694,7 @@ namespace DaggerfallWorkshop.Utility
                 ChanceForAttack3 = 33,
                 PrimaryAttackAnimFrames3 = new int[] { 0, 3, -1, 5, 0 },
                 Team = MobileTeams.Aquatic,
+                MoveSpeed = 4.5f,
             },
 
             // Orc Sergeant
@@ -702,8 +715,8 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyOrcSergeantAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] More damage, much higher HP, Level, and Armor. They move faster. They are only
-                // in Orc Stronghold dungeon types. Outside they prefer tropical climates, day or night. They
+                // [OSORKON] More damage, much higher HP, Level, and Armor. They move somewhat slowly. They are
+                // only in Orc Stronghold dungeon types. Outside they prefer tropical climates, day or night. They
                 // are rarer than standard Orcs. They never appear in towns at night.
                 MinDamage = 1,
                 MaxDamage = 25,
@@ -720,6 +733,7 @@ namespace DaggerfallWorkshop.Utility
                 ChanceForAttack2 = 50,
                 PrimaryAttackAnimFrames2 = new int[] { 5, 4, 3, -1, 2, 1, 0 },
                 Team = MobileTeams.Orcs,
+                MoveSpeed = 5.75f,
             },
 
             // Harpy
@@ -740,8 +754,8 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyHarpyAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Slightly more damage, similar HP, much less armor. They move much faster.
-                // Common in a few dungeon types and are only outside during the day in mountainous regions -
+                // [OSORKON] Slightly more damage, similar HP, much less armor. They move fast. Common
+                // in a few dungeon types and are only outside during the day in mountainous regions -
                 // I assume mountains make good nesting grounds. They never spawn outside at night.
                 MinDamage = 1,
                 MaxDamage = 23,
@@ -756,6 +770,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 53000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3 },
                 Team = MobileTeams.Harpies,
+                MoveSpeed = 7.5f,
             },
 
             // Wereboar
@@ -777,8 +792,8 @@ namespace DaggerfallWorkshop.Utility
                 MinMetalToHit = WeaponMaterialTypes.None,
 
                 // [OSORKON] More damage and Armor and way higher Level and HP. Immune to all materials except Silver.
-                // They move somewhat fast and are never in dungeons. They rarely appear outside at night anywhere
-                // with the exception of Desert wilderness. Common in day/night Haunted Woodlands wilderness.
+                // They move fast and are never in dungeons. They rarely appear outside at night anywhere with the
+                // exception of Desert wilderness. Common in day/night Haunted Woodlands wilderness.
                 MinDamage = 1,
                 MaxDamage = 16,
                 MinDamage2 = 1,
@@ -795,6 +810,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 51000,
                 PrimaryAttackAnimFrames = new int[] { 0, -1, 1, 2, 2 },
                 Team = MobileTeams.Werecreatures,
+                MoveSpeed = 7f,
             },
 
             // Skeletal Warrior
@@ -816,7 +832,7 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemySkeletonAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Lower Level, HP, and Armor. They move somewhat faster. They are immune to Archery, Short
+                // [OSORKON] Lower Level, HP, and Armor. They move somewhat fast. They are immune to Archery, Short
                 // Blade and Long Blade. Ubiquitous at night in the wilderness and common in many dungeons. Can appear
                 // during the day in Haunted Woodlands wilderness. They never spawn in towns at night. 2% chance/hit
                 // of transmitting any disease. They always charge and are occasionally found underwater.
@@ -834,6 +850,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, 3, -1, 4, 5 },
                 Team = MobileTeams.Undead,
+                MoveSpeed = 6f,
             },
 
             // Giant
@@ -854,9 +871,9 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyGiantAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Less damage and Armor, higher Level and way more HP. They move faster. Only in Giant
-                // Stronghold dungeon types. Common outside in woodland and mountain daytime wilderness. They never
-                // spawn outside at night. They always charge.
+                // [OSORKON] Less damage and Armor, higher Level and way more HP. They move somewhat fast. Only in
+                // Giant Stronghold dungeon types. Common outside in woodland and mountain daytime wilderness. They
+                // never spawn outside at night. They always charge.
                 MinDamage = 1,
                 MaxDamage = 30,
                 MinHealth = 70,
@@ -870,6 +887,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 53000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, 3, 4, -1, 5 },
                 Team = MobileTeams.Giants,
+                MoveSpeed = 6.5f,
             },
 
             // Zombie
@@ -890,7 +908,7 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyZombieAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much lower Level, damage, and Armor, more HP. They move very slowly. Immune to Short Blade,
+                // [OSORKON] Much lower Level, damage, and Armor, more HP. They move extremely slowly. Immune to Short Blade,
                 // Archery, and Hand-to-Hand. Takes double damage from Axes - I would think you "kill" a Zombie by chopping
                 // it to pieces, and an Axe is well suited for that job. Higher chance of disease. Common in many dungeons
                 // and outside in wilderness at night. They never spawn in towns at night. Can appear during the day in
@@ -913,6 +931,7 @@ namespace DaggerfallWorkshop.Utility
                 ChanceForAttack2 = 50,
                 PrimaryAttackAnimFrames2 = new int[] { 0, 2, -1, 3, 4 },
                 Team = MobileTeams.Undead,
+                MoveSpeed = 3f,
             },
 
             // Ghost
@@ -935,7 +954,7 @@ namespace DaggerfallWorkshop.Utility
                 MinMetalToHit = WeaponMaterialTypes.None,
 
                 // [OSORKON] Less damage, much less HP, much more Armor. Casts no spells. Can only be damaged by
-                // Silver. Moves very slowly. Extremely fragile but hard to hit. Holy Water or Holy Daggers
+                // Silver. Moves extremely slowly. Extremely fragile but hard to hit. Holy Water or Holy Daggers
                 // recommended if player isn't a spellcaster. Common in many dungeons and outside in wilderness
                 // at night. They can spawn in Haunted Woodland towns at night, and very common in Haunted
                 // Woodlands wilderness, day or night. They always charge and are very rarely found underwater.
@@ -955,6 +974,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, 3 },
                 SpellAnimFrames = new int[] { 0, 0, 0, 0, 0, 0 },
                 Team = MobileTeams.Undead,
+                MoveSpeed = 3.5f,
             },
 
             // Mummy
@@ -976,8 +996,8 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyMummyAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] More damage, lower Level, much more HP. Moves very slowly. Immune to Archery. Common in a
-                // few undead-themed dungeon types, rare outside in wilderness at night. Very common at night in Desert
+                // [OSORKON] More damage, lower Level, much more HP. Moves extremely slowly. Immune to Archery. Common in
+                // a few undead-themed dungeon types, rare outside in wilderness at night. Very common at night in Desert
                 // wilderness - the environment suits them. They never spawn in towns at night. Can appear during the
                 // day in Haunted Woodlands wilderness. Lower chance of disease, and they always charge.
                 MinDamage = 1,
@@ -994,6 +1014,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 60000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3, 4 },
                 Team = MobileTeams.Undead,
+                MoveSpeed = 3.5f,
             },
 
             // Giant Scorpion
@@ -1013,7 +1034,7 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyScorpionAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Less damage and Armor, more HP. Moves very fast. Immune to Hand-to-Hand and Archery.
+                // [OSORKON] Less damage and Armor, more HP. Moves fast. Immune to Hand-to-Hand and Archery.
                 // 10% chance/hit to poison, 0.1% chance/hit to inflict Immunity-bypassing poison, doesn't Paralyze.
                 // Very common in Scorpion Nest dungeon types and outside in daytime Desert wilderness. They never
                 // spawn outside at night. They always charge.
@@ -1029,6 +1050,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 3, 2, 1, 0 },
                 Team = MobileTeams.Scorpions,
+                MoveSpeed = 7f,
             },
 
             // Orc Shaman
@@ -1049,7 +1071,7 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyOrcShamanAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much higher damage, HP, Level, and Armor. They move a bit faster. Greatly increased
+                // [OSORKON] Much higher damage, HP, Level, and Armor. They move somewhat slowly. Greatly increased
                 // spell variety, increased chance to carry good loot. Only in Orc Stronghold dungeon type. Outside
                 // they prefer tropical climates, day or night. They never appear in towns at night. Shamans are very
                 // rare compared to standard Orcs.
@@ -1076,6 +1098,7 @@ namespace DaggerfallWorkshop.Utility
                 HasSpellAnimation = true,
                 SpellAnimFrames = new int[] { 0, 0, 1, 2, 3, 3, 3 },
                 Team = MobileTeams.Orcs,
+                MoveSpeed = 5.25f,
             },
 
             // Gargoyle
@@ -1096,7 +1119,7 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyGargoyleAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much more damage and HP, slightly better Armor. They move very slowly. Immune to all
+                // [OSORKON] Much more damage and HP, slightly better Armor. They move extremely slowly. Immune to all
                 // weapons except Blunt Weapons. Common in Mines, Laboratories, and Giant Strongholds (they speak
                 // Giantish). They rarely appear outside at night and rarely spawn in daytime Desert wilderness.
                 // They always charge.
@@ -1112,6 +1135,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 53000,
                 PrimaryAttackAnimFrames = new int[] { 0, 2, 1, 2, 3, -1, 4, 0 },
                 Team = MobileTeams.Magic,
+                MoveSpeed = 3.5f,
             },
 
             // Wraith
@@ -1134,11 +1158,11 @@ namespace DaggerfallWorkshop.Utility
                 MinMetalToHit = WeaponMaterialTypes.None,
 
                 // [OSORKON] Much less damage and HP, much more Armor. Immune to all materials except Silver. They move
-                // very slowly. Greatly increased spell variety. Very fragile but incredibly hard to hit. Holy Water or
-                // Holy Daggers recommended if player isn't a spellcaster. Common in Vampire Haunts, somewhat common in a
-                // few other dungeon types. Rarely spawns in outside wilderness at night. Can spawn in Haunted Woodland
-                // towns at night. Very common in Haunted Woodland wilderness, day or night. They always charge, and are
-                // very rarely found underwater.
+                // slowly. Greatly increased spell variety. Very fragile but incredibly hard to hit. Holy Water or Holy
+                // Daggers recommended if player isn't a spellcaster. Common in Vampire Haunts, somewhat common in a few
+                // other dungeon types. Rarely spawns in outside wilderness at night. Can spawn in Haunted Woodland towns
+                // at night. Very common in Haunted Woodland wilderness, day or night. They always charge, and are very
+                // rarely found underwater.
                 MinDamage = 1,
                 MaxDamage = 45,
                 MinHealth = 10,
@@ -1155,6 +1179,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3 },
                 SpellAnimFrames = new int[] { 0, 0, 0, 0, 0 },
                 Team = MobileTeams.Undead,
+                MoveSpeed = 4f,
             },
 
             // Orc Warlord
@@ -1200,6 +1225,7 @@ namespace DaggerfallWorkshop.Utility
                 ChanceForAttack3 = 33,
                 PrimaryAttackAnimFrames3 = new int[] { 0, 1, -1, 2, 3, 4 -1, 5, 0, 4, -1, 5, 0 },
                 Team = MobileTeams.Orcs,
+                MoveSpeed = 6f,
             },
 
             // Frost Daedra
@@ -1220,7 +1246,7 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyFrostDaedraAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much less damage and Armor, less HP. Moves rather slowly. Frostbite added to spell kit.
+                // [OSORKON] Much less damage and Armor, less HP. Moves slowly. Frostbite added to spell kit.
                 // Common in Covens and outside in Mountain wilderness at night. Will very rarely spawn in Mountain
                 // Woods wilderness at night. Never spawns in towns at night. Greater chance to drop good loot. 
                 MinDamage = 1,
@@ -1242,6 +1268,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames2 = new int[] { -1, 4, 5, 0 },
                 SpellAnimFrames = new int[] { 1, 1, 3, 3 },
                 Team = MobileTeams.Daedra,
+                MoveSpeed = 4f,
             },
 
             // Fire Daedra
@@ -1262,9 +1289,9 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyFireDaedraAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Less damage, much more HP and Armor. Moves quite fast. God's Fire added to spell kit.
-                // Common in a handful of dungeon types and outside in Desert daytime wilderness. Never spawns outside
-                // at night. I don't recommend using Hand-to-Hand on them - doing so will damage you. They have a greater
+                // [OSORKON] Less damage, much more HP and Armor. Moves fast. God's Fire added to spell kit. Common
+                // in a handful of dungeon types and outside in Desert daytime wilderness. Never spawns outside at
+                // night. I don't recommend using Hand-to-Hand on them - doing so will damage you. They have a greater
                 // chance to drop good loot.
                 MinDamage = 1,
                 MaxDamage = 50,
@@ -1285,6 +1312,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames2 = new int[] { 3, -1, 4 },
                 SpellAnimFrames = new int[] { 1, 1, 3, 3 },
                 Team = MobileTeams.Daedra,
+                MoveSpeed = 7f,
             },
 
             // Daedroth
@@ -1328,6 +1356,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 0, 1, -1, 2, 3, 4, -1, 5, 0, 4, -1, 5, 0 },
                 SpellAnimFrames = new int[] { 1, 1, 3, 3 },
                 Team = MobileTeams.Daedra,
+                MoveSpeed = 6f,
             },
 
             // Vampire
@@ -1370,6 +1399,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, 3, -1, 4, 5 },
                 SpellAnimFrames = new int[] { 1, 1, 5, 5 },
                 Team = MobileTeams.Undead,
+                MoveSpeed = 9f,
             },
 
             // Daedra Seducer
@@ -1392,11 +1422,11 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemySeducerAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] The toughest non-boss enemy of the game. Much more damage, HP, and Armor. They move very fast.
+                // [OSORKON] The toughest non-boss enemy of the game. Much more damage, HP, and Armor. They move fast.
                 // Spell variety greatly increased. They are relatively common in a handful of the toughest dungeon types.
                 // Also, they will very rarely spawn outside in daytime wilderness wherever the player normally finds Nymphs.
                 // My thought was every now and then a Daedra Seducer would pretend to be a Nymph and try to trick foolish
-                // mortals. They have a high chance of dropping good loot.
+                // mortals. They have a higher chance of dropping good loot.
                 MinDamage = 1,
                 MaxDamage = 90,
                 MinHealth = 75,
@@ -1414,6 +1444,7 @@ namespace DaggerfallWorkshop.Utility
                 SeducerTransform1Frames = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 },
                 SeducerTransform2Frames = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 },
                 Team = MobileTeams.Daedra,
+                MoveSpeed = 7.5f,
             },
 
             // Vampire Ancient
@@ -1456,6 +1487,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, 3, -1, 4, 5 },
                 SpellAnimFrames = new int[] { 1, 1, 5, 5 },
                 Team = MobileTeams.Undead,
+                MoveSpeed = 12f,
             },
 
             // Daedra Lord
@@ -1477,7 +1509,7 @@ namespace DaggerfallWorkshop.Utility
                 MinMetalToHit = WeaponMaterialTypes.None,
 
                 // [OSORKON] The third toughest boss, tougher than Orc Warlords but not as tough as an Ancient Vampire.
-                // All stats buffed. They move quite fast. Spell variety greatly increased, they have infinite Magicka.
+                // All stats buffed. They move fast. Spell variety greatly increased, they have infinite Magicka.
                 // Incredibly high chance to drop good loot. They are very rare.
                 MinDamage = 30,
                 MaxDamage = 60,
@@ -1500,6 +1532,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 0, 1, -1, 2, 1, 0, 1, -1, 2, 1, 0 },
                 SpellAnimFrames = new int[] { 1, 1, 3, 3 },
                 Team = MobileTeams.Daedra,
+                MoveSpeed = 7f,
             },
 
             // Lich
@@ -1523,8 +1556,8 @@ namespace DaggerfallWorkshop.Utility
 
                 // [OSORKON] The second easiest boss, tougher than a Vampire but not as tough as an Assassin. Slightly
                 // less damage than vanilla, higher Level, much more HP, much less Armor. They take double damage from
-                // Silver. Spell variety greatly increased, has Magicka for 30 spells. Moves very slowly. High chance
-                // of dropping good loot. They are very rare.
+                // Silver. Spell variety greatly increased, has Magicka for 30 spells. Moves slowly. High chance of
+                // dropping good loot. They are very rare.
                 MinDamage = 60,
                 MaxDamage = 90,
                 MinHealth = 80,
@@ -1542,6 +1575,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 1, 2, -1, 3, 4, 4 },
                 SpellAnimFrames = new int[] { 0, 1, 2, 3, 4 },
                 Team = MobileTeams.Undead,
+                MoveSpeed = 4f,
             },
 
             // Ancient Lich
@@ -1570,7 +1604,7 @@ namespace DaggerfallWorkshop.Utility
                 // 300+ HP, plenty of Healing, and a very high weapon skill. Chipping away at them over time won't work, as they
                 // regularly cast Heal on themselves and have infinite Magicka. To top it off, they will likely reflect or resist
                 // any spell you throw at them. Their greatest weakness is their speed - they'll never chase you down as they move
-                // quite slowly. They almost always drop excellent loot. They are very rare and can be found underwater.
+                // slowly. They almost always drop excellent loot. They are very rare and can be found underwater.
                 MinDamage = 115,
                 MaxDamage = 145,
                 MinHealth = 200,
@@ -1590,6 +1624,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 1, 2, -1, 3, 4, 4 },
                 SpellAnimFrames = new int[] { 0, 1, 2, 3, 4 },
                 Team = MobileTeams.Undead,
+                MoveSpeed = 4.5f,
             },
 
             // Dragonling
@@ -1609,9 +1644,9 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyFaeryDragonAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much more damage, HP, and Armor, but much lower Level. Moves quite fast. Common in a
-                // handful of dungeon types, they only spawn outside in Desert wilderness during the day. They never
-                // spawn outside at night. 
+                // [OSORKON] Much more damage, HP, and Armor, but much lower Level. Moves fast. Common in a handful
+                // of dungeon types, they only spawn outside in Desert wilderness during the day. They never spawn
+                // outside at night. 
                 MinDamage = 1,
                 MaxDamage = 30,
                 MinHealth = 40,
@@ -1624,6 +1659,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3 },
                 Team = MobileTeams.Dragonlings,
+                MoveSpeed = 7.5f,
             },
 
             // Fire Atronach
@@ -1644,7 +1680,7 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyFireAtronachAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Less damage, similar HP, much more Armor than vanilla. They move quite fast. Immune to all
+                // [OSORKON] Less damage, similar HP, much more Armor than vanilla. They move fast. Immune to all
                 // materials except Silver. I am torn on their immunity to most materials as a weakness to Silver doesn't
                 // really make sense, but it looks like they're made out of fire and thus I don't think any conventional
                 // metal would harm them. This is true for Fire Atronachs only - to me, it looks like Fire Daedra are not
@@ -1666,6 +1702,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 80000,
                 PrimaryAttackAnimFrames = new int[] { 0, -1, 1, 2, 3, 4 },
                 Team = MobileTeams.Magic,
+                MoveSpeed = 7f,
             },
 
             // Iron Atronach
@@ -1701,6 +1738,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 80000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3, 4 },
                 Team = MobileTeams.Magic,
+                MoveSpeed = 3f,
             },
 
             // Flesh Atronach
@@ -1738,6 +1776,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 60000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3, 4 },
                 Team = MobileTeams.Magic,
+                MoveSpeed = 3f,
             },
 
             // Ice Atronach
@@ -1777,6 +1816,7 @@ namespace DaggerfallWorkshop.Utility
                 ChanceForAttack2 = 50,
                 PrimaryAttackAnimFrames2 = new int[] { 0, -1, 3, 4 },
                 Team = MobileTeams.Magic,
+                MoveSpeed = 3f,
             },
 
             // Weights in classic (From offset 0x1BD8D9 in FALL.EXE) only have entries
@@ -1827,6 +1867,7 @@ namespace DaggerfallWorkshop.Utility
                 SoulPts = 1500000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, 3 },
                 Team = MobileTeams.Dragonlings,
+                MoveSpeed = 9f,
             },
 
             // Dreugh
@@ -1847,7 +1888,7 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyDreughAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Slightly better Armor, much lower damage and Level, much more HP. They swim very
+                // [OSORKON] Slightly better Armor, much lower damage and Level, much more HP. They swim extremely
                 // slowly and are very common, but only appear underwater.
                 MinDamage = 1,
                 MaxDamage = 10,
@@ -1866,6 +1907,7 @@ namespace DaggerfallWorkshop.Utility
                 ChanceForAttack3 = 33,
                 PrimaryAttackAnimFrames3 = new int[] { 0, 5, -1, 6, 7 },
                 Team = MobileTeams.Aquatic,
+                MoveSpeed = 3.5f,
             },
 
             // Lamia
@@ -1886,8 +1928,8 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyLamiaAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Less damage, much more HP and Armor. They swim rather slowly and only appear
-                // underwater. They are very rare.
+                // [OSORKON] Less damage, much more HP and Armor. They swim slowly and only appear underwater.
+                // They are very rare.
                 MinDamage = 1,
                 MaxDamage = 15,
                 MinHealth = 51,
@@ -1905,11 +1947,12 @@ namespace DaggerfallWorkshop.Utility
                 ChanceForAttack3 = 33,
                 PrimaryAttackAnimFrames3 = new int[] { 0, 3, -1, 5, 0 },
                 Team = MobileTeams.Aquatic,
+                MoveSpeed = 4f,
             },
 
             // Mage
 
-            // [OSORKON] Mages move very slowly. Their level scales with player's level until player is level 7, then they
+            // [OSORKON] Mages move slowly. Their level scales with player's level until player is level 7, then they
             // can be any level from 1-20 but will usually be around level 10. Their melee damage, armor, and loot quality
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more melee damage at high levels. HP unchanged from vanilla. Greatly increased spell variety.
@@ -1942,11 +1985,12 @@ namespace DaggerfallWorkshop.Utility
                 HasSpellAnimation = true,
                 SpellAnimFrames = new int[] { 0, 1, 2, 3, 3 },
                 Team = MobileTeams.KnightsAndMages,
+                MoveSpeed = 4f,
             },
 
             // Spellsword
 
-            // [OSORKON] Spellswords move quite fast. Their level scales with player's level until player is level 7, then they
+            // [OSORKON] Spellswords move fast. Their level scales with player's level until player is level 7, then they
             // can be any level from 1-20 but will usually be around level 10. Their damage, armor, and loot quality
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more damage at high levels. HP unchanged from vanilla. Greatly increased spell variety.
@@ -1980,6 +2024,7 @@ namespace DaggerfallWorkshop.Utility
                 HasSpellAnimation = true,
                 SpellAnimFrames = new int[] { 0, 1, 2, 3, 3 },
                 Team = MobileTeams.KnightsAndMages,
+                MoveSpeed = 7f,
             },
 
             // Battlemage
@@ -2018,11 +2063,12 @@ namespace DaggerfallWorkshop.Utility
                 HasSpellAnimation = true,
                 SpellAnimFrames = new int[] { 0, 1, 2, 3, 3 },
                 Team = MobileTeams.KnightsAndMages,
+                MoveSpeed = 6f,
             },
 
             // Sorcerer
 
-            // [OSORKON] Sorcerers move very slowly. Their level scales with player's level until player is level 7, then they
+            // [OSORKON] Sorcerers move slowly. Their level scales with player's level until player is level 7, then they
             // can be any level from 1-20 but will usually be around level 10. Their damage, armor, and loot quality
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more damage at high levels. HP unchanged from vanilla. They are most commonly found outside
@@ -2051,11 +2097,12 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames2 = new int[] { 4, 5, -1, 3, 2, 1, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.KnightsAndMages,
+                MoveSpeed = 4f,
             },
 
             // Healer
 
-            // [OSORKON] Healers move very slowly. Their level scales with player's level until player is level 7, then they
+            // [OSORKON] Healers move slowly. Their level scales with player's level until player is level 7, then they
             // can be any level from 1-20 but will usually be around level 10. Their melee damage, armor, and loot quality
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more melee damage at high levels. HP unchanged from vanilla. Greatly increased spell variety.
@@ -2088,11 +2135,12 @@ namespace DaggerfallWorkshop.Utility
                 HasSpellAnimation = true,
                 SpellAnimFrames = new int[] { 0, 1, 2, 3, 3 },
                 Team = MobileTeams.KnightsAndMages,
+                MoveSpeed = 4f,
             },
 
             // Nightblade
 
-            // [OSORKON] Nightblades move quite fast. Their level scales with player's level until player is level 7, then they
+            // [OSORKON] Nightblades move fast. Their level scales with player's level until player is level 7, then they
             // can be any level from 1-20 but will usually be around level 10. Their damage, armor, and loot quality
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more damage at high levels. HP unchanged from vanilla. Greatly increased spell variety.
@@ -2126,6 +2174,7 @@ namespace DaggerfallWorkshop.Utility
                 HasSpellAnimation = true,
                 SpellAnimFrames = new int[] { 0, 1, 2, 3, 3 },
                 Team = MobileTeams.Criminals,
+                MoveSpeed = 7.5f,
             },
 
             // Bard
@@ -2161,11 +2210,12 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 4, -1, 5, 0, 0, 1, -1, 2, 3, 4, -1, 5, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.Criminals,
+                MoveSpeed = 6.5f,
             },
 
             // Burglar
 
-            // [OSORKON] Burglars move quite fast. Their level scales with player's level until player is level 7, then they
+            // [OSORKON] Burglars move fast. Their level scales with player's level until player is level 7, then they
             // can be any level from 1-20 but will usually be around level 10. Their damage, armor, and loot quality
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more damage at high levels. HP unchanged from vanilla. They are most commonly found outside
@@ -2196,11 +2246,12 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 4, -1, 5, 0, 0, 1, -1, 2, 3, 4, -1, 5, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.Criminals,
+                MoveSpeed = 7.5f,
             },
 
             // Rogue
 
-            // [OSORKON] Rogues move quite fast. Their level scales with player's level until player is level 7, then they
+            // [OSORKON] Rogues move fast. Their level scales with player's level until player is level 7, then they
             // can be any level from 1-20 but will usually be around level 10. Their damage, armor, and loot quality
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more damage at high levels. HP unchanged from vanilla. They are most commonly found outside
@@ -2231,6 +2282,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 4, -1, 5, 0, 0, 1, -1, 2, 3, 4, -1, 5, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.Criminals,
+                MoveSpeed = 7.5f,
             },
 
             // Acrobat
@@ -2266,11 +2318,12 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 4, -1, 5, 0, 0, 1, -1, 2, 3, 4, -1, 5, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.Criminals,
+                MoveSpeed = 8f,
             },
 
             // Thief
 
-            // [OSORKON] Thieves move quite fast. Their level scales with player's level until player is level 7, then they
+            // [OSORKON] Thieves move fast. Their level scales with player's level until player is level 7, then they
             // can be any level from 1-20 but will usually be around level 10. Their damage, armor, and loot quality
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more damage at high levels. HP unchanged from vanilla. They are most commonly found outside
@@ -2301,6 +2354,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 4, -1, 5, 0, 0, 1, -1, 2, 3, 4, -1, 5, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.Criminals,
+                MoveSpeed = 7.5f,
             },
 
             // Assassin
@@ -2342,11 +2396,12 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 4, -1, 5, 0, 0, 1, -1, 2, 3, 4, -1, 5, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.Criminals,
+                MoveSpeed = 9f,
             },
 
             // Monk
 
-            // [OSORKON] Monks move quite fast. Their level scales with player's level until player is level 7, then they
+            // [OSORKON] Monks move fast. Their level scales with player's level until player is level 7, then they
             // can be any level from 1-20 but will usually be around level 10. Their damage, armor, and loot quality
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more damage at high levels. HP unchanged from vanilla. They are most commonly found outside
@@ -2377,11 +2432,12 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 5, 5, 3, -1, 2, 1, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.KnightsAndMages,
+                MoveSpeed = 7f,
             },
 
             // Archer
 
-            // [OSORKON] Archers move rather slowly. Their level scales with player's level until player is level 7, then they
+            // [OSORKON] Archers move slowly. Their level scales with player's level until player is level 7, then they
             // can be any level from 1-20 but will usually be around level 10. Their damage, armor, and loot quality
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more damage at high levels. HP unchanged from vanilla. They are most commonly found outside
@@ -2413,11 +2469,12 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames2 = new int[] { 3, 4, -1, 5, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.KnightsAndMages,
+                MoveSpeed = 4.5f,
             },
 
             // Ranger
 
-            // [OSORKON] Rangers move rather slowly. Their level scales with player's level until player is level 7, then they
+            // [OSORKON] Rangers move slowly. Their level scales with player's level until player is level 7, then they
             // can be any level from 1-20 but will usually be around level 10. Their damage, armor, and loot quality
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more damage at high levels. HP unchanged from vanilla. They are most commonly found outside
@@ -2450,6 +2507,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames2 = new int[] { 3, 4, -1, 5, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.KnightsAndMages,
+                MoveSpeed = 4.5f,
             },
 
             // Barbarian
@@ -2487,6 +2545,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 5, 5, 3, -1, 2, 1, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.Criminals,
+                MoveSpeed = 6.5f,
             },
 
             // Warrior
@@ -2522,6 +2581,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 5, 5, 3, -1, 2, 1, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.KnightsAndMages,
+                MoveSpeed = 5.75f,
             },
 
             // Knight
@@ -2557,6 +2617,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 5, 5, 3, -1, 2, 1, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.KnightsAndMages,
+                MoveSpeed = 5f,
             },
 
             // City Watch - The Haltmeister
@@ -2605,6 +2666,7 @@ namespace DaggerfallWorkshop.Utility
                 PrimaryAttackAnimFrames3 = new int[] { 5, 5, 3, -1, 2, 1, 0 },
                 RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 },
                 Team = MobileTeams.CityWatch,
+                MoveSpeed = 8f,
 
                 // [OSORKON] HALT!
             },

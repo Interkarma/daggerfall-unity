@@ -39,31 +39,9 @@ namespace DaggerfallWorkshop.Game.Items
         // The array is traversed, subtracting each value from a sum until the sum is less than the next value.
         // Steel through Daedric, or Iron if sum is less than the first value.
 
-        // [OSORKON] This materialsByModifier array sets item material generation probabilities. I changed this
-        // array to be a "short" instead of a "byte" so I could put elements higher than 255 in the array. Now
-        // that I'm more familiar with DFU code I realize this change isn't necessary as I could use FormulaHelper
-        // functions to implement unleveled loot. The only mod I can think of that would be negatively impacted
-        // by my "short" change is "Unleveled Loot", which I already listed as a Known Conflicting Mod, but if I
-        // find that I've broken other mods I'll undo my changes in this script and move them to FormulaHelper.
-
-        // [OSORKON] If you are already familiar with how item materials are generated in vanilla DFU, you likely
-        // won't learn anything from my long paragraph immediately below. I wrote this long comment because I had
-        // a very hard time figuring out precisely how item materials were generated even after I read the vanilla
-        // comments and an explanation on the forums. If anybody else is as confused as I initially was, hopefully
-        // my extended paragraph will help make item material generation clearer. This explanation is for BOSSFALL
-        // loot generation - the numbers I use are different from vanilla DFU, but the process is similar.
-
-        // [OSORKON] In BOSSFALL when a weapon or plate armor item is generated from a loot pile or an enemy
-        // below level 16, a function in FormulaHelper generates a random number from 0 to 1024. A result of
-        // 327 or less generates an Iron item, while a result of 328 to 981 or less generates a Steel item.
-        // A result of 982 to 1024 generates Silver through Daedric - as material tier increases, generation
-        // chance decreases, and a result of 1024 is required to generate a Daedric item. The random number
-        // from FormulaHelper is not changed by player level or any other player-dependent factors, which results
-        // in BOSSFALL's unleveled static drop chances for all materials. Once the enemy is level 16 or higher,
-        // progressively higher values (50 * (enemy Level - 15)) are added to the FormulaHelper random number,
-        // which often results in a value higher than 1024. If the value is higher than 1024, a Daedric item
-        // will be generated.
-        public static readonly short[] materialsByModifier = { 327, 654, 8, 12, 8, 5, 4, 3, 2, 1 };
+        // [OSORKON] This array does nothing in BOSSFALL. I kept it because mods might call this and I don't want
+        // to break anything. I implemented unleveled material selection in the RandomMaterial function in FormulaHelper.
+        public static readonly byte[] materialsByModifier = { 64, 128, 10, 21, 13, 8, 5, 3, 2, 5 };
 
         // Weight multipliers by material type. Iron through Daedric. Weight is baseWeight * value / 4.
         static readonly short[] weightMultipliersByMaterial = { 4, 5, 4, 4, 3, 4, 4, 2, 4, 5 };
