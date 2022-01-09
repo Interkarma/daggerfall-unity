@@ -36,6 +36,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(HelpCommand.name, HelpCommand.description, HelpCommand.usage, HelpCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(LoadCommand.name, LoadCommand.description, LoadCommand.usage, LoadCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GodCommand.name, GodCommand.description, GodCommand.usage, GodCommand.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(NoClipCommand.name, NoClipCommand.description, NoClipCommand.usage, NoClipCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(NoTargetCommand.name, NoTargetCommand.description, NoTargetCommand.usage, NoTargetCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ToggleAICommand.name, ToggleAICommand.description, ToggleAICommand.usage, ToggleAICommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(CreateMobileCommand.name, CreateMobileCommand.description, CreateMobileCommand.usage, CreateMobileCommand.Execute);
@@ -379,6 +380,30 @@ namespace Wenzil.Console
                     PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                     playerEntity.GodMode = !playerEntity.GodMode;
                     return string.Format("Godmode enabled: {0}", playerEntity.GodMode);
+                }
+                else
+                    return error;
+            }
+        }
+
+        private static class NoClipCommand
+        {
+            public static readonly string name = "tcl";
+            public static readonly string error = "Failed to set TCL, either Levitate or PlayerHealth could not be found";
+            public static readonly string usage = "tcl";
+            public static readonly string description = "Toggle noclip by turning off all collissions (levitate recomended)";
+
+            public static string Execute(params string[] args)
+            {
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+
+                if (playerEntity != null)
+                {
+                    playerEntity.NoClipMode = !playerEntity.NoClipMode;
+
+                    GameManager.Instance.PlayerController.gameObject.layer = playerEntity.NoClipMode ? LayerMask.NameToLayer("NoclipLayer") : LayerMask.NameToLayer("Player");
+
+                    return string.Format("Noclip enabled: {0}", playerEntity.NoClipMode);
                 }
                 else
                     return error;

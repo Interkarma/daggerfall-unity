@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public const string lycanthropySpellTag = "lycanthrope";
 
         bool godMode = false;
+        bool noClipMode = false;
         bool noTargetMode = false;
         bool preventEnemySpawns = false;
         bool preventNormalizingReputations = false;
@@ -139,6 +140,7 @@ namespace DaggerfallWorkshop.Game.Entity
         #region Properties
 
         public bool GodMode { get { return godMode; } set { godMode = value; } }
+        public bool NoClipMode { get { return noClipMode; } set { noClipMode = value; } }
         public bool NoTargetMode { get { return noTargetMode; } set { noTargetMode = value; } }
         public bool PreventEnemySpawns { get { return preventEnemySpawns; } set { preventEnemySpawns = value; } }
         public bool PreventNormalizingReputations { get { return preventNormalizingReputations; } set { preventNormalizingReputations = value; } }
