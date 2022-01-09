@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using System;
@@ -209,6 +209,27 @@ namespace DaggerfallWorkshop
 
         // No enemy type
         None = (int)0xffff,
+    }
+
+    /// <summary>
+    /// [OSORKON] Some BOSSFALL enemies inflict custom effects on player and player's items or have unique immunities
+    /// and weaknesses. I use this enum in FormulaHelper to make the enemy selection process more understandable.
+    /// </summary>
+    public enum EnemySpecialHandling
+    {
+        None,
+        Spriggan,
+        FleshyUndead,
+        SkeletalWarrior,
+        Scorpion,
+        SilverOnly,
+        Mummy,
+        Stone,
+        Iron,
+        FireAtronach,
+        Ice,
+        FireDaedra,
+        SilverTimesTwo,
     }
 
     /// <summary>

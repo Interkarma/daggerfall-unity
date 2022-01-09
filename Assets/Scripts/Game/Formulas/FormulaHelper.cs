@@ -54,6 +54,18 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Approximation of classic frame updates
         public const int classicFrameUpdate = 980;
 
+        /// <summary>[OSORKON] This array represents enemy IDs from 0-38 (Rat to IceAtronach). Different monsters have different
+        /// weaknesses and immunities, and I wanted to improve enemy immunity/special ability selection efficiency
+        /// over the enormous if/else if list that was in previous versions of BOSSFALL.</summary> 
+        public static readonly byte[] enemySpecialHandling = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 3, 0, 2,
+            5, 6, 4, 0, 7, 5, 0, 0, 11, 0, 12, 0, 12, 0, 12, 12, 0, 9, 8, 2, 10 };
+
+        /// <summary>[OSORKON] Each element in this array represents a weapon material, Iron through Daedric. Each material has a
+        /// (element / 1025) percent chance of being generated, unless RandomMaterial is generating items for an
+        /// enemy above level 15. In that case high tier material generation is more likely. Details are in my
+        /// comments in the RandomMaterial function.</summary>
+        public static readonly short[] materialProbability = { 327, 654, 8, 12, 8, 5, 4, 3, 2, 1 };
+
         /// <summary>Struct for return values of formula that affect damage and to-hit chance.</summary>
         public struct ToHitAndDamageMods
         {
@@ -153,28 +165,14 @@ namespace DaggerfallWorkshop.Game.Formulas
             return UnityEngine.Random.Range(minBonusPool, maxBonusPool + 1);
         }
 
-        // [OSORKON] This new bool detects Hand-to-Hand punch attacks. I used this to rework H2H skill.
+        /// <summary>[OSORKON] This new bool detects WeaponStates that are punch attacks when player is using Hand-to-Hand.
+        /// I used this to rework H2H skill. I had an IsKick bool but I rewrote code and didn't use it anymore.</summary>
         public static bool IsPunch(FPSWeapon onscreenWeapon)
         {
             if (onscreenWeapon != null)
             {
                 if (onscreenWeapon.WeaponState == WeaponStates.StrikeRight || onscreenWeapon.WeaponState == WeaponStates.StrikeDownLeft
                     || onscreenWeapon.WeaponState == WeaponStates.StrikeDownRight)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        // [OSORKON] This new bool detects H2H kick attacks. I used this to rework H2H skill.
-        public static bool IsKick(FPSWeapon onscreenWeapon)
-        {
-            if (onscreenWeapon != null)
-            {
-                if (onscreenWeapon.WeaponState == WeaponStates.StrikeLeft || onscreenWeapon.WeaponState == WeaponStates.StrikeUp
-                    || onscreenWeapon.WeaponState == WeaponStates.StrikeDown)
                 {
                     return true;
                 }
@@ -597,26 +595,25 @@ namespace DaggerfallWorkshop.Game.Formulas
             // and the weaponless values seems more appropriate, so here
             // enemies will choose to use their weaponless attack if it is more damaging.
             EnemyEntity AIAttacker = attacker as EnemyEntity;
+
+            // [OSORKON] I modified this check to also make human class enemies use Hand-to-Hand if that would be more
+            // effective. This makes humans far more dangerous at higher levels, which is one of BOSSFALL's main goals.
             if (AIAttacker != null && weapon != null)
             {
                 int weaponAverage = (weapon.GetBaseDamageMin() + weapon.GetBaseDamageMax()) / 2;
                 int noWeaponAverage = (AIAttacker.MobileEnemy.MinDamage + AIAttacker.MobileEnemy.MaxDamage) / 2;
-
-                if (noWeaponAverage > weaponAverage)
-                {
-                    // Use hand-to-hand
-                    weapon = null;
-                }
-            }
-            // [OSORKON] This check makes human enemies use H2H if that's more effective.
-            // This makes humans far more dangerous at higher levels, which is one of BOSSFALL's main goals.
-            if (AIAttacker != null && weapon != null && AIAttacker.EntityType == EntityTypes.EnemyClass)
-            {
-                int weaponDamage = (weapon.GetBaseDamageMin() + weapon.GetBaseDamageMax()) / 2;
-                int noWeaponDamage = (CalculateHandToHandMinDamage(AIAttacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand))
+                int classNoWeaponAverage = (CalculateHandToHandMinDamage(AIAttacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand))
                     + CalculateHandToHandMaxDamage(AIAttacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand))) / 2;
 
-                if (noWeaponDamage > weaponDamage)
+                if (AIAttacker.EntityType == EntityTypes.EnemyMonster)
+                {
+                    if (noWeaponAverage > weaponAverage)
+                    {
+                        // Use hand-to-hand
+                        weapon = null;
+                    }
+                }
+                else if (classNoWeaponAverage > weaponAverage)
                 {
                     weapon = null;
                 }
@@ -657,76 +654,73 @@ namespace DaggerfallWorkshop.Game.Formulas
                 // [OSORKON] This long list checks whether player's H2H attacks are punches or kicks and buffs
                 // to-hit rolls according to what armor material is on player's hands or feet. To-hit bonuses
                 // scale exactly like vanilla DFU weapon materials. Leather, Chain, Steel, and Silver do not
-                // change to-hit rolls. If player is in wereform these checks don't run.
-                if (skillID == (short)DFCareer.Skills.HandToHand && IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon)
-                 && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Werecreature)
+                // change to-hit rolls. If player is using a weapon or in wereform these checks don't run.
+                if (skillID == (short)DFCareer.Skills.HandToHand
+                    && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Werecreature)
                 {
-                    if (gloves != null)
+                    if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
                     {
-                        if (gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Iron)
+                        if (gloves != null)
                         {
-                            chanceToHitMod -= 10;
-                        }
-                        else if (gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Elven)
-                        {
-                            chanceToHitMod += 10;
-                        }
-                        else if (gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Dwarven)
-                        {
-                            chanceToHitMod += 20;
-                        }
-                        else if (gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Mithril
-                              || gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Adamantium)
-                        {
-                            chanceToHitMod += 30;
-                        }
-                        else if (gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Ebony)
-                        {
-                            chanceToHitMod += 40;
-                        }
-                        else if (gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Orcish)
-                        {
-                            chanceToHitMod += 50;
-                        }
-                        else if (gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Daedric)
-                        {
-                            chanceToHitMod += 60;
+                            switch (gloves.nativeMaterialValue)
+                            {
+                                case (int)ArmorMaterialTypes.Iron:
+                                    chanceToHitMod -= 10;
+                                    break;
+                                case (int)ArmorMaterialTypes.Elven:
+                                    chanceToHitMod += 10;
+                                    break;
+                                case (int)ArmorMaterialTypes.Dwarven:
+                                    chanceToHitMod += 20;
+                                    break;
+                                case (int)ArmorMaterialTypes.Mithril:
+                                case (int)ArmorMaterialTypes.Adamantium:
+                                    chanceToHitMod += 30;
+                                    break;
+                                case (int)ArmorMaterialTypes.Ebony:
+                                    chanceToHitMod += 40;
+                                    break;
+                                case (int)ArmorMaterialTypes.Orcish:
+                                    chanceToHitMod += 50;
+                                    break;
+                                case (int)ArmorMaterialTypes.Daedric:
+                                    chanceToHitMod += 60;
+                                    break;
+
+                                default:
+                                    break;
+                            }
                         }
                     }
-                }
-                else if (skillID == (short)DFCareer.Skills.HandToHand && IsKick(GameManager.Instance.WeaponManager.ScreenWeapon)
-                      && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Werecreature)
-                {
-                    if (boots != null)
+                    else if (boots != null)
                     {
-                        if (boots.nativeMaterialValue == (int)ArmorMaterialTypes.Iron)
+                        switch (boots.nativeMaterialValue)
                         {
-                            chanceToHitMod -= 10;
-                        }
-                        else if (boots.nativeMaterialValue == (int)ArmorMaterialTypes.Elven)
-                        {
-                            chanceToHitMod += 10;
-                        }
-                        else if (boots.nativeMaterialValue == (int)ArmorMaterialTypes.Dwarven)
-                        {
-                            chanceToHitMod += 20;
-                        }
-                        else if (boots.nativeMaterialValue == (int)ArmorMaterialTypes.Mithril
-                              || boots.nativeMaterialValue == (int)ArmorMaterialTypes.Adamantium)
-                        {
-                            chanceToHitMod += 30;
-                        }
-                        else if (boots.nativeMaterialValue == (int)ArmorMaterialTypes.Ebony)
-                        {
-                            chanceToHitMod += 40;
-                        }
-                        else if (boots.nativeMaterialValue == (int)ArmorMaterialTypes.Orcish)
-                        {
-                            chanceToHitMod += 50;
-                        }
-                        else if (boots.nativeMaterialValue == (int)ArmorMaterialTypes.Daedric)
-                        {
-                            chanceToHitMod += 60;
+                            case (int)ArmorMaterialTypes.Iron:
+                                chanceToHitMod -= 10;
+                                break;
+                            case (int)ArmorMaterialTypes.Elven:
+                                chanceToHitMod += 10;
+                                break;
+                            case (int)ArmorMaterialTypes.Dwarven:
+                                chanceToHitMod += 20;
+                                break;
+                            case (int)ArmorMaterialTypes.Mithril:
+                            case (int)ArmorMaterialTypes.Adamantium:
+                                chanceToHitMod += 30;
+                                break;
+                            case (int)ArmorMaterialTypes.Ebony:
+                                chanceToHitMod += 40;
+                                break;
+                            case (int)ArmorMaterialTypes.Orcish:
+                                chanceToHitMod += 50;
+                                break;
+                            case (int)ArmorMaterialTypes.Daedric:
+                                chanceToHitMod += 60;
+                                break;
+
+                            default:
+                                break;
                         }
                     }
                 }
@@ -821,641 +815,346 @@ namespace DaggerfallWorkshop.Game.Formulas
             // apply poison if player is using a poisoned weapon with their left hand. If that circumstance ever
             // arises I'll have to revisit this formula. Note the Assassin customization - their poison will
             // bypass player's Poison Immunity, but only if player is at least level 7.
-            if (poisonWeapon != null && damage > 0 && poisonWeapon.poisonType != Poisons.None
-                && GameManager.Instance.PlayerEntity.Level > 6 && AIAttacker.MobileEnemy.ID == (int)MobileTypes.Assassin)
+            if (damage > 0 && poisonWeapon != null && poisonWeapon.poisonType != Poisons.None)
             {
-                InflictPoison(attacker, target, poisonWeapon.poisonType, true);
-                poisonWeapon.poisonType = Poisons.None;
-            }
-            else if (poisonWeapon != null && damage > 0 && poisonWeapon.poisonType != Poisons.None)
-            {
-                InflictPoison(attacker, target, poisonWeapon.poisonType, false);
-                poisonWeapon.poisonType = Poisons.None;
+                if (AIAttacker.MobileEnemy.ID == (int)MobileTypes.Assassin && GameManager.Instance.PlayerEntity.Level > 6)
+                {
+                    InflictPoison(attacker, target, poisonWeapon.poisonType, true);
+                    poisonWeapon.poisonType = Poisons.None;
+                }
+                else
+                {
+                    InflictPoison(attacker, target, poisonWeapon.poisonType, false);
+                    poisonWeapon.poisonType = Poisons.None;
+                }
             }
 
             damage = Mathf.Max(0, damage);
 
             DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
 
-            // [OSORKON] This inflicts durability damage on player's gloves or boots depending on
-            // whether H2H attack is a punch or kick. I couldn't make this part of the standard DamageEquipment
-            // function as I changed that function to only differentiate between weapons and armor. If player
-            // is in wereform these checks don't run.
-            if (attacker == player && damage > 0 && skillID == (short)DFCareer.Skills.HandToHand
+            // [OSORKON] This inflicts durability damage on player's gloves or boots depending on whether H2H attack
+            // is a punch or kick. I didn't put this in the DamageEquipment function because then I'd have to re-declare a
+            // bunch of local variables and I assume that would be less efficient. If player misses their H2H attack, is
+            // using a weapon, or in wereform, these checks don't run.
+            if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && damage > 0
              && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Werecreature)
             {
-                if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon) && !player.ItemEquipTable.IsSlotOpen(EquipSlots.Gloves))
+                if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
                 {
-                    gloves.LowerCondition(10, player);
+                    if (gloves != null)
+                    {
+                        if (gloves.IsEnchanted)
+                        {
+                            gloves.LowerCondition(10, player, player.Items);
+                        }
+                        else
+                        {
+                            gloves.LowerCondition(10, player);
+                        }
+                    }
                 }
-                else if (IsKick(GameManager.Instance.WeaponManager.ScreenWeapon) && !player.ItemEquipTable.IsSlotOpen(EquipSlots.Feet))
+                else if (boots != null)
                 {
-                    boots.LowerCondition(15, player);
+                    if (boots.IsEnchanted)
+                    {
+                        boots.LowerCondition(15, player, player.Items);
+                    }
+                    else
+                    {
+                        boots.LowerCondition(15, player);
+                    }
                 }
             }
 
-            // [OSORKON] This massive if/else if list is responsible for BOSSFALL's custom enemy immunities. This formula also
-            // detects whether or not player is using Silver, damages player if they punch something hard,
-            // damages player's weapon more if they strike certain enemies, deals double damage to enemies with
-            // certain weaknesses, and can tell if a H2H attack is a punch or kick. It's a versatile list! If player
-            // is in wereform these checks don't run, allowing player to damage enemies normally immune to H2H.
-            if (target != GameManager.Instance.PlayerEntity && enemyTarget.MobileEnemy.Affinity != MobileAffinity.Human
+            // [OSORKON] I desperately needed to improve BOSSFALL's custom enemy immunity and special property selection process and
+            // implementation over the massive if/else if list found here in v1.2.1 and earlier. This switch tree is the most efficient
+            // option I came up with. Enemy special handling checks are run if the player lands a hit and is not in wereform, the enemy
+            // ID is less than 39, and the element at the index matching the enemy's ID in the new enemySpecialHandling array is greater
+            // than 0. I didn't want to split enemy special handling into a bunch of different functions as then I'd have to re-declare
+            // a ton of variables and run checks to find out if player is using Hand-to-Hand, which I assume is less efficient.
+            if (attacker == player && damage > 0 && enemyTarget.MobileEnemy.ID < 39
              && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Werecreature)
             {
-                if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.Spriggan)
+                if (enemySpecialHandling[enemyTarget.MobileEnemy.ID] != (int)EnemySpecialHandling.None)
                 {
-                    if (skillID == (short)DFCareer.Skills.Axe)
+                    switch (enemySpecialHandling[enemyTarget.MobileEnemy.ID])
                     {
-                        damage *= 1;
-                    }
-                    else if (skillID == (short)DFCareer.Skills.HandToHand)
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 1);
-                            DaggerfallUI.AddHUDText("Ow! Use an Axe.");
-                        }
-                    }
-                    else if (skillID == (short)DFCareer.Skills.ShortBlade || skillID == (short)DFCareer.Skills.LongBlade)
-                    {
-                        damage = 0;
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("You dull your weapon. Use an Axe.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use an Axe.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.Zombie)
-                {
-                    if (skillID == (short)DFCareer.Skills.Axe)
-                    {
-                        damage *= 2;
-                    }
-                    else if (skillID == (short)DFCareer.Skills.LongBlade || skillID == (short)DFCareer.Skills.BluntWeapon)
-                    {
-                        damage *= 1;
-                    }
-                    else if (skillID == (short)DFCareer.Skills.HandToHand)
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon, Long Blade, or Axe.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon, Long Blade, or Axe.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.SkeletalWarrior)
-                {
-                    if (skillID == (short)DFCareer.Skills.BluntWeapon || skillID == (short)DFCareer.Skills.Axe
-                     || skillID == (short)DFCareer.Skills.HandToHand)
-                    {
-                        damage *= 1;
-                    }
-                    else if (skillID == (short)DFCareer.Skills.LongBlade || skillID == (short)DFCareer.Skills.ShortBlade)
-                    {
-                        damage = 0;
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("You chip your blade. Use a Blunt Weapon, Axe, or Hand-to-Hand.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon, Axe, or Hand-to-Hand.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.GiantScorpion)
-                {
-                    if (skillID == (short)DFCareer.Skills.LongBlade || skillID == (short)DFCareer.Skills.ShortBlade
-                     || skillID == (short)DFCareer.Skills.BluntWeapon || skillID == (short)DFCareer.Skills.Axe)
-                    {
-                        damage *= 1;
-                    }
-                    else if (skillID == (short)DFCareer.Skills.HandToHand)
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 1);
-                            DaggerfallUI.AddHUDText("Ow! Don't use Hand-to-Hand or Archery.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Don't use Archery or Hand-to-Hand.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.Ghost)
-                {
-                    if (skillID != (short)DFCareer.Skills.HandToHand && weapon.NativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                    {
-                        damage *= 1;
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 1;
-                        }
-                        else
-                        {
+                        case (int)EnemySpecialHandling.Spriggan:
+                            switch (skillID)
+                            {
+                                case (short)DFCareer.Skills.Axe:
+                                    break;
+                                case (short)DFCareer.Skills.HandToHand:
+                                    damage = 0;
+                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 1);
+                                    DaggerfallUI.AddHUDText("Ow! Use an Axe.");
+                                    break;
+                                case (short)DFCareer.Skills.ShortBlade:
+                                case (short)DFCareer.Skills.LongBlade:
+                                    damage = 0;
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DaggerfallUI.AddHUDText("You dull your weapon. Use an Axe.");
+                                    break;
+                                case (short)DFCareer.Skills.BluntWeapon:
+                                case (short)DFCareer.Skills.Archery:
+                                    damage = 0;
+                                    DaggerfallUI.AddHUDText("Ineffective. Use an Axe.");
+                                    break;
+                            }
+                            break;
+                        case (int)EnemySpecialHandling.FleshyUndead:
+                            switch (skillID)
+                            {
+                                case (short)DFCareer.Skills.Axe:
+                                    damage *= 2;
+                                    break;
+                                case (short)DFCareer.Skills.LongBlade:
+                                case (short)DFCareer.Skills.BluntWeapon:
+                                    break;
+                                case (short)DFCareer.Skills.HandToHand:
+                                case (short)DFCareer.Skills.ShortBlade:
+                                case (short)DFCareer.Skills.Archery:
+                                    damage = 0;
+                                    DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon, Long Blade, or Axe.");
+                                    break;
+                            }
+                            break;
+                        case (int)EnemySpecialHandling.SkeletalWarrior:
+                            switch (skillID)
+                            {
+                                case (short)DFCareer.Skills.Axe:
+                                case (short)DFCareer.Skills.BluntWeapon:
+                                case (short)DFCareer.Skills.HandToHand:
+                                    break;
+                                case (short)DFCareer.Skills.LongBlade:
+                                case (short)DFCareer.Skills.ShortBlade:
+                                    damage = 0;
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DaggerfallUI.AddHUDText("You chip your blade. Use a Blunt Weapon, Axe, or Hand-to-Hand.");
+                                    break;
+                                case (short)DFCareer.Skills.Archery:
+                                    damage = 0;
+                                    DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon, Axe, or Hand-to-Hand.");
+                                    break;
+                            }
+                            break;
+                        case (int)EnemySpecialHandling.Scorpion:
+                            switch (skillID)
+                            {
+                                case (short)DFCareer.Skills.Axe:
+                                case (short)DFCareer.Skills.BluntWeapon:
+                                case (short)DFCareer.Skills.LongBlade:
+                                case (short)DFCareer.Skills.ShortBlade:
+                                    break;
+                                case (short)DFCareer.Skills.HandToHand:
+                                    damage = 0;
+                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 1);
+                                    DaggerfallUI.AddHUDText("Ow! Don't use Archery or Hand-to-Hand.");
+                                    break;
+                                case (short)DFCareer.Skills.Archery:
+                                    damage = 0;
+                                    DaggerfallUI.AddHUDText("Ineffective. Don't use Archery or Hand-to-Hand.");
+                                    break;
+                            }
+                            break;
+                        case (int)EnemySpecialHandling.SilverOnly:
+                            if (skillID != (short)DFCareer.Skills.HandToHand)
+                            {
+                                if (weapon.nativeMaterialValue == (int)WeaponMaterialTypes.Silver)
+                                {
+                                    break;
+                                }
+                                damage = 0;
+                                DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
+                                break;
+                            }
+                            else if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
+                            {
+                                if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
+                                {
+                                    break;
+                                }
+                                damage = 0;
+                                DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
+                                break;
+                            }
+                            else if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
+                            {
+                                break;
+                            }
                             damage = 0;
                             DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsKick(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 1;
-                        }
-                        else
-                        {
-                            damage = 0;
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.Mummy)
-                {
-                    if (skillID == (short)DFCareer.Skills.ShortBlade || skillID == (short)DFCareer.Skills.LongBlade
-                     || skillID == (short)DFCareer.Skills.BluntWeapon || skillID == (short)DFCareer.Skills.Axe
-                     || skillID == (short)DFCareer.Skills.HandToHand)
-                    {
-                        damage *= 1;
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Don't use Archery.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.Wraith)
-                {
-                    if (skillID != (short)DFCareer.Skills.HandToHand && weapon.NativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                    {
-                        damage *= 1;
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 1;
-                        }
-                        else
-                        {
-                            damage = 0;
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsKick(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 1;
-                        }
-                        else
-                        {
-                            damage = 0;
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.Werewolf)
-                {
-                    if (skillID != (short)DFCareer.Skills.HandToHand && weapon.NativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                    {
-                        damage *= 1;
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 1;
-                        }
-                        else
-                        {
-                            damage = 0;
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsKick(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 1;
-                        }
-                        else
-                        {
-                            damage = 0;
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.Wereboar)
-                {
-                    if (skillID != (short)DFCareer.Skills.HandToHand && weapon.NativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                    {
-                        damage *= 1;
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 1;
-                        }
-                        else
-                        {
-                            damage = 0;
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsKick(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 1;
-                        }
-                        else
-                        {
-                            damage = 0;
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.FleshAtronach)
-                {
-                    if (skillID == (short)DFCareer.Skills.Axe)
-                    {
-                        damage *= 2;
-                    }
-                    else if (skillID == (short)DFCareer.Skills.LongBlade || skillID == (short)DFCareer.Skills.BluntWeapon)
-                    {
-                        damage *= 1;
-                    }
-                    else if (skillID == (short)DFCareer.Skills.HandToHand)
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use a Long Blade, Blunt Weapon, or Axe.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use a Long Blade, Blunt Weapon, or Axe.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.Gargoyle)
-                {
-                    if (skillID == (short)DFCareer.Skills.BluntWeapon)
-                    {
-                        damage *= 1;
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                    }
-                    else if (skillID == (short)DFCareer.Skills.HandToHand)
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                            DaggerfallUI.AddHUDText("OW! Use a Blunt Weapon.");
-                        }
-                    }
-                    else if (skillID == (short)DFCareer.Skills.ShortBlade || skillID == (short)DFCareer.Skills.LongBlade
-                          || skillID == (short)DFCareer.Skills.Axe)
-                    {
-                        damage = 0;
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Your weapon cracks. Use a Blunt Weapon.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.IronAtronach)
-                {
-                    if (skillID == (short)DFCareer.Skills.BluntWeapon)
-                    {
-                        damage *= 1;
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                    }
-                    else if (skillID == (short)DFCareer.Skills.HandToHand)
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 3);
-                            DaggerfallUI.AddHUDText("OW!! Use a Blunt Weapon.");
-                        }
-                    }
-                    else if (skillID == (short)DFCareer.Skills.ShortBlade || skillID == (short)DFCareer.Skills.LongBlade
-                          || skillID == (short)DFCareer.Skills.Axe)
-                    {
-                        damage = 0;
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Your weapon shrieks in protest! Use a Blunt Weapon.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.FireAtronach)
-                {
-                    if (skillID != (short)DFCareer.Skills.HandToHand && weapon.NativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                    {
-                        damage *= 1;
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 1;
-                            GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                            DaggerfallUI.AddHUDText("You burn your hand.");
-                        }
-                        else
-                        {
-                            damage = 0;
-                            GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                            DaggerfallUI.AddHUDText("Ineffective. You burn your hand. Use Silver.");
-                        }
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsKick(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 1;
-                            GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                            DaggerfallUI.AddHUDText("You burn your foot.");
-                        }
-                        else
-                        {
+                            break;
+                        case (int)EnemySpecialHandling.Mummy:
+                            switch (skillID)
+                            {
+                                case (short)DFCareer.Skills.Axe:
+                                case (short)DFCareer.Skills.BluntWeapon:
+                                case (short)DFCareer.Skills.HandToHand:
+                                case (short)DFCareer.Skills.LongBlade:
+                                case (short)DFCareer.Skills.ShortBlade:
+                                    break;
+                                case (short)DFCareer.Skills.Archery:
+                                    damage = 0;
+                                    DaggerfallUI.AddHUDText("Ineffective. Don't use Archery.");
+                                    break;
+                            }
+                            break;
+                        case (int)EnemySpecialHandling.Stone:
+                            switch (skillID)
+                            {
+                                case (short)DFCareer.Skills.BluntWeapon:
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    break;
+                                case (short)DFCareer.Skills.HandToHand:
+                                    damage = 0;
+                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
+                                    DaggerfallUI.AddHUDText("OW! Use a Blunt Weapon.");
+                                    break;
+                                case (short)DFCareer.Skills.Axe:
+                                case (short)DFCareer.Skills.LongBlade:
+                                case (short)DFCareer.Skills.ShortBlade:
+                                    damage = 0;
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DaggerfallUI.AddHUDText("Your weapon cracks. Use a Blunt Weapon.");
+                                    break;
+                                case (short)DFCareer.Skills.Archery:
+                                    damage = 0;
+                                    DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon.");
+                                    break;
+                            }
+                            break;
+                        case (int)EnemySpecialHandling.Iron:
+                            switch (skillID)
+                            {
+                                case (short)DFCareer.Skills.BluntWeapon:
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    break;
+                                case (short)DFCareer.Skills.HandToHand:
+                                    damage = 0;
+                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 3);
+                                    DaggerfallUI.AddHUDText("OW!! Use a Blunt Weapon.");
+                                    break;
+                                case (short)DFCareer.Skills.Axe:
+                                case (short)DFCareer.Skills.LongBlade:
+                                case (short)DFCareer.Skills.ShortBlade:
+                                    damage = 0;
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DaggerfallUI.AddHUDText("Your weapon shrieks in protest! Use a Blunt Weapon.");
+                                    break;
+                                case (short)DFCareer.Skills.Archery:
+                                    damage = 0;
+                                    DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon.");
+                                    break;
+                            }
+                            break;
+                        case (int)EnemySpecialHandling.FireAtronach:
+                            if (skillID != (short)DFCareer.Skills.HandToHand)
+                            {
+                                if (weapon.nativeMaterialValue == (int)WeaponMaterialTypes.Silver)
+                                {
+                                    break;
+                                }
+                                damage = 0;
+                                DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
+                                break;
+                            }
+                            else if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
+                            {
+                                if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
+                                {
+                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
+                                    DaggerfallUI.AddHUDText("You burn your hand.");
+                                    break;
+                                }
+                                damage = 0;
+                                GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
+                                DaggerfallUI.AddHUDText("Ineffective. You burn your hand. Use Silver.");
+                                break;
+                            }
+                            else if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
+                            {
+                                GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
+                                DaggerfallUI.AddHUDText("You burn your foot.");
+                                break;
+                            }
                             damage = 0;
                             GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
                             DaggerfallUI.AddHUDText("Ineffective. You burn your foot. Use Silver.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.IceAtronach)
-                {
-                    if (skillID == (short)DFCareer.Skills.BluntWeapon)
-                    {
-                        damage *= 1;
-                    }
-                    else if (skillID == (short)DFCareer.Skills.Axe)
-                    {
-                        damage *= 1;
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                    }
-                    else if (skillID == (short)DFCareer.Skills.HandToHand)
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                            DaggerfallUI.AddHUDText("OW! Use a Blunt Weapon or Axe.");
-                        }
-                    }
-                    else if (skillID == (short)DFCareer.Skills.ShortBlade || skillID == (short)DFCareer.Skills.LongBlade)
-                    {
-                        damage = 0;
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                        DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("You chip your weapon. Use a Blunt Weapon or Axe.");
-                        }
-                    }
-                    else
-                    {
-                        damage = 0;
-
-                        if (attacker == player)
-                        {
-                            DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon or Axe.");
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.FireDaedra)
-                {
-                    if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        damage *= 1;
-                        GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 4);
-                        DaggerfallUI.AddHUDText("You scorch your hand!");
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsKick(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        damage *= 1;
-                        GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 4);
-                        DaggerfallUI.AddHUDText("You scorch your foot!");
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.Vampire)
-                {
-                    if (skillID != (short)DFCareer.Skills.HandToHand && weapon.NativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                    {
-                        damage *= 2;
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 2;
-                        }
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsKick(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 2;
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.Lich)
-                {
-                    if (skillID != (short)DFCareer.Skills.HandToHand && weapon.NativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                    {
-                        damage *= 2;
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 2;
-                        }
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsKick(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 2;
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.VampireAncient)
-                {
-                    if (skillID != (short)DFCareer.Skills.HandToHand && weapon.NativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                    {
-                        damage *= 2;
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 2;
-                        }
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsKick(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 2;
-                        }
-                    }
-                }
-                else if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.AncientLich)
-                {
-                    if (skillID != (short)DFCareer.Skills.HandToHand && weapon.NativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                    {
-                        damage *= 2;
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 2;
-                        }
-                    }
-                    else if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && IsKick(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                        {
-                            damage *= 2;
-                        }
+                            break;
+                        case (int)EnemySpecialHandling.Ice:
+                            switch (skillID)
+                            {
+                                case (short)DFCareer.Skills.Axe:
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    break;
+                                case (short)DFCareer.Skills.BluntWeapon:
+                                    break;
+                                case (short)DFCareer.Skills.HandToHand:
+                                    damage = 0;
+                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
+                                    DaggerfallUI.AddHUDText("OW! Use a Blunt Weapon or Axe.");
+                                    break;
+                                case (short)DFCareer.Skills.LongBlade:
+                                case (short)DFCareer.Skills.ShortBlade:
+                                    damage = 0;
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    DaggerfallUI.AddHUDText("You chip your weapon. Use a Blunt Weapon or Axe.");
+                                    break;
+                                case (short)DFCareer.Skills.Archery:
+                                    damage = 0;
+                                    DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon or Axe.");
+                                    break;
+                            }
+                            break;
+                        case (int)EnemySpecialHandling.FireDaedra:
+                            if (skillID == (short)DFCareer.Skills.HandToHand)
+                            {
+                                if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
+                                {
+                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 4);
+                                    DaggerfallUI.AddHUDText("You scorch your hand!");
+                                    break;
+                                }
+                                GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 4);
+                                DaggerfallUI.AddHUDText("You scorch your foot!");
+                                break;
+                            }
+                            break;
+                        case (int)EnemySpecialHandling.SilverTimesTwo:
+                            if (skillID != (short)DFCareer.Skills.HandToHand)
+                            {
+                                if (weapon.nativeMaterialValue == (int)WeaponMaterialTypes.Silver)
+                                {
+                                    damage *= 2;
+                                    break;
+                                }
+                                break;
+                            }
+                            else if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
+                            {
+                                if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
+                                {
+                                    damage *= 2;
+                                    break;
+                                }
+                                break;
+                            }
+                            else if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
+                            {
+                                damage *= 2;
+                                break;
+                            }
+                            break;
                     }
                 }
             }
@@ -1873,8 +1572,10 @@ namespace DaggerfallWorkshop.Game.Formulas
                 {
                     ApplyConditionDamageThroughPhysicalHit(weapon, attacker, damage);
                 }
+
                 DaggerfallUnityItem shield = target.ItemEquipTable.GetItem(EquipSlots.LeftHand);
                 bool shieldTakesDamage = false;
+
                 if (shield != null)
                 {
                     BodyParts[] protectedBodyParts = shield.GetShieldProtectedBodyParts();
@@ -3035,11 +2736,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             // (50 * (enemy Level - 15)) are added to the random number from this function, which often results in a
             // value higher than 1024. If the value is higher than 1024, a Daedric item will be generated.
 
-            // [OSORKON] Each element in this array represents a weapon material, Iron through Daedric. Materials have
-            // a (element / 1025) percent chance of being generated, unless this function is generating items for an
-            // enemy above level 15. In that case high tier material generation is more likely, as described above.
-            short[] materialProbability = { 327, 654, 8, 12, 8, 5, 4, 3, 2, 1 };
-
             // [OSORKON] This new formula is responsible for BOSSFALL's unleveled loot. The playerLevel variable is still
             // present here but in most other functions that call RandomMaterial playerLevel has been replaced with 10.
             int levelModifier = (playerLevel - 15) * 50;
@@ -3065,7 +2761,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             // The higher combinedModifiers is, the higher the material
 
-            // [OSORKON] I changed this "while" to use an array declared in this function rather than call one from
+            // [OSORKON] I changed this "while" to use an array I declared in this script rather than call one from
             // ItemBuilder. I did this so I could modify the array's elements without changing any vanilla values. I
             // don't want to break any mods that call the vanilla array.
             while (materialProbability[material] < combinedModifiers)
