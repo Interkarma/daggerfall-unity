@@ -73,7 +73,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Color unselectedTextColor = new Color(0.6f, 0.6f, 0.6f, 1f);
         Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
         Color secondaryTextColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
-        // [OSORKON] This solid red color is for the "Bossfall" title text on start-up. Looks properly dangerous.
+
+        /// <summary>[OSORKON] This solid red color is for the "Bossfall" title text on start-up. Looks properly dangerous.</summary>
         Color tertiaryTextColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
 
         #endregion
@@ -442,6 +443,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Add title text
             TextLabel titleLabel = new TextLabel(DaggerfallUI.Instance.Font2);
+
             // [OSORKON] I don't want people playing BOSSFALL and mistakenly thinking it's vanilla DFU - in case
             // there's a bug, I want people to know they're playing BOSSFALL and not to waste anyone else's time.
             // I also want to spread awareness of the name.
@@ -449,15 +451,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel.Position = new Vector2(0, 15);
             titleLabel.TextScale = 1.4f;
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
             // [OSORKON] This changes the "Bossfall" string to an intimidating shade of red.
             titleLabel.TextColor = tertiaryTextColor;
             optionsPanel.Components.Add(titleLabel);
 
             // Add version text
             TextLabel versionLabel = new TextLabel(DaggerfallUI.DefaultFont);
-            // [OSORKON] The BOSSFALL version number. "1.2.1" is the actual BOSSFALL version and the ".0134" string
-            // is the DFU version number. Makes versioning a bit clearer so people know what DFU version I'm using.
-            versionLabel.Text = "1.2.1.0134";
+
+            // [OSORKON] The BOSSFALL version number. "1.x" is the BOSSFALL version and the ending ".xxxx" string
+            // is the DFU version number. Makes versioning clearer so you know what DFU version BOSSFALL is using.
+            versionLabel.Text = "1.3.0134";
             versionLabel.Position = new Vector2(0, 40);
             versionLabel.TextScale = 1.0f;
             versionLabel.HorizontalAlignment = HorizontalAlignment.Center;

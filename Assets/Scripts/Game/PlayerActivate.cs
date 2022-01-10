@@ -771,13 +771,13 @@ namespace DaggerfallWorkshop.Game
                     {
                         MobileEnemy mobileEnemy = enemyEntity.MobileEnemy;
                         string enemyName = TextManager.Instance.GetLocalizedEnemyName(mobileEnemy.ID);
-                        bool startsWithVowel = "aeiouAEIOU".Contains(enemyName[0].ToString());
-                        string message;
-                        if (startsWithVowel)
-                            message = TextManager.Instance.GetLocalizedText("youSeeAn");
-                        else
-                            message = TextManager.Instance.GetLocalizedText("youSeeA");
-                        message = message.Replace("%s", enemyName);
+
+                        // [OSORKON] Activating an enemy will now display their level, so player will know in
+                        // advance if they're outclassed and it's time to run.
+                        int enemyLevel = enemyEntity.Level;
+                        string enemyLevelAndName = "Level " + enemyLevel.ToString() + " " + enemyName;
+                        string message = TextManager.Instance.GetLocalizedText("youSeeA");
+                        message = message.Replace("%s", enemyLevelAndName);
                         DaggerfallUI.Instance.PopupMessage(message);
                     }
                     break;

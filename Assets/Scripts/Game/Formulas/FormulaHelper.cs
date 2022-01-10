@@ -834,12 +834,18 @@ namespace DaggerfallWorkshop.Game.Formulas
             DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
 
             // [OSORKON] This inflicts durability damage on player's gloves or boots depending on whether H2H attack
-            // is a punch or kick. I didn't put this in the DamageEquipment function because then I'd have to re-declare a
-            // bunch of local variables and I assume that would be less efficient. If player misses their H2H attack, is
-            // using a weapon, or in wereform, these checks don't run.
+            // is a punch or kick. It also heals player for every landed Hand-to-Hand attack if player is a Vampire
+            // (technically, if player has stage two Vampirism). I didn't put this in the DamageEquipment function
+            // because then I'd have to re-declare a bunch of local variables and I assume that would be less
+            // efficient. If player misses their H2H attack, is using a weapon, or in wereform, these checks don't run.
             if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && damage > 0
              && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Werecreature)
             {
+                if (GameManager.Instance.PlayerEffectManager.HasVampirism())
+                {
+                    player.IncreaseHealth(2);
+                }
+
                 if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
                 {
                     if (gloves != null)

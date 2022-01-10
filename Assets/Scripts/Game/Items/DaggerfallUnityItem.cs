@@ -1228,6 +1228,13 @@ namespace DaggerfallWorkshop.Game.Items
             else
                 itemBroke = TextManager.Instance.GetLocalizedText("itemHasBroken");
             itemBroke = itemBroke.Replace("%s", LongName);
+
+            // [OSORKON] I want a different message displayed when Holy Water breaks. "Broken" water doesn't make much sense.
+            if (TemplateIndex == (int)ReligiousItems.Holy_water)
+            {
+                itemBroke = "You empty the Holy Water.";
+            }
+
             DaggerfallUI.Instance.PopupMessage(itemBroke);
 
             // Unequip item if owner specified
