@@ -234,12 +234,13 @@ namespace DaggerfallWorkshop.Utility
 
         // [OSORKON] In BOSSFALL spawn frequency generally determines monster difficulty. Common enemies are weak
         // and low level. As spawn frequency falls, monster Armor, HP, Level, and damage smoothly rise. Rare enemies
-        // are very dangerous compared to vanilla. HP doesn't follow the standard xd8 + 10 pattern - all monsters
+        // are very dangerous compared to vanilla. HP doesn't follow the standard DFU xd8 + 10 pattern - all monsters
         // have MaxHealth of (MinHealth * 3). Non-boss human HP is unchanged. All non-boss monsters (except for those
         // with Bonus To Hit: Humanoids) have a minimum damage of 1. Added a new MoveSpeed field to every enemy to
         // greatly reduce movespeed checks done in EnemyMotor. Empty soul gems cost 50,000 gold so I added 50,000
-        // to all SoulPts for consistency otherwise filled soul gems would be too cheap. Finally, I set every
-        // MinMetalToHit to None. Custom immunities are added in the CalculateAttackDamage function in FormulaHelper.
+        // to all SoulPts for consistency otherwise filled soul gems would be too cheap. Only bosses and high-level
+        // monsters see Invisible, human spellcasters above level 15 also see Invisible. Finally, I set every MinMetalToHit
+        // to None. Weaknesses/resistances/immunities are added in the CalculateAttackDamage function in FormulaHelper.
         public static MobileEnemy[] Enemies = new MobileEnemy[]
         {
             // Rat
@@ -260,9 +261,9 @@ namespace DaggerfallWorkshop.Utility
                 MinMetalToHit = WeaponMaterialTypes.None,
 
                 // [OSORKON] Slightly less damage and armor than vanilla, similar HP. They move somewhat fast.
-                // Rats are very common in dungeons, outside they prefer temperate climates. Rats are rare in the
-                // wilderness during the day and are fairly common at night. They can only transmit the Plague
-                // and they always charge. They never appear in towns at night.
+                // Rats are very common in dungeons, rare in the wilderness during the day and fairly common
+                // at night. 5% chance per hit of infecting player with the Plague, and they always charge.
+                // They never appear in towns at night.
                 MinDamage = 1,
                 MaxDamage = 3,
                 MinHealth = 6,
@@ -308,7 +309,6 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 Weight = 40,
-                SeesThroughInvisibility = true,
                 LootTableKey = "D",
                 SoulPts = 51000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3, 1 },
@@ -335,9 +335,10 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemySprigganAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much less damage and armor, more HP. They can only be damaged by Axes.
-                // They move extremely slowly. They are in Natural Cave dungeon types and very common
-                // in wilderness during the day anywhere except Deserts. Not as active during the night.
+                // [OSORKON] Much less damage and armor, more HP. Immune to Archery, resistant to Short Blades and
+                // Hand-to-Hand, takes double damage from Axes. They move extremely slowly. They are in Natural Cave
+                // dungeon types and very common in wilderness during the day anywhere except Deserts. Not as active
+                // during the night.
                 MinDamage = 1,
                 MaxDamage = 4,
                 MinDamage2 = 1,
@@ -377,7 +378,7 @@ namespace DaggerfallWorkshop.Utility
 
                 // [OSORKON] Less damage and HP, slightly better armor. They move very fast. Very common in dungeons,
                 // outside they prefer warmer climates. They never spawn outside during the day or in towns at night,
-                // but are common in nighttime wilderness. Higher chance of transmitting disease. They always charge.
+                // but are common in nighttime wilderness. 5% chance per hit of transmitting disease. They always charge.
                 MinDamage = 1,
                 MaxDamage = 7,
                 MinHealth = 8,
@@ -449,7 +450,7 @@ namespace DaggerfallWorkshop.Utility
                 MinMetalToHit = WeaponMaterialTypes.None,
 
                 // [OSORKON] Much less damage, much more HP and armor. They move fast. Never in any dungeons
-                // and only outside in tropical climates. Not as active at night. They always charge.
+                // and only outside in subtropical/rainforest climates. Not as active at night. They always charge.
                 MinDamage = 1,
                 MaxDamage = 7,
                 MinDamage2 = 1,
@@ -600,9 +601,9 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyWerewolfAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Less damage but way higher Level, HP, and Armor. Immune to all materials except Silver.
-                // They move very fast and are never in dungeons. They rarely appear outside at night anywhere with
-                // the exception of Desert wilderness. Common in day/night Haunted Woodlands wilderness.
+                // [OSORKON] Less damage but way higher Level, HP, and Armor. Non-Silver materials deal half damage.
+                // They move very fast and are never in dungeons. They rarely appear outside at night almost anywhere,
+                // but never in Desert wilderness. Common in day/night Haunted Woodlands wilderness.
                 MinDamage = 1,
                 MaxDamage = 8,
                 MinDamage2 = 1,
@@ -641,8 +642,8 @@ namespace DaggerfallWorkshop.Utility
                 MinMetalToHit = WeaponMaterialTypes.None,
 
                 // [OSORKON] More damage, less HP and much less Armor. They move slowly. They're only found
-                // in Natural Cave dungeon types and are common outside in tropical daytime wilderness.
-                // They never spawn outside at night.
+                // in Natural Cave dungeon types and are common outside in tropical daytime wilderness. They
+                // never spawn outside at night.
                 MinDamage = 1,
                 MaxDamage = 10,
                 MinHealth = 15,
@@ -791,9 +792,9 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyWereboarAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] More damage and Armor and way higher Level and HP. Immune to all materials except Silver.
-                // They move fast and are never in dungeons. They rarely appear outside at night anywhere with the
-                // exception of Desert wilderness. Common in day/night Haunted Woodlands wilderness.
+                // [OSORKON] More damage and Armor and way higher Level and HP. Non-Silver materials deal half damage.
+                // They move fast and are never in dungeons. They rarely appear outside at night almost anywhere, but
+                // never in Desert wilderness. Common in day/night Haunted Woodlands wilderness.
                 MinDamage = 1,
                 MaxDamage = 16,
                 MinDamage2 = 1,
@@ -832,10 +833,11 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemySkeletonAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Lower Level, HP, and Armor. They move somewhat fast. They are immune to Archery, Short
-                // Blade and Long Blade. Ubiquitous at night in the wilderness and common in many dungeons. Can appear
-                // during the day in Haunted Woodlands wilderness. They never spawn in towns at night. 2% chance/hit
-                // of transmitting any disease. They always charge and are occasionally found underwater.
+                // [OSORKON] Lower Level, HP, and Armor. They move somewhat fast. Immune to Archery, resistant to
+                // Long/Short Blades, takes double damage from Blunt Weapons. Ubiquitous at night in the wilderness
+                // and common in many dungeons. Can appear during the day in Haunted Woodlands wilderness. They
+                // never spawn in towns at night. 2% chance/hit of transmitting any disease. They always charge
+                // and are occasionally found underwater.
                 MinDamage = 1,
                 MaxDamage = 19,
                 MinHealth = 17,
@@ -845,7 +847,6 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 1,
                 Weight = 80,
-                SeesThroughInvisibility = true,
                 LootTableKey = "H",
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, 3, -1, 4, 5 },
@@ -908,11 +909,10 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyZombieAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much lower Level, damage, and Armor, more HP. They move extremely slowly. Immune to Short Blade,
-                // Archery, and Hand-to-Hand. Takes double damage from Axes - I would think you "kill" a Zombie by chopping
-                // it to pieces, and an Axe is well suited for that job. Higher chance of disease. Common in many dungeons
-                // and outside in wilderness at night. They never spawn in towns at night. Can appear during the day in
-                // Haunted Woodlands wilderness. They always charge and are rarely found underwater.
+                // [OSORKON] Much lower Level, damage, and Armor, more HP. They move extremely slowly. Resistant to Short
+                // Blades, Hand-to-Hand, and Archery, takes double damage from Axes. 5% chance/hit of transmitting any disease.
+                // Common in many dungeons and outside in wilderness at night. They never spawn in towns at night. Can
+                // appear during the day in Haunted Woodlands wilderness. They always charge and are rarely found underwater.
                 MinDamage = 1,
                 MaxDamage = 15,
                 MinHealth = 33,
@@ -922,9 +922,6 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 Weight = 4000,
-
-                // [OSORKON] Zombies now see through Invisibility.
-                SeesThroughInvisibility = true,
                 LootTableKey = "G",
                 SoulPts = 50000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3, 4 },
@@ -967,7 +964,6 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 Weight = 0,
-                SeesThroughInvisibility = true,
                 LootTableKey = "I",
                 NoShadow = true,
                 SoulPts = 80000,
@@ -996,10 +992,11 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyMummyAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] More damage, lower Level, much more HP. Moves extremely slowly. Immune to Archery. Common in
-                // a few undead-themed dungeon types, rare outside in wilderness at night. Very common at night in Desert
-                // wilderness - the environment suits them. They never spawn in towns at night. Can appear during the
-                // day in Haunted Woodlands wilderness. Lower chance of disease, and they always charge.
+                // [OSORKON] More damage, lower Level, much more HP. Moves extremely slowly. Resistant to Archery,
+                // takes double damage from Axes and Long Blades. Common in a few undead-themed dungeon types, rare
+                // outside in wilderness at night. Very common at night in Desert wilderness - the environment suits
+                // them. They never spawn in towns at night. Can appear during the day in Haunted Woodlands
+                // wilderness. 2% chance/hit of transmitting disease, and they always charge.
                 MinDamage = 1,
                 MaxDamage = 25,
                 MinHealth = 45,
@@ -1009,7 +1006,6 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 Weight = 300,
-                SeesThroughInvisibility = true,
                 LootTableKey = "E",
                 SoulPts = 60000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, 2, -1, 3, 4 },
@@ -1034,10 +1030,10 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyScorpionAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Less damage and Armor, more HP. Moves fast. Immune to Hand-to-Hand and Archery.
-                // 10% chance/hit to poison, 0.1% chance/hit to inflict Immunity-bypassing poison, doesn't Paralyze.
-                // Very common in Scorpion Nest dungeon types and outside in daytime Desert wilderness. They never
-                // spawn outside at night. They always charge.
+                // [OSORKON] Less damage and Armor, more HP. Moves fast. Resistant to Hand-to-Hand and Archery,
+                // takes double damage from Axes. 10% chance/hit to poison, 0.1% chance/hit to inflict
+                // Immunity-bypassing poison, doesn't Paralyze. Very common in Scorpion Nest dungeon types and
+                // outside in daytime Desert wilderness. They never spawn outside at night. They always charge.
                 MinDamage = 1,
                 MaxDamage = 30,
                 MinHealth = 33,
@@ -1119,10 +1115,10 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyGargoyleAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much more damage and HP, slightly better Armor. They move extremely slowly. Immune to all
-                // weapons except Blunt Weapons. Common in Mines, Laboratories, and Giant Strongholds (they speak
-                // Giantish). They rarely appear outside at night and rarely spawn in daytime Desert wilderness.
-                // They always charge.
+                // [OSORKON] Much more damage and HP, slightly better Armor. They move extremely slowly. Immune to
+                // Hand-to-Hand and Archery, resistant to Long/Short Blades. Common in Mines, Laboratories, and
+                // Giant Strongholds (they speak Giantish). They rarely appear outside at night and rarely spawn
+                // in daytime Desert wilderness. They always charge.
                 MinDamage = 1,
                 MaxDamage = 50,
                 MinHealth = 50,
@@ -1172,7 +1168,6 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = false,
                 MapChance = 1,
                 Weight = 0,
-                SeesThroughInvisibility = true,
                 LootTableKey = "I",
                 NoShadow = true,
                 SoulPts = 80000,
@@ -1258,7 +1253,6 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 Weight = 800,
-                SeesThroughInvisibility = true,
                 LootTableKey = "J",
                 NoShadow = true,
                 GlowColor = new Color(18, 68, 88) * 0.1f,
@@ -1291,8 +1285,8 @@ namespace DaggerfallWorkshop.Utility
 
                 // [OSORKON] Less damage, much more HP and Armor. Moves fast. God's Fire added to spell kit. Common
                 // in a handful of dungeon types and outside in Desert daytime wilderness. Never spawns outside at
-                // night. I don't recommend using Hand-to-Hand on them - doing so will damage you. They have a greater
-                // chance to drop good loot.
+                // night. I don't recommend using Hand-to-Hand on them - doing so will damage you 4 HP every landed
+                // attack. They have a greater chance to drop good loot.
                 MinDamage = 1,
                 MaxDamage = 50,
                 MinHealth = 60,
@@ -1302,7 +1296,6 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 Weight = 800,
-                SeesThroughInvisibility = true,
                 LootTableKey = "J",
                 NoShadow = true,
                 GlowColor = new Color(243, 239, 44) * 0.05f,
@@ -1346,7 +1339,6 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
                 Weight = 400,
-                SeesThroughInvisibility = true,
                 LootTableKey = "E",
                 SoulPts = 60000,
                 PrimaryAttackAnimFrames = new int[] { 0, 1, -1, 2, 3, 4, -1, 5 },
@@ -1379,8 +1371,8 @@ namespace DaggerfallWorkshop.Utility
 
                 // [OSORKON] The easiest boss of the game. Greatly increased Level, damage, HP, and Armor. They move extremely
                 // fast and take double damage from Silver. Spell variety greatly increased, they have Magicka for 30 spells.
-                // They can transmit any disease rather than just the Plague. High chance to drop good loot. Very common in
-                // Vampire Haunt dungeon types, very rare otherwise.
+                // 1.4% chance/hit of transmitting any disease, 0.6% chance/hit of transmitting stage one Vampirism. High
+                // chance to drop good loot. Very common in Vampire Haunt dungeon types, very rare otherwise.
                 MinDamage = 32,
                 MaxDamage = 62,
                 MinHealth = 80,
@@ -1467,8 +1459,8 @@ namespace DaggerfallWorkshop.Utility
 
                 // [OSORKON] The second toughest boss, tougher than a Daedra Lord but not as tough as an Ancient Lich. All
                 // stats heavily buffed. They are incredibly fast and will outrun player with 100 Running and SPD. They take
-                // double damage from Silver. Casts no spells. Can transmit any disease rather than just the Plague.
-                // Incredibly high chance to drop good loot. They are very rare.
+                // double damage from Silver. Casts no spells. 1.4% chance/hit of transmitting any disease, 0.6% chance/hit
+                // of transmitting stage one Vampirism. Incredibly high chance to drop good loot. They are very rare.
                 MinDamage = 82,
                 MaxDamage = 112,
                 MinHealth = 180,
@@ -1680,14 +1672,9 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyFireAtronachAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Less damage, similar HP, much more Armor than vanilla. They move fast. Immune to all
-                // materials except Silver. I am torn on their immunity to most materials as a weakness to Silver doesn't
-                // really make sense, but it looks like they're made out of fire and thus I don't think any conventional
-                // metal would harm them. This is true for Fire Atronachs only - to me, it looks like Fire Daedra are not
-                // actually made out of fire, they're only wreathed in flames and have a solid material body underneath.
-                // Punching or kicking Fire Atronachs will damage player, but not as much as punching or kicking Fire Daedra.
-                // They are common in Laboratory and Volcanic Cave dungeon types, and are very common in Desert daytime
-                // wilderness. They never spawn outside at night.
+                // [OSORKON] Less damage, similar HP, much more Armor than vanilla. They move fast.  Punching or kicking
+                // a Fire Atronach inflicts 2 HP damage on player every hit. They are common in Laboratory and Volcanic
+                // Cave dungeon types, and are very common in Desert daytime wilderness. They never spawn outside at night.
                 MinDamage = 1,
                 MaxDamage = 15,
                 MinHealth = 40,
@@ -1723,9 +1710,9 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyIronAtronachAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] More damage, much more HP and Armor. They move extremely slowly. Immune to all
-                // weapon types except Blunt Weapons. They are common in Laboratory and Mine dungeon types
-                // but they never spawn outside.
+                // [OSORKON] More damage, much more HP and Armor. They move extremely slowly. Immune to Hand-to-Hand
+                // and Archery, resistant to Long/Short Blades and Axes. They are common in Laboratory and Mine
+                // dungeon types but they never spawn outside.
                 MinDamage = 1,
                 MaxDamage = 25,
                 MinHealth = 66,
@@ -1759,11 +1746,10 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyFleshAtronachAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much less damage, more Armor, much more HP. They move extremely slowly. They are immune
-                // to Hand-to-Hand, Archery, and Short Blade, but take double damage from Axes. I would think you "kill"
-                // a Flesh Atronach by chopping it to pieces, and an Axe is well suited for that job. Like all Atronachs,
-                // they are common in Laboratory dungeon types. They also appear in Haunted Woodland towns at night and
-                // Haunted Woodland wilderness, day or night. 
+                // [OSORKON] Much less damage, more Armor, much more HP. They move extremely slowly. Resistant to Short
+                // Blades, Hand-to-Hand, and Archery, takes double damage from Axes. Like all Atronachs, they are common
+                // in Laboratory dungeon types. They also appear in Haunted Woodland towns at night and Haunted Woodland
+                // wilderness, day or night. 
                 MinDamage = 1,
                 MaxDamage = 10,
                 MinHealth = 60,
@@ -1797,11 +1783,9 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.EnemyIceAtronachAttack,
                 MinMetalToHit = WeaponMaterialTypes.None,
 
-                // [OSORKON] Much more HP and Armor. They move extremely slowly. They are immune to all weapon types
-                // except for Blunt Weapons and Axes. To "kill" them you'd have to shatter them, and most weapons wouldn't
-                // work. Axes are heavy enough to do the job, but they take increased durability damage doing so. Ice Atronachs
-                // are common in Laboratory dungeon types and outside in Mountain nighttime wilderness. They rarely appear in
-                // Mountain Woods nighttime wilderness and underwater.
+                // [OSORKON] Much more HP and Armor. They move extremely slowly. Immune to Hand-to-Hand and Archery,
+                // resistant to Long/Short Blades. Ice Atronachs are common in Laboratory dungeon types and outside in
+                // Mountain nighttime wilderness. They rarely appear in Mountain Woods nighttime wilderness and underwater.
                 MinDamage = 1,
                 MaxDamage = 20,
                 MinHealth = 50,
@@ -2651,9 +2635,6 @@ namespace DaggerfallWorkshop.Utility
                 AttackSound = (int)SoundClips.None,
                 ParrySounds = true,
                 MapChance = 0,
-
-                // [OSORKON] Guards now see Invisible. HALT!
-                SeesThroughInvisibility = true,
                 CastsMagic = false,
 
                 // [OSORKON] I copied and pasted all Knight PrimaryAttack and RangedAttack animations here. Now Guards shoot

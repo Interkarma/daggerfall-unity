@@ -212,8 +212,8 @@ namespace DaggerfallWorkshop
     }
 
     /// <summary>
-    /// [OSORKON] Some BOSSFALL enemies inflict custom effects on player and player's items or have unique immunities
-    /// and weaknesses. I use this enum in FormulaHelper to make the enemy selection process more understandable.
+    /// [OSORKON] Some BOSSFALL enemies inflict custom effects on player and player's items and have unique immunities,
+    /// resistances, or weaknesses. I use this enum in FormulaHelper to make the enemy selection process more understandable.
     /// </summary>
     public enum EnemySpecialHandling
     {
@@ -230,6 +230,7 @@ namespace DaggerfallWorkshop
         Ice,
         FireDaedra,
         SilverTimesTwo,
+        Lycanthropes,
     }
 
     /// <summary>

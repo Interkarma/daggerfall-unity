@@ -54,16 +54,16 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Approximation of classic frame updates
         public const int classicFrameUpdate = 980;
 
-        /// <summary>[OSORKON] This array represents enemy IDs from 0-38 (Rat to IceAtronach). Different monsters have different
-        /// weaknesses and immunities, and I wanted to improve enemy immunity/special ability selection efficiency
-        /// over the enormous if/else if list that was in previous versions of BOSSFALL.</summary> 
-        public static readonly byte[] enemySpecialHandling = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 3, 0, 2,
+        /// <summary>[OSORKON] This array represents enemy IDs from 0-38 (Rat to IceAtronach). Monsters in that ID range
+        /// have varying weapon resistances/immunities/weaknesses, and with this array I was able to greatly improve
+        /// code efficiency over the enormous if/else if list that was in previous versions of BOSSFALL.</summary> 
+        public static readonly byte[] enemySpecialHandling = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 13, 3, 0, 2,
             5, 6, 4, 0, 7, 5, 0, 0, 11, 0, 12, 0, 12, 0, 12, 12, 0, 9, 8, 2, 10 };
 
         /// <summary>[OSORKON] Each element in this array represents a weapon material, Iron through Daedric. Each material has a
-        /// (element / 1025) percent chance of being generated, unless RandomMaterial is generating items for an
-        /// enemy above level 15. In that case high tier material generation is more likely. Details are in my
-        /// comments in the RandomMaterial function.</summary>
+        /// (element / 1025) percent chance of being generated, unless the RandomMaterial function is generating items for an
+        /// enemy above level 15. In that case high tier material generation is more likely. Details are in my comments in the
+        /// RandomMaterial function.</summary>
         public static readonly short[] materialProbability = { 327, 654, 8, 12, 8, 5, 4, 3, 2, 1 };
 
         /// <summary>Struct for return values of formula that affect damage and to-hit chance.</summary>
@@ -873,8 +873,8 @@ namespace DaggerfallWorkshop.Game.Formulas
                 }
             }
 
-            // [OSORKON] I desperately needed to improve BOSSFALL's custom enemy immunity and special property selection process and
-            // implementation over the massive if/else if list found here in v1.2.1 and earlier. This switch tree is the most efficient
+            // [OSORKON] I desperately needed to improve implementation of BOSSFALL's custom enemy weapon immunities, resistances, and
+            // weaknesses, as the massive if/else if list I used previously was not ideal. This switch tree is the most efficient
             // option I came up with. Enemy special handling checks are run if the player lands a hit and is not in wereform, the enemy
             // ID is less than 39, and the element at the index matching the enemy's ID in the new enemySpecialHandling array is greater
             // than 0. I didn't want to split enemy special handling into a bunch of different functions as then I'd have to re-declare
@@ -890,22 +890,62 @@ namespace DaggerfallWorkshop.Game.Formulas
                             switch (skillID)
                             {
                                 case (short)DFCareer.Skills.Axe:
+                                    damage *= 2;
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("Very effective!");
+                                        enemyTarget.shownMsg = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.HandToHand:
-                                    damage = 0;
+                                    damage /= 4;
                                     GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 1);
-                                    DaggerfallUI.AddHUDText("Ow! Use an Axe.");
+                                    if (!enemyTarget.shownMsgTwo)
+                                    {
+                                        DaggerfallUI.AddHUDText("Ow! Not very effective...");
+                                        enemyTarget.shownMsgTwo = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.ShortBlade:
+                                    damage /= 2;
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(1, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(1, player);
+                                    }
+                                    if (!enemyTarget.shownMsgThree)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective... You dull your blade.");
+                                        enemyTarget.shownMsgThree = true;
+                                    }
+                                    break;
                                 case (short)DFCareer.Skills.LongBlade:
-                                    damage = 0;
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DaggerfallUI.AddHUDText("You dull your weapon. Use an Axe.");
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(6, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(6, player);
+                                    }
+                                    if (!enemyTarget.shownMsgFour)
+                                    {
+                                        DaggerfallUI.AddHUDText("You dull your blade.");
+                                        enemyTarget.shownMsgFour = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.BluntWeapon:
+                                    break;
                                 case (short)DFCareer.Skills.Archery:
                                     damage = 0;
-                                    DaggerfallUI.AddHUDText("Ineffective. Use an Axe.");
+                                    if (!enemyTarget.shownMsgFive)
+                                    {
+                                        DaggerfallUI.AddHUDText("Ineffective.");
+                                        enemyTarget.shownMsgFive = true;
+                                    }
                                     break;
                             }
                             break;
@@ -914,35 +954,94 @@ namespace DaggerfallWorkshop.Game.Formulas
                             {
                                 case (short)DFCareer.Skills.Axe:
                                     damage *= 2;
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("Very effective!");
+                                        enemyTarget.shownMsg = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.LongBlade:
                                 case (short)DFCareer.Skills.BluntWeapon:
                                     break;
                                 case (short)DFCareer.Skills.HandToHand:
+                                    damage /= 3;
+                                    if (!enemyTarget.shownMsgTwo)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective...");
+                                        enemyTarget.shownMsgTwo = true;
+                                    }
+                                    break;
                                 case (short)DFCareer.Skills.ShortBlade:
+                                    damage /= 2;
+                                    if (!enemyTarget.shownMsgThree)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective...");
+                                        enemyTarget.shownMsgThree = true;
+                                    }
+                                    break;
                                 case (short)DFCareer.Skills.Archery:
-                                    damage = 0;
-                                    DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon, Long Blade, or Axe.");
+                                    damage /= 4;
+                                    if (!enemyTarget.shownMsgFour)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective...");
+                                        enemyTarget.shownMsgFour = true;
+                                    }
                                     break;
                             }
                             break;
                         case (int)EnemySpecialHandling.SkeletalWarrior:
                             switch (skillID)
                             {
-                                case (short)DFCareer.Skills.Axe:
                                 case (short)DFCareer.Skills.BluntWeapon:
+                                    damage *= 2;
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("Very effective!");
+                                        enemyTarget.shownMsg = true;
+                                    }
+                                    break;
+                                case (short)DFCareer.Skills.Axe:
                                 case (short)DFCareer.Skills.HandToHand:
                                     break;
                                 case (short)DFCareer.Skills.LongBlade:
+                                    damage /= 2;
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(6, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(6, player);
+                                    }
+                                    if (!enemyTarget.shownMsgTwo)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective... You nick your blade.");
+                                        enemyTarget.shownMsgTwo = true;
+                                    }
+                                    break;
                                 case (short)DFCareer.Skills.ShortBlade:
-                                    damage = 0;
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DaggerfallUI.AddHUDText("You chip your blade. Use a Blunt Weapon, Axe, or Hand-to-Hand.");
+                                    damage /= 3;
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(2, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(2, player);
+                                    }
+                                    if (!enemyTarget.shownMsgThree)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective... You chip your blade.");
+                                        enemyTarget.shownMsgThree = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.Archery:
                                     damage = 0;
-                                    DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon, Axe, or Hand-to-Hand.");
+                                    if (!enemyTarget.shownMsgFour)
+                                    {
+                                        DaggerfallUI.AddHUDText("Ineffective.");
+                                        enemyTarget.shownMsgFour = true;
+                                    }
                                     break;
                             }
                             break;
@@ -950,18 +1049,33 @@ namespace DaggerfallWorkshop.Game.Formulas
                             switch (skillID)
                             {
                                 case (short)DFCareer.Skills.Axe:
+                                    damage *= 2;
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("Very effective!");
+                                        enemyTarget.shownMsg = true;
+                                    }
+                                    break;
                                 case (short)DFCareer.Skills.BluntWeapon:
                                 case (short)DFCareer.Skills.LongBlade:
                                 case (short)DFCareer.Skills.ShortBlade:
                                     break;
                                 case (short)DFCareer.Skills.HandToHand:
-                                    damage = 0;
+                                    damage /= 2;
                                     GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 1);
-                                    DaggerfallUI.AddHUDText("Ow! Don't use Archery or Hand-to-Hand.");
+                                    if (!enemyTarget.shownMsgTwo)
+                                    {
+                                        DaggerfallUI.AddHUDText("Ow! Not very effective...");
+                                        enemyTarget.shownMsgTwo = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.Archery:
-                                    damage = 0;
-                                    DaggerfallUI.AddHUDText("Ineffective. Don't use Archery or Hand-to-Hand.");
+                                    damage /= 3;
+                                    if (!enemyTarget.shownMsgThree)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective...");
+                                        enemyTarget.shownMsgThree = true;
+                                    }
                                     break;
                             }
                             break;
@@ -970,41 +1084,79 @@ namespace DaggerfallWorkshop.Game.Formulas
                             {
                                 if (weapon.nativeMaterialValue == (int)WeaponMaterialTypes.Silver)
                                 {
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("Your Silver weapon strikes true!");
+                                        enemyTarget.shownMsg = true;
+                                    }
                                     break;
                                 }
                                 damage = 0;
-                                DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
+                                if (!enemyTarget.shownMsgTwo)
+                                {
+                                    DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
+                                    enemyTarget.shownMsgTwo = true;
+                                }
                                 break;
                             }
                             else if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
                             {
                                 if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
                                 {
+                                    if (!enemyTarget.shownMsgThree)
+                                    {
+                                        DaggerfallUI.AddHUDText("Your Silver gauntlet strikes true!");
+                                        enemyTarget.shownMsgThree = true;
+                                    }
                                     break;
                                 }
                                 damage = 0;
-                                DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
+                                if (!enemyTarget.shownMsgFour)
+                                {
+                                    DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
+                                    enemyTarget.shownMsgFour = true;
+                                }
                                 break;
                             }
                             else if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
                             {
+                                if (!enemyTarget.shownMsgFive)
+                                {
+                                    DaggerfallUI.AddHUDText("Your Silver boot strikes true!");
+                                    enemyTarget.shownMsgFive = true;
+                                }
                                 break;
                             }
                             damage = 0;
-                            DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
+                            if (!enemyTarget.shownMsgSix)
+                            {
+                                DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
+                                enemyTarget.shownMsgSix = true;
+                            }
                             break;
                         case (int)EnemySpecialHandling.Mummy:
                             switch (skillID)
                             {
                                 case (short)DFCareer.Skills.Axe:
+                                case (short)DFCareer.Skills.LongBlade:
+                                    damage *= 2;
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("Very effective!");
+                                        enemyTarget.shownMsg = true;
+                                    }
+                                    break;
                                 case (short)DFCareer.Skills.BluntWeapon:
                                 case (short)DFCareer.Skills.HandToHand:
-                                case (short)DFCareer.Skills.LongBlade:
                                 case (short)DFCareer.Skills.ShortBlade:
                                     break;
                                 case (short)DFCareer.Skills.Archery:
-                                    damage = 0;
-                                    DaggerfallUI.AddHUDText("Ineffective. Don't use Archery.");
+                                    damage /= 2;
+                                    if (!enemyTarget.shownMsgTwo)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective...");
+                                        enemyTarget.shownMsgTwo = true;
+                                    }
                                     break;
                             }
                             break;
@@ -1012,25 +1164,83 @@ namespace DaggerfallWorkshop.Game.Formulas
                             switch (skillID)
                             {
                                 case (short)DFCareer.Skills.BluntWeapon:
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(6, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(6, player);
+                                    }
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("You dent your weapon.");
+                                        enemyTarget.shownMsg = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.HandToHand:
                                     damage = 0;
                                     GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                                    DaggerfallUI.AddHUDText("OW! Use a Blunt Weapon.");
+                                    if (!enemyTarget.shownMsgTwo)
+                                    {
+                                        DaggerfallUI.AddHUDText("OW! Ineffective.");
+                                        enemyTarget.shownMsgTwo = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.Axe:
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(12, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(12, player);
+                                    }
+                                    if (!enemyTarget.shownMsgThree)
+                                    {
+                                        DaggerfallUI.AddHUDText("You chip your axe.");
+                                        enemyTarget.shownMsgThree = true;
+                                    }
+                                    break;
                                 case (short)DFCareer.Skills.LongBlade:
+                                    damage /= 2;
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(18, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(18, player);
+                                    }
+                                    if (!enemyTarget.shownMsgFour)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective... You crack your blade.");
+                                        enemyTarget.shownMsgFour = true;
+                                    }
+                                    break;
                                 case (short)DFCareer.Skills.ShortBlade:
-                                    damage = 0;
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DaggerfallUI.AddHUDText("Your weapon cracks. Use a Blunt Weapon.");
+                                    damage /= 3;
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(3, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(3, player);
+                                    }
+                                    if (!enemyTarget.shownMsgFive)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective... You crack your blade.");
+                                        enemyTarget.shownMsgFive = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.Archery:
                                     damage = 0;
-                                    DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon.");
+                                    if (!enemyTarget.shownMsgSix)
+                                    {
+                                        DaggerfallUI.AddHUDText("Ineffective.");
+                                        enemyTarget.shownMsgSix = true;
+                                    }
                                     break;
                             }
                             break;
@@ -1038,87 +1248,177 @@ namespace DaggerfallWorkshop.Game.Formulas
                             switch (skillID)
                             {
                                 case (short)DFCareer.Skills.BluntWeapon:
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(12, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(12, player);
+                                    }
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("You chip your weapon.");
+                                        enemyTarget.shownMsg = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.HandToHand:
                                     damage = 0;
                                     GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 3);
-                                    DaggerfallUI.AddHUDText("OW!! Use a Blunt Weapon.");
+                                    if (!enemyTarget.shownMsgTwo)
+                                    {
+                                        DaggerfallUI.AddHUDText("OW!! Ineffective.");
+                                        enemyTarget.shownMsgTwo = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.Axe:
+                                    damage /= 2;
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(18, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(18, player);
+                                    }
+                                    if (!enemyTarget.shownMsgThree)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective... You crack your axe.");
+                                        enemyTarget.shownMsgThree = true;
+                                    }
+                                    break;
                                 case (short)DFCareer.Skills.LongBlade:
+                                    damage /= 3;
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(24, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(24, player);
+                                    }
+                                    if (!enemyTarget.shownMsgFour)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective... You badly damage your blade!");
+                                        enemyTarget.shownMsgFour = true;
+                                    }
+                                    break;
                                 case (short)DFCareer.Skills.ShortBlade:
-                                    damage = 0;
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DaggerfallUI.AddHUDText("Your weapon shrieks in protest! Use a Blunt Weapon.");
+                                    damage /= 4;
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(4, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(4, player);
+                                    }
+                                    if (!enemyTarget.shownMsgFive)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective... You badly damage your blade!");
+                                        enemyTarget.shownMsgFive = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.Archery:
                                     damage = 0;
-                                    DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon.");
+                                    if (!enemyTarget.shownMsgSix)
+                                    {
+                                        DaggerfallUI.AddHUDText("Ineffective.");
+                                        enemyTarget.shownMsgSix = true;
+                                    }
                                     break;
                             }
                             break;
                         case (int)EnemySpecialHandling.FireAtronach:
-                            if (skillID != (short)DFCareer.Skills.HandToHand)
+                            if (skillID == (short)DFCareer.Skills.HandToHand)
                             {
-                                if (weapon.nativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                                {
-                                    break;
-                                }
-                                damage = 0;
-                                DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                                break;
-                            }
-                            else if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                            {
-                                if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
+                                if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
                                 {
                                     GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                                    DaggerfallUI.AddHUDText("You burn your hand.");
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("You burn your hand.");
+                                        enemyTarget.shownMsg = true;
+                                    }
                                     break;
                                 }
-                                damage = 0;
                                 GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                                DaggerfallUI.AddHUDText("Ineffective. You burn your hand. Use Silver.");
+                                if (!enemyTarget.shownMsgTwo)
+                                {
+                                    DaggerfallUI.AddHUDText("You burn your foot.");
+                                    enemyTarget.shownMsgTwo = true;
+                                }
                                 break;
                             }
-                            else if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                            {
-                                GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                                DaggerfallUI.AddHUDText("You burn your foot.");
-                                break;
-                            }
-                            damage = 0;
-                            GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                            DaggerfallUI.AddHUDText("Ineffective. You burn your foot. Use Silver.");
                             break;
                         case (int)EnemySpecialHandling.Ice:
                             switch (skillID)
                             {
                                 case (short)DFCareer.Skills.Axe:
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(6, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(6, player);
+                                    }
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("You nick your axe.");
+                                        enemyTarget.shownMsg = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.BluntWeapon:
                                     break;
                                 case (short)DFCareer.Skills.HandToHand:
                                     damage = 0;
                                     GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                                    DaggerfallUI.AddHUDText("OW! Use a Blunt Weapon or Axe.");
+                                    if (!enemyTarget.shownMsgTwo)
+                                    {
+                                        DaggerfallUI.AddHUDText("OW! Ineffective.");
+                                        enemyTarget.shownMsgTwo = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.LongBlade:
+                                    damage /= 2;
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(12, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(12, player);
+                                    }
+                                    if (!enemyTarget.shownMsgThree)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective... You chip your blade.");
+                                        enemyTarget.shownMsgThree = true;
+                                    }
+                                    break;
                                 case (short)DFCareer.Skills.ShortBlade:
-                                    damage = 0;
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DamageEquipment(attacker, target, 1, weapon, struckBodyPart);
-                                    DaggerfallUI.AddHUDText("You chip your weapon. Use a Blunt Weapon or Axe.");
+                                    damage /= 3;
+                                    if (weapon.IsEnchanted)
+                                    {
+                                        weapon.LowerCondition(2, player, player.Items);
+                                    }
+                                    else
+                                    {
+                                        weapon.LowerCondition(2, player);
+                                    }
+                                    if (!enemyTarget.shownMsgFour)
+                                    {
+                                        DaggerfallUI.AddHUDText("Not very effective... You chip your blade.");
+                                        enemyTarget.shownMsgFour = true;
+                                    }
                                     break;
                                 case (short)DFCareer.Skills.Archery:
                                     damage = 0;
-                                    DaggerfallUI.AddHUDText("Ineffective. Use a Blunt Weapon or Axe.");
+                                    if (!enemyTarget.shownMsgFive)
+                                    {
+                                        DaggerfallUI.AddHUDText("Ineffective.");
+                                        enemyTarget.shownMsgFive = true;
+                                    }
                                     break;
                             }
                             break;
@@ -1128,11 +1428,19 @@ namespace DaggerfallWorkshop.Game.Formulas
                                 if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
                                 {
                                     GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 4);
-                                    DaggerfallUI.AddHUDText("You scorch your hand!");
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("You scorch your hand!");
+                                        enemyTarget.shownMsg = true;
+                                    }
                                     break;
                                 }
                                 GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 4);
-                                DaggerfallUI.AddHUDText("You scorch your foot!");
+                                if (!enemyTarget.shownMsgTwo)
+                                {
+                                    DaggerfallUI.AddHUDText("You scorch your foot!");
+                                    enemyTarget.shownMsgTwo = true;
+                                }
                                 break;
                             }
                             break;
@@ -1142,6 +1450,11 @@ namespace DaggerfallWorkshop.Game.Formulas
                                 if (weapon.nativeMaterialValue == (int)WeaponMaterialTypes.Silver)
                                 {
                                     damage *= 2;
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("Your Silver weapon strikes true!");
+                                        enemyTarget.shownMsg = true;
+                                    }
                                     break;
                                 }
                                 break;
@@ -1151,6 +1464,11 @@ namespace DaggerfallWorkshop.Game.Formulas
                                 if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
                                 {
                                     damage *= 2;
+                                    if (!enemyTarget.shownMsgTwo)
+                                    {
+                                        DaggerfallUI.AddHUDText("Your Silver gauntlet strikes true!");
+                                        enemyTarget.shownMsgTwo = true;
+                                    }
                                     break;
                                 }
                                 break;
@@ -1158,7 +1476,67 @@ namespace DaggerfallWorkshop.Game.Formulas
                             else if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
                             {
                                 damage *= 2;
+                                if (!enemyTarget.shownMsgThree)
+                                {
+                                    DaggerfallUI.AddHUDText("Your Silver boot strikes true!");
+                                    enemyTarget.shownMsgThree = true;
+                                }
                                 break;
+                            }
+                            break;
+                        case (int)EnemySpecialHandling.Lycanthropes:
+                            if (skillID != (short)DFCareer.Skills.HandToHand)
+                            {
+                                if (weapon.nativeMaterialValue == (int)WeaponMaterialTypes.Silver)
+                                {
+                                    if (!enemyTarget.shownMsg)
+                                    {
+                                        DaggerfallUI.AddHUDText("Your Silver weapon strikes true!");
+                                        enemyTarget.shownMsg = true;
+                                    }
+                                    break;
+                                }
+                                damage /= 2;
+                                if (!enemyTarget.shownMsgTwo)
+                                {
+                                    DaggerfallUI.AddHUDText("Not very effective... Use Silver.");
+                                    enemyTarget.shownMsgTwo = true;
+                                }
+                                break;
+                            }
+                            else if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
+                            {
+                                if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
+                                {
+                                    if (!enemyTarget.shownMsgThree)
+                                    {
+                                        DaggerfallUI.AddHUDText("Your Silver gauntlet strikes true!");
+                                        enemyTarget.shownMsgThree = true;
+                                    }
+                                    break;
+                                }
+                                damage /= 2;
+                                if (!enemyTarget.shownMsgFour)
+                                {
+                                    DaggerfallUI.AddHUDText("Not very effective... Use Silver.");
+                                    enemyTarget.shownMsgFour = true;
+                                }
+                                break;
+                            }
+                            else if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
+                            {
+                                if (!enemyTarget.shownMsgFive)
+                                {
+                                    DaggerfallUI.AddHUDText("Your Silver boot strikes true!");
+                                    enemyTarget.shownMsgFive = true;
+                                }
+                                break;
+                            }
+                            damage /= 2;
+                            if (!enemyTarget.shownMsgSix)
+                            {
+                                DaggerfallUI.AddHUDText("Not very effective... Use Silver.");
+                                enemyTarget.shownMsgSix = true;
                             }
                             break;
                     }

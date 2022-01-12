@@ -58,26 +58,40 @@ namespace DaggerfallWorkshop.Game.Entity
         int questFoeItemQueueIndex = -1;
         bool suppressInfighting = false;
 
+        // [OSORKON] This list of bools is used in the CalculateAttackDamage function in FormulaHelper so player isn't
+        // spammed with HUD messages when attacking an enemy with an immunity, resistance, or weakness to the player's
+        // current weapon. I first put this list in FormulaHelper (the bools were static originally) but that resulted
+        // in each HUD message appearing only once, requiring a game restart before they were shown again. That wasn't
+        // what I wanted so I moved them here. HUD messages now appear once per enemy per immunity/resistance/weakness.
+        public bool shownMsg;
+        public bool shownMsgTwo;
+        public bool shownMsgThree;
+        public bool shownMsgFour;
+        public bool shownMsgFive;
+        public bool shownMsgSix;
+
         // From FALL.EXE offset 0x1C0F14
 
-        // [OSORKON] The hexadecimal numbers are referenced in classic Daggerfall's SPELL.STD file, which has a
-        // list of 99 or so different spells. Changing enemy spells is super easy - all you have to do is find the hex
-        // number for that spell effect and plug that into the correct array. I used UESP's SPELL.STD page for reference.
-        // I greatly increased enemy spell variety, as knowing what spells to expect takes most of the challenge away.
-        // I didn't change Frost or Fire Daedra spells much - I added Frostbite to Frost Daedra spells and God's Fire
-        // to Fire Daedra spells.
-        static byte[] ImpSpells            = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
-        static byte[] OrcShamanSpells      = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
-        static byte[] WraithSpells         = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
+        // [OSORKON] The hexadecimal numbers refer to a list in classic Daggerfall's SPELL.STD file. Changing enemy
+        // spells is super easy - all you have to do is find the hex number for the desired classic spell effect and
+        // plug that into the correct array. I used UESP's SPELL.STD page for reference. I greatly increased Ancient
+        // Lich spell variety and made all spellcasters (except Frost/Fire Daedra) use that spell list. I didn't
+        // change Frost or Fire Daedra spells much - I added Frostbite to Frost Daedra spells and God's Fire to Fire
+        // Daedra spells. I kept unused spell arrays in case any mods called them. I don't want to break any mods.
+        static byte[] ImpSpells            = { 0x07, 0x0A, 0x1D, 0x2C };
+        static byte[] GhostSpells          = { 0x22 };
+        static byte[] OrcShamanSpells      = { 0x06, 0x07, 0x16, 0x19, 0x1F };
+        static byte[] WraithSpells         = { 0x1C, 0x1F };
         static byte[] FrostDaedraSpells    = { 0x10, 0x14, 0x03 };
         static byte[] FireDaedraSpells     = { 0x0E, 0x19, 0x20 };
-        static byte[] DaedrothSpells       = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
-        static byte[] VampireSpells        = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
-        static byte[] SeducerSpells        = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
-        static byte[] DaedraLordSpells     = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
-        static byte[] LichSpells           = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
+        static byte[] DaedrothSpells       = { 0x16, 0x17, 0x1F };
+        static byte[] VampireSpells        = { 0x33 };
+        static byte[] SeducerSpells        = { 0x34, 0x43 };
+        static byte[] VampireAncientSpells = { 0x08, 0x32 };
+        static byte[] DaedraLordSpells     = { 0x08, 0x0A, 0x0E, 0x3C, 0x43 };
+        static byte[] LichSpells           = { 0x08, 0x0A, 0x0E, 0x22, 0x3C };
         static byte[] AncientLichSpells    = { 0x08, 0x0E, 0x1D, 0x1F, 0x32, 0x33, 0x19, 0x1C, 0x43, 0x34, 0x17, 0x10, 0x14, 0x09, 0x1B, 0x1E, 0x20, 0x23, 0x24, 0x27, 0x35, 0x36, 0x37, 0x40 };
-        static byte[][] EnemyClassSpells   = { FrostDaedraSpells, DaedrothSpells, OrcShamanSpells, DaedraLordSpells, LichSpells, AncientLichSpells };
+        static byte[][] EnemyClassSpells   = { FrostDaedraSpells, DaedrothSpells, OrcShamanSpells, VampireAncientSpells, DaedraLordSpells, LichSpells, AncientLichSpells };
 
         #endregion
 
@@ -679,13 +693,13 @@ namespace DaggerfallWorkshop.Game.Entity
             if (entityType == EntityTypes.EnemyMonster)
             {
                 // [OSORKON] I condensed the vanilla if/else if list, all monsters use the same spells in BOSSFALL.
-                //  No need for extra checks. The only exceptions are Frost/Fire Daedra, who do use different spell lists.
+                // The only exceptions are Frost/Fire Daedra, who do use different spell lists.
                 if (careerIndex == (int)MonsterCareers.Imp || careerIndex == (int)MonsterCareers.OrcShaman
                     || careerIndex == (int)MonsterCareers.Wraith || careerIndex == (int)MonsterCareers.Daedroth
                     || careerIndex == (int)MonsterCareers.Vampire || careerIndex == (int)MonsterCareers.DaedraSeducer
                     || careerIndex == (int)MonsterCareers.DaedraLord || careerIndex == (int)MonsterCareers.Lich
                     || careerIndex == (int)MonsterCareers.AncientLich)
-                    SetEnemySpells(ImpSpells);
+                    SetEnemySpells(AncientLichSpells);
                 else if (careerIndex == (int)MonsterCareers.FrostDaedra)
                     SetEnemySpells(FrostDaedraSpells);
                 else if (careerIndex == (int)MonsterCareers.FireDaedra)
