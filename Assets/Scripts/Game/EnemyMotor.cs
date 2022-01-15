@@ -82,6 +82,19 @@ namespace DaggerfallWorkshop.Game
         bool shownBossWarning;
         bool shownPowerfulBossWarning;
 
+        /// <summary>
+        /// [OSORKON] This monstrosity represents enemy move speeds by enemy ID and covers IDs from 0-146. This array is used if the
+        /// "Enemy Move Speed" setting is "Very Fast", and these speeds are BOSSFALL v1.2.1 enemy move speeds. I use this array to
+        /// make the enemy movespeed selection process much faster than the giant if/else if tree I had in TakeAction in versions
+        /// v1.2.1 and earlier. Most of this array is unused filler as enemies with IDs 43-127 don't exist, but it's more efficient
+        /// to declare this whole thing and then search by ID without modification than it would be to declare a 62-element array
+        /// (to match the 62 enemies in DFU) and then subtract 85 from every enemy ID above 127 to get the correct index number.
+        /// </summary>
+        public static readonly float[] veryFastMoveSpeeds = { 7f, 6f, 3f, 8.5f, 7.5f, 8f, 9f, 5f, 7.5f, 9f, 4.5f, 4.5f, 5.75f, 8f,
+        7.5f, 6f, 7f, 3f, 3.5f, 3.5f, 7.5f, 5.75f, 4.5f, 4f, 6.5f, 5f, 7.5f, 6.5f, 10f, 7.5f, 12f, 7.5f, 4f, 4.5f, 8f, 7.5f, 3f, 3f,
+        3f, 0, 10f, 3.5f, 4f, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4f, 7.5f, 6f, 4f, 4f, 8f, 7f, 8f, 8f, 8.5f, 8f, 10f, 7.5f, 4.5f, 4.5f, 7f, 5.75f, 5f, 8.5f };
 
         EnemySenses senses;
         Vector3 destination;
@@ -194,24 +207,27 @@ namespace DaggerfallWorkshop.Game
             OpenDoors();
             HeightAdjust();
 
-            // [OSORKON] This checks for nearby bosses and creates warning HUD messages. Detection radius is
-            // roughly classic despawn distance. Assassins won't trigger warning messages - they're too stealthy
-            // to detect. The three toughest bosses (Daedra Lord, Vampire Ancient, Ancient Lich) get a unique HUD
-            // message. The HUD message appears once per boss.
-            if (isBoss && !shownBossWarning)
+            // [OSORKON] If the Boss Proximity Warning setting is ON, this checks for nearby bosses and creates warning
+            // HUD messages. Detection radius is roughly half a dungeon block. Assassins won't trigger warning messages,
+            // they're too stealthy to detect. The three toughest bosses (Daedra Lord, Vampire Ancient, Ancient Lich)
+            // get a unique HUD message. The HUD message appears once per boss.
+            if (DaggerfallUnity.Settings.BossProximityWarning)
             {
-                if (senses.DistanceToPlayer < 25.6f)
+                if (isBoss && !shownBossWarning)
                 {
-                    DaggerfallUI.AddHUDText("You sense a boss nearby.");
-                    shownBossWarning = true;
+                    if (senses.DistanceToPlayer < 25.6f)
+                    {
+                        DaggerfallUI.AddHUDText("You sense a boss nearby.");
+                        shownBossWarning = true;
+                    }
                 }
-            }
-            else if (isPowerfulBoss && !shownPowerfulBossWarning)
-            {
-                if (senses.DistanceToPlayer < 25.6f)
+                else if (isPowerfulBoss && !shownPowerfulBossWarning)
                 {
-                    DaggerfallUI.AddHUDText("You sense a powerful boss nearby.");
-                    shownPowerfulBossWarning = true;
+                    if (senses.DistanceToPlayer < 25.6f)
+                    {
+                        DaggerfallUI.AddHUDText("You sense a powerful boss nearby.");
+                        shownPowerfulBossWarning = true;
+                    }
                 }
             }
         }
@@ -469,14 +485,25 @@ namespace DaggerfallWorkshop.Game
         void TakeAction()
         {
             // Monster speed of movement follows the same formula as for when the player walks
-            float moveSpeed = (entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
 
-            // [OSORKON] Use MoveSpeed value from EnemyBasics for enemy moveSpeed. I kept the above vanilla moveSpeed
-            // formula and added the != 0 check because "Meaner Monsters" and any future mods that add enemies won't
-            // have anything in the MoveSpeed field as that field is not in vanilla DFU code. I don't want to break mods.
-            if (mobile.Enemy.MoveSpeed != 0)
+            // [OSORKON] I changed the declaration of this variable to avoid unnecessary moveSpeed calculations.
+            float moveSpeed;
+
+            // [OSORKON] This sets enemy movement speed based on which "Enemy Move Speed" setting is used. The first option
+            // is the recommended "Fast" setting, which is rebalanced speeds for BOSSFALL v1.3. The second option is the
+            // "Very Fast" setting - which is v1.2.1 speeds - and the last option is the "Vanilla" setting, which is vanilla
+            // DFU speed set using the vanilla formula.
+            if (DaggerfallUnity.Settings.EnemyMoveSpeed == 1)
             {
                 moveSpeed = mobile.Enemy.MoveSpeed;
+            }
+            else if (DaggerfallUnity.Settings.EnemyMoveSpeed == 2)
+            {
+                moveSpeed = veryFastMoveSpeeds[mobile.Enemy.ID];
+            }
+            else
+            {
+                moveSpeed = (entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
             }
 
             // Get isPlayingOneShot for use below

@@ -6961,15 +6961,26 @@ namespace DaggerfallWorkshop.Utility
             // [OSORKON] I erased most of what vanilla had here but I kept this necessary variable.
             RandomEncounterTable encounterTable = EncounterTables[encounterTableIndex];
 
-            // [OSORKON] In BOSSFALL there are two types of random enemy spawns. The first are dungeon enemies that
-            // spawn at set points in dungeon blocks - those are handled in RDBLayout and not here (they are selected
-            // using the same method as in this script). The second are random spawns when player is resting in a
-            // dungeon or outside at certain locations and times, and that is what the line below handles. A random
-            // enemy is selected from the array - this random selection is not altered by any external variables such
-            // as player level - and this random selection is how BOSSFALL implements unleveled enemies. How often a
-            // specific enemy spawns is determined by simple probabilities - that enemy has a (amount of times specific
-            // enemy is listed / length of the encounter table) percent chance of spawning every time this function is
-            // called. Function call frequency is set in FormulaHelper and has been reduced compared to vanilla DFU.
+            // [OSORKON] If the "Powerful Enemies Are:" setting is "More Common" and the player is not using modded encounter
+            // tables (which are never longer than 20), randomly pick an enemy from the first 100 slots of the encounter table.
+            // When I made powerful enemies less common for BOSSFALL v1.3, I added 40 slots at the end of each encounter table
+            // and didn't change the first 100. So, by picking only from the first 100, the "More Common" setting uses v1.2.1
+            // enemy rarities. I don't think this setting is balanced so I recommend "Less Common".
+            if (DaggerfallUnity.Settings.PowerfulEnemyRarity == 1 && encounterTable.Enemies.Length > 99)
+            {
+                return encounterTable.Enemies[UnityEngine.Random.Range(0, 100)];
+            }
+
+            // [OSORKON] In BOSSFALL there are two types of random spawns. The first are dungeon enemies that spawn at set points
+            // in dungeon blocks - those are handled in RDBLayout and not here (they are selected using the same method as in this
+            // script). The second are random spawns when player is resting in a dungeon or outside at certain locations and times,
+            // and that is what the line below handles. If the "Powerful Enemies Are:" setting is "Less Common" (I recommend using
+            // this setting as I think it's the most balanced) or if player is using modded encounter tables, a random enemy is
+            // selected from the entire array - this random selection is not altered by any external variables such as player level
+            // - and this random selection is how BOSSFALL implements unleveled enemies. How often a specific enemy spawns is
+            // determined by probabilities - that enemy has a (amount of times enemy is listed / length of the encounter table)
+            // percent chance of spawning every time this function is called. Function call frequency is set in FormulaHelper and
+            // has been reduced compared to vanilla DFU.
             return encounterTable.Enemies[UnityEngine.Random.Range(0, encounterTable.Enemies.Length)];
         }
     }

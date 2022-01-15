@@ -1197,7 +1197,7 @@ namespace DaggerfallWorkshop.Utility
 
                 // [OSORKON] The fourth most difficult boss of the game, tougher than Alternate Dragonlings but not as
                 // tough as a Daedra Lord. Damage, HP, Level, and Armor greatly increased. Moves somewhat fast. Has much
-                // greater chance of dropping good loot. They are very rare.
+                // greater chance of dropping good loot. They are the only boss who don't See Invisible. They are very rare.
                 MinDamage = 42,
                 MaxDamage = 73,
                 MinHealth = 150,
@@ -1207,9 +1207,6 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 2,
                 Weight = 700,
-
-                // [OSORKON] All bosses see Invisible.
-                SeesThroughInvisibility = true,
                 LootTableKey = "T",
 
                 // [OSORKON] All boss Soul Gems are extremely valuable.

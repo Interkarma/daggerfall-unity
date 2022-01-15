@@ -307,15 +307,52 @@ namespace DaggerfallWorkshop.Game.Entity
                 // Here we use a rate of 1/4 that observed for classic.
                 if (playerMotor.IsRunning && !playerMotor.IsRiding)
                 {
-                    // [OSORKON] I increased the runningTallyCounter from vanilla's 3.
-                    // Running now levels slower than vanilla.
-                    if (runningTallyCounter == 5)
+                    // [OSORKON] The Skill Advancement Difficulty setting determines how fast the Running skill is tallied. This
+                    // is BOSSFALL v1.3's "Hard" difficulty setting. I changed the runningTallyCounter condition to ( > 4) rather
+                    // than ( == 5) because I don't know if the runningTallyCounter is serialized - if it is and the
+                    // runningTallyCounter is above 5 due to using the "Extremely Hard" difficulty setting, if the player then
+                    // switches to another difficulty setting the runningTallyCounter would increase to infinity and never tally
+                    // Running again. I obviously don't want that to happen, so I changed the condition.
+                    if (DaggerfallUnity.Settings.SkillAdvancementDifficulty == 1)
                     {
-                        TallySkill(DFCareer.Skills.Running, 1);
-                        runningTallyCounter = 0;
+                        if (runningTallyCounter > 4)
+                        {
+                            TallySkill(DFCareer.Skills.Running, 1);
+                            runningTallyCounter = 0;
+                        }
+                        else
+                        {
+                            runningTallyCounter++;
+                        }
                     }
+                    // [OSORKON] This is BOSSFALL v.1.2.1's "Extremely Hard" difficulty setting. With that setting Running levels
+                    // about 7 times slower than vanilla.
+                    else if (DaggerfallUnity.Settings.SkillAdvancementDifficulty == 2)
+                    {
+                        if (runningTallyCounter == 20)
+                        {
+                            TallySkill(DFCareer.Skills.Running, 1);
+                            runningTallyCounter = 0;
+                        }
+                        else
+                        {
+                            runningTallyCounter++;
+                        }
+                    }
+                    // [OSORKON] This is vanilla DFU's difficulty setting. I changed the runningTallyCounter TallySkill condition
+                    // from ( == 3) to ( > 2) to avoid the infinity situation described in my comments starting at line 310.
                     else
-                        runningTallyCounter++;
+                    {
+                        if (runningTallyCounter > 2)
+                        {
+                            TallySkill(DFCareer.Skills.Running, 1);
+                            runningTallyCounter = 0;
+                        }
+                        else
+                        {
+                            runningTallyCounter++;
+                        }
+                    }
                 }
 
                 // Handle breath when underwater and not water breathing

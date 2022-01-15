@@ -772,12 +772,29 @@ namespace DaggerfallWorkshop.Game
                         MobileEnemy mobileEnemy = enemyEntity.MobileEnemy;
                         string enemyName = TextManager.Instance.GetLocalizedEnemyName(mobileEnemy.ID);
 
-                        // [OSORKON] Activating an enemy will now display their level, so player will know in
-                        // advance if they're outclassed and it's time to run.
+                        // [OSORKON] If the Display Enemy Level setting is ON, activating an enemy will now display their
+                        // level, so player will know in advance if they're outclassed and it's time to run. This tweak
+                        // revealed the fact that enemy level is not serialized and gets reset on every load, which is not
+                        // very helpful when human enemies can be levels 1-20! I fixed this for BOSSFALL v1.3.
                         int enemyLevel = enemyEntity.Level;
-                        string enemyLevelAndName = "Level " + enemyLevel.ToString() + " " + enemyName;
+                        string enemyLevelAndName = string.Format("Level {0} {1}", enemyLevel.ToString(), enemyName);
                         string message = TextManager.Instance.GetLocalizedText("youSeeA");
                         message = message.Replace("%s", enemyLevelAndName);
+
+                        // [OSORKON] If the Display Enemy Level setting is OFF, display vanilla text.
+                        if (!DaggerfallUnity.Settings.DisplayEnemyLevel)
+                        {
+                            bool startsWithVowel = "aeiouAEIOU".Contains(enemyName[0].ToString());
+                            if (startsWithVowel)
+                            {
+                                message = TextManager.Instance.GetLocalizedText("youSeeAn");
+                            }
+                            else
+                            {
+                                message = TextManager.Instance.GetLocalizedText("youSeeA");
+                            }
+                            message = message.Replace("%s", enemyName);
+                        }
                         DaggerfallUI.Instance.PopupMessage(message);
                     }
                     break;

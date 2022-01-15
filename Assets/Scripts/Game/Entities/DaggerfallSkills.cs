@@ -488,114 +488,306 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public static int GetAdvancementMultiplier(DFCareer.Skills skill)
         {
-            // [OSORKON] BOSSFALL v1.2.1 had sky-high AdvancementMultipliers compared to vanilla DFU. After
-            // much consideration, I came to the conclusion that increasing skill difficulty that much forced
-            // players to always have a CareerAdvancementMultiplier of 0.3 to level skills at a reasonable rate,
-            // and even then certain skills would still be extremely hard to level, essentially forcing player
-            // to train in order to progress - I don't think training is as fun or satisfying as clearing out a
-            // dungeon and getting a bunch of skill levels along the way. Thus, I decided I was violating one of
-            // my core design tenets - I want to greatly increase end-game difficulty, but I don't want to make
-            // BOSSFALL frustratingly unfair or boring while doing so. For v1.3, skill difficulty is still overall
-            // increased compared to vanilla, but it's been greatly reduced compared to previous versions of BOSSFALL.
-            switch (skill)
+            // [OSORKON] The Skill Advancement Difficulty setting determines what switch tree is used. The first switch
+            // tree is BOSSFALL v1.3's "Hard" difficulty, the second is v1.2.1's "Extremely Hard" difficulty, and the
+            // last is vanilla DFU's "Vanilla" difficulty.
+            if (DaggerfallUnity.Settings.SkillAdvancementDifficulty == 1)
             {
-                // [OSORKON] This is the only skill I lowered simply to suit my playstyle. I plan on playing with a
-                // CareerAdvancementMultiplier of around 2.8 which puts Medical at 14, slightly increased from
-                // vanilla's 12. I could pretend to have lowered it because "Medical levels really slowly at higher
-                // skill levels in vanilla" but that isn't the real reason... I feel a bit guilty about this.
-                case DFCareer.Skills.Medical:
-                    return 5;
-                case DFCareer.Skills.Etiquette:
-                case DFCareer.Skills.Streetwise:
-                    return 1;
-                case DFCareer.Skills.Jumping:
-                    return 5;
+                // [OSORKON] BOSSFALL v1.2.1 had sky-high AdvancementMultipliers compared to vanilla DFU. After
+                // much consideration, I came to the conclusion that increasing skill difficulty that much forced
+                // players to always have a CareerAdvancementMultiplier of 0.3 to level skills at a reasonable rate,
+                // and even then certain skills would still be extremely hard to level, essentially forcing player
+                // to train in order to progress - I don't think training is as fun or satisfying as clearing out a
+                // dungeon and getting a bunch of skill levels along the way. Thus, I decided I was violating one of
+                // my core design tenets - I want to greatly increase end-game difficulty, but I don't want to make
+                // BOSSFALL frustratingly unfair or boring while doing so. For v1.3, skill difficulty is still overall
+                // increased compared to vanilla, but it's been greatly reduced compared to previous versions of BOSSFALL.
+                switch (skill)
+                {
+                    // [OSORKON] This is the only skill I lowered simply to suit my playstyle. I plan on playing with a
+                    // CareerAdvancementMultiplier of around 2.8 which puts Medical at 14, slightly increased from
+                    // vanilla's 12. I could pretend to have lowered it because "Medical levels really slowly at higher
+                    // skill levels in vanilla" but that isn't the real reason... I feel a bit guilty about this.
+                    case DFCareer.Skills.Medical:
+                        return 5;
+                    case DFCareer.Skills.Etiquette:
+                    case DFCareer.Skills.Streetwise:
+                        return 1;
+                    case DFCareer.Skills.Jumping:
+                        return 5;
 
-                // [OSORKON] Greatly lowered Orcish from vanilla's 15. Orcs appear quite frequently
-                // compared to the other monsters with languages so Orcish is 2 rather than 1.
-                case DFCareer.Skills.Orcish:
-                    return 2;
+                    // [OSORKON] Greatly lowered Orcish from vanilla's 15. Orcs appear quite frequently
+                    // compared to the other monsters with languages so Orcish is 2 rather than 1.
+                    case DFCareer.Skills.Orcish:
+                        return 2;
 
-                // [OSORKON] Greatly lowered monster language difficulty from vanilla's 15. I play "linguist"
-                // characters so my weapon and spell skills start off very low. I do this to make the
-                // game as hard as possible. Unfortunately, monster language skills were impossible to level
-                // past vanilla's level 50 skill training cap, which was a hard limit to my character's
-                // progression. I fixed that obstacle by greatly reducing monster language skill difficulty.
-                case DFCareer.Skills.Harpy:
-                case DFCareer.Skills.Giantish:
-                case DFCareer.Skills.Dragonish:
-                case DFCareer.Skills.Nymph:
-                case DFCareer.Skills.Daedric:
-                case DFCareer.Skills.Spriggan:
-                case DFCareer.Skills.Centaurian:
-                case DFCareer.Skills.Impish:
-                    return 1;
-                case DFCareer.Skills.Lockpicking:
-                    return 2;
+                    // [OSORKON] Greatly lowered monster language difficulty from vanilla's 15. I play "linguist"
+                    // characters so my weapon and spell skills start off very low. I do this to make the
+                    // game as hard as possible. Unfortunately, monster language skills were impossible to level
+                    // past vanilla's level 50 skill training cap, which was a hard limit to my character's
+                    // progression. I fixed that obstacle by greatly reducing monster language skill difficulty.
+                    case DFCareer.Skills.Harpy:
+                    case DFCareer.Skills.Giantish:
+                    case DFCareer.Skills.Dragonish:
+                    case DFCareer.Skills.Nymph:
+                    case DFCareer.Skills.Daedric:
+                    case DFCareer.Skills.Spriggan:
+                    case DFCareer.Skills.Centaurian:
+                    case DFCareer.Skills.Impish:
+                        return 1;
+                    case DFCareer.Skills.Lockpicking:
+                        return 2;
 
-                // [OSORKON] Tripled Mercantile from vanilla's 1. I play with "Climates & Calories"
-                // and that mod requires a lot of little purchases, which raises this skill very quickly.
-                // Because it's so easy to train, I made it harder to level.
-                case DFCareer.Skills.Mercantile:
-                    return 3;
-                case DFCareer.Skills.Pickpocket:
-                    return 2;
+                    // [OSORKON] Tripled Mercantile from vanilla's 1. I play with "Climates & Calories"
+                    // and that mod requires a lot of little purchases, which raises this skill very quickly.
+                    // Because it's so easy to train, I made it harder to level.
+                    case DFCareer.Skills.Mercantile:
+                        return 3;
+                    case DFCareer.Skills.Pickpocket:
+                        return 2;
 
-                // [OSORKON] This skill will skyrocket in vanilla whenever player is around enemies (basically
-                // all the time). Because it's so easy to train, I made it harder to level.
-                case DFCareer.Skills.Stealth:
-                    return 4;
-                case DFCareer.Skills.Swimming:
-                    return 1;
+                    // [OSORKON] This skill will skyrocket in vanilla whenever player is around enemies (basically
+                    // all the time). Because it's so easy to train, I made it harder to level.
+                    case DFCareer.Skills.Stealth:
+                        return 4;
+                    case DFCareer.Skills.Swimming:
+                        return 1;
 
-                // [OSORKON] Increased from vanilla's 2. I removed cheesy ways to level the skill (Rappel mode
-                // gives no Climbing skill tallies) but it was still too easy to level. 5 may still be too high -
-                // I'll have to try a longer playthrough once BOSSFALL v1.3 is finished and see how I like it.
-                case DFCareer.Skills.Climbing:
-                    return 5;
-                case DFCareer.Skills.Backstabbing:
-                    return 1;
+                    // [OSORKON] Increased from vanilla's 2. I removed cheesy ways to level the skill (Rappel mode
+                    // gives no Climbing skill tallies) but it was still too easy to level. 5 may still be too high -
+                    // I'll have to try a longer playthrough once BOSSFALL v1.3 is finished and see how I like it.
+                    case DFCareer.Skills.Climbing:
+                        return 5;
+                    case DFCareer.Skills.Backstabbing:
+                        return 1;
 
-                // [OSORKON] Doubled from vanilla's 4. Greatly reduced from BOSSFALL v1.2.1's ridiculous 24.
-                case DFCareer.Skills.Dodging:
-                    return 8;
+                    // [OSORKON] Doubled from vanilla's 4. Greatly reduced from BOSSFALL v1.2.1's ridiculous 24.
+                    case DFCareer.Skills.Dodging:
+                        return 8;
 
-                // [OSORKON] In BOSSFALL v1.1 I set Running to 400. This had disastrous results as there is a
-                // skill tally limit of 20,000 set in another script. That same skill tally limit is defined as
-                // a "short" (a 16-bit integer) which means its maximum value is 32,767. I tried raising the
-                // skill tally cap to 32,767 but that still wasn't enough for Running to level up at higher
-                // Running skill levels - I effectively broke the skill. Fortunately, I discovered another method
-                // to make Running progression more difficult. Thus, Running difficulty in this script is unchanged
-                // but it will now level about half as fast as vanilla DFU.
-                case DFCareer.Skills.Running:
-                    return 50;
+                    // [OSORKON] In BOSSFALL v1.1 I set Running to 400. This had disastrous results as there is a
+                    // skill tally limit of 20,000 set in another script. That same skill tally limit is defined as
+                    // a "short" (a 16-bit integer) which means its maximum value is 32,767. I tried raising the
+                    // skill tally cap to 32,767 but that still wasn't enough for Running to level up at higher
+                    // Running skill levels - I effectively broke the skill. Fortunately, I discovered another method
+                    // to make Running progression more difficult. Thus, Running difficulty in this script is unchanged
+                    // but it will now level about half as fast as vanilla DFU.
+                    case DFCareer.Skills.Running:
+                        return 50;
 
-                // [OSORKON] All spell difficulty increased from vanilla's 1 and 2. Thaumaturgy and Restoration
-                // no longer level slower than the rest.
-                case DFCareer.Skills.Destruction:
-                case DFCareer.Skills.Restoration:
-                case DFCareer.Skills.Illusion:
-                case DFCareer.Skills.Alteration:
-                case DFCareer.Skills.Thaumaturgy:
-                case DFCareer.Skills.Mysticism:
-                    return 3;
+                    // [OSORKON] All spell difficulty increased from vanilla's 1 and 2. Thaumaturgy and Restoration
+                    // no longer level slower than the rest.
+                    case DFCareer.Skills.Destruction:
+                    case DFCareer.Skills.Restoration:
+                    case DFCareer.Skills.Illusion:
+                    case DFCareer.Skills.Alteration:
+                    case DFCareer.Skills.Thaumaturgy:
+                    case DFCareer.Skills.Mysticism:
+                        return 3;
 
-                // [OSORKON] All weapon difficulty increased from vanilla's 1 and 2. Archery no longer
-                // levels faster than the rest.
-                case DFCareer.Skills.ShortBlade:
-                case DFCareer.Skills.LongBlade:
-                case DFCareer.Skills.HandToHand:
-                case DFCareer.Skills.Axe:
-                case DFCareer.Skills.BluntWeapon:
-                case DFCareer.Skills.Archery:
-                    return 4;
+                    // [OSORKON] All weapon difficulty increased from vanilla's 1 and 2. Archery no longer
+                    // levels faster than the rest.
+                    case DFCareer.Skills.ShortBlade:
+                    case DFCareer.Skills.LongBlade:
+                    case DFCareer.Skills.HandToHand:
+                    case DFCareer.Skills.Axe:
+                    case DFCareer.Skills.BluntWeapon:
+                    case DFCareer.Skills.Archery:
+                        return 4;
 
-                // [OSORKON] Doubled from vanilla's 8, but greatly reduced from BOSSFALL v1.2.1's obscene 48.
-                // I'll have to test this after v1.3 is done to see if I still need to change Critical Strike.
-                case DFCareer.Skills.CriticalStrike:
-                    return 16;
-                default:
-                    return 0;
+                    // [OSORKON] Doubled from vanilla's 8, but greatly reduced from BOSSFALL v1.2.1's obscene 48.
+                    // I'll have to test this after v1.3 is done to see if I still need to change Critical Strike.
+                    case DFCareer.Skills.CriticalStrike:
+                        return 16;
+                    default:
+                        return 0;
+                }
+            }
+            // [OSORKON] This is BOSSFALL v1.2.1's "Extremely Hard" skill advancement difficulty. I think most of
+            // these values are ridiculously high but that's just me. The comments are from v1.2.1 and don't
+            // reflect changes I made for v1.3.
+            else if (DaggerfallUnity.Settings.SkillAdvancementDifficulty == 2)
+            {
+                switch (skill)
+                {
+                    // [OSORKON] Raised Medical from vanilla's 12. I don't know if this change is necessary.
+                    // I'll have to test a longer playthrough and see if Medical levels too slowly.
+                    case DFCareer.Skills.Medical:
+                        return 16;
+                    case DFCareer.Skills.Etiquette:
+                    case DFCareer.Skills.Streetwise:
+                        return 1;
+
+                    // [OSORKON] Greatly raised Jumping from vanilla's 5. Unfortunately the fastest way
+                    // to level this skill is jumping in a doorway with the "Jumping" spell active. I'll
+                    // never try to nerf that particular behavior, so to compensate for this skill's
+                    // cheesy training method I made the skill extremely hard to level.
+                    case DFCareer.Skills.Jumping:
+                        return 20;
+
+                    // [OSORKON] Greatly lowered Orcish from vanilla's 15. Orcs appear quite frequently
+                    // compared to the other monsters with languages so Orcish is 2 rather than 1.
+                    case DFCareer.Skills.Orcish:
+                        return 2;
+
+                    // [OSORKON] Greatly lowered monster language difficulty from vanilla's 15. I play "linguist"
+                    // characters so my weapon and spell skills start off very low. I do this to make the
+                    // game as hard as possible. Unfortunately, monster language skills were impossible to level
+                    // past vanilla's level 50 skill training cap, which was a hard limit to my character's
+                    // progression. I fixed that obstacle by greatly reducing monster language skill difficulty.
+                    case DFCareer.Skills.Harpy:
+                    case DFCareer.Skills.Giantish:
+                    case DFCareer.Skills.Dragonish:
+                    case DFCareer.Skills.Nymph:
+                    case DFCareer.Skills.Daedric:
+                    case DFCareer.Skills.Spriggan:
+                    case DFCareer.Skills.Centaurian:
+                    case DFCareer.Skills.Impish:
+                        return 1;
+                    case DFCareer.Skills.Lockpicking:
+                        return 2;
+
+                    // [OSORKON] Greatly increased Mercantile from vanilla's 1. I play with "Climates & Calories"
+                    // and that mod requires a lot of little purchases, which raises this skill very quickly.
+                    // Because it's so easy to train, I made it much harder to level.
+                    case DFCareer.Skills.Mercantile:
+                        return 9;
+                    case DFCareer.Skills.Pickpocket:
+                        return 2;
+
+                    // [OSORKON] This skill will skyrocket in vanilla whenever player is around enemies (basically
+                    // all the time). Because it's so easy to train, I made it much harder to level. With the
+                    // excellent "Skulduggery" mod, Stealth becomes extremely hard to level. I don't know if I've
+                    // found the right balance for the Stealth skill yet.
+                    case DFCareer.Skills.Stealth:
+                        return 12;
+
+                    // [OSORKON] Doubled from vanilla's 1. Not sure if this change is necessary, as there's no
+                    // cheesy way to level this skill. I may revert this change later.
+                    case DFCareer.Skills.Swimming:
+                        return 2;
+
+                    // [OSORKON] Greatly increased from vanilla's 2. Now that I think about it, I may have gone
+                    // way overboard, as I removed cheesy ways to level the skill - Rappel mode no longer gives
+                    // Climbing skill tallies. Without that easy method of leveling Climbing, 20 may be too high.
+                    case DFCareer.Skills.Climbing:
+                        return 20;
+
+                    // [OSORKON] Tripled from vanilla's 1. This skill is hard to exercise as Backstabbing is
+                    // quite difficult to do (unless player has a long-lasting Invisibility True spell). I may
+                    // revert this change later.
+                    case DFCareer.Skills.Backstabbing:
+                        return 3;
+
+                    // [OSORKON] Greatly increased from vanilla's 4. It was even higher in BOSSFALL v1.1 but
+                    // I'm still not sure it's where I want. I'll have to test Dodging with a longer
+                    // playthrough and see if it levels too slowly.
+                    case DFCareer.Skills.Dodging:
+                        return 24;
+
+                    // [OSORKON] In BOSSFALL v1.1 I set Running to 400. This had disastrous results as there is a
+                    // skill tally limit of 20,000 set in another script. That same skill tally limit is defined as
+                    // a "short" (a 16-bit integer) which means its maximum value is 32,767. I tried raising the
+                    // skill tally cap to 32,767 but that still wasn't enough for Running to level up at higher
+                    // Running skill levels - I effectively broke the skill. Fortunately, I discovered another method
+                    // to make Running progression more difficult. Thus, Running difficulty in this script is unchanged
+                    // from vanilla, but it will now level up roughly 7 times slower.
+                    case DFCareer.Skills.Running:
+                        return 50;
+
+                    // [OSORKON] All spells greatly increased from vanilla's 1 and 2. Thaumaturgy and Restoration
+                    // no longer level slower than the rest. 8 may be too high - I'll revisit skill difficulty in
+                    // a later version of BOSSFALL.
+                    case DFCareer.Skills.Destruction:
+                    case DFCareer.Skills.Restoration:
+                    case DFCareer.Skills.Illusion:
+                    case DFCareer.Skills.Alteration:
+                    case DFCareer.Skills.Thaumaturgy:
+                    case DFCareer.Skills.Mysticism:
+                        return 8;
+
+                    // [OSORKON] All weapons greatly increased from vanilla's 1 and 2. Archery no longer levels
+                    // faster than the rest. I have a feeling 12 is too high, but I haven't taken the time to do
+                    // a longer playthrough to find out for sure.
+                    case DFCareer.Skills.ShortBlade:
+                    case DFCareer.Skills.LongBlade:
+                    case DFCareer.Skills.HandToHand:
+                    case DFCareer.Skills.Axe:
+                    case DFCareer.Skills.BluntWeapon:
+                    case DFCareer.Skills.Archery:
+                        return 12;
+
+                    // [OSORKON] Greatly increased from vanilla's 8. I'm pretty sure I set this way too high, and
+                    // I'll likely lower it at a later date. 
+                    case DFCareer.Skills.CriticalStrike:
+                        return 48;
+                    default:
+                        return 0;
+                }
+            }
+            // [OSORKON] This last switch tree is vanilla DFU skill advancement difficulty.
+            else
+            {
+                switch (skill)
+                {
+                    case DFCareer.Skills.Medical:
+                        return 12;
+                    case DFCareer.Skills.Etiquette:
+                    case DFCareer.Skills.Streetwise:
+                        return 1;
+                    case DFCareer.Skills.Jumping:
+                        return 5;
+                    case DFCareer.Skills.Orcish:
+                    case DFCareer.Skills.Harpy:
+                    case DFCareer.Skills.Giantish:
+                    case DFCareer.Skills.Dragonish:
+                    case DFCareer.Skills.Nymph:
+                    case DFCareer.Skills.Daedric:
+                    case DFCareer.Skills.Spriggan:
+                    case DFCareer.Skills.Centaurian:
+                    case DFCareer.Skills.Impish:
+                        return 15;
+                    case DFCareer.Skills.Lockpicking:
+                        return 2;
+                    case DFCareer.Skills.Mercantile:
+                        return 1;
+                    case DFCareer.Skills.Pickpocket:
+                    case DFCareer.Skills.Stealth:
+                        return 2;
+                    case DFCareer.Skills.Swimming:
+                        return 1;
+                    case DFCareer.Skills.Climbing:
+                        return 2;
+                    case DFCareer.Skills.Backstabbing:
+                        return 1;
+                    case DFCareer.Skills.Dodging:
+                        return 4;
+                    case DFCareer.Skills.Running:
+                        return 50;
+                    case DFCareer.Skills.Destruction:
+                        return 1;
+                    case DFCareer.Skills.Restoration:
+                        return 2;
+                    case DFCareer.Skills.Illusion:
+                    case DFCareer.Skills.Alteration:
+                        return 1;
+                    case DFCareer.Skills.Thaumaturgy:
+                        return 2;
+                    case DFCareer.Skills.Mysticism:
+                        return 1;
+                    case DFCareer.Skills.ShortBlade:
+                    case DFCareer.Skills.LongBlade:
+                    case DFCareer.Skills.HandToHand:
+                    case DFCareer.Skills.Axe:
+                    case DFCareer.Skills.BluntWeapon:
+                        return 2;
+                    case DFCareer.Skills.Archery:
+                        return 1;
+                    case DFCareer.Skills.CriticalStrike:
+                        return 8;
+                    default:
+                        return 0;
+                }
             }
         }
 

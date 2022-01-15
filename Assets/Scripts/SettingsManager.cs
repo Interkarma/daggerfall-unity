@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 //#define SEPARATE_DEV_PERSISTENT_PATH
@@ -46,6 +46,10 @@ namespace DaggerfallWorkshop
         const string sectionStartup = "Startup";
         const string sectionExperimental = "Experimental";
         const string sectionEnhancements = "Enhancements";
+
+        // [OSORKON] Adds a new settings.ini section for BOSSFALL. I also added default settings to defaults.ini. Defaults
+        // are v1.2.1 values so current Bossfall players don't have to mess around with settings unless they want to.
+        const string sectionBossfall = "Bossfall";
 
         FileIniDataParser iniParser = new FileIniDataParser();
         IniData defaultIniData = null;
@@ -267,6 +271,14 @@ namespace DaggerfallWorkshop
         public bool BowLeftHandWithSwitching { get; set; }
         public int LoiterLimitInHours { get; set; }
 
+        // [OSORKON] New BOSSFALL settings.
+        public int PowerfulEnemyRarity { get; set; }
+        public int EnemyMoveSpeed { get; set; }
+        public int SkillAdvancementDifficulty { get; set; }
+        public bool BossProximityWarning { get; set; }
+        public bool DisplayEnemyLevel { get; set; }
+        public bool AlternateLootPiles { get; set; }
+
         #endregion
 
         #region Public Methods
@@ -454,6 +466,14 @@ namespace DaggerfallWorkshop
             GuildQuestListBox = GetBool(sectionEnhancements, "GuildQuestListBox");
             BowLeftHandWithSwitching = GetBool(sectionEnhancements, "BowLeftHandWithSwitching");
             LoiterLimitInHours = GetInt(sectionEnhancements, "LoiterLimitInHours");
+
+            // [OSORKON] Added this to load new BOSSFALL settings from settings.ini.
+            PowerfulEnemyRarity = GetInt(sectionBossfall, "PowerfulEnemyRarity");
+            EnemyMoveSpeed = GetInt(sectionBossfall, "EnemyMoveSpeed");
+            SkillAdvancementDifficulty = GetInt(sectionBossfall, "SkillAdvancementDifficulty");
+            BossProximityWarning = GetBool(sectionBossfall, "BossProximityWarning");
+            DisplayEnemyLevel = GetBool(sectionBossfall, "DisplayEnemyLevel");
+            AlternateLootPiles = GetBool(sectionBossfall, "AlternateLootPiles");
         }
 
         /// <summary>
@@ -631,6 +651,14 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "GuildQuestListBox", GuildQuestListBox);
             SetBool(sectionEnhancements, "BowLeftHandWithSwitching", BowLeftHandWithSwitching);
             SetInt(sectionEnhancements, "LoiterLimitInHours", LoiterLimitInHours);
+
+            // [OSORKON] Added this to write new BOSSFALL settings to settings.ini.
+            SetInt(sectionBossfall, "PowerfulEnemyRarity", PowerfulEnemyRarity);
+            SetInt(sectionBossfall, "EnemyMoveSpeed", EnemyMoveSpeed);
+            SetInt(sectionBossfall, "SkillAdvancementDifficulty", SkillAdvancementDifficulty);
+            SetBool(sectionBossfall, "BossProximityWarning", BossProximityWarning);
+            SetBool(sectionBossfall, "DisplayEnemyLevel", DisplayEnemyLevel);
+            SetBool(sectionBossfall, "AlternateLootPiles", AlternateLootPiles);
 
             // Write settings to persistent file
             WriteSettingsFile();

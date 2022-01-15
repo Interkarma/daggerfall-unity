@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Lypyl (lypyl@dfworkshop.net)
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 #define KEEP_PREFAB_LINKS
@@ -704,8 +704,16 @@ namespace DaggerfallWorkshop.Utility
             // Randomise container texture, if not manually set
             if (iconRecord == -1)
             {
-                int iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.randomTreasureIconIndices.Length);
-                iconRecord = DaggerfallLootDataTables.randomTreasureIconIndices[iconIndex];
+                // [OSORKON] If Alternate Loot Piles is ON, use new loot pile icon array.
+                int iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.alternateRandomTreasureIconIndices.Length);
+                iconRecord = DaggerfallLootDataTables.alternateRandomTreasureIconIndices[iconIndex];
+
+                // [OSORKON] If Alternate Loot Piles is OFF, use vanilla loot pile icon array.
+                if (!DaggerfallUnity.Settings.AlternateLootPiles)
+                {
+                    iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.randomTreasureIconIndices.Length);
+                    iconRecord = DaggerfallLootDataTables.randomTreasureIconIndices[iconIndex];
+                }
             }
 
             // Find ground position below player

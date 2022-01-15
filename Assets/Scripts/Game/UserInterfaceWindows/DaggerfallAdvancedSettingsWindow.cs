@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: TheLacus
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using System;
@@ -35,7 +35,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         enum InteractionModeIconModes { none, minimal, large, classic, colour, monochrome, classicXhair, colourXhair };
         enum IconsPositioningSchemes { classic, medium, small, smalldeckleft, smalldeckright, smallvertleft, smallvertright, smallhorzbottom };
-
         const string textTable = "GameSettings";
 
         const float topY = 8;
@@ -44,7 +43,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         readonly Vector2 offset = new Vector2(10, 20);
         const float columnHeight = 140;
 
-        const int topBarButtonsLength = 60;
+        // [OSORKON] I reduced this to 52 from vanilla's 60 to make room for the Bossfall button in the bar at the
+        // top of the Advanced Settings page.
+        const int topBarButtonsLength = 52;
 
         const float itemTextScale = 0.9f;
         const float sectionSpacing = 12f;
@@ -167,6 +168,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Button automapReset;
 
+        // [OSORKON] Bossfall settings.
+        HorizontalSlider powerfulEnemyRarity;
+        HorizontalSlider enemyMoveSpeed;
+        HorizontalSlider skillAdvancementDifficulty;
+        Checkbox bossProximityWarning;
+        Checkbox displayEnemyLevel;
+        Checkbox alternateLootPiles;
+
         #endregion
 
         #region Override Methods
@@ -231,6 +240,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddPage("enhancements", Enhancements);
             AddPage("video", Video);
             AddPage("accessibility", Accessibility);
+
+            // [OSORKON] This adds a BOSSFALL settings page.
+            AddPage("bossfall", Bossfall);
         }
 
         private void Gameplay(Panel leftPanel, Panel rightPanel)
@@ -401,6 +413,69 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             automapHouseColor.BackgroundColor = DaggerfallUI.DaggerfallDefaultHouseAutomapColor;
         }
 
+        ///<summary>
+        ///[OSORKON] This determines what settings are present in the Bossfall settings page and in what order they appear. Also, it
+        ///adds a "Use Recommended Settings" button to the Bossfall settings page that sets all settings to values I recommend.
+        /// </summary>
+        public void Bossfall(Panel leftPanel, Panel rightPanel)
+        {
+            BaseScreenComponent.OnMouseClickHandler onMouseClickHandler = UseRecommendedSettings_OnMouseClick;
+
+            // [OSORKON] BOSSFALL difficulty section.
+            AddSectionTitle(leftPanel, "difficulty");
+
+            // [OSORKON] This determines how common bosses and other high level enemies are. "lessCommon" uses larger encounter
+            // tables I made for BOSSFALL v1.3 that significantly reduce most high level enemy rarities from previous versions
+            // and also make various other changes to enemy spawn frequencies. "moreCommon" uses v1.2.1 encounter tables. I
+            // recommend using "lessCommon" as I think it's more balanced.
+            powerfulEnemyRarity = AddSlider(leftPanel, "powerfulEnemyRarity",
+                DaggerfallUnity.Settings.PowerfulEnemyRarity, "lessCommon", "moreCommon");
+
+            // [OSORKON] This determines enemy move speed. "vanilla" is vanilla DFU speed, "fast" is BOSSFALL v1.3 speed, and
+            // "veryFast" is v1.2.1 speed. I recommend using "fast" as I think it's more balanced.
+            enemyMoveSpeed = AddSlider(leftPanel, "enemyMoveSpeed",
+                DaggerfallUnity.Settings.EnemyMoveSpeed, "vanilla", "fast", "veryFast");
+
+            // [OSORKON] This determines how quickly player can level their skills. "vanilla" is vanilla DFU skill advancement
+            // difficulty, "hard" is v1.3 difficulty, and "extremelyHard" is v1.2.1 difficulty. For the more casual player I
+            // think "extremelyHard" would be very tedious, so I recommend using "hard".
+            skillAdvancementDifficulty = AddSlider(leftPanel, "skillAdvancementDifficulty",
+                DaggerfallUnity.Settings.SkillAdvancementDifficulty, "vanilla", "hard", "extremelyHard");
+
+            // [OSORKON] Pops up a one-time HUD warning message when a boss is nearby.
+            bossProximityWarning = AddCheckbox(leftPanel, "bossProximityWarning", DaggerfallUnity.Settings.BossProximityWarning);
+
+            // [OSORKON] Miscellaneous quality-of-life section.
+            AddSectionTitle(leftPanel, "miscellaneous");
+
+            // [OSORKON] Activating an enemy in Info/Talk/Grab mode displays enemy level as well as name.
+            displayEnemyLevel = AddCheckbox(leftPanel, "displayEnemyLevel", DaggerfallUnity.Settings.DisplayEnemyLevel);
+
+            // [OSORKON] Uses expanded vanilla sprite list for loot piles for visual variety. May not work well with graphics
+            // mods like "D.R.E.A.M." and "Handpainted Models".
+            alternateLootPiles = AddCheckbox(leftPanel, "alternateLootPiles", DaggerfallUnity.Settings.AlternateLootPiles);
+
+            // [OSORKON] This button sets all settings to the values I recommend.
+            Button button = DaggerfallUI.AddButton(new Vector2(0, y + 1), new Vector2(124, 11), leftPanel);
+            button.Label.Text = "Use Recommended Settings";
+            button.OnMouseClick += onMouseClickHandler;
+            button.Outline.Enabled = true;
+            button.BackgroundColor = new Color(0.0f, 0.5f, 0.0f, 0.4f);
+        }
+
+        /// <summary>
+        /// [OSORKON] This function sets Bossfall settings to the values I recommend.
+        /// </summary>
+        public void UseRecommendedSettings_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            powerfulEnemyRarity.ScrollIndex = 0;
+            enemyMoveSpeed.ScrollIndex = 1;
+            skillAdvancementDifficulty.ScrollIndex = 1;
+            bossProximityWarning.IsChecked = true;
+            displayEnemyLevel.IsChecked = true;
+            alternateLootPiles.IsChecked = true;
+        }
+
         private void SaveSettings()
         {
             /* GamePlay */
@@ -517,6 +592,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.AutomapShopColor = automapShopColor.BackgroundColor;
             DaggerfallUnity.Settings.AutomapTavernColor = automapTavernColor.BackgroundColor;
             DaggerfallUnity.Settings.AutomapHouseColor = automapHouseColor.BackgroundColor;
+
+            // [OSORKON] This addition saves BOSSFALL settings to settings.ini.
+            DaggerfallUnity.Settings.PowerfulEnemyRarity = powerfulEnemyRarity.ScrollIndex;
+            DaggerfallUnity.Settings.EnemyMoveSpeed = enemyMoveSpeed.ScrollIndex;
+            DaggerfallUnity.Settings.SkillAdvancementDifficulty = skillAdvancementDifficulty.ScrollIndex;
+            DaggerfallUnity.Settings.BossProximityWarning = bossProximityWarning.IsChecked;
+            DaggerfallUnity.Settings.DisplayEnemyLevel = displayEnemyLevel.IsChecked;
+            DaggerfallUnity.Settings.AlternateLootPiles = alternateLootPiles.IsChecked;
 
             DaggerfallUnity.Settings.SaveSettings();
         }

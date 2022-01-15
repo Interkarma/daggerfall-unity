@@ -28,11 +28,14 @@ namespace DaggerfallWorkshop
         // Default icon range for random treasure piles in dungeons and when items are dropped by the player
         // Random treasure is generated only when clicked on and icon has no bearing
         // Only a subset of loot icons from TEXTURE.216 are used & These are matched to classic
+
+        // [OSORKON] Expanded loot pile icon array, called when Alternate Loot Piles setting is ON.
+        public static int[] alternateRandomTreasureIconIndices = new int[]
+        { 0,1,3,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40,43,44,45,46,47 };
+
+        // [OSORKON] Vanilla loot pile icon array, called when Alternate Loot Piles setting is OFF.
         public static int[] randomTreasureIconIndices = new int[]
-        {
-            // [OSORKON] I copied the entire randomTreasureArchive array here to give loot pile appearance some variety.
-            0,1,3,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40,43,44,45,46,47
-        };
+        { 0, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 37, 43, 44, 45, 46, 47 };
 
         // Dropped items icon lists for player selection in inventory window
         public static Dictionary<int, int[]> dropIconIdxs = new Dictionary<int, int[]>

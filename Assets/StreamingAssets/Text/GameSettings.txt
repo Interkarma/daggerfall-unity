@@ -1,4 +1,5 @@
 - Text database for game settings window.
+- [OSORKON] I added support for Bossfall settings with changes to this file.
 
 schema: *key,text
 
@@ -9,6 +10,7 @@ interface,                                          Interface
 enhancements,                                       Enhancements
 video,                                              Video
 accessibility,                                      Accessibility
+bossfall,					    Bossfall
 
 game,                                               Game
 controls,                                           Controls
@@ -21,6 +23,8 @@ light,                                              Lighting
 basic,                                              Basic
 advanced,                                           Advanced
 automap,                                            Automap
+difficulty,					    Difficulty
+miscellaneous,					    Miscellaneous
 
 - Settings and tooltip descriptions
 
@@ -172,6 +176,19 @@ exteriorLightShadowsInfo,                           Exterior sunlight casts shad
 ambientLitInteriors,                                Ambient Lit Interiors
 ambientLitInteriorsInfo,                            Use ambient lighting only for higher performance interiors
 
+powerfulEnemyRarity,				    Powerful Enemies Are:
+powerfulEnemyRarityInfo,			    Sets boss and high level enemy spawn frequency
+enemyMoveSpeed,					    Enemy Move Speed
+enemyMoveSpeedInfo,				    How fast enemies move
+skillAdvancementDifficulty,			    Skill Advancement Difficulty
+skillAdvancementDifficultyInfo,			    Skill levelling difficulty
+bossProximityWarning,				    Boss Proximity Warning
+bossProximityWarningInfo,			    HUD warning when boss nearby - won't appear for stealthy Assassins
+displayEnemyLevel,				    Display Enemy Level
+displayEnemyLevelInfo,				    Activating enemy displays their level
+alternateLootPiles,				    Alternate Loot Piles
+alternateLootPilesInfo,				    Use different vanilla loot pile sprites
+
 - Options shared among sliders. Missing keys use default text.
 
 Off,                                                Off
@@ -204,3 +221,11 @@ colour,                                             colour
 monochrome,                                         monochrome
 
 reset,                                              Reset
+
+lessCommon,					    Less Common
+moreCommon,					    More Common
+vanilla,					    Vanilla
+fast,						    Fast
+veryFast,					    Very Fast
+hard,						    Hard
+extremelyHard,					    Extremely Hard

@@ -1326,13 +1326,20 @@ namespace DaggerfallWorkshop.Utility
                     table = RandomEncounters.EncounterTables[19]; // underwater encounter table
                 }
 
-                // [OSORKON] This function is responsible for BOSSFALL's increased enemy variety. I removed all variations
-                // based on player level, monsterPower, and monsterVariance. Now it simply returns a random enemy from
-                // the environment's encounter table found in RandomEncounters. I want BOSSFALL to work even if the
-                // player is using another mod's encounter tables, so the maximum range is the length of the table rather
-                // than BOSSFALL's encounter table length of 100. The range is not inclusive but the Length is always 1
-                // more than the array's maximum index value. Thus, the range covers the entire table.
-                MobileTypes type = table.Enemies[UnityEngine.Random.Range(0, (int)table.Enemies.Length)];
+                // [OSORKON] This is how BOSSFALL unlevels dungeon enemies. If the "Powerful Enemies Are:" setting is "Less Common"
+                // or if they player is using modded encounter tables, select a random enemy from the length of the environment's
+                // encounter table. "Less Common" is an enemy rarity rebalance I did for v1.3 and I recommend using this setting.
+                MobileTypes type = table.Enemies[UnityEngine.Random.Range(0, table.Enemies.Length)];
+
+                // [OSORKON] If the "Powerful Enemies Are:" setting is "More Common" and the player is not using modded encounter
+                // tables (which AFAIK are never longer than 20, much less 99), randomly pick an enemy from the first 100 slots of
+                // the encounter table. When I made powerful enemies less common for BOSSFALL v1.3, I added 40 slots at the end of
+                // each encounter table and didn't change the first 100. So, by picking only from the first 100, the "More Common"
+                // setting uses v1.2.1 enemy rarities. I don't think this setting is balanced so I recommend using "Less Common".
+                if (DaggerfallUnity.Settings.PowerfulEnemyRarity == 1 && table.Enemies.Length > 99)
+                {
+                    type = table.Enemies[UnityEngine.Random.Range(0, 100)];
+                }
 
                 // Create unique LoadID for save sytem
                 ulong loadID = 0;
@@ -1455,8 +1462,17 @@ namespace DaggerfallWorkshop.Utility
                 loadID = (ulong)(blockData.Position + obj.Position);
 
             // Randomise container texture
-            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.randomTreasureIconIndices.Length);
-            int iconRecord = DaggerfallLootDataTables.randomTreasureIconIndices[iconIndex];
+
+            // [OSORKON] If Alternate Loot Piles is ON, use expanded loot pile icon array.
+            int iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.alternateRandomTreasureIconIndices.Length);
+            int iconRecord = DaggerfallLootDataTables.alternateRandomTreasureIconIndices[iconIndex];
+
+            // [OSORKON] If Alternate Loot Piles is OFF, use vanilla loot pile icon array.
+            if (!DaggerfallUnity.Settings.AlternateLootPiles)
+            {
+                iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.randomTreasureIconIndices.Length);
+                iconRecord = DaggerfallLootDataTables.randomTreasureIconIndices[iconIndex];
+            }
 
             // Find bottom of marker in world space
             // Marker is aligned to surface and has a constant size (40x40)

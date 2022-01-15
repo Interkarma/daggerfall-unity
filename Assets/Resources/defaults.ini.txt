@@ -184,3 +184,11 @@ EnhancedCombatAI=True
 GuildQuestListBox=False
 BowLeftHandWithSwitching=False
 LoiterLimitInHours=3
+
+[Bossfall]
+PowerfulEnemyRarity=1
+EnemyMoveSpeed=2
+SkillAdvancementDifficulty=2
+BossProximityWarning=False
+DisplayEnemyLevel=False
+AlternateLootPiles=False
