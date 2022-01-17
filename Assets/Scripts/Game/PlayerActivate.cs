@@ -772,10 +772,14 @@ namespace DaggerfallWorkshop.Game
                         MobileEnemy mobileEnemy = enemyEntity.MobileEnemy;
                         string enemyName = TextManager.Instance.GetLocalizedEnemyName(mobileEnemy.ID);
 
-                        // [OSORKON] If the Display Enemy Level setting is ON, activating an enemy will now display their
-                        // level, so player will know in advance if they're outclassed and it's time to run. This tweak
-                        // revealed the fact that enemy level is not serialized and gets reset on every load, which is not
-                        // very helpful when human enemies can be levels 1-20! I fixed this for BOSSFALL v1.3.
+                        // [OSORKON] If the Display Enemy Level setting is ON, activating an enemy in Info/Talk/Grab mode will
+                        // display their level as well as their name so player will know in advance if they're outclassed and
+                        // it's time to run. This tweak revealed that my enemy level changes were not fixed across saves. On
+                        // monsters that wouldn't break the game as their levels don't vary much (I would've still fixed it as it
+                        // looked bad), but on human class enemies that was unacceptable as they can be levels 1-20! Fixing this
+                        // problem turned out to be more complicated than I originally thought - I also discovered the enemy's
+                        // skill and armor levels weren't saved either. After making some changes to how enemies are saved/loaded,
+                        // enemy level, skill levels, and armor are saved and persist across saves - this doesn't break old saves.
                         int enemyLevel = enemyEntity.Level;
                         string enemyLevelAndName = string.Format("Level {0} {1}", enemyLevel.ToString(), enemyName);
                         string message = TextManager.Instance.GetLocalizedText("youSeeA");

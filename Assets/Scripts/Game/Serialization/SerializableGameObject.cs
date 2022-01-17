@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Lypyl (lypyldf@gmail.com), Hazelnut, Numidium
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -368,6 +368,9 @@ namespace DaggerfallWorkshop.Game.Serialization
         public int currentMagicka;
         public EntityTypes entityType;
         public string careerName;
+
+        // [OSORKON] I added the enemyLevel field so enemy level and all level-dependent factors persist across saves/loads.
+        public int enemyLevel;
         public int careerIndex;
         public bool isHostile;
         public bool hasEncounteredPlayer;

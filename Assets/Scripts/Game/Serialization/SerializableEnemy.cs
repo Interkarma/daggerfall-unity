@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -105,6 +105,9 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.worldCompensation = GameManager.Instance.StreamingWorld.WorldCompensation;
             data.entityType = entity.EntityType;
             data.careerName = entity.Career.Name;
+
+            // [OSORKON] I added this line so enemy level gets saved.
+            data.enemyLevel = entity.Level;
             data.careerIndex = entity.CareerIndex;
             data.startingHealth = entity.MaxHealth;
             data.currentHealth = entity.CurrentHealth;
@@ -154,7 +157,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             if (entity == null || entity.EntityType != data.entityType || entity.CareerIndex != data.careerIndex)
             {
                 SetupDemoEnemy setupEnemy = enemy.GetComponent<SetupDemoEnemy>();
-                setupEnemy.ApplyEnemySettings(data.entityType, data.careerIndex, data.mobileGender, data.isHostile, alliedToPlayer: data.alliedToPlayer);
+
+                // [OSORKON] I pass on data.enemyLevel so enemy level and all level-dependent factors persist across saves/loads.
+                // If data.enemyLevel is zero (i.e. from any save before I added the enemyLevel field to EnemyData_v1) enemy level
+                // will be set using standard BOSSFALL unleveling formulas.
+                setupEnemy.ApplyEnemySettings(data.entityType, data.careerIndex, data.mobileGender, data.isHostile, alliedToPlayer: data.alliedToPlayer, data.enemyLevel);
                 setupEnemy.AlignToGround();
 
                 if (entity == null)

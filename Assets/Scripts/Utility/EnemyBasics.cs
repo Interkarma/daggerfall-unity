@@ -1938,7 +1938,7 @@ namespace DaggerfallWorkshop.Utility
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more melee damage at high levels. HP unchanged from vanilla. Greatly increased spell variety.
             // They are most commonly found outside in towns at night and are fairly common in most wilderness areas during
-            // day or night, and in several dungeon types.
+            // day or night, and in several dungeon types. Level 20 Mages see Invisible.
             new MobileEnemy()
             {
                 ID = 128,
@@ -2054,6 +2054,7 @@ namespace DaggerfallWorkshop.Utility
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more damage at high levels. HP unchanged from vanilla. They are most commonly found outside
             // in towns at night and are fairly common in most wilderness areas during day or night, and in several dungeon types.
+            // Level 20 Sorcerers see Invisible.
             new MobileEnemy()
             {
                 ID = 131,
@@ -2126,7 +2127,7 @@ namespace DaggerfallWorkshop.Utility
             // scales with their level. Their armor isn't changed by their equipment, it now only varies based on enemy level,
             // and they do far more damage at high levels. HP unchanged from vanilla. Greatly increased spell variety.
             // They are most commonly found outside in towns at night and are fairly common in most wilderness areas during
-            // day or night, and in several dungeon types.
+            // day or night, and in several dungeon types. Level 20 Nightblades see Invisible.
             new MobileEnemy()
             {
                 ID = 133,

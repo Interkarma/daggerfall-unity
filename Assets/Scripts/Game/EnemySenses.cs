@@ -81,6 +81,11 @@ namespace DaggerfallWorkshop.Game
         float classicDespawnXZDist = 0f;
         float classicDespawnYDist = 0f;
 
+        /// <summary>
+        /// [OSORKON] This bool is true if enemy is a level 20 Mage, Sorcerer, or Nightblade. 
+        /// </summary>
+        public bool canDetectInvisible;
+
         public DaggerfallEntityBehaviour Target
         {
             get { return target; }
@@ -210,6 +215,14 @@ namespace DaggerfallWorkshop.Game
             // 180 degrees is classic's value. 190 degrees is actual human FOV according to online sources.
             if (DaggerfallUnity.Settings.EnhancedCombatAI)
                 FieldOfView = 190;
+
+            ///<summary>
+            /// [OSORKON] Checks if an enemy is a Level 20 Mage, Sorcerer, or Nightblade. Only needs to be checked once.
+            /// </summary>
+            if (enemyEntity.Level == 20 && (mobile.Enemy.ID == 128 || mobile.Enemy.ID == 131 || mobile.Enemy.ID == 133))
+            {
+                canDetectInvisible = true;
+            }
         }
 
         void FixedUpdate()
@@ -634,6 +647,10 @@ namespace DaggerfallWorkshop.Game
 
             // Some enemy types can see through these effects.
             if (mobile.Enemy.SeesThroughInvisibility)
+                return false;
+
+            // [OSORKON] If enemy is a level 20 Mage, Sorcerer, or Nightblade, they can see Invisible.
+            if (canDetectInvisible)
                 return false;
 
             // If not one of the above enemy types, and target has invisibility,

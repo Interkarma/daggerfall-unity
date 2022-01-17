@@ -260,9 +260,10 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         /// <summary>
-        /// Sets enemy career and prepares entity settings.
+        /// Sets enemy career and prepares entity settings. [OSORKON] I added the enemyLevel = 0 parameter so enemy level and all
+        /// level-dependent factors persist across saves/loads.
         /// </summary>
-        public void SetEnemyCareer(MobileEnemy mobileEnemy, EntityTypes entityType)
+        public void SetEnemyCareer(MobileEnemy mobileEnemy, EntityTypes entityType, int enemyLevel = 0)
         {
             // Try custom career first
             career = GetCustomCareerTemplate(mobileEnemy.ID);
@@ -277,15 +278,21 @@ namespace DaggerfallWorkshop.Game.Entity
                 {
                     // Default like a monster
 
-                    // [OSORKON] If mods ever add custom monsters their level will vary up and
-                    // down a bit, just like regular BOSSFALL monsters.
+                    // [OSORKON] If mods add custom monsters their level will vary a bit, like regular BOSSFALL monsters.
                     level = mobileEnemy.Level + UnityEngine.Random.Range(-2, 2 + 1);
 
-                    // [OSORKON] I don't know what would happen if their level was 0 or less. I
-                    // don't particularly want to find out.
+                    // [OSORKON] I don't know what would happen if monster level was 0 or less. I don't want to find out.
                     if (level < 1)
                     {
                         level = 1;
+                    }
+
+                    // [OSORKON] If player is loading a saved game, enemyLevel will always pass in a value. In all other cases
+                    // enemyLevel will be zero. This keeps enemy levels and all other level-dependent values consistent when
+                    // saving/loading. Since no other mods randomly vary enemy levels, this change only affects BOSSFALL.
+                    if (enemyLevel != 0)
+                    {
+                        level = enemyLevel;
                     }
 
                     maxHealth = Random.Range(mobileEnemy.MinHealth, mobileEnemy.MaxHealth + 1);
@@ -411,6 +418,14 @@ namespace DaggerfallWorkshop.Game.Entity
                         }
                     }
 
+                    // [OSORKON] If player is loading a saved game, enemyLevel will always pass in a value. In all other cases
+                    // enemyLevel will be zero. This keeps enemy levels and all other level-dependent values consistent when
+                    // saving/loading. Since no other mods randomly vary enemy levels, this change only affects BOSSFALL.
+                    if (enemyLevel != 0)
+                    {
+                        level = enemyLevel;
+                    }
+
                     // [OSORKON] Custom class enemy health works the same as vanilla.
                     maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
                 }
@@ -424,6 +439,14 @@ namespace DaggerfallWorkshop.Game.Entity
                     if (level < 1)
                     {
                         level = 1;
+                    }
+
+                    // [OSORKON] If player is loading a saved game, enemyLevel will always pass in a value. In all other cases
+                    // enemyLevel will be zero. This keeps enemy levels and all other level-dependent values consistent when
+                    // saving/loading. Since no other mods randomly vary enemy levels, this change only affects BOSSFALL.
+                    if (enemyLevel != 0)
+                    {
+                        level = enemyLevel;
                     }
 
                     // [OSORKON] Custom class enemy health works the same as vanilla.
@@ -482,6 +505,14 @@ namespace DaggerfallWorkshop.Game.Entity
                 else if (careerIndex == (int)MobileTypes.AncientLich)
                 {
                     level = UnityEngine.Random.Range(26, 30 + 1);
+                }
+
+                // [OSORKON] If player is loading a saved game, enemyLevel will always pass in a value. In all other cases
+                // enemyLevel will be zero. This keeps enemy levels and all other level-dependent values consistent when
+                // saving/loading. Since no other mods randomly vary enemy levels, this change only affects BOSSFALL.
+                if (enemyLevel != 0)
+                {
+                    level = enemyLevel;
                 }
 
                 maxHealth = UnityEngine.Random.Range(mobileEnemy.MinHealth, mobileEnemy.MaxHealth + 1);
@@ -636,6 +667,14 @@ namespace DaggerfallWorkshop.Game.Entity
                 if (GameManager.Instance.PlayerEntity.Level > 6 && careerIndex == (int)MobileTypes.Assassin - 128)
                     level = UnityEngine.Random.Range(21, 30 + 1);
 
+                // [OSORKON] If player is loading a saved game, enemyLevel will always pass in a value. In all other cases
+                // enemyLevel will be zero. This keeps enemy levels and all other level-dependent values consistent when
+                // saving/loading. Since no other mods randomly vary enemy levels, this change only affects BOSSFALL.
+                if (enemyLevel != 0)
+                {
+                    level = enemyLevel;
+                }
+
                 maxHealth = FormulaHelper.RollEnemyClassMaxHealth(level, career.HitPointsPerLevel);
 
                 // [OSORKON] Once player is at least level 7, Assassin HP is set to their boss range.
@@ -738,7 +777,7 @@ namespace DaggerfallWorkshop.Game.Entity
             if (entityType == EntityTypes.EnemyClass)
             {
                 // [OSORKON] This sets class enemy armor depending on their level. Setting this up to work properly
-                // gave me endless headaches - I called MobileEnemy.Level in v1.1, which refers to ArmorValue
+                // gave me endless headaches - I called MobileEnemy.Level in BOSSFALL v1.1, which refers to ArmorValue
                 // in EnemyBasics. Unfortunately, class enemies don't have an ArmorValue in EnemyBasics, so v1.1
                 // class enemy armor didn't vary by their level. I eventually figured out the proper "level" object
                 // to call. Live and learn...
@@ -746,9 +785,9 @@ namespace DaggerfallWorkshop.Game.Entity
                 {
                     ArmorValues[i] = (sbyte)(60 - (level * 2));
 
-                    // [OSORKON] Once player is at least level 7, Assassins have boss armor. I botched this in v1.1,
-                    // as I forgot player gets +40 to hit against monsters (but not classes) and set Assassin armor
-                    // to a ridiculous -40. Fortunately I noticed the inconsistency and corrected it in v1.2.
+                    // [OSORKON] Once player is at least level 7, Assassins have boss armor. I botched this in BOSSFALL
+                    // v1.1, as I forgot player gets +40 to hit against monsters (but not classes) and set Assassin
+                    // armor to a ridiculous -40. Fortunately I noticed the inconsistency and corrected it in v1.2.
                     if (GameManager.Instance.PlayerEntity.Level > 6 && careerIndex == (int)MobileTypes.Assassin - 128)
                     {
                         ArmorValues[i] = 0;
@@ -761,12 +800,11 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             // Enemies don't follow same rule as player for maximum spell points
 
-            // [OSORKON] For whatever reason, enemy spell costs in vanilla vary depending on player
-            // spell skill level, which makes it impossible to precisely set how many spells an enemy
-            // could cast - and that's exactly what I wanted to do. I solved this problem by manually
-            // setting how much magicka each enemy spell would cost in EntityEffectManager. Once I did
-            // that, I could precisely manage how many spells enemies could cast. This list sets enemy
-            // mana pools, each spell costs 5 mana. Bosses above level 25 have effectively infinite mana.
+            // [OSORKON] For whatever reason, enemy spell costs in vanilla vary depending on player spell skill level,
+            // which makes it impossible to precisely set how many spells an enemy could cast - and that's exactly what
+            // I wanted to do. I solved this problem by manually setting how much magicka each enemy spell would cost
+            // in EntityEffectManager. Once I did that, I could precisely manage how many spells enemies could cast.
+            // This list sets enemy mana, each spell costs 5 mana. Bosses above level 25 have effectively infinite mana.
             if (level > 0 && level < 8)
             {
                 MaxMagicka = 9;
