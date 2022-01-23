@@ -255,6 +255,9 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public FactionFile.GuildGroups GetGuildGroup(int factionId)
         {
+            if (factionId == 510)   // Shops are marked as FG in faction data, hardcode to none to prevent them acting as FG guildhalls.
+                return FactionFile.GuildGroups.None;
+
             PersistentFactionData persistentFactionData = GameManager.Instance.PlayerEntity.FactionData;
             FactionFile.GuildGroups guildGroup = FactionFile.GuildGroups.None;
             FactionFile.FactionData factionData;
