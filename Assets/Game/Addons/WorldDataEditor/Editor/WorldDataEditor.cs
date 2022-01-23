@@ -340,7 +340,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
 
         private void FlatGroupSwitchers(ref int elementIndex, string flatId)
         {
-            Debug.LogFormat("flat group switch: {0}", flatId);
+            //Debug.LogFormat("flat group switch: {0}", flatId);
             WorldDataEditorObject data = Selection.activeGameObject.GetComponent<WorldDataEditorObject>();
             foreach (string flatGroupName in WorldDataEditorObjectData.flatGroups.Keys)
             {
@@ -1325,7 +1325,8 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                     {
                         record.Type = DFBlock.RdbResourceTypes.Flat;
                         record.Resources.FlatResource.FactionOrMobileId = (ushort)data.factionID;
-                        record.Resources.FlatResource.SoundIndex = (byte)(record.Resources.FlatResource.SoundIndex & 0x7);  // Ensure only 0-7 for distance arrays in EnemySenses.Start()
+                        int mask = (record.Resources.FlatResource.TextureArchive == 199 && record.Resources.FlatResource.TextureRecord == 10) ? 0xFF : 0x7;
+                        record.Resources.FlatResource.SoundIndex = (byte)(record.Resources.FlatResource.SoundIndex & mask);  // Ensure only values 0-7 allowed for distance arrays in EnemySenses.Start()
                     }
                     else if (data.type == WorldDataEditorObject.DataType.Light)
                     {
