@@ -3323,7 +3323,7 @@ namespace DaggerfallWorkshop.Game
             int playerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             byte[] KnightlyOrderRegions = { 0x05, 0x11, 0x12, 0x14, 0x15, 0x16, 0x17, 0x2B, 0x33, 0x37 };
 
-            for (int i = 0; i < 28; ++i)
+            for (int i = 0; i < FactionsAndBuildings.Length; ++i)
             {
                 if (i >= 8 && i <= 17) // Is a knightly order
                 {
