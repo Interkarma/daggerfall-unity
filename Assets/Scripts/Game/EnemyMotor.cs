@@ -78,9 +78,8 @@ namespace DaggerfallWorkshop.Game
         bool prefersBow;
         bool alwaysCharges;
         bool isBoss;
-        bool isPowerfulBoss;
-        bool shownBossWarning;
-        bool shownPowerfulBossWarning;
+        bool showBossWarning;
+        bool showPowerfulBossWarning;
 
         /// <summary>
         /// [OSORKON] This monstrosity represents enemy move speeds by enemy ID and covers IDs from 0-146. This array is used if the
@@ -160,7 +159,7 @@ namespace DaggerfallWorkshop.Game
             // [OSORKON] If enemy is non-sentient or very stupid alwaysCharges is true. Only needs to be checked once.
             if (mobile.Enemy.ID == 32 || mobile.Enemy.ID == 33)
             {
-                 alwaysCharges = false;
+                alwaysCharges = false;
             }
             else if (mobile.Enemy.Affinity == MobileAffinity.Animal || mobile.Enemy.Affinity == MobileAffinity.Undead)
             {
@@ -171,16 +170,18 @@ namespace DaggerfallWorkshop.Game
                 alwaysCharges = true;
             }
 
-            // [OSORKON] If enemy is an OrcWarlord/Vampire/Lich/Alternate_Dragonling isBoss is true. Only needs to be checked once.
+            // [OSORKON] If enemy is a boss isBoss is true. If enemy is an OrcWarlord/Vampire/Lich/Dragonling_Alternate
+            // showBossWarning is true. If enemy is a VampireAncient/DaedraLord/AncientLich showPowerfulBossWarning is
+            // true. Only needs to be checked once.
             if (mobile.Enemy.ID == 24 || mobile.Enemy.ID == 28 || mobile.Enemy.ID == 32 || mobile.Enemy.ID == 40)
             {
                 isBoss = true;
+                showBossWarning = true;
             }
-
-            // [OSORKON] If enemy is a VampireAncient/DaedraLord/AncientLich isPowerfulBoss is true. Only needs to be checked once.
-            if (mobile.Enemy.ID == 30 || mobile.Enemy.ID == 31 || mobile.Enemy.ID == 33)
+            else if (mobile.Enemy.ID == 30 || mobile.Enemy.ID == 31 || mobile.Enemy.ID == 33)
             {
-                isPowerfulBoss = true;
+                isBoss = true;
+                showPowerfulBossWarning = true;
             }
         }
 
@@ -211,22 +212,22 @@ namespace DaggerfallWorkshop.Game
             // HUD messages. Detection radius is roughly half a dungeon block. Assassins won't trigger warning messages,
             // they're too stealthy to detect. The three toughest bosses (Daedra Lord, Vampire Ancient, Ancient Lich)
             // get a unique HUD message. The HUD message appears once per boss.
-            if (DaggerfallUnity.Settings.BossProximityWarning)
+            if (DaggerfallUnity.Settings.BossProximityWarning && isBoss)
             {
-                if (isBoss && !shownBossWarning)
+                if (showBossWarning)
                 {
                     if (senses.DistanceToPlayer < 25.6f)
                     {
                         DaggerfallUI.AddHUDText("You sense a boss nearby.");
-                        shownBossWarning = true;
+                        showBossWarning = false;
                     }
                 }
-                else if (isPowerfulBoss && !shownPowerfulBossWarning)
+                else if (showPowerfulBossWarning)
                 {
                     if (senses.DistanceToPlayer < 25.6f)
                     {
                         DaggerfallUI.AddHUDText("You sense a powerful boss nearby.");
-                        shownPowerfulBossWarning = true;
+                        showPowerfulBossWarning = false;
                     }
                 }
             }

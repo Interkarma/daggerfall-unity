@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes:
+// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
 //
 
 using UnityEngine;
@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game
@@ -76,9 +77,28 @@ namespace DaggerfallWorkshop.Game
             // Do not destroy as we must still save enemy state when dead
             gameObject.SetActive(false);
 
+            // [OSORKON] I added the player variable and moved the senses declaration up as I needed it earlier.
+            PlayerEntity player = GameManager.Instance.PlayerEntity;
+            EnemySenses senses = entityBehaviour.GetComponent<EnemySenses>();
+
             // Show death message
             string deathMessage = TextManager.Instance.GetLocalizedText("thingJustDied");
             deathMessage = deathMessage.Replace("%s", TextManager.Instance.GetLocalizedEnemyName(mobile.Enemy.ID));
+
+            // [OSORKON] This heals Vampire players and generates custom HUD messages if an enemy dies near player,
+            // heal amount and message depends on enemy. Powerful enemies heal player much more. Detection range
+            // is slightly more than standard weapon reach so this will occur in most combat situations. I included
+            // the distance check to avoid the silly situation of players healing from enemies dying at long range.
+            if (GameManager.Instance.PlayerEffectManager.HasVampirism() && senses.DistanceToPlayer < 3f)
+            {
+                player.IncreaseHealth(FormulaHelper.vampireHealAmount[mobile.Enemy.ID]);
+
+                if (!string.IsNullOrEmpty(FormulaHelper.vampireHUDMessage[mobile.Enemy.ID]))
+                {
+                    deathMessage = FormulaHelper.vampireHUDMessage[mobile.Enemy.ID];
+                }
+            }
+
             DaggerfallUI.Instance.PopupMessage(deathMessage);
 
             // Generate lootable corpse marker
@@ -116,7 +136,6 @@ namespace DaggerfallWorkshop.Game
             // Lower enemy alert state on player now that enemy is dead
             // If this is final enemy targeting player then alert state will remain clear
             // Other enemies still targeting player will continue to raise alert state every update
-            EnemySenses senses = entityBehaviour.GetComponent<EnemySenses>();
             if (senses && senses.Target == GameManager.Instance.PlayerEntityBehaviour)
                 GameManager.Instance.PlayerEntity.SetEnemyAlert(false);
 

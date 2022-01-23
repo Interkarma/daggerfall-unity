@@ -232,15 +232,18 @@ namespace DaggerfallWorkshop.Utility
         // Fills in the blanks where source of data in game files is unknown
         // Suspect at least some of this data is also hard-coded in Daggerfall
 
-        // [OSORKON] In BOSSFALL spawn frequency generally determines monster difficulty. Common enemies are weak
-        // and low level. As spawn frequency falls, monster Armor, HP, Level, and damage smoothly rise. Rare enemies
-        // are very dangerous compared to vanilla. HP doesn't follow the standard DFU xd8 + 10 pattern - all monsters
-        // have MaxHealth of (MinHealth * 3). Non-boss human HP is unchanged. All non-boss monsters (except for those
-        // with Bonus To Hit: Humanoids) have a minimum damage of 1. Added a new MoveSpeed field to every enemy to
-        // greatly reduce movespeed checks done in EnemyMotor. Empty soul gems cost 50,000 gold so I added 50,000
-        // to all SoulPts for consistency otherwise filled soul gems would be too cheap. Only bosses and high-level
-        // monsters see Invisible, human spellcasters above level 15 also see Invisible. Finally, I set every MinMetalToHit
-        // to None. Weaknesses/resistances/immunities are added in the CalculateAttackDamage function in FormulaHelper.
+        /// <summary>
+        /// [OSORKON] In BOSSFALL spawn frequency generally determines monster difficulty. Common enemies are weak
+        /// and low level. As spawn frequency falls, monster Armor, HP, Level, and damage smoothly rise. Rare enemies
+        /// are very dangerous compared to vanilla. HP doesn't follow the standard DFU xd8 + 10 pattern - all monsters
+        /// have MaxHealth of (MinHealth * 3). Non-boss human HP is unchanged. All non-boss monsters (except for those
+        /// with Bonus To Hit: Humanoids) have a minimum damage of 1. Added a new MoveSpeed field to every enemy to
+        /// greatly reduce movespeed checks done in EnemyMotor. Empty soul gems cost 50,000 gold so I added 50,000
+        /// to all SoulPts for consistency otherwise filled soul gems would be too cheap. The only enemies that see
+        /// Invisible are all bosses (except Orc Warlords), Daedra Seducers, and Level 20 Mages/Sorcerers/Nightblades.
+        /// Finally, I set every MinMetalToHit to None. Weaknesses/resistances/immunities are implemented in the
+        /// CalculateAttackDamage method in FormulaHelper.
+        /// </summary>
         public static MobileEnemy[] Enemies = new MobileEnemy[]
         {
             // Rat
@@ -1841,7 +1844,7 @@ namespace DaggerfallWorkshop.Utility
                 MapChance = 0,
                 Weight = 10000, // Using same value as other dragonling
 
-                // [OSORKON] All bosses see Invisible.
+                // [OSORKON] Dragonling bosses see Invisible.
                 SeesThroughInvisibility = true,
 
                 // [OSORKON] All boss Soul Gems are extremely valuable.
@@ -2367,7 +2370,7 @@ namespace DaggerfallWorkshop.Utility
                 ParrySounds = true,
                 MapChance = 0,
 
-                // [OSORKON] All bosses see Invisible.
+                // [OSORKON] Assassins see Invisible.
                 SeesThroughInvisibility = true,
                 LootTableKey = "O",
                 CastsMagic = false,

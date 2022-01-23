@@ -54,17 +54,66 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Approximation of classic frame updates
         public const int classicFrameUpdate = 980;
 
-        /// <summary>[OSORKON] This array represents enemy IDs from 0-38 (Rat to IceAtronach). Monsters in that ID range
+        /// <summary>
+        /// [OSORKON] This array represents enemy IDs from 0-38 (Rat to IceAtronach). Monsters in that ID range
         /// have varying weapon resistances/immunities/weaknesses, and with this array I was able to greatly improve
-        /// code efficiency over the enormous if/else if list that was in previous versions of BOSSFALL.</summary> 
+        /// code efficiency over the enormous if/else if list that was in previous versions of BOSSFALL.
+        /// </summary> 
         public static readonly byte[] enemySpecialHandling = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 13, 3, 0, 2,
             5, 6, 4, 0, 7, 5, 0, 0, 11, 0, 12, 0, 12, 0, 12, 12, 0, 9, 8, 2, 10 };
 
-        /// <summary>[OSORKON] Each element in this array represents a weapon material, Iron through Daedric. Each material has a
+        /// <summary>
+        /// [OSORKON] Each element in this array represents a weapon material, Iron through Daedric. Each material has a
         /// (element / 1025) percent chance of being generated, unless the RandomMaterial function is generating items for an
         /// enemy above level 15. In that case high tier material generation is more likely. Details are in my comments in the
-        /// RandomMaterial function.</summary>
+        /// RandomMaterial function.
+        /// </summary>
         public static readonly short[] materialProbability = { 327, 654, 8, 12, 8, 5, 4, 3, 2, 1 };
+
+        /// <summary>
+        /// [OSORKON] This 147-element monstrosity covers enemy IDs from 0-146 and determines how much HP Vampire player characters
+        /// heal when they kill a given enemy. BOSSFALL v1.3 healed Vampire players 2 HP with every successful Hand-to-Hand attack
+        /// whether or not it made sense to do so - I added this feature as an afterthought. I am not satisfied with my previous
+        /// addition and want to add something more memorable (and useful). This array is used in EnemyDeath to determine whether
+        /// Vampire player characters should be healed and by how much - more powerful enemies have more powerful blood so they
+        /// heal player more. Most of this array is unused filler as enemies with IDs 43-127 don't exist, but it's more efficient
+        /// to declare this whole thing and then search by ID without modification than it would be to declare a 62-element array
+        /// (to match the 62 enemies in DFU) and then subtract 85 from every enemy ID above 127 to get the correct index number.
+        /// </summary>
+        public static readonly byte[] vampireHealAmount = { 3, 1, 0, 3, 75, 50, 9, 40, 50, 40, 15, 5, 50, 15,
+        50, 0, 150, 0, 0, 0, 12, 45, 0, 0, 200, 0, 0, 100, 175, 150, 255, 255, 0, 0, 15, 0, 0, 0,
+        0, 0, 200, 20, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 20, 25, 15, 15, 20, 20, 20, 25, 15, 20, 200, 35, 30, 35, 50, 45, 40, 50 };
+
+        /// <summary>
+        /// [OSORKON] This enormous 147-element array of strings covers enemy IDs from 0-146 and is used in EnemyDeath to determine
+        /// what HUD message is displayed after Vampire player characters kill a given enemy. Most of this array is unused filler
+        /// as enemies with IDs 43-127 don't exist, but it's more efficient to declare this whole thing and then search by ID
+        /// without modification than it would be to declare a 62-element array (to match the 62 enemies in DFU) and then subtract
+        /// 85 from every enemy ID above 127 to get the correct index number. Each enemy displays a unique HUD message.
+        /// </summary>
+        public static readonly string[] vampireHUDMessage = { "You discard the drained Rat.", "Barely any blood. Worthless Imp.", "",
+            "You discard the drained Giant Bat.", "You gorge on Grizzly Bear blood.", "You feast on Sabretooth Tiger blood.",
+            "Not enough blood in this Spider.", "You greedily lap up the Orc's blood.", "Fresh Centaur blood, and plenty of it.",
+            "You devour the Werewolf's cursed blood.", "You ache for more Nymph blood.", "There's not much blood in the Slaughterfish.",
+            "You guzzle the Orc Sergeant's blood.", "Harpy blood tastes as vile as it smells.", "You yearn for more Wereboar blood.",
+            "", "Giant blood. Almost enough to satisfy you.", "You gag on foul Zombie blood.", "", "",
+            "Not much blood in this Giant Scorpion.", "You savor the Orc Shaman's blood.", "", "",
+            "Orc Warlord blood revitalizes you!", "", "", "Daedroth blood. So sweet...", "This Vampire's blood is now yours.",
+            "Daedra Seducer blood mends your wounds.", "Vampire Ancient blood sates your hunger. For now.",
+            "You feel the heady rush of Daedra Lord blood!", "", "", "You crave more Dragonling blood.", "", "",
+            "You retch on old Flesh Atronach blood.", "", "", "Such powerful Dragonling blood!", "Dreugh blood tastes like Orc.",
+            "Lamia blood is marvelous. You want more.", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "This Mage had more Magicka than blood.", "The Spellsword succumbs to your fangs.",
+            "You gulp down the Battlemage's blood.", "You absorb the Sorcerer's blood.", "Healer's blood cannot assuage your hunger.",
+            "The Nightblade's blood gushes into your mouth.", "You lust for more Bard blood.", "You rob the Burglar of blood.",
+            "This Rogue's blood is delicious.", "This scrawny Acrobat had little blood.", "You steal life from the Thief.",
+            "You imbibe the Assassin's powerful blood!", "You drain the Monk of blood.", "You sup on the Archer's vital fluids.",
+            "You eagerly drink the Ranger's blood.", "Hearty Barbarian blood!", "This Warrior's blood fortifies you.",
+            "The Knight's blood fills your belly.", "You consume the Guard's blood. You want more." };
 
         /// <summary>Struct for return values of formula that affect damage and to-hit chance.</summary>
         public struct ToHitAndDamageMods
@@ -833,19 +882,13 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
 
-            // [OSORKON] This inflicts durability damage on player's gloves or boots depending on whether H2H attack
-            // is a punch or kick. It also heals player for every landed Hand-to-Hand attack if player is a Vampire
-            // (technically, if player has stage two Vampirism). I didn't put this in the DamageEquipment function
-            // because then I'd have to re-declare a bunch of local variables and I assume that would be less
-            // efficient. If player misses their H2H attack, is using a weapon, or in wereform, these checks don't run.
+            // [OSORKON] This inflicts durability damage on player's gloves or boots depending on whether H2H attack is a punch
+            // or kick. I didn't put this in the DamageEquipment function because then I'd have to re-declare a bunch of local
+            // variables and I assume that would be less efficient. If player misses their H2H attack, is using a weapon, or in
+            // wereform, these checks don't run.
             if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && damage > 0
              && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Werecreature)
             {
-                if (GameManager.Instance.PlayerEffectManager.HasVampirism())
-                {
-                    player.IncreaseHealth(2);
-                }
-
                 if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
                 {
                     if (gloves != null)
