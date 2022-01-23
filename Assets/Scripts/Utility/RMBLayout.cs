@@ -352,24 +352,6 @@ namespace DaggerfallWorkshop.Utility
                 GameObject go = MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent);
                 if (go == null)
                 {
-                    //// Use misc billboard atlas where available
-                    //if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
-                    //{
-                    //    TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
-                    //    if (item.key != -1)
-                    //    {
-                    //        miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
-                    //        continue;
-                    //    }
-                    //}
-
-                    // Add to batch where available
-                    //if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
-                    //{
-                    //    animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
-                    //    continue;
-                    //}
-
                     // Add standalone billboard gameobject
                     go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
                     go.transform.position = billboardPosition;
