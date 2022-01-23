@@ -14,6 +14,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -186,7 +187,7 @@ namespace DaggerfallWorkshop.Game
                 if (entityBehaviour.Entity.Team == MobileTeams.PlayerAlly)
                 {
                     int id = (entityBehaviour.Entity as EnemyEntity).MobileEnemy.ID;
-                    entityBehaviour.Entity.Team = EnemyBasics.Enemies[id].Team;
+                    entityBehaviour.Entity.Team = EnemyBasics.Enemies.First(x => x.ID == id).Team;
                 }
             }
         }
