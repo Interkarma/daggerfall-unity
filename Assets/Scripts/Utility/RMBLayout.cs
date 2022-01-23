@@ -348,44 +348,45 @@ namespace DaggerfallWorkshop.Utility
                     obj.XPos,
                     -obj.YPos + blockFlatsOffsetY,
                     obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
+                
+                GameObject go = MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent);
+                if (go == null)
+                {
+                    //// Use misc billboard atlas where available
+                    //if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
+                    //{
+                    //    TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
+                    //    if (item.key != -1)
+                    //    {
+                    //        miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
+                    //        continue;
+                    //    }
+                    //}
 
-                // Import custom 3d gameobject instead of flat
-                if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent) != null)
-                    continue;
+                    // Add to batch where available
+                    //if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
+                    //{
+                    //    animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
+                    //    continue;
+                    //}
 
-                //// Use misc billboard atlas where available
-                //if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
-                //{
-                //    TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
-                //    if (item.key != -1)
-                //    {
-                //        miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
-                //        continue;
-                //    }
-                //}
-
-                // Add to batch where available
-                //if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
-                //{
-                //    animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
-                //    continue;
-                //}
-
-                // Add standalone billboard gameobject
-                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
-                go.transform.position = billboardPosition;
-                AlignBillboardToBase(go);
+                    // Add standalone billboard gameobject
+                    go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
+                    go.transform.position = billboardPosition;
+                    AlignBillboardToBase(go);
+                }
 
                 // Add animal sound
                 if (obj.TextureArchive == TextureReader.AnimalsTextureArchive)
-                    AddAnimalAudioSource(go);
+                    AddAnimalAudioSource(go, obj.TextureRecord);
 
                 // If flat record has a non-zero faction id, then it's an exterior NPC
                 if (obj.FactionID != 0)
                 {
                     // Add RMB data to billboard
                     DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                    dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
+                    if (dfBillboard != null)
+                        dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
 
                     // Add StaticNPC behaviour
                     StaticNPC npc = go.AddComponent<StaticNPC>();
@@ -439,25 +440,27 @@ namespace DaggerfallWorkshop.Utility
                         billboardPosition.z = natureFlatsOffsetY;
                     }
 
-                    // Import custom 3d gameobject instead of flat
-                    if (MeshReplacement.ImportCustomFlatGameobject(archive, obj.TextureRecord, billboardPosition, flatsParent) != null)
-                        continue;
-
-                    // Add standalone billboard gameobject
-                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, obj.TextureRecord, flatsParent);
-                    go.transform.position = billboardPosition;
-                    AlignBillboardToBase(go);
+                    GameObject go = MeshReplacement.ImportCustomFlatGameobject(archive, obj.TextureRecord, billboardPosition, flatsParent);
+                    bool isImported = go != null;
+                    if (!isImported)
+                    {
+                        // Add standalone billboard gameobject
+                        go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, obj.TextureRecord, flatsParent);
+                        go.transform.position = billboardPosition;
+                        AlignBillboardToBase(go);
+                    }
 
                     // Add animal sound
                     if (archive == TextureReader.AnimalsTextureArchive)
-                        AddAnimalAudioSource(go);
+                        AddAnimalAudioSource(go, obj.TextureRecord);
 
                     // If flat record has a non-zero faction id, then it's an exterior NPC
                     if (obj.FactionID != 0)
                     {
                         // Add RMB data to billboard
                         DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                        dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
+                        if (dfBillboard != null)
+                            dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
 
                         // Add StaticNPC behaviour
                         StaticNPC npc = go.AddComponent<StaticNPC>();
@@ -465,7 +468,7 @@ namespace DaggerfallWorkshop.Utility
                     }
 
                     // If this is a light flat, import light prefab
-                    if (archive == TextureReader.LightsTextureArchive)
+                    if (archive == TextureReader.LightsTextureArchive && !isImported)
                     {
                         if (dfUnity.Option_CityLightPrefab == null)
                             return;
@@ -1016,14 +1019,13 @@ namespace DaggerfallWorkshop.Utility
             return modelID == BulletinBoardModelID;
         }
 
-        private static void AddAnimalAudioSource(GameObject go)
+        private static void AddAnimalAudioSource(GameObject go, int record)
         {
             DaggerfallAudioSource source = go.AddComponent<DaggerfallAudioSource>();
             source.AudioSource.maxDistance = animalSoundMaxDistance;
 
-            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-            SoundClips sound = SoundClips.None;
-            switch (dfBillboard.Summary.Record)
+            SoundClips sound;
+            switch (record)
             {
                 case 0:
                 case 1:
