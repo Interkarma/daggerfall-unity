@@ -165,11 +165,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             Button presetButton = new Button();
             presetButton.Size = new Vector2(35, 9);
             presetButton.Position = new Vector2(mainPanel.Size.x - 37, 2);
+            presetButton.BackgroundColor = saveButtonColor;
             presetButton.Label.Text = ModManager.GetText("presets");
-            presetButton.Label.Font = DaggerfallUI.Instance.Font1;
-            presetButton.Label.TextScale = 0.4f;
-            presetButton.Label.TextColor = sectionTitleColor;
-            presetButton.Label.ShadowColor = sectionTitleShadow;
+            presetButton.Outline.Enabled = true;
             presetButton.OnMouseClick += PresetButton_OnMouseClick;
             mainPanel.Components.Add(presetButton);
 
