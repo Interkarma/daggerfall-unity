@@ -1,6 +1,212 @@
-BOSSFALL v1.2.1 Changelog
+BOSSFALL v1.3 Changelog
 
 Using DaggerfallUnity 0.13.4
+
+ENEMIES:
+
+Changed which enemies see Invisible: (thanks yabay for the new See Invisible list!)
+
+All bosses (except Orc Warlords, they're not the brightest)
+
+Daedra Seducers
+
+Level 20 Mage/Sorcerer/Nightblade
+
+Enemy immunities reworked - some previously useless weapon types now do significantly reduced damage (thanks cantcomeupwithsomething for the damage scaling idea!)
+
+All HUD weakness/resistance/immunity messages changed for clarity's sake, now only pop up once per enemy
+
+Spriggan:
+
+Axe deals x2 damage
+
+Blunt Weapon deals x1 dmg
+
+Long Blade deals x1 dmg, suffers x2 durability dmg
+
+Short Blade deals 1/2 dmg, suffers x2 durability dmg
+
+Hand-to-Hand deals 1/4 dmg, player suffers 1 HP dmg
+
+Archery Immune
+
+Zombie/Flesh Atronach:
+
+Axe deals x2 damage
+
+Blunt Weapon/Long Blade deals x1 dmg
+
+Short Blade deals 1/2 dmg
+
+Hand-to-Hand deals 1/3 dmg
+
+Archery deals 1/4 dmg
+
+Skeletal Warrior:
+
+Blunt Weapon deals x2 damage
+
+Axe/Hand-to-Hand deals x1 dmg
+
+Long Blade deals 1/2 dmg, suffers x2 durability dmg
+
+Short Blade deals 1/3 dmg, suffers x3 durability dmg
+
+Archery Immune
+
+Giant Scorpion:
+
+Axe deals x2 damage
+
+Blunt Weapon/Long Blade/Short Blade deals x1 dmg
+
+Hand-to-Hand deals 1/2 dmg, player suffers 1 HP dmg
+
+Archery deals 1/3 dmg
+
+Ghost/Wraith:
+
+Silver weapons/gloves/boots deal x1 dmg
+
+Immune to all other materials
+
+Mummy:
+
+Axe/Long Blade deals x2 damage
+
+Blunt Weapon/Short Blade/Hand-to-Hand deals x1 dmg
+
+Archery deals 1/2 dmg
+
+Gargoyle:
+
+Blunt Weapon deals x1 damage, suffers x2 durability dmg
+
+Axe deals x1 dmg, suffers x3 durability dmg
+
+Long Blade deals 1/2 dmg, suffers x4 durability dmg
+
+Short Blade deals 1/3 dmg, suffers x4 durability dmg
+
+Hand-to-Hand Immune, player suffers 2 HP dmg
+
+Archery Immune
+
+Iron Atronach:
+
+Blunt Weapon deals x1 damage, suffers x3 durability dmg
+
+Axe deals 1/2 dmg, suffers x4 durability dmg
+
+Long Blade deals 1/3 dmg, suffers x5 durability dmg
+
+Short Blade deals 1/4 dmg, suffers x5 durability dmg
+
+Hand-to-Hand Immune, player suffers 3 HP dmg
+
+Archery Immune
+
+Fire Atronach:
+
+Player suffers 2 HP damage per landed Hand-to-Hand attack
+
+Ice Atronach:
+
+Axe deals x1 damage, suffers x2 durability dmg
+
+Blunt Weapon deals x1 dmg
+
+Long Blade deals 1/2 dmg, suffers x3 durability dmg
+
+Short Blade deals 1/3 dmg, suffers x4 durability dmg
+
+Hand-to-Hand Immune, player suffers 2 HP dmg
+
+Archery Immune
+
+Fire Daedra:
+
+Player suffers 4 HP damage per landed Hand-to-Hand attack
+
+Vampire/Lich/Vampire Ancient/Ancient Lich:
+
+Silver weapons/gloves/boots deal x2 damage
+
+All other materials deal x1 dmg
+
+Werewolf/Wereboar:
+
+Silver weapons/gloves/boots deal x1 damage
+
+All other materials deal 1/2 dmg
+
+ITEMS:
+
+Shield armor scales with material tier, now shields made of high tier materials are actually useful
+
+An Iron Tower Shield grants 3 armor, an Elven Tower Shield grants 5 armor, a Daedric Tower Shield grants 10 armor
+
+Leather/Chain/Steel/Silver shield armor values unchanged
+
+Enchanted Boots/Gauntlets broken by H2H durability damage disappear from inventory like other broken magic items
+
+MAGIC ITEMS:
+
+Holy Water displays custom HUD message when used
+
+MISCELLANEOUS CODE CHANGES:
+
+If it feels to you like v1.3 features less gameplay changes than previous major versions, I agree - I spent tons of time improving my code efficiency
+
+Player likely won't notice any of the below changes but I mention them due to the time/energy investment
+
+Greatly increased efficiency of Bossfall enemy move speed and AI code
+
+Greatly increased efficiency of Bossfall FormulaHelper code, mostly in attack formulas
+
+Changed saves/loads to save/restore enemy level and all level-dependent values (human enemy damage & armor, spell damage, skill levels)
+
+Backwards compatible w/old Bossfall saves & non-Bossfall saves, this adds an "enemyLevel" line to all enemies in your save file
+
+Improved vanilla mod support by reverting to vanilla DFU code in a few places and moving my changes elsewhere to not conflict w/mods
+
+SETTINGS:
+
+"Bossfall" settings section added to Advanced Settings top bar after Accessibility section
+
+Click the "Use Recommended Settings" button to set everything to the settings I recommend
+
+Settings default to Bossfall v1.2.1 values so current Bossfall players don't have to mess around with settings unless they want to
+
+"Powerful Enemies Are:" (I recommend LESS COMMON) Determines how often powerful enemies spawn, also tweaks other enemy rarities
+
+"More Common" is Bossfall v1.2.1 spawn frequency, "Less Common" is rebalance I did for v1.3
+
+"Enemy Move Speed" (I recommend FAST) Switch between vanilla enemy movespeed and two faster options
+
+"Very Fast" is Bossfall v1.2.1 speed, "Fast" is rebalance I did for v1.3
+
+"Skill Advancement Difficulty" (I recommend HARD) Switch between vanilla skill advancement difficulty and two harder options
+
+"Hard" is rebalance I did for Bossfall v1.3, "Extremely Hard" is v1.2.1 difficulty, IMO suitable for only the most patient adventurers
+
+"Boss Proximity Warning" (I recommend ON) HUD warning message when (non-Assassin) boss nearby, detection radius half a dungeon block
+
+"Display Enemy Level" (I recommend ON) Activating an enemy in Info/Talk/Grab mode displays enemy's level as well as name
+
+"Alternate Loot Piles" (I recommend ON) Uses expanded vanilla sprite list so loot piles have some visual variety
+
+May not work perfectly with graphics mods like D.R.E.A.M. and Handpainted Models
+
+SKILLS:
+
+Player will start climbing much more frequently at low Climbing skill levels
+
+VAMPIRISM:
+
+If player is a Vampire, they heal 2 HP every landed Hand-to-Hand attack
+
+BOSSFALL v1.2.1 Changelog
 
 CHARACTER CREATION:
 
@@ -26,10 +232,7 @@ ITEMS:
 
 I noticed I reduced Weapon generation in General Stores. I forgot to add that to v1.2 Changelog
 
-
-BOSSFALL: UNLEVELED v1.2 Changelog
-
-Using DaggerfallUnity 0.12.3
+BOSSFALL v1.2 Changelog
 
 BANKING:
 
@@ -414,14 +617,7 @@ Regenerate effect removed from SpellMaker
 
 Fire Daedra spell kit now includes God's Fire
 
-Bossfall: Unleveled v1.1 Changelog
-
-Using DaggerfallUnity 0.12.3
-
-TLDR: Monsters, loot, human enemies unleveled. High level enemies much tougher. Some enemies move VERY fast. Some monsters immune to 
-some weapon types/materials. Weapons/armor less durable. Monster variety increased. Bosses rare, difficult, rewarding. 
-Weapon/spell skills harder to level, training cap is 95. Exploits/OP mechanics removed/nerfed. Guards tougher. HALT!
-
+BOSSFALL v1.1 Changelog
 
 BOSS INFO:
 
