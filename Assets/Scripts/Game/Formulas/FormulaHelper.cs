@@ -64,9 +64,9 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         /// <summary>
         /// [OSORKON] Each element in this array represents a weapon material, Iron through Daedric. Each material has a
-        /// (element / 1025) percent chance of being generated, unless the RandomMaterial function is generating items for an
+        /// (element / 1025) percent chance of being generated, unless the RandomMaterial method is generating items for an
         /// enemy above level 15. In that case high tier material generation is more likely. Details are in my comments in the
-        /// RandomMaterial function.
+        /// RandomMaterial method.
         /// </summary>
         public static readonly short[] materialProbability = { 327, 654, 8, 12, 8, 5, 4, 3, 2, 1 };
 
@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// </summary>
         public static readonly string[] vampireHUDMessage = { "You discard the drained Rat.", "Barely any blood. Worthless Imp.", "",
             "You discard the drained Giant Bat.", "You gorge on Grizzly Bear blood.", "You feast on Sabretooth Tiger blood.",
-            "Not enough blood in this Spider.", "You greedily lap up the Orc's blood.", "Fresh Centaur blood, and plenty of it.",
+            "Not enough blood in this Spider.", "You greedily lap up the Orc's blood.", "Fresh Centaur blood, and plenty of it!",
             "You devour the Werewolf's cursed blood.", "You ache for more Nymph blood.", "There's not much blood in the Slaughterfish.",
             "You guzzle the Orc Sergeant's blood.", "Harpy blood tastes as vile as it smells.", "You yearn for more Wereboar blood.",
             "", "Giant blood. Almost enough to satisfy you.", "You gag on foul Zombie blood.", "", "",
@@ -114,6 +114,23 @@ namespace DaggerfallWorkshop.Game.Formulas
             "You imbibe the Assassin's powerful blood!", "You drain the Monk of blood.", "You sup on the Archer's vital fluids.",
             "You eagerly drink the Ranger's blood.", "Hearty Barbarian blood!", "This Warrior's blood fortifies you.",
             "The Knight's blood fills your belly.", "You consume the Guard's blood. You want more." };
+
+        /// <summary>
+        /// [OSORKON] When a player with stage two Lycanthropy kills an innocent a string is randomly selected from this array
+        /// and displayed as a HUD message. Added for extra roleplaying flavor.
+        /// </summary>
+        public static readonly string[] innocentHUDMessage = { "Your urge to kill subsides.", "The innocent collapses.",
+        "The innocent breathes their last.", "One final twitch and the innocent goes still.", "A pool of blood spreads from the innocent.",
+        "You shed innocent blood.", "You are soaked with innocent blood.", "Your urge to hunt fades.", "You tear innocent flesh from bone.",
+        "You spill innocent blood.", "The innocent shrieks, then goes silent.", "You lock eyes with the dying innocent.",
+        "Blood fountains from the innocent's neck.", "Innocent blood soaks the ground.", "Life fades from the innocent's eyes.",
+        "Your urge to hunt recedes.", "The innocent recoils, then falls.", "You end an innocent life.", "Innocent screams fill the air.",
+        "The innocent gasps, then goes limp.", "You cut short an innocent life.", "The innocent lies in a broken heap.",
+        "Blood gushes from the innocent's chest.", "Eyes wide with shock, the innocent topples.", "Silently, the innocent expires.",
+        "You wipe innocent blood from your face.", "You stop an innocent heart.", "The innocent crumples to the ground.",
+        "Blood spouts from the innocent's mouth.", "Writhing, the innocent drops to the earth.", "An innocent heart beats no more.",
+        "With a pitiful moan, the innocent dies.", "The innocent's mangled body lies still.", "Your face is covered with innocent blood.",
+        "Your urge to hunt dissipates.", "You snuff out an innocent life.", "An innocent corpse lies at your feet." };
 
         /// <summary>Struct for return values of formula that affect damage and to-hit chance.</summary>
         public struct ToHitAndDamageMods

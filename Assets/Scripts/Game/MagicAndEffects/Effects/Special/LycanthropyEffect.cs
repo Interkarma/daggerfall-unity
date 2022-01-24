@@ -16,6 +16,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Questing;
@@ -351,7 +352,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Check if we killed an innocent and update satiation - do not need to be transformed
             if (KilledInnocent(targetEntity))
+            {
                 UpdateSatiation();
+
+                // [OSORKON] This displays a randomly selected custom HUD message when player with stage two
+                // Lycanthropy kills innocents. Added for extra roleplaying flavor.
+                int selection = Random.Range(0, FormulaHelper.innocentHUDMessage.Length);
+                DaggerfallUI.AddHUDText(FormulaHelper.innocentHUDMessage[selection]);
+            }
 
             // Do nothing further if not transformed
             if (!isTransformed)

@@ -322,7 +322,7 @@ namespace DaggerfallWorkshop.Game
                     QuestResourceBehaviour questResourceBehaviour;
                     if (QuestResourceBehaviourCheck(hit, out questResourceBehaviour) && !(questResourceBehaviour.TargetResource is Person))
                     {
-                        if (hit.distance > DefaultActivationDistance)
+                        if (hit.distance > DefaultActivationDistance && currentMode != PlayerActivateModes.Info)
                         {
                             DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("youAreTooFarAway"));
                             return;

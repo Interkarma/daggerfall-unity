@@ -74,7 +74,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Color selectedTextColor = new Color(0.0f, 0.8f, 0.0f, 1.0f);
         Color secondaryTextColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
 
-        /// <summary>[OSORKON] This solid red color is for the "Bossfall" title text on start-up. Looks properly dangerous.</summary>
+        /// <summary>
+        /// [OSORKON] This solid red color is for the "Bossfall" title text on start-up. Looks properly dangerous.
+        /// </summary>
         Color tertiaryTextColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
 
         #endregion
@@ -461,7 +463,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // [OSORKON] The BOSSFALL version number. "1.x" is the BOSSFALL version and the ending ".xxxx" string
             // is the DFU version number. Makes versioning clearer so you know what DFU version BOSSFALL is using.
-            versionLabel.Text = "1.3.0134";
+            versionLabel.Text = "1.4.0134";
             versionLabel.Position = new Vector2(0, 40);
             versionLabel.TextScale = 1.0f;
             versionLabel.HorizontalAlignment = HorizontalAlignment.Center;

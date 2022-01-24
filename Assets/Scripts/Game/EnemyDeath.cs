@@ -99,7 +99,16 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
-            DaggerfallUI.Instance.PopupMessage(deathMessage);
+            // [OSORKON] This changes the PopupMessage to not display anything if player has stage two Lycanthropy
+            // and the enemy dying is a Guard. In that case, the HUD message displayed is set in LycanthropyEffect.
+            if (!GameManager.Instance.PlayerEffectManager.HasLycanthropy())
+            {
+                DaggerfallUI.Instance.PopupMessage(deathMessage);
+            }
+            else if (mobile.Enemy.ID != 146)
+            {
+                DaggerfallUI.Instance.PopupMessage(deathMessage);
+            }
 
             // Generate lootable corpse marker
             DaggerfallLoot loot = GameObjectHelper.CreateLootableCorpseMarker(
