@@ -168,7 +168,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Ensures that the requested imported model is assigned to the given transform and is positioned correctly.
         /// If archive and record mismatch, the requested prefab is imported while currently loaded gameobject is destroyed.
-        /// This has a similar purpose to <see cref="DaggerfallBillboard.SetMaterial(int, int, int)"/>.
+        /// This has a similar purpose to <see cref="Billboard.SetMaterial(int, int, int)"/>.
         /// </summary>
         /// <param name="archive">Texture archive for original billboard.</param>
         /// <param name="record">Texture record for original billboard.</param>

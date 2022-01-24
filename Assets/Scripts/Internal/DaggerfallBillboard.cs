@@ -14,13 +14,8 @@ using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.Rendering;
-using System;
-using System.IO;
 using System.Collections;
-using System.Collections.Generic;
 using DaggerfallConnect;
-using DaggerfallConnect.Utility;
-using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Utility;
@@ -32,55 +27,38 @@ namespace DaggerfallWorkshop
 #endif
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
-    public class DaggerfallBillboard : MonoBehaviour
+    public class DaggerfallBillboard : Billboard
     {
-        public int FramesPerSecond = 5;     // General FPS
-        public bool OneShot = false;        // Plays animation once then destroys GameObject
-        public bool FaceY = false;          // Billboard should also face camera up/down
-
-        [SerializeField]
-        BillboardSummary summary = new BillboardSummary();
-
-        public int customArchive = 210;
-        public int customRecord = 0;
+        // Just using a simple animation speed for simple billboard anims
+        // You can adjust this or extend as needed
+        const int animalFps = 5;
+        const int lightFps = 12;
 
         Camera mainCamera = null;
         MeshFilter meshFilter = null;
         bool restartAnims = true;
         MeshRenderer meshRenderer;
 
-        // Just using a simple animation speed for simple billboard anims
-        // You can adjust this or extend as needed
-        const int animalFps = 5;
-        const int lightFps = 12;
+        int framesPerSecond = 5;     // General FPS
+        bool oneShot = false;        // Plays animation once then destroys GameObject
+        bool faceY = false;          // Billboard should also face camera up/down
 
-        public BillboardSummary Summary
+        public override int FramesPerSecond
         {
-            get { return summary; }
+            get { return framesPerSecond; }
+            set { framesPerSecond = value; }
         }
 
-        [Serializable]
-        public struct BillboardSummary
+        public override bool OneShot
         {
-            public Vector2 Size;                                // Size and scale in world units
-            public Rect Rect;                                   // Single UV rectangle for non-atlased materials only
-            public Rect[] AtlasRects;                           // Array of UV rectangles for atlased materials only
-            public RecordIndex[] AtlasIndices;                  // Indices into UV rect array for atlased materials only, supports animations
-            public bool AtlasedMaterial;                        // True if material is part of an atlas
-            public bool AnimatedMaterial;                       // True if material uses atlas UV animations (always false for non atlased materials)
-            public int CurrentFrame;                            // Current animation frame
-            public FlatTypes FlatType;                          // Type of flat
-            public EditorFlatTypes EditorFlatType;              // Sub-type of flat when editor/marker
-            public bool IsMobile;                               // Billboard is a mobile enemy
-            public int Archive;                                 // Texture archive index
-            public int Record;                                  // Texture record index
-            public int Flags;                                   // NPC Flags found in RMB and RDB NPC data
-            public int FactionOrMobileID;                       // FactionID for NPCs, Mobile ID for monsters
-            public int NameSeed;                                // NPC name seed
-            public MobileTypes FixedEnemyType;                  // Type for fixed enemy marker
-            public short WaterLevel;                            // Dungeon water level
-            public bool CastleBlock;                            // Non-hostile area of main story castle dungeons
-            public BillboardImportedTextures ImportedTextures;  // Textures imported from mods
+            get { return oneShot; }
+            set { oneShot = value; }
+        }
+
+        public override bool FaceY
+        {
+            get { return faceY; }
+            set { faceY = value; }
         }
 
         void Start()
@@ -187,7 +165,7 @@ namespace DaggerfallWorkshop
         /// Sets extended data about people billboard from RMB resource data.
         /// </summary>
         /// <param name="person"></param>
-        public void SetRMBPeopleData(DFBlock.RmbBlockPeopleRecord person)
+        public override void SetRMBPeopleData(DFBlock.RmbBlockPeopleRecord person)
         {
             SetRMBPeopleData(person.FactionID, person.Flags, person.Position);
         }
@@ -197,7 +175,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <param name="factionID">FactionID of person.</param>
         /// <param name="flags">Person flags.</param>
-        public void SetRMBPeopleData(int factionID, int flags, long position = 0)
+        public override void SetRMBPeopleData(int factionID, int flags, long position = 0)
         {
             // Add common data
             summary.FactionOrMobileID = factionID;
@@ -211,7 +189,7 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Sets extended data about billboard from RDB flat resource data.
         /// </summary>
-        public void SetRDBResourceData(DFBlock.RdbFlatResource resource)
+        public override void SetRDBResourceData(DFBlock.RdbFlatResource resource)
         {
             // Add common data
             summary.Flags = resource.Flags;
@@ -251,7 +229,7 @@ namespace DaggerfallWorkshop
         /// <param name="record">Texture record index.</param>
         /// <param name="frame">Frame index.</param>
         /// <returns>Material.</returns>
-        public Material SetMaterial(int archive, int record, int frame = 0)
+        public override Material SetMaterial(int archive, int record, int frame = 0)
         {
             // Get DaggerfallUnity
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
@@ -369,7 +347,7 @@ namespace DaggerfallWorkshop
         /// <param name="texture">Texture2D to set on material.</param>
         /// <param name="size">Size of billboard quad in normal units (not Daggerfall units).</param>
         /// <returns>Material.</returns>
-        public Material SetMaterial(Texture2D texture, Vector2 size, bool isLightArchive = false)
+        public override Material SetMaterial(Texture2D texture, Vector2 size, bool isLightArchive = false)
         {
             // Get DaggerfallUnity
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
@@ -418,7 +396,7 @@ namespace DaggerfallWorkshop
         /// Aligns billboard to centre of base, rather than exact centre.
         /// Must have already set material using SetMaterial() for billboard dimensions to be known.
         /// </summary>
-        public void AlignToBase()
+        public override void AlignToBase()
         {
             // Calcuate offset for correct positioning in scene
             Vector3 offset = Vector3.zero;

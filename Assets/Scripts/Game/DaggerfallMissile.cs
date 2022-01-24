@@ -68,7 +68,7 @@ namespace DaggerfallWorkshop.Game
         SphereCollider myCollider;
         DaggerfallAudioSource audioSource;
         Rigidbody myRigidbody;
-        DaggerfallBillboard myBillboard;
+        Billboard myBillboard;
         bool forceDisableSpellLighting;
         bool noSpellsSpatialBlend = false;
         float lifespan = 0f;
@@ -524,7 +524,7 @@ namespace DaggerfallWorkshop.Game
             GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(GetMissileTextureArchive(), record, transform);
             go.transform.localPosition = Vector3.zero;
             go.layer = gameObject.layer;
-            myBillboard = go.GetComponent<DaggerfallBillboard>();
+            myBillboard = go.GetComponent<Billboard>();
             myBillboard.FramesPerSecond = BillboardFramesPerSecond;
             myBillboard.FaceY = true;
             myBillboard.OneShot = oneShot;

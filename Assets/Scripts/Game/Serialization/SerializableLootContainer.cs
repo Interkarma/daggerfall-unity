@@ -93,7 +93,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 loot.ContainerType == LootContainerTypes.CorpseMarker ||
                 loot.ContainerType == LootContainerTypes.DroppedLoot)
             {
-                DaggerfallBillboard billboard = loot.GetComponent<DaggerfallBillboard>();
+                Billboard billboard = loot.GetComponent<Billboard>();
 
                 // Interiors and exteriors need special handling to ensure loot is always placed correctly for pre and post floating y saves
                 // Dungeons are not involved with floating y and don't need any changes

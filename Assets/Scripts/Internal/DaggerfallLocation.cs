@@ -248,7 +248,7 @@ namespace DaggerfallWorkshop
             int natureArchive = GetNatureArchive();
 
             // Process all DaggerfallBillboard child components
-            DaggerfallBillboard[] billboardArray = GetComponentsInChildren<DaggerfallBillboard>();
+            Billboard[] billboardArray = GetComponentsInChildren<Billboard>();
             foreach (var db in billboardArray)
             {
                 if (db.Summary.FlatType == FlatTypes.Nature)
@@ -277,7 +277,7 @@ namespace DaggerfallWorkshop
         public void EnumerateStartMarkers()
         {
             // Process all DaggerfallBillboard child components
-            DaggerfallBillboard[] billboardArray = GetComponentsInChildren<DaggerfallBillboard>();
+            Billboard[] billboardArray = GetComponentsInChildren<Billboard>();
             startMarkers.Clear();
             foreach (var db in billboardArray)
             {

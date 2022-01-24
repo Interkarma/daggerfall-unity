@@ -405,7 +405,7 @@ namespace DaggerfallWorkshop
                 if (assign)
                     startMarker = dfBlock.StartMarkers[0];
 
-                DaggerfallBillboard dfBillboard = dfBlock.StartMarkers[0].GetComponent<DaggerfallBillboard>();
+                Billboard dfBillboard = dfBlock.StartMarkers[0].GetComponent<Billboard>();
                 block.WaterLevel = dfBillboard.Summary.WaterLevel;
                 block.CastleBlock = dfBillboard.Summary.CastleBlock;
             }

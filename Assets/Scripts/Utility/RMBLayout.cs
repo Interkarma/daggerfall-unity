@@ -366,7 +366,7 @@ namespace DaggerfallWorkshop.Utility
                 if (obj.FactionID != 0)
                 {
                     // Add RMB data to billboard
-                    DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                    Billboard dfBillboard = go.GetComponent<Billboard>();
                     if (dfBillboard != null)
                         dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
 
@@ -440,7 +440,7 @@ namespace DaggerfallWorkshop.Utility
                     if (obj.FactionID != 0)
                     {
                         // Add RMB data to billboard
-                        DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                        Billboard dfBillboard = go.GetComponent<Billboard>();
                         if (dfBillboard != null)
                             dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
 
@@ -475,7 +475,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="go">GameObject with DaggerfallBillboard component.</param>
         public static void AlignBillboardToBase(GameObject go)
         {
-            DaggerfallBillboard c = go.GetComponent<DaggerfallBillboard>();
+            Billboard c = go.GetComponent<Billboard>();
             if (c)
             {
                 c.AlignToBase();
