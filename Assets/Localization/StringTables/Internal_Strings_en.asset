@@ -332,7 +332,9 @@ MonoBehaviour:
       Clothing
       store
 
-      Gem store'
+      Gem store
+
+      Pawn shop'
     m_Metadata:
       m_Items: []
   - m_Id: 64
