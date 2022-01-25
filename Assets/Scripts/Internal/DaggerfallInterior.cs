@@ -947,6 +947,12 @@ namespace DaggerfallWorkshop
                     // Add RMB data to billboard
                     dfBillboard.SetRMBPeopleData(obj);
                 }
+                else
+                {
+                    Billboard dfBillboard = go.GetComponent<Billboard>();
+                    if (dfBillboard)
+                        dfBillboard.SetRMBPeopleData(obj);
+                }
 
                 // Add StaticNPC behaviour
                 StaticNPC npc = go.AddComponent<StaticNPC>();

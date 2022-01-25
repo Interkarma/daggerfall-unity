@@ -1211,9 +1211,10 @@ namespace DaggerfallWorkshop.Utility
                 // Setup standard billboard and assign RDB data
                 go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent);
                 go.transform.position = targetPosition;
-                Billboard dfBillboard = go.GetComponent<Billboard>();
-                dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
             }
+            Billboard dfBillboard = go.GetComponent<Billboard>();
+            if (dfBillboard)
+                dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
 
             // Add StaticNPC behaviour - required for quest system
             if (IsNPCFlat(archive))
