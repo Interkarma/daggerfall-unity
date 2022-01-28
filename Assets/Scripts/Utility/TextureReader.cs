@@ -1141,7 +1141,7 @@ namespace DaggerfallWorkshop.Utility
 
         #region Private Methods
 
-        private TextureFormat ParseTextureFormat(SupportedAlphaTextureFormats format)
+        public TextureFormat ParseTextureFormat(SupportedAlphaTextureFormats format)
         {
             switch (format)
             {
