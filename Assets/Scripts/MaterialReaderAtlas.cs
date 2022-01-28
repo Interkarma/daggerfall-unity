@@ -1,3 +1,14 @@
+// Project:         Daggerfall Tools For Unity
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Web Site:        http://www.dfworkshop.net
+// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
+// Source Code:     https://github.com/Interkarma/daggerfall-unity
+// Original Author: John Doom
+// Contributors:    
+// 
+// Notes:
+//
+
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using System.Collections;
@@ -63,7 +74,7 @@ public class MaterialReaderAtlas : MonoBehaviour
         material.name = string.Format("TEXTURE.{0:000} [Atlas]", archive);
 
         TextureReaderAtlas atlas = new GameObject().AddComponent<TextureReaderAtlas>();
-        yield return StartCoroutine(atlas.Load(materialRender.TextureReader, settings, materialRender.AlphaTextureFormat));
+        yield return atlas.Load(materialRender.TextureReader, settings, materialRender.AlphaTextureFormat);
         GetTextureResults results = atlas.results;
         GameObject.Destroy(atlas.gameObject);
 
