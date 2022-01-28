@@ -664,7 +664,7 @@ namespace DaggerfallWorkshop.Utility
                 suffix = "st";
             else if (day == 2 || day == 22)
                 suffix = "nd";
-            else if (day == 3 || day == 33)
+            else if (day == 3 || day == 23)
                 suffix = "rd";
 
             return suffix;
