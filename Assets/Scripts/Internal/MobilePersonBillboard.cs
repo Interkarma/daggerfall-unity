@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    TheLacus
+// Contributors:    John Doom, TheLacus
 // 
 // Notes:
 //
@@ -268,8 +268,8 @@ namespace DaggerfallWorkshop
             }
 
             // Setup person rendering
-            yield return StartCoroutine(CacheRecordSizesAndFrames(textures[personVariant]));
-            yield return StartCoroutine(AssignMeshAndMaterial(textures[personVariant]));
+            yield return CacheRecordSizesAndFrames(textures[personVariant]);
+            yield return AssignMeshAndMaterial(textures[personVariant]);
 
             // Setup animation state
             moveAnims = GetStateAnims(AnimStates.Move);
@@ -402,7 +402,7 @@ namespace DaggerfallWorkshop
 
             // Create material
             TextureReplacementBillboard trb = new GameObject().AddComponent<TextureReplacementBillboard>();
-            yield return StartCoroutine(trb.Load(textureArchive, meshFilter, importedTextures));
+            yield return trb.Load(textureArchive, meshFilter, importedTextures);
             importedTextures = trb.importedTextures;
             Material material = trb.material;
             Destroy(trb.gameObject);
@@ -410,7 +410,7 @@ namespace DaggerfallWorkshop
             if (material == null)
             {
                 MaterialReaderAtlas mra = new GameObject().AddComponent<MaterialReaderAtlas>();
-                yield return StartCoroutine(mra.Load(
+                yield return mra.Load(
                     DaggerfallUnity.Instance.MaterialReader,
                     textureArchive,
                     0,
@@ -420,7 +420,7 @@ namespace DaggerfallWorkshop
                     true,
                     0,
                     false,
-                    true));
+                    true);
                 atlasRects = mra.rectsOut;
                 atlasIndices = mra.indicesOut;
                 material = mra.material;
