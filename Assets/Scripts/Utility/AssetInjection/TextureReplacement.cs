@@ -89,7 +89,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         const string extension = ".png";
 
         // Paths
-        static readonly string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
+        public static readonly string texturesPath = Path.Combine(Application.streamingAssetsPath, "Textures");
         static readonly string imgPath = Path.Combine(texturesPath, "Img");
         static readonly string cifRciPath = Path.Combine(texturesPath, "CifRci");
 
@@ -982,7 +982,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="getName">Get name of frame.</param>
         /// <param name="texFrames">Imported texture frames.</param>
         /// <returns>True if texture imported.</returns>
-        private static bool TryImportTexture(string path, Func<int, string> getName, out Texture2D[] texFrames)
+        public static bool TryImportTexture(string path, Func<int, string> getName, out Texture2D[] texFrames)
         {
             int frame = 0;
             Texture2D tex;
@@ -1124,7 +1124,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         /// <param name="x">Offset on X axis.</param>
         /// <param name="y">Offset on Y axis.</param>
-        private static void SetUv(MeshFilter meshFilter, float x = 0, float y = 0)
+        public static void SetUv(MeshFilter meshFilter, float x = 0, float y = 0)
         {
             Vector2[] uv = new Vector2[4];
             uv[0] = new Vector2(x, 1 - y);
@@ -1145,7 +1145,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="albedo">Imported albedo or null.</param>
         /// <param name="emission">Imported emission map or null.</param>
         /// <returns>True if textures found and loaded.</returns>
-        private static bool LoadFromCacheOrImport(
+        public static bool LoadFromCacheOrImport(
             int archive,
             int record,
             int frame,
@@ -1194,7 +1194,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return material.HasProperty(propertyID) ? (Texture2D)material.GetTexture(propertyID) : null;
         }
 
-        private static void ToggleEmission(Material material, bool isEmissive)
+        public static void ToggleEmission(Material material, bool isEmissive)
         {
             bool isEnabled = material.IsKeywordEnabled(KeyWords.Emission);
 
@@ -1213,7 +1213,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
         }
 
-        private static Material MakeBillboardMaterial(string renderMode = null)
+        public static Material MakeBillboardMaterial(string renderMode = null)
         {
             // Parse blendMode from string or use Cutout if no custom blendMode specified
             MaterialReader.CustomBlendMode blendMode =
