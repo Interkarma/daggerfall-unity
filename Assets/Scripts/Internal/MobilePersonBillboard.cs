@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    TheLacus
+// Contributors:    John Doom, TheLacus
 // 
 // Notes:
 //
@@ -41,6 +41,8 @@ namespace DaggerfallWorkshop
         /// </summary>
         protected internal CapsuleCollider Trigger { get; internal set; }
 
+        public abstract bool IsReady { get; protected set; }
+
         /// <summary>
         /// Gets or sets idle state. Daggerfall NPCs are either in or motion or idle facing player.
         /// This only controls animation state, actual motion is handled by <see cref="MobilePersonMotor"/>.
@@ -55,7 +57,7 @@ namespace DaggerfallWorkshop
         /// <param name="gender">Gender of target npc.</param>
         /// <param name="personVariant">Which basic outfit does the person wear.</param>
         /// <param name="isGuard">True if this npc is a city watch guard.</param>
-        public abstract void SetPerson(Races race, Genders gender, int personVariant, bool isGuard, int personFaceVariant, int personFaceRecordId);
+        public abstract IEnumerator SetPerson(Races race, Genders gender, int personVariant, bool isGuard, int personFaceVariant, int personFaceRecordId);
 
         /// <summary>
         /// Gets size of asset used by this person (i.e size of bounds). Used to adjust position on terrain.
@@ -175,6 +177,13 @@ namespace DaggerfallWorkshop
             set { SetIdle(value); }
         }
 
+        bool isReady;
+        public override bool IsReady
+        {
+            get { return isReady; }
+            protected set { isReady = value; }
+        }
+
         #endregion
 
         #region Unity
@@ -226,11 +235,11 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Setup this person based on race and gender.
         /// </summary>
-        public override void SetPerson(Races race, Genders gender, int personVariant, bool isGuard, int personFaceVariant, int personFaceRecordId)
+        public override IEnumerator SetPerson(Races race, Genders gender, int personVariant, bool isGuard, int personFaceVariant, int personFaceRecordId)
         {
             // Must specify a race
             if (race == Races.None)
-                return;
+                yield break;
 
             // Get texture range for this race and gender
             int[] textures = null;
@@ -259,8 +268,8 @@ namespace DaggerfallWorkshop
             }
 
             // Setup person rendering
-            CacheRecordSizesAndFrames(textures[personVariant]);
-            AssignMeshAndMaterial(textures[personVariant]);
+            yield return StartCoroutine(CacheRecordSizesAndFrames(textures[personVariant]));
+            yield return StartCoroutine(AssignMeshAndMaterial(textures[personVariant]));
 
             // Setup animation state
             moveAnims = GetStateAnims(AnimStates.Move);
@@ -270,6 +279,8 @@ namespace DaggerfallWorkshop
             currentAnimState = AnimStates.Move;
             lastOrientation = -1;
             UpdateOrientation();
+
+            IsReady = true;
         }
 
         /// <summary>
@@ -312,11 +323,12 @@ namespace DaggerfallWorkshop
             }
         }
 
-        private void CacheRecordSizesAndFrames(int textureArchive)
+        private IEnumerator CacheRecordSizesAndFrames(int textureArchive)
         {
             // Open texture file
             string path = Path.Combine(DaggerfallUnity.Instance.Arena2Path, TextureFile.IndexToFileName(textureArchive));
             TextureFile textureFile = new TextureFile(path, FileUsage.UseMemory, true);
+            yield return null;
 
             // Cache size and scale for each record
             recordSizes = new Vector2[textureFile.RecordCount];
@@ -348,7 +360,7 @@ namespace DaggerfallWorkshop
             }
         }
 
-        private void AssignMeshAndMaterial(int textureArchive)
+        private IEnumerator AssignMeshAndMaterial(int textureArchive)
         {
             // Get mesh filter
             if (meshFilter == null)
@@ -389,19 +401,31 @@ namespace DaggerfallWorkshop
             meshFilter.sharedMesh = mesh;
 
             // Create material
-            Material material = TextureReplacement.GetMobileBillboardMaterial(textureArchive, meshFilter, ref importedTextures) ??
-                DaggerfallUnity.Instance.MaterialReader.GetMaterialAtlas(
-                textureArchive,
-                0,
-                4,
-                1024,
-                out atlasRects,
-                out atlasIndices,
-                4,
-                true,
-                0,
-                false,
-                true);
+            TextureReplacementBillboard trb = new GameObject().AddComponent<TextureReplacementBillboard>();
+            yield return StartCoroutine(trb.Load(textureArchive, meshFilter, importedTextures));
+            importedTextures = trb.importedTextures;
+            Material material = trb.material;
+            Destroy(trb.gameObject);
+
+            if (material == null)
+            {
+                MaterialReaderAtlas mra = new GameObject().AddComponent<MaterialReaderAtlas>();
+                yield return StartCoroutine(mra.Load(
+                    DaggerfallUnity.Instance.MaterialReader,
+                    textureArchive,
+                    0,
+                    4,
+                    1024,
+                    4,
+                    true,
+                    0,
+                    false,
+                    true));
+                atlasRects = mra.rectsOut;
+                atlasIndices = mra.indicesOut;
+                material = mra.material;
+                Destroy(mra.gameObject);
+            }
 
             // Set new person material
             GetComponent<MeshRenderer>().sharedMaterial = material;
