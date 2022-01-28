@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop
 
         DaggerfallUnity dfUnity;
         TextureReader textureReader;
-        Dictionary<int, CachedMaterial> materialDict = new Dictionary<int, CachedMaterial>();
+        public Dictionary<int, CachedMaterial> materialDict = new Dictionary<int, CachedMaterial>();
         //TextureAtlasBuilder miscBillboardsAtlas = null;
 
         #endregion
@@ -1013,7 +1013,7 @@ namespace DaggerfallWorkshop
             return GetMaterialFromCache(key);
         }
 
-        private CachedMaterial GetMaterialFromCache(int key)
+        public CachedMaterial GetMaterialFromCache(int key)
         {
             CachedMaterial cachedMaterial = materialDict[key];
 
