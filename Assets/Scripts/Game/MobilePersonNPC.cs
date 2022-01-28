@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Michael Rauter (Nystul)
+// Contributors:    John Doom, Michael Rauter (Nystul)
 // 
 // Notes:
 //
@@ -147,7 +147,7 @@ namespace DaggerfallWorkshop.Game
             // Set race (set current race before calling this function with property Race)
             SetRace(race);
             // Set remaining fields and update billboards
-            yield return StartCoroutine(SetPerson());
+            yield return SetPerson();
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace DaggerfallWorkshop.Game
                 this.personOutfitVariant = outfitVariantToBeSet;
 
             // set remaining fields and update billboards
-            yield return StartCoroutine(SetPerson());
+            yield return SetPerson();
         }
 
         #endregion
@@ -210,7 +210,7 @@ namespace DaggerfallWorkshop.Game
 
             // set billboard to correct race, gender and outfit variant
             Asset = GetComponentInChildren<MobilePersonAsset>();
-            yield return StartCoroutine(Asset.SetPerson(race, gender, personOutfitVariant, IsGuard, personFaceVariant, personFaceRecordId));
+            yield return Asset.SetPerson(race, gender, personOutfitVariant, IsGuard, personFaceVariant, personFaceRecordId);
         }
 
         /// <summary>
