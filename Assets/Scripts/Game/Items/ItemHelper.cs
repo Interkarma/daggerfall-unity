@@ -237,6 +237,10 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>Item group index, or -1 if not found.</returns>
         public int GetGroupIndex(ItemGroups itemGroup, int templateIndex)
         {
+            // Items added by mods are after last DF template, and groupIndex == templateIndex
+            if (templateIndex > LastDFTemplate)
+                return templateIndex;
+
             Array values = GetEnumArray(itemGroup);
             for (int i = 0; i < values.Length; i++)
             {
