@@ -16,6 +16,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Utility;
+using System.Collections;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -126,7 +127,7 @@ namespace DaggerfallWorkshop.Game
         /// randomize NPC with current race - set current race before calling this function with property Race.
         /// </summary>
         /// <param name="race">Entity race of NPC in current location.</param>
-        public void RandomiseNPC(Races race)
+        public IEnumerator RandomiseNPC(Races race)
         {
             // Randomly set guards
             if (Random.Range(0, 32) == 0)
@@ -146,13 +147,13 @@ namespace DaggerfallWorkshop.Game
             // Set race (set current race before calling this function with property Race)
             SetRace(race);
             // Set remaining fields and update billboards
-            SetPerson();
+            yield return StartCoroutine(SetPerson());
         }
 
         /// <summary>
         /// apply person settings via Unity Inspector through public fields raceToBeSet, genderToBeSet and outfitVariantToBeSet.
         /// </summary>
-        public void ApplyPersonSettingsViaInspector()
+        public IEnumerator ApplyPersonSettingsViaInspector()
         {
             // get gender for npc from inspector value
             this.gender = genderToBeSet;
@@ -167,7 +168,7 @@ namespace DaggerfallWorkshop.Game
                 this.personOutfitVariant = outfitVariantToBeSet;
 
             // set remaining fields and update billboards
-            SetPerson();
+            yield return StartCoroutine(SetPerson());
         }
 
         #endregion
@@ -178,7 +179,7 @@ namespace DaggerfallWorkshop.Game
         /// used to set remaining fields of person (with random values) and update billboards
         /// this function should be called after race, gender and personOutfitVariant has been set beforehand
         /// </summary>
-        void SetPerson()
+        IEnumerator SetPerson()
         {
             // get person's face texture record index for this race and gender and outfit variant
             int[] recordIndices = null;
@@ -209,7 +210,7 @@ namespace DaggerfallWorkshop.Game
 
             // set billboard to correct race, gender and outfit variant
             Asset = GetComponentInChildren<MobilePersonAsset>();
-            Asset.SetPerson(race, gender, personOutfitVariant, IsGuard, personFaceVariant, personFaceRecordId);
+            yield return StartCoroutine(Asset.SetPerson(race, gender, personOutfitVariant, IsGuard, personFaceVariant, personFaceRecordId));
         }
 
         /// <summary>
