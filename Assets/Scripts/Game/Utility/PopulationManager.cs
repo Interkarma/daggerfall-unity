@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    John Doom
 // 
 // Notes:
 //
@@ -15,6 +15,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
+using System.Collections;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -48,6 +49,8 @@ namespace DaggerfallWorkshop.Game.Utility
         CityNavigation cityNavigation;
 
         List<PoolItem> populationPool = new List<PoolItem>();
+
+        bool coroutineRunning;
 
         #endregion
 
@@ -119,14 +122,25 @@ namespace DaggerfallWorkshop.Game.Utility
                 playerInLocationRange = true;
             }
 
-            // Update population
-            SpawnAvailableMobile();
-            UpdateMobiles();
+            //wait to finish
+            if (coroutineRunning) return;
+            StartCoroutine(CoroutinePopulation());
         }
 
         #endregion
 
         #region Private Methods
+
+        IEnumerator CoroutinePopulation()
+        {
+            coroutineRunning = true;
+
+            // Update population
+            SpawnAvailableMobile();
+            yield return StartCoroutine(UpdateMobiles());
+
+            coroutineRunning = false;
+        }
 
         /// <summary>
         /// Spawn a new pool item within range of player.
@@ -169,7 +183,7 @@ namespace DaggerfallWorkshop.Game.Utility
         /// <summary>
         /// Promote pending mobiles to live status and recycle out of range mobiles.
         /// </summary>
-        void UpdateMobiles()
+        IEnumerator UpdateMobiles()
         {
             // Racial override can suppress population, e.g. transformed lycanthrope
             MagicAndEffects.MagicEffects.RacialOverrideEffect racialOverride = GameManager.Instance.PlayerEffectManager.GetRacialOverrideEffect();
@@ -192,7 +206,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 {
                     poolItem.npc.Motor.gameObject.SetActive(true);
                     poolItem.scheduleEnable = false;
-                    poolItem.npc.RandomiseNPC(GetEntityRace());
+                    yield return StartCoroutine(poolItem.npc.RandomiseNPC(GetEntityRace()));
                     poolItem.npc.Motor.InitMotor();
 
                     // Adjust billboard position for actual size
