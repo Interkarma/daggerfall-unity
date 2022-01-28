@@ -180,6 +180,10 @@ namespace DaggerfallWorkshop.Game
             if (GameManager.IsGamePaused)
                 return;
 
+            // Do nothing if not ready
+            if (!mobileAsset.IsReady)
+                return;
+
             // Do nothing if paralyzed
             if (entityBehaviour.Entity.IsParalyzed)
             {
