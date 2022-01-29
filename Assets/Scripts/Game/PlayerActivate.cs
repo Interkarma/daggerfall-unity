@@ -1372,7 +1372,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Sets new activation mode
-        public void ChangeInteractionMode(PlayerActivateModes newMode, bool noText = false)
+        public void ChangeInteractionMode(PlayerActivateModes newMode, bool showText = true)
         {
             // Do nothing if new mode matches current mode
             if (newMode == currentMode)
@@ -1400,7 +1400,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Present new mode to player
-            if(!noText)
+            if(showText)
                 DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("interactionIsNowInMode").Replace("%s", modeText));
         }
 
