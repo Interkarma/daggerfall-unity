@@ -1400,7 +1400,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Present new mode to player
-            if(showText)
+            if (showText)
                 DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("interactionIsNowInMode").Replace("%s", modeText));
         }
 
