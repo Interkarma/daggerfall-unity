@@ -1400,7 +1400,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Present new mode to player
-            if(!noText) DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("interactionIsNowInMode").Replace("%s", modeText));
+            if(!noText)
+                DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("interactionIsNowInMode").Replace("%s", modeText));
         }
 
         // Output NPC info to HUD
