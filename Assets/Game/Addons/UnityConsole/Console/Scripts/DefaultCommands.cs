@@ -389,18 +389,19 @@ namespace Wenzil.Console
         private static class NoClipCommand
         {
             public static readonly string name = "tcl";
-            public static readonly string error = "Failed to set TCL, either Levitate or PlayerHealth could not be found";
+            public static readonly string error = "Failed to set TCL, PlayerEntity or Levitate could not be found";
             public static readonly string usage = "tcl";
-            public static readonly string description = "Toggle noclip by turning off all collissions (levitate recomended)";
+            public static readonly string description = "Toggle noclip by turning off all collisions and activates levitate";
 
             public static string Execute(params string[] args)
             {
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                LevitateMotor levitateMotor = GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>();
 
-                if (playerEntity != null)
+                if (playerEntity && levitateMotor)
                 {
                     playerEntity.NoClipMode = !playerEntity.NoClipMode;
-
+                    levitateMotor.IsLevitating = playerEntity.NoClipMode;
                     GameManager.Instance.PlayerController.gameObject.layer = playerEntity.NoClipMode ? LayerMask.NameToLayer("NoclipLayer") : LayerMask.NameToLayer("Player");
 
                     return string.Format("Noclip enabled: {0}", playerEntity.NoClipMode);
