@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel encumbranceLabel = new TextLabel();
         Panel[] statPanels = new Panel[DaggerfallStats.Count];
         TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
-        PaperDoll characterPortrait = new PaperDoll();
+        PaperDoll characterPortrait = new PaperDoll(showArmorValues: false);
 
         #endregion
 
