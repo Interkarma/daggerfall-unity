@@ -439,7 +439,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Private methods
 
-        private void UpdateDifficulty()
+        protected virtual void UpdateDifficulty()
         {
             const int defaultDaggerX = 220;
             const int defaultDaggerY = 115;

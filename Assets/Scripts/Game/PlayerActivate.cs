@@ -758,7 +758,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void ActivateMobileEnemy(RaycastHit hit, DaggerfallEntityBehaviour mobileEnemyBehaviour)
+        protected virtual void ActivateMobileEnemy(RaycastHit hit, DaggerfallEntityBehaviour mobileEnemyBehaviour)
         {
             EnemyEntity enemyEntity = mobileEnemyBehaviour.Entity as EnemyEntity;
             switch (currentMode)
