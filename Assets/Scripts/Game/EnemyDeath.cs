@@ -59,7 +59,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
-        void CompleteDeath()
+        protected virtual void CompleteDeath()
         {
             if (!entityBehaviour)
                 return;

@@ -280,7 +280,7 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
-        private void LayoutDungeon(in DFLocation location, bool importEnemies = true)
+        protected virtual void LayoutDungeon(in DFLocation location, bool importEnemies = true)
         {
 #if SHOW_LAYOUT_TIMES
             // Start timing

@@ -244,7 +244,7 @@ namespace DaggerfallWorkshop.Game.Entity
         /// <summary>
         /// Sets enemy career and prepares entity settings.
         /// </summary>
-        public void SetEnemyCareer(MobileEnemy mobileEnemy, EntityTypes entityType)
+        public virtual void SetEnemyCareer(MobileEnemy mobileEnemy, EntityTypes entityType)
         {
             // Try custom career first
             career = GetCustomCareerTemplate(mobileEnemy.ID);
@@ -609,7 +609,7 @@ namespace DaggerfallWorkshop.Game.Entity
             }
         }
 
-        public int GetWeightInClassicUnits()
+        public virtual int GetWeightInClassicUnits()
         {
             int itemWeightsClassic = (int)(Items.GetWeight() * 4);
             int baseWeight;
