@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using UnityEngine;
@@ -16,7 +16,6 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Questing;
@@ -352,14 +351,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Check if we killed an innocent and update satiation - do not need to be transformed
             if (KilledInnocent(targetEntity))
-            {
                 UpdateSatiation();
-
-                // [OSORKON] This displays a randomly selected custom HUD message when player with stage two
-                // Lycanthropy kills innocents. Added for extra roleplaying flavor.
-                int selection = Random.Range(0, FormulaHelper.innocentHUDMessage.Length);
-                DaggerfallUI.AddHUDText(FormulaHelper.innocentHUDMessage[selection]);
-            }
 
             // Do nothing further if not transformed
             if (!isTransformed)
@@ -539,8 +531,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Classic heals player to full each time they transform
             // Not sure if intentional and definitely exploitable during full moons
             // One of those cases where implementing like classic and open to review later
-
-            // [OSORKON] I removed the "full heal on transform" code. Too easily exploited for my taste.
+            GameManager.Instance.PlayerEntity.CurrentHealth = GameManager.Instance.PlayerEntity.MaxHealth;
 
             // Store time whenever cast
             lastCastMorphSelf = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();

@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Allofich
 // 
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using UnityEngine;
@@ -75,27 +75,6 @@ namespace DaggerfallWorkshop.Game
         float lastGroundedY;                        // Used for fall damage
         float originalHeight;
 
-        // [OSORKON] These bools are used for custom enemy AI and boss proximity warning HUD messages.
-        bool prefersBow;
-        bool alwaysCharges;
-        bool isBoss;
-        bool showBossWarning;
-        bool showPowerfulBossWarning;
-
-        /// <summary>
-        /// [OSORKON] This monstrosity represents enemy move speeds by enemy ID and covers IDs from 0-146. This array is used if the
-        /// "Enemy Move Speed" setting is "Very Fast", and these speeds are BOSSFALL v1.2.1 enemy move speeds. I use this array to
-        /// make the enemy movespeed selection process much faster than the giant if/else if tree I had in TakeAction in versions
-        /// v1.2.1 and earlier. Most of this array is unused filler as enemies with IDs 43-127 don't exist, but it's more efficient
-        /// to declare this whole thing and then search by ID without modification than it would be to declare a 62-element array
-        /// (to match the 62 enemies in DFU) and then subtract 85 from every enemy ID above 127 to get the correct index number.
-        /// </summary>
-        public static readonly float[] veryFastMoveSpeeds = { 7f, 6f, 3f, 8.5f, 7.5f, 8f, 9f, 5f, 7.5f, 9f, 4.5f, 4.5f, 5.75f, 8f,
-        7.5f, 6f, 7f, 3f, 3.5f, 3.5f, 7.5f, 5.75f, 4.5f, 4f, 6.5f, 5f, 7.5f, 6.5f, 10f, 7.5f, 12f, 7.5f, 4f, 4.5f, 8f, 7.5f, 3f, 3f,
-        3f, 0, 10f, 3.5f, 4f, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4f, 7.5f, 6f, 4f, 4f, 8f, 7f, 8f, 8f, 8.5f, 8f, 10f, 7.5f, 4.5f, 4.5f, 7f, 5.75f, 5f, 8.5f };
-
         EnemySenses senses;
         Vector3 destination;
         Vector3 detourDestination;
@@ -150,40 +129,6 @@ namespace DaggerfallWorkshop.Game
 
             // Get original height, before any height adjustments
             originalHeight = controller.height;
-
-            // [OSORKON] If enemy is an Archer or Ranger prefersBow is true. Only needs to be checked once.
-            if (mobile.Enemy.ID == 141 || mobile.Enemy.ID == 142)
-            {
-                prefersBow = true;
-            }
-
-            // [OSORKON] If enemy is non-sentient or very stupid alwaysCharges is true. Only needs to be checked once.
-            if (mobile.Enemy.ID == 32 || mobile.Enemy.ID == 33)
-            {
-                alwaysCharges = false;
-            }
-            else if (mobile.Enemy.Affinity == MobileAffinity.Animal || mobile.Enemy.Affinity == MobileAffinity.Undead)
-            {
-                alwaysCharges = true;
-            }
-            else if (mobile.Enemy.ID == 11 || mobile.Enemy.ID == 16 || mobile.Enemy.ID == 22 || mobile.Enemy.ID == 143)
-            {
-                alwaysCharges = true;
-            }
-
-            // [OSORKON] If enemy is a boss isBoss is true. If enemy is an OrcWarlord/Vampire/Lich/Dragonling_Alternate
-            // showBossWarning is true. If enemy is a VampireAncient/DaedraLord/AncientLich showPowerfulBossWarning is
-            // true. Only needs to be checked once.
-            if (mobile.Enemy.ID == 24 || mobile.Enemy.ID == 28 || mobile.Enemy.ID == 32 || mobile.Enemy.ID == 40)
-            {
-                isBoss = true;
-                showBossWarning = true;
-            }
-            else if (mobile.Enemy.ID == 30 || mobile.Enemy.ID == 31 || mobile.Enemy.ID == 33)
-            {
-                isBoss = true;
-                showPowerfulBossWarning = true;
-            }
         }
 
         void FixedUpdate()
@@ -208,30 +153,6 @@ namespace DaggerfallWorkshop.Game
             UpdateToIdleOrMoveAnim();
             OpenDoors();
             HeightAdjust();
-
-            // [OSORKON] If the Boss Proximity Warning setting is ON, this checks for nearby bosses and creates warning
-            // HUD messages. Detection radius is roughly half a dungeon block. Assassins won't trigger warning messages,
-            // they're too stealthy to detect. The three toughest bosses (Daedra Lord, Vampire Ancient, Ancient Lich)
-            // get a unique HUD message. The HUD message appears once per boss.
-            if (DaggerfallUnity.Settings.BossProximityWarning && isBoss)
-            {
-                if (showBossWarning)
-                {
-                    if (senses.DistanceToPlayer < 25.6f)
-                    {
-                        DaggerfallUI.AddHUDText("You sense a boss nearby.");
-                        showBossWarning = false;
-                    }
-                }
-                else if (showPowerfulBossWarning)
-                {
-                    if (senses.DistanceToPlayer < 25.6f)
-                    {
-                        DaggerfallUI.AddHUDText("You sense a powerful boss nearby.");
-                        showPowerfulBossWarning = false;
-                    }
-                }
-            }
         }
         #endregion
 
@@ -331,11 +252,8 @@ namespace DaggerfallWorkshop.Game
             {
                 // Limit KnockbackSpeed. This can be higher than what is actually used for the speed of motion,
                 // making it last longer and do more damage if the enemy collides with something (TODO).
-
-                // [OSORKON] I capped KnockbackSpeed at 25 rather than 40. This reduces time spent
-                // flying backwards, so enemy can resume smacking away at the player.
-                if (KnockbackSpeed > (25 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
-                    KnockbackSpeed = (25 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
+                if (KnockbackSpeed > (40 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)))
+                    KnockbackSpeed = (40 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
 
                 if (KnockbackSpeed > (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10)) &&
                     mobile.EnemyState != MobileStates.PrimaryAttack)
@@ -361,11 +279,8 @@ namespace DaggerfallWorkshop.Game
                 // Remove remaining knockback and restore animation
                 if (GameManager.ClassicUpdate)
                 {
-                    // [OSORKON] I set KnockbackSpeed to decrement at 7 rather than 5, and I capped
-                    // KnockbackSpeed at 7 rather than 5. With changes to enemy weight I made in
-                    // FormulaHelper, this greatly reduces knockback stunlocks with high damage/SPD attacks.
-                    KnockbackSpeed -= (7 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
-                    if (KnockbackSpeed <= (7 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10))
+                    KnockbackSpeed -= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10));
+                    if (KnockbackSpeed <= (5 / (PlayerSpeedChanger.classicToUnitySpeedUnitRatio / 10))
                         && mobile.EnemyState != MobileStates.PrimaryAttack)
                     {
                         mobile.ChangeEnemyState(MobileStates.Move);
@@ -487,38 +402,14 @@ namespace DaggerfallWorkshop.Game
         void TakeAction()
         {
             // Monster speed of movement follows the same formula as for when the player walks
-
-            // [OSORKON] I changed the declaration of this variable to avoid unnecessary moveSpeed calculations.
-            float moveSpeed;
-
-            // [OSORKON] This sets enemy movement speed based on which "Enemy Move Speed" setting is used. The first option
-            // is the recommended "Fast" setting, which is rebalanced speeds for BOSSFALL v1.3. The second option is the
-            // "Very Fast" setting - which is v1.2.1 speeds - and the last option is the "Vanilla" setting, which is vanilla
-            // DFU speed set using the vanilla formula.
-            if (DaggerfallUnity.Settings.EnemyMoveSpeed == 1)
-            {
-                moveSpeed = mobile.Enemy.MoveSpeed;
-            }
-            else if (DaggerfallUnity.Settings.EnemyMoveSpeed == 2)
-            {
-                moveSpeed = veryFastMoveSpeeds[mobile.Enemy.ID];
-            }
-            else
-            {
-                moveSpeed = (entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
-            }
+            float moveSpeed = (entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
 
             // Get isPlayingOneShot for use below
             bool isPlayingOneShot = mobile.IsPlayingOneShot();
 
             // Reduced speed if playing a one-shot animation with enhanced AI
-
-            // [OSORKON] I removed the below check that was in vanilla. Now Vampire Ancients can run down the player and
-            // hit them instead of slowing down when attacking. To balance this out, I added Pacification, Dispel,
-            // and Teleport magical items to give player a fighting chance.
-
-            // if (isPlayingOneShot && DaggerfallUnity.Settings.EnhancedCombatAI)
-            //    moveSpeed /= attackSpeedDivisor;
+            if (isPlayingOneShot && DaggerfallUnity.Settings.EnhancedCombatAI)
+                moveSpeed /= attackSpeedDivisor;
 
             // Classic AI moves only as close as melee range. It uses a different range for the player and for other AI.
             if (!DaggerfallUnity.Settings.EnhancedCombatAI)
@@ -558,14 +449,6 @@ namespace DaggerfallWorkshop.Game
             if (moveInForAttackTimer <= 0 && avoidObstaclesTimer <= 0)
                 EvaluateMoveInForAttack();
 
-            // [OSORKON] If enemy is an Archer or Ranger, I never want them to move in to attack. I put these bool
-            // settings here, as that influences what decisions are made a few lines down.
-            if (prefersBow)
-            {
-                retreating = true;
-                pursuing = false;
-            }
-
             // If detouring, always attempt to move
             if (avoidObstaclesTimer > 0)
             {
@@ -596,11 +479,8 @@ namespace DaggerfallWorkshop.Game
                 !moveInForAttack && distance < stopDistance * retreatDistanceMultiplier && (changeStateTimer <= 0 || retreating)))
             {
                 // If state change timer is done, or we are already executing a retreat, we can move immediately
-
-                // [OSORKON] Vanilla has moveSpeed / 2 here, I removed the 2. This makes enemies back up at full speed.
-                // The player can run backwards at full speed, I wanted enemies to do so as well. It's only fair.
                 if (changeStateTimer <= 0 || retreating)
-                    AttemptMove(direction, moveSpeed, true);
+                    AttemptMove(direction, moveSpeed / 2, true);
             }
             // Not moving, just look at target
             else if (!senses.TargetIsWithinYawAngle(22.5f, destination))
@@ -670,9 +550,7 @@ namespace DaggerfallWorkshop.Game
 
                 if (doStrafe && strafeTimer > 0)
                 {
-                    // [OSORKON] Vanilla has moveSpeed / 4 here, I changed that to 2 so enemies at range strafe faster.
-                    // I got annoyed at how easy it was to hit enemies with arrows at long distances.
-                    AttemptMove(direction, moveSpeed / 2, false, true, distance);
+                    AttemptMove(direction, moveSpeed / 4, false, true, distance);
                 }
 
                 if (GameManager.ClassicUpdate && senses.TargetIsWithinYawAngle(22.5f, destination))
@@ -682,9 +560,7 @@ namespace DaggerfallWorkshop.Game
                         if (hasBowAttack)
                         {
                             // Random chance to shoot bow
-
-                            // [OSORKON] Vanilla has 1/32f here. I thought bow attacks were too infrequent.
-                            if (Random.value < 1/18f)
+                            if (Random.value < 1/32f)
                             {
                                 if (mobile.Enemy.HasRangedAttack1 && !mobile.Enemy.HasRangedAttack2)
                                     mobile.ChangeEnemyState(MobileStates.RangedAttack1);
@@ -693,9 +569,7 @@ namespace DaggerfallWorkshop.Game
                             }
                         }
                         // Random chance to shoot spell
-
-                        // [OSORKON] Vanilla has 1/40f here. Bossfall enemies are magical machine guns.
-                        else if (Random.value < 1/15f && entityEffectManager.SetReadySpell(selectedSpell))
+                        else if (Random.value < 1/40f && entityEffectManager.SetReadySpell(selectedSpell))
                         {
                             mobile.ChangeEnemyState(MobileStates.Spell);
                         }
@@ -734,8 +608,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         void StrafeDecision()
         {
-            // [OSORKON] I changed the maximum range from 4 to 5, reducing strafe frequency.
-            doStrafe = Random.Range(0, 5) == 0;
+            doStrafe = Random.Range(0, 4) == 0;
             strafeTimer = Random.Range(1f, 2f);
             if (doStrafe)
             {
@@ -861,12 +734,8 @@ namespace DaggerfallWorkshop.Game
             int count = 0;
             foreach (EffectBundleSettings spell in spells)
             {
-                // [OSORKON] I added CasterOnly, enemies now cast self-protection/healing spells at range.
-                // If they didn't, they would never cast Spell Resistance, Shalidor's Mirror, and Heal unless
-                // player is within melee range, and by then it'd likely be too late.
                 if (spell.TargetType == TargetTypes.SingleTargetAtRange
-                    || spell.TargetType == TargetTypes.AreaAtRange
-                    || spell.TargetType == TargetTypes.CasterOnly)
+                    || spell.TargetType == TargetTypes.AreaAtRange)
                 {
                     rangeSpells.Add(spell);
                     count++;
@@ -900,17 +769,25 @@ namespace DaggerfallWorkshop.Game
             int count = 0;
             foreach (EffectBundleSettings spell in spells)
             {
-
-                // [OSORKON] I condensed this bool as I didn't want to differentiate between classic
-                // and Enhanced Combat AI. Enemies cast any type of melee spell within melee range.
-                if (spell.TargetType == TargetTypes.ByTouch
-                    || spell.TargetType == TargetTypes.CasterOnly
-                    || spell.TargetType == TargetTypes.AreaAroundCaster)
+                // Classic AI considers ByTouch and CasterOnly here
+                if (!DaggerfallUnity.Settings.EnhancedCombatAI)
                 {
-                    rangeSpells.Add(spell);
-                    count++;
+                    if (spell.TargetType == TargetTypes.ByTouch
+                        || spell.TargetType == TargetTypes.CasterOnly)
+                    {
+                        rangeSpells.Add(spell);
+                        count++;
+                    }
                 }
-
+                else // Enhanced AI considers ByTouch and AreaAroundCaster. TODO: CasterOnly logic
+                {
+                    if (spell.TargetType == TargetTypes.ByTouch
+                        || spell.TargetType == TargetTypes.AreaAroundCaster)
+                    {
+                        rangeSpells.Add(spell);
+                        count++;
+                    }
+                }
             }
 
             if (count == 0)
@@ -1051,9 +928,7 @@ namespace DaggerfallWorkshop.Game
                     if (senses.TargetIsAbove() && !senses.TargetIsWithinPitchAngle(55.0f) && (changeStateTimer <= 0 || backingUp))
                     {
                         // Back away from target
-
-                        // [OSORKON] Vanilla has moveSpeed * 0.75 here. I want enemies to back up faster.
-                        motion = -transform.forward * moveSpeed;
+                        motion = -transform.forward * moveSpeed * 0.75f;
                         backingUp = true;
                     }
                     else
@@ -1318,9 +1193,7 @@ namespace DaggerfallWorkshop.Game
         void EvaluateMoveInForAttack()
         {
             // Classic always attacks
-
-            // [OSORKON] If enemy is the type to always charge, they'll always move in to attack.
-            if (!DaggerfallUnity.Settings.EnhancedCombatAI || alwaysCharges)
+            if (!DaggerfallUnity.Settings.EnhancedCombatAI)
             {
                 moveInForAttack = true;
                 return;
@@ -1336,33 +1209,28 @@ namespace DaggerfallWorkshop.Game
             // No retreat if enemy is paralyzed
             if (senses.Target != null)
             {
-                // [OSORKON] The new !prefersBow check ensures Archers/Rangers never move in to melee range, even
-                // if player is incapacitated or unaware.
-                if (!prefersBow)
+                EntityEffectManager targetEffectManager = senses.Target.GetComponent<EntityEffectManager>();
+                if (targetEffectManager.FindIncumbentEffect<MagicAndEffects.MagicEffects.Paralyze>() != null)
                 {
-                    EntityEffectManager targetEffectManager = senses.Target.GetComponent<EntityEffectManager>();
-                    if (targetEffectManager.FindIncumbentEffect<MagicAndEffects.MagicEffects.Paralyze>() != null)
-                    {
-                        moveInForAttack = true;
-                        return;
-                    }
+                    moveInForAttack = true;
+                    return;
+                }
 
-                    // No retreat if enemy's back is turned
-                    if (senses.TargetHasBackTurned())
-                    {
-                        moveInForAttack = true;
-                        return;
-                    }
+                // No retreat if enemy's back is turned
+                if (senses.TargetHasBackTurned())
+                {
+                    moveInForAttack = true;
+                    return;
+                }
 
-                    // No retreat if enemy is player with bow or weapon not out
-                    if (senses.Target == GameManager.Instance.PlayerEntityBehaviour
-                        && GameManager.Instance.WeaponManager.ScreenWeapon
-                        && (GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType == WeaponTypes.Bow
-                        || !GameManager.Instance.WeaponManager.ScreenWeapon.ShowWeapon))
-                    {
-                        moveInForAttack = true;
-                        return;
-                    }
+                // No retreat if enemy is player with bow or weapon not out
+                if (senses.Target == GameManager.Instance.PlayerEntityBehaviour
+                    && GameManager.Instance.WeaponManager.ScreenWeapon
+                    && (GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType == WeaponTypes.Bow
+                    || !GameManager.Instance.WeaponManager.ScreenWeapon.ShowWeapon))
+                {
+                    moveInForAttack = true;
+                    return;
                 }
             }
             else
@@ -1377,34 +1245,17 @@ namespace DaggerfallWorkshop.Game
             int levelMod = (entity.Level - senses.Target.Entity.Level) / 2;
             if (levelMod > 4)
                 levelMod = 4;
-
-            // [OSORKON] Vanilla has levelMod < -4 here. I find enemies constantly retreating really annoying,
-            // so I greatly reduced the likelihood of that occurring.
-            if (levelMod < 0)
-                levelMod = 0;
+            if (levelMod < -4)
+                levelMod = -4;
 
             int roll = Random.Range(0 + levelMod, 10 + levelMod);
 
-            // [OSORKON] If enemy is not an Archer or Ranger, proceed as normal. If they are, moveInForAttack will
-            // always be false.
-            if (!prefersBow)
-            {
-                moveInForAttack = roll > 4;
-            }
-            else
-            {
-                moveInForAttack = false;
-            }
+            moveInForAttack = roll > 4;
 
             // Chose to retreat
             if (!moveInForAttack)
             {
                 retreatDistanceMultiplier = (float)(retreatDistanceBaseMult + (retreatDistanceBaseMult * (0.25 * (2 - roll))));
-
-                // [OSORKON] This check is necessary for TakeAction to do what I want. Without this custom multiplier, Archers
-                // and Rangers usually won't begin retreating until player is right in front of them.
-                if (prefersBow)
-                    retreatDistanceMultiplier = 2.75f;
 
                 if (!DaggerfallUnity.Settings.EnhancedCombatAI)
                     return;
@@ -1437,7 +1288,7 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             if (changeStateTimer <= 0)
-                changeStateTimer = Random.Range(0.2f, 0.8f);
+                changeStateTimer = Random.Range(0.2f, .8f);
         }
 
         /// <summary>
@@ -1464,8 +1315,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         void TurnToTarget(Vector3 targetDirection)
         {
-            // [OSORKON] Vanilla has 20f here. I want enemies to turn faster.
-            const float turnSpeed = 30f;
+            const float turnSpeed = 20f;
             //Classic speed is 11.25f, too slow for Daggerfall Unity's agile player movement
 
             if (GameManager.ClassicUpdate)
@@ -1502,11 +1352,8 @@ namespace DaggerfallWorkshop.Game
         void ApplyFallDamage()
         {
             // Assuming the same formula is used for the player and enemies
-
-            // [OSORKON] BOSSFALL doubles vanilla falling damage and starts damaging at a lower threshold.
-            // Enemies are also affected by this change.
-            const float fallingDamageThreshold = 3.8f;
-            const float HPPerMetre = 10f;
+            const float fallingDamageThreshold = 5.0f;
+            const float HPPerMetre = 5f;
 
             if (controller.isGrounded)
             {

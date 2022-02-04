@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using DaggerfallConnect.FallExe;
@@ -27,10 +27,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ShowSpellIcon = false;
-
-            // [OSORKON] I removed the "properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;"
-            // line. The Item Maker doesn't offer this effect anymore. Until I get around to reworking this
-            // effect, it is no longer available to the player. Too OP.
+            properties.AllowedCraftingStations = MagicCraftingStations.ItemMaker;
             properties.ItemMakerFlags = ItemMakerFlags.AllowMultiplePrimaryInstances;
             properties.EnchantmentPayloadFlags = EnchantmentPayloadFlags.Held;
         }

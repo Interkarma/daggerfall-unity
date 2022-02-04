@@ -1,12 +1,10 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors:
-//
-// Note: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Contributors:    
 
 using UnityEngine;
 using System.Collections.Generic;
@@ -25,8 +23,7 @@ namespace DaggerfallWorkshop.Game.Guilds
     {
         #region Constants
 
-        // [OSORKON] I moved defaultTrainingMax from 50 to 94. Player can now train up to skill level 95.
-        public const int defaultTrainingMax = 94;
+        public const int defaultTrainingMax = 50;
         public const int memberTrainingCost = 100;
         public const int nonMemberTrainingCost = 400;
 

@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com), Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using System;
@@ -19,7 +19,6 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.FallExe;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Guilds;
-using DaggerfallWorkshop.Game.Utility;
 
 /*Example patterns:
  * 
@@ -292,9 +291,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (itemClass == (int)ItemGroups.MagicItems)
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-
-                // [OSORKON] I changed playerLevel to 10. This unlevels loot.
-                result = ItemBuilder.CreateRegularMagicItem(itemSubClass, 10, playerEntity.Gender, playerEntity.Race);
+                result = ItemBuilder.CreateRegularMagicItem(itemSubClass, playerEntity.Level, playerEntity.Gender, playerEntity.Race);
             }
             // Handle books
             else if (itemClass == (int)ItemGroups.Books)
@@ -318,7 +315,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Create item
                 result = new DaggerfallUnityItem((ItemGroups)itemClass, itemSubClass);
             }
-
+            
             // Randomise clothing dye
             if (result.IsClothing)
                 result.dyeColor = ItemBuilder.RandomClothingDye();
@@ -348,81 +345,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
-                // [OSORKON] This is a crude implementation of unleveled gold rewards for quests. Usually
-                // player will get very little, but good rewards occur often enough to keep things interesting.
-                // Player level no longer affects gold rewards at all. I'd like to refine this further in
-                // BOSSFALL v1.3 as I think high gold rewards happen too often.
-                int roll = Dice100.Roll();
-                int playerMod;
-
-                // [OSORKON] 20% of the time playerMod will equal something higher than 1. The playerMod is
-                // then multiplied by the base gold reward. Quests can be quite lucrative at any level.
-                // High playerMod values are relatively rare.
-                if (roll > 80)
-                {
-                    if (roll > 85)
-                    {
-                        if (roll > 88)
-                        {
-                            if (roll > 91)
-                            {
-                                if (roll > 94)
-                                {
-                                    if (roll > 96)
-                                    {
-                                        if (roll > 97)
-                                        {
-                                            if (roll > 98)
-                                            {
-                                                if (roll > 99)
-                                                {
-                                                    playerMod = 10;
-                                                }
-                                                else
-                                                {
-                                                    playerMod = 9;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                playerMod = 8;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            playerMod = 7;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        playerMod = 6;
-                                    }
-                                }
-                                else
-                                {
-                                    playerMod = 5;
-                                }
-                            }
-                            else
-                            {
-                                playerMod = 4;
-                            }
-                        }
-                        else
-                        {
-                            playerMod = 3;
-                        }
-                    }
-                    else
-                    {
-                        playerMod = 2;
-                    }
-                }
-                else
-                {
-                    playerMod = 1;
-                }
-
+                int playerMod = (playerEntity.Level / 2) + 1;
                 int factionMod = 50;
                 IGuild guild = null;
                 if (ParentQuest.FactionId != 0)
@@ -444,11 +367,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 PlayerGPS gps = GameManager.Instance.PlayerGPS;
                 int regionPriceMod = playerEntity.RegionData[gps.CurrentRegionIndex].PriceAdjustment / 2;
-
-                // [OSORKON] I changed the minimum range value from 150 * playerMod to 10 * playerMod. This may
-                // be too low. Occasionally player will get offered sub-50 gold for a dungeon quest, which 
-                // seems ridiculous. I want to refine this system in BOSSFALL v1.3.
-                amount = UnityEngine.Random.Range(10 * playerMod, (200 * playerMod) + 1) * (regionPriceMod + 500) / 1000 * (factionMod + 50) / 100;
+                amount = UnityEngine.Random.Range(150 * playerMod, (200 * playerMod) + 1) * (regionPriceMod + 500) / 1000 * (factionMod + 50) / 100;
 
                 if (guild != null)
                     amount = guild.AlterReward(amount);

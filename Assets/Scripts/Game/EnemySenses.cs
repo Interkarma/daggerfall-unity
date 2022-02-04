@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Allofich
 // 
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using UnityEngine;
@@ -80,11 +80,6 @@ namespace DaggerfallWorkshop.Game
         float classicSpawnYDistLower = 0f;
         float classicDespawnXZDist = 0f;
         float classicDespawnYDist = 0f;
-
-        /// <summary>
-        /// [OSORKON] This bool is true if enemy is a level 20 Mage, Sorcerer, or Nightblade. 
-        /// </summary>
-        public bool canDetectInvisible;
 
         public DaggerfallEntityBehaviour Target
         {
@@ -215,14 +210,6 @@ namespace DaggerfallWorkshop.Game
             // 180 degrees is classic's value. 190 degrees is actual human FOV according to online sources.
             if (DaggerfallUnity.Settings.EnhancedCombatAI)
                 FieldOfView = 190;
-
-            ///<summary>
-            /// [OSORKON] Checks if an enemy is a Level 20 Mage, Sorcerer, or Nightblade. Only needs to be checked once.
-            /// </summary>
-            if (enemyEntity.Level == 20 && (mobile.Enemy.ID == 128 || mobile.Enemy.ID == 131 || mobile.Enemy.ID == 133))
-            {
-                canDetectInvisible = true;
-            }
         }
 
         void FixedUpdate()
@@ -499,15 +486,9 @@ namespace DaggerfallWorkshop.Game
                             {
                                 motor.IsHostile = false;
                                 DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("languagePacified").Replace("%e", enemyEntity.Name).Replace("%s", languageSkill.ToString()), 5);
-
-                                // [OSORKON] I lowered TallySkill from 3 to 1. As far as I'm aware, no other skills tally more
-                                // than 1 on success. BOSSFALL greatly increases speed at which language skills level anyway.
-                                player.TallySkill(languageSkill, 1);    // BCHG: increased skill uses from 1 in classic on success to make raising language skills easier
+                                player.TallySkill(languageSkill, 3);    // BCHG: increased skill uses from 1 in classic on success to make raising language skills easier
                             }
-                            else
-                                // [OSORKON] I removed the conditions that excluded Etiquette and Streetwise from getting tallies
-                                // if enemy pacification wasn't successful. Player will notice Etiquette and Streetwise increasing
-                                // at a much faster rate. All language skills now function the same way. I like consistency.
+                            else if (languageSkill != DFCareer.Skills.Etiquette && languageSkill != DFCareer.Skills.Streetwise)
                                 player.TallySkill(languageSkill, 1);
                         }
                     }
@@ -647,10 +628,6 @@ namespace DaggerfallWorkshop.Game
 
             // Some enemy types can see through these effects.
             if (mobile.Enemy.SeesThroughInvisibility)
-                return false;
-
-            // [OSORKON] If enemy is a level 20 Mage, Sorcerer, or Nightblade, they can see Invisible.
-            if (canDetectInvisible)
                 return false;
 
             // If not one of the above enemy types, and target has invisibility,

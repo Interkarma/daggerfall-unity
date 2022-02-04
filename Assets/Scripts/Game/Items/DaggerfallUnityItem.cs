@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    
 // 
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using System;
@@ -17,8 +17,10 @@ using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Formulas;
+using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Items
 {
@@ -649,12 +651,7 @@ namespace DaggerfallWorkshop.Game.Items
         // Horses, carts, arrows and maps are not counted against encumbrance.
         public float EffectiveUnitWeightInKg()
         {
-            // [OSORKON] I removed "TemplateIndex == (int)Weapons.Arrow" from this conditional. This makes
-            // arrows actually weigh something. If player is using "Roleplay and Realism: Items", arrow
-            // weights are too high for my taste. RPR:I sets arrows to 0.1 kg and I set arrows to 0.05 kg,
-            // but RPR:I's weight takes precedence. I wish this wasn't the case, but unless I make BOSSFALL
-            // into a .dfmod I don't have an easy way to work around this.
-            if (ItemGroup == ItemGroups.Transportation ||
+            if (ItemGroup == ItemGroups.Transportation || TemplateIndex == (int)Weapons.Arrow ||
                 IsOfTemplate(ItemGroups.MiscItems, (int)MiscItems.Map))
                 return 0f;
             return weightInKg;
@@ -1047,52 +1044,16 @@ namespace DaggerfallWorkshop.Game.Items
 
         public virtual int GetShieldArmorValue()
         {
-            // [OSORKON] I rewrote most of this function to make shields of high tier materials actually useful.
-            // Leather/Chain/Steel/Silver shield armor unchanged from vanilla. An Iron shield grants 1 less armor
-            // than vanilla, an Elven shield grants 1 more armor than vanilla, a Dwarven shield grants 2 more armor
-            // than vanilla,... a Daedric shield grants 6 more armor than vanilla.
-            int shieldMaterialModifier;
-
-            switch (nativeMaterialValue)
-            {
-                case (int)ArmorMaterialTypes.Iron:
-                    shieldMaterialModifier = -1;
-                    break;
-                case (int)ArmorMaterialTypes.Elven:
-                    shieldMaterialModifier = 1;
-                    break;
-                case (int)ArmorMaterialTypes.Dwarven:
-                    shieldMaterialModifier = 2;
-                    break;
-                case (int)ArmorMaterialTypes.Mithril:
-                case (int)ArmorMaterialTypes.Adamantium:
-                    shieldMaterialModifier = 3;
-                    break;
-                case (int)ArmorMaterialTypes.Ebony:
-                    shieldMaterialModifier = 4;
-                    break;
-                case (int)ArmorMaterialTypes.Orcish:
-                    shieldMaterialModifier = 5;
-                    break;
-                case (int)ArmorMaterialTypes.Daedric:
-                    shieldMaterialModifier = 6;
-                    break;
-
-                default:
-                    shieldMaterialModifier = 0;
-                    break;
-            }
-
             switch (TemplateIndex)
             {
                 case (int)Armor.Buckler:
-                    return 1 + shieldMaterialModifier;
+                    return 1;
                 case (int)Armor.Round_Shield:
-                    return 2 + shieldMaterialModifier;
+                    return 2;
                 case (int)Armor.Kite_Shield:
-                    return 3 + shieldMaterialModifier;
+                    return 3;
                 case (int)Armor.Tower_Shield:
-                    return 4 + shieldMaterialModifier;
+                    return 4;
 
                 default:
                     return 0;
@@ -1228,13 +1189,6 @@ namespace DaggerfallWorkshop.Game.Items
             else
                 itemBroke = TextManager.Instance.GetLocalizedText("itemHasBroken");
             itemBroke = itemBroke.Replace("%s", LongName);
-
-            // [OSORKON] I want a different message displayed when Holy Water breaks. "Broken" water doesn't make much sense.
-            if (TemplateIndex == (int)ReligiousItems.Holy_water)
-            {
-                itemBroke = "You empty the Holy Water.";
-            }
-
             DaggerfallUI.Instance.PopupMessage(itemBroke);
 
             // Unequip item if owner specified

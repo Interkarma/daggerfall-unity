@@ -1,18 +1,19 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Numidium
 // 
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using UnityEngine;
 using System;
 using System.Collections.Generic;
 using DaggerfallConnect;
+using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
@@ -375,23 +376,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Deduct spellpoint cost from entity if not free (magic item, innate ability)
-
-            // [OSORKON] I ran into problems in EnemyEntity when I was trying to make enemies cast a set
-            // number of spells. Sometimes identical enemies would cast several spells, sometimes they'd cast
-            // only 1, and all I could initially figure out was that casting cost for different spells wasn't
-            // the reason for the variance. I tried setting enemy spell skills to higher levels in EnemyEntity
-            // but that never changed anything. After playtesting for a while, I figured out that enemy spell
-            // costs at least partially varied based on player spell skill level, but I never found the exact
-            // formula where that happened. I think it happens in the casting cost formulas in FormulaHelper,
-            // but at that point I wasn't confident enough in my ability to rework how spell costs got
-            // calculated without breaking things. Fortunately I found this alternate method. With my changes
-            // to this formula, if the caster is the player, spell costs are calculated like usual. If the
-            // caster is an enemy, 5 Magicka is deducted from their mana pool. This allowed me to precisely
-            // set how many spells an enemy would cast, regardless of actual casting costs.
-            if (IsPlayerEntity && !readySpellDoesNotCostSpellPoints)
+            if (!readySpellDoesNotCostSpellPoints)
                 entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
-            else if (!IsPlayerEntity && !readySpellDoesNotCostSpellPoints)
-                entityBehaviour.Entity.DecreaseMagicka(5);
 
             // Clear ready spell and reset casting - do not store last spell for no anim spells (prevent spamming)
             RaiseOnCastReadySpell(readySpell);
@@ -427,16 +413,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Deduct spellpoint cost from entity if not free (magic item, innate ability)
-
-            // [OSORKON] As I described above, I changed this formula so I could precisely set how many spells
-            // an enemy of a given level would cast. Now if the caster is the player, spell costs are calculated
-            // like usual. If the caster is an enemy, 5 Magicka is deducted from their mana pool. With these
-            // changes and with custom enemy Magicka pools I set in EnemyEntity, enemies cast a set amount of
-            // spells regardless of the spell's actual casting cost, which is what I wanted in the first place.
-            if (IsPlayerEntity && !readySpellDoesNotCostSpellPoints)
+            if (!readySpellDoesNotCostSpellPoints)
                 entityBehaviour.Entity.DecreaseMagicka(readySpellCastingCost);
-            else if (!IsPlayerEntity && !readySpellDoesNotCostSpellPoints)
-                entityBehaviour.Entity.DecreaseMagicka(5);
 
             // Play casting animation based on element type
             // Spell is released by event handler PlayerSpellCasting_OnReleaseFrame
@@ -1207,15 +1185,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             // Cannot reflect bundle more than once
             // Could increase this later to allow for limited "reflect volleys" with two reflecting entities and first one to fail save cops the spell
-
-            // [OSORKON] The above comment inspired me to make this change. ReflectedCount can go up to 100
-            // rather than vanilla's 0, so "reflect volleys" can now occur. I didn't want infinite reflections
-            // as I thought that would lead to confusing HUD message spam, so BOSSFALL enemy Spell Reflection
-            // comes from Shalidor's Mirror which has a maximum reflect chance of 65% at enemy level 30. In
-            // practice, I got spammed with a few "spell reflected" messages when I had a very high reflect
-            // chance fighting an Ancient Lich who also had Spell Reflection active, but I didn't think it
-            // was anything too obnoxious.
-            if (sourceBundle.ReflectedCount > 100)
+            if (sourceBundle.ReflectedCount > 0)
                 return false;
 
             // Entity must be reflecting

@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Numidium
 // 
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using UnityEngine;
@@ -258,11 +258,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void Spinner_OnDownButtonClicked()
         {
-            // [OSORKON] I changed the minimum stat value to 1 rather than 10. I did this very early
-            // on when I wanted to drop my Luck attribute to 1 so I could get the hardest result possible
-            // from the "Unleveled Loot" mod. My later changes made my use of "Unleveled Loot" unnecessary,
-            // but this change remains. Don't try this - dropping an attribute to 1 is suicidal.
-            const int minFreeEditValue = 1;
+            const int minFreeEditValue = 10;
 
             // Get working stat value
             int workingValue = workingStats.GetPermanentStatValue(selectedStat);

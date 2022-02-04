@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
 // Contributors:    
 // 
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using System.Collections.Generic;
@@ -123,9 +123,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             now.RaiseTime(DaggerfallDateTime.SecondsPerHour * 3);
             playerEntity.DecreaseFatigue(PlayerEntity.DefaultFatigueLoss * 180);
             int skillAdvancementMultiplier = DaggerfallSkills.GetAdvancementMultiplier(skillToTrain);
-
-            // [OSORKON] I replaced vanilla's random range with 8. This roughly halves training effectiveness.
-            short tallyAmount = (short)(8 * skillAdvancementMultiplier);
+            short tallyAmount = (short)(UnityEngine.Random.Range(10, 20 + 1) * skillAdvancementMultiplier);
             playerEntity.TallySkill(skillToTrain, tallyAmount);
             DaggerfallUI.MessageBox(TrainSkillId);
         }

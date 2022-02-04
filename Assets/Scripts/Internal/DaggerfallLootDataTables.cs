@@ -1,5 +1,5 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -7,7 +7,7 @@
 // Contributors:    Allofich
 // 
 // Notes: Extracted from DaggerfallLoot class on 2 Feb 2018
-//        All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+//
 
 using System.Collections.Generic;
 
@@ -28,14 +28,10 @@ namespace DaggerfallWorkshop
         // Default icon range for random treasure piles in dungeons and when items are dropped by the player
         // Random treasure is generated only when clicked on and icon has no bearing
         // Only a subset of loot icons from TEXTURE.216 are used & These are matched to classic
-
-        // [OSORKON] Expanded loot pile icon array, called when Alternate Loot Piles setting is ON.
-        public static int[] alternateRandomTreasureIconIndices = new int[]
-        { 0,1,3,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40,43,44,45,46,47 };
-
-        // [OSORKON] Vanilla loot pile icon array, called when Alternate Loot Piles setting is OFF.
         public static int[] randomTreasureIconIndices = new int[]
-        { 0, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 37, 43, 44, 45, 46, 47 };
+        {
+            0, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 37, 43, 44, 45, 46, 47
+        };
 
         // Dropped items icon lists for player selection in inventory window
         public static Dictionary<int, int[]> dropIconIdxs = new Dictionary<int, int[]>
@@ -57,12 +53,7 @@ namespace DaggerfallWorkshop
         public static byte[] itemGroupsClothingStore = new byte[] { 0x06, 0x32, 0x0C, 0x32 };
         public static byte[] itemGroupsFurnitureStore = new byte[] { 0x0D, 0x14 };
         public static byte[] itemGroupsGemStore = new byte[] { 0x0E, 0x28, 0x19, 0x32 };
-
-        // [OSORKON] I added "0x02, 0x0A," and changed "0x03, 0x14," to "0x03, 0x0A," in itemGroupsGeneralStore.
-        // 0x02 and 0x03 are the ItemGroup, and I believe 0x0A and 0x14 are the amount of times the game tries to
-        // generate an item from that ItemGroup. Items are not generated with 100% probability, though. The end
-        // result is that General Stores now stock and sell armor, and stock fewer weapons.
-        public static byte[] itemGroupsGeneralStore = new byte[] { 0x02, 0x0A, 0x03, 0x0A, 0x06, 0x0A, 0x07, 0x0A, 0x09, 0x32, 0x17, 0x00, 0x0C, 0x0A, 0x04, 0x00 };
+        public static byte[] itemGroupsGeneralStore = new byte[] { 0x03, 0x14, 0x06, 0x0A, 0x07, 0x0A, 0x09, 0x32, 0x17, 0x00, 0x0C, 0x0A, 0x04, 0x00 };
         public static byte[] itemGroupsLibrary = new byte[] { 0x07, 0x32 };
         public static byte[] itemGroupsGuildHall = new byte[] { 0x04, 0x1E, 0x07, 0x1E, 0x0F, 0x32, 0x10, 0x32, 0x11, 0x1E, 0x12, 0x14, 0x13, 0x14, 0x14, 0x3C, 0x15, 0x28, 0x16, 0x1E };
         public static byte[] itemGroupsPawnShop = new byte[] { 0x02, 0x0A, 0x03, 0x0A, 0x04, 0x0A, 0x07, 0x0A, 0x09, 0x14, 0x0D, 0x05, 0x0E, 0x0A, 0x19, 0x0A, 0x0A, 0x0A };

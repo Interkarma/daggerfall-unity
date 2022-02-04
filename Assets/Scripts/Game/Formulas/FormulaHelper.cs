@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Allofich, Hazelnut, ifkopifko, Numidium, TheLacus
 // 
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using UnityEngine;
@@ -54,84 +54,6 @@ namespace DaggerfallWorkshop.Game.Formulas
         // Approximation of classic frame updates
         public const int classicFrameUpdate = 980;
 
-        /// <summary>
-        /// [OSORKON] This array represents enemy IDs from 0-38 (Rat to IceAtronach). Monsters in that ID range
-        /// have varying weapon resistances/immunities/weaknesses, and with this array I was able to greatly improve
-        /// code efficiency over the enormous if/else if list that was in previous versions of BOSSFALL.
-        /// </summary> 
-        public static readonly byte[] enemySpecialHandling = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 13, 3, 0, 2,
-            5, 6, 4, 0, 7, 5, 0, 0, 11, 0, 12, 0, 12, 0, 12, 12, 0, 9, 8, 2, 10 };
-
-        /// <summary>
-        /// [OSORKON] Each element in this array represents a weapon material, Iron through Daedric. Each material has a
-        /// (element / 1025) percent chance of being generated, unless the RandomMaterial method is generating items for an
-        /// enemy above level 15. In that case high tier material generation is more likely. Details are in my comments in the
-        /// RandomMaterial method.
-        /// </summary>
-        public static readonly short[] materialProbability = { 327, 654, 8, 12, 8, 5, 4, 3, 2, 1 };
-
-        /// <summary>
-        /// [OSORKON] This 147-element monstrosity covers enemy IDs from 0-146 and determines how much HP Vampire player characters
-        /// heal when they kill a given enemy. BOSSFALL v1.3 healed Vampire players 2 HP with every successful Hand-to-Hand attack
-        /// whether or not it made sense to do so - I added this feature as an afterthought. I am not satisfied with my previous
-        /// addition and want to add something more memorable (and useful). This array is used in EnemyDeath to determine whether
-        /// Vampire player characters should be healed and by how much - more powerful enemies have more powerful blood so they
-        /// heal player more. Most of this array is unused filler as enemies with IDs 43-127 don't exist, but it's more efficient
-        /// to declare this whole thing and then search by ID without modification than it would be to declare a 62-element array
-        /// (to match the 62 enemies in DFU) and then subtract 85 from every enemy ID above 127 to get the correct index number.
-        /// </summary>
-        public static readonly byte[] vampireHealAmount = { 3, 1, 0, 3, 75, 50, 9, 40, 50, 40, 15, 5, 50, 15,
-        50, 0, 150, 0, 0, 0, 12, 45, 0, 0, 200, 0, 0, 100, 175, 150, 255, 255, 0, 0, 15, 0, 0, 0,
-        0, 0, 200, 20, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 20, 25, 15, 15, 20, 20, 20, 25, 15, 20, 200, 35, 30, 35, 50, 45, 40, 50 };
-
-        /// <summary>
-        /// [OSORKON] This enormous 147-element array of strings covers enemy IDs from 0-146 and is used in EnemyDeath to determine
-        /// what HUD message is displayed after Vampire player characters kill a given enemy. Most of this array is unused filler
-        /// as enemies with IDs 43-127 don't exist, but it's more efficient to declare this whole thing and then search by ID
-        /// without modification than it would be to declare a 62-element array (to match the 62 enemies in DFU) and then subtract
-        /// 85 from every enemy ID above 127 to get the correct index number. Each enemy displays a unique HUD message.
-        /// </summary>
-        public static readonly string[] vampireHUDMessage = { "You discard the drained Rat.", "Barely any blood. Worthless Imp.", "",
-            "You discard the drained Giant Bat.", "You gorge on Grizzly Bear blood.", "You feast on Sabretooth Tiger blood.",
-            "Not enough blood in this Spider.", "You greedily lap up the Orc's blood.", "Fresh Centaur blood, and plenty of it!",
-            "You devour the Werewolf's cursed blood.", "You ache for more Nymph blood.", "There's not much blood in the Slaughterfish.",
-            "You guzzle the Orc Sergeant's blood.", "Harpy blood tastes as vile as it smells.", "You yearn for more Wereboar blood.",
-            "", "Giant blood. Almost enough to satisfy you.", "You gag on foul Zombie blood.", "", "",
-            "Not much blood in this Giant Scorpion.", "You savor the Orc Shaman's blood.", "", "",
-            "Orc Warlord blood revitalizes you!", "", "", "Daedroth blood. So sweet...", "This Vampire's blood is now yours.",
-            "Daedra Seducer blood mends your wounds.", "Vampire Ancient blood sates your hunger. For now.",
-            "You feel the heady rush of Daedra Lord blood!", "", "", "You crave more Dragonling blood.", "", "",
-            "You retch on old Flesh Atronach blood.", "", "", "Such powerful Dragonling blood!", "Dreugh blood tastes like Orc.",
-            "Lamia blood is marvelous. You want more.", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-            "", "", "", "", "", "", "This Mage had more Magicka than blood.", "The Spellsword succumbs to your fangs.",
-            "You gulp down the Battlemage's blood.", "You absorb the Sorcerer's blood.", "Healer's blood cannot assuage your hunger.",
-            "The Nightblade's blood gushes into your mouth.", "You lust for more Bard blood.", "You rob the Burglar of blood.",
-            "This Rogue's blood is delicious.", "This scrawny Acrobat had little blood.", "You steal life from the Thief.",
-            "You imbibe the Assassin's powerful blood!", "You drain the Monk of blood.", "You sup on the Archer's vital fluids.",
-            "You eagerly drink the Ranger's blood.", "Hearty Barbarian blood!", "This Warrior's blood fortifies you.",
-            "The Knight's blood fills your belly.", "You consume the Guard's blood. You want more." };
-
-        /// <summary>
-        /// [OSORKON] When a player with stage two Lycanthropy kills an innocent a string is randomly selected from this array
-        /// and displayed as a HUD message. Added for extra roleplaying flavor.
-        /// </summary>
-        public static readonly string[] innocentHUDMessage = { "Your urge to kill subsides.", "The innocent collapses.",
-        "The innocent breathes their last.", "One final twitch and the innocent goes still.", "A pool of blood spreads from the innocent.",
-        "You shed innocent blood.", "You are soaked with innocent blood.", "Your urge to hunt fades.", "You tear innocent flesh from bone.",
-        "You spill innocent blood.", "The innocent shrieks, then goes silent.", "You lock eyes with the dying innocent.",
-        "Blood fountains from the innocent's neck.", "Innocent blood soaks the ground.", "Life fades from the innocent's eyes.",
-        "Your urge to hunt recedes.", "The innocent recoils, then falls.", "You end an innocent life.", "Innocent screams fill the air.",
-        "The innocent gasps, then goes limp.", "You cut short an innocent life.", "The innocent lies in a broken heap.",
-        "Blood gushes from the innocent's chest.", "Eyes wide with shock, the innocent topples.", "Silently, the innocent expires.",
-        "You wipe innocent blood from your face.", "You stop an innocent heart.", "The innocent crumples to the ground.",
-        "Blood spouts from the innocent's mouth.", "Writhing, the innocent drops to the earth.", "An innocent heart beats no more.",
-        "With a pitiful moan, the innocent dies.", "The innocent's mangled body lies still.", "Your face is covered with innocent blood.",
-        "Your urge to hunt dissipates.", "You snuff out an innocent life.", "An innocent corpse lies at your feet." };
-
         /// <summary>Struct for return values of formula that affect damage and to-hit chance.</summary>
         public struct ToHitAndDamageMods
         {
@@ -147,8 +69,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("DamageModifier", out del))
                 return del(strength);
 
-            // [OSORKON] I changed STR damage modifier to match scaling of other stats.
-            return (int)Mathf.Floor((float)(strength - 50) / 10f);
+            return (int)Mathf.Floor((float)(strength - 50) / 5f);
         }
 
         public static int MaxEncumbrance(int strength)
@@ -229,22 +150,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Using maxBonusPool + 1 for inclusive range
             UnityEngine.Random.InitState(Time.frameCount);
             return UnityEngine.Random.Range(minBonusPool, maxBonusPool + 1);
-        }
-
-        /// <summary>[OSORKON] This new bool detects WeaponStates that are punch attacks when player is using Hand-to-Hand.
-        /// I used this to rework H2H skill. I had an IsKick bool but I rewrote code and didn't use it anymore.</summary>
-        public static bool IsPunch(FPSWeapon onscreenWeapon)
-        {
-            if (onscreenWeapon != null)
-            {
-                if (onscreenWeapon.WeaponState == WeaponStates.StrikeRight || onscreenWeapon.WeaponState == WeaponStates.StrikeDownLeft
-                    || onscreenWeapon.WeaponState == WeaponStates.StrikeDownRight)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         #endregion
@@ -401,15 +306,11 @@ namespace DaggerfallWorkshop.Game.Formulas
                 skill *= 2;
 
             // Clamp skill range
-
-            // [OSORKON] I changed how luck affects the skill check and the clamp range.
-            skill = Mathf.Clamp(skill, 1, 100);
-            float luckFactor = Mathf.Lerp(-5, 5, luck * 0.01f);
+            skill = Mathf.Clamp(skill, 5, 95);
+            float luckFactor = Mathf.Lerp(0, 10, luck * 0.01f);
 
             // Skill Check
-
-            // [OSORKON] Climbing success now depends almost entirely on your skill level.
-            int chance = (int)(Mathf.Lerp(15, 100, skill * .01f) + luckFactor);
+            int chance = (int) (Mathf.Lerp(basePercentSuccess, 100, skill * .01f) + luckFactor);
 
             return chance;
         }
@@ -550,7 +451,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             // in classic Daggerfall shows it as continuing to be (handToHandSkill / 5) + 1
             return (handToHandSkill / 5) + 1;
         }
-            
+
         public static int CalculateWeaponMinDamage(Weapons weapon)
         {
             Func<Weapons, int> del;
@@ -559,7 +460,6 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             switch (weapon)
             {
-                // [OSORKON] I set all weapon minimum damage to 1.
                 case Weapons.Dagger:
                 case Weapons.Tanto:
                 case Weapons.Wakazashi:
@@ -567,18 +467,21 @@ namespace DaggerfallWorkshop.Game.Formulas
                 case Weapons.Broadsword:
                 case Weapons.Staff:
                 case Weapons.Mace:
+                    return 1;
                 case Weapons.Longsword:
                 case Weapons.Claymore:
                 case Weapons.Battle_Axe:
                 case Weapons.War_Axe:
                 case Weapons.Flail:
+                    return 2;
                 case Weapons.Saber:
                 case Weapons.Katana:
                 case Weapons.Dai_Katana:
                 case Weapons.Warhammer:
+                    return 3;
                 case Weapons.Short_Bow:
                 case Weapons.Long_Bow:
-                    return 1;
+                    return 4;
                 default:
                     return 0;
             }
@@ -648,12 +551,6 @@ namespace DaggerfallWorkshop.Game.Formulas
             PlayerEntity player = GameManager.Instance.PlayerEntity;
             short skillID = 0;
 
-            // [OSORKON] These variables are used in my new formulas.
-            DaggerfallUnityItem gloves = player.ItemEquipTable.GetItem(EquipSlots.Gloves);
-            DaggerfallUnityItem boots = player.ItemEquipTable.GetItem(EquipSlots.Feet);
-            DaggerfallUnityItem poisonWeapon = attacker.ItemEquipTable.GetItem(EquipSlots.RightHand);
-            var enemyTarget = target as EnemyEntity;
-
             // Choose whether weapon-wielding enemies use their weapons or weaponless attacks.
             // In classic, weapon-wielding enemies use the damage values of their weapons
             // instead of their weaponless values.
@@ -661,32 +558,29 @@ namespace DaggerfallWorkshop.Game.Formulas
             // and the weaponless values seems more appropriate, so here
             // enemies will choose to use their weaponless attack if it is more damaging.
             EnemyEntity AIAttacker = attacker as EnemyEntity;
-
-            // [OSORKON] I modified this check to also make human class enemies use Hand-to-Hand if that would be more
-            // effective. This makes humans far more dangerous at higher levels, which is one of BOSSFALL's main goals.
             if (AIAttacker != null && weapon != null)
             {
                 int weaponAverage = (weapon.GetBaseDamageMin() + weapon.GetBaseDamageMax()) / 2;
                 int noWeaponAverage = (AIAttacker.MobileEnemy.MinDamage + AIAttacker.MobileEnemy.MaxDamage) / 2;
-                int classNoWeaponAverage = (CalculateHandToHandMinDamage(AIAttacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand))
-                    + CalculateHandToHandMaxDamage(AIAttacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand))) / 2;
 
-                if (AIAttacker.EntityType == EntityTypes.EnemyMonster)
+                if (noWeaponAverage > weaponAverage)
                 {
-                    if (noWeaponAverage > weaponAverage)
-                    {
-                        // Use hand-to-hand
-                        weapon = null;
-                    }
-                }
-                else if (classNoWeaponAverage > weaponAverage)
-                {
+                    // Use hand-to-hand
                     weapon = null;
                 }
             }
 
             if (weapon != null)
             {
+                // If the attacker is using a weapon, check if the material is high enough to damage the target
+                if (target.MinMetalToHit > (WeaponMaterialTypes)weapon.NativeMaterialValue)
+                {
+                    if (attacker == player)
+                    {
+                        DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("materialIneffective"));
+                    }
+                    return 0;
+                }
                 // Get weapon skill used
                 skillID = weapon.GetWeaponSkillIDAsShort();
             }
@@ -716,80 +610,6 @@ namespace DaggerfallWorkshop.Game.Formulas
 
                 backstabChance = CalculateBackstabChance(player, null, isEnemyFacingAwayFromPlayer);
                 chanceToHitMod += backstabChance;
-
-                // [OSORKON] This long list checks whether player's H2H attacks are punches or kicks and buffs
-                // to-hit rolls according to what armor material is on player's hands or feet. To-hit bonuses
-                // scale exactly like vanilla DFU weapon materials. Leather, Chain, Steel, and Silver do not
-                // change to-hit rolls. If player is using a weapon or in wereform these checks don't run.
-                if (skillID == (short)DFCareer.Skills.HandToHand
-                    && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Werecreature)
-                {
-                    if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                    {
-                        if (gloves != null)
-                        {
-                            switch (gloves.nativeMaterialValue)
-                            {
-                                case (int)ArmorMaterialTypes.Iron:
-                                    chanceToHitMod -= 10;
-                                    break;
-                                case (int)ArmorMaterialTypes.Elven:
-                                    chanceToHitMod += 10;
-                                    break;
-                                case (int)ArmorMaterialTypes.Dwarven:
-                                    chanceToHitMod += 20;
-                                    break;
-                                case (int)ArmorMaterialTypes.Mithril:
-                                case (int)ArmorMaterialTypes.Adamantium:
-                                    chanceToHitMod += 30;
-                                    break;
-                                case (int)ArmorMaterialTypes.Ebony:
-                                    chanceToHitMod += 40;
-                                    break;
-                                case (int)ArmorMaterialTypes.Orcish:
-                                    chanceToHitMod += 50;
-                                    break;
-                                case (int)ArmorMaterialTypes.Daedric:
-                                    chanceToHitMod += 60;
-                                    break;
-
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-                    else if (boots != null)
-                    {
-                        switch (boots.nativeMaterialValue)
-                        {
-                            case (int)ArmorMaterialTypes.Iron:
-                                chanceToHitMod -= 10;
-                                break;
-                            case (int)ArmorMaterialTypes.Elven:
-                                chanceToHitMod += 10;
-                                break;
-                            case (int)ArmorMaterialTypes.Dwarven:
-                                chanceToHitMod += 20;
-                                break;
-                            case (int)ArmorMaterialTypes.Mithril:
-                            case (int)ArmorMaterialTypes.Adamantium:
-                                chanceToHitMod += 30;
-                                break;
-                            case (int)ArmorMaterialTypes.Ebony:
-                                chanceToHitMod += 40;
-                                break;
-                            case (int)ArmorMaterialTypes.Orcish:
-                                chanceToHitMod += 50;
-                                break;
-                            case (int)ArmorMaterialTypes.Daedric:
-                                chanceToHitMod += 60;
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-                }
             }
 
             // Choose struck body part
@@ -868,740 +688,17 @@ namespace DaggerfallWorkshop.Game.Formulas
                     damage = CalculateBackstabDamage(damage, backstabChance);
                 }
 
-            }
-
-            // Handle poisoned weapons
-
-            // [OSORKON] I moved poison formulas out of the weapon != null check. Enemies with poisoned weapons
-            // now usually use Hand-to-Hand and I want their poison to be inflicted anyway, so I check
-            // right-handed items for poison and apply that poison to the target. Enemies only spawn with poison
-            // on right-handed items, so from the player's perspective enemy poison functions exactly like
-            // vanilla, which is my goal. This method comes with some downsides. For instance, if poisoned weapons
-            // ever become a part of the player's arsenal (added by mods, I assume) this formula will never
-            // apply poison if player is using a poisoned weapon with their left hand. If that circumstance ever
-            // arises I'll have to revisit this formula. Note the Assassin customization - their poison will
-            // bypass player's Poison Immunity, but only if player is at least level 7.
-            if (damage > 0 && poisonWeapon != null && poisonWeapon.poisonType != Poisons.None)
-            {
-                if (AIAttacker.MobileEnemy.ID == (int)MobileTypes.Assassin && GameManager.Instance.PlayerEntity.Level > 6)
+                // Handle poisoned weapons
+                if (damage > 0 && weapon.poisonType != Poisons.None)
                 {
-                    InflictPoison(attacker, target, poisonWeapon.poisonType, true);
-                    poisonWeapon.poisonType = Poisons.None;
-                }
-                else
-                {
-                    InflictPoison(attacker, target, poisonWeapon.poisonType, false);
-                    poisonWeapon.poisonType = Poisons.None;
+                    InflictPoison(attacker, target, weapon.poisonType, false);
+                    weapon.poisonType = Poisons.None;
                 }
             }
 
             damage = Mathf.Max(0, damage);
 
             DamageEquipment(attacker, target, damage, weapon, struckBodyPart);
-
-            // [OSORKON] This inflicts durability damage on player's gloves or boots depending on whether H2H attack is a punch
-            // or kick. I didn't put this in the DamageEquipment function because then I'd have to re-declare a bunch of local
-            // variables and I assume that would be less efficient. If player misses their H2H attack, is using a weapon, or in
-            // wereform, these checks don't run.
-            if (attacker == player && skillID == (short)DFCareer.Skills.HandToHand && damage > 0
-             && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Werecreature)
-            {
-                if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                {
-                    if (gloves != null)
-                    {
-                        if (gloves.IsEnchanted)
-                        {
-                            gloves.LowerCondition(10, player, player.Items);
-                        }
-                        else
-                        {
-                            gloves.LowerCondition(10, player);
-                        }
-                    }
-                }
-                else if (boots != null)
-                {
-                    if (boots.IsEnchanted)
-                    {
-                        boots.LowerCondition(15, player, player.Items);
-                    }
-                    else
-                    {
-                        boots.LowerCondition(15, player);
-                    }
-                }
-            }
-
-            // [OSORKON] I desperately needed to improve implementation of BOSSFALL's custom enemy weapon immunities, resistances, and
-            // weaknesses, as the massive if/else if list I used previously was not ideal. This switch tree is the most efficient
-            // option I came up with. Enemy special handling checks are run if the player lands a hit and is not in wereform, the enemy
-            // ID is less than 39, and the element at the index matching the enemy's ID in the new enemySpecialHandling array is greater
-            // than 0. I didn't want to split enemy special handling into a bunch of different functions as then I'd have to re-declare
-            // a ton of variables and run checks to find out if player is using Hand-to-Hand, which I assume is less efficient.
-            if (attacker == player && damage > 0 && enemyTarget.MobileEnemy.ID < 39
-             && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Werecreature)
-            {
-                if (enemySpecialHandling[enemyTarget.MobileEnemy.ID] != (int)EnemySpecialHandling.None)
-                {
-                    switch (enemySpecialHandling[enemyTarget.MobileEnemy.ID])
-                    {
-                        case (int)EnemySpecialHandling.Spriggan:
-                            switch (skillID)
-                            {
-                                case (short)DFCareer.Skills.Axe:
-                                    damage *= 2;
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("Very effective!");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.HandToHand:
-                                    damage /= 4;
-                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 1);
-                                    if (!enemyTarget.shownMsgTwo)
-                                    {
-                                        DaggerfallUI.AddHUDText("Ow! Not very effective...");
-                                        enemyTarget.shownMsgTwo = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.ShortBlade:
-                                    damage /= 2;
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(1, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(1, player);
-                                    }
-                                    if (!enemyTarget.shownMsgThree)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective... You dull your blade.");
-                                        enemyTarget.shownMsgThree = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.LongBlade:
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(6, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(6, player);
-                                    }
-                                    if (!enemyTarget.shownMsgFour)
-                                    {
-                                        DaggerfallUI.AddHUDText("You dull your blade.");
-                                        enemyTarget.shownMsgFour = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.BluntWeapon:
-                                    break;
-                                case (short)DFCareer.Skills.Archery:
-                                    damage = 0;
-                                    if (!enemyTarget.shownMsgFive)
-                                    {
-                                        DaggerfallUI.AddHUDText("Ineffective.");
-                                        enemyTarget.shownMsgFive = true;
-                                    }
-                                    break;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.FleshyUndead:
-                            switch (skillID)
-                            {
-                                case (short)DFCareer.Skills.Axe:
-                                    damage *= 2;
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("Very effective!");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.LongBlade:
-                                case (short)DFCareer.Skills.BluntWeapon:
-                                    break;
-                                case (short)DFCareer.Skills.HandToHand:
-                                    damage /= 3;
-                                    if (!enemyTarget.shownMsgTwo)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective...");
-                                        enemyTarget.shownMsgTwo = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.ShortBlade:
-                                    damage /= 2;
-                                    if (!enemyTarget.shownMsgThree)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective...");
-                                        enemyTarget.shownMsgThree = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.Archery:
-                                    damage /= 4;
-                                    if (!enemyTarget.shownMsgFour)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective...");
-                                        enemyTarget.shownMsgFour = true;
-                                    }
-                                    break;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.SkeletalWarrior:
-                            switch (skillID)
-                            {
-                                case (short)DFCareer.Skills.BluntWeapon:
-                                    damage *= 2;
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("Very effective!");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.Axe:
-                                case (short)DFCareer.Skills.HandToHand:
-                                    break;
-                                case (short)DFCareer.Skills.LongBlade:
-                                    damage /= 2;
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(6, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(6, player);
-                                    }
-                                    if (!enemyTarget.shownMsgTwo)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective... You nick your blade.");
-                                        enemyTarget.shownMsgTwo = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.ShortBlade:
-                                    damage /= 3;
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(2, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(2, player);
-                                    }
-                                    if (!enemyTarget.shownMsgThree)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective... You chip your blade.");
-                                        enemyTarget.shownMsgThree = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.Archery:
-                                    damage = 0;
-                                    if (!enemyTarget.shownMsgFour)
-                                    {
-                                        DaggerfallUI.AddHUDText("Ineffective.");
-                                        enemyTarget.shownMsgFour = true;
-                                    }
-                                    break;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.Scorpion:
-                            switch (skillID)
-                            {
-                                case (short)DFCareer.Skills.Axe:
-                                    damage *= 2;
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("Very effective!");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.BluntWeapon:
-                                case (short)DFCareer.Skills.LongBlade:
-                                case (short)DFCareer.Skills.ShortBlade:
-                                    break;
-                                case (short)DFCareer.Skills.HandToHand:
-                                    damage /= 2;
-                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 1);
-                                    if (!enemyTarget.shownMsgTwo)
-                                    {
-                                        DaggerfallUI.AddHUDText("Ow! Not very effective...");
-                                        enemyTarget.shownMsgTwo = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.Archery:
-                                    damage /= 3;
-                                    if (!enemyTarget.shownMsgThree)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective...");
-                                        enemyTarget.shownMsgThree = true;
-                                    }
-                                    break;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.SilverOnly:
-                            if (skillID != (short)DFCareer.Skills.HandToHand)
-                            {
-                                if (weapon.nativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                                {
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("Your Silver weapon strikes true!");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                }
-                                damage = 0;
-                                if (!enemyTarget.shownMsgTwo)
-                                {
-                                    DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                                    enemyTarget.shownMsgTwo = true;
-                                }
-                                break;
-                            }
-                            else if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                            {
-                                if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                                {
-                                    if (!enemyTarget.shownMsgThree)
-                                    {
-                                        DaggerfallUI.AddHUDText("Your Silver gauntlet strikes true!");
-                                        enemyTarget.shownMsgThree = true;
-                                    }
-                                    break;
-                                }
-                                damage = 0;
-                                if (!enemyTarget.shownMsgFour)
-                                {
-                                    DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                                    enemyTarget.shownMsgFour = true;
-                                }
-                                break;
-                            }
-                            else if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                            {
-                                if (!enemyTarget.shownMsgFive)
-                                {
-                                    DaggerfallUI.AddHUDText("Your Silver boot strikes true!");
-                                    enemyTarget.shownMsgFive = true;
-                                }
-                                break;
-                            }
-                            damage = 0;
-                            if (!enemyTarget.shownMsgSix)
-                            {
-                                DaggerfallUI.AddHUDText("Ineffective. Use Silver.");
-                                enemyTarget.shownMsgSix = true;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.Mummy:
-                            switch (skillID)
-                            {
-                                case (short)DFCareer.Skills.Axe:
-                                case (short)DFCareer.Skills.LongBlade:
-                                    damage *= 2;
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("Very effective!");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.BluntWeapon:
-                                case (short)DFCareer.Skills.HandToHand:
-                                case (short)DFCareer.Skills.ShortBlade:
-                                    break;
-                                case (short)DFCareer.Skills.Archery:
-                                    damage /= 2;
-                                    if (!enemyTarget.shownMsgTwo)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective...");
-                                        enemyTarget.shownMsgTwo = true;
-                                    }
-                                    break;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.Stone:
-                            switch (skillID)
-                            {
-                                case (short)DFCareer.Skills.BluntWeapon:
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(6, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(6, player);
-                                    }
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("You dent your weapon.");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.HandToHand:
-                                    damage = 0;
-                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                                    if (!enemyTarget.shownMsgTwo)
-                                    {
-                                        DaggerfallUI.AddHUDText("OW! Ineffective.");
-                                        enemyTarget.shownMsgTwo = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.Axe:
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(12, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(12, player);
-                                    }
-                                    if (!enemyTarget.shownMsgThree)
-                                    {
-                                        DaggerfallUI.AddHUDText("You chip your axe.");
-                                        enemyTarget.shownMsgThree = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.LongBlade:
-                                    damage /= 2;
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(18, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(18, player);
-                                    }
-                                    if (!enemyTarget.shownMsgFour)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective... You crack your blade.");
-                                        enemyTarget.shownMsgFour = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.ShortBlade:
-                                    damage /= 3;
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(3, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(3, player);
-                                    }
-                                    if (!enemyTarget.shownMsgFive)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective... You crack your blade.");
-                                        enemyTarget.shownMsgFive = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.Archery:
-                                    damage = 0;
-                                    if (!enemyTarget.shownMsgSix)
-                                    {
-                                        DaggerfallUI.AddHUDText("Ineffective.");
-                                        enemyTarget.shownMsgSix = true;
-                                    }
-                                    break;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.Iron:
-                            switch (skillID)
-                            {
-                                case (short)DFCareer.Skills.BluntWeapon:
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(12, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(12, player);
-                                    }
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("You chip your weapon.");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.HandToHand:
-                                    damage = 0;
-                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 3);
-                                    if (!enemyTarget.shownMsgTwo)
-                                    {
-                                        DaggerfallUI.AddHUDText("OW!! Ineffective.");
-                                        enemyTarget.shownMsgTwo = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.Axe:
-                                    damage /= 2;
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(18, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(18, player);
-                                    }
-                                    if (!enemyTarget.shownMsgThree)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective... You crack your axe.");
-                                        enemyTarget.shownMsgThree = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.LongBlade:
-                                    damage /= 3;
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(24, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(24, player);
-                                    }
-                                    if (!enemyTarget.shownMsgFour)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective... You badly damage your blade!");
-                                        enemyTarget.shownMsgFour = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.ShortBlade:
-                                    damage /= 4;
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(4, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(4, player);
-                                    }
-                                    if (!enemyTarget.shownMsgFive)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective... You badly damage your blade!");
-                                        enemyTarget.shownMsgFive = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.Archery:
-                                    damage = 0;
-                                    if (!enemyTarget.shownMsgSix)
-                                    {
-                                        DaggerfallUI.AddHUDText("Ineffective.");
-                                        enemyTarget.shownMsgSix = true;
-                                    }
-                                    break;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.FireAtronach:
-                            if (skillID == (short)DFCareer.Skills.HandToHand)
-                            {
-                                if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                                {
-                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("You burn your hand.");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                }
-                                GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                                if (!enemyTarget.shownMsgTwo)
-                                {
-                                    DaggerfallUI.AddHUDText("You burn your foot.");
-                                    enemyTarget.shownMsgTwo = true;
-                                }
-                                break;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.Ice:
-                            switch (skillID)
-                            {
-                                case (short)DFCareer.Skills.Axe:
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(6, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(6, player);
-                                    }
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("You nick your axe.");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.BluntWeapon:
-                                    break;
-                                case (short)DFCareer.Skills.HandToHand:
-                                    damage = 0;
-                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 2);
-                                    if (!enemyTarget.shownMsgTwo)
-                                    {
-                                        DaggerfallUI.AddHUDText("OW! Ineffective.");
-                                        enemyTarget.shownMsgTwo = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.LongBlade:
-                                    damage /= 2;
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(12, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(12, player);
-                                    }
-                                    if (!enemyTarget.shownMsgThree)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective... You chip your blade.");
-                                        enemyTarget.shownMsgThree = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.ShortBlade:
-                                    damage /= 3;
-                                    if (weapon.IsEnchanted)
-                                    {
-                                        weapon.LowerCondition(2, player, player.Items);
-                                    }
-                                    else
-                                    {
-                                        weapon.LowerCondition(2, player);
-                                    }
-                                    if (!enemyTarget.shownMsgFour)
-                                    {
-                                        DaggerfallUI.AddHUDText("Not very effective... You chip your blade.");
-                                        enemyTarget.shownMsgFour = true;
-                                    }
-                                    break;
-                                case (short)DFCareer.Skills.Archery:
-                                    damage = 0;
-                                    if (!enemyTarget.shownMsgFive)
-                                    {
-                                        DaggerfallUI.AddHUDText("Ineffective.");
-                                        enemyTarget.shownMsgFive = true;
-                                    }
-                                    break;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.FireDaedra:
-                            if (skillID == (short)DFCareer.Skills.HandToHand)
-                            {
-                                if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                                {
-                                    GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 4);
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("You scorch your hand!");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                }
-                                GameManager.Instance.PlayerObject.SendMessage("RemoveHealth", 4);
-                                if (!enemyTarget.shownMsgTwo)
-                                {
-                                    DaggerfallUI.AddHUDText("You scorch your foot!");
-                                    enemyTarget.shownMsgTwo = true;
-                                }
-                                break;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.SilverTimesTwo:
-                            if (skillID != (short)DFCareer.Skills.HandToHand)
-                            {
-                                if (weapon.nativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                                {
-                                    damage *= 2;
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("Your Silver weapon strikes true!");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                }
-                                break;
-                            }
-                            else if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                            {
-                                if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                                {
-                                    damage *= 2;
-                                    if (!enemyTarget.shownMsgTwo)
-                                    {
-                                        DaggerfallUI.AddHUDText("Your Silver gauntlet strikes true!");
-                                        enemyTarget.shownMsgTwo = true;
-                                    }
-                                    break;
-                                }
-                                break;
-                            }
-                            else if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                            {
-                                damage *= 2;
-                                if (!enemyTarget.shownMsgThree)
-                                {
-                                    DaggerfallUI.AddHUDText("Your Silver boot strikes true!");
-                                    enemyTarget.shownMsgThree = true;
-                                }
-                                break;
-                            }
-                            break;
-                        case (int)EnemySpecialHandling.Lycanthropes:
-                            if (skillID != (short)DFCareer.Skills.HandToHand)
-                            {
-                                if (weapon.nativeMaterialValue == (int)WeaponMaterialTypes.Silver)
-                                {
-                                    if (!enemyTarget.shownMsg)
-                                    {
-                                        DaggerfallUI.AddHUDText("Your Silver weapon strikes true!");
-                                        enemyTarget.shownMsg = true;
-                                    }
-                                    break;
-                                }
-                                damage /= 2;
-                                if (!enemyTarget.shownMsgTwo)
-                                {
-                                    DaggerfallUI.AddHUDText("Not very effective... Use Silver.");
-                                    enemyTarget.shownMsgTwo = true;
-                                }
-                                break;
-                            }
-                            else if (IsPunch(GameManager.Instance.WeaponManager.ScreenWeapon))
-                            {
-                                if (gloves != null && gloves.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                                {
-                                    if (!enemyTarget.shownMsgThree)
-                                    {
-                                        DaggerfallUI.AddHUDText("Your Silver gauntlet strikes true!");
-                                        enemyTarget.shownMsgThree = true;
-                                    }
-                                    break;
-                                }
-                                damage /= 2;
-                                if (!enemyTarget.shownMsgFour)
-                                {
-                                    DaggerfallUI.AddHUDText("Not very effective... Use Silver.");
-                                    enemyTarget.shownMsgFour = true;
-                                }
-                                break;
-                            }
-                            else if (boots != null && boots.nativeMaterialValue == (int)ArmorMaterialTypes.Silver)
-                            {
-                                if (!enemyTarget.shownMsgFive)
-                                {
-                                    DaggerfallUI.AddHUDText("Your Silver boot strikes true!");
-                                    enemyTarget.shownMsgFive = true;
-                                }
-                                break;
-                            }
-                            damage /= 2;
-                            if (!enemyTarget.shownMsgSix)
-                            {
-                                DaggerfallUI.AddHUDText("Not very effective... Use Silver.");
-                                enemyTarget.shownMsgSix = true;
-                            }
-                            break;
-                    }
-                }
-            }
 
             // Apply Ring of Namira effect
             if (target == player)
@@ -1636,19 +733,22 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("CalculateWeaponAttackDamage", out del))
                 return del(attacker, target, damageModifier, weaponAnimTime, weapon);
 
-            // [OSORKON] I copied this variable from the "CalculateAttackDamage" function as I already knew
-            // it worked. With this I could add bonus damage based on what type of enemy is attacking player.
-            EnemyEntity AIAttacker = attacker as EnemyEntity;
-
             int damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + 1) + damageModifier;
 
-            // [OSORKON] This addition is a part of BOSSFALL's increased difficulty. Enemy classes deal
-            // more damage as long as they're using a weapon (class enemies switch to H2H around level 5).
-            if (AIAttacker != null && AIAttacker.EntityType == EntityTypes.EnemyClass)
+            if (target != GameManager.Instance.PlayerEntity)
             {
-                damage = UnityEngine.Random.Range(weapon.GetBaseDamageMin(), weapon.GetBaseDamageMax() + (attacker.Level * 2) + 1) + damageModifier;
-            }
+                if ((target as EnemyEntity).CareerIndex == (int)MonsterCareers.SkeletalWarrior)
+                {
+                    // Apply edged-weapon damage modifier for Skeletal Warrior
+                    if ((weapon.flags & 0x10) == 0)
+                        damage /= 2;
 
+                    // Apply silver weapon damage modifier for Skeletal Warrior
+                    // Arena applies a silver weapon damage bonus for undead enemies, which is probably where this comes from.
+                    if (weapon.NativeMaterialValue == (int)WeaponMaterialTypes.Silver)
+                        damage *= 2;
+                }
+            }
             // TODO: Apply strength bonus from Mace of Molag Bal
 
             // Apply strength modifier
@@ -1674,29 +774,16 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("CalculateHandToHandAttackDamage", out del))
                 return del(attacker, target, damageModifier);
 
-            // [OSORKON] I copied this variable from the "CalculateAttackDamage" function as I already knew
-            // it worked. With this I could add bonus damage based on what type of enemy is attacking player.
-            EnemyEntity AIAttacker = attacker as EnemyEntity;
-
             int minBaseDamage = CalculateHandToHandMinDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
             int maxBaseDamage = CalculateHandToHandMaxDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
             int damage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + 1);
-
-            // [OSORKON] This addition is a key part of BOSSFALL's increased difficulty. Enemy classes dish out
-            // much more damage at high levels. Note the Assassin exclusion - their damage would be ridiculous.
-            if (AIAttacker != null && AIAttacker.EntityType == EntityTypes.EnemyClass
-                && AIAttacker.MobileEnemy.ID != (int)MobileTypes.Assassin)
-            {
-                damage = UnityEngine.Random.Range(minBaseDamage, maxBaseDamage + (attacker.Level * 2) + 1);
-            }
 
             // Apply damage modifiers.
             damage += damageModifier;
 
             // Apply strength modifier for players. It is not applied in classic despite what the in-game description for the Strength attribute says.
-
-            // [OSORKON] I removed the player-only check, now high STR benefits both player and enemies.
-            damage += DamageModifier(attacker.Stats.LiveStrength);
+            if (player)
+                damage += DamageModifier(attacker.Stats.LiveStrength);
 
             damage += GetBonusOrPenaltyByEnemyType(attacker, target);
 
@@ -1747,7 +834,6 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return del(player, weaponType, weaponHands);
 
             float speed = 3 * (115 - player.Stats.LiveSpeed);
-
             return speed / classicFrameUpdate;
         }
 
@@ -1780,11 +866,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("CalculateStruckBodyPart", out del))
                 return del();
 
-            // [OSORKON] Vanilla DFU weights landed attacks toward chest armor. That is realistic but I couldn't
-            // change armor durability values to compensate (due to conflicts with Roleplay & Realism: Items), so a
-            // workaround is this non-weighted formula. Pauldrons, boots, and helms now wear out quicker than chest armor,
-            // which is what I want.
-            int[] bodyParts = { 0, 1, 2, 3, 4, 5, 6 };
+            int[] bodyParts = { 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6 };
             return bodyParts[UnityEngine.Random.Range(0, bodyParts.Length)];
         }
 
@@ -1899,10 +981,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("CalculateBackstabDamage", out del))
                 return del(damage, backstabbingLevel);
 
-            // [OSORKON] I moved the backstabbingLevel check from > 1 to > 0 as I set miscellaneous
-            // skills to start at 1-4. I wanted a Backstab (however unlikely) to be
-            // possible at a Backstabbing skill level of 1.
-            if (backstabbingLevel > 0 && Dice100.SuccessRoll(backstabbingLevel))
+            if (backstabbingLevel > 1 && Dice100.SuccessRoll(backstabbingLevel))
             {
                 damage *= 3;
                 string backstabMessage = TextManager.Instance.GetLocalizedText("successfulBackstab");
@@ -2008,18 +1087,13 @@ namespace DaggerfallWorkshop.Game.Formulas
             // If damage was done by a weapon, damage the weapon and armor of the hit body part.
             // In classic, shields are never damaged, only armor specific to the hitbody part is.
             // Here, if an equipped shield covers the hit body part, it takes damage instead.
-
-            // [OSORKON] I moved the weapon != null check - armor is now damaged by weaponless attacks.
-            if (damage > 0)
+            if (weapon != null && damage > 0)
             {
-                if (weapon != null)
-                {
-                    ApplyConditionDamageThroughPhysicalHit(weapon, attacker, damage);
-                }
+                // TODO: If attacker is AI, apply Ring of Namira effect
+                ApplyConditionDamageThroughPhysicalHit(weapon, attacker, damage);
 
                 DaggerfallUnityItem shield = target.ItemEquipTable.GetItem(EquipSlots.LeftHand);
                 bool shieldTakesDamage = false;
-
                 if (shield != null)
                 {
                     BodyParts[] protectedBodyParts = shield.GetShieldProtectedBodyParts();
@@ -2053,30 +1127,9 @@ namespace DaggerfallWorkshop.Game.Formulas
                 if (del(item, owner, damage))
                     return; // Only return if override returns true
 
-            // [OSORKON] I added these variables.
-            short skillID = 0;
-            skillID = item.GetWeaponSkillIDAsShort();
-            int amount = 0;
-
-            // [OSORKON] I want BOSSFALL to work well with popular existing mods, which is why I made such
-            // oddly specific changes to this function. Roleplay & Realism: Items sets certain item durabilities
-            // (this I can't change), so in order to work well with RPR:I I needed to vary equipment damage
-            // if I wanted my nerfs to equipment durability to be consistent with RPR:I's item durabilities.
-            // I couldn't nerf vanilla armor durabilities as then regular armor would have far less
-            // durability than RPR:I's added armor, so as a workaround I varied damage based on weapon skill used.
-            if (skillID == (short)DFCareer.Skills.ShortBlade || skillID == (short)DFCareer.Skills.Archery)
-            {
+            int amount = (10 * damage + 50) / 100;
+            if ((amount == 0) && Dice100.SuccessRoll(20))
                 amount = 1;
-            }
-            else if (skillID == (short)DFCareer.Skills.LongBlade || skillID == (short)DFCareer.Skills.Axe
-                  || skillID == (short)DFCareer.Skills.BluntWeapon)
-            {
-                amount = 6;
-            }
-            else
-            {
-                amount = 50;
-            }
 
             if (item.IsEnchanted && owner is PlayerEntity)
                 item.LowerCondition(amount, owner, (owner as PlayerEntity).Items);      // Lower condition and trigger removal for magic items (will not be removed if AllowMagicRepairs enabled)
@@ -2226,124 +1279,29 @@ namespace DaggerfallWorkshop.Game.Formulas
             float random;
             switch (attacker.CareerIndex)
             {
-
                 case (int)MonsterCareers.Rat:
                     // In classic rat can only give plague (diseaseListA), but DF Chronicles says plague, stomach rot and brain fever (diseaseListB).
                     // Don't know which was intended. Using B since it has more variety.
-
-                    // [OSORKON] I liked the idea of Rats only transmitting the Plague.
-                    if (Dice100.SuccessRoll(5))
-                        InflictDisease(attacker, target, diseaseListA);
-                    break;
-                case (int)MonsterCareers.GiantBat:
-                    // Classic uses 2% chance, but DF Chronicles says 5% chance. Not sure which was intended.
-
-                    // [OSORKON] I liked the 5% chance of disease. I doubt Giant Bats brush their teeth.
                     if (Dice100.SuccessRoll(5))
                         InflictDisease(attacker, target, diseaseListB);
                     break;
-
-                    // [OSORKON] On UESP's Skeletal Warrior page it says they have a 2% chance of transmitting disease.
-                    // I liked that idea. As a side note, this is where BOSSFALL began - this new disease
-                    // chance for Skeletal Warriors was the first thing I added.
-                case (int)MonsterCareers.SkeletalWarrior:
+                case (int)MonsterCareers.GiantBat:
+                    // Classic uses 2% chance, but DF Chronicles says 5% chance. Not sure which was intended.
                     if (Dice100.SuccessRoll(2))
-                        InflictDisease(attacker, target, diseaseListC);
+                        InflictDisease(attacker, target, diseaseListB);
                     break;
-
-                    // [OSORKON] I never understood why Spiders and Scorpions paralyzed rather than poisoned. I know
-                    // that's consistent with TES I: Arena but it still didn't make sense... On every hit from a Spider
-                    // or Scorpion there's a 10% chance you'll get poisoned. There is a tiny 0.1% chance/hit of poison
-                    // being Drothweed that bypasses Poison Immunity. This accomplishes two goals. First, Drothweed will
-                    // likely kill you unless you have a Cure Poison spell or potion. This encourages the player to always
-                    // be prepared, and you must be to survive BOSSFALL. Second, it makes Poison Immunity a bit less OP.
                 case (int)MonsterCareers.Spider:
                 case (int)MonsterCareers.GiantScorpion:
-                    if (Dice100.SuccessRoll(10))
+                    EntityEffectManager targetEffectManager = target.EntityBehaviour.GetComponent<EntityEffectManager>();
+                    if (targetEffectManager.FindIncumbentEffect<Paralyze>() == null)
                     {
-                        int roll = Dice100.Roll();
-
-                        if (roll > 0)
-                        {
-                            if (roll > 9)
-                            {
-                                if (roll > 18)
-                                {
-                                    if (roll > 27)
-                                    {
-                                        if (roll > 36)
-                                        {
-                                            if (roll > 45)
-                                            {
-                                                if (roll > 54)
-                                                {
-                                                    if (roll > 63)
-                                                    {
-                                                        if (roll > 72)
-                                                        {
-                                                            if (roll > 81)
-                                                            {
-                                                                if (roll > 90)
-                                                                {
-                                                                    if (roll > 99)
-                                                                    {
-                                                                        InflictPoison(attacker, target, Poisons.Drothweed, true);
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        InflictPoison(attacker, target, Poisons.Arsenic, false);
-                                                                    }
-                                                                }
-                                                                else
-                                                                {
-                                                                    InflictPoison(attacker, target, Poisons.Moonseed, false);
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                InflictPoison(attacker, target, Poisons.Nux_Vomica, false);
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            InflictPoison(attacker, target, Poisons.Somnalius, false);
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        InflictPoison(attacker, target, Poisons.Pyrrhic_Acid, false);
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    InflictPoison(attacker, target, Poisons.Magebane, false);
-                                                }
-                                            }
-                                            else
-                                            {
-                                                InflictPoison(attacker, target, Poisons.Thyrwort, false);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            InflictPoison(attacker, target, Poisons.Indulcet, false);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        InflictPoison(attacker, target, Poisons.Sursum, false);
-                                    }
-                                }
-                                else
-                                {
-                                    InflictPoison(attacker, target, Poisons.Quaesto_Vil, false);
-                                }
-                            }
-                            else
-                            {
-                                InflictPoison(attacker, target, Poisons.Aegrotat, false);
-                            }
-                        }
+                        SpellRecord.SpellRecordData spellData;
+                        GameManager.Instance.EntityEffectBroker.GetClassicSpellRecord(66, out spellData);
+                        EffectBundleSettings bundle;
+                        GameManager.Instance.EntityEffectBroker.ClassicSpellRecordDataToEffectBundleSettings(spellData, BundleTypes.Spell, out bundle);
+                        EntityEffectBundle spell = new EntityEffectBundle(bundle, attacker.EntityBehaviour);
+                        EntityEffectManager attackerEffectManager = attacker.EntityBehaviour.GetComponent<EntityEffectManager>();
+                        attackerEffectManager.SetReadySpell(spell, true);
                     }
                     break;
                 case (int)MonsterCareers.Werewolf:
@@ -2372,15 +1330,11 @@ namespace DaggerfallWorkshop.Game.Formulas
                 case (int)MonsterCareers.Zombie:
                     // Nothing in classic. DF Chronicles says 2% chance of disease, which seems like it was probably intended.
                     // Diseases listed in DF Chronicles match those of mummy (except missing cholera, probably a mistake)
-
-                    // [OSORKON] I bumped up Zombie disease chance to 5%. Zombies don't look very clean.
-                    if (Dice100.SuccessRoll(5))
+                    if (Dice100.SuccessRoll(2))
                         InflictDisease(attacker, target, diseaseListC);
                     break;
-
-                    // [OSORKON] Why would a dusty old Mummy be more infectious than a dirty Zombie? I reduced disease chance to 2%.
                 case (int)MonsterCareers.Mummy:
-                    if (Dice100.SuccessRoll(2))
+                    if (Dice100.SuccessRoll(5))
                         InflictDisease(attacker, target, diseaseListC);
                     break;
                 case (int)MonsterCareers.Vampire:
@@ -2395,9 +1349,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                     }
                     else if (random <= 2.0f)
                     {
-                        // [OSORKON] In vanilla DFU Vampires/Vampire Ancients could only transmit the Plague. I don't know if that's
-                        // how it worked in classic or if it was a mistake, but either way they now give you any disease.
-                        InflictDisease(attacker, target, diseaseListC);
+                        InflictDisease(attacker, target, diseaseListA);
                     }
                     break;
                 case (int)MonsterCareers.Lamia:
@@ -2415,13 +1367,13 @@ namespace DaggerfallWorkshop.Game.Formulas
         /// <param name="attacker">Source entity. Can be the same as target</param>
         /// <param name="target">Target entity</param>
         /// <param name="poisonType">Classic poison type</param>
-        /// <param name="bypassImmunity"> [OSORKON] Whether it should bypass Poison Immunity</param>
-        public static void InflictPoison(DaggerfallEntity attacker, DaggerfallEntity target, Poisons poisonType, bool bypassImmunity)
+        /// <param name="bypassResistance">Whether it should bypass resistances</param>
+        public static void InflictPoison(DaggerfallEntity attacker, DaggerfallEntity target, Poisons poisonType, bool bypassResistance)
         {
             Action<DaggerfallEntity, DaggerfallEntity, Poisons, bool> del;
             if(TryGetOverride("InflictPoison", out del))
             {
-                del(attacker, target, poisonType, bypassImmunity);
+                del(attacker, target, poisonType, bypassResistance);
                 return;
             }
 
@@ -2438,24 +1390,20 @@ namespace DaggerfallWorkshop.Game.Formulas
                 return;
             }
 
-            // [OSORKON] If bypassImmunity is true the immunity checks are skipped, ensuring the poison will pierce
-            // Poison Immunity. If bypassImmunity is false, Poison Immunity will block every poison, just like vanilla DFU.
-            if (!bypassImmunity)
-            {
-                // Note: In classic, AI characters' immunity to poison is ignored, although the level 1 check below still gives rats immunity
-                DFCareer.Tolerance toleranceFlags = target.Career.Poison;
-                if (toleranceFlags == DFCareer.Tolerance.Immune)
-                    return;
+            // Note: In classic, AI characters' immunity to poison is ignored, although the level 1 check below still gives rats immunity
+            DFCareer.Tolerance toleranceFlags = target.Career.Poison;
+            if (toleranceFlags == DFCareer.Tolerance.Immune)
+                return;
 
-                // Handle player with racial resistance to poison
-                if (target is PlayerEntity)
-                {
-                    RaceTemplate raceTemplate = (target as PlayerEntity).GetLiveRaceTemplate();
-                    if ((raceTemplate.ImmunityFlags & DFCareer.EffectFlags.Poison) == DFCareer.EffectFlags.Poison)
-                        return;
-                }
+            // Handle player with racial resistance to poison
+            if (target is PlayerEntity)
+            {
+                RaceTemplate raceTemplate = (target as PlayerEntity).GetLiveRaceTemplate();
+                if ((raceTemplate.ImmunityFlags & DFCareer.EffectFlags.Poison) == DFCareer.EffectFlags.Poison)
+                    return;
             }
-            if (bypassImmunity || SavingThrow(DFCareer.Elements.DiseaseOrPoison, DFCareer.EffectFlags.Poison, target, 0) != 0)
+
+            if (bypassResistance || SavingThrow(DFCareer.Elements.DiseaseOrPoison, DFCareer.EffectFlags.Poison, target, 0) != 0)
             {
                 if (target.Level != 1)
                 {
@@ -2804,8 +1752,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("RollRandomSpawn_LocationNight", out del))
                 return del();
             else
-                // [OSORKON] I increased range to 40, making spawns less likely.
-                return UnityEngine.Random.Range(0, 40 + 1);
+                return UnityEngine.Random.Range(0, 24);
         }
 
         /// <summary>
@@ -2818,8 +1765,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("RollRandomSpawn_WildernessDay", out del))
                 return del();
             else
-                // [OSORKON] I increased range to 40, making spawns less likely.
-                return UnityEngine.Random.Range(0, 40 + 1);
+                return UnityEngine.Random.Range(0, 36);
         }
 
         /// <summary>
@@ -2832,8 +1778,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("RollRandomSpawn_WildernessNight", out del))
                 return del();
             else
-                // [OSORKON] I increased range to 40, making spawns less likely.
-                return UnityEngine.Random.Range(0, 40 + 1);
+                return UnityEngine.Random.Range(0, 24);
         }
 
         /// <summary>
@@ -2846,9 +1791,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("RollRandomSpawn_Dungeon", out del))
                 return del();
             else if (GameManager.Instance.PlayerEntity.EnemyAlertActive)
-
-                // [OSORKON] I increased range to 40, making spawns less likely.
-                return UnityEngine.Random.Range(0, 40 + 1);
+                return UnityEngine.Random.Range(0, 36);
 
             return 1; // >0 is do not generate a spawn
         }
@@ -3061,8 +2004,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("CalculateBankLoanRepayment", out del))
                 return del(amount, regionIndex);
 
-            // [OSORKON] I bumped loan interest from 10% to 20%. Seemed more reasonable.
-            return (int)(amount + amount * .2);
+            return (int)(amount + amount * .1);
         }
 
         public static int ApplyRegionalPriceAdjustment(int cost)
@@ -3163,54 +2105,24 @@ namespace DaggerfallWorkshop.Game.Formulas
             if (TryGetOverride("RandomMaterial", out del))
                 return del(playerLevel);
 
-            // [OSORKON] If you are already familiar with how item materials are generated in vanilla DFU, you likely
-            // won't learn anything from my long paragraph immediately below. I wrote this long comment because I had
-            // a very hard time figuring out precisely how item materials were generated even after I read the vanilla
-            // comments and an explanation on the forums. If anybody else is as confused as I initially was, hopefully
-            // my extended paragraph will help make item material generation clearer. This explanation is for BOSSFALL
-            // loot generation - the numbers I use are different from vanilla DFU, but the process is similar.
+            int levelModifier = (playerLevel - 10);
 
-            // [OSORKON] In BOSSFALL when a weapon or plate armor item is generated from a loot pile or an enemy
-            // below level 16, this function generates a random number from 0 to 1024. A result of 327 or less generates
-            // an Iron item, while a result of 328 to 981 or less generates a Steel item. A result of 982 to 1024
-            // generates Silver through Daedric - as material tier increases, generation chance decreases, and a result
-            // of 1024 is required to generate a Daedric item. The random number from this function is not changed by
-            // player level or any other player-dependent factors, which results in BOSSFALL's unleveled static drop
-            // chances for all materials. Once the enemy is level 16 or higher, progressively higher values
-            // (50 * (enemy Level - 15)) are added to the random number from this function, which often results in a
-            // value higher than 1024. If the value is higher than 1024, a Daedric item will be generated.
+            if (levelModifier >= 0)
+                levelModifier *= 2;
+            else
+                levelModifier *= 4;
 
-            // [OSORKON] This new formula is responsible for BOSSFALL's unleveled loot. The playerLevel variable is still
-            // present here but in most other functions that call RandomMaterial playerLevel has been replaced with 10.
-            int levelModifier = (playerLevel - 15) * 50;
-
-            // [OSORKON] Without this check, enemies below level 15 would never drop anything but Iron and Steel. I want
-            // the player to (rarely) find great loot anywhere.
-            if (levelModifier < 0)
-            {
-                levelModifier = 0;
-            }
-
-            // [OSORKON] I increased the maximum range from vanilla's 256 to 1024. In BOSSFALL v1.1 I failed to include
-            // the +1 modifier at the end, which had embarrassing results. Enemies below level 11, loot piles, and stores
-            // never generated Daedric items. *facepalm*
-            int randomModifier = UnityEngine.Random.Range(0, 1024 + 1);
+            int randomModifier = UnityEngine.Random.Range(0, 256);
 
             int combinedModifiers = levelModifier + randomModifier;
-
-            // [OSORKON] I increased the clamp range from 256 to 1024.
-            combinedModifiers = Mathf.Clamp(combinedModifiers, 0, 1024);
+            combinedModifiers = Mathf.Clamp(combinedModifiers, 0, 256);
 
             int material = 0; // initialize to iron
 
             // The higher combinedModifiers is, the higher the material
-
-            // [OSORKON] I changed this "while" to use an array I declared in this script rather than call one from
-            // ItemBuilder. I did this so I could modify the array's elements without changing any vanilla values. I
-            // don't want to break any mods that call the vanilla array.
-            while (materialProbability[material] < combinedModifiers)
+            while (ItemBuilder.materialsByModifier[material] < combinedModifiers)
             {
-                combinedModifiers -= materialProbability[material++];
+                combinedModifiers -= ItemBuilder.materialsByModifier[material++];
             }
 
             return (WeaponMaterialTypes)(material);
@@ -3229,12 +2141,9 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             // Random armor material
             int roll = Dice100.Roll();
-            if (roll > 70)
+            if (roll >= 70)
             {
-                // [OSORKON] In vanilla DFU if roll >= 90 it returns plate, which means an 11% chance for
-                // plate. 10% is the chance I've seen in various sources - I don't know if 11% is what classic
-                // actually uses or if 11% is a mistake. Regardless, BOSSFALL has a 10% chance for plate.
-                if (roll > 90)
+                if (roll >= 90)
                 {
                     WeaponMaterialTypes plateMaterial = FormulaHelper.RandomMaterial(playerLevel);
                     return (ArmorMaterialTypes)(0x0200 + plateMaterial);

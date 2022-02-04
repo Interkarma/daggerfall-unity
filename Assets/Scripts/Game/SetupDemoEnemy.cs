@@ -1,5 +1,3 @@
-// All additions or modifications that differ from the source code found at https://github.com/Interkarma/daggerfall-unity copyright (c) 2021-2022 Osorkon
-
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -74,10 +72,9 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Sets up enemy based on current settings. [OSORKON] I added the enemyLevel = 0 parameter so enemy level and all
-        /// level-dependent factors persist across saves/loads.
+        /// Sets up enemy based on current settings.
         /// </summary>
-        public void ApplyEnemySettings(MobileGender gender, int enemyLevel = 0)
+        public void ApplyEnemySettings(MobileGender gender)
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             Dictionary<int, MobileEnemy> enemyDict = GameObjectHelper.EnemyDict;
@@ -163,18 +160,12 @@ namespace DaggerfallWorkshop.Game
                     if (enemyIndex >= 0 && enemyIndex <= 42)
                     {
                         entityBehaviour.EntityType = EntityTypes.EnemyMonster;
-
-                        // [OSORKON] I pass on enemyLevel so enemy level and all level-dependent factors persist across
-                        // saves/loads.
-                        entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType, enemyLevel);
+                        entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType);
                     }
                     else if (enemyIndex >= 128 && enemyIndex <= 146)
                     {
                         entityBehaviour.EntityType = EntityTypes.EnemyClass;
-
-                        // [OSORKON] I pass on enemyLevel so enemy level and all level-dependent factors persist across
-                        // saves/loads.
-                        entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType, enemyLevel);
+                        entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType);
                     }
                     else if (DaggerfallEntity.GetCustomCareerTemplate(enemyIndex) != null)
                     {
@@ -191,9 +182,7 @@ namespace DaggerfallWorkshop.Game
                         {
                             entityBehaviour.EntityType = EntityTypes.EnemyMonster;
                         }
-                        // [OSORKON] I pass on enemyLevel so enemy level and all level-dependent factors persist across
-                        // saves/loads.
-                        entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType, enemyLevel);
+                        entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType);
                     }
                     else
                     {
@@ -210,26 +199,22 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Change enemy settings and configure in a single call. [OSORKON] I added the enemyLevel = 0 parameter so enemy level
-        /// and all level-dependent factors persist across saves/loads.
+        /// Change enemy settings and configure in a single call.
         /// </summary>
         /// <param name="enemyType">Enemy type.</param>
-        public void ApplyEnemySettings(MobileTypes enemyType, MobileReactions enemyReaction, MobileGender gender, byte classicSpawnDistanceType = 0, bool alliedToPlayer = false, int enemyLevel = 0)
+        public void ApplyEnemySettings(MobileTypes enemyType, MobileReactions enemyReaction, MobileGender gender, byte classicSpawnDistanceType = 0, bool alliedToPlayer = false)
         {
             EnemyType = enemyType;
             EnemyReaction = enemyReaction;
             ClassicSpawnDistanceType = classicSpawnDistanceType;
             AlliedToPlayer = alliedToPlayer;
-
-            // [OSORKON] I pass on enemyLevel so enemy level and all level-dependent factors persist across saves/loads.
-            ApplyEnemySettings(gender, enemyLevel);
+            ApplyEnemySettings(gender);
         }
 
         /// <summary>
-        /// Change enemy settings and configure in a single call. [OSORKON] I added the enemyLevel = 0 parameter so enemy level
-        /// and all level-dependent factors persist across saves/loads.
+        /// Change enemy settings and configure in a single call.
         /// </summary>
-        public void ApplyEnemySettings(EntityTypes entityType, int careerIndex, MobileGender gender, bool isHostile = true, bool alliedToPlayer = false, int enemyLevel = 0)
+        public void ApplyEnemySettings(EntityTypes entityType, int careerIndex, MobileGender gender, bool isHostile = true, bool alliedToPlayer = false)
         {
             // Get mobile type based on entity type and career index
             MobileTypes mobileType;
@@ -243,8 +228,7 @@ namespace DaggerfallWorkshop.Game
             MobileReactions enemyReaction = (isHostile) ? MobileReactions.Hostile : MobileReactions.Passive;
             MobileGender enemyGender = gender;
 
-            // [OSORKON] I pass on enemyLevel so enemy level and all level-dependent factors persist across saves/loads.
-            ApplyEnemySettings(mobileType, enemyReaction, enemyGender, alliedToPlayer: alliedToPlayer, enemyLevel: enemyLevel);
+            ApplyEnemySettings(mobileType, enemyReaction, enemyGender, alliedToPlayer: alliedToPlayer);
         }
 
         public void AlignToGround()

@@ -1,12 +1,12 @@
 // Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com)
 // Contributors:    Hazelnut
 // 
-// Notes: All additions or modifications that differ from the source code copyright (c) 2021-2022 Osorkon
+// Notes:
 //
 
 using UnityEngine;
@@ -207,43 +207,12 @@ namespace DaggerfallWorkshop.Game.Banking
             return BankAccounts[regionIndex].loanTotal > 0;
         }
 
-        // [OSORKON] This new bool returns true if player has a loan from any region.
-        // I use this elsewhere to limit player to only one active loan at a time, thus
-        // removing the massive vanilla exploit of borrowing from multiple region's banks
-        // simultaneously and never paying anything back - basically, unlimited free money.
-        // In BOSSFALL, I don't want anything to be too easy.
-        public static bool HasLoanAnywhere()
-        {
-            for (int i = 0; i < BankAccounts.Length; i++)
-            {
-                if (BankAccounts[i].loanTotal > 0)
-                    return true;
-            }
-
-            return false;
-        }
-
         public static bool HasDefaulted(int regionIndex)
         {
             if (!ValidateRegion(regionIndex))
                 return false;
 
             return BankAccounts[regionIndex].hasDefaulted;
-        }
-
-        // [OSORKON] This new bool returns true if player has defaulted on a loan from any region.
-        // If they have no bank will lend to the player, ever. This is permanent, barring starting
-        // a new game. I don't think this is unreasonable, especially with the loan reminders the
-        // game gives the player.
-        public static bool HasDefaultedAnywhere()
-        {
-            for (int i = 0; i < BankAccounts.Length; i++)
-            {
-                if (BankAccounts[i].hasDefaulted)
-                    return true;
-            }
-
-            return false;
         }
 
         public static void SetDefaulted(int regionIndex, bool defaulted)

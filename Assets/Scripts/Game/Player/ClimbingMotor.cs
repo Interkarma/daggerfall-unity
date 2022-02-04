@@ -1,5 +1,3 @@
-// All additions or modifications that differ from the source code found at https://github.com/Interkarma/daggerfall-unity copyright (c) 2021-2022 Osorkon
-
 using UnityEngine;
 using System;
 using System.Collections;
@@ -76,24 +74,13 @@ namespace DaggerfallWorkshop.Game
         // how long it takes before we try to regain hold if slipping
         private readonly float regainHoldSkillCheckFrequency = 5; 
         // minimum percent chance to regain hold per skill check if slipping, gets closer to 100 with higher skill
-
-        // [OSORKON] Changing the Climbing skill check in FormulaHelper to be more difficult didn't have the
-        // results I wanted - I could still climb anything at low Climbing skill levels and practically never fall.
-        // I then moved to this script and changed regainHoldMinChance, continueClimbMinChance, and graspWallMinChance
-        // to 0. Finally, some results. With Advanced Climbing off Climbing was impossible at low skill levels, but
-        // Advanced Climbing still refused to change. The skill check was bypassed in another part of this script.
-        private const int regainHoldMinChance = 0;
-
-        // [OSORKON] I tried setting startClimbMinChance to 0 but this had the unintended side effect of seemingly
-        // racking up Climbing skill tallies very rapidly when player is facing a wall trying to start climbing. I
-        // think if the player has a low Climbing skill and startClimbMinChance is 0, the game runs Climbing skill
-        // checks very rapidly until a check succeeds, leading to rapid skill tallies. I don't want there to be a
-        // cheesy way to level the skill so I set startClimbMinChance to 75.
-        private const int startClimbMinChance = 75;
+        private const int regainHoldMinChance = 20;
+        // minimum percent chance to start climbing
+        private const int startClimbMinChance = 70;
         // minimum percent chance to continue climbing per skill check, gets closer to 100 with higher skill
-        private const int continueClimbMinChance = 0;
+        private const int continueClimbMinChance = 50;
         // minimum percent chance to grab a wall while falling
-        private const int graspWallMinChance = 0;
+        private const int graspWallMinChance = 40;
 
         public bool IsClimbing
         {
@@ -346,12 +333,7 @@ namespace DaggerfallWorkshop.Game
                 else if (releasedFromCeiling)
                 {
                     startClimbHorizontalTolerance = 0.90f;
-
-                    // [OSORKON] I changed the startClimbSkillCheckFrequency from 0 to 5. I made this change
-                    // early on when I didn't really know what I was doing, and I still don't know if this
-                    // change is necessary. Regardless, Climbing now functions the way I want it to, so I
-                    // don't see a need to change anything further.
-                    startClimbSkillCheckFrequency = 5;
+                    startClimbSkillCheckFrequency = 0;
                 }
                 else
                 {   // least leniency because we want climbing to be very intentional here
@@ -523,15 +505,8 @@ namespace DaggerfallWorkshop.Game
                     {
                         // TODO: devise horizontal distance-based solution to terminate forward movement
                         // It may fix the problem of climbing to the top of gabled roofs.
-
-                        // [OSORKON] This check was bypassing the Climbing skill check if Advanced Climbing
-                        // was on, allowing player to climb anything at very low Climbing skill levels while
-                        // never falling off. I didn't want Advanced Climbing to bypass the Climbing check,
-                        // so I commented out these two lines. In BOSSFALL player must have decent Climbing
-                        // skill in order to reliably climb anything, which seems reasonable to me.
-                        // if (!overrideSkillCheck)
-                        //    overrideSkillCheck = !hitSomethingInFront;
-
+                        if (!overrideSkillCheck)
+                            overrideSkillCheck = !hitSomethingInFront;
                         moveDirection.y = Vector3.up.y * climbScalar;
                     }
                     else if (movedBackward)
