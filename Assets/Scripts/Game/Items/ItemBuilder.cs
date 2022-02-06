@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors: InconsolableCellist
+// Contributors:    InconsolableCellist, John Doom
 //
 // Notes:
 //
@@ -83,6 +83,10 @@ namespace DaggerfallWorkshop.Game.Items
             DyeColors.Yellow,
             DyeColors.Green,
         };
+
+        static Dictionary<int, BodyMorphology> customRaces = new Dictionary<int, BodyMorphology>();
+
+        public static Dictionary<int, BodyMorphology> CustomRaces { get => customRaces; private set => customRaces = value; }
 
         #endregion
 
@@ -896,6 +900,11 @@ namespace DaggerfallWorkshop.Game.Items
 
         public static BodyMorphology GetBodyMorphology(Races race)
         {
+            //check customs
+            if (customRaces.ContainsKey((int)race))
+                return customRaces[(int)race];
+
+            //check vanilla
             switch (race)
             {
                 case Races.Argonian:
@@ -917,6 +926,11 @@ namespace DaggerfallWorkshop.Game.Items
                 default:
                     throw new Exception("GetBodyMorphology() encountered unsupported race value.");
             }
+        }
+
+        public static void RegisterCustomRace(int id, BodyMorphology bodyMorphology)
+        {
+            CustomRaces.Add(id, bodyMorphology);
         }
 
         #endregion
