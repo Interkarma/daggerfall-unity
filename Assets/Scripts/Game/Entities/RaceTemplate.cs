@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    John Doom
 // 
 // Notes:
 //
@@ -40,6 +40,12 @@ namespace DaggerfallWorkshop.Game.Entity
         public DFCareer.EffectFlags LowToleranceFlags;          // Racial low tolerance
         public DFCareer.EffectFlags CriticalWeaknessFlags;      // Racial critical weakness
         public DFCareer.SpecialAbilityFlags SpecialAbilities;   // Racial special abilities
+
+        public string[] DescriptionString;
+
+        static List<RaceTemplate> customRaces = new List<RaceTemplate>();
+
+        public static List<RaceTemplate> CustomRaces { get => customRaces; protected set => customRaces = value; }
 
         /// <summary>
         /// Clones this race template.
@@ -96,6 +102,10 @@ namespace DaggerfallWorkshop.Game.Entity
             raceDict.Add(woodElf.ID, woodElf);
             raceDict.Add(khajiit.ID, khajiit);
             raceDict.Add(argonian.ID, argonian);
+
+            // Add custom races
+            foreach (RaceTemplate race in CustomRaces)
+                raceDict.Add(race.ID, race);
 
             return raceDict;
         }
@@ -164,6 +174,11 @@ namespace DaggerfallWorkshop.Game.Entity
             }
 
             return FactionFile.FactionRaces.None;
+        }
+
+        public static void RegisterCustomRace(RaceTemplate race)
+        {
+            CustomRaces.Add(race);
         }
     }
 
