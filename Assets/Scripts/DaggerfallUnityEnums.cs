@@ -507,6 +507,7 @@ namespace DaggerfallWorkshop
         CFA,
         BSS,
         GFX,
+        JSON,
     }
 
     /// <summary>
