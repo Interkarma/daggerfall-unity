@@ -162,6 +162,11 @@ namespace DaggerfallConnect.FallExe
         public int id;
     }
 
+    public struct JsonClone
+    {
+        public string src;
+    }
+
     /// <summary>
     /// Reads item template data from FALL.EXE and structures for use.
     /// There is no "items file" as such for this data, just keeping
