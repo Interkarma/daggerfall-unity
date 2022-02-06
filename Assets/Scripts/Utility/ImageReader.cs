@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    John Doom
 // 
 // Notes:
 //
@@ -371,6 +371,17 @@ namespace DaggerfallWorkshop.Utility
 
                     break;
 
+                case ImageTypes.JSON:
+                    string text;
+                    AssetInjection.TextAssetReader.TryRead(filename, out text);
+                    DaggerfallConnect.FallExe.JsonClone jsonClone =
+                        (DaggerfallConnect.FallExe.JsonClone)Game.Serialization.SaveLoadManager.Deserialize(typeof(DaggerfallConnect.FallExe.JsonClone), text);
+                    string sourceName = jsonClone.src;
+                    string actualName = filename.ToLower().Replace(".json", "") + "_" + record + "-" + frame;
+                    imageData = GetImageData(sourceName, record, frame, hasAlpha, createTexture, createAllFrameTextures, alphaIndex);
+                    AssetInjection.TextureReplacement.TryImportImage(actualName, false, out imageData.texture);
+                    return imageData;
+
                 default:
                     return new ImageData();
             }
@@ -479,6 +490,8 @@ namespace DaggerfallWorkshop.Utility
                 return ImageTypes.BSS;
             else if (filename.EndsWith(".GFX", StringComparison.InvariantCultureIgnoreCase))
                 return ImageTypes.GFX;
+            else if (filename.EndsWith(".JSON", StringComparison.InvariantCultureIgnoreCase))
+                return ImageTypes.JSON;
             else
                 throw new Exception("ParseFileType could not match filename with a supported image type.");
         }
