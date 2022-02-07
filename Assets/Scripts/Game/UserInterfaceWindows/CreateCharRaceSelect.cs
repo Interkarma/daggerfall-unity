@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    John Doom
 // 
 // Notes:
 //
@@ -32,6 +32,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture;
         TextLabel promptLabel;
+        TextLabel customLabel;
         DFBitmap racePickerBitmap;
         RaceTemplate selectedRace;
 
@@ -67,6 +68,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             promptLabel.ShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;
             promptLabel.ShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
 
+            // Add custom races prompt
+            if (RaceTemplate.CustomRaces.Count > 0)
+            {
+                customLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 24), "Press R for more races.", NativePanel);
+                customLabel.HorizontalAlignment = promptLabel.HorizontalAlignment;
+                customLabel.TextColor = promptLabel.TextColor;
+                customLabel.ShadowColor = promptLabel.ShadowColor;
+                customLabel.ShadowPosition = promptLabel.ShadowPosition;
+            }
+
             // Handle clicks
             NativePanel.OnMouseClick += ClickHandler;
         }
@@ -80,6 +91,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 selectedRace = null;
                 CancelWindow();
             }
+
+            //test
+            if (Input.GetKeyDown(KeyCode.R))
+                ShowList();
         }
 
         public void Reset()
@@ -87,6 +102,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedRace = null;
             if (promptLabel != null)
                 promptLabel.Enabled = true;
+            if (customLabel != null)
+                customLabel.Enabled = true;
         }
 
         void ClickHandler(BaseScreenComponent sender, Vector2 position)
@@ -97,23 +114,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             int id = racePickerBitmap.Data[offset];
             if (raceDict.ContainsKey(id))
-            {
-                promptLabel.Enabled = false;
-                selectedRace = raceDict[id];
-
-                TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(selectedRace.DescriptionID);
-                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                messageBox.SetTextTokens(textTokens);
-                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-                Button noButton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
-                noButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
-                messageBox.OnButtonClick += ConfirmRacePopup_OnButtonClick;
-                messageBox.OnCancel += ConfirmRacePopup_OnCancel;
-                uiManager.PushWindow(messageBox);
-
-                DaggerfallAudioSource source = DaggerfallUI.Instance.GetComponent<DaggerfallAudioSource>();
-                source.PlayOneShot((uint)selectedRace.ClipID);
-            }
+                ShowRace(id);
         }
 
         void ConfirmRacePopup_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
@@ -131,6 +132,59 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void ConfirmRacePopup_OnCancel(DaggerfallPopupWindow sender)
         {
             Reset();
+        }
+
+        void ShowRace(int id)
+        {
+            promptLabel.Enabled = false;
+            if (customLabel != null) customLabel.Enabled = false;
+            selectedRace = raceDict[id];
+
+            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
+
+            // Get description
+            if (selectedRace.DescriptionString != null)
+            {
+                // If string present, use it
+                messageBox.SetText(selectedRace.DescriptionString);
+            }
+            else
+            {
+                // Else use from id
+                TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(selectedRace.DescriptionID);
+                messageBox.SetTextTokens(textTokens);
+            }
+
+            messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+            Button noButton = messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+            noButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
+            messageBox.OnButtonClick += ConfirmRacePopup_OnButtonClick;
+            messageBox.OnCancel += ConfirmRacePopup_OnCancel;
+            uiManager.PushWindow(messageBox);
+
+            DaggerfallAudioSource source = DaggerfallUI.Instance.GetComponent<DaggerfallAudioSource>();
+            source.PlayOneShot((uint)selectedRace.ClipID);
+        }
+
+        void ShowList()
+        {
+            DaggerfallListPickerWindow window = new DaggerfallListPickerWindow(uiManager, this);
+            foreach(RaceTemplate race in RaceTemplate.CustomRaces)
+                window.ListBox.AddItem(race.Name);
+            window.OnItemPicked += OnListPicked;
+            uiManager.PushWindow(window);
+        }
+
+        void OnListPicked(int index, string itemString)
+        {
+            foreach (RaceTemplate race in RaceTemplate.CustomRaces)
+            {
+                if (race.Name.Contains(itemString))
+                {
+                    ShowRace(race.ID);
+                    break;
+                }
+            }
         }
     }
 }
