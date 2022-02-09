@@ -29,6 +29,10 @@ namespace DaggerfallWorkshop
     [RequireComponent(typeof(MeshRenderer))]
     public class DaggerfallBillboard : Billboard
     {
+        // Used by DaggerfallBillboardEditor.DisplayAboutGUI()
+        public int customArchive = 210;
+        public int customRecord = 0;
+
         // Just using a simple animation speed for simple billboard anims
         // You can adjust this or extend as needed
         const int animalFps = 5;
