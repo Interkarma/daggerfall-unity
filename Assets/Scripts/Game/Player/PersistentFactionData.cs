@@ -390,6 +390,15 @@ namespace DaggerfallWorkshop.Game.Player
                 }
                 else
                 {
+                    // Change ally and enemy faction reputations first (for guild faction or social questgiver npc)
+                    int[] allies = { factionData.ally1, factionData.ally2, factionData.ally3 };
+                    int[] enemies = { factionData.enemy1, factionData.enemy2, factionData.enemy3 };
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        ChangeReputation(allies[i], amount / 2);
+                        ChangeReputation(enemies[i], -amount / 2);
+                    }
+
                     // If a knightly order faction, propagate rep for the generic order only
                     // (this is what classic does - assume due to all affiliated nobles being aloof from such matters..)
                     if (factionData.ggroup == (int)FactionFile.GuildGroups.KnightlyOrder)
@@ -400,20 +409,11 @@ namespace DaggerfallWorkshop.Game.Player
                     }
                     else
                     {
-                        // Change ally and enemy faction reputations first (for guild faction or social questgiver npc)
-                        int[] allies = { factionData.ally1, factionData.ally2, factionData.ally3 };
-                        int[] enemies = { factionData.enemy1, factionData.enemy2, factionData.enemy3 };
-                        for (int i = 0; i < 3; ++i)
-                        {
-                            ChangeReputation(allies[i], amount / 2);
-                            ChangeReputation(enemies[i], -amount / 2);
-                        }
-
                         // Navigate up to the root faction (treat Dark Brotherhood faction as a root faction)
                         while (factionDict.ContainsKey(factionData.parent) && factionData.id != (int)FactionFile.FactionIDs.The_Dark_Brotherhood)
                             factionData = factionDict[factionData.parent];
 
-                        // Propagate reputation changes for all children of the root, or just the sindle faction
+                        // Propagate reputation changes for all children of the root, or just the single faction
                         if (factionData.children != null)
                             PropagateReputationChange(factionData, factionID, amount);
                         else
