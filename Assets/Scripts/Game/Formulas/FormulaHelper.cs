@@ -822,7 +822,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             // Apply monster modifier and biography adjustments.
             chanceToHit += CalculateAdjustmentsToHit(attacker, target);
 
-            Mathf.Clamp(chanceToHit, 3, 97);
+            chanceToHit = Mathf.Clamp(chanceToHit, 3, 97);
 
             return Dice100.SuccessRoll(chanceToHit);
         }
@@ -2055,7 +2055,7 @@ namespace DaggerfallWorkshop.Game.Formulas
                         else
                             regionData[i].PriceAdjustment = (ushort)(51 * regionData[i].PriceAdjustment / 50);
 
-                        Mathf.Clamp(regionData[i].PriceAdjustment, 250, 4000);
+                        regionData[i].PriceAdjustment = (ushort)Mathf.Clamp(regionData[i].PriceAdjustment, 250, 4000);
                         if (regionData[i].PriceAdjustment <= 2000)
                         {
                             if (regionData[i].PriceAdjustment >= 500)
