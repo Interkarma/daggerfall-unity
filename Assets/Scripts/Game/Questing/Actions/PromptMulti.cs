@@ -90,11 +90,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             messageBox.AddButton((DaggerfallMessageBox.MessageBoxButtons)opt1button, true);
             messageBox.AddButton((DaggerfallMessageBox.MessageBoxButtons)opt2button);
-            if (opt3button != 0) {
+            if (opt3TaskSymbol != null) {
                 messageBox.ButtonSpacing = 28;
                 messageBox.AddButton((DaggerfallMessageBox.MessageBoxButtons)opt3button);
             }
-            if (opt4button != 0) {
+            if (opt4TaskSymbol != null) {
                 messageBox.ButtonSpacing = 24;
                 messageBox.AddButton((DaggerfallMessageBox.MessageBoxButtons)opt4button);
             }
