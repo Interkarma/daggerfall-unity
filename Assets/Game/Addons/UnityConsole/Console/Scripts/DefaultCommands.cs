@@ -398,7 +398,7 @@ namespace Wenzil.Console
                 PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
                 LevitateMotor levitateMotor = GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>();
 
-                if (playerEntity && levitateMotor)
+                if (playerEntity != null && levitateMotor != null)
                 {
                     playerEntity.NoClipMode = !playerEntity.NoClipMode;
                     levitateMotor.IsLevitating = playerEntity.NoClipMode;
