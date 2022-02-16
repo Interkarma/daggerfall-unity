@@ -49,6 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         readonly Vector2[] armourLabelPos = new Vector2[] { new Vector2(70, 12), new Vector2(20, 38), new Vector2(86, 38), new Vector2(12, 58), new Vector2(6, 90), new Vector2(18, 120), new Vector2(22, 168) };
 
         string lastBackgroundName = string.Empty;
+        bool showArmorLabels;
 
         #endregion
 
@@ -63,7 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Constructors
 
-        public PaperDoll()
+        public PaperDoll(bool showArmorValues=true)
         {
             // Setup panels
             Size = new Vector2(paperDollWidth, paperDollHeight);
@@ -77,10 +78,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             backgroundPanel.Enabled = showBackgroundLayer;
             characterPanel.Enabled = showCharacterLayer;
 
-            for (int bpIdx = 0; bpIdx < DaggerfallEntity.NumberBodyParts; bpIdx++)
+            showArmorLabels = showArmorValues;
+            if (showArmorLabels)
             {
-                armourLabels[bpIdx] = DaggerfallUI.AddDefaultShadowedTextLabel(armourLabelPos[bpIdx], characterPanel);
-                armourLabels[bpIdx].Text = "0";
+                for (int bpIdx = 0; bpIdx < DaggerfallEntity.NumberBodyParts; bpIdx++)
+                {
+                    armourLabels[bpIdx] = DaggerfallUI.AddDefaultShadowedTextLabel(armourLabelPos[bpIdx], characterPanel);
+                    armourLabels[bpIdx].Text = "0";
+                }
             }
         }
 
@@ -147,7 +152,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         // Refresh armour value labels
         void RefreshArmourValues(PlayerEntity playerEntity, bool suppress = false)
-        { 
+        {
+            if (!showArmorLabels)
+                return;
+
             for (int bpIdx = 0; bpIdx < DaggerfallEntity.NumberBodyParts; bpIdx++)
             {
                 int armorMod = playerEntity.DecreasedArmorValueModifier - playerEntity.IncreasedArmorValueModifier;
