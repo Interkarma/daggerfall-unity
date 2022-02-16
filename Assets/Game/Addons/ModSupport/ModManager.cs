@@ -1053,6 +1053,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                     if (!target.Enabled)
                     {
+                        if (dependency.IsOptional)
+                            continue;
+
                         errorMessages.Add(string.Format(GetText("dependencyNotEnabled"), dependency.Name));
                         continue;
                     }
