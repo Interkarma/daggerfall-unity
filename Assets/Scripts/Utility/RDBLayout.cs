@@ -1211,9 +1211,10 @@ namespace DaggerfallWorkshop.Utility
                 // Setup standard billboard and assign RDB data
                 go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent);
                 go.transform.position = targetPosition;
-                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
             }
+            Billboard dfBillboard = go.GetComponent<Billboard>();
+            if (dfBillboard)
+                dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
 
             // Add StaticNPC behaviour - required for quest system
             if (IsNPCFlat(archive))
@@ -1326,9 +1327,9 @@ namespace DaggerfallWorkshop.Utility
             if (dungeonIndex < RandomEncounters.EncounterTables.Length)
             {
                 // Get water level from start marker if it exists
-                DaggerfallBillboard dfBillboard;
+                Billboard dfBillboard;
                 if (startMarkers.Length > 0)
-                    dfBillboard = startMarkers[0].GetComponent<DaggerfallBillboard>();
+                    dfBillboard = startMarkers[0].GetComponent<Billboard>();
                 else
                     dfBillboard = null;
 
@@ -1398,9 +1399,9 @@ namespace DaggerfallWorkshop.Utility
             if (dungeonIndex < RandomEncounters.EncounterTables.Length)
             {
                 // Get water level from start marker if it exists
-                DaggerfallBillboard dfBillboard;
+                Billboard dfBillboard;
                 if (startMarkers.Length > 0)
-                    dfBillboard = startMarkers[0].GetComponent<DaggerfallBillboard>();
+                    dfBillboard = startMarkers[0].GetComponent<Billboard>();
                 else
                     dfBillboard = null;
 
@@ -1494,9 +1495,9 @@ namespace DaggerfallWorkshop.Utility
             byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
 
             // Get water level from start marker if it exists
-            DaggerfallBillboard dfBillboard;
+            Billboard dfBillboard;
             if (startMarkers.Length > 0)
-                dfBillboard = startMarkers[0].GetComponent<DaggerfallBillboard>();
+                dfBillboard = startMarkers[0].GetComponent<Billboard>();
             else
                 dfBillboard = null;
 

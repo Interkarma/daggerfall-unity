@@ -620,7 +620,7 @@ namespace DaggerfallWorkshop
                 GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, node.transform);
 
                 // Set position
-                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                Billboard dfBillboard = go.GetComponent<Billboard>();
                 go.transform.position = billboardPosition;
                 go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
@@ -940,12 +940,18 @@ namespace DaggerfallWorkshop
                     }
 
                     // Set position
-                    DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                    Billboard dfBillboard = go.GetComponent<Billboard>();
                     go.transform.position = billboardPosition;
                     go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
                     // Add RMB data to billboard
                     dfBillboard.SetRMBPeopleData(obj);
+                }
+                else
+                {
+                    Billboard dfBillboard = go.GetComponent<Billboard>();
+                    if (dfBillboard)
+                        dfBillboard.SetRMBPeopleData(obj);
                 }
 
                 // Add StaticNPC behaviour

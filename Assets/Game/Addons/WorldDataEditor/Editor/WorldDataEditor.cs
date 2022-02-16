@@ -681,7 +681,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                     {
                         data.rdbObj.Resources.FlatResource.TextureArchive = archive;
                         data.rdbObj.Resources.FlatResource.TextureRecord = record;
-                        DaggerfallBillboard billboard = Selection.activeGameObject.GetComponent<DaggerfallBillboard>();
+                        Billboard billboard = Selection.activeGameObject.GetComponent<Billboard>();
                         billboard.SetMaterial(archive, record);
                     }
                 }
@@ -1443,7 +1443,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                     }
 
                     record.XPos = Mathf.RoundToInt(modelPosition.x);
-                    record.YPos = Mathf.RoundToInt(-((child.localPosition.y - (child.GetComponent<DaggerfallBillboard>().Summary.Size.y / 2)) / MeshReader.GlobalScale));
+                    record.YPos = Mathf.RoundToInt(-((child.localPosition.y - (child.GetComponent<Billboard>().Summary.Size.y / 2)) / MeshReader.GlobalScale));
                     record.ZPos = Mathf.RoundToInt(modelPosition.z);
 
                     if (data.isExterior)
@@ -1462,7 +1462,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
 
                     modelPosition = child.transform.localPosition / MeshReader.GlobalScale;
                     record.XPos = Mathf.RoundToInt(modelPosition.x);
-                    record.YPos = Mathf.RoundToInt(-((child.localPosition.y - (child.GetComponent<DaggerfallBillboard>().Summary.Size.y / 2)) / MeshReader.GlobalScale));
+                    record.YPos = Mathf.RoundToInt(-((child.localPosition.y - (child.GetComponent<Billboard>().Summary.Size.y / 2)) / MeshReader.GlobalScale));
                     record.ZPos = Mathf.RoundToInt(modelPosition.z);
 
                     ArrayUtility.Add(ref buildingData.RmbSubRecord.Interior.BlockPeopleRecords, record);

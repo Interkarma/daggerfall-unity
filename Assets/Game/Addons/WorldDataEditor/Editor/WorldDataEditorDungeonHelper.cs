@@ -129,7 +129,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 // Setup standard billboard and assign RDB data
                 go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, null);
                 go.transform.position = targetPosition;
-                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                Billboard dfBillboard = go.GetComponent<Billboard>();
                 dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
             }
             return go;

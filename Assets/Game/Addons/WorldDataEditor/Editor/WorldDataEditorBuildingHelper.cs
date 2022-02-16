@@ -138,7 +138,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
             GameObject go = DaggerfallWorkshop.Utility.GameObjectHelper.CreateDaggerfallBillboardGameObject(rmbBlock.TextureArchive, rmbBlock.TextureRecord, null);
 
             // Set position
-            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+            Billboard dfBillboard = go.GetComponent<Billboard>();
             go.transform.position = billboardPosition;
             go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
@@ -153,7 +153,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
             GameObject go = DaggerfallWorkshop.Utility.GameObjectHelper.CreateDaggerfallBillboardGameObject(rmbBlock.TextureArchive, rmbBlock.TextureRecord, null);
 
             // Set position
-            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+            Billboard dfBillboard = go.GetComponent<Billboard>();
             go.transform.position = billboardPosition;
             go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 

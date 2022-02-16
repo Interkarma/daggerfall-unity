@@ -277,7 +277,7 @@ namespace DaggerfallWorkshop.Utility
             GameObject go = new GameObject(flatName);
             if (parent) go.transform.parent = parent;
 
-            DaggerfallBillboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
+            Billboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
             dfBillboard.SetMaterial(archive, record);
 
             if (PlayerActivate.HasCustomActivation(flatName)) 
@@ -634,13 +634,13 @@ namespace DaggerfallWorkshop.Utility
             if (MeshReplacement.ImportCustomFlatGameobject(textureArchive, textureRecord, Vector3.zero, go.transform))
             {
                 // Use imported model instead of billboard
-                GameObject.Destroy(go.GetComponent<DaggerfallBillboard>());
+                GameObject.Destroy(go.GetComponent<Billboard>());
                 GameObject.Destroy(go.GetComponent<MeshRenderer>());
             }
             else
             {
                 // Setup billboard component
-                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+                Billboard dfBillboard = go.GetComponent<Billboard>();
                 dfBillboard.SetMaterial(textureArchive, textureRecord);
 
                 // Now move up loot icon by half own size so bottom is aligned with position
@@ -986,7 +986,7 @@ namespace DaggerfallWorkshop.Utility
             // Set position and adjust up by half height if not inside a dungeon
             Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
             go.transform.localPosition = dungeonBlockPosition + marker.flatPosition;
-            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+            Billboard dfBillboard = go.GetComponent<Billboard>();
             if (siteType != SiteTypes.Dungeon)
                 go.transform.localPosition += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
@@ -1064,7 +1064,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Create billboard
             GameObject go = CreateDaggerfallBillboardGameObject(textureArchive, textureRecord, parent);
-            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
+            Billboard dfBillboard = go.GetComponent<Billboard>();
 
             // Set name
             go.name = string.Format("Quest Item [{0} | {1}]", item.Symbol.Original, item.DaggerfallUnityItem.LongName);

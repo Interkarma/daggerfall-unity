@@ -11,6 +11,8 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Utility;
+using System;
+using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
 {
@@ -75,6 +77,32 @@ namespace DaggerfallWorkshop
         /// Used when enemies are slowed by spells etc.
         /// </summary>
         public abstract int FrameSpeedDivisor { get; set; }
+
+        /// <summary>
+        /// Get the MobileUnitSummary data
+        /// </summary>
+        public MobileUnitSummary Summary { get { return summary; } }
+
+        [SerializeField]
+        protected MobileUnitSummary summary = new MobileUnitSummary();
+
+        [Serializable]
+        public struct MobileUnitSummary
+        {
+            public bool IsSetup;                                        // Flagged true when mobile settings are populated
+            public Rect[] AtlasRects;                                   // Array of rectangles for atlased materials
+            public RecordIndex[] AtlasIndices;                          // Indices into rect array for atlased materials, supports animations
+            public Vector2[] RecordSizes;                               // Size and scale of individual records
+            public int[] RecordFrames;                                  // Number of frames of individual records
+            public MobileEnemy Enemy;                                   // Mobile enemy settings
+            public MobileStates EnemyState;                             // Animation state
+            public MobileAnimation[] StateAnims;                        // Animation frames for this state
+            public MobileBillboardImportedTextures ImportedTextures;    // Textures imported from mods
+            public int AnimStateRecord;                                 // Record number of animation state
+            public int[] StateAnimFrames;                               // Sequence of frames to play for this animation. Used for attacks
+            public byte ClassicSpawnDistanceType;                       // 0 through 6 value read from spawn marker that determines distance at which enemy spawns/despawns in classic.
+            public bool specialTransformationCompleted;                 // Mobile has completed special transformation (e.g. Daedra Seducer)
+        }
 
         #endregion
 

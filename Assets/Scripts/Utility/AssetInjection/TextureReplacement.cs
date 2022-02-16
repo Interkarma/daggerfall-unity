@@ -461,7 +461,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// Always creates an emission map for textures marked as emissive by TextureReader, import emission maps for others only if available.
         /// </remarks>
         /// <returns>A material or null.</returns>
-        public static Material GetStaticBillboardMaterial(GameObject go, int archive, int record, ref DaggerfallBillboard.BillboardSummary summary, out Vector2 scale)
+        public static Material GetStaticBillboardMaterial(GameObject go, int archive, int record, ref Billboard.BillboardSummary summary, out Vector2 scale)
         {
             scale = Vector2.one;
 
