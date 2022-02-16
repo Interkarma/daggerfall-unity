@@ -48,6 +48,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public string DisplayNameKey { get; set; }
 
         /// <summary>
+        /// Custom display name of this potion recipe.
+        /// If set, this property will be returned by DisplayName.
+        /// </summary>
+        public string CustomDisplayName { get; set; }
+
+        /// <summary>
         /// The price of this potion recipe.
         /// </summary>
         public int Price { get; set; }
@@ -218,6 +224,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public string GetDisplayName()
         {
+            // Allow for custom display name when set
+            if (!string.IsNullOrEmpty(CustomDisplayName))
+                return CustomDisplayName;
+
+            // Resolve default name based on localization key
             if (string.IsNullOrEmpty(DisplayNameKey))
                 return TextManager.Instance.GetLocalizedText("unknownPowers");
             else
