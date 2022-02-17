@@ -16,6 +16,30 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop
 {
+    [Serializable]
+    public struct BillboardSummary
+    {
+        public Vector2 Size;                                // Size and scale in world units
+        public Rect Rect;                                   // Single UV rectangle for non-atlased materials only
+        public Rect[] AtlasRects;                           // Array of UV rectangles for atlased materials only
+        public RecordIndex[] AtlasIndices;                  // Indices into UV rect array for atlased materials only, supports animations
+        public bool AtlasedMaterial;                        // True if material is part of an atlas
+        public bool AnimatedMaterial;                       // True if material uses atlas UV animations (always false for non atlased materials)
+        public int CurrentFrame;                            // Current animation frame
+        public FlatTypes FlatType;                          // Type of flat
+        public EditorFlatTypes EditorFlatType;              // Sub-type of flat when editor/marker
+        public bool IsMobile;                               // Billboard is a mobile enemy
+        public int Archive;                                 // Texture archive index
+        public int Record;                                  // Texture record index
+        public int Flags;                                   // NPC Flags found in RMB and RDB NPC data
+        public int FactionOrMobileID;                       // FactionID for NPCs, Mobile ID for monsters
+        public int NameSeed;                                // NPC name seed
+        public MobileTypes FixedEnemyType;                  // Type for fixed enemy marker
+        public short WaterLevel;                            // Dungeon water level
+        public bool CastleBlock;                            // Non-hostile area of main story castle dungeons
+        public BillboardImportedTextures ImportedTextures;  // Textures imported from mods
+    }
+
     public abstract class Billboard : MonoBehaviour
     {
         /// <summary>
@@ -40,31 +64,7 @@ namespace DaggerfallWorkshop
         {
             get { return summary; }
         }
-
-        [Serializable]
-        public struct BillboardSummary
-        {
-            public Vector2 Size;                                // Size and scale in world units
-            public Rect Rect;                                   // Single UV rectangle for non-atlased materials only
-            public Rect[] AtlasRects;                           // Array of UV rectangles for atlased materials only
-            public RecordIndex[] AtlasIndices;                  // Indices into UV rect array for atlased materials only, supports animations
-            public bool AtlasedMaterial;                        // True if material is part of an atlas
-            public bool AnimatedMaterial;                       // True if material uses atlas UV animations (always false for non atlased materials)
-            public int CurrentFrame;                            // Current animation frame
-            public FlatTypes FlatType;                          // Type of flat
-            public EditorFlatTypes EditorFlatType;              // Sub-type of flat when editor/marker
-            public bool IsMobile;                               // Billboard is a mobile enemy
-            public int Archive;                                 // Texture archive index
-            public int Record;                                  // Texture record index
-            public int Flags;                                   // NPC Flags found in RMB and RDB NPC data
-            public int FactionOrMobileID;                       // FactionID for NPCs, Mobile ID for monsters
-            public int NameSeed;                                // NPC name seed
-            public MobileTypes FixedEnemyType;                  // Type for fixed enemy marker
-            public short WaterLevel;                            // Dungeon water level
-            public bool CastleBlock;                            // Non-hostile area of main story castle dungeons
-            public BillboardImportedTextures ImportedTextures;  // Textures imported from mods
-        }
-
+        
         /// <summary>
         /// Sets extended data about people billboard from RMB resource data.
         /// </summary>
