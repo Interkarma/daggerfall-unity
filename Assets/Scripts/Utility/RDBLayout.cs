@@ -687,23 +687,14 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         private static Matrix4x4 GetModelMatrix(DFBlock.RdbObject obj)
         {
-            // Get rotation angle for each axis
-            float degreesX = -obj.Resources.ModelResource.XRotation / BlocksFile.RotationDivisor;
-            float degreesY = -obj.Resources.ModelResource.YRotation / BlocksFile.RotationDivisor;
-            float degreesZ = -obj.Resources.ModelResource.ZRotation / BlocksFile.RotationDivisor;
-
-            // Calcuate transform
+            // Calculate transform
             Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
 
-            // Calculate matrix
-            Vector3 rx = new Vector3(degreesX, 0, 0);
-            Vector3 ry = new Vector3(0, degreesY, 0);
-            Vector3 rz = new Vector3(0, 0, degreesZ);
+            // Calculate rotation
+            Vector3 rotation = new Vector3(-obj.Resources.ModelResource.XRotation / BlocksFile.RotationDivisor, -obj.Resources.ModelResource.YRotation / BlocksFile.RotationDivisor, -obj.Resources.ModelResource.ZRotation / BlocksFile.RotationDivisor);
+
             Matrix4x4 modelMatrix = Matrix4x4.identity;
-            modelMatrix *= Matrix4x4.TRS(position, Quaternion.identity, Vector3.one);
-            modelMatrix *= Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(rz), Vector3.one);
-            modelMatrix *= Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(rx), Vector3.one);
-            modelMatrix *= Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(ry), Vector3.one);
+            modelMatrix *= Matrix4x4.TRS(position, Quaternion.Euler(rotation), Vector3.one);
 
             return modelMatrix;
         }
@@ -1148,15 +1139,10 @@ namespace DaggerfallWorkshop.Utility
                 }
             }
 
-            // Get rotation angle for each axis
-            float degreesX = -obj.Resources.ModelResource.XRotation / BlocksFile.RotationDivisor;
-            float degreesY = -obj.Resources.ModelResource.YRotation / BlocksFile.RotationDivisor;
-            float degreesZ = -obj.Resources.ModelResource.ZRotation / BlocksFile.RotationDivisor;
+            // Apply rotation
+            Vector3 rotation = new Vector3(-obj.Resources.ModelResource.XRotation / BlocksFile.RotationDivisor, -obj.Resources.ModelResource.YRotation / BlocksFile.RotationDivisor, -obj.Resources.ModelResource.ZRotation / BlocksFile.RotationDivisor);
+            go.transform.Rotate(rotation, Space.World);
 
-            // Apply transforms
-            go.transform.Rotate(0, degreesY, 0, Space.World);
-            go.transform.Rotate(degreesX, 0, 0, Space.World);
-            go.transform.Rotate(0, 0, degreesZ, Space.World);
             go.transform.localPosition = modelMatrix.GetColumn(3);
 
             // Get action door script
