@@ -725,7 +725,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
 
         protected override bool IsValueEqual(Color32 value)
         {
-            return Value.r == value.r || Value.g == value.g || Value.b == value.b || Value.a == value.a;
+            return Value.r == value.r && Value.g == value.g && Value.b == value.b && Value.a == value.a;
         }
 
         protected override string Serialize()
