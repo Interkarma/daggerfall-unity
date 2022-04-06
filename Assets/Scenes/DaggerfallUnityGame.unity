@@ -801,8 +801,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1551452250}
     - target: {fileID: 1573166380, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
+      propertyPath: antialiasingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1573166380, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
       propertyPath: m_BeforeStackBundles.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1573166380, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
+      propertyPath: temporalAntialiasing.jitterSpread
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 1573166380, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
+      propertyPath: temporalAntialiasing.motionBlending
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1573166380, guid: 53a45b46ca97a974f8e677f68c2a85e6, type: 3}
       propertyPath: m_BeforeStackBundles.Array.data[0].assemblyQualifiedName
