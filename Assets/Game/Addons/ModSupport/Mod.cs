@@ -514,7 +514,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <returns>Localized string.</returns>
         public string Localize(string key)
         {
-            return TryLocalize(key) ?? string.Format(LocalizationSettings.StringDatabase.NoTranslationFoundFormat, key);
+            return TryLocalize(key) ?? string.Format(LocalizationSettings.StringDatabase.NoTranslationFoundMessage, key);
         }
 
         /// <summary>

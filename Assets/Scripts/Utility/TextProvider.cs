@@ -294,10 +294,11 @@ namespace DaggerfallWorkshop.Utility
             StringTable table = null;
             var sd = LocalizationSettings.StringDatabase;
             var op = sd.GetTableAsync(collection);
+            op.WaitForCompletion();
             if (op.IsDone)
                 table = op.Result;
             else
-                op.Completed += (o) => table = o.Result;
+                Debug.LogErrorFormat("GetLocalizedString() failed on collection='{0}' id='{1}'", collection, id);
 
             if (table != null)
             {

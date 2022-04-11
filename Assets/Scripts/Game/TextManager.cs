@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game
         public static string defaultInternalStringsCollectionName = "Internal_Strings";
         public static string defaultInternalRSCCollectionName = "Internal_RSC";
         public static string defaultInternalBOKCollectionName = "Internal_BOK";
+        public static string defaultInternalFlatsCollectionName = "Internal_Flats";
 
         const string localizedTextLookupError = "<LocaleText-NotFound>";
         const string textFolderName = "Text";
@@ -41,12 +42,14 @@ namespace DaggerfallWorkshop.Game
         public string runtimeInternalStrings = defaultInternalStringsCollectionName;
         public string runtimeRSCStrings = defaultInternalRSCCollectionName;
         public string runtimeBOKStrings = defaultInternalBOKCollectionName;
+        public string runtimeFlatStrings = defaultInternalFlatsCollectionName;
 
         // String table copy editor properties
         public bool tableCopyOverwriteTargetStringTables = false;
         public string tableCopyTargetInternalStrings = null;
         public string tableCopyTargetRSCStrings = null;
         public string tableCopyTargetBOKStrings = null;
+        public string tableCopyTargetFlatStrings = null;
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
         Dictionary<string, string[]> cachedLocalizedTextLists = new Dictionary<string, string[]>();
@@ -138,10 +141,11 @@ namespace DaggerfallWorkshop.Game
         {
             Locale selectedLocale = null;
             var op = LocalizationSettings.SelectedLocaleAsync;
+            op.WaitForCompletion();
             if (op.IsDone)
                 selectedLocale = op.Result;
             else
-                op.Completed += (o) => selectedLocale = o.Result;
+                Debug.LogError("HasLocalizedFont() failed LocalizationSettings.SelectedLocaleAsync operation");
 
             return (selectedLocale != null) ? localizedFonts.ContainsKey(GetLocaleFontKey(selectedLocale, fontName)) : false;
         }
@@ -173,10 +177,11 @@ namespace DaggerfallWorkshop.Game
         {
             Locale selectedLocale = null;
             var op = LocalizationSettings.SelectedLocaleAsync;
+            op.WaitForCompletion();
             if (op.IsDone)
                 selectedLocale = op.Result;
             else
-                op.Completed += (o) => selectedLocale = o.Result;
+                Debug.LogError("GetLocalizedFont() failed LocalizationSettings.SelectedLocaleAsync operation");
 
             return (selectedLocale != null) ? GetLocalizedFont(selectedLocale, fontName) : null;
         }
@@ -246,6 +251,14 @@ namespace DaggerfallWorkshop.Game
 
                 case TextCollections.TextRSC:
                     collectionName = runtimeRSCStrings;
+                    break;
+
+                case TextCollections.TextBOK:
+                    collectionName = runtimeBOKStrings;
+                    break;
+
+                case TextCollections.TextFlats:
+                    collectionName = runtimeFlatStrings;
                     break;
             }
 
