@@ -119,7 +119,7 @@ namespace DaggerfallWorkshop
 
         public override bool SpecialTransformationCompleted
         {
-            get { return Summary.specialTransformationCompleted; }
+            get { return summary.specialTransformationCompleted; }
             protected set { summary.specialTransformationCompleted = value; }
         }
 
