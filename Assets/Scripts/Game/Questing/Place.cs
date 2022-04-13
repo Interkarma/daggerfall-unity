@@ -175,7 +175,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
                 else if (string.Compare(siteType, "randompermanent", true) == 0)
                 {
-                    // This is comma-separated list of random sites
+                    // This is a comma-separated list of random sites
                     scope = Scopes.Fixed;
                     randomSiteList = true;
                 }
@@ -199,7 +199,6 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (siteNames == null || siteNames.Length == 0)
                         throw new Exception(string.Format("Place randompermanent must have at least one site name in source: '{0}'", line));
                     name = siteNames[UnityEngine.Random.Range(0, siteNames.Length)];
-                    scope = Scopes.Fixed;
                 }
 
                 // Try to read place variables from data table
