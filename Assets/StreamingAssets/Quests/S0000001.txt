@@ -314,7 +314,7 @@ Person _brother_ face 5 faction Children male remote anyInfo 1030 rumors 1031
 Person _agentuk_ face 1 faction Agents_of_The_Underking remote
 Person _underking_ face 1 named The_Underking anyInfo 1013
 
-Place _ukcrypt_ remote dungeon11 anyInfo 1015 rumors 1016
+Place _ukcrypt_ randompermanent Castle_Faallem,Fortress_Fhojum anyInfo 1015 rumors 1016
 Place _dirennitower_ permanent DirenniTowerEntry
 Place _agentplace_ remote tavern
 

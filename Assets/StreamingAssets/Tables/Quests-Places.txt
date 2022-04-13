@@ -13,6 +13,7 @@ schema: *name,p1,p2,p3
 AlcaireCoven,       0xc35a, 0x0001, -1
 BeldamaCoven,       0xc356, 0x0001, -1
 BluffCoven,         0xc360, 0x0001, -1
+Castle_Faallem,     0x5d6c, 0xfa01, -1
 Castle_Necromoghan, 0x4587, 0x0001, -1
 Coven_in_the_Marsh, 0xc374, 0x0001, -1
 Coven_of_Dust,      0xc376, 0x0001, -1
@@ -27,6 +28,7 @@ DevilRockCoven,     0xc36e, 0x0001, -1
 DirenniTowerEntry,  0xc364, 0xfa01, -1
 DirenniTower3,      0xc365, 0xfa08, -1
 DirenniTower2,      0xc365, 0xfa02, -1
+Fortress_Fhojum,    0x5fa8, 0xfa01, -1
 GlenmorilCoven,     0xc358, 0x0001, -1
 KykosCoven,         0xc37e, 0x0001, -1
 Llugwych,           0xc352, 0x0001, -1

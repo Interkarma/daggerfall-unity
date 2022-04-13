@@ -145,9 +145,11 @@ namespace DaggerfallWorkshop.Game.Questing
             base.SetResource(line);
 
             // Match string for Place variants
-            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent) (?<siteName>\w+)";
+            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent) (?<siteName>\w+)|" +
+                              @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>randompermanent) (?<siteList>[a-zA-Z0-9_.,]+)";
 
             // Try to match source line with pattern
+            bool randomSiteList = false;
             Match match = Regex.Match(line, matchStr);
             if (match.Success)
             {
@@ -171,6 +173,12 @@ namespace DaggerfallWorkshop.Game.Questing
                     // This is a permanent place
                     scope = Scopes.Fixed;
                 }
+                else if (string.Compare(siteType, "randompermanent", true) == 0)
+                {
+                    // This is comma-separated list of random sites
+                    scope = Scopes.Fixed;
+                    randomSiteList = true;
+                }
                 else
                 {
                     throw new Exception(string.Format("Place found no site type match found for source: '{0}'. Must be local|remote|permanent.", line));
@@ -178,9 +186,20 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Get place name for parameter lookup
                 name = match.Groups["siteName"].Value;
-                if (string.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name) && !randomSiteList)
                 {
                     throw new Exception(string.Format("Place site name empty for source: '{0}'", line));
+                }
+
+                // Pick one permanent place from random site list
+                if (randomSiteList)
+                {
+                    string srcSiteList = match.Groups["siteList"].Value;
+                    string[] siteNames = srcSiteList.Split(',');
+                    if (siteNames == null || siteNames.Length == 0)
+                        throw new Exception(string.Format("Place randompermanent must have at least one site name in source: '{0}'", line));
+                    name = siteNames[UnityEngine.Random.Range(0, siteNames.Length)];
+                    scope = Scopes.Fixed;
                 }
 
                 // Try to read place variables from data table
