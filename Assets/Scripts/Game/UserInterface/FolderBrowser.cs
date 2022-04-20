@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return confirmEnabled; }
             set { confirmEnabled = value; }
         }
-                
+
         #endregion
 
         #region Constructors
@@ -176,15 +176,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // DriveInfo not implemented on all platforms, need to use GetLogicalDrives
             drives.Clear();
-            drives.AddRange(Directory.GetLogicalDrives());
+            switch (SystemInfo.operatingSystemFamily)
+            {
+                case OperatingSystemFamily.MacOSX:
+                case OperatingSystemFamily.Linux:
+                    drives.Add("/");
+                    break;
+                default:
+                    drives.AddRange(Directory.GetLogicalDrives());
+                    break;
+            }
+
             if (drives.Count == 0)
                 return;
-            
+
             driveList.ClearItems();
-            foreach(var drive in drives)
-            {
-                driveList.AddItem(drive);
-            }
+            driveList.AddItems(drives);
 
             driveList.SelectedIndex = 0;
             currentPath = drives[driveList.SelectedIndex];
@@ -327,7 +334,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 string selectedFolder = folderList.SelectedItem;
                 newPath = Path.Combine(currentPath, selectedFolder);
             }
-            
+
             // List folders in new path
             if (Directory.Exists(newPath))
             {
