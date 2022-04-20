@@ -174,7 +174,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void RefreshDrives()
         {
-            // DriveInfo not implemented on all platforms, need to use GetLogicalDrives
+            // Unix has no concept of logical drives, root is always the correct filesystem root
             drives.Clear();
             switch (SystemInfo.operatingSystemFamily)
             {
