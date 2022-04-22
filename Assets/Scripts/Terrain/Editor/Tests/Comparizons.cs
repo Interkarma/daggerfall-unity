@@ -61,6 +61,7 @@ namespace DaggerfallWorkshop.Tests
         {
             const uint seed = 1;
             const uint numRepeats = (uint)1e6;
+            int innerloopBatchCount = Mathf.Max((int)(numRepeats / (SystemInfo.processorCount * 100)),1024);
             Debug.Log($"seed: {seed}");
             Debug.Log($"numRepeats: {numRepeats}");
 
@@ -138,10 +139,10 @@ namespace DaggerfallWorkshop.Tests
                 {
                     var job = new _Random_IJob_Burst
                     {
-                        Rnd = new Unity.Mathematics.Random(seed) ,
-                        NumRepeats = numRepeats ,
-                        Min = int.MinValue ,
-                        Max = int.MaxValue ,
+                        Rnd = new Unity.Mathematics.Random(seed),
+                        NumRepeats = numRepeats,
+                        Min = int.MinValue,
+                        Max = int.MaxValue,
                     };
                     job.Schedule().Complete();
                 }
@@ -153,10 +154,10 @@ namespace DaggerfallWorkshop.Tests
                 {
                     var job = new _Random_IJob_Burst
                     {
-                        Rnd = new Unity.Mathematics.Random(seed) ,
-                        NumRepeats = numRepeats ,
-                        Min = 0 ,
-                        Max = int.MaxValue ,
+                        Rnd = new Unity.Mathematics.Random(seed),
+                        NumRepeats = numRepeats,
+                        Min = 0,
+                        Max = int.MaxValue,
                     };
                     job.Schedule().Complete();
                 }
@@ -168,11 +169,11 @@ namespace DaggerfallWorkshop.Tests
                 {
                     var job = new _Random_IJobParallelFor_Burst
                     {
-                        Rnd = new Unity.Mathematics.Random(seed) ,
-                        Min = int.MinValue ,
-                        Max = int.MaxValue ,
+                        Rnd = new Unity.Mathematics.Random(seed),
+                        Min = int.MinValue,
+                        Max = int.MaxValue,
                     };
-                    job.Schedule( (int) numRepeats , 1024 ).Complete();
+                    job.Schedule((int)numRepeats, innerloopBatchCount).Complete();
                 }
                 stopwatch.Stop();
                 Debug.Log($"\t IJobParallelFor+Burst NextInt(int.MinValue, int.MaxValue):\n\t\t{stopwatch.ElapsedMilliseconds} [ms]\t{stopwatch.ElapsedTicks} [ticks]");
@@ -182,15 +183,17 @@ namespace DaggerfallWorkshop.Tests
                 {
                     var job = new _Random_IJobParallelFor_Burst
                     {
-                        Rnd = new Unity.Mathematics.Random(seed) ,
-                        Min = 0 ,
-                        Max = int.MaxValue ,
+                        Rnd = new Unity.Mathematics.Random(seed),
+                        Min = 0,
+                        Max = int.MaxValue,
                     };
-                    job.Schedule( (int) numRepeats , 1024 ).Complete();
+                    job.Schedule((int)numRepeats, innerloopBatchCount).Complete();
                 }
                 stopwatch.Stop();
                 Debug.Log($"\t IJobParallelFor+Burst NextInt(0, int.MaxValue):\n\t\t{stopwatch.ElapsedMilliseconds} [ms]\t{stopwatch.ElapsedTicks} [ticks]");
             }
+
+            Debug.Log("\nnote: Running this test repeatedly makes cpu better at executing it (helps cpu predict code execution pathways). Running it 3>= times should stabilize the results around such optimistic case.");
         }
 
         static string _BuildString(System.Func<string> func, uint numRepeats)
@@ -200,7 +203,7 @@ namespace DaggerfallWorkshop.Tests
             return sb.ToString();
         }
 
-        [Unity.Burst.BurstCompile]
+        [Unity.Burst.BurstCompile(CompileSynchronously = true)]
         struct _Random_IJob_Burst : IJob
         {
             public Unity.Mathematics.Random Rnd;
@@ -213,7 +216,7 @@ namespace DaggerfallWorkshop.Tests
             }
         }
 
-        [Unity.Burst.BurstCompile]
+        [Unity.Burst.BurstCompile(CompileSynchronously = true)]
         struct _Random_IJobParallelFor_Burst : IJobParallelFor
         {
             public Unity.Mathematics.Random Rnd;
