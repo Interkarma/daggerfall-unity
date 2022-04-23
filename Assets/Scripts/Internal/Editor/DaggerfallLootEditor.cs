@@ -10,16 +10,10 @@
 //
 
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEditor;
-using DaggerfallWorkshop.Game;
+
 using DaggerfallWorkshop.Game.Items;
-using DaggerfallConnect;
-using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Game.Utility;
-using DaggerfallWorkshop.Game.MagicAndEffects;
-using DaggerfallWorkshop.Game.Formulas;
-using DaggerfallConnect.FallExe;
-using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop
 {
@@ -27,31 +21,52 @@ namespace DaggerfallWorkshop
     [CanEditMultipleObjects]
     public class DaggerfallLootEditor : Editor
     {
-        DaggerfallLoot component;
-        static bool isFoldoutEnabled = false;
         const string isFoldoutEnabledKey = nameof(DaggerfallLootEditor) + "::" + nameof(isFoldoutEnabledKey);
+        DaggerfallLoot component;
 
         void OnEnable()
         {
             component = target as DaggerfallLoot;
-            isFoldoutEnabled = EditorPrefs.GetBool(isFoldoutEnabledKey, false);
         }
-        void OnDisable() => EditorPrefs.SetBool(isFoldoutEnabledKey, isFoldoutEnabled);
 
-        public override void OnInspectorGUI()
+        public override VisualElement CreateInspectorGUI()
         {
-            base.OnInspectorGUI();
-
-            var items = component.Items;
-            isFoldoutEnabled = EditorGUILayout.BeginFoldoutHeaderGroup(isFoldoutEnabled, $"[{items.Count}] Items");
-            EditorGUI.indentLevel++;
-            for (int i = 0; isFoldoutEnabled && i < items.Count; i++)
+            var ROOT = new VisualElement();
             {
-                var next = items.GetItem(i);
-                EditorGUILayout.LabelField($"{next.ItemName}{(next.stackCount == 1 ? "" : $" x {next.stackCount}")}");
+                ROOT.Add(new IMGUIContainer(base.OnInspectorGUI));
+
+                int numItems = component.Items.Count;
+
+                var FOLDOUT = new Foldout() { text = $"[{numItems}] {nameof(DaggerfallLoot.Items)}", value = EditorPrefs.GetBool(isFoldoutEnabledKey, false) };
+                FOLDOUT.RegisterValueChangedCallback((evt) => EditorPrefs.SetBool(isFoldoutEnabledKey, evt.newValue));
+                if (numItems != 0)// @TODO: remove this line once component.Items is a IList (so the ListView is always created)
+                {
+                    // @TODO: component.Items is no IList so can't reference it as itemsSource directly without making a copy
+                    //        (direct reference is highly prefferable so remove this copy in the future)
+                    var itemsAsArray = new DaggerfallUnityItem[numItems];
+                    for (int i = 0; i < numItems; i++)
+                        itemsAsArray[i] = component.Items.GetItem(i);
+
+                    int itemHeight = (int)EditorGUIUtility.singleLineHeight;
+
+                    var LISTVIEW = new ListView(
+                        itemsSource: itemsAsArray,
+                        itemHeight: itemHeight,
+                        makeItem: () => new Label(),
+                        bindItem: (ve, i) => ((Label)ve).text = $"{itemsAsArray[i].ItemName}{(itemsAsArray[i].stackCount == 1 ? "" : $" x {itemsAsArray[i].stackCount}")}"
+                    );
+                    {
+                        var style = LISTVIEW.style;
+                        style.flexGrow = 1;
+                        style.minHeight = itemHeight * Mathf.Min(numItems, 6);
+                        style.maxHeight = itemHeight * Mathf.Min(numItems, 12);
+                    }
+                    FOLDOUT.Add(LISTVIEW);
+                }
+                ROOT.Add(FOLDOUT);
             }
-            EditorGUI.indentLevel--;
-            EditorGUILayout.EndFoldoutHeaderGroup();
+            return ROOT;
         }
+
     }
 }
