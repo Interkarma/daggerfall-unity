@@ -14,7 +14,7 @@ using UnityEngine.UIElements;
 
 using DaggerfallWorkshop.Game.Items;
 
-namespace DaggerfallWorkshop.UIToolkit
+namespace DaggerfallWorkshop.EditorOnly.UIToolkit
 {
     public class ItemCollectionField : Foldout
     {
