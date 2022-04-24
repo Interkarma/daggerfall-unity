@@ -16,13 +16,14 @@ using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.UIToolkit
 {
-    [UnityEngine.Scripting.Preserve]
     public class ItemCollectionField : Foldout
     {
 
         const string isFoldoutEnabledKey = nameof(ItemCollectionField) + "::" + nameof(isFoldoutEnabledKey);
+        const string classItemName = "item-name";
+        const string classInventoryImage = "inventory-image";
 
-        public ItemCollectionField(ItemCollection obj)
+        public ItemCollectionField(ItemCollection obj, int itemHeight = 64)
         {
             int numItems = obj.Count;
 
@@ -38,14 +39,7 @@ namespace DaggerfallWorkshop.UIToolkit
                 for (int i = 0; i < numItems; i++)
                     itemsAsArray[i] = obj.GetItem(i);
 
-                const int itemHeight = 16;
-
-                var LISTVIEW = new ListView(
-                    itemsSource: itemsAsArray,
-                    itemHeight: itemHeight,
-                    makeItem: () => new Label(),
-                    bindItem: (ve, i) => ((Label)ve).text = $"{itemsAsArray[i].ItemName}{(itemsAsArray[i].stackCount == 1 ? "" : $" x {itemsAsArray[i].stackCount}")}"
-                );
+                var LISTVIEW = new ListView(itemsAsArray, itemHeight, makeItem, bindItem);
                 {
                     var style = LISTVIEW.style;
                     style.flexGrow = 1;
@@ -53,6 +47,41 @@ namespace DaggerfallWorkshop.UIToolkit
                     style.maxHeight = itemHeight * Mathf.Min(numItems, 12);
                 }
                 this.Add(LISTVIEW);
+
+                VisualElement makeItem()
+                {
+                    var ve = new VisualElement();
+                    {
+                        var style = ve.style;
+                        style.flexDirection = FlexDirection.Row;
+                        style.alignItems = Align.Center;
+                    }
+                    {
+                        var img = new Image() { name = classInventoryImage, scaleMode = ScaleMode.ScaleToFit };
+                        {
+                            var style = img.style;
+                            style.width = style.height = itemHeight;
+                            style.flexShrink = 0;
+                        }
+                        ve.Add(img);
+
+                        var label = new Label() { name = classItemName };
+                        {
+                            var style = label.style;
+                            style.flexWrap = Wrap.Wrap;
+                            style.flexShrink = 1;
+                        }
+                        ve.Add(label);
+                    }
+
+                    return ve;
+                }
+                void bindItem(VisualElement ve, int i)
+                {
+                    DaggerfallUnityItem item = itemsAsArray[i];
+                    ve.Q<Image>(classInventoryImage).image = DaggerfallUnity.Instance.ItemHelper.GetInventoryImage(item).texture;
+                    ve.Q<Label>(classItemName).text = $"{item.LongName}{(item.stackCount == 1 ? "" : $" x {item.stackCount}")}";
+                }
             }
         }
 

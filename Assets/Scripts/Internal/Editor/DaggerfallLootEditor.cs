@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop.EditorOnly
             var ROOT = new VisualElement();
             {
                 ROOT.Add(new IMGUIContainer(base.OnInspectorGUI));
-                ROOT.Add(new UIToolkit.ItemCollectionField(component.Items));
+                ROOT.Add(new UIToolkit.ItemCollectionField(obj: component.Items, itemHeight: 32));
             }
             return ROOT;
         }
