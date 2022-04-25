@@ -29,6 +29,7 @@ Shader "Daggerfall/TilemapTextureArray" {
         _TilemapTex("Tilemap (R)", 2D) = "red" {}
         _TilemapDim("Tilemap Dimension (in tiles)", Int) = 128
         _MaxIndex("Max Tileset Index", Int) = 255
+        _Padding("Padding", Range(0, 0.1)) = 0.0005
     }
     SubShader {
         Tags { "RenderType"="Opaque" }
@@ -59,6 +60,7 @@ Shader "Daggerfall/TilemapTextureArray" {
         float4 _TileTexArr_TexelSize;
         int _MaxIndex;
         int _TilemapDim;
+        float _Padding;
 
         struct Input
         {
@@ -102,7 +104,7 @@ Shader "Daggerfall/TilemapTextureArray" {
 
             // Offset to fragment position inside tile
             float2 unwrappedUV = IN.uv_MainTex * _TilemapDim;
-            float2 tileUV = frac(unwrappedUV);
+            float2 tileUV = frac(unwrappedUV) * (1 - 2 * _Padding) + _Padding;
             float2 transformedTileUV = mul(rotations[tileTransformation], tileUV) + translations[tileTransformation];
 
             // Sample based on gradient and set output
