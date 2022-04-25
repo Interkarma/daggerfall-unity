@@ -96,14 +96,17 @@ Shader "Daggerfall/TilemapTextureArray" {
         void surf (Input IN, inout SurfaceOutput o)
         {
             // Get offset to tile in atlas
-            uint index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex + 0.5;
+            uint tileData = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex + 0.5;
+            uint tileIndex = tileData >> 2; // compute correct texture array index from index
+            uint tileTransformation = tileData & 0x3;
 
             // Offset to fragment position inside tile
             float2 unwrappedUV = IN.uv_MainTex * _TilemapDim;
-            float2 uv = mul(rotations[index % 4], frac(unwrappedUV)) + translations[index % 4];
+            float2 tileUV = frac(unwrappedUV);
+            float2 transformedTileUV = mul(rotations[tileTransformation], tileUV) + translations[tileTransformation];
 
             // Sample based on gradient and set output
-            float3 uv3 = float3(uv, index / 4); // compute correct texture array index from index
+            float3 uv3 = float3(transformedTileUV, tileIndex);
 
             // Get mipmap level
             float mipMapLevel = GetMipLevel(unwrappedUV, _TileTexArr_TexelSize);
