@@ -65,7 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     // Change reputation
                     int rep = Math.Abs(playerEntity.FactionData.GetReputation(factionId));
-                    if (Dice100.SuccessRoll(2 * amount / ((2 * amount / Math.Max(rep, 1)) + 1)))
+                    if (Dice100.SuccessRoll((2 * amount / Math.Max(rep, 1)) + 1))
                         playerEntity.FactionData.ChangeReputation(factionId, 1); // Does not propagate in classic
 
                     // Show thanks message
