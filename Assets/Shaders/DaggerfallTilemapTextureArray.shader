@@ -29,7 +29,6 @@ Shader "Daggerfall/TilemapTextureArray" {
         _TilemapTex("Tilemap (R)", 2D) = "red" {}
         _TilemapDim("Tilemap Dimension (in tiles)", Int) = 128
         _MaxIndex("Max Tileset Index", Int) = 255
-        _Padding("Padding", Range(0, 0.1)) = 0.0005
     }
     SubShader {
         Tags { "RenderType"="Opaque" }
@@ -58,9 +57,8 @@ Shader "Daggerfall/TilemapTextureArray" {
 
         sampler2D _TilemapTex;
         float4 _TileTexArr_TexelSize;
-        int _MaxIndex;
-        int _TilemapDim;
-        float _Padding;
+        uint _MaxIndex;
+        uint _TilemapDim;
 
         struct Input
         {
@@ -97,14 +95,15 @@ Shader "Daggerfall/TilemapTextureArray" {
 
         void surf (Input IN, inout SurfaceOutput o)
         {
+            float2 unwrappedUV = IN.uv_MainTex * _TilemapDim;
+
             // Get offset to tile in atlas
-            uint tileData = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex + 0.5;
-            uint tileIndex = tileData >> 2; // compute correct texture array index from index
+            uint tileData = tex2D(_TilemapTex, floor(unwrappedUV) / _TilemapDim).a * _MaxIndex + 0.5;
+            uint tileIndex = tileData >> 2; // compute correct texture array index from data
             uint tileTransformation = tileData & 0x3;
 
             // Offset to fragment position inside tile
-            float2 unwrappedUV = IN.uv_MainTex * _TilemapDim;
-            float2 tileUV = frac(unwrappedUV) * (1 - 2 * _Padding) + _Padding;
+            float2 tileUV = frac(unwrappedUV);
             float2 transformedTileUV = mul(rotations[tileTransformation], tileUV) + translations[tileTransformation];
 
             // Sample based on gradient and set output
