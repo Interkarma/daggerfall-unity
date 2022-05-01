@@ -570,8 +570,13 @@ namespace DaggerfallWorkshop.Game
 
                     if (distMovement > JoystickDeadzone)
                     {
-                        controllerCursorPosition.x += JoystickCursorSensitivity * controllerCursorHorizontalSpeed * horizj * Time.fixedDeltaTime;
-                        controllerCursorPosition.y += JoystickCursorSensitivity * controllerCursorVerticalSpeed * vertj * Time.fixedDeltaTime;
+                        // Since OnGUI is not fixed, make sure the mouse keeps consistent speed regardless of framerate
+                        // Speed = speed * 0.02 * 60 frames / (1 / unscaledDeltaTime) or speed * 1.2 * unscaledDeltaTime
+                        // 60 frames -> speed * 60 / 60 = speed * 1.0
+                        // 30 frames -> speed * 60 / 30 = speed * 2.0
+                        // 120 frames -> speed * 60 / 120 = speed * 0.5
+                        controllerCursorPosition.x += JoystickCursorSensitivity * controllerCursorHorizontalSpeed * horizj * 1.2f * Time.unscaledDeltaTime;
+                        controllerCursorPosition.y += JoystickCursorSensitivity * controllerCursorVerticalSpeed * vertj * 1.2f * Time.unscaledDeltaTime;
                     }
 
                     controllerCursorPosition.x = Mathf.Clamp(controllerCursorPosition.x, 0, Screen.width);
