@@ -443,22 +443,10 @@ namespace DaggerfallWorkshop
         /// <summary>
         /// Draws a circle at the bottom of the bilboard to make it easier to judge the size regardless of rotation.
         /// </summary>
-        public void OnDrawGizmosSelected()
+        void OnDrawGizmosSelected()
         {
-            if (!Application.isPlaying)
-            {
-                UnityEditor.SceneView sceneView = GetActiveSceneView();
-                if (sceneView)
-                {
-                    float radius = 0.0f;
-                    Vector3 offset = Vector3.zero;
-
-                    radius = (summary.Size.x / 2);
-                    offset.y = (summary.Size.y / 2);
-
-                    Handles.DrawWireDisc(transform.position - offset, Vector3.up, radius);
-                }
-            }
+            Vector3 sizeHalf = summary.Size * 0.5f;
+            Handles.DrawWireDisc(transform.position - new Vector3(0, sizeHalf.y, 0), Vector3.up, sizeHalf.x);
         }
 
         private SceneView GetActiveSceneView()
