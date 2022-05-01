@@ -439,6 +439,7 @@ namespace DaggerfallWorkshop
                 }
             }
         }
+        
         /// <summary>
         /// Draws a circle at the bottom of the bilboard to make it easier to judge the size regardless of rotation.
         /// </summary>
@@ -449,7 +450,7 @@ namespace DaggerfallWorkshop
                 UnityEditor.SceneView sceneView = GetActiveSceneView();
                 if (sceneView)
                 {
-                    float radius;
+                    float radius = 0.0f;
                     Vector3 offset = Vector3.zero;
 
                     radius = (summary.Size.x / 2);
