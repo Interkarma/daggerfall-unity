@@ -69,13 +69,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public string Text
         {
             get { return text; }
-            set { text = value; SetCursorPosition(text.Length); }
+            set
+            {
+                text = value ?? string.Empty;
+                SetCursorPosition(text.Length);
+            }
         }
 
         public string DefaultText
         {
             get { return defaultText; }
-            set { defaultText = value; }
+            set { defaultText = value ?? string.Empty; }
         }
 
         public string ResultText

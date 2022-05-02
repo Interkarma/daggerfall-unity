@@ -295,6 +295,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         protected virtual void SetText(string value)
         {
+            if (value == null)
+                value = string.Empty;
+
             // Truncate string to max characters
             if (maxCharacters != -1)
                 value = value.Substring(0, Math.Min(value.Length, maxCharacters));
