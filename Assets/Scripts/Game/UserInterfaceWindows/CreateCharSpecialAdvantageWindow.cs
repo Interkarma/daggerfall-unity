@@ -321,6 +321,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             };
             string[] secondaryList = null;
             // advantages/disadvantages with secondary options
+            bool alreadyAdded = false;
             switch (primaryKey)
             {
                 case HardStrings.bonusToHit:
@@ -338,17 +339,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
                 case HardStrings.increasedMagery:
                     // limit to 1 magery increase advantage for the character
-                    bool alreadyAdded = false;
                     foreach (SpecialAdvDis item in advDisList)
                     {
                         if (item.primaryStringKey == HardStrings.increasedMagery)
-                        {
                             alreadyAdded = true;
-                        }
-                    }
-                    if (alreadyAdded)
-                    {
-                        return;
                     }
                     secondaryList = increasedMageryStringKeys;
                     break;
@@ -363,6 +357,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     secondaryList = damageEnvStringKeys;
                     break;
                 case HardStrings.darknessPoweredMagery:
+                    // limit to 1 darkness powered disadvantage for the character
+                    foreach (SpecialAdvDis item in advDisList)
+                    {
+                        if (item.primaryStringKey == HardStrings.darknessPoweredMagery)
+                            alreadyAdded = true;
+                    }
                     secondaryList = darknessPoweredStringKeys;
                     break;
                 case HardStrings.forbiddenArmorType:
@@ -375,6 +375,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     secondaryList = shieldTypeStringKeys;
                     break;
                 case HardStrings.lightPoweredMagery:
+                    // limit to 1 light powered disadvantage for the character
+                    foreach (SpecialAdvDis item in advDisList)
+                    {
+                        if (item.primaryStringKey == HardStrings.lightPoweredMagery)
+                            alreadyAdded = true;
+                    }
                     secondaryList = lightPoweredStringKeys;
                     break;
                 case HardStrings.lowTolerance:
@@ -383,6 +389,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 default:
                     break;
             }
+
+            // Exit if already added
+            if (alreadyAdded)
+                return;
+
             if (secondaryList == null)
             {
                 if (CannotAddAdvantage(s))
