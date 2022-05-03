@@ -65,7 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox mouseSmoothing;
         Checkbox leftHandWeapons;
         Checkbox playerNudity;
-        Checkbox clickToAttack;
+        HorizontalSlider weaponSwingMode;
         Checkbox sdfFontRendering;
         Checkbox enableController;
         Checkbox retro320x200WorldRendering;
@@ -404,6 +404,32 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return checkbox;
         }
 
+        HorizontalSlider AddSlider(float x, string key, int selected, params string[] choices)
+        {
+            TextLabel label = DaggerfallUI.AddTextLabel(
+                DaggerfallUI.DefaultFont,
+                new Vector2(x, optionPos), 
+                GetText(key),
+                optionsPanel
+            );
+            label.TextColor = selectedTextColor;
+            label.TextScale = 1.0f;
+            label.ShadowPosition = Vector2.zero;
+
+            HorizontalSlider slider = DaggerfallUI.AddSlider(
+                new Vector2(x, optionPos + 8f),
+                (s) => s.SetIndicator(choices, selected),
+                1.0f,
+                optionsPanel
+            );
+            slider.ToolTip = defaultToolTip;
+            slider.ToolTipText = GetText("weaponSwingModeInfo");
+
+            optionPos += optionSpacing;
+
+            return slider;
+        }
+
         bool GetLeftHandWeapons()
         {
             if (DaggerfallUnity.Settings.Handedness == 1)
@@ -479,7 +505,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             optionPos = 60;
             leftHandWeapons = AddOption(x, "leftHandWeapons", GetLeftHandWeapons());
             playerNudity = AddOption(x, "playerNudity", DaggerfallUnity.Settings.PlayerNudity);
-            clickToAttack = AddOption(x, "clickToAttack", DaggerfallUnity.Settings.ClickToAttack);
 
             // Setup mods checkboxes
             // TODO: Might rework this, but could still be useful for certain core mods later
@@ -489,9 +514,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             enableController = AddOption(x, "enableController", DaggerfallUnity.Settings.EnableController);
             enableController.OnToggleState += EnableController_OnToggleState;
+            
+            weaponSwingMode = AddSlider(x, "weaponSwingMode", DaggerfallUnity.Settings.WeaponSwingMode, "Vanilla", "Click", "Hold");
 
             // Add mod note
-            TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 125), GetText("modNote"), optionsPanel);
+            TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 130), GetText("modNote"), optionsPanel);
             modNoteLabel.HorizontalAlignment = HorizontalAlignment.Center;
             modNoteLabel.ShadowPosition = Vector2.zero;
 
@@ -808,7 +835,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothing.IsChecked;
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
-            DaggerfallUnity.Settings.ClickToAttack = clickToAttack.IsChecked;
+            DaggerfallUnity.Settings.WeaponSwingMode = weaponSwingMode.ScrollIndex;
             DaggerfallUnity.Settings.EnableController = enableController.IsChecked;
             DaggerfallUnity.Settings.SaveSettings();
 

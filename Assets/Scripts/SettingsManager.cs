@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop
         //public float WeaponSensitivity { get; set; }
         public bool MovementAcceleration { get; set; }
         public bool ToggleSneak { get; set; }
-        public bool ClickToAttack { get; set; }
+        public int WeaponSwingMode { get; set; }
         public int CameraRecoilStrength { get; set; }
         public float MusicVolume { get; set; }
         public float SoundVolume { get; set; }
@@ -409,7 +409,7 @@ namespace DaggerfallWorkshop
             Handedness = GetInt(sectionControls, "Handedness", 0, 3);
             WeaponAttackThreshold = GetFloat(sectionControls, "WeaponAttackThreshold", 0.001f, 1.0f);
             //WeaponSensitivity = GetFloat(sectionControls, "WeaponSensitivity", 0.1f, 10.0f);
-            ClickToAttack = GetBool(sectionControls, "ClickToAttack");
+            WeaponSwingMode = GetInt(sectionControls, "WeaponSwingMode", 0, 2);
             CameraRecoilStrength = GetInt(sectionControls, "CameraRecoilStrength", 0, 4);
             SoundVolume = GetFloat(sectionControls, "SoundVolume", 0f, 1.0f);
             MusicVolume = GetFloat(sectionControls, "MusicVolume", 0f, 1.0f);
@@ -592,7 +592,7 @@ namespace DaggerfallWorkshop
             SetInt(sectionControls, "Handedness", Handedness);
             SetFloat(sectionControls, "WeaponAttackThreshold", WeaponAttackThreshold);
             //SetFloat(sectionControls, "WeaponSensitivity", WeaponSensitivity);
-            SetBool(sectionControls, "ClickToAttack", ClickToAttack);
+            SetInt(sectionControls, "WeaponSwingMode", WeaponSwingMode);
             SetInt(sectionControls, "CameraRecoilStrength", CameraRecoilStrength);
             SetFloat(sectionControls, "SoundVolume", SoundVolume);
             SetFloat(sectionControls, "MusicVolume", MusicVolume);
