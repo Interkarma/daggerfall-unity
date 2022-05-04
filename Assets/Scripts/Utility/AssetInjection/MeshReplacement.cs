@@ -353,8 +353,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         private static void AlignToBase(Transform transform, Vector3 position, int archive, int record, bool inDungeon)
         {
-            // Fix origin position for dungeon flats
-            if (inDungeon)
+            // Fix origin position for dungeon flats - ignore treasure flats or they get aligned twice
+            if (inDungeon && archive != TextureReader.FixedTreasureFlatsArchive)
             {
                 int height = ImageReader.GetImageData(TextureFile.IndexToFileName(archive), record, createTexture: false).height;
                 position.y -= height / 2 * MeshReader.GlobalScale;
