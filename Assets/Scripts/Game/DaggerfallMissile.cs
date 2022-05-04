@@ -216,8 +216,10 @@ namespace DaggerfallWorkshop.Game
             {
                 // Create and orient 3d arrow
                 goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(99800, transform);
-                MeshCollider arrowCollider = GetComponent<MeshCollider>();
+                MeshCollider arrowCollider = goModel.GetComponent<MeshCollider>();
                 arrowCollider.sharedMesh = goModel.GetComponent<MeshFilter>().sharedMesh;
+                arrowCollider.convex = true;
+                arrowCollider.isTrigger = true;
 
                 // Offset up so it comes from same place LOS check is done from
                 Vector3 adjust;
