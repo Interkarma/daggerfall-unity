@@ -83,16 +83,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (GameManager.Instance.EntityEffectBroker.MagicRoundsSinceStartup % conditionPerRounds != 0)
                 return;
 
-            // Get equipped items
-            DaggerfallUnityItem[] equippedItems = GameManager.Instance.PlayerEntity.ItemEquipTable.EquipTable;
-            if (equippedItems == null || equippedItems.Length == 0)
-                return;
-
-            // Improve condition of a single items not at max condition
-            for (int i = 0; i < equippedItems.Length; i++)
+            // Improve condition of a single item not at max condition
+            for (int i = 0; i < GameManager.Instance.PlayerEntity.Items.Count; i++)
             {
-                DaggerfallUnityItem item = equippedItems[i];
-                if (item != null && equippedItems[i].currentCondition < equippedItems[i].maxCondition)
+                DaggerfallUnityItem item = GameManager.Instance.PlayerEntity.Items.GetItem(i);
+                if (item != null && item.currentCondition < item.maxCondition)
                 {
                     // Do not repair magic items unless settings allow it
                     if (item.IsEnchanted && !DaggerfallUnity.Settings.AllowMagicRepairs)
