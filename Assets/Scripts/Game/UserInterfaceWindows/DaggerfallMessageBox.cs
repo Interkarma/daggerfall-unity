@@ -284,6 +284,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (!IsSetup)
                 Setup();
 
+            // Update message box size before presentation
+            UpdatePanelSizes();
+
             uiManager.PushWindow(this);
             presentationTime = Time.realtimeSinceStartup;
         }
@@ -504,9 +507,22 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     finalSize.x += buttonSpacing;
             }
 
+            // If image panel setup then get height of embedded image
+            // This is used to display paintings in message box popup
+            // Label text will be realigned to bottom of message box
+            // Image panel not intended to be used with buttons
+            float imagePanelHeight = 0;
+            if (imagePanel != null && imagePanel.BackgroundTexture != null)
+            {
+                imagePanelHeight = imagePanel.BackgroundTexture.height;
+                finalSize.y += imagePanelHeight;
+                imagePanel.VerticalAlignment = VerticalAlignment.Top;
+                label.VerticalAlignment = VerticalAlignment.Bottom;
+            }
+
             // If buttons have been added, resize label text by adding in the height of the finalized button panel.
             if (finalSize.y - buttonPanel.Size.y > 0)
-                label.ResizeY(label.Size.y + (finalSize.y - buttonPanel.Size.y) + buttonTextDistance);
+                label.ResizeY(label.Size.y + (finalSize.y - buttonPanel.Size.y - imagePanelHeight) + buttonTextDistance);
 
             buttonPanel.Size = finalSize;
 
@@ -523,7 +539,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Resize the message panel to get a clean border of 22x22 pixel textures
             int minimum = 44;
             float width = Math.Max(finalSize.x, label.Size.x) + messagePanel.LeftMargin + messagePanel.RightMargin;
-            float height = label.Size.y + messagePanel.TopMargin + messagePanel.BottomMargin;
+            float height = label.Size.y + imagePanelHeight + messagePanel.TopMargin + messagePanel.BottomMargin;
 
             // Enforce a minimum size
             if (width < minBoxWidth)
