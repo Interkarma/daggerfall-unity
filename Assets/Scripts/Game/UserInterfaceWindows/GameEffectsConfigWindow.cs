@@ -19,12 +19,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         protected Vector2 mainPanelSize = new Vector2(210, 150);
         protected Rect effectListPanelRect = new Rect(2, 2, 60, 137);
-        protected Rect effectPanelRect = new Rect(63, 2, 145, 146);
+        protected Rect effectPanelRect = new Rect(63, 2, 145, 138);
+        protected Rect buttonPanelRect = new Rect(63, 140, 145, 8);
         protected Rect resetDefaultsButtonRect = new Rect(2, 140, 60, 8);
+        protected Rect doneButtonRect = new Rect(115, 0, 30, 8);
 
         protected Panel mainPanel = new Panel();
+        protected Panel buttonPanel = new Panel();
         protected ListBox effectList = new ListBox();
         protected Button resetDefaultsButton = new Button();
+        protected Button doneButton = new Button();
 
         protected Color mainPanelBackgroundColor = new Color(0.0f, 0.0f, 0.0f, 0.2f);
         protected Color effectListBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.6f);
@@ -66,6 +70,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             effectList.OnSelectItem += EffectList_OnSelectItem;
             mainPanel.Components.Add(effectList);
 
+            // Button panel (only for doneButton)
+            buttonPanel.Position = buttonPanelRect.position;
+            buttonPanel.Size = buttonPanelRect.size;
+            buttonPanel.BackgroundColor = effectPanelBackgroundColor;
+            mainPanel.Components.Add(buttonPanel);
+
             // Reset page defaults button
             resetDefaultsButton.Position = resetDefaultsButtonRect.position;
             resetDefaultsButton.Size = resetDefaultsButtonRect.size;
@@ -74,6 +84,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             resetDefaultsButton.Label.Text = TextManager.Instance.GetLocalizedText("setPageDefaults");
             resetDefaultsButton.OnMouseClick += ResetDefaultsButton_OnMouseClick;
             mainPanel.Components.Add(resetDefaultsButton);
+
+            // Done button
+            doneButton.Position = doneButtonRect.position;
+            doneButton.Size = doneButtonRect.size;
+            doneButton.BackgroundColor = Color.gray;
+            doneButton.Label.TextScale = 0.75f;
+            doneButton.Label.Text = TextManager.Instance.GetLocalizedText("doneButton");
+            doneButton.OnMouseClick += DoneButton_OnMouseClick;
+            buttonPanel.Components.Add(doneButton);
 
             IsSetup = true;
 
@@ -177,6 +196,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 configPageEntry.page.SetDefaults();
                 configPageEntry.page.ReadSettings();
             }
+        }
+
+        private void DoneButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            CancelWindow();
         }
 
         #endregion
