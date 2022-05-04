@@ -990,6 +990,9 @@ namespace DaggerfallWorkshop.Utility
             if (siteType != SiteTypes.Dungeon)
                 go.transform.localPosition += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
 
+            // Align injected NPC with ground
+            GameObjectHelper.AlignBillboardToGround(dfBillboard.gameObject, dfBillboard.Summary.Size, 4);
+
             // Add people data to billboard
             dfBillboard.SetRMBPeopleData(person.FactionIndex, person.FactionData.flags);
 
