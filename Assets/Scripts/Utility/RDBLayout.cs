@@ -1620,6 +1620,14 @@ namespace DaggerfallWorkshop.Utility
                     adjustPosition);
             }
 
+            // Also Adjust random treasure to surface below so it doesn't end up floating if marker is floating
+            if (adjustPosition && loot)
+            {
+                Billboard dfBillboard = loot.gameObject.GetComponent<Billboard>();
+                if (dfBillboard)
+                    GameObjectHelper.AlignBillboardToGround(dfBillboard.gameObject, dfBillboard.Summary.Size, 4);
+            }
+
             // Get dungeon type index
             int dungeonIndex = (int)dungeonType;
 
