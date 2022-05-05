@@ -200,7 +200,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void DoneButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            CancelWindow();
+            CloseWindow();
         }
 
         #endregion
