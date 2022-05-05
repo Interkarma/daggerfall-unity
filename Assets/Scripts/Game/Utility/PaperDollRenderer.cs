@@ -416,7 +416,7 @@ namespace DaggerfallWorkshop.Game.Utility
             {
                 if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing ||
                     item.ItemGroup == ItemGroups.Armor || item.ItemGroup == ItemGroups.Weapons || 
-					item.ItemGroup == ItemGroups.Jewellery)
+					(item.ItemGroup == ItemGroups.Jewellery && IsEquippedToBody(item)))
                 {
                     BlitItem(item);
                 }
@@ -428,6 +428,12 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             ImageData source = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, true, true);
             DrawTexture(source, item);
+        }
+
+        // Equip slots > 11 are considered equipped to body
+        bool IsEquippedToBody(DaggerfallUnityItem item)
+        {
+            return ((int)item.EquipSlot > 11);
         }
 
         #endregion
