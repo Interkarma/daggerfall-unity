@@ -174,8 +174,13 @@ namespace DaggerfallWorkshop.Game
 
             if (InputManager.Instance.UsingController)
             {
-                sensitivityX = sensitivity.x * joystickSensitivityScale;
-                sensitivityY = sensitivity.y * joystickSensitivityScale;
+                // Make sure it keeps consistent speed regardless of framerate
+                // Speed = speed * 60 frames / (1 / unscaledDeltaTime) or speed * 60 * unscaledDeltaTime
+                // 60 frames -> speed * 60 / 60 = speed * 1.0
+                // 30 frames -> speed * 60 / 30 = speed * 2.0
+                // 120 frames -> speed * 60 / 120 = speed * 0.5
+                sensitivityX = sensitivity.x * joystickSensitivityScale * 60f * Time.unscaledDeltaTime;
+                sensitivityY = sensitivity.y * joystickSensitivityScale * 60f * Time.unscaledDeltaTime;
             }
             else
             {
