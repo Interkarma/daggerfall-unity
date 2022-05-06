@@ -40,9 +40,9 @@ Shader "Daggerfall/Tilemap" {
 		sampler2D _TileAtlasTex;
 		sampler2D _TilemapTex;
 		sampler2D _BumpMap;
-		int _TilesetDim;
-		int _TilemapDim;
-		int _MaxIndex;
+		uint _TilesetDim;
+		uint _TilemapDim;
+		uint _MaxIndex;
 		float _AtlasSize;
 		float _GutterSize;
 
@@ -54,16 +54,17 @@ Shader "Daggerfall/Tilemap" {
 
 		void surf (Input IN, inout SurfaceOutput o)
 		{
+			float2 unwrappedUV = IN.uv_MainTex * _TilemapDim;
+
 			// Get offset to tile in atlas
-			int index = tex2D(_TilemapTex, IN.uv_MainTex).a * _MaxIndex + 0.5;
-			int xpos = index % _TilesetDim;
-			int ypos = index / _TilesetDim;
+			uint index = tex2D(_TilemapTex, floor(unwrappedUV) / _TilemapDim).a * _MaxIndex + 0.5;
+			uint xpos = index % _TilesetDim;
+			uint ypos = index / _TilesetDim;
 			float2 uv = float2(xpos, ypos) / _TilesetDim;
 
 			// Offset to fragment position inside tile
-			float xoffset = frac(IN.uv_MainTex.x * _TilemapDim) / _GutterSize;
-			float yoffset = frac(IN.uv_MainTex.y * _TilemapDim) / _GutterSize;
-			uv += float2(xoffset, yoffset) + _GutterSize / _AtlasSize;
+			float2 offset = frac(unwrappedUV) / _GutterSize;
+			uv += offset + _GutterSize / _AtlasSize;
 
 			// Sample based on gradient and set output
 			float2 uvr = IN.uv_MainTex * ((float)_TilemapDim / _GutterSize);
