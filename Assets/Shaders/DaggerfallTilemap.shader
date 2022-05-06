@@ -67,7 +67,7 @@ Shader "Daggerfall/Tilemap" {
 			uv += offset + _GutterSize / _AtlasSize;
 
 			// Sample based on gradient and set output
-			float2 uvr = IN.uv_MainTex * ((float)_TilemapDim / _GutterSize);
+			float2 uvr = unwrappedUV / _GutterSize;
 			half4 c = tex2Dgrad(_TileAtlasTex, uv, ddx(uvr), ddy(uvr));
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;
