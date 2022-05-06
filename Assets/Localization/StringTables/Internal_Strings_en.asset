@@ -3964,5 +3964,13 @@ MonoBehaviour:
     m_Localized: 16:10
     m_Metadata:
       m_Items: []
+  - m_Id: 213117009860509696
+    m_Localized: You do not have enough spell points left.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 213117165859258368
+    m_Localized: '{0} out of {1} identified.'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

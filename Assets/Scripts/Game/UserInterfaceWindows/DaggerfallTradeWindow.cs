@@ -171,6 +171,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { usingIdentifySpell = value; }
         }
 
+        public int IdentifySpellChance { get; set; }
+
+        public int IdentifySpellCost { get; set; }
+
         #endregion
 
         #region Constructors
@@ -815,7 +819,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                     case WindowModes.Identify:
                         // Check if item is unidentified & transfer
-                        if (!item.IsIdentified)
+                        // In spell mode items can be transferred even if identified (matches classic)
+                        if (!item.IsIdentified || UsingIdentifySpell)
                             TransferItem(item, localItems, remoteItems);
                         else
                             DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("doesntNeedIdentify"));
@@ -948,11 +953,45 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void DoModeAction()
         {
+            // Identify using spell or trade
             if (usingIdentifySpell)
-            {   // No trade when using a spell, just identify immediately
+            {
+                // Must have enough spell points available or be in godmode
+                if (IdentifySpellCost > GameManager.Instance.PlayerEntity.CurrentMagicka && !GameManager.Instance.PlayerEntity.GodMode)
+                {
+                    DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("notEnoughSpellpointsLeft"));
+                    return;
+                }
+
+                // Identify all items in remote list
+                int successCount = 0;
                 for (int i = 0; i < remoteItems.Count; i++)
-                    remoteItems.GetItem(i).IdentifyItem();
-                DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("itemsIdentified"));
+                {
+                    // Already identified items are always considered successful
+                    if (remoteItems.GetItem(i).IsIdentified)
+                    {
+                        successCount++;
+                        continue;
+                    }
+
+                    // Roll for chance and identify item if successful
+                    if (Dice100.SuccessRoll(IdentifySpellChance))
+                    {
+                        remoteItems.GetItem(i).IdentifyItem();
+                        successCount++;
+                    }
+                }
+
+                // Reduce spell points when total items greater than zero
+                if (remoteItems.Count > 0)
+                    GameManager.Instance.PlayerEntity.DecreaseMagicka(IdentifySpellCost);
+
+                // Output to player how many items were identified
+                DaggerfallUI.MessageBox(string.Format(TextManager.Instance.GetLocalizedText("totalIdentified"), successCount, remoteItems.Count));
+
+                // Transfer all items back to player
+                ClearSelectedItems();
+                Refresh();
             }
             else
                 ShowTradePopup();

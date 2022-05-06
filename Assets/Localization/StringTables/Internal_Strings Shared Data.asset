@@ -3583,6 +3583,14 @@ MonoBehaviour:
     m_Key: SixteenTen
     m_Metadata:
       m_Items: []
+  - m_Id: 213117009860509696
+    m_Key: notEnoughSpellpointsLeft
+    m_Metadata:
+      m_Items: []
+  - m_Id: 213117165859258368
+    m_Key: totalIdentified
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

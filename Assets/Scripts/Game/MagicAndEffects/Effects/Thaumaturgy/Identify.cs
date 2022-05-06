@@ -14,6 +14,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -28,12 +29,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             properties.Key = EffectKey;
             properties.ClassicKey = MakeClassicKey(40, 255);
-            //properties.SupportChance = true;
+            properties.SupportChance = true;
             properties.AllowedTargets = TargetTypes.CasterOnly;
             properties.AllowedElements = ElementTypes.Magic;
             properties.AllowedCraftingStations = MagicCraftingStations.SpellMaker;
             properties.MagicSkill = DFCareer.MagicSkills.Thaumaturgy;
-            //properties.DurationCosts = MakeEffectCosts(40, 100, 28);
+            properties.ChanceCosts = MakeEffectCosts(40, 100, 28);
+            properties.ChanceFunction = ChanceFunction.Custom;
         }
 
         public override string GroupName => TextManager.Instance.GetLocalizedText("identify");
@@ -44,9 +46,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             base.Start(manager, caster);
 
+            // Refund spell point cost for this effect before opening trade window
+            // Actual spell point cost is applied when player clicks Identify button in trade window
+            // Any other effects bundled with identify on spell will not have their spell point cost refunded
+            FormulaHelper.SpellCost cost = FormulaHelper.CalculateEffectCosts(this, settings, caster.Entity);
+            caster.Entity.IncreaseMagicka(cost.spellPointCost);
+
+            // Open identify trade window in spell mode
             UserInterfaceManager uiManager = DaggerfallUI.UIManager as UserInterfaceManager;
             DaggerfallTradeWindow tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, null, DaggerfallTradeWindow.WindowModes.Identify, null });
             tradeWindow.UsingIdentifySpell = true;
+            tradeWindow.IdentifySpellChance = ChanceValue();
+            tradeWindow.IdentifySpellCost = cost.spellPointCost;
             uiManager.PushWindow(tradeWindow);
         }
     }
