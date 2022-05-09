@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(midScreenTextLabel);
 
             placeMarker.Size = new Vector2(640, 400);
-            placeMarker.AutoSize = AutoSizeModes.ScaleToFit;
+            placeMarker.AutoSize = AutoSizeModes.ScaleFreely;
             ParentPanel.Components.Add(placeMarker);
 
             escortingFaces.Size = NativePanel.Size;

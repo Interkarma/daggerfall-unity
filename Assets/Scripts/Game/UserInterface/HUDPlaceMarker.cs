@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -18,8 +18,8 @@ using DaggerfallConnect;
 namespace DaggerfallWorkshop.Game.UserInterface
 {
     /// <summary>
-    /// A debugging class to hack a local quest site marker onto HUD.
-    /// Not intended for gameplay - only used for bootstrapping site location in quest system.
+    /// A debugging class to draw local quest site marker onto HUD.
+    /// Not intended for gameplay - only used to help find site locations during quest development.
     /// </summary>
     public class HUDPlaceMarker : Panel
     {
@@ -64,8 +64,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 enableMarkers = false;
             }
 
+            // Get docked HUD height
+            float largeHUDHeight = 0;
+            if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Enabled && DaggerfallUnity.Settings.LargeHUDDocked)
+                largeHUDHeight = DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
+
             // Set marker label position and text
-            Rect rect = Rectangle;
             Camera mainCamera = GameManager.Instance.MainCamera;
             for (int i = 0; i < siteTargets.Count; i++)
             {
@@ -75,7 +79,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (screenPos.z < 0)
                     siteTargets[i].markerLabel.Enabled = false;
 
-                Vector2 panelPos = ScreenToLocal(new Vector2(screenPos.x, rect.height - screenPos.y));
+                // Convert label screen position into panel position based on retro mode setting
+                // Panel is always 640x400 and scaled to fit "screen" which varies based on retro mode setting
+                // Need to adjust for docked large HUD
+                // Also Unity screen position is bottom-left whereas Panel position is top-left
+                Vector2 panelPos = Vector2.zero;
+                switch (DaggerfallUnity.Settings.RetroRenderingMode)
+                {
+                    case 0: // Off
+                        panelPos = new Vector2(screenPos.x / LocalScale.x, (Screen.height - screenPos.y) / LocalScale.y);
+                        break;
+                    case 1: // 320x200
+                        panelPos = new Vector2(screenPos.x * 2, Screen.height / LocalScale.y - screenPos.y * 2 - largeHUDHeight / LocalScale.y);
+                        break;
+                    case 2: // 640x400
+                        panelPos = new Vector2(screenPos.x, Screen.height / LocalScale.y - screenPos.y - largeHUDHeight / LocalScale.y);
+                        break;
+                }
+                    
                 siteTargets[i].markerLabel.Position = panelPos;
                 siteTargets[i].markerLabel.Text = string.Format("{0} {1}", siteTargets[i].targetName, screenPos.z.ToString("[0]"));
             }
