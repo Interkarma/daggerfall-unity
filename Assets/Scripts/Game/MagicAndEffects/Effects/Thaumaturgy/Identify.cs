@@ -50,7 +50,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Actual spell point cost is applied when player clicks Identify button in trade window
             // Any other effects bundled with identify on spell will not have their spell point cost refunded
             FormulaHelper.SpellCost cost = FormulaHelper.CalculateEffectCosts(this, settings, caster.Entity);
+            if (cost.spellPointCost < 5)
+                cost.spellPointCost = 5;
             caster.Entity.IncreaseMagicka(cost.spellPointCost);
+
+            // Get peered entity gameobject
+            DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+            if (!entityBehaviour)
+                return;
+
+            // Target must be player - no effect on other entities
+            if (entityBehaviour != GameManager.Instance.PlayerEntityBehaviour)
+                return;
 
             // Open identify trade window in spell mode
             UserInterfaceManager uiManager = DaggerfallUI.UIManager as UserInterfaceManager;
