@@ -196,6 +196,7 @@ namespace DaggerfallWorkshop.Game.Entity
         public bool EnemyAlertActive { get { return enemyAlertActive; } }
         public int DaedraSummonDay { get; set; }
         public int DaedraSummonIndex { get; set; }
+        public PlayerPositionData_v1 AnchorPosition { get; set; }
 
         #endregion
 

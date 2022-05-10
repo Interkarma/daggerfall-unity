@@ -22,7 +22,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// <summary>
     /// Teleport
     /// </summary>
-    public class Teleport : IncumbentEffect
+    public class Teleport : BaseEntityEffect
     {
         public static readonly string EffectKey = "Teleport-Effect";
 
@@ -32,10 +32,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         const int teleportOrSetAnchor = 4000;
         const int achorMustBeSet = 4001;
 
-        // Effect data to serialize
-        bool anchorSet = false;
+        // Anchor is now stored in PlayerEntity
+        // Below field is maintained for backwards compatibility with old save files
+        // If non-null this anchor data will be migrated to PlayerEntity on load and the effect will end
         PlayerPositionData_v1 anchorPosition;
-        int forcedRoundsRemaining = 1;
 
         // Volatile references
         SerializablePlayer serializablePlayer = null;
@@ -60,48 +60,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override TextFile.Token[] SpellMakerDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1602);
         public override TextFile.Token[] SpellBookDescription => DaggerfallUnity.Instance.TextProvider.GetRSCTokens(1302);
 
-        protected override int RemoveRound()
-        {
-            return forcedRoundsRemaining;
-        }
-
-        public override int RoundsRemaining
-        {
-            get { return forcedRoundsRemaining; }
-        }
-
-        protected override bool IsLikeKind(IncumbentEffect other)
-        {
-            return (other is Teleport);
-        }
-
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
         {
             base.Start(manager, caster);
             CacheReferences();
-        }
-
-        public override void Resume(EntityEffectManager.EffectSaveData_v1 effectData, EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
-        {
-            base.Resume(effectData, manager, caster);
-            CacheReferences();
-        }
-
-        protected override void BecomeIncumbent()
-        {
-            base.BecomeIncumbent();
             PromptPlayer();
-        }
-
-        protected override void AddState(IncumbentEffect incumbent)
-        {
-            // Prompt from incumbent as it has the position data for teleport
-            (incumbent as Teleport).PromptPlayer();
         }
 
         public override void End()
         {
             anchorPosition = null;
+            RoundsRemaining = 0;
             base.End();
         }
 
@@ -135,14 +104,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             // Get position information
-            anchorPosition = serializablePlayer.GetPlayerPositionData();
+            PlayerPositionData_v1 newAnchorPosition = serializablePlayer.GetPlayerPositionData();
             if (playerEnterExit.IsPlayerInsideBuilding)
             {
-                anchorPosition.exteriorDoors = playerEnterExit.ExteriorDoors;
-                anchorPosition.buildingDiscoveryData = playerEnterExit.BuildingDiscoveryData;
+                newAnchorPosition.exteriorDoors = playerEnterExit.ExteriorDoors;
+                newAnchorPosition.buildingDiscoveryData = playerEnterExit.BuildingDiscoveryData;
             }
 
-            anchorSet = true;
+            // Assign anchor to player entity then end effect
+            GameManager.Instance.PlayerEntity.AnchorPosition = newAnchorPosition;
+            End();
         }
 
         void TeleportPlayer()
@@ -150,6 +121,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Validate references
             if (!serializablePlayer || !playerEnterExit)
                 return;
+
+            // Get anchor position from player entity
+            anchorPosition = GameManager.Instance.PlayerEntity.AnchorPosition;
 
             // Is player in same interior as anchor?
             if (IsSameInterior())
@@ -186,13 +160,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 // When moving anywhere other than same interior trigger a fade so transition appears smoother
                 DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
             }
-
-            // End and resign
-            // Player will need to create a new teleport with a new anchor from here
-            // This is same behaviour as classic
-            forcedRoundsRemaining = 0;
-            ResignAsIncumbent();
-            anchorSet = false;
         }
 
         #endregion
@@ -267,6 +234,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (!CacheReferences())
                 return;
 
+            // Get anchor position from player entity
+            anchorPosition = GameManager.Instance.PlayerEntity.AnchorPosition;
+
             // Restore final position and unwire event
             serializablePlayer.RestorePosition(anchorPosition);
             PlayerEnterExit.OnRespawnerComplete -= PlayerEnterExit_OnRespawnerComplete;
@@ -279,6 +249,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 SaveLoadManager.RestoreCachedScene(GameManager.Instance.StreamingWorld.SceneName);      // Player is outside
             else if (playerEnterExit.IsPlayerInsideBuilding)
                 SaveLoadManager.RestoreCachedScene(playerEnterExit.Interior.name);                      // Player inside a building
+
+            GameManager.Instance.PlayerEntity.AnchorPosition = null;
+            End();
         }
 
         private void EffectActionPrompt_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
@@ -291,14 +264,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
             else if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Teleport)
             {
-                if (!anchorSet || anchorPosition == null)
+                if (GameManager.Instance.PlayerEntity.AnchorPosition == null)
                 {
                     DaggerfallMessageBox mb = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallUI.Instance.UserInterfaceManager.TopWindow);
                     mb.SetTextTokens(achorMustBeSet);
                     mb.ClickAnywhereToClose = true;
                     mb.Show();
-                    forcedRoundsRemaining = 0;
-                    ResignAsIncumbent();
                     return;
                 }
                 TeleportPlayer();
@@ -314,15 +285,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         {
             public bool anchorSet;
             public PlayerPositionData_v1 anchorPosition;
-            public int forcedRoundsRemaining;
         }
 
         public override object GetSaveData()
         {
             SaveData_v1 data = new SaveData_v1();
-            data.anchorSet = anchorSet;
             data.anchorPosition = anchorPosition;
-            data.forcedRoundsRemaining = forcedRoundsRemaining;
 
             return data;
         }
@@ -333,9 +301,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 return;
 
             SaveData_v1 data = (SaveData_v1)dataIn;
-            anchorSet = data.anchorSet;
             anchorPosition = data.anchorPosition;
-            forcedRoundsRemaining = data.forcedRoundsRemaining;
+
+            // On resume migrate legacy anchor position to player entity then end effect
+            if (anchorPosition != null)
+            {
+                GameManager.Instance.PlayerEntity.AnchorPosition = anchorPosition;
+                End();
+            }
         }
 
         #endregion

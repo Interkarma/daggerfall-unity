@@ -163,6 +163,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.previousVampireClan = entity.PreviousVampireClan;
             data.playerEntity.daedraSummonDay = entity.DaedraSummonDay;
             data.playerEntity.daedraSummonIndex = entity.DaedraSummonIndex;
+            data.playerEntity.anchorPosition = entity.AnchorPosition;
 
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
@@ -326,6 +327,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.PreviousVampireClan = data.playerEntity.previousVampireClan;
             entity.DaedraSummonDay = data.playerEntity.daedraSummonDay;
             entity.DaedraSummonIndex = data.playerEntity.daedraSummonIndex;
+            entity.AnchorPosition = data.playerEntity.anchorPosition;
 
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();
 

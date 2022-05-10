@@ -215,6 +215,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public VampireClans previousVampireClan;
         public int daedraSummonDay;
         public int daedraSummonIndex;
+        public PlayerPositionData_v1 anchorPosition;
     }
 
     [fsObject("v1")]
