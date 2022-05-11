@@ -180,6 +180,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else if (Input.GetKeyDown(KeyCode.C))
                 AnswerAndPlayAnim(2);
 
+            float movement = InputManager.Instance.GetUIScrollMovement();
+            if (movement > 0.1f)
+                NativePanel_OnMouseScrollDown(null);
+            else if (movement < -0.1f)
+                NativePanel_OnMouseScrollUp(null);
+
             // User is scrolling with a mouseclick
             if (isScrolling)
             {
