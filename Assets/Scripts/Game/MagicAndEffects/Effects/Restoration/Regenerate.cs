@@ -18,7 +18,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// <summary>
     /// Regenerate
     /// </summary>
-    public class Regenerate : BaseEntityEffect
+    public class Regenerate : IncumbentEffect
     {
         public static readonly string EffectKey = "Regenerate";
 
@@ -50,6 +50,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("youAreRegenerating"), 1.5f);
             }
+        }
+
+        protected override bool IsLikeKind(IncumbentEffect other)
+        {
+            return (other is Regenerate && CompareSettings(other));
+        }
+
+        protected override void AddState(IncumbentEffect incumbent)
+        {
+            // Stack my rounds onto incumbent
+            incumbent.RoundsRemaining += RoundsRemaining;
         }
 
         public override void MagicRound()

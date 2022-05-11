@@ -760,6 +760,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return outcome;
         }
 
+        /// <summary>
+        /// Helper to compare the settings of this effect with another effect.
+        /// Used to determine if the Duration, Chance, Magnitude settings are equivalent in both effects.
+        /// </summary>
+        /// <param name="other">Other effect for comparison.</param>
+        public virtual bool CompareSettings(IEntityEffect other)
+        {
+            return this.Settings.Equals(other.Settings);
+        }
+
         #endregion
 
         #region Protected Helpers
