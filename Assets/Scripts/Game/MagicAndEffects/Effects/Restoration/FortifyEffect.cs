@@ -24,7 +24,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         protected override bool IsLikeKind(IncumbentEffect other)
         {
-            return (other is FortifyEffect && (other as FortifyEffect).fortifyStat == fortifyStat) ? true : false;
+            return (other is FortifyEffect && CompareSettings(other) && (other as FortifyEffect).fortifyStat == fortifyStat) ? true : false;
         }
 
         protected override void BecomeIncumbent()
