@@ -338,7 +338,9 @@ namespace DaggerfallWorkshop
             // Add NPC trigger collider
             if (summary.FlatType == FlatTypes.NPC)
             {
-                Collider col = gameObject.AddComponent<BoxCollider>();
+                Collider col = gameObject.GetComponent<BoxCollider>();
+                if(col == null)
+                    col = gameObject.AddComponent<BoxCollider>();
                 col.isTrigger = true;
             }
 
