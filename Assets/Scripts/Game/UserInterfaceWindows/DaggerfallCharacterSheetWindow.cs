@@ -270,7 +270,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.OnMouseClick += StatButton_OnMouseClick;
         }
 
-        void ShowSkillsDialog(List<DFCareer.Skills> skills, bool twoColumn = false)
+        protected virtual void ShowSkillsDialog(List<DFCareer.Skills> skills, bool twoColumn = false)
         {
             bool secondColumn = false;
             bool showHandToHandDamage = false;
