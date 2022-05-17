@@ -873,6 +873,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 if (spellRecordData.effects[i].type == -1)
                     continue;
 
+                // Fix bad Free Action spell data from SPELLS.STD at runtime
+                // Spell index 10 effect 0 references Cure Paralyzation effect type=3/subType=2 instead of the intended Free Action effect
+                // Patch the type/subType values to match Free Action effect type=26/subType=-1
+                // Note player will need to re-equip enchanted items or wait for next reroll tick before correct effect is applied
+                if (spellRecordData.index == 10 && i == 0 && spellRecordData.effects[i].type == 3 && spellRecordData.effects[i].subType == 2)
+                {
+                    spellRecordData.effects[i].type = 26;
+                    spellRecordData.effects[i].subType = -1;
+                }
+
                 // Get entry from effect
                 EffectEntry entry;
                 if (!ClassicEffectRecordToEffectEntry(spellRecordData.effects[i], out entry))
