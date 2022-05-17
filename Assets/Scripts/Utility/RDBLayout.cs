@@ -341,6 +341,14 @@ namespace DaggerfallWorkshop.Utility
                         // Store editor objects and start markers
                         int archive = obj.Resources.FlatResource.TextureArchive;
                         int record = obj.Resources.FlatResource.TextureRecord;
+                        
+                        // Add animal sound
+                        // This was specifically added to accommodate the cat in
+                        // Direnni Tower. This should also enable animals added
+                        // to dungeons by mods to have proper sounds too.
+                        if (archive == TextureReader.AnimalsTextureArchive)
+                            RMBLayout.AddAnimalAudioSource(flatObject, record);
+
                         if (archive == TextureReader.EditorFlatsTextureArchive)
                         {
                             editorObjects.Add(obj);

@@ -1001,7 +1001,7 @@ namespace DaggerfallWorkshop.Utility
             return modelID == BulletinBoardModelID;
         }
 
-        private static void AddAnimalAudioSource(GameObject go, int record)
+        public static void AddAnimalAudioSource(GameObject go, int record)
         {
             DaggerfallAudioSource source = go.AddComponent<DaggerfallAudioSource>();
             source.AudioSource.maxDistance = animalSoundMaxDistance;
