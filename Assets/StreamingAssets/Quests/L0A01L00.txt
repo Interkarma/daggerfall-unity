@@ -21,7 +21,7 @@ QuestComplete:  [1004]
 <ce>               town, you will know if there are any guild
 <ce>                  buildings there. It is customary for
 <ce>               the novice to receive payment of a single
-<ce>               gold coin for %pg1 first sanctioned death.
+<ce>               gold coin for %pg3 first sanctioned death.
 <ce>                             Here is yours.
 
 RumorsDuringQuest:  [1005]
