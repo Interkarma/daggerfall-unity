@@ -126,10 +126,10 @@ namespace DaggerfallWorkshop.Game.Utility
             this.scale = scale;
 
             // Create scaled render texture
-            target = new RenderTexture((int)(paperDollWidth * scale), (int)(paperDollHeight * scale), 0);
+            target = new RenderTexture((int)(paperDollWidth * scale), (int)(paperDollHeight * scale), 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
 
             // Create output texture
-            paperDollTexture = new Texture2D(target.width, target.height, TextureFormat.ARGB32, false);
+            paperDollTexture = new Texture2D(target.width, target.height, TextureFormat.ARGB32, false, true);
             paperDollTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
         }
 
