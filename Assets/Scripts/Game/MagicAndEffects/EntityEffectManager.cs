@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool castInProgress = false;
         bool readySpellDoesNotCostSpellPoints = false;
         int readySpellCastingCost;
+        int lastReadySpellCastingCost;
 
         DaggerfallEntityBehaviour entityBehaviour = null;
         EntityTypes entityType;
@@ -384,6 +385,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             lastSpell = null;
             readySpell = null;
             readySpellCastingCost = 0;
+            lastReadySpellCastingCost = 0;
             instantCast = false;
             castInProgress = false;
             readySpellDoesNotCostSpellPoints = false;
@@ -467,6 +469,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Instantiate all effects in this bundle
+            int totalAbsorbed = 0;
             for (int i = 0; i < sourceBundle.Settings.Effects.Length; i++)
             {
                 // Instantiate effect
@@ -498,8 +501,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     int absorbSpellPoints;
                     if (sourceBundle.Settings.BundleType == BundleTypes.Spell && TryAbsorption(effect, sourceBundle.Settings.TargetType, sourceBundle.CasterEntityBehaviour.Entity, out absorbSpellPoints))
                     {
-                        // Spell passed all checks and was absorbed - return cost output to target
-                        entityBehaviour.Entity.IncreaseMagicka(absorbSpellPoints);
+                        // Spell passed all checks and was absorbed - tally cost output to target
+                        totalAbsorbed += absorbSpellPoints;
 
                         // Output "Spell was absorbed."
                         DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("spellAbsorbed"));
@@ -582,6 +585,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                 // At this point effect is ready and gets initial magic round
                 effect.MagicRound();
+            }
+
+            // Refund absorbed spellpoints
+            if (totalAbsorbed > 0)
+            {
+                // If this is a self-cast spell then cannot refund more spellpoints than cost
+                // Spell absorption is calculated per effect and sometimes possible to get back more than the casting cost
+                // Cap does not apply to spells cast by other entities or from zero-cost spells
+                if (sourceBundle.CasterEntityBehaviour == entityBehaviour && totalAbsorbed > readySpellCastingCost && lastReadySpellCastingCost > 0)
+                    totalAbsorbed = lastReadySpellCastingCost;
+
+                entityBehaviour.Entity.IncreaseMagicka(totalAbsorbed);
+                //Debug.LogFormat("Absorbed {0} total spellpoints", totalAbsorbed);
             }
 
             // Add bundles with at least one effect
@@ -2096,7 +2112,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Clear ready spell and reset casting - do not update last spell if casting from item
             RaiseOnCastReadySpell(readySpell);
             if (!readySpellDoesNotCostSpellPoints)
+            {
                 lastSpell = readySpell;
+                lastReadySpellCastingCost = readySpellCastingCost;
+            }
             readySpell = null;
             readySpellCastingCost = 0;
             instantCast = false;
