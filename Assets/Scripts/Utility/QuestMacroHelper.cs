@@ -127,15 +127,15 @@ namespace DaggerfallWorkshop.Utility
                                 System.Type t = resource.GetType();
                                 if (t.Equals(typeof(DaggerfallWorkshop.Game.Questing.Place)))
                                 {
-                                        GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, macro.symbol, TalkManager.QuestInfoResourceType.Location);
+                                     GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, resource, TalkManager.QuestInfoResourceType.Location);
                                 }
                                 else if (t.Equals(typeof(DaggerfallWorkshop.Game.Questing.Person)))
                                 {
-                                        GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, macro.symbol, TalkManager.QuestInfoResourceType.Person);
+                                     GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, resource, TalkManager.QuestInfoResourceType.Person);
                                 }
                                 else if (t.Equals(typeof(DaggerfallWorkshop.Game.Questing.Item)))
                                 {
-                                        GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, macro.symbol, TalkManager.QuestInfoResourceType.Thing);
+                                     GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, resource, TalkManager.QuestInfoResourceType.Thing);
                                 }
                             }
                         }

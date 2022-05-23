@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -70,15 +70,15 @@ namespace DaggerfallWorkshop.Game.Questing
             // add dialog for resources
             if (place != null)
             {
-                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, place.Symbol.Name, TalkManager.QuestInfoResourceType.Location, false);
+                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, place, TalkManager.QuestInfoResourceType.Location, false);
             }
             if (person != null)
             {
-                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, person.Symbol.Name, TalkManager.QuestInfoResourceType.Person, false);
+                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, person, TalkManager.QuestInfoResourceType.Person, false);
             }
             if (item != null)
             {
-                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, item.Symbol.Name, TalkManager.QuestInfoResourceType.Thing, false);
+                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(ParentQuest.UID, item, TalkManager.QuestInfoResourceType.Thing, false);
             }
 
             SetComplete();

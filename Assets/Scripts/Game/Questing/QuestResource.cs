@@ -23,6 +23,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int rumorsMessageID = -1;
         bool hasPlayerClicked = false;
         bool isHidden = false;
+        bool isAvailableForDialog = true;
 
         [NonSerialized]
         QuestResourceBehaviour questResourceBehaviour = null;
@@ -91,6 +92,15 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             get { return isHidden; }
             set { SetHidden(value); }
+        }
+
+        /// <summary>
+        /// Gets or sets flag to show this quest resource in dialog.
+        /// </summary>
+        public bool IsAvailableForDialog
+        {
+            get { return isAvailableForDialog; }
+            set { isAvailableForDialog = value; }
         }
 
         /// <summary>
