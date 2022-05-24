@@ -347,7 +347,7 @@ namespace DaggerfallWorkshop.Utility
                         // Direnni Tower. This should also enable animals added
                         // to dungeons by mods to have proper sounds too.
                         if (archive == TextureReader.AnimalsTextureArchive)
-                            RMBLayout.AddAnimalAudioSource(flatObject, record);
+                            GameObjectHelper.AddAnimalAudioSource(flatObject, record);
 
                         if (archive == TextureReader.EditorFlatsTextureArchive)
                         {
