@@ -342,7 +342,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public static string GetServiceLabelText(GuildServices service)
         {
-            // Check custom names
+            // Check custom service labels
             string serviceName;
             if (customNpcServiceNames.TryGetValue((int)service, out serviceName))
                 return serviceName;
