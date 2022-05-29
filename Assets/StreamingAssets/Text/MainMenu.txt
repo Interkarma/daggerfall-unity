@@ -27,8 +27,8 @@ leftHandWeapons,            Left Hand Weapons
 leftHandWeaponsInfo,        Draw weapons on left side of screen
 playerNudity,               Player Nudity
 playerNudityInfo,           Allow nudity on paper doll
-clickToAttack,              Click to attack
-clickToAttackInfo,          Enable a simple click to trigger attacks
+weaponSwingMode,            Weapon swing mode
+weaponSwingModeInfo,        Enable a click or hold to trigger attacks
 sdfFontRendering,           SDF Font Rendering
 sdfFontRenderingInfo,       Enable for smooth fonts at high resolutions
 enableController,           Enable Controller

@@ -299,7 +299,7 @@ namespace DaggerfallWorkshop.Game
             // Handle beginning a new attack
             if (!isAttacking)
             {
-                if (!DaggerfallUnity.Settings.ClickToAttack || bowEquipped)
+                if (DaggerfallUnity.Settings.WeaponSwingMode == 0 || bowEquipped)
                 {
                     // Reset tracking if user not holding down 'SwingWeapon' button and no attack in progress
                     if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon))
@@ -311,8 +311,11 @@ namespace DaggerfallWorkshop.Game
                 }
                 else
                 {
-                    // Player must click to attack
-                    if (InputManager.Instance.ActionStarted(InputManager.Actions.SwingWeapon))
+                    // Player must click to attack...
+                    if (InputManager.Instance.ActionStarted(InputManager.Actions.SwingWeapon)
+                        // ...or hold to attack.
+                        || (DaggerfallUnity.Settings.WeaponSwingMode == 2
+                            && InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon)))
                     {
                         isClickAttack = true;
                     }
