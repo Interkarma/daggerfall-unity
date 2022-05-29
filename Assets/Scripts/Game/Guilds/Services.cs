@@ -210,6 +210,17 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        public static bool RegisterGuildService(GuildServices serviceId, CustomGuildService service)
+        {
+            DaggerfallUnity.LogMessage("RegisterGuildService: " + serviceId, true);
+            if (!guildNpcServices.ContainsKey((int)serviceId))
+            {
+                customNpcServices.Add((int)serviceId, service);
+                return true;
+            }
+            return false;
+        }
+
         public static bool RegisterGuildService(int npcFactionId, CustomGuildService service, string serviceName, DaggerfallShortcut.Buttons serviceButton = DaggerfallShortcut.Buttons.None)
         {
             DaggerfallUnity.LogMessage("RegisterGuildService: " + npcFactionId + " with service: " + serviceName, true);
