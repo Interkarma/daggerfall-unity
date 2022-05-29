@@ -1761,7 +1761,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             RemovePendingBundles();
         }
 
-        void RemoveBundle(LiveEffectBundle bundle)
+        public void RemoveBundle(LiveEffectBundle bundle)
         {
             foreach (IEntityEffect effect in bundle.liveEffects)
             {
