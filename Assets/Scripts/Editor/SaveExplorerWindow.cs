@@ -506,16 +506,20 @@ namespace DaggerfallWorkshop
                 // Prevent duplicate names so save games aren't automatically removed from the Save Select GUI
                 for (int i = 0; i < saveNames.Length; i++)
                 {
+                    var nextName = saveNames[i];
+                    if (nextName == null) continue;
                     int duplicateCount = 0;
                     for (int j = i + 1; j < saveNames.Length; j++)
                     {
-                        if (saveNames[j].text == saveNames[i].text)
+                        var otherName = saveNames[j];
+                        if (otherName == null) continue;
+                        if (otherName.text == nextName.text)
                         {
                             bool unique = false;
                             while (!unique)
                             {
                                 unique = true;
-                                string replaceText = saveNames[j].text + "(" + ++duplicateCount + ")";
+                                string replaceText = $"{otherName.text}({++duplicateCount})";
                                 for (int k = 0; k < saveNames.Length; k++)
                                 {
                                     if (saveNames[k].text == replaceText)
@@ -526,7 +530,7 @@ namespace DaggerfallWorkshop
                                 }
 
                                 if (unique)
-                                    saveNames[j].text = replaceText;
+                                    otherName.text = replaceText;
                             }
                         }
                     }
