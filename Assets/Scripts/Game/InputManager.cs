@@ -1199,6 +1199,41 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// Calculates UI scroll movement value based on analog axes input.
+        /// Return value:
+        /// Positive values (> 0.1f) - scrolling downwards
+        /// Negative values (< -0.1f) - scrolling upwards
+        /// </summary>
+        public float GetUIScrollMovement()
+        {
+            float horizontal = Input.GetAxis(cameraAxisBindingCache[0]);
+            float vertical = Input.GetAxis(cameraAxisBindingCache[1]);
+
+            if (GetAxisActionInversion(AxisActions.CameraHorizontal))
+                horizontal *= -1;
+
+            if (GetAxisActionInversion(AxisActions.CameraVertical))
+                vertical *= -1;
+
+            float calculatedDeadzone = Mathf.Sqrt(horizontal * horizontal + vertical * vertical);
+            if (calculatedDeadzone <= JoystickDeadzone)
+                return 0.0f;
+
+            /*
+             * With most controllers, positive values on vertical axis usually mean that stick is being tilted upwards.
+             * Similarly, negative values mean that stick is tilted downwards.
+             *
+             * Most common behavior when scrolling is to scroll in the same direction, where the stick is being tilted.
+             * So to achieve this we need to invert vertical axis value.
+             * This issue does not occur with horizontal axis - right tilt is being interpreted as scrolling downwards.
+             */
+            vertical *= -1;
+
+            // Use both analog axes for scrolling movement - for now it doesn't matter which axis we use for scrolling
+            return horizontal + vertical;
+        }
+
         #endregion
 
         #region Public Static Methods
