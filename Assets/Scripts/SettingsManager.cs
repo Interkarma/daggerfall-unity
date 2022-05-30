@@ -196,6 +196,7 @@ namespace DaggerfallWorkshop
         public bool RunInBackground { get; set; }
         public bool EnableQuestDebugger { get; set; }
         public int QuestRumorWeight { get; set; }
+        public bool DisableEnemyDeathAlert { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -391,6 +392,7 @@ namespace DaggerfallWorkshop
             CanDropQuestItems = GetBool(sectionGUI, "CanDropQuestItems");
             EnableQuestDebugger = GetBool(sectionGUI, "EnableQuestDebugger");
             QuestRumorWeight = GetInt(sectionGUI, "QuestRumorWeight", 1, 100);
+            DisableEnemyDeathAlert = GetBool(sectionGUI, "DisableEnemyDeathAlert");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -574,6 +576,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "CanDropQuestItems", CanDropQuestItems);
             SetBool(sectionGUI, "EnableQuestDebugger", EnableQuestDebugger);
             SetInt(sectionGUI, "QuestRumorWeight", QuestRumorWeight);
+            SetBool(sectionGUI, "DisableEnemyDeathAlert", DisableEnemyDeathAlert);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);
