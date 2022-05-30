@@ -593,7 +593,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // If this is a self-cast spell then cannot refund more spellpoints than cost
                 // Spell absorption is calculated per effect and sometimes possible to get back more than the casting cost
                 // Cap does not apply to spells cast by other entities or from zero-cost spells
-                if (sourceBundle.CasterEntityBehaviour == entityBehaviour && totalAbsorbed > readySpellCastingCost && lastReadySpellCastingCost > 0)
+                if (sourceBundle.CasterEntityBehaviour == entityBehaviour && lastReadySpellCastingCost > 0 && totalAbsorbed > lastReadySpellCastingCost)
                     totalAbsorbed = lastReadySpellCastingCost;
 
                 entityBehaviour.Entity.IncreaseMagicka(totalAbsorbed);
