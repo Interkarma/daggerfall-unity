@@ -439,6 +439,15 @@ namespace DaggerfallWorkshop
                 }
             }
         }
+        
+        /// <summary>
+        /// Draws a circle at the bottom of the bilboard to make it easier to judge the size regardless of rotation.
+        /// </summary>
+        void OnDrawGizmosSelected()
+        {
+            Vector3 sizeHalf = summary.Size * 0.5f;
+            Handles.DrawWireDisc(transform.position - new Vector3(0, sizeHalf.y, 0), Vector3.up, sizeHalf.x);
+        }
 
         private SceneView GetActiveSceneView()
         {
