@@ -192,7 +192,8 @@ _normalvict_ task:
 _victory_ task:
 	give pc _gold_ 
                 start timer _end_
-	end quest 
+--	end quest 
+--this would cause double quest ending, for double reputation gain
 
 _clearclick_ task:
 	when _qgclicked_ and not _S.01_ and not _S.07_ 
