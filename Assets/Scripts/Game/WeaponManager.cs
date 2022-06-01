@@ -549,7 +549,7 @@ namespace DaggerfallWorkshop.Game
                     // Add arrow to target's inventory
                     if (arrowHit && !arrowSummoned)
                     {
-                        DaggerfallUnityItem arrow = ItemBuilder.CreateItem(ItemGroups.Weapons, (int)Weapons.Arrow);
+                        DaggerfallUnityItem arrow = ItemBuilder.CreateWeapon(Weapons.Arrow, WeaponMaterialTypes.None);
                         enemyEntity.Items.AddItem(arrow);
                     }
 

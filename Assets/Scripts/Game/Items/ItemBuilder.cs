@@ -360,6 +360,7 @@ namespace DaggerfallWorkshop.Game.Items
             {   // Handle arrows
                 newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
+                newItem.nativeMaterialValue = 0;
             }
             else
             {
