@@ -143,6 +143,7 @@ namespace DaggerfallWorkshop.Game
                 damage = ApplyDamageToNonPlayer(entity.ItemEquipTable.GetItem(Items.EquipSlots.RightHand), direction, true);
 
             Items.DaggerfallUnityItem arrow = Items.ItemBuilder.CreateWeapon(Items.Weapons.Arrow, Items.WeaponMaterialTypes.None);
+            arrow.stackCount = 1;
             senses.Target.Entity.Items.AddItem(arrow);
         }
 

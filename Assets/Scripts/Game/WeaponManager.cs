@@ -550,6 +550,7 @@ namespace DaggerfallWorkshop.Game
                     if (arrowHit && !arrowSummoned)
                     {
                         DaggerfallUnityItem arrow = ItemBuilder.CreateWeapon(Weapons.Arrow, WeaponMaterialTypes.None);
+                        arrow.stackCount = 1;
                         enemyEntity.Items.AddItem(arrow);
                     }
 
