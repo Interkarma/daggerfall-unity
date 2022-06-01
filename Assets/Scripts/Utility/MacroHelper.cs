@@ -230,7 +230,7 @@ namespace DaggerfallWorkshop.Utility
         // DF Unity - new macros:
             { "%", Percent }, // Not really a macro, just print %
             { "%pg", PlayerPronoun },   // He/She (player)
-            { "%pg1", PlayerPronoun1 },  // His/Her (player)
+            { "%pg1", PlayerPronoun },  // He/She (player)
             { "%pg2", PlayerPronoun2 }, // Him/Her (player)
             { "%pg2self", PlayerPronoun2self },// Himself/Herself (player)
             { "%pg3", PlayerPronoun3 },  // His/Her (player)
@@ -845,11 +845,6 @@ namespace DaggerfallWorkshop.Utility
         {   // %pg
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounShe") : TextManager.Instance.GetLocalizedText("pronounHe");
         }
-        private static string PlayerPronoun1(IMacroContextProvider mcp)
-        {   // %pg1 (same as %pg3)
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHis");
-        }
-
         private static string PlayerPronoun2(IMacroContextProvider mcp)
         {   // %pg2
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHim");
