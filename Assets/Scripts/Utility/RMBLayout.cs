@@ -51,9 +51,6 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
-        // Animal sounds range. Matched to classic.
-        const float animalSoundMaxDistance = 768 * MeshReader.GlobalScale;
-
         #region Structures
 
         class BuildingPoolItem
@@ -360,7 +357,7 @@ namespace DaggerfallWorkshop.Utility
 
                 // Add animal sound
                 if (obj.TextureArchive == TextureReader.AnimalsTextureArchive)
-                    AddAnimalAudioSource(go, obj.TextureRecord);
+                    GameObjectHelper.AddAnimalAudioSource(go, obj.TextureRecord);
 
                 // If flat record has a non-zero faction id, then it's an exterior NPC
                 if (obj.FactionID != 0)
@@ -434,7 +431,7 @@ namespace DaggerfallWorkshop.Utility
 
                     // Add animal sound
                     if (archive == TextureReader.AnimalsTextureArchive)
-                        AddAnimalAudioSource(go, obj.TextureRecord);
+                        GameObjectHelper.AddAnimalAudioSource(go, obj.TextureRecord);
 
                     // If flat record has a non-zero faction id, then it's an exterior NPC
                     if (obj.FactionID != 0)
@@ -1001,41 +998,6 @@ namespace DaggerfallWorkshop.Utility
             return modelID == BulletinBoardModelID;
         }
 
-        private static void AddAnimalAudioSource(GameObject go, int record)
-        {
-            DaggerfallAudioSource source = go.AddComponent<DaggerfallAudioSource>();
-            source.AudioSource.maxDistance = animalSoundMaxDistance;
-
-            SoundClips sound;
-            switch (record)
-            {
-                case 0:
-                case 1:
-                    sound = SoundClips.AnimalHorse;
-                    break;
-                case 3:
-                case 4:
-                    sound = SoundClips.AnimalCow;
-                    break;
-                case 5:
-                case 6:
-                    sound = SoundClips.AnimalPig;
-                    break;
-                case 7:
-                case 8:
-                    sound = SoundClips.AnimalCat;
-                    break;
-                case 9:
-                case 10:
-                    sound = SoundClips.AnimalDog;
-                    break;
-                default:
-                    sound = SoundClips.None;
-                    break;
-            }
-
-            source.SetSound(sound, AudioPresets.PlayRandomlyIfPlayerNear);
-        }
 
         #endregion
     }
