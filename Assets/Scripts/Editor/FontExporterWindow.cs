@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+﻿// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2015 Gavin Clayton
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Web Site:        http://www.dfworkshop.net
