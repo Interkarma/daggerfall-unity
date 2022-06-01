@@ -473,8 +473,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 daggerY = Math.Min(maxDaggerY, (int)(defaultDaggerY + (41 * (-difficultyPoints / 12f))));
             }
 
-            DaggerfallUI.Instance.StartCoroutine(AnimateDagger());
             daggerPanel.Position = new Vector2(defaultDaggerX, daggerY);
+            DaggerfallUI.Instance.StartCoroutine(AnimateDagger());
         }
 
         IEnumerator AnimateDagger()
