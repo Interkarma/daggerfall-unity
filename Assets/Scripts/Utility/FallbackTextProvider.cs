@@ -191,6 +191,17 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Gets the name associated with a custom enemy id (ie: not defined in MobileTypes).
+        /// Returns null if the enemy id is unknown.
+        /// </summary>
+        /// <param name="enemyId">Custom enemy id</param>
+        /// <returns>Name if the enemy id is known, null otherwise</returns>
+        public virtual string GetCustomEnemyName(int enemyId)
+        {
+            return fallback.GetCustomEnemyName(enemyId);
+        }
+
+        /// <summary>
         /// Attempts to read a localized string from a named table collection.
         /// </summary>
         /// <param name="collection">Name of table collection.</param>

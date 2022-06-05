@@ -126,6 +126,14 @@ namespace DaggerfallWorkshop.Utility
         int GetStatDescriptionTextID(DFCareer.Stats stat);
 
         /// <summary>
+        /// Gets the name associated with a custom enemy id (ie: not defined in MobileTypes).
+        /// Returns null if the enemy id is unknown.
+        /// </summary>
+        /// <param name="enemyId">Custom enemy id</param>
+        /// <returns>Name if the enemy id is known, null otherwise</returns>
+        string GetCustomEnemyName(int enemyId);
+
+        /// <summary>
         /// Attempts to read a localized string from a named table collection.
         /// </summary>
         /// <param name="collection">Name of table collection.</param>
@@ -139,6 +147,7 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="enable">True to enable, false to disable.</param>
         void EnableLocalizedStringDebug(bool enable);
+
     }
 
     /// <summary>
@@ -593,6 +602,12 @@ namespace DaggerfallWorkshop.Utility
                 default:
                     return -1;
             }
+        }
+
+        // This interface function is meant for mods, the default TextProvider implementation does not know any custom enemy
+        public string GetCustomEnemyName(int enemyId)
+        {
+            return null;
         }
 
         #region Protected Methods
