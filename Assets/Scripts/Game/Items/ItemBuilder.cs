@@ -390,16 +390,17 @@ namespace DaggerfallWorkshop.Game.Items
  
             // Random weapon material
             WeaponMaterialTypes material = FormulaHelper.RandomMaterial(playerLevel);
-            ApplyWeaponMaterial(newItem, material);
 
-            // Handle arrows
             if (groupIndex == 18)
-            {
+            {   // Handle arrows
                 newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
                 newItem.nativeMaterialValue = 0; // Arrows don't have a material
             }
-
+            else
+            {
+                ApplyWeaponMaterial(newItem, material);
+            }
             return newItem;
         }
 
