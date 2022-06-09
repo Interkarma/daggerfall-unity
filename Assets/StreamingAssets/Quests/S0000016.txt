@@ -3,6 +3,7 @@
 -- QuestId: 16
 Messages: 51
 Quest: S0000016
+DisplayName: Journey to Aetherius
 -- Message panels
 QRC:
 
