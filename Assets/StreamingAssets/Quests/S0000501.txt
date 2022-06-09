@@ -206,6 +206,10 @@ _S.09_ task:
 	remove log step 0
 	start task _stagger_
 
+_notyet_ task:
+	when _S.04_ and not _S.00_
+	clear _S.04_ _notyet_
+
 variable _stagger_
 _clearclick_ task:
 	when _stagger_ and _S.04_ and not _hittraitor_
