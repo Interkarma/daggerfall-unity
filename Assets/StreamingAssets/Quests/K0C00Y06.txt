@@ -57,9 +57,9 @@ QuestComplete:  [1004]
 <ce>                your reputation will never be the same.
 
 RumorsDuringQuest:  [1005]
-They always have the best information in _inn_.
+They always have the best information in _inn_, __inn_.
 <--->
-_inn_ is the only place I'd go for really choice information.
+_inn_ of __inn_ is the only place I'd go for really choice information.
 <--->
 When they find that %ra thief, there's going to be a real hanging party.
 <--->
@@ -102,7 +102,7 @@ _merchant_ is a hard-working, basically honest __merchanthome_ merchant.
 <--->
 Not one to overcharge customers, that _merchant_. At least not too much.
 <--->
-_merchant_, eh? You'll find %g2 over in _merchanthome_ this time of day.
+_merchant_, eh? You'll find %g2 over in _merchanthome_, __merchanthome_ this time of day.
 <--->
 If you listened to _priest_, _merchant_ is a blight on all of %reg.
 <--->
@@ -113,7 +113,7 @@ _noble_ is of the royal house of __noblehome_. %oth, %g3 family has ruled foreve
 <--->
 _noble_ is a typical member of %g3 class -- decadent, ruthless, arrogant.
 <--->
-_noble_ spends %g3 time over in the _noblehome_ this time of day.
+_noble_ spends %g3 time over in the _noblehome_, __noblehome_ this time of day.
 <--->
 _thief_ isn't too fond of _noble_, but most everyone else is.
 <--->
@@ -124,7 +124,7 @@ _priest_ is a cleric of ==priest_, of course, and quite a zealous one too.
 <--->
 _priest_ has risen above the scandals that plagued %g3 early days in ==priest_.
 <--->
-_priest_ usually can be found in meditation at _priesthome_ right about now.
+_priest_ usually can be found in meditation at _priesthome_, __priesthome_ right about now.
 <--->
 Most everyone in __priesthome_, except _noble_, greatly respect _priest_.
 <--->
@@ -144,7 +144,7 @@ _thief_ dislikes _noble_, despite the =noble_'s aristocratic blood.
 Message:  1016
 _witness_ is the name of that =witness_ who saw the theft at __qgiver_.
 <--->
-_witness_ is just a =witness_. You can find %g2 over in __witness_.
+_witness_ is just a =witness_. You can find %g2 over in __witness_, ___witness_.
 
 Message:  1017
 <ce>             A ragged beggar boy suddenly thrusts a letter
@@ -302,14 +302,14 @@ Dear %pcn,
 <ce>                               A Friend
 
 Message:  1025
-<ce>                  It's you! You're the one who robbed
+<ce>                  "It's you! You're the one who robbed
 <ce>                          __qgiver_! Guards!
-<ce>                                Guards!
+<ce>                                Guards!"
 <ce>                                    
 <ce>                _witness_ slips you a note as %g flees.
                                      <--->
-<ce>                        It's the %ra who robbed
-<ce>                     __qgiver_! Somebody help me!
+<ce>                        "It's the %ra who robbed
+<ce>                     __qgiver_! Somebody help me!"
 <ce>                                    
 <ce>                _witness_ slips you a note as %g flees.
 
@@ -386,7 +386,8 @@ Message:  1032
 Message:  1033
 %pcn,
  
-     Meet me at _withouse_.
+     Meet me at _withouse_
+	  here in __withouse_.
  
 <ce>                               _witness_
 
@@ -699,8 +700,9 @@ _thief_
 
 Message:  1052
 <ce>                This does seem to be some incriminating
-<ce>                evidence. Now you must consider to whom
-<ce>                       you'll give this letter.
+<ce>                evidence. Hopefully you can locate some
+<ce>                 friend of _qgiver_ who can convince %g2
+<ce>                 to come out of hiding after reading it.
 
 Message:  1053
 <ce>                   _noble_ was behind that burglary?
@@ -781,12 +783,20 @@ Message:  1060
 <ce>                would be best to give the place a wide
 <ce>                         berth for some time.
 
+Message:  1061
+%qdt:
+ I was informed that someone named
+ _witness_ has been blaming me
+ for the theft of the _gem_.
+ I should search for this person.
+
 Message:  1091
 %qdt:
  I met with _witness_ who
  told me that the one behind the stolen _gem_
  is indeed _merchant_. %g spends
- %g3 nights at home, in _thiefhouse_,
+ %g3 nights at home, in _thiefhouse_
+ of ___thiefhouse_,
  and has a stash at ___mondung_.
  I may get out of this mess yet.
 
@@ -795,7 +805,8 @@ Message:  1092
  I met with _witness_ who
  told me that the one behind the stolen _gem_
  is indeed _noble_. %g spends
- %g3 nights at home, in _thiefhouse_,
+ %g3 nights at home, in _thiefhouse_
+ of ___thiefhouse_,
  and has a stash at ___mondung_.
  I may get out of this mess yet.
 
@@ -804,7 +815,8 @@ Message:  1093
  I met with _witness_ who
  told me that the one behind the stolen _gem_
  is indeed _priest_. %g spends
- %g3 nights at home, in _thiefhouse_,
+ %g3 nights at home, in _thiefhouse_
+ of ___thiefhouse_,
  and has a stash at ___mondung_.
  I may get out of this mess yet.
 
@@ -813,78 +825,28 @@ Message:  1094
  I met with _witness_ who
  told me that the one behind the stolen _gem_
  is indeed _thief_. %g spends
- %g3 nights at home, in _thiefhouse_,
+ %g3 nights at home, in _thiefhouse_
+ of ___thiefhouse_,
  and has a stash at ___mondung_.
  I may get out of this mess yet.
 
 Message:  1100
 <ce>              You notice _qgiver_ sneak out of the door.
 
-
--- Symbols used in the QRC file:
---
---               %cn occurs 1 time.
---                %g occurs 66 times.
---               %g2 occurs 33 times.
---               %g3 occurs 26 times.
---              %god occurs 2 times.
---                %n occurs 5 times.
---              %oth occurs 6 times.
---              %pcf occurs 31 times.
---              %pcn occurs 13 times.
---              %qdt occurs 18 times.
---               %ra occurs 27 times.
---              %reg occurs 6 times.
---         ==priest_ occurs 11 times.
---           =guard_ occurs 1 time.
---        =merchant_ occurs 5 times.
---           =noble_ occurs 3 times.
---          =priest_ occurs 3 times.
---          =qgiver_ occurs 1 time.
---           =thief_ occurs 3 times.
---         =witness_ occurs 8 times.
---                 _ occurs 67 times.
---       ___mondung_ occurs 26 times.
---        ___qgiver_ occurs 6 times.
---            __inn_ occurs 4 times.
---   __merchanthome_ occurs 4 times.
---      __noblehome_ occurs 5 times.
---     __priesthome_ occurs 3 times.
---         __qgiver_ occurs 34 times.
---      __thiefhome_ occurs 2 times.
---     __thiefhouse_ occurs 3 times.
---        __witness_ occurs 10 times.
---             _gem_ occurs 76 times.
---          _guard4_ occurs 2 times.
---           _guard_ occurs 28 times.
---             _inn_ occurs 8 times.
---        _merchant_ occurs 23 times.
---    _merchanthome_ occurs 1 time.
---           _noble_ occurs 25 times.
---       _noblehome_ occurs 1 time.
---          _priest_ occurs 23 times.
---      _priesthome_ occurs 2 times.
---          _qgiver_ occurs 18 times.
---          _reward_ occurs 1 time.
---           _thief_ occurs 23 times.
---      _thiefhouse_ occurs 20 times.
---        _withouse_ occurs 8 times.
---         _witness_ occurs 26 times.
-
 QBN:
-Item letter13 letter used 1018
-Item letter14 letter used 1019
-Item letter15 letter used 1020
-Item letter16 letter used 1021
-Item letter17 letter used 1022
-Item letter18 letter used 1023
-Item letter25 letter used 1024
+Item _necromancerletter_ letter used 1018
+Item _underkingletter_ letter used 1019
+Item _thievesguildletter_ letter used 1020
+Item _antipriestletter_ letter used 1021
+Item _antimerchantletter_ letter used 1022
+Item _antinobleletter_ letter used 1023
+Item _antithiefletter_ letter used 1024
 Item _gem_ gem
-Item letter19 letter used 1033
-Item letter20 letter used 1051
-Item letter21 letter used 1048
-Item letter23 letter used 1050
-Item letter22 letter used 1049
+Item _almightyletter_ letter used 1033
+Item _thiefevidenceletter_ letter used 1051
+Item _merchantevidenceletter_ letter used 1048
+Item _priestevidenceletter_ letter used 1050
+Item _nobleevidenceletter_ letter used 1049
 Item _reward_ trinket
 
 Person _qgiver_ group Questor anyInfo 1011
@@ -906,8 +868,8 @@ Place _noblehome_ remote house1
 Place _priesthome_ remote temple
 Place _thiefhome_ remote tavern
 
-Clock _2letter_ 00:25 00:50
-Clock _queston_ 00:00 0 flag 17 range 0 5
+Clock _letterarrivaltime_ 00:25 00:50
+Clock _questtimelimit_ 00:00 0 flag 17 range 0 5
 Clock _delay_ 00:01 0 flag 1 range 0 1
 
 Foe _guard_ is Warrior
@@ -926,12 +888,12 @@ Foe _guard4_ is Spellsword
 	dialog link for location _thiefhouse_ person _merchant_ 
 	dialog link for person _priest_ 
 	dialog link for person _noble_ 
-	start timer _queston_ 
+	start timer _questtimelimit_ 
 	start timer _delay_ 
-	start timer _2letter_ 
+	start timer _letterarrivaltime_ 
 	log 1010 step 0 
-	pick one of _S.03_ _S.01_ _S.00_ _S.02_ 
-	letter19 used do _S.26_ 
+	pick one of _merchantguilty_ _nobleguilty_ _priestguilty_ _thiefguilty_ 
+	_almightyletter_ used do _havereadwitnessletter_ 
 	legal repute -15 
 	place npc _noble_ at _noblehome_ 
 	place npc _merchant_ at _merchanthome_ 
@@ -939,260 +901,266 @@ Foe _guard4_ is Spellsword
 	place npc _priest_ at _priesthome_ 
 	place npc _thief_ at _thiefhome_ 
 
-variable _S.00_
-variable _S.01_
-variable _S.02_
-variable _S.03_
-_S.04_ task:
+variable _priestguilty_
+variable _merchantguilty_
+variable _nobleguilty_
+variable _thiefguilty_
+
+_delay_ task:
+	hide npc _qgiver_ 
+	say 1100 
+
+_latenight_ task:
 	daily from 00:00 to 02:00 
 
-_S.05_ task:
-	when _S.00_ and _S.04_ 
-	place npc _priest_ at _thiefhouse_ 
+_priestnight_ task:
+	when _priestguilty_ and _latenight_ and _secondwitnessdiscussion_
+	place npc _priest_ at _thiefhouse_
+	restore _priest_
 
-_S.06_ task:
-	when _S.03_ and _S.04_ 
+_priestdayletter_ task:
+	when _priestguilty_ and not _latenight_ and _secondwitnessdiscussion_
+	place item _priestevidenceletter_ at _thiefhouse_ 
+	hide npc _priest_ 
+
+_merchantnight_ task:
+	when _merchantguilty_ and _latenight_ and _secondwitnessdiscussion_
 	place npc _merchant_ at _thiefhouse_ 
+	restore _merchant_
 
-_S.07_ task:
-	when _S.01_ and _S.04_ 
-	place npc _noble_ at _thiefhouse_ 
+_merchantdayletter_ task:
+	when _merchantguilty_ and not _latenight_ and _secondwitnessdiscussion_
+	place item _merchantevidenceletter_ at _thiefhouse_ 
+	hide npc _merchant_ 
 
-_S.08_ task:
-	when _S.02_ and _S.04_ 
+_noblenight_ task:
+	when _nobleguilty_ and _latenight_ and _secondwitnessdiscussion_
+	place npc _noble_ at _thiefhouse_
+	restore _noble_
+
+_nobledayletter_ task:
+	when _nobleguilty_ and not _latenight_ and _secondwitnessdiscussion_
+	place item _nobleevidenceletter_ at _thiefhouse_ 
+	hide npc _noble_ 
+
+_thiefdayletter_ task:
+	when _thiefguilty_ and not _latenight_ and _secondwitnessdiscussion_
+	place item _thiefevidenceletter_ at _thiefhouse_ 
+	hide npc _thief_ 
+
+_thiefnight_ task:
+	when _thiefguilty_ and _latenight_ and _secondwitnessdiscussion_
 	place npc _thief_ at _thiefhouse_ 
+	restore _thief_
 
-_2letter_ task:
-	repute with _tg_ exceeds 10 do _S.11_ 
-	repute with necromancer exceeds 10 do _S.12_ 
-	repute with underking exceeds 10 do _S.13_ 
+_letterarrivaltime_ task:
+	repute with _tg_ exceeds 10 do _friendofthievesguild_ 
+	repute with necromancer exceeds 10 do _friendofnecros_ 
+	repute with underking exceeds 10 do _friendofunderking_
 
-_queston_ task:
-	have _gem_ set _S.59_ 
+_friendofthievesguild_ task:
+	_thievesguildletter_ used do _havereadthievesguildletter_ 
+	give pc _thievesguildletter_ notify 1017 
+	clear _friendofnecros_ _friendofunderking_ 
 
-_S.11_ task:
-	letter15 used do _S.38_ 
-	give pc letter15 notify 1017 
-	clear _S.12_ _S.13_ 
+_havereadthievesguildletter_ task:
+	log 1028 step 1 
 
-_S.12_ task:
-	letter13 used do _S.56_ 
-	give pc letter13 notify 1017 
-	clear _S.13_ 
+_friendofnecros_ task:
+	_necromancerletter_ used do _havereadnecromancerletter_ 
+	give pc _necromancerletter_ notify 1017 
+	clear _friendofunderking_ 
 
-_S.13_ task:
-	letter14 used do questRumors 
-	give pc letter14 notify 1017 
+_havereadnecromancerletter_ task:
+	log 1026 step 1 
 
-_S.14_ task:
+_friendofunderking_ task:
+	_underkingletter_ used do _havereadunderkingletter_ 
+	give pc _underkingletter_ notify 1017 
+
+_havereadunderkingletter_ task:
+	log 1027 step 1 
+
+_nobodyismyfriend_ task:
+	when not _friendofnecros_ and not _friendofunderking_ and not _friendofthievesguild_ 
+
+_makehelpfulletterarrive_ task:
+	when _nobodyismyfriend_ and _letterarrivaltime_ 
+
+_clickonwitness_ task:
 	clicked npc _witness_ 
 
-_S.15_ task:
-	log 1029 step 2 
-
-_S.16_ task:
-	log 1031 step 2 
-
-_S.17_ task:
-	log 1032 step 2 
-
-_S.18_ task:
-	log 1030 step 2 
-
-_S.19_ task:
-	when _S.14_ and _S.26_ 
-	reveal _mondung_ 
-	pick one of _S.28_ _S.27_ 
-	hide npc _witness_ 
-
-_S.20_ task:
-	when _S.14_ and not _S.19_ 
+_firstwitnessdiscussion_ task:
+	when _clickonwitness_ and not _havereadwitnessletter_ 
 	create foe _guard2_ every 1 minutes 1 times with 100% success 
-	get item letter19 
+	get item _almightyletter_ 
 	say 1025 
 	place npc _witness_ at _withouse_ 
-	clear _S.14_ 
+	clear _clickonwitness_ 
 
-_S.21_ task:
-	when not _S.12_ and not _S.13_ and not _S.11_ 
-
-_S.22_ task:
-	when _S.00_ and _S.60_ 
-	letter16 used do _S.15_ 
-	give pc letter16 notify 1017 
-
-_S.23_ task:
-	when _S.03_ and _S.60_ 
-	letter17 used do _S.18_ 
-	give pc letter17 notify 1017 
-
-_S.24_ task:
-	when _S.01_ and _S.60_ 
-	letter18 used do _S.16_ 
-	give pc letter18 notify 1017 
-
-_S.25_ task:
-	when _S.02_ and _S.60_ 
-	letter25 used do _S.17_ 
-	give pc letter25 notify 1017 
-
-_S.26_ task:
+_havereadwitnessletter_ task:
 	log 1034 step 3 
 
-variable _S.27_
-variable _S.28_
-_S.29_ task:
-	when _S.28_ and _S.02_ 
-	log 1094 step 4 
+_secondwitnessdiscussion_ task:
+	when _clickonwitness_ and _havereadwitnessletter_
+	reveal _mondung_ 
+	pick one of _honestmistake_ _annoyingwitness_ 
+	hide npc _witness_ 
+
+_giveantipriestletter_ task:
+	when _priestguilty_ and _makehelpfulletterarrive_ 
+	_antipriestletter_ used do _antipriestlog_ 
+	give pc _antipriestletter_ notify 1017 
+
+_antipriestlog_ task:
+	log 1029 step 2 
+
+_giveantimerchantletter_ task:
+	when _merchantguilty_ and _makehelpfulletterarrive_ 
+	_antimerchantletter_ used do _antimerchantlog_ 
+	give pc _antimerchantletter_ notify 1017 
+
+_antimerchantlog_ task:
+	log 1030 step 2 
+
+_giveantinobleletter_ task:
+	when _nobleguilty_ and _makehelpfulletterarrive_ 
+	_antinobleletter_ used do _antinoblelog_ 
+	give pc _antinobleletter_ notify 1017 
+
+_antinoblelog_ task:
+	log 1031 step 2 
+
+_giveantithiefletter_ task:
+	when _thiefguilty_ and _makehelpfulletterarrive_ 
+	_antithiefletter_ used do _antithieflog_ 
+	give pc _antithiefletter_ notify 1017 
+
+_antithieflog_ task:
+	log 1032 step 2 
+
+variable _annoyingwitness_
+variable _honestmistake_
+_revealthiefhonestmistake_ task:
+	when _honestmistake_ and _thiefguilty_ 
+	log 1046 step 4 
 	say 1038 
 
-_S.30_ task:
-	when _S.28_ and _S.01_ 
-	log 1092 step 4 
+_revealnoblehonestmistake_ task:
+	when _honestmistake_ and _nobleguilty_ 
+	log 1044 step 4 
 	say 1036 
 
-_S.31_ task:
-	when _S.28_ and _S.03_ 
-	log 1091 step 4 
+_revealmerchanthonestmistake_ task:
+	when _honestmistake_ and _merchantguilty_ 
+	log 1043 step 4 
 	say 1035 
 
-_S.32_ task:
-	when _S.28_ and _S.00_ 
-	log 1093 step 4 
+_revealpriesthonestmistake_ task:
+	when _honestmistake_ and _priestguilty_ 
+	log 1045 step 4 
 	say 1037 
 
-_S.33_ task:
-	when _S.02_ and _S.27_ 
+_revealthiefannoyingwitness_ task:
+	when _thiefguilty_ and _annoyingwitness_ 
 	log 1094 step 4 
 	say 1042 
 
-_S.34_ task:
-	when _S.00_ and _S.27_ 
+_revealpriestannoyingwitness_ task:
+	when _priestguilty_ and _annoyingwitness_ 
 	log 1093 step 4 
 	say 1041 
 
-_S.35_ task:
-	when _S.03_ and _S.27_ 
+_revealmerchantannoyingwitness_ task:
+	when _merchantguilty_ and _annoyingwitness_ 
 	log 1091 step 4 
 	say 1039 
 
-_S.36_ task:
-	when _S.01_ and _S.27_ 
+_revealnobleannoyingwitness_ task:
+	when _nobleguilty_ and _annoyingwitness_ 
 	log 1092 step 4 
 	say 1040 
 
-_S.37_ task:
+_retrievegem_ task:
 	clicked item _gem_ 
 	say 1047 
 
-_S.38_ task:
-	log 1028 step 1 
-
-_S.39_ task:
-	when _S.03_ and not _S.04_ 
-	place item letter21 at _thiefhouse_ 
-	hide npc _merchant_ 
-
-_S.40_ task:
-	when _S.01_ and not _S.04_ 
-	place item letter22 at _thiefhouse_ 
-	hide npc _noble_ 
-
-_S.41_ task:
-	when _S.00_ and not _S.04_ 
-	place item letter23 at _thiefhouse_ 
-	hide npc _priest_ 
-
-_S.42_ task:
-	when _S.02_ and not _S.04_ 
-	place item letter20 at _thiefhouse_ 
-	hide npc _thief_ 
-
-_S.43_ task:
-	clicked item letter23 
-	clicked item letter20 
-	clicked item letter21 
-	clicked item letter22 
+_readincriminatingletter_ task:
+	clicked item _priestevidenceletter_ 
+	clicked item _thiefevidenceletter_ 
+	clicked item _merchantevidenceletter_ 
+	clicked item _nobleevidenceletter_ 
 	say 1052 
 
-_mow1_ task:
-	when _S.45_ or _S.46_ or _S.48_ or _S.47_ 
+_makevictimreturn_ task:
+	when _deliverlettertomerchant_ or _deliverlettertonoble_ or _deliverlettertopriest_ or _deliverlettertothief_ 
 	log 1059 step 5 
 	restore _qgiver_ 
 
-_S.45_ task:
-	toting letter20 and _merchant_ clicked 
-	say 1054 
-
-_S.46_ task:
-	toting letter23 and _noble_ clicked 
-	say 1056 
-
-_S.47_ task:
-	toting letter22 and _thief_ clicked 
+_deliverlettertothief_ task:
+	toting _nobleevidenceletter_ and _thief_ clicked 
 	say 1053 
 
-_S.48_ task:
-	toting letter21 and _priest_ clicked 
+_deliverlettertomerchant_ task:
+	toting _thiefevidenceletter_ and _merchant_ clicked 
+	say 1054 
+
+_deliverlettertopriest_ task:
+	toting _merchantevidenceletter_ and _priest_ clicked 
 	say 1055 
 
-_mapdung_ task:
-	when _S.55_ and not _mow1_ 
+_deliverlettertonoble_ task:
+	toting _priestevidenceletter_ and _noble_ clicked 
+	say 1056 
+
+_noevidenceconfrontation_ task:
+	when _clickanyone_ and not _makevictimreturn_ 
 	create foe _guard3_ every 1 minutes 1 times with 100% success 
 	say 1057 
-	clear _S.51_ _S.52_ _S.53_ _S.54_ 
+	clear _clickmerchant_ _clicknoble_ _clickpriest_ _clickthief_ 
+	start task _reminderwitness_
 
-_mow2_ task:
+_reminderwitness_ task:
+	log 1061 step 2
+
+_victory_ task:
 	toting _gem_ and _qgiver_ clicked 
 	give pc _reward_ 
 	change repute with _qgiver_ by +10 
 	legal repute +20
 	end quest 
 
-_S.51_ task:
+_clickmerchant_ task:
 	clicked npc _merchant_ 
 
-_S.52_ task:
+_clicknoble_ task:
 	clicked npc _noble_ 
 
-_S.53_ task:
+_clickpriest_ task:
 	clicked npc _priest_ 
 
-_S.54_ task:
+_clickthief_ task:
 	clicked npc _thief_ 
 
-_S.55_ task:
-	when _S.51_ or _S.52_ or _S.53_ or _S.54_ 
-
-_S.56_ task:
-	log 1026 step 1 
+_clickanyone_ task:
+	when _clickmerchant_ or _clicknoble_ or _clickpriest_ or _clickthief_ 
 
 _revenge_ task:
-	when _S.52_ and _S.47_ 
-	when _S.53_ and _S.46_ 
-	when _S.51_ and _S.48_ 
-	when _S.54_ and _S.45_ 
+	when _clicknoble_ and _deliverlettertothief_ 
+	when _clickpriest_ and _deliverlettertonoble_ 
+	when _clickmerchant_ and _deliverlettertopriest_ 
+	when _clickthief_ and _deliverlettertomerchant_ 
 	create foe _guard4_ every 1 minutes 1 times with 100% success 
 	say 1058 
 
-_S.58_ task:
-	when _queston_ and not _mow2_ 
-	say 1060 
+_questtimelimit_ task:
+	have _gem_ set _illkeepthatgem_ 
 
-_S.59_ task:
+_illkeepthatgem_ task:
 	make _gem_ permanent 
 
-_S.60_ task:
-	when _S.21_ and _2letter_ 
-
-questRumors task:
-	log 1027 step 1 
-
-_delay_ task:
-	hide npc _qgiver_ 
-	say 1100 
-
-finishedQuestRumors task:
-	when _queston_ and _S.58_ 
+_youhavefailed_ task:
+	when _questtimelimit_ and not _victory_ 
+	say 1060 
 	restore _qgiver_ 
 	end quest 
