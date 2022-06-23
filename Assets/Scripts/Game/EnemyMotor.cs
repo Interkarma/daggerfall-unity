@@ -117,7 +117,12 @@ namespace DaggerfallWorkshop.Game
             attack = GetComponent<EnemyAttack>();
 
             // Only need to check for ability to shoot bow once.
-            hasBowAttack = mobile.Enemy.HasRangedAttack1 && mobile.Enemy.ID > 129 && mobile.Enemy.ID != 132;
+            // A mobile has a bow attack if:
+            //   - it has RangedAttack1 and does not cast magic (ex: Mage, Healer, ...), or 
+            //   - it has both RangedAttack1 and RangedAttack2 (ex: Nightblade)
+            // If a mobile only has RangedAttack1 and casts magic, then its ranged attack is only shooting spells, not shooting a bow
+            hasBowAttack =
+                (mobile.Enemy.HasRangedAttack1 && (!mobile.Enemy.CastsMagic || mobile.Enemy.HasRangedAttack2));
 
             // Add things AI should ignore when checking for a clear path to shoot.
             ignoreMaskForShooting = ~(1 << LayerMask.NameToLayer("SpellMissiles") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
