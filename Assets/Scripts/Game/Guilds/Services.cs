@@ -210,6 +210,17 @@ namespace DaggerfallWorkshop.Game.Guilds
             return false;
         }
 
+        public static bool RegisterGuildService(GuildServices serviceId, CustomGuildService service)
+        {
+            DaggerfallUnity.LogMessage("RegisterGuildService: " + serviceId, true);
+            if (!guildNpcServices.ContainsKey((int)serviceId))
+            {
+                customNpcServices.Add((int)serviceId, service);
+                return true;
+            }
+            return false;
+        }
+
         public static bool RegisterGuildService(int npcFactionId, CustomGuildService service, string serviceName, DaggerfallShortcut.Buttons serviceButton = DaggerfallShortcut.Buttons.None)
         {
             DaggerfallUnity.LogMessage("RegisterGuildService: " + npcFactionId + " with service: " + serviceName, true);
@@ -342,6 +353,11 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public static string GetServiceLabelText(GuildServices service)
         {
+            // Check custom service labels
+            string serviceName;
+            if (customNpcServiceNames.TryGetValue((int)service, out serviceName))
+                return serviceName;
+
             switch (service)
             {
                 case GuildServices.Training:
@@ -385,16 +401,17 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return TextManager.Instance.GetLocalizedText("serviceReceiveHouse");
 
                 default:
-                    string serviceName;
-                    if (customNpcServiceNames.TryGetValue((int)service, out serviceName))
-                        return serviceName;
-                    else
-                        return "?";
+                    return "?";
             }
         }
 
         public static DaggerfallShortcut.Buttons GetServiceShortcutButton(GuildServices service)
         {
+            // Check custom shortcut buttons
+            DaggerfallShortcut.Buttons serviceButton;
+            if (customNpcServiceButtons.TryGetValue((int)service, out serviceButton))
+                return serviceButton;
+
             switch (service)
             {
                 case GuildServices.Training:
@@ -438,11 +455,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                     return DaggerfallShortcut.Buttons.GuildsReceiveHouse;
 
                 default:
-                    DaggerfallShortcut.Buttons serviceButton;
-                    if (customNpcServiceButtons.TryGetValue((int)service, out serviceButton))
-                        return serviceButton;
-                    else
-                        return DaggerfallShortcut.Buttons.None;
+                    return DaggerfallShortcut.Buttons.None;
             }
         }
 

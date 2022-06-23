@@ -322,6 +322,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 return;
             }
+
+            // Handle custom service
+            Services.CustomGuildService customService;
+            if (Services.GetCustomGuildService((int)service, out customService))
+            {
+                CloseWindow();
+                customService(this);
+                return;
+            }
+
             // Handle known service
             DaggerfallTradeWindow tradeWindow;
             switch (service)
@@ -433,11 +443,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 default:
                     CloseWindow();
-                    Services.CustomGuildService customService;
-                    if (Services.GetCustomGuildService((int)service, out customService))
-                        customService(this);
-                    else
-                        DaggerfallUI.MessageBox("Guild service not yet implemented.");
+                    DaggerfallUI.MessageBox("Guild service not yet implemented.");
                     break;
             }
         }
