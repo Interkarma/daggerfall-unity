@@ -5,6 +5,7 @@
 -- QuestId: 0
 Messages: 62
 Quest: $CUREWER
+DisplayName: Cure for Lycanthropy
 -- Message panels
 QRC:
 

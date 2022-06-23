@@ -43,19 +43,16 @@ RumorsDuringQuest:  [1005]
 <ce>                        to pay to get it slain.
 
 RumorsPostfailure:  [1006]
-<ce>                    Didn't you kill that rampaging
-<ce>                     tiger that got into _house_?
+A tiger killed some poor bloke in his own home. A terrible tragedy.
 
 RumorsPostsuccess:  [1007]
-<ce>                    A tiger killed some poor bloke
-<ce>                 in his own home. A terrible tragedy.
+Didn't you kill that rampaging tiger that got into _house_?
 
 QuestorPostsuccess:  [1008]
-<ce>                      Good going with that tiger.
+Good going with that tiger.
 
 QuestorPostfailure:  [1009]
-<ce>                Tigers are tough. Maybe we should start
-<ce>                 you out with chipmunks. What a putz.
+Tigers are tough. Maybe we should start you out with chipmunks. What a putz.
 
 QuestLogEntry:  [1010]
 %qdt:

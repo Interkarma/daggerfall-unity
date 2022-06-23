@@ -3,6 +3,7 @@
 -- QuestId: 501
 Messages: 62
 Quest: S0000501
+DisplayName: Lord K'avar Quest Part III
 -- Message panels
 QRC:
 
@@ -204,6 +205,10 @@ _S.09_ task:
 	say 1040 
 	remove log step 0
 	start task _stagger_
+
+_notyet_ task:
+	when _S.04_ and not _S.00_
+	clear _S.04_ _notyet_
 
 variable _stagger_
 _clearclick_ task:

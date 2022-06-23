@@ -3,6 +3,7 @@
 -- QuestId: 500
 Messages: 71
 Quest: S0000500
+DisplayName: Lord K'avar Quest Part II
 -- Message panels
 QRC:
 
