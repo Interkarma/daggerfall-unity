@@ -360,7 +360,13 @@ namespace DaggerfallWorkshop.Game
             // Handle custom enemies
             else
             {
-                // TODO: maybe go through TextProvider so mods can try to offer localization?
+                string name = DaggerfallUnity.Instance.TextProvider.GetCustomEnemyName(enemyID);
+                if (!string.IsNullOrEmpty(name))
+                {
+                    return name;
+                }
+
+                // Fallback to career name
                 DaggerfallConnect.DFCareer career = DaggerfallEntity.GetCustomCareerTemplate(enemyID);
                 if (career == null)
                 {
