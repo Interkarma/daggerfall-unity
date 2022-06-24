@@ -67,7 +67,7 @@ QuestLogEntry:  [1010]
 %qdt:
  _qgiver_, of __qgiver_
  in ___qgiver_, has given me
- the chance to find _religitem_
+ the chance to find the _religitem_
  which had been stolen by a
  =thief_ named _thief_.
  I have =traveltime_ days to get it back.
