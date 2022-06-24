@@ -1234,28 +1234,7 @@ namespace DaggerfallWorkshop.Utility
             // Special handling for individual NPCs found in layout data
             // This NPC may be used in 0 or more active quests at home
             int factionID = obj.Resources.FlatResource.FactionOrMobileId;
-            if (QuestMachine.Instance.IsIndividualNPC(factionID))
-            {
-                // Check if NPC has been placed elsewhere on a quest
-                if (QuestMachine.Instance.IsIndividualQuestNPCAtSiteLink(factionID))
-                {
-                    // Disable individual NPC if placed elsewhere
-                    go.SetActive(false);
-                }
-                else
-                {
-                    // Always add QuestResourceBehaviour to individual NPC
-                    // This is required to bootstrap quest as often questor is not set until after player clicks resource
-                    QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
-                    Person[] activePersonResources = QuestMachine.Instance.ActiveFactionPersons(factionID);
-                    if (activePersonResources != null && activePersonResources.Length > 0)
-                    {
-                        Person person = activePersonResources[0];
-                        questResourceBehaviour.AssignResource(person);
-                        person.QuestResourceBehaviour = questResourceBehaviour;
-                    }
-                }
-            }
+            QuestMachine.Instance.SetupIndividualStaticNPC(go, factionID);
 
             // Disable enemy editor flats
             if (archive == TextureReader.EditorFlatsTextureArchive && (record == 15 || record == 16))

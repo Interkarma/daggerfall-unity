@@ -17,6 +17,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game;
 using System.Linq;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -370,6 +371,8 @@ namespace DaggerfallWorkshop.Utility
                     // Add StaticNPC behaviour
                     StaticNPC npc = go.AddComponent<StaticNPC>();
                     npc.SetLayoutData(obj, mapId, locationIndex);
+
+                    QuestMachine.Instance.SetupIndividualStaticNPC(go, obj.FactionID);
                 }
             }
         }
@@ -444,6 +447,8 @@ namespace DaggerfallWorkshop.Utility
                         // Add StaticNPC behaviour
                         StaticNPC npc = go.AddComponent<StaticNPC>();
                         npc.SetLayoutData(obj, mapId, locationIndex);
+
+                        QuestMachine.Instance.SetupIndividualStaticNPC(go, obj.FactionID);
                     }
 
                     // If this is a light flat, import light prefab

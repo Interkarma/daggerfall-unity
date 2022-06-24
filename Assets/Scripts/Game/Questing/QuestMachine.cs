@@ -1293,6 +1293,44 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Checks if NPC is a special individual NPC, then sets it up with components required for quests.
+        /// If the NPC has an Individual faction, and the NPC is currently placed somewhere else in a quest,
+        /// the GameObject will be deactivated
+        /// </summary>
+        /// <param name="go">GameObject representing the static NPC</param>
+        /// <param name="factionID">Faction ID of the NPC</param>
+        /// <returns></returns>
+        public bool SetupIndividualStaticNPC(GameObject go, int factionID)
+        {
+            if (IsIndividualNPC(factionID))
+            {
+                // Check if NPC has been placed elsewhere on a quest
+                if (IsIndividualQuestNPCAtSiteLink(factionID))
+                {
+                    // Disable individual NPC if placed elsewhere
+                    go.SetActive(false);
+                    return false;
+                }
+                else
+                {
+                    // Always add QuestResourceBehaviour to individual NPC
+                    // This is required to bootstrap quest as often questor is not set until after player clicks resource
+                    QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
+                    Person[] activePersonResources = QuestMachine.Instance.ActiveFactionPersons(factionID);
+                    if (activePersonResources != null && activePersonResources.Length > 0)
+                    {
+                        Person person = activePersonResources[0];
+                        questResourceBehaviour.AssignResource(person);
+                        person.QuestResourceBehaviour = questResourceBehaviour;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
         /// Walks SiteLink > Quest > Place > QuestMarkers > Target to see if an individual NPC has been placed elsewhere.
         /// Used only to determine if an individual NPC should be disabled at home location by layout builders.
         /// Ignores non-individual NPCs.

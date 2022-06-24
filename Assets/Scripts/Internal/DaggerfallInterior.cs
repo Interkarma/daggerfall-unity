@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop
 {
@@ -975,6 +976,10 @@ namespace DaggerfallWorkshop
                 else if (buildingData.buildingType == DFLocation.BuildingTypes.House2 && buildingData.factionID != 0 && !isMemberOfBuildingGuild)
                 {
                     go.SetActive(false);
+                }
+                else
+                {
+                    QuestMachine.Instance.SetupIndividualStaticNPC(go, obj.FactionID);
                 }
             }
         }

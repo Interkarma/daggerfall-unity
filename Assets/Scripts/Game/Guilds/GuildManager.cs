@@ -266,7 +266,8 @@ namespace DaggerfallWorkshop.Game.Guilds
                 guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
 
                 // Handle temples nested under deity
-                if (factionData.children != null && (guildGroup == FactionFile.GuildGroups.None && factionData.children.Count > 0))
+                if (factionData.type == (int)FactionFile.FactionTypes.God
+                    && factionData.children != null && (guildGroup == FactionFile.GuildGroups.None && factionData.children.Count > 0))
                 {
                     FactionFile.FactionData firstChild;
                     if (persistentFactionData.GetFactionData(factionData.children[0], out firstChild))
