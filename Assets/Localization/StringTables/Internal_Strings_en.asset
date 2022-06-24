@@ -3972,5 +3972,13 @@ MonoBehaviour:
     m_Localized: '{0} out of {1} identified.'
     m_Metadata:
       m_Items: []
+  - m_Id: 231219528834760704
+    m_Localized: Dispel magic was a success...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 231219571734102016
+    m_Localized: Dispel magic failed...
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

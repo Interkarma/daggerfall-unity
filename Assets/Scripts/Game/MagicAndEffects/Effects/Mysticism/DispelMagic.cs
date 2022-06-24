@@ -126,7 +126,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             if (bundle.caster.EntityType == EntityTypes.Player || RollChance())
             {
                 manager.RemoveBundle(bundle);
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("dispelMagicSuccess"));
                 //Debug.LogFormat("Dispelling {0}", validSpells[index].name);
+            }
+            else
+            {
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("dispelMagicFailed"));
             }
 
             spellPicker.CloseWindow();

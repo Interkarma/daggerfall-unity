@@ -3591,6 +3591,14 @@ MonoBehaviour:
     m_Key: totalIdentified
     m_Metadata:
       m_Items: []
+  - m_Id: 231219528834760704
+    m_Key: dispelMagicSuccess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 231219571734102016
+    m_Key: dispelMagicFailed
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
