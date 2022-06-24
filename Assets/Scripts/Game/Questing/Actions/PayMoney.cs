@@ -89,6 +89,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                     }
                 }
             }
+
+            SetComplete();
         }
 
         #region Serialization
