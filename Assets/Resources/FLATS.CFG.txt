@@ -206,7 +206,7 @@ cowled woman
 2
 24
 14
-360
+369
 
 178 1
 red-cowled man
