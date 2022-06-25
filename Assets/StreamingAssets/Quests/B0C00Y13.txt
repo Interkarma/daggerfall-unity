@@ -94,7 +94,7 @@ QBN:
 
 Person _qgiver_ group Questor
 
-Place _house_ local random
+Place _house_ local house
 
 Clock _oneday_ 1.00:00 0 flag 1 range 0 1
 
