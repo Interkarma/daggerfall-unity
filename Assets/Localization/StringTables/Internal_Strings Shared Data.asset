@@ -3599,6 +3599,10 @@ MonoBehaviour:
     m_Key: dispelMagicFailed
     m_Metadata:
       m_Items: []
+  - m_Id: 231237822383931392
+    m_Key: smallerDungeonsChanged
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

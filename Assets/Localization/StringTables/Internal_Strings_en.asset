@@ -3980,5 +3980,10 @@ MonoBehaviour:
     m_Localized: Dispel magic failed...
     m_Metadata:
       m_Items: []
+  - m_Id: 231237822383931392
+    m_Localized: Smaller dungeons changed while inside dungeon. Moving player to
+      dungeon exit.
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

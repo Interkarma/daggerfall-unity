@@ -26,6 +26,8 @@ automap,                                            Automap
 
 startInDungeon,                                     Start In Dungeon
 startInDungeonInfo,                                 Start new game inside the first dungeon
+smallerDungeons,                                    Smaller Dungeons
+smallerDungeonsInfo,                                Random dungeons will have only one interior block and four border blocks
 randomDungeonTextures,                              Dungeon Textures
 randomDungeonTexturesInfo,                          Generates dungeon texture table from random seed
 cameraRecoilStrength,                               Camera Recoil Strength

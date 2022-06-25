@@ -449,6 +449,14 @@ namespace DaggerfallWorkshop.Game.Serialization
                 transform.position = positionData.position;
             }
 
+            // If player saved with opposite smaller dungeon state then warp to start marker
+            bool smallerDungeons = (positionData.smallerDungeonsState == QuestSmallerDungeonsState.Enabled) ? true : false;
+            if (positionData.worldContext == WorldContext.Dungeon && smallerDungeons != DaggerfallUnity.Settings.SmallerDungeons)
+            {
+                transform.position = playerEnterExit.Dungeon.StartMarker.transform.position;
+                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("smallerDungeonsChanged"));
+            }
+
             // Restore orientation and crouch state
             playerMouseLook.Yaw = positionData.yaw;
             playerMouseLook.Pitch = positionData.pitch;

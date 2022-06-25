@@ -87,6 +87,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         // GamePlay
         Checkbox startInDungeon;
+        Checkbox smallerDungeons;
         HorizontalSlider randomDungeonTextures;
         HorizontalSlider cameraRecoilStrength;
         HorizontalSlider mouseSensitivity;
@@ -238,6 +239,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Game
             AddSectionTitle(leftPanel, "game");
             startInDungeon = AddCheckbox(leftPanel, "startInDungeon", DaggerfallUnity.Settings.StartInDungeon);
+            smallerDungeons = AddCheckbox(leftPanel, "smallerDungeons", DaggerfallUnity.Settings.SmallerDungeons);
             randomDungeonTextures = AddSlider(leftPanel, "randomDungeonTextures",
                 DaggerfallUnity.Settings.RandomDungeonTextures, "classic", "climate", "climateOnly", "random", "randomOnly");
             cameraRecoilStrength = AddSlider(leftPanel, "cameraRecoilStrength",
@@ -406,6 +408,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             /* GamePlay */
 
             DaggerfallUnity.Settings.StartInDungeon = startInDungeon.IsChecked;
+            DaggerfallUnity.Settings.SmallerDungeons = smallerDungeons.IsChecked;
             DaggerfallUnity.Settings.RandomDungeonTextures = randomDungeonTextures.ScrollIndex;
 
             DaggerfallUnity.Settings.MouseLookSensitivity = mouseSensitivity.GetValue();
