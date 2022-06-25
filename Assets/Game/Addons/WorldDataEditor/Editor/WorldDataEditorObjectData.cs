@@ -17,6 +17,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
         public const uint containerObjectGroupOffset = 41000;
         public static List<uint> shopShelvesObjectGroupIndices = new List<uint> { 5, 6, 11, 12, 13, 14, 15, 16, 17, 18, 19, 26, 28, 29, 31, 35, 36, 37, 40, 41, 42, 44, 46, 47, 48, 49, 808 };
         public static List<uint> houseContainerObjectGroupIndices = new List<uint> { 3, 4, 7, 8, 27, 32, 33, 34, 35, 37, 38, 50, 51 };
+        public static List<uint> houseFireplaceObjectGroupIndices = new List<uint> { 41116, 41117 };
 
         // Flat groups
         public static Dictionary<string, string[]> flatGroups = new Dictionary<string, string[]>() {
