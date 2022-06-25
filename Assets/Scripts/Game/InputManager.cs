@@ -984,7 +984,7 @@ namespace DaggerfallWorkshop.Game
             setBinding(KeyCode.E, Actions.AbortSpell, true);
             setBinding(KeyCode.U, Actions.UseMagicItem, true);
 
-            setBinding(KeyCode.F, Actions.ReadyWeapon, true);
+            setBinding(KeyCode.Z, Actions.ReadyWeapon, true);
             setBinding(KeyCode.Mouse1, Actions.SwingWeapon, true);
             setBinding(KeyCode.H, Actions.SwitchHand, true);
 
