@@ -453,8 +453,14 @@ namespace DaggerfallWorkshop.Game.Serialization
             bool smallerDungeons = (positionData.smallerDungeonsState == QuestSmallerDungeonsState.Enabled) ? true : false;
             if (positionData.worldContext == WorldContext.Dungeon && smallerDungeons != DaggerfallUnity.Settings.SmallerDungeons)
             {
-                transform.position = playerEnterExit.Dungeon.StartMarker.transform.position;
-                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("smallerDungeonsChanged"));
+                // Exclude story dungeons as these never use smaller dungeons setting
+                // Avoids player being warped to exit if they toggle in the middle of a main quest dungeon crawl
+                bool isStoryDungeon = DaggerfallDungeon.IsMainStoryDungeon(playerEnterExit.Dungeon.Summary.ID);
+                if (!isStoryDungeon)
+                {
+                    transform.position = playerEnterExit.Dungeon.StartMarker.transform.position;
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("smallerDungeonsChanged"));
+                }
             }
 
             // Restore orientation and crouch state
