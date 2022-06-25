@@ -54,7 +54,7 @@ namespace DaggerfallWorkshop.Game
 
         // References
         DaggerfallEntityBehaviour entityBehaviour;
-        MobilePersonAsset mobileAsset;
+        public MobilePersonAsset MobileAsset { get; set; }
 
         #endregion
 
@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game
         {
             // Cache references
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
-            mobileAsset = FindMobilePersonAsset();
+            MobileAsset = FindMobilePersonAsset();
 
             // Need to repath if floating origin ticks while in range
             FloatingOrigin.OnPositionUpdate += FloatingOrigin_OnPositionUpdate;
@@ -183,7 +183,7 @@ namespace DaggerfallWorkshop.Game
             // Do nothing if paralyzed
             if (entityBehaviour.Entity.IsParalyzed)
             {
-                mobileAsset.IsIdle = false;
+                MobileAsset.IsIdle = false;
                 return;
             }
 
@@ -224,16 +224,16 @@ namespace DaggerfallWorkshop.Game
             else
                 wantsToStop = false;
 
-            if (!wantsToStop && mobileAsset.IsIdle)
+            if (!wantsToStop && MobileAsset.IsIdle)
             {
                 // Switch animation state back to moving
-                mobileAsset.IsIdle = false;
+                MobileAsset.IsIdle = false;
                 currentMobileState = MobileStates.MovingForward;
             }
-            else if (wantsToStop && !mobileAsset.IsIdle)
+            else if (wantsToStop && !MobileAsset.IsIdle)
             {
                 // Switch animation state to idle
-                mobileAsset.IsIdle = true;
+                MobileAsset.IsIdle = true;
                 currentMobileState = MobileStates.Idle;
             }
 
@@ -411,7 +411,7 @@ namespace DaggerfallWorkshop.Game
             // Aim low to better detect stairs
             tempTargetScenePosition.y += 0.1f;
             Ray ray = new Ray(transform.position, tempTargetScenePosition - transform.position);
-            bool collision = Physics.Raycast(transform.position, tempTargetScenePosition - transform.position, Vector3.Distance(transform.position, tempTargetScenePosition), ~mobileAsset.GetLayerMask());
+            bool collision = Physics.Raycast(transform.position, tempTargetScenePosition - transform.position, Vector3.Distance(transform.position, tempTargetScenePosition), ~MobileAsset.GetLayerMask());
             // Debug.DrawRay(transform.position, tempTargetScenePosition - transform.position, collision ? Color.red : Color.green, 1f);
             return !collision;
         }
