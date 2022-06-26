@@ -290,6 +290,10 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                             {
                                 GUIElementObjectType(ref data, ref elementIndex, "Is Container");
                             }
+                            else if (WorldDataEditorObjectData.houseFireplaceObjectGroupIndices.Contains(uint.Parse(data.id)))
+                            {
+                                GUIElementObjectType(ref data, ref elementIndex, "Animate");
+                            }
 
                             ModelGroupSwitchers(ref elementIndex, data.id);
                         }
