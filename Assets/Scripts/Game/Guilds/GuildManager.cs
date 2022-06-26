@@ -169,7 +169,17 @@ namespace DaggerfallWorkshop.Game.Guilds
             Type guildType;
             if (customGuilds.TryGetValue(guildGroup, out guildType))
             {
-                return (IGuild)Activator.CreateInstance(guildType);
+                switch (guildGroup)
+                {
+                    case FactionFile.GuildGroups.HolyOrder:
+                        return (IGuild)Activator.CreateInstance(guildType, new object[] { Temple.GetDivine(variant) });
+
+                    case FactionFile.GuildGroups.KnightlyOrder:
+                        return (IGuild)Activator.CreateInstance(guildType, new object[] { KnightlyOrder.GetOrder(variant) });
+
+                    default:
+                        return (IGuild)Activator.CreateInstance(guildType);
+                }
             }
             else
             {
