@@ -260,6 +260,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                     if (data.type == (int)WorldDataEditorObject.DataType.Object3D)
                     {
                         GUIElementPosition(ref data, ref elementIndex);
+                        GUIElementShift(ref data, ref elementIndex);//Shift by size
                         GUIElementRotation(ref data, ref elementIndex);
                         if (dataMode == DataMode.Building)
                             GUIElementScale(ref data, ref elementIndex);
@@ -270,6 +271,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                             GUIElementModelActionRecord(ref data, ref elementIndex);
                             GUIElementNextObject(ref data, ref elementIndex);
                             GUIElementPrevObject(ref data, ref elementIndex);
+                            GUIElementGroundButton(ref elementIndex);//move to ground
                         }
                         else if (dataMode == DataMode.Building)
                         {
@@ -296,11 +298,13 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                             }
 
                             ModelGroupSwitchers(ref elementIndex, data.id);
+                            GUIElementGroundButton(ref elementIndex);//move to ground
                         }
                     }                  
                     else if (data.type == WorldDataEditorObject.DataType.Flat) //Flat object
                     {
                         GUIElementPosition(ref data, ref elementIndex);
+                        GUIElementShift(ref data, ref elementIndex);//Shift by size
                         GUIElementFaction(ref data, ref elementIndex);
 
                         if (dataMode == DataMode.Dungeon)
@@ -314,24 +318,30 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                         }
 
                         FlatGroupSwitchers(ref elementIndex, data.id);
+                        GUIElementGroundButton(ref elementIndex);//move to ground
                     }                  
                     else if (data.type == WorldDataEditorObject.DataType.Person) //Person object
                     {
                         GUIElementPosition(ref data, ref elementIndex);
+                        GUIElementShift(ref data, ref elementIndex);//Shift by size
                         GUIElementFaction(ref data, ref elementIndex);
                         GUIElementFlag(ref data, ref elementIndex);
 
                         FlatGroupSwitchers(ref elementIndex, data.id);
+                        GUIElementGroundButton(ref elementIndex);//move to ground
                     }
                     else if (data.type == WorldDataEditorObject.DataType.Door) //Door object
                     {
                         GUIElementPosition(ref data, ref elementIndex);
+                        GUIElementShift(ref data, ref elementIndex);//Shift by size
                         GUIElementRotation(ref data, ref elementIndex);
+                        GUIElementGroundButton(ref elementIndex);//move to ground
                     }
                     else if (data.type == WorldDataEditorObject.DataType.Light) //Light object
                     {
                         GUIElementPosition(ref data, ref elementIndex);
                         GUIElementLightRadius(ref data, ref elementIndex);
+                        GUIElementGroundButton(ref elementIndex);//move to ground
                     }
                 }
                 else
@@ -432,6 +442,85 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
             GUI.BeginGroup(new Rect(8, 120 + (56 * elementIndex), Screen.width - 16, 48), lightMedBG);
             {
                 data.transform.localScale = EditorGUI.Vector3Field(new Rect(32, 4, 312, 32), "Scale", data.transform.localScale);
+            }
+            elementIndex++;
+            GUI.EndGroup();
+        }
+
+        //Shows a series of buttons that shift an object in a given direction based on its bounding box size in that direction.
+        private void GUIElementShift(ref WorldDataEditorObject data, ref int elementIndex)
+        {
+            GUI.BeginGroup(new Rect(8, 120 + (56 * elementIndex), Screen.width - 16, 48), lightMedBG);
+            {
+                int buttonCount = 0;
+                if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "-X"))
+                {
+                    foreach(GameObject go in Selection.gameObjects)
+                    {
+                        Vector3 shiftSize = GetObjectSize(go);
+                        
+                        go.transform.localPosition += new Vector3(-shiftSize.x, 0, 0);
+                    }
+                }
+                buttonCount++;
+                
+                if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "+X"))
+                {
+                    foreach(GameObject go in Selection.gameObjects)
+                    {
+                        Vector3 shiftSize = GetObjectSize(go);
+                        
+                        go.transform.localPosition += new Vector3(shiftSize.x, 0, 0);
+                    }
+                }
+                buttonCount++;
+
+                if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "-Y"))
+                {
+                    foreach(GameObject go in Selection.gameObjects)
+                    {
+                        Vector3 shiftSize = GetObjectSize(go);
+                        
+                        go.transform.localPosition += new Vector3(0, -shiftSize.y, 0);
+                    }
+                }
+                buttonCount++;
+                
+                if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "+Y"))
+                {
+                    foreach(GameObject go in Selection.gameObjects)
+                    {
+                        Vector3 shiftSize = GetObjectSize(go);
+                        
+                        go.transform.localPosition += new Vector3(0, shiftSize.y, 0);
+                    }
+                }
+                buttonCount++;
+
+                if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "-Z"))
+                {
+                    foreach(GameObject go in Selection.gameObjects)
+                    {
+                        Vector3 shiftSize = GetObjectSize(go);
+                        
+                        go.transform.localPosition += new Vector3(0, 0, -shiftSize.z);
+                    }
+                }
+                buttonCount++;
+                
+                if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "+Z"))
+                {
+                    foreach(GameObject go in Selection.gameObjects)
+                    {
+                        Vector3 shiftSize = GetObjectSize(go);
+                        
+                        go.transform.localPosition += new Vector3(0, 0, shiftSize.z);
+                    }
+                }
+                buttonCount++;
+
+                GUI.Label(new Rect(8 + buttonCount * 40, 8, 128, 32), "Shift object by its size");
+
             }
             elementIndex++;
             GUI.EndGroup();
@@ -641,6 +730,38 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
             GUI.EndGroup();
         }
 
+        //Adds a button that moves the object to the ground
+        private void GUIElementGroundButton(ref int elementIndex)
+        {
+            GUI.BeginGroup(new Rect(8, 120 + (56 * elementIndex), Screen.width - 16, 48), lightMedBG);
+            if (GUI.Button(new Rect(8, 8, 100, 32), "Snap to Floor"))
+            {
+                //We're just moving objects so it should be safe to modify everything selected.
+                foreach(GameObject go in Selection.gameObjects)
+                {
+                    Vector3 goSize = GetObjectSize(go, true);
+
+                    //The AlignBillboardToGround fires a raycast. We need to turn off the collider if it's there so we don't hit ourselves.
+                    Collider coll = go.GetComponent<Collider>();
+
+                    if(coll)
+                    {
+                        coll.enabled = false;
+                    }
+
+                    //There's already a helper function that moves things to the ground.
+                    DaggerfallWorkshop.Utility.GameObjectHelper.AlignBillboardToGround(go, new Vector2(0, goSize.y), 4);
+                    
+                    if(coll)
+                    {
+                        coll.enabled = true;
+                    }
+                }
+            }
+            elementIndex++;
+            GUI.EndGroup();
+        }
+
         private void GUIElementFlatSwitchType(ref WorldDataEditorObject data, ref int elementIndex, string[] tempArray)
         {
             int pos = ArrayUtility.IndexOf(tempArray, data.id.ToString());
@@ -670,24 +791,22 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                     data.id = tempArray[pos];
                     int archive = int.Parse(data.id.Split('.')[0]);
                     int record = int.Parse(data.id.Split('.')[1]);
-                    if (dataMode == DataMode.Building)
-                    {
-                        DFBlock.RmbBlockFlatObjectRecord newBlockRecord = new DFBlock.RmbBlockFlatObjectRecord();
-                        newBlockRecord.TextureArchive = archive;
-                        newBlockRecord.TextureRecord = record;
-                        GameObject go = CreateFlatObject(newBlockRecord, isExteriorMode);
-                        data.gameObject.GetComponent<MeshRenderer>().sharedMaterials = go.GetComponent<MeshRenderer>().sharedMaterials;
-                        data.gameObject.GetComponent<MeshFilter>().sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
-                        data.gameObject.name = go.gameObject.name;
-                        DestroyImmediate(go);
-                    }
-                    else
-                    {
-                        data.rdbObj.Resources.FlatResource.TextureArchive = archive;
-                        data.rdbObj.Resources.FlatResource.TextureRecord = record;
-                        Billboard billboard = Selection.activeGameObject.GetComponent<Billboard>();
-                        billboard.SetMaterial(archive, record);
-                    }
+                    
+                    Billboard billboard = Selection.activeGameObject.GetComponent<Billboard>();
+
+                    //The previous code made an entirely new go and tried to replace the name and renderer
+                    //we can just update the name ourselves and SetMaterial below will work better than ripping the renderer off of another object
+                    data.gameObject.name = DaggerfallWorkshop.Utility.GameObjectHelper.GetGoFlatName(archive, record);
+                    
+                    //Dungeon mode needs us to update the rdbObj and building mode ignores it.
+                    data.rdbObj.Resources.FlatResource.TextureArchive = archive;
+                    data.rdbObj.Resources.FlatResource.TextureRecord = record;
+                    
+                    //We want to use SetMaterial since it properly updates the summary.size.
+                    //but since it's designed to be called on init, it will duplicate colliders if we do it here.
+                    //so we'll remove the collider first since we don't really care about maintaining the integrity of the geometry in the editor
+                    DestroyImmediate(Selection.activeGameObject.GetComponent<Collider>());
+                    billboard.SetMaterial(archive, record);
                 }
 
             }
@@ -986,6 +1105,35 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 rol++;
             }
             return 0;
+        }
+
+        //Gets the size of an object, used mostly so we can put things on the ground or move them based on size.
+        //getOffsetSize can be set to true to adjust the size if the origin is not the center of the mesh
+        private Vector3 GetObjectSize(GameObject go, bool getOffsetSize = false)
+        {
+            Vector3 size = new Vector3();
+
+            Renderer objRend = go.GetComponent<Renderer>();
+            if(objRend)
+            {
+                size = objRend.bounds.size;
+
+                if(getOffsetSize)
+                {
+                    //We need to find the difference between the object's origin and the mesh's center and subtract that from the size
+                    //this way it will align properly if the origin is offset.
+                    size.y -= (objRend.bounds.center.y - go.transform.position.y) * 2;
+                }
+            }
+
+            Billboard objBill = go.GetComponent<Billboard>();
+            if(objBill)
+            {
+                size.x = objBill.Summary.Size.x;
+                size.y = objBill.Summary.Size.y;
+                size.z = objBill.Summary.Size.x; //billboards are 2d so their x and z data are basically the same
+            }
+            return size;
         }
 
         #endregion
