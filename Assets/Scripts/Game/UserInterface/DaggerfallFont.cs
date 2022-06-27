@@ -454,18 +454,31 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Load a TextMeshPro 2.0.x asset used for this to use for SDF rendering.
+        /// Load a TextMeshPro 2.0.x font asset to use for SDF rendering.
         /// Mods can use DaggerfallUI.Instance.Font0 through Font4 to access the instances used by other game windows.
         /// Custom font should be set only during startup.
+        /// Note: Asset must be in a Resources folder.
         /// </summary>
-        /// <param name="path">Path to a TextMeshPro 1.3.x font asset.</param>
-        public void LoadSDFFontAsset(string path)
+        /// <param name="path">Path to a TextMeshPro 2.0.x font asset.</param>
+        /// <returns>True if successful.</returns>
+        public bool LoadSDFFontAsset(string path)
         {
             // Attempt to load a TextMeshPro font asset
             TMP_FontAsset tmpFont = Resources.Load<TMP_FontAsset>(path);
             if (!tmpFont)
-                return;
+                return false;
 
+            UseSDFFontAsset(tmpFont);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Use provided TextMeshPro 2.0.x font asset for SDF rendering.
+        /// </summary>
+        /// <param name="tmpFont">TMP font asset to use for this font.</param>
+        public void UseSDFFontAsset(TMP_FontAsset tmpFont)
+        {
             // Create font info
             SDFFontInfo fi = new SDFFontInfo();
             fi.pointSize = tmpFont.faceInfo.pointSize;
@@ -500,6 +513,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Set live font info
             sdfFontInfo = fi;
+        }
+
+        /// <summary>
+        /// Gets array of unicode values from currently loaded SDF font.
+        /// </summary>
+        /// <returns>Array of unicode characters. Can be null or empty.</returns>
+        public uint[] GetUnicodes()
+        {
+            // Must have a previously loaded SDF font
+            if (sdfFontInfo == null)
+                return null;
+
+            // Get unicode values loaded for this font
+            List<uint> unicodes = new List<uint>();
+            foreach (var key in sdfFontInfo.Value.glyphs.Keys)
+            {
+                unicodes.Add((uint)key);
+            }
+
+            return unicodes.ToArray();
         }
 
         #endregion

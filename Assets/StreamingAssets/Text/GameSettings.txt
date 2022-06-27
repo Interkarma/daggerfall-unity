@@ -171,8 +171,8 @@ interiorLightShadows,                               Interior Light Shadows
 interiorLightShadowsInfo,                           Interior lights cast shadows
 exteriorLightShadows,                               Exterior Light Shadows
 exteriorLightShadowsInfo,                           Exterior sunlight casts shadows
-ambientLitInteriors,                                Ambient Lit Interiors
-ambientLitInteriorsInfo,                            Use ambient lighting only for higher performance interiors
+ambientLitInteriors,                                Simplify Interior Lighting
+ambientLitInteriorsInfo,                            Use less complex lighting for higher performance interiors
 
 - Options shared among sliders. Missing keys use default text.
 
