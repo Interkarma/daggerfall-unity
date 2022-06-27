@@ -13,6 +13,7 @@ using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
 {
@@ -933,6 +934,14 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 obj.Type = DFBlock.RdbResourceTypes.Flat;
                 obj.Resources.FlatResource.TextureArchive = int.Parse(selectedObjectID.Split('.')[0]);
                 obj.Resources.FlatResource.TextureRecord = int.Parse(selectedObjectID.Split('.')[1]);
+
+                // Only add "Custom Marker" flag to this marker for now
+                // Some markers (ex: Random Monster) may use Flags differently
+                if(selectedObjectID == "199.16") // Marker: Monster
+                {
+                    obj.Resources.FlatResource.Flags |= RDBLayout.CustomMarkerFlag;
+                }
+
                 go = WorldDataEditorDungeonHelper.AddFlatObject(obj);
                 if (go != null)
                 {

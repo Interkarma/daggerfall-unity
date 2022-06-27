@@ -210,8 +210,13 @@ namespace DaggerfallWorkshop
                 {
                     summary.IsMobile = true;
                     summary.EditorFlatType = EditorFlatTypes.FixedMobile;
-                    summary.FixedEnemyType = (MobileTypes)(summary.FactionOrMobileID & 0xff);
-                }
+
+                    bool isCustomMarker = (summary.Flags & RDBLayout.CustomMarkerFlag) == RDBLayout.CustomMarkerFlag;
+                    if (!isCustomMarker)
+                        summary.FixedEnemyType = (MobileTypes)(summary.FactionOrMobileID & 0xff);
+                    else
+                        summary.FixedEnemyType = (MobileTypes)(summary.FactionOrMobileID);
+                }       
                 else if (resource.TextureRecord == 10) // Start marker. Holds data for dungeon block water level and castle block status.
                 {
                     if (resource.SoundIndex != 0)

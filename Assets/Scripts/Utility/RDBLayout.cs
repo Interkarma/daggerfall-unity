@@ -43,6 +43,8 @@ namespace DaggerfallWorkshop.Utility
         const float torchMaxDistance = 5f;
         const float torchVolume = 0.7f;
 
+        public const int CustomMarkerFlag = 128;
+
         #region Structs & Enums
 
         /// <summary>
@@ -1466,10 +1468,15 @@ namespace DaggerfallWorkshop.Utility
 
         private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, GameObject[] startMarkers, bool serialize)
         {
-            // Get type value and ignore known invalid types
-            int typeValue = (int)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
-            if (typeValue == 99)
-                return;
+            bool isCustomMarker = (obj.Resources.FlatResource.Flags & CustomMarkerFlag) == CustomMarkerFlag;
+
+            if (!isCustomMarker)
+            {
+                // Get type value and ignore known invalid types
+                int typeValue = (int)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
+                if (typeValue == 99)
+                    return;
+            }
 
             // Create unique LoadID for save sytem
             ulong loadID = 0;
@@ -1477,7 +1484,13 @@ namespace DaggerfallWorkshop.Utility
                 loadID = (ulong)(blockData.Position + obj.Position);
 
             // Cast to enum
-            MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
+            // DF "Fixed Enemy" markers have garbage data in the 8 MSBs.
+            // For custom marker, we take all 16 bits as a MobileId, in case of custom enemies
+            MobileTypes type;
+            if (!isCustomMarker)
+                type = (MobileTypes)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
+            else
+                type = (MobileTypes)obj.Resources.FlatResource.FactionOrMobileId;
 
             byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
 
@@ -1521,9 +1534,11 @@ namespace DaggerfallWorkshop.Utility
             MobileGender gender = MobileGender.Unspecified;
             if ((int)type > 43 && useGenderFlag)
             {
-                if (obj.Resources.FlatResource.Flags == (int)DFBlock.EnemyGenders.Female)
+                int femaleFlag = (int)DFBlock.EnemyGenders.Female;
+                int maleFlag = (int)DFBlock.EnemyGenders.Male;
+                if ((obj.Resources.FlatResource.Flags & femaleFlag) == femaleFlag)
                     gender = MobileGender.Female;
-                if (obj.Resources.FlatResource.Flags == (int)DFBlock.EnemyGenders.Male)
+                if ((obj.Resources.FlatResource.Flags & maleFlag) == maleFlag)
                     gender = MobileGender.Male;
             }
 

@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
             {
                 id = obj.Resources.FlatResource.TextureArchive + "." + obj.Resources.FlatResource.TextureRecord;
                 factionID = (short)obj.Resources.FlatResource.FactionOrMobileId;
+                flags = (byte)obj.Resources.FlatResource.Flags;
             }
             else if (type == DataType.Light)
             {
