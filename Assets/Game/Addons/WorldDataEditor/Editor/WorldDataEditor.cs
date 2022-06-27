@@ -455,7 +455,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 int buttonCount = 0;
                 if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "-X"))
                 {
-                    foreach(GameObject go in Selection.gameObjects)
+                    foreach (GameObject go in Selection.gameObjects)
                     {
                         Vector3 shiftSize = GetObjectSize(go);
                         
@@ -466,7 +466,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 
                 if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "+X"))
                 {
-                    foreach(GameObject go in Selection.gameObjects)
+                    foreach (GameObject go in Selection.gameObjects)
                     {
                         Vector3 shiftSize = GetObjectSize(go);
                         
@@ -477,7 +477,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
 
                 if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "-Y"))
                 {
-                    foreach(GameObject go in Selection.gameObjects)
+                    foreach (GameObject go in Selection.gameObjects)
                     {
                         Vector3 shiftSize = GetObjectSize(go);
                         
@@ -488,7 +488,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 
                 if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "+Y"))
                 {
-                    foreach(GameObject go in Selection.gameObjects)
+                    foreach (GameObject go in Selection.gameObjects)
                     {
                         Vector3 shiftSize = GetObjectSize(go);
                         
@@ -499,7 +499,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
 
                 if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "-Z"))
                 {
-                    foreach(GameObject go in Selection.gameObjects)
+                    foreach (GameObject go in Selection.gameObjects)
                     {
                         Vector3 shiftSize = GetObjectSize(go);
                         
@@ -510,7 +510,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 
                 if (GUI.Button(new Rect(8 + buttonCount * 40, 8, 32, 32), "+Z"))
                 {
-                    foreach(GameObject go in Selection.gameObjects)
+                    foreach (GameObject go in Selection.gameObjects)
                     {
                         Vector3 shiftSize = GetObjectSize(go);
                         
@@ -736,15 +736,14 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
             GUI.BeginGroup(new Rect(8, 120 + (56 * elementIndex), Screen.width - 16, 48), lightMedBG);
             if (GUI.Button(new Rect(8, 8, 100, 32), "Snap to Floor"))
             {
-                //We're just moving objects so it should be safe to modify everything selected.
-                foreach(GameObject go in Selection.gameObjects)
+                foreach (GameObject go in Selection.gameObjects)
                 {
                     Vector3 goSize = GetObjectSize(go, true);
 
                     //The AlignBillboardToGround fires a raycast. We need to turn off the collider if it's there so we don't hit ourselves.
                     Collider coll = go.GetComponent<Collider>();
 
-                    if(coll)
+                    if (coll)
                     {
                         coll.enabled = false;
                     }
@@ -752,7 +751,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                     //There's already a helper function that moves things to the ground.
                     DaggerfallWorkshop.Utility.GameObjectHelper.AlignBillboardToGround(go, new Vector2(0, goSize.y), 4);
                     
-                    if(coll)
+                    if (coll)
                     {
                         coll.enabled = true;
                     }
@@ -794,17 +793,12 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                     
                     Billboard billboard = Selection.activeGameObject.GetComponent<Billboard>();
 
-                    //The previous code made an entirely new go and tried to replace the name and renderer
-                    //we can just update the name ourselves and SetMaterial below will work better than ripping the renderer off of another object
                     data.gameObject.name = DaggerfallWorkshop.Utility.GameObjectHelper.GetGoFlatName(archive, record);
                     
                     //Dungeon mode needs us to update the rdbObj and building mode ignores it.
                     data.rdbObj.Resources.FlatResource.TextureArchive = archive;
                     data.rdbObj.Resources.FlatResource.TextureRecord = record;
                     
-                    //We want to use SetMaterial since it properly updates the summary.size.
-                    //but since it's designed to be called on init, it will duplicate colliders if we do it here.
-                    //so we'll remove the collider first since we don't really care about maintaining the integrity of the geometry in the editor
                     DestroyImmediate(Selection.activeGameObject.GetComponent<Collider>());
                     billboard.SetMaterial(archive, record);
                 }
@@ -1114,11 +1108,11 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
             Vector3 size = new Vector3();
 
             Renderer objRend = go.GetComponent<Renderer>();
-            if(objRend)
+            if (objRend)
             {
                 size = objRend.bounds.size;
 
-                if(getOffsetSize)
+                if (getOffsetSize)
                 {
                     //We need to find the difference between the object's origin and the mesh's center and subtract that from the size
                     //this way it will align properly if the origin is offset.
@@ -1127,7 +1121,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
             }
 
             Billboard objBill = go.GetComponent<Billboard>();
-            if(objBill)
+            if (objBill)
             {
                 size.x = objBill.Summary.Size.x;
                 size.y = objBill.Summary.Size.y;
