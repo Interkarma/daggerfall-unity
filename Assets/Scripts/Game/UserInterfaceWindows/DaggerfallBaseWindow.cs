@@ -25,8 +25,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     /// </summary>
     public abstract class DaggerfallBaseWindow : UserInterfaceWindow
     {
-        public const KeyCode exitKey = KeyCode.Escape;
-
         bool isSetup;
         DaggerfallUnity dfUnity;
         Panel nativePanel = new Panel();
