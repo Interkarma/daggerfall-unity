@@ -1518,9 +1518,15 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
             }
 
             //Loop through all NPCS to give them a unique position ID
-            for (int i = 0, NPC_ID = 0; i < buildingData.RmbSubRecord.Interior.BlockPeopleRecords.Length; i++)
+            int NPC_ID = buildingData.RmbSubRecord.XPos + buildingData.RmbSubRecord.ZPos + buildingData.RmbSubRecord.YRotation + buildingData.Quality;
+            for (int i = 0; i < buildingData.RmbSubRecord.Interior.BlockPeopleRecords.Length; i++)
             {
                 buildingData.RmbSubRecord.Interior.BlockPeopleRecords[i].Position = NPC_ID;
+                NPC_ID++;
+            }
+            for (int i = 0; i < buildingData.RmbSubRecord.Exterior.BlockFlatObjectRecords.Length; i++)
+            {
+                buildingData.RmbSubRecord.Exterior.BlockFlatObjectRecords[i].Position = NPC_ID;
                 NPC_ID++;
             }
 
