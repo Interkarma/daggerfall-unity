@@ -297,12 +297,13 @@ namespace DaggerfallWorkshop.Game
         {
             LeftClick,
             RightClick,
-            MiddleClick
+            MiddleClick,
+            UiExit
         }
 
         public enum Actions
         {
-            Escape,
+            Pause,
             ToggleConsole,
 
             MoveForwards,
@@ -955,7 +956,7 @@ namespace DaggerfallWorkshop.Game
                 setJoystickUIBinding = SetJoystickUIBinding;
             }
 
-            setBinding(KeyCode.Escape, Actions.Escape, true);
+            setBinding(KeyCode.Escape, Actions.Pause, true);
             setBinding(KeyCode.BackQuote, Actions.ToggleConsole, true);
 
             setBinding(KeyCode.W, Actions.MoveForwards, true);
@@ -1016,8 +1017,9 @@ namespace DaggerfallWorkshop.Game
             setAxisBinding("Axis5", AxisActions.CameraVertical);
 
             setJoystickUIBinding(KeyCode.JoystickButton0, JoystickUIActions.LeftClick);
-            setJoystickUIBinding(KeyCode.JoystickButton1, JoystickUIActions.RightClick);
+            setJoystickUIBinding(KeyCode.JoystickButton3, JoystickUIActions.RightClick);
             setJoystickUIBinding(KeyCode.JoystickButton2, JoystickUIActions.MiddleClick);
+            setJoystickUIBinding(KeyCode.JoystickButton1, JoystickUIActions.UiExit);
             UpdateBindingCache();
 
             foreach (AxisActions axisAction in Enum.GetValues(typeof(AxisActions)))
@@ -1080,6 +1082,16 @@ namespace DaggerfallWorkshop.Game
         public bool AnyKeyUpIgnoreAxisBinds
         {
             get => GetAnyKeyUpIgnoreAxisBinds() != KeyCode.None;
+        }
+
+        public bool GetUiExitKeyDown()
+        {
+            return GetKeyDown(KeyCode.Escape) || GetKeyDown(GetJoystickUIBinding(JoystickUIActions.UiExit));
+        }
+
+        public bool GetUiExitKeyUp()
+        {
+            return GetKeyUp(KeyCode.Escape) || GetKeyUp(GetJoystickUIBinding(JoystickUIActions.UiExit));
         }
 
         public KeyCode GetAnyKeyDown()

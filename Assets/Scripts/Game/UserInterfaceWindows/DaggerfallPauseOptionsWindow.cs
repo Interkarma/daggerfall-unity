@@ -156,7 +156,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPush();
 
-            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Escape);
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Pause);
 
             hud = DaggerfallUI.Instance.DaggerfallHUD;
             if (fullScreenTick != null)

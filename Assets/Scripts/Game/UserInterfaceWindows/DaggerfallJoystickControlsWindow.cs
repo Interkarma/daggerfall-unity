@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string rightClickString = "Right-Click";
         const string middleClickString = "Middle-Click";
         const string leftClickString = "Left-Click";
+        const string uiExitString = "UI Exit";
 
         Color mainPanelBackgroundColor = new Color(0.0f, 0.0f, 0.0f, 1.0f);
         Color keybindButtonBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 1.0f);
@@ -45,6 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Button leftClickKeybindButton = new Button();
         protected Button middleClickKeybindButton = new Button();
         protected Button rightClickKeybindButton = new Button();
+        protected Button uiExitKeybindButton = new Button();
         protected Button movementHorizontalAxisKeybindButton = new Button();
         protected Button movementVerticalAxisKeybindButton = new Button();
         protected Button lookHorizontalAxisKeybindButton = new Button();
@@ -153,9 +155,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupAxisKeybindButton(lookVerticalAxisKeybindButton,       InputManager.AxisActions.CameraVertical, 115, 80);
             invertLookVerticalCheckbox =        AddOption(158, 100, "Invert", InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.CameraVertical));
 
-            SetupUIKeybindButton(leftClickKeybindButton, 0, 210, 40);
-            SetupUIKeybindButton(middleClickKeybindButton, 2, 210, 60);
-            SetupUIKeybindButton(rightClickKeybindButton, 1, 210, 80);
+            SetupUIKeybindButton(leftClickKeybindButton, leftClickString, 210, 40);
+            SetupUIKeybindButton(middleClickKeybindButton, middleClickString, 210, 60);
+            SetupUIKeybindButton(rightClickKeybindButton, rightClickString, 210, 80);
+            SetupUIKeybindButton(uiExitKeybindButton, uiExitString, 210, 100);
 
             joystickCameraSensitivitySlider = CreateSlider("Look Sensitivity", 15, 120, 0.1f, 4.0f, DaggerfallUnity.Settings.JoystickLookSensitivity);
 
@@ -199,6 +202,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UnsavedKeybindDict[leftClickString] = InputManager.Instance.GetKeyString(InputManager.Instance.GetJoystickUIBinding(InputManager.JoystickUIActions.LeftClick));
             UnsavedKeybindDict[middleClickString] = InputManager.Instance.GetKeyString(InputManager.Instance.GetJoystickUIBinding(InputManager.JoystickUIActions.MiddleClick));
             UnsavedKeybindDict[rightClickString] = InputManager.Instance.GetKeyString(InputManager.Instance.GetJoystickUIBinding(InputManager.JoystickUIActions.RightClick));
+            UnsavedKeybindDict[uiExitString] = InputManager.Instance.GetKeyString(InputManager.Instance.GetJoystickUIBinding(InputManager.JoystickUIActions.UiExit));
 
             foreach (InputManager.AxisActions a in Enum.GetValues(typeof(InputManager.AxisActions)))
                 UnsavedKeybindDict[a.ToString()] = InputManager.Instance.GetAxisBinding(a);
@@ -245,7 +249,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //for "reset defaults" overload
         private void SetupKeybindButton(Button button, string action)
         {
-            if (action == leftClickString || action == middleClickString || action == rightClickString)
+            if (action == leftClickString || action == middleClickString || action == rightClickString || action == uiExitString)
             {
                 var code = InputManager.Instance.ParseKeyCodeString(UnsavedKeybindDict[action]);
                 button.Label.Text = ControlsConfigManager.Instance.GetButtonText(code);
@@ -260,24 +264,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
         }
 
-        private void SetupUIKeybindButton(Button button, int mouseButton, int x, int y)
+        private void SetupUIKeybindButton(Button button, string text, int x, int y)
         {
-            string action = "";
-
-            switch (mouseButton)
-            {
-                case 0:
-                    action = leftClickString;
-                    break;
-                case 1:
-                    action = rightClickString;
-                    break;
-                case 2:
-                    action = middleClickString;
-                    break;
-            }
-
-            SetupKeybindButton(button, action, x, y);
+            SetupKeybindButton(button, text, x, y);
             button.OnMouseClick += UIKeybindButton_OnMouseClick;
         }
 
@@ -390,6 +379,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupKeybindButton(leftClickKeybindButton, leftClickString);
             SetupKeybindButton(middleClickKeybindButton, middleClickString);
             SetupKeybindButton(rightClickKeybindButton, rightClickString);
+            SetupKeybindButton(uiExitKeybindButton, uiExitString);
             SetupKeybindButton(movementHorizontalAxisKeybindButton, InputManager.AxisActions.MovementHorizontal.ToString());
             SetupKeybindButton(movementVerticalAxisKeybindButton, InputManager.AxisActions.MovementVertical.ToString());
             SetupKeybindButton(lookHorizontalAxisKeybindButton, InputManager.AxisActions.CameraHorizontal.ToString());
@@ -470,7 +460,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             foreach(var action in UnsavedKeybindDict.Keys)
             {
-                if (action == leftClickString || action == middleClickString || action == rightClickString)
+                if (action == leftClickString || action == middleClickString || action == rightClickString || action == uiExitString)
                 {
                     KeyCode code = InputManager.Instance.ParseKeyCodeString(UnsavedKeybindDict[action]);
                     InputManager.JoystickUIActions uiAction = InputManager.JoystickUIActions.LeftClick;
@@ -479,6 +469,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         uiAction = InputManager.JoystickUIActions.MiddleClick;
                     else if (action == rightClickString)
                         uiAction = InputManager.JoystickUIActions.RightClick;
+                    else if (action == uiExitString)
+                        uiAction = InputManager.JoystickUIActions.UiExit;
 
                     KeyCode curCode = InputManager.Instance.GetJoystickUIBinding(uiAction);
 
