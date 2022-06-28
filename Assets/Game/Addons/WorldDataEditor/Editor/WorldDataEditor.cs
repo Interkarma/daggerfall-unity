@@ -306,7 +306,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                         if (dataMode == DataMode.Dungeon)
                         {
                             GUIElementFlatActionRecord(ref data, ref elementIndex);
-                            GUIElementNextObject(ref data, ref elementIndex);
+                            GUIElementFlatNextObject(ref data, ref elementIndex);
                         }
                         else
                         {
@@ -533,8 +533,8 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 GUI.Label(new Rect(224, 16, 72, 16), "Magnitude : ");
                 record.Magnitude = (ushort)EditorGUI.IntField(new Rect(296, 16, 48, 16), record.Magnitude);
 
-                GUI.Label(new Rect(354, 16, 48, 16), "Flags : ");
-                record.Flags = EditorGUI.IntField(new Rect(400, 16, 48, 16), record.Flags);
+                GUI.Label(new Rect(354, 16, 48, 16), "Action : ");
+                record.Flags = (int)(DFBlock.RdbActionFlags)EditorGUI.EnumPopup(new Rect(400, 16, 140, 16), (DFBlock.RdbActionFlags)record.Flags);
             }
             elementIndex++;
             GUI.EndGroup();
@@ -544,12 +544,33 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
         {
             GUI.BeginGroup(new Rect(8, 120 + (56 * elementIndex), Screen.width - 16, 48), lightMedBG);
             {
-                ref DFBlock.RdbActionResource record = ref data.rdbObj.Resources.ModelResource.ActionResource;
+                ref DFBlock.RdbFlatResource record = ref data.rdbObj.Resources.FlatResource;
                 GUI.Label(new Rect(8, 16, 72, 16), "Magnitude : ");
-                record.Magnitude = (ushort)EditorGUI.IntField(new Rect(80, 16, 48, 16), record.Magnitude);
+                record.Magnitude = (byte)EditorGUI.IntField(new Rect(80, 16, 48, 16), record.Magnitude);
 
                 GUI.Label(new Rect(136, 16, 48, 16), "Flags : ");
-                record.Flags = EditorGUI.IntField(new Rect(186, 16, 48, 16), record.Flags);
+                record.Flags = (ushort)EditorGUI.IntField(new Rect(186, 16, 48, 16), record.Flags);
+
+                GUI.Label(new Rect(242, 16, 48, 16), "Action : ");
+                record.Action = (byte)(DFBlock.RdbActionFlags)EditorGUI.EnumPopup(new Rect(298, 16, 140, 16), (DFBlock.RdbActionFlags)record.Action);
+                GUI.Label(new Rect(242, 32, 260, 16), "(set to 'DoorText' for Passive Mob markers)");
+            }
+            elementIndex++;
+            GUI.EndGroup();
+        }
+
+        private void GUIElementFlatNextObject(ref WorldDataEditorObject data, ref int elementIndex)
+        {
+            GUI.BeginGroup(new Rect(8, 120 + (56 * elementIndex), Screen.width - 16, 48), lightMedBG);
+            {
+                GUI.Label(new Rect(8, 16, 96, 16), "Next Object Id : ");
+                data.rdbObj.Resources.FlatResource.NextObjectOffset =
+                    EditorGUI.IntField(new Rect(96, 16, 96, 16), data.rdbObj.Resources.FlatResource.NextObjectOffset);
+
+                if (GUI.Button(new Rect(200, 12, 64, 24), "Select") && data.rdbObj.Resources.FlatResource.NextObjectOffset > 0)
+                {
+                    SelectDungeonObject(data.rdbObj.Resources.FlatResource.NextObjectOffset);
+                }
             }
             elementIndex++;
             GUI.EndGroup();
