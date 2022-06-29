@@ -567,9 +567,12 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 data.rdbObj.Resources.FlatResource.NextObjectOffset =
                     EditorGUI.IntField(new Rect(96, 16, 96, 16), data.rdbObj.Resources.FlatResource.NextObjectOffset);
 
-                if (GUI.Button(new Rect(200, 12, 64, 24), "Select") && data.rdbObj.Resources.FlatResource.NextObjectOffset > 0)
+                using (new EditorGUI.DisabledScope(data.rdbObj.Resources.FlatResource.NextObjectOffset == 0))
                 {
-                    SelectDungeonObject(data.rdbObj.Resources.FlatResource.NextObjectOffset);
+                    if (GUI.Button(new Rect(200, 12, 64, 24), "Select"))
+                    {
+                        SelectDungeonObject(data.rdbObj.Resources.FlatResource.NextObjectOffset);
+                    }
                 }
             }
             elementIndex++;
@@ -584,9 +587,12 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 data.rdbObj.Resources.ModelResource.ActionResource.NextObjectOffset =
                     EditorGUI.IntField(new Rect(96, 16, 96, 16), data.rdbObj.Resources.ModelResource.ActionResource.NextObjectOffset);
 
-                if (GUI.Button(new Rect(200, 12, 64, 24), "Select") && data.rdbObj.Resources.ModelResource.ActionResource.NextObjectOffset > 0)
+                using (new EditorGUI.DisabledScope(data.rdbObj.Resources.ModelResource.ActionResource.NextObjectOffset == 0))
                 {
-                    SelectDungeonObject(data.rdbObj.Resources.ModelResource.ActionResource.NextObjectOffset);
+                    if (GUI.Button(new Rect(200, 12, 64, 24), "Select"))
+                    {
+                        SelectDungeonObject(data.rdbObj.Resources.ModelResource.ActionResource.NextObjectOffset);
+                    }
                 }
             }
             elementIndex++;
@@ -601,9 +607,12 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 data.rdbObj.Resources.ModelResource.ActionResource.PreviousObjectOffset =
                     EditorGUI.IntField(new Rect(96, 16, 96, 16), data.rdbObj.Resources.ModelResource.ActionResource.PreviousObjectOffset);
 
-                if (GUI.Button(new Rect(200, 12, 64, 24), "Select") && data.rdbObj.Resources.ModelResource.ActionResource.PreviousObjectOffset > 0)
+                using (new EditorGUI.DisabledScope(data.rdbObj.Resources.ModelResource.ActionResource.PreviousObjectOffset == 0))
                 {
-                    SelectDungeonObject(data.rdbObj.Resources.ModelResource.ActionResource.PreviousObjectOffset);
+                    if (GUI.Button(new Rect(200, 12, 64, 24), "Select"))
+                    {
+                        SelectDungeonObject(data.rdbObj.Resources.ModelResource.ActionResource.PreviousObjectOffset);
+                    }
                 }
             }
             elementIndex++;
