@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -17,6 +17,8 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
+using UnityEngine;
+
 #endregion
 
 namespace DaggerfallConnect.Save
@@ -275,8 +277,9 @@ namespace DaggerfallConnect.Save
             {
                 return OpenSave(save);
             }
-            catch
+            catch  (Exception e)
             {
+                Debug.LogError($"An Exception occurred while attempting to load Classic save #{save.ToString()}:\n{e}");
                 return false;
             }
         }
