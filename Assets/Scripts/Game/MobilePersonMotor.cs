@@ -55,6 +55,11 @@ namespace DaggerfallWorkshop.Game
         // References
         DaggerfallEntityBehaviour entityBehaviour;
         MobilePersonAsset mobileAsset;
+        public MobilePersonAsset MobileAsset
+        {
+            get { return mobileAsset; }
+            set { mobileAsset = value; }
+        }
 
         #endregion
 
