@@ -1041,12 +1041,12 @@ namespace DaggerfallWorkshop.Game
             return Input.GetMouseButton(button) || (EnableController && GetKey(joystickUICache[button], false));
         }
 
-        public bool GetBackKeyDown()
+        public bool GetBackButtonDown()
         {
             return GetKeyDown(KeyCode.Escape) || (EnableController && GetKeyDown(joystickUICache[3], false));
         }
 
-        public bool GetBackKeyUp()
+        public bool GetBackButtonUp()
         {
             return GetKeyUp(KeyCode.Escape) || (EnableController && GetKeyUp(joystickUICache[3], false));
         }
