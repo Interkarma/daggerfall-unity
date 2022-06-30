@@ -188,7 +188,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Toggle window closed with same hotkey used to open it, or the DaggerfallBaseWindow's exitKey
                 // Window will properly end the rest if the player was currently resting
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || InputManager.Instance.GetUiExitKeyUp())
+                if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || InputManager.Instance.GetBackKeyUp())
                     if (currentRestMode != RestModes.Selection)
                         EndRest();
                     else
