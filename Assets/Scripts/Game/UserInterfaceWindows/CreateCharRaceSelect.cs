@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            if (InputManager.Instance.GetUiExitKeyDown())
+            if (InputManager.Instance.GetBackKeyDown())
             {
                 selectedRace = null;
                 CancelWindow();
