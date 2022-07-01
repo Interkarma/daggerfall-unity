@@ -324,9 +324,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Draw thumb texture slices in screen space
             Rect sourceRect = new Rect(0, 0, 1, 1);
-            Color color = GUI.color;
+            Color color = DaggerfallUI.ModulateColor(Color.white);
             if (TintColor.HasValue)
-                color = TintColor.Value;
+                color = DaggerfallUI.ModulateColor(TintColor.Value);
             Graphics.DrawTexture(leftRect, hScrollThumbLeft, sourceRect, 0, 0, 0, 0, color);
             Graphics.DrawTexture(bodyRect, hScrollThumbBody, sourceRect, 0, 0, 0, 0, color);
             Graphics.DrawTexture(rightRect, hScrollThumbRight, sourceRect, 0, 0, 0, 0, color);

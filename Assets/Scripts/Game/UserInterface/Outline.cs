@@ -73,13 +73,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             rect.width = Mathf.Round(rect.width);
             rect.height = Mathf.Round(rect.height);
             Rect sourceRect = new Rect(0, 0, 1, 1);
+            Color color = DaggerfallUI.ModulateColor(outlineColor);
 
             // Top
             if ((sides & Sides.Top) == Sides.Top)
             {
                 Rect topRect = rect;
                 topRect.height = Mathf.Round(outlineThickness * LocalScale.y);
-                Graphics.DrawTexture(topRect, outlineTexture, sourceRect, 0, 0, 0, 0, outlineColor);
+                Graphics.DrawTexture(topRect, outlineTexture, sourceRect, 0, 0, 0, 0, color);
             }
 
             // Left
@@ -87,7 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Rect leftRect = rect;
                 leftRect.width = Mathf.Round(outlineThickness * LocalScale.x);
-                Graphics.DrawTexture(leftRect, outlineTexture, sourceRect, 0, 0, 0, 0, outlineColor);
+                Graphics.DrawTexture(leftRect, outlineTexture, sourceRect, 0, 0, 0, 0, color);
             }
 
             // Right
@@ -96,7 +97,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Rect rightRect = rect;
                 rightRect.x = Mathf.Round(rect.xMax);
                 rightRect.width = Mathf.Round(outlineThickness * LocalScale.x);
-                Graphics.DrawTexture(rightRect, outlineTexture, sourceRect, 0, 0, 0, 0, outlineColor);
+                Graphics.DrawTexture(rightRect, outlineTexture, sourceRect, 0, 0, 0, 0, color);
             }
 
             // Bottom
@@ -106,7 +107,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 bottomRect.y = rect.yMax;
                 bottomRect.width += Mathf.Round(outlineThickness * LocalScale.y);
                 bottomRect.height = Mathf.Round(outlineThickness * LocalScale.y);
-                Graphics.DrawTexture(bottomRect, outlineTexture, sourceRect, 0, 0, 0, 0, outlineColor);
+                Graphics.DrawTexture(bottomRect, outlineTexture, sourceRect, 0, 0, 0, 0, color);
             }
         }
 

@@ -1371,6 +1371,16 @@ namespace DaggerfallWorkshop.Game
             return distinctResolutions.ToArray();
         }
 
+        /// <summary>
+        /// Modulates a Color for Graphics.DrawTexture where neutral is 0.5, 0.5, 0.5, 0.5
+        /// </summary>
+        /// <param name="input">Input Color.</param>
+        /// <returns>Output Color modulates for Graphics.DrawTexture.</returns>
+        public static Color ModulateColor(Color input)
+        {
+            return new Color(input.r - 0.5f, input.g - 0.5f, input.b - 0.5f, input.a - 0.5f);
+        }
+
         #endregion
 
         #region Singleton
