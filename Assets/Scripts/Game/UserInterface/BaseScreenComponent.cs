@@ -780,17 +780,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Draw background colour or mouse over background colour
             if (mouseOverComponent && mouseOverBackgroundColor != Color.clear && backgroundColorTexture)
             {
-                Color color = GUI.color;
-                GUI.color = mouseOverBackgroundColor;
-                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
-                GUI.color = color;
+                Graphics.DrawTexture(myRect, backgroundColorTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0, mouseOverBackgroundColor);
             }
             else if (backgroundColor != Color.clear && backgroundColorTexture)
             {
-                Color color = GUI.color;
-                GUI.color = backgroundColor;
-                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
-                GUI.color = color;
+                Color32 color = backgroundColor;
+                Graphics.DrawTexture(myRect, backgroundColorTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0, backgroundColor);
             }
 
             // Draw background texture if present
@@ -1380,7 +1375,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private void CreateBackgroundColorTexture()
         {
             if (backgroundColorTexture == null)
-                backgroundColorTexture = DaggerfallUI.CreateSolidTexture(Color.white, colorTextureDim);
+                backgroundColorTexture = DaggerfallUI.CreateSolidTexture(new Color(0.5f, 0.5f, 0.5f, 0.5f), colorTextureDim);
         }
 
         /// <summary>
