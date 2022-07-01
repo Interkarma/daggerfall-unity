@@ -182,7 +182,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
-            #region Private Methods
+        #region Private Methods
 
         void SetScrollIndex(int value, bool doNotRaiseScrollEvent = false)
         {
@@ -216,9 +216,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect topRect = new Rect((int)totalRect.x, (int)(totalRect.y + thumbY), (int)totalRect.width, (int)topTextureHeight);
             Rect bodyRect = new Rect((int)totalRect.x, (int)topRect.yMax, (int)totalRect.width, (int)(thumbHeight - topTextureHeight - bottomTextureHeight));
             Rect bottomRect = new Rect((int)totalRect.x, (int)bodyRect.yMax, (int)totalRect.width, (int)bottomTextureHeight);
-            GUI.DrawTexture(topRect, vScrollThumbTop, ScaleMode.StretchToFill);
-            GUI.DrawTexture(bodyRect, vScrollThumbBody, ScaleMode.StretchToFill);
-            GUI.DrawTexture(bottomRect, vScrollThumbBottom, ScaleMode.StretchToFill);
+            Graphics.DrawTexture(topRect, vScrollThumbTop);
+            Graphics.DrawTexture(bodyRect, vScrollThumbBody);
+            Graphics.DrawTexture(bottomRect, vScrollThumbBottom);
         }
 
         #endregion
