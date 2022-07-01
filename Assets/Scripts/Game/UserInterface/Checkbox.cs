@@ -131,15 +131,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             rect.height = checkTextureSize.y * LocalScale.y;
 
             // Draw checkbox in current state
-            Color guiColor = GUI.color;
-            GUI.color = checkboxColor;
             if (!isChecked)
-                GUI.DrawTexture(rect, uncheckedTexture);
+                Graphics.DrawTexture(rect, uncheckedTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0, checkboxColor);
             else
-                GUI.DrawTexture(rect, checkedTexture);
-
-            // Restore previous color
-            GUI.color = guiColor;
+                Graphics.DrawTexture(rect, checkedTexture, new Rect(0, 0, 1, 1), 0, 0, 0, 0, checkboxColor);
 
             // Draw label
             label.Position = new Vector2(checkTextureSize.x + checkTextHorzOffset, textOffset + checkTextVertOffset);
