@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -60,12 +60,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (outlineThickness == 0 || !Enabled)
                 return;
 
-            Color guiColor = GUI.color;
-
-            GUI.color = outlineColor;
             DrawSides(outlineSides);
-
-            GUI.color = guiColor;
         }
 
         #region Private Methods
@@ -73,30 +68,35 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void DrawSides(Sides sides)
         {
             Rect rect = Rectangle;
+            rect.x = Mathf.Round(rect.x);
+            rect.y = Mathf.Round(rect.y);
+            rect.width = Mathf.Round(rect.width);
+            rect.height = Mathf.Round(rect.height);
+            Rect sourceRect = new Rect(0, 0, 1, 1);
 
             // Top
             if ((sides & Sides.Top) == Sides.Top)
             {
                 Rect topRect = rect;
-                topRect.height = outlineThickness * LocalScale.y;
-                GUI.DrawTexture(topRect, outlineTexture);
+                topRect.height = Mathf.Round(outlineThickness * LocalScale.y);
+                Graphics.DrawTexture(topRect, outlineTexture, sourceRect, 0, 0, 0, 0, outlineColor);
             }
 
             // Left
             if ((sides & Sides.Left) == Sides.Left)
             {
                 Rect leftRect = rect;
-                leftRect.width = outlineThickness * LocalScale.x;
-                GUI.DrawTexture(leftRect, outlineTexture);
+                leftRect.width = Mathf.Round(outlineThickness * LocalScale.x);
+                Graphics.DrawTexture(leftRect, outlineTexture, sourceRect, 0, 0, 0, 0, outlineColor);
             }
 
             // Right
             if ((sides & Sides.Right) == Sides.Right)
             {
                 Rect rightRect = rect;
-                rightRect.x = rect.xMax;
-                rightRect.width = outlineThickness * LocalScale.x;
-                GUI.DrawTexture(rightRect, outlineTexture);
+                rightRect.x = Mathf.Round(rect.xMax);
+                rightRect.width = Mathf.Round(outlineThickness * LocalScale.x);
+                Graphics.DrawTexture(rightRect, outlineTexture, sourceRect, 0, 0, 0, 0, outlineColor);
             }
 
             // Bottom
@@ -104,9 +104,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Rect bottomRect = rect;
                 bottomRect.y = rect.yMax;
-                bottomRect.width += outlineThickness * LocalScale.y;
-                bottomRect.height = outlineThickness * LocalScale.y;
-                GUI.DrawTexture(bottomRect, outlineTexture);
+                bottomRect.width += Mathf.Round(outlineThickness * LocalScale.y);
+                bottomRect.height = Mathf.Round(outlineThickness * LocalScale.y);
+                Graphics.DrawTexture(bottomRect, outlineTexture, sourceRect, 0, 0, 0, 0, outlineColor);
             }
         }
 
