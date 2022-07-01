@@ -211,7 +211,7 @@ namespace DaggerfallWorkshop
                     summary.IsMobile = true;
                     summary.EditorFlatType = EditorFlatTypes.FixedMobile;
 
-                    bool isCustomMarker = (summary.Flags & RDBLayout.CustomMarkerFlag) == RDBLayout.CustomMarkerFlag;
+                    bool isCustomMarker = resource.IsCustomData;
                     if (!isCustomMarker)
                         summary.FixedEnemyType = (MobileTypes)(summary.FactionOrMobileID & 0xff);
                     else

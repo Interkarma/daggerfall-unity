@@ -43,8 +43,6 @@ namespace DaggerfallWorkshop.Utility
         const float torchMaxDistance = 5f;
         const float torchVolume = 0.7f;
 
-        public const int CustomMarkerFlag = 128;
-
         #region Structs & Enums
 
         /// <summary>
@@ -1468,7 +1466,7 @@ namespace DaggerfallWorkshop.Utility
 
         private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, GameObject[] startMarkers, bool serialize)
         {
-            bool isCustomMarker = (obj.Resources.FlatResource.Flags & CustomMarkerFlag) == CustomMarkerFlag;
+            bool isCustomMarker = obj.Resources.FlatResource.IsCustomData;
 
             if (!isCustomMarker)
             {
