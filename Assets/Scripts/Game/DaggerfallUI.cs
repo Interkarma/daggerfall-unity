@@ -1332,7 +1332,7 @@ namespace DaggerfallWorkshop.Game
         {
             Texture2D texture = null;
 
-            texture = new Texture2D(dim, dim, TextureFormat.ARGB32, false, true);
+            texture = new Texture2D(dim, dim);
             Color32[] colors = new Color32[dim * dim];
             for (int i = 0; i < colors.Length; i++)
             {

@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             // Create texture once
             if (!colorTexture)
-                colorTexture = DaggerfallUI.CreateSolidTexture(new Color(0.5f, 0.5f, 0.5f, 0.5f), 8);
+                colorTexture = DaggerfallUI.CreateSolidTexture(UnityEngine.Color.white, 8);
 
             if (Enabled)
             {
