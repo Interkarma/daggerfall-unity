@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -162,7 +162,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsReady())
                 return;
 
-            GUI.DrawTexture(position, image);
+            DaggerfallUI.DrawTexture(position, image);
         }
 
         public void DrawTexture(Rect position, Texture2D image, ScaleMode scaleMode, bool alphaBlend = true, float imageAspect = 0)
@@ -170,7 +170,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsReady())
                 return;
 
-            GUI.DrawTexture(position, image, scaleMode, alphaBlend);
+            DaggerfallUI.DrawTexture(position, image, scaleMode, alphaBlend);
         }
 
         public void DrawTextureWithTexCoords(Rect position, Texture image, Rect texCoords, bool alphaBlend = true)
@@ -178,7 +178,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsReady())
                 return;
 
-            GUI.DrawTextureWithTexCoords(position, image, texCoords, alphaBlend);
+            DaggerfallUI.DrawTextureWithTexCoords(position, image, texCoords, alphaBlend);
         }
 
         #endregion

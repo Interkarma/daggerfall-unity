@@ -250,19 +250,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             // Draw fill
-            GUI.DrawTextureWithTexCoords(fillBordersRect, fillBordersTexture, new Rect(0, 0, (fillBordersRect.width / LocalScale.x) / virtualSizes.Fill.x, (fillBordersRect.height / LocalScale.y) / virtualSizes.Fill.y));
+            DaggerfallUI.DrawTextureWithTexCoords(fillBordersRect, fillBordersTexture, new Rect(0, 0, (fillBordersRect.width / LocalScale.x) / virtualSizes.Fill.x, (fillBordersRect.height / LocalScale.y) / virtualSizes.Fill.y));
 
             // Draw corners
-            GUI.DrawTexture(topLeftBorderRect, topLeftBorderTexture);
-            GUI.DrawTexture(topRightBorderRect, topRightBorderTexture);
-            GUI.DrawTexture(bottomLeftBorderRect, bottomLeftBorderTexture);
-            GUI.DrawTexture(bottomRightBorderRect, bottomRightBorderTexture);
+            DaggerfallUI.DrawTexture(topLeftBorderRect, topLeftBorderTexture);
+            DaggerfallUI.DrawTexture(topRightBorderRect, topRightBorderTexture);
+            DaggerfallUI.DrawTexture(bottomLeftBorderRect, bottomLeftBorderTexture);
+            DaggerfallUI.DrawTexture(bottomRightBorderRect, bottomRightBorderTexture);
 
             // Draw edges
-            GUI.DrawTextureWithTexCoords(topBorderRect, topBorderTexture, new Rect(0, 0, (topBorderRect.width / LocalScale.x) / virtualSizes.Top.x, 1));
-            GUI.DrawTextureWithTexCoords(leftBorderRect, leftBorderTexture, new Rect(0, 0, 1, (leftBorderRect.height / LocalScale.y) / virtualSizes.Left.y));
-            GUI.DrawTextureWithTexCoords(rightBorderRect, rightBorderTexture, new Rect(0, 0, 1, (rightBorderRect.height / LocalScale.y) / virtualSizes.Right.y));
-            GUI.DrawTextureWithTexCoords(bottomBorderRect, bottomBorderTexture, new Rect(0, 0, (bottomBorderRect.width / LocalScale.y) / virtualSizes.Bottom.x, 1));
+            DaggerfallUI.DrawTextureWithTexCoords(topBorderRect, topBorderTexture, new Rect(0, 0, (topBorderRect.width / LocalScale.x) / virtualSizes.Top.x, 1));
+            DaggerfallUI.DrawTextureWithTexCoords(leftBorderRect, leftBorderTexture, new Rect(0, 0, 1, (leftBorderRect.height / LocalScale.y) / virtualSizes.Left.y));
+            DaggerfallUI.DrawTextureWithTexCoords(rightBorderRect, rightBorderTexture, new Rect(0, 0, 1, (rightBorderRect.height / LocalScale.y) / virtualSizes.Right.y));
+            DaggerfallUI.DrawTextureWithTexCoords(bottomBorderRect, bottomBorderTexture, new Rect(0, 0, (bottomBorderRect.width / LocalScale.y) / virtualSizes.Bottom.x, 1));
         }
 
         void UpdateBorderDrawRects(Rect drawRect)

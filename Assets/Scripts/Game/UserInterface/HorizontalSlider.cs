@@ -323,13 +323,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect rightRect = new Rect((int)bodyRect.xMax, (int)totalRect.y, (int)rightTextureWidth, (int)totalRect.height);
 
             // Draw thumb texture slices in screen space
-            Color color = DaggerfallUI.ModulateColor(Color.white);
-            if (TintColor.HasValue)
-                GUI.color = TintColor.Value;
-            GUI.DrawTexture(leftRect, hScrollThumbLeft, ScaleMode.StretchToFill);
-            GUI.DrawTexture(bodyRect, hScrollThumbBody, ScaleMode.StretchToFill);
-            GUI.DrawTexture(rightRect, hScrollThumbRight, ScaleMode.StretchToFill);
-            GUI.color = color;
+            Color color = (TintColor.HasValue) ? TintColor.Value : Color.white;
+            DaggerfallUI.DrawTexture(leftRect, hScrollThumbLeft, ScaleMode.StretchToFill, true, color);
+            DaggerfallUI.DrawTexture(bodyRect, hScrollThumbBody, ScaleMode.StretchToFill, true, color);
+            DaggerfallUI.DrawTexture(rightRect, hScrollThumbRight, ScaleMode.StretchToFill, true, color);
         }
 
         void SetupIndicator(int min, int max, int start)
