@@ -142,6 +142,8 @@ namespace DaggerfallWorkshop
         public const string _DaggerfallRetroDepthShaderName = "Daggerfall/DepthProcessShader";
         public const string _DaggerfallRetroPosterizationShaderName = "Daggerfall/RetroPosterization";
         public const string _DaggerfallRetroPalettizationShaderName = "Daggerfall/RetroPalettization";
+        public const string _DaggerfallUIBlendShaderName = "Daggerfall/UIBlend";
+        public const string _DaggerfallUIBlitShaderName = "Daggerfall/UIBlit";
 
         DaggerfallUnity dfUnity;
         TextureReader textureReader;

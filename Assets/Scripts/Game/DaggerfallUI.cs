@@ -126,6 +126,8 @@ namespace DaggerfallWorkshop.Game
 
         Material pixelFontMaterial;
         Material sdfFontMaterial;
+        Material uiBlendMaterial;
+        Material uiBlitMaterial;
 
         Questing.Actions.GivePc lastPendingOfferSender = null;
 
@@ -146,6 +148,8 @@ namespace DaggerfallWorkshop.Game
 
         public Material PixelFontMaterial { get { return pixelFontMaterial; } set { pixelFontMaterial = value; } }
         public Material SDFFontMaterial { get { return sdfFontMaterial; } set { sdfFontMaterial = value; } }
+        public Material UIBlendMaterial { get { return uiBlendMaterial; } set { uiBlendMaterial = value; } }
+        public Material UIBlitMaterial { get { return uiBlitMaterial; } set { uiBlitMaterial = value; } }
 
         PaperDollRenderer paperDollRenderer;
 
@@ -359,6 +363,14 @@ namespace DaggerfallWorkshop.Game
             // Create SDF font material
             if (sdfFontMaterial == null)
                 sdfFontMaterial = new Material(Shader.Find(MaterialReader._DaggerfallSDFFontShaderName));
+
+            // Create UI blend material
+            if (uiBlendMaterial == null)
+                uiBlendMaterial = new Material(Shader.Find(MaterialReader._DaggerfallUIBlendShaderName));
+
+            // Create UI blit material
+            if (uiBlitMaterial == null)
+                uiBlitMaterial = new Material(Shader.Find(MaterialReader._DaggerfallUIBlitShaderName));
         }
 
         void Update()
@@ -1369,6 +1381,136 @@ namespace DaggerfallWorkshop.Game
             }
 
             return distinctResolutions.ToArray();
+        }
+
+        /// <summary>
+        /// Custom DrawTexture for DagUI.
+        /// </summary>
+        /// <param name="position">Rectangle on screen to draw the texture within.</param>
+        /// <param name="image">Texture to display.</param>
+        /// <param name="scaleMode">How to scale the image when the aspect ratio of it doesn't fit the aspect ratio to be drawn within.</param>
+        /// <param name="alphaBlend">Whether to enable alpha blending when drawing the image (enabled by default).</param>
+        public static void DrawTexture(Rect position, Texture image, ScaleMode scaleMode = ScaleMode.StretchToFill, bool alphaBlend = true)
+        {
+            DrawTexture(position, image, scaleMode, alphaBlend, Color.white);
+        }
+
+        /// <summary>
+        /// Custom DrawTexture for DagUI.
+        /// </summary>
+        /// <param name="position">Rectangle on screen to draw the texture within.</param>
+        /// <param name="image">Texture to display.</param>
+        /// <param name="scaleMode">How to scale the image when the aspect ratio of it doesn't fit the aspect ratio to be drawn within.</param>
+        /// <param name="alphaBlend">Whether to enable alpha blending when drawing the image (enabled by default).</param>
+        /// <param name="color">A tint color to apply on the texture.</param>
+        public static void DrawTexture(Rect position, Texture image, ScaleMode scaleMode, bool alphaBlend, Color color)
+        {
+            if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX)
+            {
+                // Mac UI rendering to get correct linear output requires Graphics.DrawTexture with sRGB textures
+                // Using GUI.DrawTexture on Mac with sRGB textures results in improper colour space adjustment and they appear bright
+                Rect screenRect = new Rect();
+                Rect sourceRect = new Rect();
+                float imageAspect = (float)image.width / image.height;
+                Material mat = (alphaBlend) ? DaggerfallUI.Instance.UIBlendMaterial : DaggerfallUI.Instance.UIBlitMaterial;
+                if (CalculateScaledTextureRects(position, scaleMode, imageAspect, ref screenRect, ref sourceRect))
+                {
+                    mat.SetColor("_ColorTint", color);
+                    Graphics.DrawTexture(screenRect, image, sourceRect, 0, 0, 0, 0, ModulateColor(color), mat);
+                }
+            }
+            else
+            {
+                // TODO: UI rendering on other platforms works as expected
+            }
+        }
+
+        /// <summary>
+        /// Custom DrawTextureWithTexCoords for DagUI.
+        /// </summary>
+        /// <param name="position">Rectangle on screen to draw the texture within.</param>
+        /// <param name="image">Texture to display.</param>
+        /// <param name="texCoords">Rectangle of source texture to draw.</param>
+        /// <param name="alphaBlend">Whether to enable alpha blending when drawing the image (enabled by default).</param>
+        public static void DrawTextureWithTexCoords(Rect position, Texture image, Rect texCoords, bool alphaBlend = true)
+        {
+            DrawTextureWithTexCoords(position, image, texCoords, alphaBlend, Color.white);
+        }
+
+        /// <summary>
+        /// Custom DrawTextureWithTexCoords for DagUI.
+        /// </summary>
+        /// <param name="position">Rectangle on screen to draw the texture within.</param>
+        /// <param name="image">Texture to display.</param>
+        /// <param name="texCoords">Rectangle of source texture to draw.</param>
+        /// <param name="alphaBlend">Whether to enable alpha blending when drawing the image (enabled by default).</param>
+        /// <param name="color">A tint color to apply on the texture.</param>
+        public static void DrawTextureWithTexCoords(Rect position, Texture image, Rect texCoords, bool alphaBlend, Color color)
+        {
+            // Mac UI rendering to get correct linear output requires Graphics.DrawTexture with sRGB textures
+            // Using GUI.DrawTexture on Mac with sRGB textures results in improper colour space adjustment and they appear bright
+            if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX)
+            {
+                Material mat = (alphaBlend) ? DaggerfallUI.Instance.UIBlendMaterial : DaggerfallUI.Instance.UIBlitMaterial;
+                mat.SetColor("_ColorTint", color);
+                Graphics.DrawTexture(position, image, texCoords, 0, 0, 0, 0, ModulateColor(color), mat);
+            }
+            else
+            {
+                // TODO: UI rendering on other platforms works as expected
+            }
+        }
+
+        // Calculate screenrect and sourcerect for different scalemodes
+        // Reimplemented from internal IMGUI method in source below:
+        // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Modules/IMGUI/GUI.cs
+        public static bool CalculateScaledTextureRects(Rect position, ScaleMode scaleMode, float imageAspect, ref Rect outScreenRect, ref Rect outSourceRect)
+        {
+            float destAspect = position.width / position.height;
+            bool ret = false;
+
+            switch (scaleMode)
+            {
+                case ScaleMode.StretchToFill:
+                    outScreenRect = position;
+                    outSourceRect = new Rect(0, 0, 1, 1);
+                    ret = true;
+                    break;
+                case ScaleMode.ScaleAndCrop:
+                    if (destAspect > imageAspect)
+                    {
+                        float stretch = imageAspect / destAspect;
+                        outScreenRect = position;
+                        outSourceRect = new Rect(0, (1 - stretch) * .5f, 1, stretch);
+                        ret = true;
+                    }
+                    else
+                    {
+                        float stretch = destAspect / imageAspect;
+                        outScreenRect = position;
+                        outSourceRect = new Rect(.5f - stretch * .5f, 0, stretch, 1);
+                        ret = true;
+                    }
+                    break;
+                case ScaleMode.ScaleToFit:
+                    if (destAspect > imageAspect)
+                    {
+                        float stretch = imageAspect / destAspect;
+                        outScreenRect = new Rect(position.xMin + position.width * (1.0f - stretch) * .5f, position.yMin, stretch * position.width, position.height);
+                        outSourceRect = new Rect(0, 0, 1, 1);
+                        ret = true;
+                    }
+                    else
+                    {
+                        float stretch = destAspect / imageAspect;
+                        outScreenRect = new Rect(position.xMin, position.yMin + position.height * (1.0f - stretch) * .5f, position.width, stretch * position.height);
+                        outSourceRect = new Rect(0, 0, 1, 1);
+                        ret = true;
+                    }
+                    break;
+            }
+
+            return ret;
         }
 
         /// <summary>
