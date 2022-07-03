@@ -245,7 +245,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             };
 
             // Draw marker
-            GUI.DrawTexture(markerRect, defaultTrackingIcon, ScaleMode.StretchToFill, true);
+            DaggerfallUI.DrawTexture(markerRect, defaultTrackingIcon, ScaleMode.StretchToFill, true);
         }
 
         float ChangeRange(float value, float oldMin, float oldMax, float newMin, float newMax)
