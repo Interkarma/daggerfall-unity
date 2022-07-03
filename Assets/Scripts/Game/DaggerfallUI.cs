@@ -1421,7 +1421,11 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                // TODO: UI rendering on other platforms works as expected
+                // UI rendering on other platforms works as expected
+                Color oldColor = GUI.color;
+                GUI.color = color;
+                GUI.DrawTexture(position, image, scaleMode);
+                GUI.color = oldColor;
             }
         }
 
@@ -1457,7 +1461,11 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                // TODO: UI rendering on other platforms works as expected
+                // UI rendering on other platforms works as expected
+                Color oldColor = GUI.color;
+                GUI.color = color;
+                GUI.DrawTextureWithTexCoords(position, image, texCoords, alphaBlend);
+                GUI.color = oldColor;
             }
         }
 
