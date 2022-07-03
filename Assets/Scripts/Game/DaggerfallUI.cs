@@ -30,6 +30,13 @@ using static DaggerfallWorkshop.Game.UserInterface.BaseScreenComponent;
 
 namespace DaggerfallWorkshop.Game
 {
+    // Common shader params
+    public class UIShaderParam
+    {
+        public static int _Color = Shader.PropertyToID("_Color");
+        public static int _ColorTint = Shader.PropertyToID("_ColorTint");
+    }
+
     /// <summary>
     /// Implements Daggerfall's user interface with internal UI system.
     /// </summary>
@@ -1415,7 +1422,7 @@ namespace DaggerfallWorkshop.Game
                 Material mat = (alphaBlend) ? DaggerfallUI.Instance.UIBlendMaterial : DaggerfallUI.Instance.UIBlitMaterial;
                 if (CalculateScaledTextureRects(position, scaleMode, imageAspect, ref screenRect, ref sourceRect))
                 {
-                    mat.SetColor("_ColorTint", color);
+                    mat.SetColor(UIShaderParam._ColorTint, color);
                     Graphics.DrawTexture(screenRect, image, sourceRect, 0, 0, 0, 0, ModulateColor(color), mat);
                 }
             }
@@ -1456,7 +1463,7 @@ namespace DaggerfallWorkshop.Game
             if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX)
             {
                 Material mat = (alphaBlend) ? DaggerfallUI.Instance.UIBlendMaterial : DaggerfallUI.Instance.UIBlitMaterial;
-                mat.SetColor("_ColorTint", color);
+                mat.SetColor(UIShaderParam._ColorTint, color);
                 Graphics.DrawTexture(position, image, texCoords, 0, 0, 0, 0, ModulateColor(color), mat);
             }
             else
