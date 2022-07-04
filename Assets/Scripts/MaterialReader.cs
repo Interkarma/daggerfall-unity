@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop
         public const string HeightMap                             = "_PARALLAXMAP";
         public const string Emission                              = "_EMISSION";
         public const string MetallicGlossMap                      = "_METALLICGLOSSMAP";
+        public const string MacOSX                                = "_MacOSX";
     }
 
     public static class Uniforms

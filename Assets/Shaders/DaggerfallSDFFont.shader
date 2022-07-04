@@ -22,6 +22,7 @@ Shader "Daggerfall/SDFFont"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+            #pragma shader_feature _MacOSX
 
 			#include "UnityCG.cginc"
 
@@ -62,7 +63,11 @@ Shader "Daggerfall/SDFFont"
                 float dist = tex2D(_MainTex, i.texcoord).a;
                 float smoothing = fwidth(dist);
                 float alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, dist);
-                return float4(_Color.rgb, alpha);
+                #ifdef _MacOSX
+                    return float4(_Color.rgb, alpha);
+                #else
+                    return float4(i.color.rgb, alpha);
+                #endif
 
                 //return float4(float3(1,1,1), 1 - alpha);  // Glyph visualisation
                 //return float4(float3(i.screenPos.x, i.screenPos.y, 0), 1 - alpha);  // screenPos visualisation

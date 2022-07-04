@@ -22,6 +22,7 @@ Shader "Daggerfall/PixelFont"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+            #pragma shader_feature _MacOSX
 
 			#include "UnityCG.cginc"
 
@@ -61,7 +62,11 @@ Shader "Daggerfall/PixelFont"
 
                 float alpha = tex2D(_MainTex, i.texcoord).a;
 
-                return float4(_Color.rgb, alpha);
+                #ifdef _MacOSX
+                    return float4(_Color.rgb, alpha);
+                #else
+                    return float4(i.color.rgb, alpha);
+                #endif
 			}
 			ENDCG 
 		}

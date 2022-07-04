@@ -378,6 +378,12 @@ namespace DaggerfallWorkshop.Game
             // Create UI blit material
             if (uiBlitMaterial == null)
                 uiBlitMaterial = new Material(Shader.Find(MaterialReader._DaggerfallUIBlitShaderName));
+
+            // Set shader platform keyword for MacOSX
+            if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX)
+                Shader.EnableKeyword(KeyWords.MacOSX);
+            else
+                Shader.DisableKeyword(KeyWords.MacOSX);
         }
 
         void Update()
