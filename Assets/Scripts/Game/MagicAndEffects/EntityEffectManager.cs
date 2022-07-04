@@ -1905,7 +1905,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Only supporting LoadID from enemies at this time
             if (caster.EntityType == EntityTypes.EnemyMonster || caster.EntityType == EntityTypes.EnemyClass)
             {
-                ISerializableGameObject serializableEnemy = caster.GetComponent<SerializableEnemy>() as ISerializableGameObject;
+                ISerializableGameObject serializableEnemy = caster.GetComponent<ISerializableGameObject>();
+                if (serializableEnemy == null)
+                    return 0;
+
                 return serializableEnemy.LoadID;
             }
             else
