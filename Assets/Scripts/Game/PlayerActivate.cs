@@ -105,7 +105,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Allows the building greeting message boxes to be disabled by mods
-        public static bool buildingGreetingEnabled = true;
+        public static bool buildingGreetingsEnabled = true;
 
         #region custom mod activation
         private struct CustomModActivation
@@ -561,7 +561,7 @@ namespace DaggerfallWorkshop.Game
 
                     // If entering a shop let player know the quality level
                     // If entering an open home, show greeting
-                    if (hitBuilding && buildingGreetingEnabled)
+                    if (hitBuilding && buildingGreetingsEnabled)
                     {
                         const int houseGreetingsTextId = 256;
 
