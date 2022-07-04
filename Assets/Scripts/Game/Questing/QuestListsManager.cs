@@ -342,6 +342,10 @@ namespace DaggerfallWorkshop.Game.Questing
 #if UNITY_EDITOR    // Reload every time when in editor
             LoadQuestLists();
 #endif
+            // Create one-time quest list if not already created
+            if (oneTimeQuestsAccepted == null)
+                oneTimeQuestsAccepted = new List<string>();
+
             List<QuestData> socialQuests;
             if (social.TryGetValue(socialGroup, out socialQuests))
             {
@@ -353,7 +357,7 @@ namespace DaggerfallWorkshop.Game.Questing
                          (quest.membership == 'M' && gender == Genders.Male) ||
                          (quest.membership == 'F' && gender == Genders.Female)))
                     {
-                        if (!quest.adult || DaggerfallUnity.Settings.PlayerNudity)
+                        if ((!quest.adult || DaggerfallUnity.Settings.PlayerNudity) && !(quest.oneTime && oneTimeQuestsAccepted.Contains(quest.name)))
                             pool.Add(quest);
                     }
                 }
