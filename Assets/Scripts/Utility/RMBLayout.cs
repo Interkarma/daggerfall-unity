@@ -41,7 +41,9 @@ namespace DaggerfallWorkshop.Utility
         public const uint CityGateClosedModelID = 447;
         public const uint BulletinBoardModelID = 41739;
 
+#if !UNITY_EDITOR
         private static int maxLocationCacheSize = 12;
+#endif
         private static List<KeyValuePair<int, DFBlock[]>> locationCache = new List<KeyValuePair<int, DFBlock[]>>();
 
         /// <summary>Clear the location cache. Use if block data is changed dynamically.</summary>
