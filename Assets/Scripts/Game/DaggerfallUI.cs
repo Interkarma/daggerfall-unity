@@ -381,9 +381,10 @@ namespace DaggerfallWorkshop.Game
 
             // Set shader platform keyword for MacOSX
             if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX)
-                Shader.EnableKeyword(KeyWords.MacOSX);
-            else
-                Shader.DisableKeyword(KeyWords.MacOSX);
+            {
+                pixelFontMaterial.EnableKeyword(KeyWords.MacOSX);
+                sdfFontMaterial.EnableKeyword(KeyWords.MacOSX);
+            }
         }
 
         void Update()

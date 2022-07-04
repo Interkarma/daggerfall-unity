@@ -22,7 +22,7 @@ Shader "Daggerfall/SDFFont"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-            #pragma shader_feature _MacOSX
+            #pragma multi_compile_local __ _MacOSX
 
 			#include "UnityCG.cginc"
 
