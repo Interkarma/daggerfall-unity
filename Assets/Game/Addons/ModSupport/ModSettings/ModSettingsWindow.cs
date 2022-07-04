@@ -46,8 +46,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         const int columnWidth                       = 140;
         const int columnsOffset                     = columnWidth + startX * 2;
 
-        const KeyCode nextPageKey                   = KeyCode.Tab;
-        const KeyCode previousPageKey               = KeyCode.LeftShift;
+        const KeyCode nextPageKey                   = KeyCode.PageDown;
+        const KeyCode previousPageKey               = KeyCode.PageUp;
 
         Color panelBackgroundColor                  = new Color(0, 0, 0, 0.7f);
         Color resetButtonColor                      = new Color(1, 0, 0, 0.4f);           // red with alpha
