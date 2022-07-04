@@ -1057,6 +1057,11 @@ namespace DaggerfallConnect
 
             /// <summary>Action flag.</summary>
             public Byte Action;
+
+            /* DFU custom fields */
+
+            /// <summary>True if the data is custom data placed by a DFU tool. False if the data comes from arena2</summary>
+            public bool IsCustomData;
         }
 
         /// <summary>

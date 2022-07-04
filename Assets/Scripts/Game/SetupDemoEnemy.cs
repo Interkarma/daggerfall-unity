@@ -78,7 +78,10 @@ namespace DaggerfallWorkshop.Game
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             Dictionary<int, MobileEnemy> enemyDict = GameObjectHelper.EnemyDict;
-            MobileEnemy mobileEnemy = enemyDict[(int)EnemyType];
+
+            if (!enemyDict.TryGetValue((int)EnemyType, out MobileEnemy mobileEnemy))
+                return;
+
             if (AlliedToPlayer)
                 mobileEnemy.Team = MobileTeams.PlayerAlly;
 
