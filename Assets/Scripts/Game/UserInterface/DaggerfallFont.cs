@@ -156,7 +156,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect atlasRect = atlasRects[rawAscii - asciiStart];
             if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX)
             {
-                DaggerfallUI.Instance.SDFFontMaterial.SetColor(UIShaderParam._Color, color);
+                DaggerfallUI.Instance.PixelFontMaterial.SetColor(UIShaderParam._Color, color);
                 Graphics.DrawTexture(targetRect, atlasTexture, atlasRect, 0, 0, 0, 0, DaggerfallUI.Instance.PixelFontMaterial);
             }
             else
