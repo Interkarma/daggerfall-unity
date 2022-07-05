@@ -1787,17 +1787,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     for (int x = 0; x < microMapBlockSizeInPixels; x++)
                     {
-                        if (DaggerfallUnity.Settings.MoreReadableDungeonMicroMap)
-                        {
-                            if (block.BlockName.Substring(0, 1) == "B")
-                                textureMicroMap.SetPixel(xBlockPos * microMapBlockSizeInPixels + x, yBlockPos * microMapBlockSizeInPixels + y, new Color32(250, 180, 3, 255));
-                            else
-                                textureMicroMap.SetPixel(xBlockPos * microMapBlockSizeInPixels + x, yBlockPos * microMapBlockSizeInPixels + y, new Color32(212, 135, 208, 255));
-                        }
-                        else
-                        {
-                            textureMicroMap.SetPixel(xBlockPos * microMapBlockSizeInPixels + x, yBlockPos * microMapBlockSizeInPixels + y, Color.yellow);
-                        }
+                        textureMicroMap.SetPixel(xBlockPos * microMapBlockSizeInPixels + x, yBlockPos * microMapBlockSizeInPixels + y, Color.yellow);
                     }
                 }
             }

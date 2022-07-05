@@ -174,7 +174,6 @@ AssetInjection=True
 CompressModdedTextures=True
 NearDeathWarning=True
 AdvancedClimbing=False
-MoreReadableDungeonMicroMap=False
 AlternateRandomEnemySelection=False
 DungeonAmbientLightScale=1.0
 NightAmbientLightScale=1.0
