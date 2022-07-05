@@ -152,8 +152,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             compassDstRect.width = compassBoxRect.width - (boxOutlineSize * 2) * Scale.x;
             compassDstRect.height = compassTextureHeight * Scale.y;
 
-            GUI.DrawTextureWithTexCoords(compassDstRect, compassTexture, compassSrcRect, false);
-            GUI.DrawTexture(compassBoxRect, compassBoxTexture, ScaleMode.StretchToFill, true);
+            DaggerfallUI.DrawTextureWithTexCoords(compassDstRect, compassTexture, compassSrcRect, false);
+            DaggerfallUI.DrawTexture(compassBoxRect, compassBoxTexture, ScaleMode.StretchToFill, true);
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             };
 
             // Draw marker
-            GUI.DrawTexture(markerRect, defaultTrackingIcon, ScaleMode.StretchToFill, true);
+            DaggerfallUI.DrawTexture(markerRect, defaultTrackingIcon, ScaleMode.StretchToFill, true);
         }
 
         float ChangeRange(float value, float oldMin, float oldMax, float newMin, float newMax)

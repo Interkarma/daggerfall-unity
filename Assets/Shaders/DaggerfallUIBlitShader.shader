@@ -1,28 +1,27 @@
-Shader "Daggerfall/PixelFont"
+Shader "Daggerfall/UIBlit"
 {
 	Properties
     {
         _MainTex ("Texture", any) = "" {}
-        _ScissorRect("Scissor Rectangle", Vector) = (0,1,0,1)   // x=left, y=right, z=bottom, w=top - fullscreen is (0,1,0,1)
-		_Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+		_ColorTint ("Tint", Color) = (1.0, 1.0, 1.0, 1.0)
     }
 
 	SubShader {
 
 		Tags { "ForceSupported" = "True" "RenderType"="Overlay" } 
 		
-		Lighting Off 
-		Blend SrcAlpha OneMinusSrcAlpha 
-		Cull Off 
-		ZWrite Off 
-		Fog { Mode Off } 
-		ZTest Always
-		
-		Pass {	
+		Lighting Off
+		Cull Off
+		ZWrite Off
+        ZTest Always
+		Fog { Mode Off }
+
+        // Renders texture with normal alpha blending
+		Pass {
+            Blend Off
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-            #pragma multi_compile_local __ _MacOSX
 
 			#include "UnityCG.cginc"
 
@@ -41,8 +40,7 @@ Shader "Daggerfall/PixelFont"
 
 			sampler2D _MainTex;
             uniform float4 _MainTex_ST;
-            float4 _ScissorRect;
-			float4 _Color;
+			float4 _ColorTint;
 			
 			v2f vert (appdata_t v)
 			{
@@ -56,17 +54,7 @@ Shader "Daggerfall/PixelFont"
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-                if (i.screenPos.x < _ScissorRect.x || i.screenPos.x > _ScissorRect.y ||
-                    i.screenPos.y < _ScissorRect.z || i.screenPos.y > _ScissorRect.w)
-                    discard;
-
-                float alpha = tex2D(_MainTex, i.texcoord).a;
-
-                #ifdef _MacOSX
-                    return float4(_Color.rgb, alpha);
-                #else
-                    return float4(i.color.rgb, alpha);
-                #endif
+                return tex2D(_MainTex, i.texcoord).rgba * _ColorTint;
 			}
 			ENDCG 
 		}

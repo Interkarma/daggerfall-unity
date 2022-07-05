@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -81,12 +81,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             if (blinkOn)
             {
-                Color guiColor = GUI.color;
-
-                GUI.color = cursorColor;
                 DrawCursor();
-
-                GUI.color = guiColor;
             }
         }
 
@@ -103,7 +98,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             Rect rect = Rectangle;
             rect.width = cursorThickness * LocalScale.x;
-            GUI.DrawTexture(rect, cursorTexture);
+            DaggerfallUI.DrawTexture(rect, cursorTexture, ScaleMode.StretchToFill, true, cursorColor);
         }
 
         void SetThickness(int value)

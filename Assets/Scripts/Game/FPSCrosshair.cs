@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -25,13 +25,15 @@ namespace DaggerfallWorkshop.Game
         {
             if (CrosshairTexture != null)
             {
-                GUI.color = new Color(1, 1, 1, 0.75f);
-                GUI.DrawTexture(
+                Color color = new Color(1, 1, 1, 0.75f);
+                DaggerfallUI.DrawTexture(
                     new Rect((Screen.width * 0.5f) - (CrosshairTexture.width * 0.5f),
                         (Screen.height * 0.5f) - (CrosshairTexture.height * 0.5f),
-                        CrosshairTexture.width,
-                        CrosshairTexture.height), (Texture2D)CrosshairTexture);
-                GUI.color = Color.white;
+                        CrosshairTexture.width, CrosshairTexture.height),
+                        (Texture2D)CrosshairTexture,
+                        ScaleMode.StretchToFill,
+                        true,
+                        color);
             }
         }
     }

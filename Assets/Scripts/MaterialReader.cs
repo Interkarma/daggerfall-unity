@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop
         public const string HeightMap                             = "_PARALLAXMAP";
         public const string Emission                              = "_EMISSION";
         public const string MetallicGlossMap                      = "_METALLICGLOSSMAP";
+        public const string MacOSX                                = "_MacOSX";
     }
 
     public static class Uniforms
@@ -142,6 +143,8 @@ namespace DaggerfallWorkshop
         public const string _DaggerfallRetroDepthShaderName = "Daggerfall/DepthProcessShader";
         public const string _DaggerfallRetroPosterizationShaderName = "Daggerfall/RetroPosterization";
         public const string _DaggerfallRetroPalettizationShaderName = "Daggerfall/RetroPalettization";
+        public const string _DaggerfallUIBlendShaderName = "Daggerfall/UIBlend";
+        public const string _DaggerfallUIBlitShaderName = "Daggerfall/UIBlit";
 
         DaggerfallUnity dfUnity;
         TextureReader textureReader;

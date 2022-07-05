@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             base.Draw();
 
-            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), videoPlayer.texture, ScaleMode);
+            DaggerfallUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), videoPlayer.texture, ScaleMode);
         }
 
         /// <summary>

@@ -780,17 +780,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Draw background colour or mouse over background colour
             if (mouseOverComponent && mouseOverBackgroundColor != Color.clear && backgroundColorTexture)
             {
-                Color color = GUI.color;
-                GUI.color = mouseOverBackgroundColor;
-                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
-                GUI.color = color;
+                DaggerfallUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill, true, mouseOverBackgroundColor);
             }
             else if (backgroundColor != Color.clear && backgroundColorTexture)
             {
-                Color color = GUI.color;
-                GUI.color = backgroundColor;
-                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
-                GUI.color = color;
+                DaggerfallUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill, true, backgroundColor);
             }
 
             // Draw background texture if present
@@ -800,19 +794,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     case BackgroundLayout.Tile:
                         backgroundTexture.wrapMode = TextureWrapMode.Repeat;
-                        GUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(0, 0, myRect.width / backgroundTexture.width, myRect.height / backgroundTexture.height));
+                        DaggerfallUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(0, 0, myRect.width / backgroundTexture.width, myRect.height / backgroundTexture.height));
                         break;
                     case BackgroundLayout.StretchToFill:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.StretchToFill);
+                        DaggerfallUI.DrawTexture(myRect, backgroundTexture, ScaleMode.StretchToFill);
                         break;
                     case BackgroundLayout.ScaleToFit:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
+                        DaggerfallUI.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
                         break;
                     case BackgroundLayout.Cropped:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        GUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(
+                        DaggerfallUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(
                             BackgroundCroppedRect.x / backgroundTexture.width,
                             BackgroundCroppedRect.y / backgroundTexture.height,
                             BackgroundCroppedRect.width / backgroundTexture.width,
