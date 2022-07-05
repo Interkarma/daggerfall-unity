@@ -49,6 +49,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         KeyCode extraProceedBinding = KeyCode.None;
         bool isNextMessageDeferred = false;
 
+        float textScale = 1.0f;
+
+        /// <summary>
+        /// Change the scale of text inside message box.
+        /// Must set custom TextScale immediately after creating messagebox and before setting text/tokens.
+        /// </summary>
+        public float TextScale
+        {
+            get { return textScale; }
+            set { textScale = value; }
+        }
+
         /// <summary>
         /// Default message box buttons are indices into BUTTONS.RCI.
         /// </summary>
@@ -227,6 +239,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             label.HorizontalAlignment = HorizontalAlignment.Center;
             label.VerticalAlignment = VerticalAlignment.Middle;
+            label.TextScale = TextScale;
             messagePanel.Components.Add(label);
 
             buttonPanel.HorizontalAlignment = HorizontalAlignment.Center;
