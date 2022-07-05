@@ -69,6 +69,8 @@ namespace DaggerfallWorkshop.Game
         public static Color DaggerfallDefaultShopAutomapColor = new Color32(190, 85, 24, 255);
         public static Color DaggerfallDefaultTavernAutomapColor = new Color32(85, 117, 48, 255);
         public static Color DaggerfallDefaultHouseAutomapColor = new Color32(69, 60, 40, 255);
+		 public static Color DaggerfallDefaultMicMapInnerQoLColor = new Color32(212, 135, 208, 255);
+        public static Color DaggerfallDefaultMicMapBorderQoLColor = new Color32(250, 180, 3, 255);
         public static Vector2 DaggerfallDefaultShadowPos = Vector2.one;
 
         public FilterMode globalFilterMode = FilterMode.Point;

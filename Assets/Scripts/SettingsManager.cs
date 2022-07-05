@@ -237,6 +237,9 @@ namespace DaggerfallWorkshop
         public Color32 AutomapShopColor { get; set; }
         public Color32 AutomapTavernColor { get; set; }
         public Color32 AutomapHouseColor { get; set; }
+        public bool DungeonMicMapQoL { get; set; }
+        public Color32 DunMicMapInnerColor { get; set; }
+        public Color32 DunMicMapBorderColor { get; set; }
 
         // [Startup]
         public int StartCellX { get; set; }
@@ -257,7 +260,6 @@ namespace DaggerfallWorkshop
         public bool NearDeathWarning { get; set; }
         public bool AlternateRandomEnemySelection { get; set; }
         public bool AdvancedClimbing { get; set; }
-        public bool MoreReadableDungeonMicroMap { get; set; }
         public float DungeonAmbientLightScale { get; set; }
         public float NightAmbientLightScale { get; set; }
         public float PlayerTorchLightScale { get; set; }
@@ -430,6 +432,9 @@ namespace DaggerfallWorkshop
             AutomapShopColor = GetColor(sectionMap, "AutomapShopColor", DaggerfallUI.DaggerfallDefaultShopAutomapColor);
             AutomapTavernColor = GetColor(sectionMap, "AutomapTavernColor", DaggerfallUI.DaggerfallDefaultTavernAutomapColor);
             AutomapHouseColor = GetColor(sectionMap, "AutomapHouseColor", DaggerfallUI.DaggerfallDefaultHouseAutomapColor);
+            DungeonMicMapQoL = GetBool(sectionMap, "DungeonMicMapQoL");
+            DunMicMapInnerColor = GetColor(sectionMap, "DunMicMapInnerColor", DaggerfallUI.DaggerfallDefaultMicMapInnerQoLColor);
+            DunMicMapBorderColor = GetColor(sectionMap, "DunMicMapBorderColor", DaggerfallUI.DaggerfallDefaultMicMapBorderQoLColor);
 
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
@@ -447,7 +452,6 @@ namespace DaggerfallWorkshop
             NearDeathWarning = GetBool(sectionEnhancements, "NearDeathWarning");
             AlternateRandomEnemySelection = GetBool(sectionEnhancements, "AlternateRandomEnemySelection");
             AdvancedClimbing = GetBool(sectionEnhancements, "AdvancedClimbing");
-            MoreReadableDungeonMicroMap = GetBool(sectionEnhancements, "MoreReadableDungeonMicroMap");
             DungeonAmbientLightScale = GetFloat(sectionEnhancements, "DungeonAmbientLightScale", 0.0f, 1.0f);
             NightAmbientLightScale = GetFloat(sectionEnhancements, "NightAmbientLightScale", 0.0f, 1.0f);
             PlayerTorchLightScale = GetFloat(sectionEnhancements, "PlayerTorchLightScale", 0.0f, 1.0f);
@@ -609,6 +613,9 @@ namespace DaggerfallWorkshop
             SetColor(sectionMap, "AutomapShopColor", AutomapShopColor);
             SetColor(sectionMap, "AutomapTavernColor", AutomapTavernColor);
             SetColor(sectionMap, "AutomapHouseColor", AutomapHouseColor);
+            SetBool(sectionMap, "DungeonMicMapQoL", DungeonMicMapQoL);
+            SetColor(sectionMap, "DunMicMapInnerColor", DunMicMapInnerColor);
+            SetColor(sectionMap, "DunMicMapBorderColor", DunMicMapBorderColor);
 
             SetInt(sectionStartup, "StartCellX", StartCellX);
             SetInt(sectionStartup, "StartCellY", StartCellY);
@@ -626,7 +633,6 @@ namespace DaggerfallWorkshop
             SetBool(sectionEnhancements, "NearDeathWarning", NearDeathWarning);
             SetBool(sectionEnhancements, "AlternateRandomEnemySelection", AlternateRandomEnemySelection);
             SetBool(sectionEnhancements, "AdvancedClimbing", AdvancedClimbing);
-            SetBool(sectionEnhancements, "MoreReadableDungeonMicroMap", MoreReadableDungeonMicroMap);
             SetFloat(sectionEnhancements, "DungeonAmbientLightScale", DungeonAmbientLightScale);
             SetFloat(sectionEnhancements, "NightAmbientLightScale", NightAmbientLightScale);
             SetFloat(sectionEnhancements, "PlayerTorchLightScale", PlayerTorchLightScale);

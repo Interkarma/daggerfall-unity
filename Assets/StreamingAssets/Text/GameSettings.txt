@@ -21,6 +21,7 @@ light,                                              Lighting
 basic,                                              Basic
 advanced,                                           Advanced
 automap,                                            Automap
+dungeonmicromap,                                 	 Dungeon Micro-Map
 
 - Settings and tooltip descriptions
 
@@ -107,6 +108,12 @@ automapTavernColor,                                 Tavern color
 automapTavernColorInfo,                             The color of taverns on the exterior automap
 automapHouseColor,                                  Residence color
 automapHouseColorInfo,                              The color of residences and others on the exterior automap
+dungeonMicMapQoL,									 Micro-Map QoL Toggle
+dungeonMicMapQoLInfo,								 False = Uses vanilla micro-map colors | True = Use micro-map QoL colors
+dunMicMapInnerColor,                                Inner Block color
+dunMicMapInnerColorInfo,                            The color that Inner dungeon blocks will be on micromap while QoL option is true
+dunMicMapBorderColor,                               Border Block color
+dunMicMapBorderColorInfo,                           The color that Border dungeon blocks will be on micromap while QoL option is true
 
 modSystem,                                          Mod System
 modSystemInfo,                                      Enable support for mods.

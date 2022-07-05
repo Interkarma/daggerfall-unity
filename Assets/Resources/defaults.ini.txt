@@ -154,6 +154,9 @@ AutomapTempleColor=457DC3FF
 AutomapShopColor=BE5518FF
 AutomapTavernColor=557530FF
 AutomapHouseColor=453C28FF
+DungeonMicMapQoL=False
+DunMicMapInnerColor=D487D0FF
+DunMicMapBorderColor=FAB403FF
 
 [Startup]
 StartCellX=109
@@ -174,7 +177,6 @@ AssetInjection=True
 CompressModdedTextures=True
 NearDeathWarning=True
 AdvancedClimbing=False
-MoreReadableDungeonMicroMap=False
 AlternateRandomEnemySelection=False
 DungeonAmbientLightScale=1.0
 NightAmbientLightScale=1.0
