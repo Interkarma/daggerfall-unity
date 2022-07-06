@@ -15,13 +15,11 @@ using UnityEngine;
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
     /// <summary>
-    /// Finds an appropriate position and rotation for objects that replace billboard wall props such as torches.
+    /// Applies rotation for NPC model replacements.
     /// </summary>
     /// <remarks>
-    /// This component performs three operations:
-    /// 1. Ensures the object faces the wall on the set direction and rotates if needed.
-    /// 2. Moves the object next to the wall or away from it if clipping.
-    /// 3. Aligns the object if wall is not perpendicular to the floor.
+    /// This component does the following:
+    /// Building Interiors - Ensures the object faces the nearest internal door, preferring visible.
     /// </remarks>
     public class NPCModelRotator : MonoBehaviour, IObjectPositioner
     {
