@@ -31,7 +31,7 @@ namespace DaggerfallWorkshop
         const int propModelType = 3;
 
         private const int posMask = 0x3FF;  // 10 bits
-        private const string peopleFlats = "People Flats";
+        public const string peopleFlats = "People Flats";
 
         const uint houseContainerObjectGroup = 418;
         const uint containerObjectGroupOffset = 41000;

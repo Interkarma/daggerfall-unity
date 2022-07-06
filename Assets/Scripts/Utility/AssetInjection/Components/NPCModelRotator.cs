@@ -24,52 +24,80 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     public class NPCModelRotator : MonoBehaviour, IObjectPositioner
     {
         /// <summary>
-        /// Always false because rotation is set for NPC facing.
+        /// Return false if NPC model is inside a building interior to disable random rotation.
         /// </summary>
         public virtual bool AllowFlatRotation
         {
-            get { return false; }
+            get { return transform.parent.gameObject.name != DaggerfallInterior.peopleFlats; }
         }
 
         private void Start()
         {
-            // If player in inside a building, then apply rotation to model so it faces the nearest internal (action) door.
-            // Prefers visible doors if there are any.
-            // TODO: Add checks for static doors? (entry / exit doors)
-
-            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
-            if (playerEnterExit.IsPlayerInsideBuilding)
+            // If model in inside building interior, then apply rotation to model so it faces the nearest internal (action) door, preferring visible doors if there are any.
+            GameObject interiorParent = GameManager.Instance.PlayerEnterExit.InteriorParent;
+            if (interiorParent == transform.root.gameObject)
             {
-                DaggerfallActionDoor[] actionDoors = playerEnterExit.InteriorParent.GetComponentsInChildren<DaggerfallActionDoor>();
+                // Disable model colliders so raycasts cannot hit self
+                Collider[] colliders = GetComponents<Collider>();
+                for (int i = 0; i < colliders.Length; i++)
+                    colliders[i].enabled = false;
 
                 float closestDoorDistance = float.MaxValue;
                 bool closestDoorVisible = false;
-                int closestDoorIdx = -1;
+                int closestStaticDoorIdx = -1;
+                int closestActionDoorIdx = -1;
+
+                // Find the closest static door
+                DaggerfallStaticDoors staticDoors = interiorParent.GetComponentInChildren<DaggerfallStaticDoors>();
+                if (staticDoors.FindClosestDoorToPlayer(transform.position, -1, out Vector3 closestStaticDoorPos, out closestStaticDoorIdx, DoorTypes.Building))
+                {
+                    closestDoorDistance = Vector3.Distance(transform.position, closestStaticDoorPos);
+
+                    bool visible = !Physics.Raycast(transform.position, closestStaticDoorPos - transform.position, closestDoorDistance - 0.5f);
+                    if (visible)
+                        closestDoorVisible = true;
+                }
+
+                // Find closest action door
+                DaggerfallActionDoor[] actionDoors = interiorParent.GetComponentsInChildren<DaggerfallActionDoor>();
                 for (int i = 0; i < actionDoors.Length; i++)
                 {
                     Vector3 doorCentre = GetDoorCenter(actionDoors[i]);
                     //Debug.LogFormat("Door at {0}, centre {1}  rot {2}", actionDoors[i].transform.position, doorCentre, actionDoors[i].transform.rotation);
 
-                    bool visible = !Physics.Linecast(transform.position, doorCentre, out RaycastHit hitInfo);
                     float distance = Vector3.Distance(transform.position, doorCentre);
+                    bool visible = !Physics.Raycast(transform.position, doorCentre - transform.position, distance - 0.5f);
 
                     if (visible)
+                    {
+                        if (!closestDoorVisible)
+                            closestDoorDistance = float.MaxValue;   // Reset distance if first visible door
                         closestDoorVisible = true;
-
+                    }
                     if (distance < closestDoorDistance && closestDoorVisible == visible)
                     {
                         closestDoorDistance = distance;
-                        closestDoorIdx = i;
+                        closestActionDoorIdx = i;
                     }
                 }
 
                 // Rotate model to look at the closest door position
-                if (closestDoorIdx >= 0)
+                if (closestActionDoorIdx >= 0)
                 {
-                    Vector3 lookPos = GetDoorCenter(actionDoors[closestDoorIdx]);
+                    Vector3 lookPos = GetDoorCenter(actionDoors[closestActionDoorIdx]);
                     lookPos.y = transform.position.y;
                     transform.LookAt(lookPos);
                 }
+                else if (closestStaticDoorIdx >= 0)
+                {
+                    Vector3 lookPos = staticDoors.GetDoorPosition(closestStaticDoorIdx);
+                    lookPos.y = transform.position.y;
+                    transform.LookAt(lookPos);
+                }
+
+                // Re-enable model colliders
+                for (int i = 0; i < colliders.Length; i++)
+                    colliders[i].enabled = true;
             }
         }
 
