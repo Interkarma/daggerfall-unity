@@ -165,8 +165,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button automapShopColor;
         Button automapTavernColor;
         Button automapHouseColor;
+        Checkbox dungeonMicMapQoL;
+        Button dunMicMapInnerColor;
+        Button dunMicMapBorderColor;
 
         Button automapReset;
+        Button dunMicMapReset;
 
         #endregion
 
@@ -393,6 +397,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             automapHouseColor = AddColorPicker(leftPanel, "automapHouseColor", DaggerfallUnity.Settings.AutomapHouseColor);
 
             automapReset = AddButton(leftPanel, GetText("reset"), AutomapReset_OnMouseClick);
+
+            y = 0;
+
+            AddSectionTitle(rightPanel, "dungeonmicromap");
+            dungeonMicMapQoL = AddCheckbox(rightPanel, "dungeonMicMapQoL", DaggerfallUnity.Settings.DungeonMicMapQoL);
+            dunMicMapInnerColor = AddColorPicker(rightPanel, "dunMicMapInnerColor", DaggerfallUnity.Settings.DunMicMapInnerColor);
+            dunMicMapBorderColor = AddColorPicker(rightPanel, "dunMicMapBorderColor", DaggerfallUnity.Settings.DunMicMapBorderColor);
+
+            dunMicMapReset = AddButton(rightPanel, GetText("reset"), MicMapQoLReset_OnMouseClick);
         }
 
         private void AutomapReset_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -401,6 +414,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             automapShopColor.BackgroundColor = DaggerfallUI.DaggerfallDefaultShopAutomapColor;
             automapTavernColor.BackgroundColor = DaggerfallUI.DaggerfallDefaultTavernAutomapColor;
             automapHouseColor.BackgroundColor = DaggerfallUI.DaggerfallDefaultHouseAutomapColor;
+        }
+
+        private void MicMapQoLReset_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            dunMicMapInnerColor.BackgroundColor = DaggerfallUI.DaggerfallDefaultMicMapInnerQoLColor;
+            dunMicMapBorderColor.BackgroundColor = DaggerfallUI.DaggerfallDefaultMicMapBorderQoLColor;
         }
 
         private void SaveSettings()
@@ -520,6 +539,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.AutomapShopColor = automapShopColor.BackgroundColor;
             DaggerfallUnity.Settings.AutomapTavernColor = automapTavernColor.BackgroundColor;
             DaggerfallUnity.Settings.AutomapHouseColor = automapHouseColor.BackgroundColor;
+            DaggerfallUnity.Settings.DungeonMicMapQoL = dungeonMicMapQoL.IsChecked;
+            DaggerfallUnity.Settings.DunMicMapInnerColor = dunMicMapInnerColor.BackgroundColor;
+            DaggerfallUnity.Settings.DunMicMapBorderColor = dunMicMapBorderColor.BackgroundColor;
 
             DaggerfallUnity.Settings.SaveSettings();
         }
