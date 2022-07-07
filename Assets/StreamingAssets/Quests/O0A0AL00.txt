@@ -120,7 +120,7 @@ The legal system in %reg has its good points and bad ones.
 QuestLogEntry:  [1010]
 %qdt:
  I was handed a note by a beggar.
- The Thieves Guild has targetted me for 'unapproved'
+ The Thieves Guild has targeted me for 'unapproved'
  criminal activity. I must either join them or become
  their enemy.
 
