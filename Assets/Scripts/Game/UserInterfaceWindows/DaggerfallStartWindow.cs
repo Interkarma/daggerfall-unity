@@ -70,6 +70,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             InputManager.Instance.CursorVisible = true;
         }
 
+        float timer = 0;
+        bool oneTime = false;
+        public override void Draw()
+        {
+            base.Draw();
+
+            // 100ms is enough time to ensure window drawn and event raised before user can click
+            if (!oneTime && (timer += Time.realtimeSinceStartup) > 100)
+            {
+                RaiseOnStartFirstVisibleEvent();
+                oneTime = true;
+            }
+        }
+
         void LoadGame()
         {
             uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.UnitySaveGame, new object[] { uiManager, DaggerfallUnitySaveGameWindow.Modes.LoadGame, null, true }));
@@ -151,5 +165,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        public delegate void OnStartFirstVisibleEventHandler();
+        public static event OnStartFirstVisibleEventHandler OnStartFirstVisible;
+        void RaiseOnStartFirstVisibleEvent()
+        {
+            if (OnStartFirstVisible != null)
+                OnStartFirstVisible();
+        }
     }
 }
