@@ -19,13 +19,13 @@ public class PostProcessBuild
         {
             // Get build path
             string pureBuildPath = Path.GetDirectoryName(pathToBuiltProject);
+            Debug.LogFormat("Running OnPostprocessBuild at path `{0}`", pureBuildPath);
 
             // Remove PDB files
-            foreach (string file in Directory.GetFiles(pureBuildPath, "*.pdb"))
-            {
-                Debug.Log(file + " deleted!");
-                File.Delete(file);
-            }
+            RemoveFilePattern(pureBuildPath, "*.pdb");
+
+            // Remove .gitignore files
+            RemoveFilePattern(pureBuildPath, ".gitignore", SearchOption.AllDirectories);
 
             //// Create default mods folder
             //string modsPath = Path.Combine(pureBuildPath, defaultModsFolderName);
@@ -38,6 +38,15 @@ public class PostProcessBuild
 
             // Copy manual
             //FileUtil.CopyFileOrDirectory(Path.Combine("Assets/Docs", manualFileName), Path.Combine(pureBuildPath, manualFileName));
+        }
+
+        void RemoveFilePattern(string pureBuildPath, string pattern, SearchOption option = SearchOption.TopDirectoryOnly)
+        {
+            foreach (string file in Directory.GetFiles(pureBuildPath, pattern, option))
+            {
+                Debug.Log(file + " deleted!");
+                File.Delete(file);
+            }
         }
     }
 }
