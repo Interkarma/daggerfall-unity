@@ -24,8 +24,14 @@ public class PostProcessBuild
             // Remove PDB files
             RemoveFilePattern(pureBuildPath, "*.pdb");
 
+            // Remove release.yml files
+            RemoveFilePattern(pureBuildPath, ".release.yml");
+
             // Remove .gitignore files
             RemoveFilePattern(pureBuildPath, ".gitignore", SearchOption.AllDirectories);
+
+            // Remove "Daggerfall Unity_BurstDebugInformation_DoNotShip" directory
+            RemoveDirectoryPattern(pureBuildPath, "Daggerfall Unity_BurstDebugInformation_DoNotShip");
 
             //// Create default mods folder
             //string modsPath = Path.Combine(pureBuildPath, defaultModsFolderName);
@@ -44,8 +50,17 @@ public class PostProcessBuild
         {
             foreach (string file in Directory.GetFiles(pureBuildPath, pattern, option))
             {
-                Debug.Log(file + " deleted!");
                 File.Delete(file);
+                Debug.Log(file + " deleted!");
+            }
+        }
+
+        void RemoveDirectoryPattern(string pureBuildPath, string pattern, SearchOption option = SearchOption.TopDirectoryOnly)
+        {
+            foreach (string directory in Directory.GetDirectories(pureBuildPath, pattern, option))
+            {
+                Directory.Delete(directory, true);
+                Debug.Log(directory + " deleted!");
             }
         }
     }
