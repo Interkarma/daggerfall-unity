@@ -381,6 +381,14 @@ namespace DaggerfallWorkshop
                     found = true;
             }
 
+            // Finally, look for arena2 folder in StreamingAssets/GameFiles
+            if (Application.isPlaying && !found)
+            { 
+                path = TestArena2Exists(Path.Combine(Application.streamingAssetsPath, "GameFiles"));
+                if (!string.IsNullOrEmpty(path))
+                    found = true;
+            }
+
             // Did we find a path?
             if (found)
             {

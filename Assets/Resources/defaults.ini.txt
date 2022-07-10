@@ -3,8 +3,8 @@ MyDaggerfallPath=
 MyDaggerfallUnitySavePath=
 
 [Video]
-ResolutionWidth=1280
-ResolutionHeight=720
+ResolutionWidth=1920
+ResolutionHeight=1080
 RetroRenderingMode=0
 PostProcessingInRetroMode=0
 UseMipMapsInRetroMode=False
@@ -12,7 +12,7 @@ RetroModeAspectCorrection=0
 PalettizationLUTShift=1
 VSync=True
 TargetFrameRate=0
-Fullscreen=False
+Fullscreen=True
 ExclusiveFullscreen=False
 RunInBackground=True
 FieldOfView=65
