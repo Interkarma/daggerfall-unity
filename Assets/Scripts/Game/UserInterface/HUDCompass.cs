@@ -205,6 +205,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     continue;
                 }
 
+                if (detector.DetectedObjects == null || detector.DetectedObjects.Count == 0)
+                    continue;
+
                 foreach(PlayerGPS.NearbyObject no in detector.DetectedObjects)
                 {
                     if (no.gameObject != null)
