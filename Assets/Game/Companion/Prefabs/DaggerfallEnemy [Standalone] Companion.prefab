@@ -1,0 +1,2784 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3416167678077346801
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3232411237596820979}
+  - component: {fileID: 7647635640025288070}
+  - component: {fileID: 999098131603857872}
+  - component: {fileID: 7648516329757795051}
+  - component: {fileID: 1912028134143776755}
+  m_Layer: 5
+  m_Name: Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3232411237596820979
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3416167678077346801}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_Children:
+  - {fileID: 2763583797220572488}
+  m_Father: {fileID: 5421262379106624631}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 1.303}
+  m_SizeDelta: {x: 100, y: 25}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!223 &7647635640025288070
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3416167678077346801}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &999098131603857872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3416167678077346801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+--- !u!114 &7648516329757795051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3416167678077346801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4026662711
+--- !u!114 &1912028134143776755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3416167678077346801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 887b84b32c83447c9883828f70b22cfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &4379617114784909921
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9058585690117600652}
+  - component: {fileID: 5915023607829368896}
+  m_Layer: 0
+  m_Name: PotionSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9058585690117600652
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4379617114784909921}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5421262379106624631}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5915023607829368896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4379617114784909921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21a90329bf5343d2b360f496fedbfa38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  potions:
+  - potion:
+      ingredientIds: 3e00000010000000410000002a000000
+    count: 1
+  lootPrefab: {fileID: 3817830061456617253, guid: accce43b0aacfe946b545892b40b6afe,
+    type: 3}
+  archive: 205
+  record: 15
+--- !u!114 &-8730641147239372700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5421262379106408721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f718a78139c24dbc9973368ef35af1ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  followThreshold: 3
+  teleportThreshold: 10
+  entity: {fileID: 5421262379100913901}
+  motor: {fileID: 5421262379100897149}
+--- !u!114 &5367830844075744893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5421262379106408721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ede3ed18357429fa5ea785c93a6a2e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  threshold: 0.35
+  onHealthDropped:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5915023607829368896}
+        m_MethodName: Spawn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!1001 &5389319867828344774
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3232411237596820979}
+    m_Modifications:
+    - target: {fileID: 2781450880384676662, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_Name
+      value: HealthBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 5057170216524486296, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: daggerfallEntity
+      value: 
+      objectReference: {fileID: 5421262379100913901}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7f1acd3b7866e33448b581f0be16e83d, type: 3}
+--- !u!224 &2763583797220572488 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7822907652107037326, guid: 7f1acd3b7866e33448b581f0be16e83d,
+    type: 3}
+  m_PrefabInstance: {fileID: 5389319867828344774}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5421262379106286931
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 140354, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_Name
+      value: DaggerfallEnemy [Standalone] Companion
+      objectReference: {fileID: 0}
+    - target: {fileID: 140354, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 488118, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.025
+      objectReference: {fileID: 0}
+    - target: {fileID: 488118, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 488118, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.027000796
+      objectReference: {fileID: 0}
+    - target: {fileID: 488118, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 488118, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.99963546
+      objectReference: {fileID: 0}
+    - target: {fileID: 488118, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302536, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3367684, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11410784, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: EnemyType
+      value: 131
+      objectReference: {fileID: 0}
+    - target: {fileID: 11410784, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: EnemyGender
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11410784, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: EnemyReaction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11410784, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: AlliedToPlayer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11439840, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: BarkSound
+      value: 244
+      objectReference: {fileID: 0}
+    - target: {fileID: 11439840, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: MoveSound
+      value: 243
+      objectReference: {fileID: 0}
+    - target: {fileID: 11439840, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: AttackSound
+      value: 245
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.IsSetup
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.ID
+      value: 131
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.Team
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.Gender
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.HasIdle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.Affinity
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AnimStateRecord
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.BarkSound
+      value: 244
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.MapChance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.MoveSound
+      value: 243
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.Reactions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.AttackSound
+      value: 245
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.MaleTexture
+      value: 478
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.CanOpenDoors
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.LootTableKey
+      value: U
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.CorpseTexture
+      value: 24903681
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.FemaleTexture
+      value: 477
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.size
+      value: 81
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.ChanceForAttack2
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.HasRangedAttack1
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.size
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.size
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.size
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[0].x
+      value: 0.3232422
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[0].y
+      value: 0.7158203
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[1].x
+      value: 0.3232422
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[1].y
+      value: 0.6201172
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[2].x
+      value: 0.3232422
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[2].y
+      value: 0.52441406
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[3].x
+      value: 0.3232422
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[3].y
+      value: 0.42871094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[4].x
+      value: 0.79296875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[4].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[5].x
+      value: 0.3798828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[5].y
+      value: 0.3251953
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[6].x
+      value: 0.9121094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[6].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[7].x
+      value: 0.85253906
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[7].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[8].x
+      value: 0.47558594
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[8].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[9].x
+      value: 0.5390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[9].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[0]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[1]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[2]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[3]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[4]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[5]
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[6]
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[7]
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[8]
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[9]
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[10].x
+      value: 0.6660156
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[10].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[11].x
+      value: 0.60253906
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[11].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[12].x
+      value: 0.3798828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[12].y
+      value: 0.515625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[13].x
+      value: 0.3798828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[13].y
+      value: 0.41992188
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[14].x
+      value: 0.3232422
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[14].y
+      value: 0.90722656
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[15].x
+      value: 0.3232422
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[15].y
+      value: 0.81152344
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[16].x
+      value: 0.3798828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[16].y
+      value: 0.8984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[17].x
+      value: 0.3798828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[17].y
+      value: 0.8027344
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[18].x
+      value: 0.3798828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[18].y
+      value: 0.70703125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[19].x
+      value: 0.3798828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[19].y
+      value: 0.6113281
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[20].x
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[20].y
+      value: 0.66015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[21].x
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[21].y
+      value: 0.87890625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[22].x
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[22].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[23].x
+      value: 0.18652344
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[23].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[24].x
+      value: 0.27539062
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[24].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[25].x
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[25].y
+      value: 0.76953125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[26].x
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[26].y
+      value: 0.44140625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[27].x
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[27].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[28].x
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[28].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[29].x
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[29].y
+      value: 0.55078125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[30].x
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[30].y
+      value: 0.22265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[31].x
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[31].y
+      value: 0.33203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[32].x
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[32].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[33].x
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[33].y
+      value: 0.22265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[34].x
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[34].y
+      value: 0.33203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[35].x
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[35].y
+      value: 0.44140625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[36].x
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[36].y
+      value: 0.55078125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[37].x
+      value: 0.86816406
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[37].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[38].x
+      value: 0.2548828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[38].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[39].x
+      value: 0.17871094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[39].y
+      value: 0.7597656
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[40].x
+      value: 0.17871094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[40].y
+      value: 0.32226562
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[41].x
+      value: 0.17871094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[41].y
+      value: 0.43164062
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[42].x
+      value: 0.17871094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[42].y
+      value: 0.5410156
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[43].x
+      value: 0.17871094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[43].y
+      value: 0.8691406
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[44].x
+      value: 0.17871094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[44].y
+      value: 0.6503906
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[45].x
+      value: 0.7841797
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[45].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[46].x
+      value: 0.7001953
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[46].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[47].x
+      value: 0.61621094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[47].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[48].x
+      value: 0.53222656
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[48].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[49].x
+      value: 0.3642578
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[49].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[50].x
+      value: 0.4482422
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[50].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[51].x
+      value: 0.3388672
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[51].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[52].x
+      value: 0.26464844
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[52].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[53].x
+      value: 0.17871094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[53].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[54].x
+      value: 0.67871094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[54].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[55].x
+      value: 0.6113281
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[55].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[56].x
+      value: 0.4892578
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[56].y
+      value: 0.3251953
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[57].x
+      value: 0.7294922
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[57].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[58].x
+      value: 0.40722656
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[58].y
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[59].x
+      value: 0.43945312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[59].y
+      value: 0.3251953
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[60].x
+      value: 0.5371094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[60].y
+      value: 0.3251953
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[61].x
+      value: 0.94921875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[61].y
+      value: 0.00390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[62].x
+      value: 0.95214844
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[62].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[63].x
+      value: 0.2548828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[63].y
+      value: 0.42871094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[64].x
+      value: 0.2548828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[64].y
+      value: 0.53808594
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[65].x
+      value: 0.32617188
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[65].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[66].x
+      value: 0.39746094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[66].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[67].x
+      value: 0.46875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[67].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[68].x
+      value: 0.54003906
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[68].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[69].x
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[69].y
+      value: 0.76660156
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[70].x
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[70].y
+      value: 0.66015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[71].x
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[71].y
+      value: 0.8730469
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[72].x
+      value: 0.17871094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[72].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[73].x
+      value: 0.7470703
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[73].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[74].x
+      value: 0.8154297
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[74].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[75].x
+      value: 0.88378906
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[75].y
+      value: 0.21582031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[76].x
+      value: 0.2548828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[76].y
+      value: 0.3251953
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[77].x
+      value: 0.2548828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[77].y
+      value: 0.75097656
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[78].x
+      value: 0.2548828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[78].y
+      value: 0.8544922
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[79].x
+      value: 0.3232422
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[79].y
+      value: 0.3251953
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[80].x
+      value: 0.2548828
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[80].y
+      value: 0.64746094
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[10]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[11]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[12]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[13]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[14]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[15]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[16]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[17]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[18]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[19]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[20]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[21]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[22]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[23]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordFrames.Array.data[24]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[0].x
+      value: 1.025
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[0].y
+      value: 2.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[1].x
+      value: 1.275
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[1].y
+      value: 2.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[2].x
+      value: 1.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[2].y
+      value: 2.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[3].x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[3].y
+      value: 2.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[4].x
+      value: 0.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[4].y
+      value: 2.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[5].x
+      value: 1.975
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[5].y
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[6].x
+      value: 2.1000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[6].y
+      value: 2.4750001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[7].x
+      value: 1.8000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[7].y
+      value: 2.4750001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[8].x
+      value: 1.5500001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[8].y
+      value: 2.4750001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[9].x
+      value: 1.875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[9].y
+      value: 2.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[10].x
+      value: 1.475
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[10].y
+      value: 2.275
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[11].x
+      value: 1.625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[11].y
+      value: 2.275
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[12].x
+      value: 1.9250001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[12].y
+      value: 2.325
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[13].x
+      value: 1.475
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[13].y
+      value: 2.375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[14].x
+      value: 1.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[14].y
+      value: 2.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[15].x
+      value: 0.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[15].y
+      value: 2.075
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[16].x
+      value: 1.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[16].y
+      value: 2.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[17].x
+      value: 1.475
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[17].y
+      value: 2.1000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[18].x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[18].y
+      value: 2.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[19].x
+      value: 0.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[19].y
+      value: 2.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[20].x
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[20].y
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[21].x
+      value: 1.5500001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[21].y
+      value: 2.4750001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[22].x
+      value: 1.6750001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[22].y
+      value: 2.425
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[23].x
+      value: 1.475
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[23].y
+      value: 2.3500001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[24].x
+      value: 1.1750001
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.RecordSizes.Array.data[24].y
+      value: 2.325
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[0].width
+      value: 0.0390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[1].width
+      value: 0.0390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[2].width
+      value: 0.0390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[3].width
+      value: 0.0390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[4].width
+      value: 0.047851562
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[5].width
+      value: 0.047851562
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[6].width
+      value: 0.047851562
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[7].width
+      value: 0.047851562
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[8].width
+      value: 0.051757812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[9].width
+      value: 0.051757812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[0].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[10].width
+      value: 0.051757812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[11].width
+      value: 0.051757812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[12].width
+      value: 0.038085938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[13].width
+      value: 0.038085938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[14].width
+      value: 0.038085938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[15].width
+      value: 0.038085938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[16].width
+      value: 0.036132812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[17].width
+      value: 0.036132812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[18].width
+      value: 0.036132812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[19].width
+      value: 0.036132812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[1].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[20].width
+      value: 0.07714844
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[21].width
+      value: 0.07714844
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[22].width
+      value: 0.07714844
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[23].width
+      value: 0.07714844
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[24].width
+      value: 0.07714844
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[25].width
+      value: 0.07714844
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[26].width
+      value: 0.08203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[27].width
+      value: 0.08203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[28].width
+      value: 0.08203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[29].width
+      value: 0.08203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[2].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[30].width
+      value: 0.08203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[31].width
+      value: 0.08203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[32].width
+      value: 0.06933594
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[33].width
+      value: 0.06933594
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[34].width
+      value: 0.06933594
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[35].width
+      value: 0.06933594
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[36].width
+      value: 0.06933594
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[37].width
+      value: 0.06933594
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[38].width
+      value: 0.059570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[39].width
+      value: 0.059570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[3].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[40].width
+      value: 0.059570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[41].width
+      value: 0.059570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[42].width
+      value: 0.059570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[43].width
+      value: 0.059570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[44].width
+      value: 0.059570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[45].width
+      value: 0.072265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[46].width
+      value: 0.072265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[47].width
+      value: 0.072265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[48].width
+      value: 0.072265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[49].width
+      value: 0.072265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[4].height
+      value: 0.08300781
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[50].width
+      value: 0.072265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[51].width
+      value: 0.056640625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[52].width
+      value: 0.0625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[53].width
+      value: 0.07421875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[54].width
+      value: 0.056640625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[55].width
+      value: 0.055664062
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[56].width
+      value: 0.036132812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[57].width
+      value: 0.051757812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[58].width
+      value: 0.056640625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[59].width
+      value: 0.038085938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[5].height
+      value: 0.08300781
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[60].width
+      value: 0.03515625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[61].width
+      value: 0.041992188
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[62].width
+      value: 0.041992188
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[63].width
+      value: 0.041992188
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[64].width
+      value: 0.041992188
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[65].width
+      value: 0.059570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[66].width
+      value: 0.059570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[67].width
+      value: 0.059570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[68].width
+      value: 0.059570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[69].width
+      value: 0.064453125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[6].height
+      value: 0.08300781
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[70].width
+      value: 0.064453125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[71].width
+      value: 0.064453125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[72].width
+      value: 0.064453125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[73].width
+      value: 0.056640625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[74].width
+      value: 0.056640625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[75].width
+      value: 0.056640625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[76].width
+      value: 0.056640625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[77].width
+      value: 0.044921875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[78].width
+      value: 0.044921875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[79].width
+      value: 0.044921875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[7].height
+      value: 0.08300781
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[80].width
+      value: 0.044921875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[8].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[9].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[1].Record
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[2].Record
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[3].Record
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[4].Record
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[5].Record
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[6].Record
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[7].Record
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[0].width
+      value: 56
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[1].width
+      value: 69
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[2].width
+      value: 74
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[3].width
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[4].width
+      value: 52
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[5].width
+      value: 108
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[6].width
+      value: 115
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[7].width
+      value: 98
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[8].width
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[9].width
+      value: 102
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[10].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[11].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[12].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[13].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[14].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[15].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[16].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[17].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[18].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[19].height
+      value: 0.083984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[20].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[21].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[22].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[23].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[24].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[25].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[26].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[27].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[28].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[29].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[30].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[31].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[32].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[33].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[34].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[35].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[36].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[37].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[38].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[39].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[40].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[41].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[42].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[43].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[44].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[45].height
+      value: 0.095703125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[46].height
+      value: 0.095703125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[47].height
+      value: 0.095703125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[48].height
+      value: 0.095703125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[49].height
+      value: 0.095703125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[50].height
+      value: 0.095703125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[51].height
+      value: 0.08886719
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[52].height
+      value: 0.08886719
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[53].height
+      value: 0.09082031
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[54].height
+      value: 0.09277344
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[55].height
+      value: 0.09472656
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[56].height
+      value: 0.08105469
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[57].height
+      value: 0.080078125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[58].height
+      value: 0.08203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[59].height
+      value: 0.08300781
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[60].height
+      value: 0.08300781
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[61].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[62].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[63].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[64].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[65].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[66].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[67].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[68].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[69].height
+      value: 0.09472656
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[70].height
+      value: 0.09472656
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[71].height
+      value: 0.09472656
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[72].height
+      value: 0.09472656
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[73].height
+      value: 0.091796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[74].height
+      value: 0.091796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[75].height
+      value: 0.091796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[76].height
+      value: 0.091796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[77].height
+      value: 0.091796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[78].height
+      value: 0.091796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[79].height
+      value: 0.091796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[80].height
+      value: 0.091796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[0].height
+      value: 118
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[10].width
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[11].width
+      value: 89
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[12].width
+      value: 105
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[13].width
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[14].width
+      value: 79
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[15].width
+      value: 52
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[16].width
+      value: 74
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[17].width
+      value: 81
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[18].width
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[19].width
+      value: 51
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[1].height
+      value: 117
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[20].width
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[21].width
+      value: 84
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[22].width
+      value: 91
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[23].width
+      value: 81
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[24].width
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[2].height
+      value: 118
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[3].height
+      value: 118
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[4].height
+      value: 118
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[5].height
+      value: 137
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[6].height
+      value: 136
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[7].height
+      value: 136
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[8].height
+      value: 136
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[9].height
+      value: 134
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[10].height
+      value: 124
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[11].height
+      value: 124
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[12].height
+      value: 127
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[13].height
+      value: 130
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[14].height
+      value: 132
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[15].height
+      value: 114
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[16].height
+      value: 112
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[17].height
+      value: 115
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[18].height
+      value: 117
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[19].height
+      value: 116
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[20].height
+      value: 137
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[21].height
+      value: 136
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[22].height
+      value: 133
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[23].height
+      value: 129
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[24].height
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[0].NumFrames
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[1].NumFrames
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[2].NumFrames
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[3].NumFrames
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[4].NumFrames
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[5].NumFrames
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[6].NumFrames
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[7].NumFrames
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[0].frameCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[1].frameCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[1].startIndex
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[2].frameCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[2].startIndex
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[3].frameCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[3].startIndex
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[4].frameCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[4].startIndex
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[5].frameCount
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[5].startIndex
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[6].frameCount
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[6].startIndex
+      value: 26
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[7].frameCount
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[7].startIndex
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[8].frameCount
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[8].startIndex
+      value: 38
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[9].frameCount
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[9].startIndex
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[10].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[10].startIndex
+      value: 51
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[11].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[11].startIndex
+      value: 52
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[12].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[12].startIndex
+      value: 53
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[13].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[13].startIndex
+      value: 54
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[14].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[14].startIndex
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[15].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[15].startIndex
+      value: 56
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[16].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[16].startIndex
+      value: 57
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[17].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[17].startIndex
+      value: 58
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[18].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[18].startIndex
+      value: 59
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[19].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[19].startIndex
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[20].frameCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[20].startIndex
+      value: 61
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[21].frameCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[21].startIndex
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[22].frameCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[22].startIndex
+      value: 69
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[23].frameCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[23].startIndex
+      value: 73
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[24].frameCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[24].startIndex
+      value: 77
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[5].FlipLeftRight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[6].FlipLeftRight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[7].FlipLeftRight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.RangedAttackAnimFrames.Array.size
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[0].FramePerSecond
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[1].FramePerSecond
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[2].FramePerSecond
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[3].FramePerSecond
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[4].FramePerSecond
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[5].FramePerSecond
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[6].FramePerSecond
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.StateAnims.Array.data[7].FramePerSecond
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames2.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.RangedAttackAnimFrames.Array.data[0]
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.RangedAttackAnimFrames.Array.data[1]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.RangedAttackAnimFrames.Array.data[5]
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.RangedAttackAnimFrames.Array.data[6]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.RangedAttackAnimFrames.Array.data[7]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.RangedAttackAnimFrames.Array.data[8]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.RangedAttackAnimFrames.Array.data[9]
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames.Array.data[2]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames.Array.data[3]
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames.Array.data[4]
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames.Array.data[5]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames.Array.data[6]
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames2.Array.data[0]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames2.Array.data[1]
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames2.Array.data[2]
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames2.Array.data[3]
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames2.Array.data[4]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478892, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: summary.Enemy.PrimaryAttackAnimFrames2.Array.data[5]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11499798, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: HearingRadius
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 14323946, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+      propertyPath: m_Height
+      value: 2.15
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 11449422, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+--- !u!1 &5421262379106408721 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 140354, guid: 81f9cc3450e0e0d4b8f609fa31938b81,
+    type: 3}
+  m_PrefabInstance: {fileID: 5421262379106286931}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5421262379106624631 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 481572, guid: 81f9cc3450e0e0d4b8f609fa31938b81,
+    type: 3}
+  m_PrefabInstance: {fileID: 5421262379106286931}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5421262379100897149 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 11452974, guid: 81f9cc3450e0e0d4b8f609fa31938b81,
+    type: 3}
+  m_PrefabInstance: {fileID: 5421262379106286931}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5421262379106408721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 727166852387f3c4ca2404b91b6598d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5421262379100913901 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 11435454, guid: 81f9cc3450e0e0d4b8f609fa31938b81,
+    type: 3}
+  m_PrefabInstance: {fileID: 5421262379106286931}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5421262379106408721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f21f0be6973ba834e8bc968c33766e0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

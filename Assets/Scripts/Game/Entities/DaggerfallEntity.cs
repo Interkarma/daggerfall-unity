@@ -330,7 +330,11 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public virtual int SetHealth(int amount, bool restoreMode = false)
         {
+            int initialHealth = currentHealth;
+
             currentHealth = (restoreMode) ? amount : Mathf.Clamp(amount, 0, MaxHealth);
+            RaiseOnHealthChangedEvent(currentHealth - initialHealth);
+
             if (currentHealth <= 0)
                 RaiseOnDeathEvent();
 
@@ -878,6 +882,14 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             if (OnDeath != null && !quiesce)
                 OnDeath(this);
+        }
+
+        public delegate void OnHealthChangedHandler(DaggerfallEntity entity, int change);
+        public event OnHealthChangedHandler OnHealthChanged;
+        protected void RaiseOnHealthChangedEvent(int change)
+        {
+            if (OnHealthChanged != null && !quiesce)
+                OnHealthChanged(this, change);
         }
 
         public delegate void OnExhaustedHandler(DaggerfallEntity entity);

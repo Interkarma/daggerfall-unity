@@ -1,0 +1,1547 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3817830061445392811
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 101432, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_Name
+      value: DaggerfallLootContainer [Game Serializable] Potion Loot
+      objectReference: {fileID: 0}
+    - target: {fileID: 421668, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421668, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421668, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421668, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421668, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 421668, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421668, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421668, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421668, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421668, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 421668, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2315524, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: m_CastShadows
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11486862, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: customDrop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11486862, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: entityName
+      value: Companion help
+      objectReference: {fileID: 0}
+    - target: {fileID: 11486862, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: ContainerType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: customRecord
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: customArchive
+      value: 205
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.Record
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.Size.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.Size.y
+      value: 0.625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.Archive
+      value: 205
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasedMaterial
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.size
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.size
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[0].x
+      value: 0.34570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[0].y
+      value: 0.2265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[1].x
+      value: 0.4375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[1].y
+      value: 0.80859375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[2].x
+      value: 0.53515625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[2].y
+      value: 0.15234375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[3].x
+      value: 0.53515625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[3].y
+      value: 0.3125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[4].x
+      value: 0.53515625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[4].y
+      value: 0.47265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[5].x
+      value: 0.53515625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[5].y
+      value: 0.79296875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[6].x
+      value: 0.9453125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[6].y
+      value: 0.015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[7].x
+      value: 0.53515625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[7].y
+      value: 0.6328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[8].x
+      value: 0.8613281
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[8].y
+      value: 0.015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[9].x
+      value: 0.4375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[9].y
+      value: 0.015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[10].x
+      value: 0.19335938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[10].y
+      value: 0.82421875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[11].x
+      value: 0.60546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[11].y
+      value: 0.53515625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[12].x
+      value: 0.60546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[12].y
+      value: 0.390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[13].x
+      value: 0.28710938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[13].y
+      value: 0.61328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[14].x
+      value: 0.29882812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[14].y
+      value: 0.421875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[15].x
+      value: 0.29882812
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[15].y
+      value: 0.19921875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[16].x
+      value: 0.15039062
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[16].y
+      value: 0.2109375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[17].x
+      value: 0.4375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[17].y
+      value: 0.18359375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[18].x
+      value: 0.60546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[18].y
+      value: 0.15234375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[19].x
+      value: 0.34570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[19].y
+      value: 0.41796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[20].x
+      value: 0.4375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[20].y
+      value: 0.65625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[21].x
+      value: 0.34570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[21].y
+      value: 0.59375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[22].x
+      value: 0.4375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[22].y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[23].x
+      value: 0.4375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[23].y
+      value: 0.3359375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[24].x
+      value: 0.19335938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[24].y
+      value: 0.421875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[25].x
+      value: 0.0078125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[25].y
+      value: 0.2109375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[26].x
+      value: 0.0078125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[26].y
+      value: 0.015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[27].x
+      value: 0.19335938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[27].y
+      value: 0.015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[28].x
+      value: 0.0078125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[28].y
+      value: 0.66015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[29].x
+      value: 0.19335938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[29].y
+      value: 0.61328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[30].x
+      value: 0.34570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[30].y
+      value: 0.015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[31].x
+      value: 0.53515625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[31].y
+      value: 0.015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[32].x
+      value: 0.60546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[32].y
+      value: 0.6796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[33].x
+      value: 0.14453125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[33].y
+      value: 0.4375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[34].x
+      value: 0.60546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[34].y
+      value: 0.82421875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[35].x
+      value: 0.1484375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[35].y
+      value: 0.8515625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[36].x
+      value: 0.6796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[36].y
+      value: 0.15234375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[37].x
+      value: 0.0078125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[37].y
+      value: 0.4375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[38].x
+      value: 0.0078125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[38].y
+      value: 0.8515625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[39].x
+      value: 0.19335938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[39].y
+      value: 0.19921875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[40].x
+      value: 0.34570312
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[40].y
+      value: 0.75390625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[41].x
+      value: 0.60546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[41].y
+      value: 0.265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[42].x
+      value: 0.76953125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[42].y
+      value: 0.015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[43].x
+      value: 0.30664062
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[43].y
+      value: 0.82421875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[44].x
+      value: 0.65234375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[44].y
+      value: 0.015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[0].width
+      value: 0.064453125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[1].width
+      value: 0.046875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[2].width
+      value: 0.046875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[3].width
+      value: 0.046875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[4].width
+      value: 0.046875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[5].width
+      value: 0.046875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[6].width
+      value: 0.046875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[7].width
+      value: 0.046875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[8].width
+      value: 0.060546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[9].width
+      value: 0.07421875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[0].height
+      value: 0.14453125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[10].width
+      value: 0.08984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[11].width
+      value: 0.01953125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[12].width
+      value: 0.01953125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[13].width
+      value: 0.01953125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[14].width
+      value: 0.01953125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[15].width
+      value: 0.01953125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[16].width
+      value: 0.01953125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[17].width
+      value: 0.072265625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[18].width
+      value: 0.05078125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[19].width
+      value: 0.060546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[1].height
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[20].width
+      value: 0.052734375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[21].width
+      value: 0.064453125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[22].width
+      value: 0.0625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[23].width
+      value: 0.05859375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[24].width
+      value: 0.08203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[25].width
+      value: 0.119140625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[26].width
+      value: 0.16210938
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[27].width
+      value: 0.12890625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[28].width
+      value: 0.1328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[29].width
+      value: 0.0703125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[2].height
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[30].width
+      value: 0.068359375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[31].width
+      value: 0.09375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[32].width
+      value: 0.017578125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[33].width
+      value: 0.021484375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[34].width
+      value: 0.017578125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[35].width
+      value: 0.021484375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[36].width
+      value: 0.033203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[37].width
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[38].width
+      value: 0.1171875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[39].width
+      value: 0.08203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[3].height
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[40].width
+      value: 0.0546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[41].width
+      value: 0.037109375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[42].width
+      value: 0.068359375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[43].width
+      value: 0.015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[44].width
+      value: 0.09375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[4].height
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[5].height
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[6].height
+      value: 0.08203125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[7].height
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[8].height
+      value: 0.0625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[9].height
+      value: 0.12109375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[0].width
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[1].width
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[2].width
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[3].width
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[4].width
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[5].width
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[6].width
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[7].width
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[8].width
+      value: 31
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[9].width
+      value: 38
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[10].height
+      value: 0.12109375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[11].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[12].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[13].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[14].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[15].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[16].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[17].height
+      value: 0.10546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[18].height
+      value: 0.06640625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[19].height
+      value: 0.12890625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[20].height
+      value: 0.10546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[21].height
+      value: 0.11328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[22].height
+      value: 0.109375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[23].height
+      value: 0.1171875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[24].height
+      value: 0.14453125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[25].height
+      value: 0.1796875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[26].height
+      value: 0.1484375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[27].height
+      value: 0.13671875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[28].height
+      value: 0.14453125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[29].height
+      value: 0.1640625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[30].height
+      value: 0.1640625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[31].height
+      value: 0.08984375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[32].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[33].height
+      value: 0.1015625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[34].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[35].height
+      value: 0.09765625
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[36].height
+      value: 0.0546875
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[37].height
+      value: 0.17578125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[38].height
+      value: 0.1328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[39].height
+      value: 0.17578125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[40].height
+      value: 0.1328125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[41].height
+      value: 0.078125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[42].height
+      value: 0.05859375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[43].height
+      value: 0.0703125
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasRects.Array.data[44].height
+      value: 0.05859375
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[0].height
+      value: 37
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[10].width
+      value: 46
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[11].width
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[12].width
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[13].width
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[14].width
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[15].width
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[16].width
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[17].width
+      value: 37
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[18].width
+      value: 26
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[19].width
+      value: 31
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[1].height
+      value: 29
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[20].width
+      value: 27
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[21].width
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[22].width
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[23].width
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[24].width
+      value: 42
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[25].width
+      value: 61
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[26].width
+      value: 83
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[27].width
+      value: 66
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[28].width
+      value: 68
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[29].width
+      value: 36
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[2].height
+      value: 29
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[30].width
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[31].width
+      value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[32].width
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[33].width
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[34].width
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[35].width
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[36].width
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[37].width
+      value: 58
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[38].width
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[39].width
+      value: 42
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[3].height
+      value: 29
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[40].width
+      value: 28
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[41].width
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[42].width
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[43].width
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[44].width
+      value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[4].height
+      value: 29
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[5].height
+      value: 29
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[6].height
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[7].height
+      value: 29
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[8].height
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[9].height
+      value: 31
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[10].height
+      value: 31
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[11].height
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[12].height
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[13].height
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[14].height
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[15].height
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[16].height
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[17].height
+      value: 27
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[18].height
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[19].height
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[20].height
+      value: 27
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[21].height
+      value: 29
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[22].height
+      value: 28
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[23].height
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[24].height
+      value: 37
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[25].height
+      value: 46
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[26].height
+      value: 38
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[27].height
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[28].height
+      value: 37
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[29].height
+      value: 42
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[30].height
+      value: 42
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[31].height
+      value: 23
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[32].height
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[33].height
+      value: 26
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[34].height
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[35].height
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[36].height
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[37].height
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[38].height
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[39].height
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[40].height
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[41].height
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[42].height
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[43].height
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[44].height
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[0].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[1].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[1].startIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[2].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[2].startIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[3].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[3].startIndex
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[4].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[4].startIndex
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[5].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[5].startIndex
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[6].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[6].startIndex
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[7].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[7].startIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[8].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[8].startIndex
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[9].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[9].startIndex
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[10].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[10].startIndex
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[11].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[11].startIndex
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[12].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[12].startIndex
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[13].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[13].startIndex
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[14].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[14].startIndex
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[15].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[15].startIndex
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[16].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[16].startIndex
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[17].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[17].startIndex
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[18].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[18].startIndex
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[19].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[19].startIndex
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[20].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[20].startIndex
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[21].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[21].startIndex
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[22].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[22].startIndex
+      value: 22
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[23].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[23].startIndex
+      value: 23
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[24].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[24].startIndex
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[25].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[25].startIndex
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[26].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[26].startIndex
+      value: 26
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[27].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[27].startIndex
+      value: 27
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[28].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[28].startIndex
+      value: 28
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[29].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[29].startIndex
+      value: 29
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[30].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[30].startIndex
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[31].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[31].startIndex
+      value: 31
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[32].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[32].startIndex
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[33].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[33].startIndex
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[34].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[34].startIndex
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[35].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[35].startIndex
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[36].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[36].startIndex
+      value: 36
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[37].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[37].startIndex
+      value: 37
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[38].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[38].startIndex
+      value: 38
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[39].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[39].startIndex
+      value: 39
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[40].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[40].startIndex
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[41].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[41].startIndex
+      value: 41
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[42].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[42].startIndex
+      value: 42
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[43].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[43].startIndex
+      value: 43
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[44].frameCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11493726, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}
+      propertyPath: summary.AtlasIndices.Array.data[44].startIndex
+      value: 44
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559, type: 3}

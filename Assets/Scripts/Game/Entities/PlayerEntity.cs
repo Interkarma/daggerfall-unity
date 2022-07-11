@@ -486,8 +486,8 @@ namespace DaggerfallWorkshop.Game.Entity
                 for (uint l = 0; l < (gameMinutes - lastGameMinutes); ++l)
                 {
                     // Catch up time and break if something spawns. Don't spawn encounters while player is swimming in water or on ship (same as classic).
-                    if (!GameManager.Instance.PlayerEnterExit.IsPlayerSwimming && 
-                        !GameManager.Instance.TransportManager.IsOnShip() && 
+                    if (!GameManager.Instance.PlayerEnterExit.IsPlayerSwimming &&
+                        !GameManager.Instance.TransportManager.IsOnShip() &&
                         IntermittentEnemySpawn(l + lastGameMinutes + 1))
                         break;
 
@@ -1197,7 +1197,10 @@ namespace DaggerfallWorkshop.Game.Entity
             if (godMode)
                 return currentHealth = MaxHealth;
 
+            int initialHealth = currentHealth;
             currentHealth = (restoreMode) ? amount : Mathf.Clamp(amount, 0, MaxHealth);
+            RaiseOnHealthChangedEvent(currentHealth - initialHealth);
+
             if (currentHealth <= 0)
             {
                 // Players can have avoid death benefit from guild memberships, leaves them on 10% hp
