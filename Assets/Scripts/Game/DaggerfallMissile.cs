@@ -508,6 +508,10 @@ namespace DaggerfallWorkshop.Game
                     aimDirection = caster.transform.forward;
                 else
                     aimDirection = (predictedPosition - caster.transform.position).normalized;
+
+                // Enemy archers must aim lower to compensate for crouched player capsule
+                if (IsArrow && enemySenses.Target?.EntityType == EntityTypes.Player && GameManager.Instance.PlayerMotor.IsCrouching)
+                    aimDirection += Vector3.down * 0.05f;
             }
 
             return aimDirection;
