@@ -1008,7 +1008,7 @@ namespace DaggerfallWorkshop.Game
 
             setBinding(KeyCode.F8, Actions.PrintScreen, true);
             setBinding(KeyCode.F9, Actions.QuickSave, true);
-            setBinding(KeyCode.F12, Actions.QuickLoad, true);
+            setBinding(KeyCode.F11, Actions.QuickLoad, true);
 
             setAxisBinding("Axis1", AxisActions.MovementHorizontal);
             setAxisBinding("Axis2", AxisActions.MovementVertical);
