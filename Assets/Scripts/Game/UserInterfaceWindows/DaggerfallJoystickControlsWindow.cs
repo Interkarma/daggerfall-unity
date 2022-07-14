@@ -88,7 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            if (!AllowCancel && !waitingForInput && Input.GetKeyDown(KeyCode.Escape))
+            if (!AllowCancel && !waitingForInput && Input.GetKeyDown(exitKey))
             {
                 ShowMultipleAssignmentsMessage();
             }

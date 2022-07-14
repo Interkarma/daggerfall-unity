@@ -31,6 +31,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             : base(uiManager, previous)
         {
             ParentPanel.BackgroundColor = Color.clear;
+            // Prevent duplicate close calls with base class's exitKey (Escape)
+            AllowCancel = false;
         }
 
         #endregion
@@ -68,9 +70,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             // Toggle window closed with same hotkey used to open it
-            if (InputManager.Instance.GetKeyDown(toggleClosedBinding))
+            if (InputManager.Instance.GetKeyDown(toggleClosedBinding) || Input.GetKeyDown(exitKey))
                 isCloseWindowDeferred = true;
-            else if (InputManager.Instance.GetKeyUp(toggleClosedBinding) && isCloseWindowDeferred)
+            else if ((InputManager.Instance.GetKeyUp(toggleClosedBinding) || Input.GetKeyUp(exitKey)) && isCloseWindowDeferred)
             {
                 isCloseWindowDeferred = false;
                 CloseWindow();

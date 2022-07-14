@@ -116,6 +116,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             : base(uiManager)
         {
             this.ignoreAllocatedBed = ignoreAllocatedBed;
+            // Prevent duplicate close calls with base class's exitKey (Escape)
+            AllowCancel = false;
         }
 
         #endregion
