@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop
     {
         const string defaultsIniName = "defaults.ini";
         const string settingsIniName = "settings.ini";
+        const string settingsDistIniName = "settings-{0}.ini";
 
         const string sectionDaggerfall = "Daggerfall";
         const string sectionVideo = "Video";
@@ -52,6 +53,7 @@ namespace DaggerfallWorkshop
         IniData userIniData = null;
 
         string persistentPath = null;
+        string distributionSuffix = null;
 
         public string PersistentDataPath
         {
@@ -70,9 +72,49 @@ namespace DaggerfallWorkshop
             }
         }
 
+        /// <summary>
+        /// Distribution suffix for alternate distributions of DFU.
+        /// Can be null or empty if no distribution suffix is loaded.
+        /// </summary>
+        public string DistributionSuffix
+        {
+            get { return distributionSuffix == null ? ReadDistributionSuffix() : distributionSuffix; }
+        }
+
         public SettingsManager()
         {
             LoadSettings();
+        }
+
+        /// <summary>
+        /// Reads a distribution suffix name of up to 16 characters in length from Application.dataFile/dist.suf.
+        /// This suffix is appended to settings.ini and keybinds.txt to form a unique config for a distribution.
+        /// If no distribution suffix file is provided then none will be used.
+        /// </summary>
+        /// <returns>Distribution suffix name. Can be be an empty string.</returns>
+        string ReadDistributionSuffix()
+        {
+            distributionSuffix = string.Empty;
+
+            try
+            {
+                // Attempt to load distribution name file
+                string distributionFilePath = Path.Combine(Application.dataPath, "dist.suf");
+                if (File.Exists(distributionFilePath))
+                {
+                    distributionSuffix = File.ReadAllText(distributionFilePath);
+                    distributionSuffix.Trim();
+                    if (distributionSuffix.Length > 16)
+                        distributionSuffix = distributionSuffix.Substring(0, 16);
+                }
+            }
+            catch (Exception ex)
+            {
+                DaggerfallUnity.LogMessage(string.Format("Exception loading distribution suffix. {0}", ex.Message));
+                distributionSuffix = string.Empty;
+            }
+
+            return distributionSuffix;
         }
 
         #region Public Settings Properties
@@ -652,6 +694,14 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
+        string SettingsName()
+        {
+            if (string.IsNullOrEmpty(DistributionSuffix))
+                return settingsIniName;
+            else
+                return string.Format(settingsDistIniName, DistributionSuffix);
+        }
+
         void ReadSettingsFile()
         {
             // Load defaults.ini
@@ -663,17 +713,17 @@ namespace DaggerfallWorkshop
 
             // Must have settings.ini in persistent data path
             string message;
-            string userIniPath = Path.Combine(PersistentDataPath, settingsIniName);
+            string userIniPath = Path.Combine(PersistentDataPath, SettingsName());
             if (!File.Exists(userIniPath))
             {
                 // Create file
-                message = string.Format("Creating new '{0}' at path '{1}'", settingsIniName, userIniPath);
+                message = string.Format("Creating new '{0}' at path '{1}'", SettingsName(), userIniPath);
                 File.WriteAllBytes(userIniPath, asset.bytes);
                 DaggerfallUnity.LogMessage(message);
             }
 
             // Log ini path in use
-            message = string.Format("Using '{0}' at path '{1}'", settingsIniName, userIniPath);
+            message = string.Format("Using '{0}' at path '{1}'", SettingsName(), userIniPath);
             DaggerfallUnity.LogMessage(message);
 
             // Load settings.ini or set as read-only
@@ -689,7 +739,7 @@ namespace DaggerfallWorkshop
             {
                 try
                 {
-                    string path = Path.Combine(PersistentDataPath, settingsIniName);
+                    string path = Path.Combine(PersistentDataPath, SettingsName());
                     if (File.Exists(path))
                     {
                         iniParser.WriteFile(path, userIniData);

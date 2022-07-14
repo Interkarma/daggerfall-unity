@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game
         String[] axisKeyCodeToInputAxis = new String[numAxes * 2];
 
         const string keyBindsFilename = "KeyBinds.txt";
+        const string keyBindsDistFilename = "KeyBinds-{0}.txt";
 
         const float deadZone = 0.05f;
         const float inputWaitTotal = 0.0833f;
@@ -1888,7 +1889,13 @@ namespace DaggerfallWorkshop.Game
 
         string GetKeyBindsSavePath()
         {
-            return Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, keyBindsFilename);
+            string filename;
+            if (string.IsNullOrEmpty(DaggerfallUnity.Settings.DistributionSuffix))
+                filename = keyBindsFilename;
+            else
+                filename = string.Format(keyBindsDistFilename, DaggerfallUnity.Settings.DistributionSuffix);
+
+            return Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, filename);
         }
 
         bool HasKeyBindsSave()
