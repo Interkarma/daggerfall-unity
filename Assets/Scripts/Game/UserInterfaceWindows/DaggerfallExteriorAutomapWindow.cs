@@ -171,6 +171,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallExteriorAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+            // Prevent duplicate close calls with base class's exitKey (Escape)
+            AllowCancel = false;
         }
 
         /// <summary>
@@ -580,11 +582,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
 
-            if (Input.GetKeyDown(KeyCode.Escape) ||
+            if (Input.GetKeyDown(exitKey) ||
                 // Toggle window closed with same hotkey used to open it
                 InputManager.Instance.GetKeyDown(automapBinding))
                 isCloseWindowDeferred = true;
-            else if ((Input.GetKeyUp(KeyCode.Escape) ||
+            else if ((Input.GetKeyUp(exitKey) ||
                 // Toggle window closed with same hotkey used to open it
                 InputManager.Instance.GetKeyUp(automapBinding)) && isCloseWindowDeferred)
             {

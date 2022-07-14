@@ -85,6 +85,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallCharacterSheetWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+            // Prevent duplicate close calls with base class's exitKey (Escape)
+            AllowCancel = false;
         }
 
         #endregion
@@ -234,7 +236,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (DaggerfallUI.Instance.HotkeySequenceProcessed  == HotkeySequence.HotkeySequenceProcessStatus.NotFound)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
+                if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || Input.GetKeyUp(exitKey))
                     if (CheckIfDoneLeveling())
                         CloseWindow();
             }

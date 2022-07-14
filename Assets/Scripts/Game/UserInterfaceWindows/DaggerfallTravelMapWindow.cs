@@ -229,6 +229,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 Debug.LogError(string.Format("Error Registering Travelmap Console commands: {0}", ex.Message));
             }
+
+            // Prevent duplicate close calls with base class's exitKey (Escape)
+            AllowCancel = false;
         }
 
         #endregion
@@ -371,7 +374,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             // Toggle window closed with same hotkey used to open it
-            if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
+            if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || Input.GetKeyUp(exitKey))
             {
                 if (RegionSelected)
                     CloseRegionPanel();
