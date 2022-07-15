@@ -549,6 +549,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             restartButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GameSetupRestart);
             optionsPanel.Components.Add(restartButton);
 
+            // Disable restart button when running from distribution
+            // Prevents end user from accidentally stepping back to path selection for game files
+            // Distributions are expected to bundle game files in StreamingAssets/GameFiles with an empty MyDaggerfallPath in settings-distsuffix.ini
+            if (!string.IsNullOrEmpty(DaggerfallUnity.Settings.DistributionSuffix))
+                restartButton.Enabled = false;
+
             if (DaggerfallUnity.Settings.LypyL_ModSystem)
             {
                 Button ShowModsButton = new Button();
