@@ -178,7 +178,7 @@ namespace DaggerfallWorkshop
             summary.Flags = flags;
 
             // TEMP: Add name seed
-            summary.NameSeed = (int) position;
+            summary.NameSeed = (int)position;
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace DaggerfallWorkshop
                         summary.FixedEnemyType = (MobileTypes)(summary.FactionOrMobileID & 0xff);
                     else
                         summary.FixedEnemyType = (MobileTypes)(summary.FactionOrMobileID);
-                }       
+                }
                 else if (resource.TextureRecord == 10) // Start marker. Holds data for dungeon block water level and castle block status.
                 {
                     if (resource.SoundIndex != 0)
@@ -335,7 +335,7 @@ namespace DaggerfallWorkshop
             if (summary.FlatType == FlatTypes.NPC)
             {
                 Collider col = gameObject.GetComponent<BoxCollider>();
-                if(col == null)
+                if (col == null)
                     col = gameObject.AddComponent<BoxCollider>();
                 col.isTrigger = true;
             }
@@ -437,7 +437,7 @@ namespace DaggerfallWorkshop
                 }
             }
         }
-        
+
         /// <summary>
         /// Draws a circle at the bottom of the bilboard to make it easier to judge the size regardless of rotation.
         /// </summary>
