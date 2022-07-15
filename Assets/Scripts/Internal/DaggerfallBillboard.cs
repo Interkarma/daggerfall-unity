@@ -80,10 +80,19 @@ namespace DaggerfallWorkshop
                     meshRenderer.enabled = false;
                 }
 
-                yield return null;// without this delay many billboards were broken (not animating or visible when shouldn't)
+                // wait a single frame so all objects initialize
+                yield return null;
 
-                if (faceY) DaggerfallBillboardSystem.AddPointBillboard(transform);
-                else DaggerfallBillboardSystem.AddAxialBillboard(transform);
+                // Rotate to face camera in game
+                // Do not rotate if MeshRenderer disabled. The player can't see it anyway and this could be a hidden editor marker with child objects.
+                // In the case of hidden editor markers with child treasure objects, we don't want a 3D replacement spinning around like a billboard.
+                // Treasure objects are parented to editor marker in this way as the moving action data for treasure is actually on editor marker parent.
+                // Visible child of treasure objects have their own MeshRenderer and DaggerfallBillboard to apply rotations.
+                if (meshRenderer.enabled)
+                {
+                    if (faceY) DaggerfallBillboardSystem.AddPointBillboard(transform);
+                    else DaggerfallBillboardSystem.AddAxialBillboard(transform);
+                }
 
                 // Restart animation coroutine if not running
                 if (summary.AnimatedMaterial)

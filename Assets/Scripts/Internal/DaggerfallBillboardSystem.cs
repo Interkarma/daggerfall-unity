@@ -69,11 +69,6 @@ namespace DaggerfallWorkshop
             if (mainCamera == null)
                 mainCamera = GameObject.FindGameObjectWithTag("MainCamera")?.GetComponent<Camera>();
 
-            // Rotate to face camera in game
-            // Do not rotate if MeshRenderer disabled. The player can't see it anyway and this could be a hidden editor marker with child objects.
-            // In the case of hidden editor markers with child treasure objects, we don't want a 3D replacement spinning around like a billboard.
-            // Treasure objects are parented to editor marker in this way as the moving action data for treasure is actually on editor marker parent.
-            // Visible child of treasure objects have their own MeshRenderer and DaggerfallBillboard to apply rotations.
             if (mainCamera != null)
             {
                 pmCalculateQuaterions.Begin();
