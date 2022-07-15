@@ -38,9 +38,7 @@ namespace DaggerfallWorkshop
         const int animalFps = 5;
         const int lightFps = 12;
 
-        Camera mainCamera = null;
         MeshFilter meshFilter = null;
-        bool restartAnims = true;
         MeshRenderer meshRenderer;
 
         int framesPerSecond = 5;     // General FPS
@@ -62,15 +60,20 @@ namespace DaggerfallWorkshop
         public override bool FaceY
         {
             get { return faceY; }
-            set { faceY = value; }
+            set
+            {
+                DaggerfallBillboardSystem.RemoveBillboard(transform);
+                faceY = value;
+                if (faceY) DaggerfallBillboardSystem.AddPointBillboard(transform);
+                else DaggerfallBillboardSystem.AddAxialBillboard(transform);
+            }
         }
 
-        void Start()
+        IEnumerator Start()
         {
             if (Application.isPlaying)
             {
                 // Get component references
-                mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
                 meshFilter = GetComponent<MeshFilter>();
                 meshRenderer = GetComponent<MeshRenderer>();
 
@@ -82,34 +85,22 @@ namespace DaggerfallWorkshop
                     // Example is the treasury in Daggerfall castle, some action records flow through the quest item marker
                     meshRenderer.enabled = false;
                 }
+
+                yield return null;// without this delay many billboards were broken (not animating or visible when shouldn't)
+
+                if (faceY) DaggerfallBillboardSystem.AddPointBillboard(transform);
+                else DaggerfallBillboardSystem.AddAxialBillboard(transform);
+
+                // Restart animation coroutine if not running
+                if (summary.AnimatedMaterial)
+                    StartCoroutine(AnimateBillboard());
             }
+            else yield return null;
         }
 
-        void OnDisable()
+        void OnDestroy()
         {
-            restartAnims = true;
-        }
-
-        void Update()
-        {
-            // Restart animation coroutine if not running
-            if (restartAnims && summary.AnimatedMaterial)
-            {
-                StartCoroutine(AnimateBillboard());
-                restartAnims = false;
-            }
-
-            // Rotate to face camera in game
-            // Do not rotate if MeshRenderer disabled. The player can't see it anyway and this could be a hidden editor marker with child objects.
-            // In the case of hidden editor markers with child treasure objects, we don't want a 3D replacement spinning around like a billboard.
-            // Treasure objects are parented to editor marker in this way as the moving action data for treasure is actually on editor marker parent.
-            // Visible child of treasure objects have their own MeshRenderer and DaggerfallBillboard to apply rotations.
-            if (mainCamera && Application.isPlaying && meshRenderer.enabled)
-            {
-                float y = (FaceY) ? mainCamera.transform.forward.y : 0;
-                Vector3 viewDirection = -new Vector3(mainCamera.transform.forward.x, y, mainCamera.transform.forward.z);
-                transform.LookAt(transform.position + viewDirection);
-            }
+            DaggerfallBillboardSystem.RemoveBillboard(transform);
         }
 
         IEnumerator AnimateBillboard()
@@ -440,9 +431,9 @@ namespace DaggerfallWorkshop
                 if (sceneView)
                 {
                     // Editor camera stands in for player camera in edit mode
-                    float y = (FaceY) ? mainCamera.transform.forward.y : 0;
-                    Vector3 viewDirection = -new Vector3(sceneView.camera.transform.forward.x, y, sceneView.camera.transform.forward.z);
-                    transform.LookAt(transform.position + viewDirection);
+                    var camera = sceneView.camera;
+                    Vector3 forward = camera.transform.forward;
+                    transform.rotation = Quaternion.LookRotation(-new Vector3(forward.x, ((FaceY) ? forward.y : 0), forward.z));
                 }
             }
         }
