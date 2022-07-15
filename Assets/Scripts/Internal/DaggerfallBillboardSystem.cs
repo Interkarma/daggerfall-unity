@@ -79,6 +79,7 @@ namespace DaggerfallWorkshop
 
                     // schedule axial billboard job:
                     var jobAxial = new SetRotationJob { Value = Quaternion.LookRotation(-new Vector3(cameraForward.x, 0, cameraForward.z)) };
+                    // var jobAxial = new AxialLookAtPointJob { Point = cameraPosition };// better looking but about x2 more costly
                     var jobHandleAxial = jobAxial.Schedule(axialBillboards);
 
                     // schedule point billboard job:
@@ -140,6 +141,28 @@ namespace DaggerfallWorkshop
             public quaternion Value;
             void IJobParallelForTransform.Execute(int index, TransformAccess transform)
                 => transform.rotation = Value;
+        }
+
+        [Unity.Burst.BurstCompile]
+        public struct LookAtPointJob : IJobParallelForTransform
+        {
+            public float3 Point;
+            void IJobParallelForTransform.Execute(int index, TransformAccess transform)
+                => transform.rotation = quaternion.LookRotationSafe(Point - (float3)transform.position, new float3 { y = 1 });
+        }
+
+        [Unity.Burst.BurstCompile]
+        public struct AxialLookAtPointJob : IJobParallelForTransform
+        {
+            public float3 Point;
+            void IJobParallelForTransform.Execute(int index, TransformAccess transform)
+            {
+                float3 position = (float3)transform.position;
+                transform.rotation = quaternion.LookRotationSafe(
+                    new float3 { x = Point.x, y = position.y, z = Point.z } - position,
+                    new float3 { y = 1 }
+                );
+            }
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
