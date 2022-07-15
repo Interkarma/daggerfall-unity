@@ -216,9 +216,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             saveFolderLabel.TextColor = saveFolderColor;
             screenshotPanel.Components.Add(saveFolderLabel);
 
-            // Allow clicking folder label to open save folder in explorer
-            // Currently Windows player and editor platforms only
-            if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+            // Allow clicking folder label to open save folder
+            // Currently for Windows and Mac only
+            if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows ||
+                SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX)
             {
                 saveFolderLabel.MouseOverBackgroundColor = Color.blue;
                 saveFolderLabel.OnMouseClick += SaveFolderLabel_OnMouseClick;
