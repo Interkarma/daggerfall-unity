@@ -60,13 +60,7 @@ namespace DaggerfallWorkshop
         public override bool FaceY
         {
             get { return faceY; }
-            set
-            {
-                DaggerfallBillboardSystem.RemoveBillboard(transform);
-                faceY = value;
-                if (faceY) DaggerfallBillboardSystem.AddPointBillboard(transform);
-                else DaggerfallBillboardSystem.AddAxialBillboard(transform);
-            }
+            set { faceY = value; }
         }
 
         IEnumerator Start()
