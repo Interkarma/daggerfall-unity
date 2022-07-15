@@ -98,7 +98,6 @@ namespace DaggerfallWorkshop
                 if (summary.AnimatedMaterial)
                     StartCoroutine(AnimateBillboard());
             }
-            else yield return null;
         }
 
         void OnDestroy()
