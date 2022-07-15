@@ -40,9 +40,7 @@ namespace DaggerfallWorkshop
         static Dictionary<Transform, int>
             pointIndices = new Dictionary<Transform, int>(),
             axialIndices = new Dictionary<Transform, int>();
-        static ProfilerMarker
-            pmCalculateQuaterions = new ProfilerMarker("calculate quaterions"),
-            pmScheduleJobs = new ProfilerMarker("schedule jobs");
+        static ProfilerMarker pmScheduleJobs = new ProfilerMarker("schedule jobs");
         Camera mainCamera = null;
         JobHandle dependency;
 
@@ -71,26 +69,20 @@ namespace DaggerfallWorkshop
 
             if (mainCamera != null)
             {
-                pmCalculateQuaterions.Begin();
-                var forward = mainCamera.transform.forward;
-                var lookAxial = Quaternion.LookRotation(-new Vector3(forward.x, 0, forward.z));
-                var lookPoint = Quaternion.LookRotation(-forward);
-                pmCalculateQuaterions.End();
+                dependency.Complete();// make sure these jobs take no more than a single frame:
 
                 pmScheduleJobs.Begin();
                 {
-                    dependency.Complete();// make sure these jobs take no more than a single frame:
+                    var cameraTransform = mainCamera.transform;
+                    var cameraForward = cameraTransform.forward;
+                    var cameraPosition = cameraTransform.position;
 
-                    var jobAxial = new SetRotationJob
-                    {
-                        Value = lookAxial
-                    };
+                    // schedule axial billboard job:
+                    var jobAxial = new SetRotationJob { Value = Quaternion.LookRotation(-new Vector3(cameraForward.x, 0, cameraForward.z)) };
                     var jobHandleAxial = jobAxial.Schedule(axialBillboards);
 
-                    var jobPoint = new SetRotationJob
-                    {
-                        Value = lookPoint
-                    };
+                    // schedule point billboard job:
+                    var jobPoint = new SetRotationJob { Value = Quaternion.LookRotation(-cameraForward) };
                     var jobHandlePoint = jobPoint.Schedule(pointBillboards);
 
                     dependency = JobHandle.CombineDependencies(jobHandleAxial, jobHandlePoint);
