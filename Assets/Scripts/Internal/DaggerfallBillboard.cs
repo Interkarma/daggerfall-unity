@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop
         const int lightFps = 12;
 
         MeshFilter meshFilter = null;
+        bool restartAnims = true;
         MeshRenderer meshRenderer;
 
         int framesPerSecond = 5;     // General FPS
@@ -63,7 +64,7 @@ namespace DaggerfallWorkshop
             set { faceY = value; }
         }
 
-        IEnumerator Start()
+        void Start()
         {
             if (Application.isPlaying)
             {
@@ -79,28 +80,36 @@ namespace DaggerfallWorkshop
                     // Example is the treasury in Daggerfall castle, some action records flow through the quest item marker
                     meshRenderer.enabled = false;
                 }
-
-                // wait a single frame so all objects initialize
-                yield return null;
-
-                // Rotate to face camera in game
-                // Do not rotate if MeshRenderer disabled. The player can't see it anyway and this could be a hidden editor marker with child objects.
-                // In the case of hidden editor markers with child treasure objects, we don't want a 3D replacement spinning around like a billboard.
-                // Treasure objects are parented to editor marker in this way as the moving action data for treasure is actually on editor marker parent.
-                // Visible child of treasure objects have their own MeshRenderer and DaggerfallBillboard to apply rotations.
-                if (meshRenderer.enabled)
-                {
-                    if (faceY) DaggerfallBillboardSystem.AddPointBillboard(transform);
-                    else DaggerfallBillboardSystem.AddAxialBillboard(transform);
-                }
-
-                // Restart animation coroutine if not running
-                if (summary.AnimatedMaterial)
-                    StartCoroutine(AnimateBillboard());
             }
         }
 
-        void OnDestroy()
+        void OnDisable()
+        {
+            restartAnims = true;
+        }
+
+        void Update()
+        {
+            // Restart animation coroutine if not running
+            if (restartAnims && summary.AnimatedMaterial)
+            {
+                StartCoroutine(AnimateBillboard());
+                restartAnims = false;
+            }
+        }
+
+        // Rotate to face camera in game
+        // Do not rotate if MeshRenderer disabled. The player can't see it anyway and this could be a hidden editor marker with child objects.
+        // In the case of hidden editor markers with child treasure objects, we don't want a 3D replacement spinning around like a billboard.
+        // Treasure objects are parented to editor marker in this way as the moving action data for treasure is actually on editor marker parent.
+        // Visible child of treasure objects have their own MeshRenderer and DaggerfallBillboard to apply rotations.
+        void OnBecameVisible()
+        {
+            if (faceY) DaggerfallBillboardSystem.AddPointBillboard(transform);
+            else DaggerfallBillboardSystem.AddAxialBillboard(transform);
+        }
+
+        void OnBecameInvisible()
         {
             DaggerfallBillboardSystem.RemoveBillboard(transform);
         }
@@ -433,9 +442,10 @@ namespace DaggerfallWorkshop
                 if (sceneView)
                 {
                     // Editor camera stands in for player camera in edit mode
-                    var camera = sceneView.camera;
-                    Vector3 forward = camera.transform.forward;
-                    transform.rotation = Quaternion.LookRotation(-new Vector3(forward.x, ((FaceY) ? forward.y : 0), forward.z));
+                    Vector3 forward = sceneView.camera.transform.forward;
+                    float y = (FaceY) ? forward.y : 0;
+                    Vector3 viewDirection = -new Vector3(forward.x, y, forward.z);
+                    transform.LookAt(transform.position + viewDirection);
                 }
             }
         }
