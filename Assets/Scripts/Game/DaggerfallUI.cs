@@ -140,6 +140,8 @@ namespace DaggerfallWorkshop.Game
 
         Questing.Actions.GivePc lastPendingOfferSender = null;
 
+        internal float timeClosedInputMessageBox;
+
         public DaggerfallFont Font1 { get { return GetFont(DaggerfallFont.FontName.FONT0000); } }
         public DaggerfallFont Font2 { get { return GetFont(DaggerfallFont.FontName.FONT0001); } }
         public DaggerfallFont Font3 { get { return GetFont(DaggerfallFont.FontName.FONT0002); } }
@@ -356,6 +358,9 @@ namespace DaggerfallWorkshop.Game
             // This window isn't intended to be replaced by mods - rather mods should plug in custom pages implementing IGameEffectConfigPage
             // Mods should register their custom pages using gameEffectsConfigWindow.OnRegisterCustomPages event
             gameEffectsConfigWindow = new GameEffectsConfigWindow((IUserInterfaceManager)uiManager);
+
+            // Input timer at startup
+            timeClosedInputMessageBox = Time.realtimeSinceStartup;
 
             SetupSingleton();
         }

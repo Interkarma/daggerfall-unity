@@ -266,6 +266,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ReturnPlayerInputEvent(DaggerfallInputMessageBox sender, string userInput)
         {
             CloseWindow();
+            DaggerfallUI.Instance.timeClosedInputMessageBox = Time.realtimeSinceStartup;
             if (OnGotUserInput != null)
                 OnGotUserInput(sender, userInput);
         }

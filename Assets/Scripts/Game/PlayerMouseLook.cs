@@ -107,9 +107,14 @@ namespace DaggerfallWorkshop.Game
             // When cursor activated during gameplay, player can click on world objects to activate them
             // When cursor simply active from closing a popup, etc. a click will recapture cursor
             // We handle activated cursor first as it takes precendence over mouse look and normal cursor recapture
-            if (!GameManager.IsGamePaused && InputManager.Instance.ActionComplete(InputManager.Actions.ActivateCursor))
+            if (!GameManager.IsGamePaused && InputManager.Instance.ActionStarted(InputManager.Actions.ActivateCursor))
             {
-                cursorActive = !cursorActive;
+                // Don't allow activate cursor for 1 second after closing an input message box
+                // Helps prevent player accidentally activating cursor when responding to some input
+                // For example, responding to guard at Castle Daggerfall and cursor becomes active after pressing return key
+                // Players often think this is a bug and don't know the default active cursor toggle is return
+                if (Time.realtimeSinceStartup - DaggerfallUI.Instance.timeClosedInputMessageBox > 1)
+                    cursorActive = !cursorActive;
             }
 
             // Show cursor and unlock while active
