@@ -109,11 +109,11 @@ namespace DaggerfallWorkshop.Game
             // We handle activated cursor first as it takes precendence over mouse look and normal cursor recapture
             if (!GameManager.IsGamePaused && InputManager.Instance.ActionStarted(InputManager.Actions.ActivateCursor))
             {
-                // Don't allow activate cursor for 1 second after closing an input message box
+                // Don't allow activate cursor for 0.3 seconds after closing an input message box
                 // Helps prevent player accidentally activating cursor when responding to some input
                 // For example, responding to guard at Castle Daggerfall and cursor becomes active after pressing return key
                 // Players often think this is a bug and don't know the default active cursor toggle is return
-                if (Time.realtimeSinceStartup - DaggerfallUI.Instance.timeClosedInputMessageBox > 1)
+                if (Time.realtimeSinceStartup - DaggerfallUI.Instance.timeClosedInputMessageBox > 0.3f)
                     cursorActive = !cursorActive;
             }
 
