@@ -904,7 +904,7 @@ namespace DaggerfallWorkshop.Game.Items
                                 case (int)ArtifactsSubTypes.Mace_of_Molag_Bal:
                                     return MetalTypes.Ebony;
                                 case (int)ArtifactsSubTypes.Wabbajack:
-                                    return MetalTypes.Steel;
+                                    return MetalTypes.Dwarven;
                                 default:
                                     break;
                             }
@@ -912,7 +912,7 @@ namespace DaggerfallWorkshop.Game.Items
                     }
                     // Artifact weapons with no unique effects
                     if (item.ItemName == "Chrysamere")
-                        return MetalTypes.Elven;
+                        return MetalTypes.Mithril;
                     if (item.ItemName == "Staff of Magnus")
                         return MetalTypes.Mithril;
                 }
