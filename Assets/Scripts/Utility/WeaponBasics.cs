@@ -4,14 +4,13 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Kirk.O
+// Contributors:    
 // 
 // Notes:
 //
 
 using System;
 using System.Collections.Generic;
-using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Utility
@@ -200,130 +199,6 @@ namespace DaggerfallWorkshop.Utility
                     return "MJIC00C6.CIF";
                 default:
                     throw new Exception("Unsupported element type.");
-            }
-        }
-
-        public static string GetModdedWeaponFilename(DaggerfallUnityItem weapon)
-        {
-            if (weapon.IsEnchanted)
-            {
-                if (weapon.IsArtifact)
-                {
-                    switch (weapon.TemplateIndex)
-                    {
-                        case (int)Weapons.Dagger:
-                            return "MEHRUNESRAZOR.CIF";
-                        case (int)Weapons.Staff:
-                            if (weapon.ItemName == "Wabbajack")
-                                return "WABBAJACK.CIF";
-                            else
-                                return "STAFFOFMAGNUS.CIF";
-                        case (int)Weapons.Katana:
-                            return "EBONYBLADE.CIF";
-                        case (int)Weapons.Claymore:
-                            return "CHRYSAMERE.CIF";
-                        case (int)Weapons.Mace:
-                            return "MACEOFMOLAGBAL.CIF";
-                        case (int)Weapons.Warhammer:
-                            return "VOLENDRUNG.CIF";
-                        case (int)Weapons.Long_Bow:
-                            return "AURIELSBOW.CIF";
-                        default:
-                            return ""; // Just place-holder for now, may see about allowing custom weapon types to use this in some way.
-                    }
-                }
-                else
-                {
-                    switch (weapon.TemplateIndex)
-                    {
-                        case (int)Weapons.Dagger:
-                            return "DAGGERMAGIC.CIF";
-                        case (int)Weapons.Tanto:
-                            return "TANTOMAGIC.CIF";
-                        case (int)Weapons.Staff:
-                            return "STAFFMAGIC.CIF";
-                        case (int)Weapons.Shortsword:
-                            return "SHORTSWORDMAGIC.CIF";
-                        case (int)Weapons.Wakazashi:
-                            return "WAKAZASHIMAGIC.CIF";
-                        case (int)Weapons.Broadsword:
-                            return "BROADSWORDMAGIC.CIF";
-                        case (int)Weapons.Saber:
-                            return "SABERMAGIC.CIF";
-                        case (int)Weapons.Longsword:
-                            return "LONGSWORDMAGIC.CIF";
-                        case (int)Weapons.Katana:
-                            return "KATANAMAGIC.CIF";
-                        case (int)Weapons.Claymore:
-                            return "CLAYMOREMAGIC.CIF";
-                        case (int)Weapons.Dai_Katana:
-                            return "DAIKATANAMAGIC.CIF";
-                        case (int)Weapons.Mace:
-                            return "MACEMAGIC.CIF";
-                        case (int)Weapons.Flail:
-                            return "FLAILMAGIC.CIF";
-                        case (int)Weapons.Warhammer:
-                            return "WARHAMMERMAGIC.CIF";
-                        case (int)Weapons.Battle_Axe:
-                            return "BATTLEAXEMAGIC.CIF";
-                        case (int)Weapons.War_Axe:
-                            return "WARAXEMAGIC.CIF";
-                        case (int)Weapons.Short_Bow:
-                            return "SHORTBOWMAGIC.CIF";
-                        case (int)Weapons.Long_Bow:
-                            return "LONGBOWMAGIC.CIF";
-                        case (int)Weapons.Arrow:
-                            return "ARROWMAGIC.CIF";
-                        default:
-                            return ""; // Just place-holder for now, may see about allowing custom weapon types to use this in some way.
-                    }
-                }
-            }
-            else
-            {
-                switch (weapon.TemplateIndex)
-                {
-                    case (int)Weapons.Dagger:
-                        return "DAGGER.CIF";
-                    case (int)Weapons.Tanto:
-                        return "TANTO.CIF";
-                    case (int)Weapons.Staff:
-                        return "STAFF.CIF";
-                    case (int)Weapons.Shortsword:
-                        return "SHORTSWORD.CIF";
-                    case (int)Weapons.Wakazashi:
-                        return "WAKAZASHI.CIF";
-                    case (int)Weapons.Broadsword:
-                        return "BROADSWORD.CIF";
-                    case (int)Weapons.Saber:
-                        return "SABER.CIF";
-                    case (int)Weapons.Longsword:
-                        return "LONGSWORD.CIF";
-                    case (int)Weapons.Katana:
-                        return "KATANA.CIF";
-                    case (int)Weapons.Claymore:
-                        return "CLAYMORE.CIF";
-                    case (int)Weapons.Dai_Katana:
-                        return "DAIKATANA.CIF";
-                    case (int)Weapons.Mace:
-                        return "MACE.CIF";
-                    case (int)Weapons.Flail:
-                        return "FLAIL.CIF";
-                    case (int)Weapons.Warhammer:
-                        return "WARHAMMER.CIF";
-                    case (int)Weapons.Battle_Axe:
-                        return "BATTLEAXE.CIF";
-                    case (int)Weapons.War_Axe:
-                        return "WARAXE.CIF";
-                    case (int)Weapons.Short_Bow:
-                        return "SHORTBOW.CIF";
-                    case (int)Weapons.Long_Bow:
-                        return "LONGBOW.CIF";
-                    case (int)Weapons.Arrow:
-                        return "ARROW.CIF";
-                    default:
-                        return ""; // Just place-holder for now, may see about allowing custom weapon types to use this in some way.
-                }
             }
         }
 
