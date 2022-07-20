@@ -214,7 +214,7 @@ namespace DaggerfallWorkshop.Utility
                         case (int)Weapons.Dagger:
                             return "MEHRUNESRAZOR.CIF";
                         case (int)Weapons.Staff:
-                            if (weapon.ItemName == "Wabbajack")
+                            if (weapon.ItemName == "The Wabbajack")
                                 return "WABBAJACK.CIF";
                             else
                                 return "STAFFOFMAGNUS.CIF";
