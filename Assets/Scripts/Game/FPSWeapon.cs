@@ -549,7 +549,7 @@ namespace DaggerfallWorkshop.Game
                     {
                         filename = WeaponBasics.GetModdedWeaponFilename(SpecificWeapon);
 
-                        if (filename == "")
+                        if (string.IsNullOrEmpty(filename))
                             filename = WeaponBasics.GetWeaponFilename(WeaponType); // Possibly make support for custom weapon types for the HUD in the future.
                     }
 
