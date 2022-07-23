@@ -214,10 +214,17 @@ namespace DaggerfallWorkshop.Utility
                         case (int)Weapons.Dagger:
                             return "MEHRUNESRAZOR.CIF";
                         case (int)Weapons.Staff:
-                            if (weapon.ItemName == "The Wabbajack")
-                                return "WABBAJACK.CIF";
-                            else
-                                return "STAFFOFMAGNUS.CIF";
+                            foreach (DaggerfallConnect.FallExe.DaggerfallEnchantment enchantment in weapon.LegacyEnchantments)
+                            {
+                                if (enchantment.type == DaggerfallConnect.FallExe.EnchantmentTypes.SpecialArtifactEffect)
+                                {
+                                    if (enchantment.param == (int)ArtifactsSubTypes.Wabbajack)
+                                        return "WABBAJACK.CIF";
+                                }
+                                else
+                                    return "STAFFOFMAGNUS.CIF";
+                            }
+                            return "";
                         case (int)Weapons.Katana:
                             return "EBONYBLADE.CIF";
                         case (int)Weapons.Claymore:
