@@ -65,7 +65,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallUnity dfUnity;
         CifRciFile cifFile;
         WeaponAtlas weaponAtlas;
-        Queue<WeaponAtlas> weaponAtlasCache = new Queue<WeaponAtlas>();
+        readonly Queue<WeaponAtlas> weaponAtlasCache = new Queue<WeaponAtlas>();
         Rect weaponPosition;
         float weaponScaleX;
         float weaponScaleY;
@@ -269,6 +269,13 @@ namespace DaggerfallWorkshop.Game
                     dfAudioSource.PlayOneShot(customSound, 0, 1f);
                 }
             }
+        }
+
+        public void TryCacheReadiedWeaponAtlas(MetalTypes metalType, WeaponTypes weaponType)
+        {
+            var fileName = WeaponBasics.GetWeaponFilename(weaponType);
+            if (GetCachedWeaponAtlas(fileName, metalType) == null)
+                CacheWeaponAtlas(GetWeaponTextureAtlas(fileName, metalType, 2, 2, true));
         }
 
         #region Private Methods
@@ -579,7 +586,7 @@ namespace DaggerfallWorkshop.Game
                 rectsOut[i] = rct;
             }
 
-            var loadedAtlas = new WeaponAtlas()
+            return new WeaponAtlas()
             {
                 FileName = filename,
                 MetalType = metalType,
@@ -587,9 +594,6 @@ namespace DaggerfallWorkshop.Game
                 WeaponRects = rectsOut,
                 WeaponIndices = indicesOut
             };
-
-            CacheWeaponAtlas(loadedAtlas);
-            return loadedAtlas;
         }
 
         private Texture2D GetWeaponTexture2D(
