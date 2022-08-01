@@ -88,8 +88,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             this.mode = mode;
             this.displayMostRecentChar = displayMostRecentChar;
 
-            // Update save textBox
-            LoadLatestSaveGameIntoSaveNameTextBox();
+            // Update saveTextBox in Load Mode
+            if (this.mode == Modes.LoadGame)
+                LoadLatestSaveGameIntoSaveNameTextBox();  
         }
 
         #endregion
@@ -293,8 +294,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update saves list
             UpdateSavesList();
 
-            // Update save textBox
-            LoadLatestSaveGameIntoSaveNameTextBox();
+            // Update saveTextBox in Load Mode
+            if (this.mode == Modes.LoadGame)
+                LoadLatestSaveGameIntoSaveNameTextBox();
         }
 
         public override void Update()
