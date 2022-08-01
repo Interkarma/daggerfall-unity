@@ -87,6 +87,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             this.mode = mode;
             this.displayMostRecentChar = displayMostRecentChar;
+
+            // Update save textBox
             LoadLatestSaveGameIntoSaveNameTextBox();
         }
 
@@ -290,6 +292,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Update saves list
             UpdateSavesList();
+
+            // Update save textBox
+            LoadLatestSaveGameIntoSaveNameTextBox();
         }
 
         public override void Update()
