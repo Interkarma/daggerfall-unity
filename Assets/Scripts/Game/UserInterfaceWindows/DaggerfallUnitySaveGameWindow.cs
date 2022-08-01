@@ -87,6 +87,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             this.mode = mode;
             this.displayMostRecentChar = displayMostRecentChar;
+            LoadLatestSaveGameIntoSaveNameTextBox();
         }
 
         #endregion
@@ -460,6 +461,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 #pragma warning restore 0618
         }
 
+        #endregion
+
+        #region Private Methods
+        private void LoadLatestSaveGameIntoSaveNameTextBox()
+        {
+            int mostRecentSave = GameManager.Instance.SaveLoadManager.FindMostRecentSave();
+            SaveInfo_v1 latestSaveInfo = GameManager.Instance.SaveLoadManager.GetSaveInfo(mostRecentSave);
+            currentPlayerName = latestSaveInfo.characterName;
+            saveNameTextBox.Text = latestSaveInfo.saveName;
+            screenshotPanel.BackgroundTexture = new Texture2D(0, 0);
+            UpdateSelectedSaveInfo();
+        }
         #endregion
 
         #region Event Handlers
