@@ -87,10 +87,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             this.mode = mode;
             this.displayMostRecentChar = displayMostRecentChar;
-
-            // Update saveTextBox in Load Mode
-            if (this.mode == Modes.LoadGame)
-                LoadLatestSaveGameIntoSaveNameTextBox();  
         }
 
         #endregion
@@ -294,9 +290,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Update saves list
             UpdateSavesList();
 
-            // Update saveTextBox in Load Mode
-            if (this.mode == Modes.LoadGame)
-                LoadLatestSaveGameIntoSaveNameTextBox();
+            // Autoselect save at top of list
+            if (mode == Modes.LoadGame && savesList.Count > 0)
+                savesList.SelectIndex(0);
         }
 
         public override void Update()
@@ -468,18 +464,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 #pragma warning restore 0618
         }
 
-        #endregion
-
-        #region Private Methods
-        private void LoadLatestSaveGameIntoSaveNameTextBox()
-        {
-            int mostRecentSave = GameManager.Instance.SaveLoadManager.FindMostRecentSave();
-            SaveInfo_v1 latestSaveInfo = GameManager.Instance.SaveLoadManager.GetSaveInfo(mostRecentSave);
-            currentPlayerName = latestSaveInfo.characterName;
-            saveNameTextBox.Text = latestSaveInfo.saveName;
-            screenshotPanel.BackgroundTexture = new Texture2D(0, 0);
-            UpdateSelectedSaveInfo();
-        }
         #endregion
 
         #region Event Handlers
