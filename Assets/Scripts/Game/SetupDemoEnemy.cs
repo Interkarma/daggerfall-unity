@@ -172,12 +172,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     else if (DaggerfallEntity.GetCustomCareerTemplate(enemyIndex) != null)
                     {
-                        // For custom enemies, we use the 7th bit to tell whether a class or monster was intended
-                        // 0-127 is monster
-                        // 128-255 is class
-                        // 256-383 is monster again
-                        // etc
-                        if ((enemyIndex & 128) != 0)
+                        if (DaggerfallEntity.IsClassEnemyId(enemyIndex))
                         {
                             entityBehaviour.EntityType = EntityTypes.EnemyClass;
                         }
