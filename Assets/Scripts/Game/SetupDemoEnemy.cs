@@ -221,12 +221,22 @@ namespace DaggerfallWorkshop.Game
         {
             // Get mobile type based on entity type and career index
             MobileTypes mobileType;
-            if (entityType == EntityTypes.EnemyMonster)
-                mobileType = (MobileTypes)careerIndex;
-            else if (entityType == EntityTypes.EnemyClass)
-                mobileType = (MobileTypes)(careerIndex + 128);
+
+            // For classic enemies, careerIndex is equal to enemyId for monsters, or enemyId - 128 for class enemies (ex: Mage, enemyId=128, careerIndex=0)
+            // For custom enemies, we just always store the enemyId in careerIndex, even if class type
+            if (careerIndex < 256)
+            {                
+                if (entityType == EntityTypes.EnemyMonster)
+                    mobileType = (MobileTypes)careerIndex;
+                else if (entityType == EntityTypes.EnemyClass)
+                    mobileType = (MobileTypes)(careerIndex + 128);
+                else
+                    return;
+            }
             else
-                return;
+            {
+                mobileType = (MobileTypes)careerIndex;
+            }
 
             MobileReactions enemyReaction = (isHostile) ? MobileReactions.Hostile : MobileReactions.Passive;
             MobileGender enemyGender = gender;
