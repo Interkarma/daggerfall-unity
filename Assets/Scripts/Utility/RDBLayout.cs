@@ -1247,7 +1247,7 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
-        public static List<int> NPCFlatArchives = new List<int>{334, 346, 357, 176, 177, 178, 179, 180, 181, 182, 183};
+        public static List<int> NPCFlatArchives = new List<int>{334, 346, 357, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184};
         public static bool IsNPCFlat(int archive)
         {
             return NPCFlatArchives.Contains(archive);
