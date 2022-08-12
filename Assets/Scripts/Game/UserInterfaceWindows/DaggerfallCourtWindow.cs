@@ -297,7 +297,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (playerEntity.InPrison)
                 {
-                    if (InputManager.Instance.GetBackButtonDown()) // Speed up prison day countdown. Not in classic.
+                    if (InputManager.Instance.GetBackButton()) // Speed up prison day countdown. Not in classic.
                         prisonUpdateInterval = 0.001f;
                     else
                         prisonUpdateInterval = 0.3f;
