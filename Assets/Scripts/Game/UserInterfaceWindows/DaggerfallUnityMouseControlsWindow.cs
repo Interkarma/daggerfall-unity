@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Components.Add(continueButton);
 
             // keybind buttons
-            SetupKeybindButton(pauseKeybindButton, InputManager.Actions.Pause, 20, 20);
+            SetupKeybindButton(pauseKeybindButton, InputManager.Actions.Escape, 20, 20);
             SetupKeybindButton(autoRunKeybindButton, InputManager.Actions.AutoRun, 20, 40);
             SetupKeybindButton(consoleKeybindButton, InputManager.Actions.ToggleConsole, 115, 20);
             SetupKeybindButton(screenshotKeybindButton, InputManager.Actions.PrintScreen, 115, 40);
@@ -221,7 +221,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpdateKeybindButtons()
         {
-            SetupKeybindButton(pauseKeybindButton, InputManager.Actions.Pause);
+            SetupKeybindButton(pauseKeybindButton, InputManager.Actions.Escape);
             SetupKeybindButton(consoleKeybindButton, InputManager.Actions.ToggleConsole);
             SetupKeybindButton(screenshotKeybindButton, InputManager.Actions.PrintScreen);
             SetupKeybindButton(quickSaveKeybindButton, InputManager.Actions.QuickSave);

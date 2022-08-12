@@ -513,7 +513,7 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             // Post message to open options dialog on escape during gameplay
-            if (InputManager.Instance.ActionComplete(InputManager.Actions.Pause))
+            if (InputManager.Instance.ActionComplete(InputManager.Actions.Escape))
             {
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenPauseOptionsDialog);
             }

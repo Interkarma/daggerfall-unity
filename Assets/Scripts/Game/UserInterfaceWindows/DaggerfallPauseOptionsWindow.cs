@@ -156,7 +156,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.OnPush();
 
-            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Pause);
+            toggleClosedBinding = InputManager.Instance.GetBinding(InputManager.Actions.Escape);
 
             hud = DaggerfallUI.Instance.DaggerfallHUD;
             if (fullScreenTick != null)
@@ -183,7 +183,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (DaggerfallUI.Instance.HotkeySequenceProcessed == HotkeySequence.HotkeySequenceProcessStatus.NotFound)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || Input.GetKeyUp(exitKey))
+                if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || InputManager.Instance.GetBackButtonUp())
                     CloseWindow();
             }
         }

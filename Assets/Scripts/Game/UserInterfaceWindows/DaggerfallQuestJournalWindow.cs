@@ -215,7 +215,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 // Toggle window closed with same hotkey used to open it
                 if (InputManager.Instance.GetKeyUp(toggleClosedBinding1)
                     || InputManager.Instance.GetKeyUp(toggleClosedBinding2)
-                    || Input.GetKeyUp(exitKey))
+                    || InputManager.Instance.GetBackButtonUp())
                     CloseWindow();
             }
 

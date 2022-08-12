@@ -301,9 +301,11 @@ namespace DaggerfallWorkshop.Game
             Back
         }
 
+        // Note: renaming any of these will break backwards compatibility
+        // for other players' saved keybinds.
         public enum Actions
         {
-            Pause,
+            Escape,
             ToggleConsole,
 
             MoveForwards,
@@ -956,7 +958,7 @@ namespace DaggerfallWorkshop.Game
                 setJoystickUIBinding = SetJoystickUIBinding;
             }
 
-            setBinding(KeyCode.Escape, Actions.Pause, true);
+            setBinding(KeyCode.Escape, Actions.Escape, true);
             setBinding(KeyCode.BackQuote, Actions.ToggleConsole, true);
 
             setBinding(KeyCode.W, Actions.MoveForwards, true);
