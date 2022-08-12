@@ -1046,17 +1046,17 @@ namespace DaggerfallWorkshop.Game
 
         public bool GetBackButtonDown()
         {
-            return GetKeyDown(KeyCode.Escape) || (EnableController && GetKeyDown(joystickUICache[3], false));
+            return Input.GetKeyDown(KeyCode.Escape) || (EnableController && GetKeyDown(joystickUICache[3], false));
         }
 
         public bool GetBackButtonUp()
         {
-            return GetKeyUp(KeyCode.Escape) || (EnableController && GetKeyUp(joystickUICache[3], false));
+            return Input.GetKeyUp(KeyCode.Escape) || (EnableController && GetKeyUp(joystickUICache[3], false));
         }
 
         public bool GetBackButton()
         {
-            return GetKey(KeyCode.Escape) || (EnableController && GetKey(joystickUICache[3], false));
+            return Input.GetKey(KeyCode.Escape) || (EnableController && GetKey(joystickUICache[3], false));
         }
 
         public bool GetKey(KeyCode k, bool useSecondary = true)
