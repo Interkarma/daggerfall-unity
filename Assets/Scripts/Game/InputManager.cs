@@ -1054,6 +1054,11 @@ namespace DaggerfallWorkshop.Game
             return GetKeyUp(KeyCode.Escape) || (EnableController && GetKeyUp(joystickUICache[3], false));
         }
 
+        public bool GetBackButton()
+        {
+            return GetKey(KeyCode.Escape) || (EnableController && GetKey(joystickUICache[3], false));
+        }
+
         public bool GetKey(KeyCode k, bool useSecondary = true)
         {
             if (heldKeyCounter == 0)
