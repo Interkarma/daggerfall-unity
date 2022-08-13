@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Disable levitation for player or enemies
             if (entityBehaviour.EntityType == EntityTypes.Player)
             {
-                GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>().IsLevitating = false;
+                GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>().IsLevitating = GameManager.Instance.PlayerEntity.NoClipMode;
             }
             else if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
             {
