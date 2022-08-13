@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
             // Check target match
             // Note: Charm only works on enemy classes (not monstrous humanoids)
-            return (entity as EnemyEntity).MobileEnemy.ID >= 128;
+            return DaggerfallEntity.IsClassEnemyId((entity as EnemyEntity).MobileEnemy.ID);
         }
     }
 }
