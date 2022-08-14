@@ -493,15 +493,16 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <param name="flags">Flags to search for.</param>
         /// <param name="maxRange">Max range for search. Not matched to classic range at this time.</param>
+        /// <param name="activeInHierarchy">Flag to get active or inactive objects.</param>
         /// <returns>NearbyObject list. Can be null or empty.</returns>
-        public List<NearbyObject> GetNearbyObjects(NearbyObjectFlags flags, float maxRange = 14f)
+        public List<NearbyObject> GetNearbyObjects(NearbyObjectFlags flags, float maxRange = 14f, bool activeInHierarchy = true)
         {
             if (flags == NearbyObjectFlags.None)
                 return null;
 
             var query =
                 from no in nearbyObjects
-                where ((no.flags & flags) == flags) && no.distance < maxRange
+                where ((no.flags & flags) == flags) && no.distance < maxRange && no.gameObject != null && no.gameObject.activeInHierarchy == activeInHierarchy
                 select no;
 
             return query.ToList();
