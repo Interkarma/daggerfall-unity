@@ -28,6 +28,7 @@ namespace DaggerfallWorkshop.Game
 
         const float fallSpeed = 2.5f;
 
+        public const SoundClips classicPlayerDeathSound = SoundClips.WoodElfMalePain1;
         public float FadeDuration = 2f;
         public float TimeBeforeReset = 3;
 
@@ -160,9 +161,13 @@ namespace DaggerfallWorkshop.Game
             currentCameraHeight = startCameraHeight;
             DaggerfallUI.Instance.FadeBehaviour.FadeHUDToBlack(FadeDuration);
 
-            // There are 3 pain-like sounds for each race/gender. The third one, used here, sounds like
-            // it may have been meant for when the player dies.
-            SoundClips sound = GetRaceGenderPain3Sound(playerEntity.Race, playerEntity.Gender);
+            SoundClips sound = classicPlayerDeathSound;
+            if (DaggerfallUnity.Settings.CombatVoices)
+            {
+                // There are 3 pain-like sounds for each race/gender. The third one, used here, sounds like
+                // it may have been meant for when the player dies.
+                sound = GetRaceGenderPain3Sound(playerEntity.Race, playerEntity.Gender);
+            }
 
             if (DaggerfallUI.Instance.DaggerfallAudioSource)
                 DaggerfallUI.Instance.DaggerfallAudioSource.PlayOneShot(sound, 0);
