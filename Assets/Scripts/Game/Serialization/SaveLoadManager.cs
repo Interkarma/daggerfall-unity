@@ -1388,11 +1388,21 @@ namespace DaggerfallWorkshop.Game.Serialization
                 playerEntity.Notebook.RestoreNotebookData(notebookData);
             }
 
-            // Restore WorldData variants data
-            if (!string.IsNullOrEmpty(worldVariantsDataJson))
+            // Try to restore WorldData variants data
+            // If this fails for some reason then whole game will fail loading
+            // Handle exception, display an informational message, and try to keep loading
+            try
             {
-                WorldDataVariants.WorldVariationData_v1 worldVariantsData = Deserialize(typeof(WorldDataVariants.WorldVariationData_v1), worldVariantsDataJson) as WorldDataVariants.WorldVariationData_v1;
-                WorldDataVariants.RestoreWorldVariationData(worldVariantsData);
+                if (!string.IsNullOrEmpty(worldVariantsDataJson))
+                {
+                    WorldDataVariants.WorldVariationData_v1 worldVariantsData = Deserialize(typeof(WorldDataVariants.WorldVariationData_v1), worldVariantsDataJson) as WorldDataVariants.WorldVariationData_v1;
+                    WorldDataVariants.RestoreWorldVariationData(worldVariantsData);
+                }
+            }
+            catch (Exception ex)
+            {
+                DaggerfallUI.AddHUDText("Failed to load `WorldVariationData`. Load will try to continue without world variants.", 3);
+                DaggerfallUnity.LogMessage(string.Format("Failed to load world variants. `WorldVariationData.txt` may be corrupt or variants failed to restore. Exception: {0}", ex.Message), true);
             }
 
             // Restore player position to world
