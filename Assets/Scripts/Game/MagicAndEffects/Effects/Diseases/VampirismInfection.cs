@@ -159,6 +159,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Raise game time to an evening two weeks later
             float raiseTime = (2 * DaggerfallDateTime.SecondsPerWeek) + (DaggerfallDateTime.DuskHour + 1 - DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.Hour) * 3600;
             DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.RaiseTime(raiseTime);
+            GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease = true;
 
             // Transfer player to a random cemetery
             // Always using a small cemetery, nothing spoils that first vampire moment like being lost the guts of a massive dungeon
