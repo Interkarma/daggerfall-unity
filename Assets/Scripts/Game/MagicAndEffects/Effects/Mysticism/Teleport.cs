@@ -130,6 +130,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 // Just need to move player
                 serializablePlayer.RestorePosition(anchorPosition);
+                GameManager.Instance.PlayerEntity.AnchorPosition = null;
             }
             else
             {

@@ -289,6 +289,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Update saves list
             UpdateSavesList();
+
+            // Autoselect save at top of list
+            if (mode == Modes.LoadGame && savesList.Count > 0)
+                savesList.SelectIndex(0);
         }
 
         public override void Update()

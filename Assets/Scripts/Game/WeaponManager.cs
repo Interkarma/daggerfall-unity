@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Numidium, Hazelnut
+// Contributors:    Numidium, Hazelnut, Kirk.O
 //
 // Notes:
 //
@@ -777,6 +777,7 @@ namespace DaggerfallWorkshop.Game
             target.WeaponType = DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(weapon);
             target.MetalType = DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(weapon);
             target.WeaponHands = ItemEquipTable.GetItemHands(weapon);
+            target.SpecificWeapon = weapon;
             target.DrawWeaponSound = weapon.GetEquipSound();
             target.SwingWeaponSound = weapon.GetSwingSound();
         }

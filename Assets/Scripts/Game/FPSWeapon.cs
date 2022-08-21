@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Hazelnut, Numidium
+// Contributors:    Hazelnut, Kirk.O, Numidium
 // 
 // Notes:
 //
@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -47,6 +48,7 @@ namespace DaggerfallWorkshop.Game
         public WeaponTypes WeaponType = WeaponTypes.None;
         public MetalTypes MetalType = MetalTypes.None;
         public ItemHands WeaponHands = ItemHands.None;
+        public DaggerfallUnityItem SpecificWeapon = null;
         public float Reach = 2.5f;
         public float AttackSpeedScale = 1.0f;
         public float Cooldown = 0.0f;
@@ -82,6 +84,9 @@ namespace DaggerfallWorkshop.Game
 
         readonly Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
         Texture2D curCustomTexture;
+
+        // Allows a mod to specify if DFU should use custom HUD animations for weapons
+        public static bool moddedWeaponHUDAnimsEnabled = false;
 
         float lastScreenWidth, lastScreenHeight;
         bool lastLargeHUDSetting, lastLargeHUDDockSetting;
@@ -557,6 +562,14 @@ namespace DaggerfallWorkshop.Game
                 for (int frame = 0; frame < frames; frame++)
                 {
                     textures.Add(GetWeaponTexture2D(filename, record, frame, metalType, out rect, border, dilate));
+
+                    if (moddedWeaponHUDAnimsEnabled && SpecificWeapon != null)
+                    {
+                        filename = WeaponBasics.GetModdedWeaponFilename(SpecificWeapon);
+
+                        if (string.IsNullOrEmpty(filename))
+                            filename = WeaponBasics.GetWeaponFilename(WeaponType); // Possibly make support for custom weapon types for the HUD in the future.
+                    }
 
                     Texture2D tex;
                     if (TextureReplacement.TryImportCifRci(filename, record, frame, metalType, true, out tex))

@@ -1247,18 +1247,10 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
+        public static List<int> NPCFlatArchives = new List<int>{334, 346, 357, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184};
         public static bool IsNPCFlat(int archive)
         {
-            // These texture archives are NPCs
-            if (archive == 334 ||                               // Daggerfall people
-                archive == 346 ||                               // Wayrest people
-                archive == 357 ||                               // Sentinel people
-                archive >= 175 && archive <= 184)               // Other people
-            {
-                return true;
-            }
-
-            return false;
+            return NPCFlatArchives.Contains(archive);
         }
 
         public static bool IsTorchFlat(int archive, int record)

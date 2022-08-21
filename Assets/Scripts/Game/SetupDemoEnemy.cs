@@ -172,12 +172,7 @@ namespace DaggerfallWorkshop.Game
                     }
                     else if (DaggerfallEntity.GetCustomCareerTemplate(enemyIndex) != null)
                     {
-                        // For custom enemies, we use the 7th bit to tell whether a class or monster was intended
-                        // 0-127 is monster
-                        // 128-255 is class
-                        // 256-383 is monster again
-                        // etc
-                        if ((enemyIndex & 128) != 0)
+                        if (DaggerfallEntity.IsClassEnemyId(enemyIndex))
                         {
                             entityBehaviour.EntityType = EntityTypes.EnemyClass;
                         }
@@ -221,12 +216,22 @@ namespace DaggerfallWorkshop.Game
         {
             // Get mobile type based on entity type and career index
             MobileTypes mobileType;
-            if (entityType == EntityTypes.EnemyMonster)
-                mobileType = (MobileTypes)careerIndex;
-            else if (entityType == EntityTypes.EnemyClass)
-                mobileType = (MobileTypes)(careerIndex + 128);
+
+            // For classic enemies, careerIndex is equal to enemyId for monsters, or enemyId - 128 for class enemies (ex: Mage, enemyId=128, careerIndex=0)
+            // For custom enemies, we just always store the enemyId in careerIndex, even if class type
+            if (careerIndex < 256)
+            {                
+                if (entityType == EntityTypes.EnemyMonster)
+                    mobileType = (MobileTypes)careerIndex;
+                else if (entityType == EntityTypes.EnemyClass)
+                    mobileType = (MobileTypes)(careerIndex + 128);
+                else
+                    return;
+            }
             else
-                return;
+            {
+                mobileType = (MobileTypes)careerIndex;
+            }
 
             MobileReactions enemyReaction = (isHostile) ? MobileReactions.Hostile : MobileReactions.Passive;
             MobileGender enemyGender = gender;

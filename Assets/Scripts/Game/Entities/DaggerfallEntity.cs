@@ -961,6 +961,21 @@ namespace DaggerfallWorkshop.Game.Entity
             CustomCareerTemplates[enemyId] = career;
         }
 
+        /// <summary>
+        /// Returns whether the provided enemy id refers to a Class enemy (as opposed to a Monster enemy)
+        /// For custom enemies, we use the 7th bit to tell whether a class or monster was intended
+        /// 0-127 is monster
+        /// 128-255 is class
+        /// 256-383 is monster again
+        /// etc
+        /// </summary>
+        /// <param name="enemyId">Id of the enemy type</param>
+        /// <returns>True if Class type enemy, False if Monster type enemy</returns>
+        public static bool IsClassEnemyId(int enemyId)
+        {
+            return (enemyId & 128) != 0;
+        }
+
         public static SoundClips GetRaceGenderAttackSound(Races race, Genders gender, bool isPlayerAttack = false)
         {
             // Check for racial override attack sound for player only
