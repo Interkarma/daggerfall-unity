@@ -43,6 +43,13 @@ namespace DaggerfallWorkshop.Game
             public RecordIndex[] WeaponIndices { get; set; }
         }
 
+        class CustomWeaponAnimation
+        {
+            public string FileName { get; set; }
+            public MetalTypes MetalType { get; set; }
+            public Dictionary<int, Texture2D> Textures { get; set; }
+        }
+
         public bool ShowWeapon = true;
         public bool FlipHorizontal = false;
         public WeaponTypes WeaponType = WeaponTypes.None;
@@ -68,6 +75,7 @@ namespace DaggerfallWorkshop.Game
         CifRciFile cifFile;
         WeaponAtlas weaponAtlas;
         readonly Queue<WeaponAtlas> weaponAtlasCache = new Queue<WeaponAtlas>();
+        readonly Queue<CustomWeaponAnimation> customWeaponAnimationCache = new Queue<CustomWeaponAnimation>();
         Rect weaponPosition;
         float weaponScaleX;
         float weaponScaleY;
@@ -82,7 +90,7 @@ namespace DaggerfallWorkshop.Game
         float weaponOffsetHeight;
         Rect screenRect;
 
-        readonly Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
+        Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
         Texture2D curCustomTexture;
 
         // Allows a mod to specify if DFU should use custom HUD animations for weapons
@@ -534,10 +542,15 @@ namespace DaggerfallWorkshop.Game
             int border,
             bool dilate = false)
         {
-            // Check cache
+            // Check caches
             var cachedAtlas = GetCachedWeaponAtlas(filename, metalType);
-            if (cachedAtlas != null)
+            var cachedAnimation = GetCachedCustomWeaponAnimation(filename, metalType);
+            // Nothing to load if both vanilla atlas and custom texture are currently cached.
+            if (cachedAtlas != null && cachedAnimation != null)
+            {
+                customTextures = cachedAnimation.Textures;
                 return cachedAtlas;
+            }
 
             // Load texture file
             cifFile.Load(Path.Combine(dfUnity.Arena2Path, filename), FileUsage.UseMemory, true);
@@ -546,7 +559,7 @@ namespace DaggerfallWorkshop.Game
             Rect rect;
             List<Texture2D> textures = new List<Texture2D>();
             List<RecordIndex> indices = new List<RecordIndex>();
-            customTextures.Clear();
+            customTextures = new Dictionary<int, Texture2D>();
             for (int record = 0; record < cifFile.RecordCount; record++)
             {
                 int frames = cifFile.GetFrameCount(record);
@@ -559,10 +572,16 @@ namespace DaggerfallWorkshop.Game
                     height = size.Height,
                 };
                 indices.Add(ri);
+                if (cachedAtlas == null) // Load atlas if not already cached.
+                {
+                    for (int frame = 0; frame < frames; frame++)
+                        textures.Add(GetWeaponTexture2D(filename, record, frame, metalType, out rect, border, dilate));
+                }
+
+                if (cachedAnimation != null) // No need to load frames if cached.
+                    continue;
                 for (int frame = 0; frame < frames; frame++)
                 {
-                    textures.Add(GetWeaponTexture2D(filename, record, frame, metalType, out rect, border, dilate));
-
                     if (moddedWeaponHUDAnimsEnabled && SpecificWeapon != null)
                     {
                         filename = WeaponBasics.GetModdedWeaponFilename(SpecificWeapon);
@@ -580,6 +599,11 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
             }
+
+            if (cachedAnimation == null && customTextures.Count > 0)
+                CacheCustomWeaponAnimation(new CustomWeaponAnimation() { FileName = filename, MetalType = metalType, Textures = customTextures });
+            if (cachedAtlas != null)
+                return cachedAtlas;
 
             // Pack textures into atlas
             Texture2D atlasTexture = new Texture2D(2048, 2048, TextureFormat.ARGB32, false);
@@ -660,10 +684,29 @@ namespace DaggerfallWorkshop.Game
 
         private void CacheWeaponAtlas(WeaponAtlas weaponAtlas)
         {
-            const int maxCacheSize = 4;
+            const int maxCacheSize = 2; // One for each hand.
             weaponAtlasCache.Enqueue(weaponAtlas);
             if (weaponAtlasCache.Count > maxCacheSize)
                 weaponAtlasCache.Dequeue();
+        }
+
+        private CustomWeaponAnimation GetCachedCustomWeaponAnimation(string fileName, MetalTypes metalType)
+        {
+            foreach (var animation in customWeaponAnimationCache)
+            {
+                if (animation.FileName == fileName && animation.MetalType == metalType)
+                    return animation;
+            }
+
+            return null;
+        }
+
+        private void CacheCustomWeaponAnimation(CustomWeaponAnimation animation)
+        {
+            const int maxCacheSize = 2;
+            customWeaponAnimationCache.Enqueue(animation);
+            if (customWeaponAnimationCache.Count > maxCacheSize)
+                customWeaponAnimationCache.Dequeue();
         }
 
         #endregion
