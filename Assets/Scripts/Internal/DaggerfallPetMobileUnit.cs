@@ -9,36 +9,26 @@
 // Notes:
 //
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.IO;
 using DaggerfallConnect;
-using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
+using DaggerfallConnect.Utility;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
-using DaggerfallWorkshop.Game.Utility;
+using UnityEditor;
+using UnityEngine;
 
 namespace DaggerfallWorkshop
 {
-    /// <summary>
-    /// A billboard class for classic Daggerfall mobile sprites with 8 orientations.
-    /// Handles loading resources and rendering billboard based on orientation and state.
-    /// Will rotate and scale based on camera angle and texture, so this component should
-    /// only be attached to a child GameObject.
-    /// Uses parent GameObject to determine actual facing in world.
-    /// </summary>
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     [ExecuteInEditMode]
-    #endif
+#endif
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
-    public class DaggerfallMobileUnit : MobileUnit
+    public class DaggerfallPetMobileUnit : PetMobileUnit
     {
         const int numberOrientations = 8;
         const float anglePerOrientation = 360f / numberOrientations;
@@ -48,12 +38,10 @@ namespace DaggerfallWorkshop
         MeshRenderer meshRenderer = null;
 
         Vector3 cameraPosition;
-        float enemyFacingAngle;
+        float petFacingAngle;
         int lastOrientation;
         int currentFrame;
         int frameIterator;
-        bool doMeleeDamage = false;
-        bool shootArrow = false;
         bool restartAnims = true;
         bool freezeAnims = false;
         bool animReversed = false;
@@ -69,23 +57,10 @@ namespace DaggerfallWorkshop
         {
             get { return currentFrame; }
         }
-
-        public override int FrameSpeedDivisor
+        public int FrameSpeedDivisor
         {
             get { return frameSpeedDivisor; }
             set { frameSpeedDivisor = (value < 1) ? 1 : value; }
-        }
-
-        public override bool DoMeleeDamage
-        {
-            get { return doMeleeDamage; }
-            set { doMeleeDamage = value; }
-        }
-
-        public override bool ShootArrow
-        {
-            get { return shootArrow; }
-            set { shootArrow = value; }
         }
 
         public override bool FreezeAnims
@@ -94,21 +69,16 @@ namespace DaggerfallWorkshop
             set { freezeAnims = value; }
         }
 
-        public override MobileEnemy Enemy
+        public override MobilePet Pet
         {
-            get { return summary.Enemy; }
-            protected set { summary.Enemy = value; }
+            get { return summary.Pet; }
+            protected set { summary.Pet = value; }
         }
 
-        public override MobileStates EnemyState
+        public override MobileStates PetState
         {
-            get { return summary.EnemyState; }
-            protected set { summary.EnemyState = value; }
-        }
-
-        public override bool IsBackFacing
-        {
-            get { return summary.AnimStateRecord % 5 > 2; }
+            get { return summary.PetState; }
+            protected set { summary.PetState = value; }
         }
 
         public override byte ClassicSpawnDistanceType
@@ -116,6 +86,7 @@ namespace DaggerfallWorkshop
             get { return summary.ClassicSpawnDistanceType; }
             protected set { summary.ClassicSpawnDistanceType = value; }
         }
+
 
         public override bool SpecialTransformationCompleted
         {
@@ -144,7 +115,7 @@ namespace DaggerfallWorkshop
             // Restart animation coroutine if not running
             if (restartAnims)
             {
-                StartCoroutine(AnimateEnemy());
+                StartCoroutine(AnimatePet());
                 restartAnims = false;
             }
 
@@ -156,31 +127,35 @@ namespace DaggerfallWorkshop
                 Vector3 viewDirection = -new Vector3(mainCamera.transform.forward.x, 0, mainCamera.transform.forward.z);
                 transform.LookAt(transform.position + viewDirection);
 
-                // Orient enemy based on camera position
+                // Orient pet based on camera position
                 UpdateOrientation();
             }
         }
 
-        protected override void ApplyEnemy(DaggerfallUnity dfUnity)
+        public override Vector3 GetSize()
         {
-            // Load enemy content
+            return summary.RecordSizes[0];
+        }
+
+        protected override void ApplyPet(DaggerfallUnity dfUnity)
+        {
+            // Load pet content
             int archive = GetTextureArchive();
             CacheRecordSizesAndFrames(dfUnity, archive);
             AssignMeshAndMaterial(dfUnity, archive);
 
-            // Apply enemy state and update orientation
+            // Apply pet state and update orientation
             lastOrientation = -1;
-            ApplyEnemyState();
+            ApplyPetState();
         }
 
-        protected override void ApplyEnemyStateChange(MobileStates currentState, MobileStates newState)
+        protected override void ApplyPetStateChange(MobileStates currentState, MobileStates newState)
         {
-            // Don't reset frame to 0 for idle/move switches for enemies without idle animations
             bool resetFrame = true;
 
-            if (!summary.Enemy.HasIdle &&
+            if (!summary.Pet.HasIdle &&
                 ((currentState == MobileStates.Idle && newState == MobileStates.Move) ||
-                (currentState == MobileStates.Move && newState == MobileStates.Idle)))
+                 (currentState == MobileStates.Move && newState == MobileStates.Idle)))
                 resetFrame = false;
 
             if (resetFrame)
@@ -189,121 +164,31 @@ namespace DaggerfallWorkshop
                 animReversed = false;
             }
 
-            ApplyEnemyState();
-        }
-
-        public override Vector3 GetSize()
-        {
-            return summary.RecordSizes[0];
+            ApplyPetState();
         }
 
         #region Private Methods
 
         /// <summary>
-        /// Updates enemy state based on current settings.
-        /// Called automatially by SetEnemyType().
-        /// This should be called after changing enemy state (e.g. from in code or in editor).
+        /// Updates pet state based on current settings.
+        /// Called automatially by SetPetType().
+        /// This should be called after changing pet state (e.g. from in code or in editor).
         /// </summary>
-        private void ApplyEnemyState()
+        private void ApplyPetState()
         {
             // Get state animations
-            summary.StateAnims = GetStateAnims(summary.EnemyState);
-            if (summary.EnemyState == MobileStates.PrimaryAttack)
-            {
-                int random = Dice100.Roll();
+            summary.StateAnims = GetStateAnims(summary.PetState);
 
-                if (random <= summary.Enemy.ChanceForAttack2)
-                    summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames2;
-                else
-                {
-                    random -= summary.Enemy.ChanceForAttack2;
-                    if (random <= summary.Enemy.ChanceForAttack3)
-                        summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames3;
-                    else
-                    {
-                        random -= summary.Enemy.ChanceForAttack3;
-                        if (random <= summary.Enemy.ChanceForAttack4)
-                            summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames4;
-                        else
-                        {
-                            random -= summary.Enemy.ChanceForAttack4;
-                            if (random <= summary.Enemy.ChanceForAttack5)
-                                summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames5;
-                            else
-                                summary.StateAnimFrames = summary.Enemy.PrimaryAttackAnimFrames;
-                        }
-                    }
-                }
+            // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimatePet() next runs
+            currentFrame = 0;
+            frameIterator = 1;
 
-                // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
-                currentFrame = summary.StateAnimFrames[0];
-                frameIterator = 1;
-            }
-
-            if (summary.EnemyState == MobileStates.RangedAttack1 || summary.EnemyState == MobileStates.RangedAttack2)
-            {
-                summary.StateAnimFrames = summary.Enemy.RangedAttackAnimFrames;
-
-                // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
-                currentFrame = summary.StateAnimFrames[0];
-                frameIterator = 1;
-            }
-
-            if (summary.EnemyState == MobileStates.Spell)
-            {
-                summary.StateAnimFrames = summary.Enemy.SpellAnimFrames;
-
-                // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
-                currentFrame = summary.StateAnimFrames[0];
-                frameIterator = 1;
-            }
-
-            if (summary.EnemyState == MobileStates.SeducerTransform1)
-            {
-                // Switch to flying sprite alignment while crouched and growing wings
-                summary.Enemy.Behaviour = MobileBehaviour.Flying;
-                summary.StateAnimFrames = summary.Enemy.SeducerTransform1Frames;
-
-                // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
-                currentFrame = summary.StateAnimFrames[0];
-                frameIterator = 1;
-            }
-
-            if (summary.EnemyState == MobileStates.SeducerTransform2)
-            {
-                // Switch to grounded sprite alignment while standing and spreading wings
-                summary.Enemy.Behaviour = MobileBehaviour.General;
-                summary.StateAnimFrames = summary.Enemy.SeducerTransform2Frames;
-
-                // Set to the first frame of this animation, and prepare frameIterator to start from the second frame when AnimateEnemy() next runs
-                currentFrame = summary.StateAnimFrames[0];
-                frameIterator = 1;
-            }
-
-            if (summary.StateAnims == null)
-            {
-                // Log error message
-                DaggerfallUnity.LogMessage(string.Format("DaggerfalMobileUnit: Enemy does not have animation for {0} state. Defaulting to Idle state.", summary.EnemyState.ToString()), true);
-
-                // Set back to idle (which every enemy has in one form or another)
-                summary.EnemyState = MobileStates.Idle;
-                summary.StateAnims = GetStateAnims(summary.EnemyState);
-            }
-
-            // One of the frost daedra's sets of attack frames starts with the hit frame (-1), so we need to check for that right away before updating orientation.
-            if (currentFrame == -1 && summary.EnemyState == MobileStates.PrimaryAttack)
-            {
-                doMeleeDamage = true;
-                if (frameIterator < summary.StateAnimFrames.Length)
-                    currentFrame = summary.StateAnimFrames[frameIterator++];
-            }
-
-            // Orient enemy relative to camera
+            // Orient pet relative to camera
             UpdateOrientation();
         }
 
         /// <summary>
-        /// Updates enemy orientation based on angle between enemy and camera.
+        /// Updates pet orientation based on angle between pet and camera.
         /// </summary>
         private void UpdateOrientation()
         {
@@ -321,24 +206,24 @@ namespace DaggerfallWorkshop
             parentForward.y = 0;
 
             // Get angle and cross product for left/right angle
-            enemyFacingAngle = Vector3.Angle(dir, parentForward);
-            enemyFacingAngle = enemyFacingAngle * -Mathf.Sign(Vector3.Cross(dir, parentForward).y);
+            petFacingAngle = Vector3.Angle(dir, parentForward);
+            petFacingAngle = petFacingAngle * -Mathf.Sign(Vector3.Cross(dir, parentForward).y);
 
             // Facing index
-            int orientation = - Mathf.RoundToInt(enemyFacingAngle / anglePerOrientation);
+            int orientation = -Mathf.RoundToInt(petFacingAngle / anglePerOrientation);
             // Wrap values to 0 .. numberOrientations-1
             orientation = (orientation + numberOrientations) % numberOrientations;
 
-            // Change enemy to this orientation
+            // Change pet to this orientation
             if (orientation != lastOrientation)
-                OrientEnemy(orientation);
+                OrientPet(orientation);
         }
 
         /// <summary>
-        /// Sets enemy orientation index.
+        /// Sets pet orientation index.
         /// </summary>
         /// <param name="orientation">New orientation index.</param>
-        private void OrientEnemy(int orientation)
+        private void OrientPet(int orientation)
         {
             if (summary.StateAnims == null || summary.StateAnims.Length == 0)
                 return;
@@ -349,26 +234,24 @@ namespace DaggerfallWorkshop
 
             // Try to fix if anim array is null
             if (summary.StateAnims == null)
-                ApplyEnemyState();
-            
-            // Get enemy size and scale for this state
+                ApplyPetState();
+
+            // Get pet size and scale for this state
             int record = summary.StateAnims[orientation].Record;
             summary.AnimStateRecord = record;
             Vector2 size = summary.RecordSizes[record];
 
             // Post-fix female texture scale for 475 while casting spells
             // The scale read from Daggerfall's files is too small 
-            if (summary.Enemy.FemaleTexture == 475 &&
-                summary.Enemy.Gender == MobileGender.Female &&
+            if (summary.Pet.FemaleTexture == 475 &&
+                summary.Pet.Gender == MobileGender.Female &&
                 record >= 20 && record <= 24)
             {
                 size *= 1.35f;
             }
 
             // Ensure walking enemies keep their feet aligned between states
-            if (summary.Enemy.Behaviour != MobileBehaviour.Flying &&
-                summary.Enemy.Behaviour != MobileBehaviour.Aquatic &&
-                summary.EnemyState != MobileStates.Idle)
+            if (summary.PetState != MobileStates.Idle)
             {
                 Vector2 idleSize = summary.RecordSizes[0];
                 transform.localPosition = new Vector3(0f, (size.y - idleSize.y) * 0.5f, 0f);
@@ -383,10 +266,6 @@ namespace DaggerfallWorkshop
 
             // Check if orientation flip needed
             bool flip = summary.StateAnims[orientation].FlipLeftRight;
-
-            // Scorpion animations need to be inverted
-            if (summary.Enemy.ID == (int)MobileTypes.GiantScorpion)
-                flip = !flip;
 
             // Update Record/Frame texture
             if (summary.ImportedTextures.HasImportedTextures)
@@ -443,71 +322,47 @@ namespace DaggerfallWorkshop
             lastOrientation = orientation;
         }
 
-        IEnumerator AnimateEnemy()
+        IEnumerator AnimatePet()
         {
             float fps = 10;
             while (true)
             {
                 if (!freezeAnims && summary.IsSetup && summary.StateAnims != null && summary.StateAnims.Length > 0)
                 {
-                    // Update enemy and fps
-                    OrientEnemy(lastOrientation);
+                    // Update pet and fps
+                    OrientPet(lastOrientation);
                     fps = summary.StateAnims[lastOrientation].FramePerSecond / FrameSpeedDivisor;
 
                     // Enforce a lower limit on animation speed when using a custom FrameSpeedDivisor
                     if (FrameSpeedDivisor > 1 && fps < 4)
                         fps = 4;
 
-                    bool doingAttackAnimation = (summary.EnemyState == MobileStates.PrimaryAttack ||
-                        summary.EnemyState == MobileStates.RangedAttack1 ||
-                        summary.EnemyState == MobileStates.RangedAttack2);
 
-                    // Reset to idle if frameIterator has finished. Used for attack animations.
-                    if (doingAttackAnimation && frameIterator >= summary.StateAnimFrames.Length)
+                    currentFrame =0;
+
+                    // Set boolean if frame to attempt to apply damage or shoot arrow is encountered, and proceed to next frame if it exists
+                    if (currentFrame == -1)
                     {
-                        ChangeEnemyState(MobileStates.Idle);
-                        frameIterator = 0;
+                        if (frameIterator < summary.StateAnimFrames.Length)
+                            currentFrame = summary.StateAnimFrames[frameIterator++];
                     }
 
-                    // Step frame
-                    if (!doingAttackAnimation)
-                        currentFrame = (animReversed) ? currentFrame - 1 : currentFrame + 1;
-                    else // Attack animation
-                    {
-                        currentFrame = summary.StateAnimFrames[frameIterator++];
-
-                        // Set boolean if frame to attempt to apply damage or shoot arrow is encountered, and proceed to next frame if it exists
-                        if (currentFrame == -1)
-                        {
-                            if (summary.EnemyState == MobileStates.PrimaryAttack)
-                                doMeleeDamage = true;
-                            else if (summary.EnemyState == MobileStates.RangedAttack1 || summary.EnemyState == MobileStates.RangedAttack2)
-                                shootArrow = true;
-
-                            if (frameIterator < summary.StateAnimFrames.Length)
-                                currentFrame = summary.StateAnimFrames[frameIterator++];
-                        }
-                    }
 
                     if (currentFrame >= summary.StateAnims[lastOrientation].NumFrames ||
                         animReversed && currentFrame <= 0)
                     {
-                        if (IsPlayingOneShot())
-                            ChangeEnemyState(NextStateAfterCurrentOneShot());   // If this is a one-shot anim, revert to next state (usually idle)
+
+                        // Otherwise keep looping frames
+                        bool bounceAnim = summary.StateAnims[lastOrientation].BounceAnim;
+                        if (bounceAnim && !animReversed)
+                        {
+                            currentFrame = summary.StateAnims[lastOrientation].NumFrames - 2;
+                            animReversed = true;
+                        }
                         else
                         {
-                            // Otherwise keep looping frames
-                            bool bounceAnim = summary.StateAnims[lastOrientation].BounceAnim;
-                            if (bounceAnim && !animReversed)
-                            {
-                                currentFrame = summary.StateAnims[lastOrientation].NumFrames - 2;
-                                animReversed = true;
-                            }
-                            else
-                            {
-                                currentFrame = 0;
-                                animReversed = false;
-                            }
+                            currentFrame = 0;
+                            animReversed = false;
                         }
                     }
                 }
@@ -515,50 +370,30 @@ namespace DaggerfallWorkshop
                 yield return new WaitForSeconds(1f / fps);
             }
         }
-
-        /// <summary>
-        /// Gets the next state after finished playing current oneshot state
-        /// </summary>
-        /// <returns>Next state.</returns>
-        MobileStates NextStateAfterCurrentOneShot()
-        {
-            switch(summary.EnemyState)
-            {
-                case MobileStates.SeducerTransform1:
-                    return MobileStates.SeducerTransform2;
-                case MobileStates.SeducerTransform2:
-                    SetSpecialTransformationCompleted();
-                    return MobileStates.Idle;
-                default:
-                    return MobileStates.Idle;
-            }
-        }
-
         #endregion
 
         #region Content Loading
 
         /// <summary>
         /// Get texture archive index based on gender.
-        /// Assigns random gender for humans enemies with unspecified gender.
         /// </summary>
         /// <returns>Texture archive index.</returns>
         private int GetTextureArchive()
         {
             // If human with unspecified gender then randomise gender
-            if (summary.Enemy.Affinity == MobileAffinity.Human && summary.Enemy.Gender == MobileGender.Unspecified)
+            if (summary.Pet.Affinity == MobileAffinity.Human && summary.Pet.Gender == MobileGender.Unspecified)
             {
                 if (DFRandom.random_range(0, 2) == 0)
-                    summary.Enemy.Gender = MobileGender.Male;
+                    summary.Pet.Gender = MobileGender.Male;
                 else
-                    summary.Enemy.Gender = MobileGender.Female;
+                    summary.Pet.Gender = MobileGender.Female;
             }
 
             // Monster genders are always unspecified as there is no male/female variant
-            if (summary.Enemy.Gender == MobileGender.Male || summary.Enemy.Gender == MobileGender.Unspecified)
-                return summary.Enemy.MaleTexture;
+            if (summary.Pet.Gender == MobileGender.Male || summary.Pet.Gender == MobileGender.Unspecified)
+                return summary.Pet.MaleTexture;
             else
-                return summary.Enemy.FemaleTexture;
+                return summary.Pet.FemaleTexture;
         }
 
         /// <summary>
@@ -602,7 +437,7 @@ namespace DaggerfallWorkshop
 
                 // Set optional scale
                 TextureReplacement.SetBillboardScale(archive, i, ref finalSize);
- 
+
                 // Store final size and frame count
                 summary.RecordSizes[i] = finalSize * MeshReader.GlobalScale;
                 summary.RecordFrames[i] = textureFile.GetFrameCount(i);
@@ -610,7 +445,7 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Creates mesh and material for this enemy.
+        /// Creates mesh and material for this pet.
         /// </summary>
         /// <param name="dfUnity">DaggerfallUnity singleton. Required for content readers and settings.</param>
         /// <param name="archive">Texture archive index derived from type and gender.</param>
@@ -653,6 +488,8 @@ namespace DaggerfallWorkshop
 
             // Assign mesh
             meshFilter.sharedMesh = mesh;
+            dfUnity.EditorUpdate();
+
             // Create material
             Material material = TextureReplacement.GetMobileBillboardMaterial(archive, GetComponent<MeshFilter>(), ref summary.ImportedTextures) ??
                 dfUnity.MaterialReader.GetMaterialAtlas(
@@ -699,14 +536,14 @@ namespace DaggerfallWorkshop
                 }
             }
 
-            // Set new enemy material
+            // Set new pet material
             GetComponent<MeshRenderer>().sharedMaterial = material;
         }
 
         /// <summary>
         /// Gets cloned animation set for specified state.
         /// </summary>
-        /// <param name="state">Enemy state.</param>
+        /// <param name="state">pet state.</param>
         /// <returns>Array of mobile animations.</returns>
         private MobileAnimation[] GetStateAnims(MobileStates state)
         {
@@ -715,66 +552,16 @@ namespace DaggerfallWorkshop
             switch (state)
             {
                 case MobileStates.Move:
-                    if ((MobileTypes)summary.Enemy.ID == MobileTypes.Ghost ||
-                        (MobileTypes)summary.Enemy.ID == MobileTypes.Wraith)
-                        anims = (MobileAnimation[])EnemyBasics.GhostWraithMoveAnims.Clone();
-                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.DaedraSeducer && summary.specialTransformationCompleted)
-                        anims = (MobileAnimation[])EnemyBasics.SeducerIdleMoveAnims.Clone();
-                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.Slaughterfish)
-                        anims = (MobileAnimation[])EnemyBasics.SlaughterfishMoveAnims.Clone();
-                    else
-                        anims = (MobileAnimation[])EnemyBasics.MoveAnims.Clone();
-                    break;
-                case MobileStates.PrimaryAttack:
-                    if ((MobileTypes)summary.Enemy.ID == MobileTypes.Ghost ||
-                        (MobileTypes)summary.Enemy.ID == MobileTypes.Wraith)
-                        anims = (MobileAnimation[])EnemyBasics.GhostWraithAttackAnims.Clone();
-                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.DaedraSeducer && summary.specialTransformationCompleted)
-                        anims = (MobileAnimation[])EnemyBasics.SeducerAttackAnims.Clone();
-                    else
-                        anims = (MobileAnimation[])EnemyBasics.PrimaryAttackAnims.Clone();
+                    anims = (MobileAnimation[])EnemyBasics.MoveAnims.Clone();
                     break;
                 case MobileStates.Hurt:
-                    if ((MobileTypes)summary.Enemy.ID == MobileTypes.DaedraSeducer && summary.specialTransformationCompleted)
-                        anims = (MobileAnimation[])EnemyBasics.SeducerIdleMoveAnims.Clone();
-                    else
-                        anims = (MobileAnimation[])EnemyBasics.HurtAnims.Clone();
+                    anims = (MobileAnimation[])EnemyBasics.HurtAnims.Clone();
                     break;
                 case MobileStates.Idle:
-                    if ((MobileTypes)summary.Enemy.ID == MobileTypes.Ghost ||
-                        (MobileTypes)summary.Enemy.ID == MobileTypes.Wraith)
-                        anims = (MobileAnimation[])EnemyBasics.GhostWraithMoveAnims.Clone();
-                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.DaedraSeducer && summary.specialTransformationCompleted)
-                        anims = (MobileAnimation[])EnemyBasics.SeducerIdleMoveAnims.Clone();
-                    else if (summary.Enemy.FemaleTexture == 483 &&
-                        summary.Enemy.Gender == MobileGender.Female)
-                        anims = (MobileAnimation[])EnemyBasics.FemaleThiefIdleAnims.Clone();
-                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.Rat)
-                        anims = (MobileAnimation[])EnemyBasics.RatIdleAnims.Clone();
-                    else if ((MobileTypes)summary.Enemy.ID == MobileTypes.Slaughterfish)
-                        anims = (MobileAnimation[])EnemyBasics.SlaughterfishMoveAnims.Clone();
-                    else if (!summary.Enemy.HasIdle)
+                    if (!summary.Pet.HasIdle)
                         anims = (MobileAnimation[])EnemyBasics.MoveAnims.Clone();
                     else
                         anims = (MobileAnimation[])EnemyBasics.IdleAnims.Clone();
-                    break;
-                case MobileStates.RangedAttack1:
-                    anims = (summary.Enemy.HasRangedAttack1) ? (MobileAnimation[])EnemyBasics.RangedAttack1Anims.Clone() : null;
-                    break;
-                case MobileStates.RangedAttack2:
-                    anims = (summary.Enemy.HasRangedAttack2) ? (MobileAnimation[])EnemyBasics.RangedAttack2Anims.Clone() : null;
-                    break;
-                case MobileStates.Spell:
-                    if ((MobileTypes)summary.Enemy.ID == MobileTypes.DaedraSeducer && summary.specialTransformationCompleted)
-                        anims = (MobileAnimation[])EnemyBasics.SeducerAttackAnims.Clone();
-                    else
-                        anims = (summary.Enemy.HasSpellAnimation) ? (MobileAnimation[])EnemyBasics.RangedAttack1Anims.Clone() : (MobileAnimation[])EnemyBasics.PrimaryAttackAnims.Clone();
-                    break;
-                case MobileStates.SeducerTransform1:
-                    anims = (summary.Enemy.HasSeducerTransform1) ? (MobileAnimation[])EnemyBasics.SeducerTransform1Anims.Clone() : null;
-                    break;
-                case MobileStates.SeducerTransform2:
-                    anims = (summary.Enemy.HasSeducerTransform2) ? (MobileAnimation[])EnemyBasics.SeducerTransform2Anims.Clone() : null;
                     break;
                 default:
                     return null;
@@ -784,11 +571,6 @@ namespace DaggerfallWorkshop
             for (int i = 0; i < anims.Length; i++)
                 anims[i].NumFrames = summary.RecordFrames[anims[i].Record];
 
-            // If flying, set to faster flying animation speed
-            if ((state == MobileStates.Move || state == MobileStates.Idle) && summary.Enemy.Behaviour == MobileBehaviour.Flying)
-                for (int i = 0; i < anims.Length; i++)
-                    anims[i].FramePerSecond = EnemyBasics.FlyAnimSpeed;
-
             return anims;
         }
 
@@ -796,7 +578,7 @@ namespace DaggerfallWorkshop
 
 #if UNITY_EDITOR
         /// <summary>
-        /// Rotate enemy to face editor camera while game not running.
+        /// Rotate pet to face editor camera while game not running.
         /// </summary>
         public void OnDrawGizmos()
         {

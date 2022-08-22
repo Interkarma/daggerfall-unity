@@ -544,6 +544,32 @@ namespace DaggerfallWorkshop
         public string SpellName;                // Display name of spell - only used to make file more human readable
     }
 
+    /// <summary>
+    /// Defines basic properties of mobile enemies.
+    /// </summary>
+    [Serializable]
+    public struct MobilePet
+    {
+        public int ID;                              // ID of this mobile
+        public MobileAffinity Affinity;             // Affinity of mobile
+        public MobileGender Gender;                 // Gender of mobile
+        public MobileReactions Reactions;           // Mobile reaction setting
+        public int MaleTexture;                     // Texture archive index for male sprite
+        public int FemaleTexture;                   // Texture archive index for female sprite
+        public int CorpseTexture;                   // Corpse texture archive:record bits
+        public int FemaleCorpseTexture;             // Corpse texture archive:record bits, for female entities. If 0, use CorpseTexture
+        public bool HasIdle;                        // Has standard Idle animation group
+        public int BloodIndex;                      // Index in TEXTURE.380 for blood splash 
+        public int MoveSound;                       // Index of enemy "moving around" sound
+        public int BarkSound;                       // Index of enemy "bark" or "shout" sound
+        public int MinHealth;                       // Minimum health
+        public int MaxHealth;                       // Maximum health
+        public int ArmorValue;                      // Armor value
+        public Color? GlowColor;                   // Emitted light color
+        public bool NoShadow;                       // Casts no shadows
+        public MobileTeams Team;                    // Team that this enemy uses if enemy in-fighting is on
+    }
+
     public struct Border<T>
     {
         public Border(T common)

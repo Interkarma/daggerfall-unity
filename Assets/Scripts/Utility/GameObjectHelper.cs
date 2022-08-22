@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
@@ -1505,6 +1506,25 @@ namespace DaggerfallWorkshop.Utility
             q.y *= Mathf.Sign(q.y * (m[0, 2] - m[2, 0]));
             q.z *= Mathf.Sign(q.z * (m[1, 0] - m[0, 1]));
             return q;
+        }
+
+        public static MobilePet GetPetStats()
+        {
+            return new MobilePet()
+            {
+                ID = 0,
+                Affinity = MobileAffinity.Animal,
+                MaleTexture = 260,
+                FemaleTexture = 260,
+                CorpseTexture = EnemyBasics.CorpseTexture(401, 3),
+                HasIdle = true,
+                MoveSound = (int)SoundClips.EnemyTigerMove,
+                BarkSound = (int)SoundClips.EnemyTigerBark,
+                MinHealth = 13,
+                MaxHealth = 34,
+                ArmorValue = 0,
+                Team = MobileTeams.PlayerAlly
+            };
         }
     }
 }

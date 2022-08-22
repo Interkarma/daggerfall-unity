@@ -3,16 +3,17 @@
 --- !u!1 &100000
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
   m_Component:
-  - 4: {fileID: 400000}
-  - 114: {fileID: 11400008}
-  - 114: {fileID: 11400010}
-  - 114: {fileID: 11400002}
-  - 114: {fileID: 11400004}
-  - 114: {fileID: 11400000}
+  - component: {fileID: 400000}
+  - component: {fileID: 11400008}
+  - component: {fileID: 11400010}
+  - component: {fileID: 11400002}
+  - component: {fileID: 11400004}
+  - component: {fileID: 11400000}
   m_Layer: 0
   m_Name: DaggerfallUnity
   m_TagString: Untagged
@@ -22,72 +23,69 @@ GameObject:
   m_IsActive: 1
 --- !u!4 &400000
 Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11400000
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &11400008
 MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 743257e53050c9344ab2b21bdbd5d8d6, type: 3}
+  m_Script: {fileID: 11500000, guid: fa90c88382e6a0440bb268626863c5fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Arena2Path: D:\Program Files (x86)\Bethesda Softworks\Daggerfall\arena2
-  ModelImporter_ModelID: 456
-  BlockImporter_BlockName: MAGEAA01.RMB
-  CityImporter_CityName: Daggerfall/Daggerfall
-  DungeonImporter_DungeonName: Daggerfall/Privateer's Hold
-  Option_SetStaticFlags: 1
-  Option_CombineRMB: 1
-  Option_CombineRDB: 1
-  Option_BatchBillboards: 1
-  Option_AddMeshColliders: 1
-  Option_AddNavmeshAgents: 1
-  Option_RMBGroundPlane: 1
-  Option_CloseCityGates: 0
-  Option_ImportLightPrefabs: 1
-  Option_CityLightPrefab: {fileID: 10897134, guid: c05f4b58f3973de41a32c50d46f01d99,
-    type: 2}
-  Option_DungeonLightPrefab: {fileID: 10828972, guid: cebf048511e80ab458197b0d05c5eb71,
-    type: 2}
-  Option_InteriorLightPrefab: {fileID: 10828972, guid: 615999c22ca61aa4caed18ec4644eea9,
-    type: 2}
-  Option_ImportDoorPrefabs: 1
-  Option_DungeonDoorPrefab: {fileID: 11410228, guid: 01790b44b07d0f14f88d2a198a694c1f,
-    type: 2}
-  Option_InteriorDoorPrefab: {fileID: 11420022, guid: 5ff2939196ad9d544b940b85e9b05471,
-    type: 2}
-  Option_CityBlockPrefab: {fileID: 11448502, guid: 4d43a13c5e42b8445b6ec93a9d8c7bbe,
-    type: 2}
-  Option_DungeonBlockPrefab: {fileID: 11498520, guid: 27a51a887fcbfdf48bf6d8c3e30c8c76,
-    type: 2}
-  Option_ImportEnemyPrefabs: 1
-  Option_EnemyPrefab: {fileID: 11495432, guid: bb371757861765d4e8cd34d3dde6f640, type: 2}
-  Option_ImportRandomTreasure: 1
-  Option_LootContainerPrefab: {fileID: 11448000, guid: e44e9b9711fff7a4a8f1331e5f18f151,
-    type: 2}
-  Option_AutomateTextureSwaps: 1
-  Option_AutomateSky: 1
-  Option_AutomateCityWindows: 1
-  Option_AutomateCityLights: 1
-  Option_AutomateCityGates: 0
+  AtlasTextures: 1
+  CompressSkyTextures: 0
+  CompressModdedTextures: 1
+  Sharpen: 0
+  GenerateNormals: 0
+  NormalTextureStrength: 0.2
+  MainFilterMode: 0
+  SkyFilterMode: 0
+  MipMaps: 1
+  ReadableTextures: 0
+  AlphaTextureFormat: 2
+  DayWindowColor: {r: 0.34901962, g: 0.6039216, b: 0.69803923, a: 1}
+  NightWindowColor: {r: 1, g: 0.7137255, b: 0.21960784, a: 1}
+  FogWindowColor: {r: 0.45882353, g: 0.45882353, b: 0.45882353, a: 1}
+  CustomWindowColor: {r: 0.78431374, g: 0, b: 0.78431374, a: 1}
+  DayWindowIntensity: 0.5
+  NightWindowIntensity: 0.8
+  FogWindowIntensity: 0.5
+  CustomWindowIntensity: 1
+--- !u!114 &11400010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc1654648048f5e4ca76b2e9f99dd919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AddMeshTangents: 1
+  AddMeshLightmapUVs: 0
 --- !u!114 &11400002
 MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -96,9 +94,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &11400004
 MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -112,101 +111,65 @@ MonoBehaviour:
     Hour: 12
     Minute: 0
     Second: 0
+  RaiseTimeInSeconds: 0
   TimeScale: 12
   ShowDebugString: 0
---- !u!114 &11400008
+--- !u!114 &11400000
 MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa90c88382e6a0440bb268626863c5fb, type: 3}
+  m_Script: {fileID: 11500000, guid: 743257e53050c9344ab2b21bdbd5d8d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AtlasTextures: 1
-  CompressSkyTextures: 0
-  Sharpen: 0
-  GenerateNormals: 0
-  NormalTextureStrength: 0.2
-  MainFilterMode: 0
-  SkyFilterMode: 0
-  MipMaps: 1
-  AlphaTextureFormat: 2
-  NonAlphaTextureFormat: 1
-  DayWindowColor: {r: 0.34901962, g: 0.6039216, b: 0.69803923, a: 1}
-  NightWindowColor: {r: 1, g: 0.7137255, b: 0.21960784, a: 1}
-  FogWindowColor: {r: 0.45882353, g: 0.45882353, b: 0.45882353, a: 1}
-  CustomWindowColor: {r: 0.78431374, g: 0, b: 0.78431374, a: 1}
-  DayWindowIntensity: 0.5
-  NightWindowIntensity: 0.8
-  FogWindowIntensity: 0.5
-  CustomWindowIntensity: 1
---- !u!114 &11400010
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc1654648048f5e4ca76b2e9f99dd919, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AddMeshTangents: 1
-  AddMeshLightmapUVs: 0
---- !u!1001 &100100000
-Prefab:
-  m_ObjectHideFlags: 1
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 0}
-      propertyPath: Option_CityLightPrefab
-      value: 
-      objectReference: {fileID: 10897134, guid: c05f4b58f3973de41a32c50d46f01d99,
-        type: 2}
-    - target: {fileID: 0}
-      propertyPath: Option_DungeonLightPrefab
-      value: 
-      objectReference: {fileID: 10828972, guid: cebf048511e80ab458197b0d05c5eb71,
-        type: 2}
-    - target: {fileID: 0}
-      propertyPath: Option_InteriorLightPrefab
-      value: 
-      objectReference: {fileID: 10828972, guid: 615999c22ca61aa4caed18ec4644eea9,
-        type: 2}
-    - target: {fileID: 0}
-      propertyPath: Option_DungeonDoorPrefab
-      value: 
-      objectReference: {fileID: 11410228, guid: 01790b44b07d0f14f88d2a198a694c1f,
-        type: 2}
-    - target: {fileID: 0}
-      propertyPath: Option_InteriorDoorPrefab
-      value: 
-      objectReference: {fileID: 11420022, guid: 5ff2939196ad9d544b940b85e9b05471,
-        type: 2}
-    - target: {fileID: 0}
-      propertyPath: Option_EnemyPrefab
-      value: 
-      objectReference: {fileID: 11495432, guid: c4ffeec35c7aaa24d8a9defc2edb7ac5,
-        type: 2}
-    - target: {fileID: 0}
-      propertyPath: NonAlphaTextureFormat
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: AlphaTextureFormat
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: Option_LootContainerPrefab
-      value: 
-      objectReference: {fileID: 11448000, guid: e44e9b9711fff7a4a8f1331e5f18f151,
-        type: 2}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 100000}
-  m_IsPrefabParent: 1
+  Arena2Path: A:\Games\Daggerfall\Daggerfall Unity\DAGGER\arena2
+  ModelImporter_ModelID: 456
+  BlockImporter_BlockName: N0000031.RDB
+  CityImporter_CityName: Daggerfall/Daggerfall
+  Experimental_CityLayoutName: Daggerfall/Aldcart
+  DungeonImporter_DungeonName: Daggerfall/Privateer's Hold
+  Option_SetStaticFlags: 1
+  Option_CombineRMB: 1
+  Option_CombineRDB: 1
+  Option_BatchBillboards: 1
+  Option_AddMeshColliders: 1
+  Option_AddNavmeshAgents: 1
+  Option_RMBGroundPlane: 1
+  Option_ImportLightPrefabs: 1
+  Option_CityLightPrefab: {fileID: 10897134, guid: c05f4b58f3973de41a32c50d46f01d99,
+    type: 3}
+  Option_DungeonLightPrefab: {fileID: 10828972, guid: cebf048511e80ab458197b0d05c5eb71,
+    type: 3}
+  Option_InteriorLightPrefab: {fileID: 10828972, guid: 615999c22ca61aa4caed18ec4644eea9,
+    type: 3}
+  Option_ImportDoorPrefabs: 1
+  Option_DungeonDoorPrefab: {fileID: 11410228, guid: 829d47869fdd54e48b9424565c0108ec,
+    type: 3}
+  Option_InteriorDoorPrefab: {fileID: 11420022, guid: 5ff2939196ad9d544b940b85e9b05471,
+    type: 3}
+  Option_CityBlockPrefab: {fileID: 11448502, guid: 4d43a13c5e42b8445b6ec93a9d8c7bbe,
+    type: 3}
+  Option_DungeonBlockPrefab: {fileID: 11498520, guid: 27a51a887fcbfdf48bf6d8c3e30c8c76,
+    type: 3}
+  Option_MobileNPCPrefab: {fileID: 114040605119886728, guid: a00eeb38a1afa314b9c2e1c2879a2e1d,
+    type: 3}
+  Option_ImportEnemyPrefabs: 1
+  Option_EnemyPrefab: {fileID: 11495432, guid: 81f9cc3450e0e0d4b8f609fa31938b81, type: 3}
+  Option_ImportPetPrefabs: 1
+  Option_PetPrefab: {fileID: 0}
+  Option_ImportRandomTreasure: 1
+  Option_LootContainerPrefab: {fileID: 11486862, guid: 0cdf6abd09ff76d41ab8b3cdcbd5e559,
+    type: 3}
+  Option_DungeonWaterPrefab: {fileID: 1333835593155398, guid: 574cb9d5c6f200a47987d8425d8c9342,
+    type: 3}
+  Option_DungeonWaterPlaneSize: {x: 10, y: 1, z: 10}
+  Option_DungeonWaterPlaneOffset: {x: 5, y: 0, z: 5}
+  Option_AutomateTextureSwaps: 1
+  Option_AutomateSky: 1
+  Option_AutomateCityWindows: 1
+  Option_AutomateCityLights: 1
+  Option_AutomateCityGates: 0

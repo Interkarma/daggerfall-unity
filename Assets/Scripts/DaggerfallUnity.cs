@@ -22,6 +22,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
@@ -40,6 +41,7 @@ namespace DaggerfallWorkshop
     [RequireComponent(typeof(SoundReader))]
     public class DaggerfallUnity : MonoBehaviour
     {
+
         #region Fields
 
         public const string staticGeometryTag = "StaticGeometry";
@@ -69,6 +71,7 @@ namespace DaggerfallWorkshop
 
         // General
         public string Arena2Path;
+
         public int ModelImporter_ModelID = 456;
         public string BlockImporter_BlockName = "MAGEAA01.RMB";
         public string CityImporter_CityName = "Daggerfall/Daggerfall";
@@ -99,6 +102,8 @@ namespace DaggerfallWorkshop
         public MobilePersonMotor Option_MobileNPCPrefab = null;
         public bool Option_ImportEnemyPrefabs = true;
         public DaggerfallEnemy Option_EnemyPrefab = null;
+        public DaggerfallEnemy Option_PetPrefab = null;
+
         public bool Option_ImportRandomTreasure = true;
         public DaggerfallLoot Option_LootContainerPrefab = null;
         public GameObject Option_DungeonWaterPrefab = null;

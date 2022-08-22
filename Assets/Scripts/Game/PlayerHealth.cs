@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using System;
 using UnityEngine;
 using System.Collections;
 using DaggerfallWorkshop.Game.Entity;
@@ -24,6 +25,7 @@ namespace DaggerfallWorkshop.Game
         //public bool GodMode = false;
 
         DaggerfallEntityBehaviour entityBehaviour;
+        public Action<int,int> OnHealthChangedAction;
 
         void Awake()
         {
@@ -40,6 +42,7 @@ namespace DaggerfallWorkshop.Game
             {
                 PlayerEntity entity = entityBehaviour.Entity as PlayerEntity;
                 entity.DecreaseHealth(amount);
+                OnHealthChangedAction?.Invoke(entity.CurrentHealth,entity.MaxHealth);
             }
         }
 
