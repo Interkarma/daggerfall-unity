@@ -279,7 +279,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Monster types get a random monster name
             // Always treating monsters as male for now as they don't have any gender in game files
-            if ((int)foeType < 128)
+            if (!DaggerfallEntity.IsClassEnemyId((int)foeType))
             {
                 DFRandom.srand(DateTime.Now.Millisecond + DFRandom.random_range(1, 1000000));
                 displayName = DaggerfallUnity.Instance.NameHelper.MonsterName();

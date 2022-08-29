@@ -218,7 +218,8 @@ namespace DaggerfallWorkshop.Game
 
         private bool IgnoreHumanSounds()
         {
-            if (DaggerfallEntity.IsClassEnemyId(mobile.Enemy.ID) && MuteHumanSounds)
+            // Mute all class enemies, except the City watch
+            if ((mobile.Enemy.ID != (int)MobileTypes.Knight_CityWatch && DaggerfallEntity.IsClassEnemyId(mobile.Enemy.ID)) && MuteHumanSounds)
                 return true;
             else
                 return false;
