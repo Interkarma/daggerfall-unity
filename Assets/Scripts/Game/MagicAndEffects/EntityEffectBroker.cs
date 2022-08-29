@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Some time-based effects do not operate during these increases, e.g. the "item deteriorates" side-effect
         /// This flag is lowered at the end of each magic update.
         /// </summary>
-        public bool SyntheticTimeIncrease { get; private set; }
+        public bool SyntheticTimeIncrease { get; internal set; }
 
         /// <summary>
         /// The list of standard spells (aka circinate spells), taken from SPELLS.STD and potentially modified (or added to) by mods

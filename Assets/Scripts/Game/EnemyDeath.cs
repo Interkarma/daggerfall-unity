@@ -82,12 +82,22 @@ namespace DaggerfallWorkshop.Game
             if (!DaggerfallUnity.Settings.DisableEnemyDeathAlert)
                 DaggerfallUI.Instance.PopupMessage(deathMessage);
 
+            int corpseTexture;
+            if(mobile.Enemy.Gender == MobileGender.Female && mobile.Enemy.FemaleCorpseTexture != 0)
+            {
+                corpseTexture = mobile.Enemy.FemaleCorpseTexture;
+            }
+            else
+            {
+                corpseTexture = mobile.Enemy.CorpseTexture;
+            }
+
             // Generate lootable corpse marker
             DaggerfallLoot loot = GameObjectHelper.CreateLootableCorpseMarker(
                 GameManager.Instance.PlayerObject,
                 entityBehaviour.gameObject,
                 enemyEntity,
-                mobile.Enemy.CorpseTexture,
+                corpseTexture,
                 DaggerfallUnity.NextUID);
 
             // This is still required so enemy equipment is not marked as equipped

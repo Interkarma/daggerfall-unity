@@ -182,6 +182,7 @@ namespace DaggerfallWorkshop
         public int MaleTexture;                     // Texture archive index for male sprite
         public int FemaleTexture;                   // Texture archive index for female sprite
         public int CorpseTexture;                   // Corpse texture archive:record bits
+        public int FemaleCorpseTexture;             // Corpse texture archive:record bits, for female entities. If 0, use CorpseTexture
         public bool HasIdle;                        // Has standard Idle animation group
         public bool HasRangedAttack1;               // Has RangedAttack1 animation group
         public bool HasRangedAttack2;               // Has RangedAttack2 animation group

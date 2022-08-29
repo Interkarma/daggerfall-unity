@@ -12,6 +12,7 @@
 using UnityEngine;
 using System.Collections;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -217,7 +218,7 @@ namespace DaggerfallWorkshop.Game
 
         private bool IgnoreHumanSounds()
         {
-            if (mobile.Enemy.ID > 127 && mobile.Enemy.ID < 146 && MuteHumanSounds)
+            if (DaggerfallEntity.IsClassEnemyId(mobile.Enemy.ID) && MuteHumanSounds)
                 return true;
             else
                 return false;
