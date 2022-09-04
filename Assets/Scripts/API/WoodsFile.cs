@@ -113,26 +113,20 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Width of heightmap data (always 1000).
         /// </summary>
-        public static int MapWidth
-        {
-            get { return mapWidthValue; }
-        }
+        public static int MapWidth => mapWidthValue;
 
         /// <summary>
         /// Height of heightmap data (always 500).
         /// </summary>
-        public static int MapHeight
-        {
-            get { return mapHeightValue; }
-        }
+        public static int MapHeight => mapHeightValue;
 
         /// <summary>
         /// Gets or sets extracted heightmap data.
         /// </summary>
         public Byte[] Buffer
         {
-            get { return heightMapBuffer; }
-            set { heightMapBuffer = value; }
+            get => heightMapBuffer;
+            set => heightMapBuffer = value;
         }
 
         #endregion
@@ -142,10 +136,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Gets default WOODS.WLD filename.
         /// </summary>
-        static public string Filename
-        {
-            get { return "WOODS.WLD"; }
-        }
+        static public string Filename => "WOODS.WLD";
 
         #endregion
 
@@ -242,11 +233,9 @@ namespace DaggerfallConnect.Arena2
         {
             Byte[,] dstData = new Byte[dim, dim];
             for (int y = 0; y < dim; y++)
+            for (int x = 0; x < dim; x++)
             {
-                for (int x = 0; x < dim; x++)
-                {
-                    dstData[x, y] = GetHeightMapValue(mapPixelX + x, mapPixelY + y);
-                }
+                dstData[x, y] = GetHeightMapValue(mapPixelX + x, mapPixelY + y);
             }
 
             return dstData;
@@ -263,11 +252,9 @@ namespace DaggerfallConnect.Arena2
         {
             Byte[] dstData = new Byte[dim * dim];
             for (int y = 0; y < dim; y++)
+            for (int x = 0; x < dim; x++)
             {
-                for (int x = 0; x < dim; x++)
-                {
-                    dstData[x + (y * dim)] = GetHeightMapValue(mapPixelX + x, mapPixelY + y);
-                }
+                dstData[x + (y * dim)] = GetHeightMapValue(mapPixelX + x, mapPixelY + y);
             }
             return dstData;
         }
@@ -296,11 +283,9 @@ namespace DaggerfallConnect.Arena2
             // Read 5x5 data
             Byte[,] data = new Byte[5, 5];
             for (int y = 0; y < 5; y++)
+            for (int x = 0; x < 5; x++)
             {
-                for (int x = 0; x < 5; x++)
-                {
-                    data[x, y] = reader.ReadByte();
-                }
+                data[x, y] = reader.ReadByte();
             }
 
             return data;
@@ -322,22 +307,18 @@ namespace DaggerfallConnect.Arena2
 
             Byte[,] dstData = new Byte[dim * len, dim * len];
             for (int y = 0; y < dim; y++)
+            for (int x = 0; x < dim; x++)
             {
-                for (int x = 0; x < dim; x++)
-                {
-                    // Get source 5x5 data
-                    Byte[,] srcData = GetLargeMapData(mapPixelX + x, mapPixelY - y);
+                // Get source 5x5 data
+                Byte[,] srcData = GetLargeMapData(mapPixelX + x, mapPixelY - y);
 
-                    // Write 3x3 heightmap pixels to destination array
-                    int startX = x * len;
-                    int startY = y * len;
-                    for (int iy = offsety; iy < offsety + len; iy++)
-                    {
-                        for (int ix = offsetx; ix < offsetx + len; ix++)
-                        {
-                            dstData[startX + ix - offsetx, startY + iy - offsety] = srcData[ix, 4 - iy];
-                        }
-                    }
+                // Write 3x3 heightmap pixels to destination array
+                int startX = x * len;
+                int startY = y * len;
+                for (int iy = offsety; iy < offsety + len; iy++)
+                for (int ix = offsetx; ix < offsetx + len; ix++)
+                {
+                    dstData[startX + ix - offsetx, startY + iy - offsety] = srcData[ix, 4 - iy];
                 }
             }
 

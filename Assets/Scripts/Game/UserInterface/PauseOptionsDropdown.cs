@@ -203,8 +203,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             foreach (var opt in DaggerfallUI.Instance.GetPauseOptionsDropdownItems())
             {
-                dropdownList.AddItem(opt.Item1, out ListBox.ListItem item);
-                clickHandlers.Add(opt.Item2);
+                dropdownList.AddItem(opt.text, out var item);
+                clickHandlers.Add(opt.action);
 
                 if (item.textLabel.TextWidth > maxTextWidth)
                     maxTextWidth = item.textLabel.TextWidth + 8;

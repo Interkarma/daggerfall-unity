@@ -132,66 +132,42 @@ namespace DaggerfallConnect.Utility
         /// <summary>
         /// Get full path and filename of managed file. Derived from filename for disk files, or specified at construction for managed files.
         /// </summary>
-        public string FilePath
-        {
-            get { return managedFilePath; }
-        }
+        public string FilePath => managedFilePath;
 
         /// <summary>
         /// Get filename of managed file without path.
         /// </summary>
-        public string FileName
-        {
-            get { return Path.GetFileName(managedFilePath); }
-        }
+        public string FileName => Path.GetFileName(managedFilePath);
 
         /// <summary>
         /// Get directory path of managed file without filename.
         /// </summary>
-        public string Directory
-        {
-            get { return Path.GetDirectoryName(managedFilePath); }
-        }
+        public string Directory => Path.GetDirectoryName(managedFilePath);
 
         /// <summary>
         /// Get the file usage in effect for this managed file.
         /// </summary>
-        public FileUsage Usage
-        {
-            get { return fileUsage; }
-        }
+        public FileUsage Usage => fileUsage;
 
         /// <summary>
         /// Access allowed to file.
         /// </summary>
-        public bool ReadOnly
-        {
-            get { return isReadOnly; }
-        }
+        public bool ReadOnly => isReadOnly;
 
         /// <summary>
         /// Gets last exception thrown.
         /// </summary>
-        public Exception LastException
-        {
-            get { return myLastException; }
-        }
+        public Exception LastException => myLastException;
 
         /// <summary>
         /// Gets byte array when using FileUsage.UseMemory.
         /// </summary>
-        public byte[] Buffer
-        {
-            get { return fileBuffer; }
-        }
+        public byte[] Buffer => fileBuffer;
 
         /// <summary>
         /// Gets file stream when using FileUsage.UseDisk
         /// </summary>
-        public FileStream FileStream
-        {
-            get { return fileStream; }
-        }
+        public FileStream FileStream => fileStream;
 
         #endregion
 
@@ -207,19 +183,18 @@ namespace DaggerfallConnect.Utility
         public bool Load(string filePath, FileUsage usage = FileUsage.UseMemory, bool readOnly = true)
         {
             // Determine file access settings
+            isReadOnly = readOnly;
             FileAccess fileAccess;
             FileShare fileShare;
             if (readOnly)
             {
                 fileAccess = FileAccess.Read;
                 fileShare = FileShare.ReadWrite;
-                isReadOnly = true;
             }
             else
             {
                 fileAccess = FileAccess.ReadWrite;
                 fileShare = FileShare.Read;
-                isReadOnly = false;
             }
 
             // Load based on usage
@@ -433,60 +408,42 @@ namespace DaggerfallConnect.Utility
         /// </summary>
         /// <param name="reader">Source reader.</param>
         /// <returns>Big-endian Int16</returns>
-        public Int16 beReadInt16(BinaryReader reader)
-        {
-            return (Int16)endianSwapUInt16(reader.ReadUInt16());
-        }
+        public Int16 beReadInt16(BinaryReader reader) => (Int16)endianSwapUInt16(reader.ReadUInt16());
 
         /// <summary>
         /// Reads next 2 bytes as a big-endian UInt16.
         /// </summary>
         /// <param name="reader">Source reader.</param>
         /// <returns>Big-endian UInt16.</returns>
-        public UInt16 beReadUInt16(BinaryReader reader)
-        {
-            return endianSwapUInt16(reader.ReadUInt16());
-        }
+        public UInt16 beReadUInt16(BinaryReader reader) => endianSwapUInt16(reader.ReadUInt16());
 
         /// <summary>
         /// Reads next 4 bytes as a big-endian Int32.
         /// </summary>
         /// <param name="reader">Source reader.</param>
         /// <returns>Big-endian Int32.</returns>
-        public Int32 beReadInt32(BinaryReader reader)
-        {
-            return (Int32)endianSwapUInt32(reader.ReadUInt32());
-        }
+        public Int32 beReadInt32(BinaryReader reader) => (Int32)endianSwapUInt32(reader.ReadUInt32());
 
         /// <summary>
         /// Reads next 4 bytes as a big-endian UInt32.
         /// </summary>
         /// <param name="reader">Source reader.</param>
         /// <returns>Big-endian Int32.</returns>
-        public UInt32 beReadUInt32(BinaryReader reader)
-        {
-            return endianSwapUInt32(reader.ReadUInt32());
-        }
+        public UInt32 beReadUInt32(BinaryReader reader) => endianSwapUInt32(reader.ReadUInt32());
 
         /// <summary>
         /// Swaps an unsigned 16-bit big-endian value to little-endian.
         /// </summary>
         /// <param name="value">Source reader.</param>
         /// <returns>Little-endian UInt16.</returns>
-        public UInt16 endianSwapUInt16(UInt16 value)
-        {
-            return (UInt16)((value >> 8) | (value << 8));
-        }
+        public UInt16 endianSwapUInt16(UInt16 value) => (UInt16)((value >> 8) | (value << 8));
 
         /// <summary>
         /// Swaps an unsigned 32-bit big-endian value to little-endian.
         /// </summary>
         /// <param name="value">Source reader.</param>
         /// <returns>Little-endian UInt32.</returns>
-        public UInt32 endianSwapUInt32(UInt32 value)
-        {
-            return (UInt32)((value >> 24) | ((value << 8) & 0x00FF0000) | ((value >> 8) & 0x0000FF00) | (value << 24));
-        }
+        public UInt32 endianSwapUInt32(UInt32 value) => (UInt32)((value >> 24) | ((value << 8) & 0x00FF0000) | ((value >> 8) & 0x0000FF00) | (value << 24));
 
         #endregion
 
@@ -496,19 +453,13 @@ namespace DaggerfallConnect.Utility
         /// Gets stream to disk file.
         /// </summary>
         /// <returns>FileStream object.</returns>
-        private FileStream GetFileStream()
-        {
-            return fileStream;
-        }
+        private FileStream GetFileStream() => fileStream;
 
         /// <summary>
         /// Gets stream to memory file.
         /// </summary>
         /// <returns>FileStream object</returns>
-        private MemoryStream GetMemoryStream()
-        {
-            return new MemoryStream(fileBuffer);
-        }
+        private MemoryStream GetMemoryStream() => new MemoryStream(fileBuffer);
 
         /// <summary>
         /// Loads a file into memory.

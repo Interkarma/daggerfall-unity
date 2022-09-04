@@ -130,8 +130,7 @@ namespace DaggerfallWorkshop.Game
         DaggerfallCourtWindow dfCourtWindow;
         GameEffectsConfigWindow gameEffectsConfigWindow;
 
-        private List<System.Tuple<string, Action>> pauseOptionsDropdownItems
-            = new List<System.Tuple<string, Action>>();
+        private List<(string text, Action action)> pauseOptionsDropdownItems = new List<(string, Action)>();
 
         Material pixelFontMaterial;
         Material sdfFontMaterial;
@@ -806,16 +805,14 @@ namespace DaggerfallWorkshop.Game
             if (action == null)
                 throw new ArgumentNullException("action");
 
-            pauseOptionsDropdownItems.Add(new System.Tuple<string, Action>(text, action));
+            pauseOptionsDropdownItems.Add((text, action));
         }
 
         /// <summary>
         /// Returns shallow copied list of registered dropdown items in alphabetical order
         /// </summary>
-        public IEnumerable<System.Tuple<string, Action>> GetPauseOptionsDropdownItems()
-        {
-            return pauseOptionsDropdownItems.OrderBy(it => it.Item1);
-        }
+        public IEnumerable<(string text, Action action)> GetPauseOptionsDropdownItems()
+            => pauseOptionsDropdownItems.OrderBy(it => it.text);
 
         public void PopupMessage(string text)
         {
