@@ -11,12 +11,13 @@
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using Unity.Collections;
 using Unity.Jobs;
-using System.Collections.Generic;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop
 {
@@ -79,6 +80,25 @@ namespace DaggerfallWorkshop
             set { heightMapPixelError = value; }
         }
 
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___m_InstantiateTerrain = new ProfilerMarker(nameof(InstantiateTerrain)),
+            ___m_BeginMapPixelDataUpdate = new ProfilerMarker(nameof(BeginMapPixelDataUpdate)),
+            ___m_CompleteMapPixelDataUpdate = new ProfilerMarker(nameof(CompleteMapPixelDataUpdate)),
+            ___convert_heightmap_data = new ProfilerMarker("convert heightmap data"),
+            ___convert_tilemap_data = new ProfilerMarker("convert tilemap data"),
+            ___create_tileMap_array = new ProfilerMarker("create tilemap data"),
+            ___m_DisposeNativeMemory = new ProfilerMarker(nameof(DisposeNativeMemory)),
+            ___m_PromoteTerrainData = new ProfilerMarker(nameof(PromoteTerrainData)),
+            ___Texture2D_SetPixels32 = new ProfilerMarker($"{nameof(Texture2D)}.{nameof(Texture2D.SetPixels32)}"),
+            ___Texture2D_Apply = new ProfilerMarker($"{nameof(Texture2D)}.{nameof(Texture2D.Apply)}"),
+            ___m_UpdateNeighbours = new ProfilerMarker(nameof(UpdateNeighbours)),
+            ___v_RaiseOnInstantiateTerrainEvent = new ProfilerMarker(nameof(RaiseOnInstantiateTerrainEvent)),
+            ___v_RaiseOnPromoteTerrainDataEvent = new ProfilerMarker(nameof(RaiseOnPromoteTerrainDataEvent));
+
+        #endregion
+
         // Dispose any native memory if class is destroyed.
         ~DaggerfallTerrain()
         {
@@ -102,8 +122,13 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void InstantiateTerrain()
         {
+            ___m_InstantiateTerrain.Begin();
+
             if (!ReadyCheck())
+            {
+                ___m_InstantiateTerrain.End();
                 return;
+            }
 
             // Create tileMap texture
             if (tileMapTexture == null)
@@ -122,6 +147,8 @@ namespace DaggerfallWorkshop
 
             // Raise event
             RaiseOnInstantiateTerrainEvent();
+
+            ___m_InstantiateTerrain.End();
         }
 
         /// <summary>
@@ -132,9 +159,7 @@ namespace DaggerfallWorkshop
         {
             // Update atlas texture if world climate changed
             if (currentWorldClimate != MapData.worldClimate || dfUnity.WorldTime.Now.SeasonValue != season || init)
-            {
                 currentWorldClimate = MapData.worldClimate;
-            }
         }
 
         /// <summary>
@@ -147,6 +172,8 @@ namespace DaggerfallWorkshop
         /// <returns>JobHandle of the scheduled jobs</returns>
         public JobHandle BeginMapPixelDataUpdate(ITerrainTexturing terrainTexturing = null)
         {
+            ___m_BeginMapPixelDataUpdate.Begin();
+
             // Get basic terrain data.
             MapData = TerrainHelper.GetMapPixelData(dfUnity.ContentReader, MapPixelX, MapPixelY);
 
@@ -160,7 +187,9 @@ namespace DaggerfallWorkshop
             MapData.tileMap = new NativeArray<Color32>(tilemapDim * tilemapDim, Allocator.TempJob);
 
             // Create data array for average & max heights.
-            MapData.avgMaxHeight = new NativeArray<float>(new float[] { 0, float.MinValue }, Allocator.TempJob);
+            MapData.avgMaxHeight = new NativeArray<float>(2, Allocator.TempJob);
+            MapData.avgMaxHeight[0] = 0;
+            MapData.avgMaxHeight[1] = float.MinValue;
 
             // Create list for recording native arrays that need disposal after jobs complete.
             MapData.nativeArrayList = new List<IDisposable>();
@@ -173,7 +202,7 @@ namespace DaggerfallWorkshop
             if (MapData.hasLocation)
             {
                 // Schedule job to calc average & max heights.
-                JobHandle calcAvgMaxHeightJobHandle = TerrainHelper.ScheduleCalcAvgMaxHeightJob(ref MapData, generateHeightmapSamplesJobHandle);
+                JobHandle calcAvgMaxHeightJobHandle = TerrainHelper.CalcAvgMaxHeightAsync(MapData, generateHeightmapSamplesJobHandle);
                 JobHandle.ScheduleBatchedJobs();
 
                 // Set location tiles.
@@ -182,7 +211,7 @@ namespace DaggerfallWorkshop
                 if (!dfUnity.TerrainSampler.IsLocationTerrainBlended())
                 {
                     // Schedule job to blend and flatten location heights. (depends on SetLocationTiles being done first)
-                    blendLocationTerrainJobHandle = TerrainHelper.ScheduleBlendLocationTerrainJob(ref MapData, calcAvgMaxHeightJobHandle);
+                    blendLocationTerrainJobHandle = TerrainHelper.BlendLocationTerrainAsync(MapData, calcAvgMaxHeightJobHandle);
                 }
                 else
                     blendLocationTerrainJobHandle = calcAvgMaxHeightJobHandle;
@@ -191,12 +220,15 @@ namespace DaggerfallWorkshop
                 blendLocationTerrainJobHandle = generateHeightmapSamplesJobHandle;
 
             // Assign tiles for terrain texturing.
-            JobHandle assignTilesJobHandle = (terrainTexturing == null) ? blendLocationTerrainJobHandle :
-                terrainTexturing.ScheduleAssignTilesJob(dfUnity.TerrainSampler, ref MapData, blendLocationTerrainJobHandle);
+            JobHandle assignTilesJobHandle = terrainTexturing == null
+                ? blendLocationTerrainJobHandle
+                : terrainTexturing.ScheduleAssignTilesJob(dfUnity.TerrainSampler, ref MapData, blendLocationTerrainJobHandle);
 
             // Update tile map for shader.
-            JobHandle updateTileMapJobHandle = TerrainHelper.ScheduleUpdateTileMapDataJob(ref MapData, assignTilesJobHandle);
+            JobHandle updateTileMapJobHandle = TerrainHelper.UpdateTileMapDataAsync(MapData, assignTilesJobHandle);
             JobHandle.ScheduleBatchedJobs();
+            
+            ___m_BeginMapPixelDataUpdate.End();
             return updateTileMapJobHandle;
         }
 
@@ -206,32 +238,42 @@ namespace DaggerfallWorkshop
         /// <param name="terrainTexturing">Instance of ITerrainTexturing implementation class to use.</param>
         public void CompleteMapPixelDataUpdate(ITerrainTexturing terrainTexturing = null)
         {
+            ___m_CompleteMapPixelDataUpdate.Begin();
+
             // Convert heightmap data back to standard managed 2d array.
+            ___convert_heightmap_data.Begin();
             MapData.heightmapSamples = new float[heightmapDim, heightmapDim];
             for (int i = 0; i < MapData.heightmapData.Length; i++)
-                MapData.heightmapSamples[JobA.Row(i, heightmapDim), JobA.Col(i, heightmapDim)] = MapData.heightmapData[i];
+                MapData.heightmapSamples[Matrix.Row(i, heightmapDim), Matrix.Col(i, heightmapDim)] = MapData.heightmapData[i];
+            ___convert_heightmap_data.End();
 
             // Convert tilemap data back to standard managed 2d array.
             // (Still needed for nature layout so it can be called again without requiring terrain data generation)
+            ___convert_tilemap_data.Begin();
             MapData.tilemapSamples = new byte[tilemapDim, tilemapDim];
             for (int i = 0; i < MapData.tilemapData.Length; i++)
             {
                 byte tile = MapData.tilemapData[i];
                 if (tile == byte.MaxValue)
                     tile = 0;
-                MapData.tilemapSamples[JobA.Row(i, tilemapDim), JobA.Col(i, tilemapDim)] = tile;
+                MapData.tilemapSamples[Matrix.Row(i, tilemapDim), Matrix.Col(i, tilemapDim)] = tile;
             }
+            ___convert_tilemap_data.End();
 
             // Create tileMap array or resize if needed and copy native array.
+            ___create_tileMap_array.Begin();
             if (TileMap == null || TileMap.Length != MapData.tileMap.Length)
                 TileMap = new Color32[MapData.tileMap.Length];
             MapData.tileMap.CopyTo(TileMap);
+            ___create_tileMap_array.End();
 
             // Copy max and avg heights. (TODO: Are these needed? Seem to not be used anywhere)
             MapData.averageHeight = MapData.avgMaxHeight[TerrainHelper.avgHeightIdx];
             MapData.maxHeight = MapData.avgMaxHeight[TerrainHelper.maxHeightIdx];
 
             DisposeNativeMemory();
+
+            ___m_CompleteMapPixelDataUpdate.End();
         }
 
         /// <summary>
@@ -239,9 +281,11 @@ namespace DaggerfallWorkshop
         /// </summary>
         private void DisposeNativeMemory()
         {
-            if (MapData.nativeArrayList != null)
+            ___m_DisposeNativeMemory.Begin();
+
+            // Dispose any temp working native array memory.
+            if (MapData.nativeArrayList?.Count != 0)
             {
-                // Dispose any temp working native array memory.
                 foreach (IDisposable nativeArray in MapData.nativeArrayList)
                     nativeArray.Dispose();
                 MapData.nativeArrayList = null;
@@ -256,6 +300,8 @@ namespace DaggerfallWorkshop
                 MapData.avgMaxHeight.Dispose();
             if (MapData.tileMap.IsCreated)
                 MapData.tileMap.Dispose();
+            
+            ___m_DisposeNativeMemory.End();
         }
 
         /// <summary>
@@ -264,6 +310,8 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void PromoteTerrainData()
         {
+            ___m_PromoteTerrainData.Begin();
+
             // Basemap not used and is just pushed far away
             const float basemapDistance = 10000f;
             int heightmapDimension = dfUnity.TerrainSampler.HeightmapDimension;
@@ -294,8 +342,12 @@ namespace DaggerfallWorkshop
             }
 
             // Promote tileMap
+            ___Texture2D_SetPixels32.Begin();
             tileMapTexture.SetPixels32(TileMap);
+            ___Texture2D_SetPixels32.End();
+            ___Texture2D_Apply.Begin();
             tileMapTexture.Apply(false);
+            ___Texture2D_Apply.End();
 
             // Promote material
             var terrainMaterialData = new TerrainMaterialData(terrainMaterial, terrain.terrainData, tileMapTexture, currentWorldClimate);
@@ -309,6 +361,8 @@ namespace DaggerfallWorkshop
 
             // Raise event
             RaiseOnPromoteTerrainDataEvent(terrain.terrainData);
+
+            ___m_PromoteTerrainData.End();
         }
 
         /// <summary>
@@ -316,8 +370,12 @@ namespace DaggerfallWorkshop
         /// </summary>
         public void UpdateNeighbours()
         {
+            ___m_UpdateNeighbours.Begin();
+
             Terrain terrain = GetComponent<Terrain>();
             terrain.SetNeighbors(LeftNeighbour, TopNeighbour, RightNeighbour, BottomNeighbour);
+
+            ___m_UpdateNeighbours.End();
         }
 
         #region Editor Support
@@ -385,8 +443,12 @@ namespace DaggerfallWorkshop
         public static event OnInstantiateTerrainEventHandler OnInstantiateTerrain;
         protected virtual void RaiseOnInstantiateTerrainEvent()
         {
+            ___v_RaiseOnInstantiateTerrainEvent.Begin();
+
             if (OnInstantiateTerrain != null)
                 OnInstantiateTerrain(this);
+            
+            ___v_RaiseOnInstantiateTerrainEvent.End();
         }
 
         // OnPromoteTerrainData
@@ -394,8 +456,12 @@ namespace DaggerfallWorkshop
         public static event OnPromoteTerrainDataEventHandler OnPromoteTerrainData;
         protected virtual void RaiseOnPromoteTerrainDataEvent(TerrainData terrainData)
         {
+            ___v_RaiseOnPromoteTerrainDataEvent.Begin();
+
             if (OnPromoteTerrainData != null)
                 OnPromoteTerrainData(this, terrainData);
+            
+            ___v_RaiseOnPromoteTerrainDataEvent.End();
         }
 
         #endregion

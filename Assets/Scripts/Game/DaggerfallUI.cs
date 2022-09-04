@@ -1195,13 +1195,14 @@ namespace DaggerfallWorkshop.Game
 
             Color32[] newColors = new Color32[(int)subRect.width * (int)subRect.height];
             ImageProcessing.CopyColors(
-                ref colors,
-                ref newColors,
+                colors,
+                newColors,
                 new DFSize(bitmap.Width, bitmap.Height),
                 new DFSize((int)subRect.width, (int)subRect.height),
                 new DFPosition((int)subRect.x, (int)subRect.y),
                 new DFPosition(0, 0),
-                new DFSize((int)subRect.width, (int)subRect.height));
+                new DFSize((int)subRect.width, (int)subRect.height)
+            );
 
             Texture2D texture = new Texture2D((int)subRect.width, (int)subRect.height, format, false);
             texture.SetPixels32(newColors, 0);

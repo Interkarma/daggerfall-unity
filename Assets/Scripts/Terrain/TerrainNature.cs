@@ -4,15 +4,21 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Hazelnut
+// Contributors:    Hazelnut, Andrzej Łukasik (andrew.r.lukasik)
 // 
 // Notes:
 //
 
+using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using Unity.Profiling;
+using Unity.Mathematics;
+using Unity.Collections;
+
+using Random = UnityEngine.Random;
 
 namespace DaggerfallWorkshop
 {
@@ -53,8 +59,22 @@ namespace DaggerfallWorkshop
 
         public bool NatureMeshUsed { get; protected set; }
 
+        #region Profiler Markers
+        
+        static readonly ProfilerMarker
+            ___getClimateSettings = new ProfilerMarker("get climate settings"),
+            ___removeExitingBillboards = new ProfilerMarker("remove existing billboards"),
+            ___layoutlayoutRandomFlats = new ProfilerMarker("layout random flats"),
+            ___addNewBillboards = new ProfilerMarker("add new billboards"),
+            ___apply = new ProfilerMarker("apply"),
+            ___LayoutNature = new ProfilerMarker($"{nameof(DefaultTerrainNature)}.{nameof(LayoutNature)}");
+        
+        #endregion
+
         public virtual void LayoutNature(DaggerfallTerrain dfTerrain, DaggerfallBillboardBatch dfBillboardBatch, float terrainScale, int terrainDist)
         {
+            ___LayoutNature.Begin();
+
             // Location Rect is expanded slightly to give extra clearance around locations
             Rect rect = dfTerrain.MapData.locationRect;
             if (rect.x > 0 && rect.y > 0)
@@ -68,9 +88,10 @@ namespace DaggerfallWorkshop
             // This tends to produce sparser lowlands and denser highlands
             // Adjust or remove clamp range to influence nature generation
             float elevationScale = (dfTerrain.MapData.worldHeight / 128f);
-            elevationScale = Mathf.Clamp(elevationScale, 0.4f, 1.0f);
+            elevationScale = math.clamp(elevationScale, 0.4f, 1.0f);
 
             // Chance scaled by base climate type
+            ___getClimateSettings.Begin();
             float climateScale = 1.0f;
             DFLocation.ClimateSettings climate = MapsFile.GetWorldClimateSettings(dfTerrain.MapData.worldClimate);
             switch (climate.ClimateType)
@@ -82,50 +103,57 @@ namespace DaggerfallWorkshop
             float chanceOnDirt = baseChanceOnDirt * elevationScale * climateScale;
             float chanceOnGrass = baseChanceOnGrass * elevationScale * climateScale;
             float chanceOnStone = baseChanceOnStone * elevationScale * climateScale;
+            ___getClimateSettings.End();
 
             // Get terrain
             Terrain terrain = dfTerrain.gameObject.GetComponent<Terrain>();
             if (!terrain)
+            {
+                ___LayoutNature.End();
                 return;
+            }
 
             // Get terrain data
             TerrainData terrainData = terrain.terrainData;
             if (!terrainData)
+            {
+                ___LayoutNature.End();
                 return;
+            }
 
             // Remove exiting billboards
+            ___removeExitingBillboards.Begin();
             dfBillboardBatch.Clear();
             MeshReplacement.ClearNatureGameObjects(terrain);
+            ___removeExitingBillboards.End();
 
             // Seed random with terrain key
             Random.InitState(TerrainHelper.MakeTerrainKey(dfTerrain.MapPixelX, dfTerrain.MapPixelY));
 
             // Just layout some random flats spread evenly across entire map pixel area
             // Flats are aligned with tiles, max 16129 billboards per batch
-            Vector2 tilePos = Vector2.zero;
+            ___layoutlayoutRandomFlats.Begin();
+            var terrainSampler = DaggerfallUnity.Instance.TerrainSampler;
             int tDim = MapsFile.WorldMapTileDim;
-            int hDim = DaggerfallUnity.Instance.TerrainSampler.HeightmapDimension;
+            int hDim = terrainSampler.HeightmapDimension;
             float scale = terrainData.heightmapScale.x * (float)hDim / (float)tDim;
-            float maxTerrainHeight = DaggerfallUnity.Instance.TerrainSampler.MaxTerrainHeight;
-            float beachLine = DaggerfallUnity.Instance.TerrainSampler.BeachElevation;
-
+            float maxTerrainHeight = terrainSampler.MaxTerrainHeight;
+            float beachLine = terrainSampler.BeachElevation;
+            byte[,] tilemapSamples = dfTerrain.MapData.tilemapSamples;
+            float[,] heightmapSamples = dfTerrain.MapData.heightmapSamples;
+            float3 terrainPosition = terrain.transform.position;
+            var itemsBuffer = new NativeArray<DaggerfallBillboardBatch.ItemToAdd>(math.min(tDim * tDim, DaggerfallBillboardBatch.maxBillboardCount), Allocator.TempJob);
+            int itemsBufferCounter = 0;
             for (int y = 0; y < tDim; y++)
             {
                 for (int x = 0; x < tDim; x++)
                 {
-                    // Reject based on steepness
-                    float steepness = terrainData.GetSteepness((float)x / tDim, (float)y / tDim);
-                    if (steepness > maxSteepness)
-                        continue;
-
                     // Reject if inside location rect (expanded slightly to give extra clearance around locations)
-                    tilePos.x = x;
-                    tilePos.y = y;
-                    if (rect.x > 0 && rect.y > 0 && rect.Contains(tilePos))
+                    if (rect.x > 0 && rect.y > 0 && rect.Contains(new Vector2(x,y)))// tilePos = new Vector2(x,y);
                         continue;
 
                     // Chance also determined by tile type
-                    int tile = dfTerrain.MapData.tilemapSamples[x, y] & 0x3F;
+                    int tile = tilemapSamples[x, y] & 0x3F;
                     if (tile == 1)
                     {   // Dirt
                         if (Random.Range(0f, 1f) > chanceOnDirt)
@@ -146,30 +174,46 @@ namespace DaggerfallWorkshop
                         continue;
                     }
 
-                    int hx = (int)Mathf.Clamp(hDim * ((float)x / (float)tDim), 0, hDim - 1);
-                    int hy = (int)Mathf.Clamp(hDim * ((float)y / (float)tDim), 0, hDim - 1);
-                    float height = dfTerrain.MapData.heightmapSamples[hy, hx] * maxTerrainHeight;  // x & y swapped in heightmap for TerrainData.SetHeights()
+                    int2 h = (int2)math.clamp(new float2(hDim) * (new float2(x, y) / new float2(tDim)), float2.zero, new float2(hDim) - new float2(1));
+                    float height = heightmapSamples[h.y, h.x] * maxTerrainHeight;// x & y swapped in heightmap for TerrainData.SetHeights()
 
                     // Reject if too close to water
                     if (height < beachLine)
                         continue;
 
-                    // Sample height and position billboard
-                    Vector3 pos = new Vector3(x * scale, 0, y * scale);
-                    float height2 = terrain.SampleHeight(pos + terrain.transform.position);
-                    pos.y = height2 - (steepness / slopeSinkRatio);
+                    // Reject based on steepness
+                    float steepness = terrainData.GetSteepness((float)x / tDim, (float)y / tDim);
+                    if (steepness > maxSteepness)
+                        continue;
 
                     // Add to batch unless a mesh replacement is found
                     int record = Random.Range(1, 32);
                     if (terrainDist > 1 || !MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
-                        dfBillboardBatch.AddItem(record, pos);
-                    else if (!NatureMeshUsed)
-                        NatureMeshUsed = true;  // Signal that nature mesh has been used to initiate extra terrain updates
+                    {
+                        // Sample height and position billboard
+                        float3 pos = new float3(x, 0, y) * new float3(scale);
+                        float height2 = terrain.SampleHeight(pos + terrainPosition);
+                        pos.y = height2 - (steepness / slopeSinkRatio);
+
+                        itemsBuffer[itemsBufferCounter++] = new DaggerfallBillboardBatch.ItemToAdd(record, pos);
+                        if (itemsBufferCounter == itemsBuffer.Length) goto loopEnd;// stop when full
+                    }
+                    else NatureMeshUsed = true;  // Signal that nature mesh has been used to initiate extra terrain updates
                 }
             }
+        loopEnd:
+            ___layoutlayoutRandomFlats.End();
 
-            // Apply new batch
+            ___addNewBillboards.Begin();
+            var addItemsJobHandle = dfBillboardBatch.AddItemsAsync(itemsBuffer.GetSubArray(0, itemsBufferCounter));
+            itemsBuffer.Dispose(addItemsJobHandle);
+            ___addNewBillboards.End();
+
+            ___apply.Begin();
             dfBillboardBatch.Apply();
+            ___apply.End();
+
+            ___LayoutNature.End();
         }
     }
 

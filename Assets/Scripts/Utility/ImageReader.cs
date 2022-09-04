@@ -217,13 +217,14 @@ namespace DaggerfallWorkshop.Utility
             // Create new Color32 array
             Color32[] newColors = new Color32[(int)subRect.width * (int)subRect.height];
             ImageProcessing.CopyColors(
-                ref colors,
-                ref newColors,
+                colors,
+                newColors,
                 new DFSize(srcWidth, srcHeight),
                 new DFSize((int)subRect.width, (int)subRect.height),
                 new DFPosition((int)subRect.x, (int)subRect.y),
                 new DFPosition(0, 0),
-                new DFSize((int)subRect.width, (int)subRect.height));
+                new DFSize((int)subRect.width, (int)subRect.height)
+            );
 
             return newColors;
         }

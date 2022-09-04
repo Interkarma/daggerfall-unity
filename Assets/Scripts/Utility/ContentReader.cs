@@ -15,6 +15,7 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using System;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -33,7 +34,7 @@ namespace DaggerfallWorkshop.Utility
         FactionFile factionFileReader;
         FlatsFile flatsFileReader;
         PaintFile paintFileReader;
-        Dictionary<int, MapSummary> mapDict;
+        Dictionary<int, MapSummary> mapSummaries;
         Dictionary<int, int> locationIdToMapIdDict;
 
         public struct MapSummary
@@ -46,45 +47,22 @@ namespace DaggerfallWorkshop.Utility
             public bool Discovered;
         }
 
-        public bool IsReady
-        {
-            get { return isReady; }
-        }
+        public bool IsReady => isReady;
+        public BlocksFile BlockFileReader => blockFileReader;
+        public MapsFile MapFileReader => mapFileReader;
+        public MonsterFile MonsterFileReader => monsterFileReader;
+        public WoodsFile WoodsFileReader => woodsFileReader;
+        public FactionFile FactionFileReader => factionFileReader;
+        public FlatsFile FlatsFileReader => flatsFileReader;
+        public PaintFile PaintFileReader => paintFileReader;
+        public Dictionary<int, MapSummary> MapSummaries => mapSummaries;
 
-        public BlocksFile BlockFileReader
-        {
-            get { return blockFileReader; }
-        }
+        #region Profiler Markers
 
-        public MapsFile MapFileReader
-        {
-            get { return mapFileReader; }
-        }
+        static readonly ProfilerMarker
+            ___m_EnumerateMaps = new ProfilerMarker(nameof(EnumerateMaps));
 
-        public MonsterFile MonsterFileReader
-        {
-            get { return monsterFileReader; }
-        }
-
-        public WoodsFile WoodsFileReader
-        {
-            get { return woodsFileReader; }
-        }
-
-        public FactionFile FactionFileReader
-        {
-            get { return factionFileReader; }
-        }
-
-        public FlatsFile FlatsFileReader
-        {
-            get { return flatsFileReader; }
-        }
-
-        public PaintFile PaintFileReader
-        {
-            get { return paintFileReader; }
-        }
+        #endregion
 
         #region Constructors
 
@@ -193,11 +171,8 @@ namespace DaggerfallWorkshop.Utility
 
             // Get mapId from locationId
             int mapId = LocationIdToMapId(locationId);
-            if (mapDict.ContainsKey(mapId))
-            {
-                MapSummary summary = mapDict[mapId];
+            if (mapSummaries.TryGetValue(mapId, out var summary))
                 return GetLocation(summary.RegionIndex, summary.MapIndex, out locationOut);
-            }
 
             return false;
         }
@@ -218,14 +193,7 @@ namespace DaggerfallWorkshop.Utility
             MapDictCheck();
 
             int id = MapsFile.GetMapPixelID(mapPixelX, mapPixelY);
-            if (mapDict.ContainsKey(id))
-            {
-                summaryOut = mapDict[id];
-                return true;
-            }
-
-            summaryOut = new MapSummary();
-            return false;
+            return mapSummaries.TryGetValue(id, out summaryOut);
         }
 
         /// <summary>
@@ -237,17 +205,11 @@ namespace DaggerfallWorkshop.Utility
         public bool HasLocation(int mapPixelX, int mapPixelY)
         {
             if (!isReady)
-            {
                 return false;
-            }
             MapDictCheck();
 
             int id = MapsFile.GetMapPixelID(mapPixelX, mapPixelY);
-            if (mapDict.ContainsKey(id))
-            {
-                return true;
-            }
-            return false;
+            return mapSummaries.ContainsKey(id);
         }
 
         /// <summary>
@@ -257,10 +219,8 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>MapId if present or -1.</returns>
         public int LocationIdToMapId(int locationId)
         {
-            if (locationIdToMapIdDict.ContainsKey(locationId))
-            {
-                return locationIdToMapIdDict[locationId];
-            }
+            if (locationIdToMapIdDict.TryGetValue(locationId,out var result))
+                return result;
 
             return -1;
         }
@@ -307,7 +267,7 @@ namespace DaggerfallWorkshop.Utility
         private void MapDictCheck()
         {
             // Build map lookup dictionary
-            if (mapDict == null && mapFileReader != null)
+            if (mapSummaries == null && mapFileReader != null)
                 EnumerateMaps();
         }
 
@@ -316,10 +276,9 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         private void EnumerateMaps()
         {
-            //System.Diagnostics.Stopwatch s = System.Diagnostics.Stopwatch.StartNew();
-            //long startTime = s.ElapsedMilliseconds;
+            ___m_EnumerateMaps.Begin();
 
-            mapDict = new Dictionary<int, MapSummary>();
+            mapSummaries = new Dictionary<int, MapSummary>();
             locationIdToMapIdDict = new Dictionary<int, int>();
             for (int region = 0; region < mapFileReader.RegionCount; region++)
             {
@@ -340,7 +299,7 @@ namespace DaggerfallWorkshop.Utility
                         // TODO: This by itself doesn't account for DFRegion.LocationTypes.GraveyardForgotten locations that start the game discovered in classic
                         summary.Discovered = mapTable.Discovered;
 
-                        mapDict.Add(summary.ID, summary);
+                        mapSummaries.Add(summary.ID, summary);
 
                         // Link locationId with mapId - adds ~25ms overhead
                         int locationId = mapFileReader.ReadLocationIdFast(region, location);
@@ -353,8 +312,7 @@ namespace DaggerfallWorkshop.Utility
                 }
             }
 
-            //long totalTime = s.ElapsedMilliseconds - startTime;
-            //Debug.LogFormat("Total time to enum maps: {0}ms", totalTime);
+            ___m_EnumerateMaps.End();
         }
 
         #endregion

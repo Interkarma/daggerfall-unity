@@ -400,7 +400,8 @@ namespace DaggerfallWorkshop
         [HideInInspector, NonSerialized]
         public NativeArray<float> avgMaxHeight;     // Average and max height of terrain for location placement (unmanaged memory)
 
-        [HideInInspector, NonSerialized]
+        // @TODO: remove this nativeArrayList once mods stop using it
+        [HideInInspector, NonSerialized, Obsolete("use [DeallocateOnJobCompletion] attribute or DeallocateArrayJob instead")]
         public List<IDisposable> nativeArrayList;   // List of temp working native arrays (unmanaged memory) for disposal when jobs complete
     }
 

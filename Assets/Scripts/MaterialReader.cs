@@ -23,6 +23,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop
 {
@@ -229,6 +230,25 @@ namespace DaggerfallWorkshop
 
         #endregion
 
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___reverseTextureKey = new ProfilerMarker("reverse texture key"),
+            ___applyClimate = new ProfilerMarker("apply climate"),
+            ___getNewMaterial = new ProfilerMarker("get new material"),
+            ___handleWindows = new ProfilerMarker("handle windows"),
+            ___m_GetMaterial = new ProfilerMarker(nameof(GetMaterial)),
+            ___m_GetMaterialAtlas = new ProfilerMarker(nameof(GetMaterialAtlas)),
+            ___createSettings = new ProfilerMarker("create settings"),
+            ___toArray = new ProfilerMarker("to array"),
+            ___setupCachedMaterial = new ProfilerMarker("setup cached material"),
+            ___setupMaterial = new ProfilerMarker("setup material"),
+            ___setupNormalMap = new ProfilerMarker("setup normal map"),
+            ___setupEmissionMap = new ProfilerMarker("setup emission map"),
+            ___m_GetCachedMaterial = new ProfilerMarker(nameof(GetCachedMaterial));
+
+        #endregion
+
         #region Material Creation
 
         /// <summary>
@@ -350,10 +370,7 @@ namespace DaggerfallWorkshop
         /// <param name="alphaIndex">Index to receive transparent alpha.</param>
         /// <returns>Material or null.</returns>
         public Material GetMaterial(int archive, int record, int frame = 0, int alphaIndex = -1)
-        {
-            Rect rect;
-            return GetMaterial(archive, record, frame, alphaIndex, out rect, 0, false);
-        }
+            => GetMaterial(archive, record, frame, alphaIndex, out var rect, 0, false);
 
         /// <summary>
         /// Gets Unity Material from Daggerfall texture with more options.
@@ -376,10 +393,13 @@ namespace DaggerfallWorkshop
             bool dilate = false,
             bool isBillboard = false)
         {
+            ___m_GetMaterial.Begin();
+
             // Ready check
             if (!IsReady)
             {
                 rectOut = new Rect();
+                ___m_GetMaterial.End();
                 return null;
             }
 
@@ -389,6 +409,7 @@ namespace DaggerfallWorkshop
             {
                 CachedMaterial cm = GetMaterialFromCache(key);
                 rectOut = cm.singleRect;
+                ___m_GetMaterial.End();
                 return cm.material;
             }
 
@@ -511,6 +532,7 @@ namespace DaggerfallWorkshop
             };
             materialDict.Add(key, newcm);
 
+            ___m_GetMaterial.End();
             return material;
         }
 
@@ -542,11 +564,14 @@ namespace DaggerfallWorkshop
             bool copyToOppositeBorder = false,
             bool isBillboard = false)
         {
+            ___m_GetMaterialAtlas.Begin();
+
             // Ready check
             if (!IsReady)
             {
                 rectsOut = null;
                 indicesOut = null;
+                ___m_GetMaterialAtlas.End();
                 return null;
             }
 
@@ -559,6 +584,7 @@ namespace DaggerfallWorkshop
                     // Properties are the same
                     rectsOut = cm.atlasRects;
                     indicesOut = cm.atlasIndices;
+                    ___m_GetMaterialAtlas.End();
                     return cm.material;
                 }
                 else
@@ -576,6 +602,7 @@ namespace DaggerfallWorkshop
                 material = CreateDefaultMaterial();
 
             // Create settings
+            ___createSettings.Begin();
             GetTextureSettings settings = TextureReader.CreateTextureSettings(archive, 0, 0, alphaIndex, border, dilate);
             settings.createNormalMap = GenerateNormals;
             settings.autoEmission = true;
@@ -583,23 +610,28 @@ namespace DaggerfallWorkshop
             settings.atlasPadding = padding;
             settings.atlasMaxSize = maxAtlasSize;
             settings.copyToOppositeBorder = copyToOppositeBorder;
+            ___createSettings.End();
 
             // Setup material
-            material.name = string.Format("TEXTURE.{0:000} [Atlas]", archive);
+            ___setupMaterial.Begin();
+            material.name = $"TEXTURE.{archive:000} [Atlas]";
             GetTextureResults results = textureReader.GetTexture2DAtlas(settings, AlphaTextureFormat);
-
             material.mainTexture = results.albedoMap;
             material.mainTexture.filterMode = MainFilterMode;
+            ___setupMaterial.End();
 
             // Setup normal map
+            ___setupNormalMap.Begin();
             if (GenerateNormals && results.normalMap != null)
             {
                 results.normalMap.filterMode = MainFilterMode;
                 material.SetTexture(Uniforms.BumpMap, results.normalMap);
                 material.EnableKeyword(KeyWords.NormalMap);
             }
+            ___setupNormalMap.End();
 
             // Setup emission map
+            ___setupEmissionMap.Begin();
             if (results.isEmissive && results.emissionMap != null)
             {
                 results.emissionMap.filterMode = MainFilterMode;
@@ -607,29 +639,37 @@ namespace DaggerfallWorkshop
                 material.SetColor(Uniforms.EmissionColor, Color.white);
                 material.EnableKeyword(KeyWords.Emission);
             }
+            ___setupEmissionMap.End();
 
             // TEMP: Bridging between legacy material out params and GetTextureResults for now
-            Vector2[] sizesOut, scalesOut, offsetsOut;
-            sizesOut = results.atlasSizes.ToArray();
-            scalesOut = results.atlasScales.ToArray();
-            offsetsOut = results.atlasOffsets.ToArray();
+            ___toArray.Begin();
+            Vector2[]
+                sizesOut = results.atlasSizes.ToArray(),
+                scalesOut = results.atlasScales.ToArray(),
+                offsetsOut = results.atlasOffsets.ToArray();
             rectsOut = results.atlasRects.ToArray();
             indicesOut = results.atlasIndices.ToArray();
+            ___toArray.End();
 
             // Setup cached material
-            CachedMaterial newcm = new CachedMaterial();
-            newcm.key = key;
-            newcm.keyGroup = AtlasKeyGroup;
-            newcm.atlasRects = rectsOut;
-            newcm.atlasIndices = indicesOut;
-            newcm.material = material;
-            newcm.filterMode = MainFilterMode;
-            newcm.recordSizes = sizesOut;
-            newcm.recordScales = scalesOut;
-            newcm.recordOffsets = offsetsOut;
-            newcm.atlasFrameCounts = results.atlasFrameCounts.ToArray();
+            ___setupCachedMaterial.Begin();
+            CachedMaterial newcm = new CachedMaterial
+            {
+                key = key,
+                keyGroup = AtlasKeyGroup,
+                atlasRects = rectsOut,
+                atlasIndices = indicesOut,
+                material = material,
+                filterMode = MainFilterMode,
+                recordSizes = sizesOut,
+                recordScales = scalesOut,
+                recordOffsets = offsetsOut,
+                atlasFrameCounts = results.atlasFrameCounts.ToArray(),
+            };
             materialDict.Add(key, newcm);
+            ___setupCachedMaterial.End();
 
+            ___m_GetMaterialAtlas.End();
             return material;
         }
 
@@ -780,10 +820,13 @@ namespace DaggerfallWorkshop
         /// <returns>True if CachedMaterial found or loaded successfully.</returns>
         public bool GetCachedMaterial(int archive, int record, int frame, out CachedMaterial cachedMaterialOut, int alphaIndex = -1)
         {
+            ___m_GetCachedMaterial.Begin();
+
             int key = MakeTextureKey((short)archive, (byte)record, (byte)frame);
             if (materialDict.ContainsKey(key))
             {
                 cachedMaterialOut = GetMaterialFromCache(key);
+                ___m_GetCachedMaterial.End();
                 return true;
             }
             else
@@ -792,12 +835,14 @@ namespace DaggerfallWorkshop
                 if (GetMaterial(archive, record, frame, alphaIndex) == null)
                 {
                     cachedMaterialOut = new CachedMaterial();
+                    ___m_GetCachedMaterial.End();
                     return false;
                 }
             }
 
             cachedMaterialOut = materialDict[key];
 
+            ___m_GetCachedMaterial.End();
             return true;
         }
 
@@ -893,18 +938,23 @@ namespace DaggerfallWorkshop
 
             // Reverse key and apply climate
             int archive, record, frame;
+            ___reverseTextureKey.Begin();
             ReverseTextureKey(key, out archive, out record, out frame);
+            ___reverseTextureKey.End();
+            ___applyClimate.Begin();
             archive = ClimateSwaps.ApplyClimate(archive, record, climate, season);
+            ___applyClimate.End();
 
             // Get new material
-            Material material;
-            CachedMaterial cm = GetMaterialFromCache(archive, record, out material);
+            ___getNewMaterial.Begin();
+            CachedMaterial cm = GetMaterialFromCache(archive, record, out Material material);
+            ___getNewMaterial.End();
 
             // Handle windows
+            ___handleWindows.Begin();
             if (cm.isWindow)
-            {
                 ChangeWindowEmissionColor(material, windowStyle);
-            }
+            ___handleWindows.End();
 
             return material;
         }

@@ -4,12 +4,12 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Michael Rauter (Nystul)
+// Contributors:    Michael Rauter (Nystul), Andrzej Łukasik (andrew.r.lukasik)
 // 
 // Notes:
 //
 
-using System;
+using Unity.Collections;
 using Unity.Jobs;
 
 namespace DaggerfallWorkshop
@@ -115,15 +115,16 @@ namespace DaggerfallWorkshop
             GenerateSamples(ref mapPixel);
 
             // Convert generated samples to the flattened native array used by jobs.
-            int hDim = HeightmapDimension;
-            for (int y = 0; y < hDim; y++)
-            {
-                for (int x = 0; x < hDim; x++)
-                {
-                    mapPixel.heightmapData[JobA.Idx(y, x, hDim)] = mapPixel.heightmapSamples[y, x];
-                }
-            }
-            return new JobHandle();
+            // int hDim = HeightmapDimension;
+            // for (int y = 0; y < hDim; y++)
+            // for (int x = 0; x < hDim; x++)
+            //     mapPixel.heightmapData[Matrix.Idx(y, x, hDim)] = mapPixel.heightmapSamples[y, x];
+
+            var copyJob = new CopyToJob<float>(mapPixel.heightmapSamples.AsNativeArray(out ulong gcHandle), mapPixel.heightmapData);
+            var copyJobHandle = copyJob.Schedule();
+            JobUtility.ReleaseGCObject(gcHandle);
+
+            return copyJobHandle;
         }
     }
 }

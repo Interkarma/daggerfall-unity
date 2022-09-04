@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Andrzej Łukasik (andrew.r.lukasik)
 // 
 // Notes:
 //
@@ -14,6 +14,10 @@ using System;
 using System.IO;
 using DaggerfallConnect.Utility;
 using UnityEngine;
+using Unity.Profiling;
+using Unity.Mathematics;
+using Unity.Collections;
+using Unity.Jobs;
 #endregion
 
 namespace DaggerfallConnect.Arena2
@@ -35,6 +39,15 @@ namespace DaggerfallConnect.Arena2
         /// Managed file.
         /// </summary>
         internal FileProxy managedFile = new FileProxy();
+
+        #endregion
+
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___m_GetColor32 = new ProfilerMarker(nameof(GetColor32)),
+            ___m_GetColor32Async = new ProfilerMarker(nameof(GetColor32Async)),
+            ___m_GetWindowColors32 = new ProfilerMarker(nameof(GetWindowColors32));
 
         #endregion
 
@@ -187,9 +200,7 @@ namespace DaggerfallConnect.Arena2
         public Color32[] GetColor32(int record, int frame, int alphaIndex = -1)
         {
             DFBitmap srcBitmap = GetDFBitmap(record, frame);
-
-            DFSize sz;
-            return GetColor32(srcBitmap, alphaIndex, 0, out sz);
+            return GetColor32(srcBitmap, alphaIndex, 0, out var sz);
         }
 
         /// <summary>
@@ -200,8 +211,7 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Color32 array.</returns>
         public Color32[] GetColor32(DFBitmap srcBitmap, int alphaIndex = -1)
         {
-            DFSize sz;
-            return GetColor32(srcBitmap, alphaIndex, 0, out sz);
+            return GetColor32(srcBitmap, alphaIndex, 0, out var sz);
         }
 
         /// <summary>
@@ -232,6 +242,8 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Color32 array.</returns>
         public Color32[] GetColor32(DFBitmap srcBitmap, int alphaIndex, int border, out DFSize sizeOut, int emissionIndex = -1, int customAlphaValue = 255)
         {
+            ___m_GetColor32.Begin();
+
             // Calculate dimensions
             int srcWidth = srcBitmap.Width;
             int srcHeight = srcBitmap.Height;
@@ -239,33 +251,107 @@ namespace DaggerfallConnect.Arena2
             int dstHeight = srcHeight + border * 2;
 
             Color32[] colors = new Color32[dstWidth * dstHeight];
+            byte[] paletteBuffer = myPalette.PaletteBuffer;
+            int paletteHeaderLength = myPalette.HeaderLength;
 
-            Color32 c = new Color32();
-            int index, offset, srcRow, dstRow;
-            byte[] paletteData = myPalette.PaletteBuffer;
             for (int y = 0; y < srcHeight; y++)
             {
                 // Get row position
-                srcRow = y * srcWidth;
-                dstRow = (dstHeight - 1 - border - y) * dstWidth;
+                int srcRow = y * srcWidth;
+                int dstRow = (dstHeight - 1 - border - y) * dstWidth;
 
                 // Write data for this row
                 for (int x = 0; x < srcWidth; x++)
                 {
-                    index = srcBitmap.Data[srcRow + x];
-                    offset = myPalette.HeaderLength + index * 3;
-                    c.r = paletteData[offset];
-                    c.g = paletteData[offset + 1];
-                    c.b = paletteData[offset + 2];
-                    c.a = (alphaIndex == index) ? (byte)0 : (byte)customAlphaValue;     // General cutout alpha with custom alpha output
-                    c.a = (emissionIndex == index) ? (byte)255 : c.a;                   // Make emissive parts fully non-transparent alpha
+                    int index = srcBitmap.Data[srcRow + x];
+                    int offset = paletteHeaderLength + index * 3;
+                    Color32 c = new Color32(
+                        paletteBuffer[offset],
+                        paletteBuffer[offset + 1],
+                        paletteBuffer[offset + 2],
+                        (byte)customAlphaValue
+                    );
+                    if(alphaIndex == index) c.a = 0;// General cutout alpha with custom alpha output
+                    if(emissionIndex == index) c.a = 255;// Make emissive parts fully non-transparent alpha
                     colors[dstRow + border + x] = c;
                 }
             }
 
             sizeOut = new DFSize(dstWidth, dstHeight);
 
+            ___m_GetColor32.End();
             return colors;
+        }
+        public JobHandle GetColor32Async(
+            DFBitmap srcBitmap,
+            int alphaIndex,
+            int border,
+            out DFSize sizeOut,
+            out NativeArray<Color32> colors,
+            int emissionIndex = -1,
+            byte customAlphaValue = 255,
+            Allocator colorsAllocator = Allocator.TempJob,
+            JobHandle dependency = default
+        )
+        {
+            ___m_GetColor32Async.Begin();
+
+            // Calculate dimensions
+            int srcWidth = srcBitmap.Width;
+            int srcHeight = srcBitmap.Height;
+            int dstWidth = srcWidth + border * 2;
+            int dstHeight = srcHeight + border * 2;
+
+            sizeOut = new DFSize(dstWidth, dstHeight);
+            colors = new NativeArray<Color32>(dstWidth * dstHeight, colorsAllocator);
+
+            var job = new GetColor32RowJob
+            {
+                Colors = colors,
+                PaletteData = myPalette.PaletteBuffer.AsNativeArray(out ulong gcHandlePalette),
+                SrcBitmapData = srcBitmap.Data.AsNativeArray(out ulong gcHandleBitmap),
+                SrcWidth = srcWidth,
+                DstWidth = dstWidth,
+                DstHeight = dstHeight,
+                Border = border,
+                AlphaIndex = alphaIndex,
+                EmissionIndex = emissionIndex,
+                PaletteHeaderLength = myPalette.HeaderLength,
+                customAlpha = customAlphaValue,
+            };
+            var jobHandle = job.Schedule(srcHeight, JobUtility.OptimalLoopBatchCount(srcHeight), dependency);
+            JobUtility.ReleaseGCObject(gcHandlePalette, jobHandle);
+            JobUtility.ReleaseGCObject(gcHandleBitmap, jobHandle);
+
+            ___m_GetColor32Async.End();
+            return jobHandle;
+        }
+
+        [Unity.Burst.BurstCompile]
+        struct GetColor32RowJob : IJobParallelFor
+        {
+            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<Color32> Colors;
+            [ReadOnly] public NativeArray<byte> SrcBitmapData;
+            [ReadOnly] public NativeArray<byte> PaletteData;
+            public int SrcWidth, DstWidth, DstHeight, Border, AlphaIndex, EmissionIndex, PaletteHeaderLength;
+            public byte customAlpha;
+            void IJobParallelFor.Execute(int y)
+            {
+                // Get row position
+                int srcRow = y * SrcWidth;
+                int dstRow = (DstHeight - 1 - Border - y) * DstWidth;
+
+                // Write data for this row
+                for (int x = 0; x < SrcWidth; x++)
+                {
+                    int index = SrcBitmapData[srcRow + x];
+                    int offset = PaletteHeaderLength + index * 3;
+                    var c = new Color32(PaletteData[offset], PaletteData[offset + 1], PaletteData[offset + 2], (byte)customAlpha);
+                    if (AlphaIndex == index) c.a = 0;// General cutout alpha with custom alpha output
+                    if (EmissionIndex == index) c.a = 255;// Make emissive parts fully non-transparent alpha
+                    Colors[dstRow + Border + x] = c;
+                }
+            }
         }
 
         /// <summary>
@@ -276,6 +362,8 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Color32 array.</returns>
         public Color32[] GetWindowColors32(DFBitmap srcBitmap, int emissionIndex = 0xff)
         {
+            ___m_GetWindowColors32.Begin();
+
             // Create target array
             DFSize sz = new DFSize(srcBitmap.Width, srcBitmap.Height);
             Color32[] emissionColors = new Color32[sz.Width * sz.Height];
@@ -297,7 +385,60 @@ namespace DaggerfallConnect.Arena2
                 }
             }
 
+            ___m_GetWindowColors32.End();
             return emissionColors;
+        }
+        public JobHandle GetWindowColors32Async(
+            DFBitmap srcBitmap,
+            out NativeArray<Color32> results,
+            int emissionIndex = 0xff,
+            Allocator resultsAllocator = Allocator.TempJob,
+            JobHandle dependency = default
+        )
+        {
+            ___m_GetWindowColors32.Begin();
+
+            results = new NativeArray<Color32>(srcBitmap.Width * srcBitmap.Height, resultsAllocator);
+
+            var job = new GetWindowColors32RowJob
+            {
+                Results = results,
+                SrcBitmapData = srcBitmap.Data.AsNativeArray(out ulong gcHandle),
+                SrcBitmapWidth = srcBitmap.Width,
+                SrcBitmapHeight = srcBitmap.Height,
+                EmissionIndex = (byte)emissionIndex,
+            };
+            int numRows = srcBitmap.Height;
+            var jobHandle = job.Schedule(numRows, JobUtility.OptimalLoopBatchCount(numRows));
+            JobUtility.ReleaseGCObject(gcHandle, jobHandle);
+
+            ___m_GetWindowColors32.End();
+            return jobHandle;
+        }
+        [Unity.Burst.BurstCompile]
+        struct GetWindowColors32RowJob : IJobParallelFor
+        {
+            [WriteOnly] public NativeArray<Color32> Results;
+            [ReadOnly] public NativeArray<byte> SrcBitmapData;
+            public int
+                SrcBitmapWidth,
+                SrcBitmapHeight;
+            public byte
+                EmissionIndex;
+            void IJobParallelFor.Execute(int y)
+            {
+                // Get row position
+                int srcRow = y * SrcBitmapWidth;
+                int dstRow = (SrcBitmapHeight - 1 - y) * SrcBitmapWidth;
+
+                // Write data for this row
+                for (int x = 0; x < SrcBitmapWidth; x++)
+                {
+                    byte index = SrcBitmapData[srcRow + x];
+                    if (index == EmissionIndex)
+                        Results[dstRow + x] = Color.white;
+                }
+            }
         }
 
         /// <summary>
@@ -317,34 +458,124 @@ namespace DaggerfallConnect.Arena2
             Color32[] emissionColors = new Color32[sz.Width * sz.Height];
 
             // Generate emissive parts of texture based on index
-            int index, srcRow, dstRow;
             for (int y = 0; y < srcBitmap.Height; y++)
             {
                 // Get row position
-                srcRow = y * srcBitmap.Width;
-                dstRow = (sz.Height - 1 - borderSize - y) * sz.Width;
+                int srcRow = y * srcBitmap.Width;
+                int dstRow = (sz.Height - 1 - borderSize - y) * sz.Width;
 
                 // Write data for this row
                 for (int x = 0; x < srcBitmap.Width; x++)
                 {
-                    index = srcBitmap.Data[srcRow + x];
+                    int index = srcBitmap.Data[srcRow + x];
+                    int i = dstRow + borderSize + x;
                     if (index == eyesEmissionIndex)
-                        emissionColors[dstRow + borderSize + x] = eyeEmission;
+                        emissionColors[i] = eyeEmission;
                     else
                     {
                         // Feed albedoColors into emission to really pop lighter features like ribs and skulls
                         // Use otherEmission (with Color.black) for flatter more stealthy ghost
-                        float H;
-                        float S;
-                        float V;
-                        Color.RGBToHSV(albedoColors[dstRow + borderSize + x], out H, out S, out V);
+                        var albedo = albedoColors[i];
+                        Color.RGBToHSV(albedo, out float H, out float S, out float V);
                         float emission = Mathf.Pow(V, 1.9f);
-                        emissionColors[dstRow + borderSize + x] = Color.Lerp(otherEmission, albedoColors[dstRow + borderSize + x], Mathf.Clamp01(emission));
+                        emissionColors[i] = Color.Lerp(otherEmission, albedo, emission);
                     }
                 }
             }
 
             return emissionColors;
+        }
+        
+        public JobHandle GetSpectralEmissionColors32Async(
+            DFBitmap srcBitmap,
+            Color32[] albedoColors,
+            int borderSize,
+            int eyesEmissionIndex,
+            Color eyeEmission,
+            Color otherEmission,
+            out NativeArray<Color32> results,
+            Allocator resultsAllocator = Allocator.TempJob,
+            JobHandle dependency = default
+        )
+        {
+            int
+                srcBitmapWidth = srcBitmap.Width,
+                srcBitmapHeight = srcBitmap.Height,
+                szWidth = srcBitmapWidth + borderSize * 2,
+                szHeight = srcBitmapHeight + borderSize * 2;
+
+            results = new NativeArray<Color32>(szWidth * szHeight, resultsAllocator);
+
+            var job = new GetSpectralEmissionColors32Job
+            {
+                EmissionColors = results,
+                SrcBitmapData = srcBitmap.Data.AsNativeArray(out ulong gcHandleBitmap),
+                AlbedoColors = albedoColors.AsNativeArray(out ulong gcHandleAlbedo),
+                SrcBitmapWidth = srcBitmapWidth,
+                SrcBitmapHeight = srcBitmapHeight,
+                SzWidth = szWidth,
+                SzHeight = szHeight,
+                BorderSize = borderSize,
+                EyesEmissionIndex = (byte)eyesEmissionIndex,
+                EyeEmission = eyeEmission,
+                OtherEmission = otherEmission,
+            };
+            var jobHandle = job.Schedule(srcBitmapHeight, JobUtility.OptimalLoopBatchCount(srcBitmapHeight), dependency);
+            JobUtility.ReleaseGCObject(gcHandleBitmap, jobHandle);
+            JobUtility.ReleaseGCObject(gcHandleAlbedo, jobHandle);
+
+            return jobHandle;
+        }
+        [Unity.Burst.BurstCompile]
+        struct GetSpectralEmissionColors32Job : IJobParallelFor
+        {
+            [WriteOnly][NativeDisableParallelForRestriction] public NativeArray<Color32> EmissionColors;
+            [ReadOnly] public NativeArray<byte> SrcBitmapData;
+            [ReadOnly] public NativeArray<Color32> AlbedoColors;
+            public int
+                SrcBitmapWidth,
+                SrcBitmapHeight,
+                SzWidth,
+                SzHeight,
+                BorderSize;
+            public byte
+                EyesEmissionIndex;
+            public Color32
+                EyeEmission,
+                OtherEmission;
+            void IJobParallelFor.Execute(int y)
+            {
+                // Generate emissive parts of texture based on index
+                
+                // Get row position
+                int srcRow = y * SrcBitmapWidth;
+                int dstRow = (SzHeight - 1 - BorderSize - y) * SzWidth;
+
+                // Write data for this row
+                for (int x = 0; x < SrcBitmapWidth; x++)
+                {
+                    int index = SrcBitmapData[srcRow + x];
+                    int i = dstRow + BorderSize + x;
+                    if (index == EyesEmissionIndex)
+                        EmissionColors[i] = EyeEmission;
+                    else
+                    {
+                        // Feed albedoColors into emission to really pop lighter features like ribs and skulls
+                        // Use otherEmission (with Color.black) for flatter more stealthy ghost
+                        Color32 albedo = AlbedoColors[i];
+                        float V = GetBrightness(albedo);
+                        float emission = math.pow(V, 1.9f);
+                        // EmissionColors[i] = Color.Lerp(OtherEmission, albedo, math.saturate(emission));
+
+                        int4 rgba = (int4)math.round(math.lerp(
+                            new float4(OtherEmission.r, OtherEmission.g, OtherEmission.b, OtherEmission.a),
+                            new float4(albedo.r, albedo.g, albedo.b, albedo.a),
+                            math.saturate(emission)
+                        ));
+                        EmissionColors[i] = new Color32((byte)rgba.x, (byte)rgba.y, (byte)rgba.z, (byte)rgba.w);
+                    }
+                }
+            }
         }
 
         public Color32[] GetFireWallColors32(ref Color32[] srcTexture, int width, int height, Color neutralColor, float scale)
@@ -355,6 +586,56 @@ namespace DaggerfallConnect.Arena2
                 emissionColors[i] = Color32.Lerp(neutralColor, srcTexture[i], scale);
 
             return emissionColors;
+        }
+        public JobHandle GetFireWallColors32Async(
+            Color32[] srcTexture,
+            Color neutralColor,
+            float scale,
+            out NativeArray<Color32> results,
+            Allocator resultsAllocator = Allocator.TempJob,
+            JobHandle dependency = default
+        )
+        {
+            int length = srcTexture.Length;
+
+            results = new NativeArray<Color32>(length, resultsAllocator);
+            var job = new GetFireWallColors32Job
+            {
+                SrcTexture = srcTexture.AsNativeArray(out ulong gcHandle),
+                EmissionColors = results,
+                NeutralColor = neutralColor,
+                Scale = scale,
+            };
+            var jobHandle = job.Schedule(length, JobUtility.OptimalLoopBatchCount(length), dependency);
+            JobUtility.ReleaseGCObject(gcHandle,jobHandle);
+
+            return jobHandle;
+        }
+        [Unity.Burst.BurstCompile]
+        struct GetFireWallColors32Job : IJobParallelFor
+        {
+            [ReadOnly] public NativeArray<Color32> SrcTexture;
+            [WriteOnly] public NativeArray<Color32> EmissionColors;
+            public Color32 NeutralColor;
+            public float Scale;
+            void IJobParallelFor.Execute(int index)
+            {
+                float4 a = new float4(NeutralColor.r, NeutralColor.g, NeutralColor.b, NeutralColor.a);
+                var src = SrcTexture[index];
+                float4 b = new float4(src.r, src.g, src.b, src.a);
+                int4 c = (int4)math.lerp(a, b, Scale);
+                EmissionColors[index] = new Color32((byte)c.x, (byte)c.y, (byte)c.z, (byte)c.w);
+            }
+        }
+
+        public static float GetBrightness(Color32 color)
+        {
+            float3 rgb = new float3(color.r, color.g, color.b) * (1f / 255f);
+            return math.max(math.max(rgb.z, rgb.y), rgb.x);
+        }
+        public static float GetBrightness(Color color)
+        {
+            return math.max(math.max(color.b, color.g), color.r);
         }
 
         #endregion
@@ -414,6 +695,6 @@ namespace DaggerfallConnect.Arena2
             } while (pos < length);
         }
 
-        #endregion 
+        #endregion
     }
 }
