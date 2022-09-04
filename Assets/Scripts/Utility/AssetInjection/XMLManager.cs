@@ -14,6 +14,7 @@ using System.IO;
 using System.Xml.Linq;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -26,6 +27,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         const string extension = ".xml";
         readonly XElement xml;
+
+        #endregion
+
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___TryReadXml = new ProfilerMarker($"{nameof(XMLManager)}.{nameof(TryReadXml)}");
 
         #endregion
 
@@ -48,8 +56,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         public bool TryGetString(string key, out string value)
         {
-            XElement element;
-            if (TryGetElement(key, out element))
+            if (TryGetElement(key, out XElement element))
             {
                 value = (string)element;
                 return true;
@@ -61,14 +68,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         public bool GetBool(string key, bool defaultValue = false)
         {
-            XElement element;
-            return TryGetElement(key, out element) ? bool.Parse((string)element) : defaultValue;
+            return TryGetElement(key, out XElement element) ? bool.Parse((string)element) : defaultValue;
         }
 
         public bool TryGetFloat(string key, out float value)
         {
-            XElement element;
-            if (TryGetElement(key, out element))
+            if (TryGetElement(key, out XElement element))
                 return float.TryParse((string)element, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
 
             value = -1;
@@ -147,8 +152,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Rect read from xml file.</returns>
         public Rect GetRect(string name, Rect baseRect, float requestedScale = 1)
         {
-            XElement element;
-            if (!TryGetElement(name, out element))
+            if (!TryGetElement(name, out XElement element))
                 return baseRect;
 
             float scale = requestedScale / ParseFloat((string)element.Attribute("scale")) ?? 1;
@@ -193,6 +197,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if xml found and read.</returns>
         public static bool TryReadXml(string directory, string name, out XMLManager xml)
         {
+            ___TryReadXml.Begin();
+
             AddExtensionIfMissing(ref name);
 
             // Seek from loose files
@@ -205,16 +211,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             // Seek from mods
             if (ModManager.Instance != null)
+            if (ModManager.Instance.TryGetAsset(name, false, out TextAsset textAsset))
             {
-                TextAsset textAsset;
-                if (ModManager.Instance.TryGetAsset(name, false, out textAsset))
-                {
-                    using (var stringReader = new StringReader(textAsset.text))
-                        xml = new XMLManager(stringReader);
-                    return true;
-                }
+                using (var stringReader = new StringReader(textAsset.text))
+                    xml = new XMLManager(stringReader);
+                return true;
             }
 
+            ___TryReadXml.End();
             xml = null;
             return false;
         }
@@ -227,8 +231,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         private static float? ParseFloat(string element = null, float scale = 1)
         {
-            float value;
-            if (element != null && float.TryParse(element, NumberStyles.Float, CultureInfo.InvariantCulture, out value))
+            if (element != null && float.TryParse(element, NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
                 return value * scale;
 
             return null;

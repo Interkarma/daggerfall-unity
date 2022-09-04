@@ -17,6 +17,7 @@ using System.IO;
 using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop
 {
@@ -32,6 +33,10 @@ namespace DaggerfallWorkshop
         private ClimateSeason currentSeason;
         [SerializeField]
         private WindowStyle currentWindowStyle;
+
+        static readonly ProfilerMarker
+            ___getNewMaterialArray = new ProfilerMarker("get new material array"),
+            ___assignMaterialArray = new ProfilerMarker("assign material array");
 
         public ClimateBases Climate
         {
@@ -99,15 +104,17 @@ namespace DaggerfallWorkshop
                 return;
 
             // Get new material array
+            ___getNewMaterialArray.Begin();
             Material[] materials = new Material[defaultTextures.Count];
             for (int i = 0; i < defaultTextures.Count; i++)
-            {
                 materials[i] = dfUnity.MaterialReader.ChangeClimate(defaultTextures[i], climate, season, windowStyle);
-            }
+            ___getNewMaterialArray.End();
 
             // Assign material array
+            ___assignMaterialArray.Begin();
             if (materials != null)
                 GetComponent<MeshRenderer>().sharedMaterials = materials;
+            ___assignMaterialArray.End();
 
             // Store climate settings
             currentClimate = climate;

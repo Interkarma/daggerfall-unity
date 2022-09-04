@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Andrzej Łukasik (andrew.r.lukasik)
 // 
 // Notes:
 //
@@ -14,6 +14,7 @@ using UnityEngine;
 using System;
 using System.Text;
 using System.IO;
+using Unity.Profiling;
 #endregion
 
 namespace DaggerfallConnect
@@ -21,7 +22,7 @@ namespace DaggerfallConnect
     /// <summary>
     /// File usage enumeration.
     /// </summary>
-    public enum FileUsage
+    public enum FileUsage : byte
     {
         /// <summary>Usage is not defined and will default to UseDisk if not specifed.</summary>
         Undefined,
@@ -171,6 +172,23 @@ namespace DaggerfallConnect.Utility
 
         #endregion
 
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___m_Load = new ProfilerMarker(nameof(Load)),
+            ___m_Close = new ProfilerMarker(nameof(Close)),
+            ___m_GetBytes = new ProfilerMarker(nameof(GetBytes)),
+            ___m_GetReader = new ProfilerMarker(nameof(GetReader)),
+            ___m_GetWriter = new ProfilerMarker(nameof(GetWriter)),
+            ___m_ReadCString = new ProfilerMarker(nameof(ReadCString)),
+            ___ReadCString = new ProfilerMarker($"{nameof(FileProxy)}.{nameof(ReadCString)}"),
+            ___ReadCStringSkip = new ProfilerMarker($"{nameof(FileProxy)}.{nameof(ReadCStringSkip)}"),
+            ___FindString = new ProfilerMarker(nameof(FindString)),
+            ___m_LoadMemory = new ProfilerMarker(nameof(LoadMemory)),
+            ___m_LoadDisk = new ProfilerMarker(nameof(LoadDisk));
+        
+        #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -182,6 +200,8 @@ namespace DaggerfallConnect.Utility
         /// <returns>True if successful, otherwise false.</returns>
         public bool Load(string filePath, FileUsage usage = FileUsage.UseMemory, bool readOnly = true)
         {
+            ___m_Load.Begin();
+
             // Determine file access settings
             isReadOnly = readOnly;
             FileAccess fileAccess;
@@ -198,14 +218,20 @@ namespace DaggerfallConnect.Utility
             }
 
             // Load based on usage
+            bool success;
             switch (usage)
             {
                 case FileUsage.UseMemory:
-                    return LoadMemory(filePath, fileAccess, fileShare);
+                    success = LoadMemory(filePath, fileAccess, fileShare);
+                    break;
                 case FileUsage.UseDisk:
                 default:
-                    return LoadDisk(filePath, fileAccess, fileShare);
+                    success = LoadDisk(filePath, fileAccess, fileShare);
+                    break;
             }
+
+            ___m_Load.End();
+            return success;
         }
 
         /// <summary>
@@ -215,9 +241,13 @@ namespace DaggerfallConnect.Utility
         /// <param name="name">Name, filename, or path  to describe memory buffer.</param>
         public void Load(byte[] data, string name)
         {
+            ___m_Load.Begin();
+
             fileBuffer = data;
             managedFilePath = name;
             fileUsage = FileUsage.UseMemory;
+
+            ___m_Load.End();
         }
 
         /// <summary>
@@ -225,9 +255,14 @@ namespace DaggerfallConnect.Utility
         /// </summary>
         public void Close()
         {
+            ___m_Close.Begin();
+
             // Exit if no file being managed
             if (String.IsNullOrEmpty(managedFilePath))
+            {
+                ___m_Close.End();
                 return;
+            }
 
             // Close based on type
             if (fileUsage == FileUsage.UseMemory)
@@ -237,6 +272,8 @@ namespace DaggerfallConnect.Utility
 
             // Clear filename
             managedFilePath = String.Empty;
+
+            ___m_Close.End();
         }
 
         /// <summary>
@@ -245,15 +282,24 @@ namespace DaggerfallConnect.Utility
         /// <returns>BinaryReader to managed file with UTF8 encoding.</returns>
         public BinaryReader GetReader()
         {
+            ___m_GetReader.Begin();
+
+            BinaryReader reader;
             switch (fileUsage)
             {
                 case FileUsage.UseMemory:
-                    return new BinaryReader(GetMemoryStream(), Encoding.UTF8);
+                    reader = new BinaryReader(GetMemoryStream(), Encoding.UTF8);
+                    break;
                 case FileUsage.UseDisk:
-                    return new BinaryReader(GetFileStream(), Encoding.UTF8);
+                    reader = new BinaryReader(GetFileStream(), Encoding.UTF8);
+                    break;
                 default:
-                    return null;
+                    reader = null;
+                    break;
             }
+
+            ___m_GetReader.End();
+            return reader;
         }
 
         /// <summary>
@@ -262,10 +308,14 @@ namespace DaggerfallConnect.Utility
         /// <returns></returns>
         public byte[] GetBytes()
         {
-            if (Usage == FileUsage.UseMemory)
-                return fileBuffer;
-            else
-                return GetBytes(0, Length);
+            ___m_GetBytes.Begin();
+            
+            byte[] results = Usage == FileUsage.UseMemory
+                ? fileBuffer
+                : GetBytes(0, Length);
+            
+            ___m_GetBytes.End();
+            return results;
         }
 
         /// <summary>
@@ -276,11 +326,12 @@ namespace DaggerfallConnect.Utility
         /// <returns></returns>
         public byte[] GetBytes(long position, int length)
         {
-            BinaryReader reader = GetReader(position);
-            if (reader == null)
-                return null;
+            ___m_GetBytes.Begin();
 
-            return reader.ReadBytes(length);
+            byte[] results = GetReader(position)?.ReadBytes(length);
+
+            ___m_GetBytes.End();
+            return results;
         }
 
         /// <summary>
@@ -290,10 +341,13 @@ namespace DaggerfallConnect.Utility
         /// <returns>BinaryReader to managed file with UTF8 encoding and set to specified position.</returns>
         public BinaryReader GetReader(long position)
         {
+            ___m_GetReader.Begin();
+
             BinaryReader reader = GetReader();
             if (position < reader.BaseStream.Length)
                 reader.BaseStream.Position = position;
 
+            ___m_GetReader.End();
             return reader;
         }
 
@@ -303,15 +357,24 @@ namespace DaggerfallConnect.Utility
         /// <returns>BinaryReader to managed file with UTF8 encoding.</returns>
         public BinaryWriter GetWriter()
         {
+            ___m_GetWriter.Begin();
+
+            BinaryWriter writer;
             switch (fileUsage)
             {
                 case FileUsage.UseMemory:
-                    return new BinaryWriter(GetMemoryStream(), Encoding.UTF8);
+                    writer = new BinaryWriter(GetMemoryStream(), Encoding.UTF8);
+                    break;
                 case FileUsage.UseDisk:
-                    return new BinaryWriter(GetFileStream(), Encoding.UTF8);
+                    writer = new BinaryWriter(GetFileStream(), Encoding.UTF8);
+                    break;
                 default:
-                    return null;
+                    writer = null;
+                    break;
             }
+
+            ___m_GetWriter.End();
+            return writer;
         }
 
         /// <summary>
@@ -321,10 +384,13 @@ namespace DaggerfallConnect.Utility
         /// <returns>BinaryReader to managed file with UTF8 encoding and set to specified position.</returns>
         public BinaryWriter GetWriter(long position)
         {
+            ___m_GetWriter.Begin();
+
             BinaryWriter writer = GetWriter();
             if (position < writer.BaseStream.Length)
                 writer.BaseStream.Position = position;
 
+            ___m_GetWriter.End();
             return writer;
         }
 
@@ -336,13 +402,18 @@ namespace DaggerfallConnect.Utility
         /// <returns>String composed from bytes read (all NULLs are discarded).</returns>
         public string ReadCString(int position, int readLength)
         {
+            ___m_ReadCString.Begin();
+
             // End position must be less than length of stream
             if (position + readLength > Length) return string.Empty;
 
             // Read from new stream
             BinaryReader reader = GetReader();
             reader.BaseStream.Position = position;
-            return ReadCString(reader, readLength);
+            string result = ReadCString(reader, readLength);
+
+            ___m_ReadCString.End();
+            return result;
         }
 
         /// <summary>
@@ -354,6 +425,8 @@ namespace DaggerfallConnect.Utility
         /// <returns>String composed from bytes read.</returns>
         public static string ReadCString(BinaryReader reader, int readLength = 0)
         {
+            ___ReadCString.Begin();
+
             // Find null terminator as Encoding.UTF8.GetString(bytes[]) does not null terminate
             if (readLength == 0)
             {
@@ -361,8 +434,10 @@ namespace DaggerfallConnect.Utility
                 while (reader.ReadByte() != 0) readLength++;
                 reader.BaseStream.Position = pos;
             }
+            string result = Encoding.UTF8.GetString(reader.ReadBytes(readLength)).TrimEnd('\0');
 
-            return Encoding.UTF8.GetString(reader.ReadBytes(readLength)).TrimEnd('\0');
+            ___ReadCString.End();
+            return result;
         }
 
         /// <summary>
@@ -375,10 +450,13 @@ namespace DaggerfallConnect.Utility
         /// <returns>String composed from bytes read (all NULLs are discarded).</returns>
         public static string ReadCStringSkip(BinaryReader reader, int readLength, int skipLength)
         {
+            ___ReadCStringSkip.Begin();
+
             long pos = reader.BaseStream.Position;
             string str = ReadCString(reader, readLength);
             reader.BaseStream.Position = pos + skipLength;
 
+            ___ReadCStringSkip.End();
             return str;
         }
 
@@ -390,16 +468,22 @@ namespace DaggerfallConnect.Utility
         /// <returns>Index of pattern found or -1 if not found.</returns>
         public int FindString(string pattern, int position = 0)
         {
+            ___FindString.Begin();
+
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(pattern);
 
-            for (int i = position; i < Buffer.Length; i++)
+            int bufferLength = Buffer.Length;
+            int patternLength = pattern.Length;
+            for (int i = position; i < bufferLength; i++)
             {
-                if (Buffer[i] == bytes[0] && ReadCString(i, pattern.Length) == pattern)
+                if (Buffer[i] == bytes[0] && ReadCString(i, patternLength) == pattern)
                 {
+                    ___FindString.End();
                     return i;
                 }
             }
 
+            ___FindString.End();
             return -1;
         }
 
@@ -472,9 +556,12 @@ namespace DaggerfallConnect.Utility
         /// <returns>True if successful, otherwise false.</returns>
         private bool LoadMemory(string filePath, FileAccess fileAccess, FileShare fileShare)
         {
+            ___m_LoadMemory.Begin();
+
 #if UNITY_WEBGL && !UNITY_EDITOR
             // Unity cannot use Resources.Load in WebGL
             // TODO: Implement WWW resource loading
+            ___LoadMemory_member.End();
             return false;
 #else
 
@@ -489,7 +576,10 @@ namespace DaggerfallConnect.Utility
             {
                 // File must exist
                 if (!File.Exists(filePath))
+                {
+                    ___m_LoadMemory.End();
                     return false;
+                }
 
                 // Load file into memory buffer
                 try
@@ -497,7 +587,10 @@ namespace DaggerfallConnect.Utility
                     FileStream file = File.Open(filePath, FileMode.Open, fileAccess, fileShare);
                     fileBuffer = new byte[file.Length];
                     if (file.Length != file.Read(fileBuffer, 0, (int)file.Length))
+                    {
+                        ___m_LoadMemory.End();
                         return false;
+                    }
 
                     // Close file
                     file.Close();
@@ -506,6 +599,7 @@ namespace DaggerfallConnect.Utility
                 {
                     myLastException = e;
                     Console.WriteLine(e.Message);
+                    ___m_LoadMemory.End();
                     return false;
                 }
             }
@@ -516,6 +610,7 @@ namespace DaggerfallConnect.Utility
             // Set usage
             fileUsage = FileUsage.UseMemory;
 
+            ___m_LoadMemory.End();
             return true;
 #endif
         }
@@ -529,21 +624,30 @@ namespace DaggerfallConnect.Utility
         /// <returns>True if successful, otherwise false.</returns>
         private bool LoadDisk(string filePath, FileAccess fileAccess, FileShare fileShare)
         {
+            ___m_LoadDisk.Begin();
+
             // File must exist
             if (!File.Exists(filePath))
+            {
+                ___m_LoadDisk.End();
                 return false;
+            }
 
             // Open file
             try
             {
                 fileStream = File.Open(filePath, FileMode.Open, fileAccess, fileShare);
                 if (fileStream == null)
+                {
+                    ___m_LoadDisk.End();
                     return false;
+                }
             }
             catch (Exception e)
             {
                 myLastException = e;
                 Console.WriteLine(e.Message);
+                ___m_LoadDisk.End();
                 return false;
             }
 
@@ -553,6 +657,7 @@ namespace DaggerfallConnect.Utility
             // Set usage
             fileUsage = FileUsage.UseDisk;
 
+            ___m_LoadDisk.End();
             return true;
         }
 

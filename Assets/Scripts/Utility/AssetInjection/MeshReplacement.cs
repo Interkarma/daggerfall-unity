@@ -22,6 +22,7 @@ using Random = UnityEngine.Random;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -40,6 +41,21 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static readonly HashSet<Vector2Int> triedBillboards = new HashSet<Vector2Int>();
         static readonly HashSet<(uint, ClimateBases, DaggerfallDateTime.Seasons)> triedModels = new HashSet<(uint, ClimateBases, DaggerfallDateTime.Seasons)>();
 
+        #endregion
+
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___ImportCustomGameobject = new ProfilerMarker($"{nameof(MeshReplacement)}.{nameof(ImportCustomGameobject)}"),
+            ___ImportCustomFlatGameobject = new ProfilerMarker($"{nameof(MeshReplacement)}.{nameof(ImportCustomFlatGameobject)}"),
+            ___SwapCustomFlatGameobject = new ProfilerMarker($"{nameof(MeshReplacement)}.{nameof(SwapCustomFlatGameobject)}"),
+            ___ImportNatureGameObject = new ProfilerMarker($"{nameof(MeshReplacement)}.{nameof(ImportNatureGameObject)}"),
+            ___ClearNatureGameObjects = new ProfilerMarker($"{nameof(MeshReplacement)}.{nameof(ClearNatureGameObjects)}"),
+            ___TryImportGameObject = new ProfilerMarker($"{nameof(MeshReplacement)}.{nameof(TryImportGameObject)}"),
+            ___AlignToBase = new ProfilerMarker($"{nameof(MeshReplacement)}.{nameof(AlignToBase)}"),
+            ___GetTreePrototypeIndex = new ProfilerMarker($"{nameof(MeshReplacement)}.{nameof(GetTreePrototypeIndex)}"),
+            ___FinaliseMaterials = new ProfilerMarker($"{nameof(MeshReplacement)}.{nameof(FinaliseMaterials)}");
+        
         #endregion
 
         #region Properties
@@ -98,25 +114,31 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Returns the imported model or null if not found.</returns>
         public static GameObject ImportCustomGameobject(uint modelID, Transform parent, Matrix4x4 matrix, bool isAutomapRun = false)
         {
-            GameObject modelGO;
-            if (!TryImportGameObject(modelID, true, out modelGO))
-                return null;
+            ___ImportCustomGameobject.Begin();
 
-            modelGO.name = GameObjectHelper.GetGoModelName(modelID) + " [Replacement]";
-            modelGO.transform.parent = parent;
-            modelGO.transform.position = matrix.GetColumn(3);
-            modelGO.transform.rotation = matrix.rotation;
+            if (!TryImportGameObject(modelID, true, out GameObject modelGameObject))
+            {
+                ___ImportCustomGameobject.End();
+                return null;
+            }
+
+            modelGameObject.name = $"{GameObjectHelper.GetGoModelName(modelID)} [Replacement]";
+            Transform modelTransform = modelGameObject.transform;
+            modelTransform.parent = parent;
+            modelTransform.position = matrix.GetColumn(3);
+            modelTransform.rotation = matrix.rotation;
 
             //Multiply the scale instead of applying it, since custom 3D models doesn't necessary have (1,1,1) scale
-            modelGO.transform.localScale = Vector3.Scale(modelGO.transform.localScale, matrix.lossyScale);
+            modelTransform.localScale = Vector3.Scale(modelTransform.localScale, matrix.lossyScale);
 
             // Finalise gameobject
-            FinaliseMaterials(modelGO);
+            FinaliseMaterials(modelGameObject);
 
             if (isAutomapRun)
-                modelGO.AddComponent<AutomapModel>();
+                modelGameObject.AddComponent<AutomapModel>();
 
-            return modelGO;
+            ___ImportCustomGameobject.End();
+            return modelGameObject;
         }
 
         public static string GetFlatReplacementName(int archive, int record)
@@ -135,9 +157,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Returns the imported model or null if not found.</returns>
         public static GameObject ImportCustomFlatGameobject(int archive, int record, Vector3 position, Transform parent, bool inDungeon = false)
         {
-            GameObject go;
-            if (!TryImportGameObject(archive, record, true, out go))
+            ___ImportCustomFlatGameobject.Begin();
+
+            if (!TryImportGameObject(archive, record, true, out GameObject go))
+            {
+                ___ImportCustomFlatGameobject.End();
                 return null;
+            }
 
             go.name = GetFlatReplacementName(archive, record);
             go.transform.parent = parent;
@@ -162,6 +188,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             // Finalise gameobject materials
             FinaliseMaterials(go);
+
+            ___ImportCustomFlatGameobject.End();
             return go;
         }
 
@@ -178,6 +206,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>Returns the imported model or null if not found.</returns>
         public static GameObject SwapCustomFlatGameobject(int archive, int record, Transform parent, Vector3 position, bool inDungeon = false)
         {
+            ___SwapCustomFlatGameobject.Begin();
+
             GameObject go = null;
 
             string name = GetFlatReplacementName(archive, record);
@@ -190,7 +220,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     GameObject.Destroy(transform.gameObject);
             }
 
-            return go ?? ImportCustomFlatGameobject(archive, record, position, parent, inDungeon);
+            GameObject result = go ?? ImportCustomFlatGameobject(archive, record, position, parent, inDungeon);
+
+            ___SwapCustomFlatGameobject.End();
+            return result;
         }
 
         /// <summary>
@@ -204,11 +237,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if gameobject is found and imported.</returns>
         public static bool ImportNatureGameObject(int archive, int record, Terrain terrain, int x, int y)
         {
+            ___ImportNatureGameObject.Begin();
+
             const int tilemapDim = MapsFile.WorldMapTileDim - 1;
 
             GameObject prefab;
             if (!TryImportGameObject(archive, record, false, out prefab))
+            {
+                ___ImportNatureGameObject.End();
                 return false;
+            }
 
             // Store state of random sequence
             Random.State prevState = Random.state;
@@ -234,6 +272,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             terrain.AddTreeInstance(treeInstance);
 
             Random.state = prevState;   // Restore random state
+            ___ImportNatureGameObject.End();
             return true;
         }
 
@@ -242,8 +281,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public static void ClearNatureGameObjects(Terrain terrain)
         {
+            ___ClearNatureGameObjects.Begin();
+
             if (!DaggerfallUnity.Settings.AssetInjection)
+            {
+                ___ClearNatureGameObjects.End();
                 return;
+            }
 
             setTreesSettingsCallback(terrain);
 
@@ -256,6 +300,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             terrain.Flush();
+
+            ___ClearNatureGameObjects.End();
         }
 
         #endregion
@@ -267,21 +313,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         ///</summary>
         private static bool TryImportGameObject(uint modelID, bool clone, out GameObject go)
         {
-            if (DaggerfallUnity.Settings.AssetInjection)
+            ___TryImportGameObject.Begin();
+
+            if (DaggerfallUnity.Settings.AssetInjection && ModManager.Instance != null)
             {
-                if (ModManager.Instance != null)
+                var key = MakeModelKey(modelID);
+                if (!triedModels.Contains(key))
                 {
-                    var key = MakeModelKey(modelID);
-                    if (!triedModels.Contains(key))
+                    if (ModManager.Instance.TryGetAsset(GetName(key), clone, out go))
                     {
-                        if (ModManager.Instance.TryGetAsset(GetName(key), clone, out go))
-                            return true;
-                        else
-                            triedModels.Add(key);
+                        ___TryImportGameObject.End();
+                        return true;
                     }
+                    else triedModels.Add(key);
                 }
             }
 
+            ___TryImportGameObject.End();
             go = null;
             return false;
         }
@@ -291,21 +339,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         ///</summary>
         private static bool TryImportGameObject(int archive, int record, bool clone, out GameObject go)
         {
-            if (DaggerfallUnity.Settings.AssetInjection)
+            ___TryImportGameObject.Begin();
+
+            if (DaggerfallUnity.Settings.AssetInjection && ModManager.Instance != null)
             {
-                if (ModManager.Instance != null)
+                Vector2Int billboardIdx = new Vector2Int(archive, record);
+                if (!triedBillboards.Contains(billboardIdx))
                 {
-                    Vector2Int billboardIdx = new Vector2Int(archive, record);
-                    if (!triedBillboards.Contains(billboardIdx))
+                    if (ModManager.Instance.TryGetAsset(GetName(archive, record), clone, out go))
                     {
-                        if (ModManager.Instance.TryGetAsset(GetName(archive, record), clone, out go))
-                            return true;
-                        else
-                            triedBillboards.Add(billboardIdx);
+                        ___TryImportGameObject.End();
+                        return true;
                     }
+                    else triedBillboards.Add(billboardIdx);
                 }
             }
 
+            ___TryImportGameObject.End();
             go = null;
             return false;
         }
@@ -353,6 +403,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         private static void AlignToBase(Transform transform, Vector3 position, int archive, int record, bool inDungeon)
         {
+            ___AlignToBase.Begin();
+
             // Fix origin position for dungeon flats - ignore treasure flats or they get aligned twice
             if (inDungeon && archive != TextureReader.FixedTreasureFlatsArchive)
             {
@@ -362,6 +414,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             // Assign position
             transform.localPosition = position;
+
+            ___AlignToBase.End();
         }
 
         /// <summary>
@@ -369,12 +423,17 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         private static int GetTreePrototypeIndex(TerrainData terrainData, GameObject prefab)
         {
+            ___GetTreePrototypeIndex.Begin();
+
             // Search existing prototype
             TreePrototype[] treePrototypes = terrainData.treePrototypes;
             for (int i = 0; i < treePrototypes.Length; i++)
             {
                 if (treePrototypes[i].prefab == prefab)
+                {
+                    ___GetTreePrototypeIndex.End();
                     return i;
+                }
             }
 
             // Add new prototype
@@ -387,7 +446,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             updatedTreePrototypes.Add(treePrototype);
             terrainData.treePrototypes = updatedTreePrototypes.ToArray();
             terrainData.RefreshPrototypes();
-            return updatedTreePrototypes.Count - 1;
+            
+            int result = updatedTreePrototypes.Count - 1;
+
+            ___GetTreePrototypeIndex.End();
+            return result;
         }
 
         /// <summary>
@@ -399,6 +462,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </remarks>
         private static void FinaliseMaterials(GameObject go)
         {
+            ___FinaliseMaterials.Begin();
+
             // Get MaterialReader
             MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
 
@@ -442,6 +507,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // Confirm finalised materials
                 meshRenderer.sharedMaterials = materials;
             }
+
+            ___FinaliseMaterials.End();
         }
 
         /// <summary>

@@ -23,6 +23,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop
 {
@@ -105,6 +106,17 @@ namespace DaggerfallWorkshop
             public int BlockHeight;
             public DFLocation LegacyLocation;
         }
+
+        static readonly ProfilerMarker
+            ___getComponentsInChildren = new ProfilerMarker(nameof(GetComponentsInChildren)),
+            ___processMeshComponents = new ProfilerMarker("process mesh components"),
+            ___processGroundMeshComponents = new ProfilerMarker("process ground meshes"),
+            ___determineCorrectNatureArchive = new ProfilerMarker("determine correct nature archive"),
+            ___processBillboardComponents = new ProfilerMarker("process billboard components"),
+            ___processNatureBillboardBatch = new ProfilerMarker("process nature billboard batch"),
+            ___setClimate = new ProfilerMarker("set climate"),
+            ___setGroundClimate = new ProfilerMarker("set ground climate"),
+            ___disableClimate = new ProfilerMarker("disable climate");
 
         void Start()
         {
@@ -209,46 +221,72 @@ namespace DaggerfallWorkshop
                 return;
 
             // Process all DaggerfallMesh child components
+            ___processMeshComponents.Begin();
+            ___getComponentsInChildren.Begin();
             DaggerfallMesh[] meshArray = GetComponentsInChildren<DaggerfallMesh>();
-            foreach (var dm in meshArray)
+            ___getComponentsInChildren.End();
+            switch (ClimateUse)
             {
-                switch (ClimateUse)
-                {
-                    case LocationClimateUse.UseLocation:
+                case LocationClimateUse.UseLocation:
+                    ___setClimate.Begin();
+                    foreach (var dm in meshArray)
                         dm.SetClimate(Summary.Climate, CurrentSeason, WindowTextureStyle);
-                        break;
-                    case LocationClimateUse.Custom:
+                    ___setClimate.End();
+                    break;
+                case LocationClimateUse.Custom:
+                    ___setClimate.Begin();
+                    foreach (var dm in meshArray)
                         dm.SetClimate(CurrentClimate, CurrentSeason, WindowTextureStyle);
-                        break;
-                    case LocationClimateUse.Disabled:
+                    ___setClimate.End();
+                    break;
+                case LocationClimateUse.Disabled:
+                    ___disableClimate.Begin();
+                    foreach (var dm in meshArray)
                         dm.DisableClimate(dfUnity);
-                        break;
-                }
+                    ___disableClimate.End();
+                    break;
             }
+            ___processMeshComponents.End();
 
             // Process all DaggerfallGroundMesh child components
+            ___processGroundMeshComponents.Begin();
+            ___getComponentsInChildren.Begin();
             DaggerfallGroundPlane[] groundMeshArray = GetComponentsInChildren<DaggerfallGroundPlane>();
-            foreach (var gm in groundMeshArray)
+            ___getComponentsInChildren.End();
+            
+            switch (ClimateUse)
             {
-                switch (ClimateUse)
-                {
-                    case LocationClimateUse.UseLocation:
+                case LocationClimateUse.UseLocation:
+                    ___setGroundClimate.Begin();
+                    foreach (var gm in groundMeshArray)
                         gm.SetClimate(dfUnity, Summary.Climate, CurrentSeason);
-                        break;
-                    case LocationClimateUse.Custom:
+                    ___setGroundClimate.End();
+                    break;
+                case LocationClimateUse.Custom:
+                    ___setGroundClimate.Begin();
+                    foreach (var gm in groundMeshArray)
                         gm.SetClimate(dfUnity, CurrentClimate, CurrentSeason);
-                        break;
-                    case LocationClimateUse.Disabled:
+                    ___setGroundClimate.End();
+                    break;
+                case LocationClimateUse.Disabled:
+                    ___setGroundClimate.Begin();
+                    foreach (var gm in groundMeshArray)
                         gm.SetClimate(dfUnity, ClimateBases.Temperate, ClimateSeason.Summer);
-                        break;
-                }
+                    ___setGroundClimate.End();
+                    break;
             }
+            ___processGroundMeshComponents.End();
 
             // Determine correct nature archive
+            ___determineCorrectNatureArchive.Begin();
             int natureArchive = GetNatureArchive();
+            ___determineCorrectNatureArchive.End();
 
             // Process all DaggerfallBillboard child components
+            ___processBillboardComponents.Begin();
+            ___getComponentsInChildren.Begin();
             Billboard[] billboardArray = GetComponentsInChildren<Billboard>();
+            ___getComponentsInChildren.End();
             foreach (var db in billboardArray)
             {
                 if (db.Summary.FlatType == FlatTypes.Nature)
@@ -262,13 +300,16 @@ namespace DaggerfallWorkshop
                     db.SetMaterial(db.Summary.Archive, db.Summary.Record);
                 }
             }
+            ___processBillboardComponents.End();
 
             // Process nature billboard batch
+            ___processNatureBillboardBatch.Begin();
             if (summary.NatureBillboardBatch != null)
             {
                 summary.NatureBillboardBatch.SetMaterial(natureArchive, true);
                 summary.NatureBillboardBatch.Apply();
             }
+            ___processNatureBillboardBatch.End();
         }
 
         /// <summary>

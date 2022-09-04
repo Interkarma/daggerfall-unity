@@ -24,6 +24,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop
 {
@@ -119,6 +120,20 @@ namespace DaggerfallWorkshop
             Humanoid = 32,
             Animal = 64,
         }
+
+        #endregion
+
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___updateLocalWorldInformation = new ProfilerMarker("update local world information"),
+            ___updateWorldInfo = new ProfilerMarker("update world info"),
+            ___raiseOnMapPixelChangedEvent = new ProfilerMarker("raise pixel changed event"),
+            ___getShipCoords = new ProfilerMarker("get ship coords"),
+            ___clearSceneCache = new ProfilerMarker("clear scene cache"),
+            ___raiseEvents = new ProfilerMarker("raise events"),
+            ___playerLocationRectCheck = new ProfilerMarker("player location rect check"),
+            ___updateNearbyObjects = new ProfilerMarker("update nearby objects");
 
         #endregion
 
@@ -287,34 +302,53 @@ namespace DaggerfallWorkshop
                 return;
 
             // Update local world information whenever player map pixel changes
+            ___updateLocalWorldInformation.Begin();
             DFPosition pos = CurrentMapPixel;
             if (pos.X != lastMapPixelX || pos.Y != lastMapPixelY)
             {
+                ___updateWorldInfo.Begin();
                 UpdateWorldInfo(pos.X, pos.Y);
+                ___updateWorldInfo.End();
+
+                ___raiseOnMapPixelChangedEvent.Begin();
                 RaiseOnMapPixelChangedEvent(pos);
+                ___raiseOnMapPixelChangedEvent.End();
 
                 // Clear non-permanent scenes from cache, unless going to/from owned ship
+                ___getShipCoords.Begin();
                 DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
+                ___getShipCoords.End();
                 if (shipCoords == null || (!(pos.X == shipCoords.X && pos.Y == shipCoords.Y) && !(lastMapPixelX == shipCoords.X && lastMapPixelY == shipCoords.Y)))
+                {
+                    ___clearSceneCache.Begin();
                     SaveLoadManager.ClearSceneCache(false);
+                    ___clearSceneCache.End();
+                }
 
                 lastMapPixelX = pos.X;
                 lastMapPixelY = pos.Y;
             }
+            ___updateLocalWorldInformation.End();
 
             // Raise other events
+            ___raiseEvents.Begin();
             RaiseEvents();
+            ___raiseEvents.End();
 
             // Check if player is inside actual location rect
+            ___playerLocationRectCheck.Begin();
             PlayerLocationRectCheck();
+            ___playerLocationRectCheck.End();
 
             // Update nearby objects
+            ___updateNearbyObjects.Begin();
             nearbyObjectsUpdateTimer += Time.deltaTime;
             if (nearbyObjectsUpdateTimer > refreshNearbyObjectsInterval)
             {
                 UpdateNearbyObjects();
                 nearbyObjectsUpdateTimer = 0;
             }
+            ___updateNearbyObjects.End();
         }
 
         private void LateUpdate()

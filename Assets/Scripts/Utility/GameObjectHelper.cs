@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -30,6 +31,27 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public static class GameObjectHelper
     {
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___CreateRMBBlockGameObject = new ProfilerMarker($"{nameof(GameObjectHelper)}.{nameof(CreateRMBBlockGameObject)}"),
+            ___createFlatsNode = new ProfilerMarker("create flats node"),
+            ___createLightsNode = new ProfilerMarker("create lights node"),
+            ___autoBatch = new ProfilerMarker("auto batch"),
+            ___applyAutoBatches = new ProfilerMarker("apply auto batches"),
+            ___CreateRDBBlockGameObject = new ProfilerMarker($"{nameof(GameObjectHelper)}.{nameof(CreateRDBBlockGameObject)}"),
+            ___CreateLootContainer = new ProfilerMarker($"{nameof(GameObjectHelper)}.{nameof(CreateLootContainer)}"),
+            ___CreateDroppedLootContainer = new ProfilerMarker($"{nameof(GameObjectHelper)}.{nameof(CreateDroppedLootContainer)}"),
+            ___CreateLootableCorpseMarker = new ProfilerMarker($"{nameof(GameObjectHelper)}.{nameof(CreateLootableCorpseMarker)}"),
+            ___AddQuestResourceObjects = new ProfilerMarker($"{nameof(GameObjectHelper)}.{nameof(AddQuestResourceObjects)}"),
+            ___AddMarkerResourceObjects = new ProfilerMarker($"{nameof(GameObjectHelper)}.{nameof(AddMarkerResourceObjects)}"),
+            ___AddQuestNPC = new ProfilerMarker($"{nameof(GameObjectHelper)}.{nameof(AddQuestNPC)}"),
+            ___GetDaggerfallMarker = new ProfilerMarker($"{nameof(GameObjectHelper)}.{nameof(GetDaggerfallMarker)}"),
+            ___CreateFoeGameObjects = new ProfilerMarker($"{nameof(GameObjectHelper)}.{nameof(CreateFoeGameObjects)}"),
+            ___GetStaticDoors = new ProfilerMarker($"{nameof(GameObjectHelper)}.{nameof(GetStaticDoors)}");
+
+        #endregion
+
         static Dictionary<int, MobileEnemy> enemyDict;
         public static Dictionary<int, MobileEnemy> EnemyDict
         {
@@ -509,26 +531,37 @@ namespace DaggerfallWorkshop.Utility
             TextureAtlasBuilder miscBillboardAtlas = null,
             DaggerfallBillboardBatch miscBillboardBatch = null,
             ClimateNatureSets climateNature = ClimateNatureSets.TemperateWoodland,
-            ClimateSeason climateSeason = ClimateSeason.Summer)
+            ClimateSeason climateSeason = ClimateSeason.Summer
+        )
         {
+            ___CreateRMBBlockGameObject.Begin();
+
             // Get DaggerfallUnity
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
+            {
+                ___CreateRMBBlockGameObject.End();
                 return null;
+            }
 
             // Create base object
             GameObject go = RMBLayout.CreateBaseGameObject(ref blockData, layoutX, layoutY, cloneFrom);
 
             // Create flats node
+            ___createFlatsNode.Begin();
             GameObject flatsNode = new GameObject("Flats");
             flatsNode.transform.parent = go.transform;
+            ___createFlatsNode.End();
 
             // Create lights node
+            ___createLightsNode.Begin();
             GameObject lightsNode = new GameObject("Lights");
             lightsNode.transform.parent = go.transform;
+            ___createLightsNode.End();
 
             // If billboard batching is enabled but user has not specified
             // a batch, then make our own auto batch for this block
+            ___autoBatch.Begin();
             bool autoLightsBatch = false;
             bool autoNatureBatch = false;
             bool autoAnimalsBatch = false;
@@ -551,6 +584,7 @@ namespace DaggerfallWorkshop.Utility
                     animalsBillboardBatch = GameObjectHelper.CreateBillboardBatchGameObject(TextureReader.AnimalsTextureArchive, flatsNode.transform);
                 }
             }
+            ___autoBatch.End();
 
             // Layout light billboards and gameobjects
             RMBLayout.AddLights(ref blockData, flatsNode.transform, lightsNode.transform, lightsBillboardBatch);
@@ -569,10 +603,13 @@ namespace DaggerfallWorkshop.Utility
                 RMBLayout.AddGroundPlane(ref blockData, go.transform);
 
             // Apply auto batches
+            ___applyAutoBatches.Begin();
             if (autoNatureBatch) natureBillboardBatch.Apply();
             if (autoLightsBatch) lightsBillboardBatch.Apply();
             if (autoAnimalsBatch) animalsBillboardBatch.Apply();
+            ___applyAutoBatches.End();
 
+            ___CreateRMBBlockGameObject.End();
             return go;
         }
 
@@ -597,10 +634,15 @@ namespace DaggerfallWorkshop.Utility
             DaggerfallRDBBlock cloneFrom = null,
             bool importEnemies = true)
         {
+            ___CreateRDBBlockGameObject.Begin();
+
             // Get DaggerfallUnity
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady)
+            {
+                ___CreateRDBBlockGameObject.End();
                 return null;
+            }
 
             Dictionary<int, RDBLayout.ActionLink> actionLinkDict = new Dictionary<int, RDBLayout.ActionLink>();
 
@@ -637,6 +679,7 @@ namespace DaggerfallWorkshop.Utility
             RDBLayout.LinkActionNodes(actionLinkDict);
             GameManager.Instance.PlayerEnterExit.IsCreatingDungeonObjects = false;
 
+            ___CreateRDBBlockGameObject.End();
             return go;
         }
 
@@ -666,6 +709,8 @@ namespace DaggerfallWorkshop.Utility
             EnemyEntity enemyEntity = null,
             bool adjustPosition = true)
         {
+            ___CreateLootContainer.Begin();
+
             // Setup initial loot container prefab
             GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_LootContainerPrefab.gameObject, containerType.ToString(), parent, position);
 
@@ -705,6 +750,7 @@ namespace DaggerfallWorkshop.Utility
 
             loot.transform.position = position;
 
+            ___CreateLootContainer.End();
             return loot;
         }
 
@@ -716,15 +762,23 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>DaggerfallLoot.</returns>
         public static DaggerfallLoot CreateDroppedLootContainer(GameObject player, ulong loadID, int iconArchive = DaggerfallLootDataTables.randomTreasureArchive, int iconRecord = -1)
         {
+            ___CreateDroppedLootContainer.Begin();
+
             // Player must have a PlayerEnterExit component
             PlayerEnterExit playerEnterExit = player.GetComponent<PlayerEnterExit>();
             if (!playerEnterExit)
+            {
+                ___CreateDroppedLootContainer.End();
                 throw new Exception("CreateDroppedLootContainer() player game object must have PlayerEnterExit component.");
+            }
 
             // Player must have a PlayerMotor component
             PlayerMotor playerMotor = player.GetComponent<PlayerMotor>();
             if (!playerMotor)
+            {
+                ___CreateDroppedLootContainer.End();
                 throw new Exception("CreateDroppedLootContainer() player game object must have PlayerMotor component.");
+            }
 
             // Get parent by context
             Transform parent = null;
@@ -758,7 +812,8 @@ namespace DaggerfallWorkshop.Utility
                 parent,
                 iconArchive,
                 iconRecord,
-                loadID);
+                loadID
+            );
 
             // Set properties
             loot.LoadID = loadID;
@@ -768,10 +823,9 @@ namespace DaggerfallWorkshop.Utility
 
             // If dropped outside ask StreamingWorld to track loose object
             if (!GameManager.Instance.IsPlayerInside)
-            {
                 GameManager.Instance.StreamingWorld.TrackLooseObject(loot.gameObject, true);
-            }
 
+            ___CreateDroppedLootContainer.End();
             return loot;
         }
 
@@ -785,15 +839,23 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>DaggerfallLoot.</returns>
         public static DaggerfallLoot CreateLootableCorpseMarker(GameObject player, GameObject enemy, EnemyEntity enemyEntity, int corpseTexture, ulong loadID)
         {
+            ___CreateLootableCorpseMarker.Begin();
+
             // Player must have a PlayerEnterExit component
             PlayerEnterExit playerEnterExit = player.GetComponent<PlayerEnterExit>();
             if (!playerEnterExit)
+            {
+                ___CreateLootableCorpseMarker.End();
                 throw new Exception("CreateLootableCorpseMarker() player game object must have PlayerEnterExit component.");
+            }
 
             // Enemy must have an EnemyMotor component
             EnemyMotor enemyMotor = enemy.GetComponent<EnemyMotor>();
             if (!enemyMotor)
+            {
+                ___CreateLootableCorpseMarker.End();
                 throw new Exception("CreateLootableCorpseMarker() enemy game object must have EnemyMotor component.");
+            }
 
             // Get parent by context
             Transform parent = null;
@@ -825,7 +887,8 @@ namespace DaggerfallWorkshop.Utility
                 archive,
                 record,
                 loadID,
-                enemyEntity);
+                enemyEntity
+            );
 
             // Set properties
             loot.LoadID = loadID;
@@ -835,10 +898,9 @@ namespace DaggerfallWorkshop.Utility
 
             // If dropped outside ask StreamingWorld to track loose object
             if (!GameManager.Instance.IsPlayerInside)
-            {
                 GameManager.Instance.StreamingWorld.TrackLooseObject(loot.gameObject, true);
-            }
 
+            ___CreateLootableCorpseMarker.End();
             return loot;
         }
 
@@ -902,10 +964,15 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         public static void AddQuestResourceObjects(SiteTypes siteType, Transform parent, int buildingKey = 0, bool enableNPCs = true, bool enableFoes = true, bool enableItems = true)
         {
+            ___AddQuestResourceObjects.Begin();
+
             // Collect any SiteLinks associdated with this site
             SiteLink[] siteLinks = QuestMachine.Instance.GetSiteLinks(siteType, GameManager.Instance.PlayerGPS.CurrentMapID, buildingKey);
             if (siteLinks == null || siteLinks.Length == 0)
+            {
+                ___AddQuestResourceObjects.End();
                 return;
+            }
 
             // Walk through all found SiteLinks
             foreach (SiteLink link in siteLinks)
@@ -913,12 +980,18 @@ namespace DaggerfallWorkshop.Utility
                 // Get the Quest object referenced by this link
                 Quest quest = QuestMachine.Instance.GetQuest(link.questUID);
                 if (quest == null)
+                {
+                    ___AddQuestResourceObjects.End();
                     throw new Exception(string.Format("Could not find active quest for UID {0}", link.questUID));
+                }
 
                 // Get the Place resource referenced by this link
                 Place place = quest.GetPlace(link.placeSymbol);
                 if (place == null)
+                {
+                    ___AddQuestResourceObjects.End();
                     throw new Exception(string.Format("Could not find Place symbol {0} in quest UID {1}", link.placeSymbol, link.questUID));
+                }
 
                 // Get all quest resource behaviours already in scene
                 // Slightly expensive but only runs once at layout time or when "place thing" is called
@@ -933,10 +1006,14 @@ namespace DaggerfallWorkshop.Utility
                     foreach (QuestMarker marker in place.SiteDetails.questSpawnMarkers)
                         AddMarkerResourceObjects(siteType, parent, enableNPCs, enableFoes, quest, resourceBehaviours, marker);
             }
+
+            ___AddQuestResourceObjects.End();
         }
 
         private static void AddMarkerResourceObjects(SiteTypes siteType, Transform parent, bool enableNPCs, bool enableFoes, Quest quest, QuestResourceBehaviour[] resourceBehaviours, QuestMarker marker)
         {
+            ___AddMarkerResourceObjects.Begin();
+
             if (marker.targetResources != null)
             {
                 foreach (Symbol target in marker.targetResources)
@@ -967,6 +1044,8 @@ namespace DaggerfallWorkshop.Utility
                     }
                 }
             }
+
+            ___AddMarkerResourceObjects.End();
         }
 
         /// <summary>
@@ -994,6 +1073,8 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         static void AddQuestNPC(SiteTypes siteType, Quest quest, QuestMarker marker, Person person, Transform parent)
         {
+            ___AddQuestNPC.Begin();
+
             // Get billboard texture data
             FactionFile.FlatData flatData;
             if (person.IsIndividualNPC)
@@ -1048,6 +1129,8 @@ namespace DaggerfallWorkshop.Utility
 
             // Set tag
             go.tag = QuestMachine.questPersonTag;
+
+            ___AddQuestNPC.End();
         }
 
         /// <summary>
@@ -1149,6 +1232,8 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         static DaggerfallMarker GetDaggerfallMarker(ulong markerID)
         {
+            ___GetDaggerfallMarker.Begin();
+
             DaggerfallMarker result = null;
             DaggerfallMarker[] markers = GameObject.FindObjectsOfType<DaggerfallMarker>();
             foreach(DaggerfallMarker marker in markers)
@@ -1165,10 +1250,14 @@ namespace DaggerfallWorkshop.Utility
                     if (result == null)
                         result = marker;
                     else
+                    {
+                        ___GetDaggerfallMarker.End();
                         return null;
+                    }
                 }
             }
 
+            ___GetDaggerfallMarker.End();
             return result;
         }
 
@@ -1227,12 +1316,13 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>GameObject[] array of 1-N foes. Array can be null or empty if create fails.</returns>
         public static GameObject[] CreateFoeGameObjects(Vector3 position, MobileTypes foeType, int spawnCount = 1, MobileReactions reaction = MobileReactions.Hostile, Foe foeResource = null, bool alliedToPlayer = false)
         {
-            List<GameObject> gameObjects = new List<GameObject>();
+            ___CreateFoeGameObjects.Begin();
 
             // Clamp total spawn count
             int totalSpawns = Mathf.Clamp(spawnCount, 1, 8);
 
             // Generate GameObjects
+            var gameObjects = new GameObject[totalSpawns];
             for (int i = 0; i < totalSpawns; i++)
             {
                 // Generate enemy
@@ -1279,10 +1369,11 @@ namespace DaggerfallWorkshop.Utility
                 GameManager.Instance?.RaiseOnEnemySpawnEvent(go);
 
                 // Add to list
-                gameObjects.Add(go);
+                gameObjects[i] = go;
             }
 
-            return gameObjects.ToArray();
+            ___CreateFoeGameObjects.End();
+            return gameObjects;
         }
 
         /// <summary>
@@ -1454,13 +1545,19 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>Array of doors in this model data.</returns>
         public static StaticDoor[] GetStaticDoors(ref ModelData modelData, int blockIndex, int recordIndex, Matrix4x4 buildingMatrix)
         {
+            ___GetStaticDoors.Begin();
+
             // Exit if no doors
             if (modelData.Doors == null)
+            {
+                ___GetStaticDoors.End();
                 return null;
+            }
 
             // Add door triggers
             StaticDoor[] staticDoors = new StaticDoor[modelData.Doors.Length];
-            for (int i = 0; i < modelData.Doors.Length; i++)
+            int numDoors = modelData.Doors.Length;
+            for (int i = 0; i < numDoors; i++)
             {
                 // Get door and diagonal verts
                 ModelDoor door = modelData.Doors[i];
@@ -1475,7 +1572,7 @@ namespace DaggerfallWorkshop.Utility
                 Vector3 size = new Vector3(thickness, Mathf.Max(height, thickness), Mathf.Min(height, thickness));
 
                 // Add door to array
-                StaticDoor newDoor = new StaticDoor()
+                StaticDoor newDoor = new StaticDoor
                 {
                     buildingMatrix = buildingMatrix,
                     doorType = door.Type,
@@ -1489,6 +1586,7 @@ namespace DaggerfallWorkshop.Utility
                 staticDoors[i] = newDoor;
             }
 
+            ___GetStaticDoors.End();
             return staticDoors;
         }
 

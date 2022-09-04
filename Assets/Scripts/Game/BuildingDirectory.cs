@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Utility;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -75,6 +76,13 @@ namespace DaggerfallWorkshop.Game
 
         #endregion
 
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___m_SetLocation = new ProfilerMarker(nameof(SetLocation));
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -84,6 +92,8 @@ namespace DaggerfallWorkshop.Game
         /// <param name="blocks">Exterior blocks.</param>
         public void SetLocation(in DFLocation location, out DFBlock[] blocks)
         {
+            ___m_SetLocation.Begin();
+
             // Clear existing buildings
             buildingDict.Clear();
 
@@ -116,6 +126,8 @@ namespace DaggerfallWorkshop.Game
             locationId = location.Exterior.ExteriorData.LocationId;
             mapId = location.MapTableData.MapId;
             locationData = location;
+
+            ___m_SetLocation.End();
         }
 
         /// <summary>

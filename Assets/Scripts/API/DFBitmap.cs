@@ -11,6 +11,7 @@
 
 #region Using Statements
 using UnityEngine;
+using Unity.Profiling;
 #endregion
 
 namespace DaggerfallConnect
@@ -34,6 +35,13 @@ namespace DaggerfallConnect
         /// <summary>Daggerfall palette.</summary>
         public DFPalette Palette = new DFPalette();
 
+        #endregion
+
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___GetColor32 = new ProfilerMarker($"{nameof(DFBitmap)}.{nameof(GetColor32)}");
+        
         #endregion
 
         #region Constructors
@@ -94,31 +102,36 @@ namespace DaggerfallConnect
         /// <returns>Color32 array.</returns>
         public Color32[] GetColor32(int alphaIndex, int maskIndex, Color maskColor, bool excludeNonMasked = false)
         {
-            Color32[] colors = new Color32[Width * Height];
+            ___GetColor32.Begin();
 
-            Color32 c = new Color32();
-            int index, offset, srcRow, dstRow;
+            Color32[] colors = new Color32[Width * Height];
+            byte[] paletteBuffer = Palette.PaletteBuffer;
+            int paletteHeaderLength = Palette.HeaderLength;
+
             for (int y = 0; y < Height; y++)
             {
                 // Get row position
-                srcRow = y * Width;
-                dstRow = (Height - 1 - y) * Width;
+                int srcRow = y * Width;
+                int dstRow = (Height - 1 - y) * Width;
 
                 // Write data for this row
                 for (int x = 0; x < Width; x++)
                 {
-                    index = Data[srcRow + x];
+                    int index = Data[srcRow + x];
                     if (index == maskIndex)
                     {
                         colors[dstRow + x] = maskColor;
                     }
                     else if (!excludeNonMasked)
                     {
-                        offset = Palette.HeaderLength + index * 3;
-                        c.r = Palette.PaletteBuffer[offset];
-                        c.g = Palette.PaletteBuffer[offset + 1];
-                        c.b = Palette.PaletteBuffer[offset + 2];
-                        c.a = (alphaIndex == index) ? (byte)0 : (byte)255;
+                        int offset = paletteHeaderLength + index * 3;
+                        Color32 c = new Color32(
+                            paletteBuffer[offset],
+                            paletteBuffer[offset + 1],
+                            paletteBuffer[offset + 2],
+                            255
+                        );
+                        if(alphaIndex == index) c.a = 0;
                         colors[dstRow + x] = c;
                     }
                     else
@@ -128,6 +141,7 @@ namespace DaggerfallConnect
                 }
             }
 
+            ___GetColor32.End();
             return colors;
         }
 

@@ -28,6 +28,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -140,6 +141,26 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         #endregion
+        
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___CustomizeMaterial = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(CustomizeMaterial)}"),
+            ___GetStaticBillboardMaterial = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(GetStaticBillboardMaterial)}"),
+            ___GetMobileBillboardMaterial = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(GetMobileBillboardMaterial)}"),
+            ___TryImportTexture = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(TryImportTexture)}"),
+            ___TryImportImage = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(TryImportImage)}"),
+            ___TryImportCifRci = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(TryImportCifRci)}"),
+            ___TryImportTextureArray = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(TryImportTextureArray)}"),
+            ___TryImportTextureFromLooseFiles = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(TryImportTextureFromLooseFiles)}"),
+            ___TryImportTextureFromDisk = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(TryImportTextureFromDisk)}"),
+            ___TryMakeTextureArrayCopyTexture = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(TryMakeTextureArrayCopyTexture)}"),
+            ___LoadFromCacheOrImport = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(LoadFromCacheOrImport)}"),
+            ___MakeBillboardMaterial = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(MakeBillboardMaterial)}"),
+            ___IsDaggerfallTexture = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(IsDaggerfallTexture)}"),
+            ___AssignFiltermode = new ProfilerMarker($"{nameof(TextureReplacement)}.{nameof(AssignFiltermode)}");
+
+        #endregion
 
         #region Textures Import
 
@@ -165,7 +186,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(int archive, int record, out Texture2D[] texFrames)
         {
-            return TryImportTexture(texturesPath, frame => GetName(archive, record, frame), out texFrames);
+            ___TryImportTexture.Begin();
+
+            bool success = TryImportTexture(texturesPath, frame => GetName(archive, record, frame), out texFrames);
+
+            ___TryImportTexture.End();
+            return success;
         }
 
         /// <summary>
@@ -178,7 +204,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(int archive, int record, int frame, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, GetName(archive, record, frame), false, null, out tex);
+            ___TryImportTexture.Begin();
+
+            bool success =  TryImportTexture(texturesPath, GetName(archive, record, frame), false, null, out tex);
+            
+            ___TryImportTexture.End();
+            return success;
         }
 
         /// <summary>
@@ -193,7 +224,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(int archive, int record, int frame, TextureMap textureMap, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), readOnly, textureMap, out tex);
+            ___TryImportTexture.Begin();
+
+            bool success = TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), readOnly, textureMap, out tex);
+            
+            ___TryImportTexture.End();
+            return success;
         }
 
         /// <summary>
@@ -209,9 +245,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(int archive, int record, int frame, TextureMap textureMap, TextureImport textureImport, bool readOnly, out Texture2D tex)
         {
+            ___TryImportTexture.Begin();
+
+            bool success =
+                    (textureImport == TextureImport.AllLocations && TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), readOnly, textureMap, out tex))
+                ||  (textureImport == TextureImport.LooseFiles && TryImportTextureFromLooseFiles(archive, record, frame, textureMap, readOnly, out tex));
+            
             tex = null;
-            return (textureImport == TextureImport.AllLocations && TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), readOnly, textureMap, out tex))
-                || (textureImport == TextureImport.LooseFiles && TryImportTextureFromLooseFiles(archive, record, frame, textureMap, readOnly, out tex));
+            ___TryImportTexture.End();
+            return success;
         }
 
         /// <summary>
@@ -226,7 +268,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, TextureMap textureMap, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap, dye), false, null, out tex);
+            ___TryImportTexture.Begin();
+
+            bool success = TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap, dye), false, null, out tex);
+
+            ___TryImportTexture.End();
+            return success;
         }
 
         /// <summary>
@@ -238,7 +285,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(string name, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, name, readOnly, null, out tex);
+            ___TryImportTexture.Begin();
+
+            bool success = TryImportTexture(texturesPath, name, readOnly, null, out tex);
+
+            ___TryImportTexture.End();
+            return success;
         }
 
         /// <summary>
@@ -250,7 +302,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if image imported.</returns>
         public static bool TryImportImage(string name, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(imgPath, name, readOnly, null, out tex);
+            ___TryImportImage.Begin();
+
+            bool success =  TryImportTexture(imgPath, name, readOnly, null, out tex);
+
+            ___TryImportImage.End();
+            return success;
         }
 
         /// <summary>
@@ -264,7 +321,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if CifRci imported.</returns>
         public static bool TryImportCifRci(string name, int record, int frame, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame), readOnly, null, out tex);
+            ___TryImportCifRci.Begin();
+
+            bool success = TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame), readOnly, null, out tex);
+
+            ___TryImportCifRci.End();
+            return success;
         }
 
         /// <summary>
@@ -279,7 +341,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if CifRci imported.</returns>
         public static bool TryImportCifRci(string name, int record, int frame, MetalTypes metalType, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame, metalType), readOnly, null, out tex);
+            ___TryImportCifRci.Begin();
+
+            bool success = TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame, metalType), readOnly, null, out tex);
+
+            ___TryImportCifRci.End();
+            return success;
         }
 
         /// <summary>
@@ -295,9 +362,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if the texture array has been imported or created.</returns>
         internal static bool TryImportTextureArray(int archive, int depth, TextureMap textureMap, Color32? fallbackColor, out Texture2DArray textureArray)
         {
+            ___TryImportTextureArray.Begin();
+
             if (!DaggerfallUnity.Settings.AssetInjection)
             {
                 textureArray = null;
+                ___TryImportTextureArray.End();
                 return false;
             }
 
@@ -312,14 +382,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (ModManager.Instance.TryGetAsset(names, null, out texture) && texture.dimension == TextureDimension.Tex2DArray)
                 {
                     if ((textureArray = texture as Texture2DArray).depth == depth)
+                    {
+                        ___TryImportTextureArray.End();
                         return true;
+                    }
 
                     Debug.LogErrorFormat("{0}: expected depth {0} but got {1}.", textureArray.name, depth, textureArray.depth);
                 }
             }
 
             // Seek individual textures from mods and loose files
-            return TryMakeTextureArrayCopyTexture(archive, depth, textureMap, fallbackColor, out textureArray);
+            var success = TryMakeTextureArrayCopyTexture(archive, depth, textureMap, fallbackColor, out textureArray);
+            
+            ___TryImportTextureArray.End();
+            return success;
         }
 
         /// <summary>
@@ -334,13 +410,18 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTextureFromLooseFiles(int archive, int record, int frame, TextureMap textureMap, bool readOnly, out Texture2D tex)
         { 
+            ___TryImportTextureFromLooseFiles.Begin();
+
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 string path = Path.Combine(texturesPath, GetName(archive, record, frame, textureMap));
-                return TryImportTextureFromDisk(path, true, IsLinearTextureMap(textureMap), readOnly, out tex);
+                bool success = TryImportTextureFromDisk(path, true, IsLinearTextureMap(textureMap), readOnly, out tex);
+                ___TryImportTextureFromLooseFiles.End();
+                return success;
             }
 
             tex = null;
+            ___TryImportTextureFromLooseFiles.End();
             return false;           
         }
 
@@ -411,9 +492,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="material">Material.</param>
         public static void CustomizeMaterial(int archive, int record, int frame, Material material)
         {
+            ___CustomizeMaterial.Begin();
+
             // MetallicGloss map
-            Texture2D metallicGloss;
-            if (TryImportTextureFromLooseFiles(archive, record, frame, TextureMap.MetallicGloss, true, out metallicGloss))
+            if (TryImportTextureFromLooseFiles(archive, record, frame, TextureMap.MetallicGloss, true, out Texture2D metallicGloss))
             {
                 metallicGloss.filterMode = MainFilterMode;
                 material.EnableKeyword(KeyWords.MetallicGlossMap);
@@ -422,8 +504,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             // Height Map
-            Texture2D height;
-            if (TryImportTextureFromLooseFiles(archive, record, frame, TextureMap.Height, true, out height))
+            if (TryImportTextureFromLooseFiles(archive, record, frame, TextureMap.Height, true, out Texture2D height))
             {
                 height.filterMode = MainFilterMode;
                 material.EnableKeyword(KeyWords.HeightMap);
@@ -446,6 +527,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (xml.TryGetFloat("smoothness", out smoothness))
                     material.SetFloat(Uniforms.Glossiness, smoothness);
             }
+
+            ___CustomizeMaterial.End();
         }
 
         /// <summary>
@@ -463,24 +546,27 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>A material or null.</returns>
         public static Material GetStaticBillboardMaterial(GameObject go, int archive, int record, ref BillboardSummary summary, out Vector2 scale)
         {
+            ___GetStaticBillboardMaterial.Begin();
+
             scale = Vector2.one;
 
             if (!DaggerfallUnity.Settings.AssetInjection)
+            {
+                ___GetStaticBillboardMaterial.End();
                 return null;
+            }
 
             //MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
             int frame = 0;
 
-            Texture2D albedo, emission;
-            if (summary.ImportedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, record, frame, true, true, out albedo, out emission))
+            if (summary.ImportedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, record, frame, true, true, out Texture2D albedo, out Texture2D emission))
             {
                 bool isEmissive = emission || DaggerfallUnity.Instance.MaterialReader.TextureReader.IsEmissive(archive, record);
 
                 // Read xml configuration
                 Vector2 uv = Vector2.zero;
                 string renderMode = null;
-                XMLManager xml;
-                if (XMLManager.TryReadXml(texturesPath, GetName(archive, record), out xml))
+                if (XMLManager.TryReadXml(texturesPath, GetName(archive, record), out XMLManager xml))
                 {
                     xml.TryGetString("renderMode", out renderMode);
                     isEmissive |= xml.GetBool("emission");
@@ -519,9 +605,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 summary.ImportedTextures.Albedo = albedoTextures;
                 summary.ImportedTextures.Emission = emissionTextures;
 
+                ___GetStaticBillboardMaterial.End();
                 return material;
             }
 
+            ___GetStaticBillboardMaterial.End();
             return null;
         }
 
@@ -538,17 +626,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>A material or null.</returns>
         public static Material GetMobileBillboardMaterial(int archive, MeshFilter meshFilter, ref MobileBillboardImportedTextures importedTextures)
         {
-            if (!DaggerfallUnity.Settings.AssetInjection)
-                return null;
+            ___GetMobileBillboardMaterial.Begin();
 
-            Texture2D tex, emission;
-            if (importedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, 0, 0, true, true, out tex, out emission))
+            if (!DaggerfallUnity.Settings.AssetInjection)
+            {
+                ___GetMobileBillboardMaterial.End();
+                return null;
+            }
+
+            if (importedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, 0, 0, true, true, out Texture2D tex, out Texture2D emission))
             {
                 string renderMode = null;
 
                 // Read xml configuration
-                XMLManager xml;
-                if (XMLManager.TryReadXml(ImagesPath, string.Format("{0:000}", archive), out xml))
+                if (XMLManager.TryReadXml(ImagesPath, string.Format("{0:000}", archive), out XMLManager xml))
                 {
                     xml.TryGetString("renderMode", out renderMode);
                     importedTextures.IsEmissive = xml.GetBool("emission");
@@ -622,9 +713,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // Update UV map
                 SetUv(meshFilter);
 
+                ___GetMobileBillboardMaterial.End();
                 return material;
             }
 
+            ___GetMobileBillboardMaterial.End();
             return null;
         }
 
@@ -731,17 +824,18 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture is a Daggerfall texture.</returns>
         static public bool IsDaggerfallTexture(string name, out int archive, out int record)
         {
+            ___IsDaggerfallTexture.Begin();
+
             if ((name[3] == '_') && name.EndsWith("-0", StringComparison.CurrentCulture))
+            if (Int32.TryParse(name.Substring(0, 3), out archive))
+            if ((name[5] == '-' && Int32.TryParse(name.Substring(4, 1), out record)) || (name[6] == '-' && Int32.TryParse(name.Substring(4, 2), out record)))
             {
-                if (Int32.TryParse(name.Substring(0, 3), out archive))
-                {
-                    if ((name[5] == '-' && Int32.TryParse(name.Substring(4, 1), out record)) ||
-                            (name[6] == '-' && Int32.TryParse(name.Substring(4, 2), out record)))
-                        return true;
-                }
+                ___IsDaggerfallTexture.End();
+                return true;
             }
 
             archive = record = -1;
+            ___IsDaggerfallTexture.End();
             return false;
         }
 
@@ -799,12 +893,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         public static void AssignFiltermode(Material material)
         {
+            ___AssignFiltermode.Begin();
+
             FilterMode filterMode = MainFilterMode;
             foreach (var property in Uniforms.Textures.Where(x => material.HasProperty(x)))
             {
                 Texture tex = material.GetTexture(property);
                 if (tex) tex.filterMode = filterMode;
             }
+
+            ___AssignFiltermode.End();
         }
 
         /// <summary>
@@ -954,12 +1052,17 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         private static bool TryImportTexture(string path, string name, bool readOnly, TextureMap? textureMap, out Texture2D tex)
         {
+            ___TryImportTexture.Begin();
+
             bool isLinear = textureMap != null && IsLinearTextureMap(textureMap.Value);
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 // Seek from loose files
                 if (TryImportTextureFromDisk(Path.Combine(path, name), false, isLinear, readOnly, out tex))
+                {
+                    ___TryImportTexture.End();
                     return true;
+                }
 
                 // Seek from mods
                 if (ModManager.Instance && ModManager.Instance.TryGetAsset(name, null, out tex))
@@ -967,11 +1070,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     if (!readOnly && !tex.isReadable)
                         Debug.LogWarning($"Texture {name} is not readable.");
 
+                    ___TryImportTexture.End();
                     return true;
                 }
             }
 
             tex = null;
+            ___TryImportTexture.End();
             return false;
         }
 
@@ -984,6 +1089,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         private static bool TryImportTexture(string path, Func<int, string> getName, out Texture2D[] texFrames)
         {
+            ___TryImportTexture.Begin();
+            
             int frame = 0;
             Texture2D tex;
             if (TryImportTexture(path, getName(frame), false, null, out tex))
@@ -992,10 +1099,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 do textures.Add(tex);
                 while (TryImportTexture(path, getName(++frame), false, null, out tex));
                 texFrames = textures.ToArray();
+                
+                ___TryImportTexture.End();
                 return true;
             }
 
             texFrames = null;
+            ___TryImportTexture.End();
             return false;
         }
 
@@ -1011,6 +1121,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture exists and has been imported.</returns>
         private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool isLinear, bool readOnly, out Texture2D tex)
         {
+            ___TryImportTextureFromDisk.Begin();
+
             const int retroThreshold = 256; // Imported textures with a width or height below this threshold will never be compressed to preserve retro appearance
 
             if (!path.EndsWith(extension))
@@ -1031,10 +1143,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 #endif
 
                 tex.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
+                
+                ___TryImportTextureFromDisk.End();
                 return true;
             }
 
             tex = null;
+            ___TryImportTextureFromDisk.End();
             return false;
         }
 
@@ -1055,10 +1170,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if the texture array has been created.</returns>
         private static bool TryMakeTextureArrayCopyTexture(int archive, int depth, TextureMap textureMap, Color32? fallbackColor, out Texture2DArray textureArray)
         {
+            ___TryMakeTextureArrayCopyTexture.Begin();
+
             textureArray = null;
 
             if ((SystemInfo.copyTextureSupport & CopyTextureSupport.DifferentTypes) == CopyTextureSupport.None)
+            {
+                ___TryMakeTextureArrayCopyTexture.End();
                 return false;
+            }
 
             bool mipMaps = false;
             Texture2D fallback = null;
@@ -1069,7 +1189,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (!TryImportTexture(archive, record, 0, textureMap, true, out tex))
                 {
                     if (!textureArray)
+                    {
+                        ___TryMakeTextureArrayCopyTexture.End();
                         return false;
+                    }
 
                     if (!fallbackColor.HasValue)
                     {
@@ -1094,7 +1217,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 if (!textureArray)
                 {
                     if (fallbackColor.HasValue && tex.format != TextureFormat.RGBA32 && tex.format != TextureFormat.ARGB32)
+                    {
+                        ___TryMakeTextureArrayCopyTexture.End();
                         return false;
+                    }
 
                     textureArray = new Texture2DArray(tex.width, tex.height, depth, tex.format, mipMaps = tex.mipmapCount > 1, IsLinearTextureMap(textureMap));
                     textureArray.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
@@ -1113,9 +1239,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 textureArray.wrapMode = TextureWrapMode.Clamp;
                 textureArray.anisoLevel = 8;
+                ___TryMakeTextureArrayCopyTexture.End();
                 return true;
             }
 
+            ___TryMakeTextureArrayCopyTexture.End();
             return false;
         }
 
@@ -1152,8 +1280,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             bool allowEmissionMap,
             bool readOnly,
             out Texture2D albedo,
-            out Texture2D emission)
+            out Texture2D emission
+        )
         {
+            ___LoadFromCacheOrImport.Begin();
+
             MaterialReader materialReader = DaggerfallUnity.Instance.MaterialReader;
 
             CachedMaterial cachedMaterial;
@@ -1165,6 +1296,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 albedo = cachedMaterial.albedoMap;
                 emission = cachedMaterial.emissionMap;
+                ___LoadFromCacheOrImport.End();
                 return true;
             }
 
@@ -1183,9 +1315,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
 
                 materialReader.SetCachedMaterialCustomBillboard(archive, record, frame, cachedMaterial);
+                ___LoadFromCacheOrImport.End();
                 return true;
             }
 
+            ___LoadFromCacheOrImport.End();
             return false;
         }
 
@@ -1215,6 +1349,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         private static Material MakeBillboardMaterial(string renderMode = null)
         {
+            ___MakeBillboardMaterial.Begin();
+
             // Parse blendMode from string or use Cutout if no custom blendMode specified
             MaterialReader.CustomBlendMode blendMode =
                 renderMode != null && Enum.IsDefined(customBlendModeType, renderMode) ?
@@ -1223,9 +1359,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             // Use Daggerfall/Billboard material for standard cutout billboards or create a Standard material if using any other custom blendMode
             if (blendMode == MaterialReader.CustomBlendMode.Cutout)
+            {
+                ___MakeBillboardMaterial.End();
                 return MaterialReader.CreateBillboardMaterial();
+            }
             else
+            {
+                ___MakeBillboardMaterial.End();
                 return MaterialReader.CreateStandardMaterial(blendMode);
+            }
         }
 
         private static bool MakeName(ImageData imageData, DyeColors dyeColor, out string directory, out string name)

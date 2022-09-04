@@ -13,6 +13,7 @@
 using System;
 using System.IO;
 using DaggerfallConnect.Utility;
+using Unity.Profiling;
 #endregion
 
 namespace DaggerfallConnect.Arena2
@@ -59,6 +60,16 @@ namespace DaggerfallConnect.Arena2
         /// Height map data buffer.
         /// </summary>
         private Byte[] heightMapBuffer = new Byte[mapBufferLengthValue];
+
+        #endregion
+
+        #region Profiler Markers
+
+        static readonly ProfilerMarker
+            ___GetLargeHeightMapValuesRange = new ProfilerMarker($"{nameof(WoodsFile)}.{nameof(GetLargeHeightMapValuesRange)}"),
+            ___GetLargeMapData = new ProfilerMarker($"{nameof(WoodsFile)}.{nameof(GetLargeMapData)}"),
+            ___GetHeightMapValuesRange1Dim = new ProfilerMarker($"{nameof(WoodsFile)}.{nameof(GetHeightMapValuesRange1Dim)}"),
+            ___GetHeightMapValuesRange = new ProfilerMarker($"{nameof(WoodsFile)}.{nameof(GetHeightMapValuesRange)}");
 
         #endregion
 
@@ -231,6 +242,8 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Byte array dim,dim in size.</returns>
         public Byte[,] GetHeightMapValuesRange(int mapPixelX, int mapPixelY, int dim)
         {
+            ___GetHeightMapValuesRange.Begin();
+
             Byte[,] dstData = new Byte[dim, dim];
             for (int y = 0; y < dim; y++)
             for (int x = 0; x < dim; x++)
@@ -238,6 +251,7 @@ namespace DaggerfallConnect.Arena2
                 dstData[x, y] = GetHeightMapValue(mapPixelX + x, mapPixelY + y);
             }
 
+            ___GetHeightMapValuesRange.End();
             return dstData;
         }
 
@@ -250,12 +264,16 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Byte 1D array dim * dim in size.</returns>
         public Byte[] GetHeightMapValuesRange1Dim(int mapPixelX, int mapPixelY, int dim)
         {
+            ___GetHeightMapValuesRange1Dim.Begin();
+
             Byte[] dstData = new Byte[dim * dim];
             for (int y = 0; y < dim; y++)
             for (int x = 0; x < dim; x++)
             {
                 dstData[x + (y * dim)] = GetHeightMapValue(mapPixelX + x, mapPixelY + y);
             }
+
+            ___GetHeightMapValuesRange1Dim.End();
             return dstData;
         }
 
@@ -268,6 +286,8 @@ namespace DaggerfallConnect.Arena2
         /// <returns>5x5 grid of map data.</returns>
         public Byte[,] GetLargeMapData(int mapPixelX, int mapPixelY)
         {
+            ___GetLargeMapData.Begin();
+
             // Clamp X
             if (mapPixelX < 0) mapPixelX = 0;
             if (mapPixelX >= MapWidth - 1) mapPixelX = MapWidth - 1;
@@ -288,6 +308,7 @@ namespace DaggerfallConnect.Arena2
                 data[x, y] = reader.ReadByte();
             }
 
+            ___GetLargeMapData.End();
             return data;
         }
 
@@ -301,6 +322,8 @@ namespace DaggerfallConnect.Arena2
         /// <returns>Byte array dim*3,dim*3 in size.</returns>
         public Byte[,] GetLargeHeightMapValuesRange(int mapPixelX, int mapPixelY, int dim)
         {
+            ___GetLargeHeightMapValuesRange.Begin();
+
             const int offsetx = 1;
             const int offsety = 1;
             const int len = 3;
@@ -322,6 +345,7 @@ namespace DaggerfallConnect.Arena2
                 }
             }
 
+            ___GetLargeHeightMapValuesRange.End();
             return dstData;
         }
 
