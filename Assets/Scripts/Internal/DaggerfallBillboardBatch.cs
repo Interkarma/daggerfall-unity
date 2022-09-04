@@ -61,6 +61,9 @@ namespace DaggerfallWorkshop
         [Range(1, 127)]
         public int RandomDepth = 16;
         public float RandomSpacing = BlocksFile.TileDimension * MeshReader.GlobalScale;
+        public float MinRandomScale = 1.0f;
+        public float MaxRandomScale = 1.0f;
+        public int RandomSeed = -1;
 
         DaggerfallUnity dfUnity;
         int currentArchive = -1;
@@ -424,7 +427,7 @@ namespace DaggerfallWorkshop
                 BillboardItem bi = billboardItems[billboard];
 
                 // Billboard size and origin
-                Vector2 finalSize = GetScaledBillboardSize(bi.customSize, bi.customScale);
+                Vector2 finalSize = ApplyRandomScale(GetScaledBillboardSize(bi.customSize, bi.customScale));
                 float hy = (finalSize.y / 2);
                 Vector3 position = bi.position + new Vector3(0, hy, 0);
 
@@ -514,13 +517,16 @@ namespace DaggerfallWorkshop
             uvs = new Vector2[vertexCount];
             int[] indices = new int[indexCount];
             int currentIndex = 0;
+            if(RandomSeed > -1) {
+                UnityEngine.Random.InitState(RandomSeed);
+            }
             for (int billboard = 0; billboard < billboardItems.Count; billboard++)
             {
                 int offset = billboard * vertsPerQuad;
                 BillboardItem bi = billboardItems[billboard];
 
                 // Billboard size and origin
-                Vector2 finalSize = GetScaledBillboardSize(bi.record);
+                Vector2 finalSize = ApplyRandomScale(GetScaledBillboardSize(bi.record));
                 //float hx = (finalSize.x / 2);
                 float hy = (finalSize.y / 2);
                 Vector3 position = bi.position + new Vector3(0, hy, 0);
@@ -591,6 +597,17 @@ namespace DaggerfallWorkshop
             // Assign mesh
             MeshFilter filter = GetComponent<MeshFilter>();
             filter.sharedMesh = billboardMesh;
+        }
+
+        //Applies random scaling
+        private Vector2 ApplyRandomScale(Vector2 finalSize) {
+            if(RandomSeed == -1) {
+                return finalSize;
+            }
+            float randomScale = UnityEngine.Random.Range(MinRandomScale, MaxRandomScale);
+            finalSize.x *= randomScale;
+            finalSize.y *= randomScale;
+            return finalSize;
         }
 
         // Gets scaled billboard size to properly size billboard in world
