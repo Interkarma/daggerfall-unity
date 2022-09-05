@@ -4,12 +4,14 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors:    
+// Contributors:    Andrzej Łukasik (andrew.r.lukasik)
 // 
 // Notes:
 //
 
 using System;
+using Unity.Collections;
+using Unity.Jobs;
 
 namespace DaggerfallWorkshop
 {
@@ -71,4 +73,19 @@ namespace DaggerfallWorkshop
         }
     }
 
+}
+
+public static class JobUtility
+{
+    /// <summary>
+    /// Schedules a job that calls UnsafeUtility.ReleaseGCObject(gcHandle).
+    /// </summary>
+    public static JobHandle ReleaseGCObject(ulong gcHandle, JobHandle dependency = default)
+        => new ReleaseGCObjectJob(gcHandle).Schedule(dependency);
+
+    /// <summary>
+    /// This equation is yet to be (im)proved experimentally, the current version is merely an initial guesswork
+    /// </summary>
+    public static int OptimalLoopBatchCount(int length)
+        => Unity.Mathematics.math.max(length / (UnityEngine.SystemInfo.processorCount * 3), 1);
 }

@@ -680,7 +680,7 @@ PlayerSettings:
   incrementalIl2cppBuild:
     iPhone: 0
   suppressCommonWarnings: 1
-  allowUnsafeCode: 0
+  allowUnsafeCode: 1
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 1
   gcIncremental: 1
