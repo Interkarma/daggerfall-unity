@@ -154,7 +154,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Stop levitating
-            if (playerLevitating && !levitating)
+            if (playerLevitating && !playerEntity.NoClipMode  && !levitating)
             {
                 playerMotor.CancelMovement = true;
                 playerLevitating = false;
