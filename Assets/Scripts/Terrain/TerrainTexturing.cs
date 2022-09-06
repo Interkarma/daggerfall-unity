@@ -14,6 +14,7 @@ using System;
 using DaggerfallConnect.Arena2;
 using Unity.Jobs;
 using Unity.Collections;
+using Unity.Mathematics;
 
 namespace DaggerfallWorkshop
 {
@@ -103,6 +104,7 @@ namespace DaggerfallWorkshop
         // Very basic marching squares for water > dirt > grass > stone transitions.
         // Cannot handle water > grass or water > stone, etc.
         // Will improve this at later date to use a wider range of transitions.
+        [Unity.Burst.BurstCompile]
         protected struct AssignTilesJob : IJobParallelFor
         {
             [ReadOnly]
@@ -149,6 +151,7 @@ namespace DaggerfallWorkshop
             }
         }
 
+        [Unity.Burst.BurstCompile]
         protected struct GenerateTileDataJob : IJobParallelFor
         {
             [ReadOnly]
@@ -219,7 +222,7 @@ namespace DaggerfallWorkshop
                 }
                 // Beach texture
                 // Adds a little +/- randomness to threshold so beach line isn't too regular
-                if (height <= beachElevation + (JobRand.Next(-15000000, 15000000) / 10000000f))
+                if (height <= beachElevation + Unity.Mathematics.Random.CreateFromIndex((uint)index).NextFloat(-1.5f, 1.5f))
                 {
                     tileData[index] = dirt;
                     return;
