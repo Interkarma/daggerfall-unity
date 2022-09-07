@@ -633,6 +633,12 @@ namespace DaggerfallWorkshop.Utility
                 RDBLayout.AddRandomEnemies(go, editorObjects, dungeonType, monsterPower, ref blockData, startMarkers, monsterVariance, seed);
             }
 
+            // Add companion to unique block
+            if (blockName.Equals("S0000999.RDB"))
+            {
+                RDBLayout.AddFixedCompanions(go);
+            }
+
             // Link action nodes
             RDBLayout.LinkActionNodes(actionLinkDict);
             GameManager.Instance.PlayerEnterExit.IsCreatingDungeonObjects = false;
@@ -1175,6 +1181,45 @@ namespace DaggerfallWorkshop.Utility
         #endregion
 
         #region Enemy Helpers
+
+        /// <summary>
+        /// Create an enemy in the world and perform common setup tasks.
+        /// </summary>
+        public static GameObject CreateCompanion(string name, MobileTypes mobileType, Vector3 localPosition, MobileGender mobileGender = MobileGender.Unspecified, Transform parent = null, MobileReactions mobileReaction = MobileReactions.Hostile)
+        {
+            // Create target GameObject
+            string displayName = string.Format("{0} [{1}]", name, mobileType.ToString());
+            GameObject go = InstantiatePrefab(DaggerfallUnity.Instance.Option_EnemyPrefab.gameObject, displayName, parent, Vector3.zero);
+            SetupDemoEnemy setupEnemy = go.GetComponent<SetupDemoEnemy>();
+
+            // Set position
+            go.transform.localPosition = localPosition;
+
+            // Assign humanoid gender randomly if unspecfied
+            // This does not affect monsters like rats, bats, etc
+            MobileGender gender;
+            if (mobileGender == MobileGender.Unspecified)
+            {
+                if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
+                    gender = MobileGender.Male;
+                else
+                    gender = MobileGender.Female;
+            }
+            else
+            {
+                gender = mobileGender;
+            }
+
+            // Configure enemy
+            setupEnemy.ApplyEnemySettings(mobileType, mobileReaction, gender, 0, true);
+
+            // Align non-flying units with ground
+            MobileUnit mobileUnit = setupEnemy.GetMobileBillboardChild();
+            if (mobileUnit.Enemy.Behaviour != MobileBehaviour.Flying)
+                AlignControllerToGround(go.GetComponent<CharacterController>());
+
+            return go;
+        }
 
         /// <summary>
         /// Create an enemy in the world and perform common setup tasks.

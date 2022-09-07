@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game
         public float OpenDoorDistance = 2f;         // Maximum distance to open door
         const float attackSpeedDivisor = 2f;        // How much to slow down during attack animations
         float stopDistance = 1.7f;                  // Used to prevent orbiting
+        float teleportDistance = 15f;               // Used to teleport companion when too far
         const float doorCrouchingHeight = 1.65f;    // How low enemies dive to pass thru doors
         bool flies;                                 // The enemy can fly
         bool swims;                                 // The enemy can swim
@@ -158,6 +159,7 @@ namespace DaggerfallWorkshop.Game
             UpdateToIdleOrMoveAnim();
             OpenDoors();
             HeightAdjust();
+            AttemptTeleport();
         }
         #endregion
 
@@ -333,6 +335,8 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         void HandleNoAction()
         {
+            if (senses.FollowTarget != null) return;
+
             if (senses.Target == null || GiveUpTimer <= 0 || senses.PredictedTargetPos == EnemySenses.ResetPlayerPos)
             {
                 SetChangeStateTimer();
@@ -438,6 +442,14 @@ namespace DaggerfallWorkshop.Game
             else
                 distance = (destination - transform.position).magnitude;
 
+
+            // Follow player when there is no Target
+            if (senses.FollowTarget != null && senses.Target == null) {
+                if (distance >= stopDistance)
+                    AttemptMove(direction, moveSpeed);
+                return;
+            }
+
             // Do not change action if currently playing oneshot wants to stop actions
             if (isPlayingOneShot && mobile.OneShotPauseActionsWhilePlaying())
                 return;
@@ -505,7 +517,7 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         void GetDestination()
         {
-            CharacterController targetController = senses.Target.GetComponent<CharacterController>();
+            CharacterController targetController = (senses.Target ?? senses.FollowTarget).GetComponent<CharacterController>();
             // If detouring around an obstacle or fall, use the detour position
             if (avoidObstaclesTimer > 0)
             {
@@ -1108,6 +1120,29 @@ namespace DaggerfallWorkshop.Game
             if (avoidObstaclesTimer <= 0)
                 avoidObstaclesTimer = 0.75f;
             lastTimeWasStuck = Time.time;
+        }
+
+        /// <summary>
+        /// Try to teleport to player position
+        /// </summary>
+        void AttemptTeleport() {
+            if (senses.FollowTarget == null) return;
+            Vector3 direction = transform.position - senses.FollowTarget.transform.position;
+            if (direction.magnitude < teleportDistance) return;
+
+            bool isBehind = Vector3.Angle(direction, senses.FollowTarget.transform.forward) > 45;
+
+            // Teleport only if behind a player or behind an obstacle
+            if (isBehind || avoidObstaclesTimer > 0) {
+                Debug.Log("Teleport companion");
+
+                senses.ResetTargets();
+                senses.FindFollowTarget();
+
+                Vector3 newPosition = senses.FollowTarget.transform.position -
+                                      senses.FollowTarget.transform.forward * stopDistance;
+                transform.position = newPosition;
+            }
         }
 
         void ObstacleCheck(Vector3 direction)

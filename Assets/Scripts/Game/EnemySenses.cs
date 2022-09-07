@@ -45,6 +45,7 @@ namespace DaggerfallWorkshop.Game
         float distanceToPlayer;
         float distanceToTarget;
         DaggerfallEntityBehaviour player;
+        DaggerfallEntityBehaviour followTarget;
         DaggerfallEntityBehaviour target;
         DaggerfallEntityBehaviour targetOnLastUpdate;
         DaggerfallEntityBehaviour secondaryTarget;
@@ -80,6 +81,12 @@ namespace DaggerfallWorkshop.Game
         float classicSpawnYDistLower = 0f;
         float classicDespawnXZDist = 0f;
         float classicDespawnYDist = 0f;
+
+        public DaggerfallEntityBehaviour FollowTarget
+        {
+            get { return followTarget; }
+            set { followTarget = value; }
+        }
 
         public DaggerfallEntityBehaviour Target
         {
@@ -301,13 +308,8 @@ namespace DaggerfallWorkshop.Game
                 // Reset these values if no target
                 if (target == null)
                 {
-                    lastKnownTargetPos = ResetPlayerPos;
-                    predictedTargetPos = ResetPlayerPos;
-                    directionToTarget = ResetPlayerPos;
-                    lastDistanceToTarget = 0;
-                    targetRateOfApproach = 0;
-                    distanceToTarget = 0;
-                    targetSenses = null;
+                    ResetTargets();
+                    FindFollowTarget();
 
                     // If we have a valid secondary target that we acquired when we got the primary, switch to it.
                     // There will only be a secondary target if using enhanced combat AI.
@@ -382,6 +384,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     targetInSight = false;
                     detectedTarget = false;
+                    FindFollowTarget();
                     return;
                 }
 
@@ -504,6 +507,27 @@ namespace DaggerfallWorkshop.Game
         }
 
         #region Public Methods
+
+        public void ResetTargets() {
+            lastKnownTargetPos = ResetPlayerPos;
+            predictedTargetPos = ResetPlayerPos;
+            directionToTarget = ResetPlayerPos;
+            lastDistanceToTarget = 0;
+            targetRateOfApproach = 0;
+            distanceToTarget = 0;
+            targetSenses = null;
+        }
+
+        public void FindFollowTarget() {
+            if (enemyEntity.Team == MobileTeams.PlayerAlly) {
+                Vector3 toTarget = player.transform.position - transform.position;
+                directionToTarget = toTarget.normalized;
+                distanceToTarget = toTarget.magnitude;
+                followTarget = player;
+                lastKnownTargetPos = predictedTargetPos = player.transform.position;
+
+            }
+        }
 
         public Vector3 PredictNextTargetPos(float interceptSpeed)
         {

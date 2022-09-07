@@ -468,6 +468,21 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Add fixed enemies.
+        /// </summary>
+        /// <param name="go">GameObject to add companions to.</param>
+        public static void AddFixedCompanions(GameObject go)
+        {
+            // Add parent node
+            GameObject fixedCompanionsNode = new GameObject("Fixed Companions");
+            fixedCompanionsNode.transform.parent = go.transform;
+
+            // Spawn companion
+            Vector3 spawnPosition = GameManager.Instance.PlayerObject.transform.position + Vector3.right * 2;
+            GameObjectHelper.CreateCompanion("Bob", MobileTypes.GiantBat, spawnPosition, MobileGender.Unspecified, fixedCompanionsNode.transform);
+        }
+
+        /// <summary>
         /// Add random enemies from encounter tables based on dungeon type, monster power, and seed.
         /// </summary>
         /// <param name="go">GameObject to add monsters to.</param>
