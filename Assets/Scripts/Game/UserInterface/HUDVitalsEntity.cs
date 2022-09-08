@@ -5,6 +5,7 @@ namespace DaggerfallWorkshop.Game.UserInterface {
     public class HUDVitalsEntity : Panel {
 
         const string healthBarFilename = "MAIN04I0.IMG";
+        const string healthBarAllyFilename = "MAIN03I0.IMG";
 
         const int screenWidth = 160;
         const int screenHeight = 100;
@@ -17,14 +18,18 @@ namespace DaggerfallWorkshop.Game.UserInterface {
         HorizontalProgressSmoother healthBarLoss = new HorizontalProgressSmoother();
         HorizontalProgress healthBarGain = new HorizontalProgress();
         HorizontalProgress healthBarBackground = new HorizontalProgress();
-        DaggerfallEntity entity;
 
         Color healthLossColor = new Color(0.44f, 0, 0);
         Color healthGainColor = new Color(1f, 0.50f, 0.50f);
+        Color healthLossAllyColor = new Color(0, 0.22f, 0);
+        Color healthGainAllyColor = new Color(0.60f, 1f, 0.60f);
         Color healthBackgoundColor = new Color(0.1f, 0.10f, 0.10f);
 
+        Vector3 healthBarPivotOffset = new Vector3(0, 0.8f, 0);
+
+        DaggerfallEntity entity;
+        MobileUnit mobile;
         Camera camera;
-        float lastKnownHealthValue = 1;
 
         public Vector2? CustomHealthBarPosition { get; set; }
         public Vector2? CustomHealthBarSize { get; set; }
@@ -38,12 +43,9 @@ namespace DaggerfallWorkshop.Game.UserInterface {
             set { healthBarGain.Amount = value; }
         }
 
-        public HUDVitalsEntity() : base()
+        public HUDVitalsEntity(Camera cameraRef) : base()
         {
-            LoadAssets();
-
-            camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-            entity = GameManager.Instance.PlayerEntity;
+            camera = cameraRef;
             BackgroundColor = Color.clear;
 
             SetMargins(Margins.All, borderSize);
@@ -68,40 +70,92 @@ namespace DaggerfallWorkshop.Game.UserInterface {
             Components.Add(healthBarGain);
             Components.Add(healthBar);
 
+            Enabled = false;
         }
-
-        void LoadAssets()
-        {
-            healthBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(healthBarFilename);
-            healthBarBackground.Color = healthBackgoundColor;
-            healthBarLoss.Color = healthLossColor;
-            healthBarGain.Color = healthGainColor;
-        }
-
 
         public override void Update()
         {
             if (Enabled)
             {
+                if (mobile == null) {
+                    Hide();
+                    return;
+                }
+
                 base.Update();
                 PositionIndicators();
 
-                UpdateAllVitals();
+                healthBarLoss.Cycle();
+                healthBar.Cycle();
             }
+        }
+
+        #region Public Methods
+
+        public void Show(bool allyToPlayer = false)
+        {
+            if (Enabled) return;
+            LoadAssets(allyToPlayer);
+            SynchronizeImmediately();
+            Enabled = true;
+        }
+
+        public void Hide(DaggerfallEntity dfEntity = null)
+        {
+            if (entity != null) {
+                entity.OnHealthChange -= UpdateVitals;
+                entity.OnDeath -= Hide;
+            }
+
+            Enabled = false;
+        }
+
+        public void SetOwner(MobileUnit mobile, DaggerfallEntity entity)
+        {
+            this.entity = entity;
+            this.mobile = mobile;
+            entity.OnHealthChange += UpdateVitals;
+            entity.OnDeath += Hide;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        void LoadAssets(bool allyToPlayer)
+        {
+            healthBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(allyToPlayer ? healthBarAllyFilename : healthBarFilename);
+            healthBarBackground.Color = healthBackgoundColor;
+            healthBarLoss.Color = allyToPlayer ? healthLossAllyColor : healthLossColor;
+            healthBarGain.Color = allyToPlayer ? healthGainAllyColor : healthGainColor;
         }
 
         void PositionIndicators()
         {
+            var worldPosition = mobile.transform.position + healthBarPivotOffset;
+            var screenPoint = camera.WorldToScreenPoint(worldPosition);
+
+            if (screenPoint.y < 0 || screenPoint.z < 0) return;
+
+            var direction = worldPosition - camera.transform.position;
+            float distance = direction.magnitude;
+
             float barWidth = nativeBarWidth * Scale.x;
             float barHeight = nativeBarHeight * Scale.y;
 
             Size = new Vector2(barWidth * 5, barHeight);
 
-            float x = screenWidth * 0.5f - (barWidth / 2);//Screen.width * 0.25f;//Random.Range(-100, 100);//
-            float y = screenHeight * 0f;//Screen.height * 0.25f;//Random.Range(-100, 100);//
+            float barSizeX = Mathf.RoundToInt(Mathf.Clamp(barWidth / (distance * 0.5f), 1, barWidth));
+            float barSizeY = Mathf.RoundToInt(Mathf.Clamp(barHeight / (distance * 0.5f), 1, barHeight));
+
+            float screenPosX = screenPoint.x / Screen.width;
+            float screenPosY = screenPoint.y / Screen.height;
+
+            float x = screenWidth * screenPosX - (barSizeX * 0.5f);
+            float y = screenHeight * (-screenPosY + 0.5f);
 
             healthBar.Position = (CustomHealthBarPosition != null) ? CustomHealthBarPosition.Value : new Vector2(x, y);
-            healthBar.Size =  (CustomHealthBarSize != null) ? CustomHealthBarSize.Value : new Vector2(barWidth, barHeight);
+            healthBar.Size =  (CustomHealthBarSize != null) ? CustomHealthBarSize.Value : new Vector2(barSizeX, barSizeY);
 
             healthBarLoss.Position = healthBar.Position;
             healthBarLoss.Size = healthBar.Size;
@@ -113,14 +167,21 @@ namespace DaggerfallWorkshop.Game.UserInterface {
             healthBarBackground.Size = healthBar.Size;
         }
 
-        void UpdateAllVitals()
+        private void SynchronizeImmediately()
         {
-            healthBarGain.Amount = entity.CurrentHealth / (float)entity.MaxHealth;
+            // Adjust vitals based on current player state
+            healthBar.Amount = entity.CurrentHealth / (float)entity.MaxHealth;
+            healthBarGain.Amount = healthBar.Amount;
+            healthBarLoss.Amount = healthBar.Amount;
+        }
 
-            var healthLost = lastKnownHealthValue - healthBarGain.Amount;
+        void UpdateVitals(float healthLostValue)
+        {
+            Health = entity.CurrentHealth / (float)entity.MaxHealth;
 
-            float target;
-            // Smooth update the Loss bar, and
+            var healthLost = healthLostValue / entity.MaxHealth;
+
+            // Smooth update the Loss bar
             if (healthLost != 0)
             {
                 if (healthLost > 0)
@@ -128,14 +189,14 @@ namespace DaggerfallWorkshop.Game.UserInterface {
                 else // assumed gaining health
                     healthBarLoss.Amount += healthLost;
 
-                target = healthBarGain.Amount;
+                float target = Health;
                 healthBar.BeginSmoothChange(target);
                 healthBarLoss.BeginSmoothChange(target);
             }
-            lastKnownHealthValue = healthBarGain.Amount;
 
-            healthBarLoss.Cycle();
-            healthBar.Cycle();
         }
+
+        #endregion
+
     }
 }

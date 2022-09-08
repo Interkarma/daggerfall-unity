@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel arrowCountTextLabel = new TextLabel();
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
-        HUDVitalsEntity vitalsEntity = new HUDVitalsEntity();
+        HUDVitalsPool vitalsPool = new HUDVitalsPool(20);
         HUDBreathBar breathBar = new HUDBreathBar();
         HUDCompass compass = new HUDCompass();
         HUDFlickerController flickerController = new HUDFlickerController();
@@ -133,11 +133,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.Components.Add(largeHUD);
             ParentPanel.Components.Add(crosshair);
             ParentPanel.Components.Add(vitals);
-            ParentPanel.Components.Add(vitalsEntity);
             ParentPanel.Components.Add(breathBar);
             ParentPanel.Components.Add(compass);
             ParentPanel.Components.Add(interactionModeIcon);
             ParentPanel.Components.Add(flickerController);
+            vitalsPool.VitalsPool.ForEach(v => ParentPanel.Components.Add(v));
+            //ParentPanel.Components.Add(vitalsPool);
         }
 
         protected override void Setup()
@@ -303,6 +304,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             flickerController.NextCycle();
+            vitalsPool.Update();
 
             // Don't display persistent HUD elements during initial startup
             // Prevents HUD elements being shown briefly at wrong size/scale at game start

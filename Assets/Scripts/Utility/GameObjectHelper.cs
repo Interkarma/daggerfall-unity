@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Lypyl (lypyl@dfworkshop.net)
-// 
+//
 // Notes:
 //
 
@@ -30,6 +30,9 @@ namespace DaggerfallWorkshop.Utility
     /// </summary>
     public static class GameObjectHelper
     {
+        public static event Action<DaggerfallEntity> OnCompanionCreated;
+        public static event Action<DaggerfallEntity> OnEnemyCreated;
+
         static Dictionary<int, MobileEnemy> enemyDict;
         public static Dictionary<int, MobileEnemy> EnemyDict
         {
@@ -319,7 +322,7 @@ namespace DaggerfallWorkshop.Utility
             Billboard dfBillboard = go.AddComponent<DaggerfallBillboard>();
             dfBillboard.SetMaterial(archive, record);
 
-            if (PlayerActivate.HasCustomActivation(flatName)) 
+            if (PlayerActivate.HasCustomActivation(flatName))
             {
                 // Add box collider to flats with actions for raycasting - only flats that can be activated directly need this, so this can possibly be restricted in future
                 // Skip this for flats that already have a collider assigned from elsewhere (e.g. NPC flats)
@@ -1218,6 +1221,8 @@ namespace DaggerfallWorkshop.Utility
             if (mobileUnit.Enemy.Behaviour != MobileBehaviour.Flying)
                 AlignControllerToGround(go.GetComponent<CharacterController>());
 
+            GameManager.Instance?.RaiseOnEnemySpawnEvent(go);
+
             return go;
         }
 
@@ -1450,7 +1455,7 @@ namespace DaggerfallWorkshop.Utility
             DFLocation location;
             if (!FindMultiNameLocation(multiName, out location))
                 return null;
-            
+
             GameObject daggerfallDungeonObject;
             daggerfallDungeon = CreateDaggerfallDungeonGameObject(location, parent, out daggerfallDungeonObject);
             daggerfallDungeon.SetDungeon(location, importEnemies);

@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Lypyl (lypyl@dfworkshop.net)
-// 
+//
 // Notes:
 //
 
@@ -341,7 +341,7 @@ namespace DaggerfallWorkshop.Utility
                         // Store editor objects and start markers
                         int archive = obj.Resources.FlatResource.TextureArchive;
                         int record = obj.Resources.FlatResource.TextureRecord;
-                        
+
                         // Add animal sound
                         // This was specifically added to accommodate the cat in
                         // Direnni Tower. This should also enable animals added
@@ -479,7 +479,8 @@ namespace DaggerfallWorkshop.Utility
 
             // Spawn companion
             Vector3 spawnPosition = GameManager.Instance.PlayerObject.transform.position + Vector3.right * 2;
-            GameObjectHelper.CreateCompanion("Bob", MobileTypes.Imp, spawnPosition, MobileGender.Unspecified, fixedCompanionsNode.transform);
+            //GameObjectHelper.CreateFoeGameObjects(spawnPosition, MobileTypes.GiantBat, 1, MobileReactions.Hostile, null, true);
+            GameObjectHelper.CreateCompanion("Bob", MobileTypes.GiantBat, spawnPosition, MobileGender.Unspecified, fixedCompanionsNode.transform);
         }
 
         /// <summary>
