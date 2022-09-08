@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -19,10 +19,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
     public class VerticalProgress : BaseScreenComponent
     {
         public Texture2D ProgressTexture;
-        Texture2D colorTexture;
+        protected Texture2D colorTexture;
 
-        Color32 color;
-        float amount = 1.0f;
+        protected Color32 color;
+        protected float amount = 1.0f;
 
         public float Amount
         {
@@ -65,7 +65,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             this.color = color;
         }
 
-        void DrawProgress()
+        protected virtual void DrawProgress()
         {
             Rect srcRect = new Rect(0, 0, 1, 1 * amount);
             Rect dstRect = Rectangle;

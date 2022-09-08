@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextLabel arrowCountTextLabel = new TextLabel();
         HUDCrosshair crosshair = new HUDCrosshair();
         HUDVitals vitals = new HUDVitals();
+        HUDVitalsEntity vitalsEntity = new HUDVitalsEntity();
         HUDBreathBar breathBar = new HUDBreathBar();
         HUDCompass compass = new HUDCompass();
         HUDFlickerController flickerController = new HUDFlickerController();
@@ -132,6 +133,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.Components.Add(largeHUD);
             ParentPanel.Components.Add(crosshair);
             ParentPanel.Components.Add(vitals);
+            ParentPanel.Components.Add(vitalsEntity);
             ParentPanel.Components.Add(breathBar);
             ParentPanel.Components.Add(compass);
             ParentPanel.Components.Add(interactionModeIcon);

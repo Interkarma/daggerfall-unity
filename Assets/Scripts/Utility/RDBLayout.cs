@@ -468,7 +468,7 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Add fixed enemies.
+        /// Add fixed companions.
         /// </summary>
         /// <param name="go">GameObject to add companions to.</param>
         public static void AddFixedCompanions(GameObject go)
@@ -479,7 +479,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Spawn companion
             Vector3 spawnPosition = GameManager.Instance.PlayerObject.transform.position + Vector3.right * 2;
-            GameObjectHelper.CreateCompanion("Bob", MobileTypes.GiantBat, spawnPosition, MobileGender.Unspecified, fixedCompanionsNode.transform);
+            GameObjectHelper.CreateCompanion("Bob", MobileTypes.Imp, spawnPosition, MobileGender.Unspecified, fixedCompanionsNode.transform);
         }
 
         /// <summary>

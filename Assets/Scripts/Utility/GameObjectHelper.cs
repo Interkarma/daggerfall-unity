@@ -1183,7 +1183,7 @@ namespace DaggerfallWorkshop.Utility
         #region Enemy Helpers
 
         /// <summary>
-        /// Create an enemy in the world and perform common setup tasks.
+        /// Create a companion in the world and perform common setup tasks.
         /// </summary>
         public static GameObject CreateCompanion(string name, MobileTypes mobileType, Vector3 localPosition, MobileGender mobileGender = MobileGender.Unspecified, Transform parent = null, MobileReactions mobileReaction = MobileReactions.Hostile)
         {
@@ -1210,7 +1210,7 @@ namespace DaggerfallWorkshop.Utility
                 gender = mobileGender;
             }
 
-            // Configure enemy
+            // Configure companion
             setupEnemy.ApplyEnemySettings(mobileType, mobileReaction, gender, 0, true);
 
             // Align non-flying units with ground
