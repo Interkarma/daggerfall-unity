@@ -90,6 +90,7 @@ namespace DaggerfallWorkshop.Game
         EntityEffectManager entityEffectManager;
         EntityEffectBundle selectedSpell;
         EnemyAttack attack;
+        EnemyHelp help;
         EnemyEntity entity;
         #endregion
 
@@ -119,6 +120,7 @@ namespace DaggerfallWorkshop.Game
             entityEffectManager = GetComponent<EntityEffectManager>();
             entity = entityBehaviour.Entity as EnemyEntity;
             attack = GetComponent<EnemyAttack>();
+            help = gameObject.AddComponent<EnemyHelp>();
 
             // Only need to check for ability to shoot bow once.
             // A mobile has a bow attack if:
@@ -445,6 +447,9 @@ namespace DaggerfallWorkshop.Game
             else
                 distance = (destination - transform.position).magnitude;
 
+            // Help target
+            if (DoHelpTarget())
+                return;
 
             // Follow player when there is no Target
             if (senses.FollowTarget != null && senses.Target == null) {
@@ -621,6 +626,17 @@ namespace DaggerfallWorkshop.Game
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Handles help for follow target.
+        /// </summary>
+        bool DoHelpTarget()
+        {
+            if (!CanHelpTarget()) return false;
+
+            help.SpawnHealingPotion();
+            return true;
         }
 
         /// <summary>
@@ -820,6 +836,14 @@ namespace DaggerfallWorkshop.Game
                 return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// Returns true if can help target
+        /// </summary>
+        bool CanHelpTarget() {
+            return help.CanSpawnHealingPotion() && senses.FollowTarget != null &&
+                   senses.FollowTarget.Entity.CurrentHealth / (float)senses.FollowTarget.Entity.MaxHealth < 0.25f;
         }
 
         /// <summary>

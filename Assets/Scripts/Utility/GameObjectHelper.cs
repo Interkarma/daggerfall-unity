@@ -718,6 +718,66 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
+        /// Creates a loot container for healing potion.
+        /// </summary>
+        /// <param name="entity">Entity object, must have EnemyMotor attached.</param>
+        /// <param name="loadID">Unique LoadID for save system.</param>
+        /// <returns>DaggerfallLoot.</returns>
+        public static DaggerfallLoot CreateHealingPotion(GameObject entity, ulong loadID,
+            int iconArchive = DaggerfallLootDataTables.randomTreasureArchive, int iconRecord = -1) {
+
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            if (!playerEnterExit)
+                throw new Exception("CreateHealingPotion() player game object must have PlayerEnterExit component.");
+
+            Transform parent = null;
+            if (GameManager.Instance.IsPlayerInside)
+            {
+                if (GameManager.Instance.IsPlayerInsideDungeon)
+                    parent = playerEnterExit.Dungeon.transform;
+                else
+                    parent = playerEnterExit.Interior.transform;
+            }
+            else
+            {
+                parent = GameManager.Instance.StreamingTarget.transform;
+            }
+
+            // Randomise container texture, if not manually set
+            if (iconRecord == -1)
+            {
+                int iconIndex = UnityEngine.Random.Range(0, DaggerfallLootDataTables.randomTreasureIconIndices.Length);
+                iconRecord = DaggerfallLootDataTables.randomTreasureIconIndices[iconIndex];
+            }
+
+            Vector3 position = entity.GetComponent<EnemyMotor>().FindGroundPosition();
+
+            var loot = CreateLootContainer(
+                LootContainerTypes.DroppedLoot,
+                InventoryContainerImages.Chest,
+                position,
+                parent,
+                iconArchive,
+                iconRecord,
+                loadID);
+
+            DaggerfallLoot.AddHealingPotion(loot.Items);
+
+            // Set properties
+            loot.LoadID = loadID;
+            loot.customDrop = true;
+            loot.WorldContext = playerEnterExit.WorldContext;
+
+            // If dropped outside ask StreamingWorld to track loose object
+            if (!GameManager.Instance.IsPlayerInside)
+            {
+                GameManager.Instance.StreamingWorld.TrackLooseObject(loot.gameObject, true);
+            }
+
+            return loot;
+        }
+
+        /// <summary>
         /// Creates a loot container for items dropped by the player.
         /// </summary>
         /// <param name="player">Player object, must have PlayerEnterExit and PlayerMotor attached.</param>

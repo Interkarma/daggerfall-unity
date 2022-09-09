@@ -751,6 +751,16 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
+        /// Creates a healing potion with.
+        /// </summary>
+        /// <returns>Potion DaggerfallUnityItem</returns>
+        public static DaggerfallUnityItem CreateHealingPotion()
+        {
+            // Create potion with unique recipeKey for Heal Potion
+            return CreatePotion(4937012);
+        }
+
+        /// <summary>
         /// Creates a random potion from all registered recipes.
         /// </summary>
         /// <returns>Potion DaggerfallUnityItem</returns>

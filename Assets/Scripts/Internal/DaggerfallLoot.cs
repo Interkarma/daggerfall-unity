@@ -110,6 +110,14 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Add a healing potion
+        /// </summary>
+        public static void AddHealingPotion(ItemCollection collection)
+        {
+            collection.AddItem(ItemBuilder.CreateHealingPotion());
+        }
+
+        /// <summary>
         /// Called when this loot collection is opened by inventory window
         /// </summary>
         public void OnInventoryOpen()
