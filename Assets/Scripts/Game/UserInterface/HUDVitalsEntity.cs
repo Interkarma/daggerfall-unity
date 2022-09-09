@@ -181,6 +181,10 @@ namespace DaggerfallWorkshop.Game.UserInterface {
             healthBar.Amount = entity.CurrentHealth / (float)entity.MaxHealth;
             healthBarGain.Amount = healthBar.Amount;
             healthBarLoss.Amount = healthBar.Amount;
+
+            //Stop smoothing
+            healthBar.cycleTimer = false;
+            healthBarLoss.cycleTimer = false;
         }
 
         void UpdateVitals(float healthLostValue)
