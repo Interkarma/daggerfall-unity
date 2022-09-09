@@ -35,6 +35,9 @@ namespace DaggerfallWorkshop.Game
         const float attackSpeedDivisor = 2f;        // How much to slow down during attack animations
         float stopDistance = 1.7f;                  // Used to prevent orbiting
         float teleportDistance = 15f;               // Used to teleport companion when too far
+        float teleportDistanceSqr = 225f;           // Squared teleport distance
+        float teleportCooldown = 1f;                // Cooldown for attempting teleport
+        float curTeleportCooldown = 0;              // Current cooldown for attempting teleport
         const float doorCrouchingHeight = 1.65f;    // How low enemies dive to pass thru doors
         bool flies;                                 // The enemy can fly
         bool swims;                                 // The enemy can swim
@@ -119,7 +122,7 @@ namespace DaggerfallWorkshop.Game
 
             // Only need to check for ability to shoot bow once.
             // A mobile has a bow attack if:
-            //   - it has RangedAttack1 and does not cast magic (ex: Mage, Healer, ...), or 
+            //   - it has RangedAttack1 and does not cast magic (ex: Mage, Healer, ...), or
             //   - it has both RangedAttack1 and RangedAttack2 (ex: Nightblade)
             // If a mobile only has RangedAttack1 and casts magic, then its ranged attack is only shooting spells, not shooting a bow
             hasBowAttack =
@@ -1123,12 +1126,19 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-        /// Try to teleport to player position
+        /// Try to teleport to position behind the player
         /// </summary>
-        void AttemptTeleport() {
+        void AttemptTeleport()
+        {
             if (senses.FollowTarget == null) return;
+
+            // Wait for cooldown
+            curTeleportCooldown += Time.deltaTime;
+            if (curTeleportCooldown < teleportCooldown) return;
+
+            // If distance is less than teleport distance, do nothing
             Vector3 direction = transform.position - senses.FollowTarget.transform.position;
-            if (direction.magnitude < teleportDistance) return;
+            if (direction.sqrMagnitude < teleportDistanceSqr) return;
 
             bool isBehind = Vector3.Angle(direction, senses.FollowTarget.transform.forward) > 45;
 
@@ -1143,6 +1153,8 @@ namespace DaggerfallWorkshop.Game
                                       senses.FollowTarget.transform.forward * stopDistance;
                 transform.position = newPosition;
             }
+
+            curTeleportCooldown = 0;
         }
 
         void ObstacleCheck(Vector3 direction)

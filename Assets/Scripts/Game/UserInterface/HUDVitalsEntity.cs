@@ -24,6 +24,7 @@ namespace DaggerfallWorkshop.Game.UserInterface {
         Color healthLossAllyColor = new Color(0, 0.22f, 0);
         Color healthGainAllyColor = new Color(0.60f, 1f, 0.60f);
         Color healthBackgoundColor = new Color(0.1f, 0.10f, 0.10f);
+        Texture2D allyTexture, enemytexture;
 
         Vector3 healthBarPivotOffset = new Vector3(0, 0.8f, 0);
 
@@ -48,6 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterface {
             camera = cameraRef;
             BackgroundColor = Color.clear;
 
+            LoadAssets();
             SetMargins(Margins.All, borderSize);
 
             AutoSize = AutoSizeModes.ScaleToFit;
@@ -95,7 +97,7 @@ namespace DaggerfallWorkshop.Game.UserInterface {
         public void Show(bool allyToPlayer = false)
         {
             if (Enabled) return;
-            LoadAssets(allyToPlayer);
+            SetTexture(allyToPlayer);
             SynchronizeImmediately();
             Enabled = true;
         }
@@ -122,9 +124,15 @@ namespace DaggerfallWorkshop.Game.UserInterface {
 
         #region Private Methods
 
-        void LoadAssets(bool allyToPlayer)
+        void LoadAssets()
         {
-            healthBar.ProgressTexture = DaggerfallUI.GetTextureFromImg(allyToPlayer ? healthBarAllyFilename : healthBarFilename);
+            allyTexture = DaggerfallUI.GetTextureFromImg(healthBarAllyFilename);
+            enemytexture = DaggerfallUI.GetTextureFromImg(healthBarFilename);
+        }
+
+        void SetTexture(bool allyToPlayer) {
+
+            healthBar.ProgressTexture = allyToPlayer ? allyTexture : enemytexture;
             healthBarBackground.Color = healthBackgoundColor;
             healthBarLoss.Color = allyToPlayer ? healthLossAllyColor : healthLossColor;
             healthBarGain.Color = allyToPlayer ? healthGainAllyColor : healthGainColor;

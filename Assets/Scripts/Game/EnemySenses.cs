@@ -508,7 +508,8 @@ namespace DaggerfallWorkshop.Game
 
         #region Public Methods
 
-        public void ResetTargets() {
+        public void ResetTargets()
+        {
             lastKnownTargetPos = ResetPlayerPos;
             predictedTargetPos = ResetPlayerPos;
             directionToTarget = ResetPlayerPos;
@@ -518,15 +519,15 @@ namespace DaggerfallWorkshop.Game
             targetSenses = null;
         }
 
-        public void FindFollowTarget() {
-            if (enemyEntity.Team == MobileTeams.PlayerAlly) {
-                Vector3 toTarget = player.transform.position - transform.position;
-                directionToTarget = toTarget.normalized;
-                distanceToTarget = toTarget.magnitude;
-                followTarget = player;
-                lastKnownTargetPos = predictedTargetPos = player.transform.position;
+        public void FindFollowTarget()
+        {
+            if (enemyEntity.Team != MobileTeams.PlayerAlly) return;
 
-            }
+            Vector3 toTarget = player.transform.position - transform.position;
+            directionToTarget = toTarget.normalized;
+            distanceToTarget = toTarget.magnitude;
+            followTarget = player;
+            lastKnownTargetPos = predictedTargetPos = player.transform.position;
         }
 
         public Vector3 PredictNextTargetPos(float interceptSpeed)

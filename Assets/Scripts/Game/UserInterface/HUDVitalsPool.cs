@@ -22,15 +22,18 @@ namespace DaggerfallWorkshop.Game.UserInterface {
         {
             _camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 
-            _enemyVitalsPair = new Dictionary<GameObject, HUDVitalsEntity>();
+            // Fill pool with vitals panels
             _vitalsPool = new List<HUDVitalsEntity>(poolStackCount);
             for (int i = 0; i < poolStackCount; i++)
                 _vitalsPool.Add(new HUDVitalsEntity(_camera));
 
+            _enemyVitalsPair = new Dictionary<GameObject, HUDVitalsEntity>();
             GameManager.OnEnemySpawn += OnEnemySpawn;
         }
 
-        public void Update() {
+        public void Update()
+        {
+            // Wait for cooldown
             _curRaycastCooldown += Time.unscaledDeltaTime;
             if (_curRaycastCooldown < _raycastCooldown) return;
 
@@ -38,6 +41,7 @@ namespace DaggerfallWorkshop.Game.UserInterface {
                 var mobileUnit = enemy.GetComponent<DaggerfallEnemy>().MobileUnit;
                 var entityBehaviour = enemy.GetComponent<DaggerfallEntityBehaviour>();
 
+                // If unit is visible, activate HealthBar from pool
                 if (IsVisible(mobileUnit, entityBehaviour.Entity)) {
                     if (_enemyVitalsPair[enemy] != null) continue;
                     var freeVitals = GetFreeHUD();
@@ -45,6 +49,7 @@ namespace DaggerfallWorkshop.Game.UserInterface {
                     freeVitals.Show(mobileUnit.Enemy.Team == MobileTeams.PlayerAlly);
                     _enemyVitalsPair[enemy] = freeVitals;
                 }
+                // Else, deactivate HealthBar
                 else {
                     _enemyVitalsPair[enemy]?.Hide();
                     _enemyVitalsPair[enemy] = null;
@@ -56,10 +61,14 @@ namespace DaggerfallWorkshop.Game.UserInterface {
 
         bool IsVisible(MobileUnit mobile, DaggerfallEntity entity)
         {
+            // HealthBar is not visible if distance is greater than 15
+            var sqrDistance = (mobile.transform.position - _camera.transform.position).sqrMagnitude;
+            if (sqrDistance > 225) return false;
+
             var viewportPoint = _camera.WorldToViewportPoint(mobile.transform.position);
             var ray = _camera.ViewportPointToRay(viewportPoint);
 
-            if (Physics.Raycast(ray, out var hit, 20f, LayerMask.GetMask("Enemies", "Default")))
+            if (Physics.Raycast(ray, out var hit, 15f, LayerMask.GetMask("Enemies", "Default")))
                 if (hit.collider.TryGetComponent(out DaggerfallEntityBehaviour beh) && beh.Entity == entity)
                     return true;
 
