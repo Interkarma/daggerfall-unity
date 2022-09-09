@@ -479,7 +479,6 @@ namespace DaggerfallWorkshop.Utility
 
             // Spawn companion
             Vector3 spawnPosition = GameManager.Instance.PlayerObject.transform.position + Vector3.right * 2;
-            //GameObjectHelper.CreateFoeGameObjects(spawnPosition, MobileTypes.GiantBat, 1, MobileReactions.Hostile, null, true);
             GameObjectHelper.CreateCompanion("Bob", MobileTypes.GiantBat, spawnPosition, MobileGender.Unspecified, fixedCompanionsNode.transform);
         }
 

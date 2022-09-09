@@ -143,24 +143,27 @@ namespace DaggerfallWorkshop.Game.UserInterface {
             var worldPosition = mobile.transform.position + healthBarPivotOffset;
             var screenPoint = camera.WorldToScreenPoint(worldPosition);
 
-            if (screenPoint.y < 0 || screenPoint.z < 0) return;
+            // By default move HUD outside the view
+            float barSizeX = 0, barSizeY = 0;
+            float x = -500, y = -500;
 
-            var direction = worldPosition - camera.transform.position;
-            float distance = direction.magnitude;
+            // If screenPoint is inside the screen we calculate position
+            if (screenPoint.y > 0 && screenPoint.z > 0) {
+                float barWidth = nativeBarWidth * Scale.x;
+                float barHeight = nativeBarHeight * Scale.y;
 
-            float barWidth = nativeBarWidth * Scale.x;
-            float barHeight = nativeBarHeight * Scale.y;
+                Size = new Vector2(barWidth * 5, barHeight);
 
-            Size = new Vector2(barWidth * 5, barHeight);
+                float distance = (worldPosition - camera.transform.position).magnitude;
+                barSizeX = Mathf.RoundToInt(Mathf.Clamp(barWidth / (distance * 0.5f), 1, barWidth));
+                barSizeY = Mathf.RoundToInt(Mathf.Clamp(barHeight / (distance * 0.5f), 1, barHeight));
 
-            float barSizeX = Mathf.RoundToInt(Mathf.Clamp(barWidth / (distance * 0.5f), 1, barWidth));
-            float barSizeY = Mathf.RoundToInt(Mathf.Clamp(barHeight / (distance * 0.5f), 1, barHeight));
+                float screenPosX = screenPoint.x / Screen.width;
+                float screenPosY = screenPoint.y / Screen.height;
 
-            float screenPosX = screenPoint.x / Screen.width;
-            float screenPosY = screenPoint.y / Screen.height;
-
-            float x = screenWidth * screenPosX - (barSizeX * 0.5f);
-            float y = screenHeight * (-screenPosY + 0.5f);
+                x = screenWidth * screenPosX - (barSizeX * 0.5f);
+                y = screenHeight * (-screenPosY + 0.5f);
+            }
 
             healthBar.Position = (CustomHealthBarPosition != null) ? CustomHealthBarPosition.Value : new Vector2(x, y);
             healthBar.Size =  (CustomHealthBarSize != null) ? CustomHealthBarSize.Value : new Vector2(barSizeX, barSizeY);

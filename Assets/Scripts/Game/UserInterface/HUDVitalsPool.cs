@@ -6,7 +6,7 @@ using DaggerfallWorkshop.Game.Entity;
 using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.UserInterface {
-    public class HUDVitalsPool : IDisposable {
+    public class HUDVitalsPool {
 
         private Dictionary<GameObject, HUDVitalsEntity> _enemyVitalsPair;
         private List<HUDVitalsEntity> _vitalsPool;
@@ -18,7 +18,7 @@ namespace DaggerfallWorkshop.Game.UserInterface {
         public List<HUDVitalsEntity> VitalsPool => _vitalsPool;
         public GameObject[] Enemies => _enemyVitalsPair.Keys.ToArray();
 
-        public HUDVitalsPool(int poolStackCount) : base()
+        public HUDVitalsPool(int poolStackCount)
         {
             _camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 
@@ -38,6 +38,13 @@ namespace DaggerfallWorkshop.Game.UserInterface {
             if (_curRaycastCooldown < _raycastCooldown) return;
 
             foreach (var enemy in Enemies) {
+
+                // Clear all destroyed enemies
+                if (enemy == null) {
+                    _enemyVitalsPair.Remove(enemy);
+                    continue;
+                }
+
                 var mobileUnit = enemy.GetComponent<DaggerfallEnemy>().MobileUnit;
                 var entityBehaviour = enemy.GetComponent<DaggerfallEntityBehaviour>();
 
@@ -59,7 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterface {
             _curRaycastCooldown = 0;
         }
 
-        bool IsVisible(MobileUnit mobile, DaggerfallEntity entity)
+        private bool IsVisible(MobileUnit mobile, DaggerfallEntity entity)
         {
             // HealthBar is not visible if distance is greater than 15
             var sqrDistance = (mobile.transform.position - _camera.transform.position).sqrMagnitude;
@@ -75,18 +82,19 @@ namespace DaggerfallWorkshop.Game.UserInterface {
             return false;
         }
 
-        void OnEnemySpawn(GameObject go)
+        private void OnEnemySpawn(GameObject go)
         {
             _enemyVitalsPair.Add(go, null);
         }
 
-        HUDVitalsEntity GetFreeHUD()
+        private HUDVitalsEntity GetFreeHUD()
         {
             // Get first disabled object from pool, if no such, use first in pool
             return _vitalsPool.FirstOrDefault(v => !v.Enabled) ?? _vitalsPool.First();
         }
 
-        public void Dispose() {
+        ~HUDVitalsPool()
+        {
             GameManager.OnEnemySpawn -= OnEnemySpawn;
         }
     }
