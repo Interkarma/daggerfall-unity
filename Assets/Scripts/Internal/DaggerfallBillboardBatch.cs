@@ -204,10 +204,10 @@ namespace DaggerfallWorkshop
                     ___schedule.Begin();
                     AnimateUVJob animateUVJob = new AnimateUVJob
                     {
-                        AtlasRects = new NativeArray<Rect>(cachedMaterial.atlasRects, Allocator.TempJob),
-                        AtlasIndices = new NativeArray<RecordIndex>(cachedMaterial.atlasIndices, Allocator.TempJob),
-                        Billboards = billboardData,
-                        UV = meshUVs,
+                        atlasRects = new NativeArray<Rect>(cachedMaterial.atlasRects, Allocator.TempJob),
+                        atlasIndices = new NativeArray<RecordIndex>(cachedMaterial.atlasIndices, Allocator.TempJob),
+                        billboards = billboardData,
+                        uv = meshUVs,
                     };
                     UvAnimationDependency = animateUVJob.Schedule(numBillboardsToAnimate, 128, Dependency);
                     ___schedule.End();
@@ -445,12 +445,12 @@ namespace DaggerfallWorkshop
                 ___schedule.Begin();
                 AddItemsJob job = new AddItemsJob
                 {
-                    Source = items,
-                    AtlasFrameCounts = new NativeArray<int>(cachedMaterial.atlasFrameCounts, Allocator.TempJob),
-                    RandomStartFrame = RandomStartFrame,
-                    Seed = (uint)((System.Environment.TickCount * this.GetHashCode()).GetHashCode()),
-                    BlockOrigin = BlockOrigin,
-                    BillboardItems = billboardData.AsParallelWriter(),
+                    source = items,
+                    atlasFrameCounts = new NativeArray<int>(cachedMaterial.atlasFrameCounts, Allocator.TempJob),
+                    randomStartFrame = RandomStartFrame,
+                    seed = (uint)((System.Environment.TickCount * this.GetHashCode()).GetHashCode()),
+                    blockOrigin = BlockOrigin,
+                    billboardItems = billboardData.AsParallelWriter(),
                 };
                 Dependency = job.Schedule(arrayLength: numItemsToAdd, innerloopBatchCount: 128, dependsOn: JobHandle.CombineDependencies(Dependency, dependency));
                 ___schedule.End();
@@ -527,9 +527,9 @@ namespace DaggerfallWorkshop
             ___schedule.Begin();
             AddCustomItemsJob job = new AddCustomItemsJob
             {
-                Source = items,
-                BlockOrigin = BlockOrigin,
-                BillboardItems = billboardData.AsParallelWriter(),
+                source = items,
+                blockOrigin = BlockOrigin,
+                billboardItems = billboardData.AsParallelWriter(),
             };
             JobHandle jobHandle = job.Schedule(items.Length, items.Length, JobHandle.CombineDependencies(Dependency, dependency));
             ___schedule.End();
@@ -675,47 +675,47 @@ namespace DaggerfallWorkshop
 
             JobHandle getCustomBatchDataJobHandle = new GetCustomMaterialBatchDataJob
             {
-                Billboards = billboardData,
-                AtlasRects = new NativeArray<Rect>(cachedMaterial.atlasRects, Allocator.TempJob),
-                AtlasIndices = new NativeArray<RecordIndex>(cachedMaterial.atlasIndices, Allocator.TempJob),
-                Origin = origins,
-                Size = sizes,
+                billboards = billboardData,
+                atlasRects = new NativeArray<Rect>(cachedMaterial.atlasRects, Allocator.TempJob),
+                atlasIndices = new NativeArray<RecordIndex>(cachedMaterial.atlasIndices, Allocator.TempJob),
+                origin = origins,
+                size = sizes,
             }.Schedule(numBillboards, 128, Dependency);
 
             JobHandle boundsJobHandle = new BoundsJob
             {
-                NumBillboards = numBillboards,
-                Origin = origins,
-                Size = sizes,
-                AABB = meshAABB
+                numBillboards = numBillboards,
+                origin = origins,
+                size = sizes,
+                aabb = meshAABB
             }.Schedule(getCustomBatchDataJobHandle);
 
             JobHandle vertexJobHandle = new VertexJob
             {
-                Origin = origins,
-                Vertex = meshVertices,
+                origin = origins,
+                vertex = meshVertices,
             }.Schedule(numBillboards, 128, getCustomBatchDataJobHandle);
 
             JobHandle uvJobHandle = new CustomRectUVJob
             {
-                Billboards = billboardData,
-                UV = meshUVs,
+                billboards = billboardData,
+                uv = meshUVs,
             }.Schedule(numBillboards, 128, getCustomBatchDataJobHandle);
 
             JobHandle tangentJobHandle = new TangentJob
             {
-                Size = sizes,
-                Tangent = meshTangents,
+                size = sizes,
+                tangent = meshTangents,
             }.Schedule(numBillboards, 128, getCustomBatchDataJobHandle);
 
             JobHandle indicesJobHandle = new Indices16Job
             {
-                Indices = meshIndices,
+                indices = meshIndices,
             }.Schedule(numBillboards, 128, Dependency);
 
             JobHandle normalsJobHandle = new NormalsJob
             {
-                Normal = meshNormals
+                normal = meshNormals
             }.Schedule(meshNormals.Length, meshNormals.Length / SystemInfo.processorCount * 4, Dependency);
 
             NativeArray<JobHandle> handles = new NativeArray<JobHandle>(6, Allocator.Temp);
@@ -779,58 +779,58 @@ namespace DaggerfallWorkshop
 
             GetBatchDataJob getBatchDataJob = new GetBatchDataJob
             {
-                Billboards = billboardData,
-                RecordSize = new NativeArray<Vector2>(cachedMaterial.recordSizes, Allocator.TempJob).Reinterpret<float2>(),
-                RecordScale = new NativeArray<Vector2>(cachedMaterial.recordScales, Allocator.TempJob).Reinterpret<float2>(),
-                AtlasRects = new NativeArray<Rect>(cachedMaterial.atlasRects, Allocator.TempJob),
-                AtlasIndices = new NativeArray<RecordIndex>(cachedMaterial.atlasIndices, Allocator.TempJob),
-                ScaleDivisor = BlocksFile.ScaleDivisor,
+                billboards = billboardData,
+                recordSize = new NativeArray<Vector2>(cachedMaterial.recordSizes, Allocator.TempJob).Reinterpret<float2>(),
+                recordScale = new NativeArray<Vector2>(cachedMaterial.recordScales, Allocator.TempJob).Reinterpret<float2>(),
+                atlasRects = new NativeArray<Rect>(cachedMaterial.atlasRects, Allocator.TempJob),
+                atlasIndices = new NativeArray<RecordIndex>(cachedMaterial.atlasIndices, Allocator.TempJob),
+                scaleDivisor = BlocksFile.ScaleDivisor,
 
-                Origin = origins,
-                Size = sizes,
-                UVRect = uvrects,
+                origin = origins,
+                size = sizes,
+                uvRect = uvrects,
             };
             JobHandle getBatchDataJobHandle = getBatchDataJob.Schedule(numBillboards, 128, Dependency);
 
             BoundsJob boundsJob = new BoundsJob
             {
-                NumBillboards = numBillboards,
-                Origin = origins,
-                Size = sizes,
-                AABB = meshAABB
+                numBillboards = numBillboards,
+                origin = origins,
+                size = sizes,
+                aabb = meshAABB
             };
             JobHandle boundsJobHandle = boundsJob.Schedule(getBatchDataJobHandle);
 
             VertexJob vertexJob = new VertexJob
             {
-                Origin = origins,
-                Vertex = meshVertices,
+                origin = origins,
+                vertex = meshVertices,
             };
             JobHandle vertexJobHandle = vertexJob.Schedule(numBillboards, 128, getBatchDataJobHandle);
 
             UVJob uvJob = new UVJob
             {
-                UVRect = uvrects,
-                UV = meshUVs,
+                uvRect = uvrects,
+                uv = meshUVs,
             };
             JobHandle uvJobHandle = uvJob.Schedule(numBillboards, 128, getBatchDataJobHandle);
 
             TangentJob tangentJob = new TangentJob
             {
-                Size = sizes,
-                Tangent = meshTangents,
+                size = sizes,
+                tangent = meshTangents,
             };
             JobHandle tangentJobHandle = tangentJob.Schedule(numBillboards, 128, getBatchDataJobHandle);
 
             Indices16Job indicesJob = new Indices16Job
             {
-                Indices = meshIndices,
+                indices = meshIndices,
             };
             JobHandle indicesJobHandle = indicesJob.Schedule(numBillboards, 128, Dependency);
 
             NormalsJob normalsJob = new NormalsJob
             {
-                Normal = meshNormals
+                normal = meshNormals
             };
             JobHandle normalsJobHandle = normalsJob.Schedule(meshNormals.Length, meshNormals.Length / SystemInfo.processorCount * 4, Dependency);
 
@@ -999,7 +999,7 @@ namespace DaggerfallWorkshop
         [Unity.Burst.BurstCompile]
         public struct Indices16Job : IJobParallelFor
         {
-            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<ushort> Indices;
+            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<ushort> indices;
             void IJobParallelFor.Execute(int billboard)
             {
                 int currentIndex = billboard * indicesPerQuad;
@@ -1009,101 +1009,101 @@ namespace DaggerfallWorkshop
                 ushort c = (ushort)(a + 2);
                 ushort d = (ushort)(a + 3);
 
-                Indices[currentIndex] = a;
-                Indices[currentIndex + 1] = b;
-                Indices[currentIndex + 2] = c;
-                Indices[currentIndex + 3] = d;
-                Indices[currentIndex + 4] = c;
-                Indices[currentIndex + 5] = b;
+                indices[currentIndex] = a;
+                indices[currentIndex + 1] = b;
+                indices[currentIndex + 2] = c;
+                indices[currentIndex + 3] = d;
+                indices[currentIndex + 4] = c;
+                indices[currentIndex + 5] = b;
             }
         }
 
         [Unity.Burst.BurstCompile]
         public struct NormalsJob : IJobParallelFor
         {
-            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float3> Normal;
+            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float3> normal;
             void IJobParallelFor.Execute(int index)
             {
                 // Using half way between forward and up for billboard normal
                 // Workable for most lighting but will need a better system eventually
-                Normal[index] = new float3(0, 0.707106781187f, 0.707106781187f);// Vector3.Normalize(Vector3.up + Vector3.forward);
+                normal[index] = new float3(0, 0.707106781187f, 0.707106781187f);// Vector3.Normalize(Vector3.up + Vector3.forward);
             }
         }
 
         [Unity.Burst.BurstCompile]
         public struct VertexJob : IJobParallelFor
         {
-            [ReadOnly] public NativeArray<float3> Origin;
-            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float3> Vertex;
+            [ReadOnly] public NativeArray<float3> origin;
+            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float3> vertex;
             void IJobParallelFor.Execute(int billboard)
             {
-                float3 origin = Origin[billboard];
+                float3 o = origin[billboard];
                 int offset = billboard * vertsPerQuad;
-                Vertex[offset] = origin;
-                Vertex[offset + 1] = origin;
-                Vertex[offset + 2] = origin;
-                Vertex[offset + 3] = origin;
+                vertex[offset] = o;
+                vertex[offset + 1] = o;
+                vertex[offset + 2] = o;
+                vertex[offset + 3] = o;
             }
         }
 
         [Unity.Burst.BurstCompile]
         struct UVJob : IJobParallelFor
         {
-            [ReadOnly] public NativeArray<Rect> UVRect;
-            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float2> UV;
+            [ReadOnly] public NativeArray<Rect> uvRect;
+            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float2> uv;
             void IJobParallelFor.Execute(int billboard)
             {
-                Rect rect = UVRect[billboard];
+                Rect rect = uvRect[billboard];
                 int offset = billboard * vertsPerQuad;
 
-                UV[offset] = new float2(rect.x, rect.yMax);
-                UV[offset + 1] = new float2(rect.xMax, rect.yMax);
-                UV[offset + 2] = new float2(rect.x, rect.y);
-                UV[offset + 3] = new float2(rect.xMax, rect.y);
+                uv[offset] = new float2(rect.x, rect.yMax);
+                uv[offset + 1] = new float2(rect.xMax, rect.yMax);
+                uv[offset + 2] = new float2(rect.x, rect.y);
+                uv[offset + 3] = new float2(rect.xMax, rect.y);
             }
         }
         [Unity.Burst.BurstCompile]
         struct CustomRectUVJob : IJobParallelFor
         {
-            [ReadOnly] public NativeArray<BillboardItem> Billboards;
-            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float2> UV;
+            [ReadOnly] public NativeArray<BillboardItem> billboards;
+            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float2> uv;
             void IJobParallelFor.Execute(int billboard)
             {
-                BillboardItem bi = Billboards[billboard];
+                BillboardItem bi = billboards[billboard];
                 int offset = billboard * vertsPerQuad;
 
                 Rect rect = bi.customRect;
-                UV[offset] = new float2(rect.x, rect.yMax);
-                UV[offset + 1] = new float2(rect.xMax, rect.yMax);
-                UV[offset + 2] = new float2(rect.x, rect.y);
-                UV[offset + 3] = new float2(rect.xMax, rect.y);
+                uv[offset] = new float2(rect.x, rect.yMax);
+                uv[offset + 1] = new float2(rect.xMax, rect.yMax);
+                uv[offset + 2] = new float2(rect.x, rect.y);
+                uv[offset + 3] = new float2(rect.xMax, rect.y);
             }
         }
         [Unity.Burst.BurstCompile]
         struct AnimateUVJob : IJobParallelFor
         {
-            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<Rect> AtlasRects;
-            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<RecordIndex> AtlasIndices;
-            public NativeArray<BillboardItem> Billboards;
-            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float2> UV;
+            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<Rect> atlasRects;
+            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<RecordIndex> atlasIndices;
+            public NativeArray<BillboardItem> billboards;
+            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float2> uv;
             void IJobParallelFor.Execute(int billboard)
             {
-                BillboardItem bi = Billboards[billboard];
+                BillboardItem bi = billboards[billboard];
                 // Look for animated billboards. Do nothing if single frame
                 if (bi.totalFrames > 1)
                 {
                     // Increment current billboard frame
                     if (++bi.currentFrame >= bi.totalFrames)
                         bi.currentFrame = 0;
-                    Billboards[billboard] = bi;
+                    billboards[billboard] = bi;
 
                     // Set new UV properties based on current frame
-                    Rect rect = AtlasRects[AtlasIndices[bi.record].startIndex + bi.currentFrame];
+                    Rect rect = atlasRects[atlasIndices[bi.record].startIndex + bi.currentFrame];
                     int offset = billboard * vertsPerQuad;
-                    UV[offset] = new float2(rect.x, rect.yMax);
-                    UV[offset + 1] = new float2(rect.xMax, rect.yMax);
-                    UV[offset + 2] = new float2(rect.x, rect.y);
-                    UV[offset + 3] = new float2(rect.xMax, rect.y);
+                    uv[offset] = new float2(rect.x, rect.yMax);
+                    uv[offset + 1] = new float2(rect.xMax, rect.yMax);
+                    uv[offset + 2] = new float2(rect.x, rect.y);
+                    uv[offset + 3] = new float2(rect.xMax, rect.y);
                 }
             }
         }
@@ -1111,142 +1111,137 @@ namespace DaggerfallWorkshop
         [Unity.Burst.BurstCompile]
         struct TangentJob : IJobParallelFor
         {
-            [ReadOnly] public NativeArray<float2> Size;
-            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float4> Tangent;
+            [ReadOnly] public NativeArray<float2> size;
+            [WriteOnly] [NativeDisableParallelForRestriction] public NativeArray<float4> tangent;
             void IJobParallelFor.Execute(int billboard)
             {
-                float2 size = Size[billboard];
+                float2 s = size[billboard];
                 int offset = billboard * vertsPerQuad;
 
                 // Tangent data for shader is used to size billboard
-                Tangent[offset] = new float4(size.x, size.y, 0, 1);
-                Tangent[offset + 1] = new float4(size.x, size.y, 1, 1);
-                Tangent[offset + 2] = new float4(size.x, size.y, 0, 0);
-                Tangent[offset + 3] = new float4(size.x, size.y, 1, 0);
+                tangent[offset] = new float4(s.x, s.y, 0, 1);
+                tangent[offset + 1] = new float4(s.x, s.y, 1, 1);
+                tangent[offset + 2] = new float4(s.x, s.y, 0, 0);
+                tangent[offset + 3] = new float4(s.x, s.y, 1, 0);
             }
         }
 
         [Unity.Burst.BurstCompile]
         struct GetBatchDataJob : IJobParallelFor
         {
-            [ReadOnly] public NativeArray<BillboardItem> Billboards;
-            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<float2> RecordSize;
-            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<float2> RecordScale;
-            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<Rect> AtlasRects;
-            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<RecordIndex> AtlasIndices;
-            public float ScaleDivisor;
-
-            [WriteOnly] public NativeArray<float3> Origin;
-            [WriteOnly] public NativeArray<float2> Size;
-            [WriteOnly] public NativeArray<Rect> UVRect;
-
+            [ReadOnly] public NativeArray<BillboardItem> billboards;
+            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<float2> recordSize;
+            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<float2> recordScale;
+            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<Rect> atlasRects;
+            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<RecordIndex> atlasIndices;
+            public float scaleDivisor;
+            [WriteOnly] public NativeArray<float3> origin;
+            [WriteOnly] public NativeArray<float2> size;
+            [WriteOnly] public NativeArray<Rect> uvRect;
             void IJobParallelFor.Execute(int billboard)
             {
-                BillboardItem bi = Billboards[billboard];
+                BillboardItem bi = billboards[billboard];
 
-                float2 size = DaggerfallBillboardBatch.GetScaledBillboardSize(bi.record, RecordSize, RecordScale, ScaleDivisor);
+                float2 size = DaggerfallBillboardBatch.GetScaledBillboardSize(bi.record, recordSize, recordScale, scaleDivisor);
                 float3 origin = bi.position + new float3(0, size.y * 0.5f, 0);
-                Rect uvrect = AtlasRects[AtlasIndices[bi.record].startIndex + bi.currentFrame];
+                Rect uvrect = atlasRects[atlasIndices[bi.record].startIndex + bi.currentFrame];
 
-                Size[billboard] = size;
-                UVRect[billboard] = uvrect;
-                Origin[billboard] = origin;
+                this.size[billboard] = size;
+                uvRect[billboard] = uvrect;
+                this.origin[billboard] = origin;
             }
         }
         [Unity.Burst.BurstCompile]
         struct GetCustomMaterialBatchDataJob : IJobParallelFor
         {
-            [ReadOnly] public NativeArray<BillboardItem> Billboards;
-            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<Rect> AtlasRects;
-            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<RecordIndex> AtlasIndices;
-
-            [WriteOnly] public NativeArray<float3> Origin;
-            [WriteOnly] public NativeArray<float2> Size;
-
+            [ReadOnly] public NativeArray<BillboardItem> billboards;
+            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<Rect> atlasRects;
+            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<RecordIndex> atlasIndices;
+            [WriteOnly] public NativeArray<float3> origin;
+            [WriteOnly] public NativeArray<float2> size;
             void IJobParallelFor.Execute(int billboard)
             {
-                BillboardItem bi = Billboards[billboard];
+                BillboardItem bi = billboards[billboard];
 
-                float2 size = DaggerfallBillboardBatch.GetScaledBillboardSize((Vector2)bi.customSize, (Vector2)bi.customScale);
-                float3 origin = bi.position + new float3(0, size.y * 0.5f, 0);
-                Rect uvrect = AtlasRects[AtlasIndices[bi.record].startIndex + bi.currentFrame];
+                float2 s = DaggerfallBillboardBatch.GetScaledBillboardSize((Vector2)bi.customSize, (Vector2)bi.customScale);
+                float3 origin = bi.position + new float3(0, s.y * 0.5f, 0);
+                Rect uvrect = atlasRects[atlasIndices[bi.record].startIndex + bi.currentFrame];
 
-                Size[billboard] = size;
-                Origin[billboard] = origin;
+                size[billboard] = s;
+                this.origin[billboard] = origin;
             }
         }
 
         [Unity.Burst.BurstCompile]
         struct BoundsJob : IJob
         {
-            public int NumBillboards;
-            [ReadOnly] public NativeArray<float3> Origin;
-            [ReadOnly] public NativeArray<float2> Size;
-
-            [WriteOnly] public NativeArray<Bounds> AABB;
+            public int numBillboards;
+            [ReadOnly] public NativeArray<float3> origin;
+            [ReadOnly] public NativeArray<float2> size;
+            [WriteOnly] public NativeArray<Bounds> aabb;
             void IJob.Execute()
             {
                 // Update bounds tracking using actual position and size
                 // This can be a little wonky with single billboards side-on as AABB does not rotate
                 // But it generally works well for large batches as intended
                 // Multiply finalSize * 2f if culling problems with standalone billboards
-                AABB[0] = new Bounds();
-                if (NumBillboards == 0) return;
-                Bounds aabb = new Bounds(Origin[0], (Vector2)Size[0]); ;
-                for (int billboard = 0; billboard < NumBillboards; billboard++)
-                    aabb.Encapsulate(new Bounds(Origin[billboard], (Vector2)Size[billboard]));
-                AABB[0] = aabb;
+                this.aabb[0] = new Bounds();
+                if (numBillboards == 0) return;
+                Bounds aabb = new Bounds(origin[0], (Vector2)size[0]); ;
+                for (int billboard = 0; billboard < numBillboards; billboard++)
+                    aabb.Encapsulate(new Bounds(origin[billboard], (Vector2)size[billboard]));
+                this.aabb[0] = aabb;
             }
         }
 
         [Unity.Burst.BurstCompile]
         struct AddItemsJob : IJobParallelFor
         {
-            [ReadOnly] public NativeArray<BasicInfo> Source;
-            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<int> AtlasFrameCounts;
-            public bool RandomStartFrame;
-            public uint Seed;
-            public float3 BlockOrigin;
-            [WriteOnly] public NativeList<BillboardItem>.ParallelWriter BillboardItems;
+            [ReadOnly] public NativeArray<BasicInfo> source;
+            [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<int> atlasFrameCounts;
+            public bool randomStartFrame;
+            public uint seed;
+            public float3 blockOrigin;
+            [WriteOnly] public NativeList<BillboardItem>.ParallelWriter billboardItems;
             void IJobParallelFor.Execute(int index)
             {
-                var item = Source[index];
+                var item = source[index];
 
                 // Get frame count and start frame
-                int frameCount = AtlasFrameCounts[item.textureRecord];
+                int frameCount = atlasFrameCounts[item.textureRecord];
                 int startFrame = 0;
-                if (RandomStartFrame)
-                    startFrame = new Unity.Mathematics.Random(Seed * (uint)(index + 1)).NextInt(0, frameCount);
+                if (randomStartFrame)
+                    startFrame = new Unity.Mathematics.Random(seed * (uint)(index + 1)).NextInt(0, frameCount);
 
                 // Add new billboard to batch
                 var billboard = new BillboardItem
                 {
                     record = item.textureRecord,
-                    position = BlockOrigin + item.localPosition,
+                    position = blockOrigin + item.localPosition,
                     totalFrames = frameCount,
                     currentFrame = startFrame,
                 };
-                BillboardItems.AddNoResize(billboard);
+                billboardItems.AddNoResize(billboard);
             }
         }
 
         [Unity.Burst.BurstCompile]
         struct AddCustomItemsJob : IJobParallelFor
         {
-            [ReadOnly] public NativeArray<CustomInfo> Source;
-            public float3 BlockOrigin;
-            [WriteOnly] public NativeList<BillboardItem>.ParallelWriter BillboardItems;
+            [ReadOnly] public NativeArray<CustomInfo> source;
+            public float3 blockOrigin;
+            [WriteOnly] public NativeList<BillboardItem>.ParallelWriter billboardItems;
             void IJobParallelFor.Execute(int index)
             {
-                CustomInfo item = Source[index];
+                CustomInfo item = source[index];
                 BillboardItem billboard = new BillboardItem
                 {
-                    position = BlockOrigin + item.localPosition,
+                    position = blockOrigin + item.localPosition,
                     customRect = item.rect,
                     customSize = item.size,
                     customScale = item.scale,
                 };
-                BillboardItems.AddNoResize(billboard);
+                billboardItems.AddNoResize(billboard);
             }
         }
 
@@ -1254,8 +1249,8 @@ namespace DaggerfallWorkshop
         [Unity.Burst.BurstCompile]
         struct DeallocateArrayJob<T> : IJob where T : unmanaged
         {
-            [ReadOnly] [DeallocateOnJobCompletion] NativeArray<T> Array;
-            public DeallocateArrayJob(NativeArray<T> array) => this.Array = array;
+            [ReadOnly] [DeallocateOnJobCompletion] NativeArray<T> array;
+            public DeallocateArrayJob(NativeArray<T> array) => this.array = array;
             void IJob.Execute() { }
         }
 
