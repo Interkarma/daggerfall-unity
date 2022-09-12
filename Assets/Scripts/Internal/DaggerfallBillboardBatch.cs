@@ -144,6 +144,10 @@ namespace DaggerfallWorkshop
 
         void OnDestroy()
         {
+            // make sure there are no unfinished jobs:
+            Dependency.Complete();
+            UvAnimationDependency.Complete();
+
             if (billboardData.IsCreated) billboardData.Dispose();
             if (meshVertices.IsCreated) meshVertices.Dispose();
             if (meshNormals.IsCreated) meshNormals.Dispose();
