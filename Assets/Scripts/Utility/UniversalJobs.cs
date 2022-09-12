@@ -22,14 +22,6 @@ public struct DeallocateArrayJob<T> : IJob where T : unmanaged
 }
 
 [Unity.Burst.BurstCompile]
-public struct DeallocateListJob<T> : IJob where T : unmanaged
-{
-    [ReadOnly] [DeallocateOnJobCompletion] NativeList<T> List;
-    public DeallocateListJob(NativeList<T> list) => this.List = list;
-    void IJob.Execute() { }
-}
-
-[Unity.Burst.BurstCompile]
 public struct FillJob<T> : IJob where T : unmanaged
 {
     T Value;
