@@ -27,7 +27,7 @@ public static class ArrayExtensionMethods
         void* ptr = UnsafeUtility.PinGCArrayAndGetDataAddress(array, out gcHandle);
         var nativeArray = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(ptr, array.Length, Allocator.None);
         #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref nativeArray, AtomicSafetyHandle.GetTempMemoryHandle());
+        NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref nativeArray, AtomicSafetyHandle.Create());
         #endif
         return nativeArray;
     }
@@ -37,7 +37,7 @@ public static class ArrayExtensionMethods
         void* ptr = UnsafeUtility.PinGCArrayAndGetDataAddress(array, out gcHandle);
         var nativeArray = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(ptr, array.Length, Allocator.None);
         #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref nativeArray, AtomicSafetyHandle.GetTempMemoryHandle());
+        NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref nativeArray, AtomicSafetyHandle.Create());
         #endif
         return nativeArray;
     }
@@ -47,7 +47,7 @@ public static class ArrayExtensionMethods
         void* ptr = UnsafeUtility.PinGCArrayAndGetDataAddress(array, out gcHandle);
         var nativeArray = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(ptr, array.Length, Allocator.None);
         #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref nativeArray, AtomicSafetyHandle.GetTempMemoryHandle());
+        NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref nativeArray, AtomicSafetyHandle.Create());
         #endif
         return nativeArray;
     }
@@ -59,7 +59,7 @@ public static class ArrayExtensionMethods
         void* ptr = UnsafeUtility.PinGCArrayAndGetDataAddress(array, out gcHandle);
         var nativeArray = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<(T1,T2)>(ptr, array.Length, Allocator.None);
         #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref nativeArray, AtomicSafetyHandle.GetTempMemoryHandle());
+        NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref nativeArray, AtomicSafetyHandle.Create());
         #endif
         return nativeArray;
     }
@@ -72,7 +72,7 @@ public static class ArrayExtensionMethods
         void* ptr = UnsafeUtility.PinGCArrayAndGetDataAddress(array, out gcHandle);
         var nativeArray = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<(T1,T2,T3)>(ptr, array.Length, Allocator.None);
         #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref nativeArray, AtomicSafetyHandle.GetTempMemoryHandle());
+        NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref nativeArray, AtomicSafetyHandle.Create());
         #endif
         return nativeArray;
     }
