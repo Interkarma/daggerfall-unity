@@ -1385,6 +1385,9 @@ namespace DaggerfallWorkshop.Game
 
                 lastGroundedY = transform.position.y;
             }
+            // For flying enemies, "lastGroundedY" is really "lastAltitudeControlY"
+            else if (flies && !flyerFalls)
+                lastGroundedY = transform.position.y;
         }
 
         /// <summary>
