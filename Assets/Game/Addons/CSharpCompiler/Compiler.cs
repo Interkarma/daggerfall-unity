@@ -97,8 +97,25 @@ namespace DaggerfallWorkshop.Game.Utility
                 var msg = new StringBuilder();
                 foreach (CompilerError error in result.Errors)
                 {
-                    msg.AppendFormat("Error ({0}): {1}\n",
-                        error.ErrorNumber, error.ErrorText);
+                    if (int.TryParse(error.FileName, out int fileIndex))
+                        msg.AppendFormat("Error ({0}): {1} (at: \"{2}\")\n", error.ErrorNumber, error.ErrorText, readLine(sources[fileIndex], error.Line));
+                    else
+                        msg.AppendFormat("Error ({0}): {1} (at {2}:{3})\n", error.ErrorNumber, error.ErrorText, error.FileName, error.Line);
+                }
+
+                // src* https://stackoverflow.com/a/2606447/2528943 (author: Paul Ruane)
+                string readLine(string text, int lineNumber)
+                {
+                    var reader = new System.IO.StringReader(text);
+                    string line;
+                    int currentLineNumber = 0;
+                    do
+                    {
+                        currentLineNumber += 1;
+                        line = reader.ReadLine();
+                    }
+                    while (line != null && currentLineNumber < lineNumber);
+                    return (currentLineNumber == lineNumber) ? line : string.Empty;
                 }
 
                 throw new Exception(msg.ToString());
