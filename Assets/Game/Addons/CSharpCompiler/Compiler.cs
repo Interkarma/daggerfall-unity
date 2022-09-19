@@ -97,25 +97,19 @@ namespace DaggerfallWorkshop.Game.Utility
                 var msg = new StringBuilder();
                 foreach (CompilerError error in result.Errors)
                 {
-                    if (int.TryParse(error.FileName, out int fileIndex))
-                        msg.AppendFormat("Error ({0}): {1} (at: \"{2}\")\n", error.ErrorNumber, error.ErrorText, readLine(sources[fileIndex], error.Line));
-                    else
-                        msg.AppendFormat("Error ({0}): {1} (at {2}:{3})\n", error.ErrorNumber, error.ErrorText, error.FileName, error.Line);
-                }
-
-                // src* https://stackoverflow.com/a/2606447/2528943 (author: Paul Ruane)
-                string readLine(string text, int lineNumber)
-                {
-                    var reader = new System.IO.StringReader(text);
-                    string line;
-                    int currentLineNumber = 0;
-                    do
+                    string errorCode = !string.IsNullOrEmpty(error.ErrorNumber) ? $"CS{error.ErrorNumber}" : "(unknown)";
+                    if (
+                           int.TryParse(error.FileName, out int fileIndex)
+                        && GetSpecificLine(sources[fileIndex], error.Line, out string lineText)
+                        && !string.IsNullOrEmpty(lineText)
+                    )
                     {
-                        currentLineNumber += 1;
-                        line = reader.ReadLine();
+                        msg.AppendFormat("Error {0}: {1} (at line #{2}: \"{3}\")\n", errorCode, error.ErrorText, error.Line, lineText);
                     }
-                    while (line != null && currentLineNumber < lineNumber);
-                    return (currentLineNumber == lineNumber) ? line : string.Empty;
+                    else
+                    {
+                        msg.AppendFormat("Error {0}: {1}\n", errorCode, error.ErrorText);
+                    }
                 }
 
                 throw new Exception(msg.ToString());
@@ -124,5 +118,22 @@ namespace DaggerfallWorkshop.Game.Utility
             // Return the assembly
             return result.CompiledAssembly;
         }
+
+        static bool GetSpecificLine(string text, int lineNumber, out string line)
+        {
+            bool success;
+            var reader = new System.IO.StringReader(text);
+            {
+                string nextLine;
+                int i = 0;
+                do nextLine = reader.ReadLine();
+                while (nextLine != null && i++ < lineNumber);
+                success = i == lineNumber;
+                line = success ? nextLine : string.Empty;
+            }
+            reader.Close();
+            return success;
+        }
+
     }
 }
