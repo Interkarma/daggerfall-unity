@@ -124,12 +124,10 @@ namespace DaggerfallWorkshop.Game.Utility
             bool success;
             var reader = new System.IO.StringReader(text);
             {
-                string nextLine;
                 int i = 0;
-                do nextLine = reader.ReadLine();
-                while (nextLine != null && i++ < lineNumber);
+                do line = reader.ReadLine();
+                while (line != null && ++i < lineNumber);
                 success = i == lineNumber;
-                line = success ? nextLine : string.Empty;
             }
             reader.Close();
             return success;
