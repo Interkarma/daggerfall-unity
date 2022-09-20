@@ -106,7 +106,7 @@ namespace DaggerfallWorkshop.Game.Utility
                     if (int.TryParse(error.FileName, out int fileIndex) && GetSpecificLine(sources[fileIndex], error.Line, out lineContentText))
                         lineContentText = $"\"{lineContentText}\"";
 
-                    msg.AppendLine($"Error {errorCodeText}: {errorText}");
+                    msg.AppendLine($"<b>Compilation Error {errorCodeText}</b>: {errorText}");
                     msg.AppendLine($"\tat {numLineText} {numColumnText} {lineContentText}");
                 }
 
