@@ -97,19 +97,17 @@ namespace DaggerfallWorkshop.Game.Utility
                 var msg = new StringBuilder();
                 foreach (CompilerError error in result.Errors)
                 {
-                    string errorCode = !string.IsNullOrEmpty(error.ErrorNumber) ? $"CS{error.ErrorNumber}" : "(unknown)";
-                    if (
-                           int.TryParse(error.FileName, out int fileIndex)
-                        && GetSpecificLine(sources[fileIndex], error.Line, out string lineText)
-                        && !string.IsNullOrEmpty(lineText)
-                    )
-                    {
-                        msg.AppendFormat("Error {0}: {1} (at line #{2}: \"{3}\")\n", errorCode, error.ErrorText, error.Line, lineText);
-                    }
-                    else
-                    {
-                        msg.AppendFormat("Error {0}: {1}\n", errorCode, error.ErrorText);
-                    }
+                    string errorCodeText = !string.IsNullOrEmpty(error.ErrorNumber) ? $"CS{error.ErrorNumber}" : string.Empty;
+                    string errorText = error.ErrorText;
+                    string numLineText = $"line#{error.Line}";
+                    string numColumnText = $"column#{error.Column}";
+                    string lineContentText = string.Empty;
+
+                    if (int.TryParse(error.FileName, out int fileIndex) && GetSpecificLine(sources[fileIndex], error.Line, out lineContentText))
+                        lineContentText = $"\"{lineContentText}\"";
+
+                    msg.AppendLine($"Error {errorCodeText}: {errorText}");
+                    msg.AppendLine($"\tat {numLineText} {numColumnText} {lineContentText}");
                 }
 
                 throw new Exception(msg.ToString());
