@@ -1594,7 +1594,7 @@ namespace DaggerfallWorkshop.Game
         {
             // edit user note marker
             messageboxUserNote = new DaggerfallInputMessageBox(DaggerfallUI.UIManager, DaggerfallUI.Instance.AutomapWindow);
-            messageboxUserNote.SetTextBoxLabel("you note: ");
+            messageboxUserNote.SetTextBoxLabel(TextManager.Instance.GetLocalizedText("youNote"));
             messageboxUserNote.TextPanelDistanceX = 5;
             messageboxUserNote.TextPanelDistanceY = 8;            
             if (listUserNoteMarkers.ContainsKey(id))

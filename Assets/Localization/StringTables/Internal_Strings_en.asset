@@ -3985,5 +3985,9 @@ MonoBehaviour:
       dungeon exit.
     m_Metadata:
       m_Items: []
+  - m_Id: 263503556027629568
+    m_Localized: 'You note: '
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
