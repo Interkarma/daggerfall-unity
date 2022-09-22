@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop
             throw new System.NotImplementedException();
         }
 
+        [Unity.Burst.BurstCompile]
         struct GenerateSamplesJob : IJobParallelFor
         {
             [ReadOnly]
