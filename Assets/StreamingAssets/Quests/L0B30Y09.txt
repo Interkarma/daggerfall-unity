@@ -73,7 +73,7 @@ Message:  1020
  left cheek. The deed must be done in =1stparton_ days.
 
 Message:  1021
-<ce>              A fresh scar mars the target's left cheek.
+<ce>              A fresh scar marks the target's left cheek.
 
 
 -- Symbols used in the QRC file:
