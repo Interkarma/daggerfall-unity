@@ -3989,5 +3989,9 @@ MonoBehaviour:
     m_Localized: 'You note: '
     m_Metadata:
       m_Items: []
+  - m_Id: 264997637513822208
+    m_Localized: 'Custom name: '
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

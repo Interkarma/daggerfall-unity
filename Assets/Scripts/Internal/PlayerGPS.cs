@@ -98,6 +98,7 @@ namespace DaggerfallWorkshop
             public int quality;
             public DFLocation.BuildingTypes buildingType;
             public int lastLockpickAttempt;
+            public string customUserDisplayName;
         }
 
         public struct NearbyObject
@@ -1043,6 +1044,21 @@ namespace DaggerfallWorkshop
             discoveredBuildingOut = dl.discoveredBuildings[buildingKey];
 
             return true;
+        }
+
+        /// <summary>
+        /// Sets custom name field for discovered building in current location.
+        /// </summary>
+        /// <param name="buildingKey">Building key in current location.</param>
+        /// <param name="customName">Custom name of building. Set null or empty to remove custom name.</param>
+        public void SetDiscoveredBuildingCustomName(int buildingKey, string customName)
+        {
+            DiscoveredBuilding discoveredBuilding;
+            if (GetDiscoveredBuilding(buildingKey, out discoveredBuilding))
+            {
+                discoveredBuilding.customUserDisplayName = customName;
+                UpdateDiscoveredBuilding(discoveredBuilding);
+            }
         }
 
         /// <summary>

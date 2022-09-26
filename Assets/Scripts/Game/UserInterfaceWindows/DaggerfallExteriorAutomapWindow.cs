@@ -877,8 +877,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].name;
                 panelRenderAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
 
+                // use long name or custom name for nameplate label
+                string displayName = !string.IsNullOrEmpty(exteriorAutomap.buildingNameplates[i].customName) ? exteriorAutomap.buildingNameplates[i].customName : exteriorAutomap.buildingNameplates[i].name;
+
                 exteriorAutomap.buildingNameplates[i].gameObject.name = String.Format("building name plate for [{0}]+", exteriorAutomap.buildingNameplates[i].name);
-                exteriorAutomap.buildingNameplates[i].textLabel.Text = exteriorAutomap.buildingNameplates[i].name; // use long name
+                exteriorAutomap.buildingNameplates[i].textLabel.Text = displayName;
                 exteriorAutomap.buildingNameplates[i].width = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth;
                 exteriorAutomap.buildingNameplates[i].height = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight;
                 exteriorAutomap.buildingNameplates[i].offset = Vector2.zero;

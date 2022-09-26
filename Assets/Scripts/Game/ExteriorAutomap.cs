@@ -20,6 +20,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
@@ -57,6 +58,7 @@ namespace DaggerfallWorkshop.Game
         {
             public Vector2 anchorPoint; // the anchor point of the nameplate (the position in world coordinates of the nameplate - target position for the gameobject's transform position)
             public string name; // the name of the nameplate (this is never changed - even if nameplate is later presented as "*" in case of an occlusion - this remains the (unchanged) full name)
+            public string customName; // a custom name set by player (this can change while map is open but does not change actual building name or tooltip)
             public int uniqueIndex; // the unique index of the nameplate in the array of nameplates
             public TextLabel textLabel; // the TextLabel used to create and reuse its Texture2D element as texture for the nameplate 
             public GameObject gameObject; // the GameObject used to hold the nameplate     
@@ -118,6 +120,8 @@ namespace DaggerfallWorkshop.Game
         GameObject gameObjectBuildingNameplates = null; // parent gameobject for all building name plates
 
         //GameObject popUpNameplate = null; // the pop-up nameplate used to expand "*" nameplates
+
+        TextLabel renamingLabelRef = null;
 
         public struct Rectangle
         {
@@ -660,7 +664,7 @@ namespace DaggerfallWorkshop.Game
                         int xPosBuilding = layout.rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * blockSizeWidth);
                         int yPosBuilding = layout.rect.ypos + (int)(buildingSummary.Position.z / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * blockSizeHeight);
 
-                        BuildingNameplate newBuildingNameplate;
+                        BuildingNameplate newBuildingNameplate = new BuildingNameplate();
                         try
                         {
                             newBuildingNameplate.name = ""; // default value for player has not discovered location or building yet
@@ -673,6 +677,7 @@ namespace DaggerfallWorkshop.Game
                                 if (!RMBLayout.IsResidence(buildingSummary.BuildingType) || discoveredBuilding.isOverrideName)
                                 {
                                     newBuildingNameplate.name = discoveredBuilding.displayName;
+                                    newBuildingNameplate.customName = discoveredBuilding.customUserDisplayName;
                                 }
                                 else if (RMBLayout.IsResidence(buildingSummary.BuildingType)) // residence handling
                                 {
@@ -782,6 +787,8 @@ namespace DaggerfallWorkshop.Game
                             newBuildingNameplate.textLabel.TextScale = 1.0f;
                             newBuildingNameplate.textLabel.MaxCharacters = -1;
                             newBuildingNameplate.textLabel.Name = newBuildingNameplate.name;
+                            newBuildingNameplate.textLabel.Tag = buildingSummary;
+                            newBuildingNameplate.textLabel.OnMouseDoubleClick += TextLabel_OnMouseDoubleClick;
                             newBuildingNameplate.scale = 1.0f;
 
                             SetLayerRecursively(newBuildingNameplate.gameObject, layerAutomap);
@@ -825,6 +832,7 @@ namespace DaggerfallWorkshop.Game
             {
                 foreach (BuildingNameplate n in buildingNameplates)
                 {
+                    n.textLabel.OnMouseDoubleClick -= TextLabel_OnMouseDoubleClick;
                     if (n.gameObject != null)
                     {
                         UnityEngine.Object.Destroy(n.gameObject);
@@ -837,6 +845,78 @@ namespace DaggerfallWorkshop.Game
             {
                 UnityEngine.Object.Destroy(gameObjectBuildingNameplates);
                 gameObjectBuildingNameplates = null;
+            }
+        }
+
+        private void TextLabel_OnMouseDoubleClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // Must have a valid sender tagged with BuildingSummary data
+            if (sender == null || sender.Tag == null || !(sender.Tag is BuildingSummary))
+                return;
+
+            renamingLabelRef = (TextLabel)sender;
+            SetCustomBuildingName();
+        }
+
+        private void SetCustomBuildingName()
+        {
+            // Must have a renaming label reference
+            if (renamingLabelRef == null)
+                return;
+
+            // Get building summary
+            BuildingSummary buildingSummary = (BuildingSummary)renamingLabelRef.Tag;
+
+            // Cannot rename a residence - these names are temporary and typically generated by quest system
+            if (RMBLayout.IsResidence(buildingSummary.BuildingType))
+                return;
+
+            // Get default name
+            string defaultName = renamingLabelRef.Name;
+
+            // Present name input prompt to player
+            DaggerfallInputMessageBox mb;
+            mb = new DaggerfallInputMessageBox(DaggerfallUI.UIManager, DaggerfallUI.Instance.ExteriorAutomapWindow);
+            mb.SetTextBoxLabel(TextManager.Instance.GetLocalizedText("customName"));
+            mb.TextBox.Name = defaultName;
+            mb.TextBox.Text = renamingLabelRef.Text;
+            mb.TextBox.DefaultText = defaultName;
+            mb.TextPanelDistanceX = 5;
+            mb.TextPanelDistanceY = 8;
+            mb.TextBox.Numeric = false;
+            mb.TextBox.MaxCharacters = 80;
+            mb.TextBox.WidthOverride = 306;
+            mb.TextBox.Tag = buildingSummary;
+            mb.OnCancel += CustomBuildingName_OnCancel;
+            mb.OnGotUserInput += CustomBuildingName_OnGotUserInput;
+            mb.Show();
+        }
+
+        private void CustomBuildingName_OnCancel(DaggerfallPopupWindow sender)
+        {
+            renamingLabelRef = null;
+        }
+
+        private void CustomBuildingName_OnGotUserInput(DaggerfallInputMessageBox sender, string input)
+        {
+            // Trim input to prevent just setting spaces or storing leading/trailing spaces
+            input = input.Trim();
+
+            // Update discovered building name in discovery data
+            // If building not actually discovered then nothing is changed
+            BuildingSummary buildingSummary = (BuildingSummary)sender.TextBox.Tag;
+            GameManager.Instance.PlayerGPS.SetDiscoveredBuildingCustomName(buildingSummary.buildingKey, input);
+
+            // Refresh building nameplates in view
+            CreateBuildingNameplates();
+            if (renamingLabelRef != null)
+            {
+                if (!string.IsNullOrEmpty(input))
+                    renamingLabelRef.Text = input;
+                else
+                    renamingLabelRef.Text = sender.TextBox.Name;
+
+                renamingLabelRef = null;
             }
         }
 
