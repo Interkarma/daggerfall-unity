@@ -1495,6 +1495,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     questItem.PlayerDropped = true;
                 else if (from == remoteItems)
                     questItem.PlayerDropped = false;
+
+                // If transferring a cloned quest item that should be permanent then reset permanent status
+                if (questItem.MadePermanent)
+                    item.MakePermanent();
             }
             // Extinguish light sources when transferring out of player inventory
             if (item.IsLightSource && playerEntity.LightSource == item && from == localItems)
