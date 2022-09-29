@@ -1780,10 +1780,20 @@ namespace DaggerfallWorkshop.Game.Questing
             // Restore Quests
             foreach(Quest.QuestSaveData_v1 questData in data.quests)
             {
-                Quest quest = new Quest();
-                quest.RestoreSaveData(questData);
-                quests.Add(quest.UID, quest);
-                quest.ReassignLegacyQuestMarkers();
+                try
+                {
+                    Quest quest = new Quest();
+                    quest.RestoreSaveData(questData);
+                    quests.Add(quest.UID, quest);
+                    quest.ReassignLegacyQuestMarkers();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarningFormat("Failed to load quest data for '{0} [{1}]' with UID {2}. This is expected after removing a mod with custom quest actions. Exception message is '{3}'",
+                        questData.displayName, questData.questName, questData.uid, ex.Message);
+
+                    DaggerfallUI.AddHUDText(string.Format("Failed to load quest '{0} [{1}]'. This is expected if quest mod removed.", questData.displayName, questData.questName), 3);
+                }
             }
 
             // Remove site links with no matching quest
