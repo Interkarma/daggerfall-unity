@@ -100,6 +100,10 @@ namespace DaggerfallWorkshop.Game
                 corpseTexture,
                 DaggerfallUnity.NextUID);
 
+            // Tag corpse loot marker with quest UID
+            if (questResourceBehaviour)
+                loot.corpseQuestUID = questResourceBehaviour.QuestUID;
+
             // This is still required so enemy equipment is not marked as equipped
             // This item collection is transferred to loot container below
             for (int i = (int)Items.EquipSlots.Head; i <= (int)Items.EquipSlots.Feet; i++)

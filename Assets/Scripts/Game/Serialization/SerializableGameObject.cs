@@ -406,6 +406,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string lootTableKey;
         public string entityName;
         public int stockedDate;
+        public ulong corpseQuestUID;
         public bool playerOwned;
         public bool customDrop;
         public bool isEnemyClass;

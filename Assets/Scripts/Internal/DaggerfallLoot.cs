@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop
 {
@@ -42,6 +43,7 @@ namespace DaggerfallWorkshop
         public bool customDrop = false;         // Custom drop loot is not part of base scene and must be respawned on deserialization
         public bool isEnemyClass = false;
         public int stockedDate = 0;
+        public ulong corpseQuestUID = 0;
 
         ulong loadID = 0;
         ItemCollection items = new ItemCollection();
@@ -125,6 +127,19 @@ namespace DaggerfallWorkshop
             //Debug.Log("Loot container closed.");
         }
 
+        private void Update()
+        {
+            // If this a quest corpse marker then disable and destroy self when quest complete
+            if (ContainerType == LootContainerTypes.CorpseMarker && corpseQuestUID != 0)
+            {
+                Quest quest = QuestMachine.Instance.GetQuest(corpseQuestUID);
+                if ((quest == null || quest.QuestTombstoned) && gameObject.activeSelf)
+                {
+                    gameObject.SetActive(false);
+                    GameObject.Destroy(gameObject);
+                }
+            }
+        }
 
         public void StockShopShelf(PlayerGPS.DiscoveredBuilding buildingData)
         {
