@@ -1155,7 +1155,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             int armorValue = 0;
             if (struckBodyPart <= target.ArmorValues.Length)
             {
-                armorValue = target.ArmorValues[struckBodyPart] + (target.IncreasedArmorValueModifier * 5) + (target.DecreasedArmorValueModifier * 5);
+                armorValue = target.ArmorValues[struckBodyPart] + target.IncreasedArmorValueModifier + target.DecreasedArmorValueModifier;
             }
             return armorValue;
         }
