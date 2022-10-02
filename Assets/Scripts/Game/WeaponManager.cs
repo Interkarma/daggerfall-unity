@@ -656,11 +656,25 @@ namespace DaggerfallWorkshop.Game
 
             // Right-hand item changed
             if (!DaggerfallUnityItem.CompareItems(currentRightHandWeapon, rightHandItem))
+            {
                 currentRightHandWeapon = rightHandItem;
+                if (rightHandItem != null && !rightHandItem.IsShield)
+                    ScreenWeapon.TryCacheReadiedWeaponAtlas(DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(rightHandItem),
+                                                            DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(rightHandItem));
+                else if (rightHandItem == null)
+                    ScreenWeapon.TryCacheReadiedWeaponAtlas(MetalTypes.None, WeaponTypes.Melee);
+            }
 
             // Left-hand item changed
             if (!DaggerfallUnityItem.CompareItems(currentLeftHandWeapon, leftHandItem))
+            {
                 currentLeftHandWeapon = leftHandItem;
+                if (leftHandItem != null && !leftHandItem.IsShield)
+                    ScreenWeapon.TryCacheReadiedWeaponAtlas(DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(leftHandItem),
+                                                            DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(leftHandItem));
+                else if (leftHandItem == null)
+                    ScreenWeapon.TryCacheReadiedWeaponAtlas(MetalTypes.None, WeaponTypes.Melee);
+            }
 
             if (EquipCountdownRightHand > 0)
             {
