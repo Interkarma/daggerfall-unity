@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
@@ -1083,6 +1084,10 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Find all factions of type
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(factionType);
+
+            // Strip "Generic Temple" from random Temple pool
+            if (factionType == (int)FactionFile.FactionTypes.Temple)
+                factions = factions.Where(val => val.id != 450).ToArray();
 
             // Should always find at least one
             if (factions == null || factions.Length == 0)
