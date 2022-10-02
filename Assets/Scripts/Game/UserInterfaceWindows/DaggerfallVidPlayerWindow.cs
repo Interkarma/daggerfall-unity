@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (useCustomVideo)
             {
                 if (endOnAnyKey && InputManager.Instance.AnyKeyDownIgnoreAxisBinds ||
-                    Input.GetKeyDown(exitKey) ||
+                    InputManager.Instance.GetBackButtonDown() ||
                     !customVideo.IsPlaying)
                 {
                     customVideo.Stop();
@@ -131,7 +131,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 if (endOnAnyKey && InputManager.Instance.AnyKeyDownIgnoreAxisBinds ||
-                    Input.GetKeyDown(exitKey) ||
+                    InputManager.Instance.GetBackButtonDown() ||
                     video.VidFile.EndOfFile && video.Playing)
                 {
                     video.Playing = false;

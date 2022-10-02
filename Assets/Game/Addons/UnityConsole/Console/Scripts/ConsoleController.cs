@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -55,7 +55,7 @@ namespace Wenzil.Console
         {
             if (DaggerfallWorkshop.Game.InputManager.Instance.GetKeyDown(toggleKey))
                 ui.ToggleConsole();
-            else if (Input.GetKeyDown(KeyCode.Escape) && closeOnEscape)
+            else if (DaggerfallWorkshop.Game.InputManager.Instance.GetBackButtonDown() && closeOnEscape)
                 ui.CloseConsole();
             else if (Input.GetKeyDown(KeyCode.UpArrow))
                 NavigateInputHistory(true);

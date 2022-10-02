@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected Panel mainPanel;
         protected TextLabel titleLabel;
-        protected Button escapeKeybindButton = new Button();
+        protected Button pauseKeybindButton = new Button();
         protected Button consoleKeybindButton = new Button();
         protected Button screenshotKeybindButton = new Button();
         protected Button quickSaveKeybindButton = new Button();
@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Components.Add(continueButton);
 
             // keybind buttons
-            SetupKeybindButton(escapeKeybindButton, InputManager.Actions.Escape, 20, 20);
+            SetupKeybindButton(pauseKeybindButton, InputManager.Actions.Escape, 20, 20);
             SetupKeybindButton(autoRunKeybindButton, InputManager.Actions.AutoRun, 20, 40);
             SetupKeybindButton(consoleKeybindButton, InputManager.Actions.ToggleConsole, 115, 20);
             SetupKeybindButton(screenshotKeybindButton, InputManager.Actions.PrintScreen, 115, 40);
@@ -191,8 +191,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             //"ToggleConsole" is too long as a word when looking in non-SDF font view
             //"Screenshot" is a better word and is one letter less than "PrintScreen"
-            label.Text = action == InputManager.Actions.Escape ? "Pause"
-                                   : action == InputManager.Actions.ToggleConsole ? "Console"
+            label.Text = action == InputManager.Actions.ToggleConsole ? "Console"
                                    : action == InputManager.Actions.PrintScreen ? "Screenshot"
                                    : action.ToString();
 
@@ -222,7 +221,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         private void UpdateKeybindButtons()
         {
-            SetupKeybindButton(escapeKeybindButton, InputManager.Actions.Escape);
+            SetupKeybindButton(pauseKeybindButton, InputManager.Actions.Escape);
             SetupKeybindButton(consoleKeybindButton, InputManager.Actions.ToggleConsole);
             SetupKeybindButton(screenshotKeybindButton, InputManager.Actions.PrintScreen);
             SetupKeybindButton(quickSaveKeybindButton, InputManager.Actions.QuickSave);
