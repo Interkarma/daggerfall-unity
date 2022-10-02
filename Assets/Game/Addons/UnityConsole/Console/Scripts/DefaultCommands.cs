@@ -950,12 +950,12 @@ namespace Wenzil.Console
         {
             public static readonly string name = "set_grav";
             public static readonly string error = "Failed to set gravity - invalid setting or PlayerMotor object not found";
-            public static readonly string description = "Set gravity. Default is 20";
+            public static readonly string description = string.Format("Set gravity. Use -1 for default (namely, {0})", AcrobatMotor.defaultGravity);
             public static readonly string usage = "set_grav [#]";
 
             public static string Execute(params string[] args)
             {
-                int gravity = 0;
+                float gravity = 0;
                 AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
 
                 if (acrobatMotor == null)
@@ -974,11 +974,13 @@ namespace Wenzil.Console
                     }
 
                 }
-                else if (!int.TryParse(args[0], out gravity))
+                else if (!float.TryParse(args[0], out gravity))
+                    return error;
+                else if (gravity != -1 && gravity < 0)
                     return error;
                 else
                 {
-                    acrobatMotor.gravity = gravity;
+                    acrobatMotor.gravity = gravity == -1 ? AcrobatMotor.defaultGravity : gravity;
                     return string.Format("Gravity set to: {0}", acrobatMotor.gravity);
                 }
 
@@ -989,12 +991,12 @@ namespace Wenzil.Console
         {
             public static readonly string name = "set_jump";
             public static readonly string error = "Failed to set jump speed - invalid setting or PlayerMotor object not found";
-            public static readonly string description = "Set jump speed. Default is 8";
+            public static readonly string description = string.Format("Set jump speed. Use -1 for default (namely, {0})", AcrobatMotor.defaultJumpSpeed);
             public static readonly string usage = "set_jump [#]";
 
             public static string Execute(params string[] args)
             {
-                int speed;
+                float speed;
                 AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
 
                 if (acrobatMotor == null)
@@ -1013,11 +1015,13 @@ namespace Wenzil.Console
                         return HelpCommand.Execute(SetJumpSpeed.name);
                     }
                 }
-                else if (!int.TryParse(args[0], out speed))
+                else if (!float.TryParse(args[0], out speed))
+                    return error;
+                else if (speed != -1 && speed < 0)
                     return error;
                 else
                 {
-                    acrobatMotor.jumpSpeed = speed;
+                    acrobatMotor.jumpSpeed = speed == -1 ? AcrobatMotor.defaultJumpSpeed : speed;
                     return string.Format("Jump speed set to: {0}", acrobatMotor.jumpSpeed);
                 }
             }
