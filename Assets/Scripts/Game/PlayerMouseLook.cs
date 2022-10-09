@@ -118,6 +118,21 @@ namespace DaggerfallWorkshop.Game
 
             _lookTarget += Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX, sensitivityY));
 
+            // Clamp look yaws to range 0..<360
+            if (_lookTarget.x < 0)
+            {
+                _lookTarget.x += 360;
+                _lookCurrent.x += 360;
+            }
+            else if(_lookTarget.x >= 360)
+            {
+                _lookTarget.x -= 360;
+                _lookCurrent.x -= 360;
+            }
+
+            // Clamp pitch to range of straight down to straight up
+            _lookTarget.y = Mathf.Clamp(_lookTarget.y, -90, 90);
+
             ApplySmoothing();
         }
 
