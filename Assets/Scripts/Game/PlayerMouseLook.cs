@@ -129,9 +129,9 @@ namespace DaggerfallWorkshop.Game
                 _lookTarget.x -= 360;
                 _lookCurrent.x -= 360;
             }
-
-            // Clamp pitch to range of straight down to straight up
-            _lookTarget.y = Mathf.Clamp(_lookTarget.y, -90, 90);
+            
+            // Clamp target look pitch to range of straight down to straight up
+            _lookTarget.y = Mathf.Clamp(_lookTarget.y, PitchMin, PitchMax);
 
             ApplySmoothing();
         }
