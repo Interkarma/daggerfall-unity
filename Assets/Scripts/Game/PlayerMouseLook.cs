@@ -91,6 +91,15 @@ namespace DaggerfallWorkshop.Game
             Init();
         }
 
+        // Returns frame rate scaled fractional progression
+        // Note that this is distinct from linear frame rate scaling
+        private float GetFrameRateScaledFractionOfProgression(float fractionAt60FPS)
+        {
+            float frames = Time.unscaledDeltaTime * 60f; // Number of frames to handle this tick, can be partial
+            float c = (1.0f - fractionAt60FPS) / fractionAt60FPS;
+            return 1.0f - c / (frames + c);
+        }
+
         // Applies scaled raw mouse deltas to _lookTarget, then calls ApplySmoothing method to update _lookCurrent
         void ApplyLook()
         {
@@ -146,6 +155,9 @@ namespace DaggerfallWorkshop.Game
             // Enforce some minimum smoothing for controllers (if you like)
             if (InputManager.Instance.UsingController && smoothing < 0.5f)
                 smoothing = 0.5f;
+
+            // Scale for FPS
+            smoothing = 1.0f - GetFrameRateScaledFractionOfProgression(1.0f - smoothing);
 
             // Move _lookCurrent a fraction towards _lookTarget (weighted average formula)
             _lookCurrent = _lookCurrent * smoothing + _lookTarget * (1.0f - smoothing);
