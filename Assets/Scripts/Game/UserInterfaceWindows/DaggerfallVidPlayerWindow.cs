@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         bool useCustomVideo = false;
 
         bool hideCursor = true;
-        bool endOnAnyKey = true;
+        bool endOnAnyKey = false;
 
         public string PlayOnStart { get; set; }
 
@@ -114,9 +114,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Handle exit any key or end of video
             if (useCustomVideo)
             {
-                if (endOnAnyKey && InputManager.Instance.AnyKeyDownIgnoreAxisBinds ||
-                    InputManager.Instance.GetBackButtonDown() ||
-                    !customVideo.IsPlaying)
+                if ((endOnAnyKey && InputManager.Instance.AnyKeyDownIgnoreAxisBinds)
+                    || Input.GetKeyDown(KeyCode.Space)
+                    || InputManager.Instance.GetBackButtonDown()
+                    || !customVideo.IsPlaying)
                 {
                     customVideo.Stop();
                     customVideo.Dispose();
@@ -130,9 +131,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
-                if (endOnAnyKey && InputManager.Instance.AnyKeyDownIgnoreAxisBinds ||
-                    InputManager.Instance.GetBackButtonDown() ||
-                    video.VidFile.EndOfFile && video.Playing)
+                if ((endOnAnyKey && InputManager.Instance.AnyKeyDownIgnoreAxisBinds)
+                    || Input.GetKeyDown(KeyCode.Space)
+                    || InputManager.Instance.GetBackButtonDown()
+                    || (video.VidFile.EndOfFile && video.Playing))
                 {
                     video.Playing = false;
                     video.Dispose();
