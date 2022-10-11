@@ -73,6 +73,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             PlayOnStart = playOnStart;
         }
 
+        public DaggerfallVidPlayerWindow(IUserInterfaceManager uiManager, string playOnStart, bool endOnAnyKey)
+            : base(uiManager)
+        {
+            PlayOnStart = playOnStart;
+            EndOnAnyKey = endOnAnyKey;
+        }
+
         protected override void Setup()
         {
             if (useCustomVideo = VideoReplacement.TryImportMovie(PlayOnStart, out customVideo))

@@ -1710,7 +1710,7 @@ namespace DaggerfallWorkshop.Game
             {
                 uiManager.PushWindow(UIWindowFactory.GetInstance(UIWindowType.Start, uiManager));
                 if (!string.IsNullOrEmpty(video) && enableVideos)
-                    uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { uiManager, video }));
+                    uiManager.PushWindow(UIWindowFactory.GetInstanceWithArgs(UIWindowType.VidPlayer, new object[] { uiManager, video, true }));
             }
         }
 
