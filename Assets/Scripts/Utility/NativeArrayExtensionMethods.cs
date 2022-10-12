@@ -93,7 +93,7 @@ public static class NativeArrayExtensionMethods
     /// <summary> Fills entire array using given value. </summary>
     public static unsafe void Fill<T>(this NativeArray<T> Array, T value) where T : unmanaged
     {
-        void* src = UnsafeUtility.Malloc(UnsafeUtility.SizeOf<T>(), UnsafeUtility.AlignOf<T>(), Allocator.Temp);
+        void* src = &value;
         void* dst = NativeArrayUnsafeUtility.GetUnsafePtr<T>(Array);
         int size = UnsafeUtility.SizeOf<T>();
         int count = Array.Length;
