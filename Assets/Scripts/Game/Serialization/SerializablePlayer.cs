@@ -464,7 +464,8 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             // Restore orientation and crouch state
-            playerMouseLook.SetFacing(positionData.yaw, positionData.pitch);
+            playerMouseLook.Yaw = positionData.yaw;
+            playerMouseLook.Pitch = positionData.pitch;
             playerMotor.IsCrouching = positionData.isCrouching;
         }
 
