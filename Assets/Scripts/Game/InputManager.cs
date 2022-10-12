@@ -51,6 +51,24 @@ namespace DaggerfallWorkshop.Game
         const float controllerCursorHorizontalSpeed = 900.0f;
         const float controllerCursorVerticalSpeed = 900.0f;
 
+        // Use 'int' because Unity creates overhead for hashed lookups of enums
+        static readonly HashSet<int> unacceptedAnyKeys = new HashSet<int>()
+        {
+            (int)KeyCode.LeftShift,
+            (int)KeyCode.RightShift,
+            (int)KeyCode.LeftAlt,
+            (int)KeyCode.RightAlt,
+            (int)KeyCode.AltGr,
+            (int)KeyCode.LeftControl,
+            (int)KeyCode.RightControl,
+            (int)KeyCode.LeftWindows,
+            (int)KeyCode.RightWindows,
+            (int)KeyCode.LeftCommand,
+            (int)KeyCode.RightCommand,
+            (int)KeyCode.LeftApple,
+            (int)KeyCode.RightApple,
+        };
+
         KeyCode[] keyCodeList;
         KeyCode[] reservedKeys = new KeyCode[] { };
 
@@ -150,7 +168,7 @@ namespace DaggerfallWorkshop.Game
 
         public KeyCode[] KeyCodeList
         {
-            get { return GetKeyCodeList(); }
+            get { return keyCodeList ?? (keyCodeList = GetKeyCodeList()); }
         }
 
         public KeyCode[] ReservedKeys
@@ -1104,7 +1122,8 @@ namespace DaggerfallWorkshop.Game
         public KeyCode GetAnyKeyDown()
         {
             foreach (KeyCode k in KeyCodeList)
-                if (GetUnaryKey(k, getKeyDownMethod, true, false))
+                if (!unacceptedAnyKeys.Contains((int)k)
+                    && GetUnaryKey(k, getKeyDownMethod, true, false))
                     return k;
 
             return KeyCode.None;
@@ -1113,7 +1132,8 @@ namespace DaggerfallWorkshop.Game
         public KeyCode GetAnyKeyUp()
         {
             foreach (KeyCode k in KeyCodeList)
-                if (GetUnaryKey(k, getKeyUpMethod, false, false))
+                if (!unacceptedAnyKeys.Contains((int)k)
+                    && GetUnaryKey(k, getKeyUpMethod, false, false))
                     return k;
 
             return KeyCode.None;
@@ -1122,7 +1142,9 @@ namespace DaggerfallWorkshop.Game
         public KeyCode GetAnyKeyDownIgnoreAxisBinds()
         {
             foreach (KeyCode k in KeyCodeList)
-                if (!IsUsedInAxisBinding(k) && GetUnaryKey(k, getKeyDownMethod, true, false))
+                if (!unacceptedAnyKeys.Contains((int)k)
+                    && !IsUsedInAxisBinding(k)
+                    && GetUnaryKey(k, getKeyDownMethod, true, false))
                     return k;
 
             return KeyCode.None;
@@ -1132,7 +1154,9 @@ namespace DaggerfallWorkshop.Game
         public KeyCode GetAnyKeyUpIgnoreAxisBinds()
         {
             foreach (KeyCode k in KeyCodeList)
-                if (!IsUsedInAxisBinding(k) && GetUnaryKey(k, getKeyUpMethod, false, false))
+                if (!unacceptedAnyKeys.Contains((int)k)
+                    && !IsUsedInAxisBinding(k)
+                    && GetUnaryKey(k, getKeyUpMethod, false, false))
                     return k;
 
             return KeyCode.None;
@@ -1548,9 +1572,6 @@ namespace DaggerfallWorkshop.Game
         // returns a list of all the Unity Input.KeyCodes and the custom axis KeyCodes
         KeyCode[] GetKeyCodeList()
         {
-            if (keyCodeList != null)
-                return keyCodeList;
-
             HashSet<KeyCode> list = new HashSet<KeyCode>();
 
             foreach (var e in Enum.GetValues(typeof(KeyCode)))
