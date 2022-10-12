@@ -4,9 +4,9 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Avernite
+// Contributors:    Avernite (avernite@gmail.com)
 // 
-// Notes:
+// Notes:           Look-smoothing code changed in 0.14.5 (Avernite)
 //
 
 using UnityEngine;
@@ -20,23 +20,31 @@ namespace DaggerfallWorkshop.Game
     //
     public class PlayerMouseLook : MonoBehaviour
     {
-        public const float PITCH_MAX = 90;
-        public const float PITCH_MIN = -90;
+        public const float PitchMax = 90;
+        public const float PitchMin = -90;
 
-        const float PI_OVER_2 = Mathf.PI / 2;
+        const float piover2 = 1.570796f;
 
-        float pitchMax = PITCH_MAX;
-        float pitchMin = PITCH_MIN;
-
-        public bool enableMouseLook = true;
-
-        Vector2 lookCurrent;
         Vector2 lookTarget;
+        Vector2 lookCurrent;
+        float cameraPitch = 0.0f;
+        float cameraYaw = 0.0f;
+        public bool cursorActive;
+        float pitchMax = PitchMax;
+        float pitchMin = PitchMin;
 
         public bool invertMouseY = false;
+        public bool lockCursor;
+        public Vector2 sensitivity = new Vector2(2, 2);
+        //public Vector2 smoothing = new Vector2(3, 3); // Replaced by single float member of same name
+        public float sensitivityScale = 1.0f;
+        public float joystickSensitivityScale = 1.0f;
+        public bool enableMouseLook = true;
+        public bool enableSmoothing = true;
+        public bool simpleCursorLock = false;
+        private bool forceHideCursor;
 
-        public bool enableSmoothing = true; // This field could be eliminated because a smoothing value of 0.0f means smoothing is disabled
-        public const float SMOOTHING_MAX = 0.9f;
+        public const float SmoothingMax = 0.9f;
         float smoothing = 0.5f; // This value could come from user-defined settings if "Mouse Smoothing" checkbox is changed to a slider with values from 0.0 to 0.9
 
         /// <summary>
@@ -45,27 +53,8 @@ namespace DaggerfallWorkshop.Game
         public float Smoothing
         {
             get { return smoothing; }
-            set { smoothing = Mathf.Clamp(value, 0.0f, SMOOTHING_MAX); }
+            set { smoothing = Mathf.Clamp(value, 0.0f, SmoothingMax); }
         }
-
-        const float ZOOM_MIN = 1.0f;
-        const float ZOOM_MAX = 4.0f;
-        float zoomCurrent = ZOOM_MIN;
-        bool zooming;
-
-        float cameraPitch = 0.0f;
-        float cameraYaw = 0.0f;
-
-        public bool cursorActive;
-        public bool lockCursor;
-        public bool simpleCursorLock = false;
-        private bool forceHideCursor;
-        
-        public Vector2 sensitivity = new Vector2(2, 2);
-        public float sensitivityScale = 1.0f;
-        public float joystickSensitivityScale = 1.0f;
-
-        private bool immediateSet = true; // Alters Pitch and Yaw setter behaviors. Not meant to be changed anywhere but in ApplyLook method
 
         // Assign this if there's a parent object controlling motion, such as a Character Controller.
         // Yaw rotation will affect this object instead of the camera if set.
@@ -81,12 +70,10 @@ namespace DaggerfallWorkshop.Game
             {
                 value = Mathf.Clamp(value, pitchMin, pitchMax);
                 cameraPitch = value * Mathf.Deg2Rad;
-                if (cameraPitch > PI_OVER_2 * .99f)
-                    cameraPitch = PI_OVER_2 * .99f;
-                else if (cameraPitch < -PI_OVER_2 * .99f)
-                    cameraPitch = -PI_OVER_2 * .99f;
-                if(immediateSet)
-                    lookCurrent.y = lookTarget.y = value;
+                if (cameraPitch > piover2 * .99f)
+                    cameraPitch = piover2 * .99f;
+                else if (cameraPitch < -piover2 * .99f)
+                    cameraPitch = -piover2 * .99f;
             }
         }
 
@@ -96,26 +83,19 @@ namespace DaggerfallWorkshop.Game
         public float Yaw
         {
             get { return cameraYaw * Mathf.Rad2Deg; }
-            set
-            {
-                cameraYaw = value * Mathf.Deg2Rad;
-                if(immediateSet)
-                    lookCurrent.x = lookTarget.x = value;
-            }
+            set { cameraYaw = value * Mathf.Deg2Rad; }
         }
 
-        // Set a new maximum pitch limit and ensure current pitch is inside of new bounds
         public float PitchMaxLimit
         {
             get { return pitchMax; }
-            set { pitchMax = Mathf.Clamp(value, PITCH_MIN, PITCH_MAX); Pitch = Pitch; }
+            set { pitchMax = Mathf.Clamp(value, PitchMin, PitchMax); Pitch = Pitch; }
         }
 
-        // Set a new minimum pitch limit and ensure current pitch is inside of new bounds
         public float PitchMinLimit
         {
             get { return pitchMin; }
-            set { pitchMin = Mathf.Clamp(value, PITCH_MIN, PITCH_MAX); Pitch = Pitch; }
+            set { pitchMin = Mathf.Clamp(value, PitchMin, PitchMax); Pitch = Pitch; }
         }
 
         // Scales fractional progression (non-linear) to frame rate
@@ -124,21 +104,6 @@ namespace DaggerfallWorkshop.Game
             float frames = Time.unscaledDeltaTime * 60f; // Number of frames to handle this tick, can be partial
             float c = (1.0f - fractionAt60FPS) / fractionAt60FPS;
             return 1.0f - c / (frames + c);
-        }
-
-        void HandleZooming() // Latent functionality, uncomment body to activate
-        {
-            /*if (InputManager.Instance.ActionStarted(InputManager.Actions.Zoom))
-                zooming = !zooming;
-
-            float unscaledZoomSpeed = 0.4f; // Higher value will shorten zoom transition period
-
-            // Get frame rate scaled zoomSpeed so that zoom transition period is same regardless of FPS
-            float zoomSpeed = GetFrameRateScaledFractionOfProgression(unscaledZoomSpeed * (zooming ? 0.5f : 1.0f));
-            
-            zoomCurrent = zoomCurrent * (1.0f - zoomSpeed) + (zooming ? ZOOM_MAX : ZOOM_MIN) * zoomSpeed;
-
-            GameManager.Instance.MainCamera.fieldOfView = DaggerfallUnity.Settings.FieldOfView / zoomCurrent;*/
         }
 
         // Applies scaled raw mouse deltas to lookTarget, then calls ApplySmoothing method to update lookCurrent
@@ -166,12 +131,11 @@ namespace DaggerfallWorkshop.Game
 
             Vector2 rawMouseDelta = new Vector2(InputManager.Instance.LookX, InputManager.Instance.LookY);
 
-            // Sensitivity factors are inversely scaled by zoomCurrent to allow finer control when zoomed in
-            lookTarget += Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX / zoomCurrent, sensitivityY / zoomCurrent * (invertMouseY ? 1 : -1)));
+            lookTarget += Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX, sensitivityY * (invertMouseY ? -1 : 1)));
 
-            float range = 360.0f; // Wrap look yaws to range 0..<360
+            float range = 360.0f; // Max yaw (or close enough)
 
-            if (lookTarget.x < 0.0f || lookTarget.x >= range)
+            if (lookTarget.x < 0.0f || lookTarget.x >= range) // Wrap look yaws to range 0..<360
             {
                 float delta = Mathf.Floor(lookTarget.x / range) * range;
                 lookTarget.x -= delta;
@@ -183,15 +147,14 @@ namespace DaggerfallWorkshop.Game
 
             ApplySmoothing();
 
-            // Access special setter behaviors for Yaw and Pitch
-            immediateSet = false; SetFacing(lookCurrent); immediateSet = true;
+            Yaw = lookCurrent.x;
+            Pitch = -lookCurrent.y;
         }
 
         // Updates lookCurrent by moving it a fraction towards lookTarget
         // If smoothing is 0.0 (off) then lookCurrent will be set to lookTarget with no intermediates
         void ApplySmoothing()
         {
-            // This value could come from user-defined settings (0.0 is none, 0.1 is a little, 0.9 is a lot)
             float smoothing = enableSmoothing ? Smoothing : 0.0f;
 
             // Enforce some minimum smoothing for controllers (if you like)
@@ -205,13 +168,9 @@ namespace DaggerfallWorkshop.Game
             lookCurrent = lookCurrent * smoothing + lookTarget * (1.0f - smoothing);
         }
 
-        bool SuppressLook()
+        void Start()
         {
-            // Suppress mouse look if WeaponSwingMode is Classic/Vanilla and player is dragging mouse to swing
-            if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && DaggerfallUnity.Settings.WeaponSwingMode == 0 && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Bow)
-                return true;
-
-            return false;
+            Init();
         }
 
         void Update()
@@ -222,6 +181,8 @@ namespace DaggerfallWorkshop.Game
                 InputManager.Instance.CursorVisible = false;
                 return;
             }
+
+            bool applyLook = true;
 
             // Cursor activation toggle while game is running
             // This is distinct from cursor being left active when UI open or game is unpaused by esc
@@ -284,12 +245,14 @@ namespace DaggerfallWorkshop.Game
             if (!enableMouseLook)
                 return;
 
-            HandleZooming();
+            // Suppress mouse look if player is swinging weapon
+            if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && DaggerfallUnity.Settings.WeaponSwingMode == 0 && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Bow)
+                applyLook = false;
 
-            if (SuppressLook())
-                SetFacing(lookCurrent); // Immediately stop at current heading
+            if (applyLook)
+                ApplyLook(); // Apply mouse tracking or controller input to look vector
             else
-                ApplyLook(); // Apply mouse tracking or controller input to look heading
+                SetFacing(lookCurrent); // Immediately stop at current heading
 
             // If there's a character body that acts as a parent to the camera
             if (characterBody)
@@ -303,16 +266,23 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public void Init()
+        {
+            lookTarget.x = Yaw;
+            lookTarget.y = -Pitch;
+            lookCurrent = lookTarget;
+        }
+
         public void SetFacing(float yaw, float pitch)
         {
             Yaw = yaw;
             Pitch = pitch;
+            Init();
         }
 
         public void SetFacing(Vector2 facing)
         {
-            Yaw = facing.x;
-            Pitch = facing.y;
+            SetFacing(facing.x, -facing.y);
         }
 
         public void SetFacing(Vector3 forward)
