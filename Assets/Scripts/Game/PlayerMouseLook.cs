@@ -118,7 +118,7 @@ namespace DaggerfallWorkshop.Game
             set { pitchMin = Mathf.Clamp(value, PITCH_MIN, PITCH_MAX); Pitch = Pitch; }
         }
 
-        // Returns fractional progression (non-linear), scaled to frame rate
+        // Scales fractional progression (non-linear) to frame rate
         private float GetFrameRateScaledFractionOfProgression(float fractionAt60FPS)
         {
             float frames = Time.unscaledDeltaTime * 60f; // Number of frames to handle this tick, can be partial
@@ -169,16 +169,13 @@ namespace DaggerfallWorkshop.Game
             // Sensitivity factors are inversely scaled by zoomCurrent to allow finer control when zoomed in
             lookTarget += Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX / zoomCurrent, sensitivityY / zoomCurrent * (invertMouseY ? 1 : -1)));
 
-            // Wrap look yaws to range 0..<360
-            if (lookTarget.x < 0)
+            float range = 360.0f; // Wrap look yaws to range 0..<360
+
+            if (lookTarget.x < 0.0f || lookTarget.x >= range)
             {
-                lookTarget.x += 360;
-                lookCurrent.x += 360;
-            }
-            else if(lookTarget.x >= 360)
-            {
-                lookTarget.x -= 360;
-                lookCurrent.x -= 360;
+                float delta = Mathf.Floor(lookTarget.x / range) * range;
+                lookTarget.x -= delta;
+                lookCurrent.x -= delta;
             }
 
             // Clamp target look pitch to range of straight down to straight up
