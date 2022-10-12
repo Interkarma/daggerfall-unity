@@ -901,15 +901,15 @@ namespace Wenzil.Console
                 if (args == null || args.Length < 1 || !float.TryParse(args[0], out speed))
                 {
                     if (mLook)
-                        Console.Log(string.Format("Current mouse smoothing: {0}", mLook.smoothing));
+                        Console.Log(string.Format("Current mouse smoothing: {0}", mLook.Smoothing));
                     return HelpCommand.Execute(SetMouseSmoothing.name);
                 }
                 else if (mLook == null)
                     return error;
                 else
                 {
-                    mLook.smoothing = new Vector2(speed, speed);
-                    return string.Format("Set mouse smoothing to: {0}", mLook.smoothing.ToString());
+                    mLook.Smoothing = speed;
+                    return string.Format("Set mouse smoothing to: {0}", mLook.Smoothing.ToString());
                 }
             }
 
