@@ -283,6 +283,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Destructors
+
+        ~DaggerfallInventoryWindow()
+        {
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+        }
+
+        #endregion
+
         #region Setup Methods
 
         protected override void Setup()

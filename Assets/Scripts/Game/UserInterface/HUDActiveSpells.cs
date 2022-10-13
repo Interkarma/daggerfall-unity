@@ -101,6 +101,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Public Methods
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            EntityEffectBroker.OnNewMagicRound -= UpdateIcons;
+            GameManager.Instance.PlayerEffectManager.OnAssignBundle -= UpdateIcons;
+            GameManager.Instance.PlayerEffectManager.OnRemoveBundle -= UpdateIcons;
+            GameManager.Instance.PlayerEffectManager.OnAddIncumbentState -= UpdateIcons;
+            SaveLoadManager.OnLoad -= SaveLoadManager_OnLoad;
+        }
+
         public override void Update()
         {
             base.Update();

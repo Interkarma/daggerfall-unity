@@ -70,6 +70,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #endregion
 
+        #region Destructors
+
+        ~DaggerfallUnityMouseControlsWindow()
+        {
+            // note: is this the the best spot to unregister this event? idk
+            DaggerfallWorkshop.Game.InputManager.OnSavedKeyBinds -= OnUpdateValues;
+        }
+
+        #endregion
+
         #region Unity
 
         public override void Update()

@@ -119,6 +119,7 @@ namespace DaggerfallWorkshop.Game
         {
             StreamingWorld.OnInitWorld -= StreamingWorld_OnInitWorld;
             SaveLoadManager.OnLoad -= SaveLoadManager_OnLoad;
+            PlayerEnterExit.OnRespawnerComplete -= PlayerEnterExit_OnRespawnerComplete;
             PlayerEnterExit.OnTransitionInterior -= OnTransitionToInterior;
             PlayerEnterExit.OnTransitionExterior -= OnTransitionToExterior;
             PlayerEnterExit.OnTransitionDungeonInterior -= OnTransitionToDungeon;

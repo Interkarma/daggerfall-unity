@@ -77,6 +77,12 @@ namespace DaggerfallWorkshop
             DaggerfallVidPlayerWindow.OnVideoEnd += DaggerfallVidPlayerWindow_OnVideoEnd;
         }
 
+        void OnDestroy()
+        {
+            DaggerfallVidPlayerWindow.OnVideoStart -= DaggerfallVidPlayerWindow_OnVideoStart;
+            DaggerfallVidPlayerWindow.OnVideoEnd -= DaggerfallVidPlayerWindow_OnVideoEnd;
+        }
+
         void Update()
         {
             if (!isImported)

@@ -89,6 +89,11 @@ namespace DaggerfallWorkshop.Utility
             StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
         }
 
+        void OnDestroy()
+        {
+            StreamingWorld.OnInitWorld -= StreamingWorld_OnInitWorld;
+        }
+
         void FixedUpdate()
         {
             // Must have streaming world reference

@@ -213,6 +213,18 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #endregion
 
+        #region Destructors
+
+        ~PlayerEntity()
+        {
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+            OnExhausted -= PlayerEntity_OnExhausted;
+            PlayerGPS.OnExitLocationRect -= PlayerGPS_OnExitLocationRect;
+            DaggerfallTravelPopUp.OnPostFastTravel -= DaggerfallTravelPopUp_OnPostFastTravel;
+        }
+
+        #endregion
+
         #region Public Methods
 
         public bool GetSkillRecentlyIncreased(DFCareer.Skills skill)

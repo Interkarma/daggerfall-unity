@@ -62,6 +62,15 @@ namespace DaggerfallWorkshop.Game
             PlayerDeath.OnPlayerDeath               += PlayerDeath_OnPlayerDeathHandler;
         }
 
+        ~StateManager()
+        {
+            DaggerfallUI.UIManager.OnWindowChange   -= UIManager_OnWindowChangeHandler;
+            StartGameBehaviour.OnStartMenu          -= StartGameBehaviour_OnStartMenuHandler;
+            StartGameBehaviour.OnStartGame          -= StartGameBehaviour_OnStartGameHandler;
+            SaveLoadManager.OnLoad                  -= SaveLoadManager_OnLoadHandler;
+            PlayerDeath.OnPlayerDeath               -= PlayerDeath_OnPlayerDeathHandler;
+        }
+
         public enum StateTypes
         {
             None,

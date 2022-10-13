@@ -292,6 +292,16 @@ namespace DaggerfallWorkshop.Game.Entity
 
         #endregion
 
+        #region Destructors
+
+        ~DaggerfallEntity()
+        {
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+        }
+
+        #endregion
+
         #region Abstract Methods
 
         /// <summary>

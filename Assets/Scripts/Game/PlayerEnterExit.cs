@@ -322,6 +322,12 @@ namespace DaggerfallWorkshop.Game
             underwaterFog = new UnderwaterFog();
         }
 
+        void OnDestroy()
+        {
+            PlayerGPS.OnEnterLocationRect -= PlayerGPS_OnEnterLocationRect;
+            EntityEffectBroker.OnNewMagicRound -= EntityEffectBroker_OnNewMagicRound;
+        }
+
         void Update()
         {            
             // Track which dungeon block player is inside of

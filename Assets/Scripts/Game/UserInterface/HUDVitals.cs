@@ -121,6 +121,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             VitalsChangeDetector.OnReset += VitalChangeDetector_OnReset;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            VitalsChangeDetector.OnReset -= VitalChangeDetector_OnReset;
+        }
+
         public void SetAllHorizontalAlignment(HorizontalAlignment alignment)
         {
             healthBar.HorizontalAlignment = alignment;

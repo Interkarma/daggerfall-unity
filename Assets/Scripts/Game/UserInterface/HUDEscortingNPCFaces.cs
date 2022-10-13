@@ -53,6 +53,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Overrides
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            QuestMachine.OnQuestEnded -= QuestMachine_OnQuestEnded;
+            Serialization.SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+        }
+
         public override void Update()
         {
             base.Update();

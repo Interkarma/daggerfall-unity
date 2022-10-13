@@ -58,6 +58,15 @@ namespace DaggerfallWorkshop.Game.Questing
             StreamingWorld.OnInitWorld += StreamingWorld_OnInitWorld;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            PlayerEnterExit.OnTransitionDungeonExterior -= PlayerEnterExit_OnTransitionExterior;
+            PlayerEnterExit.OnTransitionExterior -= PlayerEnterExit_OnTransitionExterior;
+            StreamingWorld.OnInitWorld -= StreamingWorld_OnInitWorld;
+        }
+
         public override void InitialiseOnSet()
         {
             lastSpawnTime = 0;

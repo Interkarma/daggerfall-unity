@@ -85,6 +85,11 @@ namespace DaggerfallWorkshop.Game.Questing
             QuestMachine.OnQuestStarted += QuestMachine_OnQuestStarted;
         }
 
+        ~QuestListsManager()
+        {
+            QuestMachine.OnQuestStarted -= QuestMachine_OnQuestStarted;
+        }
+
         public void QuestMachine_OnQuestStarted(Quest quest)
         {
             // Record that this quest was accepted so it doesn't get offered again.

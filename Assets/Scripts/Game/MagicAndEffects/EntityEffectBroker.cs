@@ -103,6 +103,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         #endregion
 
+        #region Destructors
+
+        ~EntityEffectBroker()
+        {
+            SaveLoadManager.OnLoad -= SaveLoadManager_OnLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+            StartGameBehaviour.OnStartGame -= StartGameBehaviour_OnStartGame;
+            DaggerfallTravelPopUp.OnPostFastTravel -= DaggerfallTravelPopUp_OnPostFastTravel;
+            DaggerfallCourtWindow.OnEndPrisonTime -= DaggerfallCourtWindow_OnEndPrisonTime;
+        }
+
+        #endregion
+
         #region Unity
 
         void Start()
