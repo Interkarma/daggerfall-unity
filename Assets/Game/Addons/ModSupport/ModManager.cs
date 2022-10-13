@@ -158,6 +158,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
         }
 
+        void OnDestroy()
+        {
+            foreach (Mod mod in mods)
+                mod.UnloadAssetBundle(unloadAllObjects: true);
+        }
+
         #endregion
 
         #region Public Methods
