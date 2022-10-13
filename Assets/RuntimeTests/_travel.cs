@@ -31,6 +31,10 @@ public class _travel
         
         PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
         StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;
+        {
+            // hide the ui because it wasnt disappearing by itself for some reason:
+            DaggerfallUI.Instance.enabled = false;
+        }
         int counter = 0;
         var rnd = new System.Random( 934527 );
         while( counter<50 )
@@ -80,6 +84,9 @@ public class _travel
         {
             // disable a starting dungeon
             playerEnterExit.DisableAllParents(cleanup: true);
+
+            // hide the ui because it wasnt disappearing by itself for some reason:
+            DaggerfallUI.Instance.enabled = false;
         }
         int counter = 0;
         var rnd = new System.Random( 12345 );
