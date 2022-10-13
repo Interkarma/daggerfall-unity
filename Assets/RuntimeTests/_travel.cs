@@ -6,8 +6,6 @@ using UnityEngine.TestTools;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility;
-using DaggerfallConnect.Utility;
-using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
@@ -15,6 +13,8 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallConnect;
+using DaggerfallConnect.Utility;
+using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallConnect.Arena2;
 
@@ -25,13 +25,12 @@ public class _travel
     [Timeout( int.MaxValue )]
     public static IEnumerator visits_50_locations ()
     {
-        // start routine:
-        var startRoutine = _new_game.StartGameBehaviour_StartMethods_NewCharacter();
-        while( startRoutine.MoveNext() )
-            yield return startRoutine.Current;
-
+        var loadGameSceneRoutine = RuntimeTestUtilities.LoadGameScene();
+        while( loadGameSceneRoutine.MoveNext() )
+            yield return loadGameSceneRoutine.Current;
+        
         PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
-        StreamingWorld streamingWorld = GameObject.FindObjectOfType<StreamingWorld>();
+        StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;
         int counter = 0;
         var rnd = new System.Random( 934527 );
         while( counter<50 )
@@ -72,17 +71,16 @@ public class _travel
     [Timeout( int.MaxValue )]
     public static IEnumerator visits_50_dungeons ()
     {
-        // start routine:
-        var startRoutine = _new_game.StartGameBehaviour_StartMethods_NewCharacter();
-        while( startRoutine.MoveNext() )
-            yield return startRoutine.Current;
+        var loadGameSceneRoutine = RuntimeTestUtilities.LoadGameScene();
+        while( loadGameSceneRoutine.MoveNext() )
+            yield return loadGameSceneRoutine.Current;
         
         PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
-        StreamingWorld streamingWorld = GameObject.FindObjectOfType<StreamingWorld>();
-        
-        // disable starting dungeon:
-        playerEnterExit.DisableAllParents(cleanup: true);
-
+        StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;
+        {
+            // disable a starting dungeon
+            playerEnterExit.DisableAllParents(cleanup: true);
+        }
         int counter = 0;
         var rnd = new System.Random( 12345 );
         while( counter<50 )
