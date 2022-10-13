@@ -33,7 +33,7 @@ public struct FillJob<T> : IJob where T : unmanaged
     }
     unsafe void IJob.Execute()
     {
-        void* src = UnsafeUtility.Malloc(UnsafeUtility.SizeOf<T>(), UnsafeUtility.AlignOf<T>(), Allocator.Temp);
+        void* src = &Value;
         void* dst = NativeArrayUnsafeUtility.GetUnsafePtr<T>(Array);
         int size = UnsafeUtility.SizeOf<T>();
         int count = this.Array.Length;
