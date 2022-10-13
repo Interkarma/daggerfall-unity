@@ -232,6 +232,12 @@ namespace DaggerfallWorkshop
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
+        void OnDestroy()
+        {
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+        }
+
         void Update()
         {
             // Cannot proceed until ready and player is set
