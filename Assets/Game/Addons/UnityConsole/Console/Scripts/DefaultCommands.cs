@@ -69,7 +69,7 @@ namespace Wenzil.Console
 
             ConsoleCommandsDatabase.RegisterCommand(SetWalkSpeed.name, SetWalkSpeed.description, SetWalkSpeed.usage, SetWalkSpeed.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetMouseSensitivity.name, SetMouseSensitivity.description, SetMouseSensitivity.usage, SetMouseSensitivity.Execute);
-            ConsoleCommandsDatabase.RegisterCommand(ToggleMouseSmoothing.name, ToggleMouseSmoothing.description, ToggleMouseSmoothing.usage, ToggleMouseSmoothing.Execute);
+            //ConsoleCommandsDatabase.RegisterCommand(ToggleMouseSmoothing.name, ToggleMouseSmoothing.description, ToggleMouseSmoothing.usage, ToggleMouseSmoothing.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddPopupText.name, AddPopupText.description, AddPopupText.usage, AddPopupText.Execute);
 
             //ConsoleCommandsDatabase.RegisterCommand(SetMouseSmoothing.name, SetMouseSmoothing.description, SetMouseSmoothing.usage, SetMouseSmoothing.Execute);
@@ -864,7 +864,7 @@ namespace Wenzil.Console
         }
 
 
-        private static class ToggleMouseSmoothing
+        /*private static class ToggleMouseSmoothing
         {
             public static readonly string name = "tmsmooth";
             public static readonly string error = "Failed to toggle mouse smoothing - PlayerMouseLook object not found?";
@@ -884,7 +884,7 @@ namespace Wenzil.Console
                 }
             }
 
-        }
+        }*/
 
 
         private static class SetMouseSmoothing
