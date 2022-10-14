@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //protected HorizontalSlider weaponSensitivitySlider;
         protected Checkbox moveSpeedCheckbox;
         protected Checkbox invertMouseVerticalCheckbox;
-        protected Checkbox mouseSmoothingCheckbox;
+        protected HorizontalSlider mouseSmoothingSlider;
         protected HorizontalSlider weaponSwingModeSlider;
         protected Checkbox bowDrawbackCheckbox;
         protected Checkbox toggleSneakCheckbox;
@@ -125,7 +125,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             mouseSensitivitySlider = CreateSlider("Mouse Look Sensitivity", 20, 70, 0.1f, 8.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
             invertMouseVerticalCheckbox = AddOption(20, 120, "Invert Look-Y", DaggerfallUnity.Settings.InvertMouseVertical);
-            mouseSmoothingCheckbox = AddOption(20, 130, "Mouse Smoothing", DaggerfallUnity.Settings.MouseLookSmoothing);
+            mouseSmoothingSlider = CreateSlider("Mouse Smoothing", 20, 130, 0.0f, 0.9f, DaggerfallUnity.Settings.MouseLookSmoothing);
             moveSpeedCheckbox = AddOption(20, 140, "Movement Acceleration", DaggerfallUnity.Settings.MovementAcceleration);
 
             //weaponSensitivitySlider = CreateSlider("Mouse Weapon Sensitivity", 115, 80, 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
@@ -361,7 +361,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //DaggerfallUnity.Settings.WeaponSensitivity = weaponSensitivitySlider.GetValue();
             DaggerfallUnity.Settings.MovementAcceleration = moveSpeedCheckbox.IsChecked;
             DaggerfallUnity.Settings.InvertMouseVertical = invertMouseVerticalCheckbox.IsChecked;
-            DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothingCheckbox.IsChecked;
+            DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothingSlider.ScrollIndex * 0.1f;
             DaggerfallUnity.Settings.WeaponSwingMode = weaponSwingModeSlider.ScrollIndex;
             DaggerfallUnity.Settings.BowDrawback = bowDrawbackCheckbox.IsChecked;
             DaggerfallUnity.Settings.ToggleSneak = toggleSneakCheckbox.IsChecked;
