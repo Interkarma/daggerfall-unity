@@ -62,7 +62,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox vsync;
         Checkbox swapHealthAndFatigue;
         Checkbox invertMouseVertical;
-        Checkbox mouseSmoothing;
+        HorizontalSlider mouseSmoothing;
         Checkbox leftHandWeapons;
         Checkbox playerNudity;
         HorizontalSlider weaponSwingMode;
@@ -404,7 +404,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return checkbox;
         }
 
-        HorizontalSlider AddSlider(float x, string key, int selected, params string[] choices)
+        HorizontalSlider AddSlider(float x, string key, int selected, string toolTipKey, params string[] choices)
         {
             TextLabel label = DaggerfallUI.AddTextLabel(
                 DaggerfallUI.DefaultFont,
@@ -423,11 +423,28 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 optionsPanel
             );
             slider.ToolTip = defaultToolTip;
-            slider.ToolTipText = GetText("weaponSwingModeInfo");
+            slider.ToolTipText = GetText(toolTipKey);
 
             optionPos += optionSpacing;
 
             return slider;
+        }
+
+        HorizontalSlider AddSlider(float x, string key, int selected, string toolTipKey, float minValue, float maxValue)
+        {
+            int min = Mathf.RoundToInt(minValue * 10);
+            int max = Mathf.RoundToInt(maxValue * 10);
+
+            int numValues = max - min + 1;
+
+            string[] choices = new string[numValues];
+
+            --min;
+
+            for (int i = 0; i < numValues; ++i)
+                choices[i] = ++min < 10 ? "0." + min : (min / 10) + "." + (min % 10);
+
+            return AddSlider(x, key, selected, toolTipKey, choices);
         }
 
         bool GetLeftHandWeapons()
@@ -499,7 +516,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             vsync = AddOption(x, "vsync", DaggerfallUnity.Settings.VSync);
             swapHealthAndFatigue = AddOption(x, "swapHealthAndFatigue", DaggerfallUnity.Settings.SwapHealthAndFatigueColors);
             invertMouseVertical = AddOption(x, "invertMouseVertical", DaggerfallUnity.Settings.InvertMouseVertical);
-            mouseSmoothing = AddOption(x, "mouseSmoothing", DaggerfallUnity.Settings.MouseLookSmoothing);
+            mouseSmoothing = AddSlider(x, "mouseSmoothing", Mathf.RoundToInt(DaggerfallUnity.Settings.MouseLookSmoothing * 10), "mouseSmoothingInfo", 0.0f, 0.9f);
 
             x = 165;
             optionPos = 60;
@@ -515,7 +532,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enableController = AddOption(x, "enableController", DaggerfallUnity.Settings.EnableController);
             enableController.OnToggleState += EnableController_OnToggleState;
             
-            weaponSwingMode = AddSlider(x, "weaponSwingMode", DaggerfallUnity.Settings.WeaponSwingMode, "Vanilla", "Click", "Hold");
+            weaponSwingMode = AddSlider(x, "weaponSwingMode", DaggerfallUnity.Settings.WeaponSwingMode, "weaponSwingModeInfo", "Vanilla", "Click", "Hold");
 
             // Add mod note
             TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 130), GetText("modNote"), optionsPanel);
@@ -838,7 +855,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.VSync = vsync.IsChecked;
             DaggerfallUnity.Settings.SwapHealthAndFatigueColors = swapHealthAndFatigue.IsChecked;
             DaggerfallUnity.Settings.InvertMouseVertical = invertMouseVertical.IsChecked;
-            DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothing.IsChecked;
+            DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothing.ScrollIndex * 0.1f;
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
             DaggerfallUnity.Settings.WeaponSwingMode = weaponSwingMode.ScrollIndex;
