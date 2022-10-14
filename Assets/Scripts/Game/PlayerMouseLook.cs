@@ -6,7 +6,7 @@
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Avernite (avernite@gmail.com)
 // 
-// Notes:           Look-smoothing code changed in 0.14.5 (Avernite)
+// Notes:           
 //
 
 using UnityEngine;
@@ -132,7 +132,7 @@ namespace DaggerfallWorkshop.Game
 
             lookTarget += Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX, sensitivityY * (invertMouseY ? -1 : 1)));
 
-            float range = 360.0f; // Max yaw (or close enough)
+            float range = 360.0f;
 
             if (lookTarget.x < 0.0f || lookTarget.x >= range) // Wrap look yaws to range 0..<360
             {
