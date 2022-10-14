@@ -40,12 +40,11 @@ namespace DaggerfallWorkshop.Game
         public float sensitivityScale = 1.0f;
         public float joystickSensitivityScale = 1.0f;
         public bool enableMouseLook = true;
-        public bool enableSmoothing = true;
         public bool simpleCursorLock = false;
         private bool forceHideCursor;
 
         public const float SmoothingMax = 0.9f;
-        float smoothing = 0.5f; // This value could come from user-defined settings if "Mouse Smoothing" checkbox is changed to a slider with values from 0.0 to 0.9
+        float smoothing = 0.5f; // This value now comes from user-defined settings
 
         /// <summary>
         /// Gets or sets degree of mouse-look camera smoothing (0.0 is none, 0.1 is a little, 0.9 is a lot).
@@ -155,7 +154,7 @@ namespace DaggerfallWorkshop.Game
         // If smoothing is 0.0 (off) then lookCurrent will be set to lookTarget with no intermediates
         void ApplySmoothing()
         {
-            float smoothing = enableSmoothing ? Smoothing : 0.0f;
+            float smoothing = Smoothing;
 
             // Enforce some minimum smoothing for controllers (if you like)
             if (InputManager.Instance.UsingController && smoothing < 0.5f)
