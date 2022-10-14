@@ -404,7 +404,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return checkbox;
         }
 
-        HorizontalSlider AddSlider(float x, string key, int selected, string toolTipKey, params string[] choices)
+        HorizontalSlider AddSlider(float x, string key, string toolTipKey, int selected, params string[] choices)
         {
             TextLabel label = DaggerfallUI.AddTextLabel(
                 DaggerfallUI.DefaultFont,
@@ -430,21 +430,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             return slider;
         }
 
-        HorizontalSlider AddSlider(float x, string key, int selected, string toolTipKey, float minValue, float maxValue)
+        HorizontalSlider AddSlider(float x, string key, string toolTipKey, int selected, float minValue, float maxValue)
         {
-            int min = Mathf.RoundToInt(minValue * 10);
-            int max = Mathf.RoundToInt(maxValue * 10);
+            TextLabel label = DaggerfallUI.AddTextLabel(
+                DaggerfallUI.DefaultFont,
+                new Vector2(x, optionPos),
+                GetText(key),
+                optionsPanel
+            );
+            label.TextColor = selectedTextColor;
+            label.TextScale = 1.0f;
+            label.ShadowPosition = Vector2.zero;
 
-            int numValues = max - min + 1;
+            HorizontalSlider slider = DaggerfallUI.AddSlider(
+                new Vector2(x, optionPos + 8f),
+                (s) => s.SetIndicator(minValue, maxValue, selected * 0.1f),
+                1.0f,
+                optionsPanel
+            );
+            slider.ToolTip = defaultToolTip;
+            slider.ToolTipText = GetText(toolTipKey);
 
-            string[] choices = new string[numValues];
+            optionPos += optionSpacing;
 
-            --min;
-
-            for (int i = 0; i < numValues; ++i)
-                choices[i] = ++min < 10 ? "0." + min : (min / 10) + "." + (min % 10);
-
-            return AddSlider(x, key, selected, toolTipKey, choices);
+            return slider;
         }
 
         bool GetLeftHandWeapons()
@@ -516,7 +525,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             vsync = AddOption(x, "vsync", DaggerfallUnity.Settings.VSync);
             swapHealthAndFatigue = AddOption(x, "swapHealthAndFatigue", DaggerfallUnity.Settings.SwapHealthAndFatigueColors);
             invertMouseVertical = AddOption(x, "invertMouseVertical", DaggerfallUnity.Settings.InvertMouseVertical);
-            mouseSmoothing = AddSlider(x, "mouseSmoothing", Mathf.RoundToInt(DaggerfallUnity.Settings.MouseLookSmoothing * 10), "mouseSmoothingInfo", 0.0f, 0.9f);
+            mouseSmoothing = AddSlider(x, "mouseSmoothing", "mouseSmoothingInfo", Mathf.RoundToInt(DaggerfallUnity.Settings.MouseLookSmoothing * 10), 0.0f, 0.9f);
 
             x = 165;
             optionPos = 60;
@@ -532,7 +541,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enableController = AddOption(x, "enableController", DaggerfallUnity.Settings.EnableController);
             enableController.OnToggleState += EnableController_OnToggleState;
             
-            weaponSwingMode = AddSlider(x, "weaponSwingMode", DaggerfallUnity.Settings.WeaponSwingMode, "weaponSwingModeInfo", "Vanilla", "Click", "Hold");
+            weaponSwingMode = AddSlider(x, "weaponSwingMode", "weaponSwingModeInfo", DaggerfallUnity.Settings.WeaponSwingMode, "Vanilla", "Click", "Hold");
 
             // Add mod note
             TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 130), GetText("modNote"), optionsPanel);
