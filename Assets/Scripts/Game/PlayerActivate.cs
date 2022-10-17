@@ -617,6 +617,14 @@ namespace DaggerfallWorkshop.Game
                             mb.OnClose += BuildingGreetingPopup_OnClose;
                             return;
                         }
+
+                        // Bashing open an unlocked door potentially alerts the guards.
+                        if (isBash && Dice100.SuccessRoll(10))
+                        {
+                            PlayerEntity player = GameManager.Instance.PlayerEntity;
+                            player.CrimeCommitted = PlayerEntity.Crimes.Breaking_And_Entering;
+                            player.SpawnCityGuards(true);
+                        }
                     }
 
                     // Hit door while outside, transition inside
