@@ -319,12 +319,12 @@ namespace DaggerfallWorkshop
 
         public static string[] GetMouseLookSmoothingStrengths()
         {
-            return new string[] { "Off", "Reduced", "Medium", "Extra", "Max" };
+            return new string[] { "None", "Min", "Reduced", "Medium", "Extra", "Max" };
         }
 
         public static float[] GetMouseLookSmoothingFactors()
         {
-            return new float[] { 0.0f, 0.3f, 0.5f, 0.7f, 0.9f };
+            return new float[] { 0.0f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f };
         }
 
         public static int GetMouseLookSmoothingStrength(float factor)
