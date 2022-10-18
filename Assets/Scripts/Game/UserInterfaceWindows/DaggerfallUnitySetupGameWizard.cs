@@ -525,7 +525,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             vsync = AddOption(x, "vsync", DaggerfallUnity.Settings.VSync);
             swapHealthAndFatigue = AddOption(x, "swapHealthAndFatigue", DaggerfallUnity.Settings.SwapHealthAndFatigueColors);
             invertMouseVertical = AddOption(x, "invertMouseVertical", DaggerfallUnity.Settings.InvertMouseVertical);
-            mouseSmoothing = AddSlider(x, "mouseSmoothing", "mouseSmoothingInfo", Mathf.RoundToInt(DaggerfallUnity.Settings.MouseLookSmoothing * 10), 0.0f, 0.9f);
+            mouseSmoothing = AddSlider(x, "mouseSmoothing", "mouseSmoothingInfo", SettingsManager.GetMouseLookSmoothingStrength(DaggerfallUnity.Settings.MouseLookSmoothingFactor), SettingsManager.GetMouseLookSmoothingStrengths());
 
             x = 165;
             optionPos = 60;
@@ -864,7 +864,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.VSync = vsync.IsChecked;
             DaggerfallUnity.Settings.SwapHealthAndFatigueColors = swapHealthAndFatigue.IsChecked;
             DaggerfallUnity.Settings.InvertMouseVertical = invertMouseVertical.IsChecked;
-            DaggerfallUnity.Settings.MouseLookSmoothing = mouseSmoothing.ScrollIndex * 0.1f;
+            DaggerfallUnity.Settings.MouseLookSmoothingFactor = SettingsManager.GetMouseLookSmoothingFactor(mouseSmoothing.ScrollIndex);
             DaggerfallUnity.Settings.Handedness = GetHandedness(leftHandWeapons.IsChecked);
             DaggerfallUnity.Settings.PlayerNudity = playerNudity.IsChecked;
             DaggerfallUnity.Settings.WeaponSwingMode = weaponSwingMode.ScrollIndex;
