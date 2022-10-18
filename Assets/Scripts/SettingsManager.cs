@@ -246,7 +246,7 @@ namespace DaggerfallWorkshop
 
         // [Controls]
         public bool InvertMouseVertical { get; set; }
-        public float MouseLookSmoothing { get; set; }
+        public float MouseLookSmoothingFactor { get; set; }
         public float MouseLookSensitivity { get; set; }
         public float JoystickLookSensitivity { get; set; }
         public float JoystickCursorSensitivity { get; set; }
@@ -316,6 +316,32 @@ namespace DaggerfallWorkshop
         #endregion
 
         #region Public Methods
+
+        public static string[] GetMouseLookSmoothingStrengths()
+        {
+            return new string[] { "Off", "Reduced", "Medium", "Extra", "Max" };
+        }
+
+        public static float[] GetMouseLookSmoothingFactors()
+        {
+            return new float[] { 0.0f, 0.3f, 0.5f, 0.7f, 0.9f };
+        }
+
+        public static int GetMouseLookSmoothingStrength(float factor)
+        {
+            float[] factors = GetMouseLookSmoothingFactors();
+
+            for (int i = 0; i < factors.Length; ++i)
+                if (factors[i] == factor)
+                    return i;
+
+            return 0;
+        }
+
+        public static float GetMouseLookSmoothingFactor(int index)
+        {
+            return GetMouseLookSmoothingFactors()[index];
+        }
 
         /// <summary>
         /// Load settings from settings.ini to live properties.
@@ -443,7 +469,7 @@ namespace DaggerfallWorkshop
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
 
             InvertMouseVertical = GetBool(sectionControls, "InvertMouseVertical");
-            MouseLookSmoothing = GetFloat(sectionControls, "MouseLookSmoothing", 0.0f, 0.9f);
+            MouseLookSmoothingFactor = GetFloat(sectionControls, "MouseLookSmoothingFactor", 0.0f, 0.9f);
             MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 8.0f);
             JoystickLookSensitivity = GetFloat(sectionControls, "JoystickLookSensitivity", 0.1f, 4.0f);
             JoystickCursorSensitivity = GetFloat(sectionControls, "JoystickCursorSensitivity", 0.1f, 5.0f);
@@ -630,7 +656,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);
 
             SetBool(sectionControls, "InvertMouseVertical", InvertMouseVertical);
-            SetFloat(sectionControls, "MouseLookSmoothing", MouseLookSmoothing);
+            SetFloat(sectionControls, "MouseLookSmoothingFactor", MouseLookSmoothingFactor);
             SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);
             SetFloat(sectionControls, "JoystickLookSensitivity", JoystickLookSensitivity);
             SetFloat(sectionControls, "JoystickCursorSensitivity", JoystickCursorSensitivity);
