@@ -887,7 +887,7 @@ namespace Wenzil.Console
         }*/
 
 
-        private static class SetMouseSmoothing
+        /*private static class SetMouseSmoothing
         {
             public static readonly string name = "set_msmooth";
             public static readonly string error = "Failed to set mouse smoothing - invalid setting or PlayerMouseLook object not found";
@@ -913,7 +913,7 @@ namespace Wenzil.Console
                 }
             }
 
-        }
+        }*/
 
         private static class SetVSync
         {
