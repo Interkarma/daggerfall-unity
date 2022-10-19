@@ -61,10 +61,11 @@ public class RuntimeTestUtilities
         var ___pm = new ProfilerMarker($"{nameof(RuntimeTestUtilities)}::{nameof(ReadLocation)}({x},{y},...)");
         ___pm.Begin();
 
-        if (DaggerfallUnity.Instance.ContentReader.HasLocation(x, y, out var mapSummary))
+        var contentReader = DaggerfallUnity.Instance.ContentReader;
+        if (contentReader.HasLocation(x, y, out var mapSummary))
         {
             var watch = Stopwatch.StartNew();
-            bool hasLocation = DaggerfallUnity.Instance.ContentReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex, out location);
+            bool hasLocation = contentReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex, out location);
             watch.Stop();
 
             {
