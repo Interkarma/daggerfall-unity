@@ -4,6 +4,7 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "DFU",
+        "Unity.Mathematics",
         "Unity.InputSystem",
         "Unity.InputSystem.TestFramework"
     ],

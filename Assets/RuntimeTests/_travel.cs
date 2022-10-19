@@ -20,111 +20,74 @@ using DaggerfallConnect.Arena2;
 
 public class _travel
 {
-    
+
     [UnityTest]
-    [Timeout( int.MaxValue )]
-    public static IEnumerator visits_50_locations ()
+    [Timeout(int.MaxValue)]
+    public static IEnumerator visits_50_locations()
     {
-        var loadGameSceneRoutine = RuntimeTestUtilities.LoadGameScene();
-        while( loadGameSceneRoutine.MoveNext() )
-            yield return loadGameSceneRoutine.Current;
-        
-        PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
-        StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;
-        {
-            // hide the ui because it wasnt disappearing by itself for some reason:
-            DaggerfallUI.Instance.enabled = false;
-        }
+        yield return RuntimeTestUtilities.LoadGameSceneRoutine();
+
+        RuntimeTestUtilities.HideMainMenuUi();
+
         int counter = 0;
-        var rnd = new System.Random( 934527 );
-        while( counter<50 )
+        var rnd = new System.Random(934527);
+        while (counter < 50)
         {
-            int x = rnd.Next( 2 , 997 );
-            int y = rnd.Next( 2 , 497 );
+            int x = rnd.Next(2, 997);
+            int y = rnd.Next(2, 497);
 
             // Get start parameters
-            DFPosition mapPixel = new DFPosition( x , y );
-            
-            // Read location if any
-            DFLocation location = default;
-            bool hasLocation = DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out var mapSummary);
-            if (hasLocation)
-            {
-                if (!DaggerfallUnity.Instance.ContentReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex, out location))
-                    hasLocation = false;
-            }
+            DFPosition mapPixel = new DFPosition(x, y);
 
-            // Start at specified location
-            playerEnterExit.EnableExteriorParent();
-            if (streamingWorld)
+            // Read location if any
+            bool hasLocation = RuntimeTestUtilities.ReadLocation(x, y, out DFLocation location, throwWhenNoLocation: false);
+            if( hasLocation )
             {
                 counter++;
-                Debug.LogWarning($"loading location: {location.Name} ({location.RegionName}) [{x},{y}]");
 
-                streamingWorld.TeleportToCoordinates(mapPixel.X, mapPixel.Y);
-                streamingWorld.SetAutoReposition(StreamingWorld.RepositionMethods.Origin, Vector3.zero);
-                streamingWorld.suppressWorld = false;
+                RuntimeTestUtilities.MoveToExteriorLocation(x, y, location);
+
+                for (int i = 0; i < 10; i++)
+                    yield return null;
             }
-
-            for( int i=0 ; i<10 ; i++ )
-                yield return null;
+            else
+            {
+                // skip
+            }
         }
     }
 
     [UnityTest]
-    [Timeout( int.MaxValue )]
-    public static IEnumerator visits_50_dungeons ()
+    [Timeout(int.MaxValue)]
+    public static IEnumerator visits_50_dungeons()
     {
-        var loadGameSceneRoutine = RuntimeTestUtilities.LoadGameScene();
-        while( loadGameSceneRoutine.MoveNext() )
-            yield return loadGameSceneRoutine.Current;
-        
+        yield return RuntimeTestUtilities.LoadGameSceneRoutine();
+
         PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
         StreamingWorld streamingWorld = GameManager.Instance.StreamingWorld;
         {
             // disable a starting dungeon
             playerEnterExit.DisableAllParents(cleanup: true);
 
-            // hide the ui because it wasnt disappearing by itself for some reason:
-            DaggerfallUI.Instance.enabled = false;
+            RuntimeTestUtilities.HideMainMenuUi();
         }
+
         int counter = 0;
-        var rnd = new System.Random( 12345 );
-        while( counter<50 )
+        var rnd = new System.Random(12345);
+        while (counter < 50)
         {
-            int x = rnd.Next( 2 , 997 );
-            int y = rnd.Next( 2 , 497 );
+            int x = rnd.Next(2, 997);
+            int y = rnd.Next(2, 497);
 
-            // Get start parameters
-            DFPosition mapPixel = new DFPosition( x , y );
-            
-            // Read location if any
-            DFLocation location = default;
-            bool hasLocation = DaggerfallUnity.Instance.ContentReader.HasLocation(mapPixel.X, mapPixel.Y, out var mapSummary);
-            if (hasLocation)
-            {
-                if (!DaggerfallUnity.Instance.ContentReader.GetLocation(mapSummary.RegionIndex, mapSummary.MapIndex, out location))
-                    hasLocation = false;
-            }
-
-            // Start at specified location
+            bool hasLocation = RuntimeTestUtilities.ReadLocation(x, y, out DFLocation location, throwWhenNoLocation: false);
             if (hasLocation && location.HasDungeon)
             {
                 counter++;
-                Debug.LogWarning($"loading dungeon: {location.Name} ({location.RegionName}) [{x},{y}]");
 
-                if (streamingWorld)
-                {
-                    streamingWorld.TeleportToCoordinates(mapPixel.X, mapPixel.Y);
-                    streamingWorld.suppressWorld = true;
-                }
-                playerEnterExit.EnableDungeonParent();
-                playerEnterExit.StartDungeonInterior(location);
-
-                // for( int i=0 ; i<10 ; i++ )
-                    yield return null;
+                RuntimeTestUtilities.MoveToDungeonLocation(x, y, location);
                 
-                playerEnterExit.DisableAllParents(cleanup: true);
+                for (int i = 0; i < 10; i++)
+                    yield return null;
             }
             else
             {
