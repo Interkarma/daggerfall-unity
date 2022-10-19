@@ -32,26 +32,6 @@ namespace DaggerfallWorkshop
 
         void Start()
         {
-            //// Debug trigger placement at start
-            //for (int i = 0; i < Doors.Length; i++)
-            //{
-            //    Quaternion buildingRotation = GameObjectHelper.QuaternionFromMatrix(Doors[i].buildingMatrix);
-            //    Vector3 doorNormal = buildingRotation * Doors[i].normal;
-            //    Quaternion facingRotation = Quaternion.LookRotation(doorNormal, Vector3.up);
-
-            //    GameObject go = new GameObject();
-            //    go.name = "DoorTrigger";
-
-            //    BoxCollider c = go.AddComponent<BoxCollider>();
-            //    c.size = Doors[i].size;
-            //    go.transform.parent = transform;
-            //    go.transform.position = transform.rotation * Doors[i].buildingMatrix.MultiplyPoint3x4(Doors[i].centre);
-            //    go.transform.position += transform.position;
-            //    go.transform.rotation = facingRotation;
-            //    c.isTrigger = true;
-            //}
-            //Debug.LogFormat("Added {0} door triggers to scene", Doors.Length);
-
             // Promote dungeon exit doors to full physical colliders rather than just virtual trigger volumes
             // This step is based on the following:
             //  * Daggerfall uses a mixture of discrete exit quads (modelid 70300) and exits baked into surrounding geometry (e.g. modelid 58051)
@@ -86,6 +66,32 @@ namespace DaggerfallWorkshop
                 }
             }
         }
+
+#if UNITY_EDITOR
+        void OnDrawGizmosSelected()
+        {
+            // Debug door trigger placement
+            var popMatrix = Gizmos.matrix;
+            {
+                Gizmos.color = new Color(0, 1, 1, 0.5f);
+                int length = Doors.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    StaticDoor door = Doors[i];
+                    Quaternion buildingRotation = GameObjectHelper.QuaternionFromMatrix(door.buildingMatrix);
+                    Vector3 doorNormal = buildingRotation * door.normal;
+                    Quaternion facingRotation = Quaternion.LookRotation(doorNormal, Vector3.up);
+                    Vector3 doorPos = transform.rotation * door.buildingMatrix.MultiplyPoint3x4(door.centre) + transform.position;
+                    
+                    Gizmos.matrix = Matrix4x4.TRS(doorPos, facingRotation, door.size);
+                    Gizmos.DrawCube(Vector3.zero, new Vector3(1, 1, 0));
+                    Gizmos.DrawWireCube(Vector3.zero, new Vector3(1, 1, 0));
+                    Gizmos.DrawRay(Vector3.zero, new Vector3(0, 0, 0.5f));
+                }
+            }
+            Gizmos.matrix = popMatrix;
+        }
+#endif
 
         /// <summary>
         /// Check for a door hit in world space.
