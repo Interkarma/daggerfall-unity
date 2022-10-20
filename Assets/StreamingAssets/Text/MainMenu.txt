@@ -35,11 +35,11 @@ enableController,           Enable Controller
 enableControllerInfo,       Allow joysticks or other controllers to be detected and used in-game
 
 mouseSmoothingStrength0,    None
-mouseSmoothingStrength1,    Min
-mouseSmoothingStrength2,    Reduced
+mouseSmoothingStrength1,    Lowest
+mouseSmoothingStrength2,    Low
 mouseSmoothingStrength3,    Medium
-mouseSmoothingStrength4,    Extra
-mouseSmoothingStrength5,    Max
+mouseSmoothingStrength4,    High
+mouseSmoothingStrength5,    Highest
 
 findArena2Tip,              Tip: Daggerfall contains a folder called 'arena2'
 foundArena2But,             Found 'arena2' but
