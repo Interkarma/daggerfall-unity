@@ -97,53 +97,6 @@ namespace DaggerfallWorkshop.Game
             set { pitchMin = Mathf.Clamp(value, PitchMin, PitchMax); Pitch = Pitch; }
         }
 
-        //////////////////// TEMP TEST Section Start ////////////////////
-
-        float smoothingBeforeTest;
-        bool testRunning;
-        float testStartTime;
-        int testFrames;
-
-        public void HandleTesting()
-        {
-            if (!testRunning && InputManager.Instance.GetKey(KeyCode.LeftControl)) // Begin test when LEFT CTRL pressed
-            {
-                smoothingBeforeTest = smoothing;
-                smoothing = 0.99f;
-
-                SetFacing(0, 0);
-                lookTarget.x = 90;
-
-                testRunning = true;
-                testStartTime = Time.time;
-                testFrames = Time.frameCount;
-            }
-
-            if(testRunning)
-            {
-                if(lookCurrent.x >= 60) // End test condition
-                {
-                    lookTarget = lookCurrent;
-                    smoothing = smoothingBeforeTest;
-                    testRunning = false;
-
-                    float testTime = Time.time - testStartTime;
-                    testFrames = Time.frameCount - testFrames;
-
-                    int testTimeMSec = Mathf.RoundToInt(testTime * 1000);
-
-                    DaggerfallUI.MessageBox("Test time: " + (testTimeMSec / 1000) + "." + (testTimeMSec % 1000) + " sec @ " + Mathf.RoundToInt(testFrames / testTime) + " FPS");
-                }
-
-                /*// Introduce hang time to lower FPS
-                float hangTimeMSec = 17;
-                float hangEnd = System.DateTime.Now.Millisecond + hangTimeMSec;
-                while (hangEnd < 1000 && System.DateTime.Now.Millisecond < hangEnd) ;*/
-            }
-        }
-
-        //////////////////// TEMP TEST Section End ////////////////////
-
         // Scales fractional progression (non-linear) to frame rate
         private float GetFrameRateScaledFractionOfProgression(float fractionAt60FPS)
         {
@@ -155,8 +108,6 @@ namespace DaggerfallWorkshop.Game
         // Applies scaled raw mouse deltas to lookTarget, then calls ApplySmoothing method to update lookCurrent
         void ApplyLook()
         {
-            HandleTesting(); // TEMP TEST
-
             // Scale sensitivity
             float sensitivityX = 1.0f;
             float sensitivityY = 1.0f;
