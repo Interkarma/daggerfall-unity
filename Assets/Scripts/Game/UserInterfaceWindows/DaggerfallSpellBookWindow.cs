@@ -108,6 +108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected EffectBundleSettings renamedSpellSettings;
         protected int deleteSpellIndex = -1;
         protected KeyCode toggleClosedBinding;
+        protected List<int> spellBookIndices = null;
         protected List<EffectBundleSettings> offeredSpells = new List<EffectBundleSettings>();
         protected PlayerGPS.DiscoveredBuilding buildingDiscoveryData;
         protected int presentedCost;
@@ -222,6 +223,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Clear existing list
             spellsListBox.ClearItems();
+            spellBookIndices = null;
 
             // Add spells based on mode
             if (buyMode)
@@ -236,7 +238,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 EffectBundleSettings[] spellbook = GameManager.Instance.PlayerEntity.GetSpells();
                 if (spellbook != null)
                 {
-                    PopulateSpellsList(spellbook.ToList(), GameManager.Instance.PlayerEntity.CurrentMagicka);
+                    spellBookIndices = PopulateSpellsList(spellbook.ToList(), GameManager.Instance.PlayerEntity.CurrentMagicka);
                 }
             }
 
@@ -253,32 +255,43 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual void PopulateSpellsList(List<EffectBundleSettings> spells, int? availableSpellPoints = null)
+        protected virtual List<int> PopulateSpellsList(List<EffectBundleSettings> spells, int? availableSpellPoints = null)
         {
+            bool hasSpellbook = GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook);
+            int spellIndex = 0;
+            List<int> spellIndices = new List<int>();
+
             foreach (EffectBundleSettings spell in spells)
             {
-                // Get spell costs
-                // Costs can change based on player skills and stats so must be calculated each time
-                (int _, int spellPointCost) = FormulaHelper.CalculateTotalEffectCosts(spell.Effects, spell.TargetType, null, spell.MinimumCastingCost);
-
-                // Lycanthropy is a free spell, even though it shows a cost in classic
-                // Setting cost to 0 so it displays correctly in spellbook
-                if (spell.Tag == PlayerEntity.lycanthropySpellTag)
-                    spellPointCost = 0;
-
-                // Display spell name and cost
-                ListBox.ListItem listItem;
-                spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spell.Name), out listItem);
-                if (availableSpellPoints != null && availableSpellPoints < spellPointCost)
+                // Without a spellbook, only tagged spells stay available
+                if (hasSpellbook || spell.Tag != null)
                 {
-                    // Desaturate unavailable spells
-                    float desaturation = 0.75f;
-                    listItem.textColor = Color.Lerp(listItem.textColor, Color.grey, desaturation);
-                    listItem.selectedTextColor = Color.Lerp(listItem.selectedTextColor, Color.grey, desaturation);
-                    listItem.highlightedTextColor = Color.Lerp(listItem.highlightedTextColor, Color.grey, desaturation);
-                    listItem.highlightedSelectedTextColor = Color.Lerp(listItem.highlightedSelectedTextColor, Color.grey, desaturation);
+                    // Get spell costs
+                    // Costs can change based on player skills and stats so must be calculated each time
+                    (int _, int spellPointCost) = FormulaHelper.CalculateTotalEffectCosts(spell.Effects, spell.TargetType, null, spell.MinimumCastingCost);
+
+                    // Lycanthropy is a free spell, even though it shows a cost in classic
+                    // Setting cost to 0 so it displays correctly in spellbook
+                    if (spell.Tag == PlayerEntity.lycanthropySpellTag)
+                        spellPointCost = 0;
+
+                    // Display spell name and cost
+                    ListBox.ListItem listItem;
+                    spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spell.Name), out listItem);
+                    spellIndices.Add(spellIndex);
+                    if (availableSpellPoints != null && availableSpellPoints < spellPointCost)
+                    {
+                        // Desaturate unavailable spells
+                        float desaturation = 0.75f;
+                        listItem.textColor = Color.Lerp(listItem.textColor, Color.grey, desaturation);
+                        listItem.selectedTextColor = Color.Lerp(listItem.selectedTextColor, Color.grey, desaturation);
+                        listItem.highlightedTextColor = Color.Lerp(listItem.highlightedTextColor, Color.grey, desaturation);
+                        listItem.highlightedSelectedTextColor = Color.Lerp(listItem.highlightedSelectedTextColor, Color.grey, desaturation);
+                    }
                 }
+                spellIndex++;
             }
+            return spellIndices;
         }
 
         protected virtual void LoadSpellsForSale()
@@ -534,7 +547,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 // Get spell and exit if spell index not found
-                if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
+                if (!GameManager.Instance.PlayerEntity.GetSpell(spellBookIndices[spellsListBox.SelectedIndex], out spellSettings))
                 {
                     spellNameLabel.Text = string.Empty;
                     ClearEffectLabels();
@@ -736,7 +749,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
-                if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
+                if (!GameManager.Instance.PlayerEntity.GetSpell(spellBookIndices[spellsListBox.SelectedIndex], out spellSettings))
                     return;
             }
 
@@ -769,7 +782,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             // Get spell settings and exit if spell index not found
             EffectBundleSettings spellSettings;
-            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellBookIndices[spellsListBox.SelectedIndex], out spellSettings))
                 return;
 
             // Lycanthropes cast for free
@@ -814,7 +827,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Cannot delete special vampire/lycanthropy spells, as there's no way to get them back
             // These will be cleaned up when character is cured of their curse
             EffectBundleSettings spell;
-            if (GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spell))
+            if (GameManager.Instance.PlayerEntity.GetSpell(spellBookIndices[spellsListBox.SelectedIndex], out spell))
             {
                 if (spell.Tag == PlayerEntity.vampireSpellTag)
                 {
@@ -829,7 +842,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             // Prompt and delete spell
-            deleteSpellIndex = spellsListBox.SelectedIndex;
+            deleteSpellIndex = spellBookIndices[spellsListBox.SelectedIndex];
             DaggerfallMessageBox mb = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, TextManager.Instance.GetLocalizedText("deleteSpell"), this);
             mb.OnButtonClick += DeleteSpellConfirm_OnButtonClick;
             mb.Show();
@@ -874,7 +887,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (sender == downButton && spellsListBox.SelectedIndex < spellsListBox.Count - 1)
             {
-                GameManager.Instance.PlayerEntity.SwapSpells(spellsListBox.SelectedIndex, spellsListBox.SelectedIndex + 1);
+                GameManager.Instance.PlayerEntity.SwapSpells(spellBookIndices[spellsListBox.SelectedIndex], spellBookIndices[spellsListBox.SelectedIndex + 1]);
                 RefreshSpellsList(true);
                 spellsListBox.SelectNext();
                 // Force revealing one item ahead
@@ -884,7 +897,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (sender == upButton && spellsListBox.SelectedIndex > 0)
             {
-                GameManager.Instance.PlayerEntity.SwapSpells(spellsListBox.SelectedIndex, spellsListBox.SelectedIndex - 1);
+                GameManager.Instance.PlayerEntity.SwapSpells(spellBookIndices[spellsListBox.SelectedIndex], spellBookIndices[spellsListBox.SelectedIndex - 1]);
                 RefreshSpellsList(true);
                 spellsListBox.SelectPrevious();
                 // Force revealing one item ahead
@@ -924,7 +937,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void SpellNameLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
-            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out renamedSpellSettings))
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellBookIndices[spellsListBox.SelectedIndex], out renamedSpellSettings))
                 return;
 
             DaggerfallInputMessageBox renameSpellPrompt;
@@ -942,7 +955,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
 
             renamedSpellSettings.Name = input;
-            GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, renamedSpellSettings);
+            GameManager.Instance.PlayerEntity.SetSpell(spellBookIndices[spellsListBox.SelectedIndex], renamedSpellSettings);
             RefreshSpellsList(true);
             UpdateSelection();
             // classic plays edit sound before you enter the new name
@@ -958,13 +971,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected virtual void IconPicker_OnClose()
         {
             EffectBundleSettings spellSettings;
-            if (!GameManager.Instance.PlayerEntity.GetSpell(spellsListBox.SelectedIndex, out spellSettings))
+            if (!GameManager.Instance.PlayerEntity.GetSpell(spellBookIndices[spellsListBox.SelectedIndex], out spellSettings))
                 return;
 
             if (iconPicker.SelectedIcon != null)
             {
                 spellSettings.Icon = iconPicker.SelectedIcon.Value;
-                GameManager.Instance.PlayerEntity.SetSpell(spellsListBox.SelectedIndex, spellSettings);
+                GameManager.Instance.PlayerEntity.SetSpell(spellBookIndices[spellsListBox.SelectedIndex], spellSettings);
                 UpdateSelection();
                 DaggerfallUI.Instance.PlayOneShot(editSpellBook);
             }

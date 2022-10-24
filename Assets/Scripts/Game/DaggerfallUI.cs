@@ -572,7 +572,13 @@ namespace DaggerfallWorkshop.Game
                 case DaggerfallUIMessages.dfuiOpenSpellBookWindow:
                     if (!GameManager.Instance.PlayerSpellCasting.IsPlayingAnim)
                     {
-                        if (GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook))
+                        bool hasSpellbook = GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook);
+                        bool hasTaggedSpells()
+                        {
+                            EffectBundleSettings[] spells = GameManager.Instance.PlayerEntity.GetSpells();
+                            return spells == null ? false : spells.Any(spell => spell.Tag != null);
+                        }
+                        if (hasSpellbook || hasTaggedSpells())
                             uiManager.PushWindow(dfSpellBookWindow);
                         else
                             AddHUDText(TextManager.Instance.GetLocalizedText("noSpellbook"));
