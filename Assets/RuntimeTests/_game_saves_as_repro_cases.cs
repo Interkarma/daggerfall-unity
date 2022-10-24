@@ -69,17 +69,77 @@ public static class _game_saves_as_repro_cases
         }
     }
 
-    // [UnityTest]
-    // public static IEnumerator load_every_classic_save()
-    // {
-    //     yield return RuntimeTestUtilities.LoadGameSceneRoutine();
+    [UnityTest]
+    public static IEnumerator load_classic_save_index_0()
+    {
+        yield return RuntimeTestUtilities.LoadGameSceneRoutine();
 
-    //     var startGameBehaviour = GameManager.Instance.StartGameBehaviour;
-    //     startGameBehaviour.ClassicSaveIndex = 0;
-    //     startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
+        var startGameBehaviour = GameManager.Instance.StartGameBehaviour;
+        startGameBehaviour.ClassicSaveIndex = 0;
+        startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
 
-    //     for (int i = 0; i < 100; i++)
-    //         yield return null;
-    // }
+        for (int i = 0; i < 100; i++)
+            yield return null;
+    }
+    [UnityTest]
+    public static IEnumerator load_classic_save_index_1()
+    {
+        yield return RuntimeTestUtilities.LoadGameSceneRoutine();
+
+        var startGameBehaviour = GameManager.Instance.StartGameBehaviour;
+        startGameBehaviour.ClassicSaveIndex = 1;
+        startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
+
+        for (int i = 0; i < 100; i++)
+            yield return null;
+    }
+    [UnityTest]
+    public static IEnumerator load_classic_save_index_2()
+    {
+        yield return RuntimeTestUtilities.LoadGameSceneRoutine();
+
+        var startGameBehaviour = GameManager.Instance.StartGameBehaviour;
+        startGameBehaviour.ClassicSaveIndex = 2;
+        startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
+
+        for (int i = 0; i < 100; i++)
+            yield return null;
+    }
+    [UnityTest]
+    public static IEnumerator load_classic_save_index_3()
+    {
+        yield return RuntimeTestUtilities.LoadGameSceneRoutine();
+
+        var startGameBehaviour = GameManager.Instance.StartGameBehaviour;
+        startGameBehaviour.ClassicSaveIndex = 3;
+        startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
+
+        for (int i = 0; i < 100; i++)
+            yield return null;
+    }
+    [UnityTest]
+    public static IEnumerator load_classic_save_index_4()
+    {
+        yield return RuntimeTestUtilities.LoadGameSceneRoutine();
+
+        var startGameBehaviour = GameManager.Instance.StartGameBehaviour;
+        startGameBehaviour.ClassicSaveIndex = 4;
+        startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
+
+        for (int i = 0; i < 100; i++)
+            yield return null;
+    }
+    [UnityTest]
+    public static IEnumerator load_classic_save_index_5()
+    {
+        yield return RuntimeTestUtilities.LoadGameSceneRoutine();
+
+        var startGameBehaviour = GameManager.Instance.StartGameBehaviour;
+        startGameBehaviour.ClassicSaveIndex = 5;
+        startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
+
+        for (int i = 0; i < 100; i++)
+            yield return null;
+    }
 
 }
