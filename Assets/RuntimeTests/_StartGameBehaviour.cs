@@ -19,7 +19,7 @@ using DaggerfallConnect.Save;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallConnect.Arena2;
 
-public static class _StartGameBehaviour_tests
+public static class _StartGameBehaviour
 {
 
     private static IEnumerator _StartMethod_Change(StartGameBehaviour.StartMethods startMethod)
@@ -57,36 +57,36 @@ public static class _StartGameBehaviour_tests
     public static IEnumerator StartMethod_NewCharacter()
         => _StartMethod_Change(StartGameBehaviour.StartMethods.NewCharacter);
 
-    // // LoadDaggerfallUnitySave,                // Make this work with new save/load system
-    // [UnityTest]
-    // public static IEnumerator StartMethod_LoadDaggerfallUnitySave ()
-    // {
-    //     Debug.Log($"<color=yellow><b>{nameof(_new_game)}::{nameof(StartMethod_LoadDaggerfallUnitySave)}()</b>: Make sure a save exists first</color>");
+    // LoadDaggerfallUnitySave,                // Make this work with new save/load system
+    [UnityTest]
+    public static IEnumerator StartMethod_LoadDaggerfallUnitySave ()
+    {
+        Debug.Log($"<color=yellow><b>{nameof(_StartGameBehaviour)}::{nameof(StartMethod_LoadDaggerfallUnitySave)}()</b>: Make sure a save exists first</color>");
 
-    //     yield return RuntimeTestUtilities.LoadGameSceneRoutine();
+        yield return RuntimeTestUtilities.LoadGameSceneRoutine();
 
-    //     var startGameBehaviour = GameManager.Instance.StartGameBehaviour;
-    //     startGameBehaviour.SaveIndex = 0;
-    //     startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadDaggerfallUnitySave;
+        var startGameBehaviour = GameManager.Instance.StartGameBehaviour;
+        startGameBehaviour.SaveIndex = 0;
+        startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadDaggerfallUnitySave;
 
-    //     for( int i=0 ; i<100 ; i++ )
-    //         yield return null;
-    // }
+        for( int i=0 ; i<100 ; i++ )
+            yield return null;
+    }
 
-    // // LoadClassicSave,                        // Loads a classic save using start save index
-    // [UnityTest]
-    // public static IEnumerator StartMethod_LoadClassicSave ()
-    // {
-    //     Debug.Log($"<color=yellow><b>{nameof(_new_game)}::{nameof(StartMethod_LoadClassicSave)}()</b>: Make sure a classic save exists first</color>");
+    // LoadClassicSave,                        // Loads a classic save using start save index
+    [UnityTest]
+    public static IEnumerator StartMethod_LoadClassicSave ()
+    {
+        Debug.Log($"<color=yellow><b>{nameof(_StartGameBehaviour)}::{nameof(StartMethod_LoadClassicSave)}()</b>: Make sure a classic save exists first</color>");
 
-    //     yield return RuntimeTestUtilities.LoadGameSceneRoutine();
+        yield return RuntimeTestUtilities.LoadGameSceneRoutine();
 
-    //     var startGameBehaviour = GameManager.Instance.StartGameBehaviour;
-    //     startGameBehaviour.ClassicSaveIndex = 0;
-    //     startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
+        var startGameBehaviour = GameManager.Instance.StartGameBehaviour;
+        startGameBehaviour.ClassicSaveIndex = 0;
+        startGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.LoadClassicSave;
 
-    //     for( int i=0 ; i<100 ; i++ )
-    //         yield return null;
-    // }
+        for( int i=0 ; i<100 ; i++ )
+            yield return null;
+    }
 
 }
