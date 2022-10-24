@@ -28,8 +28,6 @@ public class _location_loading_time
     {
         yield return RuntimeTestUtilities.LoadGameSceneRoutine();
 
-        RuntimeTestUtilities.HideMainMenuUi();
-
         var watch = Stopwatch.StartNew();
         {
             RuntimeTestUtilities.LoadDungeonLocation(109, 158);
@@ -47,8 +45,6 @@ public class _location_loading_time
     public static IEnumerator daggerfall_city_loads_under_100_ms()
     {
         yield return RuntimeTestUtilities.LoadGameSceneRoutine();
-
-        RuntimeTestUtilities.HideMainMenuUi();
 
         var watch = Stopwatch.StartNew();
         {

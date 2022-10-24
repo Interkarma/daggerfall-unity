@@ -27,8 +27,6 @@ public class _travel
     {
         yield return RuntimeTestUtilities.LoadGameSceneRoutine();
 
-        RuntimeTestUtilities.HideMainMenuUi();
-
         int counter = 0;
         var rnd = new System.Random(934527);
         while (counter < 50)
@@ -68,8 +66,6 @@ public class _travel
         {
             // disable a starting dungeon
             playerEnterExit.DisableAllParents(cleanup: true);
-
-            RuntimeTestUtilities.HideMainMenuUi();
         }
 
         int counter = 0;

@@ -30,6 +30,7 @@ public class RuntimeTestUtilities
         var ___pm = new ProfilerMarker($"{nameof(RuntimeTestUtilities)}::{nameof(LoadGameSceneRoutine)}()");
         ___pm.Begin();
 
+        // load startup scene
         Debug.Log("<color=green>loading <b>Startup Scene</b></color>");
         Scene startupScene = SceneManager.LoadScene(SceneControl.StartupSceneIndex, new LoadSceneParameters(LoadSceneMode.Single, LocalPhysicsMode.None));
         while (!startupScene.isLoaded)
@@ -39,6 +40,7 @@ public class RuntimeTestUtilities
             ___pm.Begin();
         }
 
+        // load game scene
         Debug.Log("<color=green>loading <b>Game Scene</b></color>");
         Scene gameScene = SceneManager.LoadScene(SceneControl.GameSceneIndex, new LoadSceneParameters(LoadSceneMode.Single, LocalPhysicsMode.Physics3D));
         while (!gameScene.isLoaded)
@@ -47,6 +49,15 @@ public class RuntimeTestUtilities
             yield return null;
             ___pm.Begin();
         }
+
+        // trigger immediate start method
+        GameManager.Instance.StartGameBehaviour.StartMethod = StartGameBehaviour.StartMethods.Void;
+
+        // hide intro video and main menu ui
+        yield return null;
+        yield return null;
+        DaggerfallUI.Instance.PopToHUD();
+        // I don't know why, but this formula works. But this means it can break in the future - pls report if that happens
 
         ___pm.End();
     }
@@ -182,17 +193,6 @@ public class RuntimeTestUtilities
             message.Append(seconds > 1 ? $" took {seconds:0.00}s" : $" took {watch.ElapsedMilliseconds}ms");
             Debug.Log($"<color=green>{message}</color>");
         }
-
-        ___pm.End();
-    }
-
-    public static void HideMainMenuUi()
-    {
-        var ___pm = new ProfilerMarker($"{nameof(RuntimeTestUtilities)}::{nameof(HideMainMenuUi)}()");
-        ___pm.Begin();
-
-        // hide the ui because it wasnt disappearing by itself
-        DaggerfallUI.Instance.enabled = false;// is this a valid way to do that?
 
         ___pm.End();
     }

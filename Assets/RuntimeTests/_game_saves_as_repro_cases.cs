@@ -57,8 +57,6 @@ public static class _game_saves_as_repro_cases
     {
         yield return RuntimeTestUtilities.LoadGameSceneRoutine();
 
-        RuntimeTestUtilities.HideMainMenuUi();
-
         SaveLoadManager.Instance.EnumerateSaves();
         foreach (var next in _EnumerateSaveFolders())
         {
