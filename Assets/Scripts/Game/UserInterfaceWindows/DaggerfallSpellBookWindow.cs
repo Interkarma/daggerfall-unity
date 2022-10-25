@@ -238,7 +238,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 EffectBundleSettings[] spellbook = GameManager.Instance.PlayerEntity.GetSpells();
                 if (spellbook != null)
                 {
-                    spellBookIndices = PopulateSpellsList(spellbook.ToList(), GameManager.Instance.PlayerEntity.CurrentMagicka);
+                    spellBookIndices = new List<int>();
+                    PopulateSpellsList(spellbook.ToList(), GameManager.Instance.PlayerEntity.CurrentMagicka);
                 }
             }
 
@@ -255,11 +256,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
-        protected virtual List<int> PopulateSpellsList(List<EffectBundleSettings> spells, int? availableSpellPoints = null)
+        protected virtual void PopulateSpellsList(List<EffectBundleSettings> spells, int? availableSpellPoints = null)
         {
             bool hasSpellbook = GameManager.Instance.PlayerEntity.Items.Contains(Items.ItemGroups.MiscItems, (int)Items.MiscItems.Spellbook);
             int spellIndex = 0;
-            List<int> spellIndices = new List<int>();
 
             foreach (EffectBundleSettings spell in spells)
             {
@@ -278,7 +278,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // Display spell name and cost
                     ListBox.ListItem listItem;
                     spellsListBox.AddItem(string.Format("{0} - {1}", spellPointCost, spell.Name), out listItem);
-                    spellIndices.Add(spellIndex);
+                    spellBookIndices?.Add(spellIndex);
                     if (availableSpellPoints != null && availableSpellPoints < spellPointCost)
                     {
                         // Desaturate unavailable spells
@@ -291,7 +291,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 spellIndex++;
             }
-            return spellIndices;
         }
 
         protected virtual void LoadSpellsForSale()
