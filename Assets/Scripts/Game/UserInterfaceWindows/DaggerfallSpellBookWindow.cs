@@ -240,6 +240,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     spellBookIndices = new List<int>();
                     PopulateSpellsList(spellbook.ToList(), GameManager.Instance.PlayerEntity.CurrentMagicka);
+                    // in case a mod overrode PopulateSpellsList() with a method that doesn't update spellBookIndices
+                    if (spellBookIndices.Count == 0)
+                    {
+                        for (int i = 0; i < spellsListBox.Count; i++)
+                            spellBookIndices.Add(i);
+                    }
                 }
             }
 
