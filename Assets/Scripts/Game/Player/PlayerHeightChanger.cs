@@ -268,7 +268,7 @@ namespace DaggerfallWorkshop.Game
 
             if (playerMotor.IsCrouching)
             {
-                standingHeightAdjustment = 0;
+                standingHeightAdjustment = 0 - eyeHeight * 2; // Subtracting eyeHeight * 2 fixes crouch->stand height increase bug
                 float targetHeight = CurrentControllerStandingHeight;
                 prevCamLevel = prevHeight / 2f;
                 targetCamLevel = ControllerHeightChange(targetHeight - prevHeight);
