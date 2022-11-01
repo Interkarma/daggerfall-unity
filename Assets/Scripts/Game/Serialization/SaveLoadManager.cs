@@ -588,7 +588,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore the scene from cache
             stateManager.RestoreCachedScene(sceneName);
 
-            PlayerAmbientLight.Instance.UpdateAmbientLight(true); // Immediately update ambient lighting
+            PlayerAmbientLight.Instance.UpdateAmbientLight();
         }
 
         /// <summary>
