@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game
         SunlightManager sunlightManager;
         Color targetAmbientLight;
         bool fadeRunning;
+        float timeOfLastAmbientLightUpdate;
 
         public static PlayerAmbientLight Instance = null;
 
@@ -47,25 +48,22 @@ namespace DaggerfallWorkshop.Game
 
             playerEnterExit = GetComponent<PlayerEnterExit>();
             sunlightManager = GameManager.Instance.SunlightManager;
-            StartCoroutine(ManageAmbientLight());
         }
 
         void Update()
         {
             if (UnityEngine.RenderSettings.ambientLight != targetAmbientLight && !fadeRunning)
                 StartCoroutine(ChangeAmbientLight());
+            else if (Time.realtimeSinceStartup - timeOfLastAmbientLightUpdate > 1f / 3f) // Might be better to update every frame instead of periodically
+                UpdateAmbientLight();
         }
 
-        bool mutex;
-
-        public void UpdateAmbientLight(bool immediate = false)
+        public void UpdateAmbientLight()
         {
-            if (mutex && !immediate)
+            if (!playerEnterExit)
                 return;
 
-            while (mutex) ;
-
-            mutex = true;
+            timeOfLastAmbientLightUpdate = Time.realtimeSinceStartup;
 
             if (!playerEnterExit.IsPlayerInside && !playerEnterExit.IsPlayerInsideDungeon)
             {
@@ -86,20 +84,6 @@ namespace DaggerfallWorkshop.Game
                     targetAmbientLight = SpecialAreaLight;
                 else
                     targetAmbientLight = DungeonAmbientLight * DaggerfallUnity.Settings.DungeonAmbientLightScale;
-            }
-
-            mutex = false;
-        }
-
-        // Polls PlayerEnterExit a few times each second to detect if player environment has changed
-        IEnumerator ManageAmbientLight()
-        {
-            const float pollSpeed = 1f / 3f;
-
-            while (playerEnterExit)
-            {
-                UpdateAmbientLight();
-                yield return new WaitForSeconds(pollSpeed);
             }
         }
 
