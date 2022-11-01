@@ -841,6 +841,9 @@ namespace DaggerfallWorkshop.Game
             // Perform transition
             BuildingTransitionExteriorLogic();
 
+            // Immediately update ambient lighting (called again in SaveLoadManager.RestoreCachedSceneNextFrame method)
+            PlayerAmbientLight.Instance.UpdateAmbientLight(true);
+
             // Increase fade time if outside world not ready
             // This indicates a first-time transition on fresh load
             float fadeTime = 0.7f;
