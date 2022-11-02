@@ -38,7 +38,6 @@ namespace DaggerfallWorkshop.Game
         SunlightManager sunlightManager;
         Color targetAmbientLight;
         bool fadeRunning;
-        float timeOfLastAmbientLightUpdate;
 
         public static PlayerAmbientLight Instance = null;
 
@@ -54,16 +53,17 @@ namespace DaggerfallWorkshop.Game
         {
             if (UnityEngine.RenderSettings.ambientLight != targetAmbientLight && !fadeRunning)
                 StartCoroutine(ChangeAmbientLight());
-            else if (Time.realtimeSinceStartup - timeOfLastAmbientLightUpdate > 1f / 3f) // Might be better to update every frame instead of periodically
-                UpdateAmbientLight();
+        }
+        
+        void LateUpdate()
+        {
+            UpdateAmbientLight(); // Would be better to call this just prior to world frame rendering
         }
 
         public void UpdateAmbientLight()
         {
             if (!playerEnterExit)
                 return;
-
-            timeOfLastAmbientLightUpdate = Time.realtimeSinceStartup;
 
             if (!playerEnterExit.IsPlayerInside && !playerEnterExit.IsPlayerInsideDungeon)
             {
