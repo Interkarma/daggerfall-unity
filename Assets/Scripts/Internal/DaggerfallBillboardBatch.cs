@@ -131,6 +131,17 @@ namespace DaggerfallWorkshop
 
         #endregion
 
+#if UNITY_EDITOR
+        // fixes an editor-only issue #2455 https://github.com/Interkarma/daggerfall-unity/issues/2455
+        DaggerfallBillboardBatch() => UnityEditor.EditorApplication.playModeStateChanged += OnEditorPlayModeStateChanged;
+        ~DaggerfallBillboardBatch() => UnityEditor.EditorApplication.playModeStateChanged -= OnEditorPlayModeStateChanged;
+        void OnEditorPlayModeStateChanged(UnityEditor.PlayModeStateChange stateChange)
+        {
+            if (stateChange == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+                OnDestroy();
+        }
+#endif
+
         void OnDestroy()
         {
             // make sure there are no unfinished jobs:
