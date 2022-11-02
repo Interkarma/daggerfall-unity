@@ -587,8 +587,6 @@ namespace DaggerfallWorkshop.Game.Serialization
             yield return new WaitForEndOfFrame();
             // Restore the scene from cache
             stateManager.RestoreCachedScene(sceneName);
-
-            PlayerAmbientLight.Instance.UpdateAmbientLight();
         }
 
         /// <summary>
