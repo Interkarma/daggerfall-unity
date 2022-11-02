@@ -880,7 +880,7 @@ namespace DaggerfallWorkshop.Game
             // Fire event
             RaiseOnTransitionExteriorEvent();
 
-            // Immediately update ambient lighting for this frame (called again in SaveLoadManager.RestoreCachedSceneNextFrame method)
+            // Immediately update ambient lighting
             PlayerAmbientLight.Instance.UpdateAmbientLight();
         }
 
