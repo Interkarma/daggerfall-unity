@@ -879,9 +879,6 @@ namespace DaggerfallWorkshop.Game
 
             // Fire event
             RaiseOnTransitionExteriorEvent();
-
-            // Immediately update ambient lighting
-            PlayerAmbientLight.Instance.UpdateAmbientLight();
         }
 
         #endregion
