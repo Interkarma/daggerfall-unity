@@ -39,14 +39,16 @@ namespace DaggerfallWorkshop.Game
         Color targetAmbientLight;
         bool fadeRunning;
 
-        public static PlayerAmbientLight Instance = null;
-
         void Start()
         {
-            Instance = this;
-
+            PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             playerEnterExit = GetComponent<PlayerEnterExit>();
             sunlightManager = GameManager.Instance.SunlightManager;
+        }
+        
+        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            UpdateAmbientLight();
         }
 
         void Update()
