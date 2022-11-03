@@ -48,6 +48,7 @@ namespace DaggerfallWorkshop.Game
         
         private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
         {
+            sunlightManager.Update(); // Ensure that SunlightManager is in a ready state
             UpdateAmbientLight();
         }
 
@@ -73,7 +74,7 @@ namespace DaggerfallWorkshop.Game
             }
             else if (playerEnterExit.IsPlayerInside && !playerEnterExit.IsPlayerInsideDungeon)
             {
-                if (DaggerfallUnity.Instance.WorldTime.Now.IsNight && !playerEnterExit.IsPlayerInsideTavern) // Interiors of taverns are always welcomingly bright
+                if (DaggerfallUnity.Instance.WorldTime.Now.IsNight)
                     targetAmbientLight = (DaggerfallUnity.Settings.AmbientLitInteriors) ? InteriorNightAmbientLight_AmbientOnly : InteriorNightAmbientLight;
                 else
                     targetAmbientLight = (DaggerfallUnity.Settings.AmbientLitInteriors) ? InteriorAmbientLight_AmbientOnly : InteriorAmbientLight;
