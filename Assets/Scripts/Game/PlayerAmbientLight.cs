@@ -65,7 +65,10 @@ namespace DaggerfallWorkshop.Game
                 }
                 else if (playerEnterExit.IsPlayerInside && !playerEnterExit.IsPlayerInsideDungeon)
                 {
-                    if (DaggerfallUnity.Instance.WorldTime.Now.IsNight)
+                    // Forced brightness when Simplified Interior Lighting is enabled and player is inside a tavern at night
+                    bool forceBright = DaggerfallUnity.Settings.AmbientLitInteriors && playerEnterExit.IsPlayerInsideTavern;
+
+                    if (DaggerfallUnity.Instance.WorldTime.Now.IsNight && !forceBright)
                         targetAmbientLight = (DaggerfallUnity.Settings.AmbientLitInteriors) ? InteriorNightAmbientLight_AmbientOnly : InteriorNightAmbientLight;
                     else
                         targetAmbientLight = (DaggerfallUnity.Settings.AmbientLitInteriors) ? InteriorAmbientLight_AmbientOnly : InteriorAmbientLight;
