@@ -1242,7 +1242,7 @@ namespace DaggerfallWorkshop.Utility
 
             // Add torch burning sound
             if(IsTorchFlat(archive, record))
-                AddTorchAudioSource(go);
+                AddFireAudioSource(go, torchMaxDistance, torchVolume);
 
             return go;
         }
@@ -1275,15 +1275,15 @@ namespace DaggerfallWorkshop.Utility
             return false;
         }
 
-        private static void AddTorchAudioSource(GameObject go)
+        public static void AddFireAudioSource(GameObject go, float maxDistance, float volume)
         {
             // Apply looping burning sound to flaming torches and fires
             // Set to linear rolloff or the burning sound is audible almost everywhere
             DaggerfallAudioSource c = go.AddComponent<DaggerfallAudioSource>();
             c.AudioSource.dopplerLevel = 0;
             c.AudioSource.rolloffMode = AudioRolloffMode.Linear;
-            c.AudioSource.maxDistance = torchMaxDistance;
-            c.AudioSource.volume = torchVolume;
+            c.AudioSource.maxDistance = maxDistance;
+            c.AudioSource.volume = volume;
             c.SetSound(SoundClips.Burning, AudioPresets.LoopIfPlayerNear);
         }
 
