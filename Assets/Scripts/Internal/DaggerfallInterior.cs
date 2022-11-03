@@ -28,7 +28,13 @@ namespace DaggerfallWorkshop
     public class DaggerfallInterior : MonoBehaviour
     {
         const int ladderModelId = 41409;
+        const int fireplaceModelId = 41116;
+        const int fireplaceCornerModelId = 41117;
         const int propModelType = 3;
+
+        // Fireplace audio range and volume
+        const float fireplaceMaxDistance = 5f;
+        const float fireplaceVolume = 1.0f;
 
         private const int posMask = 0x3FF;  // 10 bits
         public const string peopleFlats = "People Flats";
@@ -471,6 +477,11 @@ namespace DaggerfallWorkshop
                         dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
                     }
                 }
+
+                // Add fireplace burning sound
+                if (modelGO)
+                    if (obj.ModelIdNum == fireplaceModelId || obj.ModelIdNum == fireplaceCornerModelId)
+                        RDBLayout.AddFireAudioSource(modelGO, fireplaceMaxDistance, fireplaceVolume);
 
                 if ((modelGO != null) && (isAutomapRun))
                     modelGO.AddComponent<AutomapModel>();
