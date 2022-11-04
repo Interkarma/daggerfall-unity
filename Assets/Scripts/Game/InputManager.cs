@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game
         Dictionary<int, bool> modifierHeldFirstDict = new Dictionary<int, bool>();
         Dictionary<int, Tuple<KeyCode, KeyCode>> comboCache = new Dictionary<int, Tuple<KeyCode, KeyCode>>();
 
-        List<Actions> currentActions = new List<Actions>();
+        HashSet<Actions> currentActions = new HashSet<Actions>(); // Using Set to disallow duplicate entries
         List<Actions> previousActions = new List<Actions>();
         KeyCode[] heldKeys = new KeyCode[totalHeldKeys];
         KeyCode[] previousKeys = new KeyCode[totalHeldKeys];
@@ -459,6 +459,9 @@ namespace DaggerfallWorkshop.Game
 
         void Update()
         {
+            if (!GameManager.PlayerObjectExists())
+                return;
+
             // Move current actions to previous actions
             previousActions.Clear();
             previousActions.AddRange(currentActions);
@@ -1831,6 +1834,13 @@ namespace DaggerfallWorkshop.Game
                 var element = enumerator.Current;
                 if (GetKey(element.Key))
                 {
+                    // Re-issue SwingWeapon action as ActivateCenterObject when player is not in attack mode
+                    if (element.Value == Actions.SwingWeapon && GameManager.Instance.WeaponManager.Sheathed)
+                    {
+                        currentActions.Add(Actions.ActivateCenterObject);
+                        continue;
+                    }
+
                     // Add current action to list
                     currentActions.Add(element.Value);
 
