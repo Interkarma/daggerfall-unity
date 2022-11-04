@@ -835,6 +835,12 @@ namespace DaggerfallWorkshop.Game
                 }
             }
         }
+        
+        // Check if player object exists without invoking GameManager instance creation
+        public static bool PlayerObjectExists()
+        {
+            return instance != null && instance.playerObject != null;
+        }
 
         #endregion
 
