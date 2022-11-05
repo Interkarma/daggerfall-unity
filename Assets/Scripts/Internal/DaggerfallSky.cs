@@ -56,7 +56,8 @@ namespace DaggerfallWorkshop
         const int skyNativeWidth = 512;         // Native image width of sky image
         const int skyNativeHalfWidth = 256;     // Half native image width
         const int skyNativeHeight = 220;        // Native image height
-        const float skyScale = 1.3f;            // Scale of sky image relative to display area
+        const float minSkyScale = 1.3f;         // Minimum scale of sky image relative to display area
+        float skyScale = minSkyScale;           // Current scale of sky image relative to display area
 
         DaggerfallUnity dfUnity;
         WeatherManager weatherManager;
@@ -91,6 +92,15 @@ namespace DaggerfallWorkshop
         public Camera SkyCamera
         {
             get { return myCamera; }
+        }
+
+        /// <summary>
+        /// Gets or sets scale of sky image relative to display area.
+        /// </summary>
+        public float SkyScale
+        {
+            get { return skyScale; }
+            set { skyScale = Mathf.Clamp(value, minSkyScale, minSkyScale * 100); }
         }
 
         void Start()
