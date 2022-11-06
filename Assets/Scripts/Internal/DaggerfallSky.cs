@@ -199,9 +199,11 @@ namespace DaggerfallWorkshop
 
         private void UpdateSkyRects()
         {
+            float relativeZoom = Mathf.Tan((DaggerfallUnity.Settings.FieldOfView * 0.50f) * Mathf.Deg2Rad) / Mathf.Tan((mainCamera.fieldOfView * 0.50f) * Mathf.Deg2Rad);
+
             Vector3 angles = mainCamera.transform.eulerAngles;
-            float width = (int)(Screen.width * skyScale);
-            float height = Screen.height * skyScale;
+            float width = (int)(Screen.width * skyScale * relativeZoom);
+            float height = Screen.height * skyScale * relativeZoom;
             float halfScreenWidth = Screen.width * 0.5f;
 
             // Scroll left-right
