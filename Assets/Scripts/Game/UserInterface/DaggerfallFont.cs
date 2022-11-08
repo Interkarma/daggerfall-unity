@@ -484,6 +484,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!tmpFont)
                 return false;
 
+            // Attempt to ingest a StreamingAssets/Fonts .ttf override file
+            TMP_FontAsset replacement;
+            if (ReplaceTMPFontFromTTF(Path.GetFileNameWithoutExtension(path) + ".ttf", tmpFont, out replacement))
+            {
+                tmpFont = replacement;
+                // TODO: Output debug text that font was replaced
+            }
+
             UseSDFFontAsset(tmpFont);
 
             return true;
@@ -620,6 +628,48 @@ namespace DaggerfallWorkshop.Game.UserInterface
         float GetGlyphSpacing()
         {
             return (!IsSDFCapable) ? classicGlyphSpacing : sdfGlyphSpacing;
+        }
+
+        /// <summary>
+        /// Replace TMP font asset using a .ttf font in StreamingAssets/Fonts.
+        /// </summary>
+        /// <param name="filename">Filename of replacement font including .ttf extension. Font file must be present in StreamingAssets/Fonts to load.</param>
+        /// <param name="source">Source TMP font for initial character table population.</param>
+        /// <param name="replacement">Replacement TMP font output.</param>
+        /// <returns>True is successfully created replacement TMP font.</returns>
+        bool ReplaceTMPFontFromTTF(string filename, TMP_FontAsset source, out TMP_FontAsset replacement)
+        {
+            // Compose path to font file
+            string path = Path.Combine(Application.streamingAssetsPath, "Fonts", filename);
+
+            // Check file exists
+            replacement = null;
+            if (!File.Exists(path))
+                return false;
+
+            // Get characters of source font
+            List<uint> sourceUnicodes = new List<uint>();
+            foreach(TMP_Character c in source.characterTable)
+            {
+                sourceUnicodes.Add(c.unicode);
+            }
+
+            // Create replacement TMP font asset from path
+            Font font = new Font(path);
+            replacement = TMP_FontAsset.CreateFontAsset(font);
+            if (replacement == null)
+                return false;
+
+            // Attempt to add unicode characters from source
+            uint[] missingUnicodesSource = null;
+            if (!replacement.TryAddCharacters(sourceUnicodes.ToArray(), out missingUnicodesSource))
+            {
+                // TODO: Output list of missing characters from source unicodes
+            }
+
+            // TODO: Attempt to add user-specified unicode characters from a source file
+
+            return true;
         }
 
         #endregion
