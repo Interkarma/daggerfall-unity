@@ -664,7 +664,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
             uint[] missingUnicodesSource = null;
             if (!replacement.TryAddCharacters(sourceUnicodes.ToArray(), out missingUnicodesSource))
             {
-                // TODO: Output list of missing characters from source unicodes
+                // Format list of missing default characters in replacement font
+                // This isn't always a problem, and missing characters aren't always important to game
+                // Just log message to help with troubleshooting if needed
+                string missingCharsString = string.Empty;
+                for (int c = 0; c < missingUnicodesSource.Length; c++)
+                {
+                    missingCharsString += string.Format("{0}[{1}] ", Convert.ToChar(missingUnicodesSource[c]), missingUnicodesSource[c]);
+                }
+                Debug.LogFormat("Some default characters could not be found in font {0}: '{1}': ", filename, missingCharsString);
             }
 
             // TODO: Attempt to add user-specified unicode characters from a source file
