@@ -36,7 +36,7 @@ namespace DaggerfallWorkshop.Utility
         #region Fields
 
         readonly string stringLiteralWrapper = "\"";
-        readonly string rowSeparator = ",";
+        string rowSeparator = ",";
 
         string[] inlineCommentSeparator = new string[] { "//" };
 
@@ -427,7 +427,11 @@ namespace DaggerfallWorkshop.Utility
         {
             // Get schema columns from comma-separated list to right of colon
             string[] parts = text.Split(':');
-            string[] columnNames = parts[1].Split(',');
+
+            if (!text.Contains(",") && text.Contains("|"))
+                rowSeparator = "|";
+
+            string[] columnNames = parts[1].Split(rowSeparator[0]);
 
             // Get column count
             columnCount = columnNames.Length;
@@ -584,6 +588,15 @@ namespace DaggerfallWorkshop.Utility
             return substrings.ToArray();
         }
 
+        string SubstituteEscapedCharacterValues(string text)
+        {
+            int pos;
+            while ((pos = text.IndexOf("\\u")) >= 0 && pos + 5 < text.Length)
+                text = text.Substring(0, pos) + (char)int.Parse(text.Substring(pos + 2, 4), System.Globalization.NumberStyles.HexNumber) + text.Substring(pos + 6);
+
+            return text;
+        }
+
         void LoadRow(string text, int lineNumber)
         {
             // Use custom split for schema containing string literals
@@ -597,7 +610,7 @@ namespace DaggerfallWorkshop.Utility
             else
             {
                 // Split line by commas
-                parts = text.Split(','); 
+                parts = text.Split(rowSeparator[0]); 
                 if (parts.Length != columnCount)
                     throw new Exception(string.Format("Row on line {0} does not match schema. \"{1}\"", lineNumber, text));
             }
@@ -606,7 +619,7 @@ namespace DaggerfallWorkshop.Utility
             for (int i = 0; i < parts.Length; i++)
             {
                 // Add value
-                string value = parts[i].Trim();
+                string value = SubstituteEscapedCharacterValues(parts[i].Trim());
                 columns[i].values.Add(value);
 
                 // Link primary key value to current index
