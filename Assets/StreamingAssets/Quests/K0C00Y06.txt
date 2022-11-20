@@ -708,7 +708,7 @@ Message:  1053
 <ce>                   _noble_ was behind that burglary?
 <ce>             Well, well, well. Here's what you need to do.
 <ce>              I'll talk to %g3 family -- they'll be eager
-<ce>                to diffuse this situation as cleanly as
+<ce>                to defuse this situation as cleanly as
 <ce>                    possible. You get the _gem_ to
 <ce>                       _qgiver_ in __qgiver_, so
 <ce>                  %g's happy. What an amateur burglar
@@ -1125,10 +1125,13 @@ _reminderwitness_ task:
 
 _victory_ task:
 	toting _gem_ and _qgiver_ clicked 
+	legal repute -200
 	give pc _reward_ 
 	change repute with _qgiver_ by +10 
-	legal repute +20
+	legal repute +105
 	end quest 
+--changing to -200/+105 again. Criminal conspiracy charges during the quest
+--can lower the player's legal rep more than intended.
 
 _clickmerchant_ task:
 	clicked npc _merchant_ 
