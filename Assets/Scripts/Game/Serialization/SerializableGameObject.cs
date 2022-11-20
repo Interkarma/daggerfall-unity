@@ -235,6 +235,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public bool insideOpenShop;
         public bool insideTavern;
         public bool insideResidence;
+        public bool playerTeleportedIntoDungeon;
         public string terrainSamplerName;
         public int terrainSamplerVersion;
         public QuestSmallerDungeonsState smallerDungeonsState;
