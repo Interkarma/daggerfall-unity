@@ -1119,30 +1119,30 @@ namespace DaggerfallWorkshop.Game
             get => GetAnyKeyUpIgnoreAxisBinds() != KeyCode.None;
         }
 
-        public KeyCode GetAnyKeyDown()
+        public KeyCode GetAnyKeyDown(bool allowUnaccepted = false)
         {
             foreach (KeyCode k in KeyCodeList)
-                if (!unacceptedAnyKeys.Contains((int)k)
+                if ((allowUnaccepted || !unacceptedAnyKeys.Contains((int)k))
                     && GetUnaryKey(k, getKeyDownMethod, true, false))
                     return k;
 
             return KeyCode.None;
         }
 
-        public KeyCode GetAnyKeyUp()
+        public KeyCode GetAnyKeyUp(bool allowUnaccepted = false)
         {
             foreach (KeyCode k in KeyCodeList)
-                if (!unacceptedAnyKeys.Contains((int)k)
+                if ((allowUnaccepted || !unacceptedAnyKeys.Contains((int)k))
                     && GetUnaryKey(k, getKeyUpMethod, false, false))
                     return k;
 
             return KeyCode.None;
         }
 
-        public KeyCode GetAnyKeyDownIgnoreAxisBinds()
+        public KeyCode GetAnyKeyDownIgnoreAxisBinds(bool allowUnaccepted = false)
         {
             foreach (KeyCode k in KeyCodeList)
-                if (!unacceptedAnyKeys.Contains((int)k)
+                if ((allowUnaccepted || !unacceptedAnyKeys.Contains((int)k))
                     && !IsUsedInAxisBinding(k)
                     && GetUnaryKey(k, getKeyDownMethod, true, false))
                     return k;
@@ -1151,10 +1151,10 @@ namespace DaggerfallWorkshop.Game
         }
 
 
-        public KeyCode GetAnyKeyUpIgnoreAxisBinds()
+        public KeyCode GetAnyKeyUpIgnoreAxisBinds(bool allowUnaccepted = false)
         {
             foreach (KeyCode k in KeyCodeList)
-                if (!unacceptedAnyKeys.Contains((int)k)
+                if ((allowUnaccepted || !unacceptedAnyKeys.Contains((int)k))
                     && !IsUsedInAxisBinding(k)
                     && GetUnaryKey(k, getKeyUpMethod, false, false))
                     return k;

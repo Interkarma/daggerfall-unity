@@ -389,7 +389,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.Label.Text = "";
             yield return new WaitForSecondsRealtime(0.05f);
 
-            while ((code1 = InputManager.Instance.GetAnyKeyDownIgnoreAxisBinds()) == KeyCode.None)
+            while ((code1 = InputManager.Instance.GetAnyKeyDownIgnoreAxisBinds(true)) == KeyCode.None)
             {
                 setWaitingForInput(true);
                 yield return null;
@@ -397,9 +397,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             yield return new WaitForSecondsRealtime(0.05f);
 
-            while ((code2 = InputManager.Instance.GetAnyKeyDownIgnoreAxisBinds()) == KeyCode.None)
+            while ((code2 = InputManager.Instance.GetAnyKeyDownIgnoreAxisBinds(true)) == KeyCode.None)
             {
-                if (InputManager.Instance.GetAnyKeyUpIgnoreAxisBinds() != KeyCode.None)
+                if (InputManager.Instance.GetAnyKeyUpIgnoreAxisBinds(true) != KeyCode.None)
                     break;
 
                 setWaitingForInput(true);
