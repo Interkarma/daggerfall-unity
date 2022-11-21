@@ -632,6 +632,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         /// <summary>
         /// Replace TMP font asset using a .ttf or .otf font in StreamingAssets/Fonts.
+        /// TODO: Support loading font file from .dfmod.
         /// </summary>
         /// <param name="filename">Filename of replacement font including .ttf extension. Font file must be present in StreamingAssets/Fonts to load.</param>
         /// <param name="source">Source TMP font for initial character table population.</param>
