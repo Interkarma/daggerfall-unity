@@ -690,7 +690,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         /// <summary>
         /// Attempt to add specific font characters to SDF font loaded from a .txt file with same name as font.
-        /// For example, "FONT0003-SDF.ttf" might be a Russian font and "FONT
+        /// For example, "FONT0003-SDF.ttf" might be a Cyrillic font and "FONT0003-SDF.txt" the Cyrillic alphabet.
+        /// Some fonts (e.g. Noto Sans JP) may contain many thousands of character codes for different languages, far too many to add all to SDF atlas.
+        /// The .txt file tells DFU which character codes are actually required in SDF atlas by translator matching their alphabet and language.
+        /// All Latin character codes are added by default if present in font.
+        /// It is recommended custom fonts always have Latin characters for any parts of game not translated or supported yet.
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="replacement"></param>
