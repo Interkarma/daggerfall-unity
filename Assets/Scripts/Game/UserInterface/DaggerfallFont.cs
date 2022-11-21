@@ -486,7 +486,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Attempt to ingest a StreamingAssets/Fonts .ttf override file
             TMP_FontAsset replacement;
-            if (ReplaceTMPFontFromTTF(Path.GetFileNameWithoutExtension(path) + ".ttf", tmpFont, out replacement))
+            if (ReplaceTMPFontFromFile(Path.GetFileNameWithoutExtension(path), tmpFont, out replacement))
             {
                 tmpFont = replacement;
                 // TODO: Output debug text that font was replaced
@@ -631,20 +631,33 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Replace TMP font asset using a .ttf font in StreamingAssets/Fonts.
+        /// Replace TMP font asset using a .ttf or .otf font in StreamingAssets/Fonts.
         /// </summary>
         /// <param name="filename">Filename of replacement font including .ttf extension. Font file must be present in StreamingAssets/Fonts to load.</param>
         /// <param name="source">Source TMP font for initial character table population.</param>
         /// <param name="replacement">Replacement TMP font output.</param>
         /// <returns>True is successfully created replacement TMP font.</returns>
-        bool ReplaceTMPFontFromTTF(string filename, TMP_FontAsset source, out TMP_FontAsset replacement)
+        bool ReplaceTMPFontFromFile(string filename, TMP_FontAsset source, out TMP_FontAsset replacement)
         {
+            const string ttfExt = ".ttf";
+            const string otfExt = ".otf";
+
             // Compose path to font file
             string path = Path.Combine(Application.streamingAssetsPath, "Fonts", filename);
 
             // Check file exists
             replacement = null;
-            if (!File.Exists(path))
+            if (File.Exists(path + ttfExt))
+                path += ttfExt;
+            else if (File.Exists(path + otfExt))
+                path += otfExt;
+            else
+                return false;
+
+            // Create replacement TMP font asset from path
+            Font font = new Font(path);
+            replacement = TMP_FontAsset.CreateFontAsset(font, 90, 9, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 2048, 2048, AtlasPopulationMode.Dynamic);
+            if (replacement == null)
                 return false;
 
             // Get characters of source font
@@ -653,12 +666,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 sourceUnicodes.Add(c.unicode);
             }
-
-            // Create replacement TMP font asset from path
-            Font font = new Font(path);
-            replacement = TMP_FontAsset.CreateFontAsset(font);
-            if (replacement == null)
-                return false;
 
             // Attempt to add unicode characters from source
             uint[] missingUnicodesSource = null;
@@ -675,9 +682,55 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Debug.LogFormat("Some default characters could not be found in font {0}: '{1}': ", filename, missingCharsString);
             }
 
-            // TODO: Attempt to add user-specified unicode characters from a source file
+            // Attempt to add user-specified unicode characters from a source file
+            LoadCustomFontChars(Path.GetFileNameWithoutExtension(path) + ".txt", replacement);
 
             return true;
+        }
+
+        /// <summary>
+        /// Attempt to add specific font characters to SDF font loaded from a .txt file with same name as font.
+        /// For example, "FONT0003-SDF.ttf" might be a Russian font and "FONT
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="replacement"></param>
+        void LoadCustomFontChars(string filename, TMP_FontAsset replacement)
+        {
+            // Compose path to character file
+            string path = Path.Combine(Application.streamingAssetsPath, "Fonts", filename);
+
+            // Check file exists
+            if (!File.Exists(path))
+                return;
+
+            // Attempt to add unicode characters from source file
+            string text = File.ReadAllText(path);
+            if (!string.IsNullOrEmpty(text))
+            {
+                // Read unicodes from source file
+                List<uint> sourceUnicodes = new List<uint>(text.Length);
+                for (int c = 0; c < text.Length; c++)
+                {
+                    if (text[c] >= 0x09 && text[c] <= 0x0d)
+                        continue; // Filter out codes 09-0d (tab through carriage return) so input txt can format a bit
+                    else
+                        sourceUnicodes.Add(text[c]);
+                }
+
+                // Attempt to add unicode characters from source file
+                uint[] missingUnicodesSource = null;
+                if (!replacement.TryAddCharacters(sourceUnicodes.ToArray(), out missingUnicodesSource))
+                {
+                    // Format list of missing default characters in replacement font
+                    // This is considered a warning at least as modder specifically requested these characters from font
+                    string missingCharsString = string.Empty;
+                    for (int c = 0; c < missingUnicodesSource.Length; c++)
+                    {
+                        missingCharsString += string.Format("{0}[{1}] ", Convert.ToChar(missingUnicodesSource[c]), missingUnicodesSource[c]);
+                    }
+                    Debug.LogWarningFormat("Some requested characters could not be found in font {0}: '{1}': ", filename, missingCharsString);
+                }
+            }
         }
 
         #endregion
