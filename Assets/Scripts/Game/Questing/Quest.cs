@@ -665,10 +665,21 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public Message GetMessage(int messageID)
         {
+            // Get default message resource
+            Message result = null;
             if (messages.ContainsKey(messageID))
-                return messages[messageID];
+                result = messages[messageID];
             else
                 return null;
+
+            // TODO: Attempt to get localized text for message
+            string key = string.Format("{0}.{1}", QuestName, messageID.ToString());
+            string localizedText = TextManager.Instance.GetLocalizedText(key, TextCollections.TextQuests);
+            if (!string.IsNullOrEmpty(localizedText))
+            {
+            }
+
+            return result;
         }
 
         public Task GetTask(Symbol symbol)

@@ -772,6 +772,7 @@ namespace DaggerfallWorkshop
         TextRSC,
         TextBOK,
         TextFlats,
+        TextQuests,
     }
 
     /// <summary>

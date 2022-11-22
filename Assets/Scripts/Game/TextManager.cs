@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Game
         public static string defaultInternalRSCCollectionName = "Internal_RSC";
         public static string defaultInternalBOKCollectionName = "Internal_BOK";
         public static string defaultInternalFlatsCollectionName = "Internal_Flats";
+        public static string defaultInternalQuestsCollectionName = "Internal_Quests";
 
         const string localizedTextLookupError = "<LocaleText-NotFound>";
         const string textFolderName = "Text";
@@ -43,6 +44,7 @@ namespace DaggerfallWorkshop.Game
         public string runtimeRSCStrings = defaultInternalRSCCollectionName;
         public string runtimeBOKStrings = defaultInternalBOKCollectionName;
         public string runtimeFlatStrings = defaultInternalFlatsCollectionName;
+        public string runtimeQuestsStrings = defaultInternalQuestsCollectionName;
 
         // String table copy editor properties
         public bool tableCopyOverwriteTargetStringTables = false;
@@ -260,6 +262,9 @@ namespace DaggerfallWorkshop.Game
                 case TextCollections.TextFlats:
                     collectionName = runtimeFlatStrings;
                     break;
+                case TextCollections.TextQuests:
+                    collectionName = runtimeQuestsStrings;
+                    break;
             }
 
             return collectionName;
@@ -282,6 +287,10 @@ namespace DaggerfallWorkshop.Game
 
                 case TextCollections.TextRSC:
                     collectionName = defaultInternalRSCCollectionName;
+                    break;
+
+                case TextCollections.TextQuests:
+                    collectionName = defaultInternalQuestsCollectionName;
                     break;
             }
 
