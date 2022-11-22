@@ -16,6 +16,11 @@ using UnityEditor.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 
+/// <summary>
+/// ITablePostprocessor string table patcher for in-game text.
+/// Attempts to load alternate text from CSV file in StreamingAssets/Text and patch existing values with new text data.
+/// Text keys are matched using Key (column 0) and if a match is found the Value (column 1) will become new string data in StringTable.
+/// </summary>
 [Serializable]
 public class StringTablePatcher : ITablePostprocessor
 {
