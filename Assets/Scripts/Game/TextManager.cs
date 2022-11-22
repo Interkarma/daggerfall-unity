@@ -387,6 +387,19 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        /// <summary>
+        /// Tries to gets text value from localization in TextProvider.
+        /// Will use current locale if available in collection.
+        /// </summary>
+        /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
+        /// <param name="key">Key of text in table.</param>
+        /// <param name="localizedString">Result of lookup if found.</param>
+        /// <returns>True if text found, otherwise false.</returns>
+        public bool TryGetLocalizedText(TextCollections collection, string key, out string localizedString)
+        {
+            return TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedString);
+        }
+
         #endregion
 
         #region Private Localized Text Methods
