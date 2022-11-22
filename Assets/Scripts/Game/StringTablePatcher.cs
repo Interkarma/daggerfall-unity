@@ -20,6 +20,7 @@ using UnityEngine.Localization.Tables;
 /// ITablePostprocessor string table patcher for in-game text.
 /// Attempts to load alternate text from CSV file in StreamingAssets/Text and patch existing values with new text data.
 /// Text keys are matched using Key (column 0) and if a match is found the Value (column 1) will become new string data in StringTable.
+/// If no matching key is found then a new key/value entry is added to StringTable.
 /// </summary>
 [Serializable]
 public class StringTablePatcher : ITablePostprocessor
@@ -40,9 +41,9 @@ public class StringTablePatcher : ITablePostprocessor
         {
             StringTableEntry entry = stringTable.GetEntry(kvp.Key);
             if (entry != null)
-            {
                 entry.Value = kvp.Value;
-            }
+            else
+                stringTable.AddEntry(kvp.Key, kvp.Value);
         }
     }
 
