@@ -3993,5 +3993,487 @@ MonoBehaviour:
     m_Localized: 'Custom name: '
     m_Metadata:
       m_Items: []
+  - m_Id: 285674837707603968
+    m_Localized: '%ef''s
+
+      %cn''s Best
+
+      The Essential
+
+      Lord %ef''s
+
+      The
+      Adventurer''s
+
+      The Odd
+
+      %ef''s Finest
+
+      Bargain
+
+      Vintage
+
+      The
+      Emperor''s
+
+      %cn
+
+      %ef''s General
+
+      The Superior
+
+      %ef''s
+      Quality
+
+      First Class
+
+      The %rt''s
+
+      The Champion
+
+      Doctor
+      %ef''s
+
+      Lady %ef''s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285674968234344448
+    m_Localized: 'Supplies
+
+      Supply Store
+
+      Gear
+
+      Gear Store
+
+      Equipment
+
+      Equipment
+      Store
+
+      Sundries
+
+      Provisions
+
+      Merchandise
+
+      General Store
+
+      Retail
+      Store
+
+      Trading Post
+
+      Market
+
+      Wares
+
+      Warehouse'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675018800873472
+    m_Localized: "Weapons\r\nWeaponry\r\nArms\r\nArmaments\r\nArsenal\r\nArmsmaker\r\nBlades\r\nBlacksmith\r\nMetalsmith\r\nWeaponsmith\r"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675106491187200
+    m_Localized: 'Armory
+
+      Mail
+
+      Shielding
+
+      Armor
+
+      Shields
+
+      Aegis
+
+      Metalworks
+
+      Blacksmith
+
+      Metalsmith
+
+      Armorer
+
+      Smith
+
+      Smithy'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675156646674432
+    m_Localized: 'Books
+
+      Bookstore
+
+      Bookshop
+
+      Book Dealer
+
+      Book
+      Center
+
+      Bookseller
+
+      Bookstall
+
+      Incunabula'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675205288017920
+    m_Localized: 'Library
+
+      Bookroom
+
+      Athenaeum
+
+      Public Library
+
+      Historians
+
+      Bookroom
+
+      Seminary
+
+      Lyceum'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675243338743808
+    m_Localized: 'Clothing
+
+      Clothes
+
+      Garments
+
+      Apparel
+
+      Costumes
+
+      Vestments
+
+      Attire
+
+      Fashion
+
+      Tailoring
+
+      Outfits
+
+      Finery'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675323382841344
+    m_Localized: 'Herbs
+
+      Potherbs
+
+      Spices
+
+      Remedies
+
+      Antidotes
+
+      Physics
+
+      Medicines
+
+      Potions
+
+      Tinctures
+
+      Medicaments
+
+      Elixirs
+
+      Pharmacy
+
+      Apothecary
+
+      Unguents
+
+      Medicinal
+      Agents
+
+      Herb Garden
+
+      Pharmaceuticals
+
+      Chemistry
+
+      Chemicals
+
+      Experiental
+      Products
+
+      Alchemistry
+
+      Alchemical Solutions
+
+      Metallurgy'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675361865580544
+    m_Localized: 'Gems
+
+      Gemstones
+
+      Jewelry
+
+      Jewels
+
+      Precious
+      Stones
+
+      Bijoutry
+
+      Jewelers
+
+      Jewel Box
+
+      Jewelry Shop
+
+      Gemcutter'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675433093251072
+    m_Localized: 'Pawnshop
+
+      Pawnbrokers
+
+      Used Supplies
+
+      Used Gear
+
+      Used
+      Equipment
+
+      Used Merchandise
+
+      Hockshop
+
+      Antiquities'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675465657827328
+    m_Localized: 'Furniture
+
+      Furnishings
+
+      Interior Design
+
+      Furniture
+      Shop
+
+      Decor
+
+      Carpentry
+
+      Woodworking
+
+      Crafts
+
+      Woodwork'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675519206506496
+    m_Localized: 'Livestock
+
+      Breeders
+
+      Farm Animals
+
+      Beasts
+
+      Creatures
+
+      Game
+
+      Animalia
+
+      Fauna
+
+      Menagerie'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675582083317760
+    m_Localized: 'The Queen''s
+
+      The King''s
+
+      The Dirty
+
+      The Black
+
+      The
+      Mole and
+
+      The Green
+
+      The Red
+
+      The Gold
+
+      The White
+
+      The
+      Silver
+
+      The Crimson
+
+      The Flying
+
+      The Dancing
+
+      The Laughing
+
+      The
+      Restless
+
+      The Thirsty
+
+      The Unfortunate
+
+      The Lucky
+
+      The
+      Devil''s
+
+      The Rusty
+
+      The Howling
+
+      The Screaming
+
+      The
+      Bat and
+
+      The Lion and
+
+      The Lynx and
+
+      The Dwarf and
+
+      The
+      Beaver and
+
+      The Fox and
+
+      The Mouse and
+
+      The Pig and
+
+      The
+      Feather and
+
+      The Toad and
+
+      The Rat and
+
+      The Savage
+
+      The
+      Knave and
+
+      The Dead'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675625704079360
+    m_Localized: 'Chasm
+
+      Mug
+
+      Pit
+
+      Cat
+
+      Dog
+
+      Goblin
+
+      Griffin
+
+      Dragon
+
+      Ogre
+
+      Giant
+
+      Djinn
+
+      Wolf
+
+      Huntsman
+
+      Dagger
+
+      Skull
+
+      Sword
+
+      Guard
+
+      Dungeon
+
+      Helm
+
+      Castle
+
+      Jug
+
+      Bird
+
+      Gnome
+
+      Hedgehog
+
+      Muskrat
+
+      Woodchuck
+
+      Scorpion
+
+      Badger
+
+      Goat
+
+      Porcupine
+
+      Priest
+
+      Fawn
+
+      Stag
+
+      Barbarian
+
+      Rascal
+
+      Fairy'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285678855704035328
+    m_Localized: House for sale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679031546036224
+    m_Localized: The Bank of
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679698457149440
+    m_Localized: Daggerfall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679716257775616
+    m_Localized: Wayrest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679764228030464
+    m_Localized: Sentinel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285680166927351808
+    m_Localized: Palace
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
