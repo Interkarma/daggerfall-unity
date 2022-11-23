@@ -11,8 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.Localization;
+//using UnityEditor;
+//using UnityEditor.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 
