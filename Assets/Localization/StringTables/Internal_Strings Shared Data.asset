@@ -3691,6 +3691,10 @@ MonoBehaviour:
     m_Key: palace
     m_Metadata:
       m_Items: []
+  - m_Id: 286284881981620224
+    m_Key: regionNames
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
