@@ -213,11 +213,21 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Gets current region name based on world position.
+        /// Gets non-localized current region name based on world position.
+        /// IMPORTANT: This is used when matching regions for NPC knowledge in TalkManager and should not be localized.
         /// </summary>
         public string CurrentRegionName
         {
             get { return regionName; }
+        }
+
+        /// <summary>
+        /// Gets localized current region name based on world position.
+        /// This should only be used for display strings in UI.
+        /// </summary>
+        public string CurrentLocalizedRegionName
+        {
+            get { return DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(CurrentRegionIndex); }
         }
 
         /// <summary>

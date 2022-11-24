@@ -550,7 +550,7 @@ namespace DaggerfallWorkshop.Utility
             if (gps.HasCurrentLocation)
                 return gps.CurrentLocation.Name;
             else
-                return gps.CurrentRegion.Name;
+                return gps.CurrentLocalizedRegionName;
         }
 
         private static string CityName2(IMacroContextProvider mcp)
@@ -562,12 +562,12 @@ namespace DaggerfallWorkshop.Utility
                 if (GameManager.Instance.PlayerGPS.CurrentLocationIndex != i && dfRegion.MapTable[i].LocationType == DFRegion.LocationTypes.TownCity)
                     return dfRegion.MapNames[i];
             }
-            return "Daggerfall";
+            return TextManager.Instance.GetLocalizedText("daggerfall"); // Localizaed fallback in case of error
         }
 
         private static string CurrentRegion(IMacroContextProvider mcp)
         {   // %crn
-            return GameManager.Instance.PlayerGPS.CurrentRegion.Name;
+            return GameManager.Instance.PlayerGPS.CurrentLocalizedRegionName;
         }
 
         private static string CityType(IMacroContextProvider mcp)
