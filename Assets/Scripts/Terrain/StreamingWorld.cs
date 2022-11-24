@@ -1698,7 +1698,7 @@ namespace DaggerfallWorkshop
                 MapPixelY,
                 LocalPlayerGPS.WorldX,
                 LocalPlayerGPS.WorldZ,
-                LocalPlayerGPS.CurrentRegionName,
+                LocalPlayerGPS.CurrentLocalizedRegionName,
                 LocalPlayerGPS.ClimateSettings.ClimateType.ToString());
             if (LocalPlayerGPS.CurrentLocation.Loaded)
             {

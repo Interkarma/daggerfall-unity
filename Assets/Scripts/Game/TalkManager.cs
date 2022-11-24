@@ -1522,7 +1522,7 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), GameManager.Instance.PlayerGPS.CurrentLocation.Name, GameManager.Instance.PlayerGPS.CurrentRegionName);
+                return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), GameManager.Instance.PlayerGPS.CurrentLocation.Name, GameManager.Instance.PlayerGPS.CurrentLocalizedRegionName);
             }
             return TextManager.Instance.GetLocalizedText("resolvingError");
         }
