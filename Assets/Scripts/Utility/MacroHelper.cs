@@ -1021,7 +1021,7 @@ namespace DaggerfallWorkshop.Utility
         {   // %reg
             if (idRegion != -1)
             {
-                return MapsFile.RegionNames[idRegion];
+                return DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(idRegion);
             }
             else
                 return CurrentRegion(mcp);

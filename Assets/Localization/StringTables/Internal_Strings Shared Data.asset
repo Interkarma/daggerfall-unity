@@ -3695,6 +3695,18 @@ MonoBehaviour:
     m_Key: regionNames
     m_Metadata:
       m_Items: []
+  - m_Id: 286315014360678400
+    m_Key: ocean
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286315235807346688
+    m_Key: unknownUpper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286316113792614400
+    m_Key: switchToRegion
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -819,7 +819,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Custom image must be based on 320x160 interior snip of TRAV0I00.IMG (so exclude top and bottom bars) but can be a higher resolution like 1600x800
             Texture2D customRegionOverlayTexture;
             if (importedOverlays.TryGetValue(playerRegion, out customRegionOverlayTexture) ||
-                TextureReplacement.TryImportImage(string.Format("{0}-{1}", overworldImgName, GetRegionName(playerRegion)), false, out customRegionOverlayTexture))
+                TextureReplacement.TryImportImage(string.Format("{0}-{1}", overworldImgName, GetRegionNameForMapReplacement(playerRegion)), false, out customRegionOverlayTexture))
             {
                 identifyOverlayPanel.BackgroundTexture = importedOverlays[playerRegion] = customRegionOverlayTexture;
                 return;
@@ -1270,9 +1270,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (RegionSelected == false)
                 regionLabel.Text = GetRegionName(mouseOverRegion);
             else if (locationSelected)
-                regionLabel.Text = string.Format("{0} : {1}", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(mouseOverRegion), GetLocationNameInCurrentRegion(locationSummary.MapIndex, true));
+                regionLabel.Text = string.Format("{0} : {1}", GetRegionName(mouseOverRegion), GetLocationNameInCurrentRegion(locationSummary.MapIndex, true));
             else if (MouseOverOtherRegion)
-                regionLabel.Text = string.Format("Switch To: {0} Region", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(mouseOverRegion));
+                regionLabel.Text = string.Format(TextManager.Instance.GetLocalizedText("switchToRegion"), GetRegionName(mouseOverRegion));
             else
                 regionLabel.Text = GetRegionName(mouseOverRegion);
         }
@@ -1572,7 +1572,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Gets name of region
         protected string GetRegionName(int region)
         {
-            return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region);
+            return DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(region);
+        }
+        protected string GetRegionNameForMapReplacement(int region)
+        {
+            return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region); // Using non-localized name for map replacement path
         }
 
         // Gets name of location in currently open region - tries world data replacement then falls back to MAPS.BSA

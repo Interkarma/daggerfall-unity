@@ -959,6 +959,8 @@ namespace DaggerfallConnect.Arena2
             try
             {
                 // Store parent region name
+                // IMPORTANT: This RegionName is used in many places as a string key and must always be the non-localized version as found in MAPS.BSA.
+                //            Anywhere using this for display to player should use TextProvider.GetLocalizedRegionName() instead.
                 dfLocation.RegionName = RegionNames[region];
 
                 // Read MapPItem for this location

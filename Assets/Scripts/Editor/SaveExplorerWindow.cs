@@ -273,7 +273,7 @@ namespace DaggerfallWorkshop
                         string regionText = "None";
                         if (region > 0)
                         {
-                            regionText = dfUnity.ContentReader.MapFileReader.GetRegionName(region);
+                            regionText = dfUnity.ContentReader.MapFileReader.GetRegionName(region); // Using non-localized name in save explorer editor
                         }
                         EditorGUILayout.LabelField(string.Format("Region: {0}", regionText));
 

@@ -716,7 +716,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 List<uint> sourceUnicodes = new List<uint>(text.Length);
                 for (int c = 0; c < text.Length; c++)
                 {
-                    if (text[c] >= 0x09 && text[c] <= 0x0d)
+                    if (text[c] >= 0x09 && text[c] <= 0x0d || sourceUnicodes.Contains(text[c]))
                         continue; // Filter out codes 09-0d (tab through carriage return) so input txt can format a bit
                     else
                         sourceUnicodes.Add(text[c]);
