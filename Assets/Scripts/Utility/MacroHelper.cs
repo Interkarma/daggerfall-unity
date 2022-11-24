@@ -838,7 +838,12 @@ namespace DaggerfallWorkshop.Utility
             DFLocation.BuildingData buildingData = buildingInterior.BuildingData;
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             DFLocation location = gps.CurrentLocation;
-            return BuildingNames.GetName(buildingData.NameSeed, buildingData.BuildingType, buildingData.FactionId, location.Name, location.RegionName);
+            return BuildingNames.GetName(
+                buildingData.NameSeed,
+                buildingData.BuildingType,
+                buildingData.FactionId,
+                location.Name,
+                DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(location.RegionIndex));
         }
 
         private static string PlayerPronoun(IMacroContextProvider mcp)

@@ -2759,7 +2759,12 @@ namespace DaggerfallWorkshop.Game
                         {
                             BuildingInfo item;
                             item.buildingType = buildingSummary.BuildingType;
-                            item.name = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+                            item.name = BuildingNames.GetName(
+                                buildingSummary.NameSeed,
+                                buildingSummary.BuildingType,
+                                buildingSummary.FactionId,
+                                location.Name,
+                                DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(location.RegionIndex));
                             item.buildingKey = buildingSummary.buildingKey;
                             // Compute building position in map coordinate system
                             float xPosBuilding = blockLayout[index].rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * ExteriorAutomap.blockSizeWidth) - GameManager.Instance.ExteriorAutomap.LocationWidth * ExteriorAutomap.blockSizeWidth * 0.5f;
