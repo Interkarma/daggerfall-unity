@@ -48,12 +48,14 @@ namespace DaggerfallWorkshop
             var runtimeRSCStrings = Prop("runtimeRSCStrings");
             var runtimeBOKStrings = Prop("runtimeBOKStrings");
             var runtimeFlatStrings = Prop("runtimeFlatStrings");
+            var runtimeLocationsStrings = Prop("runtimeLocationsStrings");
 
             var tableCopyOverwriteTargetStringTables = Prop("tableCopyOverwriteTargetStringTables");
             var tableCopyTargetInternalStrings = Prop("tableCopyTargetInternalStrings");
             var tableCopyTargetRSCStrings = Prop("tableCopyTargetRSCStrings");
             var tableCopyTargetBOKStrings = Prop("tableCopyTargetBOKStrings");
             var tableCopyTargetFlatStrings = Prop("tableCopyTargetFlatStrings");
+            var tableCopyTargetLocationStrings = Prop("tableCopyTargetLocationStrings");
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Live String Tables", EditorStyles.boldLabel);
@@ -63,6 +65,7 @@ namespace DaggerfallWorkshop
                 runtimeRSCStrings.stringValue = EditorGUILayout.TextField("RSC Strings", runtimeRSCStrings.stringValue);
                 runtimeBOKStrings.stringValue = EditorGUILayout.TextField("BOK Strings", runtimeBOKStrings.stringValue);
                 runtimeFlatStrings.stringValue = EditorGUILayout.TextField("FLATS.CFG Strings", runtimeFlatStrings.stringValue);
+                runtimeLocationsStrings.stringValue = EditorGUILayout.TextField("Location Strings", runtimeLocationsStrings.stringValue);
             });
 
             EditorGUILayout.Space();
@@ -73,6 +76,7 @@ namespace DaggerfallWorkshop
                 tableCopyTargetRSCStrings.stringValue = EditorGUILayout.TextField("RSC Strings > ", tableCopyTargetRSCStrings.stringValue);
                 tableCopyTargetBOKStrings.stringValue = EditorGUILayout.TextField("BOK Strings > ", tableCopyTargetBOKStrings.stringValue);
                 tableCopyTargetFlatStrings.stringValue = EditorGUILayout.TextField("FLATS.CFG Strings > ", tableCopyTargetFlatStrings.stringValue);
+                tableCopyTargetLocationStrings.stringValue = EditorGUILayout.TextField("Location Strings > ", tableCopyTargetLocationStrings.stringValue);
                 tableCopyOverwriteTargetStringTables.boolValue = EditorGUILayout.Toggle(new GUIContent("Overwrite String Tables?", "When enabled will copy over existing strings in target string tables."), tableCopyOverwriteTargetStringTables.boolValue);
             });
 

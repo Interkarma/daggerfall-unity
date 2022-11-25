@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game
         public static string defaultInternalBOKCollectionName = "Internal_BOK";
         public static string defaultInternalFlatsCollectionName = "Internal_Flats";
         public static string defaultInternalQuestsCollectionName = "Internal_Quests";
+        public static string defaultInternalLocationsCollectionName = "Internal_Locations";
 
         const string localizedTextLookupError = "<LocaleText-NotFound>";
         const string textFolderName = "Text";
@@ -45,6 +46,7 @@ namespace DaggerfallWorkshop.Game
         public string runtimeBOKStrings = defaultInternalBOKCollectionName;
         public string runtimeFlatStrings = defaultInternalFlatsCollectionName;
         public string runtimeQuestsStrings = defaultInternalQuestsCollectionName;
+        public string runtimeLocationsStrings = defaultInternalLocationsCollectionName;
 
         // String table copy editor properties
         public bool tableCopyOverwriteTargetStringTables = false;
@@ -52,6 +54,7 @@ namespace DaggerfallWorkshop.Game
         public string tableCopyTargetRSCStrings = null;
         public string tableCopyTargetBOKStrings = null;
         public string tableCopyTargetFlatStrings = null;
+        public string tableCopyTargetLocationStrings = null;
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
         Dictionary<string, string[]> cachedLocalizedTextLists = new Dictionary<string, string[]>();
@@ -265,6 +268,9 @@ namespace DaggerfallWorkshop.Game
                 case TextCollections.TextQuests:
                     collectionName = runtimeQuestsStrings;
                     break;
+                case TextCollections.TextLocations:
+                    collectionName = runtimeLocationsStrings;
+                    break;
             }
 
             return collectionName;
@@ -291,6 +297,10 @@ namespace DaggerfallWorkshop.Game
 
                 case TextCollections.TextQuests:
                     collectionName = defaultInternalQuestsCollectionName;
+                    break;
+
+                case TextCollections.TextLocations:
+                    collectionName = defaultInternalLocationsCollectionName;
                     break;
             }
 
