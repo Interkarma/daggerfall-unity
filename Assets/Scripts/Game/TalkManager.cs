@@ -2764,7 +2764,7 @@ namespace DaggerfallWorkshop.Game
                                 buildingSummary.BuildingType,
                                 buildingSummary.FactionId,
                                 location.Name,
-                                DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(location.RegionIndex));
+                                TextManager.Instance.GetLocalizedRegionName(location.RegionIndex));
                             item.buildingKey = buildingSummary.buildingKey;
                             // Compute building position in map coordinate system
                             float xPosBuilding = blockLayout[index].rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * ExteriorAutomap.blockSizeWidth) - GameManager.Instance.ExteriorAutomap.LocationWidth * ExteriorAutomap.blockSizeWidth * 0.5f;

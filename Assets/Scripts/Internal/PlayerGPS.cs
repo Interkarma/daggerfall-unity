@@ -227,7 +227,7 @@ namespace DaggerfallWorkshop
         /// </summary>
         public string CurrentLocalizedRegionName
         {
-            get { return DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(CurrentRegionIndex); }
+            get { return TextManager.Instance.GetLocalizedRegionName(CurrentRegionIndex); }
         }
 
         /// <summary>
@@ -1230,7 +1230,7 @@ namespace DaggerfallWorkshop
                     buildingSummary.BuildingType,
                     buildingSummary.FactionId,
                     buildingDirectory.LocationData.Name,
-                    DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(buildingDirectory.LocationData.RegionIndex));
+                    TextManager.Instance.GetLocalizedRegionName(buildingDirectory.LocationData.RegionIndex));
             }
             buildingDiscoveryData.factionID = buildingSummary.FactionId;
             buildingDiscoveryData.quality = buildingSummary.Quality;

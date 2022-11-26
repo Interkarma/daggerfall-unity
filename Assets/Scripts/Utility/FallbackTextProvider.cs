@@ -202,17 +202,6 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Gets localized version of region name from string tables for display purposes only.
-        /// This is distinct from the name in MAPS.BSA which is also used internally as a key.
-        /// </summary>
-        /// <param name="regionIndex">Index of region.</param>
-        /// <returns>Localized name of region.</returns>
-        public virtual string GetLocalizedRegionName(int regionIndex)
-        {
-            return fallback.GetLocalizedRegionName(regionIndex);
-        }
-
-        /// <summary>
         /// Attempts to read a localized string from a named table collection.
         /// </summary>
         /// <param name="collection">Name of table collection.</param>

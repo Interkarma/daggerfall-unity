@@ -2596,7 +2596,7 @@ namespace Wenzil.Console
                 {
                     for (int region = 0; region < GameManager.Instance.PlayerEntity.RegionData.Length; region++)
                     {
-                        string regionName = DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(region);
+                        string regionName = TextManager.Instance.GetLocalizedRegionName(region);
                         string reputationString = string.Empty;
                         int rep = GameManager.Instance.PlayerEntity.RegionData[region].LegalRep;
                         if (rep > 80)
@@ -2652,7 +2652,7 @@ namespace Wenzil.Console
                 {
                     for (int region = 0; region < GameManager.Instance.PlayerEntity.RegionData.Length; region++)
                     {
-                        string regionName = DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(region);
+                        string regionName = TextManager.Instance.GetLocalizedRegionName(region);
                         int rep = GameManager.Instance.PlayerEntity.RegionData[region].LegalRep;
                         if (rep < 0)
                         {

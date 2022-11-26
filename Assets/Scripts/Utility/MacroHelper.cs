@@ -843,7 +843,7 @@ namespace DaggerfallWorkshop.Utility
                 buildingData.BuildingType,
                 buildingData.FactionId,
                 location.Name,
-                DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(location.RegionIndex));
+                TextManager.Instance.GetLocalizedRegionName(location.RegionIndex));
         }
 
         private static string PlayerPronoun(IMacroContextProvider mcp)
@@ -1026,7 +1026,7 @@ namespace DaggerfallWorkshop.Utility
         {   // %reg
             if (idRegion != -1)
             {
-                return DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(idRegion);
+                return TextManager.Instance.GetLocalizedRegionName(idRegion);
             }
             else
                 return CurrentRegion(mcp);

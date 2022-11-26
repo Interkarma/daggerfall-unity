@@ -398,6 +398,24 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Gets localized version of region name from string tables for display purposes only.
+        /// This is distinct from the canonical name which is used internally as a key and to group discovery data.
+        /// </summary>
+        /// <param name="regionIndex">Index of region.</param>
+        /// <returns>Localized name of region.</returns>
+        public string GetLocalizedRegionName(int regionIndex)
+        {
+            string[] regionNames = GetLocalizedTextList("regionNames");
+            if (regionNames == null || regionNames.Length == 0 ||
+                regionIndex < 0 || regionIndex >= regionNames.Length)
+            {
+                // Fallback to canonical name using MapsFile when localization not provided or index out of range
+                return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(regionIndex);
+            }
+            return regionNames[regionIndex];
+        }
+
+        /// <summary>
         /// Tries to gets text value from localization in TextProvider.
         /// Will use current locale if available in collection.
         /// </summary>

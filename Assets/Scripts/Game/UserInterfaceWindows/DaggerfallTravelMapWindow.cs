@@ -1572,7 +1572,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Gets name of region
         protected string GetRegionName(int region)
         {
-            return DaggerfallUnity.Instance.TextProvider.GetLocalizedRegionName(region);
+            return TextManager.Instance.GetLocalizedRegionName(region);
         }
         protected string GetRegionNameForMapReplacement(int region)
         {

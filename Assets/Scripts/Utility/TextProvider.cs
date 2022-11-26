@@ -134,14 +134,6 @@ namespace DaggerfallWorkshop.Utility
         string GetCustomEnemyName(int enemyId);
 
         /// <summary>
-        /// Gets localized version of region name from string tables for display purposes only.
-        /// This is distinct from the name in MAPS.BSA which is also used internally as a key.
-        /// </summary>
-        /// <param name="regionIndex">Index of region.</param>
-        /// <returns>Localized name of region.</returns>
-        string GetLocalizedRegionName(int regionIndex);
-
-        /// <summary>
         /// Attempts to read a localized string from a named table collection.
         /// </summary>
         /// <param name="collection">Name of table collection.</param>
@@ -616,23 +608,6 @@ namespace DaggerfallWorkshop.Utility
         public string GetCustomEnemyName(int enemyId)
         {
             return null;
-        }
-
-        /// <summary>
-        /// Gets localized version of region name from string tables for display purposes only.
-        /// This is distinct from the name in MAPS.BSA which is also used internally as a key.
-        /// </summary>
-        /// <param name="regionIndex">Index of region.</param>
-        /// <returns>Localized name of region.</returns>
-        public string GetLocalizedRegionName(int regionIndex)
-        {
-            string[] regionNames = TextManager.Instance.GetLocalizedTextList("regionNames");
-            if (regionNames == null || regionNames.Length == 0 ||
-                regionIndex < 0 || regionIndex >= regionNames.Length)
-            {
-                return string.Empty; // Matching behaviour to MapsFile which returns empty string when out of range
-            }
-            return regionNames[regionIndex];
         }
 
         #region Protected Methods
