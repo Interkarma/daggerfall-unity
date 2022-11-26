@@ -65,7 +65,7 @@ namespace DaggerfallWorkshop
                 runtimeRSCStrings.stringValue = EditorGUILayout.TextField("RSC Strings", runtimeRSCStrings.stringValue);
                 runtimeBOKStrings.stringValue = EditorGUILayout.TextField("BOK Strings", runtimeBOKStrings.stringValue);
                 runtimeFlatStrings.stringValue = EditorGUILayout.TextField("FLATS.CFG Strings", runtimeFlatStrings.stringValue);
-                runtimeLocationsStrings.stringValue = EditorGUILayout.TextField("Location Strings", runtimeLocationsStrings.stringValue);
+                runtimeLocationsStrings.stringValue = EditorGUILayout.TextField("MAPS.BSA Strings", runtimeLocationsStrings.stringValue);
             });
 
             EditorGUILayout.Space();
@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop
                 tableCopyTargetRSCStrings.stringValue = EditorGUILayout.TextField("RSC Strings > ", tableCopyTargetRSCStrings.stringValue);
                 tableCopyTargetBOKStrings.stringValue = EditorGUILayout.TextField("BOK Strings > ", tableCopyTargetBOKStrings.stringValue);
                 tableCopyTargetFlatStrings.stringValue = EditorGUILayout.TextField("FLATS.CFG Strings > ", tableCopyTargetFlatStrings.stringValue);
-                tableCopyTargetLocationStrings.stringValue = EditorGUILayout.TextField("Location Strings > ", tableCopyTargetLocationStrings.stringValue);
+                tableCopyTargetLocationStrings.stringValue = EditorGUILayout.TextField("MAPS.BSA Strings > ", tableCopyTargetLocationStrings.stringValue);
                 tableCopyOverwriteTargetStringTables.boolValue = EditorGUILayout.Toggle(new GUIContent("Overwrite String Tables?", "When enabled will copy over existing strings in target string tables."), tableCopyOverwriteTargetStringTables.boolValue);
             });
 
@@ -92,6 +92,7 @@ namespace DaggerfallWorkshop
                 DaggerfallStringTableImporter.CopyTextRSCToStringTable(tableCopyTargetRSCStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
                 //DaggerfallStringTableImporter.CopyTextBOKToStringTable(tableCopyTargetBOKStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
                 DaggerfallStringTableImporter.CopyTextFlatsToStringTable(tableCopyTargetFlatStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
+                DaggerfallStringTableImporter.CopyLocationsToStringTable(tableCopyTargetLocationStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
             }
         }
     }

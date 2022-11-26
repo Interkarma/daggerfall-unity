@@ -14,11 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TableCollectionName: Internal_Locations
   m_TableCollectionNameGuidString: 5e11afb33a5de7543b2b1594675da1aa
-  m_Entries:
-  - m_Id: 114539380736
-    m_Key: exampleOnly
-    m_Metadata:
-      m_Items: []
+  m_Entries: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
