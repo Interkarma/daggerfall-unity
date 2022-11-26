@@ -1702,7 +1702,7 @@ namespace DaggerfallWorkshop
                 LocalPlayerGPS.ClimateSettings.ClimateType.ToString());
             if (LocalPlayerGPS.CurrentLocation.Loaded)
             {
-                final += string.Format(" {0} is nearby.", LocalPlayerGPS.CurrentLocation.Name);
+                final += string.Format(" {0} is nearby.", LocalPlayerGPS.CurrentLocalizedLocationName);
             }
 
             return final;

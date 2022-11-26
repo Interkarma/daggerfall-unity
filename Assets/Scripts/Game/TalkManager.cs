@@ -1506,12 +1506,12 @@ namespace DaggerfallWorkshop.Game
                     PlayerGPS.DiscoveredBuilding discoveredBuilding;
                     if (GameManager.Instance.PlayerGPS.GetAnyBuilding(GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey, out discoveredBuilding))
                     {
-                        return String.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), discoveredBuilding.displayName, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
+                        return String.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), discoveredBuilding.displayName, GameManager.Instance.PlayerGPS.CurrentLocalizedLocationName);
                     }
                     // Fallback if no discovery info was found
                     BuildingInfo currentBuilding = listBuildings.Find(x => x.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey);
 
-                    return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), currentBuilding.name, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
+                    return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), currentBuilding.name, GameManager.Instance.PlayerGPS.CurrentLocalizedLocationName);
                 }
 
                 if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // In dungeon
@@ -1522,7 +1522,7 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), GameManager.Instance.PlayerGPS.CurrentLocation.Name, GameManager.Instance.PlayerGPS.CurrentLocalizedRegionName);
+                return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), GameManager.Instance.PlayerGPS.CurrentLocalizedLocationName, GameManager.Instance.PlayerGPS.CurrentLocalizedRegionName);
             }
             return TextManager.Instance.GetLocalizedText("resolvingError");
         }
