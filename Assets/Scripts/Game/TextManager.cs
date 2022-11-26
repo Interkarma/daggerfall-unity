@@ -416,6 +416,24 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Gets localized version of location name from string tables for display purposes only.
+        /// This is distinct from the canonical name which is used internally as a key and to group discovery data.
+        /// Must provide canonical fallback name when calling method as it's expensive to reload location from data to lookup name.
+        /// Caller should already have working location data loaded and canonical name readily available.
+        /// </summary>
+        /// <param name="mapId">MapTableData.MapId key of location.</param>
+        /// <param name="fallback">Fallback canonical name.</param>
+        /// <returns>Localized name of region or fallback if key not found in string tables.</returns>
+        public string GetLocalizedLocationName(int mapId, string fallback)
+        {
+            string name;
+            if (TryGetLocalizedText(TextCollections.TextLocations, mapId.ToString(), out name))
+                return name;
+            else
+                return fallback;
+        }
+
+        /// <summary>
         /// Tries to gets text value from localization in TextProvider.
         /// Will use current locale if available in collection.
         /// </summary>

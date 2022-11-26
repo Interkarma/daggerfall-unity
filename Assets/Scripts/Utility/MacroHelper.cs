@@ -548,7 +548,7 @@ namespace DaggerfallWorkshop.Utility
         {   // %cn
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             if (gps.HasCurrentLocation)
-                return gps.CurrentLocation.Name;
+                return gps.CurrentLocalizedLocationName;
             else
                 return gps.CurrentLocalizedRegionName;
         }
@@ -560,7 +560,7 @@ namespace DaggerfallWorkshop.Utility
             for (int i = 0; i < dfRegion.LocationCount; i++)
             {
                 if (GameManager.Instance.PlayerGPS.CurrentLocationIndex != i && dfRegion.MapTable[i].LocationType == DFRegion.LocationTypes.TownCity)
-                    return dfRegion.MapNames[i];
+                    return TextManager.Instance.GetLocalizedLocationName(dfRegion.MapTable[i].MapId, dfRegion.MapNames[i]);
             }
             return TextManager.Instance.GetLocalizedText("daggerfall"); // Localizaed fallback in case of error
         }

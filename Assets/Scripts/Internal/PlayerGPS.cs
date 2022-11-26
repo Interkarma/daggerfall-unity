@@ -230,6 +230,11 @@ namespace DaggerfallWorkshop
             get { return TextManager.Instance.GetLocalizedRegionName(CurrentRegionIndex); }
         }
 
+        public string CurrentLocalizedLocationName
+        {
+            get { return TextManager.Instance.GetLocalizedLocationName(currentLocation.MapTableData.MapId, currentLocation.Name); }
+        }
+
         /// <summary>
         /// True if CurrentLocation is valid.
         /// </summary>

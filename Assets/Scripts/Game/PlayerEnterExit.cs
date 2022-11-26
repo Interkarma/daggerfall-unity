@@ -1380,7 +1380,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Show "You are entering %s"
                     string youAreEntering = TextManager.Instance.GetLocalizedText("youAreEntering");
-                    youAreEntering = youAreEntering.Replace("%s", location.Name);
+                    youAreEntering = youAreEntering.Replace("%s", TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name));
                     DaggerfallUI.AddHUDText(youAreEntering, 2);
 
                     // Check room rentals in this location, and display how long any rooms are rented for
