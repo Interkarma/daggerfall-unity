@@ -260,11 +260,11 @@ namespace DaggerfallWorkshop.Game.Questing
                     break;
 
                 case MacroTypes.NameMacro2:             // Name of location/dungeon (e.g. Gothway Garden)
-                    textOut = siteDetails.locationName;
+                    textOut = TextManager.Instance.GetLocalizedLocationName(siteDetails.mapId, siteDetails.locationName);
                     break;
 
                 case MacroTypes.NameMacro3:             // Name of dungeon (e.g. Privateer's Hold) - Not sure about this one, need to test
-                    textOut = siteDetails.locationName;
+                    textOut = TextManager.Instance.GetLocalizedLocationName(siteDetails.mapId, siteDetails.locationName);
                     break;
 
                 case MacroTypes.NameMacro4:             // Name of region (e.g. Tigonus)
