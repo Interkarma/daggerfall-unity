@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game
                     // Show text
                     if (LocationText)
                     {
-                        string text = string.Format("{0}{1}({2})", playerGPS.CurrentLocation.Name, Environment.NewLine, TextManager.Instance.GetLocalizedRegionName(playerGPS.CurrentLocation.RegionIndex));
+                        string text = string.Format("{0}{1}({2})", playerGPS.CurrentLocalizedLocationName, Environment.NewLine, TextManager.Instance.GetLocalizedRegionName(playerGPS.CurrentLocation.RegionIndex));
                         ShowText(text);
                     }
                 }

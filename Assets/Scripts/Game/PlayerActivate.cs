@@ -683,7 +683,7 @@ namespace DaggerfallWorkshop.Game
             var tokens = new List<TextFile.Token>
             {
                 new TextFile.Token(TextFile.Formatting.JustifyCenter, null),
-                new TextFile.Token(TextFile.Formatting.Text, GameManager.Instance.PlayerGPS.CurrentLocation.Name),
+                new TextFile.Token(TextFile.Formatting.Text, GameManager.Instance.PlayerGPS.CurrentLocalizedLocationName),
                 new TextFile.Token(TextFile.Formatting.JustifyCenter, null)
             };
 
