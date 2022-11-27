@@ -164,6 +164,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected string distanceRegionName = null;
         protected IDistance distance;
 
+        // Populated with localized names whenever player searches or lists inside this region
+        // Used to complete search and list on localized names over canonical names
+        protected Dictionary<string, int> localizedMapNameLookup = new Dictionary<string, int>();
+
         #endregion
 
         #region Properties
@@ -418,7 +422,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (!RegionSelected || currentDFRegion.LocationCount < 1)
                         return;
 
-                    string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
+                    string[] locations = GetCurrentRegionLocalizedMapNames().OrderBy(p => p).ToArray();
                     ShowLocationPicker(locations, true);
                 }
                 else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelMapFind).IsUpWith(keyModifiers))
@@ -1453,6 +1457,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        // Get localized names of all locations in current region with fallback to canonical name
+        // Builds a new name lookup dictionary for this region on every call used to complete search
+        protected string[] GetCurrentRegionLocalizedMapNames()
+        {
+            localizedMapNameLookup.Clear();
+            List<string> localizedNames = new List<string>(currentDFRegion.MapNames.Length);
+            for (int l = 0; l < currentDFRegion.MapNames.Length; l++)
+            {
+                // Handle duplicate names in same way as Region.MapNameLookup
+                string name = TextManager.Instance.GetLocalizedLocationName(currentDFRegion.MapTable[l].MapId, currentDFRegion.MapNames[l]);
+                if (!localizedNames.Contains(name))
+                {
+                    localizedNames.Add(name);
+                    localizedMapNameLookup.Add(name, l);
+                }
+            }
+            return localizedNames.ToArray();
+        }
+
         // Find location by name
         protected virtual bool FindLocation(string name, out List<DistanceMatch> matching)
         {
@@ -1466,7 +1489,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 distanceRegionName = currentDFRegion.Name;
                 distance = DaggerfallDistance.GetDistance();
-                distance.SetDictionary(currentDFRegion.MapNames);
+                distance.SetDictionary(GetCurrentRegionLocalizedMapNames());
             }
 
             DistanceMatch[] bestMatches = distance.FindBestMatches(name, maxMatchingResults);
@@ -1477,12 +1500,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             foreach (DistanceMatch match in bestMatches)
             {
-                if (!currentDFRegion.MapNameLookup.ContainsKey(match.text))
+                // Must have called GetCurrentRegionLocalizedMapNames() prior to this point
+                if (!localizedMapNameLookup.ContainsKey(match.text))
                 {
-                    DaggerfallUnity.LogMessage("Error: location name key not found in Region MapNameLookup dictionary");
+                    Debug.LogWarningFormat("Error: location name '{0}' key not found in localizedMapNameLookup dictionary for this region.", match.text);
                     continue;
                 }
-                int index = currentDFRegion.MapNameLookup[match.text];
+                int index = localizedMapNameLookup[match.text];
                 DFRegion.RegionMapTable locationInfo = currentDFRegion.MapTable[index];
                 DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
                 if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out findLocationSummary))
@@ -1539,7 +1563,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (applyFilters)
                 {
-                    int index = currentDFRegion.MapNameLookup[locations[i]];
+                    // Must have called GetCurrentRegionLocalizedMapNames() prior to this point
+                    int index = localizedMapNameLookup[locations[i]];
                     if (GetPixelColorIndex(currentDFRegion.MapTable[index].LocationType) == -1)
                         continue;
                 }
