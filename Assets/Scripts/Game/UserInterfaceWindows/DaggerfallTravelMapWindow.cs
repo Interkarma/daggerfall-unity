@@ -1638,7 +1638,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(doYouWishToTravelToTextId);
 
             // Hack to set location name in text token for now
-            textTokens[2].text = textTokens[2].text.Replace("%tcn", GetLocationNameInCurrentRegion(locationSummary.MapIndex));
+            textTokens[2].text = textTokens[2].text.Replace(
+                "%tcn",
+                TextManager.Instance.GetLocalizedLocationName(locationSummary.MapID, GetLocationNameInCurrentRegion(locationSummary.MapIndex)));
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
             messageBox.SetTextTokens(textTokens);
