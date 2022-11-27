@@ -444,7 +444,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (gotoPlace != null)
             {
                 // Get localized name for search with fallback to canonical name
-                string localizedGotoPlaceName = TextManager.Instance.GetLocalizedLocationName(gotoPlace.SiteDetails.mapId, gotoPlace.Name);
+                string localizedGotoPlaceName = TextManager.Instance.GetLocalizedLocationName(gotoPlace.SiteDetails.mapId, gotoPlace.SiteDetails.locationName);
 
                 // Open region and search for localizedGotoPlaceName
                 mouseOverRegion = gotoPlace.SiteDetails.regionIndex;
