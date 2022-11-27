@@ -24,6 +24,7 @@ using Wenzil.Console.Commands;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -66,8 +67,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Dictionary<string, Vector2> offsetLookup = new Dictionary<string, Vector2>();
         protected string[] selectedRegionMapNames;
 
-        protected string gotoLocation = null;
-        protected int gotoRegion;
+        protected Place gotoPlace; // Used by journal click-through to fast travel to a specific quest location
 
         protected DFBitmap regionPickerBitmap;
         protected DFRegion currentDFRegion;
@@ -211,10 +211,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             teleportationTravel = true;
         }
 
-        public void GotoLocation(string placeName, int region)
+        public void GotoPlace(Place place)
         {
-            gotoLocation = placeName;
-            gotoRegion = region;
+            gotoPlace = place;
         }
 
         #endregion
@@ -368,7 +367,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.OnPop();
             teleportationTravel = false;
             findingLocation = false;
-            gotoLocation = null;
+            gotoPlace = null;
             distanceRegionName = null;
             distance = null;
         }
@@ -442,13 +441,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AnimateIdentify();
 
             // If a goto location specified, find it and ask if player wants to travel.
-            if (!string.IsNullOrEmpty(gotoLocation))
+            if (gotoPlace != null)
             {
-                mouseOverRegion = gotoRegion;
+                // Get localized name for search with fallback to canonical name
+                string localizedGotoPlaceName = TextManager.Instance.GetLocalizedLocationName(gotoPlace.SiteDetails.mapId, gotoPlace.Name);
+
+                // Open region and search for localizedGotoPlaceName
+                mouseOverRegion = gotoPlace.SiteDetails.regionIndex;
                 OpenRegionPanel(mouseOverRegion);
                 UpdateRegionLabel();
-                HandleLocationFindEvent(null, gotoLocation);
-                gotoLocation = null;
+                HandleLocationFindEvent(null, localizedGotoPlaceName);
+                gotoPlace = null;
             }
         }
 
