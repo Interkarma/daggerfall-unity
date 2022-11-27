@@ -1590,6 +1590,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (cacheName && lastQueryLocationIndex == locationIndex)
                 return lastQueryLocationName;
 
+            // Localized name has first priority if one exists
+            string localizedName = TextManager.Instance.GetLocalizedLocationName(locationSummary.MapID, string.Empty);
+            if (!string.IsNullOrEmpty(localizedName))
+                return localizedName;
+
             // Get location name from world data replacement if available or fall back to MAPS.BSA cached names
             DFLocation location;
             if (WorldDataReplacement.GetDFLocationReplacementData(currentDFRegionIndex, locationIndex, out location))
