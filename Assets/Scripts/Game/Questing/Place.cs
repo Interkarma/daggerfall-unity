@@ -268,7 +268,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     break;
 
                 case MacroTypes.NameMacro4:             // Name of region (e.g. Tigonus)
-                    textOut = siteDetails.regionName;
+                    textOut = TextManager.Instance.GetLocalizedRegionName(siteDetails.regionIndex);
                     break;
 
                 default:                                // Macro not supported
@@ -325,6 +325,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = siteType;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.buildingKey = buildingKey;
             siteDetails.buildingName = buildingName;
             siteDetails.regionName = location.RegionName;
@@ -893,6 +894,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = SiteTypes.Dungeon;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
             siteDetails.questSpawnMarkers = questSpawnMarkers;
@@ -939,6 +941,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = SiteTypes.Town;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
             siteDetails.questSpawnMarkers = null;
@@ -1059,6 +1062,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = siteType;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
             siteDetails.buildingKey = buildingKey;
