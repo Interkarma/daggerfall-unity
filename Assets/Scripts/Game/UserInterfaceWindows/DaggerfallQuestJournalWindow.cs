@@ -454,7 +454,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (DaggerfallUI.Instance.DfTravelMapWindow.CanFindPlace(place.SiteDetails.regionName, findPlaceName))
                 {
                     findPlaceRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(place.SiteDetails.regionName);
-                    string entryStr = string.Format("{0} in {1} province", findPlaceName, place.SiteDetails.regionName);
+                    string entryStr = string.Format(
+                        TextManager.Instance.GetLocalizedText("locationInRegionProvince"),
+                        TextManager.Instance.GetLocalizedLocationName(place.SiteDetails.mapId, findPlaceName),
+                        TextManager.Instance.GetLocalizedRegionName(findPlaceRegion));
                     DaggerfallMessageBox dialogBox = CreateDialogBox(entryStr, "confirmFind");
                     dialogBox.OnButtonClick += FindPlace_OnButtonClick;
                     DaggerfallUI.UIManager.PushWindow(dialogBox);
