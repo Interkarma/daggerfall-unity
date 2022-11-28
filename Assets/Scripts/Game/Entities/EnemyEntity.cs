@@ -184,7 +184,8 @@ namespace DaggerfallWorkshop.Game.Entity
             // This can happen when exiting city area, after fast travel, or via console
             if (entityType == EntityTypes.EnemyClass &&
                 careerIndex == (int)MobileTypes.Knight_CityWatch - 128 &&
-                GameManager.Instance.PlayerEntity.CrimeCommitted == PlayerEntity.Crimes.None)
+                GameManager.Instance.PlayerEntity.CrimeCommitted == PlayerEntity.Crimes.None &&
+                !GameManager.Instance.PlayerEffectManager.IsTransformedLycanthrope())
             {
                 GameObject.Destroy(sender.gameObject);
             }
