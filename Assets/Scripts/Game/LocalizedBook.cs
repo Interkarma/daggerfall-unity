@@ -33,13 +33,13 @@ public class LocalizedBook
     const string markupFont = "[/font={0}]";
 
     // Keywords for save/load localized book format
-    const string titleKeyword = "Title";
-    const string authorKeyword = "Author";
-    const string isNaughtyKeyword = "IsNaughty";
-    const string priceKeyword = "Price";
-    const string isUniqueKeyword = "IsUnique";
-    const string whenVarSetKeyword = "WhenVarSet";
-    const string contentKeyword = "Content";
+    const string titleKeyword = "Title:";
+    const string authorKeyword = "Author:";
+    const string isNaughtyKeyword = "IsNaughty:";
+    const string priceKeyword = "Price:";
+    const string isUniqueKeyword = "IsUnique:";
+    const string whenVarSetKeyword = "WhenVarSet:";
+    const string contentKeyword = "Content:";
 
     // Book data fields
     public string Title;        // Title of book
@@ -127,7 +127,67 @@ public class LocalizedBook
         if (lines == null || lines.Length == 0)
             return false;
 
-        return false;
+        // Read file
+        bool readingContent = false;
+        Content = string.Empty;
+        for(int l = 0; l < lines.Length; l++)
+        {
+            if (!readingContent)
+            {
+                // Everything up to and including Content: line is considered data input
+                // Trim whitespace from either side of line and read tag data
+                string line = lines[l].Trim();
+                if (line.StartsWith(titleKeyword, System.StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // Title:
+                    Title = line.Substring(titleKeyword.Length).Trim();
+                }
+                else if (line.StartsWith(authorKeyword, System.StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // Author:
+                    Author = line.Substring(authorKeyword.Length).Trim();
+                }
+                else if (line.StartsWith(isNaughtyKeyword, System.StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // IsNaughty:
+                    string isNaughtyString = line.Substring(isNaughtyKeyword.Length).Trim();
+                    if (!bool.TryParse(isNaughtyString, out IsNaughty))
+                        Debug.LogErrorFormat("Could not parse IsNaughty bool from '{0}'. Value must be True or False.", isNaughtyString);
+                }
+                else if (line.StartsWith(priceKeyword, System.StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // Price:
+                    string priceString = line.Substring(priceKeyword.Length).Trim();
+                    if (!int.TryParse(priceString, out Price))
+                        Debug.LogErrorFormat("Could not parse Price int from '{0}'. Value must be numerical.", priceString);
+                }
+                else if (line.StartsWith(isUniqueKeyword, System.StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // IsUnique:
+                    string uniqueString = line.Substring(isUniqueKeyword.Length).Trim();
+                    if (!bool.TryParse(uniqueString, out IsUnique))
+                        Debug.LogErrorFormat("Could not parse IsUnique bool from '{0}'. Value must be True or False.");
+                }
+                else if (line.StartsWith(whenVarSetKeyword, System.StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // WhenVarSet:
+                    WhenVarSet = line.Substring(whenVarSetKeyword.Length).Trim();
+                }
+                else if (line.StartsWith(contentKeyword, System.StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // Content:
+                    readingContent = true;
+                }
+            }
+            else
+            {
+                // Everything after Content: tag is book contents
+                // Add back newline as File.ReadAllLines() strips this when splitting lines
+                Content += lines[l] + "\n";
+            }
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -138,13 +198,13 @@ public class LocalizedBook
     public void SaveLocalizedBook(string filename)
     {
         StringBuilder builder = new StringBuilder();
-        builder.AppendLine(string.Format("{0}: {1}", titleKeyword, Title));
-        builder.AppendLine(string.Format("{0}: {1}", authorKeyword, Author));
-        builder.AppendLine(string.Format("{0}: {1}", isNaughtyKeyword, IsNaughty));
-        builder.AppendLine(string.Format("{0}: {1}", priceKeyword, Price));
-        builder.AppendLine(string.Format("{0}: {1}", isUniqueKeyword, IsUnique));
-        builder.AppendLine(string.Format("{0}: {1}", whenVarSetKeyword, WhenVarSet));
-        builder.AppendLine(string.Format("{0}:\n{1}", contentKeyword, Content));
+        builder.AppendLine(string.Format("{0} {1}", titleKeyword, Title));
+        builder.AppendLine(string.Format("{0} {1}", authorKeyword, Author));
+        builder.AppendLine(string.Format("{0} {1}", isNaughtyKeyword, IsNaughty));
+        builder.AppendLine(string.Format("{0} {1}", priceKeyword, Price));
+        builder.AppendLine(string.Format("{0} {1}", isUniqueKeyword, IsUnique));
+        builder.AppendLine(string.Format("{0} {1}", whenVarSetKeyword, WhenVarSet));
+        builder.AppendLine(string.Format("{0}\n{1}", contentKeyword, Content));
         File.WriteAllText(filename, builder.ToString());
     }
 
@@ -191,5 +251,16 @@ public class LocalizedBook
         }
 
         return text;
+    }
+
+    /// <summary>
+    /// Convert book markup back to tokens.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    TextFile.Token[] ConvertStringToTokens(string input)
+    {
+        // TODO:
+        return null;
     }
 }

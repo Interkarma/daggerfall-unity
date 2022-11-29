@@ -132,6 +132,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             IsBookOpen = labelFormatter.ReformatBook(target.message);
             if (IsBookOpen)
                 bookLabels = labelFormatter.CreateLabels();
+
+            // TEMP: Test open localized book
+            //LocalizedBook lb = new LocalizedBook();
+            //string filename = DaggerfallUnity.Instance.ItemHelper.GetBookFileName(target.message);
+            //if (!lb.OpenLocalizedBookFile(filename))
+            //    Debug.LogErrorFormat("Failed to open LocalizedBook '{0}'", filename);
+            //else
+            //    Debug.LogFormat("Opened LocalizedBook '{0}'", filename);
         }
 
         void LayoutBook()
