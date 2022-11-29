@@ -38,5 +38,5 @@ Content:
 
 Notes:
 * Everthing below the Content: line (including whitespace) is considered readable part of book shown to player.
-* When translating book files, do not translate field names Title:, Author:, etc.
+* When translating book files, do not translate field names (e.g. Title:, Author:) or formatting tags (e.g. [center], [/font=4]).
 * Supported formatting tokens are [/left] [/center] [/font=N] (N is font index 1 through 4).
