@@ -27,11 +27,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 53072ccf48dbfb644a5f18ca3773614b
-    m_Address: Internal_BOK Shared Data
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6170d504a469fec46b1a7762508ddcf2
     m_Address: Assets/Localization/StringTables/Internal_Flats Shared Data.asset
     m_ReadOnly: 1
