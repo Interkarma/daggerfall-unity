@@ -120,9 +120,14 @@ public class LocalizedBook
         if (!fileNoExt.EndsWith(localizedFilenameSuffix))
             filename = fileNoExt + localizedFilenameSuffix + fileExtension;
 
-        // Attempt to load file from StreamingAssets/Text/Books
         // TODO: Also seek localized book file from mods
+
+        // Get path to localized book file and check it exists
         string path = Path.Combine(Application.streamingAssetsPath, textFolderName, booksFolderName, filename);
+        if (!File.Exists(path))
+            return false;
+
+        // Attempt to load file from StreamingAssets/Text/Books
         string[] lines = File.ReadAllLines(path);
         if (lines == null || lines.Length == 0)
             return false;
@@ -251,16 +256,5 @@ public class LocalizedBook
         }
 
         return text;
-    }
-
-    /// <summary>
-    /// Convert book markup back to tokens.
-    /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
-    TextFile.Token[] ConvertStringToTokens(string input)
-    {
-        // TODO:
-        return null;
     }
 }

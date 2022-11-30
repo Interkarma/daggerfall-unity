@@ -48,6 +48,9 @@ namespace DaggerfallWorkshop.Localization
         const string markupNewLine = "[/newline]";
         const string markupTextPosition = "[/pos:x={0},y={1}]";
         const string markupTextPositionPrefix = "[/pos";
+        const string markupFontPrefix = "[/font";
+        const string markupTextColorPrefix = "[/color";
+        const string markupTextScalePrefix = "[/scale";
         const string markupInputCursor = "[/input]";
         const string markupSubrecordSeparator = "[/record]";
         const string markupEndRecord = "[/end]";
@@ -219,6 +222,12 @@ namespace DaggerfallWorkshop.Localization
                 tokens.Add(new TextFile.Token(TextFile.Formatting.NewLine));
             else if (markup.StartsWith(markupTextPositionPrefix))
                 tokens.Add(ParsePositionMarkup(markup));
+            else if (markup.StartsWith(markupFontPrefix))
+                tokens.Add(ParseFontMarkup(markup));
+            else if (markup.StartsWith(markupTextColorPrefix))
+                tokens.Add(ParseColorMarkup(markup));
+            else if (markup.StartsWith(markupTextScalePrefix))
+                tokens.Add(ParseScaleMarkup(markup));
             else if (markup == markupSubrecordSeparator)
                 tokens.Add(new TextFile.Token(TextFile.Formatting.SubrecordSeparator));
             else if (markup == markupInputCursor)
@@ -245,6 +254,45 @@ namespace DaggerfallWorkshop.Localization
             int y = Parser.ParseInt(match.Groups["y"].Value);
 
             return new TextFile.Token(TextFile.Formatting.PositionPrefix, string.Empty, x, y);
+        }
+
+        /// <summary>
+        /// Reads font markup using regex.
+        /// If markup pattern not matched then returned as a string token.
+        /// </summary>
+        static TextFile.Token ParseFontMarkup(string markup)
+        {
+            const string pattern = @"font=(?<x>\d+)";
+
+            Match match = Regex.Match(markup, pattern);
+            if (!match.Success)
+                return new TextFile.Token(TextFile.Formatting.Text, markup);
+
+            int x = Parser.ParseInt(match.Groups["x"].Value);
+
+            return new TextFile.Token(TextFile.Formatting.FontPrefix, string.Empty, x, 0);
+        }
+
+        static TextFile.Token ParseColorMarkup(string markup)
+        {
+            const string pattern = @"color=(?<x>[0-9a-f]{6})";
+
+            Match match = Regex.Match(markup, pattern);
+            if (!match.Success)
+                return new TextFile.Token(TextFile.Formatting.Text, markup);
+
+            return new TextFile.Token(TextFile.Formatting.Color, match.Groups["x"].Value, 0, 0);
+        }
+
+        static TextFile.Token ParseScaleMarkup(string markup)
+        {
+            const string pattern = @"scale=(?<x>[+-]?([0-9]*[.])?[0-9]+)";
+
+            Match match = Regex.Match(markup, pattern);
+            if (!match.Success)
+                return new TextFile.Token(TextFile.Formatting.Text, markup);
+
+            return new TextFile.Token(TextFile.Formatting.Scale, match.Groups["x"].Value, 0, 0);
         }
 
         /// <summary>
