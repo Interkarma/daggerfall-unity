@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Items;
@@ -22,6 +23,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
     public class DaggerfallBookReaderWindow : DaggerfallBaseWindow
     {
+        const string textFolderName = "Text";
+        const string bookImagesPath = "Books/BookImages";
+
         const float scrollAmount = 24;
         const string nativeImgName = "BOOK00I0.IMG";
         char newline = '\n';
@@ -222,6 +226,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                             case TextFile.Formatting.Scale:
                                 currentScale = TryParseScale(token.text);
                                 break;
+                            case TextFile.Formatting.Image:
+                                bookLabels.Add(CreateImageLabel(token.text));
+                                break;
                             default:
                                 bookLabels.Add(CreateLabel(currentFont, currentAlignment, currentColor, token.text, currentScale));
                                 break;
@@ -247,6 +254,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             label.TextScale = scale;
             if (label.HorizontalAlignment == HorizontalAlignment.Center)
                 label.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Center;
+
+            return label;
+        }
+
+        ImageLabel CreateImageLabel(string filename)
+        {
+            ImageLabel label = new ImageLabel();
+
+            // TODO: Seek book images from mods
+
+            // Get path to localized book file and check it exists
+            string path = Path.Combine(Application.streamingAssetsPath, textFolderName, bookImagesPath, filename);
+            if (!File.Exists(path))
+                return label;
+
+            // Load image
+            byte[] data = File.ReadAllBytes(path);
+            if (data != null && data.Length > 0)
+            {
+                Texture2D image = new Texture2D(0, 0);
+                image.LoadImage(data);
+                label.Image = image;
+            }
 
             return label;
         }

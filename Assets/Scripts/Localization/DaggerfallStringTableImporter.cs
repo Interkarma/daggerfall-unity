@@ -51,6 +51,7 @@ namespace DaggerfallWorkshop.Localization
         const string markupFontPrefix = "[/font";
         const string markupTextColorPrefix = "[/color";
         const string markupTextScalePrefix = "[/scale";
+        const string markupImagePrefix = "[/image";
         const string markupInputCursor = "[/input]";
         const string markupSubrecordSeparator = "[/record]";
         const string markupEndRecord = "[/end]";
@@ -228,6 +229,8 @@ namespace DaggerfallWorkshop.Localization
                 tokens.Add(ParseColorMarkup(markup));
             else if (markup.StartsWith(markupTextScalePrefix))
                 tokens.Add(ParseScaleMarkup(markup));
+            else if (markup.StartsWith(markupImagePrefix))
+                tokens.Add(ParseImageMarkup(markup));
             else if (markup == markupSubrecordSeparator)
                 tokens.Add(new TextFile.Token(TextFile.Formatting.SubrecordSeparator));
             else if (markup == markupInputCursor)
@@ -293,6 +296,17 @@ namespace DaggerfallWorkshop.Localization
                 return new TextFile.Token(TextFile.Formatting.Text, markup);
 
             return new TextFile.Token(TextFile.Formatting.Scale, match.Groups["x"].Value, 0, 0);
+        }
+
+        static TextFile.Token ParseImageMarkup(string markup)
+        {
+            const string pattern = @"\[\/image=(?<x>.*)\]";
+
+            Match match = Regex.Match(markup, pattern);
+            if (!match.Success)
+                return new TextFile.Token(TextFile.Formatting.Text, markup);
+
+            return new TextFile.Token(TextFile.Formatting.Image, match.Groups["x"].Value, 0, 0);
         }
 
         /// <summary>

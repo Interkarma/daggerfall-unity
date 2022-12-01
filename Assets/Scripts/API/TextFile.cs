@@ -125,6 +125,7 @@ namespace DaggerfallConnect.Arena2
             // Custom codes
             Color = 0x100,
             Scale = 0x101,
+            Image = 0x102,
 
             Nothing = 0xffff,
         }
