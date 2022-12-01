@@ -1517,6 +1517,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     // only make location searchable if it is already discovered
                     if (!checkLocationDiscovered(findLocationSummary))
                         continue;
+                        
+                    if (GetPixelColorIndex(findLocationSummary.LocationType) == -1) // Filter out locations with invalid color indices
+                        continue;
 
                     if (cutoff == null)
                     {
