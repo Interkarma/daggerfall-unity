@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Allofich
+// Contributors:    Allofich, Numidium
 // 
 // Notes:
 //
@@ -27,9 +27,6 @@ namespace DaggerfallWorkshop.Game
     /// Currently ranged missiles can only move in a straight line as per classic.
     /// </summary>
     [RequireComponent(typeof(Light))]
-    [RequireComponent(typeof(SphereCollider))]
-    [RequireComponent(typeof(MeshCollider))]
-    [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class DaggerfallMissile : MonoBehaviour
     {
@@ -63,11 +60,10 @@ namespace DaggerfallWorkshop.Game
         public const float SphereCastRadius = 0.25f;
         public const float TouchRange = 3.0f;
 
+        Vector3 colliderPosition;
         Vector3 direction;
         Light myLight;
-        SphereCollider myCollider;
         DaggerfallAudioSource audioSource;
-        Rigidbody myRigidbody;
         Billboard myBillboard;
         bool forceDisableSpellLighting;
         bool noSpellsSpatialBlend = false;
@@ -86,6 +82,12 @@ namespace DaggerfallWorkshop.Game
         bool isArrowSummoned = false;
         GameObject goModel = null;
         EnemySenses enemySenses;
+        bool isTickRequested = false;
+        float tickTimeRemaining = 0f;
+        const float arrowTickRate = 30f;
+        const float spellTickRate = 20f;
+        float tickTime;
+        int layerMask;
 
         List<DaggerfallEntityBehaviour> targetEntities = new List<DaggerfallEntityBehaviour>();
 
@@ -181,14 +183,6 @@ namespace DaggerfallWorkshop.Game
             initialRange = myLight.range;
             initialIntensity = myLight.intensity;
 
-            // Setup collider
-            myCollider = GetComponent<SphereCollider>();
-            myCollider.radius = ColliderRadius;
-
-            // Setup rigidbody
-            myRigidbody = GetComponent<Rigidbody>();
-            myRigidbody.useGravity = false;
-
             // Use payload when available
             if (payload != null)
             {
@@ -215,11 +209,7 @@ namespace DaggerfallWorkshop.Game
             if (isArrow)
             {
                 // Create and orient 3d arrow
-                goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(99800, transform);
-                MeshCollider arrowCollider = goModel.GetComponent<MeshCollider>();
-                arrowCollider.sharedMesh = goModel.GetComponent<MeshFilter>().sharedMesh;
-                arrowCollider.convex = true;
-                arrowCollider.isTrigger = true;
+                goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(99800, transform, ignoreCollider: true);
 
                 // Offset up so it comes from same place LOS check is done from
                 Vector3 adjust;
@@ -231,10 +221,8 @@ namespace DaggerfallWorkshop.Game
                 }
                 else
                 {
-                    // Offset forward to avoid collision with player
-                    adjust = GameManager.Instance.MainCamera.transform.forward * 0.6f;
                     // Adjust slightly downward to match bow animation
-                    adjust.y -= 0.11f;
+                    adjust = new Vector3(0f, -.11f, 0);
                     // Adjust to the right or left to match bow animation
                     if (!GameManager.Instance.WeaponManager.ScreenWeapon.FlipHorizontal)
                         adjust += GameManager.Instance.MainCamera.transform.right * 0.15f;
@@ -247,13 +235,25 @@ namespace DaggerfallWorkshop.Game
                 goModel.layer = gameObject.layer;
             }
 
-            // Ignore missile collision with caster (this is a different check to AOE targets)
-            if (caster)
-                Physics.IgnoreCollision(caster.GetComponent<Collider>(), this.GetComponent<Collider>());
+            string layerName;
+            if (caster && caster != GameManager.Instance.PlayerEntityBehaviour)
+                layerName = "SpellMissiles";
+            else
+                layerName = "Player";
+            layerMask = ~(1 << LayerMask.NameToLayer(layerName));
+            tickTime = 1f / (IsArrow ? arrowTickRate : spellTickRate);
         }
 
         private void Update()
         {
+            if (tickTimeRemaining <= 0f)
+            {
+                tickTimeRemaining = tickTime;
+                isTickRequested = true;
+            }
+
+            var frameDeltaTime = Time.deltaTime;
+            tickTimeRemaining -= frameDeltaTime;
             // Execute based on target type
             if (!missileReleased)
             {
@@ -279,12 +279,38 @@ namespace DaggerfallWorkshop.Game
             if (!impactDetected)
             {
                 // Transform missile along direction vector
-                transform.position += (direction * MovementSpeed) * Time.deltaTime;
-
+                transform.position += (direction * MovementSpeed) * frameDeltaTime;
                 // Update lifespan and self-destruct if expired (e.g. spell fired straight up and will never hit anything)
-                lifespan += Time.deltaTime;
+                lifespan += frameDeltaTime;
                 if (lifespan > LifespanInSeconds)
                     Destroy(gameObject);
+                // Do fixed-interval transformation with raycast lookahead.
+                else if (isTickRequested)
+                {
+                    isTickRequested = false;
+                    var displacement = (direction * MovementSpeed) * tickTime;
+                    RaycastHit hitInfo;
+                    bool impactDetected;
+                    if (isArrow || lifespan == frameDeltaTime) // First test should always be a raycast in case the caster is hugging a wall.
+                        impactDetected = Physics.Raycast(colliderPosition, direction, out hitInfo, displacement.magnitude + ColliderRadius, layerMask);
+                    else
+                        impactDetected = Physics.SphereCast(colliderPosition, ColliderRadius, direction, out hitInfo, displacement.magnitude + ColliderRadius, layerMask);
+                    if (impactDetected)
+                    {
+                        // Place self at meeting point with collider and do collision logic.
+                        if (isArrow)
+                            colliderPosition = hitInfo.point - (transform.forward * ColliderRadius);
+                        else
+                            colliderPosition += direction.normalized * hitInfo.distance; // Stop at center of sphere cast.
+                        transform.position = colliderPosition;
+                        DoCollision(null, hitInfo.collider);
+                    }
+                    else
+                        colliderPosition += displacement;
+
+                    // Uncomment the below line to see the position used for collision in real time.
+                    //transform.position = colliderPosition;
+                }
             }
             else
             {
@@ -299,7 +325,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // Track post impact lifespan and allow impact clip to finish playing
-                postImpactLifespan += Time.deltaTime;
+                postImpactLifespan += frameDeltaTime;
                 if (postImpactLifespan > PostImpactLifespanInSeconds)
                 {
                     myLight.enabled = false;
@@ -316,31 +342,11 @@ namespace DaggerfallWorkshop.Game
 
         #region Collision Handling
 
-        private void OnCollisionEnter(Collision collision)
-        {
-            DoCollision(collision, null);
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            DoCollision(null, other);
-        }
-
         void DoCollision(Collision collision, Collider other)
         {
             // Missile collision should only happen once
             if (impactDetected)
                 return;
-
-            // Set my collider to trigger and rigidbody to kinematic immediately after impact
-            // This helps prevent mobiles from walking over low missiles or the missile bouncing off in some other direction
-            // Seems to eliminate the combined worst-case scenario where mobile will "ride" a missile bounce, throwing them high into the air
-            // Now the worst that seems to happen is mobile will "bump" over low missiles occasionally
-            // TODO: Review later and find a better way to eliminate issue other than this quick workaround
-            if (myCollider)
-                myCollider.isTrigger = true;
-            if (myRigidbody)
-                myRigidbody.isKinematic = true;
 
             // Play spell impact animation, this replaces spell missile animation
             if (elementType != ElementTypes.None && targetType != TargetTypes.ByTouch)
@@ -409,11 +415,6 @@ namespace DaggerfallWorkshop.Game
         {
             transform.position = caster.transform.position;
 
-            // Touch does not use default missile collider
-            // This prevent touch missile check colliding with self and blocking spell transfer
-            if (myCollider)
-                myCollider.enabled = false;
-
             DaggerfallEntityBehaviour entityBehaviour = GetEntityTargetInTouchRange(GetAimPosition(), GetAimDirection());
             if (entityBehaviour && entityBehaviour != caster)
             {
@@ -430,7 +431,8 @@ namespace DaggerfallWorkshop.Game
         void DoMissile()
         {
             direction = GetAimDirection();
-            transform.position = GetAimPosition() + direction * ColliderRadius;
+            transform.position = GetAimPosition();
+            colliderPosition = transform.position;
             missileReleased = true;
         }
 
