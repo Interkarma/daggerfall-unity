@@ -371,7 +371,7 @@ namespace DaggerfallWorkshop.Game
             // If missile is area at range
             if (targetType == TargetTypes.AreaAtRange)
             {
-                DoAreaOfEffect(transform.position);
+                DoAreaOfEffect(colliderPosition);
             }
         }
 
@@ -427,7 +427,7 @@ namespace DaggerfallWorkshop.Game
         {
             List<DaggerfallEntityBehaviour> entities = new List<DaggerfallEntityBehaviour>();
 
-            transform.position = position;
+            colliderPosition = position;
 
             // Collect AOE targets and ignore duplicates
             Collider[] overlaps = Physics.OverlapSphere(position, ExplosionRadius);
