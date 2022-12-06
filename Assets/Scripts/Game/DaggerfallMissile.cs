@@ -82,11 +82,6 @@ namespace DaggerfallWorkshop.Game
         bool isArrowSummoned = false;
         GameObject goModel = null;
         EnemySenses enemySenses;
-        bool isTickRequested = false;
-        float tickTimeRemaining = 0f;
-        const float arrowTickRate = 30f;
-        const float spellTickRate = 20f;
-        float tickTime;
         int layerMask;
 
         List<DaggerfallEntityBehaviour> targetEntities = new List<DaggerfallEntityBehaviour>();
@@ -241,19 +236,10 @@ namespace DaggerfallWorkshop.Game
             else
                 layerName = "Player";
             layerMask = ~(1 << LayerMask.NameToLayer(layerName));
-            tickTime = 1f / (IsArrow ? arrowTickRate : spellTickRate);
         }
 
         private void Update()
         {
-            if (tickTimeRemaining <= 0f)
-            {
-                tickTimeRemaining = tickTime;
-                isTickRequested = true;
-            }
-
-            var frameDeltaTime = Time.deltaTime;
-            tickTimeRemaining -= frameDeltaTime;
             // Execute based on target type
             if (!missileReleased)
             {
@@ -279,41 +265,15 @@ namespace DaggerfallWorkshop.Game
             if (!impactDetected)
             {
                 // Transform missile along direction vector
-                transform.position += (direction * MovementSpeed) * frameDeltaTime;
+                transform.position += (direction * MovementSpeed) * Time.deltaTime;
                 // Update lifespan and self-destruct if expired (e.g. spell fired straight up and will never hit anything)
-                lifespan += frameDeltaTime;
                 if (lifespan > LifespanInSeconds)
                     Destroy(gameObject);
-                // Do fixed-interval transformation with raycast lookahead.
-                else if (isTickRequested)
-                {
-                    isTickRequested = false;
-                    var displacement = (direction * MovementSpeed) * tickTime;
-                    RaycastHit hitInfo;
-                    bool impactDetected;
-                    if (isArrow || lifespan == frameDeltaTime) // First test should always be a raycast in case the caster is hugging a wall.
-                        impactDetected = Physics.Raycast(colliderPosition, direction, out hitInfo, displacement.magnitude + ColliderRadius, layerMask);
-                    else
-                        impactDetected = Physics.SphereCast(colliderPosition, ColliderRadius, direction, out hitInfo, displacement.magnitude + ColliderRadius, layerMask);
-                    if (impactDetected)
-                    {
-                        // Place self at meeting point with collider and do collision logic.
-                        if (isArrow)
-                            colliderPosition = hitInfo.point - (transform.forward * ColliderRadius);
-                        else
-                            colliderPosition += direction.normalized * hitInfo.distance; // Stop at center of sphere cast.
-                        transform.position = colliderPosition;
-                        DoCollision(null, hitInfo.collider);
-                    }
-                    else
-                        colliderPosition += displacement;
-
-                    // Uncomment the below line to see the position used for collision in real time.
-                    //transform.position = colliderPosition;
-                }
             }
             else
             {
+                // Transform missile to point of collision.
+                transform.position = colliderPosition;
                 // Notify listeners work is done and automatically assign impact
                 if (!impactAssigned)
                 {
@@ -325,7 +285,7 @@ namespace DaggerfallWorkshop.Game
                 }
 
                 // Track post impact lifespan and allow impact clip to finish playing
-                postImpactLifespan += frameDeltaTime;
+                postImpactLifespan += Time.deltaTime;
                 if (postImpactLifespan > PostImpactLifespanInSeconds)
                 {
                     myLight.enabled = false;
@@ -336,6 +296,32 @@ namespace DaggerfallWorkshop.Game
 
             // Update light
             UpdateLight();
+        }
+
+        private void FixedUpdate()
+        {
+            if (!missileReleased || impactDetected)
+                return;
+            lifespan += Time.fixedDeltaTime;
+            // Do fixed-interval transformation with raycast lookahead.
+            var displacement = (direction * MovementSpeed) * Time.fixedDeltaTime;
+            RaycastHit hitInfo;
+            bool castFoundHit;
+            if (isArrow || lifespan == Time.fixedDeltaTime) // First test should always be a raycast in case the caster is hugging a wall.
+                castFoundHit = Physics.Raycast(colliderPosition, direction, out hitInfo, displacement.magnitude + ColliderRadius, layerMask);
+            else
+                castFoundHit = Physics.SphereCast(colliderPosition, ColliderRadius, direction, out hitInfo, displacement.magnitude + ColliderRadius, layerMask);
+            if (castFoundHit)
+            {
+                // Place self at meeting point with collider and do collision logic.
+                if (isArrow)
+                    colliderPosition = hitInfo.point - transform.forward * ColliderRadius;
+                else
+                    colliderPosition += direction.normalized * hitInfo.distance; // Stop at center of sphere cast.
+                DoCollision(null, hitInfo.collider);
+            }
+            else
+                colliderPosition += displacement;
         }
 
         #endregion
