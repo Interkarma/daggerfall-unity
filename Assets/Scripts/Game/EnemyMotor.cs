@@ -31,62 +31,62 @@ namespace DaggerfallWorkshop.Game
 
         #region Member Variables
 
-        public float OpenDoorDistance = 2f;         // Maximum distance to open door
-        const float attackSpeedDivisor = 2f;        // How much to slow down during attack animations
-        float stopDistance = 1.7f;                  // Used to prevent orbiting
-        const float doorCrouchingHeight = 1.65f;    // How low enemies dive to pass thru doors
-        bool flies;                                 // The enemy can fly
-        bool swims;                                 // The enemy can swim
-        bool pausePursuit;                          // pause to wait for the player to come closer to ground
-        float moveInForAttackTimer;                 // Time until next pursue/retreat decision
-        bool moveInForAttack;                       // False = retreat. True = pursue.
-        float retreatDistanceMultiplier;            // How far to back off while retreating
-        float changeStateTimer;                     // Time until next change in behavior. Padding to prevent instant reflexes.
-        bool doStrafe;
-        float strafeTimer;
-        bool pursuing;                              // Is pursuing
-        bool retreating;                            // Is retreating
-        bool backingUp;                             // Is backing up
-        bool fallDetected;                          // Detected a fall in front of us, so don't move there
-        bool obstacleDetected;
-        bool foundUpwardSlope;
-        bool foundDoor;
-        Vector3 lastPosition;                       // Used to track whether we have moved or not
-        Vector3 lastDirection;                      // Used to track whether we have rotated or not
-        bool rotating;                              // Used to track whether we have rotated or not
-        float avoidObstaclesTimer;
-        bool checkingClockwise;
-        float checkingClockwiseTimer;
-        bool didClockwiseCheck;
-        float lastTimeWasStuck;
-        bool hasBowAttack;
-        float realHeight;
-        float centerChange;
-        bool resetHeight;
-        float heightChangeTimer;
-        bool strafeLeft;
-        float strafeAngle;
-        int searchMult;
-        int ignoreMaskForShooting;
-        int ignoreMaskForObstacles;
-        bool canAct;
-        bool falls;
-        bool flyerFalls;
-        float lastGroundedY;                        // Used for fall damage
-        float originalHeight;
+        public float OpenDoorDistance = 2f;                   // Maximum distance to open door
+        protected const float attackSpeedDivisor = 2f;        // How much to slow down during attack animations
+        protected float stopDistance = 1.7f;                  // Used to prevent orbiting
+        protected const float doorCrouchingHeight = 1.65f;    // How low enemies dive to pass thru doors
+        protected bool flies;                                 // The enemy can fly
+        protected bool swims;                                 // The enemy can swim
+        protected bool pausePursuit;                          // pause to wait for the player to come closer to ground
+        protected float moveInForAttackTimer;                 // Time until next pursue/retreat decision
+        protected bool moveInForAttack;                       // False = retreat. True = pursue.
+        protected float retreatDistanceMultiplier;            // How far to back off while retreating
+        protected float changeStateTimer;                     // Time until next change in behavior. Padding to prevent instant reflexes.
+        protected bool doStrafe;
+        protected float strafeTimer;
+        protected bool pursuing;                              // Is pursuing
+        protected bool retreating;                            // Is retreating
+        protected bool backingUp;                             // Is backing up
+        protected bool fallDetected;                          // Detected a fall in front of us, so don't move there
+        protected bool obstacleDetected;
+        protected bool foundUpwardSlope;
+        protected bool foundDoor;
+        protected Vector3 lastPosition;                       // Used to track whether we have moved or not
+        protected Vector3 lastDirection;                      // Used to track whether we have rotated or not
+        protected bool rotating;                              // Used to track whether we have rotated or not
+        protected float avoidObstaclesTimer;
+        protected bool checkingClockwise;
+        protected float checkingClockwiseTimer;
+        protected bool didClockwiseCheck;
+        protected float lastTimeWasStuck;
+        protected bool hasBowAttack;
+        protected float realHeight;
+        protected float centerChange;
+        protected bool resetHeight;
+        protected float heightChangeTimer;
+        protected bool strafeLeft;
+        protected float strafeAngle;
+        protected int searchMult;
+        protected int ignoreMaskForShooting;
+        protected int ignoreMaskForObstacles;
+        protected bool canAct;
+        protected bool falls;
+        protected bool flyerFalls;
+        protected float lastGroundedY;                        // Used for fall damage
+        protected float originalHeight;
 
-        EnemySenses senses;
-        Vector3 destination;
-        Vector3 detourDestination;
-        CharacterController controller;
-        MobileUnit mobile;
-        Collider myCollider;
-        DaggerfallEntityBehaviour entityBehaviour;
-        EnemyBlood entityBlood;
-        EntityEffectManager entityEffectManager;
-        EntityEffectBundle selectedSpell;
-        EnemyAttack attack;
-        EnemyEntity entity;
+        protected EnemySenses senses;
+        protected Vector3 destination;
+        protected Vector3 detourDestination;
+        protected CharacterController controller;
+        protected MobileUnit mobile;
+        protected Collider myCollider;
+        protected DaggerfallEntityBehaviour entityBehaviour;
+        protected EnemyBlood entityBlood;
+        protected EntityEffectManager entityEffectManager;
+        protected EntityEffectBundle selectedSpell;
+        protected EnemyAttack attack;
+        protected EnemyEntity entity;
         #endregion
 
         #region Auto Properties
@@ -101,7 +101,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Unity Methods
 
-        void Start()
+        protected virtual void Start()
         {
             senses = GetComponent<EnemySenses>();
             controller = GetComponent<CharacterController>();
@@ -136,7 +136,7 @@ namespace DaggerfallWorkshop.Game
             originalHeight = controller.height;
         }
 
-        void FixedUpdate()
+        protected virtual void FixedUpdate()
         {
             if (GameManager.Instance.DisableAI)
                 return;
@@ -223,12 +223,12 @@ namespace DaggerfallWorkshop.Game
 
         #endregion
 
-        #region Private Methods
+        #region Protected Methods
 
         /// <summary>
         /// Handle paralysis halting movement and animation.
         /// </summary>
-        void HandleParalysis()
+        protected void HandleParalysis()
         {
             // Cancel movement and animations if paralyzed, but still allow gravity to take effect
             // This will have the (intentional for now) side-effect of making paralyzed flying enemies fall out of the air
@@ -246,7 +246,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Handles movement if the enemy has been knocked back.
         /// </summary>
-        void KnockbackMovement()
+        protected void KnockbackMovement()
         {
             // Prevent stunlocking transforming Seducers
             if (mobile.EnemyState == MobileStates.SeducerTransform1 || mobile.EnemyState == MobileStates.SeducerTransform2)
@@ -306,7 +306,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Apply gravity to ground-based enemies and paralyzed flyers.
         /// </summary>
-        void ApplyGravity()
+        protected virtual void ApplyGravity()
         {
             // Apply gravity
             if (!flies && !swims && !IsLevitating && !controller.isGrounded)
@@ -331,7 +331,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Do nothing if no target or after giving up finding the target or if target position hasn't been acquired yet.
         /// </summary>
-        void HandleNoAction()
+        protected void HandleNoAction()
         {
             if (senses.Target == null || GiveUpTimer <= 0 || senses.PredictedTargetPos == EnemySenses.ResetPlayerPos)
             {
@@ -345,7 +345,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Handle bashing doors.
         /// </summary>
-        void HandleBashing()
+        protected void HandleBashing()
         {
             if (Bashing)
             {
@@ -363,7 +363,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Updates timers used in this class.
         /// </summary>
-        void UpdateTimers()
+        protected void UpdateTimers()
         {
             if (moveInForAttackTimer > 0)
                 moveInForAttackTimer -= Time.deltaTime;
@@ -404,7 +404,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Make decision about what action to take.
         /// </summary>
-        void TakeAction()
+        protected virtual void TakeAction()
         {
             // Monster speed of movement follows the same formula as for when the player walks
             float moveSpeed = (entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
@@ -503,7 +503,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Get the destination to move towards.
         /// </summary>
-        void GetDestination()
+        protected void GetDestination()
         {
             CharacterController targetController = senses.Target.GetComponent<CharacterController>();
             // If detouring around an obstacle or fall, use the detour position
@@ -543,7 +543,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Handles ranged attacks with bows and spells.
         /// </summary>
-        bool DoRangedAttack(Vector3 direction, float moveSpeed, float distance, bool isPlayingOneShot)
+        protected virtual bool DoRangedAttack(Vector3 direction, float moveSpeed, float distance, bool isPlayingOneShot)
         {
             bool inRange = senses.DistanceToTarget > EnemyAttack.minRangedDistance && senses.DistanceToTarget < EnemyAttack.maxRangedDistance;
             if (inRange && senses.TargetInSight && senses.DetectedTarget && (CanShootBow() || CanCastRangedSpell()))
@@ -592,7 +592,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Handles touch-range spells.
         /// </summary>
-        bool DoTouchSpell()
+        protected virtual bool DoTouchSpell()
         {
             if (senses.TargetInSight && senses.DetectedTarget && attack.MeleeTimer == 0
                 && senses.DistanceToTarget <= attack.MeleeDistance + senses.TargetRateOfApproach
@@ -611,7 +611,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Decide whether to strafe, and get direction to strafe to.
         /// </summary>
-        void StrafeDecision()
+        protected void StrafeDecision()
         {
             doStrafe = Random.Range(0, 4) == 0;
             strafeTimer = Random.Range(1f, 2f);
@@ -639,7 +639,7 @@ namespace DaggerfallWorkshop.Game
         /// Returns whether there is a clear path to move the given distance from the current location towards the given location. True if clear
         /// or if combat target is the first obstacle hit.
         /// </summary>
-        bool ClearPathToPosition(Vector3 location, float dist = 30)
+        protected bool ClearPathToPosition(Vector3 location, float dist = 30)
         {
             Vector3 sphereCastDir = (location - transform.position).normalized;
             Vector3 sphereCastDir2d = sphereCastDir;
@@ -670,7 +670,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Returns true if can shoot projectile at target.
         /// </summary>
-        bool HasClearPathToShootProjectile(float speed, float radius)
+        protected bool HasClearPathToShootProjectile(float speed, float radius)
         {
             // Check that there is a clear path to shoot projectile
             Vector3 sphereCastDir = senses.PredictNextTargetPos(speed);
@@ -716,7 +716,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Returns true if can shoot bow at target.
         /// </summary>
-        bool CanShootBow()
+        protected bool CanShootBow()
         {
             if (!hasBowAttack)
                 return false;
@@ -729,7 +729,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Selects a ranged spell from this enemy's list and returns true if it can be cast.
         /// </summary>
-        bool CanCastRangedSpell()
+        protected virtual bool CanCastRangedSpell()
         {
             if (entity.CurrentMagicka <= 0)
                 return false;
@@ -764,7 +764,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Selects a touch spell from this enemy's list and returns true if it can be cast.
         /// </summary>
-        bool CanCastTouchSpell()
+        protected virtual bool CanCastTouchSpell()
         {
             if (entity.CurrentMagicka <= 0)
                 return false;
@@ -812,7 +812,7 @@ namespace DaggerfallWorkshop.Game
         /// This can change in the case of a transformed Seducer.
         /// </summary>
         /// <returns>True if enemy can fly.</returns>
-        bool CanFly()
+        protected bool CanFly()
         {
             return mobile.Enemy.Behaviour == MobileBehaviour.Flying || mobile.Enemy.Behaviour == MobileBehaviour.Spectral;
         }
@@ -820,7 +820,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Checks whether the target already is affected by all of the effects of the given spell.
         /// </summary>
-        bool EffectsAlreadyOnTarget(EntityEffectBundle spell)
+        protected bool EffectsAlreadyOnTarget(EntityEffectBundle spell)
         {
             if (senses.Target)
             {
@@ -852,7 +852,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Try to move in given direction.
         /// </summary>
-        void AttemptMove(Vector3 direction, float moveSpeed, bool backAway = false, bool strafe = false, float strafeDist = 0)
+        protected void AttemptMove(Vector3 direction, float moveSpeed, bool backAway = false, bool strafe = false, float strafeDist = 0)
         {
             // Set whether pursuing or retreating, for bypassing changeStateTimer delay when continuing these actions
             if (!backAway && !strafe)
@@ -972,7 +972,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Try to find a way around an obstacle or fall.
         /// </summary>
-        void FindDetour(Vector3 direction2d)
+        protected void FindDetour(Vector3 direction2d)
         {
             float angle;
             Vector3 testMove = Vector3.zero;
@@ -1110,7 +1110,7 @@ namespace DaggerfallWorkshop.Game
             lastTimeWasStuck = Time.time;
         }
 
-        void ObstacleCheck(Vector3 direction)
+        protected void ObstacleCheck(Vector3 direction)
         {
             obstacleDetected = false;
             // Rationale: follow walls at 45° incidence; is that optimal? At least it seems very good
@@ -1174,7 +1174,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        void FallCheck(Vector3 direction)
+        protected void FallCheck(Vector3 direction)
         {
             if (flies || IsLevitating || swims || obstacleDetected || foundUpwardSlope || foundDoor)
             {
@@ -1195,7 +1195,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Decide whether or not to pursue enemy, based on perceived combat odds.
         /// </summary>
-        void EvaluateMoveInForAttack()
+        protected void EvaluateMoveInForAttack()
         {
             // Classic always attacks
             if (!DaggerfallUnity.Settings.EnhancedCombatAI)
@@ -1286,7 +1286,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Set timer for padding between state changes, for non-perfect reflexes.
         /// </summary>
-        void SetChangeStateTimer()
+        protected void SetChangeStateTimer()
         {
             // No timer without enhanced AI
             if (!DaggerfallUnity.Settings.EnhancedCombatAI)
@@ -1299,7 +1299,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Movement for water enemies.
         /// </summary>
-        void WaterMove(Vector3 motion)
+        protected void WaterMove(Vector3 motion)
         {
             // Don't allow aquatic enemies to go above the water level of a dungeon block
             if (GameManager.Instance.PlayerEnterExit.blockWaterLevel != 10000
@@ -1318,7 +1318,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Rotate toward target.
         /// </summary>
-        void TurnToTarget(Vector3 targetDirection)
+        protected void TurnToTarget(Vector3 targetDirection)
         {
             const float turnSpeed = 20f;
             //Classic speed is 11.25f, too slow for Daggerfall Unity's agile player movement
@@ -1332,7 +1332,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Set to either idle or move animation depending on whether the enemy has moved or rotated.
         /// </summary>
-        void UpdateToIdleOrMoveAnim()
+        protected void UpdateToIdleOrMoveAnim()
         {
             if (!mobile.IsPlayingOneShot())
             {
@@ -1354,7 +1354,7 @@ namespace DaggerfallWorkshop.Game
             lastPosition = transform.position;
         }
 
-        void ApplyFallDamage()
+        protected void ApplyFallDamage()
         {
             // Assuming the same formula is used for the player and enemies
             const float fallingDamageThreshold = 5.0f;
@@ -1393,7 +1393,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Open doors that are in the way.
         /// </summary>
-        void OpenDoors()
+        protected void OpenDoors()
         {
             // Try to open doors blocking way
             if (mobile.Enemy.CanOpenDoors)
@@ -1416,7 +1416,7 @@ namespace DaggerfallWorkshop.Game
         /// Limits maximum controller height.
         /// Tall sprites require this hack to get through doors.
         /// </summary>
-        void HeightAdjust()
+        protected void HeightAdjust()
         {
             // If enemy bumps into something, temporarily reduce their height to 1.65, which should be short enough to fit through most if not all doorways.
             // Unfortunately, while the enemy is shortened, projectiles will not collide with the top of the enemy for the difference in height.

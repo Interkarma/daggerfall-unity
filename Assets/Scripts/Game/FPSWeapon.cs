@@ -34,7 +34,7 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class FPSWeapon : MonoBehaviour
     {
-        class WeaponAtlas
+        protected class WeaponAtlas
         {
             public string FileName { get; set; }
             public MetalTypes MetalType { get; set; }
@@ -43,7 +43,7 @@ namespace DaggerfallWorkshop.Game
             public RecordIndex[] WeaponIndices { get; set; }
         }
 
-        class CustomWeaponAnimation
+        protected class CustomWeaponAnimation
         {
             public string FileName { get; set; }
             public MetalTypes MetalType { get; set; }
@@ -62,44 +62,44 @@ namespace DaggerfallWorkshop.Game
         public SoundClips DrawWeaponSound = SoundClips.DrawWeapon;
         public SoundClips SwingWeaponSound = SoundClips.SwingMediumPitch;
 
-        WeaponTypes currentWeaponType;
-        MetalTypes currentMetalType;
+        protected WeaponTypes currentWeaponType;
+        protected MetalTypes currentMetalType;
 
-        const int nativeScreenWidth = 320;
-        const int nativeScreenHeight = 200;
+        protected const int nativeScreenWidth = 320;
+        protected const int nativeScreenHeight = 200;
 
-        readonly byte[] leftUnarmedAnims = { 0, 1, 2, 3, 4, 2, 1, 0 };
-        int leftUnarmedAnimIndex = 0;
+        protected readonly byte[] leftUnarmedAnims = { 0, 1, 2, 3, 4, 2, 1, 0 };
+        protected int leftUnarmedAnimIndex = 0;
 
-        DaggerfallUnity dfUnity;
-        CifRciFile cifFile;
-        WeaponAtlas weaponAtlas;
-        readonly Queue<WeaponAtlas> weaponAtlasCache = new Queue<WeaponAtlas>();
-        readonly Queue<CustomWeaponAnimation> customWeaponAnimationCache = new Queue<CustomWeaponAnimation>();
-        Rect weaponPosition;
-        float weaponScaleX;
-        float weaponScaleY;
+        protected DaggerfallUnity dfUnity;
+        protected CifRciFile cifFile;
+        protected WeaponAtlas weaponAtlas;
+        protected readonly Queue<WeaponAtlas> weaponAtlasCache = new Queue<WeaponAtlas>();
+        protected readonly Queue<CustomWeaponAnimation> customWeaponAnimationCache = new Queue<CustomWeaponAnimation>();
+        protected Rect weaponPosition;
+        protected float weaponScaleX;
+        protected float weaponScaleY;
 
-        DaggerfallAudioSource dfAudioSource;
-        WeaponAnimation[] weaponAnims;
-        WeaponStates weaponState = WeaponStates.Idle;
-        int currentFrame = 0;
-        int animTicks = 0;
-        float animTickTime;
-        Rect curAnimRect;
-        float weaponOffsetHeight;
-        Rect screenRect;
+        protected DaggerfallAudioSource dfAudioSource;
+        protected WeaponAnimation[] weaponAnims;
+        protected WeaponStates weaponState = WeaponStates.Idle;
+        protected int currentFrame = 0;
+        protected int animTicks = 0;
+        protected float animTickTime;
+        protected Rect curAnimRect;
+        protected float weaponOffsetHeight;
+        protected Rect screenRect;
 
-        Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
-        Texture2D curCustomTexture;
+        protected Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
+        protected Texture2D curCustomTexture;
 
         // Allows a mod to specify if DFU should use custom HUD animations for weapons
         public static bool moddedWeaponHUDAnimsEnabled = false;
 
-        float lastScreenWidth, lastScreenHeight;
-        bool lastLargeHUDSetting, lastLargeHUDDockSetting;
-        bool lastSheathed;
-        float lastWeaponOffsetHeight;
+        protected float lastScreenWidth, lastScreenHeight;
+        protected bool lastLargeHUDSetting, lastLargeHUDDockSetting;
+        protected bool lastSheathed;
+        protected float lastWeaponOffsetHeight;
 
         #region Properties
 
@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Game
             StartCoroutine(AnimateWeapon());
         }
 
-        void OnGUI()
+        protected virtual void OnGUI()
         {
             bool updateWeapon = false;
             GUI.depth = 1;
@@ -291,14 +291,14 @@ namespace DaggerfallWorkshop.Game
                 CacheWeaponAtlas(GetWeaponTextureAtlas(fileName, metalType, 2, 2, true));
         }
 
-        #region Private Methods
+        #region Protected Methods
 
-        private bool IsPlayingOneShot()
+        protected bool IsPlayingOneShot()
         {
             return (weaponState != WeaponStates.Idle);
         }
 
-        private void UpdateWeapon()
+        protected void UpdateWeapon()
         {
             // Do nothing if weapon not ready
             if (weaponAtlas == null || weaponAnims == null ||
@@ -392,7 +392,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private void AlignLeft(WeaponAnimation anim, int width, int height)
+        protected void AlignLeft(WeaponAnimation anim, int width, int height)
         {
             weaponPosition = new Rect(
                 screenRect.x + screenRect.width * anim.Offset,
@@ -401,7 +401,7 @@ namespace DaggerfallWorkshop.Game
                 height * weaponScaleY);
         }
 
-        private void AlignCenter(WeaponAnimation anim, int width, int height)
+        protected void AlignCenter(WeaponAnimation anim, int width, int height)
         {
             weaponPosition = new Rect(
                 screenRect.x + screenRect.width / 2f - (width * weaponScaleX) / 2f,
@@ -410,7 +410,7 @@ namespace DaggerfallWorkshop.Game
                 height * weaponScaleY);
         }
 
-        private void AlignRight(WeaponAnimation anim, int width, int height)
+        protected void AlignRight(WeaponAnimation anim, int width, int height)
         {
             if (FlipHorizontal && (weaponState == WeaponStates.Idle || weaponState == WeaponStates.StrikeDown || weaponState == WeaponStates.StrikeUp))
             {
@@ -426,7 +426,7 @@ namespace DaggerfallWorkshop.Game
                 height * weaponScaleY);
         }
 
-        private bool ReadyCheck()
+        protected bool ReadyCheck()
         {
             // Do nothing if DaggerfallUnity not ready
             if (!dfUnity.IsReady)
@@ -445,7 +445,7 @@ namespace DaggerfallWorkshop.Game
             return true;
         }
 
-        IEnumerator AnimateWeapon()
+        protected IEnumerator AnimateWeapon()
         {
             while (true)
             {
@@ -502,7 +502,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private float GetAnimTickTime()
+        protected float GetAnimTickTime()
         {
             PlayerEntity player = GameManager.Instance.PlayerEntity;
             if (WeaponType == WeaponTypes.Bow || player == null)
@@ -511,7 +511,7 @@ namespace DaggerfallWorkshop.Game
                 return FormulaHelper.GetMeleeWeaponAnimTime(player, WeaponType, WeaponHands);
         }
 
-        private void LoadWeaponAtlas()
+        protected void LoadWeaponAtlas()
         {
             // Get weapon filename
             string filename = WeaponBasics.GetWeaponFilename(WeaponType);
@@ -535,7 +535,7 @@ namespace DaggerfallWorkshop.Game
 
         #region Texture Loading
 
-        private WeaponAtlas GetWeaponTextureAtlas(
+        protected WeaponAtlas GetWeaponTextureAtlas(
             string filename,
             MetalTypes metalType,
             int padding,
@@ -633,7 +633,7 @@ namespace DaggerfallWorkshop.Game
             };
         }
 
-        private Texture2D GetWeaponTexture2D(
+        protected Texture2D GetWeaponTexture2D(
             string filename,
             int record,
             int frame,
@@ -671,7 +671,7 @@ namespace DaggerfallWorkshop.Game
             return texture;
         }
 
-        private WeaponAtlas GetCachedWeaponAtlas(string fileName, MetalTypes metalType)
+        protected WeaponAtlas GetCachedWeaponAtlas(string fileName, MetalTypes metalType)
         {
             foreach (var atlas in weaponAtlasCache)
             {
@@ -682,7 +682,7 @@ namespace DaggerfallWorkshop.Game
             return null;
         }
 
-        private void CacheWeaponAtlas(WeaponAtlas weaponAtlas)
+        protected void CacheWeaponAtlas(WeaponAtlas weaponAtlas)
         {
             const int maxCacheSize = 2; // One for each hand.
             weaponAtlasCache.Enqueue(weaponAtlas);
@@ -690,7 +690,7 @@ namespace DaggerfallWorkshop.Game
                 weaponAtlasCache.Dequeue();
         }
 
-        private CustomWeaponAnimation GetCachedCustomWeaponAnimation(string fileName, MetalTypes metalType)
+        protected CustomWeaponAnimation GetCachedCustomWeaponAnimation(string fileName, MetalTypes metalType)
         {
             foreach (var animation in customWeaponAnimationCache)
             {
@@ -701,7 +701,7 @@ namespace DaggerfallWorkshop.Game
             return null;
         }
 
-        private void CacheCustomWeaponAnimation(CustomWeaponAnimation animation)
+        protected void CacheCustomWeaponAnimation(CustomWeaponAnimation animation)
         {
             const int maxCacheSize = 2;
             customWeaponAnimationCache.Enqueue(animation);

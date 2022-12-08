@@ -31,55 +31,55 @@ namespace DaggerfallWorkshop.Game
         public float HearingRadius = 25f;                               // Range of enemy hearing
         public float FieldOfView = 180f;                                // Enemy field of view
 
-        const float predictionInterval = 0.0625f;
+        protected const float predictionInterval = 0.0625f;
 
-        MobileUnit mobile;
-        DaggerfallEntityBehaviour entityBehaviour;
-        QuestResourceBehaviour questBehaviour;
-        EnemyMotor motor;
-        EnemyEntity enemyEntity;
-        bool targetInSight;
-        bool playerInSight;
-        bool targetInEarshot;
-        Vector3 directionToTarget;
-        float distanceToPlayer;
-        float distanceToTarget;
-        DaggerfallEntityBehaviour player;
-        DaggerfallEntityBehaviour target;
-        DaggerfallEntityBehaviour targetOnLastUpdate;
-        DaggerfallEntityBehaviour secondaryTarget;
-        bool sawSecondaryTarget;
-        Vector3 secondaryTargetPos;
-        EnemySenses targetSenses;
-        float lastDistanceToTarget;
-        float targetRateOfApproach;
-        Vector3 lastKnownTargetPos = ResetPlayerPos;
-        Vector3 oldLastKnownTargetPos = ResetPlayerPos;
-        Vector3 predictedTargetPos = ResetPlayerPos;
-        Vector3 predictedTargetPosWithoutLead = ResetPlayerPos;
-        Vector3 lastPositionDiff;
-        bool awareOfTargetForLastPrediction;
-        DaggerfallActionDoor actionDoor;
-        float distanceToActionDoor;
-        bool hasEncounteredPlayer = false;
-        bool wouldBeSpawnedInClassic = false;
-        bool detectedTarget = false;
-        uint timeOfLastStealthCheck = 0;
-        bool blockedByIllusionEffect = false;
-        float lastHadLOSTimer = 0f;
+        protected MobileUnit mobile;
+        protected DaggerfallEntityBehaviour entityBehaviour;
+        protected QuestResourceBehaviour questBehaviour;
+        protected EnemyMotor motor;
+        protected EnemyEntity enemyEntity;
+        protected bool targetInSight;
+        protected bool playerInSight;
+        protected bool targetInEarshot;
+        protected Vector3 directionToTarget;
+        protected float distanceToPlayer;
+        protected float distanceToTarget;
+        protected DaggerfallEntityBehaviour player;
+        protected DaggerfallEntityBehaviour target;
+        protected DaggerfallEntityBehaviour targetOnLastUpdate;
+        protected DaggerfallEntityBehaviour secondaryTarget;
+        protected bool sawSecondaryTarget;
+        protected Vector3 secondaryTargetPos;
+        protected EnemySenses targetSenses;
+        protected float lastDistanceToTarget;
+        protected float targetRateOfApproach;
+        protected Vector3 lastKnownTargetPos = ResetPlayerPos;
+        protected Vector3 oldLastKnownTargetPos = ResetPlayerPos;
+        protected Vector3 predictedTargetPos = ResetPlayerPos;
+        protected Vector3 predictedTargetPosWithoutLead = ResetPlayerPos;
+        protected Vector3 lastPositionDiff;
+        protected bool awareOfTargetForLastPrediction;
+        protected DaggerfallActionDoor actionDoor;
+        protected float distanceToActionDoor;
+        protected bool hasEncounteredPlayer = false;
+        protected bool wouldBeSpawnedInClassic = false;
+        protected bool detectedTarget = false;
+        protected uint timeOfLastStealthCheck = 0;
+        protected bool blockedByIllusionEffect = false;
+        protected float lastHadLOSTimer = 0f;
 
-        float targetPosPredictTimer = 0f;
-        bool targetPosPredict = false;
+        protected float targetPosPredictTimer = 0f;
+        protected bool targetPosPredict = false;
 
-        float classicTargetUpdateTimer = 0f;
-        const float systemTimerUpdatesDivisor = .0549254f;  // Divisor for updates per second by the system timer at memory location 0x46C.
+        protected float classicTargetUpdateTimer = 0f;
+        protected const float systemTimerUpdatesDivisor = .0549254f;  // Divisor for updates per second by the system timer at memory location 0x46C.
 
-        const float classicSpawnDespawnExterior = 4096 * MeshReader.GlobalScale;
-        float classicSpawnXZDist = 0f;
-        float classicSpawnYDistUpper = 0f;
-        float classicSpawnYDistLower = 0f;
-        float classicDespawnXZDist = 0f;
-        float classicDespawnYDist = 0f;
+        protected const float classicSpawnDespawnExterior = 4096 * MeshReader.GlobalScale;
+        protected float classicSpawnXZDist = 0f;
+        protected float classicSpawnYDistUpper = 0f;
+        protected float classicSpawnYDistLower = 0f;
+        protected float classicDespawnXZDist = 0f;
+        protected float classicDespawnYDist = 0f;
 
         public DaggerfallEntityBehaviour Target
         {
@@ -184,7 +184,7 @@ namespace DaggerfallWorkshop.Game
             set { targetRateOfApproach = value; }
         }
 
-        void Start()
+        protected  virtual void Start()
         {
             mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
@@ -212,7 +212,7 @@ namespace DaggerfallWorkshop.Game
                 FieldOfView = 190;
         }
 
-        void FixedUpdate()
+        protected virtual void FixedUpdate()
         {
             if (GameManager.Instance.DisableAI)
                 return;
@@ -582,7 +582,7 @@ namespace DaggerfallWorkshop.Game
             return prediction;
         }
 
-        public bool StealthCheck()
+        public virtual bool StealthCheck()
         {
             if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle && !motor.IsHostile)
                 return false;
@@ -623,7 +623,7 @@ namespace DaggerfallWorkshop.Game
             return Dice100.FailedRoll(stealthChance);
         }
 
-        public bool BlockedByIllusionEffect()
+        public virtual bool BlockedByIllusionEffect()
         {
             // In classic if the target is another AI character true is always returned.
 
@@ -701,9 +701,9 @@ namespace DaggerfallWorkshop.Game
 
         #endregion
 
-        #region Private Methods
+        #region Protected Methods
 
-        void GetTargets()
+        protected virtual void GetTargets()
         {
             DaggerfallEntityBehaviour highestPriorityTarget = null;
             DaggerfallEntityBehaviour secondHighestPriorityTarget = null;
@@ -818,7 +818,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        bool CanSeeTarget(DaggerfallEntityBehaviour target)
+        protected virtual bool CanSeeTarget(DaggerfallEntityBehaviour target)
         {
             bool seen = false;
             actionDoor = null;
@@ -868,7 +868,7 @@ namespace DaggerfallWorkshop.Game
             return seen;
         }
 
-        bool CanHearTarget()
+        protected virtual bool CanHearTarget()
         {
             float hearingScale = 1f;
 
