@@ -2346,6 +2346,20 @@ namespace DaggerfallWorkshop.Game.Entity
             bool suppressCrime = racialOverride != null && racialOverride.SuppressCrime;
 
             crimeCommitted = (!suppressCrime) ? crime : Crimes.None;
+
+            RaiseOnCrimeUpdateEvent(crimeCommitted);
+        }
+
+        // Allows modders to easily detect if a crime has been committed
+        public delegate void OnCrimeUpdateHandler(Crimes crime);
+        public event OnCrimeUpdateHandler OnCrimeUpdate;
+        protected void RaiseOnCrimeUpdateEvent(Crimes crime)
+        {
+            if (SaveLoadManager.Instance.LoadInProgress)
+                return;
+
+            if (OnCrimeUpdate != null)
+                OnCrimeUpdate(crime);
         }
 
         #endregion
