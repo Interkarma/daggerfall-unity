@@ -2351,6 +2351,8 @@ namespace DaggerfallWorkshop.Game.Entity
         }
 
         // Allows modders to easily detect if a crime has been committed
+        // This will raise when the player's crime is set to None!
+        // Make sure to account for that when necessary.
         public delegate void OnCrimeUpdateHandler(Crimes crime);
         public event OnCrimeUpdateHandler OnCrimeUpdate;
         protected void RaiseOnCrimeUpdateEvent(Crimes crime)
