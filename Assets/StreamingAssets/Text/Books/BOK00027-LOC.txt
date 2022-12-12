@@ -1,0 +1,89 @@
+Title: Special Flora of Tamriel
+Author: Hardin
+IsNaughty: False
+Price: 453
+IsUnique: False
+WhenVarSet: 
+Content:
+
+
+[/font=2]
+
+[/center]Special Flora
+
+[/center]of
+
+[/center]Tamriel
+
+
+
+[/font=4]
+
+
+
+[/center] Poppies, both black and white, can be found growing wild in
+the mountains of Hammerfell. Their succulent pods are often
+the only nourishment of adventurers who find themselves in
+the wilderness without rations. It is said that the black and
+white poppies together have magical properties. When they
+are crushed and mixed with the milk of the agile footed
+mountain goat, a potion that allows the user to glide
+safely above the ground can be made.
+
+ Fire Fern, a perennial herb, native to Morrowind. The
+flowers are inconspicuous and often hidden. The glossy,
+evergreen foliage and flowers are resistant to the
+conditions of high heat and bright light. A petal from this
+plant placed under an adventurer's tongue will provide
+protection from the heat and fire found in the lava pits and
+streams found around Dagoth-Ur.      Dragon's-Tongue, common
+name for a fern like herb found in Black Marsh. It is
+especially prolific around  the area of Utherus Swamp. It is
+a beautiful wildflower. Its name comes from the fire red
+fronds that protect its golden flower. As pretty as it is,
+it is a deadly poison to most living beings and needs to be
+avoided by adventurers. It is said, however, that Argonians
+can pick the plant and use the sap derived from its roots as
+an enhancement to their endurance. 
+
+ Domica Redwort is a herb grown by many residents of
+Valenwood for their beautiful and showy flowers. They
+attain a height of about three feet and have feathery leaves;
+the flowers are usually bright red. In addition to their
+beauty, they are said to have magical abilities to enhance
+the appearance of anyone who carries or wears one of the
+flowers.
+
+ Ironwood Nut, this rare nut comes from the Ironwood trees
+which grow deep in the forests of Skyrim. The  wood from these
+trees is as hard as the metal for which they are named. The
+very rare black ironwood tree is said to produce a nut which
+is very succulent and is believed to enhance the strength of
+the adventurer who is able to crack its shell.
+
+ The Ginko leaves which are found along the banks of rivers and
+lakes in Hammerfell are most inconspicuous, only its
+peculiar halfmoon shape makes it noticeable. It is very sweet
+and tasty. Legend has it that when mixed properly with the
+pulp of the Aloe plant, the potion has the ability to
+increase one's stamina for a short while.
+
+ The Somnalius Fern can be found in the swamps of Black
+Marsh. The fronds from this plant are light green and quite delicate.
+Picking a frond can be very difficult, but once retrieved it
+can be used to put an enemy to sleep for a short while by
+passing it under his nose.
+
+ Arrowroot is a thick, rubbery tuber that can be found in the
+Province of Valenwood. The plant is very difficult to
+find as its above ground foliage is very meager and
+scrawny. But the Arrowroot itself can be most beneficial to
+the gatherer as it has magical properties. The paste made
+from grinding the root is very tasty and can improve the
+user's accuracy with a bow and arrow.
+
+ Nightshade is reputed to be a very poisonous herb. However
+the variety found in many parts of Elsweyr is cherished by
+Khajiits who have followed the career path of thievery. Many
+Khajiits will tuck a piece of Nightshade inside their armor to
+increase their abilities to skulk, hide and become invisible. 

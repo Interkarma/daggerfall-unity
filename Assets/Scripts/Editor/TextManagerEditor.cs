@@ -46,14 +46,12 @@ namespace DaggerfallWorkshop
         {
             var runtimeInternalStrings = Prop("runtimeInternalStrings");
             var runtimeRSCStrings = Prop("runtimeRSCStrings");
-            var runtimeBOKStrings = Prop("runtimeBOKStrings");
             var runtimeFlatStrings = Prop("runtimeFlatStrings");
             var runtimeLocationsStrings = Prop("runtimeLocationsStrings");
 
             var tableCopyOverwriteTargetStringTables = Prop("tableCopyOverwriteTargetStringTables");
             var tableCopyTargetInternalStrings = Prop("tableCopyTargetInternalStrings");
             var tableCopyTargetRSCStrings = Prop("tableCopyTargetRSCStrings");
-            var tableCopyTargetBOKStrings = Prop("tableCopyTargetBOKStrings");
             var tableCopyTargetFlatStrings = Prop("tableCopyTargetFlatStrings");
             var tableCopyTargetLocationStrings = Prop("tableCopyTargetLocationStrings");
 
@@ -63,7 +61,6 @@ namespace DaggerfallWorkshop
             {
                 runtimeInternalStrings.stringValue = EditorGUILayout.TextField("Internal Strings", runtimeInternalStrings.stringValue);
                 runtimeRSCStrings.stringValue = EditorGUILayout.TextField("RSC Strings", runtimeRSCStrings.stringValue);
-                runtimeBOKStrings.stringValue = EditorGUILayout.TextField("BOK Strings", runtimeBOKStrings.stringValue);
                 runtimeFlatStrings.stringValue = EditorGUILayout.TextField("FLATS.CFG Strings", runtimeFlatStrings.stringValue);
                 runtimeLocationsStrings.stringValue = EditorGUILayout.TextField("MAPS.BSA Strings", runtimeLocationsStrings.stringValue);
             });
@@ -74,7 +71,6 @@ namespace DaggerfallWorkshop
             {
                 tableCopyTargetInternalStrings.stringValue = EditorGUILayout.TextField("Internal Strings > ", tableCopyTargetInternalStrings.stringValue);
                 tableCopyTargetRSCStrings.stringValue = EditorGUILayout.TextField("RSC Strings > ", tableCopyTargetRSCStrings.stringValue);
-                tableCopyTargetBOKStrings.stringValue = EditorGUILayout.TextField("BOK Strings > ", tableCopyTargetBOKStrings.stringValue);
                 tableCopyTargetFlatStrings.stringValue = EditorGUILayout.TextField("FLATS.CFG Strings > ", tableCopyTargetFlatStrings.stringValue);
                 tableCopyTargetLocationStrings.stringValue = EditorGUILayout.TextField("MAPS.BSA Strings > ", tableCopyTargetLocationStrings.stringValue);
                 tableCopyOverwriteTargetStringTables.boolValue = EditorGUILayout.Toggle(new GUIContent("Overwrite String Tables?", "When enabled will copy over existing strings in target string tables."), tableCopyOverwriteTargetStringTables.boolValue);
@@ -90,7 +86,6 @@ namespace DaggerfallWorkshop
             {
                 DaggerfallStringTableImporter.CopyInternalStringTable(tableCopyTargetInternalStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
                 DaggerfallStringTableImporter.CopyTextRSCToStringTable(tableCopyTargetRSCStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
-                //DaggerfallStringTableImporter.CopyTextBOKToStringTable(tableCopyTargetBOKStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
                 DaggerfallStringTableImporter.CopyTextFlatsToStringTable(tableCopyTargetFlatStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
                 DaggerfallStringTableImporter.CopyLocationsToStringTable(tableCopyTargetLocationStrings.stringValue, tableCopyOverwriteTargetStringTables.boolValue);
             }

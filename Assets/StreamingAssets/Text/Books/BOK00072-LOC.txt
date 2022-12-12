@@ -1,0 +1,72 @@
+Title: The Healer's Tale
+Author: Anonymous
+IsNaughty: True
+Price: 580
+IsUnique: False
+WhenVarSet: 
+Content:
+
+
+[/font=2]
+
+[/center]The Healer's
+
+[/center]Tale
+
+
+
+[/font=4]
+
+[/center]
+
+    For over twenty years, I have been a healer at the Temple
+of Stendarr. As the reader is doubtless aware, we are the
+only temple in the Iliac Bay that offers wound healing and
+illness curing for both the faithful and the heathen alike, for
+Stendarr is the God of Mercy. I have faced people at their
+most miserable and their most terrified. I have seen brave
+knights weep and strong peasants scream. I like to think that
+I've watched the masks drop from faces, and seen people as
+they truly are.
+
+    A healer's job, after all, is more than simply binding
+wounds and stopping the flows of poison and disease. We are
+counselors and comforters for those who have given up all
+hope. Sometimes, it seems like our kind words and sympathy do
+more for our patients than our spells.
+
+    I am reminded of a very sick young man who came to the
+temple, suffering from a variety of maladies. Once I had
+given him an examination, I told him the results, careful
+not to alarm him. I let him decide how he wanted to be told the
+news.
+
+    "I have some good news and some bad news, my child," I
+said.
+
+    "I better hear the bad news first," he said.
+
+    "Well," I said, gripping his shoulder in case he should
+faint. "The bad news is that, unless I am wrong, you will
+sicken even more over the next day or two. And unless
+Stendarr choses to be merciful to you, you will pass from
+this existance. I am sorry, my child."
+
+    As soft as the blow was, it stung nonetheless. The boy was,
+after all, very young. He thought he had his whole life ahead
+of him. Tears streaming down his face, he asked, "And what is
+the good news?"
+
+    I smiled: "When you came in, did you notice our
+proselytizer? She was the enchanting, voluptuous blonde in
+the antechamber by the foyer?"
+
+    Color returned to the young man's face. He had noticed her
+indeed. "Yes?"
+
+    "I'm sleeping with her," I said.
+
+    If more of the healers of Tamriel would consider their
+patients' feelings, not just the quickest way to heal them up
+and get them out, we would have a far, far healthier
+society. I truly believe that. 

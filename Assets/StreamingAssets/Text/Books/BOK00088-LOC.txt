@@ -1,0 +1,892 @@
+Title: Fools' Ebony, Part the Sixth
+Author: Frincheps
+IsNaughty: False
+Price: 317
+IsUnique: False
+WhenVarSet: 
+Content:
+
+
+[/font=2]
+
+[/center]Fools' Ebony,
+
+[/center]Part the
+
+[/center]Sixth
+
+
+
+[/font=4]
+
+
+
+[/center] Dramatis Personae
+
+ Prologue The Adventurer, A Dark Elf Rascal Komon, A Priest
+of Akatosh Lheban, Another Priest of Akatosh Epilogue Stete, A
+Priest of Julianos Raic, Another Priest of Julianos Shub, A
+Mage Shub, A Different Mage of the Same Name Nephron, A
+Somewhat Sleazy Merchant 5 Armorers Ortho Crunn, Husband of
+Millie A Lusty Contessa Millie, Innkeep and Philosopher
+Gurnsey, Bovine Wench Assorted Wenches and Cads of the
+Taverns Soldiers Dwarves Giants
+
+
+
+ Daggerfall and Environs in the Doldrums of the 3rd Era
+
+ Scene 1: In The Adventurer's suite at the Dead Daedra Inn.
+
+ Enter Prologue, the Adventurer, and Ortho. Ortho climbs
+into bed.
+
+       Prologue: Thank you for allowing us the time to change
+the meager set, while our bard sang that old favorite, "Hail
+and Farewell." Now then, imagine, if you will, the
+luxuriant and langorous suite of that Dark Elven rogue, the
+Adventurer, at the Dead Daedra Inn. The time is shortly
+after the last scene, which if you've forgotten, ended with
+our hero and his partner-in-crime, Nephron, making some
+arrangements to swindle from the mages, priests, and
+armorers. All are interested in getting their hands on a
+lode of Fools' Ebony, a miraculous burning mineral, and the
+priests and mages each consider the Adventurer their ally.
+The Armorers know better and have assigned one of their
+apprentices, Ortho, to watch the Adventurer's movements.
+Now, as Ortho slumbers, the Adventurer has his first moment
+of peace in days. I should mention that in the interest of
+common decency, this scene has been abbreviated from the
+original by order of the Guild of Playwrites, Actors, and
+Dramatists. It now contains little material of relevance.
+A full copy may be obtained from the playwrite after the
+show for a mere 50 g.p. copying fee. Now is the time for
+poor Prologue to shuffle away.
+
+ (Exit Prologue) (The Adventurer begins to get undressed)
+(Tap-tap at the door. Adventurer jumps, startled) (Snore
+from Ortho)
+
+       Adventurer: Who's there? I'm coming!
+
+ (Opens door - carefully) (Enter Contessa)
+
+       Adventurer: Er, well ... er ... Come In! Please.
+
+ (The Adventuer steps back, tripping over his trousers
+around his ankles ...)
+
+       Contessa So sorry to surprise you, but I thought that we
+might find something in common ... Oh! You poor man, you
+have a wound!  Here, let me fix that bandage ... it looks
+very fresh.
+
+ (Fixing bandage, properly this time)
+
+       Adventurer: Well, I ... just opened it up again.
+Evening exercises, calisthenics, so on...
+
+       Contessa: How did you get this cut - if you do not mind me
+asking?       
+
+       Adventurer: No, not at all. I was ... in a fight,
+earlier. These three crazy people jumped me.
+
+       Contessa: Really?  This cloth looks like part of a Mage's
+robe.
+
+       Adventurer: Well, yes, two of them were Mages.
+
+       Contessa: Oh My! You must have been very good, to defeat
+them.
+
+       Adventurer: Oh, ah, well, I've been in one or two
+fights. Not to be rude, but who are you?
+
+       Contessa: Oh, I am so sorry, I quite forgot the proper
+introductions. I am the Contessa Aveet Videspreed -- call me
+Ave.  From the Court at Daggerfall.
+
+       Adventurer       (aside) By Oblivion, what now?
+
+       Contessa: Here, help me off with this robe, these inn rooms
+are always ... so hot. And let me check that bandage again,
+poor man. Ooh, you are wearing an ebony belt of stamina,
+and bracers of strength. Ooh, a bracelet of endurance. This
+is my lucky night.
+
+       Adventurer       (aside) Help.
+
+       Contessa: Here, let me help you off with that old shirt -
+got to check you for any more cuts - they can go bad so
+easily, you know.
+
+       Adventurer       (aside) Well, its not the Armorers this
+time. Maybe my luck has turned.
+
+       Contessa: Well, everything seems all right...very all
+right, in fact...
+
+       Adventurer: Er...well, Ave - tell me about ... er ...
+yourself.           Contessa: If you want - just for a bit - 
+
+       Adventurer: Here, have some wine ...
+
+ Enter Prologue
+
+       Prologue: Here our worthy playwrite's speech has been
+heavily edited by the Guild of Playwrites, Actors, and
+Dramatists. I will endeavor to fill in those removed
+passages. I should first mention that the Contessa is not
+meant to be a relative of any noble currently in Castle
+Daggerfall. The Contessa Aveet regales the Adventurer with
+tales of the peculiar and hearty members of her royal
+family. She has many brothers and sisters. They are all very
+-- close.
+
+       Contessa: I think I must have been a bastard. I was the
+only one with red hair, and an affinity for magicka. Everyone
+else tried to hide this skill of mine. I remember one spanking
+very well ...
+
+       Prologue: The Contessa relates futher differences
+between her siblings.
+
+       Contessa: While my sisters were learning to curtsey in
+ten different modes, and my brothers were learning
+flower-arranging, I used to sneak off into the woods or town.
+I soon learnt how to get what I wanted, from just about
+anyone. Just for example, there was this merchant who had
+three sons ...
+
+       Prologue: The Contessa goes into detail about her
+training.
+
+       Contessa: I became quite good at the school of illusion.
+You never noticed me, downstairs, did you?. I also learned
+how to use some weapons. Let me tell you how I learned
+hand-to-hand ...
+
+       Prologue: The Contessa relates an amusing anecdote, and
+then continues.
+
+       Contessa: And on bad days, I used to dig in my father's
+library. He had a marvelous collection of old texts. I was
+fascinated by Old Dwarvish, managed to learn it quite well,
+I think. Of course, no one has seen or spoken to one in years
+and years. So its probably perfectly useless knowledge.
+But I've always had an interest in collecting new
+knowledge. At the Mages Guild, they taught me an old High
+Elven tradition. You spread this potion all over your body
+...
+
+       Prologue: The Contessa relates her current state of
+boredom.
+
+       Contessa: The life up at the Palace bores me so. My
+sisters ...
+
+       Prologue: The Contessa's sisters are entertaining some
+visitors.
+
+       Contessa: And my brothers are now studying Advanced
+Floral Theory, so I come down here, do a little ... er ...
+business. I keep all my relations supplied with their
+favourite vices -- so I can blackmail the whole rotten lot.
+
+       Adventurer: But is'nt it dangerous, down here? Did I not
+hear that some young Contessa got killed, recently?
+
+       Contessa: That little twit was my cousin, and as far as
+I'm concerned, she got what she deserved. She thought  she could
+just borrow a maids dress, muss up her hair, and pass for s
+commoner. She was spotted the first minute she left the
+Palace gates. Now, I use illusion, craft, guile -- and I
+carry weaponry. By the way, that was a neat scheme you and
+Neph cooked up.
+
+       Adventurer: Well, lets change the subject, can we? ...
+Just what do you carry? I can't see anything ... like a
+weapon, I mean ...
+
+       Contessa: Here, let me show you ...
+
+       Adventurer: Oh my, those are nice ... knives...
+
+       Contessa: And there're more ...             Adventurer: Oh yes
+...
+
+       Contessa: But we don't need these silly nasty weapons
+now, do we?
+
+       Adventurer: My, my -- now those are what I call weapons
+... Oh yes ... heavy duty, high class ones too, my ...
+
+       Contessa: I think its time that we put that ebony to the
+test ... to say nothing of your Mages Staff ...
+
+       Prologue: At this point, extensive material has been
+removed. However, please remember that any scholar who
+truly wishes to peruse this material can obtain a copy for
+only 50 g.p. - hand-drawn illustrations are of course extra.
+The Contessa, after a bit of fun, volunteers to be a part
+of the Adventurer's party to find the fools' ebony lode. I
+know, I know. It didn't make much sense in the original draft
+either, if you want to know the truth.
+
+ (Exit Prologue)
+
+       Adventurer: Sure you want to go out there in the wilds?
+
+       Contessa: Oh, yes. I am so bored here. Well, not right
+here and now, but generally. And I can really be of
+assistance. I'm pretty good with woods survival, knife
+work, hand-to-hand ... and it gets cold out there at night,
+even for big ebony-wearing men like you ...
+
+       Adventurer: All right, then. Do you know where and why we
+are going?
+
+       Contessa: Oh, of course. It's all over Daggerfall.
+Everyone is watching and waiting to see what happens. There is
+even a lottery or two running ...
+
+       Adventurer: On what ..?
+
+       Contessa: Oh, your life.
+
+       Adventurer: Oh dear Oh dear! Oh my!
+
+       Contessa: Look, don't worry -- I know all about the
+double-dealings with mages, priests, merchants, those crude
+armorers. And I intend that we come out on top. I love
+being on top. With the goods and the profits. I'll have yet
+another vice to sell to my stupid relatives in their boring
+palaces.
+
+       Adventurer: But won't it be us two against hordes?
+
+       Contessa: Oh no. Most everyone is waiting here in town to
+see what and who comes back. And I will have a surprise
+arranged for our 'escorts' - Ortho included. Out in the
+wilderness, they can be dealt with easily.
+
+ (Ortho snores)
+
+       Adventurer: Tell me more.
+
+       Contessa: Certainly. But first ... lets see how many
+uses you have left in that ebony. Mmm, your Mages' Staff is
+in good shape ...
+
+ (Enter Prologue)
+
+       Prologue: Exactly. Sorry to interrupt again, but
+we're going to have to stop this scene right here. After a
+frenzied night comes the placid dawn, tripping onto the sky
+like a budding rose. And then another day doth dawn, and then
+another. Ten dawns and ten frenzied nights pass as our wily
+Adventurer, the wanton Contessa, the clever and naughty
+Nephron, the loutish Ortho, and an assemblage of randy
+armorers and backsliding maidens take to the road. Imagine
+now that we are in the wildy wilderness of High Rock near the
+Wrothgarian Mountains.
+
+ Scene 2
+
+ (Enter Nephron and assorted lads and lasses) (Exit
+Prologue)
+
+       Contessa: I do so love a bucolic frolic.
+
+       Adventurer: It's getting pretty wild now. I guess the
+dangerous part is coming up tomorrow...?
+
+       Contessa: Yes, one last stop tonight, at that old inn up
+here -- Minnie's Inn.
+
+       Adventurer: Minnie's Inn? Oh, those two old scholars who
+gave it all up, came to run the inn out here. they must get
+all of two customers a year.
+
+       Contessa: I think they like the solitude. It gives them
+time to study. They know a lot about old Dwarvish stuff -- get
+them started on that, they will wear you ears out.
+
+       Adventurer: Er ... when does your surprise happen? I
+should probably know.
+
+       Contessa: Don't fret, dear. At the Inn tonight. Just sit
+back and enjoy the show.
+
+ (Enter Prologue)
+
+ Prologue: Time passes, the carts roll, things happen in the
+backs of the carts. And there are strange furtive movements
+unnoticed by all, on the high ridges around. When next we see
+our players, they are at Minnie's Inn, home of Minnie and
+Crunn, the philosopher- innkeeps. Imagine, if you will, the
+rather dusty dining room of Minnie's Inn.
+
+ (Enter Minnie, Crunn, and Gurnsey) (Exit Prologue) (Gurnsey
+goes to Orthos' table with more ale for him. She sits down
+suddenly. She stares into Orthos'  eyes, Ortho stares into
+hers. Mouths drop open.)
+
+       Minnie: ... er ... Crunn ...
+
+       Crunn: ... yes ... Minnie ...
+
+       Minnie: ... I was thinking ...
+
+       Crunn: ... yes, you were thinking, Minnie ...
+
+       Minnie: ... er .... thinking ...
+
+       Crunn: ... yes ...so was I ....
+
+       Minnie: ... can't remember now ...
+
+       Crunn: ... yes, Minnie ... Minnie ...
+
+       Minnie: ... Yes ..?
+
+       Crunn: ... Shut up ...
+
+       Gurnsey and Ortho       (Together): Moo ... oooh ... moo.
+
+       Adventurer: Moo?
+
+       Contessa: See, Adventurer, Ortho's fixed.
+
+       Adventurer: Is he?
+
+       Contessa: You just watch.
+
+       Adventurer: And what about the other armorers?
+
+       Contessa: Any minute now.
+
+ (Ortho and serving girl arise, approach Adventurers'
+table. The floor shakes.)
+
+       Ortho: This Gurnsey. Ortho love Gurnsey, oooh.
+
+       Gurnsey: Gurnsey love Ortho ... moo ...
+
+       Ortho: We go get marry, we is.
+
+       Adventurer: Well, congratulations! And that was a fine
+long speech, Ortho!
+
+       Ortho: We go raise piggies.
+
+       Gurnsey: Grows animals too, farmers be we.
+
+ (Exit Ortho and Gurnsey)
+
+       Adventurer: Extraordinary. Ave, I think that you must
+have been up here before.
+
+       Contessa: Oh yes. I often come up here to get away from
+the Palace and talk dwarves with Minnie and Crunn.         
+Adventurer: You mean that these two ancient ... er, Scholar-I
+nnKeeps can actually talk and about dwarves?
+
+ (All but Adventurer, Contessa, Minnie, and Crunn fall
+asleep in their meat pies.)
+
+       Contessa: Oh yes, you must just be very patient. But look
+over at our other escorts ...
+
+       Adventurer: By the Lady!
+
+       Contessa: Minnie was an Alchemist before she met Crunn,
+and knows a lot of old forgotten Dwarvish potions.        
+Adventurer: But what do we do with the bodies?        
+
+       Contessa: Wait ...
+
+ (Enter Major)
+
+       Contessa: Adventurer, meet Major Bloodnok, head of my
+own ...private little bodyguard. He's been with me since I
+was a mere girl. Served me very well, haven't you, Major?
+
+       Major: We give our all, milady.
+
+nKeeps can actually talk and about dwarves?
+
+ (All but Adventurer, Contessa, Minnie, and Crunn fall
+asleep in their meat pies.)
+
+       Contessa: Oh yes, you must just be very patient. But look
+over at our other escorts ...
+
+       Adventurer: By the Lady!
+
+       Contessa: Minnie was an Alchemist before she met Crunn,
+and knows a lot of old forgotten Dwarvish potions.        
+Adventurer: But what do we do with the bodies?        
+
+       Contessa: Wait ...
+
+ (Enter Major)
+
+       Contessa: Adventurer, meet Major Bloodnok, head of my
+own ...private little bodyguard. He's been with me since I
+was a mere girl. Served me very well, haven't you, Major?
+
+       Major: We give our all, milady.
+
+       Adventurer: Pleased to meet you, Major.
+
+       Contessa: How are my other men?
+
+       Adventurer:       (aside) Other men?
+
+ (Enter Other Men in Khajiit suits)         Major: All present
+and accounted for, milady. Had a spot of bother with what
+looked like a party of Merchants following you. But they are
+out of the picture now, down a ravine. Only one thing.
+
+       Contessa: Yes?
+
+       Major: Me and my men, we've been noticing sort of
+furtive movements, up on cliffs, on ridges -- always just
+out of the corners of our eyes. And we keep getting this
+feeling of being watched. Now, me and my men, we're the best
+but there's something out there. Don't like it, not one bit.
+
+       Contessa: Oh Dear - and just when it was getting to be fun.
+
+       Major: Its not anything human. Not Mages, Armorers,
+Priests. And its not the usual werewolves, harpies, orcs,
+daedra. Nothing like that, not at all.
+
+       Minnie: Dwarves!
+
+       Crunn: Where? ... oh ... Minnie ... you mean ... up ...
+there ... here ...
+
+       Minnie: ... Dwarves, up there ...
+
+       Crunn: ... How exciting ... mmmm ...
+
+       Minnie: ... There, there, Crunn, calm down ... just
+dwarves ... I knew that one day they would ...
+
+       Crunn: ... Wake up ..?
+
+       Minnie: ... Come back ...
+
+       Crunn: ... But ... I didn't go anywhere ...
+
+       Minnie: ... The dwarves, Crunn ...
+
+       Crunn: ... Oooh ... Back ... So excited ... Dwarves! ...
+oooh ...
+
+       Contessa: Well Major, is it possible?
+
+       Major: Anything's possible, especially up here.
+Dwarves? I don't know. Me and my men, we'll get rid of this
+lot. There's a good deep mine shaft out back.
+
+ (Exit All, but the Adventurer and Contessa)
+
+       Adventurer: Dwarves, Ave! Is that trouble? I mean, they
+sort of own all the ebony down here, don't they?
+
+       Contessa: Maybe. I guess we just have to push on, see what
+develops. I can try to talk to them, maybe? Oh, and
+Adventurer, you'll have to drive the first cart. I'll take
+old Nephron's. We'll leave the other here -- Spares for
+later.
+
+       Adventurer: What, no more bucolic frolics?
+
+       Contessa: Sorry, but we've got to get to the site and
+out again before the weather goes bad.
+
+       Adventurer: Can't your Major and his men, handle the
+carts?
+
+       Contessa: Oh, no. They will cover us from all sides and make certain there are no surprises.
+
+       Adventurer: Oh well. All good things end, I guess.
+
+       Contessa: Not quite. If you have any charges left in
+your bracelets of endurance, we can go upstairs and see what
+develops.
+
+ (Enter Prologue)
+
+       Prologue: Well, I guess we all saw that coming. Scene 3
+takes place some time later at the site. Flanked by the
+Major's men, the Adventurer and the Wanton Contessa
+successfully follow the map of the dear, departed mages.
+Imagine great veins of glistening ebonyesque material
+piercing the surface of the ground, and a nice warm fire of
+Fools Ebony where the Adventurer and the Contessa sprawl.
+To the west are signs that the weather is turning and the first
+major snowstorm of the year is coming. For some time, they
+have been mining and the Adventurer is beginning to feel the
+strain of actual labor.
+
+ (Exit Prologue)
+
+ Scene 3
+
+       Adventurer: I've got blisters on my hands from
+shovelling that black rot, blisters on my rear from that cart
+bench, and we are running out of ale. My bracelet is running
+down and my fingers are getting frostbite.
+
+       Contessa: What, your bracelet is running down? Oh, now
+that is serious.
+
+ (Enter Major, running)
+
+       Major: Dwarves! Milady, dwarves, dozens of the little
+buggers caught my men! I'm sorry, milady.
+
+ (The Contessa jumps to her feet)
+
+       Contessa: Major, get out of here now. If you get away,
+you can maybe help us later. I'll try to talk to them.
+
+ (Exit Major) (Enter Dwarves)
+
+       Contessa: Hhjgys jjvvu klpss Jjqqx zzyzx.
+
+       Dwarves       (Together): Jjpoo Kalagloo gashnoo bibloo
+franoo Xxnadoo
+
+       Contessa Jnik? Balpo?
+
+       Dwarves       (Together) Gabloo! Wazzikoo! Eppapupu!
+
+       Contessa Glooky, glooky, glooky.
+
+       Adventurer: Ave, whats going on?
+
+       Contessa: Relax. I think I've impressed them by talking
+their language. I don't understand everything, but it seems
+that they have only just 'woken up' or something. And that
+they will not let us take any of this Fool's Ebony -- it's
+somehow related to the real stuff or something. And it
+really belongs to the Lords of Oblivion -- the Dwarves are
+just care or something.
+
+       Adventurer: Very interesting. Now, what about us?
+
+       Contessa: I made a deal with them the only way I could
+see. I told them about Minnie and Crunn, how those two old
+ones know lots of dwarven tales and legends. The dwarves
+tells me that, having just 'woken up' or something, they want
+three things -- ale, women, and us to leave the Fools' Ebony
+alone.
+
+       Adventurer: Ah, flog my log.
+
+       Contessa: Well,I told them about all the ale down at
+Minnie's Inn. And about the 2 redheads there. They are going
+there, leaving right now. We may take one empty cart, 2
+horses. And they will keep us guarded all the way there. They
+also said that they will -- I don't know how -- destroy all the
+Fool's Ebony here. It shouldn't be on the surface like this,
+they say.       (aside) Dwarvish is a remarkably compact
+language.
+
+       Adventurer: By the great roaring buttocks of
+Sheogorath! All these blisters and backache for nothing! Ah
+well. At least we are still alive. For now ...
+
+ (Exeunt) (Enter Prologue)
+
+ Prologue: Farnoo Lickety Kanoo Gadfloo. Oh, I'm terribly
+sorry. As Scene 4 begins, we are back at Minnie's Inn, where
+the dwarves appear to be on holiday.
+
+ (Enter the Adventurer, the Wanton Contessa, Minnie, Crunn,
+and Dwarves)
+
+ (Exit Prologue)
+
+ Scene 4
+
+       Minnie: ... ga ... sszx ... spnoo? ...
+
+       Crunn: ... glurky ...
+
+       Dwarves       (Together): Jotcha potchka lazzo lanni joopy
+hoopy qui me amat, amat et canem meam
+
+       Adventurer: Ave, any ideas? I can't seem to work my
+magical items. And when the ale runs out ...
+
+       Contessa: Your ebony material is useless against them.
+Dwarves fashion the ebony, so I guess they can suppress it or
+something. Don't worry - just think, these dwarves have been
+asleep or something for hundreds of years. And Minnie has a
+huge stock of ale. Not many customers  come this way, and she
+knows how to salt the ale just right to keep from spoiling
+for decades.
+
+ Adventurer Oh, that's why my tongue always looks like a chunk
+of leather after a pint or two.
+
+       Contessa Dwarves apparently love ale. I expect them
+all to pass out in an hour or so. 
+
+ (Dwarves fall into comas)
+
+       Contessa: If not sooner. Come on, Adventurer. Grab a
+sack and start collecting! When the dwarves wake up,
+they'll finish the ale, and then us. 
+
+ (The Wanton Contessa and Adventurer pillage the dwarves)
+
+       Adventurer: South, as fast as our horses will take us in
+this weather.
+
+       Contessa: If we make enough distance before they wake up,
+we'll be all right - I don't think that they will leave their
+precious mountains. I hope not.
+
+ (Enter Prologue)
+
+       Prologue: The wailing wintery wind whirls wickedly,
+wafts whipping, wading waist-high, oh never mind. The
+Adventurer and the Contessa get lost in the snow storm.
+Several days later, we find them desperate for warmth and
+exhausted.
+
+ (Exit Prologue)
+
+       Adventurer: The horses have had it. They can't go another
+step and its going to snow again. No ale left, and just one
+loaf.           Contessa: It will have to do.
+
+ (Suddenly, a party of giants leaps on our hero and
+heroine. But after some quick work with Bracers of Firestorm,
+really dead giants lie around in heaps)
+
+       Adventurer: Anything left, Ave?
+
+       Contessa: No, no more fire anything - just my daggers
+
+       Adventurer: Same here, just a common shortsword. Curse
+Sheogorath for those dwarves!  Those oafs chewed up our
+horses! Do you think the Major made it out?               
+Contessa: If anyone can, it's him.  Guess we'll find out in
+town. Interesting thought just occured to me. Don't giants
+hunt in several groups? Is that more I hear?
+
+ (sound of grumbling and gargling offstage)
+
+       Adventurer: Yes, there are more giants out there. Quick,
+Ave. Help me with this one.
+
+ (The Adventurer starts to disembowel a giant's body)
+
+       Contessa: What on Tamriel are you doing? This is not the
+time for studying anatomy!
+
+       Adventurer: Don't argue, climb inside!
+
+       Contessa: Poppydash and Baldercock! Inside that smelly
+dead giant? My dear Adventurer, I'm a Lady.
+
+       Adventurer: It's our only hope! The giant smell will
+hide our scent, and live giants never touch dead ones.
+Quick!
+
+ (The Adventurer and the Contessa climb inside the steaming
+giant's body)
+
+       Adventurer: Here, help me pull the skin shut - and try not
+to throw up. Don't make a sound.
+
+ (Enter Prologue)
+
+       Prologue: A few hour pass.
+
+ (Exit Prologue) (The Adventurer and the Wanton Contessa
+poke their heads out of the giant's belly.) 
+
+       Adventurer: They've all left, but it's snowing hard.
+Definitely getting real cold. We better stay here.
+
+       Contessa: It indeed is warm.
+
+       Adventurer: It will keep us warm, safe from the storm
+and giants, for a day or soif we can stand the smell. Here,
+want some bread?
+
+ (The Contessa falls victim to nausea)
+
+ (Enter Prologue)
+
+       Prologue: For this, the last scene of the play, please
+forgive us, but we need to change the set. Remove the "giant
+corpses" and whatnot. Please be patient while our bard
+performs the timeless classic "Whither Goest Thou?"
+
+ (Bard plays "Whither Goest Thou?" If the scenarists take too
+long, he also plays "For Further Consideration.")
+
+ Prologue: Ah, here we are, back at the Dead Daedra Inn. The
+Contessa and the Adventurer made it, after all. They had to
+pay three times the normal rate, for they were very dirty and
+stinky. Now poor Prologue will bid you farewell, goodly
+people.
+
+ Scene 6
+
+       Contessa: Thank the Gods for hot water and soap! I
+thought I would smell like a giant forever.
+
+       Adventurer: Me too. Where did you go while I was
+bathing? And why no mages, priests, armorers, or merchants
+outside yelling for our blood?
+
+       Contessa: I took a quick trip to the Palace. I've fixed it
+so some cousins have told the armorers and merchants that we
+don't have cartloads of the Fools' Ebony.
+
+       Adventurer: Pity that that's actually true.
+
+       Contessa: But at least no one's interested in us
+anymore. Seems that some priests turned up dead in an old 
+temple, up on Edward's Mountain. They were found with some
+girl, all dead from 'bad green powder' or something. And
+some old mages named Shub have gone missing ...
+
+       Adventurer: Now then, what did you stuff in those sacks
+thats so important?
+
+       Contessa: Here, dump them out, take a look.
+
+       Adventurer: By the Gods, just look at that!
+
+       Contessa: Yes, those dwarves were just loaded with
+ebony. Look. Rings, torcs, bracers, belts, helms All solid
+old ebony.
+
+       Adventurer: And this stuff feels just loaded with
+magicka. Why, I bet that this ring alone has a thousand uses
+... whatever it does.
+
+       Contessa: Ooh! Look! Bracers of Extreme Endurance and a
+Belt of Strength! Put them on, Adventurer, let's
+celebrate!
+
+       Adventurer       (aside) Help!
+
+ Enter Epilogue
+
+       Epilogue: As I feared, all the loose threads of the play
+were ended by wholesale slaughter. More of the adventures of
+the Adventurer will follow, unless, of course, they don't.
+We thank you for your tempered patience. Don't forget to tip
+your worthy wenches on your way out this evening, and enjoy
+our bard's rendition of the Khajiiti classic, "It's A Matter
+of Luck." Goodnight.
+
+ (Flourish)
+
+ (Exeunt Omnes)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

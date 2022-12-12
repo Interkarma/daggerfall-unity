@@ -1,0 +1,142 @@
+Title: A History of Daggerfall
+Author: Odiva Gallwood
+IsNaughty: False
+Price: 358
+IsUnique: False
+WhenVarSet: 
+Content:
+
+
+[/font=2]
+
+[/center]A
+
+[/center]History
+
+[/center]of
+
+[/center]Daggerfall
+
+
+
+[/font=4]
+
+[/center]
+
+[/center]   There is sufficient archaeological evidence for the modern
+historian to believe that there has been some variety of
+human settlement in the city-state of Daggerfall starting
+at least a thousand years before recorded history. The first
+use of the name Daggerfall to refer to the area around the
+current capitol was most probably in the 246th year of the
+1st Era. The north half of the Iliac Bay, in fact all of the
+current province of High Rock, was conquered by invading
+Nords who brought a rough sort of civilization with them. One
+of the first civilized acts the Nords performed was a census
+-- the so-called Book of Life. Listed on page 933 of the Book
+is this entry:
+
+ "North of the Highest bluffs, south of the moors, west of the
+hills, and east of the sea is called DAGGERFALL. 110 men, 93
+women, 13 children under 8 years of age, 58 cows, 7 bulls,
+63 chickens, 11 cocks, 38 hogs live here."
+
+   Nearly four thousand years after this census was taken, we
+can see that these two hundred and sixteen people have
+multiplied heartily. The last census, in the year 3E 401,
+lists the population at over 110,000. It is always difficult
+to find an exact number, but the capitol city of
+Daggerfall certainly outnumbers her rivals, Sentinel and
+Wayrest.
+
+   It has been a consistant, if not actually helpful
+amusement of historians to find the origin of placenames.
+Daggerfall, by tradition, is said to refer to the knife the
+first chieftain threw to form the borders of his lands. But
+there are other legends that may have equal validity.
+
+   The Daggerfall entry from the Book of Life actually
+supports one theory about the reason for Daggerfall's
+longevity. The people were coastal fishermen, but they also
+found the land itself sufficiently rich to support raising
+livestock. This inclination of the early citizenry toward
+reinforcing their principal products brought stability to
+a fickle land.
+
+   Daggerfall thrived during the years of the Skyrim
+occupancy. When the Wild Hunt killed King Borgas of
+Winterhold in 1E 369, the northlands engaged in the War of
+Succession and Skyrim, greatly weakened, lost her holdings in
+High Rock and Morrowind. The Iliac Bay had become important
+strategically, and Daggerfall began to expand her
+military.
+
+   There were multiple opportunities for her to exercise this
+army and navy during the Direnni conflicts with the force of
+the Alessian Reform. The Dirennis were native Bretons, and
+Bretons are hardly ever given to excessive religion.
+Daggerfall became a minor base of operations for the
+Dirennis and their allies. Raven Direnni, the enchantress
+whose magic helped secure the final victory over the
+Alessians in the Glenumbria Moors, was one of the earliest
+occupants of Castle Daggerfall.
+
+   Over the centuries that followed, the Dirennis felt into
+obscurity, but Daggerfall continued her growth. In 1E 609,
+King Thagore of Daggerfall defeated the army of Glenpoint
+and became the preeminant economic, cultural, and
+military force in southern High Rock. A position the kingdom has
+precariously kept ever since.
+
+   Ironically, it was another successful military exercise
+three hundred and seventy years later that ended
+Daggerfall's monopoly of Bay trade: the annihilation of the
+orcish capitol Orsinium by a joint effort of Daggerfall,
+the new kingdom of Sentinel, and the now extinct Order of
+Diagna. The scattering of the orcs from southeastern High Rock
+made the river route to the Bay more accessible. The tiny
+village of Wayrest grew like a flower that no longer feared
+the mow. In twenty years, Wayrest's trade profits equalled
+Daggerfall's. In forty years, Wayrest was the acknowledged
+master of Iliac Bay trade. In one hundred and twenty years,
+Wayrest became the Kingdom of Wayrest.
+
+   The Kingdom of Sentinel did not exhibit Wayrest's
+aggrandizement during the First Era. The Redguards were
+warriors learning the ways of the merchants, and their land
+was enemy enough to keep their population checked. Indeed,
+the number of people in all areas of the Iliac Bay was
+halved once in the First Era by the Thrassian Plague, once
+again by the War of Righteousness, and a third time by the
+invading Akavari. If Daggerfall had not spent its first
+thousand years preparing for the battles of the next
+thousand years, it is indeed conceivable that the Iliac Bay
+today might be Akavarian.
+
+   The Second Era, like the latter part of the First Era, is a
+tapestry of wars, insurrections, and plagues. Daggerfall,
+Sentinel, and Wayrest continued to expand and improve
+their military and economic positions in the Bay.
+Daggerfall and Wayrest would transpose positions as major
+trading center of the Bay, and Daggerfall and Sentinel
+likewise bandied over which was the superior military power.
+
+   The Iliac Bay has continued to hold an important position
+in the Imperial government of the Third Era. Rarely allies
+(though the combined armies in opposition to the Camoran
+Usurper in the 3rd century of the 3rd Era is a notable
+exception), but not always enemies, Daggerfall, Sentinel,
+and Wayrest have weathered the storms of contention,
+plague, famine, and pestilence. The recent War of Betony was
+typical of Iliac Bay warfare: sincere, frighteningly
+violent, and peaceably resolved.
+
+
+
+
+
+
+
+
+
+

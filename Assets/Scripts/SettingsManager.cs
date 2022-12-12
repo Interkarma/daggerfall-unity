@@ -444,7 +444,7 @@ namespace DaggerfallWorkshop
 
             InvertMouseVertical = GetBool(sectionControls, "InvertMouseVertical");
             MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
-            MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 8.0f);
+            MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 16.0f);
             JoystickLookSensitivity = GetFloat(sectionControls, "JoystickLookSensitivity", 0.1f, 4.0f);
             JoystickCursorSensitivity = GetFloat(sectionControls, "JoystickCursorSensitivity", 0.1f, 5.0f);
             JoystickMovementThreshold = GetFloat(sectionControls, "JoystickMovementThreshold", 0.0f, 1.0f);

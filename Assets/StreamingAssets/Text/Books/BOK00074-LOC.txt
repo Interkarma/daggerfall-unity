@@ -1,0 +1,340 @@
+Title: Fools' Ebony, Part the Oneth
+Author: Frincheps
+IsNaughty: True
+Price: 317
+IsUnique: False
+WhenVarSet: 
+Content:
+
+
+[/font=2]
+
+[/center]Fools' Ebony,
+
+[/center]Part the
+
+[/center]Oneth
+
+
+
+[/font=4]
+
+
+
+[/center] Dramatis Personae
+
+ Prologue The Adventurer, A Dark Elf Rascal Komon, A Priest
+of Akatosh Lheban, Another Priest of Akatosh Epilogue Stete, A
+Priest of Julianos Raic, Another Priest of Julianos Shub, A
+Mage Shub, A Different Mage of the Same Name Nephron, A
+Somewhat Sleazy Merchant 5 Armorers Ortho Crunn, Husband of
+Millie A Lusty Contessa Millie, Innkeep and Philosopher
+Gurnsey, Bovine Wench Assorted Wenches and Cads of the
+Taverns Soldiers Dwarves Giants
+
+
+
+ Daggerfall and Environs in the Doldrums of the 3rd Era
+
+ Part The Oneth - Concerning Priests and Nackles       As
+related at length by two Priests of       Akatosh to the
+Adventurer, who at the        time was not having an
+adventure, and       had nothing better to do. In which some     
+ (probably unwanted) light is shed upon       the Priesthood
+and its members, and upon       an old peasant myth of some
+significance,       especially common in High Rock. And in      
+which the mysterious Fools' Ebony       appears, that strange
+material that       could bring either drastic cultural
+change       for the many, or just great profit for a       few,
+or death for a bunch, or have no       result whatsoever.
+
+ Early in the month of Frostfall. The Dead Daedra Inn. Enter
+Prologue
+
+      Prologue: Our poor players will try and remember their
+lines and not trip over our meager set. I beg you, the
+audience, not to heckle, badger, or throw rotten
+foodstuffs. You will only make this short play last longer.
+The Guild of Playwrites, Actors, and Dramatists wish any of
+you who are sensitive or allergic to rambling dialogue,
+wooden acting, incomprehensible exposition, or
+unsatisfying endings that leave one confused and unhappy to
+exit the theatre immediately. Your gold will, alas, not be
+refunded. As a saving grace, this series of vignettes
+contains gratuitous references to all pleasures of the
+flesh. You may enjoy it. Ah, here comes our hero, the roguish
+Dark Elf called the Adventurer. It is time for Prologue to
+trip merrily away.
+
+
+     Exit Prologue Enter the Adventurer
+
+       Adventurer:  What an odd conversation I just heard
+between those two mages. It is best not to speak of such
+matters next to privy hedges.
+
+ Enter 2 Priests of Akatosh (Lheban, Komon)
+
+       Lheban: Mind if we join you, fellow? ... Good, need some
+company ourselves. I am named Lheban, my fellow priest
+here is Komon. We both serve Akatosh, all in our own ways,
+of course ...
+
+       Adventurer: Make yourselves at home, it's not my bench.
+But I thought that priests ... didn't go to ... er ...
+places like this, Inns. I mean ... unless on duty?
+
+       Lheban: Oh, we're not on duty. Got to regenerate our
+internal vital energies, so we can go on blessing and curing
+...
+
+       Komon: We often come here, hike up our robes, kick up our
+heels, as it were. Fill up with some bottled energy ...
+
+ (Komon snickers)
+
+       Lheban: Looking for those in need of comfort and
+blessing, of course ...
+
+       Komon: Oh, yes, Oh yes ... like that young girl outside the
+other evening ...
+
+ (Lheban kicks Komon)
+
+       Komon: ... and anyway our High Priest told us to get
+lost...
+
+       Lheban: He means told us to get some air. We've been
+having visions, you see ...
+
+       Komon: Yes, sort of weird, really ... and we hadn't even
+been taking any of that ...
+
+ (Lheban kicks Komon)
+
+       Lheban: Both of us been having the same visions -- real
+odd.
+
+       Adventurer: Do tell, I'm not going anywhere in a hurry.
+
+       Lheban: Well, we've both been hearing sort of ... words
+... for a start. Like 'Sir Nich' or 'Sain Nack' ...
+
+       Adventurer: You said 'Nick' or 'Nack'? Just a minute ...
+let me have a swig from your bottle, Brother ... Ah! That's
+better - high-class stuff you fellows drink! Yes, I recall -
+some story or old legend about an elf, name of Nuckle, I
+think -- from Morrowind?
+
+       Lheban: You know, maybe you're on to something there --
+there is a old legend around these parts, comes from deep in
+High Rock I think ... hmmmm ... Nackles, that's it!
+
+       Adventurer: Nackles, eh! Seems that several Dark Elves
+use that name ... particularly the ... more peculiar
+ones...
+
+       Komon: Yes, I guess that the bad ones are into all that
+weapons magicka stuff ... very nasty fellows ...
+
+       Lheban:     (to Komon) Komon! This fellow's got pointy
+ears and red eyes ...
+
+       Komon: Pardon me, friend ... it's sort of dark, and I
+didn't ... uh ...          Adventurer: Oh, that's fine. These are
+strange times. You know, live and let live -- or die -- as the
+case may be.  Now ... suppose you tell me about this Nackles
+myth? Here, let me help you with that bottle ... Ah! Thanks.     
+    Lheban: Er ... sure, if you want to put it that way ...
+Here, have another swig! Sure, we've got the time, and I
+recall it clearly now.                Komon: Yes, we've a couple
+hours 'til that little blonde shows up at her lamp ...
+
+ (Lheban kicks Komon)
+
+      Lheban:      (to Komon) Quiet! Remember, we had to tell the
+High Priest her address, so she won't be around for a while!    
+ (to all) Very well, here's the story, best as I can recall
+it. This is a tale the peasants up in High Rock tell their kids
+to scare them into being good for a while, I guess. They tell
+it, let me see ... either on Tales and Tallows, or is it
+Witches' Festival? -- just before the kids are sent out to the
+barn or pigsty to sleep. 
+
+       Komon: Nasty cruel peasants!  But then, I'd send them
+all out to the midden ...
+
+       Lheban: Really, Komon! Remember, those poor souls need
+our compassion and blessing, we are their salvation!
+
+       Komon: Now who's in Old High Mucky-Mucks' study?
+
+       Lheban: Er ... anyway. It goes a bit like this.  If the kids
+have been real good during the  year -- filched enough in the
+market, mucked out the stables every day, not gone playing
+with goblins, left the sheep alone, and so on. If they have
+been real good, they've nothing to worry about. But if they
+haven't been real good then there is this nasty, horrid Dark
+Elf spirit called Nackles. Doesn't look like your typical
+Dark Elf -- thinner, taller. Pasty white face, long as your
+arm. Walks like his knees and elbows bend the wrong way.
+Snickers like when you drag your fingernails across slate.
+Wears a tight black suit (not Khajiit, more like a formal
+suit with buttons) but too tight and small. He visits the bad
+girls and --
+
+       Komon: Why are you talking about Old High Mucky again,
+Lheban?
+
+ (Komon hiccoughs) (Lheban kicks Komon)
+
+       Lheban: You really must excuse Komon here: overwork, you
+know. Too many curings and conversions ... Anyway, Old
+Nasty Nackles is supposed to wander under our Tamriel, in
+dirty deep dark dwarven tunnels. Everywhere under the
+lands, if you can believe that! Rides in a rusty squeaky old
+mine cart, on old mine tracks ...
+
+       Adventurer: I saw some of those in Fang Lair once, down
+in Hammerfell a long long while ago ...
+
+       Komon:       (to Lheban) What the Sheogorath was he doing in
+Fang Lair!?             Lheban:       (to Komon) Hush! If he's who I
+think he is, you do not want to know!       (to all) Um, yes.
+Well, Nackles gets pulled all around these deep tunnels by
+goblins -- not your usual dirty yellow ones, but nasty
+black things. Anyway, they pull Nackles round and through
+these dark tunnels, and then, late at night, he stops below
+each and every bad child's hovel or house or castle -- makes
+no difference. Then he slides up the drainage pipes ...
+
+       Komon: Creeps up cracks ... crawls through holes ...
+
+       Lheban: Oozes up oubliettes ...
+
+       Komon: Climbs giggling up garderobes ...
+
+       Lheban: Right into the kid's place! Then, if the kid's only
+been sort of bad, Nackles will just mess things up in
+general, so the kid gets blamed. Make greasy dirty marks
+everywhere (more than usual, anyway), break some things,
+steal some things, so on and so forth. Maybe take the sugar
+sweets, leave some lumps of fools' ebony instead ...
+
+       Adventurer: Fools' Ebony - what's that?  Heard mention of
+that, oh, a few hours ago ... Some Mages ...
+
+       Lheban: You did now? Interesting ... Very ... Well,
+lets talk of that in a bit ... just let me finish this Nackles
+thing. Where was I -- Oh yes ... Now, if the little brat has
+been real bad --  then all the little brat's toys get taken.
+The copper dagger, the wooden sword, the little whip, and
+so on. All the usual favorite kids things.
+
+       Komon: Whips? I like those.
+
+ (Komon hiccoughs) (Lheban kicks Komon)
+
+       Lheban: Now if that little brat has been very, very bad
+then Nackles grabs the brat. Pops him or her in his dirty
+great sack. Hauls the sack off down the holes and cracks, down
+to his rusty old mine cart!  And away they go!         Komon: Hope
+he leaves some bad little girls behind.
+
+ (Lheban kicks Komon)
+
+       Lheban: Er ... so we can save them, of course, friend ...
+Well. Sometimes, so I've heard tell, the brat never comes
+back. No great loss, I guess, peasants just breed another.
+
+       Komon: Know 'bout that, I do, I do ...
+
+ (Lheban pinches Komon's nose)
+
+       Lheban: But, as the story goes round here anyway, often
+the brat is just put to work, digging out lumps of Fools'
+Ebony, shoveling dirt, bagging it. Extending the tunnels of
+the Nackles. After a while, Brat is pushed back up to where it
+came from. Seems that Brat might think it's spent a year down
+there, but only a day has passed up top ... Brat comes back
+real thin and dirty though, covered in black mess ... You
+know, come to think of it -- on the day past Witches'
+Festival, I've often seen some little brats, scrawny, real
+dirty black mess on them, looking terrified, too. Parents
+drag them into Temples to get blessed and cured, if they have
+the gold. By the Beard of Sheogorath, the wailing and noise!
+Enough to drive a priest to ... er ... well,  never mind ...
+that's our problem ...
+
+       Komon: Nah ... it's a problem with our suppliers, I tell
+you ...
+
+ (Lheben throws Komon through a screen)
+
+       Lheban: Anyway, that's the short of it, this Nackles
+legend up around here. I recall now, it's widespread all
+over Tamriel ...  and knowing the place, probably more
+than a grain of truth in the tale, much, much more ...        
+Adventurer: So, I guess some of the ... er, darker Dark Elves
+sort of identify with this Nackles. Take on the persona, so to
+say ...
+
+       Lheban: Yeah, that sort of sums it up, I guess ... though
+we don't see those types hauling off brats in sacks, now do
+we?
+
+       Komon: Nah, that's wot we does, girly brats anyway,
+isn't it not?
+
+ (Komon hiccoughs) (Lheben breaks a bottle over Komon's head)
+(Komon falls unconscious)
+
+       Adventurer: Thats a very interesting tale, gentlemen.
+Say, let me repay you with another bottle -- what's that
+you're drinking? Ah, thought so - Innkeep!  More holy wine for
+these holy men!
+
+       Lheban: A blessing on you for that kind gesture, friend.   
+       Adventurer: I thank you, I sure could use one or three ...
+Anyway, this 'Fools' Ebony', I've heard mutters and murmurs
+about that of late -- mostly eavesdropping ... pardon me
+... listening ... to Mages and the like. What's with this
+stuff?  Here, have another swig ... good!
+
+       Lheban: Well, we're not supposed to tell outsiders ...
+but then, you seem to know something already. And if you have
+been hearing Mage gossip ... Why, maybe we can do some
+business. Profit all round! Well ... for the Akatosh
+Chantry, of course, and your fee, good Sir.
+
+       Adventurer: More and more interesting -- tell on, I pray
+you.
+
+ (Komon staggers to feet) (Komon hiccoughs)
+
+       Komon: Time for me to go convert that little lamppost
+girl ... no, no, no - not last nights one, but the blonde
+...
+
+ (Exit Komon) (Female squeals from offstage)
+
+       Lheban: Friend, you'll have to excuse Komon. He's a bit
+... you know strange ... Got these ...
+
+       Adventurer: Oh, that's all right, we've all got our own
+...
+
+ (Exeunt Lheben and the Adventurer) (Enter Epilogue)
+
+       Epilogue: Our apologies for the quality of this drama so
+far. If those of you still present will wait for a few
+minutes while our bard plays "Silence Implies Consent," we
+will change the set for the next act, Part the Twoth. Please
+don't forget to tip your wench. Do you believe there's such a
+thing as Fools' Ebony? Maybe we'll find out in Part the
+Twoth. Or maybe not.
+
+ (Flourish) (Exit Epilogue)
+
+ End of Part the Oneth, Being Mostly Concerned with The
+Legend of Nackles. 

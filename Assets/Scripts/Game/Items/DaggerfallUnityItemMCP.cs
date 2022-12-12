@@ -153,9 +153,15 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string BookAuthor()
             {   // %ba
-                BookFile bookFile = new BookFile();
 
+                // Get book author from localized book file as first preference
                 string name = GameManager.Instance.ItemHelper.GetBookFileName(parent.message);
+                LocalizedBook localizedBook = new LocalizedBook();
+                if (localizedBook.OpenLocalizedBookFile(name))
+                    return localizedBook.Author;
+
+                // Fallback to legacy book data
+                BookFile bookFile = new BookFile();
                 if (name != null)
                 {
                     if (!BookReplacement.TryImportBook(name, bookFile))

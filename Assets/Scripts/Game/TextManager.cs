@@ -32,7 +32,6 @@ namespace DaggerfallWorkshop.Game
 
         public static string defaultInternalStringsCollectionName = "Internal_Strings";
         public static string defaultInternalRSCCollectionName = "Internal_RSC";
-        public static string defaultInternalBOKCollectionName = "Internal_BOK";
         public static string defaultInternalFlatsCollectionName = "Internal_Flats";
         public static string defaultInternalQuestsCollectionName = "Internal_Quests";
         public static string defaultInternalLocationsCollectionName = "Internal_Locations";
@@ -43,7 +42,6 @@ namespace DaggerfallWorkshop.Game
 
         public string runtimeInternalStrings = defaultInternalStringsCollectionName;
         public string runtimeRSCStrings = defaultInternalRSCCollectionName;
-        public string runtimeBOKStrings = defaultInternalBOKCollectionName;
         public string runtimeFlatStrings = defaultInternalFlatsCollectionName;
         public string runtimeQuestsStrings = defaultInternalQuestsCollectionName;
         public string runtimeLocationsStrings = defaultInternalLocationsCollectionName;
@@ -253,15 +251,9 @@ namespace DaggerfallWorkshop.Game
                 case TextCollections.Internal:
                     collectionName = runtimeInternalStrings;
                     break;
-
                 case TextCollections.TextRSC:
                     collectionName = runtimeRSCStrings;
                     break;
-
-                case TextCollections.TextBOK:
-                    collectionName = runtimeBOKStrings;
-                    break;
-
                 case TextCollections.TextFlats:
                     collectionName = runtimeFlatStrings;
                     break;

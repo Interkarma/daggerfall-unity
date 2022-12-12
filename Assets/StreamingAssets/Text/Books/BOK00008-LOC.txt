@@ -1,0 +1,60 @@
+Title: The Pig Children
+Author: Tyston Bane
+IsNaughty: False
+Price: 580
+IsUnique: False
+WhenVarSet: 
+Content:
+
+
+[/font=2]
+
+[/center]The Pig Children
+
+
+
+[/font=4]
+
+ No one, not the oldest Dark Elf of Mount Dagoth-Ur or the
+Ancient Sage of Solitude, no one can recall a time when the
+Orc did not ravage our fair Tamriel. Whatever foul and
+pestilent daedra of Oblivion conjured them could scarcely
+have created a more constant threat to the well-being of the
+ civilized races of Tamriel.
+
+ Orcs are thankfully easy to recognize from other humanoids
+by their size, commonly forty pertans in height and fifteen
+thousand angaids in weight, their brutal pig-like features,
+and their stench. They are consistantly belligerant,
+morally grotesque, intellectually moronic, and unclean. By
+all rights, the civilized races of Tamriel should have been
+able to purge our land of their blight eras ago, but their
+ferocity, animal cunning, and curious tribal loyalty has
+made them inevitable as leeches in a stagnant pool.
+
+ Tales of orcish barbarity preceed written record. When
+Jastyaga wrote of the Order of Diagna joining the armies of
+Daggerfall and Sentinel "to hold the wicked orcs in their
+foul Orsinium tower ... and burn all" in 1E 950, she assumed
+that any reader would be aware of the savagery of the orcs.
+When the siege was completed thirty years later, after the
+death of many heroes including Gaiden Shinji, and the
+destruction of Orsinium scattered the orc survivors
+throughout the Wrothgarian Mountains, Jastyaga wrote, "the
+people rejoiced for their ancient enemy was dispersed."
+Obviously, the orcs had been terrorizing the region of the
+Iliac Bay at least since the early years of the first era.
+
+
+
+  
+
+
+
+
+
+
+
+
+
+ 
