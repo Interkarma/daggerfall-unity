@@ -163,6 +163,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 GameManager.Instance.PlayerSpellCasting.OnReleaseFrame += PlayerSpellCasting_OnReleaseFrame;
 
             // Wire up events
+            OnDisableReadySpell += EntityEffectManager_OnDisableReadySpell;
             EntityEffectBroker.OnNewMagicRound += EntityEffectBroker_OnNewMagicRound;
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
@@ -309,8 +310,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public bool SetReadySpell(EntityEffectBundle spell, bool noSpellPointCost = false)
         {
             // Do nothing if silenced or cast already in progress
-            if ((SilenceCheck() && !noSpellPointCost) || castInProgress)
+            bool disableReadySpell = RaiseOnDisableReadySpell(spell);
+            if (disableReadySpell)
+            {
+                spell.CasterEntityBehaviour.Entity.RaiseOnProhibitedAction(spell);
                 return false;
+            }
 
             // Spell must appear valid
             if (spell == null || spell.Settings.Version < minAcceptedSpellVersion)
@@ -2160,6 +2165,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             RerollItemEffects();
         }
 
+        public bool EntityEffectManager_OnDisableReadySpell(EntityEffectBundle spell, bool noSpellPointCost)
+        {
+            return (SilenceCheck() && !noSpellPointCost) || castInProgress;
+        }
+
         #endregion
 
         #region Serialization
@@ -2399,6 +2409,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             if (OnAddIncumbentState != null)
                 OnAddIncumbentState();
+        }
+
+        // OnDisableReadySpell
+        public delegate bool OnDisableReadySpellEventHandler(EntityEffectBundle spell, bool noSpellPointCost = false);
+        public event OnDisableReadySpellEventHandler OnDisableReadySpell;
+        protected virtual bool RaiseOnDisableReadySpell(EntityEffectBundle spell, bool noSpellPointCost = false)
+        {
+            if (OnDisableReadySpell != null)
+                return OnDisableReadySpell(spell);
+            return false;
         }
 
         // OnNewReadySpell
