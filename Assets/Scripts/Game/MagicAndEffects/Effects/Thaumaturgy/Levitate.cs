@@ -57,10 +57,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override void ConstantEffect()
         {
             base.ConstantEffect();
-            if (RoundsRemaining > 0)
-                StartLevitating();
-            else
-                StopLevitating();
+            StartLevitating();
         }
 
         public override void Start(EntityEffectManager manager, DaggerfallEntityBehaviour caster = null)
