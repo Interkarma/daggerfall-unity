@@ -138,6 +138,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             LoadTextures();
 
             // Setup native panel background
+            NativePanel.BackgroundColor = new Color(0, 0, 0, 0.75f);
             NativePanel.BackgroundTexture = baseTexture;
 
             // Setup controls
