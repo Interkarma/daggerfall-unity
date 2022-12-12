@@ -251,7 +251,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Controls
             AddSectionTitle(leftPanel, "controls");
-            mouseSensitivity = AddSlider(leftPanel, "mouseSensitivity", 0.1f, 8.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
+            mouseSensitivity = AddSlider(leftPanel, "mouseSensitivity", 0.1f, 16.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
             //weaponSensitivity = AddSlider(leftPanel, "weaponSensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
             movementAcceleration = AddCheckbox(leftPanel, "movementAcceleration", DaggerfallUnity.Settings.MovementAcceleration);
             weaponAttackThreshold = AddTextbox(leftPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
