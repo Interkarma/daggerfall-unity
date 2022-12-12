@@ -29,6 +29,12 @@ namespace DaggerfallWorkshop.Game.Items
         readonly DaggerfallEntity parentEntity = null;
         DaggerfallUnityItem[] equipTable = new DaggerfallUnityItem[equipTableLength];
 
+        public delegate bool OnDisableEquipItemHandler(DaggerfallUnityItem item);
+        public event OnDisableEquipItemHandler OnDisableEquipitem;
+
+        public delegate bool OnDisableUnequipItemHandler(EquipSlots slot);
+        public event OnDisableUnequipItemHandler OnDisableUnequipItem;
+
         #endregion
 
         #region Properties
@@ -104,63 +110,85 @@ namespace DaggerfallWorkshop.Game.Items
             // If more than one item selected, equip only one
             if (item.IsAStack())
                 item = GameManager.Instance.PlayerEntity.Items.SplitStack(item, 1);
-            
+            bool isProhibited = RaiseOnDisableEquipItem(item);
             List<DaggerfallUnityItem> unequippedList = new List<DaggerfallUnityItem>();
 
-            // Special weapon handling
-            if (item.ItemGroup == ItemGroups.Weapons)
+            if (!isProhibited)
             {
-                // Cannot equip arrows
-                if (item.TemplateIndex == (int)Weapons.Arrow)
-                    return null;
-
-                // Equipping a 2H weapons will always unequip both hands
-                if (GetItemHands(item) == ItemHands.Both)
+                // Special weapon handling
+                if (item.ItemGroup == ItemGroups.Weapons)
                 {
-                    UnequipItem(EquipSlots.LeftHand, unequippedList);
-                    UnequipItem(EquipSlots.RightHand, unequippedList);
+                    // Cannot equip arrows
+                    if (item.TemplateIndex == (int)Weapons.Arrow)
+                        return null;
+
+                    // Equipping a 2H weapons will always unequip both hands
+                    if (GetItemHands(item) == ItemHands.Both)
+                    {
+                        isProhibited |= !UnequipItem(EquipSlots.LeftHand, unequippedList);
+                        isProhibited |= !UnequipItem(EquipSlots.RightHand, unequippedList);
+                    }
+                }
+
+                // Equipping a shield will always unequip 2H weapon
+                if (GetItemHands(item) == ItemHands.LeftOnly)
+                {
+                    // If holding a 2H weapon then unequip
+                    DaggerfallUnityItem rightHandItem = equipTable[(int)EquipSlots.RightHand];
+                    if (rightHandItem != null && GetItemHands(rightHandItem) == ItemHands.Both)
+                        isProhibited |= !UnequipItem(EquipSlots.RightHand, unequippedList);
+                }
+
+                // Unequip any previous item
+                if (!IsSlotOpen(slot) && !alwaysEquip)
+                    return null;
+                else
+                    isProhibited |= !UnequipItem(slot, unequippedList);
+
+                // Equip item to slot
+                if (!isProhibited)
+                {
+                    item.EquipSlot = slot;
+                    equipTable[(int)slot] = item;
+                    // Play equip sound
+                    if (playEquipSounds)
+                        DaggerfallUI.Instance.PlayOneShot(item.GetEquipSound());
+                    // Allow entity effect manager to start any enchantments on this item
+                    StartEquippedItem(item);
                 }
             }
-
-            // Equipping a shield will always unequip 2H weapon
-            if (GetItemHands(item) == ItemHands.LeftOnly)
-            {
-                // If holding a 2H weapon then unequip
-                DaggerfallUnityItem rightHandItem = equipTable[(int)EquipSlots.RightHand];
-                if (rightHandItem != null && GetItemHands(rightHandItem) == ItemHands.Both)
-                    UnequipItem(EquipSlots.RightHand, unequippedList);
-            }
-
-            // Unequip any previous item
-            if (!IsSlotOpen(slot) && !alwaysEquip)
-                return null;
             else
-                UnequipItem(slot, unequippedList);
-
-            // Equip item to slot
-            item.EquipSlot = slot;
-            equipTable[(int)slot] = item;
-
-            // Play equip sound
-            if (playEquipSounds)
-                DaggerfallUI.Instance.PlayOneShot(item.GetEquipSound());
-
-            // Allow entity effect manager to start any enchantments on this item
-            StartEquippedItem(item);
-
+            {
+                parentEntity.RaiseOnProhibitedAction(item);
+                return null;
+            }
             //Debug.Log(string.Format("Equipped {0} to {1}", item.LongName, slot.ToString()));
 
             return unequippedList;
         }
 
-        public void UnequipItem(EquipSlots slot, List<DaggerfallUnityItem> list)
+        /// <summary>
+        /// Unequips an item and adds it to a list
+        /// </summary>
+        /// <param name="slot">Slot to remove item from.</param>
+        /// <param name="list">list to add item to.</param>
+        /// <returns>True if unequip was successful. Unequiping a slot with no item is always successful.</returns>
+        public bool UnequipItem(EquipSlots slot, List<DaggerfallUnityItem> list)
         {
             DaggerfallUnityItem item = UnequipItem(slot);
             if (item != null)
+            {
                 list.Add(item);
 
-            // Allow entity effect manager to stop any enchantments on this item
-            StopEquippedItem(item);
+                // Allow entity effect manager to stop any enchantments on this item
+                StopEquippedItem(item);
+                return true;
+            }
+            if (item == null && !IsSlotOpen(slot))
+            {
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -192,16 +220,24 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>The item unequipped, otherwise null.</returns>
         public DaggerfallUnityItem UnequipItem(EquipSlots slot)
         {
-            if (!IsSlotOpen(slot))
+            bool isProhibited = RaiseOnDisableUnequipItem(slot);
+            if (!isProhibited)
             {
-                DaggerfallUnityItem item = equipTable[(int)slot];
-                equipTable[(int)slot].EquipSlot = EquipSlots.None;
-                equipTable[(int)slot] = null;
+                if (!IsSlotOpen(slot))
+                {
+                    DaggerfallUnityItem item = equipTable[(int)slot];
+                    equipTable[(int)slot].EquipSlot = EquipSlots.None;
+                    equipTable[(int)slot] = null;
 
-                // Allow entity effect manager to stop any enchantments on this item
-                StopEquippedItem(item);
+                    // Allow entity effect manager to stop any enchantments on this item
+                    StopEquippedItem(item);
 
-                return item;
+                    return item;
+                }
+            }
+            else
+            {
+                parentEntity.RaiseOnProhibitedAction(slot);
             }
 
             return null;
@@ -650,5 +686,21 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         #endregion
+
+        bool RaiseOnDisableEquipItem(DaggerfallUnityItem item)
+        {
+            if (OnDisableEquipitem != null)
+                return OnDisableEquipitem(item);
+            else
+                return false;
+        }
+
+        bool RaiseOnDisableUnequipItem(EquipSlots slot)
+        {
+            if (OnDisableUnequipItem != null)
+                return OnDisableUnequipItem(slot);
+            else
+                return false;
+        }
     }
 }

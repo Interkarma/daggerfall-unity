@@ -1319,7 +1319,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected void EquipItem(DaggerfallUnityItem item)
         {
             const int itemBrokenTextId = 29;
-            const int forbiddenEquipmentTextId = 1068;
 
             if (item.ItemGroup == ItemGroups.Weapons && item.TemplateIndex == (int)Weapons.Arrow)
                 return;
@@ -1331,46 +1330,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                     messageBox.SetTextTokens(tokens, item);
-                    messageBox.ClickAnywhereToClose = true;
-                    messageBox.Show();
-                }
-                return;
-            }
-
-            bool prohibited = false;
-
-            if (item.ItemGroup == ItemGroups.Armor)
-            {
-                // Check for prohibited shield
-                if (item.IsShield && ((1 << (item.TemplateIndex - (int)Armor.Buckler) & (int)playerEntity.Career.ForbiddenShields) != 0))
-                    prohibited = true;
-
-                // Check for prohibited armor type (leather, chain or plate)
-                else if (!item.IsShield && (1 << (item.NativeMaterialValue >> 8) & (int)playerEntity.Career.ForbiddenArmors) != 0)
-                    prohibited = true;
-
-                // Check for prohibited material
-                else if (((item.nativeMaterialValue >> 8) == 2)
-                    && (1 << (item.NativeMaterialValue & 0xFF) & (int)playerEntity.Career.ForbiddenMaterials) != 0)
-                    prohibited = true;
-            }
-            else if (item.ItemGroup == ItemGroups.Weapons)
-            {
-                // Check for prohibited weapon type
-                if ((item.GetWeaponSkillUsed() & (int)playerEntity.Career.ForbiddenProficiencies) != 0)
-                    prohibited = true;
-                // Check for prohibited material
-                else if ((1 << item.NativeMaterialValue & (int)playerEntity.Career.ForbiddenMaterials) != 0)
-                    prohibited = true;
-            }
-
-            if (prohibited)
-            {
-                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(forbiddenEquipmentTextId);
-                if (tokens != null && tokens.Length > 0)
-                {
-                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
-                    messageBox.SetTextTokens(tokens);
                     messageBox.ClickAnywhereToClose = true;
                     messageBox.Show();
                 }

@@ -288,6 +288,7 @@ namespace DaggerfallWorkshop.Game.Entity
             // Allow for resetting specific player state on new game or when game starts loading
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+            ItemEquipTable.OnDisableEquipitem += DaggerfallEntity_OnDisableEquipEvent;
         }
 
         #endregion
@@ -896,6 +897,15 @@ namespace DaggerfallWorkshop.Game.Entity
                 OnMagickaDepleted(this);
         }
 
+        public delegate void OnProhibitedActionHandler(DaggerfallEntity entity, object sender);
+        public event OnProhibitedActionHandler OnProhibitedAction;
+        public void RaiseOnProhibitedAction(object sender)
+        {
+            if (OnProhibitedAction != null && !quiesce)
+                OnProhibitedAction(this, sender);
+        }
+
+
         #endregion
 
         #region Static Methods
@@ -1123,6 +1133,36 @@ namespace DaggerfallWorkshop.Game.Entity
         private void SaveLoadManager_OnStartLoad(SaveData_v1 saveData)
         {
             ResetEntityState();
+        }
+
+        public bool DaggerfallEntity_OnDisableEquipEvent(DaggerfallUnityItem item)
+        {
+            bool prohibited = false;
+            if (item.ItemGroup == ItemGroups.Armor)
+            {
+                // Check for prohibited shield
+                if (item.IsShield && ((1 << (item.TemplateIndex - (int)Armor.Buckler) & (int)Career.ForbiddenShields) != 0))
+                    prohibited = true;
+
+                // Check for prohibited armor type (leather, chain or plate)
+                else if (!item.IsShield && (1 << (item.NativeMaterialValue >> 8) & (int)Career.ForbiddenArmors) != 0)
+                    prohibited = true;
+
+                // Check for prohibited material
+                else if (((item.nativeMaterialValue >> 8) == 2)
+                    && (1 << (item.NativeMaterialValue & 0xFF) & (int)Career.ForbiddenMaterials) != 0)
+                    prohibited = true;
+            }
+            else if (item.ItemGroup == ItemGroups.Weapons)
+            {
+                // Check for prohibited weapon type
+                if ((item.GetWeaponSkillUsed() & (int)Career.ForbiddenProficiencies) != 0)
+                    prohibited = true;
+                // Check for prohibited material
+                else if ((1 << item.NativeMaterialValue & (int)Career.ForbiddenMaterials) != 0)
+                    prohibited = true;
+            }
+            return prohibited;
         }
 
         #endregion

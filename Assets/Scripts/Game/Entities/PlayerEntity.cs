@@ -209,6 +209,7 @@ namespace DaggerfallWorkshop.Game.Entity
             OnExhausted += PlayerEntity_OnExhausted;
             PlayerGPS.OnExitLocationRect += PlayerGPS_OnExitLocationRect;
             DaggerfallTravelPopUp.OnPostFastTravel += DaggerfallTravelPopUp_OnPostFastTravel;
+            OnProhibitedAction += PlayerEntity_OnProhibitedInventoryMessage;
         }
 
         #endregion
@@ -2436,6 +2437,22 @@ namespace DaggerfallWorkshop.Game.Entity
         {
             // Clear crime state post fast travel
             CrimeCommitted = Crimes.None;
+        }
+
+        public static void PlayerEntity_OnProhibitedInventoryMessage(DaggerfallEntity entity, object sender)
+        {
+            if (sender.GetType() == typeof(DaggerfallUnityItem))
+            {
+                const int forbiddenEquipmentTextId = 1068;
+                TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(forbiddenEquipmentTextId);
+                if (tokens != null && tokens.Length > 0)
+                {
+                    DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.Instance.UserInterfaceManager, DaggerfallUI.Instance.UserInterfaceManager.TopWindow);
+                    messageBox.SetTextTokens(tokens);
+                    messageBox.ClickAnywhereToClose = true;
+                    messageBox.Show();
+                }
+            }
         }
 
         #endregion
