@@ -447,7 +447,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 string localizedGotoPlaceName = TextManager.Instance.GetLocalizedLocationName(gotoPlace.SiteDetails.mapId, gotoPlace.SiteDetails.locationName);
 
                 // Open region and search for localizedGotoPlaceName
-                mouseOverRegion = gotoPlace.SiteDetails.regionIndex;
+                mouseOverRegion = MapsFile.PatchRegionIndex(gotoPlace.SiteDetails.regionIndex, gotoPlace.SiteDetails.regionName);
                 OpenRegionPanel(mouseOverRegion);
                 UpdateRegionLabel();
                 HandleLocationFindEvent(null, localizedGotoPlaceName);
