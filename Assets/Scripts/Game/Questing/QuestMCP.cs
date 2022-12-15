@@ -209,13 +209,14 @@ namespace DaggerfallWorkshop.Game.Questing
                     factionId = (int)GameManager.Instance.PlayerEnterExit.FactionID;
                 }
                 else
-                { 
+                {
                     factionId = GameManager.Instance.PlayerGPS.GetTempleOfCurrentRegion();
                 }
 
-                if (factionId == 0)
+                if (factionId == 0 || factionId == (int)FactionFile.FactionIDs.The_Fighters_Guild)
                 {
-                    // Classic returns "BLANK" if no temple is found, here we return a random deity name
+                    // Classic returns "BLANK" if no temple is found, here we return a random deity name.
+                    // We do the same for Fighters Guild halls, which are are considered temples in some areas.
                     const int minGodID = 21;
                     const int maxGodID = 35;
 
