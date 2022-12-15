@@ -217,10 +217,8 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     // Classic returns "BLANK" if no temple is found, here we return a random deity name.
                     // We do the same for Fighters Guild halls, which are are considered temples in some areas.
-                    const int minGodID = 21;
-                    const int maxGodID = 35;
+                    var god = GetRandomDivine();
 
-                    FactionFile.FactionIDs god = (FactionFile.FactionIDs)UnityEngine.Random.Range(minGodID, maxGodID + 1);
                     return god.ToString();
                 }
 
@@ -258,6 +256,22 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
 
                 return TextManager.Instance.GetLocalizedText("resolvingError");
+            }
+
+            private static FactionFile.FactionIDs GetRandomDivine()
+            {
+                switch (UnityEngine.Random.Range(0, 9))
+                {
+                    case 0: return FactionFile.FactionIDs.Arkay;
+                    case 1: return FactionFile.FactionIDs.Zen;
+                    case 2: return FactionFile.FactionIDs.Mara;
+                    case 3: return FactionFile.FactionIDs.Ebonarm;
+                    case 4: return FactionFile.FactionIDs.Akatosh;
+                    case 5: return FactionFile.FactionIDs.Julianos;
+                    case 6: return FactionFile.FactionIDs.Dibella;
+                    case 7: return FactionFile.FactionIDs.Stendarr;
+                    default: return FactionFile.FactionIDs.Kynareth;
+                }
             }
         }
     }
