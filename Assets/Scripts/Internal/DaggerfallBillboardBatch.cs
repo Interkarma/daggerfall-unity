@@ -9,14 +9,15 @@
 // Notes:
 //
 
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
-using System.Collections;
-using DaggerfallConnect.Arena2;
+using UnityEngine.Assertions;
 using Unity.Profiling;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+using DaggerfallConnect.Arena2;
 
 namespace DaggerfallWorkshop
 {
@@ -42,13 +43,14 @@ namespace DaggerfallWorkshop
         [SerializeField, HideInInspector]
         Mesh billboardMesh;
 
-        NativeList<BillboardItem> billboardData = new NativeList<BillboardItem>(initialCapacity: maxBillboardCount, Allocator.Persistent);
-        NativeArray<float3> meshVertices = new NativeArray<float3>(0, Allocator.Persistent);
-        NativeArray<float3> meshNormals = new NativeArray<float3>(0, Allocator.Persistent);
-        NativeArray<ushort> meshIndices = new NativeArray<ushort>(0, Allocator.Persistent);
-        NativeArray<float4> meshTangents = new NativeArray<float4>(0, Allocator.Persistent);
-        NativeArray<float2> meshUVs = new NativeArray<float2>(0, Allocator.Persistent);
-        NativeArray<Bounds> meshAABB = new NativeArray<Bounds>(1, Allocator.Persistent);
+        byte isUnmanagedMemoryAllocated;// 0 - not allocated or disposed, 1 - allocated
+        NativeList<BillboardItem> billboardData;
+        NativeArray<float3> meshVertices;
+        NativeArray<float3> meshNormals;
+        NativeArray<ushort> meshIndices;
+        NativeArray<float4> meshTangents;
+        NativeArray<float2> meshUVs;
+        NativeArray<Bounds> meshAABB;
         JobHandle Dependency;
         JobHandle UvAnimationDependency;
 
@@ -127,9 +129,27 @@ namespace DaggerfallWorkshop
             ___ResizeMeshBuffers = new ProfilerMarker($"{nameof(DaggerfallBillboardBatch)}.{nameof(ResizeMeshBuffers)}"),
             ___CreateMesh = new ProfilerMarker($"{nameof(DaggerfallBillboardBatch)}.{nameof(CreateMesh)}"),
             ___PushNewMeshData = new ProfilerMarker($"{nameof(DaggerfallBillboardBatch)}.{nameof(PushNewMeshData)}"),
-            ___PushUVData = new ProfilerMarker($"{nameof(DaggerfallBillboardBatch)}.{nameof(PushUVData)}");
+            ___PushUVData = new ProfilerMarker($"{nameof(DaggerfallBillboardBatch)}.{nameof(PushUVData)}"),
+            ___AllocateUnmanagedMemory = new ProfilerMarker($"{nameof(DaggerfallBillboardBatch)}.{nameof(AllocateUnmanagedMemory)}"),
+            ___DeallocateUnmanagedMemory = new ProfilerMarker($"{nameof(DaggerfallBillboardBatch)}.{nameof(DeallocateUnmanagedMemory)}");
 
         #endregion
+
+#if UNITY_EDITOR
+        // fixes an editor-only issue #2455 https://github.com/Interkarma/daggerfall-unity/issues/2455
+        DaggerfallBillboardBatch() => UnityEditor.EditorApplication.playModeStateChanged += OnEditorPlayModeStateChanged;
+        ~DaggerfallBillboardBatch() => UnityEditor.EditorApplication.playModeStateChanged -= OnEditorPlayModeStateChanged;
+        void OnEditorPlayModeStateChanged(UnityEditor.PlayModeStateChange stateChange)
+        {
+            if (stateChange == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+                OnDestroy();
+        }
+#endif
+
+        void Awake()
+        {
+            if (isUnmanagedMemoryAllocated == 0) AllocateUnmanagedMemory();
+        }
 
         void OnDestroy()
         {
@@ -137,13 +157,7 @@ namespace DaggerfallWorkshop
             Dependency.Complete();
             UvAnimationDependency.Complete();
 
-            if (billboardData.IsCreated) billboardData.Dispose();
-            if (meshVertices.IsCreated) meshVertices.Dispose();
-            if (meshNormals.IsCreated) meshNormals.Dispose();
-            if (meshIndices.IsCreated) meshIndices.Dispose();
-            if (meshTangents.IsCreated) meshTangents.Dispose();
-            if (meshUVs.IsCreated) meshUVs.Dispose();
-            if (meshAABB.IsCreated) meshAABB.Dispose();
+            if (isUnmanagedMemoryAllocated == 1) DeallocateUnmanagedMemory();
         }
 
         void OnDisable()
@@ -212,6 +226,44 @@ namespace DaggerfallWorkshop
 
                 yield return wait;
             }
+        }
+
+        void AllocateUnmanagedMemory()
+        {
+            ___AllocateUnmanagedMemory.Begin();
+
+            Assert.AreEqual(expected: (byte)0, actual: isUnmanagedMemoryAllocated);
+
+            billboardData = new NativeList<BillboardItem>(initialCapacity: maxBillboardCount, Allocator.Persistent);
+            meshVertices = new NativeArray<float3>(0, Allocator.Persistent);
+            meshNormals = new NativeArray<float3>(0, Allocator.Persistent);
+            meshIndices = new NativeArray<ushort>(0, Allocator.Persistent);
+            meshTangents = new NativeArray<float4>(0, Allocator.Persistent);
+            meshUVs = new NativeArray<float2>(0, Allocator.Persistent);
+            meshAABB = new NativeArray<Bounds>(1, Allocator.Persistent);
+
+            isUnmanagedMemoryAllocated = 1;
+            
+            ___AllocateUnmanagedMemory.End();
+        }
+
+        void DeallocateUnmanagedMemory()
+        {
+            ___DeallocateUnmanagedMemory.Begin();
+
+            Assert.AreEqual(expected: (byte)1, actual: isUnmanagedMemoryAllocated);
+
+            billboardData.Dispose();
+            meshVertices.Dispose();
+            meshNormals.Dispose();
+            meshIndices.Dispose();
+            meshTangents.Dispose();
+            meshUVs.Dispose();
+            meshAABB.Dispose();
+
+            isUnmanagedMemoryAllocated = 0;
+
+            ___DeallocateUnmanagedMemory.End();
         }
 
         /// <summary>
@@ -343,8 +395,15 @@ namespace DaggerfallWorkshop
         {
             ___Clear.Begin();
 
-            Dependency.Complete();// make sure there are no unfinished jobs
-            billboardData.Clear();
+            if (isUnmanagedMemoryAllocated == 1)
+            {
+                Dependency.Complete();// make sure there are no unfinished jobs
+                billboardData.Clear();
+            }
+            else
+            {
+                // no data to clear
+            }
 
             ___Clear.End();
         }
@@ -364,6 +423,9 @@ namespace DaggerfallWorkshop
             ___AddItem.Begin();
 
             Dependency.Complete();// make sure there are no unfinished jobs
+
+            // make sure unmanaged memory is allocated
+            if (isUnmanagedMemoryAllocated == 0) AllocateUnmanagedMemory();
 
             // Cannot use with a custom material
             if (customMaterial != null)
@@ -430,6 +492,9 @@ namespace DaggerfallWorkshop
                 return default;
             }
 
+            // make sure unmanaged memory is allocated
+            if (isUnmanagedMemoryAllocated == 0) AllocateUnmanagedMemory();
+
             // Limit maximum billboards in batch
             int available = maxBillboardCount - billboardData.Length;
             int numItemsToAdd = math.min(available, items.Length);
@@ -484,6 +549,9 @@ namespace DaggerfallWorkshop
             ___AddItem.Begin();
 
             Dependency.Complete();// make sure there are no unfinished jobs
+            
+            // make sure unmanaged memory is allocated
+            if (isUnmanagedMemoryAllocated == 0) AllocateUnmanagedMemory();
 
             // Cannot use with auto material
             if (customMaterial == null)
@@ -516,6 +584,9 @@ namespace DaggerfallWorkshop
                 ___AddItemsAsync.End();
                 throw new System.Exception("Cannot use with auto material. Use AddItem(int record, Vector3 localPosition) overload instead.");
             }
+
+            // make sure unmanaged memory is allocated
+            if (isUnmanagedMemoryAllocated == 0) AllocateUnmanagedMemory();
             
             ___schedule.Begin();
             AddCustomItemsJob job = new AddCustomItemsJob
@@ -659,6 +730,9 @@ namespace DaggerfallWorkshop
             Dependency.Complete();// make sure there are no unfinished jobs
             ___complete.End();
 
+            // make sure unmanaged memory is allocated
+            if (isUnmanagedMemoryAllocated == 0) AllocateUnmanagedMemory();
+
             // Create billboard data
             ___schedule.Begin();
             ResizeMeshBuffers();
@@ -761,6 +835,9 @@ namespace DaggerfallWorkshop
             ___complete.Begin();
             Dependency.Complete();// make sure there are no unfinished jobs
             ___complete.End();
+
+            // make sure unmanaged memory is allocated
+            if (isUnmanagedMemoryAllocated == 0) AllocateUnmanagedMemory();
 
             // Create billboard data
             ___schedule.Begin();
@@ -967,6 +1044,10 @@ namespace DaggerfallWorkshop
 
         private bool ReadyCheck()
         {
+            // Get references
+            if (meshRenderer == null)
+                meshRenderer = GetComponent<MeshRenderer>();
+
             // Ensure we have a DaggerfallUnity reference
             if (dfUnity == null)
             {
@@ -979,9 +1060,6 @@ namespace DaggerfallWorkshop
                 DaggerfallUnity.LogMessage("DaggerfallBillboardBatch: DaggerfallUnity component is not ready. Have you set your Arena2 path?");
                 return false;
             }
-
-            // Save references
-            meshRenderer = GetComponent<MeshRenderer>();
 
             return true;
         }
