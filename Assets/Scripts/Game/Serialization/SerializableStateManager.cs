@@ -27,7 +27,6 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         const string invalidLoadIDExceptionText = "serializableObject does not have a valid LoadID";
         const string duplicateLoadIDErrorText = "Duplicate LoadID {1} detected for {0} object. This object will not be serialized.";
-        const string typeNotImplementedExeptionText = "ISerializableGameObject type not implemented for ";
 
         private static int numStatefulGameObjectTypes = Enum.GetNames(typeof(StatefulGameObjectTypes)).Length;
 
@@ -486,16 +485,18 @@ namespace DaggerfallWorkshop.Game.Serialization
 
         private StatefulGameObjectTypes GetStatefulGameObjectType(ISerializableGameObject sgObj)
         {
-            if (sgObj is SerializableActionDoor)
-                return StatefulGameObjectTypes.ActionDoor;
-            else if (sgObj is SerializableActionObject)
-                return StatefulGameObjectTypes.ActionObject;
-            else if (sgObj is SerializableEnemy)
-                return StatefulGameObjectTypes.Enemy;
-            else if (sgObj is SerializableLootContainer)
-                return StatefulGameObjectTypes.LootContainer;
-
-            throw new Exception(typeNotImplementedExeptionText + sgObj.GetType().ToString());
+            if (sgObj is SerializableActionDoor) return StatefulGameObjectTypes.ActionDoor;
+            else if (sgObj is SerializableActionObject) return StatefulGameObjectTypes.ActionObject;
+            else if (sgObj is SerializableEnemy) return StatefulGameObjectTypes.Enemy;
+            else if (sgObj is SerializableLootContainer) return StatefulGameObjectTypes.LootContainer;
+            else
+            {
+                // type is not accounted for
+                if (sgObj is ISerializableGameObject)
+                    throw new NotImplementedException($"{nameof(GetStatefulGameObjectType)} does not know what to do with {sgObj.GetType().FullName}");
+                else
+                    throw new Exception($"{nameof(ISerializableGameObject)} type not implemented for {sgObj.GetType().FullName}");
+            }
         }
 
         #endregion
