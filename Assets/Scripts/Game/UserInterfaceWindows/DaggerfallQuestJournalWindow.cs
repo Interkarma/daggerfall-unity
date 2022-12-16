@@ -452,11 +452,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 string findPlaceName = place.SiteDetails.locationName;
                 if (DaggerfallUI.Instance.DfTravelMapWindow.CanFindPlace(place.SiteDetails.regionName, findPlaceName)) // Check using canonical name
                 {
+                    // Workaround for quests compiled before DFU 0.15.0 or later
+                    int regionIndex = MapsFile.PatchRegionIndex(place.SiteDetails.regionIndex, place.SiteDetails.regionName);
+
                     findPlace = place;
                     string entryStr = string.Format( // Display using localized name
                         TextManager.Instance.GetLocalizedText("locationInRegionProvince"),
                         TextManager.Instance.GetLocalizedLocationName(place.SiteDetails.mapId, findPlaceName),
-                        TextManager.Instance.GetLocalizedRegionName(place.SiteDetails.regionIndex));
+                        TextManager.Instance.GetLocalizedRegionName(regionIndex));
                     DaggerfallMessageBox dialogBox = CreateDialogBox(entryStr, "confirmFind");
                     dialogBox.OnButtonClick += FindPlace_OnButtonClick;
                     DaggerfallUI.UIManager.PushWindow(dialogBox);

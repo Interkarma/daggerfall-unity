@@ -217,7 +217,7 @@ namespace DaggerfallWorkshop.Game
                 else
                 {
                     // Adjust slightly downward to match bow animation
-                    adjust = new Vector3(0f, -.11f, 0);
+                    adjust = (GameManager.Instance.MainCamera.transform.rotation * -Caster.transform.up) * 0.11f;
                     // Adjust to the right or left to match bow animation
                     if (!GameManager.Instance.WeaponManager.ScreenWeapon.FlipHorizontal)
                         adjust += GameManager.Instance.MainCamera.transform.right * 0.15f;
