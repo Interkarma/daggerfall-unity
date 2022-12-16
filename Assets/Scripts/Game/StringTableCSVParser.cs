@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 /// <summary>
 /// Basic CSV parser for Windows-styled CSV files containing StringTable Key and Value columns only.
@@ -29,8 +30,7 @@ public class StringTableCSVParser
 
     /// <summary>
     /// Loads a CSV patch file for in-game text.
-    /// At this time, string patch files must be in the StreamingAssets/Text folder to load.
-    /// TODO: Support loading CSV file from .dfmod.
+    /// Seeks mods first then StreamingAssets/Text folder.
     /// </summary>
     /// <param name="filename">Filename of StringTable CSV file.</param>
     /// <returns>KeyValuePair for each row if successful, otherwise null.</returns>
@@ -38,21 +38,28 @@ public class StringTableCSVParser
     {
         string csvText = null;
 
-        if (!filename.EndsWith(csvExt))
-            filename += csvExt;
-
-        // Load patch file if present
-        string path = Path.Combine(Application.streamingAssetsPath, textString, filename);
-        if (File.Exists(path))
+        // Seek mods first then try loading from StreamingAssets/Text
+        TextAsset csvTextAsset = null;
+        if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(filename, false, out csvTextAsset))
         {
-            csvText = ReadAllText(path);
-            if (string.IsNullOrEmpty(csvText))
-                return null;
+            csvText = csvTextAsset.text;
         }
         else
         {
-            return null;
+            if (!filename.EndsWith(csvExt))
+                filename += csvExt;
+
+            // Load patch file if present
+            string path = Path.Combine(Application.streamingAssetsPath, textString, filename);
+            if (File.Exists(path))
+                csvText = ReadAllText(path);
+            else
+                return null;
         }
+
+        // Exit if no patch file loaded or patch file is empty
+        if (string.IsNullOrEmpty(csvText))
+            return null;
 
         // Parse into CSV rows
         KeyValuePair<string, string>[] rows = null;
