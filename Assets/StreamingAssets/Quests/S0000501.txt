@@ -158,9 +158,10 @@ Foe _F.00_ is 3 Archer
 Foe _mtraitor_ is Ranger
 
 --	Quest start-up:
-	create foe _F.00_ every 2000 minutes 20 times with 100% success 
+	create foe _F.00_ every 2000 minutes 5 times with 100% success 
 	start timer _S.00_ 
 	have _letter_ set _startpatsy_
+-- reduced spawning trio from 20 to 5 times
 
 _startpatsy_ task:
 	start timer _patsy_ 
