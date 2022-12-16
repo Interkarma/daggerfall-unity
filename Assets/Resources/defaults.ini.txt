@@ -123,7 +123,7 @@ EnableSpellShadows=True
 [Controls]
 InvertMouseVertical=False
 MouseLookSmoothingFactor=0.5
-MouseLookSensitivity=1.0
+MouseLookSensitivity=2.0
 JoystickLookSensitivity=1.0
 JoystickCursorSensitivity=1.0
 JoystickMovementThreshold=0.9
