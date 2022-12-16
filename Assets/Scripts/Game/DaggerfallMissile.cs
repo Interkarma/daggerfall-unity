@@ -231,10 +231,10 @@ namespace DaggerfallWorkshop.Game
                 }
                 else
                 {
-                    // Offset forward to avoid collision with player
-                    adjust = GameManager.Instance.MainCamera.transform.forward * 0.6f;
                     // Adjust slightly downward to match bow animation
-                    adjust.y -= 0.11f;
+                    adjust = (GameManager.Instance.MainCamera.transform.rotation * -Caster.transform.up) * 0.11f;
+                    // Offset forward to avoid collision with player
+                    adjust += GameManager.Instance.MainCamera.transform.forward * 0.6f;
                     // Adjust to the right or left to match bow animation
                     if (!GameManager.Instance.WeaponManager.ScreenWeapon.FlipHorizontal)
                         adjust += GameManager.Instance.MainCamera.transform.right * 0.15f;
