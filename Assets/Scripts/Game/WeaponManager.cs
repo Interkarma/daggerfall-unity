@@ -652,28 +652,22 @@ namespace DaggerfallWorkshop.Game
                 usingRightHand = true;
                 holdingShield = true;
                 leftHandItem = null;
+                if (currentLeftHandWeapon == null || !currentLeftHandWeapon.IsShield)
+                    UpdateLeftHandGfxCache(null); // Cache melee graphics in case shield is unequipped later.
             }
 
             // Right-hand item changed
             if (!DaggerfallUnityItem.CompareItems(currentRightHandWeapon, rightHandItem))
             {
                 currentRightHandWeapon = rightHandItem;
-                if (rightHandItem != null && !rightHandItem.IsShield)
-                    ScreenWeapon.TryCacheReadiedWeaponAtlas(DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(rightHandItem),
-                                                            DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(rightHandItem));
-                else if (rightHandItem == null)
-                    ScreenWeapon.TryCacheReadiedWeaponAtlas(MetalTypes.None, WeaponTypes.Melee);
+                UpdateRightHandGfxCache(rightHandItem);
             }
 
             // Left-hand item changed
             if (!DaggerfallUnityItem.CompareItems(currentLeftHandWeapon, leftHandItem))
             {
                 currentLeftHandWeapon = leftHandItem;
-                if (leftHandItem != null && !leftHandItem.IsShield)
-                    ScreenWeapon.TryCacheReadiedWeaponAtlas(DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(leftHandItem),
-                                                            DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(leftHandItem));
-                else if (leftHandItem == null)
-                    ScreenWeapon.TryCacheReadiedWeaponAtlas(MetalTypes.None, WeaponTypes.Melee);
+                UpdateLeftHandGfxCache(leftHandItem);
             }
 
             if (EquipCountdownRightHand > 0)
@@ -765,6 +759,7 @@ namespace DaggerfallWorkshop.Game
             target.MetalType = MetalTypes.None;
             target.DrawWeaponSound = SoundClips.None;
             target.SwingWeaponSound = SoundClips.SwingHighPitch;
+            target.SpecificWeapon = null;
         }
 
         void SetWeapon(FPSWeapon target, DaggerfallUnityItem weapon)
@@ -917,6 +912,33 @@ namespace DaggerfallWorkshop.Game
                     hitEnemy = WeaponDamage(strikingWeapon, false, false, hit.transform, hit.point, mainCamera.transform.forward);
                 }
             }
+        }
+
+        private void UpdateRightHandGfxCache(DaggerfallUnityItem rightHandItem)
+        {
+            ScreenWeapon.SpecificWeapon = currentRightHandWeapon;
+            if (rightHandItem != null)
+            {
+                ScreenWeapon.TryCacheReadiedWeaponAtlas(DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(rightHandItem),
+                                                        DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(rightHandItem), true);
+                if (rightHandItem.GetItemHands() == ItemHands.Both)
+                {
+                    ScreenWeapon.SpecificWeapon = currentLeftHandWeapon;
+                    ScreenWeapon.TryCacheReadiedWeaponAtlas(MetalTypes.None, WeaponTypes.Melee, false); // Left hand becomes melee if 2H.
+                }
+            }
+            else
+                ScreenWeapon.TryCacheReadiedWeaponAtlas(MetalTypes.None, WeaponTypes.Melee, true);
+        }
+
+        private void UpdateLeftHandGfxCache(DaggerfallUnityItem leftHandItem)
+        {
+            ScreenWeapon.SpecificWeapon = currentLeftHandWeapon;
+            if (leftHandItem != null)
+                ScreenWeapon.TryCacheReadiedWeaponAtlas(DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(leftHandItem),
+                                                        DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(leftHandItem), false);
+            else
+                ScreenWeapon.TryCacheReadiedWeaponAtlas(MetalTypes.None, WeaponTypes.Melee, false);
         }
 
         public void ToggleSheath()
