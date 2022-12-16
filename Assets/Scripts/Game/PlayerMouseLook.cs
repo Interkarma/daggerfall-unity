@@ -36,7 +36,6 @@ namespace DaggerfallWorkshop.Game
         public bool invertMouseY = false;
         public bool lockCursor;
         public Vector2 sensitivity = new Vector2(2, 2);
-        //public Vector2 smoothing = new Vector2(3, 3); // Replaced by single float member of same name
         public float sensitivityScale = 1.0f;
         public float joystickSensitivityScale = 1.0f;
         public bool enableMouseLook = true;
