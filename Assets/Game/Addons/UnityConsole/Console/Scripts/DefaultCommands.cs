@@ -69,7 +69,7 @@ namespace Wenzil.Console
 
             ConsoleCommandsDatabase.RegisterCommand(SetWalkSpeed.name, SetWalkSpeed.description, SetWalkSpeed.usage, SetWalkSpeed.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetMouseSensitivity.name, SetMouseSensitivity.description, SetMouseSensitivity.usage, SetMouseSensitivity.Execute);
-            ConsoleCommandsDatabase.RegisterCommand(ToggleMouseSmoothing.name, ToggleMouseSmoothing.description, ToggleMouseSmoothing.usage, ToggleMouseSmoothing.Execute);
+            //ConsoleCommandsDatabase.RegisterCommand(ToggleMouseSmoothing.name, ToggleMouseSmoothing.description, ToggleMouseSmoothing.usage, ToggleMouseSmoothing.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddPopupText.name, AddPopupText.description, AddPopupText.usage, AddPopupText.Execute);
 
             //ConsoleCommandsDatabase.RegisterCommand(SetMouseSmoothing.name, SetMouseSmoothing.description, SetMouseSmoothing.usage, SetMouseSmoothing.Execute);
@@ -864,7 +864,7 @@ namespace Wenzil.Console
         }
 
 
-        private static class ToggleMouseSmoothing
+        /*private static class ToggleMouseSmoothing
         {
             public static readonly string name = "tmsmooth";
             public static readonly string error = "Failed to toggle mouse smoothing - PlayerMouseLook object not found?";
@@ -884,10 +884,10 @@ namespace Wenzil.Console
                 }
             }
 
-        }
+        }*/
 
 
-        private static class SetMouseSmoothing
+        /*private static class SetMouseSmoothing
         {
             public static readonly string name = "set_msmooth";
             public static readonly string error = "Failed to set mouse smoothing - invalid setting or PlayerMouseLook object not found";
@@ -901,19 +901,19 @@ namespace Wenzil.Console
                 if (args == null || args.Length < 1 || !float.TryParse(args[0], out speed))
                 {
                     if (mLook)
-                        Console.Log(string.Format("Current mouse smoothing: {0}", mLook.smoothing));
+                        Console.Log(string.Format("Current mouse smoothing: {0}", mLook.Smoothing));
                     return HelpCommand.Execute(SetMouseSmoothing.name);
                 }
                 else if (mLook == null)
                     return error;
                 else
                 {
-                    mLook.smoothing = new Vector2(speed, speed);
-                    return string.Format("Set mouse smoothing to: {0}", mLook.smoothing.ToString());
+                    mLook.Smoothing = speed;
+                    return string.Format("Set mouse smoothing to: {0}", mLook.Smoothing.ToString());
                 }
             }
 
-        }
+        }*/
 
         private static class SetVSync
         {
