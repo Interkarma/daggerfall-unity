@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game
                     // Show text
                     if (LocationText)
                     {
-                        string text = string.Format("{0}{1}({2})", playerGPS.CurrentLocation.Name, Environment.NewLine, playerGPS.CurrentLocation.RegionName);
+                        string text = string.Format("{0}{1}({2})", playerGPS.CurrentLocalizedLocationName, Environment.NewLine, TextManager.Instance.GetLocalizedRegionName(playerGPS.CurrentLocation.RegionIndex));
                         ShowText(text);
                     }
                 }

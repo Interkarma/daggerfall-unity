@@ -3611,6 +3611,106 @@ MonoBehaviour:
     m_Key: customName
     m_Metadata:
       m_Items: []
+  - m_Id: 285674837707603968
+    m_Key: StoresA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285674968234344448
+    m_Key: GeneralStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675018800873472
+    m_Key: WeaponStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675106491187200
+    m_Key: ArmorStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675156646674432
+    m_Key: BookStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675205288017920
+    m_Key: LibraryStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675243338743808
+    m_Key: ClothingStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675323382841344
+    m_Key: AlchemyStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675361865580544
+    m_Key: GemStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675433093251072
+    m_Key: PawnStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675465657827328
+    m_Key: FurnitureStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675519206506496
+    m_Key: LivestockStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675582083317760
+    m_Key: TavernsA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675625704079360
+    m_Key: TavernsB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285678855704035328
+    m_Key: houseForSale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679031546036224
+    m_Key: theBankOf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679698457149440
+    m_Key: daggerfall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679716257775616
+    m_Key: wayrest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679764228030464
+    m_Key: sentinel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285680166927351808
+    m_Key: palace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286284881981620224
+    m_Key: regionNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286315014360678400
+    m_Key: ocean
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286315235807346688
+    m_Key: unknownUpper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286316113792614400
+    m_Key: switchToRegion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287414938670219264
+    m_Key: locationInRegionProvince
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

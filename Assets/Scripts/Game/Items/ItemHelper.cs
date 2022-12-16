@@ -61,6 +61,7 @@ namespace DaggerfallWorkshop.Game.Items
         readonly Dictionary<int, ImageData> itemImages = new Dictionary<int, ImageData>();
         readonly Dictionary<InventoryContainerImages, ImageData> containerImages = new Dictionary<InventoryContainerImages, ImageData>();
         readonly Dictionary<int, String> bookIDNameMapping = new Dictionary<int, String>();
+        readonly Dictionary<int, String> localizedBookIDNameMapping = new Dictionary<int, string>();
 
         public delegate bool ItemUseHandler(DaggerfallUnityItem item, ItemCollection collection);
         Dictionary<int, ItemUseHandler> itemUseHandlers = new Dictionary<int, ItemUseHandler>();
@@ -550,6 +551,21 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>The title of the bookd or defaultBookName if no name was found.</returns>
         public string GetBookTitle(int id, string defaultBookTitle)
         {
+            // Get cached localized book title if previously read
+            if (localizedBookIDNameMapping.ContainsKey(id))
+                return localizedBookIDNameMapping[id];
+
+            // Get book title from localized book file as first preference
+            // Localized title will be cached so file is only read once
+            string filename = GetBookFileName(id);
+            LocalizedBook localizedBook = new LocalizedBook();
+            if (localizedBook.OpenLocalizedBookFile(filename))
+            {
+                localizedBookIDNameMapping.Add(id, localizedBook.Title);
+                return localizedBook.Title;
+            }
+
+            // Fallback to legacy data
             string title;
             return bookIDNameMapping.TryGetValue(id, out title) ? title : defaultBookTitle;
         }

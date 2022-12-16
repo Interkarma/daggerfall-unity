@@ -213,11 +213,26 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Gets current region name based on world position.
+        /// Gets non-localized current region name based on world position.
+        /// IMPORTANT: This is used when matching regions for NPC knowledge in TalkManager and should not be localized.
         /// </summary>
         public string CurrentRegionName
         {
             get { return regionName; }
+        }
+
+        /// <summary>
+        /// Gets localized current region name based on world position.
+        /// This should only be used for display strings in UI.
+        /// </summary>
+        public string CurrentLocalizedRegionName
+        {
+            get { return TextManager.Instance.GetLocalizedRegionName(CurrentRegionIndex); }
+        }
+
+        public string CurrentLocalizedLocationName
+        {
+            get { return TextManager.Instance.GetLocalizedLocationName(currentLocation.MapTableData.MapId, currentLocation.Name); }
         }
 
         /// <summary>
@@ -554,9 +569,9 @@ namespace DaggerfallWorkshop
             if (currentPoliticIndex >= 128)
                 regionName = dfUnity.ContentReader.MapFileReader.GetRegionName(currentPoliticIndex - 128);
             else if (currentPoliticIndex == 64)
-                regionName = "Ocean";
+                regionName = TextManager.Instance.GetLocalizedText("ocean");
             else
-                regionName = "Unknown";
+                regionName = TextManager.Instance.GetLocalizedText("unknownUpper");
 
             // Get region data
             currentRegion = dfUnity.ContentReader.MapFileReader.GetRegion(CurrentRegionIndex);
@@ -1220,7 +1235,7 @@ namespace DaggerfallWorkshop
                     buildingSummary.BuildingType,
                     buildingSummary.FactionId,
                     buildingDirectory.LocationData.Name,
-                    buildingDirectory.LocationData.RegionName);
+                    TextManager.Instance.GetLocalizedRegionName(buildingDirectory.LocationData.RegionIndex));
             }
             buildingDiscoveryData.factionID = buildingSummary.FactionId;
             buildingDiscoveryData.quality = buildingSummary.Quality;

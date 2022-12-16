@@ -311,11 +311,11 @@ namespace DaggerfallWorkshop.Game.Questing
                     break;
 
                 case MacroTypes.NameMacro3:             // town name
-                    textOut = (dialogPlace != null ? dialogPlace.SiteDetails.locationName : BLANK);
+                    textOut = (dialogPlace != null ? TextManager.Instance.GetLocalizedLocationName(dialogPlace.SiteDetails.mapId, dialogPlace.SiteDetails.locationName) : BLANK);
                     break;
 
                 case MacroTypes.NameMacro4:             // region name
-                    textOut = (dialogPlace != null ? dialogPlace.SiteDetails.regionName : BLANK);
+                    textOut = (dialogPlace != null ? TextManager.Instance.GetLocalizedRegionName(dialogPlace.SiteDetails.regionIndex) : BLANK);
                     break;
 
                 case MacroTypes.DetailsMacro:           // Details macro

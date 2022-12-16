@@ -123,8 +123,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupKeybindButton(quickSaveKeybindButton, InputManager.Actions.QuickSave, 210, 20);
             SetupKeybindButton(quickLoadKeybindButton, InputManager.Actions.QuickLoad, 210, 40);
 
-            mouseSensitivitySlider = CreateSlider("Mouse Look Sensitivity", 20, 70, 0.1f, 8.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
             mouseSmoothingSlider = CreateSlider("Mouse Look Smoothing", 120, 70, SettingsManager.GetMouseLookSmoothingStrength(DaggerfallUnity.Settings.MouseLookSmoothingFactor), SettingsManager.GetMouseLookSmoothingStrengths());
+            mouseSensitivitySlider = CreateSlider("Mouse Look Sensitivity", 20, 70, 0.1f, 16.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
             invertMouseVerticalCheckbox = AddOption(20, 120, "Invert Look-Y", DaggerfallUnity.Settings.InvertMouseVertical);
             moveSpeedCheckbox = AddOption(20, 130, "Movement Acceleration", DaggerfallUnity.Settings.MovementAcceleration);
 

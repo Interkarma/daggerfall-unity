@@ -534,7 +534,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (DaggerfallBankManager.GetAccountTotal(regionIndex) > 0 || DaggerfallBankManager.HasLoan(regionIndex))
                 {
                     TextFile.Formatting formatting = DaggerfallBankManager.HasDefaulted(regionIndex) ? TextFile.Formatting.TextHighlight : TextFile.Formatting.Text;
-                    messages.AddRange(GetLoansLine(ShortenName(MapsFile.RegionNames[regionIndex], 12), DaggerfallBankManager.GetAccountTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanedTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanDueDateString(regionIndex), formatting));
+                    messages.AddRange(GetLoansLine(ShortenName(TextManager.Instance.GetLocalizedRegionName(regionIndex), 12), DaggerfallBankManager.GetAccountTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanedTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanDueDateString(regionIndex), formatting));
                     found = true;
                 }
             }

@@ -548,9 +548,9 @@ namespace DaggerfallWorkshop.Utility
         {   // %cn
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             if (gps.HasCurrentLocation)
-                return gps.CurrentLocation.Name;
+                return gps.CurrentLocalizedLocationName;
             else
-                return gps.CurrentRegion.Name;
+                return gps.CurrentLocalizedRegionName;
         }
 
         private static string CityName2(IMacroContextProvider mcp)
@@ -560,14 +560,14 @@ namespace DaggerfallWorkshop.Utility
             for (int i = 0; i < dfRegion.LocationCount; i++)
             {
                 if (GameManager.Instance.PlayerGPS.CurrentLocationIndex != i && dfRegion.MapTable[i].LocationType == DFRegion.LocationTypes.TownCity)
-                    return dfRegion.MapNames[i];
+                    return TextManager.Instance.GetLocalizedLocationName(dfRegion.MapTable[i].MapId, dfRegion.MapNames[i]);
             }
-            return "Daggerfall";
+            return TextManager.Instance.GetLocalizedText("daggerfall"); // Localizaed fallback in case of error
         }
 
         private static string CurrentRegion(IMacroContextProvider mcp)
         {   // %crn
-            return GameManager.Instance.PlayerGPS.CurrentRegion.Name;
+            return GameManager.Instance.PlayerGPS.CurrentLocalizedRegionName;
         }
 
         private static string CityType(IMacroContextProvider mcp)
@@ -838,7 +838,12 @@ namespace DaggerfallWorkshop.Utility
             DFLocation.BuildingData buildingData = buildingInterior.BuildingData;
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             DFLocation location = gps.CurrentLocation;
-            return BuildingNames.GetName(buildingData.NameSeed, buildingData.BuildingType, buildingData.FactionId, location.Name, location.RegionName);
+            return BuildingNames.GetName(
+                buildingData.NameSeed,
+                buildingData.BuildingType,
+                buildingData.FactionId,
+                location.Name,
+                TextManager.Instance.GetLocalizedRegionName(location.RegionIndex));
         }
 
         private static string PlayerPronoun(IMacroContextProvider mcp)
@@ -1021,7 +1026,7 @@ namespace DaggerfallWorkshop.Utility
         {   // %reg
             if (idRegion != -1)
             {
-                return MapsFile.RegionNames[idRegion];
+                return TextManager.Instance.GetLocalizedRegionName(idRegion);
             }
             else
                 return CurrentRegion(mcp);

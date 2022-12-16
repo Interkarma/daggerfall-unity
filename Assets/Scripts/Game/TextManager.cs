@@ -32,8 +32,9 @@ namespace DaggerfallWorkshop.Game
 
         public static string defaultInternalStringsCollectionName = "Internal_Strings";
         public static string defaultInternalRSCCollectionName = "Internal_RSC";
-        public static string defaultInternalBOKCollectionName = "Internal_BOK";
         public static string defaultInternalFlatsCollectionName = "Internal_Flats";
+        public static string defaultInternalQuestsCollectionName = "Internal_Quests";
+        public static string defaultInternalLocationsCollectionName = "Internal_Locations";
 
         const string localizedTextLookupError = "<LocaleText-NotFound>";
         const string textFolderName = "Text";
@@ -41,8 +42,9 @@ namespace DaggerfallWorkshop.Game
 
         public string runtimeInternalStrings = defaultInternalStringsCollectionName;
         public string runtimeRSCStrings = defaultInternalRSCCollectionName;
-        public string runtimeBOKStrings = defaultInternalBOKCollectionName;
         public string runtimeFlatStrings = defaultInternalFlatsCollectionName;
+        public string runtimeQuestsStrings = defaultInternalQuestsCollectionName;
+        public string runtimeLocationsStrings = defaultInternalLocationsCollectionName;
 
         // String table copy editor properties
         public bool tableCopyOverwriteTargetStringTables = false;
@@ -50,6 +52,7 @@ namespace DaggerfallWorkshop.Game
         public string tableCopyTargetRSCStrings = null;
         public string tableCopyTargetBOKStrings = null;
         public string tableCopyTargetFlatStrings = null;
+        public string tableCopyTargetLocationStrings = null;
 
         Dictionary<string, Table> textDatabases = new Dictionary<string, Table>();
         Dictionary<string, string[]> cachedLocalizedTextLists = new Dictionary<string, string[]>();
@@ -248,17 +251,17 @@ namespace DaggerfallWorkshop.Game
                 case TextCollections.Internal:
                     collectionName = runtimeInternalStrings;
                     break;
-
                 case TextCollections.TextRSC:
                     collectionName = runtimeRSCStrings;
                     break;
-
-                case TextCollections.TextBOK:
-                    collectionName = runtimeBOKStrings;
-                    break;
-
                 case TextCollections.TextFlats:
                     collectionName = runtimeFlatStrings;
+                    break;
+                case TextCollections.TextQuests:
+                    collectionName = runtimeQuestsStrings;
+                    break;
+                case TextCollections.TextLocations:
+                    collectionName = runtimeLocationsStrings;
                     break;
             }
 
@@ -282,6 +285,14 @@ namespace DaggerfallWorkshop.Game
 
                 case TextCollections.TextRSC:
                     collectionName = defaultInternalRSCCollectionName;
+                    break;
+
+                case TextCollections.TextQuests:
+                    collectionName = defaultInternalQuestsCollectionName;
+                    break;
+
+                case TextCollections.TextLocations:
+                    collectionName = defaultInternalLocationsCollectionName;
                     break;
             }
 
@@ -376,6 +387,55 @@ namespace DaggerfallWorkshop.Game
 
                 return career.Name;
             }
+        }
+
+        /// <summary>
+        /// Gets localized version of region name from string tables for display purposes only.
+        /// This is distinct from the canonical name which is used internally as a key and to group discovery data.
+        /// </summary>
+        /// <param name="regionIndex">Index of region.</param>
+        /// <returns>Localized name of region.</returns>
+        public string GetLocalizedRegionName(int regionIndex)
+        {
+            string[] regionNames = GetLocalizedTextList("regionNames");
+            if (regionNames == null || regionNames.Length == 0 ||
+                regionIndex < 0 || regionIndex >= regionNames.Length)
+            {
+                // Fallback to canonical name using MapsFile when localization not provided or index out of range
+                return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(regionIndex);
+            }
+            return regionNames[regionIndex];
+        }
+
+        /// <summary>
+        /// Gets localized version of location name from string tables for display purposes only.
+        /// This is distinct from the canonical name which is used internally as a key and to group discovery data.
+        /// Must provide canonical fallback name when calling method as it's expensive to reload location from data to lookup name.
+        /// Caller should already have working location data loaded and canonical name readily available.
+        /// </summary>
+        /// <param name="mapId">MapTableData.MapId key of location.</param>
+        /// <param name="fallback">Fallback canonical name.</param>
+        /// <returns>Localized name of region or fallback if key not found in string tables.</returns>
+        public string GetLocalizedLocationName(int mapId, string fallback)
+        {
+            string name;
+            if (TryGetLocalizedText(TextCollections.TextLocations, mapId.ToString(), out name))
+                return name;
+            else
+                return fallback;
+        }
+
+        /// <summary>
+        /// Tries to gets text value from localization in TextProvider.
+        /// Will use current locale if available in collection.
+        /// </summary>
+        /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
+        /// <param name="key">Key of text in table.</param>
+        /// <param name="localizedString">Result of lookup if found.</param>
+        /// <returns>True if text found, otherwise false.</returns>
+        public bool TryGetLocalizedText(TextCollections collection, string key, out string localizedString)
+        {
+            return TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedString);
         }
 
         #endregion

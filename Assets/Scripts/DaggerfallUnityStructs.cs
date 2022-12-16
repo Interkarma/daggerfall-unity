@@ -427,8 +427,9 @@ namespace DaggerfallWorkshop
         public SiteTypes siteType;                  // Type of site
         public int mapId;                           // MapID of this location
         public uint locationId;                     // LocationID of this location
-        public string regionName;                   // Name of region containing this location
-        public string locationName;                 // Name of exterior location itself
+        public int regionIndex;                     // Index of region containing this location
+        public string regionName;                   // Canonical name Name of region containing this location
+        public string locationName;                 // Canonical Name of exterior location itself
         public int buildingKey;                     // Key of building site in this location
         public string buildingName;                 // Name of target building, e.g. 'The Odd Blades'
         public QuestMarker[] questSpawnMarkers;     // Array of quest spawn markers (Foe, Person resources) found in site, can be null or empty

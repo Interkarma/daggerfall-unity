@@ -24,6 +24,7 @@ using Wenzil.Console.Commands;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -66,8 +67,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Dictionary<string, Vector2> offsetLookup = new Dictionary<string, Vector2>();
         protected string[] selectedRegionMapNames;
 
-        protected string gotoLocation = null;
-        protected int gotoRegion;
+        protected Place gotoPlace; // Used by journal click-through to fast travel to a specific quest location
 
         protected DFBitmap regionPickerBitmap;
         protected DFRegion currentDFRegion;
@@ -164,6 +164,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected string distanceRegionName = null;
         protected IDistance distance;
 
+        // Populated with localized names whenever player searches or lists inside this region
+        // Used to complete search and list on localized names over canonical names
+        protected Dictionary<string, int> localizedMapNameLookup = new Dictionary<string, int>();
+
         #endregion
 
         #region Properties
@@ -207,10 +211,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             teleportationTravel = true;
         }
 
-        public void GotoLocation(string placeName, int region)
+        public void GotoPlace(Place place)
         {
-            gotoLocation = placeName;
-            gotoRegion = region;
+            gotoPlace = place;
         }
 
         #endregion
@@ -364,7 +367,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.OnPop();
             teleportationTravel = false;
             findingLocation = false;
-            gotoLocation = null;
+            gotoPlace = null;
             distanceRegionName = null;
             distance = null;
         }
@@ -418,7 +421,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (!RegionSelected || currentDFRegion.LocationCount < 1)
                         return;
 
-                    string[] locations = currentDFRegion.MapNames.OrderBy(p => p).ToArray();
+                    string[] locations = GetCurrentRegionLocalizedMapNames().OrderBy(p => p).ToArray();
                     ShowLocationPicker(locations, true);
                 }
                 else if (DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TravelMapFind).IsUpWith(keyModifiers))
@@ -438,13 +441,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AnimateIdentify();
 
             // If a goto location specified, find it and ask if player wants to travel.
-            if (!string.IsNullOrEmpty(gotoLocation))
+            if (gotoPlace != null)
             {
-                mouseOverRegion = gotoRegion;
+                // Get localized name for search with fallback to canonical name
+                string localizedGotoPlaceName = TextManager.Instance.GetLocalizedLocationName(gotoPlace.SiteDetails.mapId, gotoPlace.SiteDetails.locationName);
+
+                // Open region and search for localizedGotoPlaceName
+                mouseOverRegion = MapsFile.PatchRegionIndex(gotoPlace.SiteDetails.regionIndex, gotoPlace.SiteDetails.regionName);
                 OpenRegionPanel(mouseOverRegion);
                 UpdateRegionLabel();
-                HandleLocationFindEvent(null, gotoLocation);
-                gotoLocation = null;
+                HandleLocationFindEvent(null, localizedGotoPlaceName);
+                gotoPlace = null;
             }
         }
 
@@ -819,7 +826,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Custom image must be based on 320x160 interior snip of TRAV0I00.IMG (so exclude top and bottom bars) but can be a higher resolution like 1600x800
             Texture2D customRegionOverlayTexture;
             if (importedOverlays.TryGetValue(playerRegion, out customRegionOverlayTexture) ||
-                TextureReplacement.TryImportImage(string.Format("{0}-{1}", overworldImgName, GetRegionName(playerRegion)), false, out customRegionOverlayTexture))
+                TextureReplacement.TryImportImage(string.Format("{0}-{1}", overworldImgName, GetRegionNameForMapReplacement(playerRegion)), false, out customRegionOverlayTexture))
             {
                 identifyOverlayPanel.BackgroundTexture = importedOverlays[playerRegion] = customRegionOverlayTexture;
                 return;
@@ -1270,9 +1277,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (RegionSelected == false)
                 regionLabel.Text = GetRegionName(mouseOverRegion);
             else if (locationSelected)
-                regionLabel.Text = string.Format("{0} : {1}", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(mouseOverRegion), GetLocationNameInCurrentRegion(locationSummary.MapIndex, true));
+                regionLabel.Text = string.Format("{0} : {1}", GetRegionName(mouseOverRegion), GetLocationNameInCurrentRegion(locationSummary.MapIndex, true));
             else if (MouseOverOtherRegion)
-                regionLabel.Text = string.Format("Switch To: {0} Region", DaggerfallUnity.ContentReader.MapFileReader.GetRegionName(mouseOverRegion));
+                regionLabel.Text = string.Format(TextManager.Instance.GetLocalizedText("switchToRegion"), GetRegionName(mouseOverRegion));
             else
                 regionLabel.Text = GetRegionName(mouseOverRegion);
         }
@@ -1453,6 +1460,25 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        // Get localized names of all locations in current region with fallback to canonical name
+        // Builds a new name lookup dictionary for this region on every call used to complete search
+        protected string[] GetCurrentRegionLocalizedMapNames()
+        {
+            localizedMapNameLookup.Clear();
+            List<string> localizedNames = new List<string>(currentDFRegion.MapNames.Length);
+            for (int l = 0; l < currentDFRegion.MapNames.Length; l++)
+            {
+                // Handle duplicate names in same way as Region.MapNameLookup
+                string name = TextManager.Instance.GetLocalizedLocationName(currentDFRegion.MapTable[l].MapId, currentDFRegion.MapNames[l]);
+                if (!localizedNames.Contains(name))
+                {
+                    localizedNames.Add(name);
+                    localizedMapNameLookup.Add(name, l);
+                }
+            }
+            return localizedNames.ToArray();
+        }
+
         // Find location by name
         protected virtual bool FindLocation(string name, out List<DistanceMatch> matching)
         {
@@ -1466,7 +1492,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 distanceRegionName = currentDFRegion.Name;
                 distance = DaggerfallDistance.GetDistance();
-                distance.SetDictionary(currentDFRegion.MapNames);
+                distance.SetDictionary(GetCurrentRegionLocalizedMapNames());
             }
 
             DistanceMatch[] bestMatches = distance.FindBestMatches(name, maxMatchingResults);
@@ -1477,12 +1503,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             foreach (DistanceMatch match in bestMatches)
             {
-                if (!currentDFRegion.MapNameLookup.ContainsKey(match.text))
+                // Must have called GetCurrentRegionLocalizedMapNames() prior to this point
+                if (!localizedMapNameLookup.ContainsKey(match.text))
                 {
-                    DaggerfallUnity.LogMessage("Error: location name key not found in Region MapNameLookup dictionary");
+                    Debug.LogWarningFormat("Error: location name '{0}' key not found in localizedMapNameLookup dictionary for this region.", match.text);
                     continue;
                 }
-                int index = currentDFRegion.MapNameLookup[match.text];
+                int index = localizedMapNameLookup[match.text];
                 DFRegion.RegionMapTable locationInfo = currentDFRegion.MapTable[index];
                 DFPosition pos = MapsFile.LongitudeLatitudeToMapPixel((int)locationInfo.Longitude, (int)locationInfo.Latitude);
                 if (DaggerfallUnity.ContentReader.HasLocation(pos.X, pos.Y, out findLocationSummary))
@@ -1539,7 +1566,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (applyFilters)
                 {
-                    int index = currentDFRegion.MapNameLookup[locations[i]];
+                    // Must have called GetCurrentRegionLocalizedMapNames() prior to this point
+                    int index = localizedMapNameLookup[locations[i]];
                     if (GetPixelColorIndex(currentDFRegion.MapTable[index].LocationType) == -1)
                         continue;
                 }
@@ -1572,7 +1600,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // Gets name of region
         protected string GetRegionName(int region)
         {
-            return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region);
+            return TextManager.Instance.GetLocalizedRegionName(region);
+        }
+        protected string GetRegionNameForMapReplacement(int region)
+        {
+            return DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region); // Using non-localized name for map replacement path
         }
 
         // Gets name of location in currently open region - tries world data replacement then falls back to MAPS.BSA
@@ -1585,6 +1617,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Cache the last location index when requested and only update it when index changes
             if (cacheName && lastQueryLocationIndex == locationIndex)
                 return lastQueryLocationName;
+
+            // Localized name has first priority if one exists
+            string localizedName = TextManager.Instance.GetLocalizedLocationName(locationSummary.MapID, string.Empty);
+            if (!string.IsNullOrEmpty(localizedName))
+                return localizedName;
 
             // Get location name from world data replacement if available or fall back to MAPS.BSA cached names
             DFLocation location;
@@ -1634,7 +1671,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(doYouWishToTravelToTextId);
 
             // Hack to set location name in text token for now
-            textTokens[2].text = textTokens[2].text.Replace("%tcn", GetLocationNameInCurrentRegion(locationSummary.MapIndex));
+            textTokens[2].text = textTokens[2].text.Replace(
+                "%tcn",
+                TextManager.Instance.GetLocalizedLocationName(locationSummary.MapID, GetLocationNameInCurrentRegion(locationSummary.MapIndex)));
 
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
             messageBox.SetTextTokens(textTokens);

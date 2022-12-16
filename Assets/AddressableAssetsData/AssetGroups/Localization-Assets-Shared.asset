@@ -21,18 +21,27 @@ MonoBehaviour:
     m_Address: Internal_Strings Shared Data
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a53022878bfb3504595f69334a1cd2a2
     m_Address: Internal_RSC Shared Data
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: 53072ccf48dbfb644a5f18ca3773614b
-    m_Address: Internal_BOK Shared Data
-    m_ReadOnly: 0
-    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6170d504a469fec46b1a7762508ddcf2
     m_Address: Assets/Localization/StringTables/Internal_Flats Shared Data.asset
     m_ReadOnly: 1
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 763a0745323097949bd6f8be9f62a0de
+    m_Address: Assets/Localization/StringTables/Internal_Quests Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e11afb33a5de7543b2b1594675da1aa
+    m_Address: Assets/Localization/StringTables/Internal_Locations Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: d18e8e9fddb22f341a7e4df0a26a67e2, type: 2}
   m_SchemaSet:

@@ -145,7 +145,7 @@ namespace DaggerfallWorkshop
 
             if (regionNames.Length == 0)
             {
-                regionNames = (string[])MapsFile.RegionNames.Clone();
+                regionNames = (string[])MapsFile.RegionNames.Clone(); // Using non-localized name in atlas editor
                 System.Array.Sort(regionNames);
             }
 

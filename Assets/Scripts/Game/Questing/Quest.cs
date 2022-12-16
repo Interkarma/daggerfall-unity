@@ -18,6 +18,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using FullSerializer;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -665,10 +666,23 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public Message GetMessage(int messageID)
         {
+            // Get default message resource
+            Message result = null;
             if (messages.ContainsKey(messageID))
-                return messages[messageID];
+                result = messages[messageID];
             else
                 return null;
+
+            // Attempt to get localized text for message
+            string localizedString;
+            string key = string.Format("{0}.{1}", QuestName, messageID.ToString());
+            if (TextManager.Instance.TryGetLocalizedText(TextCollections.TextQuests, key, out localizedString))
+            {
+                string[] lines = localizedString.Split('\n');
+                result.ReplaceMessage(messageID, lines);
+            }
+
+            return result;
         }
 
         public Task GetTask(Symbol symbol)

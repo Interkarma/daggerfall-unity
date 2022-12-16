@@ -33,62 +33,75 @@ namespace DaggerfallWorkshop.Utility
             bool singleton = false;
             FactionFile.FactionData factionData;
             DFRandom.srand(seed);
+            string[] StoresA = TextManager.Instance.GetLocalizedTextList("StoresA");
             switch (type)
             {
                 case DFLocation.BuildingTypes.HouseForSale:
-                    return "House for sale";
+                    return TextManager.Instance.GetLocalizedText("houseForSale");
 
                 case DFLocation.BuildingTypes.Tavern:
+                    string[] TavernsB = TextManager.Instance.GetLocalizedTextList("TavernsB");
+                    string[] TavernsA = TextManager.Instance.GetLocalizedTextList("TavernsA");
                     b = TavernsB[DFRandom.random_range(0, TavernsB.Length)];
                     a = TavernsA[DFRandom.random_range(0, TavernsA.Length)];
                     break;
 
                 case DFLocation.BuildingTypes.GeneralStore:
+                    string[] GeneralStoresB = TextManager.Instance.GetLocalizedTextList("GeneralStoresB");
                     b = GeneralStoresB[DFRandom.random_range(0, GeneralStoresB.Length)];
                     a = StoresA[DFRandom.random_range(0, StoresA.Length)];
                     break;
 
                 case DFLocation.BuildingTypes.WeaponSmith:
+                    string[] WeaponStoresB = TextManager.Instance.GetLocalizedTextList("WeaponStoresB");
                     b = WeaponStoresB[DFRandom.random_range(0, WeaponStoresB.Length)];
                     a = StoresA[DFRandom.random_range(0, StoresA.Length)];
                     break;
 
                 case DFLocation.BuildingTypes.Armorer:
+                    string[] ArmorStoresB = TextManager.Instance.GetLocalizedTextList("ArmorStoresB");
                     b = ArmorStoresB[DFRandom.random_range(0, ArmorStoresB.Length)];
                     a = StoresA[DFRandom.random_range(0, StoresA.Length)];
                     break;
 
                 case DFLocation.BuildingTypes.Bookseller:
+                    string[] BookStoresB = TextManager.Instance.GetLocalizedTextList("BookStoresB");
                     b = BookStoresB[DFRandom.random_range(0, BookStoresB.Length)];
                     a = StoresA[DFRandom.random_range(0, StoresA.Length)];
                     break;
 
                 case DFLocation.BuildingTypes.ClothingStore:
+                    string[] ClothingStoresB = TextManager.Instance.GetLocalizedTextList("ClothingStoresB");
                     b = ClothingStoresB[DFRandom.random_range(0, ClothingStoresB.Length)];
                     a = StoresA[DFRandom.random_range(0, StoresA.Length)];
                     break;
 
                 case DFLocation.BuildingTypes.Alchemist:
+                    string[] AlchemyStoresB = TextManager.Instance.GetLocalizedTextList("AlchemyStoresB");
                     b = AlchemyStoresB[DFRandom.random_range(0, AlchemyStoresB.Length)];
                     a = StoresA[DFRandom.random_range(0, StoresA.Length)];
                     break;
 
                 case DFLocation.BuildingTypes.GemStore:
+                    string[] GemStoresB = TextManager.Instance.GetLocalizedTextList("GemStoresB");
                     b = GemStoresB[DFRandom.random_range(0, GemStoresB.Length)];
                     a = StoresA[DFRandom.random_range(0, StoresA.Length)];
                     break;
 
                 case DFLocation.BuildingTypes.PawnShop:
+                    string[] PawnStoresB = TextManager.Instance.GetLocalizedTextList("PawnStoresB");
                     b = PawnStoresB[DFRandom.random_range(0, PawnStoresB.Length)];
                     a = StoresA[DFRandom.random_range(0, StoresA.Length)];
                     break;
 
                 case DFLocation.BuildingTypes.FurnitureStore:
+                    string[] FurnitureStoresB = TextManager.Instance.GetLocalizedTextList("FurnitureStoresB");
                     b = FurnitureStoresB[DFRandom.random_range(0, FurnitureStoresB.Length)];
                     a = StoresA[DFRandom.random_range(0, StoresA.Length)];
                     break;
 
                 case DFLocation.BuildingTypes.Library:
+                    string[] LibraryStoresB = TextManager.Instance.GetLocalizedTextList("LibraryStoresB");
                     b = LibraryStoresB[DFRandom.random_range(0, LibraryStoresB.Length)];
                     a = StoresA[DFRandom.random_range(0, StoresA.Length)];
                     break;
@@ -96,7 +109,7 @@ namespace DaggerfallWorkshop.Utility
                 case DFLocation.BuildingTypes.Bank:
                     // Banks always appear to be named "The Bank of RegionName"
                     b = regionName;
-                    a = "The Bank of";
+                    a = TextManager.Instance.GetLocalizedText("theBankOf");
                     break;
 
                 case DFLocation.BuildingTypes.GuildHall:
@@ -126,13 +139,13 @@ namespace DaggerfallWorkshop.Utility
 
                 case DFLocation.BuildingTypes.Palace:
                     // Main palace names come from TEXT.RSC (e.g. "Castle Daggerfall")
-                    // Other palaces are just named "Palace" (still need to confirm behaviour)
+                    // Other palaces are just named "Palace"
                     int textId = 0;
-                    if (locationName == "Daggerfall")
+                    if (locationName == TextManager.Instance.GetLocalizedText("daggerfall"))
                         textId = 475;
-                    else if (locationName == "Wayrest")
+                    else if (locationName == TextManager.Instance.GetLocalizedText("wayrest"))
                         textId = 476;
-                    else if (locationName == "Sentinel")
+                    else if (locationName == TextManager.Instance.GetLocalizedText("sentinel"))
                         textId = 477;
 
                     if (textId > 0)
@@ -150,7 +163,7 @@ namespace DaggerfallWorkshop.Utility
                     }
                     else
                     {
-                        a = "Palace";
+                        a = TextManager.Instance.GetLocalizedText("palace");
                     }
                     singleton = true;
                     break;
@@ -198,285 +211,5 @@ namespace DaggerfallWorkshop.Utility
 
             return result;
         }
-
-        #region Stores
-
-        static string[] StoresA = new string[]
-        {
-            "%ef's",
-            "%cn's Best",
-            "The Essential",
-            "Lord %ef's",
-            "The Adventurer's",
-            "The Odd",
-            "%ef's Finest",
-            "Bargain",
-            "Vintage",
-            "The Emperor's",
-            "%cn",
-            "%ef's General",
-            "The Superior",
-            "%ef's Quality",
-            "First Class",
-            "The %rt's",
-            "The Champion",
-            "Doctor %ef's",
-            "Lady %ef's",
-        };
-
-        static string[] GeneralStoresB = new string[]
-        {
-            "Supplies",
-            "Supply Store",
-            "Gear",
-            "Gear Store",
-            "Equipment",
-            "Equipment Store",
-            "Sundries",
-            "Provisions",
-            "Merchandise",
-            "General Store",
-            "Retail Store",
-            "Trading Post",
-            "Market",
-            "Wares",
-            "Warehouse",
-        };
-
-        static string[] WeaponStoresB = new string[]
-        {
-            "Weapons",
-            "Weaponry",
-            "Arms",
-            "Armaments",
-            "Arsenal",
-            "Armsmaker",
-            "Blades",
-            "Blacksmith",
-            "Metalsmith",
-            "Weaponsmith",
-        };
-
-        static string[] ArmorStoresB = new string[]
-        {
-            "Armory",
-            "Mail",
-            "Shielding",
-            "Armor",
-            "Shields",
-            "Aegis",
-            "Metalworks",
-            "Blacksmith",
-            "Metalsmith",
-            "Armorer",
-            "Smith",
-            "Smithy",
-        };
-
-        static string[] BookStoresB = new string[]
-        {
-            "Books",
-            "Bookstore",
-            "Bookshop",
-            "Book Dealer",
-            "Book Center",
-            "Bookseller",
-            "Bookstall",
-            "Incunabula",
-        };
-
-        static string[] LibraryStoresB = new string[]
-        {
-            "Library",
-            "Bookroom",
-            "Athenaeum",
-            "Public Library",
-            "Historians",
-            "Bookroom",
-            "Seminary",
-            "Lyceum",
-        };
-
-        static string[] ClothingStoresB = new string[]
-        {
-            "Clothing",
-            "Clothes",
-            "Garments",
-            "Apparel",
-            "Costumes",
-            "Vestments",
-            "Attire",
-            "Fashion",
-            "Tailoring",
-            "Outfits",
-            "Finery",
-        };
-
-        static string[] AlchemyStoresB = new string[]
-        {
-            "Herbs",
-            "Potherbs",
-            "Spices",
-            "Remedies",
-            "Antidotes",
-            "Physics",
-            "Medicines",
-            "Potions",
-            "Tinctures",
-            "Medicaments",
-            "Elixirs",
-            "Pharmacy",
-            "Apothecary",
-            "Unguents",
-            "Medicinal Agents",
-            "Herb Garden",
-            "Pharmaceuticals",
-            "Chemistry",
-            "Chemicals",
-            "Experiental Products",
-            "Alchemistry",
-            "Alchemical Solutions",
-            "Metallurgy",
-        };
-
-        static string[] GemStoresB = new string[]
-        {
-            "Gems",
-            "Gemstones",
-            "Jewelry",
-            "Jewels",
-            "Precious Stones",
-            "Bijoutry",
-            "Jewelers",
-            "Jewel Box",
-            "Jewelry Shop",
-            "Gemcutter",
-        };
-
-        static string[] PawnStoresB = new string[]
-        {
-            "Pawnshop",
-            "Pawnbrokers",
-            "Used Supplies",
-            "Used Gear",
-            "Used Equipment",
-            "Used Merchandise",
-            "Hockshop",
-            "Antiquities",
-        };
-
-        static string[] FurnitureStoresB = new string[]
-        {
-            "Furniture",
-            "Furnishings",
-            "Interior Design",
-            "Furniture Shop",
-            "Decor",
-            "Carpentry",
-            "Woodworking",
-            "Crafts",
-            "Woodwork",
-        };
-
-        // Currently unused
-        //static string[] LivestockStoresB = new string[]
-        //{
-        //    "Livestock",
-        //    "Breeders",
-        //    "Farm Animals",
-        //    "Beasts",
-        //    "Creatures",
-        //    "Game",
-        //    "Animalia",
-        //    "Fauna",
-        //    "Menagerie",
-        //};
-
-        #endregion
-
-        #region Taverns
-
-        static string[] TavernsA = new string[]
-        {
-            "The Queen's",
-            "The King's",
-            "The Dirty",
-            "The Black",
-            "The Mole and",
-            "The Green",
-            "The Red",
-            "The Gold",
-            "The White",
-            "The Silver",
-            "The Crimson",
-            "The Flying",
-            "The Dancing",
-            "The Laughing",
-            "The Restless",
-            "The Thirsty",
-            "The Unfortunate",
-            "The Lucky",
-            "The Devil's",
-            "The Rusty",
-            "The Howling",
-            "The Screaming",
-            "The Bat and",
-            "The Lion and",
-            "The Lynx and",
-            "The Dwarf and",
-            "The Beaver and",
-            "The Fox and",
-            "The Mouse and",
-            "The Pig and",
-            "The Feather and",
-            "The Toad and",
-            "The Rat and",
-            "The Savage",
-            "The Knave and",
-            "The Dead",
-        };
-
-        static string[] TavernsB = new string[]
-        {
-            "Chasm",
-            "Mug",
-            "Pit",
-            "Cat",
-            "Dog",
-            "Goblin",
-            "Griffin",
-            "Dragon",
-            "Ogre",
-            "Giant",
-            "Djinn",
-            "Wolf",
-            "Huntsman",
-            "Dagger",
-            "Skull",
-            "Sword",
-            "Guard",
-            "Dungeon",
-            "Helm",
-            "Castle",
-            "Jug",
-            "Bird",
-            "Gnome",
-            "Hedgehog",
-            "Muskrat",
-            "Woodchuck",
-            "Scorpion",
-            "Badger",
-            "Goat",
-            "Porcupine",
-            "Priest",
-            "Fawn",
-            "Stag",
-            "Barbarian",
-            "Rascal",
-            "Fairy",
-        };
-
-        #endregion
-
     }
 }

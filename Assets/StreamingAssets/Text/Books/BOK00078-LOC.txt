@@ -1,0 +1,638 @@
+Title: Fools' Ebony, Part the Fiveth
+Author: Frincheps
+IsNaughty: True
+Price: 317
+IsUnique: False
+WhenVarSet: 
+Content:
+
+
+[/font=2]
+
+[/center]Fools' Ebony
+
+[/center]Part The
+
+[/center]Fiveth
+
+
+
+[/font=4]
+
+
+
+[/center]
+
+ Dramatis Personae
+
+ Prologue The Adventurer, A Dark Elf Rascal Komon, A Priest
+of Akatosh Lheban, Another Priest of Akatosh Epilogue Stete, A
+Priest of Julianos Raic, Another Priest of Julianos Shub, A
+Mage Shub, A Different Mage of the Same Name Nephron, A
+Somewhat Sleazy Merchant 5 Armorers Ortho Crunn, Husband of
+Millie A Lusty Contessa Millie, Innkeep and Philosopher
+Gurnsey, Bovine Wench Assorted Wenches and Cads of the
+Taverns Soldiers Dwarves Giants
+
+
+
+ Part The Fiveth - Back With The Priests, Final                  
+Plans, and a Killing or Two
+
+
+  is Reported...          Nearer the middle of the Month of
+Frostfall, The Inn of the Pink Nymph.    (Enter Prologue, the
+Adventurer, Ortho, Nephron, the Five Armorers, and
+Prologue)
+
+ Prologue:   Our roguish Dark Elf, the Adventurer has            
+plummeted before our stunned eyes, from
+
+
+    the king of the spider web of intrigue
+
+
+    to a pathetic, crawling lump of Argonian
+
+
+    excrement. In the quest for Fools'
+
+
+    Ebony, that substance that all would kill
+
+
+    for, the Adventurer attempted to play
+
+
+    Mage against Priest with the help of the
+
+
+    merchant Nephron. Alas, that is to say,
+
+
+    alackaday, the five armorers have trapped
+
+
+    Nephron and the Adventurer and taken over
+
+
+    their scheme. The hulking Ortho now
+
+
+    watches the Adventurer's every move. But
+
+
+    I get the feeling -- to be honest, don't
+
+
+    you? -- that beneath the Adventurer's
+
+
+    defeated quivering jelly lurks a jungle
+
+
+    cat of such cunning and resource to
+
+
+    shatter all his enemies when the time is
+
+
+    right. Of course, I could be wrong. Ah,
+
+
+    I see one of the priests of Akatosh who
+
+
+    believes himself a friend of the
+
+
+    Adventurer. I, Prologue must away.
+
+ (Exit Prologue) (Enter Lheban, a Priest of Akatosh.)
+
+ Lheban:     Evening there, mind if I join you?
+
+ Adventurer: Well ... since you already have - no.            
+And where is our esteemed brother
+
+
+    Komon this chill evening?
+
+ Lheban:     You mean you haven't heard -- Oh, I             guess
+you have been busy with the ...
+
+
+    preparations?
+
+ Adventurer: Right, right, very busy...
+
+ Lheban:     Then let me tell you -- Oh, what a bad            
+business. What trouble ... Oh Dear ...             Well ... you
+doubtless recall that poor
+
+
+    Komon had this ... er ... problem --             overwork of
+course!
+
+ Adventurer: Oh yes -- you fellows do work exceeding            
+hard, seems to me.
+
+ Lheban:     Well ... recall how Komon left, somewhat            
+erratically as it were, and ... er ...             made off with
+that young blondie under             the lamppost outside?
+Well -- in his ...             er ... state of confusion -- he
+grabbed             the wrong blondie - Oh My, indeed the
+
+
+    wrong one ...
+
+ Adventurer: They all look pretty much the same to me,           
+ but of course, I do not look too hard!
+
+ Lheban:     Oh My! Well, to cut a short tale to the            
+bone, old Komon grabbed a Contessa, who             had thought
+to 'disguise herself.' Oh             Dear!       Adventurer: Well
+-- did she get away?  Did they catch             Komon? What
+happened?
+
+ Lheban:     Well, old Komon, tipsy as he was, was            
+quick as spit in a gale. Eluded all             pursuit, took
+the lady to a small private
+
+
+    ... retreat house that we have.  Oh Dear
+
+
+    Me! Well, the City Guards, Palace guards,
+
+
+    half a dozen Royals, all caught up with
+
+
+    Komon 3 days later. One day too late for
+
+
+    the poor Contessa -- I hear that they had
+
+
+    a hard time locating all the ... er ...
+
+
+    bits and pieces. Komon was there, passed
+
+
+    out cold. And another body, some common
+
+
+    blond lamppost girl. And by now he is cold
+
+
+    -- permanently, most likely at the bottom             of the
+Bay.
+
+ Adventurer: Oh well. Serves the Contessa right, coming        
+    down to this area. But I suppose that
+
+
+    there are repercussions?
+
+ <Enter two more Priests, Raic and Stete of Julianos, and
+four armed City Guards.)
+
+ Raic:       Evening, Lheban. Evening, Adventurer. And --
+
+ Ortho:      Me am Ortho.
+
+ Raic:       Yesss. Charmed. And Lheban, you indeed have           
+ my sympathies ... if there is anything we can
+
+
+    do to help -- our Temple of Julianos, that
+
+
+    is ..?  But really, you should have kept             Komon
+on a tighter leash - or preferably a             noose!
+
+ Adventurer: Hello Raic. And hello to you, Stete - how's        
+    your sister?
+
+ Stete:      Oh, she's great.
+
+ (Raic sets Stete on fire, but it goes out)
+
+ Lheban:     Yes, I know I know. Oh the repercussions! Do           
+ you know that the Priests of Akatosh to             Daggerfall
+Castle, Wayrest Palace and just             about everywhere
+else have all been thrown out?             That the Royal tax
+exemption for the Chantry
+
+
+    has been revoked? That the Akatosh Chantry has             
+just received a 'past due taxes' bill? Oh My!
+
+ Adventurer: Well ... I suppose that we could help
+somewhat,             maybe? Maybe a small loan from Julianos
+for             that tax bill? With, say, a Temple as security? 
+           Oh -- are not the taxes based on the number of             
+the Priests of Akatosh? So, maybe ... the School
+
+
+    of Julianos could take over a ... significant
+
+
+    number?  Reduce your tax bill? You realize that           
+  this is not the best time for this -- just as
+
+
+    we need a lot of funds for that expedition that            
+I am arranging for you.
+
+ Lheban:     Oh, I am so sorry about Komon! But, yes, maybe     
+       if good brother Raic could -- I hate to say             this
+-- take over a greater share of the
+
+
+    financial burden ..? In return, of course, for            
+... er ... considerations ..?
+
+ Raic:       Hmm. Like a good number of 'permanently' loaned    
+        priests? A long look at your books? At your
+
+
+    cellar?  Your name-lists? A Temple as security
+
+
+    on our loan? And, of course, a bigger cut in
+
+
+    the proceeds of this ... expedition? Names of
+
+
+    your ... er ... suppliers ..?
+
+ Lheban:     Oh. I foresaw something like this, talked a bit       
+     about it with old Mucky-Muck - livid, he was.
+
+
+    But, as I am a Senior Brother, he finally            
+authorized me to 'take care of it.' Those             weren't his
+exact words, mind you, which were
+
+
+    quite a bit ...longer, more explicit ... but            
+the gist, at least.
+
+ Adventurer: Of course, Lheban. If -- and note I say 'if' --    
+        if we are successful, why then you can easily            
+get back into good graces at the Palace. Merely            
+sell them the goods, as a good low rate! With             first
+refusal on any shipment you have?  What's             one
+Contessa to them, anyway?
+
+ Lheban:     Yes, yes! That could work!  Worth a try. But        
+    how? Royals will not talk to anyone from
+
+
+    the Akatosh Chantry now.
+
+ Adventurer: Leave that to me, I can make ... approaches to   
+         certain ones. Yes, I can probably persuade            
+them to let up on the Chantry, in return for
+
+
+    ... future favors ...
+
+ Lheban:     Oh, Oh how can I thank you?
+
+ Adventurer: Well, I need a fair amount of gold to finish     
+       setting up my little trip. Maybe 10,000?            
+Special horses, reinforced carts, cartiers,
+
+
+    guards ... the list goes on and on. And the             cost
+of keeping our little trip quiet is             really quite
+high.
+
+ Lheban:     Well, yes, we can afford it, I guess -- you           
+ do have the map now, don't you? I know we
+
+
+    can afford 8,000 gold. Given the potential
+
+
+    profits ...
+
+ Adventurer: Rest easy! - it's all here in my cloak --            
+show you in a bit. I've also managed to ...
+
+
+    hire some good young hefty fellows, like old
+
+
+    Ortho here, to manage the carts, dig and             load,
+act as guards, and so on ...
+
+ Lheban:     Good, good - I can relax a bit. Oh my, the            
+fellows back at the Chantry will be so             relieved. We
+really owe you, the Brotherhood             does -- Oh, I mean the
+Akatosh Chantry, of             course!
+
+ Stete:      Brotherhood ..? What about our sisterhood, eh?
+
+ (Raic grapples Stete, allowing Lheban to hit Stete with a
+large mallet)
+
+ Adventurer:  Well, Raic, what about you and the School?     
+        How much are you good for, the extra 2000?
+
+
+     And maybe some more - always lots of last             
+minute expenses on a trip like this, you know.
+
+ Raic:        Well now. Since we seem to getting a whole           
+  extra sect of Priests, and ... other
+
+
+     considerations ... Certainly!
+
+ Adventurer:  Well, gentlemen -- Oh, and Stete -- here it        
+     is!
+
+ (The Adventurer pulls out a map, gives it to Raic)
+
+
+
+
+     Oh, by the Arms of Zenithar, did I ever have              to
+work hard for this! Those cagey Mages! But,              in the
+end, just greedy old fools! ... Oh,              just in case
+you or your, er, Head Priest,
+
+
+     hasn't seen the goods -- here's a sample.              Play
+with it.
+
+ (The Adventurer hands Raic a small leather bag)
+
+ Raic:        Thank you, thank you. I must admit, I had             
+some ... well, some doubts. You know --              dealing
+with a stranger, so on ... No more.              Partner!
+
+ Adventurer:  Good, good!
+
+ (Stete hiccoughs)
+
+ Stete:       Say, you fellows ever hear this one --             
+what's a Priest keep under his robe? Haha
+
+
+     -- His sister! Haheheha!
+
+ (The Adventurer, Lheban, and Raic beat Stete into
+unconsciousness)
+
+ Raic:       You know, I fear that we really have to             do
+something about young Stete here ...
+
+
+    his sister thing ... ugh!    Adventurer: Yes, he could be
+another Komon -- just             what don't need!
+
+ Lheban:     Hmmmm. This sister of his -- does she             really
+-- exist?
+
+ Raic:       Oh yes. My. Oh yes. We know her well --             I
+mean, we have often seen her ...
+
+ Lheban:     I think, Brother, that she should be             made to
+see the errors of her ways. So
+
+
+    she is no longer an influence on
+
+
+    Stete ...
+
+ Raic:       Yes, most certainly ... Hmmm ...
+
+ Lheban:     A somewhat Dibelytical theological             point
+-- Oh, please excuse the technical             discussion here -
+Raic, if we are to             make her see the errors -- well, how
+
+
+    shall I put it -- we first have to know
+
+
+    just what the ... ways ... are, correct?
+
+ Raic:       Indeed, an astute observation! Hmmm ...             so
+you are suggesting that ... in a nut,
+
+
+    we should first determine her ... ways,
+
+
+    so as to be able to then show her the
+
+
+    ... er ... errors?
+
+ Lheban:     Precisely! Mind you, a difficult,            
+ardous, tiring project, I fear. One that             will take
+all our ... will and energy.
+
+ Raic:       Hmmm, true. But challenging, eh? Take             all
+our time - but then, we shall have             some time, while
+friend the Adventurer
+
+
+    here is off hauling and carting.
+
+ Lheban:     And ... I personally, would feel far            
+safer if we were ... in retreat maybe.
+
+
+    Studying the ways ..?
+
+ Adventurer: Yeah -- be a good idea for you two to,            
+maybe, disappear? For a while, of course.             Cut down
+on the chances of a ... rival             faction catching on?
+Or catching you?
+
+ Raic:       Very well! Lheban, why don't you and I            
+take his sister off with us on a ...
+
+
+    theological retreat, as it were? Study             the ways
+in details, and so on ...
+
+ Lheban:     We could go to that unused little            
+Temple, up on that shoulder of Edward's             Mountain
+... out of the way, quiet ...
+
+ Raic:       Door has locks ...
+
+ Lheban:     Thick walls ...
+
+ Raic:       A big cellar ...
+
+ Lheban:     Good! It's settled then. A theological            
+retreat! Oh goody!
+
+ Raic:       Of course, once we know the ... er ...             ways
+in detail, we can of course tell             old High Mucky-Muck,
+and let him take care              of the ... er ... showing of the
+errors ..?             Yes, that would improve his mood quite a
+
+
+    bit ...
+
+ Lheban:     Then it's agreed. Let's start, say, day            
+after tomorrow?
+
+ Raic:       Yes! Adventurer, why don't I meet you at,            
+oh, that horrid ugly statue of ... what
+
+
+    on Tamriel is it? - a harpy and a gargoyle?             
+Called something silly like 'Vendigao and
+
+
+    Her Lover' or some such? Up in the north
+
+
+    west corner of the town. Oh, and can I
+
+
+    keep the map?
+
+ Adventurer: Sure, keep it, I have a copy. And you will        
+    pass me a small bag, there at that nasty
+
+
+    statue?
+
+ Raic:       Have it all ready for you -- say, ten            
+o'clock sharp? Oh, Lheban, another
+
+
+    thought about young Stete here. He really             needs
+some ... seasoning in the field,             one might say ...?
+
+ Lheban:     Hmmm. Good point ... I know! The priest            
+who handles field assignments is coming             by
+tomorrow. We could arrange an ...             educational ...
+assignment for Stete?
+
+ Raic:       Very good! But where ... hmmm ...             Winter's
+coming soon now. There's a
+
+
+    vacancy up in Solitude, far north Skyrim,
+
+
+    I believe. Night collections at street            
+corners, or some such. Very Good! Come on,             Lheban.
+We have accounts to work on. Good             night to you then,
+Adventurer.  Ten             tomorrow morning!        (Lheban,
+Raic rise to leave, picking up Stete)
+
+ Lheban and Raic (Together): ... have to arrange some
+supplies ...             ... leather, rope ... holy wine ....     
+       ... lots of that pink powder ... I
+
+
+    prefer the green, myself ...
+
+ (Exeunt Lheban, Raic dragging Stete, and City Guard)
+
+ Nephron:    Well?
+
+ Adventurer: Excellent. Went just as I said it would.          
+  Got 5000 gold from them. And, thanks to             your work
+with that Contessa ... we have              the screws on the
+Chantry. And the School
+
+
+    of Julianos is going to be ... otherwise
+
+
+    engaged ... on a theological retreat.
+
+
+    More like a Sanguine retreat!
+
+ Nephron:    And those Mages Shub and Shub seem to             have
+disappeared ...
+
+ Adventurer: So we are set?
+
+ Nephron:    Yes, you can come by my warehouse            
+tomorrow afternoon. Have the heavy carts             waiting.
+
+ Ortho:      And Ortho ...
+
+ Nephron:    Oh yes, must not forget you fellows.             How
+kind of you to ... volunteer your
+
+
+    services ...
+
+ Adventurer: Tomorrow, then!
+
+ (Exeunt omnes) (Last person to leave looks just like a Royal
+in disguise ...) (Enter Epilogue)
+
+ Epilogue:   Well, we only have one part left to this            
+play and I've run out counting the number
+
+
+    of loose strings. Either Part the Sixth
+
+
+    is going to be eight hours long, or we're
+
+
+    going to leave some parts unsolved. I for
+
+
+    one hope that they don't chose to drop
+
+
+    the character of the Wanton Contessa. For
+
+
+    Jephre's sake, she's been on the Dramatis
+
+
+    Personae since Part the Oneth. Ah, well.
+
+
+    Nobody leave your seat. Your gold will
+
+
+    not be refunded. Any gold you can spare
+
+
+    to tip your friendly wenches will be
+
+
+    greatly appreciated. We just have a quick
+
+
+    costume change and a set to put together
+
+
+    and we'll be back. In the meanwhile, enjoy
+
+
+    our bard's rendition of the Nordic classic
+
+
+    "Alas, The Fleeting Years Glide By."
+
+
+
+                     So Endeth Part The Five
+
+ 

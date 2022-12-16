@@ -514,7 +514,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <returns>Localized string.</returns>
         public string Localize(string key)
         {
-            return TryLocalize(key) ?? string.Format(LocalizationSettings.StringDatabase.NoTranslationFoundMessage, key);
+            return TryLocalize(key) ?? string.Format("No translation found for key '{0}'.", key);
         }
 
         /// <summary>
@@ -971,7 +971,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
                 if (stringSource.Count > 0)
                 {
-                    assembly = ModManager.CompileFromSourceAssets(stringSource.ToArray());
+                    assembly = ModManager.CompileFromSourceAssets(stringSource.ToArray(), $"{this.ModInfo.ModTitle} {this.ModInfo.ModVersion}");
                     if (assembly != null)
                         assemblies.Add(assembly);
                 }

@@ -1,0 +1,148 @@
+Title: Legal Basics
+Author: Anchivius, M.Z.F. 
+IsNaughty: False
+Price: 636
+IsUnique: False
+WhenVarSet: 
+Content:
+
+
+[/font=2]
+
+[/center]Legal Basics
+
+
+
+[/font=4]
+
+[/center]
+
+[/center]    Ignorance of the law is no defense. Be forewarned that the
+following are but the most universal of Tamrielan laws and
+regulations. Your own local province or principality may
+have unique laws of its own. As a citizen of Empire, it is
+your right and responsibility to know and follow these laws
+of the land.
+
+    Breaking and Entering:    This refers to any act including,
+but not limited to opening, breaking, incinerating,
+magically transporting, or in any way causing a door,
+window, or other portal that has been magically or
+mundanely locked or which a reasonable person would assume
+to be so restricted to be passable, and the act (though the
+act is not required for the definition) of entering the house,
+business, or public location through said defined portal.
+The punishment for this crime may include a fine or
+incarceration, or a fine and incarceration.    The fine and
+incarceration, or both, or neither, may be less in a crime of
+Attempted Breaking and Entering. A crime of Attempted
+Breaking and Entering is defined as an any act that a
+reasonable person would perceive as the preparation for,
+an attempt (whether successful or not, or perceived to be
+possibly successful or not) to bring about the opening,
+breaking, incinerating, magically transporting, or in any
+way causing a door, window, or other portal that has been
+magically or mundanely locked or which a reasonable person
+would assume to be so restricted to be passable, and the act
+(though the act is not required for the definition) of
+preparing or attempting (whether successful or not,
+perceived to be possibly successful or not) entering the
+house, business, or public location through said defined
+portal.
+
+     Trespassing:     This refers to walking, flying, riding,
+teleporting, floating, or in any way moving or existing on
+a property without the explicit written or spoken
+permission (or permission a reasonable person might infer)
+of the owner or caretaker of the property. The punishment for
+this crime may include a fine or incarceration, or a fine
+and incarceration.
+
+     Assault     Any threat or attempt (whether successful or
+not) to do physical, emotional, mental, or magical harm or
+injury to another person, group of persons, or entity a
+reasonable person might assume to be sentient. The
+punishment for this crime may include a fine or
+incarceration, or a fine and incarceration.
+
+     Murder     Any act of premeditated or malicious or
+premeditated and malicious (or an act that a reasonable
+person would call premeditated and malicious or
+premeditated or malicious) or accidental but criminally
+intended (or what a reasonable person would call
+criminally intended) purpose that results directly in the
+death (or destruction with implied death) of a person,
+group of persons, or entity a reasonable person might
+assume to be sentient. The punishment for this crime may
+include a fine or incarceration, or a fine and
+incarceration.
+
+     Criminal Conspiracy     Any meeting, communication, or
+encounter with the purpose (or which a reasonable person
+might assume had the purpose) of preparing or arranging a
+crime of any kind (or crimes of any kind) to be commited or
+caused to be commited. The punishment for this crime may
+include a fine or incarceration, or a fine and
+incarceration.
+
+     Vagrancy     Any act of idleness, disorder, begging, or
+conduct unbecoming a person with occupation, gold, or a
+home, (or occupation, gold, and a home, or occupation or
+gold and home, or occupation and gold or home, or
+occupation and home or gold), or what a reasonable person
+would consider idle, disorderly, beggarly, or unbecoming.
+The punishment for this crime may include a fine or
+incarceration, or a fine and incarceration.
+
+     Smuggling     Any act of bringing in, taking out,
+teleporting, or causing to be brought in, taken out, or
+teleported an object considered illegal or, if not
+illegal, requiring an import or export tax which is not paid.
+The punishment for this crime may include a fine or
+incarceration, or a fine and incarceration, and will
+include confiscation of the offensive or illegal object. It
+may also include, but not be restricted to, execution or
+banishment, or execution and banishment.
+
+     High Treason     Any act against (whether directly or
+indirectly, or any nonaction which results in
+circumstances, directly or indirectly, against) a
+allegiated sovereign or by a vassal to a liege, resulting
+(or what a reasonable person would assume would result) in
+physical, emotional, mental, or magical harm or injury in
+said sovereign or liege. The punishment for this crime will
+be death.
+
+     Pickpocketing     Any act of stealing, taking, or, without
+explicit written or verbal permission (or what a
+reasonable person would infer as implied permission) an
+item or items a person, group of persons, or entity a
+reasonable person might assume to be sentient has on his,
+her, its, or their own person. The punishment for this crime
+may include a fine or incarceration, or a fine and
+incarceration.
+
+     Theft     (sometimes called Larceny)     Any act of
+stealing, taking, or, without explicit written or verbal
+permission (or what a reasonable person would infer as
+implied permission) an item or items from a person, group of
+persons, or entity a reasonable person might assume to be
+sentient's place of residence, business, person, or other
+location a reasonable person would assume is secured from
+looting. The punishment for this crime may include a fine or
+incarceration, or a fine and incarceration.
+
+     These are the usual, day-to-day definitions used by legal
+experts (like myself), but both the definitions and
+punishments may fluctuate wildly according to location
+and situation. In the Imperial City, legal counsel is
+available by persons like myself, but the provinces have no
+such system in place. Perhaps that will change in time. We
+can all hope so.
+
+     As a final note: the Tamriel legal system has its basis in
+the civilized, reasonable credo uttered by the prophet
+Marukh in the first era: "All are guilty until they have
+proven themselves innocent." Were truer word ever spoke?
+
+ 
