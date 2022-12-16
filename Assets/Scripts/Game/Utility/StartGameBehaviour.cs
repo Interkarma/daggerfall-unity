@@ -208,7 +208,7 @@ namespace DaggerfallWorkshop.Game.Utility
                 {
                     mouseLook.invertMouseY = DaggerfallUnity.Settings.InvertMouseVertical;
                     // Set mouse look smoothing
-                    mouseLook.enableSmoothing = DaggerfallUnity.Settings.MouseLookSmoothing;
+                    mouseLook.Smoothing = DaggerfallUnity.Settings.MouseLookSmoothingFactor;
                     // Set mouse look sensitivity
                     mouseLook.sensitivityScale = DaggerfallUnity.Settings.MouseLookSensitivity;
 

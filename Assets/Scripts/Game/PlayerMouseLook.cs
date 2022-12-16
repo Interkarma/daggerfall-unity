@@ -4,9 +4,9 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Avernite (avernite@gmail.com)
 // 
-// Notes:
+// Notes:           
 //
 
 using UnityEngine;
@@ -25,8 +25,8 @@ namespace DaggerfallWorkshop.Game
 
         const float piover2 = 1.570796f;
 
-        Vector2 _mouseAbsolute;
-        Vector2 _smoothMouse;
+        Vector2 lookTarget;
+        Vector2 lookCurrent;
         float cameraPitch = 0.0f;
         float cameraYaw = 0.0f;
         public bool cursorActive;
@@ -36,13 +36,23 @@ namespace DaggerfallWorkshop.Game
         public bool invertMouseY = false;
         public bool lockCursor;
         public Vector2 sensitivity = new Vector2(2, 2);
-        public Vector2 smoothing = new Vector2(3, 3);
         public float sensitivityScale = 1.0f;
         public float joystickSensitivityScale = 1.0f;
         public bool enableMouseLook = true;
-        public bool enableSmoothing = true;
         public bool simpleCursorLock = false;
         private bool forceHideCursor;
+
+        public const float SmoothingMax = 0.9f;
+        float smoothing = 0.5f; // This value now comes from user-defined settings
+
+        /// <summary>
+        /// Gets or sets degree of mouse-look camera smoothing (0.0 is none, 0.1 is a little, 0.9 is a lot).
+        /// </summary>
+        public float Smoothing
+        {
+            get { return smoothing; }
+            set { smoothing = Mathf.Clamp(value, 0.0f, SmoothingMax); }
+        }
 
         // Assign this if there's a parent object controlling motion, such as a Character Controller.
         // Yaw rotation will affect this object instead of the camera if set.
@@ -56,7 +66,7 @@ namespace DaggerfallWorkshop.Game
             get { return cameraPitch * Mathf.Rad2Deg; }
             set
             {
-                value = Mathf.Clamp(value, PitchMin, pitchMax);
+                value = Mathf.Clamp(value, pitchMin, pitchMax);
                 cameraPitch = value * Mathf.Deg2Rad;
                 if (cameraPitch > piover2 * .99f)
                     cameraPitch = piover2 * .99f;
@@ -84,6 +94,76 @@ namespace DaggerfallWorkshop.Game
         {
             get { return pitchMin; }
             set { pitchMin = Mathf.Clamp(value, PitchMin, PitchMax); Pitch = Pitch; }
+        }
+
+        // Scales fractional progression (non-linear) to frame rate
+        private float GetFrameRateScaledFractionOfProgression(float fractionAt60FPS)
+        {
+            float frames = Time.unscaledDeltaTime * 60f; // Number of frames to handle this tick, can be partial
+            float c = (1.0f - fractionAt60FPS) / fractionAt60FPS;
+            return 1.0f - c / (frames + c);
+        }
+
+        // Applies scaled raw mouse deltas to lookTarget, then calls ApplySmoothing method to update lookCurrent
+        void ApplyLook()
+        {
+            // Scale sensitivity
+            float sensitivityX = 1.0f;
+            float sensitivityY = 1.0f;
+
+            if (InputManager.Instance.UsingController)
+            {
+                // Make sure it keeps consistent speed regardless of framerate
+                // Speed = speed * 60 frames / (1 / unscaledDeltaTime) or speed * 60 * unscaledDeltaTime
+                // 60 frames -> speed * 60 / 60 = speed * 1.0
+                // 30 frames -> speed * 60 / 30 = speed * 2.0
+                // 120 frames -> speed * 60 / 120 = speed * 0.5
+                sensitivityX = sensitivity.x * joystickSensitivityScale * 60f * Time.unscaledDeltaTime;
+                sensitivityY = sensitivity.y * joystickSensitivityScale * 60f * Time.unscaledDeltaTime;
+            }
+            else
+            {
+                sensitivityX = sensitivity.x * sensitivityScale;
+                sensitivityY = sensitivity.y * sensitivityScale;
+            }
+
+            Vector2 rawMouseDelta = new Vector2(InputManager.Instance.LookX, InputManager.Instance.LookY);
+
+            lookTarget += Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX, sensitivityY * (invertMouseY ? -1 : 1)));
+
+            float range = 360.0f;
+
+            if (lookTarget.x < 0.0f || lookTarget.x >= range) // Wrap look yaws to range 0..<360
+            {
+                float delta = Mathf.Floor(lookTarget.x / range) * range;
+                lookTarget.x -= delta;
+                lookCurrent.x -= delta;
+            }
+
+            // Clamp target look pitch to range of straight down to straight up
+            lookTarget.y = Mathf.Clamp(lookTarget.y, pitchMin, pitchMax);
+
+            ApplySmoothing();
+
+            Yaw = lookCurrent.x;
+            Pitch = -lookCurrent.y;
+        }
+
+        // Updates lookCurrent by moving it a fraction towards lookTarget
+        // If smoothing is 0.0 (off) then lookCurrent will be set to lookTarget with no intermediates
+        void ApplySmoothing()
+        {
+            float smoothing = Smoothing;
+
+            // Enforce some minimum smoothing for controllers (if you like)
+            if (InputManager.Instance.UsingController && smoothing < 0.5f)
+                smoothing = 0.5f;
+
+            // Scale for FPS
+            smoothing = 1.0f - GetFrameRateScaledFractionOfProgression(1.0f - smoothing);
+
+            // Move lookCurrent a fraction towards lookTarget (weighted average formula)
+            lookCurrent = lookCurrent * smoothing + lookTarget * (1.0f - smoothing);
         }
 
         void Start()
@@ -167,63 +247,10 @@ namespace DaggerfallWorkshop.Game
             if (InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon) && DaggerfallUnity.Settings.WeaponSwingMode == 0 && GameManager.Instance.WeaponManager.ScreenWeapon.WeaponType != WeaponTypes.Bow)
                 applyLook = false;
 
-            Vector2 rawMouseDelta = new Vector2(InputManager.Instance.LookX, InputManager.Instance.LookY);
-
-            // Invert mouse Y
-            if (invertMouseY)
-                rawMouseDelta.y = -rawMouseDelta.y;
-
-            // Scale sensitivity
-            float sensitivityX = 1.0f;
-            float sensitivityY = 1.0f;
-
-            if (InputManager.Instance.UsingController)
-            {
-                // Make sure it keeps consistent speed regardless of framerate
-                // Speed = speed * 60 frames / (1 / unscaledDeltaTime) or speed * 60 * unscaledDeltaTime
-                // 60 frames -> speed * 60 / 60 = speed * 1.0
-                // 30 frames -> speed * 60 / 30 = speed * 2.0
-                // 120 frames -> speed * 60 / 120 = speed * 0.5
-                sensitivityX = sensitivity.x * joystickSensitivityScale * 60f * Time.unscaledDeltaTime;
-                sensitivityY = sensitivity.y * joystickSensitivityScale * 60f * Time.unscaledDeltaTime;
-            }
+            if (applyLook)
+                ApplyLook(); // Apply mouse tracking or controller input to look vector
             else
-            {
-                sensitivityX = sensitivity.x * sensitivityScale;
-                sensitivityY = sensitivity.y * sensitivityScale;
-            }
-
-            //controller should just use smoothing
-            if (enableSmoothing || InputManager.Instance.UsingController)
-            {
-                // Scale raw mouse delta against the smoothing value
-                Vector2 smoothMouseDelta = Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX * smoothing.x, sensitivityY * smoothing.y));
-
-                // Interpolate mouse movement over time to apply smoothing delta
-                _smoothMouse.x = Mathf.Lerp(_smoothMouse.x, smoothMouseDelta.x, 1f / smoothing.x);
-                _smoothMouse.y = Mathf.Lerp(_smoothMouse.y, smoothMouseDelta.y, 1f / smoothing.y);
-
-                // Find the absolute mouse movement value from point zero
-                _mouseAbsolute += _smoothMouse;
-
-                // Update pitch and yaw
-                if (applyLook)
-                {
-                    Yaw += _smoothMouse.x;
-                    Pitch += -_smoothMouse.y;
-                }
-            }
-            else
-            {
-                // Just use scaled raw mouse input without any smoothing
-                rawMouseDelta = Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX, sensitivityY));
-                _mouseAbsolute += rawMouseDelta;
-                if (applyLook)
-                {
-                    Yaw += rawMouseDelta.x;
-                    Pitch += -rawMouseDelta.y;
-                }
-            }
+                SetFacing(lookCurrent); // Immediately stop at current heading
 
             // If there's a character body that acts as a parent to the camera
             if (characterBody)
@@ -239,9 +266,9 @@ namespace DaggerfallWorkshop.Game
 
         public void Init()
         {
-            // Reset smoothing
-            _mouseAbsolute = Vector2.zero;
-            _smoothMouse = Vector2.zero;
+            lookTarget.x = Yaw;
+            lookTarget.y = -Pitch;
+            lookCurrent = lookTarget;
         }
 
         public void SetFacing(float yaw, float pitch)
@@ -249,6 +276,11 @@ namespace DaggerfallWorkshop.Game
             Yaw = yaw;
             Pitch = pitch;
             Init();
+        }
+
+        public void SetFacing(Vector2 facing)
+        {
+            SetFacing(facing.x, -facing.y);
         }
 
         public void SetFacing(Vector3 forward)
