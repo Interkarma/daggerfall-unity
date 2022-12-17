@@ -1657,6 +1657,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // This will need more work as more usable items are available
         protected void UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
         {
+            // Allow item to handle its own use.
+            if (item.UseItem(collection))
+                return;
+
             const int noSpellsTextId = 12;
 
             // Handle quest items on use clicks
@@ -1977,9 +1981,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (actionMode == ActionModes.Use)
             {
-                // Allow item to handle its own use, fall through to general use function if unhandled
-                if (!item.UseItem(localItems))
-                    UseItem(item, localItems);
+                UseItem(item, localItems);
                 Refresh(false);
             }
             else if (actionMode == ActionModes.Remove)
@@ -2041,9 +2043,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (actionMode == ActionModes.Use)
             {
-                // Allow item to handle its own use, fall through to general use function if unhandled
-                if (!item.UseItem(remoteItems))
-                    UseItem(item, remoteItems);
+                UseItem(item, remoteItems);
                 Refresh(false);
             }
             else if (actionMode == ActionModes.Remove)
