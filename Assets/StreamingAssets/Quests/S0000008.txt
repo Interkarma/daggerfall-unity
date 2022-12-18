@@ -540,12 +540,6 @@ EadwyreGotTotem _S.36_
 	create foe _F.01_ every 1 minutes 5 times with 100% success 
 	say 1051 
 
-_S.37_ task:
-	when _S.46_ and _S.07_ 
-	get item _goldgoth_ from _Gothryd_ 
-	say 1053 
-	make _goldgoth_ permanent 
-
 _S.38_ task:
 	give pc totemLetter6 notify 1070 
 
@@ -579,5 +573,8 @@ _S.45_ task:
 	end quest 
 
 _S.46_ task:
-	toting _totem_ and _Gothryd_ clicked 
+	toting _totem_ and _Gothryd_ clicked
+    get item _goldgoth_ from _Gothryd_ 
+    say 1053 
+    make _goldgoth_ permanent  
 	start task _S.31_ 
