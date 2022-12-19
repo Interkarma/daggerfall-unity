@@ -154,10 +154,24 @@ namespace DaggerfallWorkshop
         /// </summary>
         public int CurrentRegionIndex
         {
-            get { if (currentPoliticIndex == 64)
-                    return 31; // High Rock sea coast
+            get {
+                // Determine region from current politic index
+                int result = 0;
+                if (currentPoliticIndex == 64)
+                    result = 31; // High Rock sea coast
                   else
-                    return currentPoliticIndex - 128; }
+                    result = currentPoliticIndex - 128;
+
+                // Patch known bad value to Wrothgarian Mountains
+                if (result == 105)
+                    result = 16;
+
+                // Clamp any out of range results to 0
+                if (result < 0 || result >= 62)
+                    result = 0;
+
+                return result;
+            }
         }
 
         /// <summary>
