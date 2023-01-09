@@ -650,7 +650,7 @@ namespace DaggerfallWorkshop.Game
         private static class Locale_Set
         {
             public static readonly string name = "locale_set";
-            public static readonly string description = "Sets current locale. Use local_print to list avilable locales.";
+            public static readonly string description = "Sets current locale. Use locale_print to list available locales.";
             public static readonly string usage = "locale_set <index>";
 
             public static string Execute(params string[] args)
