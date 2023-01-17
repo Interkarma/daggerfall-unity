@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport
@@ -9,21 +10,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport
     internal static class ModOrganizerLoader
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void LoadMO2Mods()
+        internal static void LoadMO2Mods()
         {
-            #if !UNITY_EDITOR
-            return;
-            #endif
-
             var pathData = ModOrganizerData.Load();
             if (pathData is null) return;
 
-            var modManager = UnityEngine.Object.FindObjectOfType<ModManager>();
-
-            if (modManager is null)
+            if (Application.isPlaying)
             {
-                Debug.LogError($"Failed to find Mod Manager. Make sure you're starting from the DaggerfallUnityStartup scene if you wish to load mods.");
-                return;
+                var modManager = UnityEngine.Object.FindObjectOfType<ModManager>();
+
+                if (modManager is null)
+                {
+                    Debug.LogError($"Failed to find Mod Manager. Make sure you're starting from the " +
+                                   $"DaggerfallUnityStartup scene if you wish to load mods from Mod Organizer.");
+                    return;
+                }
+
+                modManager.ModDirectory = ModOrganizerData.ModInstallPath;
             }
 
             if (string.IsNullOrWhiteSpace(pathData.modOrganizerDataPath) ||
@@ -34,7 +37,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport
             }
 
             // we copy our mods to a path elsewhere to avoid Unity attempting to import everything
-            modManager.ModDirectory = ModOrganizerData.ModInstallPath;
 
             var modOrganizerModPath = Path.Combine(pathData.modOrganizerDataPath, "mods");
             modOrganizerModPath = Path.GetFullPath(modOrganizerModPath);

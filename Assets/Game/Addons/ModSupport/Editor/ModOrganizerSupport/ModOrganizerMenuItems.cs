@@ -2,15 +2,18 @@
 using UnityEngine;
 using System.IO;
 using System.Linq;
+using DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport;
 using UnityEditor;
 using Directory = System.IO.Directory;
 
-public class ModOrganizerMenuItems
+internal class ModOrganizerMenuItems
 {
     [MenuItem("Daggerfall Tools/Mod Organizer Import/Locate Data")]
     static void Select()
     {
-        // Get existing open window or if none, make a new one:
+        Debug.Log($"<color=orange>Select your Mod Organizer data directory.</color> " +
+                  $"This path should contain your `profiles` and `mods` subfolders.");
+
         string dataPath = EditorUtility.OpenFolderPanel("Select Mod Organizer data path",
             String.Empty, String.Empty);
 
@@ -42,6 +45,8 @@ public class ModOrganizerMenuItems
 
         while (profilePath == string.Empty)
         {
+
+            Debug.Log($"<color=orange>Select your profile directory.</color>");
             profilePath = EditorUtility.OpenFolderPanel("Select profile",
             Path.Combine(dataPath, "profiles"), String.Empty);
 
@@ -59,6 +64,8 @@ public class ModOrganizerMenuItems
 
         var data = new ModOrganizerData(dataPath, new DirectoryInfo(profilePath).Name);
         ModOrganizerData.Save(data);
+
+        ModOrganizerLoader.LoadMO2Mods();
 
         Debug.Log($"<color=green>Mod Organizer setup succeeded!</color>\n" +
                   $"Note that this means any mods in your StreamingAssets/Mods folder will be ignored. " +
@@ -78,5 +85,23 @@ public class ModOrganizerMenuItems
         Debug.LogWarning($"<color=orange>Mod Organizer copies deleted.</color>\n" +
                          $"Any files not present within a mod's \"Mods\" subdirectory or root folder remain in the StreamingAssets " +
                          $"folder and must be cleaned manually to avoid deleting wanted files.");
+    }
+
+    [MenuItem("Daggerfall Tools/Mod Organizer Import/Update mods from current profile")]
+    static void Refresh()
+    {
+        ModOrganizerLoader.LoadMO2Mods();
+    }
+
+    [MenuItem("Daggerfall Tools/Mod Organizer Import/Open Imported Mod Install Path")]
+    static void OpenModPath()
+    {
+        if (!Directory.Exists(ModOrganizerData.ModInstallPath))
+        {
+            Debug.LogError($"No Mod Organizer mods are currently installed.");
+            return;
+        }
+
+        Application.OpenURL($"file:///{ModOrganizerData.ModInstallPath}");
     }
 }
