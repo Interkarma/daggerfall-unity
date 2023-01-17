@@ -15,6 +15,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport
             var pathData = ModOrganizerData.Load();
             if (pathData is null) return;
 
+            if (!pathData.enableLoad)
+            {
+                if(!Application.isPlaying)
+                    Debug.LogWarning($"<color=orange>Mod Organizer loading aborted since you have disabled it</color>");
+
+                return;
+            }
+
             if (Application.isPlaying)
             {
                 var modManager = UnityEngine.Object.FindObjectOfType<ModManager>();
@@ -26,7 +34,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport
                     return;
                 }
 
-                modManager.ModDirectory = ModOrganizerData.ModInstallPath;
+                modManager.ModDirectory = ModInstallPath;
             }
 
             if (string.IsNullOrWhiteSpace(pathData.modOrganizerDataPath) ||
@@ -46,17 +54,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport
             var modList = rawModList.Where(x => x.StartsWith("+")).Select(x => x.Remove(0, 1)).Reverse()
                 .ToArray();
 
-            var loadedModPath = new DirectoryInfo(ModOrganizerData.ModInstallPath);
+            var loadedModPath = new DirectoryInfo(ModInstallPath);
             var streamingAssetsDirectory = new DirectoryInfo(Application.streamingAssetsPath);
             foreach (string modName in modList)
             {
+                Debug.Log($"<color=green>Found Mod Organizer mod: {modName}.</color><color=grey> Copying files if necessary.</color>");
                 DirectoryInfo modDir = new DirectoryInfo(Path.Combine(modOrganizerModPath, modName));
                 foreach (DirectoryInfo subDirectory in modDir.GetDirectories())
                 {
                     DirectoryInfo target = IsModSubdirectory(subDirectory) ? loadedModPath : streamingAssetsDirectory;
                     target = target.CreateSubdirectory(subDirectory.Name);
-                    Debug.Log($"<color=green>Found Mod Organizer mod: {modName}.</color><color=grey> Copying files if necessary.</color>" +
-                              $"\n<color=grey>{subDirectory.FullName}</color> => {target.FullName}\n");
                     CopyAll(subDirectory, target);
                 }
 
@@ -126,6 +133,24 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport
                 DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
                 CopyAll(diSourceSubDir, nextTargetSubDir);
             }
+        }
+
+
+
+        internal static string EditorPersistentModData =>
+            Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, "Mods", "EditorData");
+        internal static string ModInstallPath => Path.Combine(EditorPersistentModData, "mod-organizer-mod-installs");
+        internal static bool DeleteModInstalls()
+        {
+            bool deleted = false;
+
+            if (Directory.Exists(ModInstallPath))
+            {
+                Directory.Delete(ModInstallPath, true);
+                deleted = true;
+            }
+
+            return deleted;
         }
     }
 }

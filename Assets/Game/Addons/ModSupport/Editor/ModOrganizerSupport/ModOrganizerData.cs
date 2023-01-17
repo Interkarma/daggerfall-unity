@@ -3,60 +3,70 @@ using System.IO;
 using DaggerfallWorkshop;
 using UnityEngine;
 
-[Serializable]
-internal class ModOrganizerData
+namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport
 {
-    [SerializeField]
-    internal string modOrganizerDataPath;
-    [SerializeField]
-    internal string profileName;
-
-    internal ModOrganizerData(string modOrganizerDataPath, string profileName)
+    [Serializable]
+    internal class ModOrganizerData
     {
-        this.modOrganizerDataPath = modOrganizerDataPath;
-        this.profileName = profileName;
-    }
+        [SerializeField] internal string modOrganizerDataPath;
+        [SerializeField] internal string profileName;
+        [SerializeField] internal bool enableLoad;
 
-    internal string SelectedProfilePath => Path.Combine(modOrganizerDataPath, "profiles", profileName);
+        private static ModOrganizerData instance;
 
-    private static string fileName = "mod-organizer-import-settings.json";
-    private static string FilePath => Path.Combine(EditorPersistentModData, fileName);
-
-    internal static string EditorPersistentModData =>
-        Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, "Mods", "EditorData");
-
-    internal static string ModInstallPath => Path.Combine(EditorPersistentModData, "mod-organizer-mod-installs");
-
-    internal static void Save(ModOrganizerData modOrganizerData)
-    {
-        Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
-        File.WriteAllText(FilePath,JsonUtility.ToJson(modOrganizerData, true));
-    }
-
-    internal static ModOrganizerData Load()
-    {
-        if (!File.Exists(FilePath)) return null;
-
-        string fileContents = File.ReadAllText(FilePath);
-        Debug.Log($"<color=orange>Loaded {nameof(ModOrganizerData)}</color> from {FilePath}");
-        return JsonUtility.FromJson<ModOrganizerData>(fileContents);
-    }
-
-    internal static bool Delete()
-    {
-        bool deleted = false;
-        if (File.Exists(FilePath))
+        private static ModOrganizerData Instance
         {
-            File.Delete(FilePath);
-            deleted = true;
+            get
+            {
+                if (instance is null)
+                    Load();
+
+                return instance;
+            }
+            set => instance = value;
         }
 
-        if (Directory.Exists(ModInstallPath))
+        internal ModOrganizerData(string modOrganizerDataPath, string profileName)
         {
-            Directory.Delete(ModInstallPath, true);
-            deleted = true;
+            this.modOrganizerDataPath = modOrganizerDataPath;
+            this.profileName = profileName;
+            enableLoad = Instance is null || Instance.enableLoad;
+            Instance = this;
         }
 
-        return deleted;
+        internal string SelectedProfilePath => Path.Combine(modOrganizerDataPath, "profiles", profileName);
+
+        private static string fileName = "mod-organizer-import-settings.json";
+        private static string FilePath => Path.Combine(ModOrganizerLoader.EditorPersistentModData, fileName);
+
+        public static bool Enabled => Instance?.enableLoad ?? false;
+
+        internal static void Save(ModOrganizerData modOrganizerData)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
+            File.WriteAllText(FilePath, JsonUtility.ToJson(modOrganizerData, true));
+        }
+
+        internal static ModOrganizerData Load()
+        {
+            if (!File.Exists(FilePath)) return null;
+
+            string fileContents = File.ReadAllText(FilePath);
+            ModOrganizerData loaded = JsonUtility.FromJson<ModOrganizerData>(fileContents);
+
+            if (loaded != null)
+                Instance = loaded;
+
+            return loaded;
+        }
+
+        internal static void SetEnabled(bool on)
+        {
+            if (Instance is null)
+                return;
+
+            Instance.enableLoad = on;
+            Save(Instance);
+        }
     }
 }
