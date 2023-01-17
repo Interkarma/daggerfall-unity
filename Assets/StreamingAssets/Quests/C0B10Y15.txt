@@ -156,12 +156,10 @@ Foe _lich_ is Lich
 
 _qtime_ task:
 	have _item_ set _S.07_ 
-	end quest 
 
 _S.01_ task:
 	toting _item_ and _questgiver_ clicked 
 	give pc _reward_ 
-	end quest 
 
 _qgclicked_ task:
 	clicked npc _questgiver_
@@ -192,4 +190,6 @@ _S.06_ task:
 _S.07_ task:
 	say 1015 
 
-variable _S.08_
+_S.08_ task:
+    when _S.01_ or _qtime_
+    end quest
