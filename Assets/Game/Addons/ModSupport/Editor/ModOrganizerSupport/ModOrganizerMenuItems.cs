@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport;
 using UnityEditor;
@@ -16,10 +17,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport
         private const string FullMenu = ParentMenu + "/" + SubMenu + "/";
 
         [MenuItem(FullMenu + "Locate Data")]
-        static void Select()
+        static async void Select()
         {
             Debug.Log($"<color=orange>Select your Mod Organizer data directory.</color> " +
                       $"This path should contain your `profiles` and `mods` subfolders.");
+
+            await Task.Delay(500);
 
             string dataPath = EditorUtility.OpenFolderPanel("Select Mod Organizer data path",
                 String.Empty, String.Empty);
@@ -54,6 +57,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModOrganizerSupport
             {
 
                 Debug.Log($"<color=orange>Select your profile directory.</color>");
+                await Task.Delay(500);
+
                 profilePath = EditorUtility.OpenFolderPanel("Select profile",
                     Path.Combine(dataPath, "profiles"), String.Empty);
 
