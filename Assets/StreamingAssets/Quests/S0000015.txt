@@ -243,11 +243,15 @@ _S.07_ task:
 	say 1033 
 	make _gold_ permanent 
 	change repute with _gortwog_ by +20 
-	change repute with KingOfWorms0 by +20 
+	change repute with KingOfWorms0 by +20
 
 LiftedCurse _S.08_
 	when _S.03_ or _S.04_ or _S.00_ 
-	play video 13 
+	play video 13
+	remove log step 2
+	remove log step 3
+--added these remove log actions.
+--these logs would stay in the journal after catching Woodborne, which is confusing.
 
 _S.09_ task:
 	when _S.05_ or _S.07_ or _S.06_ 
