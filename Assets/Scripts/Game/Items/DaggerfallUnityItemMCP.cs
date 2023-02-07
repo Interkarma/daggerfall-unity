@@ -42,8 +42,8 @@ namespace DaggerfallWorkshop.Game.Items
                 DFRandom.srand(message);
                 uint paintingIndex = DFRandom.rand() % 180;
                 dataSource.paintingFileIdx = paintingIndex & 7;
-                char paintingFileChar = (char)((paintingIndex >> 3) + 97);
-                dataSource.paintingFilename = paintingFileChar + "paint.cif";
+                char paintingFileChar = (char)((paintingIndex >> 3) + 'A');
+                dataSource.paintingFilename = paintingFileChar + "PAINT.CIF";
 
                 byte[] paintingRecord = DaggerfallUnity.Instance.ContentReader.PaintFileReader.Read(paintingIndex);
                 Debug.LogFormat("painting file: {0}, index: {1}, cif idx: {2}, record: {3} {4} {5}", dataSource.paintingFilename, paintingIndex, dataSource.paintingFileIdx, paintingRecord[0], paintingRecord[1], paintingRecord[2]);
