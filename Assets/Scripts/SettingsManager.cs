@@ -513,7 +513,7 @@ namespace DaggerfallWorkshop
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
             StartInDungeon = GetBool(sectionStartup, "StartInDungeon");
 
-            TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 4);
+            TerrainDistance = GetInt(sectionExperimental, "TerrainDistance", 1, 6);
             TerrainHeightmapPixelError = GetFloat(sectionExperimental, "TerrainHeightmapPixelError", 1, 10);
             SmallerDungeons = GetBool(sectionExperimental, "SmallerDungeons");
             AssetCacheThreshold = GetInt(sectionExperimental, "AssetCacheThreshold", 0, 120);
