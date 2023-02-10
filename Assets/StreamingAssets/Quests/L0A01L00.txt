@@ -113,6 +113,7 @@ Message:  1020
  as our foe. Travel to ___apo_
  in ____apo_ and see _apothecary_,
  who will give you further instructions.
+ We give you =S.01_ days.
  
 <ce>                               A Brother
 
