@@ -25,6 +25,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
     {
         private const string WorldDataFolder = "/StreamingAssets/WorldData/";
         private GameObject root;
+        private GameObject light;
         private GroundEditor groundEditor;
         private SceneryEditor sceneryEditor;
         private AutomapEditor automapEditor;
@@ -349,6 +350,16 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 loadedBlock = RmbBlockHelper.LoadRmbBlockFile(path);
                 if (root != null)
                     DestroyImmediate(root);
+
+                if (light != null)
+                    DestroyImmediate(light);
+
+                // Add a  light to the scene
+                light = new GameObject("Light");
+                var lightComponent = light.AddComponent<Light>();
+                lightComponent.type = LightType.Directional;
+                lightComponent.shadows = LightShadows.Soft;
+                lightComponent.transform.rotation = Quaternion.Euler(new Vector3(50, -30, 0));
 
                 // Create and select the root GameObject
                 root = new GameObject("RMB Block : " + Path.GetFileName(path));

@@ -49,7 +49,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             }
 
             var blockReplacementJson = File.ReadAllText(path);
-            return (DFBlock.RmbBlockDesc)SaveLoadManager.Deserialize(typeof(DFBlock.RmbBlockDesc), blockReplacementJson);
+            return (DFBlock.RmbBlockDesc)SaveLoadManager.Deserialize(typeof(DFBlock.RmbBlockDesc),
+                blockReplacementJson);
         }
 
         public static void AddGroundPlane(DFBlock.RmbGroundTiles[,] groundTiles, ref DaggerfallGroundPlane dfGround,
@@ -95,7 +96,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             return go;
         }
 
-        public static GameObject Add3dObject(DFBlock.RmbBlock3dObjectRecord rmbBlock, ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
+        public static GameObject Add3dObject(DFBlock.RmbBlock3dObjectRecord rmbBlock, ClimateBases climate,
+            ClimateSeason season, WindowStyle windowStyle)
         {
             var dfUnity = DaggerfallUnity.Instance;
             // Get model data
@@ -148,26 +150,38 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 }
                 else
                     Debug.LogError("Custom model not found for modelId " + rmbBlock.ModelIdNum);
+
+                modelGo.GetComponent<DaggerfallMesh>().SetClimate(climate, season, windowStyle);
             }
-            modelGo.GetComponent<DaggerfallMesh>().SetClimate(climate, season, windowStyle);
+
             return modelGo;
         }
 
-        public static GameObject Add3dObject(string modelId, ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
+        public static GameObject Add3dObject(string modelId, ClimateBases climate, ClimateSeason season,
+            WindowStyle windowStyle)
         {
             Vector3 position = new Vector3(0, 0, 0);
 
             return Add3dObject(modelId, position, climate, season, windowStyle);
         }
 
-        public static GameObject Add3dObject(string modelId, Vector3 position, ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
+        public static GameObject Add3dObject(string modelId, Vector3 position, ClimateBases climate,
+            ClimateSeason season, WindowStyle windowStyle)
         {
             // Get matrix
             Matrix4x4 matrix = Matrix4x4.identity;
             matrix *= Matrix4x4.TRS(position, Quaternion.identity, Vector3.one);
 
-            // Get model data
             uint modelIdNum = uint.Parse(modelId);
+
+            // Inject custom GameObject if available
+            var modelGo = MeshReplacement.ImportCustomGameobject(modelIdNum, null, matrix);
+            if (modelGo != null)
+            {
+                return modelGo;
+            }
+
+            // Get model data
             ModelData modelData;
             DaggerfallUnity.Instance.MeshReader.GetModelData(modelIdNum, out modelData);
 
@@ -182,7 +196,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             throw new Exception("Vanilla model not found for preview, modelId " + modelId);
         }
 
-        public static GameObject AddBuilding3dObjects(DFBlock.RmbBlock3dObjectRecord[] ExteriorBlock3dObjectRecords, int YPos, ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
+        public static GameObject AddBuilding3dObjects(DFBlock.RmbBlock3dObjectRecord[] ExteriorBlock3dObjectRecords,
+            int YPos, ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
         {
             var obj3D = new GameObject("3D Objects");
             var mainRecord = ExteriorBlock3dObjectRecords[0];
@@ -273,7 +288,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             cloned.Header.NumPeopleRecords = blockData.Header.NumPeopleRecords;
             cloned.Header.NumDoorRecords = blockData.Header.NumDoorRecords;
             cloned.Block3dObjectRecords = new DFBlock.RmbBlock3dObjectRecord[blockData.Block3dObjectRecords.Length];
-            cloned.BlockFlatObjectRecords = new DFBlock.RmbBlockFlatObjectRecord[blockData.BlockFlatObjectRecords.Length];
+            cloned.BlockFlatObjectRecords =
+                new DFBlock.RmbBlockFlatObjectRecord[blockData.BlockFlatObjectRecords.Length];
             cloned.BlockSection3Records = new DFBlock.RmbBlockSection3Record[blockData.BlockSection3Records.Length];
             cloned.BlockPeopleRecords = new DFBlock.RmbBlockPeopleRecord[blockData.BlockPeopleRecords.Length];
             cloned.BlockDoorRecords = new DFBlock.RmbBlockDoorRecord[blockData.BlockDoorRecords.Length];
