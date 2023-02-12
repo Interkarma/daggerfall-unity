@@ -12,6 +12,7 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
+    #if UNITY_EDITOR
     [ExecuteInEditMode]
     public abstract class Placeholder : MonoBehaviour
     {
@@ -39,7 +40,10 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             {
                 meshSubComponent.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             }
+        }
 
+        public void Start()
+        {
             SceneView.duringSceneGui += OnSceneGUI;
         }
 
@@ -335,4 +339,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             transform.LookAt(SceneView.lastActiveSceneView.camera.transform);
         }
     }
+    #endif
 }

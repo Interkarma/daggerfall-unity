@@ -248,7 +248,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets
 
         private static string GetFile(string fileName)
         {
-            var path = Environment.CurrentDirectory + "/Assets/Game/Addons/RmbBlockEditor/BuildingPresets/" + fileName;
+            var path = Environment.CurrentDirectory + "/Assets/Game/Addons/RmbBlockEditor/Editor/BuildingPresets/" + fileName;
             return File.ReadAllText(path);
         }
     }

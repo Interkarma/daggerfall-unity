@@ -10,6 +10,7 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
+    #if UNITY_EDITOR
     [ExecuteInEditMode]
     public class Ground: MonoBehaviour
     {
@@ -46,4 +47,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             groundCollider.sharedMesh = meshFilter.sharedMesh;
         }
     }
+    #endif
 }

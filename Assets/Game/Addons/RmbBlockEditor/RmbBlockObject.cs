@@ -11,6 +11,7 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
+    #if UNITY_EDITOR
     [ExecuteInEditMode]
     public class RmbBlockObject : MonoBehaviour
     {
@@ -123,4 +124,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             onDestroy();
         }
     }
+    #endif
 }

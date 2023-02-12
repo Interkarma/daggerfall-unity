@@ -10,6 +10,7 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
+    #if UNITY_EDITOR
     [ExecuteInEditMode]
     public class Scenery : MonoBehaviour
     {
@@ -124,4 +125,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             return groundScenery;
         }
     }
+    #endif
 }

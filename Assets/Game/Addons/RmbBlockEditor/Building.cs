@@ -13,6 +13,7 @@ using UnityEditor;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
+    #if UNITY_EDITOR
     [ExecuteInEditMode]
     [SelectionBase]
     [Serializable]
@@ -268,4 +269,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             SceneView.duringSceneGui -= OnSceneGUI;
         }
     }
+    #endif
 }

@@ -13,6 +13,7 @@ using UnityEditor;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
+    #if UNITY_EDITOR
     [ExecuteInEditMode]
     [SelectionBase]
     public class Misc3d : MonoBehaviour
@@ -182,4 +183,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             SceneView.duringSceneGui -= OnSceneGUI;
         }
     }
+    #endif
 }

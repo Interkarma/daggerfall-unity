@@ -10,6 +10,7 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
+    #if UNITY_EDITOR
     [ExecuteInEditMode]
     public class Automap : MonoBehaviour
     {
@@ -101,4 +102,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             renderer.sharedMaterial.mainTexture = tex;
         }
     }
+    #endif
 }

@@ -12,6 +12,7 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
+    #if UNITY_EDITOR
     [ExecuteInEditMode]
     public class MiscFlat : MonoBehaviour
     {
@@ -44,6 +45,10 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
             SaveOldPosition();
             UpdateScenePosition();
+        }
+
+        public void Start()
+        {
             SceneView.duringSceneGui += OnSceneGUI;
         }
 
@@ -110,4 +115,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             SceneView.duringSceneGui -= OnSceneGUI;
         }
     }
+    #endif
 }

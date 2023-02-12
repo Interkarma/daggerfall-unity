@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         {
             var rmbPropsTree =
                 AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
-                    "Assets/Game/Addons/RmbBlockEditor/Elements/GroundGrid/Template.uxml");
+                    "Assets/Game/Addons/RmbBlockEditor/Editor/Elements/GroundGrid/Template.uxml");
             Add(rmbPropsTree.CloneTree());
             RenderGrid();
         }

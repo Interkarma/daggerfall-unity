@@ -10,6 +10,7 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
+    #if UNITY_EDITOR
     [ExecuteInEditMode]
     public class SceneryItem : MonoBehaviour
     {
@@ -21,8 +22,13 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             this.textureRecord = textureRecord;
             this.i = i;
             this.j = j;
+        }
+
+        public void Start()
+        {
             SceneView.duringSceneGui += OnSceneGUI;
         }
+
         protected void OnSceneGUI(SceneView sceneView)
         {
             var cameraPos = SceneView.lastActiveSceneView.camera.transform.position;
@@ -35,4 +41,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             SceneView.duringSceneGui -= OnSceneGUI;
         }
     }
+    #endif
 }
