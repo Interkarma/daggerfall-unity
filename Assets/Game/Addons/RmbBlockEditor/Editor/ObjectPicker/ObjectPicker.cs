@@ -149,7 +149,10 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                     var firstId = subElement.Key;
                     foreach (var objectGroupName in objectGroups.Keys)
                     {
-                        if (objectGroups[objectGroupName][0] != firstId) continue;
+                        // Some flats have leading zeros in their IDs
+                        if (objectGroups[objectGroupName][0] != firstId &&
+                            objectGroups[objectGroupName][0] != firstId.TrimStart('0'))
+                            continue;
                         objectGroup = objectGroups[objectGroupName];
                         break;
                     }
