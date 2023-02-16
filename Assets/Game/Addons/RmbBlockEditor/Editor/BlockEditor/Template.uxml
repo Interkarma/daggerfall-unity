@@ -10,7 +10,7 @@
             <engine:Label text="Position: "/>
         </engine:VisualElement>
         <engine:VisualElement class="col-1">
-            <engine:TextField name="rmb-block-position"
+            <editor:IntegerField name="rmb-block-position"
                               tooltip="This is the position of the data in the original data. It is used to create load ids so try to make it unique."/>
         </engine:VisualElement>
     </engine:VisualElement>
@@ -20,7 +20,7 @@
             <engine:Label text="Index: "/>
         </engine:VisualElement>
         <engine:VisualElement class="col-1">
-            <engine:TextField name="rmb-block-index"
+            <editor:IntegerField name="rmb-block-index"
                               tooltip="Index of block. Leave as set for original blocks being altered. Set to 0 for new blocks since it will be auto assigned."/>
         </engine:VisualElement>
     </engine:VisualElement>

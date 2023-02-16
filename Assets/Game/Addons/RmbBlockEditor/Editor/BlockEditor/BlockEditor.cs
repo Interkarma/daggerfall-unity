@@ -54,8 +54,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var typeProperty = so.FindProperty("Type");
 
             // Select the bindable fields:
-            var positionField = visualElement.Query<TextField>("rmb-block-position").First();
-            var indexField = visualElement.Query<TextField>("rmb-block-index").First();
+            var positionField = visualElement.Query<IntegerField>("rmb-block-position").First();
+            var indexField = visualElement.Query<IntegerField>("rmb-block-index").First();
             var nameField = visualElement.Query<TextField>("rmb-block-name").First();
             var typeField = visualElement.Query<EnumField>("rmb-block-type").First();
 
