@@ -84,6 +84,17 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var zPos = j * 6.4f;
             if (textureRecord != -1)
             {
+                // Check if there is already a scenery item there and remove it
+                var allItems = SceneryGameObject.GetComponentsInChildren<SceneryItem>();
+                foreach (var item in allItems)
+                {
+                    if (item.i == i && item.j == j)
+                    {
+                        DestroyImmediate(item.gameObject);
+                    }
+                }
+
+                // Place the new item
                 var sceneryFlatObject = RmbBlockHelper.AddFlatObject(getTextureArchive() + "." + textureRecord);
                 var billboard = sceneryFlatObject.GetComponent<Billboard>();
                 sceneryFlatObject.transform.position = new Vector3(xPos, billboard.Summary.Size.y / 2, -zPos);

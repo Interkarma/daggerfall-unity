@@ -10,13 +10,14 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     [ExecuteInEditMode]
     public class SceneryItem : MonoBehaviour
     {
         public int textureRecord;
         public int i;
         public int j;
+
         public void CreateObject(int textureRecord, int i, int j)
         {
             this.textureRecord = textureRecord;
@@ -26,20 +27,20 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         public void Start()
         {
-            SceneView.duringSceneGui += OnSceneGUI;
+            SceneView.beforeSceneGui += OnSceneGUI;
         }
 
-        protected void OnSceneGUI(SceneView sceneView)
+        private void OnSceneGUI(SceneView sceneView)
         {
             var cameraPos = SceneView.lastActiveSceneView.camera.transform.position;
             var targetPos = new Vector3(cameraPos.x, transform.position.y, cameraPos.z);
             transform.LookAt(targetPos);
         }
 
-        protected void OnDestroy()
+        private void OnDestroy()
         {
-            SceneView.duringSceneGui -= OnSceneGUI;
+            SceneView.beforeSceneGui -= OnSceneGUI;
         }
     }
-    #endif
+#endif
 }

@@ -56,6 +56,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 cell.scaleMode = ScaleMode.ScaleToFit;
                 cell.RegisterCallback<MouseUpEvent>(evt =>
                 {
+                    StopPainting();
                     var component = (Image)evt.currentTarget;
                     var textureRecord = (int)component.userData;
                     SelectNewCell(selectedScenery, textureRecord);
@@ -70,6 +71,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var paint = visualElement.Query<Button>("paint").First();
             paint.RegisterCallback<MouseUpEvent>(evt =>
             {
+                DestroyPlaceholder();
                 CreatePlaceholder();
             }, TrickleDown.TrickleDown);
         }

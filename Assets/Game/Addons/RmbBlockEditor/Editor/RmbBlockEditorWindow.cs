@@ -296,6 +296,12 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 Selection.SetActiveObjectWithContext(ground, null);
             }, (action) => SetMenuStatus(action));
 
+            editMenu.menu.AppendAction("Ground Scenery", action =>
+            {
+                var groundScenery = root.GetComponentInChildren<Scenery>();
+                Selection.SetActiveObjectWithContext(groundScenery, null);
+            }, (action) => SetMenuStatus(action));
+
             editMenu.menu.AppendAction("Automap", action =>
             {
                 var rmbBlockObject = root.GetComponent<RmbBlockObject>();
