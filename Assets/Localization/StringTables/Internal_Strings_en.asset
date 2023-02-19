@@ -4625,5 +4625,99 @@ MonoBehaviour:
     m_Localized: '{0} in {1} province'
     m_Metadata:
       m_Items: []
+  - m_Id: 318179644662083584
+    m_Localized: 'Sundas
+
+      Morndas
+
+      Tirdas
+
+      Middas
+
+      Turdas
+
+      Fredas
+
+      Loredas'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180613974126592
+    m_Localized: 'Morning Star
+
+      Sun''s Dawn
+
+      First Seed
+
+      Rain''s
+      Hand
+
+      Second Seed
+
+      Midyear
+
+      Sun''s Height
+
+      Last Seed
+
+      Hearthfire
+
+      Frostfall
+
+      Sun''s
+      Dusk
+
+      Evening Star'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180665765392384
+    m_Localized: 'The Ritual
+
+      The Lover
+
+      The Lord
+
+      The Mage
+
+      The
+      Shadow
+
+      The Steed
+
+      The Apprentice
+
+      The Warrior
+
+      The
+      Lady
+
+      The Tower
+
+      The Atronach
+
+      The Thief'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180720735940608
+    m_Localized: 'Fall
+
+      Spring
+
+      Summer
+
+      Winter'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318183911657566208
+    m_Localized: '{0:00}:{1:00}:{2:00} on {3}, {4}{5} of {6:00}, 3E{7}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318184342387421184
+    m_Localized: '{0:00}:{1:00}:{2:00} on {3}{4} of {5:00}, 3E{6}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318184563599208448
+    m_Localized: '{0} the {1}{2} of {3:00}'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

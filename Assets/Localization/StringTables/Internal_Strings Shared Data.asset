@@ -3711,6 +3711,34 @@ MonoBehaviour:
     m_Key: locationInRegionProvince
     m_Metadata:
       m_Items: []
+  - m_Id: 318179644662083584
+    m_Key: dayNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180613974126592
+    m_Key: monthNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180665765392384
+    m_Key: birthSignNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180720735940608
+    m_Key: seasonNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318183911657566208
+    m_Key: longDateTimeFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318184342387421184
+    m_Key: dateTimeFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318184563599208448
+    m_Key: dateFormatString
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
