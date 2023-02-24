@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Utility.AssetInjection;
 using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets
@@ -104,16 +105,66 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets
             this.windowStyle = windowStyle;
         }
 
-        public GameObject AddBuildingObject(string buildingId)
+        public GameObject AddBuildingObject(BuildingReplacementData building, Vector3 position, Vector3 rotation)
         {
-            var buildingGroupId = int.Parse(buildingId.Substring(0, 2));
-            var buildingIndex = int.Parse(buildingId.Substring(2));
-            DFBlock buildingGroup = GetBuildingGroup(buildingGroupId);
+            DFLocation.BuildingData buildingData = new DFLocation.BuildingData()
+            {
+                NameSeed = building.NameSeed, Quality = building.Quality,
+                BuildingType = (DFLocation.BuildingTypes)building.BuildingType,
+                FactionId = building.FactionId
+            };
+            DFBlock.RmbSubRecord subRecord = building.RmbSubRecord;
 
-            DFLocation.BuildingData buildingData = buildingGroup.RmbBlock.FldHeader.BuildingDataList[buildingIndex-1];
-            DFBlock.RmbSubRecord subRecord = buildingGroup.RmbBlock.SubRecords[buildingIndex-1];
+            subRecord.XPos = (int)position.x;
+            subRecord.ZPos = (int)position.z;
+            subRecord.YRotation = (short)rotation.y;
+            for (var i = 0; i < subRecord.Exterior.Block3dObjectRecords.Length; i++)
+            {
+                var model = subRecord.Exterior.Block3dObjectRecords[i];
+                subRecord.Exterior.Block3dObjectRecords[i].YPos = model.YPos + (int)position.y;
+            }
 
-            var go = new GameObject("Building " + buildingId);
+            var go = new GameObject("Building From File");
+            var buildingComponent = go.AddComponent<Building>();
+            buildingComponent.CreateObject(buildingData, subRecord, climate, season, windowStyle);
+
+            return go;
+        }
+
+        public GameObject AddBuildingObject(BuildingReplacementData building, Building oldBuilding,
+            Boolean useNewInterior, Boolean useNewExterior)
+        {
+            var oldSubRecord = oldBuilding.GetSubRecord();
+            DFLocation.BuildingData buildingData = new DFLocation.BuildingData()
+            {
+                NameSeed = building.NameSeed,
+                Quality = building.Quality,
+                BuildingType = (DFLocation.BuildingTypes)building.BuildingType,
+                FactionId = building.FactionId
+            };
+
+            var exterior = oldSubRecord.Exterior;
+
+            if (useNewExterior)
+            {
+                exterior = building.RmbSubRecord.Exterior;
+                for (var i = 0; i < exterior.Block3dObjectRecords.Length; i++)
+                {
+                    var model = exterior.Block3dObjectRecords[i];
+                    exterior.Block3dObjectRecords[i].YPos = model.YPos + oldBuilding.ModelsYPos;
+                }
+            }
+
+            DFBlock.RmbSubRecord subRecord = new DFBlock.RmbSubRecord()
+            {
+                XPos = oldBuilding.XPos,
+                ZPos = oldBuilding.ZPos,
+                YRotation = oldBuilding.YRotation,
+                Interior = useNewInterior ? building.RmbSubRecord.Interior : oldSubRecord.Interior,
+                Exterior = exterior
+            };
+
+            var go = new GameObject("Building From File");
             var buildingComponent = go.AddComponent<Building>();
             buildingComponent.CreateObject(buildingData, subRecord, climate, season, windowStyle);
 
@@ -126,8 +177,9 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets
             var buildingIndex = int.Parse(buildingId.Substring(2));
             DFBlock buildingGroup = GetBuildingGroup(buildingGroupId);
 
-            DFLocation.BuildingData buildingData = buildingGroup.RmbBlock.FldHeader.BuildingDataList[buildingIndex-1];
-            DFBlock.RmbSubRecord subRecord = RmbBlockHelper.CloneRmbSubRecord(buildingGroup.RmbBlock.SubRecords[buildingIndex-1]);
+            DFLocation.BuildingData buildingData = buildingGroup.RmbBlock.FldHeader.BuildingDataList[buildingIndex - 1];
+            DFBlock.RmbSubRecord subRecord =
+                RmbBlockHelper.CloneRmbSubRecord(buildingGroup.RmbBlock.SubRecords[buildingIndex - 1]);
 
             subRecord.XPos = (int)position.x;
             subRecord.ZPos = (int)position.z;
@@ -152,8 +204,13 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets
             var buildingIndex = int.Parse(buildingId.Substring(2));
             DFBlock buildingGroup = GetBuildingGroup(buildingGroupId);
 
-            DFBlock.RmbSubRecord subRecord = buildingGroup.RmbBlock.SubRecords[buildingIndex-1];
+            DFBlock.RmbSubRecord subRecord = buildingGroup.RmbBlock.SubRecords[buildingIndex - 1];
 
+            return AddBuildingPlaceholder(subRecord);
+        }
+
+        public GameObject AddBuildingPlaceholder(DFBlock.RmbSubRecord subRecord)
+        {
             var placeholder = new GameObject();
             foreach (var blockRecord in subRecord.Exterior.Block3dObjectRecords)
             {
@@ -248,7 +305,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets
 
         private static string GetFile(string fileName)
         {
-            var path = Environment.CurrentDirectory + "/Assets/Game/Addons/RmbBlockEditor/Editor/BuildingPresets/" + fileName;
+            var path = Environment.CurrentDirectory + "/Assets/Game/Addons/RmbBlockEditor/Editor/BuildingPresets/" +
+                       fileName;
             return File.ReadAllText(path);
         }
     }

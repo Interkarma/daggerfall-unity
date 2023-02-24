@@ -11,6 +11,7 @@ using DaggerfallWorkshop.Game.Utility.WorldDataEditor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
@@ -22,13 +23,13 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private ClimateBases climate;
         private ClimateSeason season;
         private WindowStyle windowStyle;
-        private Action<uint> apply;
+        private readonly GameObject oldGo;
 
-        public ModifyMisc3dEditor(uint objectId, Action<uint> apply)
+        public ModifyMisc3dEditor(GameObject oldGo, uint objectId)
         {
             visualElement = new VisualElement();
             this.objectId = objectId.ToString();
-            this.apply = apply;
+            this.oldGo = oldGo;
             RenderTemplate();
             RenderObjectPicker();
             BindApplyButton();
@@ -84,12 +85,34 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var button = visualElement.Query<Button>("apply-modification").First();
             button.RegisterCallback<MouseUpEvent>(evt =>
             {
-                apply((uint)int.Parse(objectId));
+                Modify((uint)int.Parse(objectId));
                 if (pickerObject != null)
                 {
                     pickerObject.Destroy();
                 }
             });
+        }
+
+        private void Modify(uint modelId)
+        {
+            var currentMisc3d = oldGo.GetComponent<Misc3d>();
+            var record = currentMisc3d.GetRecord();
+            record.ModelIdNum = modelId;
+            record.ModelId = modelId.ToString();
+
+            try
+            {
+                var newGo = RmbBlockHelper.Add3dObject(record, climate, season, windowStyle);
+                newGo.transform.parent = oldGo.transform.parent;
+                newGo.AddComponent<Misc3d>().CreateObject(record);
+
+                Object.DestroyImmediate(oldGo);
+                Selection.SetActiveObjectWithContext(newGo, null);
+            }
+            catch (Exception error)
+            {
+                Debug.LogError(error);
+            }
         }
 
         private void OnItemSelected(string objectId)

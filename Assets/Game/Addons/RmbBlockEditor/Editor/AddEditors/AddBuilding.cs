@@ -16,8 +16,10 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
     public class AddBuilding
     {
+        private const string WorldDataFolder = "/StreamingAssets/WorldData/";
         private VisualElement visualElement;
         private BuildingPreset buildingHelper;
+        private AddBuildingFromFile addBuildingFromFile;
         private string objectId;
         private ObjectPainter painterObject;
         private ObjectPicker pickerObject;
@@ -26,8 +28,10 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         {
             visualElement = new VisualElement();
             buildingHelper = new BuildingPreset();
+            addBuildingFromFile = new AddBuildingFromFile(buildingHelper);
             objectId = "";
             RenderTemplate();
+            BindTabButtons();
             RenderObjectPicker();
             RenderPainter();
         }
@@ -40,10 +44,45 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private void RenderTemplate()
         {
+            var wrapper = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                "Assets/Game/Addons/RmbBlockEditor/Editor/AddEditors/BuildingSpecific.uxml");
+            visualElement.Add(wrapper.CloneTree());
+            var fromTemplate = visualElement.Query<VisualElement>("from-template").First();
+            var fromFile = visualElement.Query<VisualElement>("from-file").First();
+
             var tree =
                 AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
                     "Assets/Game/Addons/RmbBlockEditor/Editor/AddEditors/Template.uxml");
-            visualElement.Add(tree.CloneTree());
+            fromTemplate.Add(tree.CloneTree());
+            fromFile.Add(addBuildingFromFile.Render());
+        }
+
+        private void BindTabButtons()
+        {
+            var templateTab = visualElement.Query<Button>("template-tab").First();
+            var fileTab = visualElement.Query<Button>("file-tab").First();
+            var fromTemplate = visualElement.Query<VisualElement>("from-template").First();
+            var fromFile = visualElement.Query<VisualElement>("from-file").First();
+
+            fileTab.RegisterCallback<MouseUpEvent>(evt =>
+                {
+                    templateTab.RemoveFromClassList("selected");
+                    fromTemplate.AddToClassList("hidden");
+
+                    fileTab.AddToClassList("selected");
+                    fromFile.RemoveFromClassList("hidden");
+                },
+                TrickleDown.TrickleDown);
+
+            templateTab.RegisterCallback<MouseUpEvent>(evt =>
+                {
+                    templateTab.AddToClassList("selected");
+                    fromTemplate.RemoveFromClassList("hidden");
+
+                    fileTab.RemoveFromClassList("selected");
+                    fromFile.AddToClassList("hidden");
+                },
+                TrickleDown.TrickleDown);
         }
 
         private void RenderObjectPicker()
@@ -132,6 +171,10 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             if (pickerObject != null)
             {
                 pickerObject.Destroy();
+            }
+            if (addBuildingFromFile != null)
+            {
+                addBuildingFromFile.Destroy();
             }
         }
     }

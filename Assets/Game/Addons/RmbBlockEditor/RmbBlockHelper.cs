@@ -53,6 +53,23 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 blockReplacementJson);
         }
 
+        public static BuildingReplacementData LoadBuildingFile(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new ArgumentException("Error: Trying to open file, but path is null or empty");
+            }
+
+            if (!File.Exists(path))
+            {
+                throw new ArgumentException("Error: Trying to open file at invalid path: " + path);
+            }
+
+            var buildingJson = File.ReadAllText(path);
+            return (BuildingReplacementData)SaveLoadManager.Deserialize(typeof(BuildingReplacementData),
+                buildingJson);
+        }
+
         public static void AddGroundPlane(DFBlock.RmbGroundTiles[,] groundTiles, ref DaggerfallGroundPlane dfGround,
             ref MeshFilter meshFilter, ClimateBases climate, ClimateSeason season)
         {

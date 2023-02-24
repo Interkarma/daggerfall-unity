@@ -9,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Utility.WorldDataEditor;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
@@ -18,13 +20,13 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private VisualElement visualElement;
         private string objectId;
         private ObjectPicker pickerObject;
-        private Action<string> apply;
+        private readonly GameObject oldGo;
 
-        public ModifyMiscFlatEditor(string objectId, Action<string> apply)
+        public ModifyMiscFlatEditor(GameObject oldGo, string objectId)
         {
             visualElement = new VisualElement();
             this.objectId = objectId;
-            this.apply = apply;
+            this.oldGo = oldGo;
             RenderTemplate();
             RenderObjectPicker();
             BindApplyButton();
@@ -71,12 +73,38 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var button = visualElement.Query<Button>("apply-modification").First();
             button.RegisterCallback<MouseUpEvent>(evt =>
             {
-                apply(objectId);
+                Modify(objectId);
                 if (pickerObject != null)
                 {
                     pickerObject.Destroy();
                 }
             });
+        }
+
+        private void Modify(string flatId)
+        {
+            var currentMiscFlat = oldGo.GetComponent<MiscFlat>();
+            var record = currentMiscFlat.GetRecord();
+
+            var dot = Char.Parse(".");
+            var splitId = flatId.Split(dot);
+
+            record.TextureArchive = int.Parse(splitId[0]);
+            record.TextureRecord = int.Parse(splitId[1]);
+
+            try
+            {
+                var newGo = RmbBlockHelper.AddFlatObject(flatId);
+                newGo.transform.parent = oldGo.transform.parent;
+                newGo.AddComponent<MiscFlat>().CreateObject(record);
+
+                Object.DestroyImmediate(oldGo);
+                Selection.SetActiveObjectWithContext(newGo, null);
+            }
+            catch (Exception error)
+            {
+                Debug.LogError(error);
+            }
         }
 
         private void OnItemSelected(string objectId)

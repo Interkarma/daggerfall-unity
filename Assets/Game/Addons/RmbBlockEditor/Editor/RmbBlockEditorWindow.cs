@@ -14,7 +14,6 @@ using UnityEngine;
 using DaggerfallConnect;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
-using DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
@@ -92,69 +91,17 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var rmbBlockObject = root.GetComponent<RmbBlockObject>();
             var contentContainer = rootVisualElement.Query<VisualElement>("content").First();
             contentContainer.Clear();
-            var modify3dEditor = new ModifyMisc3dEditor(modelId, OnApply3dModification);
+            var modify3dEditor = new ModifyMisc3dEditor(Selection.activeGameObject, modelId);
             contentContainer.Add(modify3dEditor.Render(rmbBlockObject.Climate, rmbBlockObject.Season,
                 rmbBlockObject.WindowStyle));
-        }
-
-        private void OnApply3dModification(uint modelId)
-        {
-            var rmbBlockObject = root.GetComponent<RmbBlockObject>();
-            var selected = Selection.activeGameObject;
-            var currentMisc3d = selected.GetComponent<Misc3d>();
-            var record = currentMisc3d.GetRecord();
-            record.ModelIdNum = modelId;
-            record.ModelId = modelId.ToString();
-
-            try
-            {
-                var newGo = RmbBlockHelper.Add3dObject(record, rmbBlockObject.Climate, rmbBlockObject.Season,
-                    rmbBlockObject.WindowStyle);
-                newGo.transform.parent = selected.transform.parent;
-                newGo.AddComponent<Misc3d>().CreateObject(record);
-
-                DestroyImmediate(selected);
-                Selection.SetActiveObjectWithContext(newGo, null);
-            }
-            catch (Exception error)
-            {
-                Debug.LogError(error);
-            }
         }
 
         private void OnModifyFlat(string flatId)
         {
             var contentContainer = rootVisualElement.Query<VisualElement>("content").First();
             contentContainer.Clear();
-            var modifyFlatEditor = new ModifyMiscFlatEditor(flatId, OnApplyFlatModification);
+            var modifyFlatEditor = new ModifyMiscFlatEditor(Selection.activeGameObject, flatId);
             contentContainer.Add(modifyFlatEditor.Render());
-        }
-
-        private void OnApplyFlatModification(string flatId)
-        {
-            var selected = Selection.activeGameObject;
-            var currentMiscFlat = selected.GetComponent<MiscFlat>();
-            var record = currentMiscFlat.GetRecord();
-
-            var dot = Char.Parse(".");
-            var splitId = flatId.Split(dot);
-
-            record.TextureArchive = int.Parse(splitId[0]);
-            record.TextureRecord = int.Parse(splitId[1]);
-
-            try
-            {
-                var newGo = RmbBlockHelper.AddFlatObject(flatId);
-                newGo.transform.parent = selected.transform.parent;
-                newGo.AddComponent<MiscFlat>().CreateObject(record);
-
-                DestroyImmediate(selected);
-                Selection.SetActiveObjectWithContext(newGo, null);
-            }
-            catch (Exception error)
-            {
-                Debug.LogError(error);
-            }
         }
 
         private void OnModifyBuilding()
@@ -162,31 +109,9 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var rmbBlockObject = root.GetComponent<RmbBlockObject>();
             var contentContainer = rootVisualElement.Query<VisualElement>("content").First();
             contentContainer.Clear();
-            var modifyBuildingEditor = new ModifyBuildingEditor(OnApplyBuildingModification);
+            var modifyBuildingEditor = new ModifyBuildingEditor(Selection.activeGameObject);
             contentContainer.Add(modifyBuildingEditor.Render(rmbBlockObject.Climate, rmbBlockObject.Season,
                 rmbBlockObject.WindowStyle));
-        }
-
-        private void OnApplyBuildingModification(string buildingId)
-        {
-            var selected = Selection.activeGameObject;
-            var currentBuilding = selected.GetComponent<Building>();
-            var oldPosition = new Vector3(currentBuilding.XPos, currentBuilding.ModelsYPos, currentBuilding.ZPos);
-            var oldRotation = new Vector3(0, currentBuilding.YRotation, 0);
-
-            try
-            {
-                var buildingHelper = new BuildingPreset();
-                var newGo = buildingHelper.AddBuildingObject(buildingId, oldPosition, oldRotation);
-                newGo.transform.parent = selected.transform.parent;
-
-                DestroyImmediate(selected);
-                Selection.SetActiveObjectWithContext(newGo, null);
-            }
-            catch (Exception error)
-            {
-                Debug.LogError(error);
-            }
         }
 
         private void OnSelectionChange()
