@@ -25,7 +25,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private string objectId;
         private Action<string> onItemSelected;
         private GameObject previewGameObject;
-        private Editor previewEditor;
+        private Preview preview;
         private Func<string, GameObject> getPreviewGO;
 
         public ObjectPicker(Dictionary<string, Dictionary<string, string>> dictionary,
@@ -41,6 +41,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             previewGameObject = null;
             search = "";
             this.objectId = objectId;
+            preview = Preview.GetPreview();
 
             FilterDictionary();
             RenderTemplate();
@@ -90,7 +91,6 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private void OnChangeObjectId()
         {
             var objectIdField = visualElement.Query<TextField>("object-id").First();
-            DestroyPreview();
             try
             {
                 objectId = objectIdField.value;
@@ -99,11 +99,6 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 {
                     // Return the ID to the parent, only if it is an actual object
                     onItemSelected(objectId);
-
-                    previewGameObject.name = "Object Preview";
-                    // We only need the previewGameObject for the preview element, so
-                    // make it really small, so it doesn't get in the way in the scene view.
-                    previewGameObject.transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
                 }
             }
             catch (Exception err)
@@ -227,34 +222,13 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private void RenderPreview()
         {
-            var preview = visualElement.Query<VisualElement>("preview").First();
-            preview.Clear();
-
-            Editor.DestroyImmediate(previewEditor);
-
-            if (objectId != "" && previewGameObject != null)
-            {
-                previewEditor = Editor.CreateEditor(previewGameObject);
-                var previewImage = new IMGUIContainer(() =>
-                {
-                    previewEditor.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(500, 450), GUIStyle.none);
-                });
-                preview.Add(previewImage);
-            }
-        }
-
-        private void DestroyPreview()
-        {
-            // Remove the preview GameObject
-            if (previewGameObject != null)
-            {
-                GameObject.DestroyImmediate(previewGameObject);
-            }
+            var element = visualElement.Query<VisualElement>("preview").First();
+            preview.Render(element, previewGameObject);
         }
 
         public void Destroy()
         {
-            DestroyPreview();
+            preview.Clear();
         }
     }
 }

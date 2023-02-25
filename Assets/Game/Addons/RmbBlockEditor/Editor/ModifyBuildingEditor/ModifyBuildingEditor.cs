@@ -119,10 +119,13 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private void BindApplyButton()
         {
+            var interior = visualElement.Query<Toggle>("interior").First();
+            var exterior = visualElement.Query<Toggle>("exterior").First();
+
             var button = visualElement.Query<Button>("apply-modification").First();
             button.RegisterCallback<MouseUpEvent>(evt =>
             {
-                Modify(objectId);
+                Modify(objectId, interior.value, exterior.value);
                 if (pickerObject != null)
                 {
                     pickerObject.Destroy();
@@ -130,16 +133,17 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             });
         }
 
-        private void Modify(string buildingId)
+        private void Modify(string buildingId, Boolean interior, Boolean exterior)
         {
-            var newGo = buildingHelper.AddBuildingObject(buildingId, oldPosition, oldRotation);
+            var currentBuilding = oldGo.GetComponent<Building>();
+            var newGo = buildingHelper.ReplaceBuildingObject(buildingId, currentBuilding, interior, exterior);
             Modify(newGo);
         }
 
         private void Modify(BuildingReplacementData building, Boolean interior, Boolean exterior)
         {
             var currentBuilding = oldGo.GetComponent<Building>();
-            var newGo = buildingHelper.AddBuildingObject(building, currentBuilding, interior, exterior);
+            var newGo = buildingHelper.ReplaceBuildingObject(building, currentBuilding, interior, exterior);
             Modify(newGo);
         }
 
@@ -159,6 +163,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private void OnItemSelected(string buildingId)
         {
+            var box = visualElement.Query<Box>("apply-modification-box").First();
+            box.RemoveFromClassList("hidden");
             objectId = buildingId;
         }
 

@@ -294,6 +294,18 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             writer.Close();
         }
 
+        public static void SaveBuildingFile(BuildingReplacementData buildingData, string path)
+        {
+            if (string.IsNullOrEmpty(path)) {
+                return;
+            }
+
+            StreamWriter writer = new StreamWriter(path, false);
+            string saveData = SaveLoadManager.Serialize(buildingData.GetType(), buildingData);
+            writer.Write(saveData);
+            writer.Close();
+        }
+
         public static DFBlock.RmbBlockData CloneBlockData(DFBlock.RmbBlockData blockData)
         {
             var cloned = new DFBlock.RmbBlockData();

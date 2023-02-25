@@ -40,6 +40,10 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             {
                 meshSubComponent.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             }
+
+            // Change the parent of the placeholder GameObject to be the RmbBlockObject
+            var rmbBlockObject = FindObjectOfType<RmbBlockObject>();
+            gameObject.transform.parent = rmbBlockObject.gameObject.transform;
         }
 
         public void Start()

@@ -104,6 +104,27 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             contentContainer.Add(modifyFlatEditor.Render());
         }
 
+        private void OnExportBuilding()
+        {
+            var rmbBlockObject = root.GetComponent<RmbBlockObject>();
+            var selectedBuildingGo = Selection.activeGameObject;
+            var selectedBuilding = selectedBuildingGo.GetComponent<Building>();
+            var buildingsGo = selectedBuildingGo.transform.parent;
+
+            var index = 0;
+            for (var i = 0; i < buildingsGo.transform.childCount; i++)
+            {
+                if (buildingsGo.transform.GetChild(i).gameObject == selectedBuildingGo)
+                {
+                    index = i;
+                }
+            }
+
+            var fileName = string.Format("{0}-{1}-building{2}", rmbBlockObject.Name, rmbBlockObject.Index, index);
+            var path = EditorUtility.SaveFilePanel("Save as", WorldDataFolder, fileName, "json");
+            selectedBuilding.Export(path);
+        }
+
         private void OnModifyBuilding()
         {
             var rmbBlockObject = root.GetComponent<RmbBlockObject>();
@@ -172,7 +193,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var buildingObject = Selection.activeGameObject.GetComponent<Building>();
             if (buildingObject)
             {
-                contentContainer.Add(BuildingEditor.Render(buildingObject.gameObject, OnModifyBuilding));
+                contentContainer.Add(BuildingEditor.Render(buildingObject.gameObject, OnModifyBuilding,
+                    OnExportBuilding));
                 return;
             }
 
@@ -285,18 +307,19 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 if (light != null)
                     DestroyImmediate(light);
 
+                // Create and select the root GameObject
+                root = new GameObject("RMB Block : " + Path.GetFileName(path));
+                var rmbBlock = root.AddComponent<RmbBlockObject>();
+                rmbBlock.CreateObject(loadedBlock, OnRemoveRoot);
+                OnSelectionChange();
+
                 // Add a  light to the scene
                 light = new GameObject("Light");
                 var lightComponent = light.AddComponent<Light>();
                 lightComponent.type = LightType.Directional;
                 lightComponent.shadows = LightShadows.Soft;
                 lightComponent.transform.rotation = Quaternion.Euler(new Vector3(50, -30, 0));
-
-                // Create and select the root GameObject
-                root = new GameObject("RMB Block : " + Path.GetFileName(path));
-                var rmbBlock = root.AddComponent<RmbBlockObject>();
-                rmbBlock.CreateObject(loadedBlock, OnRemoveRoot);
-                OnSelectionChange();
+                light.transform.parent = root.transform;
 
                 // Enable the menus
                 fileLoaded = true;

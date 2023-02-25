@@ -15,7 +15,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
     public class BuildingEditor
     {
-        public static VisualElement Render(GameObject go, Action modifyBuilding)
+        public static VisualElement Render(GameObject go, Action modifyBuilding, Action exportBuilding)
         {
             // Get serialized properties:
             var building = go.GetComponent<Building>();
@@ -36,7 +36,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             buildingPropsElement.Add(rmbPropsTree.CloneTree());
 
             // Select the bindable fields:
-            var modify = buildingPropsElement.Query<Button>("modify-model").First();
+            var export = buildingPropsElement.Query<Button>("export-building").First();
+            var modify = buildingPropsElement.Query<Button>("modify-building").First();
             var factionIdField = buildingPropsElement.Query<IntegerField>("rmb-building-faction-id").First();
             var buildingTypeField = buildingPropsElement.Query<EnumField>("rmb-building-building-type").First();
             var qualityField = buildingPropsElement.Query<SliderInt>("rmb-building-quality").First();
@@ -59,6 +60,11 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             modify.RegisterCallback<MouseUpEvent>(evt =>
             {
                 modifyBuilding();
+            });
+
+            export.RegisterCallback<MouseUpEvent>(evt =>
+            {
+                exportBuilding();
             });
 
             return buildingPropsElement;

@@ -5,5 +5,13 @@
     xsi:noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd"
 >
     <engine:VisualElement name="object-picker" class="pb"/>
-    <engine:Button name="apply-modification" text="Apply"/>
+    <engine:Box class="ml mt mr hidden" name="apply-modification-box">
+        <engine:VisualElement class="row ml pt pb">
+            <engine:Toggle value="true" name="interior" text=" Interior" class="col-2"/>
+            <engine:Toggle value="true" name="exterior" text=" Exterior" class="col-2"/>
+        </engine:VisualElement>
+        <engine:VisualElement class="row ml mr pt pb">
+            <engine:Button name="apply-modification" class="col-4" text="Apply"/>
+        </engine:VisualElement>
+    </engine:Box>
 </engine:UXML>

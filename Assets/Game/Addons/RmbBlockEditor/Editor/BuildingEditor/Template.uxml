@@ -6,8 +6,9 @@
     xsi:noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd"
 >
     <engine:VisualElement class="row pl pr pt">
-        <engine:VisualElement class="col-3"/>
-        <engine:Button name="modify-model" class="col-1" text="Modify" />
+        <engine:VisualElement class="col-2"/>
+        <engine:Button name="export-building" class="col-1" text="Export" />
+        <engine:Button name="modify-building" class="col-1" text="Modify" />
     </engine:VisualElement>
 
     <engine:VisualElement class="row pl">

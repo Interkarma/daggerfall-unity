@@ -9,6 +9,7 @@ using System;
 using DaggerfallConnect;
 using UnityEngine;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Utility.AssetInjection;
 using UnityEditor;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
@@ -190,6 +191,19 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             record.Interior.BlockDoorRecords = InteriorBlockDoorRecords;
 
             return record;
+        }
+
+        public void Export(string fileName)
+        {
+            BuildingReplacementData data = new BuildingReplacementData()
+            {
+                FactionId = FactionId,
+                BuildingType = (int)BuildingType,
+                Quality = Quality,
+                NameSeed = NameSeed,
+                RmbSubRecord = GetSubRecord()
+            };
+            RmbBlockHelper.SaveBuildingFile(data, fileName);
         }
 
         private void Add3DObjects()

@@ -13,8 +13,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private VisualElement visualElement;
         private BuildingPreset buildingHelper;
         private BuildingReplacementData building;
-        private GameObject previewGameObject;
-        private Editor previewEditor;
+        private Preview preview;
         private Action<BuildingReplacementData, Boolean, Boolean> onModify;
 
         public ModifyBuildingFromFile(BuildingPreset buildingHelper, Action<BuildingReplacementData, Boolean, Boolean> onModify)
@@ -22,7 +21,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             visualElement = new VisualElement();
             this.buildingHelper = buildingHelper;
             this.onModify = onModify;
-            previewGameObject = null;
+            preview = Preview.GetPreview();
             RenderTemplate();
             RenderFileLoader();
         }
@@ -45,33 +44,9 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             loadFile.RegisterCallback<MouseUpEvent>(evt =>
                 {
                     LoadFile();
-                    RenderPreview();
                     RenderApplyBox();
                 },
                 TrickleDown.TrickleDown);
-        }
-
-        private void RenderPreview()
-        {
-            previewGameObject.name = "Object Preview";
-            // We only need the previewGameObject for the preview element, so
-            // make it really small, so it doesn't get in the way in the scene view.
-            previewGameObject.transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
-
-            var preview = visualElement.Query<VisualElement>("file-preview").First();
-            preview.Clear();
-
-            Editor.DestroyImmediate(previewEditor);
-
-            if (previewGameObject != null)
-            {
-                previewEditor = Editor.CreateEditor(previewGameObject);
-                var previewImage = new IMGUIContainer(() =>
-                {
-                    previewEditor.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(500, 450), GUIStyle.none);
-                });
-                preview.Add(previewImage);
-            }
         }
 
         private void RenderApplyBox()
@@ -99,18 +74,18 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
             try
             {
+                // Load the file
                 building = RmbBlockHelper.LoadBuildingFile(path);
-                previewGameObject = AddPreview();
+
+                // Show the preview
+                var element = visualElement.Query<VisualElement>("file-preview").First();
+                var previewGameObject = buildingHelper.AddBuildingPlaceholder(building.RmbSubRecord);
+                preview.Render(element, previewGameObject);
             }
             catch (ArgumentException e)
             {
                 Debug.LogError(e.Message);
             }
-        }
-
-        private GameObject AddPreview()
-        {
-            return buildingHelper.AddBuildingPlaceholder(building.RmbSubRecord);
         }
     }
 }
