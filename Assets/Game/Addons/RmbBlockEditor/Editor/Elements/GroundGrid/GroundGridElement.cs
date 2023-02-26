@@ -23,29 +23,22 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private bool isDragging;
         private Vector2 coords;
         private Vector2 paintCoords;
-        private ClimateBases climate;
-        private ClimateSeason season;
         public Func<Vector2, Vector2> OnSelection;
         public static int BlankTextureRecord = 63;
 
-        public GroundGridElement(DFBlock.RmbGroundTiles[,] tiles, ClimateBases climate, ClimateSeason season)
+        public GroundGridElement(DFBlock.RmbGroundTiles[,] tiles)
         {
             this.tiles = tiles;
-            this.climate = climate;
-            this.season = season;
             isPaintMode = false;
             isDragging = false;
             RenderTemplate();
         }
 
-        public GroundGridElement(DFBlock.RmbGroundTiles[,] tiles, int paintRecord, int paintRotation,
-            ClimateBases climate, ClimateSeason season)
+        public GroundGridElement(DFBlock.RmbGroundTiles[,] tiles, int paintRecord, int paintRotation)
         {
             this.tiles = tiles;
             this.paintRecord = paintRecord;
             this.paintRotation = paintRotation;
-            this.climate = climate;
-            this.season = season;
             isPaintMode = true;
             isDragging = false;
             paintCoords = Vector2.zero;
@@ -65,8 +58,10 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             return blankTexture;
         }
 
-        public static Texture2D GetGroundTexture(int record, ClimateBases climate, ClimateSeason season)
+        public static Texture2D GetGroundTexture(int record)
         {
+            var climate = PersistedSettings.ClimateBases();
+            var season = PersistedSettings.ClimateSeason();
             var archive = GetArchive(climate, season);
             var dfUnity = DaggerfallUnity.Instance;
             var textureReader = new TextureReader(dfUnity.Arena2Path);
@@ -140,11 +135,11 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             Texture2D texture;
             if (isPaintMode && isDragging && paintCoords.Equals(new Vector2(row, col)))
             {
-                texture = GetGroundTexture(paintRecord, climate, season);
+                texture = GetGroundTexture(paintRecord);
             }
             else
             {
-                texture = GetGroundTexture(tile.TextureRecord, climate, season);
+                texture = GetGroundTexture(tile.TextureRecord);
             }
 
             var cellContainer = this.Query<VisualElement>("rmb-ground-grid-cell-" + row + "-" + col).First();

@@ -18,15 +18,12 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
     public class ModifyBuildingEditor
     {
-        private const string WorldDataFolder = "/StreamingAssets/WorldData/";
         private readonly VisualElement visualElement;
         private readonly BuildingPreset buildingHelper;
         private readonly ModifyBuildingFromFile modifyBuildingFromFile;
         private string objectId;
         private ObjectPicker pickerObject;
         private readonly GameObject oldGo;
-        private readonly Vector3 oldPosition;
-        private readonly Vector3 oldRotation;
 
         public ModifyBuildingEditor(GameObject oldGo)
         {
@@ -35,19 +32,14 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             modifyBuildingFromFile = new ModifyBuildingFromFile(buildingHelper, Modify);
             this.oldGo = oldGo;
 
-            var currentBuilding = oldGo.GetComponent<Building>();
-            oldPosition = new Vector3(currentBuilding.XPos, currentBuilding.ModelsYPos, currentBuilding.ZPos);
-            oldRotation = new Vector3(0, currentBuilding.YRotation, 0);
-
             RenderTemplate();
             BindTabButtons();
             RenderObjectPicker();
             BindApplyButton();
         }
 
-        public VisualElement Render(ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
+        public VisualElement Render()
         {
-            buildingHelper.SetClimate(climate, season, windowStyle);
             return visualElement;
         }
 

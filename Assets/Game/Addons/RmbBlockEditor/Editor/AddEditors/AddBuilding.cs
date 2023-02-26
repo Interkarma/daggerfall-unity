@@ -16,7 +16,6 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
     public class AddBuilding
     {
-        private const string WorldDataFolder = "/StreamingAssets/WorldData/";
         private VisualElement visualElement;
         private BuildingPreset buildingHelper;
         private AddBuildingFromFile addBuildingFromFile;
@@ -36,9 +35,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             RenderPainter();
         }
 
-        public VisualElement Render(ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
+        public VisualElement Render()
         {
-            buildingHelper.SetClimate(climate, season, windowStyle);
             return visualElement;
         }
 

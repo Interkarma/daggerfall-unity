@@ -10,97 +10,42 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     [ExecuteInEditMode]
     public class Scenery : MonoBehaviour
     {
         private DFBlock.RmbGroundScenery[,] GroundScenery;
         private GameObject SceneryGameObject;
-        private ClimateBases climate;
-        private ClimateSeason season;
+        private GameObject[,] SceneryItems;
 
-        public void CreateObject(DFBlock.RmbGroundScenery[,] scenery, ClimateBases climate, ClimateSeason season)
+        public void CreateObject(DFBlock.RmbGroundScenery[,] scenery)
         {
             GroundScenery = scenery;
-            this.climate = climate;
-            this.season = season;
 
             SceneryGameObject = new GameObject("Scenery");
             SceneryGameObject.transform.parent = transform;
+            SceneryItems = new GameObject[16, 16];
             CreateItems();
-        }
-
-        public void SetClimate(ClimateBases climate, ClimateSeason season)
-        {
-            this.climate = climate;
-            this.season = season;
-            var items = SceneryGameObject.GetComponentsInChildren<Billboard>();
-            foreach (var billboard in items)
-            {
-                DestroyImmediate(billboard.gameObject);
-            }
-
-            CreateItems();
-        }
-
-        private string getTextureArchive()
-        {
-            if (climate == ClimateBases.Desert)
-            {
-                return "503";
-            }
-
-            if (climate == ClimateBases.Swamp)
-            {
-                return "502";
-            }
-
-            if (climate == ClimateBases.Temperate && season != ClimateSeason.Winter)
-            {
-                return "504";
-            }
-
-            if (climate == ClimateBases.Temperate && season == ClimateSeason.Winter)
-            {
-                return "505";
-            }
-
-            if (climate == ClimateBases.Mountain && season != ClimateSeason.Winter)
-            {
-                return "510";
-            }
-
-            if (climate == ClimateBases.Mountain && season == ClimateSeason.Winter)
-            {
-                return "511";
-            }
-
-            return "504";
         }
 
         public void AddItem(int textureRecord, int i, int j)
         {
-            var xPos = i * 6.4f;
-            var zPos = j * 6.4f;
             if (textureRecord != -1)
             {
                 // Check if there is already a scenery item there and remove it
-                var allItems = SceneryGameObject.GetComponentsInChildren<SceneryItem>();
-                foreach (var item in allItems)
+                var existingItem = SceneryItems[i, j];
+                if (existingItem != null)
                 {
-                    if (item.i == i && item.j == j)
-                    {
-                        DestroyImmediate(item.gameObject);
-                    }
+                    DestroyImmediate(existingItem);
                 }
 
                 // Place the new item
-                var sceneryFlatObject = RmbBlockHelper.AddFlatObject(getTextureArchive() + "." + textureRecord);
-                var billboard = sceneryFlatObject.GetComponent<Billboard>();
-                sceneryFlatObject.transform.position = new Vector3(xPos, billboard.Summary.Size.y / 2, -zPos);
-                sceneryFlatObject.transform.parent = SceneryGameObject.transform;
-                var component = sceneryFlatObject.gameObject.AddComponent<SceneryItem>();
-                component.CreateObject(textureRecord, i, j);
+                var goName = string.Format("Scenery-{0}-{1}", i, j);
+                var sceneryItemGo = new GameObject(goName);
+                var sceneryItem = sceneryItemGo.AddComponent<SceneryItem>();
+                sceneryItem.CreateObject(textureRecord, i, j);
+                sceneryItemGo.transform.parent = SceneryGameObject.transform;
+                SceneryItems[i, j] = sceneryItemGo;
             }
         }
 
@@ -123,18 +68,21 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             {
                 for (var j = 0; j < 16; j++)
                 {
-                    groundScenery[i, j].TextureRecord = -1;
+                    var itemGo = SceneryItems[i, j];
+                    if (itemGo != null)
+                    {
+                        var item = itemGo.GetComponent<SceneryItem>();
+                        groundScenery[i, j].TextureRecord = item.textureRecord;
+                    }
+                    else
+                    {
+                        groundScenery[i, j].TextureRecord = -1;
+                    }
                 }
-            }
-
-            var sceneryItems = GetComponentsInChildren<SceneryItem>();
-            foreach (var sceneryItem in sceneryItems)
-            {
-                groundScenery[sceneryItem.i, sceneryItem.j].TextureRecord = sceneryItem.textureRecord;
             }
 
             return groundScenery;
         }
     }
-    #endif
+#endif
 }

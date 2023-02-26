@@ -6,10 +6,10 @@
 // Original Author: Podleron (podleron@gmail.com)
 
 using System.Linq;
-using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.UIElements;
+using UnityEditor.UIElements;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
@@ -27,7 +27,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         {
             this.go = go;
             RenderTemplate();
-            BindFields();
+            Initialize();
             BindButton();
             return visualElement;
         }
@@ -41,46 +41,46 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             visualElement.Add(rmbPropsTree.CloneTree());
         }
 
-        private void BindFields()
+        private void Initialize()
         {
-            if (go == null)
-            {
-                return;
-            }
-
-            // Get serialized properties:
-            var rmbBlock = go.GetComponent<RmbBlockObject>();
-            var so = new SerializedObject(rmbBlock);
-            var climateProperty = so.FindProperty("Climate");
-            var seasonProperty = so.FindProperty("Season");
-            var windowStyleProperty = so.FindProperty("WindowStyle");
-
-            // Select the bindable fields:
             var climateField = visualElement.Query<EnumField>("climate").First();
             var seasonField = visualElement.Query<EnumField>("season").First();
             var windowStyleField = visualElement.Query<EnumField>("window-style").First();
 
-            // Bind the fields to the properties:
-            climateField.BindProperty(climateProperty);
-            seasonField.BindProperty(seasonProperty);
-            windowStyleField.BindProperty(windowStyleProperty);
+            climateField.Init(PersistedSettings.ClimateBases());
+            seasonField.Init(PersistedSettings.ClimateSeason());
+            windowStyleField.Init(PersistedSettings.WindowStyle());
+
         }
 
         private void BindButton()
         {
-            var rmbBlock = go.GetComponent<RmbBlockObject>();
+            var climateField = visualElement.Query<EnumField>("climate").First();
+            var seasonField = visualElement.Query<EnumField>("season").First();
+            var windowStyleField = visualElement.Query<EnumField>("window-style").First();
+
             var button = visualElement.Query<Button>("apply").First();
             var allModels = go.GetComponentsInChildren<DaggerfallMesh>();
             var ground = go.GetComponentsInChildren<Ground>().First();
-            var scenery = go.GetComponentsInChildren<Scenery>().First();
+
             button.RegisterCallback<MouseUpEvent>(evt =>
             {
+                // Read the new values
+                ClimateBases climate = (ClimateBases)climateField.value;
+                ClimateSeason season = (ClimateSeason)seasonField.value;
+                WindowStyle windowStyle = (WindowStyle)windowStyleField.value;
+
+                // Update the settings singleton
+                PersistedSettings.SetClimate(climate, season, windowStyle);
+
+                // Update all the meshes in the scene
                 foreach (var daggerfallMesh in allModels)
                 {
-                    daggerfallMesh.SetClimate(rmbBlock.Climate, rmbBlock.Season, rmbBlock.WindowStyle);
+                    daggerfallMesh.SetClimate(climate, season, windowStyle);
                 }
-                ground.SetClimate(rmbBlock.Climate, rmbBlock.Season);
-                scenery.SetClimate(rmbBlock.Climate, rmbBlock.Season);
+
+                ground.Update();
+
             }, TrickleDown.TrickleDown);
         }
     }

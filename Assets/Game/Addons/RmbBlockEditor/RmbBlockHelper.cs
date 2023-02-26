@@ -71,8 +71,11 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         }
 
         public static void AddGroundPlane(DFBlock.RmbGroundTiles[,] groundTiles, ref DaggerfallGroundPlane dfGround,
-            ref MeshFilter meshFilter, ClimateBases climate, ClimateSeason season)
+            ref MeshFilter meshFilter)
         {
+            var climate = PersistedSettings.ClimateBases();
+            var season = PersistedSettings.ClimateSeason();
+
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             DFBlock blockData = new DFBlock();
             blockData.RmbBlock.FldHeader.GroundData.GroundTiles = groundTiles;
@@ -91,7 +94,44 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
             // Assign tileMap and climate
             dfGround.tileMap = tileMap;
-            dfGround.SetClimate(dfUnity, climate, season);
+            dfGround.SetClimate(dfUnity,climate, season);
+        }
+
+        public static int GetSceneryTextureArchive()
+        {
+            var climate = PersistedSettings.ClimateBases();
+            var season = PersistedSettings.ClimateSeason();
+            if (climate == ClimateBases.Desert)
+            {
+                return 503;
+            }
+
+            if (climate == ClimateBases.Swamp)
+            {
+                return 502;
+            }
+
+            if (climate == ClimateBases.Temperate && season != ClimateSeason.Winter)
+            {
+                return 504;
+            }
+
+            if (climate == ClimateBases.Temperate && season == ClimateSeason.Winter)
+            {
+                return 505;
+            }
+
+            if (climate == ClimateBases.Mountain && season != ClimateSeason.Winter)
+            {
+                return 510;
+            }
+
+            if (climate == ClimateBases.Mountain && season == ClimateSeason.Winter)
+            {
+                return 511;
+            }
+
+            return 504;
         }
 
         public static GameObject AddPersonObject(DFBlock.RmbBlockPeopleRecord rmbBlock)
@@ -113,9 +153,11 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             return go;
         }
 
-        public static GameObject Add3dObject(DFBlock.RmbBlock3dObjectRecord rmbBlock, ClimateBases climate,
-            ClimateSeason season, WindowStyle windowStyle)
+        public static GameObject Add3dObject(DFBlock.RmbBlock3dObjectRecord rmbBlock)
         {
+            var climate = PersistedSettings.ClimateBases();
+            var season = PersistedSettings.ClimateSeason();
+            var windowStyle = PersistedSettings.WindowStyle();
             var dfUnity = DaggerfallUnity.Instance;
             // Get model data
             dfUnity.MeshReader.GetModelData(rmbBlock.ModelIdNum, out var modelData);
@@ -174,17 +216,19 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             return modelGo;
         }
 
-        public static GameObject Add3dObject(string modelId, ClimateBases climate, ClimateSeason season,
-            WindowStyle windowStyle)
+        public static GameObject Add3dObject(string modelId)
         {
             Vector3 position = new Vector3(0, 0, 0);
 
-            return Add3dObject(modelId, position, climate, season, windowStyle);
+            return Add3dObject(modelId, position);
         }
 
-        public static GameObject Add3dObject(string modelId, Vector3 position, ClimateBases climate,
-            ClimateSeason season, WindowStyle windowStyle)
+        public static GameObject Add3dObject(string modelId, Vector3 position)
         {
+            var climate = PersistedSettings.ClimateBases();
+            var season = PersistedSettings.ClimateSeason();
+            var windowStyle = PersistedSettings.WindowStyle();
+
             // Get matrix
             Matrix4x4 matrix = Matrix4x4.identity;
             matrix *= Matrix4x4.TRS(position, Quaternion.identity, Vector3.one);
@@ -214,13 +258,13 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         }
 
         public static GameObject AddBuilding3dObjects(DFBlock.RmbBlock3dObjectRecord[] ExteriorBlock3dObjectRecords,
-            int YPos, ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
+            int YPos)
         {
             var obj3D = new GameObject("3D Objects");
             var mainRecord = ExteriorBlock3dObjectRecords[0];
             var scaledYPos = YPos * MeshReader.GlobalScale;
 
-            var main = Add3dObject(mainRecord, climate, season, windowStyle);
+            var main = Add3dObject(mainRecord);
             var mainLocalPos = main.transform.localPosition;
             main.transform.localPosition = new Vector3(mainLocalPos.x, 0, mainLocalPos.z);
             main.transform.parent = obj3D.transform;
@@ -233,7 +277,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             {
                 var blockRecord = ExteriorBlock3dObjectRecords[i];
                 var relativeY = blockRecord.YPos * MeshReader.GlobalScale;
-                var go = Add3dObject(blockRecord, climate, season, windowStyle);
+                var go = Add3dObject(blockRecord);
                 var localPos = go.transform.localPosition;
                 go.transform.localPosition = new Vector3(localPos.x, scaledYPos - relativeY, localPos.z);
                 go.transform.parent = obj3D.transform;

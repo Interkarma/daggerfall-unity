@@ -58,8 +58,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private ClimateSeason season;
         private WindowStyle windowStyle;
 
-        public void CreateObject(DFLocation.BuildingData buildingData, DFBlock.RmbSubRecord subRecord,
-            ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
+        public void CreateObject(DFLocation.BuildingData buildingData, DFBlock.RmbSubRecord subRecord)
         {
             BuildingDataObj = buildingData;
 
@@ -89,10 +88,6 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             XPos = subRecord.XPos;
             ZPos = subRecord.ZPos;
             ModelsYPos = ExteriorBlock3dObjectRecords[0].YPos;
-
-            this.climate = climate;
-            this.season = season;
-            this.windowStyle = windowStyle;
 
             SaveOldRotation();
             SaveOldPosition();
@@ -208,8 +203,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private void Add3DObjects()
         {
-            var obj3D = RmbBlockHelper.AddBuilding3dObjects(ExteriorBlock3dObjectRecords, ModelsYPos, climate, season,
-                windowStyle);
+            var obj3D = RmbBlockHelper.AddBuilding3dObjects(ExteriorBlock3dObjectRecords, ModelsYPos);
             obj3D.transform.parent = transform;
         }
 

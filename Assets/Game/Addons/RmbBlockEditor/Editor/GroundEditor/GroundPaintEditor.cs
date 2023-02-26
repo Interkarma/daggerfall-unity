@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private void RenderTileGrid()
         {
             var gridContainer = visualElement.Query<VisualElement>("terrain-grid").First();
-            gridElement = new GroundGridElement(ground.groundTiles, paintSelection, paintRotation, ground.climate, ground.season);
+            gridElement = new GroundGridElement(ground.groundTiles, paintSelection, paintRotation);
             gridContainer.Add(gridElement);
         }
 
@@ -56,7 +56,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         {
             var preview = visualElement.Query<VisualElement>("ground-paint-tile-preview").First();
             preview.Clear();
-            var texture = GroundGridElement.GetGroundTexture(paintSelection, ground.climate, ground.season);
+            var texture = GroundGridElement.GetGroundTexture(paintSelection);
 
             // I found no way to rotate the background of a VisualElement so I have to use IMGUI here
             var previewGUI = new IMGUIContainer(() =>
@@ -129,7 +129,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private IMGUIContainer RenderCell(int index)
         {
-            var texture = GroundGridElement.GetGroundTexture(index, ground.climate, ground.season);
+            var texture = GroundGridElement.GetGroundTexture(index);
             var cell = new IMGUIContainer(() =>
             {
                 var cellIsSelected = index == paintSelection;

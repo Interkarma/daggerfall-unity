@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     [ExecuteInEditMode]
     public class RmbBlockObject : MonoBehaviour
     {
@@ -20,10 +20,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         public string Name;
         public DFBlock.BlockTypes Type;
         public DFBlock.RmbBlockDesc RmbBlock;
+
         public Automap Automap;
-        public ClimateBases Climate;
-        public ClimateSeason Season;
-        public WindowStyle WindowStyle;
 
         private Action onDestroy;
         private GameObject buildings;
@@ -39,20 +37,17 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             Type = data.Type;
             RmbBlock = data.RmbBlock;
             this.onDestroy = onDestroy;
-            Climate = ClimateBases.Temperate;
-            Season = ClimateSeason.Summer;
-            WindowStyle = WindowStyle.Day;
 
             // Load ground
             var ground = new GameObject("Ground");
             var groundComponent = ground.AddComponent<Ground>();
-            groundComponent.CreateObject(data.RmbBlock.FldHeader.GroundData.GroundTiles, Climate, Season);
+            groundComponent.CreateObject(data.RmbBlock.FldHeader.GroundData.GroundTiles);
             ground.transform.parent = transform;
 
             // Load ground scenery
             var groundScenery = new GameObject("Ground Scenery");
             var groundSceneryComponent = groundScenery.AddComponent<Scenery>();
-            groundSceneryComponent.CreateObject(data.RmbBlock.FldHeader.GroundData.GroundScenery, groundComponent.climate, groundComponent.season);
+            groundSceneryComponent.CreateObject(data.RmbBlock.FldHeader.GroundData.GroundScenery);
             groundScenery.transform.parent = transform;
 
             // Load Automap
@@ -85,8 +80,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 {
                     var building = new GameObject("Building-" + i);
                     var buildingComponent = building.AddComponent<Building>();
-                    buildingComponent.CreateObject(data.FldHeader.BuildingDataList[i],
-                        data.SubRecords[i], Climate, Season, WindowStyle);
+                    buildingComponent.CreateObject(data.FldHeader.BuildingDataList[i], data.SubRecords[i]);
                     building.transform.parent = buildings.transform;
                 }
             }
@@ -97,7 +91,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 for (var i = 0; i < data.Misc3dObjectRecords.Length; i++)
                 {
                     var miscObjectData = data.Misc3dObjectRecords[i];
-                    var misc3DObject = RmbBlockHelper.Add3dObject(miscObjectData, Climate, Season, WindowStyle);
+                    var misc3DObject = RmbBlockHelper.Add3dObject(miscObjectData);
                     var misc3DObjectComponent = misc3DObject.AddComponent<Misc3d>();
                     misc3DObjectComponent.CreateObject(miscObjectData);
                     misc3DObject.transform.parent = misc3DObjects.transform;
@@ -124,5 +118,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             onDestroy();
         }
     }
-    #endif
+#endif
 }

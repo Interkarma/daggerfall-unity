@@ -24,7 +24,6 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         {
             gameObject = go;
             visualElement = new VisualElement();
-
         }
 
         public VisualElement Render()
@@ -61,7 +60,6 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                     var textureRecord = (int)component.userData;
                     SelectNewCell(selectedScenery, textureRecord);
                     selectedScenery = textureRecord;
-
                 }, TrickleDown.TrickleDown);
             });
         }
@@ -80,7 +78,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         {
             if (selectedScenery == -1) return;
 
-            placeholderGo = RmbBlockHelper.AddFlatObject("504." + selectedScenery);
+            placeholderGo = RmbBlockHelper.AddFlatObject(RmbBlockHelper.GetSceneryTextureArchive() + "." + selectedScenery);
             placeholderGo.name = "Placeholder";
             var placeholder = placeholderGo.AddComponent<SceneryPlaceholder>();
             placeholder.CreateFlatPlaceholder(PlaceScenery, StopPainting);
@@ -108,7 +106,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             DestroyPlaceholder();
         }
 
-        private void SelectNewCell(int oldCell, int newCell){
+        private void SelectNewCell(int oldCell, int newCell)
+        {
             var oldSelectedCell = visualElement.Query<Image>("scenery-" + oldCell).First();
             if (oldSelectedCell != null)
             {
@@ -128,7 +127,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var textureReader = new TextureReader(dfUnity.Arena2Path);
             var texture = record == BlankTextureRecord
                 ? GetBlankTexture()
-                : textureReader.GetTexture2D(504, record, 0, 0);
+                : textureReader.GetTexture2D(RmbBlockHelper.GetSceneryTextureArchive(), record, 0, 0);
             return texture;
         }
 

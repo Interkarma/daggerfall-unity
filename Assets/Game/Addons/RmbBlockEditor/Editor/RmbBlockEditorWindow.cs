@@ -14,6 +14,7 @@ using UnityEngine;
 using DaggerfallConnect;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
@@ -36,6 +37,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private AddFlat addFlat;
 
         private SettingsEditor settingsEditor;
+
+        private bool keepViewOnSelectionChange;
 
         [MenuItem("Daggerfall Tools/RMB Block Editor")]
         public static void ShowWindow()
@@ -62,7 +65,9 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             add3dElement = new Add3d();
             addFlat = new AddFlat();
             settingsEditor = new SettingsEditor();
+            keepViewOnSelectionChange = false;
 
+            PersistedSettings.Load();
             RenderMenus();
         }
 
@@ -88,12 +93,10 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private void OnModify3d(uint modelId)
         {
-            var rmbBlockObject = root.GetComponent<RmbBlockObject>();
             var contentContainer = rootVisualElement.Query<VisualElement>("content").First();
             contentContainer.Clear();
             var modify3dEditor = new ModifyMisc3dEditor(Selection.activeGameObject, modelId);
-            contentContainer.Add(modify3dEditor.Render(rmbBlockObject.Climate, rmbBlockObject.Season,
-                rmbBlockObject.WindowStyle));
+            contentContainer.Add(modify3dEditor.Render());
         }
 
         private void OnModifyFlat(string flatId)
@@ -127,12 +130,10 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private void OnModifyBuilding()
         {
-            var rmbBlockObject = root.GetComponent<RmbBlockObject>();
             var contentContainer = rootVisualElement.Query<VisualElement>("content").First();
             contentContainer.Clear();
             var modifyBuildingEditor = new ModifyBuildingEditor(Selection.activeGameObject);
-            contentContainer.Add(modifyBuildingEditor.Render(rmbBlockObject.Climate, rmbBlockObject.Season,
-                rmbBlockObject.WindowStyle));
+            contentContainer.Add(modifyBuildingEditor.Render());
         }
 
         private void OnSelectionChange()
@@ -140,6 +141,13 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             if (!dfUnity.IsReady || root == null)
                 return;
+
+            // If keepViewOnSelectionChange is true, do nothing here
+            if (keepViewOnSelectionChange)
+            {
+                keepViewOnSelectionChange = false;
+                return;
+            }
 
             var contentContainer = rootVisualElement.Query<VisualElement>("content").First();
             var mapBlockEditor = new BlockEditor(root);
@@ -227,8 +235,10 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 (action) => SetExportMenuStatus(action));
             fileMenu.menu.AppendAction("Import Objects", action => ImportObjectGroupFile(),
                 (action) => SetMenuStatus(action));
-            fileMenu.menu.AppendAction("Settings", action =>
+            fileMenu.menu.AppendAction("Settings/Climate", action =>
             {
+                keepViewOnSelectionChange = true;
+                Selection.SetActiveObjectWithContext(null, null);
                 var contentContainer = rootVisualElement.Query<VisualElement>("content").First();
                 contentContainer.Clear();
                 contentContainer.Add(settingsEditor.Render(root));
@@ -262,16 +272,14 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 var rmbBlockObject = root.GetComponent<RmbBlockObject>();
                 var contentContainer = rootVisualElement.Query<VisualElement>("content").First();
                 contentContainer.Clear();
-                contentContainer.Add(addBuilding.Render(rmbBlockObject.Climate, rmbBlockObject.Season,
-                    rmbBlockObject.WindowStyle));
+                contentContainer.Add(addBuilding.Render());
             }, (action) => SetMenuStatus(action));
             addMenu.menu.AppendAction("Models", action =>
             {
                 var rmbBlockObject = root.GetComponent<RmbBlockObject>();
                 var contentContainer = rootVisualElement.Query<VisualElement>("content").First();
                 contentContainer.Clear();
-                contentContainer.Add(add3dElement.Render(rmbBlockObject.Climate, rmbBlockObject.Season,
-                    rmbBlockObject.WindowStyle));
+                contentContainer.Add(add3dElement.Render());
             }, (action) => SetMenuStatus(action));
             addMenu.menu.AppendAction("Flats", action =>
             {

@@ -21,9 +21,6 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private string objectId;
         private ObjectPainter painterObject;
         private ObjectPicker pickerObject;
-        private ClimateBases climate;
-        private ClimateSeason season;
-        private WindowStyle windowStyle;
 
         public Add3d()
         {
@@ -34,11 +31,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             RenderPainter();
         }
 
-        public VisualElement Render(ClimateBases climate, ClimateSeason season, WindowStyle windowStyle)
+        public VisualElement Render()
         {
-            this.climate = climate;
-            this.season = season;
-            this.windowStyle = windowStyle;
             return visualElement;
         }
 
@@ -109,7 +103,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private GameObject AddPreview(string modelId)
         {
-            var previewObject = RmbBlockHelper.Add3dObject(modelId, climate, season, windowStyle);
+            var previewObject = RmbBlockHelper.Add3dObject(modelId);
             return previewObject;
         }
 
@@ -141,7 +135,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             data.YScale = scale.y;
             data.ZScale = scale.z;
 
-            var gameObject = RmbBlockHelper.Add3dObject(modelId, climate, season, windowStyle);
+            var gameObject = RmbBlockHelper.Add3dObject(modelId);
             var misc3DObjectComponent = gameObject.AddComponent<Misc3d>();
             misc3DObjectComponent.CreateObject(data);
 

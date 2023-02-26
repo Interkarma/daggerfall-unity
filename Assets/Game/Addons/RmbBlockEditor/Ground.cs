@@ -16,34 +16,23 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
     {
         public DFBlock.RmbGroundTiles[,] groundTiles;
         public DaggerfallGroundPlane ground;
-        public ClimateBases climate;
-        public ClimateSeason season;
         private MeshFilter meshFilter;
         private MeshCollider groundCollider;
 
-        public void CreateObject(DFBlock.RmbGroundTiles[,] gt, ClimateBases climate, ClimateSeason season)
+        public void CreateObject(DFBlock.RmbGroundTiles[,] gt)
         {
             groundTiles = gt;
             ground = gameObject.AddComponent<DaggerfallGroundPlane>();
             meshFilter = gameObject.GetComponent<MeshFilter>();
             groundCollider = gameObject.AddComponent<MeshCollider>();
 
-            this.climate = climate;
-            this.season = season;
-
             ground.transform.localPosition += new Vector3(0, 0, -DaggerfallGroundPlane.TileSize / 2.5f);
             Update();
         }
 
-        public void SetClimate(ClimateBases climate, ClimateSeason season)
-        {
-            this.climate = climate;
-            this.season = season;
-            Update();
-        }
         public void Update()
         {
-            RmbBlockHelper.AddGroundPlane(groundTiles, ref ground, ref meshFilter, climate, season);
+            RmbBlockHelper.AddGroundPlane(groundTiles, ref ground, ref meshFilter);
             groundCollider.sharedMesh = meshFilter.sharedMesh;
         }
     }

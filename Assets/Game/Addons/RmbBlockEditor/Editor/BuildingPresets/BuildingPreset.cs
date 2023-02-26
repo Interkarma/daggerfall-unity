@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets
 
             var go = new GameObject("Building From File");
             var buildingComponent = go.AddComponent<Building>();
-            buildingComponent.CreateObject(buildingData, subRecord, climate, season, windowStyle);
+            buildingComponent.CreateObject(buildingData, subRecord);
 
             return go;
         }
@@ -152,7 +152,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets
 
             var go = new GameObject("Building " + buildingId);
             var buildingComponent = go.AddComponent<Building>();
-            buildingComponent.CreateObject(buildingData, subRecord, climate, season, windowStyle);
+            buildingComponent.CreateObject(buildingData, subRecord);
 
             return go;
         }
@@ -192,12 +192,13 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets
 
             var go = new GameObject("Building From File");
             var buildingComponent = go.AddComponent<Building>();
-            buildingComponent.CreateObject(buildingData, subRecord, climate, season, windowStyle);
+            buildingComponent.CreateObject(buildingData, subRecord);
 
             return go;
         }
 
-        public GameObject ReplaceBuildingObject(string buildingId, Building oldBuilding, Boolean useNewInterior, Boolean useNewExterior)
+        public GameObject ReplaceBuildingObject(string buildingId, Building oldBuilding, Boolean useNewInterior,
+            Boolean useNewExterior)
         {
             var buildingGroupId = int.Parse(buildingId.Substring(0, 2));
             var buildingIndex = int.Parse(buildingId.Substring(2));
@@ -238,7 +239,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets
 
             var go = new GameObject("Building " + buildingId);
             var buildingComponent = go.AddComponent<Building>();
-            buildingComponent.CreateObject(buildingData, subRecord, climate, season, windowStyle);
+            buildingComponent.CreateObject(buildingData, subRecord);
 
             return go;
         }
@@ -260,7 +261,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.BuildingPresets
             var placeholder = new GameObject();
             foreach (var blockRecord in subRecord.Exterior.Block3dObjectRecords)
             {
-                var go = RmbBlockHelper.Add3dObject(blockRecord, climate, season, windowStyle);
+                var go = RmbBlockHelper.Add3dObject(blockRecord);
                 go.transform.parent = placeholder.transform;
             }
 
