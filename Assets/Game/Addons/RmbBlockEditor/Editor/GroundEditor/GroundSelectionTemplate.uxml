@@ -45,6 +45,10 @@
 
         <editor:VisualSplitter/>
 
+        <engine:VisualElement class="row center">
+            <engine:Button text="Center Camera" name="center-camera" class="col-1"/>
+        </engine:VisualElement>
+
         <engine:VisualElement class="row pt">
             <engine:VisualElement class="col-4">
                 <engine:VisualElement name="terrain-grid" class="rmb-terrain-grid"/>

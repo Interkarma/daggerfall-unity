@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             RenderTileGrid();
             RenderPreview();
             RenderControls();
+            BindCenterCameraButton();
             return visualElement;
         }
 
@@ -154,6 +155,12 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 textureRecord.value = nextRecordVal;
                 RenderPreview();
             }, TrickleDown.TrickleDown);
+        }
+
+        private void BindCenterCameraButton()
+        {
+            var centerCamera = visualElement.Query<Button>("center-camera").First();
+            centerCamera.RegisterCallback<MouseUpEvent>(evt => CameraHelper.CenterCamera());
         }
     }
 }
