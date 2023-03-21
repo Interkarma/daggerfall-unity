@@ -8,6 +8,8 @@ Also, here are the video tutorials that I have made for the tool:
 
 https://youtu.be/dk5z2orOcBQ
 
+https://youtu.be/L-53rXJ1Xyg
+
 
 ## Getting started
 
