@@ -10,6 +10,12 @@
     justify-content: center;
 }
 
+.row.right {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
 .flex-grow {
     flex: 1 0 auto;
 }
@@ -85,6 +91,10 @@
     -unity-text-align: middle-right;
 }
 
+.align-left {
+    -unity-text-align: middle-left;
+}
+
 .popup {
     height: 200px;
 }
@@ -100,6 +110,18 @@
 
 .height-450 {
     height: 450px;
+}
+
+.height-400 {
+    height: 400px;
+}
+
+.height-325 {
+    height: 325px;
+}
+
+.height-300 {
+    height: 300px;
 }
 
 .rmb-ground-grid-row {
@@ -150,6 +172,10 @@
     margin-right: auto;
 }
 
+.object-list-foldout Toggle {
+    margin-left: 0px;
+}
+
 .object-list-foldout Toggle:hover {
     background-color: darkgray;
 }
@@ -173,7 +199,6 @@
 .object-list-button {
     height: 20px;
     -unity-text-align: middle-left;
-    margin-left: 9px;
     border-width: 0;
     background-color: initial;
 }
@@ -310,7 +335,7 @@
     margin: 0;
 }
 
-.tab:hover{
+.tab:hover {
     background-color: #313030;
 }
 
@@ -318,4 +343,76 @@
     background-color: #383838;
     border-top-width: 3px;
     border-top-color: dodgerblue;
+}
+
+.import-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/import.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.export-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/export.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.remove-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/remove.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.sync-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/sync.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.file-search-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/file-search.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.add-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/add.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.save-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/save.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.edit-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/edit.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.catalog-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/catalog.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.thumbnail{
+    width: 100px;
+    height: 100px;
 }

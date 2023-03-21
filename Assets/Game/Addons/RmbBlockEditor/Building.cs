@@ -20,20 +20,6 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
     [Serializable]
     public class Building : MonoBehaviour
     {
-        public DFLocation.BuildingData BuildingDataObj;
-        [SerializeField] private DFBlock.RmbBlockHeader InteriorHeader;
-        [SerializeField] private DFBlock.RmbBlock3dObjectRecord[] InteriorBlock3dObjectRecords;
-        [SerializeField] private DFBlock.RmbBlockFlatObjectRecord[] InteriorBlockFlatObjectRecords;
-        [SerializeField] private DFBlock.RmbBlockSection3Record[] InteriorBlockSection3Records;
-        [SerializeField] private DFBlock.RmbBlockPeopleRecord[] InteriorBlockPeopleRecords;
-        [SerializeField] private DFBlock.RmbBlockDoorRecord[] InteriorBlockDoorRecords;
-        [SerializeField] private DFBlock.RmbBlockHeader ExteriorHeader;
-        [SerializeField] private DFBlock.RmbBlock3dObjectRecord[] ExteriorBlock3dObjectRecords;
-        [SerializeField] private DFBlock.RmbBlockFlatObjectRecord[] ExteriorBlockFlatObjectRecords;
-        [SerializeField] private DFBlock.RmbBlockSection3Record[] ExteriorBlockSection3Records;
-        [SerializeField] private DFBlock.RmbBlockPeopleRecord[] ExteriorBlockPeopleRecords;
-        [SerializeField] private DFBlock.RmbBlockDoorRecord[] ExteriorBlockDoorRecords;
-
 
         public ushort NameSeed;
         public ushort FactionId;
@@ -54,40 +40,24 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private int zPosOld;
         private int yPosOld;
 
-        private ClimateBases climate;
-        private ClimateSeason season;
-        private WindowStyle windowStyle;
+        private DFBlock.RmbSubRecord SubRecord;
 
         public void CreateObject(DFLocation.BuildingData buildingData, DFBlock.RmbSubRecord subRecord)
         {
-            BuildingDataObj = buildingData;
+            SubRecord = subRecord;
 
-            InteriorHeader = subRecord.Interior.Header;
-            InteriorBlock3dObjectRecords = subRecord.Interior.Block3dObjectRecords;
-            InteriorBlockFlatObjectRecords = subRecord.Interior.BlockFlatObjectRecords;
-            InteriorBlockSection3Records = subRecord.Interior.BlockSection3Records;
-            InteriorBlockPeopleRecords = subRecord.Interior.BlockPeopleRecords;
-            InteriorBlockDoorRecords = subRecord.Interior.BlockDoorRecords;
-
-            ExteriorHeader = subRecord.Exterior.Header;
-            ExteriorBlock3dObjectRecords = subRecord.Exterior.Block3dObjectRecords;
-            ExteriorBlockFlatObjectRecords = subRecord.Exterior.BlockFlatObjectRecords;
-            ExteriorBlockSection3Records = subRecord.Exterior.BlockSection3Records;
-            ExteriorBlockPeopleRecords = subRecord.Exterior.BlockPeopleRecords;
-            ExteriorBlockDoorRecords = subRecord.Exterior.BlockDoorRecords;
-
-            FactionId = BuildingDataObj.FactionId;
-            NameSeed = BuildingDataObj.NameSeed;
-            Sector = BuildingDataObj.Sector;
-            LocationId = BuildingDataObj.LocationId;
-            BuildingType = BuildingDataObj.BuildingType;
-            Quality = BuildingDataObj.Quality;
+            FactionId = buildingData.FactionId;
+            NameSeed = buildingData.NameSeed;
+            Sector = buildingData.Sector;
+            LocationId = buildingData.LocationId;
+            BuildingType = buildingData.BuildingType;
+            Quality = buildingData.Quality;
 
             YRotation = subRecord.YRotation;
 
             XPos = subRecord.XPos;
             ZPos = subRecord.ZPos;
-            ModelsYPos = ExteriorBlock3dObjectRecords[0].YPos;
+            ModelsYPos = subRecord.Exterior.Block3dObjectRecords[0].YPos;
 
             SaveOldRotation();
             SaveOldPosition();
@@ -98,6 +68,52 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
             UpdateScenePosition();
             UpdateSceneRotation();
+        }
+
+        public DFBlock.RmbSubRecord GetSubRecord()
+        {
+            var record = new DFBlock.RmbSubRecord();
+            record.XPos = XPos;
+            record.ZPos = ZPos;
+            record.YRotation = YRotation;
+            record.Exterior = SubRecord.Exterior;
+            record.Interior = SubRecord.Interior;
+
+            return record;
+        }
+
+        public void SetSubRecord(DFBlock.RmbSubRecord subRecord)
+        {
+            SubRecord.Exterior = subRecord.Exterior;
+            SubRecord.Interior = subRecord.Interior;
+
+            // A new GameObject needs to be added to the scene with the new Exterior
+            var newGo = new GameObject(gameObject.name);
+            var newBuilding = newGo.AddComponent<Building>();
+            newBuilding.CreateObject(GetBuildingData(), GetSubRecord());
+            newGo.transform.parent = gameObject.transform.parent;
+            try
+            {
+                Selection.SetActiveObjectWithContext(newGo, null);
+                DestroyImmediate(gameObject);
+            }
+            catch (Exception error)
+            {
+                Debug.LogError(error);
+            }
+        }
+
+        public DFLocation.BuildingData GetBuildingData()
+        {
+            var record = new DFLocation.BuildingData();
+            record.NameSeed = NameSeed;
+            record.FactionId = FactionId;
+            record.Sector = Sector;
+            record.LocationId = LocationId;
+            record.BuildingType = BuildingType;
+            record.Quality = Quality;
+
+            return record;
         }
 
         public void Start()
@@ -150,44 +166,6 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             }
         }
 
-        public DFLocation.BuildingData GetBuildingData()
-        {
-            var record = new DFLocation.BuildingData();
-            record.NameSeed = NameSeed;
-            record.FactionId = FactionId;
-            record.Sector = Sector;
-            record.LocationId = LocationId;
-            record.BuildingType = BuildingType;
-            record.Quality = Quality;
-
-            return record;
-        }
-
-        public DFBlock.RmbSubRecord GetSubRecord()
-        {
-            var record = new DFBlock.RmbSubRecord();
-            record.XPos = XPos;
-            record.ZPos = ZPos;
-            record.YRotation = YRotation;
-            record.Exterior = new DFBlock.RmbBlockData();
-            record.Exterior.Header = ExteriorHeader;
-            record.Exterior.Block3dObjectRecords = ExteriorBlock3dObjectRecords;
-            record.Exterior.BlockFlatObjectRecords = ExteriorBlockFlatObjectRecords;
-            record.Exterior.BlockSection3Records = ExteriorBlockSection3Records;
-            record.Exterior.BlockPeopleRecords = ExteriorBlockPeopleRecords;
-            record.Exterior.BlockDoorRecords = ExteriorBlockDoorRecords;
-
-            record.Interior = new DFBlock.RmbBlockData();
-            record.Interior.Header = InteriorHeader;
-            record.Interior.Block3dObjectRecords = InteriorBlock3dObjectRecords;
-            record.Interior.BlockFlatObjectRecords = InteriorBlockFlatObjectRecords;
-            record.Interior.BlockSection3Records = InteriorBlockSection3Records;
-            record.Interior.BlockPeopleRecords = InteriorBlockPeopleRecords;
-            record.Interior.BlockDoorRecords = InteriorBlockDoorRecords;
-
-            return record;
-        }
-
         public void Export(string fileName)
         {
             BuildingReplacementData data = new BuildingReplacementData()
@@ -203,7 +181,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private void Add3DObjects()
         {
-            var obj3D = RmbBlockHelper.AddBuilding3dObjects(ExteriorBlock3dObjectRecords, ModelsYPos);
+            var obj3D = RmbBlockHelper.AddBuilding3dObjects(SubRecord.Exterior.Block3dObjectRecords, ModelsYPos);
             obj3D.transform.parent = transform;
         }
 
@@ -212,7 +190,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var flats = new GameObject("Flats");
             flats.transform.parent = transform;
 
-            foreach (var blockRecord in ExteriorBlockFlatObjectRecords)
+            foreach (var blockRecord in SubRecord.Exterior.BlockFlatObjectRecords)
             {
                 var subRecordRotation =
                     Quaternion.AngleAxis(YRotation / BlocksFile.RotationDivisor, Vector3.up);
@@ -226,7 +204,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var people = new GameObject("People");
             people.transform.parent = transform;
 
-            foreach (var blockRecord in ExteriorBlockPeopleRecords)
+            foreach (var blockRecord in SubRecord.Exterior.BlockPeopleRecords)
             {
                 var go = RmbBlockHelper.AddPersonObject(blockRecord);
                 go.transform.parent = people.transform;
@@ -247,16 +225,16 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private void UpdateExteriorModelsYPos()
         {
-            if (ExteriorBlock3dObjectRecords.Length == 0)
+            if (SubRecord.Exterior.Block3dObjectRecords.Length == 0)
             {
                 return;
             }
 
-            var main = ExteriorBlock3dObjectRecords[0];
+            var main = SubRecord.Exterior.Block3dObjectRecords[0];
 
-            for (var i = 0; i < ExteriorBlock3dObjectRecords.Length; i++)
+            for (var i = 0; i < SubRecord.Exterior.Block3dObjectRecords.Length; i++)
             {
-                ExteriorBlock3dObjectRecords[i].YPos = ModelsYPos + (ExteriorBlock3dObjectRecords[i].YPos - main.YPos);
+                SubRecord.Exterior.Block3dObjectRecords[i].YPos = ModelsYPos + (SubRecord.Exterior.Block3dObjectRecords[i].YPos - main.YPos);
             }
         }
 

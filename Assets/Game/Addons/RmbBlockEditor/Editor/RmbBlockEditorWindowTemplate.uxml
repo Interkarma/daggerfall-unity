@@ -10,11 +10,13 @@
         <editor:ToolbarMenu text="Edit" name="rmb-edit-menu"/>
         <editor:ToolbarMenu text="Add" name="rmb-add-menu"/>
     </editor:Toolbar>
-    <engine:VisualElement class="row">
-        <engine:VisualElement class="col-4">
-            <engine:VisualElement name="content">
-                <engine:Label text="Please open a file to start editing!"/>
+    <engine:ScrollView>
+        <engine:VisualElement class="row">
+            <engine:VisualElement class="col-4">
+                <engine:VisualElement name="content">
+                    <engine:Label text="Please open a file to start editing!"/>
+                </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
-    </engine:VisualElement>
+    </engine:ScrollView>
 </engine:UXML>

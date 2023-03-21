@@ -13,12 +13,11 @@ using UnityEditor;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     [ExecuteInEditMode]
     [SelectionBase]
     public class Misc3d : MonoBehaviour
     {
-        public DFBlock.RmbBlock3dObjectRecord data;
         public uint ModelId;
         public byte ObjectType;
 
@@ -26,18 +25,24 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private Vector3 oldPos;
         public Vector3 rotation;
         public Vector3 oldRotation;
+        public Vector3 meshScale;
 
         public float scale;
         private float scaleOld;
 
         public void CreateObject(DFBlock.RmbBlock3dObjectRecord data)
         {
-            this.data = data;
             ModelId = data.ModelIdNum;
             ObjectType = data.ObjectType;
             pos = new Vector3(data.XPos, data.YPos, data.ZPos);
             rotation = new Vector3(data.XRotation, data.YRotation, data.ZRotation);
-            scale = data.YScale;
+            scale = data.XScale;
+            if (scale == 0)
+            {
+                scale = 1;
+            }
+
+            meshScale = transform.localScale / scale;
 
             SaveOldRotation();
             SaveOldPosition();
@@ -69,23 +74,30 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             return record;
         }
 
-        private void Save()
+        public void ChangeId(string modelId)
         {
-            data.XPos = (int)pos.x;
-            data.YPos = (int)pos.y;
-            data.ZPos = (int)pos.z;
-            data.XRotation = (short)rotation.x;
-            data.YRotation = (short)rotation.y;
-            data.ZRotation = (short)rotation.z;
-            data.XScale = scale;
-            data.YScale = scale;
-            data.ZScale = scale;
+            var record = GetRecord();
+            record.ModelIdNum = uint.Parse(modelId);
+            record.ModelId = modelId;
+
+            try
+            {
+                var newGo = RmbBlockHelper.Add3dObject(record);
+                newGo.transform.parent = gameObject.transform.parent;
+                newGo.AddComponent<Misc3d>().CreateObject(record);
+
+                DestroyImmediate(gameObject);
+                Selection.SetActiveObjectWithContext(newGo, null);
+            }
+            catch (Exception error)
+            {
+                Debug.LogError(error);
+            }
         }
 
         private void Update()
         {
             UpdateTransform();
-            Save();
         }
 
         private void OnSceneGUI(SceneView sceneView)
@@ -102,9 +114,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             rotation = new Vector3(rotationX, rotationY, rotationZ);
 
             SaveOldScale();
-            scale = transform.localScale.x;
-            scale = transform.localScale.y;
-            scale = transform.localScale.z;
+            scale = transform.localScale.x / meshScale.x;
 
             SaveOldPosition();
             var xPos = (int)Math.Round(transform.position.x / MeshReader.GlobalScale);
@@ -175,7 +185,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private void UpdateSceneScale()
         {
-            transform.localScale = new Vector3(scale, scale, scale);
+            transform.localScale = new Vector3(scale * meshScale.x, scale * meshScale.y, scale * meshScale.z);
         }
 
         private void OnDestroy()
@@ -183,5 +193,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             SceneView.duringSceneGui -= OnSceneGUI;
         }
     }
-    #endif
+#endif
 }

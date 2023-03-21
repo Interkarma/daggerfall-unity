@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     [ExecuteInEditMode]
     public abstract class Placeholder : MonoBehaviour
     {
@@ -132,6 +132,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
     public class ModelPlaceholder : Placeholder
     {
         private bool alignToSurface;
+        private Vector3 meshScale;
         private float scaleDelta;
         private Action<Vector3, Vector3, Vector3> onAdd;
 
@@ -141,7 +142,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             Action onCancel)
         {
             CreateObject(snapToSurface, positionOffset, onCancel);
-
+            meshScale = transform.localScale;
             this.snapToSurface = snapToSurface;
             this.alignToSurface = alignToSurface;
             this.onAdd = onAdd;
@@ -168,7 +169,12 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
             var newPosition = new Vector3(transform.position.x, -transform.position.y, transform.position.z) /
                               MeshReader.GlobalScale;
-            onAdd(newPosition, newRotation, transform.localScale);
+            onAdd(newPosition, newRotation,
+                new Vector3(
+                    transform.localScale.x / meshScale.x,
+                    transform.localScale.y / meshScale.y,
+                    transform.localScale.z / meshScale.z)
+                );
         }
 
         protected override void OnLeftDrag()
@@ -176,13 +182,14 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var delta = Event.current.delta.x;
             if (crtlPressed)
             {
-                scaleDelta += delta / 10;
+                scaleDelta += delta / 10 * meshScale.x;
                 if (scaleDelta < -0.9)
                 {
                     scaleDelta = -0.9f;
                 }
 
-                transform.localScale = new Vector3(1 + scaleDelta, 1 + scaleDelta, 1 + scaleDelta);
+                transform.localScale = new Vector3(meshScale.x + scaleDelta, meshScale.y + scaleDelta,
+                    meshScale.z + scaleDelta);
 
                 // Recalculate the offset, based on the new scale
                 groundOffset = GetOffset();
@@ -343,5 +350,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             transform.LookAt(SceneView.lastActiveSceneView.camera.transform);
         }
     }
-    #endif
+#endif
 }

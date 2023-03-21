@@ -13,9 +13,11 @@ using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using Exception = System.Exception;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
+#if UNITY_EDITOR
     public static class RmbBlockHelper
     {
         private const byte InteractiveObject = 3;
@@ -94,7 +96,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
             // Assign tileMap and climate
             dfGround.tileMap = tileMap;
-            dfGround.SetClimate(dfUnity,climate, season);
+            dfGround.SetClimate(dfUnity, climate, season);
         }
 
         public static int GetSceneryTextureArchive()
@@ -194,25 +196,46 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 -rmbBlock.YRotation / BlocksFile.RotationDivisor, -rmbBlock.ZRotation / BlocksFile.RotationDivisor);
             var modelScale = new Vector3(rmbBlock.XScale, rmbBlock.YScale, rmbBlock.ZScale);
             var modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), modelScale);
-            // Inject custom GameObject if available
-            var modelGo = MeshReplacement.ImportCustomGameobject(rmbBlock.ModelIdNum, null, modelMatrix);
-            if (modelGo == null)
-            {
-                if (modelData.DFMesh.TotalVertices != 0)
-                {
-                    modelGo =
-                        DaggerfallWorkshop.Utility.GameObjectHelper.CreateDaggerfallMeshGameObject(rmbBlock.ModelIdNum,
-                            null);
-                    modelGo.transform.localPosition = modelMatrix.GetColumn(3);
-                    modelGo.transform.localRotation = modelMatrix.rotation;
-                    modelGo.transform.localScale = modelMatrix.lossyScale;
-                }
-                else
-                    Debug.LogError("Custom model not found for modelId " + rmbBlock.ModelIdNum);
 
-                modelGo.GetComponent<DaggerfallMesh>().SetClimate(climate, season, windowStyle);
+            // Inject custom GameObject from RmbModManager
+            var modelGo = RMBModManager.GetCustomModel(rmbBlock.ModelId);
+            if (modelGo != null)
+            {
+                var mesh = modelGo.GetComponent<DaggerfallMesh>();
+                if (mesh != null)
+                {
+                    mesh.SetClimate(climate, season, windowStyle);
+                }
+
+                return modelGo;
             }
 
+            // Inject custom GameObject from ModManager
+            modelGo = MeshReplacement.ImportCustomGameobject(rmbBlock.ModelIdNum, null, modelMatrix);
+            if (modelGo != null)
+            {
+                modelGo.GetComponent<DaggerfallMesh>().SetClimate(climate, season, windowStyle);
+                return modelGo;
+            }
+
+            // Try creating a DaggerfallMesh
+            if (modelData.DFMesh.TotalVertices != 0)
+            {
+                modelGo = GameObjectHelper.CreateDaggerfallMeshGameObject(rmbBlock.ModelIdNum, null);
+                modelGo.transform.localPosition = modelMatrix.GetColumn(3);
+                modelGo.transform.localRotation = modelMatrix.rotation;
+                modelGo.transform.localScale = modelMatrix.lossyScale;
+                modelGo.GetComponent<DaggerfallMesh>().SetClimate(climate, season, windowStyle);
+                return modelGo;
+            }
+
+            // Return a magenta-colored cube if the mesh can't be found
+            Material material = new Material(Shader.Find("Standard"));
+            material.color = Color.magenta;
+
+            modelGo = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            modelGo.name = $"Missing Mesh [ID={rmbBlock.ModelIdNum}]";
+            modelGo.GetComponent<Renderer>().material = material;
             return modelGo;
         }
 
@@ -235,8 +258,21 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
             uint modelIdNum = uint.Parse(modelId);
 
+            // Inject custom GameObject from RmbModManager
+            var modelGo = RMBModManager.GetCustomModel(modelId);
+            if (modelGo != null)
+            {
+                var mesh = modelGo.GetComponent<DaggerfallMesh>();
+                if (mesh != null)
+                {
+                    mesh.SetClimate(climate, season, windowStyle);
+                }
+
+                return modelGo;
+            }
+
             // Inject custom GameObject if available
-            var modelGo = MeshReplacement.ImportCustomGameobject(modelIdNum, null, matrix);
+            modelGo = MeshReplacement.ImportCustomGameobject(modelIdNum, null, matrix);
             if (modelGo != null)
             {
                 return modelGo;
@@ -288,26 +324,57 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         public static GameObject AddFlatObject(DFBlock.RmbBlockFlatObjectRecord rmbBlock, Quaternion subRecordRotation)
         {
+            var id = $"{rmbBlock.TextureArchive}.{rmbBlock.TextureRecord}";
             var billboardPosition = new Vector3(rmbBlock.XPos, -rmbBlock.YPos, rmbBlock.ZPos) * MeshReader.GlobalScale;
             billboardPosition = subRecordRotation * billboardPosition;
 
-            // Spawn billboard gameobject
-            var go = GameObjectHelper.CreateDaggerfallBillboardGameObject(
-                rmbBlock.TextureArchive, rmbBlock.TextureRecord, null);
+            // try to get a custom flat
+            var go = RMBModManager.GetCustomBillboard(id);
+            if (go != null)
+            {
+                return go;
+            }
 
-            // Set position
-            var dfBillboard = go.GetComponent<Billboard>();
-            go.transform.position = billboardPosition;
-            go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+            try
+            {
+                // Spawn billboard gameobject
+                go = GameObjectHelper.CreateDaggerfallBillboardGameObject(
+                    rmbBlock.TextureArchive, rmbBlock.TextureRecord, null);
 
-            return go;
+                // Set position
+                var dfBillboard = go.GetComponent<Billboard>();
+                go.transform.position = billboardPosition;
+                go.transform.position += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+
+                return go;
+            }
+            catch (Exception error)
+            {
+                // Return a magenta-colored flat if the id can't be found
+                Texture2D texture = new Texture2D(1, 1);
+                texture.SetPixel(0, 0, Color.magenta);
+                texture.Apply();
+
+                go = new GameObject($"Missing Flat [ID={id}]");
+                var billboard = go.AddComponent<DaggerfallBillboard>();
+                billboard.SetMaterial(texture, new Vector2(1, 2));
+                return go;
+            }
         }
 
         public static GameObject AddFlatObject(string flatId)
         {
             var dot = Char.Parse(".");
             var splitId = flatId.Split(dot);
-            var go = GameObjectHelper.CreateDaggerfallBillboardGameObject(
+            GameObject go;
+            // try to get a custom flat
+            go = RMBModManager.GetCustomBillboard(flatId);
+            if (go != null)
+            {
+                return go;
+            }
+
+            go = GameObjectHelper.CreateDaggerfallBillboardGameObject(
                 int.Parse(splitId[0]), int.Parse(splitId[1]), null);
             return go;
         }
@@ -340,7 +407,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         public static void SaveBuildingFile(BuildingReplacementData buildingData, string path)
         {
-            if (string.IsNullOrEmpty(path)) {
+            if (string.IsNullOrEmpty(path))
+            {
                 return;
             }
 
@@ -475,4 +543,5 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             return cloned;
         }
     }
+#endif
 }

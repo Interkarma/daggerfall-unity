@@ -14,6 +14,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
     #if UNITY_EDITOR
     [ExecuteInEditMode]
+    [SelectionBase]
     public class MiscFlat : MonoBehaviour
     {
         public long Position;
@@ -25,13 +26,11 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         public Vector3 WorldPosition;
         public Vector3 OldWorldPosition;
 
-        private DFBlock.RmbBlockFlatObjectRecord data;
         private Billboard dfBillboard;
         private Vector3 flatOffset;
 
         public void CreateObject(DFBlock.RmbBlockFlatObjectRecord data)
         {
-            this.data = data;
             dfBillboard = GetComponent<Billboard>();
             flatOffset = new Vector3(0, (dfBillboard.Summary.Size.y / 2) - 0.1f, 0);
 
@@ -72,6 +71,31 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             record.ZPos = (int)WorldPosition.z;
 
             return record;
+        }
+
+        public void ChangeId(string flatId)
+        {
+            var record = GetRecord();
+
+            var dot = Char.Parse(".");
+            var splitId = flatId.Split(dot);
+
+            record.TextureArchive = int.Parse(splitId[0]);
+            record.TextureRecord = int.Parse(splitId[1]);
+
+            try
+            {
+                var newGo = RmbBlockHelper.AddFlatObject(flatId);
+                newGo.transform.parent = gameObject.transform.parent;
+                newGo.AddComponent<MiscFlat>().CreateObject(record);
+
+                DestroyImmediate(gameObject);
+                Selection.SetActiveObjectWithContext(newGo, null);
+            }
+            catch (Exception error)
+            {
+                Debug.LogError(error);
+            }
         }
 
         private void Update()
