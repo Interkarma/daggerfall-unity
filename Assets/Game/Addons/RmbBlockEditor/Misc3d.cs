@@ -42,7 +42,9 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 scale = 1;
             }
 
-            meshScale = transform.localScale / scale;
+            // Some meshes have a scale different than 1 when they are imported.
+            // We need to save the scale of the mesh to apply it when we change the scale of the object.
+            meshScale = transform.localScale;
 
             SaveOldRotation();
             SaveOldPosition();
