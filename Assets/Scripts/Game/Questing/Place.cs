@@ -268,7 +268,18 @@ namespace DaggerfallWorkshop.Game.Questing
                     break;
 
                 case MacroTypes.NameMacro4:             // Name of region (e.g. Tigonus)
-                    textOut = TextManager.Instance.GetLocalizedRegionName(siteDetails.regionIndex);
+                    if (siteDetails.regionIndex == 0 && siteDetails.regionName != "Alik'r Desert")
+                    {
+                        // Workaround for older saves where regionIndex was not present and will always be 0 in save data (Alik'r Desert)
+                        // This can result in improper region name being displayed when loading an older save and quest not actually set in Alik'r Desert.
+                        // In these cases display name using the legacy regionName field stored in place data
+                        textOut = siteDetails.regionName;
+                    }
+                    else
+                    {
+                        // Return localized region name based on regionIndex
+                        textOut = TextManager.Instance.GetLocalizedRegionName(siteDetails.regionIndex);
+                    }
                     break;
 
                 default:                                // Macro not supported
