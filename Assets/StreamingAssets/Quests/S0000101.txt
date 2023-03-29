@@ -7,7 +7,7 @@ Quest: S0000101
 QRC:
 
 Message:  1015
-<ce>                 King Eadwyre has sent us kill you and
+<ce>                 King Eadwyre has sent us to kill you and
 <ce>                 deliver the Totem to him. Prepare to
 <ce>                              die, %pcn.
                                      <--->
