@@ -101,6 +101,7 @@ public class StringTableCSVParser
             }
             string key = matches[pos++].Trim(trimChars);
             string value = matches[pos++].Trim(trimChars);
+            value = value.Replace("\"\"", "\""); // Replace escaped quotes in value with single quote marks
             KeyValuePair<string, string> kvp = new KeyValuePair<string, string>(key, value);
             rows.Add(kvp);
         }
