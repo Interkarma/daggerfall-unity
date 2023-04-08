@@ -657,7 +657,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 if (nextMessageBox != null)
                     nextMessageBox.Show();
-                else if (clickAnywhereToClose)
+                else if (clickAnywhereToClose || buttons == null || buttons.Count == 0)
                     CloseWindow();
             }
         }
