@@ -1063,6 +1063,11 @@ namespace DaggerfallWorkshop.Game.Questing
             List<Person> assignedFound = new List<Person>();
             foreach (Quest quest in quests.Values)
             {
+                // Exclude completed quests from active person check
+                // This prevents completed/tombstoned quests from locking out NPC
+                if (quest.QuestComplete)
+                    continue;
+
                 QuestResource[] persons = quest.GetAllResources(typeof(Person));
                 if (persons == null || persons.Length == 0)
                     continue;
