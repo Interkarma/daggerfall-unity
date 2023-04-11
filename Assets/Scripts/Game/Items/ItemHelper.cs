@@ -475,7 +475,7 @@ namespace DaggerfallWorkshop.Game.Items
                 // Change dye or just update texture
                 ItemGroups group = item.ItemGroup;
                 DyeColors dye = (DyeColors)color;
-                if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
+                if ((group == ItemGroups.Weapons || group == ItemGroups.Armor) && !item.IsArtifact)
                     data = ChangeDye(data, dye, DyeTargets.WeaponsAndArmor);
                 else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
                     data = ChangeDye(data, dye, DyeTargets.Clothing);
