@@ -154,7 +154,7 @@ AutomapTempleColor=457DC3FF
 AutomapShopColor=BE5518FF
 AutomapTavernColor=557530FF
 AutomapHouseColor=453C28FF
-DungeonMicMapQoL=False
+DungeonMicMapQoL=True
 DunMicMapInnerColor=D487D0FF
 DunMicMapBorderColor=FAB403FF
 
