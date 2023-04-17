@@ -657,7 +657,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Create replacement TMP font asset from path
             Font font = new Font(path);
-            replacement = TMP_FontAsset.CreateFontAsset(font, 90, 9, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 2048, 2048, AtlasPopulationMode.Dynamic);
+            replacement = TMP_FontAsset.CreateFontAsset(font, 60, 9, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 4096, 4096, AtlasPopulationMode.Dynamic);
             if (replacement == null)
                 return false;
 
