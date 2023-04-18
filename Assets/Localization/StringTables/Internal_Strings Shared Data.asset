@@ -3739,6 +3739,18 @@ MonoBehaviour:
     m_Key: dateFormatString
     m_Metadata:
       m_Items: []
+  - m_Id: 338866630561361920
+    m_Key: ingredientFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338866679752159232
+    m_Key: longWeaponNameFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338879523965104128
+    m_Key: longArmorNameFormatString
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -4719,5 +4719,17 @@ MonoBehaviour:
     m_Localized: '{0} the {1}{2} of {3:00}'
     m_Metadata:
       m_Items: []
+  - m_Id: 338866630561361920
+    m_Localized: '{0} {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338866679752159232
+    m_Localized: '{0} {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338879523965104128
+    m_Localized: '{0} {1}'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

@@ -300,9 +300,9 @@ namespace DaggerfallWorkshop.Game.Items
             if (differentiatePlantIngredients)
             {
                 if (item.ItemGroup == ItemGroups.PlantIngredients1 && item.TemplateIndex < 18)
-                    return string.Format("{0} {1}", result, TextManager.Instance.GetLocalizedText("northern"));
+                    return string.Format(TextManager.Instance.GetLocalizedText("ingredientFormatString"), result, TextManager.Instance.GetLocalizedText("northern"));
                 if (item.ItemGroup == ItemGroups.PlantIngredients2 && item.TemplateIndex < 18)
-                    return string.Format("{0} {1}", result, TextManager.Instance.GetLocalizedText("southern"));
+                    return string.Format(TextManager.Instance.GetLocalizedText("ingredientFormatString"), result, TextManager.Instance.GetLocalizedText("southern"));
             }
 
             // Resolve weapon material
@@ -310,7 +310,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)item.nativeMaterialValue;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName(weaponMaterial);
-                result = string.Format("{0} {1}", materialName, result);
+                result = string.Format(TextManager.Instance.GetLocalizedText("longWeaponNameFormatString"), materialName, result);
             }
 
             // Resolve armor material
@@ -318,7 +318,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes)item.nativeMaterialValue;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName(armorMaterial);
-                result = string.Format("{0} {1}", materialName, result);
+                result = string.Format(TextManager.Instance.GetLocalizedText("longArmorNameFormatString"), materialName, result);
             }
 
             // Resolve potion names
