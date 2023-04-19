@@ -1,47 +1,20 @@
-# What is Daggerfall Unity?
+# What is Daggerfall Unity UWP
 
-> Daggerfall Unity is an open source recreation of Daggerfall in the Unity engine created by [Daggerfall Workshop](http://www.dfworkshop.net).
+> Daggerfall Unity UWP is a port of DaggerFall Unity for the Universal Windows Platform (UWP) targeting Xbox One & Series S|X Devices.
 
-## Classic Daggerfall Plus
+# Requirements
+- A Windows PC or supported Xbox Console
+- [DaggerFall GameData](https://forums.dfworkshop.net/viewtopic.php?f=5&t=2360&p=27538#p27538) (open source)
 
-+ Cross-platform (Windows/Linux/Mac)
-+ Retro graphics are boosted by modern engine and lighting
-+ High resolution with classic style
-+ Smooth first-person controls
-+ Huge draw distances
-+ Quality of life enhancements
-+ Mod support
-
-## Free Addon To Free Daggerfall
-
-+ Runs using a free copy of Daggerfall
-+ Import your classic save games
-+ Revisit a huge world of adventure
+## Build Requirements
+- Visual Studio 2019 or newer (the project solution should prompt you to install any requirements.
+- 
 
 ## An Open Platform
 
 + Open source under MIT license
 + Quality contributions are welcome
 + Newcomers welcome and helped to learn
-+ Friendly community
-
-## Available Now
-
-+ Build updated regularly
-+ Start creating mods
-+ Contribute to development
-
-## Links
-
-+ [Daggerfall Workshop](http://www.dfworkshop.net/) - *Follow the development of Daggerfall Unity*
-+ [Workshop Forums](http://forums.dfworkshop.net/) - *Join the community*
-+ [Reddit](https://www.reddit.com/r/daggerfallunity) - *Daggerfall Unity subreddit*
-+ [Twitter](https://twitter.com/gav_clayton) - *Follow lead developer on Twitter for more news*
-
-## Versions
-+ *Daggerfall Unity* - v0.14.x
-+ *Daggerfall Tools for Unity* - v1.9.x
-+ *Required Unity3D version* - 2019.4.40f1 LTS
 
 ## License
 
