@@ -342,7 +342,8 @@ namespace DaggerfallWorkshop.Game.Items
                             {
                                 if (spell.index == parent.legacyMagic[i].param)
                                 {
-                                    magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + spell.spellName));
+                                    string spellName = TextManager.Instance.GetLocalizedSpellName(spell.index);
+                                    magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + spellName));
                                     found = true;
                                     break;
                                 }
