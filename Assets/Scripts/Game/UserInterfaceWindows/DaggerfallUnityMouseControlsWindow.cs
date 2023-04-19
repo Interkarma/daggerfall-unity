@@ -181,13 +181,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             label.HorizontalAlignment = HorizontalAlignment.Right;
             label.VerticalAlignment = VerticalAlignment.Middle;
             label.ShadowPosition = Vector2.zero;
-
-            //"ToggleConsole" is too long as a word when looking in non-SDF font view
-            //"Screenshot" is a better word and is one letter less than "PrintScreen"
-            label.Text = action == InputManager.Actions.ToggleConsole ? "Console"
-                                   : action == InputManager.Actions.PrintScreen ? "Screenshot"
-                                   : action.ToString();
-
+            label.Text = TextManager.Instance.GetLocalizedText(action.ToString(), TextCollections.TextSettings);
             label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
 
             button.Name = action.ToString();

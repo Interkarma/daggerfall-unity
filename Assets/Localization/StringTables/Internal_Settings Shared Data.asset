@@ -63,6 +63,30 @@ MonoBehaviour:
     m_Key: mouseWeaponAttackThreshold
     m_Metadata:
       m_Items: []
+  - m_Id: 21209825144832
+    m_Key: Escape
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21235720777728
+    m_Key: AutoRun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21258667814912
+    m_Key: ToggleConsole
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21297549012992
+    m_Key: PrintScreen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21352632807424
+    m_Key: QuickSave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21395456651264
+    m_Key: QuickLoad
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

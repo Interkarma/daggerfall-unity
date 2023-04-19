@@ -80,5 +80,29 @@ MonoBehaviour:
     m_Localized: Mouse Weapon Attack Threshold
     m_Metadata:
       m_Items: []
+  - m_Id: 21209825144832
+    m_Localized: Escape
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21235720777728
+    m_Localized: AutoRun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21258667814912
+    m_Localized: Console
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21297549012992
+    m_Localized: Screenshot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21352632807424
+    m_Localized: QuickSave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21395456651264
+    m_Localized: QuickLoad
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
