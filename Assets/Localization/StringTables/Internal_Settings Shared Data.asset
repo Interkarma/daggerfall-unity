@@ -99,6 +99,18 @@ MonoBehaviour:
     m_Key: cameraRecoilStrengths
     m_Metadata:
       m_Items: []
+  - m_Id: 32548303925248
+    m_Key: interactionModeIconModes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33651112275968
+    m_Key: iconsPositioningSchemes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34405386547200
+    m_Key: helmAndShieldMaterialDisplay
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

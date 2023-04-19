@@ -134,5 +134,54 @@ MonoBehaviour:
       High(100%)'
     m_Metadata:
       m_Items: []
+  - m_Id: 32548303925248
+    m_Localized: 'None
+
+      Minimal
+
+      Large
+
+      Classic
+
+      Colour
+
+      Monochrome
+
+      Classic
+      Crosshair
+
+      Colour Crosshair'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33651112275968
+    m_Localized: 'Classic
+
+      Medium
+
+      Small
+
+      Small Deck Left
+
+      Small
+      Deck Right
+
+      Small Vert Left
+
+      Small Vert Right
+
+      Small Horz
+      Bottom'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34405386547200
+    m_Localized: 'Off
+
+      No Leather Chain
+
+      No Leather
+
+      On'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

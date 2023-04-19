@@ -292,7 +292,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             vitalsIndicators = AddCheckbox(leftPanel, "vitalsIndicators", DaggerfallUnity.Settings.EnableVitalsIndicators);
             interactionModeIcon = AddSlider(leftPanel, "interactionModeIcon",
                 Enum.IsDefined(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) ? (int)Enum.Parse(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) : 0,
-                Enum.GetNames(typeof(InteractionModeIconModes)));
+                TextManager.Instance.GetLocalizedTextList("interactionModeIconModes", TextCollections.TextSettings));
             arrowCounter = AddCheckbox(leftPanel, "arrowCounter", DaggerfallUnity.Settings.EnableArrowCounter);
 
             y = 0;
@@ -305,9 +305,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enableModernConversationStyleInTalkWindow = AddCheckbox(rightPanel, "enableModernConversationStyleInTalkWindow", DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow);
             iconsPositioningScheme = AddSlider(rightPanel, "iconsPositioningScheme",
                 Enum.IsDefined(typeof(IconsPositioningSchemes), DaggerfallUnity.Settings.IconsPositioningScheme) ? (int)Enum.Parse(typeof(IconsPositioningSchemes), DaggerfallUnity.Settings.IconsPositioningScheme) : 0,
-                Enum.GetNames(typeof(IconsPositioningSchemes)));
+                TextManager.Instance.GetLocalizedTextList("iconsPositioningSchemes", TextCollections.TextSettings));
             helmAndShieldMaterialDisplay = AddSlider(rightPanel, "helmAndShieldMaterialDisplay",
-                DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
+                DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, TextManager.Instance.GetLocalizedTextList("helmAndShieldMaterialDisplay", TextCollections.TextSettings));
             geographicBackgrounds = AddCheckbox(rightPanel, "geographicBackgrounds", DaggerfallUnity.Settings.EnableGeographicBackgrounds);
             dungeonExitWagonPrompt = AddCheckbox(rightPanel, "dungeonExitWagonPrompt", DaggerfallUnity.Settings.DungeonExitWagonPrompt);
             travelMapLocationsOutline = AddCheckbox(rightPanel, "travelMapLocationsOutline", DaggerfallUnity.Settings.TravelMapLocationsOutline);
