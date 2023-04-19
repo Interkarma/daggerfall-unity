@@ -111,6 +111,38 @@ MonoBehaviour:
     m_Key: helmAndShieldMaterialDisplay
     m_Metadata:
       m_Items: []
+  - m_Id: 37951859322880
+    m_Key: qualitySettings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38352516018176
+    m_Key: filterModes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39004105338880
+    m_Key: shadowResolutionModes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39382901321728
+    m_Key: textureArrayLabel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39463364849664
+    m_Key: unsupported
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39495560327168
+    m_Key: enabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39522110271488
+    m_Key: disabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39941251264512
+    m_Key: textureArrayInfo
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

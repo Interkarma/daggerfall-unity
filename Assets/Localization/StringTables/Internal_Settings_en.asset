@@ -183,5 +183,58 @@ MonoBehaviour:
       On'
     m_Metadata:
       m_Items: []
+  - m_Id: 37951859322880
+    m_Localized: 'Fastest
+
+      Fast
+
+      Simple
+
+      Good
+
+      Beautiful
+
+      Fantastic'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38352516018176
+    m_Localized: 'Point
+
+      Bilinear
+
+      Trilinear'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39004105338880
+    m_Localized: 'Low
+
+      Medium
+
+      High
+
+      Very High'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39382901321728
+    m_Localized: 'Texture Arrays: '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39463364849664
+    m_Localized: Unsupported
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39495560327168
+    m_Localized: Enabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39522110271488
+    m_Localized: Disabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39941251264512
+    m_Localized: Improved implementation of terrain textures, with better performance
+      and modding support
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

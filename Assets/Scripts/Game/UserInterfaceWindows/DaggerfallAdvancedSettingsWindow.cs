@@ -359,9 +359,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             fullscreen.OnToggleState += Fullscreen_OnToggleState;
             //exclusiveFullscreen.OnToggleState += ExclusiveFullscreen_OnToggleState;
             runInBackground = AddCheckbox(leftPanel, "runInBackground", DaggerfallUnity.Settings.RunInBackground);
-            qualityLevel = AddSlider(leftPanel, "qualityLevel", DaggerfallUnity.Settings.QualityLevel, QualitySettings.names);
+            qualityLevel = AddSlider(leftPanel, "qualityLevel", DaggerfallUnity.Settings.QualityLevel, TextManager.Instance.GetLocalizedTextList("qualitySettings", TextCollections.TextSettings));
             qualityLevel.OnScroll += QualityLevel_OnScroll;
-            string[] filterModes = new string[] { "Point", "Bilinear", "Trilinear" };
+            string[] filterModes = TextManager.Instance.GetLocalizedTextList("filterModes", TextCollections.TextSettings);
             mainFilterMode = AddSlider(leftPanel, "mainFilterMode", DaggerfallUnity.Settings.MainFilterMode, filterModes);
             guiFilterMode = AddSlider(leftPanel, "guiFilterMode", DaggerfallUnity.Settings.GUIFilterMode, filterModes);
             videoFilterMode = AddSlider(leftPanel, "videoFilterMode", DaggerfallUnity.Settings.VideoFilterMode, filterModes);
@@ -373,17 +373,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             fovSlider = AddSlider(rightPanel, "fovSlider", 60, 120, DaggerfallUnity.Settings.FieldOfView);
             terrainDistance = AddSlider(rightPanel, "terrainDistance", 1, 4, DaggerfallUnity.Settings.TerrainDistance);
             shadowResolutionMode = AddSlider(rightPanel, "shadowResolutionMode",
-                DaggerfallUnity.Settings.ShadowResolutionMode, "Low", "Medium", "High", "Very High");
+                DaggerfallUnity.Settings.ShadowResolutionMode, TextManager.Instance.GetLocalizedTextList("shadowResolutionModes", TextCollections.TextSettings));
             dungeonLightShadows = AddCheckbox(rightPanel, "dungeonLightShadows", DaggerfallUnity.Settings.DungeonLightShadows);
             interiorLightShadows = AddCheckbox(rightPanel, "interiorLightShadows", DaggerfallUnity.Settings.InteriorLightShadows);
             exteriorLightShadows = AddCheckbox(rightPanel, "exteriorLightShadows", DaggerfallUnity.Settings.ExteriorLightShadows);
             ambientLitInteriors = AddCheckbox(rightPanel, "ambientLitInteriors", DaggerfallUnity.Settings.AmbientLitInteriors);
-            string textureArrayLabel = "Texture Arrays: ";
+            string textureArrayLabel = TextManager.Instance.GetLocalizedText("textureArrayLabel", TextCollections.TextSettings);
             if (!SystemInfo.supports2DArrayTextures)
-                textureArrayLabel += "Unsupported";
+                textureArrayLabel += TextManager.Instance.GetLocalizedText("unsupported", TextCollections.TextSettings);
             else
-                textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? "Enabled" : "Disabled";
-            AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
+                textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? TextManager.Instance.GetLocalizedText("enabled", TextCollections.TextSettings) : TextManager.Instance.GetLocalizedText("disabled", TextCollections.TextSettings);
+            AddInfo(rightPanel, textureArrayLabel, TextManager.Instance.GetLocalizedText("textureArrayInfo", TextCollections.TextSettings));
         }
 
         private void Accessibility(Panel leftPanel, Panel rightPanel)
