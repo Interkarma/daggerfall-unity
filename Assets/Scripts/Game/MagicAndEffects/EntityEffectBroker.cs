@@ -872,7 +872,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 BundleType = bundleType,
                 TargetType = ClassicTargetIndexToTargetType(spellRecordData.rangeType),
                 ElementType = ClassicElementIndexToElementType(spellRecordData.element),
-                Name = spellRecordData.spellName,
+                Name = TextManager.Instance.GetLocalizedSpellName(spellRecordData.index),
                 IconIndex = spellRecordData.icon,
                 Icon = new SpellIcon(),
                 StandardSpellIndex = spellRecordData.index, 
