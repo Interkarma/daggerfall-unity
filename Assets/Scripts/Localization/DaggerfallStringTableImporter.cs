@@ -22,6 +22,7 @@ using UnityEngine.Localization.Tables;
 using DaggerfallWorkshop.Game;
 using DaggerfallConnect;
 using DaggerfallConnect.Save;
+using DaggerfallConnect.FallExe;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Localization;
@@ -776,6 +777,11 @@ namespace DaggerfallWorkshop.Localization
             Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
         }
 
+        /// <summary>
+        /// Import SPELLS.STD spell names into specified StringTable.
+        /// </summary>
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
         public static void CopySpellsToStringTable(string target, bool overwriteExistingKeys)
         {
             const string spellsStd = "SPELLS.STD";
@@ -825,6 +831,72 @@ namespace DaggerfallWorkshop.Localization
                         else
                         {
                             Debug.LogErrorFormat("CopySpellsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
+                        }
+                    }
+                }
+
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
+            }
+
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
+        }
+
+        /// <summary>
+        /// Imports item template names into specified StringTable.
+        /// </summary>
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
+        public static void CopyItemsToStringTable(string target, bool overwriteExistingKeys)
+        {
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
+
+            // Get item template names
+            ItemTemplate[] itemTemplates = DaggerfallUnity.Instance.ItemHelper.ItemTemplates;
+            if (itemTemplates == null || itemTemplates.Length == 0)
+            {
+                Debug.LogError("CopyItemsToStringTable() could not get item template data.");
+                return;
+            }
+
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopyItemsToStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
+
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                foreach (ItemTemplate item in itemTemplates)
+                {
+                    string key = item.index.ToString();
+                    string text = item.name;
+
+                    var targetEntry = targetTable.GetEntry(key);
+                    if (targetEntry == null)
+                    {
+                        targetTable.AddEntry(key, text);
+                        copiedNew++;
+                    }
+                    else if (targetEntry != null && overwriteExistingKeys)
+                    {
+                        if (targetTable.RemoveEntry(key))
+                        {
+                            targetTable.AddEntry(key, text);
+                            copiedOverwrite++;
+                        }
+                        else
+                        {
+                            Debug.LogErrorFormat("CopyItemsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
                         }
                     }
                 }

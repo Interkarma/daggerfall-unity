@@ -775,6 +775,7 @@ namespace DaggerfallWorkshop
         TextLocations,
         TextSettings,
         TextSpells,
+        TextItems,
     }
 
     /// <summary>
