@@ -21,6 +21,7 @@ using UnityEngine;
 using UnityEngine.Localization.Tables;
 using DaggerfallWorkshop.Game;
 using DaggerfallConnect;
+using DaggerfallConnect.Save;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Localization;
@@ -761,6 +762,69 @@ namespace DaggerfallWorkshop.Localization
                                     Debug.LogErrorFormat("CopyLocationsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
                                 }
                             }
+                        }
+                    }
+                }
+
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
+            }
+
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
+        }
+
+        public static void CopySpellsToStringTable(string target, bool overwriteExistingKeys)
+        {
+            const string spellsStd = "SPELLS.STD";
+
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
+
+            // Load default SPELLS.STD file
+            List<SpellRecord.SpellRecordData> standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, spellsStd));
+            if (standardSpells == null || standardSpells.Count == 0)
+            {
+                Debug.LogError("CopySpellsToStringTable() could not find default SPELLS.STD file");
+                return;
+            }
+
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopySpellsToStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
+
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                foreach (var spell in standardSpells)
+                {
+                    string key = spell.index.ToString();
+                    string text = spell.spellName;
+
+                    var targetEntry = targetTable.GetEntry(key);
+                    if (targetEntry == null)
+                    {
+                        targetTable.AddEntry(key, text);
+                        copiedNew++;
+                    }
+                    else if (targetEntry != null && overwriteExistingKeys)
+                    {
+                        if (targetTable.RemoveEntry(key))
+                        {
+                            targetTable.AddEntry(key, text);
+                            copiedOverwrite++;
+                        }
+                        else
+                        {
+                            Debug.LogErrorFormat("CopySpellsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
                         }
                     }
                 }
