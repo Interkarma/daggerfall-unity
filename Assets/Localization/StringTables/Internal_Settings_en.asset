@@ -40,5 +40,45 @@ MonoBehaviour:
       Highest'
     m_Metadata:
       m_Items: []
+  - m_Id: 17418295963648
+    m_Localized: Configure Advanced Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17583400546304
+    m_Localized: CONTINUE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17783670173696
+    m_Localized: Mouse Look Smoothing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17828595363840
+    m_Localized: Mouse Look Sensitivity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17871150772224
+    m_Localized: Invert Look-Y
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17915681697792
+    m_Localized: Movement Acceleration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17967456186368
+    m_Localized: Weapon Swing Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18081830662144
+    m_Localized: Bows - draw and release
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18131793211392
+    m_Localized: Toggle Sneak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18170804432896
+    m_Localized: Mouse Weapon Attack Threshold
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

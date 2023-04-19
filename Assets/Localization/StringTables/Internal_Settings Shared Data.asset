@@ -23,6 +23,46 @@ MonoBehaviour:
     m_Key: mouseLookSmoothingStrengths
     m_Metadata:
       m_Items: []
+  - m_Id: 17418295963648
+    m_Key: configureAdvancedControls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17583400546304
+    m_Key: continueUpper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17783670173696
+    m_Key: mouseLookSmoothing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17828595363840
+    m_Key: mouseLookSensitivity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17871150772224
+    m_Key: invertLookY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17915681697792
+    m_Key: movementAcceleration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17967456186368
+    m_Key: weaponSwingMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18081830662144
+    m_Key: bowDrawback
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18131793211392
+    m_Key: toggleSneak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18170804432896
+    m_Key: mouseWeaponAttackThreshold
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
