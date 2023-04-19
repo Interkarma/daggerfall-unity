@@ -50,8 +50,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float sectionSpacing = 12f;
         const float itemSpacing = 10f;
 
-        const string closeButtonText = "Close";
-
         // Panels
         List<Panel> pages = new List<Panel>();
         List<Button> pagesButton = new List<Button>();
@@ -208,7 +206,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             closeButton.VerticalAlignment = VerticalAlignment.Bottom;
             closeButton.BackgroundColor = closeButtonColor;
             closeButton.Outline.Enabled = true;
-            closeButton.Label.Text = closeButtonText;
+            closeButton.Label.Text = TextManager.Instance.GetLocalizedText("close", TextCollections.TextSettings);
             closeButton.OnMouseClick += CloseButton_OnMouseClick;
             closeButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GameSetupClose);
             NativePanel.Components.Add(closeButton);
@@ -245,7 +243,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             startInDungeon = AddCheckbox(leftPanel, "startInDungeon", DaggerfallUnity.Settings.StartInDungeon);
             smallerDungeons = AddCheckbox(leftPanel, "smallerDungeons", DaggerfallUnity.Settings.SmallerDungeons);
             randomDungeonTextures = AddSlider(leftPanel, "randomDungeonTextures",
-                DaggerfallUnity.Settings.RandomDungeonTextures, "classic", "climate", "climateOnly", "random", "randomOnly");
+                DaggerfallUnity.Settings.RandomDungeonTextures, TextManager.Instance.GetLocalizedTextList("dungeonTextureModes", TextCollections.TextSettings));
             cameraRecoilStrength = AddSlider(leftPanel, "cameraRecoilStrength",
                 DaggerfallUnity.Settings.CameraRecoilStrength, "Off", "Low (25%)", "Medium (50%)", "High (75%)", "V. High(100%)");
 

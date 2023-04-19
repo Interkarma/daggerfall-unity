@@ -104,5 +104,22 @@ MonoBehaviour:
     m_Localized: QuickLoad
     m_Metadata:
       m_Items: []
+  - m_Id: 29671917350912
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30282243108864
+    m_Localized: 'Classic
+
+      Climate
+
+      Climate Only
+
+      Random
+
+      Random
+      Only'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
