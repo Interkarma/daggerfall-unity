@@ -7,8 +7,8 @@
 - [DaggerFall GameData](https://forums.dfworkshop.net/viewtopic.php?f=5&t=2360&p=27538#p27538) (open source)
 
 ## Build Requirements
-- Visual Studio 2019 or newer (the project solution should prompt you to install any requirements.
-- 
+- Visual Studio 2019 or newer (the project solution should prompt you to install any requirements.)
+- Unity with Unity 2019 Engine
 
 ## An Open Platform
 
