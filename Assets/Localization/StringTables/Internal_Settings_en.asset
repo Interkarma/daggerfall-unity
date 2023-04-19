@@ -19,15 +19,25 @@ MonoBehaviour:
     m_Items: []
   m_TableData:
   - m_Id: 66057662464
-    m_Localized: Vanilla
+    m_Localized: 'Vanilla
+
+      Click
+
+      Hold'
     m_Metadata:
       m_Items: []
-  - m_Id: 84617457664
-    m_Localized: Click
-    m_Metadata:
-      m_Items: []
-  - m_Id: 115982462976
-    m_Localized: Hold
+  - m_Id: 5289358651392
+    m_Localized: 'None
+
+      Lowest
+
+      Low
+
+      Medium
+
+      High
+
+      Highest'
     m_Metadata:
       m_Items: []
   references:

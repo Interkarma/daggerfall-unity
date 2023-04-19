@@ -123,13 +123,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupKeybindButton(quickSaveKeybindButton, InputManager.Actions.QuickSave, 210, 20);
             SetupKeybindButton(quickLoadKeybindButton, InputManager.Actions.QuickLoad, 210, 40);
 
-            mouseSmoothingSlider = CreateSlider("Mouse Look Smoothing", 120, 70, SettingsManager.GetMouseLookSmoothingStrength(DaggerfallUnity.Settings.MouseLookSmoothingFactor), SettingsManager.GetMouseLookSmoothingStrengths());
+            mouseSmoothingSlider = CreateSlider("Mouse Look Smoothing", 120, 70, SettingsManager.GetMouseLookSmoothingStrength(DaggerfallUnity.Settings.MouseLookSmoothingFactor), TextManager.Instance.GetLocalizedTextList("mouseLookSmoothingStrengths", TextCollections.TextSettings));
             mouseSensitivitySlider = CreateSlider("Mouse Look Sensitivity", 20, 70, 0.1f, 16.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
             invertMouseVerticalCheckbox = AddOption(20, 120, "Invert Look-Y", DaggerfallUnity.Settings.InvertMouseVertical);
             moveSpeedCheckbox = AddOption(20, 130, "Movement Acceleration", DaggerfallUnity.Settings.MovementAcceleration);
 
             //weaponSensitivitySlider = CreateSlider("Mouse Weapon Sensitivity", 115, 80, 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
-            weaponSwingModeSlider = CreateSlider("Weapon swing mode", 120, 90, DaggerfallUnity.Settings.WeaponSwingMode, "Vanilla", "Click", "Hold");
+            weaponSwingModeSlider = CreateSlider("Weapon swing mode", 120, 90, DaggerfallUnity.Settings.WeaponSwingMode, TextManager.Instance.GetLocalizedTextList("weaponSwingModes", TextCollections.TextSettings));
             bowDrawbackCheckbox = AddOption(115, 120, "Bows - draw and release", DaggerfallUnity.Settings.BowDrawback);
             toggleSneakCheckbox = AddOption(115, 130, "Toggle Sneak", DaggerfallUnity.Settings.ToggleSneak);
 

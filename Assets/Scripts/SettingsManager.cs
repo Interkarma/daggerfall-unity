@@ -317,16 +317,6 @@ namespace DaggerfallWorkshop
 
         #region Public Methods
 
-        public static string[] GetMouseLookSmoothingStrengths()
-        {
-            string[] strengths = new string[6];
-
-            for (int i = 0; i < strengths.Length; ++i)
-                strengths[i] = TextManager.Instance.GetText("MainMenu", "mouseSmoothingStrength" + i);
-
-            return strengths;
-        }
-
         public static float[] GetMouseLookSmoothingFactors()
         {
             return new float[] { 0.0f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f };

@@ -16,15 +16,11 @@ MonoBehaviour:
   m_TableCollectionNameGuidString: c6e2a78ddb1596d4b8bec7f8d98c0bf7
   m_Entries:
   - m_Id: 66057662464
-    m_Key: vanilla
+    m_Key: weaponSwingModes
     m_Metadata:
       m_Items: []
-  - m_Id: 84617457664
-    m_Key: click
-    m_Metadata:
-      m_Items: []
-  - m_Id: 115982462976
-    m_Key: hold
+  - m_Id: 5289358651392
+    m_Key: mouseLookSmoothingStrengths
     m_Metadata:
       m_Items: []
   m_Metadata:
