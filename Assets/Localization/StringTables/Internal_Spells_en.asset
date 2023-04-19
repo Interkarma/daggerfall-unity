@@ -267,47 +267,47 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438526
-    m_Localized: '!Nux Vomica'
+    m_Localized: Nux Vomica
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438527
-    m_Localized: '!Arsenic'
+    m_Localized: Arsenic
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438528
-    m_Localized: '!Moonseed'
+    m_Localized: Moonseed
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438529
-    m_Localized: '!Drothweed'
+    m_Localized: Drothweed
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438530
-    m_Localized: '!Somnalius'
+    m_Localized: Somnalius
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438531
-    m_Localized: '!Pyrrhic Acid'
+    m_Localized: Pyrrhic Acid
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438532
-    m_Localized: '!Magebane'
+    m_Localized: Magebane
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438533
-    m_Localized: '!Thyrwort'
+    m_Localized: Thyrwort
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438534
-    m_Localized: '!Indulcet'
+    m_Localized: Indulcet
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438535
-    m_Localized: '!Sursum'
+    m_Localized: Sursum
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438536
-    m_Localized: '!Quaesto Vil'
+    m_Localized: Quaesto Vil
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438537
@@ -351,7 +351,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438547
-    m_Localized: '!Lycanthropy'
+    m_Localized: Lycanthropy
     m_Metadata:
       m_Items: []
   - m_Id: 6371669438548
