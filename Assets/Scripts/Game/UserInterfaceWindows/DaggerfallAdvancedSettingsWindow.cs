@@ -245,7 +245,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             randomDungeonTextures = AddSlider(leftPanel, "randomDungeonTextures",
                 DaggerfallUnity.Settings.RandomDungeonTextures, TextManager.Instance.GetLocalizedTextList("dungeonTextureModes", TextCollections.TextSettings));
             cameraRecoilStrength = AddSlider(leftPanel, "cameraRecoilStrength",
-                DaggerfallUnity.Settings.CameraRecoilStrength, "Off", "Low (25%)", "Medium (50%)", "High (75%)", "V. High(100%)");
+                DaggerfallUnity.Settings.CameraRecoilStrength, TextManager.Instance.GetLocalizedTextList("cameraRecoilStrengths", TextCollections.TextSettings));
 
             // Controls
             AddSectionTitle(leftPanel, "controls");

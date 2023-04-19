@@ -121,5 +121,18 @@ MonoBehaviour:
       Only'
     m_Metadata:
       m_Items: []
+  - m_Id: 31486910132224
+    m_Localized: 'Off
+
+      Low (25%)
+
+      Medium (50%)
+
+      High (75%)
+
+      V.
+      High(100%)'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

@@ -95,6 +95,10 @@ MonoBehaviour:
     m_Key: dungeonTextureModes
     m_Metadata:
       m_Items: []
+  - m_Id: 31486910132224
+    m_Key: cameraRecoilStrengths
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
