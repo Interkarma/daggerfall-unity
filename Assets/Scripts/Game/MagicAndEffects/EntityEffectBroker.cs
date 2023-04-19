@@ -711,6 +711,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return false;
         }
 
+        /// <summary>
+        /// Lookup default spell name from standard spell dictionary.
+        /// This name is not localized. Result will be from SPELLS.STD or mods.
+        /// </summary>
+        /// <param name="id">ID of spell.</param>
+        /// <returns>Spell name if found, otherwise null.</returns>
+        public string GetStandardSpellName(int id)
+        {
+            if (standardSpells.ContainsKey(id))
+                return standardSpells[id].spellName;
+            else
+                return null;
+        }
+
         #endregion
 
         #region Private Methods

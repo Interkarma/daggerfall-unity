@@ -20,6 +20,7 @@ using Wenzil.Console;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using UnityEngine.Localization.Tables;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -433,6 +434,21 @@ namespace DaggerfallWorkshop.Game
                 return name;
             else
                 return fallback;
+        }
+
+        /// <summary>
+        /// Gets localized version of spell name from its ID.
+        /// Fallback to default spell name if localized string not found.
+        /// </summary>
+        /// <param name="id">Spell ID.</param>
+        /// <returns>Localized name of spell or default spell name.</returns>
+        public string GetLocalizedSpellName(int id)
+        {
+            string name;
+            if (TryGetLocalizedText(TextCollections.TextSpells, id.ToString(), out name))
+                return name;
+            else
+                return GameManager.Instance.EntityEffectBroker.GetStandardSpellName(id);
         }
 
         /// <summary>
