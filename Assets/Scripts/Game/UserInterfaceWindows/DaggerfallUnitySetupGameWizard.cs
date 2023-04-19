@@ -540,8 +540,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             enableController = AddOption(x, "enableController", DaggerfallUnity.Settings.EnableController);
             enableController.OnToggleState += EnableController_OnToggleState;
-            
-            weaponSwingMode = AddSlider(x, "weaponSwingMode", "weaponSwingModeInfo", DaggerfallUnity.Settings.WeaponSwingMode, "Vanilla", "Click", "Hold");
+
+            string settingVanilla = TextManager.Instance.GetLocalizedText("vanilla", TextCollections.TextSettings);
+            string settingClick = TextManager.Instance.GetLocalizedText("click", TextCollections.TextSettings);
+            string settingHold = TextManager.Instance.GetLocalizedText("hold", TextCollections.TextSettings);
+            weaponSwingMode = AddSlider(x, "weaponSwingMode", "weaponSwingModeInfo", DaggerfallUnity.Settings.WeaponSwingMode, settingVanilla, settingClick, settingHold);
 
             // Add mod note
             TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 130), GetText("modNote"), optionsPanel);

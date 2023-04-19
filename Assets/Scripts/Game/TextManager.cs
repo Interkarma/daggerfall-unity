@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game
         public static string defaultInternalFlatsCollectionName = "Internal_Flats";
         public static string defaultInternalQuestsCollectionName = "Internal_Quests";
         public static string defaultInternalLocationsCollectionName = "Internal_Locations";
+        public static string defaultInternalSettingsCollectionName = "Internal_Settings";
 
         const string localizedTextLookupError = "<LocaleText-NotFound>";
         const string textFolderName = "Text";
@@ -45,6 +46,7 @@ namespace DaggerfallWorkshop.Game
         public string runtimeFlatStrings = defaultInternalFlatsCollectionName;
         public string runtimeQuestsStrings = defaultInternalQuestsCollectionName;
         public string runtimeLocationsStrings = defaultInternalLocationsCollectionName;
+        public string runtimeSettingsStrings = defaultInternalSettingsCollectionName;
 
         // String table copy editor properties
         public bool tableCopyOverwriteTargetStringTables = false;
@@ -262,6 +264,9 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case TextCollections.TextLocations:
                     collectionName = runtimeLocationsStrings;
+                    break;
+                case TextCollections.TextSettings:
+                    collectionName = runtimeSettingsStrings;
                     break;
             }
 
