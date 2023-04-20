@@ -10,7 +10,9 @@
 - Visual Studio 2019 or newer (the project solution should prompt you to install any requirements.)
 - Unity with Unity 2019 Engine
 
-## An Open Platform
+You will find a folder called UWP in the source files, this is the UWP build, when you open the whole project into Unity make sure you set the Build path into the UWP folder if you planned on contributing to this repository.
+
+# An Open Platform
 
 + Open source under MIT license
 + Quality contributions are welcome
