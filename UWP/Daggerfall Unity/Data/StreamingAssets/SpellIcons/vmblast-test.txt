@@ -1,0 +1,284 @@
+{
+    "displayName": "VMBlast Pack",
+    "rowCount": 20,
+    "iconCount": 69,
+    "filterMode": "Bilinear",
+    "icons": [
+        {
+            "index": 0,
+            "suggestedEffects": null
+        },
+        {
+            "index": 1,
+            "suggestedEffects": null
+        },
+        {
+            "index": 2,
+            "suggestedEffects": null
+        },
+        {
+            "index": 3,
+            "suggestedEffects": null
+        },
+        {
+            "index": 4,
+            "suggestedEffects": null
+        },
+        {
+            "index": 5,
+            "suggestedEffects": null
+        },
+        {
+            "index": 6,
+            "suggestedEffects": null
+        },
+        {
+            "index": 7,
+            "suggestedEffects": null
+        },
+        {
+            "index": 8,
+            "suggestedEffects": null
+        },
+        {
+            "index": 9,
+            "suggestedEffects": null
+        },
+        {
+            "index": 10,
+            "suggestedEffects": null
+        },
+        {
+            "index": 11,
+            "suggestedEffects": null
+        },
+        {
+            "index": 12,
+            "suggestedEffects": null
+        },
+        {
+            "index": 13,
+            "suggestedEffects": null
+        },
+        {
+            "index": 14,
+            "suggestedEffects": null
+        },
+        {
+            "index": 15,
+            "suggestedEffects": null
+        },
+        {
+            "index": 16,
+            "suggestedEffects": null
+        },
+        {
+            "index": 17,
+            "suggestedEffects": null
+        },
+        {
+            "index": 18,
+            "suggestedEffects": null
+        },
+        {
+            "index": 19,
+            "suggestedEffects": null
+        },
+        {
+            "index": 20,
+            "suggestedEffects": null
+        },
+        {
+            "index": 21,
+            "suggestedEffects": null
+        },
+        {
+            "index": 22,
+            "suggestedEffects": null
+        },
+        {
+            "index": 23,
+            "suggestedEffects": null
+        },
+        {
+            "index": 24,
+            "suggestedEffects": null
+        },
+        {
+            "index": 25,
+            "suggestedEffects": null
+        },
+        {
+            "index": 26,
+            "suggestedEffects": null
+        },
+        {
+            "index": 27,
+            "suggestedEffects": null
+        },
+        {
+            "index": 28,
+            "suggestedEffects": null
+        },
+        {
+            "index": 29,
+            "suggestedEffects": null
+        },
+        {
+            "index": 30,
+            "suggestedEffects": null
+        },
+        {
+            "index": 31,
+            "suggestedEffects": null
+        },
+        {
+            "index": 32,
+            "suggestedEffects": null
+        },
+        {
+            "index": 33,
+            "suggestedEffects": null
+        },
+        {
+            "index": 34,
+            "suggestedEffects": null
+        },
+        {
+            "index": 35,
+            "suggestedEffects": null
+        },
+        {
+            "index": 36,
+            "suggestedEffects": null
+        },
+        {
+            "index": 37,
+            "suggestedEffects": null
+        },
+        {
+            "index": 38,
+            "suggestedEffects": null
+        },
+        {
+            "index": 39,
+            "suggestedEffects": null
+        },
+        {
+            "index": 40,
+            "suggestedEffects": null
+        },
+        {
+            "index": 41,
+            "suggestedEffects": null
+        },
+        {
+            "index": 42,
+            "suggestedEffects": null
+        },
+        {
+            "index": 43,
+            "suggestedEffects": null
+        },
+        {
+            "index": 44,
+            "suggestedEffects": null
+        },
+        {
+            "index": 45,
+            "suggestedEffects": null
+        },
+        {
+            "index": 46,
+            "suggestedEffects": null
+        },
+        {
+            "index": 47,
+            "suggestedEffects": null
+        },
+        {
+            "index": 48,
+            "suggestedEffects": null
+        },
+        {
+            "index": 49,
+            "suggestedEffects": null
+        },
+        {
+            "index": 50,
+            "suggestedEffects": null
+        },
+        {
+            "index": 51,
+            "suggestedEffects": null
+        },
+        {
+            "index": 52,
+            "suggestedEffects": null
+        },
+        {
+            "index": 53,
+            "suggestedEffects": null
+        },
+        {
+            "index": 54,
+            "suggestedEffects": null
+        },
+        {
+            "index": 55,
+            "suggestedEffects": null
+        },
+        {
+            "index": 56,
+            "suggestedEffects": null
+        },
+        {
+            "index": 57,
+            "suggestedEffects": null
+        },
+        {
+            "index": 58,
+            "suggestedEffects": null
+        },
+        {
+            "index": 59,
+            "suggestedEffects": null
+        },
+        {
+            "index": 60,
+            "suggestedEffects": null
+        },
+        {
+            "index": 61,
+            "suggestedEffects": null
+        },
+        {
+            "index": 62,
+            "suggestedEffects": null
+        },
+        {
+            "index": 63,
+            "suggestedEffects": null
+        },
+        {
+            "index": 64,
+            "suggestedEffects": null
+        },
+        {
+            "index": 65,
+            "suggestedEffects": null
+        },
+        {
+            "index": 66,
+            "suggestedEffects": null
+        },
+        {
+            "index": 67,
+            "suggestedEffects": null
+        },
+        {
+            "index": 68,
+            "suggestedEffects": null
+        }
+    ]
+}

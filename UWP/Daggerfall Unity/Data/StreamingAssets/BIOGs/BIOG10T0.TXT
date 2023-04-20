@@ -1,0 +1,212 @@
+1.	Of all disagreeable types, you have the
+	most personal hatred for ___.
+a.	Sanctimonious priests
+	#4650
+	!4651
+	AE M 8 12 +3
+b.	Diabolic wizards
+	#4652
+	!4653
+	AE M 8 2 +4
+c.	Power-mad robber barons
+	#4654
+	!4655
+	AE M 8 17 +4
+d.	Greedy Merchants
+	#4656
+	!4657
+	AE M 8 11 +2
+
+2.	The one skill you could not work
+	without must be ___.
+a.	Lockpicking
+	#4522
+	13 +6
+b.	Pickpocketing
+	#4523
+	15 +6
+c.	Stealthy Movement
+	#4524
+	16 +6
+d.	Dodging
+	#4525
+	20 +6
+e.	Climbing
+	#4526
+	18 +6
+f.	Backstabbing
+	#4527
+	19 +6
+
+3.	Where is your expertise in combat?
+a.	Short-bladed weapons
+	#4200
+	IT 3 0 2
+	28 +6
+b.	Hand-to-hand combat
+	#4201
+	30 +6
+	IT 2 1 0
+c.	Axe fighting
+	#4202
+	31 +6
+	IT 3 14 0
+d.	Blunt weapons
+	#4203
+	32 +6
+	IT 3 11 0
+e.	Archery
+	#4204
+	33 +6
+	IT 3 16 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+
+4.	In gratitude for services rendered, the
+	Emperor gave you ___.
+a.	Over 200 gold pieces
+	#4528
+	GP +250
+b.	An ebony dagger
+	#4529
+	IT 3 0 7
+c.	An interesting book
+	#4530
+	IT 7 0 0
+d.	A ruby
+	#4531
+	IT 14 0 0
+e.	A silver staff
+	#4532
+	IT 3 2 2
+f.	An amulet
+	#4192
+	IT 25 0 0
+
+5.	As a child, your nickname was ___.
+a.	Rabbit
+	3 +6
+b.	Guppy
+	17 +6
+c.	Quicksilver
+	21 +6
+d.	Scrapper
+	30 +6
+e.	Monkey
+	18 +6
+
+6.	You are friendlier than most with ___.
+a.	the savage Harpies
+	5 +6
+b.	the simple Giants
+	6 +6
+c.	the glorious Dragons
+	7 +6
+d.	the immodest Nymphs
+	8 +6
+e.	the infernal Daedra
+	9 +6
+f.	the bucolic Spriggans
+	10 +6
+g.	the primitive Centaurs
+	11 +6
+h.	the mischevious Imps
+	12 +6
+
+7.	Since childhood, you have saved ___.
+a.	100 gold pieces
+	GP +100
+b.	Your favorite book
+	IT 7 0 0
+c.	A cuirass
+	IT 2 0 0
+d.	A pearl
+	IT 22 1 0
+
+8.	As much as you are able, you ___.
+a.	socialize with aristocrats
+	1 +6
+	r3 +5
+	r0 -5
+b.	learn streetsmarts
+	2 +6
+	r0 +2
+	r4 +3
+	r3 -5
+c.	practice acrobatics
+	3 +2
+	20 +2
+	18 +2
+d.	trespass
+	13 +6
+e.	study economics
+	14 +6
+f.	swim
+	17 +6
+g.	spar
+	34 +6
+
+9.	What motivates you into a life of
+	adventure?
+a.	Riches
+	GP +500
+b.	Fame
+	r4 +10
+	r2 +10
+c.	Knowledge
+	IT 7 0 0
+d.	Fun
+	1 +3
+	2 +3
+e.	Helping Others
+	r0 +10
+
+10.	What god, if any, do you worship?
+a.	None
+	r2 +5
+b.	Arkay, Birth and Death God
+	rf82 +5
+c.	Zenithar, God of Commerce
+	rf84 +5
+d.	Mara, the Mother Goddess
+	rf88 +5
+e.	Dibella, Goddess of Beauty
+	rf98 +5
+f.	Julianos, God of Logic
+	rf94 +5
+g.	Akatosh, God of Time
+	rf92 +5
+h.	Stendarr, God of Mercy
+	rf106 +5
+i.	Kynareth, Goddess of Air
+	rf36 +5
+
+11.	Before you set out for the Imperial City,
+	you brought with you ___.
+a.	100 gold pieces
+	GP +100
+b.	A book
+	IT 7 0 0
+c.	A buckler
+	IT 2 7 1
+d.	Gauntlets
+	IT 2 1 0
+
+12.	You have the most trouble ___.
+a.	Resisting poisons
+	RP -10
+b.	Staying awake and alert
+	FT -5
+c.	Getting along with others
+	RR -5
+d.	Avoiding diseases
+	RD -5
+e.	Resisting magic 
+	MR -5
+f.	Fighting 
+	TH -5
+

@@ -1,0 +1,218 @@
+1.	Vous etes bien entraine ...
+a.	a l'epee courte
+	#4454
+	28 +6
+	IT 3 1 3
+b.	au corps-a-corps
+	#4455
+	30 +6
+	IT 2 1 0
+c.	a la hache
+	#4456
+	31 +6
+	IT 3 14 0
+d.	aux armes contondantes
+	#4457
+	32 +6
+	IT 3 2 0
+e.	au tir a l'arc
+	#4458
+	33 +6
+	IT 2 3 0
+f.	aux lames longues
+	#4459
+	29 +6
+	IT 3 16 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+
+2.	Quel talent de voleur avez-vous le plus
+	etudie ?
+a.	L'esquive
+	#4550
+	20 +6
+b.	La discretion
+	#4551
+	16 +6
+c.	L'embuscade
+	#4552
+	19 +6
+d.	Le crochetage
+	#4554
+	13 +6
+e.	Le vol a la tire
+	#4555
+	15 +6
+f.	L'escalade
+	#4556
+	18 +6
+g.	Les coups critiques
+	#4557
+	34 +6
+h.	La course
+	#4558
+	21 +6
+i.	Le saut
+	#4559
+	3 +6
+
+3.	Qu'est-ce qui vous pousse a mener
+	une vie d'aventurier ?
+a.	La richesse
+	#4560
+	GP +500
+b.	La gloire
+	#4561
+	r4 +10
+	r2 +10
+c.	Le savoir
+	#4562
+	IT 7 0 0
+d.	Le plaisir
+	#4563
+	1 +3
+	2 +3
+e.	Aider les autres
+	#4564
+	r0 +10
+
+4.	Votre methode criminelle preferee est ...
+a.	le cambriolage
+	#4565
+	AF F 7 12 +1
+b.	l'agression
+	#4566
+	AF F 7 12 +1
+c.	le vol a la tire
+	#4567
+	AF F 7 12 +1
+d.	l'escroquerie
+	#4568
+	AF F 7 12 +1
+e.	la contrebande
+	#4569
+	AF F 7 12 +1
+f.	le vol des banques
+	#4570
+	AF F 7 12 +1
+
+5.	Si vous deviez obtenir une recompense, vous
+	aimeriez que cela soit...
+a.	200 pieces d'or
+	#4528
+	GP +200
+b.	une dague en ebene
+	#4529
+	IT 3 0 7
+c.	un livre
+	#4530
+	IT 7 0 0
+d.	un rubis
+	#4531
+	IT 14 0 0
+e.	un baton en argent
+	#4532
+	IT 3 2 2
+f.	une amulette
+	#4192
+	IT 25 0 0
+
+6.	L'une des plus importantes competences de
+	survie que vous avez apprises est ...
+a.	guerir les blessures simples
+	0 +6
+b.	vous integrer
+	1 +6
+c.	diriger votre entourage
+	2 +6
+d.	negocier avec les marchands
+	14 +6
+e.	vous battre a la dague
+	28 +6
+
+7.	Vous etiez un enfant tres actif, ... que n'importe
+	quel autre garcon de votre age.
+a.	plus rapide
+	21 +6
+b.	plus furtif
+	16 +6
+c.	meilleur grimpeur
+	18 +6
+d.	meilleur nageur
+	17 +6
+e.	meilleur bagarreur
+	30 +6
+
+8.	Vous obtenez la plupart des choses que vous
+	voulez en les volant ...
+a.	aux riches nobles
+	IT 25 3 0
+b.	aux sages et aux mages
+	IT 7 0 0
+c.	aux temples
+	IT 10 4 0
+d.	a des marchands divers
+	IT 25 5 0
+
+9.	Le talent dont vous ne pourriez vous passer
+	pour travailler est ...
+a.	Le crochetage
+	13 +6
+b.	Le vol a la tire
+	15 +6
+c.	La discretion
+	16 +6
+d.	L'esquive
+	20 +6
+e.	L'escalade
+	18 +6
+f.	L'embuscade
+	19 +6
+
+10.	Quand vous etiez enfant, on vous surnommait ...
+a.	la grenouille
+	3 +6
+b.	l'anguille
+	17 +6
+c.	Vif-Argent
+	21 +6
+d.	le bagarreur
+	30 +6
+e.	le singe
+	18 +6
+
+11.	Vers quel dieu se tourne votre devotion ?
+a.	Aucun
+	r2 +5
+b.	Arkay, la Vie et la Mort
+	rf82 +5
+c.	Zenithar, le Commerce
+	rf84 +5
+d.	Mara, deesse Mere
+	rf88 +5
+e.	Dibella, deesse de la Beaute
+	rf98 +5
+f.	Julianos, la Logique
+	rf94 +5
+g.	Akatosh, le Temps
+	rf92 +5
+h.	Stendarr, la Pitie
+	rf106 +5
+i.	Kynareth, deesse de l'Air
+	rf36 +5
+
+12.	Votre sante fragile, quand vous etiez enfant,
+	vous a rendu ...
+a.	moins resistant aux poisons
+	RP -5
+b.	moins resistant aux maladies
+	RD -5
+c.	moins energique
+	FT -5
+d.	moins resistant a la magie
+	MR -5
+

@@ -1,0 +1,212 @@
+1.	Abgesehen von Pfeil und Bogen, seid Ihr mit ___ am besten.
+a.	Kurzwaffen
+	#4416
+	33 +9
+	28 +3
+	IT 3 3 0
+b.	Nahkampf
+	#4417
+	33 +9
+	30 +3
+	IT 2 1 0
+c.	@xten
+	#4418
+	33 +9
+	31 +3
+	IT 3 15 0
+d.	Stumpfen Waffen
+	#4419
+	33 +9
+	32 +3
+	IT 3 13 0
+e.	Langwaffen
+	#4205
+	33 +9
+	29 +3
+	IT 3 9 0
+
+2.	Was bewegt Euch zu einem Leben als Abenteurer?
+a.	Reicht}mer
+	#4560
+	GP +500
+b.	Ruhm
+	#4561
+	r4 +10
+	r2 +10
+c.	Wissen
+	#4562
+	IT 7 0 0
+d.	Spa*
+	#4563
+	1 +3
+	2 +3
+e.	Anderen zu helfen
+	#4564
+	r0 +10
+	
+3.	Welche der folgenden Fertigkeiten habt Ihr am
+	l#ngsten ge}bt?
+a.	Ausweichen
+	20 +6
+b.	Schleichen
+	16 +6
+c.	Meucheln
+	19 +6
+d.	Schl&sser &ffnen
+	13 +6
+e.	Taschendiebstahl
+	15 +6
+f.	Klettern
+	18 +6
+g.	Kritischer Schlag
+	34 +6
+h.	Rennen
+	21 +6
+i.	Springen
+	3 +6
+
+4.	Euer Spitzname als Kind war ___.
+a.	Sprunghase
+	3 +6
+b.	Guppyfisch
+	17 +6
+c.	Wieselflink
+	21 +6
+d.	Streithahn
+	30 +6
+e.	Affenstrolch
+	18 +6
+
+5.	Von allen unangenehmen Typen hasst Ihr
+	pers&nlich ___ am meisten.
+a.	scheinheilige Priester
+	#4212
+	AE M 8 12 +3
+b.	diabolische Zauberer
+	#4213
+	AE M 8 2 +4
+c.	dumme Bauern
+	#4214
+	AE M 8 8 +3
+d.	machthungrige Raubritter
+	#4215
+	AE M 8 17 +4
+
+6.	Ihr habt eine ungew&hnliche Sympathie gegen}ber ___.
+a.	den wilden Harpyien
+	#4428
+	5 +6
+b.	den einf#ltigen Riesen
+	#4429
+	6 +6
+c.	den pr#chtigen Drachen
+	#4430
+	7 +6
+d.	den schamlosen Nymphen
+	#4431
+	8 +6
+e.	den infernalischen Daedra
+	#4432
+	9 +6
+f.	den l#ndlichen Zweiglingen
+	#4433
+	10 +6
+g.	den primitiven Zentauren
+	#4434
+	11 +6
+h.	den schadenfrohen Kobolden
+	#4435
+	12 +6
+
+7.	Euer gr&*tes Problem besteht darin ___.
+a.	Giften zu widerstehen
+	RP -10
+b.	wach und alarmiert 
+	FT -5
+c.	Kontakte zu kn}pfen
+	RR -5
+d.	Krankheiten zu verhindern
+	RD -5
+e.	Zauberspr}chen zu widerstehen
+	MR -5
+f.	zu k#mpfen und zu parieren
+	TH -5
+
+8.	Seit Eurer Kindheit verwahrt Ihr  ___.
+a.	100 Goldst}cke
+	GP +100
+b.	ein Buch
+	IT 7 0 0
+c.	ein dutzend Pfeile
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+d.	einen Brustharnisch
+	IT 2 0 0
+
+9.	Am wohlsten f}hlt Ihr Euch ___.
+a.	auf festem Boden
+	21 +4
+b.	im Wasser
+	17 +4
+c.	auf einem Vorsprung oder Baum
+	18 +4
+d.	irgendwo im Dunklen
+	16 +4
+e.	zusammen mit anderen
+	1 +2
+	2 +2
+
+10.	Ihr wurdet mit 200 Goldst}cken belohnt.
+	Was habt Ihr damit gemacht? Ich ___.
+a.	behielt es
+	GP +200
+b.	kaufte einen Ebenerzdolch
+	IT 3 0 7
+c.	kaufte ein seltenes Buch
+	IT 7 0 0
+d.	kaufte einen Rubin
+	IT 14 0 0
+e.	kaufte einen Silberstab
+	IT 3 2 2
+
+11.	Ihr verbringt jede freie Minute damit, ___ zu meistern.
+a.	Kurzwaffen
+	28 +6
+b.	Nahkampf
+	30 +6
+c.	Axtkampf
+	31 +6
+d.	Stumpfe Waffen
+	32 +6
+e.	Bogenschie*en
+	33 +6
+f.	Langwaffen
+	29 +6
+
+12.	Ihr seid mit ___ befreundet.
+a.	einem M&nch
+	#4212
+	AF O 8 12 +1
+b.	einem Magier
+	#4213
+	AF O 8 2 +1
+c.	einem Banditen
+	#4214
+	AF O 8 8 +1
+d.	einem Krieger
+	#4215
+	AF O 8 17 +1
+e.	einem Assassinen
+	#4216
+	AF O 8 11 +1
+

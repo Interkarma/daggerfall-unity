@@ -1,0 +1,210 @@
+1.	Apres le College de Destruction, quelle ecole de 
+	magie avez-vous la plus etudiee ?
+a.	Guerison
+	#4250
+	22 +12
+	23 +6
+b.	Illusion
+	#4251
+	22 +12
+	24 +6
+c.	Alteration
+	#4252
+	22 +12
+	25 +6
+d.	Thaumaturgie
+	#4253
+	22 +12
+	26 +6
+e.	Mysticisme
+	#4254
+	22 +12
+	27 +6
+
+2.	Qu'est-ce qui vous pousse a mener
+	une vie d'aventurier ?
+a.	La richesse
+	#4255
+	GP +500
+b.	La gloire
+	#4256
+	r4 +10
+	r2 +10
+c.	Le savoir
+	#4257
+	IT 7 0 0
+d.	Le plaisir
+	#4258
+	1 +3
+	2 +3
+e.	Aider son prochain
+	#4259
+	r0 +10
+
+3.	Chaque fois que vous le pouviez, vous
+	aimiez passez du temps a ...
+a.	frequenter l'aristocratie
+	#4260
+	1 +6
+	r3 +5
+	r0 -5
+b.	marchander dans la rue
+	#4261
+	2 +6
+	r0 +2
+	r4 +3
+	r3 -5
+c.	faire des acrobaties
+	#4262
+	3 +2
+	20 +2
+	18 +2
+d.	apprendre l'economie
+	#4263
+	14 +6
+e.	nager
+	#4265
+	17 +6
+f.	vous bagarrer
+	#4266
+	30 +6
+
+4.	De votre enfance, vous avez preserve ...
+a.	100 pieces d'or
+	#4167
+	GP +100
+b.	votre livre favori
+	#4168
+	IT 7 0 0
+c.	une cuirasse
+	#4169
+	IT 2 0 0
+d.	un katana
+	#4193
+	IT 3 8 0
+
+5.	En remerciement pour services rendus, 
+	l'Empereur vous donne ...
+a.	200 pieces d'or
+	#4172
+	GP +250
+b.	une dague d'ebene
+	#4173
+	IT 3 0 7
+c.	un livre
+	#4174
+	IT 7 0 0
+d.	un rubis
+	#4175
+	IT 14 0 0
+e.	un baton en argent
+	#4176
+	IT 3 2 2
+f.	une perle
+	#4191
+	IT 22 1 0
+
+6.	En grandissant, vous avez recu une formation
+	complementaire en magie a propos de l'ecole ...
+a.	de la Destruction
+	22 +6
+b.	de la Guerison
+	23 +6
+c.	de l'Illusion
+	24 +6
+d.	de l'Alteration
+	25 +6
+e.	de la Thaumaturgie
+	26 +6
+f.	du Mysticisme
+	27 +6
+
+7.	Enfant, votre surnom etait ...
+a.	la grenouille
+	3 +6
+b.	l'anguille
+	17 +6
+c.	Vif-argent
+	21 +6
+d.	Le bagarreur
+	30 +6
+e.	Le singe
+	18 +6
+
+8.	Vous eprouvez le plus de sympathie envers les ...
+a.	Harpies sauvages
+	5 +6
+b.	Geants naifs 
+	6 +6
+c.	Dragons glorieux
+	7 +6
+d.	Nymphes impudiques
+	8 +6
+e.	Daedras infernaux
+	9 +6
+f.	Spriggans bucoliques
+	10 +6
+g.	Centaures primitifs
+	11 +6
+h.	Diablotins malfaisants
+	12 +6
+
+9.	Parmi tous les gens detestables, vous eprouvez
+	le plus de haine envers les ...
+a.	pretres bigots
+	AE M 8 12 +3
+b.	magiciens diaboliques
+	AE M 8 2 +4
+c.	stupides paysans
+	AE M 8 8 +3
+d.	barons avides
+	AE M 8 17 +4
+e.	assassins immoraux
+	AE M 8 11 +2
+
+10.	votre meilleur ami est un ...
+a.	pretre
+	AF O 8 12 +1
+b.	mage
+	AF O 8 2 +1
+c.	voleur
+	AF O 8 8 +1
+d.	guerrier
+	AF O 8 17 +1
+e.	assassin
+	AF O 8 11 +1
+
+11.	Vers quel dieu se tourne votre devotion ?
+a.	Aucun
+	r2 +5
+b.	Arkay, la Vie et la Mort
+	rf82 +5
+c.	Zenithar, le Commerce
+	rf84 +5
+d.	Mara, deesse Mere
+	rf88 +5
+e.	Dibella, deesse de la Beaute
+	rf98 +5
+f.	Julianos, la Logique
+	rf94 +5
+g.	Akatosh, le Temps
+	rf92 +5
+h.	Stendarr, la Pitie
+	rf106 +5
+i.	Kynareth, deesse de l'Air
+	rf36 +5
+
+12.     Vous avez des difficultes a ...
+a.	resister au poison
+	RP -10
+b.	rester eveille et alerte 
+	FT -5
+c.	etre sociable
+	RR -5
+d.	resister aux maladies
+	RD -5
+e.	resister a la magie
+	MR -5
+f.	vous battre sans magie
+	TH -5
+

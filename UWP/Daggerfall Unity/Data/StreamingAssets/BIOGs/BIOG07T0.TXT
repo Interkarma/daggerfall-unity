@@ -1,0 +1,224 @@
+1.	At an early age, your family considered
+	it important that you learn how to ___.
+a.	Mend simple wounds
+	#4500
+	0 +6
+b.	Ingratiate yourself
+	#4501
+	1 +6
+c.	Boss people around
+	#4502
+	2 +6
+d.	Haggle with merchants
+	#4503
+	14 +6
+e.	Fight with a knife
+	#4504
+	28 +6
+
+2.	You were an active child, ___ than anyone
+	else your age.
+a.	faster
+	#4505
+	21 +6
+b.	sneakier
+	#4506
+	16 +6
+c.	a better climber
+	#4507
+	18 +6
+d.	a better swimmer
+	#4508
+	17 +6
+e.	a better brawler
+	#4509
+	30 +6
+
+3.	You can get most of the things you want by
+	stealing from ___.
+a.	Rich Nobles
+	#4510
+	!4511
+	?4512
+	IT 25 3 0
+b.	Mages and Sages
+	#4513
+	!4514
+	?4515
+	IT 7 0 0
+c.	Established Temples
+	#4516
+	!4517
+	?4518
+	IT 10 4 0
+d.	Diversified Merchants
+	#4519
+	!4520
+	?4521
+	IT 25 5 0
+
+4.	The one skill you could not work
+	without must be ___.
+a.	Lockpicking
+	#4522
+	13 +6
+b.	Pickpocketing
+	#4523
+	15 +6
+c.	Stealthy Movement
+	#4524
+	16 +6
+d.	Dodging
+	#4525
+	20 +6
+e.	Climbing
+	#4526
+	18 +6
+f.	Backstabbing
+	#4527
+	19 +6
+
+5.	Though certainly not due to hard work,
+	you happen legitimately to own ___.
+a.	Over 200 gold pieces
+	#4528
+	GP +250
+b.	An ebony dagger
+	#4529
+	IT 3 0 7
+c.	A book
+	#4530
+	IT 7 0 0
+d.	A ruby
+	#4531
+	IT 14 0 0
+e.	A silver staff
+	#4532
+	IT 3 2 2 
+f.	Some holy water
+	#4533
+	IT 10 4 0
+
+6.	What thieving skill have you been
+	practicing the longest?
+a.	Dodging
+	20 +6
+b.	Stealth
+	16 +6
+c.	Backstabbing
+	19 +6
+d.	Lockpicking
+	13 +6
+e.	Pickpocketing
+	15 +6
+f.	Climbing
+	18 +6
+g.	Critical-Striking
+	34 +6
+h.	Running
+	21 +6
+i.	Jumping
+	3 +6
+
+7.	Where is your expertise in combat?
+a.	Short-bladed weapons
+	28 +6
+	IT 3 3 0
+b.	Hand-to-hand combat
+	30 +6
+	IT 2 1 0
+c.	Axe fighting
+	31 +6
+	IT 3 14 0
+d.	Blunt weapons
+	32 +6
+	IT 3 11 0
+e.	Archery
+	33 +6
+	IT 3 16 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+
+8.	As a child, your nickname was ___.
+a.	Rabbit
+	3 +6
+b.	Guppy
+	17 +6
+c.	Quicksilver
+	21 +6
+d.	Scrapper
+	30 +6
+e.	Monkey
+	18 +6
+
+9.	What motivates you into a life of
+	burglary?
+a.	Riches
+	GP +500
+b.	Fame
+	r4 +10
+	r2 +10
+c.	Knowledge
+	IT 7 0 0
+d.	Fun
+	1 +3
+	2 +3
+e.	Helping Others
+	r0 +10
+
+10.	What god, if any, do you worship?
+a.	None
+	r2 +5
+b.	Arkay, Birth and Death God
+	rf82 +5
+c.	Zenithar, God of Commerce
+	rf84 +5
+d.	Mara, the Mother Goddess
+	rf88 +5
+e.	Dibella, Goddess of Beauty
+	rf98 +5
+f.	Julianos, God of Logic
+	rf94 +5
+g.	Akatosh, God of Time
+	rf92 +5
+h.	Stendarr, God of Mercy
+	rf106 +5
+i.	Kynareth, Goddess of Air
+	rf36 +5
+
+11.	Your frail health as a child has made
+	you ___.
+a.	Less resistant to poisons
+	RP -5
+b.	Less resistant to disease
+	RD -5
+c.	Easily tired
+	FT -5
+d.	Less resistant to magic
+	MR -5
+
+12.	You preferred criminal method is ___.
+a.	catburglary
+	#4534
+	AF F 7 12 +1
+b.	mugging
+	#4535
+	AF F 7 12 +1
+c.	pickpocketing
+	#4536
+	AF F 7 12 +1
+d.	swindling
+	#4537
+	AF F 7 12 +1
+e.	smuggling
+	#4538
+	AF F 7 12 +1
+f.	bankrobbing
+	#4539
+	AF F 7 12 +1
+
+

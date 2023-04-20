@@ -1,0 +1,220 @@
+1.	After the School of Restoration, what
+	magic have you been studying the longest?
+a.	Destruction
+	#4150
+	!4156
+	23 +12
+	22 +6
+b.	Illusion
+	#4152
+	!4158
+	23 +12
+	24 +6
+c.	Alteration
+	#4153
+	!4159
+	23 +12
+	25 +6
+d.	Thaumaturgy
+	#4154
+	!4160
+	23 +12
+	26 +6
+e.	Mysticism
+	#4155
+	!4161
+	23 +12
+	27 +6
+
+2.	What motivates you into a life of
+	adventure?
+a.	Riches
+	#4162
+	!4263
+	GP +500
+b.	Fame
+	#4163
+	!4266
+	r4 +10
+	r2 +10
+c.	Knowledge
+	#4264
+	!4260
+	IT 7 0 0
+d.	Fun
+	#4165
+	!4265
+	1 +3
+	2 +3
+e.	Helping Others
+	#4166
+	!4261
+	r0 +10
+
+3.	In between formal study, you spent your
+	time ___.
+a.	socializing with aristocrats
+	1 +6
+	r3 +5
+	r0 -5
+b.	learning streetsmarts
+	2 +6
+	r0 +2
+	r4 +3
+	r3 -5
+c.	practicing acrobatics
+	3 +2
+	20 +2
+	18 +2
+d.	learning economics
+	14 +6
+e.	swimming
+	17 +6
+f.	sparring
+	30 +6
+
+4.	Since childhood, you have saved  ___.
+a.	100 gold pieces
+	#4167
+	GP +100
+b.	A favorite book
+	#4168
+	IT 7 0 0
+c.	A cuirass
+	#4169
+	IT 2 0 0
+d.	A buckler
+	#4190
+	IT 2 7 1
+
+5.	In gratitude for services rendered, the
+	Emperor gave you ___.
+a.	Over 200 gold pieces
+	#4172
+	GP +250
+b.	An ebony dagger
+	#4173
+	IT 3 0 7
+c.	A book
+	#4174
+	IT 7 0 0
+d.	A ruby
+	#4175
+	IT 14 0 0
+e.	A silver staff
+	#4176
+	IT 3 2 2
+f.	An elven flail
+	#4195
+	IT 3 12 3
+
+6.	As you grew older, you received additional
+	magical training in ___.
+a.	The School of Destruction
+	#4178
+	22 +6
+b.	The School of Restoration
+	#4179
+	23 +6
+c.	The School of Illusion
+	#4180
+	24 +6
+d.	The School of Alteration
+	#4181
+	25 +6
+e.	The School of Thaumaturgy
+	#4182
+	26 +6
+f.	The School of Mysticism
+	#4183
+	27 +6
+
+7.	As a child, your nickname was ___.
+a.	Rabbit
+	3 +6
+b.	Guppy
+	17 +6
+c.	Quicksilver
+	21 +6
+d.	Scrapper
+	30 +6
+e.	Monkey
+	18 +6
+
+8.	You are friendlier than most with ___.
+a.	the savage Harpies
+	5 +6
+b.	the simple Giants
+	6 +6
+c.	the glorious Dragons
+	7 +6
+d.	the immodest Nymphs
+	8 +6
+e.	the infernal Daedra
+	9 +6
+f.	the bucolic Spriggans
+	10 +6
+g.	the primitive Centaurs
+	11 +6
+h.	the mischevious Imps
+	12 +6
+
+9.	Of all disagreeable types, you have the
+	most personal hatred for ___.
+a.	Sanctimonious priests
+	AE M 8 12 +3
+b.	Diabolic wizards
+	AE M 8 2 +4
+c.	Stupid peasants
+	AE M 8 8 +3
+d.	Power-mad robber barons
+	AE M 8 17 +4
+e.	Immoral assassins
+	AE M 8 11 +2
+
+10.	You are intimate friends with ___.
+a.	a Monk
+	AF O 8 12 +1
+b.	a Mage
+	AF O 8 2 +1
+c.	a Rogue
+	AF O 8 8 +1
+d.	a Warrior
+	AF O 8 17 +1
+e.	an Assassin
+	AF O 8 11 +1
+
+11.	What god, if any, do you worship?
+a.	None
+	r2 +5
+b.	Arkay, Birth and Death God
+	rf82 +5
+c.	Zenithar, God of Commerce
+	rf84 +5
+d.	Mara, the Mother Goddess
+	rf88 +5
+e.	Dibella, Goddess of Beauty
+	rf98 +5
+f.	Julianos, God of Logic
+	rf94 +5
+g.	Akatosh, God of Time
+	rf92 +5
+h.	Stendarr, God of Mercy
+	rf106 +5
+i.	Kynareth, Goddess of Air
+	rf36 +5
+
+12.	You have the most trouble ___.
+a.	Resisting poisons
+	RP -10
+b.	Staying awake and alert
+	FT -5
+c.	Getting along with others
+	RR -5
+d.	Avoiding diseases
+	RD -5
+e.	Resisting magic
+	MR -5
+f.	Fighting without magic
+	TH -5
+

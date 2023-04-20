@@ -1,0 +1,52 @@
+- Text database for Daggerfall Unity main menu and setup wizard.
+
+schema: *key,text
+
+resolution,                 Resolution
+fullscreen,                 Fullscreen
+quality,                    Quality
+play,                       Play
+mods,                       Mods
+advanced,                   Advanced
+restart,                    Restart
+restartInfo,                Restart setup from beginning
+exit,                       Exit
+modNote,                    Note: Enabling mods can increase performance requirements
+
+alwayShowOptions,           Always show this window
+alwayShowOptionsInfo,       Always show this window on startup\rOtherwise use settings.ini to configure
+vsync,                      Vertical Sync
+vsyncInfo,                  Sync FPS with monitor refresh
+swapHealthAndFatigue,       Swap Health & Fatigue
+swapHealthAndFatigueInfo,   Swap health & fatigue bar colors
+invertMouseVertical,        Invert Mouse
+invertMouseVerticalInfo,    Invert mouse-look vertical
+mouseSmoothing,             Mouse Look Smoothing
+mouseSmoothingInfo,         Degree of first person camera smoothing
+leftHandWeapons,            Left Hand Weapons
+leftHandWeaponsInfo,        Draw weapons on left side of screen
+playerNudity,               Player Nudity
+playerNudityInfo,           Allow nudity on paper doll
+weaponSwingMode,            Weapon swing mode
+weaponSwingModeInfo,        Enable a click or hold to trigger attacks
+sdfFontRendering,           SDF Font Rendering
+sdfFontRenderingInfo,       Enable for smooth fonts at high resolutions
+enableController,           Enable Controller
+enableControllerInfo,       Allow joysticks or other controllers to be detected and used in-game
+
+findArena2Tip,              Tip: Daggerfall contains a folder called 'arena2'
+foundArena2But,             Found 'arena2' but
+missingTextures,            it's missing one or more TEXTURE files
+missingModels,              it's missing ARCH3D.BSA
+missingBlocks,              it's missing BLOCKS.BSA
+missingMaps,                it's missing MAPS.BSA
+missingSounds,              it's missing DAGGER.SND
+missingWoods,               it's missing WOODS.WLD
+missingVideos,              it's missing one or more .VID files
+justNotValid,               it does not appear to be valid
+pathValidated,              Great! This looks like a valid Daggerfall folder :)
+testText,                   Test
+okText,                     OK
+keepSetting,                Keep this setting? Changes will revert in 8 seconds.
+incompatibleMods,           One or more mods are incompatible with current version of the game. Please check mods window for details. Do you wish to continue anyway?
+showOptionsAgain,           Hold the Shift key when starting Daggerfall Unity to show the launcher again

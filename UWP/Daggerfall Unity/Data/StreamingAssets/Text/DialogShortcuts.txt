@@ -1,0 +1,293 @@
+- Text database for dialog box keyboard shortcuts
+
+schema: *key,text
+
+Accept,               A
+Reject,               R
+Cancel,               C
+Yes,                  Y
+No,                   N
+- Will most likely be the default button too
+OK,                   O
+Male,                 M
+Female,               F
+Add,                  A
+Delete,               D
+Edit,                 E
+Copy,                 C
+Guilty,               G
+NotGuilty,            N
+Debate,               D
+Lie,                  L
+Anchor,               A
+Teleport,             T
+
+-- Game Setup menu
+GameSetupPlay,             P
+GameSetupAdvancedSettings, A
+GameSetupMods,             M
+GameSetupClose,            C
+GameSetupBackToOptions,    O
+GameSetupRestart,          R
+GameSetupRefresh,          R
+GameSetupSaveAndClose,     S
+GameSetupExit,             E
+
+-- Main menu
+MainMenuLoad,         L
+MainMenuStart,        S
+MainMenuExit,         E
+
+-- Options menu
+OptionsExit,          E
+OptionsContinue,      C
+OptionsSave,          S
+OptionsLoad,          L
+OptionsControls,      N
+OptionsFullScreen,    F
+OptionsHeadBobbing,   H
+OptionsDropdown,      D
+
+-- General
+Pause,                Shift-Escape
+LargeHUDToggle,       F10
+HUDToggle,            Shift-F10
+ToggleRetroPP,        Shift-F11
+
+-- Debugger
+DebuggerToggle,       Ctrl-Shift-D
+DebuggerPrevQuest,    Ctrl-Shift-LeftArrow
+DebuggerNextQuest,    Ctrl-Shift-RightArrow
+DebuggerPrevMarker,   Ctrl-Shift-UpArrow
+DebuggerNextMarker,   Ctrl-Shift-DownArrow
+
+-- Rest menu
+RestForAWhile,        F
+RestUntilHealed,      U
+RestLoiter,           L
+RestStop,             S
+
+-- Transport menu
+TransportFoot,        F
+TransportHorse,       H
+TransportCart,        C
+TransportShip,        S
+TransportExit,        E
+
+-- Travel map screen
+TravelMapFind,        F
+TravelMapList,        L
+
+-- Talk screen
+TalkTellMeAbout,      A
+TalkWhereIs,          W
+TalkCategoryLocation, L
+TalkCategoryPeople,   P
+TalkCategoryThings,   T
+- conflict with TalkWhereIs
+TalkCategoryWork,     J
+TalkAsk,              O
+TalkExit,             G
+TalkCopy,             C
+TalkTonePolite,       F1
+TalkToneNormal,       F2
+TalkToneBlunt,        F3
+
+-- Spellbook screen
+SpellbookDelete,      L
+SpellbookUp,          U
+SpellbookSort,        S
+SpellbookDown,        D
+SpellbookBuy,         B
+SpellbookExit,        E
+
+-- Travel menu
+TravelBegin,               B
+TravelExit,                E
+TravelSpeedToggle,         S
+TravelTransportModeToggle, T
+- N for Nights?
+TravelInnCampOutToggle,    N
+
+-- Character Sheet screen
+CharacterSheetName,            N
+- Conflict with Logbook
+CharacterSheetLevel,           V
+CharacterSheetGold,            G
+CharacterSheetHealth,          H
+CharacterSheetAffiliations,    A
+CharacterSheetPrimarySkills,   F1
+CharacterSheetMajorSkills,     F2
+CharacterSheetMinorSkills,     F3
+CharacterSheetMiscSkills,      F4
+CharacterSheetInventory,       I
+CharacterSheetSpellbook,       S
+CharacterSheetLogbook,         L
+- Conflict with Health
+CharacterSheetHistory,         T
+CharacterSheetExit,            E
+
+-- Quest Journal screen
+JournalNextCategory,           N
+JournalNextPage,               DownArrow
+JournalPreviousPage,           UpArrow
+JournalExit,                   E
+
+-- Player History screen
+HistoryNextPage,               DownArrow
+HistoryPreviousPage,           UpArrow
+HistoryExit,                   E
+
+-- Inventory screen
+InventoryWeapons,     F1
+InventoryMagic,       F2
+InventoryClothing,    F3
+InventoryIngredients, F4
+InventoryWagon,       W
+InventoryInfo,        I
+InventoryEquip,       E
+InventoryRemove,      R
+InventoryUse,         U
+InventoryGold,        G
+InventoryExit,        X
+
+-- Merchant menu
+MerchantRepair,       R
+MerchantTalk,         T
+MerchantSell,         S
+MerchantExit,         E
+
+-- Trade screen - keep in sync with inventory?
+TradeWagon,           W
+TradeInfo,            I
+TradeSelect,          S
+TradeSteal,           T
+TradeBuy,             B
+TradeIdentify,        D
+TradeRepair,          R
+TradeSell,            L
+TradeClear,           C
+TradeExit,            X
+
+-- Taverns menu
+TavernRoom,           R
+TavernTalk,           T
+TavernFood,           F
+TavernExit,           G
+
+-- Guilds
+GuildsJoin,           J
+GuildsTalk,           T
+GuildsExit,           E
+GuildsTraining,       R
+GuildsGetQuest,       G
+GuildsRepair,         R
+GuildsIdentify,       I
+GuildsDonate,         D
+GuildsCure,           C
+GuildsBuyPotions,     B
+GuildsMakePotions,    M
+GuildsBuySpells,      B
+GuildsMakeSpells,     M
+GuildsBuyMagicItems,  B
+GuildsMakeMagicItems, M
+GuildsSellMagicItems, S
+GuildsTeleport,       L
+GuildsDaedraSummon,   D
+GuildsSpymaster,      S
+GuildsBuySoulgems,    B
+GuildsReceiveArmor,   R
+GuildsReceiveHouse,   R
+
+-- Witches Covens
+WitchesTalk,          T
+WitchesDaedraSummon,  D
+WitchesQuest,         Q
+WitchesExit,          E
+
+-- Spellmaker screen
+SpellMakerAddEffect,            A
+SpellMakerBuySpell,             B
+SpellMakerNewSpell,             W
+SpellMakerExit,                 E
+SpellMakerNameSpell,            N
+SpellMakerTargetCaster,         Shift-C
+SpellMakerTargetTouch,          Shift-T
+SpellMakerTargetSingleAtRange,  Shift-S
+SpellMakerTargetAroundCaster,   Shift-A
+SpellMakerTargetAreaAtRange,    Shift-R
+SpellMakerElementFire,          Ctrl-F
+SpellMakerElementCold,          Ctrl-C
+SpellMakerElementPoison,        Ctrl-P
+SpellMakerElementShock,         Ctrl-S
+SpellMakerElementMagic,         Ctrl-M
+SpellMakerNextIcon,             F1
+SpellMakerPrevIcon,             F2
+SpellMakerSelectIcon,           I
+
+-- Automap
+AutomapSwitchAutomapGridMode,                       Space
+AutomapResetView,                                   Backspace
+AutomapResetRotationPivotAxisView,                  Ctrl-Backspace
+AutomapSwitchFocusToNextBeaconObject,               Tab
+AutomapSwitchToNextAutomapRenderMode,               Return
+AutomapSwitchToAutomapRenderModeCutout,             F2
+AutomapSwitchToAutomapRenderModeWireframe,          F3
+AutomapSwitchToAutomapRenderModeTransparent,        F4
+AutomapSwitchToAutomapBackgroundOriginal,           F5
+AutomapSwitchToAutomapBackgroundAlternative1,       F6
+AutomapSwitchToAutomapBackgroundAlternative2,       F7
+AutomapSwitchToAutomapBackgroundAlternative3,       F8
+AutomapMoveLeft,                                    LeftArrow
+AutomapMoveRight,                                   RightArrow
+AutomapMoveForward,                                 UpArrow
+AutomapMoveBackward,                                DownArrow
+AutomapMoveRotationPivotAxisLeft,                   Ctrl-LeftArrow
+AutomapMoveRotationPivotAxisRight,                  Ctrl-RightArrow
+AutomapMoveRotationPivotAxisForward,                Ctrl-UpArrow
+AutomapMoveRotationPivotAxisBackward,               Ctrl-DownArrow
+AutomapRotateLeft,                                  Alt-LeftArrow
+AutomapRotateRight,                                 Alt-RightArrow
+AutomapRotateCameraLeft,                            Shift-LeftArrow
+AutomapRotateCameraRight,                           Shift-RightArrow
+AutomapRotateCameraOnCameraYZplaneAroundObjectUp,   Shift-UpArrow
+AutomapRotateCameraOnCameraYZplaneAroundObjectDown, Shift-DownArrow
+AutomapUpstairs,                                    PageUp
+AutomapDownstairs,                                  PageDown
+AutomapIncreaseSliceLevel,                          Ctrl-PageUp
+AutomapDecreaseSliceLevel,                          Ctrl-PageDown
+AutomapZoomIn,                                      KeypadPlus
+AutomapZoomOut,                                     KeypadMinus
+AutomapIncreaseCameraFieldOfFiew,                   KeypadMultiply
+AutomapDecreaseCameraFieldOfFiew,                   KeypadDivide
+
+ExtAutomapFocusPlayerPosition,                           Tab
+ExtAutomapResetView,                                     Backspace
+ExtAutomapSwitchToNextExteriorAutomapViewMode,           Return
+ExtAutomapSwitchToExteriorAutomapViewModeOriginal,       F2
+ExtAutomapSwitchToExteriorAutomapViewModeExtra,          F3
+ExtAutomapSwitchToExteriorAutomapViewModeAll,            F4
+ExtAutomapSwitchToExteriorAutomapBackgroundOriginal,     F5
+ExtAutomapSwitchToExteriorAutomapBackgroundAlternative1, F6
+ExtAutomapSwitchToExteriorAutomapBackgroundAlternative2, F7
+ExtAutomapSwitchToExteriorAutomapBackgroundAlternative3, F8
+ExtAutomapMoveLeft,                                      LeftArrow
+ExtAutomapMoveRight,                                     RightArrow
+ExtAutomapMoveForward,                                   UpArrow
+ExtAutomapMoveBackward,                                  DownArrow
+ExtAutomapMoveToWestLocationBorder,                      Shift-LeftArrow
+ExtAutomapMoveToEastLocationBorder,                      Shift-RightArrow
+ExtAutomapMoveToNorthLocationBorder,                     Shift-UpArrow
+ExtAutomapMoveToSouthLocationBorder,                     Shift-DownArrow
+ExtAutomapRotateLeft,                                    Ctrl-LeftArrow
+ExtAutomapRotateRight,                                   Ctrl-RightArrow
+ExtAutomapRotateAroundPlayerPosLeft,                     Alt-LeftArrow
+ExtAutomapRotateAroundPlayerPosRight,                    Alt-RightArrow
+ExtAutomapUpstairs,                                      PageUp
+ExtAutomapDownstairs,                                    PageDown
+ExtAutomapZoomIn,                                        KeypadPlus
+ExtAutomapZoomOut,                                       KeypadMinus
+ExtAutomapMaxZoom1,                                      Ctrl-PageUp
+ExtAutomapMinZoom1,                                      Ctrl-PageDown
+ExtAutomapMinZoom2,                                      Ctrl-KeypadPlus
+ExtAutomapMaxZoom2,                                      Ctrl-KeypadMinus

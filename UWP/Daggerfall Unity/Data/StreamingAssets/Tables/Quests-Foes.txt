@@ -1,0 +1,78 @@
+-- NOTE: Contents adapted from Template 1.11 by Donald Tipton
+
+schema: id,*name
+
+--	Foe classes for the Foe section of a Qbn file.
+--	The cataloguer uses the command number to create the Daggerfall unique id
+--	for each creature.
+--
+--	Non-human foes (level independent of player)
+--
+0,   Giant_rat
+1,   Imp
+2,   Spriggan
+3,   Giant_bat
+4,   Grizzley_bear
+5,   Sabretooth_tiger
+6,   Spider
+7,   Orc
+8,   Centaur
+9,   Werewolf
+10,  Nymph
+11,  Slaughterfish
+12,  Orc_sergeant
+13,  Harpy
+14,  Wereboar
+15,  Skeletal_warrior
+16,  Giant
+17,  Zombie
+18,  Ghost
+19,  Mummy
+20,  Giant_scorpion
+21,  Orc_shaman
+22,  Gargoyle
+23,  Wraith
+24,  Orc_warlord
+25,  Frost_daedra
+26,  Fire_daedra
+27,  Daedroth
+28,  Vampire
+29,  Daedra_seducer
+30,  Ancient_vampire
+31,  Daedra_lord
+32,  Lich
+33,  Ancient_lich
+34,  Dragonling_souless
+35,  Fire_atronach
+36,  Iron_atronach
+37,  Flesh_atronach
+38,  Ice_atronach
+39,  Horse
+40,  Dragonling
+41,  Dreugh
+42,  Lamia
+--
+--	Human foes (level tracks player)
+--
+128, Mage
+129, Spellsword
+130, Battle_mage
+-- Misspelled "Sorceror" must be retained for backwards compatibility with classic quests
+-- Added correct spelling "Sorcerer" matched to same ID for new quests
+131, Sorceror
+131, Sorcerer
+132, Healer
+133, Nightblade
+134, Bard
+135, Burglar
+136, Rogue
+137, Acrobat
+138, Thief
+139, Assassin
+140, Monk
+141, Archer
+142, Ranger
+143, Barbarian
+144, Warrior
+-- Monster.bsa has no knight in it.
+145, Knight

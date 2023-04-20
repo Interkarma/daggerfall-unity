@@ -1,0 +1,14 @@
+-- New DFU quests
+-- Please use the Quest Hub forums for bug reports: http://forums.dfworkshop.net/viewforum.php?f=25
+
+-- name:        filename of QRC txt file
+-- group:       guild group from FactionFile.GuildGroups enum, or social group from FactionFile.SocialGroups enum
+-- membership:  N=non-member, M=member, P=prospect, T=Akatosh, A=Arkay, D=Dibella, J=Julianos, K=Kynareth, R=Mara, S=Stendarr, Z=Zenithar
+-- minReq:      minimum requirement to be offered the quest: (val < 10) = guild rank / player level, or (val >= 10) = min reputation
+-- flag:        0 = nothing, X = adult/nudity, 1 = one time quest
+-- notes:
+
+schema: *name, group, membership, minReq, flag, notes
+
+-Interkarma
+CUSTOM01, FightersGuild, M, 40, 0, New quest exclusive to Daggerfall Unity
