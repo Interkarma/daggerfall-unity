@@ -12,7 +12,7 @@
 - Unity with Unity 2019 Engine (project will not build correctly if you update the proiject to a newer version)
 
 Check that you are building for Universal Windows Platform (UWP) and have the correct build setup as shown below -
-![BuildGuide](https://github.com/Misunderstood-Wookiee/daggerfall-unity-UWP/blob/bbba91d45bf56166e7ee33b8b4d0fe75129190b0/BuildGuide.jpg)
+![BuildGuide](https://github.com/Misunderstood-Wookiee/daggerfall-unity-UWP/blob/63996e2c16c483322cebda3bf359ff721c6d1445/BuildGuide.jpg)
 
 
 ### Note:
