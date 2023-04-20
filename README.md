@@ -6,7 +6,7 @@
 - A Windows PC or supported Xbox Console
 - [DaggerFall GameData](https://forums.dfworkshop.net/viewtopic.php?f=5&t=2360&p=27538#p27538) (open source)
 
-## Compile Build Requirements
+## Build from source Requirements
 - Ability to follow simple & complex instructions in English!
 - Visual Studio 2019 or newer (the project solution should prompt you to install any requirements.)
 - Unity with Unity 2019 Engine (project will not build correctly if you update the proiject to a newer version)
