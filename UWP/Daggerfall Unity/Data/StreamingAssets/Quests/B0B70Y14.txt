@@ -1,0 +1,181 @@
+-- Quest: C:\QUESTS\WORKING\B0B70Y14.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: knight
+-- Repute: 70
+-- QuestId: 14
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: B0B70Y14
+DisplayName: Invasion from Oblivion
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                           %pcf, we have an
+<ce>               emergency. The Mages Guild has discovered
+<ce>                a rift in the wall between Oblivion and
+<ce>               our dimension, Mundus. I don't pretend to
+<ce>                understand exactly what that means, but
+<ce>               it's bad. All sorts of Daedric beings are
+<ce>                entering into our world. The Mages Guild
+<ce>               says it can seal the breach, but it falls
+<ce>                  to us to slay the Daedras that have
+<ce>                  already crossed over. Will you take
+<ce>                      up this quest, not for gold,
+<ce>                             but for glory?
+                                     <--->
+<ce>                         The end, %pct, may be
+<ce>                 here at last. For centuries, prophets
+<ce>                    have spoken of the day when the
+<ce>                   aetherial walls that separate our
+<ce>                 dimension, Mundus, from Oblivion, the
+<ce>                land of the Daedra, will crack asunder.
+<ce>                 The Mages Guild will attempt to repair
+<ce>                the breach, but they need us to slay the
+<ce>                  infernal creatures who have already
+<ce>                   broken through. Can we rely on you
+<ce>                            for this, %pct?
+
+RefuseQuest:  [1001]
+<ce>                        Our world hangs in the
+<ce>                       balance and you can think
+<ce>                         only of yourself. I am
+<ce>                       ashamed to know you are a
+<ce>                               ==qgiver_.
+
+AcceptQuest:  [1002]
+<ce>                    Go quickly then to ___dungeon_.
+<ce>                     We have no way of knowing how
+<ce>                     many Daedra are wandering its
+<ce>                     halls. The Mages Guild says to
+<ce>                      slay all Daedric beings you
+<ce>                      encounter. They will contact
+<ce>                     you by spell when they detect
+<ce>                     the last invader gone. Hurry,
+<ce>                      for in =2dung_ days it will
+<ce>                              be too late.
+
+QuestComplete:  [1004]
+<ce>                So you killed the Daedra eh? Actually,
+<ce>                 this is kind of embarrassing. It turns
+<ce>                   out that we were duped by a rogue
+<ce>                  mage. She had summoned a Daedra that
+<ce>                 she could not control and wanted us to
+<ce>                  slay it before the Guild found out.
+<ce>                   She thought that with her story we
+<ce>                would do it for free rather than having
+<ce>                to pay the Fighters Guild. Normally our
+<ce>                   order does not pay its members for
+<ce>                   their trouble. This is an unusual
+<ce>               situation. Take these _gold_ gold pieces.
+
+RumorsDuringQuest:  [1005]
+If the people of %reg knew what the Mages Guild knows, everyone'd riot.
+
+RumorsPostfailure:  [1006]
+No thanks to %kno, the end of Tamriel was narrowly averted.
+
+RumorsPostsuccess:  [1007]
+The Mages Guild owes %kno for that fiasco over in ___dungeon_, so I hear.
+
+QuestorPostsuccess:  [1008]
+Well, %pcf, as you sort of saved the world, what can I do for you?
+
+QuestorPostfailure:  [1009]
+All of Tamriel was nearly destroyed, %pcf. And I'm a little annoyed with you.
+<--->
+I don't think you can blame me for not trusting you after your last debacle.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ ==qgiver_ in ___qgiver_
+ says that Daedras are pouring
+ through a dimensional rift.
+ I must go to ___dungeon_
+ and kill them all. They will
+ contact me by spell when I
+ have slain the last of them.
+ I have =2dung_ days before it
+ is too late.
+
+Message:  1011
+<ce>                      A voice from beyond echoes
+<ce>                        in your head, saying...
+<ce>                                    
+<ce>                       "The last Daedra is dead.
+<ce>                        With it dead, Tamriel is
+<ce>                        safe again. Hey what are
+<ce>                        you doing! Let go of my
+<ce>                        arms! I am a guild mage!
+<ce>                        Don't blow out that..."
+
+
+-- Symbols used in the QRC file:
+--
+--              %kno occurs 2 times.
+--              %pcf occurs 3 times.
+--              %pct occurs 3 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--           =2dung_ occurs 2 times.
+--         ==qgiver_ occurs 2 times.
+--       ___dungeon_ occurs 3 times.
+--        ___qgiver_ occurs 1 time.
+--            _gold_ occurs 2 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _dungeon_ remote dungeon7
+
+Clock _2dung_ 00:00 0 flag 17 range 0 2
+
+Foe _fire_ is Fire_daedra
+Foe _frost_ is Frost_daedra
+Foe _lesser_ is Daedroth
+Foe _lord_ is Daedra_lord
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	pick one of _daedra1_ _daedra2_ _daedra3_ _daedra4_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _frost_ 
+	killed 1 _fire_ 
+	killed 1 _lord_ 
+	killed 1 _lesser_ 
+	say 1011 
+
+_S.02_ task:
+	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.02_ and _S.01_ 
+	give pc _gold_ 
+	end quest 
+
+_clearclick_ task:
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_ 
+
+_daedra1_ task:
+	place foe _lord_ at _dungeon_ 
+
+_daedra2_ task:
+	place foe _lesser_ at _dungeon_ 
+
+_daedra3_ task:
+	place foe _frost_ at _dungeon_ 
+
+_daedra4_ task:
+	place foe _fire_ at _dungeon_ 

@@ -1,0 +1,216 @@
+-- Quest: C:\QUESTS\WORKING\B0B00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: knight
+-- Repute: 0
+-- QuestId: 0
+Messages: 16
+Quest: B0B00Y00
+DisplayName: The Princess
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       %pcf, the Princess _lady_
+<ce>                 has been captured from our protection,
+<ce>                   and it is the responsibility of us
+<ce>                 knights to rescue her. Unfortunately,
+<ce>                  many of our members are off fighting
+<ce>                  in the war. In the truest spirit of
+<ce>                  chivalry, will you go to rescue the
+<ce>                  princess from the _monster_ who has
+<ce>                             captured her?
+                                     <--->
+<ce>                    The war has busied the order to
+<ce>                  such a degree that important duties
+<ce>                  such as protecting the virtue of the
+<ce>                         noblewomen of %reg has
+<ce>                  fallen rather by the wayside. There
+<ce>                    is literally no one available to
+<ce>                         rescue Princess _lady_
+<ce>                   who was carried off the other day.
+<ce>                       Are you free for this most
+<ce>                           worthy of quests?
+
+RefuseQuest:  [1001]
+<ce>                   Ah, that is not the spirit of our
+<ce>                 order. There is nothing more important
+<ce>                    to us than protecting the virtue
+<ce>                            of the innocent.
+
+AcceptQuest:  [1002]
+<ce>                  You will? I must say, your heart is
+<ce>                brave. A _monster_ is a fearsome foe. Be
+<ce>                certain to prepare for a battle. Do not
+<ce>                  be foolhardy -- we care only for the
+<ce>                rescue of the princess. If the _monster_
+<ce>                  can be left alone, leave him. And if
+<ce>              you are not returned in =2mondung_ days, we
+<ce>                 will assume that you have failed, and
+<ce>                  someone will be sent in your place.
+<ce>                  I am certain you do not want someone
+<ce>                 else to earn the honor of the rescue.
+<ce>                      May %god bless your journey
+<ce>                            to ___mondung_.
+
+QuestFail:  [1003]
+<ce>                         Hurry, %pcf. You only
+<ce>                       have =2mondung_ days left.
+
+QuestComplete:  [1004]
+<ce>                      Princess _lady_, may I more
+<ce>                 officially introduce you to your good
+<ce>                             rescuer, %pcn.
+<ce>                You have done a fine and honorable thing
+<ce>                 this day, my friend, and it shall not
+<ce>                             be forgotten.
+
+RumorsDuringQuest:  [1005]
+Poor Princess _lady_. When her father gets to ___qgiver_, he will be furious.
+<--->
+_qgiver_ promised Princess _lady_'s father that she would be protected.
+
+RumorsPostfailure:  [1006]
+The Princess managed to escape ___mondung_ by herself. Some knightly valor.
+<--->
+The Princess just wandered in ___qgiver_ by herself, pale from bloodloss.
+
+RumorsPostsuccess:  [1007]
+The knights are celebrating the heroism of the great %ra who rescued _lady_.
+<--->
+Lady _lady_ has begun writing poetry about the valorous %ra who rescued her.
+
+QuestorPostsuccess:  [1008]
+Greetings, %pct. You'll be happy to know that Lady _lady_ is doing well.
+
+QuestorPostfailure:  [1009]
+What a fiasco that Lady _lady_ affair was. I imagine you want it behind you.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of __qgiver_
+ in ___qgiver_ has given me a quest
+ to rescue the fair Lady _lady_
+ from ___mondung_, where she
+ has been captured and imprisoned by a _monster_.
+ I have =2mondung_ days to rescue her before someone
+ else is sent to win my honor and glory.
+
+Message:  1011
+<ce>             A small, thin, pale little boy hisses at you
+<ce>              and slips a note into your hand. He vanishes
+<ce>                   almost the moment you notice him.
+
+Message:  1012
+<ce>                  You have just slain the _monster_,
+<ce>                   the stuff of _lady_'s nightmares.
+
+Message:  1013
+<ce>                        Lady _lady_ leaves you,
+<ce>                   intent on making her own way home.
+
+Message:  1014
+Dear %pcf,
+ 
+      If you were hesitating in that quest out of
+ reasonable fear that your dear friends, the _monster_s
+ of %reg would not want you to foil the
+ rather lascivious plans of one of its order, do not
+ fear. =monster_ is about
+ as precious to our cold hearts as a puddle of month
+ old spew.
+      Enjoy yourself. And, if you are so inclined,
+ enjoy _lady_.
+ 
+<ce>                           Your Dear Friends,
+<ce>                        The Oldest Power in %reg
+
+Message:  1015
+<ce>                       "You're %pcf! Thank %god!
+<ce>                            I'm Lady _lady_,
+<ce>                      let's get out of here now."
+
+
+-- Symbols used in the QRC file:
+--
+--               ___qgiver_ occurs 2 times.
+--              %god occurs 3 times.
+--              %pcf occurs 5 times.
+--              %pcn occurs 1 time.
+--              %pct occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--              %reg occurs 4 times.
+--        =2mondung_ occurs 4 times.
+--         =monster_ occurs 1 time.
+--       ___mondung_ occurs 4 times.
+--        ___qgiver_ occurs 2 times.
+--            _lady_ occurs 18 times.
+--         _monster_ occurs 9 times.
+--          _qgiver_ occurs 2 times.
+
+QBN:
+Item letter31 letter used 1014
+
+Person _qgiver_ group Questor
+Person _lady_ face 2 group Noble female local
+Person _vamp_ face 40 factiontype Vampire_Clan local
+
+Place _mondung_ remote dungeon8
+
+Clock _2mondung_ 00:00 0 flag 17 range 0 2
+Clock _S.07_ 10:00 1.16:00
+
+Foe _monster_ is Vampire
+Foe imp0 is Giant_rat
+
+--	Quest start-up:
+	dialog link for person _vamp_ 
+	start timer _2mondung_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	repute with _vamp_ exceeds 20 do _S.05_ 
+	pc at _mondung_ set _S.03_ 
+	place foe _monster_ at _mondung_ 
+	place npc _lady_ at _mondung_ 
+
+_2mondung_ task:
+	end quest 
+
+_S.01_ task:
+	when _qgclicked_ and _S.04_ 
+	give pc nothing 
+	end quest 
+
+_S.02_ task:
+	killed 1 _monster_ 
+	say 1012 
+
+_S.03_ task:
+	create foe imp0 every 40 minutes 100 times with 15% success 
+
+_S.04_ task:
+	clicked npc _lady_ 
+	hide npc _lady_ 
+	say 1015 
+	add _lady_ face 
+
+_S.05_ task:
+	start timer _S.07_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_S.07_ task:
+	get item letter31 
+	say 1011 
+
+variable _S.08_
+_S.09_ task:
+	when _S.04_ and _2mondung_ 
+	say 1013 
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.04_
+	say 1003 
+	clear _qgclicked_ _clearclick_ 

@@ -1,0 +1,296 @@
+-- Quest: C:\QUESTS\WORKING\A0C01Y13.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 01
+-- QuestId: 13
+Quest: A0C01Y13
+DisplayName: Defamation
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                Good day. _giver_ is the name. You may
+<ce>               have heard of me lately. Somebody has been
+<ce>                 filling the streets with horrible lies
+<ce>                  concerning my private life. I'll pay
+<ce>               _gold_ gold to the person who puts a stop
+<ce>                       to them. What do you say?
+                                     <--->
+<ce>                  The malicious, downright slanderous
+<ce>                 rumors about me must cease and desist
+<ce>                 immediately. I need someone anonymous
+<ce>                  to trace these rumors back to their
+<ce>                   infernal source. Would _gold_ gold
+<ce>                      pieces be enough to buy your
+<ce>                      investigative skills in this
+<ce>                                matter?
+
+RefuseQuest:  [1001]
+<ce>                  I guess you heard the one about me
+<ce>                  not keeping my promises. Damn lies!
+
+AcceptQuest:  [1002]
+<ce>                  You will? Excellent. Come back when
+<ce>                  you have some proof of who's behind
+<ce>                 all these nasty rumors about me. I'll
+<ce>                 give you the gold then. If you're not
+<ce>                   back within a month, I will assume
+<ce>                         that you have failed.
+
+QuestFail:  [1003]
+%qdt:
+ Someone has been spreading rumors around
+ ___giver_ about _giver_.
+ %g has hired me to put a stop
+ to them for _gold_ gold. I have 1 month to
+ return with proof of my success.
+
+QuestComplete:  [1004]
+<ce>              You have been honorable, %pcn. I thank you.
+<ce>           Take this _magicsword_, my most prized possession.
+<ce>          It is the least I can offer. We are friends forever,
+<ce>                             and I owe you.
+<ce>                   Leave _giver_ and _sister_ to me,
+<ce>                   I have something planned for them.
+
+RumorsDuringQuest:  [1005]
+<ce>                   I heard that _giver_ keeps slaves!
+<--->
+<ce>                       _giver_ beats %g3 spouse.
+
+RumorsPostfailure:  [1006]
+<ce>                    _giver_ is a pariah. Nobody in
+<ce>                town wants anything to do with %g2. You
+<ce>                 have heard all the things %g has done?
+
+RumorsPostsuccess:  [1007]
+<ce>                 _lover_ was rescued from ___dungeon_
+<ce>                 by some %ra. Hey! Aren't you that %ra?
+
+QuestorPostsuccess:  [1008]
+<ce>                 You must think I am a horrible person
+<ce>                 after what I did to my sister's lover,
+<ce>                   _lover_. Let me make it up to you.
+
+QuestorPostfailure:  [1009]
+<ce>                  You failed me! My sister no longer
+<ce>                   speaks to me and it's your fault.
+
+QuestLogEntry:  [1010]
+ %qdt:
+ I have learned that _giver_ made a deal with
+ %g3 sister, _sister_, to kidnap her lover,
+ _lover_. There is a letter received by
+ _giver_ that outlines the plan.
+
+Message:  1015
+_giver_,
+ My words will be quick. _lover_ is too
+ much, as you have said, and a little scare
+ may be what is needed. I'll be leaving on a trip
+ tonight, so tomorrow at sunset,
+ you should take him. I'll be in touch again,
+ but I don't imagine we will need to continue
+ for more than a week.
+<ce>                               -_sister_
+
+Message:  1017
+<ce>                     What's that you say? _giver_?
+<ce>               I have heard something... but we must keep
+<ce>                 our voices low. Seems that %g3 sister,
+<ce>            _sister_, was having a hard time with her lover.
+<ce>             I believe his name is _lover_. I do know that
+<ce>                there was a deal struck between _giver_
+<ce>               and %g3 sister to have _lover_ dealt with.
+<ce>             I'm not sure how, but a young chap I met says
+<ce>             he delivered a letter from _sister_ outlining
+<ce>                          the plan to _giver_.
+
+Message:  1018
+%qdt:
+ I have shown _giver_ the letter
+ outlining the plan to kidnap _lover_,
+ and _giver_ has now divulged that
+ %g hired some bandits to lock him away in
+ ___dungeon_. %g begged for his life
+ and asked that I rescue _lover_.
+
+Message:  1020
+<ce>                         Lies, all lies I say!
+<ce>                   I hate those nasty street rumors.
+<ce>                Please hurry up and put a stop to them!
+
+Message:  1021
+<ce>                     What?! What is this? Oh my...
+<ce>                     Please, please don't kill me!
+<ce>                  My sister put me up to it... I didn't
+<ce>                  mean any harm. She only asked that I
+<ce>                 scare him a little, you know, make him
+<ce>                appreciate her more. I know I shouldn't
+<ce>                have done it. Now I'm in over my head...
+<ce>               you see, I paid a group of bandits to take
+<ce>                 him away and lock him in ___dungeon_.
+<ce>                I figured this would scare him enough...
+<ce>               but he hasn't returned! I went too far... I
+<ce>             know. Please... you must rescue him! I thought
+<ce>               I could cover it up, but I can't anymore.
+<ce>            You've got to rescue him. If he's not back when 
+<ce>           my sister returns... well, she'll kill me for sure!
+
+Message:  1022
+<ce>                  _giver_ is a big topic these days.
+                                     <--->
+<ce>              _giver_ has been staying at _givershouse_.
+                                     <--->
+<ce>                 _giver_'s sister's lover is missing.
+                                     <--->
+<ce>               You can usually find _giver_ at __giver_.
+                                     <--->
+<ce>              _giver_? You can find %g2 either at __giver_,
+<ce>                      or at home at _givershouse_.
+                                     <--->
+<ce>                  _giver_ is well liked in ___giver_.
+                                     <--->
+<ce>                         You should try _inn_.
+<ce>                    The good gossip is always there.
+                                     <--->
+<ce>       _giver_ is often seen shopping with %g3 sister, _sister_.
+                                     <--->
+<ce>                    _giver_ has been stealing from
+<ce>                    _inn_. Or was that someone else?
+                                     <--->
+<ce>                     _giver_ murdered his sister.
+                                     <--->
+<ce>                 _giver_'s father was raised by orcs.
+                                     <--->
+<ce>                    _giver_ has taken an orc lover.
+                                     <--->
+<ce>              _giver_ has been stealing from the temples.
+                                     <--->
+<ce>                  _giver_ is in league with the orcs.
+                                     <--->
+<ce>                  There are more rumors about _giver_
+<ce>                than anyone else in ___giver_ this week.
+                                     <--->
+<ce>            _giver_ promised to kidnap %g3 sister's lover.
+                                     <--->
+<ce>         There is so much talk around these parts of nothing.
+                                     <--->
+<ce>                  _giver_ doesn't keep %g3 promises.
+                                     <--->
+<ce>                _giver_ has been keeping some secrets.
+                                     <--->
+<ce>              Everyone around here has their own stories.
+                                     <--->
+<ce>                     There's always talk at _inn_.
+
+Message:  1030
+<ce>_lover_ is _sister_'s lover. You know, I haven't seen him around lately.
+<--->
+<ce>_lover_ hasn't been seen around town in days. I bet _giver_ is behind
+<ce>                              it somehow.
+
+Message:  2000
+<ce>       Thank %god someone has found me! I thought I'd never get
+<ce>             out of here. I've been wandering around these
+<ce>                passages for days, trying to stay alive.
+<ce>                   What is that you say? _sister_ and
+<ce>                      _giver_ are behind all this!?
+<ce>               Well, you get me back to _sistershouse_ in
+<ce>               __sistershouse_ and I'll reward you well.
+<ce>                And then I will take care of those two!
+
+Message:  2001
+%qdt:
+ I have found _lover_ and am escorting him
+ back to _sistershouse_
+ in __sistershouse_.
+
+Message:  2005
+<ce>                             _lover_ says,
+<ce>                      "Thanks for your help, %pcn,
+<ce>                     but I'll find my own way home
+<ce>                              from here."
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 5 times.
+--               %g2 occurs 2 times.
+--               %g3 occurs 16 times.
+--              %god occurs 1 time.
+--              %pcn occurs 2 times.
+--              %qdt occurs 4 times.
+--               %ra occurs 4 times.
+--       ___dungeon_ occurs 3 times.
+--         ___giver_ occurs 11 times.
+--   __sistershouse_ occurs 3 times.
+--           _giver_ occurs 38 times.
+--     _givershouse_ occurs 4 times.
+--            _gold_ occurs 3 times.
+--             _inn_ occurs 4 times.
+--           _lover_ occurs 14 times.
+--      _magicsword_ occurs 1 time.
+--          _sister_ occurs 29 times.
+--    _sistershouse_ occurs 2 times.
+
+QBN:
+Item _letter_ letter used 1015
+Item _gold_ gold
+Item _magicsword_ magic_item
+
+Person _giver_ group Questor anyInfo 1022 rumors 1022
+Person _teller_ face 1 group Innkeeper local
+Person _sister_ face 19 group Group_6.0 female local
+Person _lover_ face 117 group Group_6.0 male local anyInfo 1030 rumors 1030
+
+Place _givershouse_ local house2
+Place _sistershouse_ local house2
+Place _dungeon_ remote dungeon
+Place _inn_ local tavern
+
+Clock _S.00_ 30.00:00 0 flag 9 range 0 1
+
+
+--	Quest start-up:
+	place item _letter_ at _givershouse_ 
+	dialog link for location _givershouse_ person _teller_ 
+	dialog link for location _sistershouse_ person _lover_ item _letter_ 
+	dialog link for location _dungeon_ person _sister_ item _gold_ 
+	start timer _S.00_ 
+	log 1003 step 0 
+	clicked npc _giver_ say 1020 
+	place npc _teller_ at _inn_ 
+	place npc _lover_ at _dungeon_ 
+
+_S.00_ task:
+	end quest 
+
+_S.01_ task:
+	clicked npc _teller_ say 1017 
+	log 1010 step 1 
+
+variable _S.02_
+variable _S.03_
+_S.04_ task:
+	toting _letter_ and _giver_ clicked saying 1021 
+	reveal _dungeon_ 
+	log 1018 step 2 
+
+_S.05_ task:
+	give pc _magicsword_ 
+	drop _lover_ face 
+	end quest 
+
+_S.06_ task:
+	clicked npc _lover_ say 2000 
+	pc at _sistershouse_ set _S.05_ 
+	log 2001 step 3 
+	hide npc _lover_ 
+	add _lover_ face 
+
+_S.07_ task:
+	when _S.00_ and _S.06_ and not _S.05_ 
+	say 2005 
+	drop _lover_ face 

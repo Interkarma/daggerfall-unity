@@ -1,0 +1,75 @@
+-- There are a total of 64 global variables
+-- Classic saves store global state in SAVEVARS.DAT
+-- Known globals have strings matching output from Template 1.11
+
+schema: id,*name
+
+0,	LiftedCurse
+1,	GothrydGotTotem
+2,	KingOfWormsGotTotem
+3,	GortwogGotTotem	
+4,	AkorithiGotTotem
+5,	Unused1
+6,	UnderkingGotTotem
+7,	EadwyreGotTotem
+8,	BrisiennaGotTotem
+9,	MedoraGotHorn
+10,	Unused2
+11,	GothrydEnding
+12,	KingOfWormsEnding
+13,	GortwogEnding
+14,	AkorithiEnding
+15,	Unused3
+16,	UnderkingEnding
+17,	EadwyreEnding
+18,	BrisiennaEnding
+19,	Unused4
+20,	Unused5
+21,	UnknownElysanna
+22,	Unused6
+23,	MorgiahSatisfied
+24,	Unused7
+25,	ElysannaSatisfied
+26,	Unused8
+27,	Unused9
+28,	BarenziahSatisfied
+29,	MyniseraSatisfied
+30,	Unused10
+31,	MetLadyBrisienna
+32,	Unused11
+33,	KingOfWormsSatisfied
+34,	Unused12
+35,	Unused13
+36,	FinishedMantellanCrux
+37,	Unused14
+38,	Unused15
+39,	Unused16
+40,	Unused17
+41,	Unused18
+42,	UnknownHelseth
+43,	LysandusSatisfied
+44,	Unused19
+45,	Unused20
+46,	Unused21
+47,	Unused22
+48,	Unused23
+49,	Unused24
+50,	Unused25
+51,	Unused26
+52,	Unused27
+53,	Unused28
+54,	Unused29
+55,	Unused30
+56,	Unused31
+57,	Unused32
+58,	Unused33
+59,	Unused34
+60,	Unused35
+61,	Unused36
+62,	Unused37
+63,	Unused38
+
+-- Reused by Werefall
+
+5,	TookTheCure
+10,	OpenedShapeshifters

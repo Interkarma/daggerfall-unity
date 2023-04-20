@@ -1,0 +1,166 @@
+-- Quest: C:\QUESTS\WORKING\A0C01Y01.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 01
+-- QuestId: 1
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 14
+Quest: A0C01Y01
+DisplayName: The Bodyguard
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                    %pcn, I fear for my very life.
+<ce>                    Will you protect me? _villains_s
+<ce>              have threatened to kill me tonight because I
+<ce>                have refused to sell my land. I can pay
+<ce>                            you _gold_ gold.
+                                     <--->
+<ce>               You find me in desperate straits, my dear
+<ce>                  %ra. I have received word from some
+<ce>                 %cn thugs that they intend to ransack
+<ce>                my house tonight. I don't suppose you'd
+<ce>                  be available to do a little creative
+<ce>                 facial rearrangement on these fellows?
+
+RefuseQuest:  [1001]
+<ce>                    Fear not for my safety, %pcn. I
+<ce>                shall find another protector... somehow.
+
+AcceptQuest:  [1002]
+<ce>             Thank you and bless you! They will strike at
+<ce>                 _qgiverhome_ in the three hours before
+<ce>              midnight. Be there and wait with me for that
+<ce>               time. Once they have been defeated, I will
+<ce>                          be safe once again.
+
+QuestComplete:  [1004]
+<ce>                 You have saved my life, %pcf. I will
+<ce>                 gladly pay you our agreed upon amount.
+
+RumorsDuringQuest:  [1005]
+<ce>                    _qgiver_ is in trouble with the
+<ce>                Thieves Guild. I hear they are going to
+<ce>                             rough %g2 up.
+
+RumorsPostfailure:  [1006]
+<ce>                    I saw _qgiver_ recently. %g was
+<ce>                        beaten up by some thugs.
+
+RumorsPostsuccess:  [1007]
+<ce>                        Aren't you the %ra that
+<ce>                  chased off those thugs that tried to
+<ce>                           beat up _qgiver_?
+
+QuestorPostsuccess:  [1008]
+<ce>                 I still remember what you did for me,
+<ce>                     %pcf. Chasing off those thugs
+<ce>                        leaves me in your debt.
+
+QuestorPostfailure:  [1009]
+<ce>                I still have the scars from when those
+<ce>                 thugs found me. I hired you to protect
+<ce>                 me and you blew it. Get away from me.
+
+QuestLogEntry:  [1010]
+On %qdt,
+ _qgiver_ of ___qgiver_ asked
+ me to protect %g2. _villains_s have
+ threatened to assault %g2 between
+ 9 and midnight at _qgiverhome_.
+
+Message:  1011
+<ce>               This is not your problem, stranger. Leave
+<ce>                   _qgiver_ to us or we will cut you
+<ce>                         down where you stand!
+
+Message:  1013
+<ce>                  This must be the place. It fits the
+<ce>                     description _qgiver_ gave you.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 1 time.
+--                %g occurs 1 time.
+--               %g2 occurs 4 times.
+--              %pcf occurs 2 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--        ___qgiver_ occurs 1 time.
+--            _gold_ occurs 2 times.
+--          _qgiver_ occurs 9 times.
+--      _qgiverhome_ occurs 3 times.
+--        _villains_ occurs 2 times.
+
+QBN:
+Item _gold_ gold
+
+Person _qgiver_ face 1 group Questor
+
+Place _qgiverhome_ local house2
+
+Clock _S.00_ 1.03:00
+--removed flags to make time limit exact
+
+Foe _villains_ is 2 Assassin
+
+--	Quest start-up:
+	start timer _S.00_ 
+	log 1010 step 0 
+	pc at _qgiverhome_ set _S.05_
+	---removed "saying" as unacceptable argument. moved to S.05
+	create npc at _qgiverhome_ 
+
+_S.00_ task:
+	end quest 
+
+_S.01_ task:
+	daily from 21:00 to 22:59
+	--changed 24:00 to 23:59. 24:00 shouldn't exist.
+	place npc _qgiver_ at _qgiverhome_ 
+
+_S.02_ task:
+	killed 2 _villains_ 
+
+_questdone_ task:
+	when _S.04_ and _S.02_ 
+	give pc _gold_ 
+
+_S.04_ task:
+	clicked npc _qgiver_ 
+
+_S.05_ task:
+	say 1013
+
+_S.06_ task:
+	injured _villains_ saying 1011 
+
+_clearclick_ task:
+	when not _S.02_ and _S.04_ 
+	clear _S.04_ _clearclick_ 
+
+_S.08_ task:
+	when _S.05_ and _S.01_ and not _S.06_
+	create foe _villains_ every 10 minutes 1 times with 25% success 
+--added "not S06" to prevent multiple spawns
+
+_mmap_ task:
+	when _questdone_ and not _S.05_ 
+	end quest 
+
+--on rare occasions, the enemies still would not spawn with the above logic.
+--A new back-up logic starting from 11PM is given below, to force an enemy
+--spawn if none has been injured by 11PM. If there's a better way to ensure
+--the enemies haven't spawned than with "injured," it would be preferable.
+
+_latehour_ task:
+	daily from 23:00 to 23:59
+	place npc _qgiver_ at _qgiverhome_ 
+
+_backupspawn_ task:
+	when _S.05_ and _latehour_ and not _S.06_
+	create foe _villains_ every 0 minutes 1 times with 100% success

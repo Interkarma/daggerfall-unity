@@ -1,0 +1,129 @@
+-- Quest: C:\QUESTS\WORKING\B0B50Y11.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: knight
+-- Repute: 50
+-- QuestId: 11
+Messages: 12
+Quest: B0B50Y11
+DisplayName: The Exorcism
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                            I am _qgiver_.
+<ce>                        One of the local nobles,
+<ce>                      _nobleman_, has just gotten
+<ce>                        the deed to an abandoned
+<ce>                      piece of property. Too late,
+<ce>                      %g found out it is haunted.
+<ce>                      Someone needs to go out and
+<ce>                      banish the ghost that haunts
+<ce>                      it. Are you willing to take
+<ce>                             up this quest?
+
+RefuseQuest:  [1001]
+<ce>                        Ghosts are normally the
+<ce>                      temple's problem. Maybe I'll
+<ce>                      turn this one over to them.
+
+AcceptQuest:  [1002]
+<ce>                       _nobleman_ wants to begin
+<ce>                    rebuilding within =2dung_ days.
+<ce>                    %g has the deed to ___dungeon_,
+<ce>                     where you'll find the spirit.
+
+QuestComplete:  [1004]
+<ce>                       _nobleman_ will be quite
+<ce>                      pleased. %g has even offered
+<ce>                       to dedicate a fountain in
+<ce>                               your name.
+
+RumorsDuringQuest:  [1005]
+_nobleman_ was crazy to accept the deed to ___dungeon_. Crazy or stupid.
+
+RumorsPostfailure:  [1006]
+Poor _nobleman_ appealed to %kno to exorcise ___dungeon_, but they failed.
+
+RumorsPostsuccess:  [1007]
+___dungeon_ can be made into a warehouse or a summer home, thanks to %kno.
+
+QuestorPostsuccess:  [1008]
+Greetings, %pcf. After helping us with _nobleman_, what can I do for you?
+
+QuestorPostfailure:  [1009]
+You failed %kno when you failed _nobleman_, %pcf. A grave disappointment.
+
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ ==qgiver_ in ___qgiver_
+ pled with me to rid ___dungeon_
+ of a ghost that is haunting
+ it. I have =2dung_ days before
+ they they need to begin
+ the reconstruction.
+
+Message:  1011
+<ce>                      The ghost has been laid to
+<ce>                        rest. _nobleman_ can now
+<ce>                          rebuild ___dungeon_.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--              %kno occurs 5 times.
+--              %pcf occurs 17 times.
+--              %qdt occurs 1 time.
+--           =2dung_ occurs 2 times.
+--         ==qgiver_ occurs 1 time.
+--       ___dungeon_ occurs 8 times.
+--        ___qgiver_ occurs 1 time.
+--        _nobleman_ occurs 12 times.
+--          _qgiver_ occurs 2 times.
+
+QBN:
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+Person _nobleman_ face 182 factiontype Province remote
+Person _local_ face 77 group Resident2 male local
+
+Place _dungeon_ remote dungeon11
+
+Clock _2dung_ 00:00 0 flag 17 range 0 2
+
+Foe _ghost_ is Ghost
+Foe _wraith_ is Wraith
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	pick one of _S.04_ _S.05_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _wraith_ saying 1011 
+	killed 1 _ghost_ saying 1011 
+
+_S.02_ task:
+	clicked npc _qgiver_ 
+	give pc nothing 
+	change repute with _local_ by +4 
+	change repute with _nobleman_ by +10 
+	end quest 
+
+_clearclick_ task:
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_ 
+
+_S.04_ task:
+	place foe _wraith_ at _dungeon_ 
+
+_S.05_ task:
+	place foe _ghost_ at _dungeon_ 

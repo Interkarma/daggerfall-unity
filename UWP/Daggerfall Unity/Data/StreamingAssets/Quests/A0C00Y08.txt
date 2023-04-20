@@ -1,0 +1,201 @@
+-- Quest: C:\QUESTS\WORKING\A0C00Y08.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 0
+-- QuestId: 8
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 34
+Quest: A0C00Y08
+DisplayName: The Assassin
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>             My name is unimportant. All you need to know
+<ce>               is that I need someone who isn't afraid to
+<ce>            spill a little blood for, say, _gold_ gold. Tell
+<ce>            me now if you're not interested. Are you willing
+<ce>                           to take this job?
+                                     <--->
+<ce>               Shhh! Keep your voice down. Before I say
+<ce>              anything else, are you the kind of %ra that
+<ce>               will kill for gold? How about _gold_ gold?
+                                     <--->
+<ce>             I am looking for someone that won't faint at
+<ce>            the sight of blood. Human blood. For _gold_ gold,
+<ce>                         would you kill a man?
+
+RefuseQuest:  [1001]
+<ce>                           You never saw me.
+                                     <--->
+<ce>        Scram. I don't want anyone to see us talking together.
+                                     <--->
+<ce>                          Fine. Be that way.
+
+AcceptQuest:  [1002]
+<ce>              I want _darkb_ killed. The problem is that
+<ce>           the Dark Brotherhood won't take the job. Something
+<ce>           about a favor they owe. I need an independent. Do
+<ce>           the job and get back to me within a week and I'll
+<ce>          pay you the _gold_ gold. Just ask for _questgiver_.
+<ce>                  I'll be waiting right here for you.
+
+QuestComplete:  [1004]
+<ce>            Revenge is mine! By the way, you had better get
+<ce>            out of town. I hear the Brotherhood caught wind
+<ce>                    of this. Here's your money, %pcf.
+
+RumorsDuringQuest:  [1005]
+<ce>                  I hear _questgiver_ hates _darkb_.
+                                     <--->
+<ce>             _darkb_ is connected to the Dark Brotherhood.
+
+RumorsPostsuccess:  [1007]
+<ce>             Someone slew _darkb_, and in public, no less!
+                                     <--->
+<ce>                Did you hear about the murder? _darkb_
+<ce>                       was slain by an assassin.
+                                     <--->
+<ce>              I never did like _darkb_. I'm glad someone
+<ce>                  finally offed %g2. I hear it was the
+<ce>                           Dark Brotherhood.
+
+QuestorPostsuccess:  [1008]
+<ce>               Keep your voice down. You killed _darkb_
+<ce>            for me, and I acknowledge the debt, but I don't
+<ce>           want people thinking I had anything to do with it.
+
+QuestorPostfailure:  [1009]
+<ce>              I hired you to do a job, but you couldn't.
+<ce>                  All you had to do was kill _darkb_.
+<ce>               Now it's too late, and the Dark Brotherhood
+<ce>                   is after me. Just leave me alone.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I accepted a contract to kill _darkb_.
+ I have a week to get back to _questgiver_
+ of ___questgiver_ with the deed done.
+
+Message:  1015
+<ce>                _darkb_ isn't dead! What kind of a fool
+<ce>                        do you take me for, %pcf?
+
+Message:  1021
+<ce>                         Help! Murderer! Help!
+
+Message:  1022
+<ce>         Cur! What kind of assassin are you? To arms! To arms!
+
+Message:  1023
+<ce>                            I'm hit! %oth.
+
+Message:  1024
+<ce>          Coward! You attack me without cause or provocation.
+
+Message:  1030
+<ce>              _questgiver_? I don't know much about %g2.
+<ce>                           Keeps to %g2self.
+
+Message:  1031
+<ce>          I hear _questgiver_ has some pretty shady friends.
+<ce>                    But you didn't hear it from me.
+
+Message:  1032
+<ce>                A fine upstanding citizen. Ask anyone.
+
+Message:  1033
+<ce>                  _darkb_ is usually at _place_, but
+<ce>                I wouldn't get mixed up in %g3 affairs.
+<ce>                    Just a friendly word of advice.
+
+
+-- Symbols used in the QRC file:
+--
+--               %g2 occurs 4 times.
+--           %g2self occurs 2 times.
+--               %g3 occurs 1 time.
+--              %oth occurs 2 times.
+--              %pcf occurs 4 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--    ___questgiver_ occurs 2 times.
+--           _darkb_ occurs 15 times.
+--            _gold_ occurs 9 times.
+--           _place_ occurs 1 time.
+--      _questgiver_ occurs 8 times.
+
+QBN:
+Item _gold_ gold
+
+Person _questgiver_ group Questor anyInfo 1030 rumors 1031
+Person _darkb_ face 1 faction The_Dark_Brotherhood remote anyInfo 1032 rumors 1033
+
+Place _place_ local random
+
+Clock _S.00_ 7.00:00 0 flag 1 range 0 1
+
+Foe _bard_ is Bard
+Foe _rogue_ is Rogue
+Foe _archer_ is Archer
+Foe _spellsword_ is Spellsword
+
+--	Quest start-up:
+	start timer _S.00_ 
+	log 1010 step 0 
+	pc at _place_ set _S.11_ 
+	place npc _darkb_ at _place_ 
+
+_S.00_ task:
+	end quest 
+
+_S.01_ task:
+	restrain foe _archer_ 
+	place foe _archer_ at _place_ 
+
+_S.02_ task:
+	restrain foe _bard_ 
+	place foe _bard_ at _place_ 
+
+_S.03_ task:
+	restrain foe _rogue_ 
+	place foe _rogue_ at _place_ 
+
+_S.04_ task:
+	restrain foe _spellsword_ 
+	place foe _spellsword_ at _place_ 
+
+variable _S.05_
+_S.06_ task:
+	injured _rogue_ saying 1023 
+	injured _archer_ saying 1021 
+	injured _bard_ saying 1022 
+	injured _spellsword_ saying 1024 
+
+_S.07_ task:
+	killed 1 _archer_ 
+	killed 1 _bard_ 
+	killed 1 _rogue_ 
+	killed 1 _spellsword_ 
+	change repute with _darkb_ by -20 
+	legal repute -20
+--nerfed legal repute, not fair for normal gameplay
+
+_S.08_ task:
+	clicked npc _questgiver_ 
+
+_clearclick_ task:
+	when _S.08_ and not _S.07_ 
+	say 1015 
+	clear _S.08_ _clearclick_
+--added an additional clear clearclick here. Otherwise this clearing function would stop working after the first click.
+
+_S.10_ task:
+	when _S.08_ and _S.07_ 
+	give pc _gold_ 
+	end quest 
+
+_S.11_ task:
+	pick one of _S.01_ _S.02_ _S.03_ _S.04_ 
+	hide npc _darkb_ 

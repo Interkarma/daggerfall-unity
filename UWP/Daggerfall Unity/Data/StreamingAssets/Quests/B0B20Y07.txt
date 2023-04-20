@@ -1,0 +1,141 @@
+-- Quest: C:\QUESTS\WORKING\B0B20Y07.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: knight
+-- Repute: 20
+-- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: B0B20Y07
+DisplayName: More Trouble with Orcs
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                     Let me introduce myself. I am
+<ce>                         _qgiver_ of ==qgiver_.
+<ce>                      Seems there is a bandit band
+<ce>                     of orcs holed up around here.
+<ce>                         The glory of %reg will
+<ce>                     go to whomever wipes them out.
+<ce>                       Can I count on you, %pcf?
+                                     <--->
+<ce>                     The orcs are moving into fair
+<ce>                        %reg, befouling the land
+<ce>                    as they progress. Will you help
+<ce>                         us in this purgation?
+
+RefuseQuest:  [1001]
+<ce>                      You're my fourth rejection
+<ce>                     today. Seems like nobody wants
+<ce>                        to tackle orcs any more.
+
+AcceptQuest:  [1002]
+<ce>                     You don't need to kill every
+<ce>                      single orc in the band. Just
+<ce>                      get a decent number of them
+<ce>                       and be sure to kill their
+<ce>                           leader, =monster_.
+<ce>                         I happen to know that
+<ce>                          they are holed up in
+<ce>                         __dungeon_. If you're
+<ce>                     not back in =2dung_ days, I'll
+<ce>                        sing your praises at the
+<ce>                           funeral ceremony.
+
+QuestComplete:  [1004]
+<ce>                     Good show! The merchants are
+<ce>                      already telling me how happy
+<ce>                      they are with the orcs gone.
+<ce>                     You are a credit to the Order.
+
+RumorsDuringQuest:  [1005]
+The orcs of __dungeon_ are all but destroying normal caravan routes.
+<--->
+The __dungeon_ orcs used to be fairly peaceful. They sure ain't anymore.
+
+RumorsPostfailure:  [1006]
+The orcs moved on, all on their own. But I bet that they'll be back.
+
+RumorsPostsuccess:  [1007]
+The %kno saved %reg from the __dungeon_ orcs. The hero was a %ra knight.
+
+QuestorPostsuccess:  [1008]
+I'd be happy to be of service, o Orc Destroyer.
+
+QuestorPostfailure:  [1009]
+Oh, hello, %pct. I'd be happier to see you if that orc business was successful.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ ==qgiver_ in ___qgiver_
+ gave me the task of wiping
+ out an orc band that makes
+ it's home in __dungeon_.
+ In particular I must get the
+ leader, a certain _monster_.
+ I need to get back to %g2
+ in =2dung_ days or %g will
+ assume I'm dead.
+
+Message:  1011
+<ce>                      You have killed =monster_.
+<ce>                      Without a leader, these orcs
+<ce>                  will never be more than a nuisance.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--               %g2 occurs 1 time.
+--              %kno occurs 1 time.
+--              %pcf occurs 2 times.
+--              %pct occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--              %reg occurs 3 times.
+--           =2dung_ occurs 2 times.
+--         ==qgiver_ occurs 2 times.
+--         =monster_ occurs 2 times.
+--      ___dungeon_ occurs 5 times.
+--        ___qgiver_ occurs 1 time.
+--         _monster_ occurs 1 time.
+--          _qgiver_ occurs 2 times.
+
+QBN:
+
+Person _qgiver_ group Questor
+Person _local_ face 1 group Resident2 local
+
+Place _dungeon_ remote dungeon1
+
+Clock _2dung_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Orc_sergeant
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	place foe _monster_ at _dungeon_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _monster_ saying 1011 
+
+_S.02_ task:
+	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.02_ and _S.01_ 
+	give pc nothing 
+	change repute with _local_ by +4 
+	end quest 
+
+_clearclick_ task:
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_
+	--ensures repeated clearclick

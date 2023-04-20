@@ -1,0 +1,149 @@
+-- Quest: C:\QUESTS\WORKING\B0C00Y13.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: knight
+-- Repute: 0
+-- QuestId: 13
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: B0C00Y13
+DisplayName: The Infested House
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                        Why should I trust you,
+<ce>                          %pcn? I suppose some
+<ce>                       small trial of arms is in
+<ce>                      order. I certainly wouldn't
+<ce>                      give you anything important,
+<ce>                        seeing as you are not a
+<ce>                     member of this knightly order.
+<ce>                        I own a building that is
+<ce>                        infested with creatures.
+<ce>                       Kill them for me and maybe
+<ce>                    I'll put in a good word for you.
+
+RefuseQuest:  [1001]
+<ce>                     I guess I'll just have to do
+<ce>                      it myself. You are even more
+<ce>                       worthless than I thought.
+
+AcceptQuest:  [1002]
+<ce>                      I am only giving you 1 day
+<ce>                      to clean _house_ out. After
+<ce>                      that, I'll just do it myself
+<ce>                    and tell everyone what a coward
+<ce>                            you really are.
+
+QuestComplete:  [1004]
+<ce>                        Quite acceptable %pcn.
+<ce>                      I'll put in a good word for
+<ce>                      you with my knightly order.
+
+RumorsDuringQuest:  [1005]
+Very strange sounds come out of the _house_.
+<--->
+_qgiver_'s house has really gone to Oblivion.
+
+RumorsPostfailure:  [1006]
+Poor _qgiver_ has to hire an exterminator.
+<--->
+It's going to cost _qgiver_ to clean that house.
+
+RumorsPostsuccess:  [1007]
+_house_ is finally at peace.
+<--->
+Those critters are out of _house_ at last.
+
+QuestorPostsuccess:  [1008]
+Well, you did clean out my house. What do you need?
+
+QuestorPostfailure:  [1009]
+You can't even kill a few critters. Don't waste my time.
+<--->
+I wouldn't waste my breath talking to a lickspittle.
+
+
+QuestLogEntry:  [1010]
+%qdt:
+ In ___qgiver_,
+ I met _qgiver_ of the knightly order.
+ I can curry favor with the knights
+ if I rid _house_ in __house_
+ of its infestation for %g2.
+
+Message:  1011
+<ce>                You have cleaned out _qgiver_'s house.
+
+Message:  1012
+<ce>  You hear scratching noises coming from the walls.
+<ce>  The creatures will most certainly react poorly
+<ce>  to your intrusion on their territory.
+
+-- Symbols used in the QRC file:
+--
+--               %g2 occurs 2 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--          __house_ occurs 6 times.
+--          _qgiver_ occurs 7 times.
+
+QBN:
+
+Person _qgiver_ group Questor
+
+Place _house_ local house
+
+Clock _oneday_ 1.00:00 0 flag 1 range 0 1
+
+Foe _spiders_ is Spider
+Foe _rats_ is Giant_rat
+Foe _scorpions_ is Giant_scorpion
+Foe _bats_ is Giant_bat
+
+--	Quest start-up:
+	start timer _oneday_ 
+	log 1010 step 0 
+	--location action removed. not defined and not needed.
+	pc at _house_ set _S.01_ 
+
+_oneday_ task:
+	end quest 
+
+_S.01_ task:
+	say 1012
+	pick one of _S.04_ _S.05_ _S.06_ _S.07_ 
+
+_questdone_ task:
+	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.03_ and _questdone_ 
+	give pc nothing 
+	end quest 
+
+_S.03_ task:
+	killed 6 _bats_ 
+	killed 7 _rats_ 
+	killed 3 _scorpions_ 
+	killed 3 _spiders_ 
+	say 1011 
+
+_S.04_ task:
+	create foe _bats_ every 2 minutes 8 times with 100% success 
+
+_S.05_ task:
+	create foe _rats_ every 2 minutes 10 times with 100% success 
+
+_S.06_ task:
+	create foe _scorpions_ every 3 minutes 4 times with 100% success 
+
+_S.07_ task:
+	create foe _spiders_ every 3 minutes 4 times with 100% success
+--slowed enemy spawn due to feedback 
+
+_clearclick_ task:
+	when not _S.03_ and _questdone_ 
+	clear _questdone_ _clearclick_ 

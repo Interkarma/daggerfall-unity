@@ -1,0 +1,227 @@
+-- Quest: C:\QUESTS\WORKING\A0C00Y12.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 0
+-- QuestId: 12
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 36
+Quest: A0C00Y12
+DisplayName: The First Printing
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                Pardon me. Have you ever read the book
+<ce>                    _book_? It is excellent, and I
+<ce>           have a first printing of it. Or, might I say, had
+<ce>          a first printing. Seems someone has taken it. I'll
+<ce>          gladly pay _gold_ gold pieces to the first one who
+<ce>            returns it to me. Do you think you can find it?
+
+RefuseQuest:  [1001]
+<ce>               Too bad. I really need to find that book.
+
+AcceptQuest:  [1002]
+<ce>           Great! It is very important to me, being a first
+<ce>            printing and all. Unfortunately, I have no idea
+<ce>             who took it. You may try to ask around town.
+
+QuestComplete:  [1004]
+<ce>             Splendid! My copy of _book_! Well done, %pcn.
+<ce>                Here is the _gold_ gold I promised you.
+
+RumorsDuringQuest:  [1005]
+<ce>                _giver_ has been desperately trying to
+<ce>               find his smelly old book. Who would want
+<ce>                          to steal it anyway?
+
+RumorsPostfailure:  [1006]
+<ce>                   I hear that _giver_ finally gave
+<ce>                   up and bought another copy of his
+<ce>             precious book. Did you know that %g actually
+<ce>                hired someone to find it? What a fool!
+
+RumorsPostsuccess:  [1007]
+<ce>                    You must be the %ra that found
+<ce>                 _giver_'s book for %g2. %g is telling
+<ce>                 everyone about it. You'd think it was
+<ce>                     the king that had been saved.
+
+QuestorPostsuccess:  [1008]
+<ce>                     Anything for my friend %pcf.
+<ce>                  You recovered my precious book and
+<ce>                         I am quite grateful.
+
+QuestorPostfailure:  [1009]
+<ce>                  Hmmph. I hired you to find my book.
+<ce>                   When you failed, I had to go out
+<ce>                    and buy another copy. I do not
+<ce>                        wish to speak with you.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _giver_ of ___giver_ has offered me _gold_
+ gold to find %g3 book, _book_.
+
+Message:  1014
+<ce>                  You may want to try _informant_ in
+<ce>              _informant1_. %g seems to know everything
+<ce>                 that goes on around __informant1_.
+                                     <--->
+<ce>                   You should ask at the local inns.
+<ce>                       They are full of gossip.
+                                     <--->
+<ce>                            You should try
+<ce>               _informant1_. There's always talk there.
+                                     <--->
+<ce>                      It was stolen from _giver_.
+                                     <--->
+<ce>               _giver_ has been asking around about it.
+                                     <--->
+<ce>                  I really enjoyed it when I read it.
+                                     <--->
+<ce>                 You should probably visit a library.
+
+Message:  1015
+<ce>         This must be the book that was stolen from _giver_.
+
+Message:  1025
+<ce>                   Hello, %pcn. Word is that you've
+<ce>                 been asking about me. I should know.
+<ce>                   All of __informant1_'s news comes
+<ce>                          through these ears.
+<ce>              Enough about me. I did hear something about
+<ce>                _giver_'s misfortunes. You want to find
+<ce>                     _thief_. %g has been looking
+<ce>                    for a first printing of _book_
+<ce>                for some time. And %g is also the type
+<ce>                   who takes things without asking,
+<ce>                       if you know what I mean.
+
+Message:  1035
+%qdt:
+ _informant_ has given me valuable
+ information about the missing
+ _book_. %g seems to think that
+ _thief_ might be mixed up in it
+ somehow. Now if I could just find %g2...
+
+Message:  1027
+_thief_ lives at _house_ in __house_.
+<--->
+_thief_ lives in __house_.
+<--->
+_thief_ spends %g3 nights at _house_.
+<--->
+You should try to find _thief_ at %g3 home. %g lives in __house_.
+<--->
+_thief_ does a lot of trading at _store_.
+<--->
+You may want to start shopping at _store_. _thief_ does.
+<--->
+_store_ is a popular place to trade stolen goods, which _thief_ has a lot of.
+<--->
+_thief_ has been seen at _store_.
+<--->
+_inn_ is a hangout for many thieves.
+<--->
+_thief_ likes to drink at _inn_.
+<--->
+_thief_'s favorite tavern is _inn_.
+<--->
+_thief_'s favorite meals are served at _inn_.
+
+Message:  1030
+<ce>                You want the book? You're not so tough.
+<ce>                     Just try and take it from me!
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 7 times.
+--               %g2 occurs 3 times.
+--               %g3 occurs 3 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 2 times.
+--              %qdt occurs 2 times.
+--               %ra occurs 1 time.
+--         ___giver_ occurs 1 time.
+--          __house_ occurs 5 times.
+--     __informant1_ occurs 3 times.
+--            _book_ occurs 6 times.
+--           _giver_ occurs 32 times.
+--            _gold_ occurs 7 times.
+--           _house_ occurs 1 time.
+--      _informant1_ occurs 2 times.
+--       _informant_ occurs 2 times.
+--             _inn_ occurs 5 times.
+--           _store_ occurs 4 times.
+--           _thief_ occurs 23 times.
+
+QBN:
+Item _book_ book2 anyInfo 1014 used 1015
+Item _gold_ gold
+
+Person _informant_ face 241 group Cleric local
+Person _giver_ group Questor
+Person _thief_ face 97 faction The_Thieves_Guild local anyInfo 1027 rumors 1027
+
+Place _inn_ local tavern
+Place _store_ local generalstore
+Place _house_ local house2
+Place _informant1_ local tavern
+
+Clock _S.01_ 10.00:00 0 flag 9 range 0 1
+
+Foe _thiefFoe_ is Thief
+
+--	Quest start-up:
+	dialog link for location _house_ person _informant_ 
+	dialog link for location _inn_ 
+	dialog link for location _store_ person _thief_ 
+	start timer _S.01_ 
+	log 1010 step 0 
+	place npc _informant_ at _informant1_ 
+
+variable _S.00_
+_S.01_ task:
+	end quest 
+
+_S.02_ task:
+	daily from 00:00 to 08:00 
+	pc at _house_ set _S.09_ 
+
+_S.03_ task:
+	daily from 16:02 to 23:59 
+	pc at _inn_ set _S.10_ 
+
+_S.04_ task:
+	daily from 08:01 to 16:01 
+	pc at _store_ set _S.11_
+--unneeded underscore removed
+
+_S.05_ task:
+	clicked npc _informant_ say 1025 
+	add dialog for person _thief_ 
+	log 1035 step 1 
+
+_S.06_ task:
+	toting _book_ and _giver_ clicked 
+	give pc _gold_ 
+	end quest 
+
+variable _S.07_
+_S.08_ task:
+	injured _thiefFoe_ 
+	give item _book_ to _thiefFoe_ 
+	say 1030 
+
+_S.09_ task:
+	place foe _thiefFoe_ at _house_
+
+_S.10_ task:
+	place foe _thiefFoe_ at _inn_ 
+
+_S.11_ task: 
+	place foe _thiefFoe_ at _store_ 

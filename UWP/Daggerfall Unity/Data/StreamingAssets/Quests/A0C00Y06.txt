@@ -1,0 +1,153 @@
+-- Quest: C:\QUESTS\WORKING\A0C00Y06.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 0
+-- QuestId: 6
+Messages: 15
+Quest: A0C00Y06
+DisplayName: An Unexpected Journey
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                         My name is _qgiver_.
+<ce>                       My master has asked me to
+<ce>                        find a brave adventurer
+<ce>                       for a dangerous mission.
+<ce>                        I cannot tell you more,
+<ce>                       other than to say that it
+<ce>                      is worth _gold_ gold pieces
+<ce>                       to whoever succeeds. Are
+<ce>                            you interested?
+
+RefuseQuest:  [1001]
+<ce>                      I shall seek elsewhere for
+<ce>                         a hero to fulfill my
+<ce>                            master's quest.
+
+AcceptQuest:  [1002]
+<ce>                         Go to _meetingplace_.
+<ce>                        There you will find my
+<ce>                                master.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I met _qgiver_
+ in ___qgiver_,
+ who told me %g3 master in
+ _meetingplace_ would
+ pay _gold_ gold pieces for
+ an unknown but certainly
+ dangerous task.
+
+Message:  1011
+%qdt:
+ The traitor _traitor_
+ magicked me to __dungeon_.
+ If I ever get out, we will meet again.
+
+Message:  1012
+<ce>                       Know me for who I really
+<ce>                      am. I am your mortal enemy,
+<ce>                          _traitor_! I have a
+<ce>                       special fate in store for
+<ce>                                 you.
+
+Message:  1013
+<ce>                        I didn't know _traitor_
+<ce>                      would betray you like that.
+<ce>                       I ain't got no beef with
+<ce>                          you, %pcn. %g moved
+<ce>                    to _hidingplace_ here in town.
+<ce>                          Look for %g2 there.
+
+Message:  1014
+<ce>                         I don't know how you
+<ce>                       escaped from ___dungeon_,
+<ce>                         %pcf. It won't do you
+<ce>                       much good, though. Prepare
+<ce>                                to die!
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g2 occurs 2 times.
+--               %g3 occurs 1 time.
+--              %pcf occurs 1 time.
+--              %pcn occurs 1 time.
+--              %qdt occurs 2 times.
+--       ___dungeon_ occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--        __dungeon_ occurs 1 time.
+--            _gold_ occurs 2 times.
+--     _hidingplace_ occurs 1 time.
+--    _meetingplace_ occurs 2 times.
+--          _qgiver_ occurs 2 times.
+--         _traitor_ occurs 3 times.
+
+QBN:
+Item _gold_ gold
+
+Person _traitor_ face 1 group Local_4.0 local
+Person _qgiver_ group Questor
+
+Place _dungeon_ remote dungeon
+Place _meetingplace_ local random
+Place _hidingplace_ local random
+
+Clock _escapetime_ 00:00 0 flag 1 range 0 5
+Clock _shortdelay_ 00:01 0 flag 1 range 0 1
+
+Foe _mtraitor_ is Mage
+
+--	Quest start-up:
+	dialog link for location _hidingplace_ 
+	start timer _escapetime_ 
+	log 1010 step 0 
+	place npc _traitor_ at _meetingplace_ 
+
+_escapetime_ task:
+	end quest 
+
+variable _shortdelay_
+_clickonenemy_ task:
+	clicked npc _traitor_ say 1012 
+	start timer _shortdelay_ 
+	hide npc _traitor_ 
+	place foe _mtraitor_ at _meetingplace_ 
+
+_traitordead_ task:
+	killed 1 _mtraitor_ 
+	end quest 
+--removed unnecessary delay
+
+_teleportpc_ task:
+	pc at _hidingplace_ set _revenge_ 
+	when not _traitordead_ and _shortdelay_ 
+	reveal _dungeon_ 
+	log 1011 step 1 
+	place foe _mtraitor_ at _hidingplace_ 
+	teleport pc to _dungeon_ 
+
+_hittraitor_ task:
+	injured _mtraitor_ 
+
+variable _revenge_
+_foundme_ task:
+	when _revenge_ and _hittraitor_ and _teleportpc_ 
+	say 1014 
+
+variable _questdone_
+_clickqgiver_ task:
+	clicked npc _qgiver_ 
+
+_findtraitor_ task:
+	when _clickqgiver_ and _teleportpc_ 
+	add dialog for location _hidingplace_ 
+	say 1013 
+
+_clearclick_ task:
+	when _clickqgiver_ and not _teleportpc_ 
+	clear _clickqgiver_ 

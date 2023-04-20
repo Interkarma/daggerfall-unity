@@ -1,0 +1,229 @@
+-- Quest: C:\QUESTS\WORKING\A0C00Y10.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 0
+-- QuestId: 10
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 28
+Quest: A0C00Y10
+DisplayName: The Duel
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>              Excuse me?! Can't you see I'm busy, you smelly
+<ce>             %ra? Are you looking for trouble or something?
+                                     <--->
+<ce>           What? What did you say? I hope I didn't hear you
+<ce>                 say something. Did you say something?
+                                     <--->
+<ce>            Can't you see I'm busy?! And not in a good mood,
+<ce>               I might add! If you don't leave now, there
+<ce>                could be trouble. Is that what you want?
+                                     <--->
+<ce>            Well, excuse me! Didn't want to get in your way,
+<ce>               you fat %ra pig. You want to step outside?
+
+RefuseQuest:  [1001]
+<ce>                  That's more like it. Now shove off.
+                                     <--->
+<ce>            I didn't think so. Go on with whatever you do.
+                                     <--->
+<ce>                Didn't think you would say yes anyway.
+<ce>                       Now begone with yourself.
+
+AcceptQuest:  [1002]
+<ce>                    Oh... you want to play, do you?
+                                     <--->
+<ce>                     I think we've got a live one!
+                                     <--->
+<ce>                       Well... looks like my day
+<ce>                       just got more interesting!
+                                     <--->
+<ce>                 You really are as stupid as you look!
+<ce>                       Fine, %ra, I'll play too.
+                                     <--->
+<ce>          So that's the way you want it! I'm game to any %ra!
+
+QuestFail:  [1003]
+%qdt:
+ I have agreed to duel with _giver_ at
+ _inn_ in ___giver_ in six hours.
+
+QuestComplete:  [1004]
+<ce>                    As you gaze down on your fallen
+<ce>                     adversary, you know that your
+<ce>                       honor has been satisfied.
+
+RumorsDuringQuest:  [1005]
+<ce>                      _giver_ has challenged some
+<ce>                        wandering %ra to a duel!
+
+RumorsPostfailure:  [1006]
+<ce>                     Aren't you that coward, %pcn?
+<ce>                    You refused a duel, didn't you?
+                                     <--->
+<ce>                         I heard that _giver_
+<ce>                 challenged someone to a duel, and the
+<ce>                        sap didn't even show up!
+
+RumorsPostsuccess:  [1007]
+<ce>                       You're the %ra that beat
+<ce>                          _giver_'s champion!
+<ce>                               Well done!
+                                     <--->
+<ce>                        I heard the _giver_ was
+<ce>                    publicly embarrassed when some
+<ce>       wandering adventurer beat %g3 champion. Serves %g2 right.
+
+QuestorPostsuccess:  [1008]
+<ce>                    %oth. I had hoped never to see
+<ce>                 you again. You bested my champion in a
+<ce>                  duel, but I am an honorable person.
+                                     <--->
+<ce>                  Don't hurt me! You beat my champion
+<ce>                     in a duel, isn't that enough?
+
+QuestorPostfailure:  [1009]
+<ce>                  Hah! You didn't even bother to show
+<ce>                  up for the duel. Thought I wouldn't
+<ce>                    remember eh? Shove off, coward!
+
+Message:  1016
+<ce>                     Oh, smelly one. 'Tis not your
+<ce>                      lucky day. How about a duel?
+                                     <--->
+<ce>               Then we shall settle this like warriors.
+<ce>                       What do you say to a duel?
+                                     <--->
+<ce>                  I settle my arguments the old way.
+<ce>                           How about a duel?
+                                     <--->
+<ce>                   We'll settle this one. At least,
+<ce>                    I will! How about a duel later?
+
+Message:  1018
+<ce>             Excellent! Ha ha! A duel it is. But not here,
+<ce>              pig. Six hours from now, at _inn_. I'll see
+<ce>                               you there.
+ 
+                                     <--->
+<ce>                  A bad decision, %ra. The duel is on
+<ce>                       then. Meet me at _inn_ in
+<ce>                      six hours. I'll be waiting!
+                                     <--->
+<ce>             Don't push too hard. Effort like that killed
+<ce>             a horse of mine ... and it may kill you! Meet
+<ce>                   me at _inn_ and we'll settle this.
+<ce>                 Be there in six hours. I must prepare.
+                                     <--->
+<ce>             A duel it is! You'll be sorry... but you had
+<ce>                your chance to keep walking. Meet me at
+<ce>             _inn_ in six hours and we'll settle this one.
+
+Message:  1019
+<ce>                    Then the %ra is not a coward as
+<ce>                     _giver_ said you were. %g paid
+<ce>                  me well to come here and cut you to
+<ce>                pieces. And I shall. Prepare for battle!
+                                     <--->
+<ce>              It's you! _giver_ said you would be here,
+<ce>                    and I always finish %g3 fights.
+                                     <--->
+<ce>                  You should watch who you mess with.
+<ce>                 _giver_ has many friends. Now prepare
+<ce>                                to die!
+
+Message:  1025
+<ce>            This could get ugly. Not as ugly as you, but I
+<ce>             have no problem cutting your head off for such
+<ce>           words! You want this to turn into a battle, do ya?
+                                     <--->
+<ce>                You're lookin' for a fight, aren't you?
+<ce>                     Is that what you want, child?
+                                     <--->
+<ce>                  Oh... we do have a live one... with
+<ce>                  weapons! You want to use that on me?
+                                     <--->
+<ce>          The two fights I got into yesterday didn't end well
+<ce>           for the other pigs! You want to take me on, do ya?
+
+Message:  1027
+<ce>                   I didn't think so. Now shove off.
+                                     <--->
+<ce>                  That's more like it. Now leave me.
+                                     <--->
+<ce>                   Now we see who you are. Goodbye.
+                                     <--->
+<ce>                  Pass on by then. I don't have time
+<ce>                            to waste on you.
+                                     <--->
+<ce>                    Then move along. I have a busy
+<ce>                               day ahead.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g2 occurs 55 times.
+--               %g3 occurs 4 times.
+--              %oth occurs 1 time.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 36 times.
+--         ___giver_ occurs 10 times.
+--             _inn_ occurs 7 times.
+
+QBN:
+
+Person _giver_ face 4 group Questor
+
+Place _inn_ local tavern
+
+--flags removed to make timing exact.
+Clock _S.00_ 06:00
+Clock _S.01_ 12:00
+Clock _S.02_ 01:00
+
+Foe _F.00_ is Spellsword
+
+--	Quest start-up:
+	start timer _S.01_ 
+	start timer _S.02_ 
+	start timer _S.00_ 
+	prompt 1025 yes _S.03_ no _S.05_ 
+	pc at _inn_ set _S.08_ 
+
+_S.00_ task:
+	place foe _F.00_ at _inn_ 
+
+_S.01_ task:
+	end quest 
+
+_S.02_ task:
+	hide npc _giver_ 
+
+_S.03_ task:
+	prompt 1016 yes _S.04_ no _S.05_ 
+
+_S.04_ task:
+	log 1003 step 0 
+	say 1018 
+
+--moved "saying ###" to its own line as "say". Should not be an argument to end quest.
+_S.05_ task:
+    say 1027
+	end quest 
+
+_S.06_ task:
+	injured _F.00_ saying 1019 
+
+_S.07_ task:
+	killed 1 _F.00_ 
+	give pc nothing 
+
+variable _S.08_
+_S.09_ task:
+	when not _S.08_ and _S.07_ 
+	end quest 

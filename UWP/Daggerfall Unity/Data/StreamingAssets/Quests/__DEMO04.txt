@@ -1,0 +1,62 @@
+- This quest is for testing early text macro support
+
+Quest: __DEMO04
+
+
+QRC:
+
+Message: 1010
+<ce>             A redfaced courier startles you with a cry of
+<ce>                   "Letter for %pcn! Hey that must be
+<ce>                 you. Here, take this. Gotta go. Other
+<ce>                         deliveries to be made.
+
+Message: 1020
+<ce>              Ah, thank you for responding to my letter,
+<ce>                     %pcf. I am Lady Brisienna. Let
+<ce>              me bring you to date on affairs. The spectre
+<ce>                 of King Lysandus haunts the streets of
+<ce>               Daggerfall at night. Trying to communicate
+<ce>                with him is futile. He will occasionally
+<ce>               moan the word "Vengeance," but that is the
+<ce>                only coherent word I have ever heard him
+<ce>              utter. If you are ever in Daggerfall, do not
+<ce>              wander the city at night. You are certain to
+<ce>                  be attacked by his legion of ghosts.
+
+Message: 1030
+%qdt:
+ I met with Lady Brisienna in a tavern room. She
+ told me that the three major powers of the Iliac
+ bay are Daggerfall, Wayrest, and Sentinel. If I
+ am to investigate the mystery of Lysandus' ghost,
+ I should start by speaking with the royal families
+ of these fiefdoms.
+
+Message: 1040
+Lady Brisienna has taken up lodging at _dirtypit_ in __dirtypit_.
+
+Message: 1050
+<ce>                       I'll give you a hint %ra.
+<ce>                    If you want to succeed in magic,
+<ce>                         join the mages guild.
+
+Message: 1060
+<ce>                  A small tip for you. Put your money
+<ce>                  in the bank of %reg. Have them give
+<ce>                   you letters of credit. They hardly
+<ce>                             weigh a thing.
+
+Message: 1070
+<ce>           For this tutorial to continue, you should go to a
+<ce>           large city, such as the city of Daggerfall. We'll
+<ce>           pick up the lessons again in =2dagger_ days. This
+<ce>              should give you plenty of time to get there.
+
+QBN:
+
+Clock _2dagger_ 6.22:40 0 flag 1 range 0 1
+Place _dirtypit_ remote tavern
+
+- Entry point
+say 1040

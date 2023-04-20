@@ -1,0 +1,164 @@
+-- Quest: C:\QUESTS\WORKING\B0B70Y16.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: knight
+-- Repute: 70
+-- QuestId: 16
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: B0B70Y16
+DisplayName: The Dragonslayer
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   Shhh! Don't let anyone else hear
+<ce>                         this, %pct. I just got
+<ce>               word that a dragon has been spotted! Well,
+<ce>                 not a full grown dragon, just a little
+<ce>               dragonling. There is no quest more heroic
+<ce>                 for a member of ==qgiver_ than to slay
+<ce>               a dragon. I know where it is, you go kill
+<ce>               it. We can both lay claim to the glory. Is
+<ce>                             it a bargain?
+                                     <--->
+<ce>                    'Tis time for you to prove that
+<ce>                      you are truly of ==qgiver_,
+<ce>                      %pct. It is time for you to
+<ce>                             slay a dragon.
+
+RefuseQuest:  [1001]
+<ce>                      You tell anyone else about
+<ce>                     this and I'll see you drummed
+<ce>                           out of ==qgiver_.
+
+AcceptQuest:  [1002]
+<ce>                      The dragon egg just hatched
+<ce>                        in ___dungeon_. I don't
+<ce>                      know if there are any other
+<ce>                       dragonlings there or not.
+<ce>                       I can keep it all a secret
+<ce>                           for =2dung_ days.
+
+QuestComplete:  [1004]
+<ce>                         All hail %pcn, known
+<ce>                      from this point onward as a
+<ce>                         dragonslayer! All hail
+<ce>                         _qgiver_, strong right
+<ce>                       arm and valued confidant!
+
+RumorsDuringQuest:  [1005]
+Nothing much of any interest going on.
+<--->
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has it good points and bad ones.
+
+RumorsPostfailure:  [1006]
+%kno went stomping about in ___dungeon_ for no reason.
+
+RumorsPostsuccess:  [1007]
+The dragon in ___dungeon_ was fifty feet long!
+<--->
+The ___dungeon_ dragon was a hundred feet long!
+<--->
+The dragon that %ra slew ate forty cows for lunch!
+
+QuestorPostsuccess:  [1008]
+What can I do for my fellow dragon slayer?
+
+QuestorPostfailure:  [1009]
+You really let me down with that dragon. Leave me alone.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ ==qgiver_ in ___qgiver_
+ told me that a dragon's egg
+ hatched in ___dungeon_.
+ I have =2dung_ days to slay
+ the beast and bask in the
+ glory of the deed.
+
+Message:  1011
+<ce>                        The dragonling is dead.
+<ce>                       They'll talk about this in
+<ce>                          ==qgiver_ for years!
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 1 time.
+--              %jok occurs 3 times.
+--              %kno occurs 1 time.
+--              %oth occurs 5 times.
+--              %pcn occurs 1 time.
+--              %pct occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--           =2dung_ occurs 3 times.
+--         ==qgiver_ occurs 6 times.
+--       ___dungeon_ occurs 5 times.
+--        ___qgiver_ occurs 3 times.
+
+QBN:
+
+Person _qgiver_ group Questor
+Person _local_ face 93 group Resident2 male local
+
+Place _dungeon_ remote dungeon14
+
+Clock _2dung_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Dragonling
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	place foe _monster_ at _dungeon_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _monster_ saying 1011 
+
+_S.02_ task:
+	clicked npc _qgiver_
+
+_success_ task:
+	when _S.02_ and _S.01_
+	give pc nothing 
+	change repute with _local_ by +6 
+	change repute with _qgiver_ by +10 
+	end quest 
+
+_clearclick_ task:
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_ 

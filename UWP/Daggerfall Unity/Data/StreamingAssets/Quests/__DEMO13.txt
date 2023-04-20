@@ -1,0 +1,43 @@
+---- Example quest to freely spawn multiple foes inside a dungeon environment
+---- Player will be teleported automatically to target dungeon
+
+Quest: __DEMO13
+
+
+QRC:
+
+Message:  1020
+<ce>That's five of the beasts. Time to escape this place.
+
+Message:  1030
+%qdt:
+ I have been drugged and imprisoned inside a dungeon
+ somewhere. Harpies are circling, but damned if I'm
+ going to be their dinner. I plan on killing at least
+ five of them before escaping this place and tracking
+ down who left me here to die.
+
+Message: 1040
+<ce>Your head spins after drinking from the cup.
+<ce>You realise too late that you've been drugged!
+<ce>Some time later, you awaken entombed to dark place.
+<ce>You can hear screeching nearby.
+
+
+QBN:
+
+Place _mondung_ remote dungeon
+Foe _monster_ is Harpy
+
+--	Quest start-up:
+	say 1040
+	log 1030 step 0
+	teleport pc to _mondung_
+	pc at _mondung_ set _S.04_
+
+_S.04_ task:
+	create foe _monster_ every 8 minutes 10 times with 100% success 
+
+_mondead_ task:
+	killed 5 _monster_ saying 1020
+	remove log step 0

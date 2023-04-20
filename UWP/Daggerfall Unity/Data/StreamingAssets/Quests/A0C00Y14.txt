@@ -1,0 +1,296 @@
+-- Quest: C:\QUESTS\WORKING\A0C00Y14.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 0
+-- QuestId: 14
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 21
+Quest: A0C00Y14
+DisplayName: The Delivery Boy
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       My name is _questgiver_.
+<ce>                      I have a simple task. If you
+<ce>                    could see your way to delivering
+<ce>                      an item to a friend of mine,
+<ce>                    I would be grateful to the tune
+<ce>                     of _gold_ gold pieces. What do
+<ce>                             you say, %pcf?
+                                     <--->
+<ce>                         Hi, I'm _questgiver_.
+<ce>                     I need someone to drop off an
+<ce>                    item for me. It's a just a short
+<ce>                     trip across town, but I'm too
+<ce>                  busy right now. There's _gold_ gold
+<ce>                             in it for ya.
+
+RefuseQuest:  [1001]
+<ce>                               Too bad.
+                                     <--->
+<ce>                     You don't have to get uppity
+<ce>                               about it!
+                                     <--->
+<ce>                   I'll have to find someone willing
+<ce>                         to work for a living.
+
+AcceptQuest:  [1002]
+<ce>                   Great! Here is the package. Take
+<ce>                      it to _pickuplocal_ here in
+<ce>                    town. %g will pay you. It needs
+<ce>                   to be there by this time tomorrow.
+                                     <--->
+<ce>                   At last, someone willing to work
+<ce>                    for a living. Just take this to
+<ce>                      _pickuplocal_ here in town.
+<ce>                    %g'll give you the _gold_ gold.
+<ce>                       Get it to %g2 by this time
+<ce>                               tomorrow.
+
+QuestComplete:  [1004]
+<ce>                       I was hoping _questgiver_
+<ce>                would be able to get this to me in time.
+<ce>                      %g has been so busy lately.
+<ce>                  Here is the _gold_ %g promised you.
+
+RumorsDuringQuest:  [1005]
+<ce>                   The weather generally stinks this
+<ce>                             time of year.
+
+RumorsPostfailure:  [1006]
+<ce>                 I hear the queen is having an affair!
+
+RumorsPostsuccess:  [1007]
+<ce>                     Are all %ra people this nosy?
+
+QuestorPostsuccess:  [1008]
+<ce>                 Thank you for delivering that package
+<ce>                              for me, %pcf.
+
+QuestorPostfailure:  [1009]
+<ce>                    Thief! You took my package and
+<ce>                      _pickuplocal_ never got it.
+<ce>                        I would never help you.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _questgiver_ of
+ ___questgiver_ has charged
+ me with the task of delivering
+ a package to _pickuplocal_,
+ also of ___pickuplocal_.
+ I have to have it there by this
+ time tomorrow.
+
+Message:  1011
+<ce>                    This book has some sentimental
+<ce>                      value. _pickuplocal_ has not
+<ce>                         seen a copy of _book_
+<ce>                               in years.
+
+Message:  1012
+<ce>                       _pickuplocal_ needs this
+<ce>                       _ingredient_ for a special
+<ce>                           brew %g is making.
+
+Message:  1013
+<ce>                       This _jewelry_ is a gift
+<ce>                       to _pickuplocal_ that will
+<ce>                     seal my arrangement with %g2.
+
+Message:  1014
+<ce>                   This is a special _mensclothing_
+<ce>                        that my mother made for
+<ce>                   _pickuplocal_ for the celebration.
+
+Message:  1015
+<ce>                    _pickuplocal_ commissioned this
+<ce>                          _painting_. It needs to be there
+<ce>                          for %g3 gathering tomorrow.
+
+Message:  1016
+<ce>                       _pickuplocal_ needs this
+<ce>                     _potion_ as soon as possible.
+
+Message:  1017
+<ce>                        _pickuplocal_ has been
+<ce>                       threatened. This _weapon_
+<ce>                     should put %g3 fears to rest.
+
+Message:  1018
+<ce>                  I bought this fine _womensclothing_
+<ce>                      for _pickuplocal_'s wedding.
+<ce>                  It would be dreadfully embarrassing
+<ce>                     if it does not arrive in time.
+
+Message:  1019
+<ce>                    What do you want? _questgiver_?
+<ce>                    Yes, %g promised to send over a
+<ce>                     package sometime today. If you
+<ce>                     go find %g2, %g might even pay
+<ce>                      you to bring it over to me.
+
+Message:  1020
+<ce>                       I overheard _questgiver_
+<ce>                       saying %g would pay you to
+<ce>                     deliver the package. Just give
+<ce>                     it to me and I won't hurt you.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 10 times.
+--               %g2 occurs 4 times.
+--               %g3 occurs 6 times.
+--              %pcf occurs 4 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--   ___pickuplocal_ occurs 1 time.
+--    ___questgiver_ occurs 1 time.
+--            _book_ occurs 3 times.
+--            _gold_ occurs 9 times.
+--      _ingredient_ occurs 1 time.
+--         _jewelry_ occurs 1 time.
+--    _mensclothing_ occurs 1 time.
+--        _painting_ occurs 1 time.
+--     _pickuplocal_ occurs 12 times.
+--          _potion_ occurs 1 time.
+--      _questgiver_ occurs 6 times.
+--          _weapon_ occurs 1 time.
+--  _womensclothing_ occurs 1 time.
+
+QBN:
+Item _book_ book0
+Item _womensclothing_ womens_clothing
+Item _potion_ misc
+Item _mensclothing_ mens_clothing
+Item _painting_ portrait
+Item _weapon_ weapon
+Item _ingredient_ large_plant
+Item _jewelry_ trinket
+Item _gold_ gold range 30 to 75
+
+Person _questgiver_ face 137 group Questor
+Person _pickuplocal_ face 232 group Local_3.0 local
+
+Clock _oneday_ 1.00:00
+--added precise timers due to short time limit
+
+Foe _thief_ is Burglar
+
+--	Quest start-up:
+	start timer _oneday_ 
+	log 1010 step 0 
+	pick one of _S.01_ _S.10_ 
+	pick one of _S.14_ _S.15_ _S.15_ _S.15_ 
+	create npc _pickuplocal_ 
+
+_oneday_ task:
+	end quest 
+
+_S.01_ task:
+	pick one of _S.02_ _snitch0_ _S.04_ _S.05_ 
+--added underscores to snitch0
+
+_S.02_ task:
+	get item _book_ saying 1011 
+
+_snitch0_ task:
+	get item _ingredient_ saying 1012 
+
+_S.04_ task:
+	get item _jewelry_ saying 1013 
+
+_S.05_ task:
+	get item _mensclothing_ saying 1014 
+
+_S.06_ task:
+	get item _painting_ saying 1015 
+
+_S.07_ task:
+	get item _potion_ saying 1016 
+
+_S.08_ task:
+	get item _weapon_ saying 1017 
+
+_S.09_ task:
+	get item _womensclothing_ saying 1018 
+
+_S.10_ task:
+	pick one of _S.06_ _S.07_ _S.08_ _S.09_ 
+
+_S.11_ task:
+	toting _jewelry_ and _pickuplocal_ clicked 
+	toting _mensclothing_ and _pickuplocal_ clicked 
+	toting _painting_ and _pickuplocal_ clicked 
+	toting _potion_ and _pickuplocal_ clicked 
+	toting _weapon_ and _pickuplocal_ clicked 
+	toting _book_ and _pickuplocal_ clicked 
+	toting _ingredient_ and _pickuplocal_ clicked 
+	toting _womensclothing_ and _pickuplocal_ clicked 
+	give pc _gold_ 
+	end quest 
+--removed unnecessary delay
+
+_S.12_ task:
+	clicked npc _pickuplocal_ 
+
+_S.13_ task:
+	when _S.12_ and not _S.11_ 
+	say 1019 
+	clear _S.12_ _S.13_ 
+
+_S.14_ task:
+	create foe _thief_ every 20 minutes 3 times with 25% success 
+
+variable _S.15_
+_S.16_ task:
+	injured _thief_ 
+	prompt 1020 yes _yes_ no _no_ 
+
+_yes_ task:
+	restrain foe _thief_ 
+
+variable _no_
+_yes1_ task:
+	when _yes_ and _S.02_ 
+	take _book_ from pc
+	give item _book_ to _thief_ 
+--added "take X from pc" for all yes# tasks.
+
+_yes2_ task:
+	when _yes_ and _snitch0_ 
+	take _ingredient_ from pc
+	give item _ingredient_ to _thief_ 
+
+_yes3_ task:
+	when _yes_ and _S.04_ 
+	take _jewelry_ from pc
+	give item _jewelry_ to _thief_ 
+
+_yes4_ task:
+	when _yes_ and _S.05_ 
+	take _mensclothing_ from pc
+	give item _mensclothing_ to _thief_ 
+
+_ring_ task:
+	when _yes_ and _S.06_ 
+	take _painting_ from pc
+	give item _painting_ to _thief_ 
+
+_yes6_ task:
+	when _yes_ and _S.07_
+	take _potion_ from pc 
+	give item _potion_ to _thief_ 
+
+_note_ task:
+	when _yes_ and _S.08_ 
+	take _weapon_ from pc
+	give item _weapon_ to _thief_ 
+
+_poet_ task:
+	when _yes_ and _S.09_ 
+	take _womensclothing_ from pc
+	give item _womensclothing_ to _thief_ 

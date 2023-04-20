@@ -1,0 +1,238 @@
+1.	Ihr k#mpft bevorzugt mit ___.
+a.	Kurzwaffen
+	#4200
+	!4900
+	28 +12
+	IT 3 4 2
+b.	@xten
+	#4202
+	!4902
+	31 +12
+	IT 3 15	0
+c.	Stumpfe Waffen
+	#4203
+	!4903
+	32 +12
+	IT 3 13	0
+d.	B&gen
+	#4204
+	!4904
+	33 +12
+	IT 3 17	0
+	IT 3 18	1
+	IT 3 18	1
+	IT 3 18	1
+	IT 3 18 1
+	IT 3 18 1
+	IT 3 18 1
+e.	Langwaffen
+	#4205
+	!4905
+	29 +12
+	IT 3 8 0
+
+2.	Was bewegt Euch zu einem Leben als Abenteurer?
+a.	Reicht}mer
+	#4560
+	GP +500
+b.	Ruhm
+	#4561
+	r4 +10
+	r2 +10
+c.	Wissen
+	#4562
+	IT 7 0 0
+d.	Spa*
+	#4563
+	1 +3
+	2 +3
+e.	Anderen zu helfen
+	#4564
+	r0 +10
+	
+3.	Welche der folgenden Fertigkeiten habt Ihr am l#ngsten ge}bt?
+a.	Ausweichen
+	#4550
+	!4400
+	20 +6
+b.	Schleichen
+	#4551
+	!4401
+	16 +6
+c.	Meucheln
+	#4552
+	!4402
+	19 +6
+d.	Schl&sser &ffnen
+	#4554
+	!4404
+	13 +6
+e.	Taschendiebstahl
+	#4555
+	!4405
+	15 +6
+f.	Klettern
+	#4453
+	!4406
+	18 +6
+g.	Kritischer Schlag
+	#4452
+	!4407
+	34 +6
+h.	Rennen
+	#4451
+	!4408
+	21 +6
+i.	Springen
+	#4450
+	!4409
+	3 +6
+
+4.	Euer Spitzname als Kind war ___.
+a.	Sprunghase
+	3 +6
+b.	Guppyfisch
+	17 +6
+c.	Wieselflink
+	21 +6
+d.	Streithahn
+	30 +6
+e.	Affenstrolch
+	18 +6
+
+5.	Man hat Euch einmal etwas geliehen, das Ihr sp#ter
+	behalten durftet. Es handelte sich um ___.
+a.	200 Goldst}cke
+	GP +200
+b.	ein Buch
+	IT 7 0 0
+c.	einen Elfenflegel
+	IT 3 12 3
+d.	ein Dai-Katana
+	IT 3 10 0
+
+6.	Zu welchem Gott betet Ihr, wenn }berhaupt?
+a.	Zu keinem
+	r2 +5
+b.	Arkay, Gott v. Geburt u. Tod
+	rf82 +5
+c.	Zenithar, Gott des Handels
+	rf84 +5
+d.	Mara, der Mutterg&ttin
+	rf88 +5
+e.	Dibella, G&ttin der Sch&nheit
+	rf98 +5
+f.	Julianos, Gott der Logik
+	rf94 +5
+g.	Akatosh, Gott der Zeit
+	rf92 +5
+h.	Stendarr, Gott der Gnade
+	rf106 +5
+i.	Kynareth, G&ttin der Luft
+	rf36 +5
+
+7.	Euer gr&*tes Problem besteht darin ___.
+a.	Giften zu widerstehen
+	RP -10
+b.	wach und alarmiert zu bleiben
+	FT -5
+c.	Kontakte zu kn}pfen
+	RR -5
+d.	Krankheiten zu verhindern
+	RD -5
+e.	Magie zu widerstehen
+	MR -5
+f.	zu k#mpfen und zu parieren
+	TH -5
+
+8.	Seit Eurer Kindheit verwahrt Ihr  ___.
+a.	100 Goldst}cke
+	GP + 100
+b.	ein Lieblingsbuch
+	IT 7 0 0
+c.	ein dutzend Pfeile
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+d.	eine Perle
+	IT 22 1 0
+
+9.	Ihr seid freundlicher als die meisten anderen im Umgang mit ___.
+a.	den wilden Harpyien
+	#4764
+	5 +6
+b.	den einf#ltigen Riesen
+	#4765
+	6 +6
+c.	den pr#chtigen Drachen
+	#4766
+	7 +6
+d.	den schamlosen Nymphen
+	#4767
+	8 +6
+e.	den infernalischen Daedra
+	#4768
+	9 +6
+f.	den l#ndlichen Zweiglingen
+	#4769
+	10 +6
+g.	den primitiven Zentauren
+	#4770
+	11 +6
+h.	den schadenfrohen Kobolden
+	#4771
+	12 +6
+
+10.	Ihr wurdet mit 200 Goldst}cken belohnt. Was habt Ihr
+	damit gemacht? Ich ___.
+a.	behielt es
+	GP +200
+b.	kaufte einen Ebenerzdolch
+	IT 3 0 7
+c.	kaufte ein gutes Buch
+	IT 7 0 0
+d.	kaufte einen Rubin
+	IT 14 0 0
+e.	kaufte einen Silberstab
+	IT 3 2 2
+
+11.	Ihr verbringt jede freie Minute damit, ___ zu meistern.
+a.	Kurzwaffen
+	28 +6
+b.	Nahkampf
+	30 +6
+c.	Axtkampf
+	31 +6
+d.	Stumpfe Waffen
+	32 +6
+e.	Bogenschie*en
+	33 +6
+f.	Langwaffen
+	29 +6
+
+12.	Ihr seid mit ___ befreundet.
+a.	einem M&nch
+	#4212
+	AF O 8 12 +1
+b.	einem Magier
+	#4213
+	AF O 8 2 +1
+c.	einem Banditen
+	#4214
+	AF O 8 8 +1
+d.	einem Krieger
+	#4215
+	AF O 8 17 +1
+e.	einem Assassinen
+	#4216
+	AF O 8 11 +1
+

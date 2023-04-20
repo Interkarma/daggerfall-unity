@@ -1,0 +1,465 @@
+-- Quest: C:\QUESTS\WORKING\B0B71Y03.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: knight
+-- Repute: 71
+-- QuestId: 3
+Messages: 53
+Quest: B0B71Y03
+DisplayName: The Artifact
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      A rumor has surfaced as to
+<ce>                     the whereabouts of an ancient
+<ce>                       artifact of power. This is
+<ce>                          a once in a lifetime
+<ce>                       opportunity. Are you up to
+<ce>                               it, %pct?
+
+RefuseQuest:  [1001]
+<ce>                      Not the ambitious type, eh?
+<ce>                        Some other lucky knight
+<ce>                       will be sure to snap this
+<ce>                                one up.
+
+AcceptQuest:  [1002]
+<ce>                       I thought I detected the
+<ce>                       gleam of ambition in your
+<ce>                         eyes %pcf. Supposedly,
+<ce>                       a witch living deep in the
+<ce>                         bowels of ___dungeon1_
+<ce>                      has discovered a clue about
+<ce>                       where to find this thing.
+<ce>                          I'd start with her.
+
+QuestComplete:  [1004]
+<ce>                             Your quest is
+<ce>                               complete.
+
+RumorsDuringQuest:  [1005]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has its good points and bad ones.
+
+RumorsPostfailure:  [1006]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has its good points and bad ones.
+
+RumorsPostsuccess:  [1007]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has its good points and bad ones.
+
+QuestorPostsuccess:  [1008]
+So, you won that which you quested for. What would have now?
+
+QuestorPostfailure:  [1009]
+I haven't anything to say to you, %pcf.
+<--->
+I wasted my breath talking to you before.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I embarked upon a quest to find a legendary,
+ artifact of power. The only clue
+ _questgiver_ of __questgiver_
+ was able to provide is that a witch hermited
+ in ___dungeon1_ might know
+ something about it.
+
+Message:  1011
+%qdt:
+ The witch, _witch_,
+ in ___dungeon1_ demanded
+ that I kidnap _child_,
+ in _palace_, in __palace_,
+ her great granddaughter, and bring her
+ to the witch if I am ever to find
+ _aurielsbow_.
+
+Message:  1012
+%qdt:
+ The witch, _witch_,
+ in ___dungeon1_ demanded
+ that I kidnap _child_,
+ in _palace_, in __palace_,
+ her great granddaughter, and bring her
+ to the witch if I am ever to find
+ _aurielshield_.
+
+Message:  1013
+%qdt:
+ The witch, _witch_,
+ in ___dungeon1_ demanded
+ that I kidnap _child_,
+ in _palace_, in __palace_,
+ her great granddaughter, and bring her
+ to the witch if I am ever to find
+ _lordsmail_.
+
+Message:  1021
+<ce>              I am _witch_. So, you want _aurielshield_.
+<ce>          It is true that I know something of it. You must do
+<ce>            something for me if you wish to learn my secret.
+<ce>            Long ago, when I was young and your grandfather
+<ce>                  was less than a gleam in your great
+<ce>             grandmother's eye, I gave birth to a daughter.
+<ce>        I left the child to be raised by others, but now that my
+<ce>                   powers are waning, I need an heir.
+<ce>                 My daughter is long dead, but I have a
+<ce>                  great granddaughter of the right age
+<ce>                     named _child_. Bring her to me
+<ce>         within =finddaughter_ days and I will tell you what I
+<ce>               know of _aurielshield_. _child_'s parents
+<ce>           know nothing of her birthright and will certainly
+<ce>                    resist any attempt to take her.
+<ce>                     You will find her in _palace_
+<ce>                             in __palace_.
+
+Message:  1020
+<ce>               I am _witch_. So, you want _aurielsbow_.
+<ce>          It is true that I know something of it. You must do
+<ce>            something for me if you wish to learn my secret.
+<ce>            Long ago, when I was young and your grandfather
+<ce>                  was less than a gleam in your great
+<ce>             grandmother's eye, I gave birth to a daughter.
+<ce>        I left the child to be raised by others, but now that my
+<ce>                   powers are waning, I need an heir.
+<ce>                 My daughter is long dead, but I have a
+<ce>                  great granddaughter of the right age
+<ce>                     named _child_. Bring her to me
+<ce>         within =finddaughter_ days and I will tell you what I
+<ce>                know of _aurielsbow_. _child_'s parents
+<ce>           know nothing of her birthright and will certainly
+<ce>                    resist any attempt to take her.
+<ce>                     You will find her in _palace_
+<ce>                             in __palace_.
+
+Message:  1022
+<ce>                I am _witch_. So, you want _lordsmail_.
+<ce>          It is true that I know something of it. You must do
+<ce>            something for me if you wish to learn my secret.
+<ce>            Long ago, when I was young and your grandfather
+<ce>                  was less than a gleam in your great
+<ce>             grandmother's eye, I gave birth to a daughter.
+<ce>        I left the child to be raised by others, but now that my
+<ce>                   powers are waning, I need an heir.
+<ce>                 My daughter is long dead, but I have a
+<ce>                  great granddaughter of the right age
+<ce>                     named _child_. Bring her to me
+<ce>         within =finddaughter_ days and I will tell you what I
+<ce>                 know of _lordsmail_. _child_'s parents
+<ce>           know nothing of her birthright and will certainly
+<ce>                    resist any attempt to take her.
+<ce>                     You will find her in _palace_
+<ce>                             in __palace_.
+
+Message:  1025
+<ce>                      What are you doing! I don't
+<ce>                       want to go with you. Help!
+<ce>                          Mommy, daddy, help!
+
+Message:  1026
+<ce>                          Intruder! Intruder!
+
+Message:  1027
+<ce>                          Put down _child_ or
+<ce>                     I will be forced to kill you.
+
+Message:  1032
+<ce>                     Ah yes, my heir. What did you
+<ce>                      say it's name was? _child_?
+<ce>                         Yes, %g will do fine.
+<ce>                         %pcn, you have earned
+<ce>                  the right to pursue _aurielshield_.
+<ce>                      The stars have told me that
+<ce>                    the path to _aurielshield_ leads
+<ce>                         through ___dungeon2_.
+<ce>                          That is all I know.
+
+Message:  1031
+<ce>                     Ah yes, my heir. What did you
+<ce>                      say it's name was? _child_?
+<ce>                         Yes, %g will do fine.
+<ce>                         %pcn, you have earned
+<ce>                   the right to pursue _aurielsbow_.
+<ce>                      The stars have told me that
+<ce>                     the path to _aurielsbow_ leads
+<ce>                         through ___dungeon2_.
+<ce>                          That is all I know.
+
+Message:  1033
+<ce>                     Ah yes, my heir. What did you
+<ce>                      say it's name was? _child_?
+<ce>                         Yes, %g will do fine.
+<ce>                         %pcn, you have earned
+<ce>                    the right to pursue _lordsmail_.
+<ce>                      The stars have told me that
+<ce>                     the path to _lordsmail_ leads
+<ce>                         through ___dungeon2_.
+<ce>                          That is all I know.
+
+Message:  1051
+%qdt:
+ _witch_ has told me that
+ the path to _aurielshield_
+ is through ___dungeon2_.
+
+Message:  1050
+%qdt:
+ _witch_ has told me that
+ the path to _aurielsbow_
+ is through ___dungeon2_.
+
+Message:  1052
+%qdt:
+ _witch_ has told me that
+ the path to _lordsmail_
+ is through ___dungeon2_.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 3 times.
+--                %g occurs 3 times.
+--              %jok occurs 9 times.
+--              %oth occurs 15 times.
+--              %pcf occurs 2 times.
+--              %pcn occurs 3 times.
+--              %pct occurs 2 times.
+--              %qdt occurs 7 times.
+--              %reg occurs 3 times.
+--    =finddaughter_ occurs 3 times.
+--      ___dungeon1_ occurs 5 times.
+--      ___dungeon2_ occurs 12 times.
+--         __palace_ occurs 9 times.
+--     __questgiver_ occurs 1 time.
+--      _aurielsbow_ occurs 6 times.
+--    _aurielshield_ occurs 6 times.
+--           _child_ occurs 13 times.
+--       _lordsmail_ occurs 6 times.
+--          _palace_ occurs 12 times.
+--      _questgiver_ occurs 1 time.
+--           _witch_ occurs 9 times.
+
+QBN:
+Item _aurielshield_ artifact Auriels_Shield
+Item _aurielsbow_ artifact Auriels_Bow
+Item _lordsmail_ artifact Lords_Mail
+
+Person _witch_ face 1 faction The_Glenmoril_Witches remote
+Person _child_ face 211 faction Children female remote
+Person _ruler_ group Noble remote
+Person _local_ face 33 group Resident2 local
+Person _questgiver_ face 67 group Questor
+
+Place _dungeon1_ remote dungeon
+Place _palace_ remote palace
+Place _dungeon2_ remote dungeon
+
+Clock _finddaughter_ 00:00 0 flag 17 range 1 2
+
+Foe _F.00_ is 2 Knight
+Foe _battlemage_ is Battle_mage
+Foe _warrior_ is Warrior
+
+--	Quest start-up:
+	start timer _finddaughter_ 
+	reveal _dungeon1_ 
+	log 1010 step 0 
+	pick one of _artifact1_ _artifact2_ _artifact3_ 
+	pc at _palace_ set _S.10_ 
+	place npc _child_ at _palace_ 
+	place npc _witch_ at _dungeon1_ 
+
+_S.00_ task:
+	clicked npc _witch_ 
+
+_S.01_ task:
+	clicked npc _child_ say 1025 
+	create foe _F.00_ every 3 minutes 5 times with 30% success 
+	create foe _battlemage_ every 4 minutes 5 times with 25% success 
+	hide npc _child_ 
+	add _child_ face 
+	clear _S.00_
+--added this clear task. otherwise witch would talk in palace re success
+
+-_clearclick_ task:
+-	when _S.00_ and not _S.01_ 
+-	clear _S.00_ _clearclick_ 
+--removed this clearclick. prevented quest from working
+variable _finddaughter_
+variable _artifact1_
+variable _artifact2_
+variable _artifact3_
+_how1_ task:
+	when _S.16_ and _artifact1_ 
+	log 1011 step 1 
+
+_how2_ task:
+	when _S.16_ and _artifact2_ 
+	log 1012 step 1 
+
+_fire_ task:
+	when _S.16_ and _artifact3_ 
+	log 1013 step 1 
+
+_S.10_ task:
+	create foe _warrior_ every 5 minutes 5 times with 50% success 
+
+_greklith_ task:
+	injured _warrior_ saying 1026 
+
+_S.12_ task:
+	injured _battlemage_ 
+	injured _F.00_ 
+	prompt 1027 yes _S.13_ no _S.14_ 
+
+_S.13_ task:
+	drop _child_ face 
+	change repute with _local_ by +6 
+	change repute with _child_ by -10 
+	end quest 
+
+_S.14_ task:
+	change repute with _ruler_ by -50 
+
+_S.15_ task:
+	when _S.01_ and not _S.13_ and _S.00_ 
+	reveal _dungeon2_
+	clear _S.01_ 
+
+_S.16_ task:
+	when _S.00_ and not _S.01_ 
+
+_S.17_ task:
+	when _artifact1_ and _S.15_ 
+	place item _aurielsbow_ at _dungeon2_ 
+	log 1050 step 2 
+	say 1031 
+	drop _child_ face
+--moved "drop face" here, was not cooperating in S.15
+
+_S.18_ task:
+	when _artifact2_ and _S.15_ 
+	place item _aurielshield_ at _dungeon2_ 
+	log 1051 step 2 
+	say 1032 
+	drop _child_ face
+--moved "drop face" here, was not cooperating in S.15
+
+_S.19_ task:
+	when _artifact3_ and _S.15_ 
+	place item _lordsmail_ at _dungeon2_ 
+	log 1052 step 2 
+	say 1033 
+	drop _child_ face
+--moved "drop face" here, was not cooperating in S.15
+
+_S.20_ task:
+	clicked item _aurielsbow_ 
+	make _aurielsbow_ permanent 
+--	Discovered a new op-code:
+	_0x3c_ 19
+
+_S.21_ task:
+	clicked item _aurielshield_ 
+	make _aurielshield_ permanent 
+
+_S.22_ task:
+	clicked item _lordsmail_ 
+	make _lordsmail_ permanent 
+
+_S.23_ task:
+	when _S.20_ or _S.22_ or _S.21_ 
+	give pc nothing 
+	end quest 
+
+_S.24_ task:
+	when _S.00_ and _artifact1_
+	say 1020 
+
+_S.25_ task:
+	when _S.00_ and _artifact2_
+	say 1021 
+
+_S.26_ task:
+	when _S.00_ and _artifact3_
+	say 1022 
+
+variable _love_

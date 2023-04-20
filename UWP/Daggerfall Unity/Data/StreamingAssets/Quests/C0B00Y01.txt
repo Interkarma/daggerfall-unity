@@ -1,0 +1,607 @@
+-- Quest: C:\QUESTS\WORKING\C0B00Y01.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: temple
+-- Repute: 0
+-- QuestId: 1
+Messages: 38
+Quest: C0B00Y01
+DisplayName: The Heretic
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                        %god be with you, %pct.
+<ce>                   You may have heard of _prophet_.
+<ce>                 If you have not yet, you will. We are
+<ce>                  investigating %g3 claims that %g is
+<ce>                    a prophet. We are not, I think,
+<ce>                   censorious by nature, but we must
+<ce>                     ever be alert to the presence
+<ce>                  of heretical influences. Would you
+<ce>                    be available to assist in this
+<ce>                       important investigation?
+                                     <--->
+<ce>                  It falls upon us to investigate the
+<ce>                       claims of _prophet_ that
+<ce>                  %g has seen the face and heard the
+<ce>                      words of %god. Perhaps you
+<ce>                      have time to assist in this
+<ce>                               inquiry?
+
+RefuseQuest:  [1001]
+<ce>                         That's a pity, %pct.
+<ce>                   I hope you will find time in your
+<ce>                     busy schedule for the temple
+<ce>                          in the near future.
+
+AcceptQuest:  [1002]
+<ce>                 Good. We have already sent one of the
+<ce>                        Temple, _priest_ to the
+<ce>                    desacrilized ___mondung_, where
+<ce>                    _prophet_ asserts that %g first
+<ce>                        witnessed the miracle.
+<ce>                     If _priest_ needs assistance,
+<ce>                I will send for you. In the meanwhile,
+<ce>                 I want you to find some more secular
+<ce>                       information on _prophet_,
+<ce>                   by asking around in %g3 hometown,
+<ce>                          __tavern_. A loyal
+<ce>                       cleric of ours, _contact_
+<ce>                      will meet you in _tavern_.
+<ce>                  I want to see evidence of the true
+<ce>                          nature of _prophet_
+<ce>                   in no more than =queston_ days. I
+<ce>                  would leave immediately. May Great
+<ce>                   %god bless your enterprise, %pct.
+
+QuestComplete:  [1004]
+<ce>                     Well done, %pct. I tremble to
+<ce>                    think what _prophet_ might have
+<ce>                   done to our temple had %g spread
+<ce>                        %g3 profane word. %god
+<ce>                    bless you and keep you, goodly
+<ce>                       %ra. Here, a small token
+<ce>                    of the esteem of your brethren.
+
+RumorsDuringQuest:  [1005]
+Say what you want about _prophet_'s religion, but %g's a persuasive writer.
+<--->
+__qgiver_ is real nervous about having a revolutionary like _prophet_ around.
+<--->
+I read about _prophet_'s miracle in %g3 tract. I must say, it's persuasive.
+
+RumorsPostfailure:  [1006]
+_prophet_'s gone on to preach %g3 evangelium to the heathen folk of Tamriel.
+<--->
+_prophet_'s left the Bay, but %g3 work is not yet complete.
+<--->
+_prophet_ may be the greatest leader to come out of __tavern_.
+<--->
+_prophet_ spends %g3 time in %g3 room in _prophouse_, writing.
+<--->
+_prophet_ hasn't ever gotten on well with __qgiver_.
+
+RumorsPostsuccess:  [1007]
+That _prophet_ was a charlatan who found some fools in __tavern_.
+
+QuestorPostsuccess:  [1008]
+For what thou hast done for the faith, I'd be happy to help thee.
+
+QuestorPostfailure:  [1009]
+I have nothing to say to thee, heretic of _prophet_.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of ___qgiver_
+ has sent me to investigate the life of
+ _prophet_, who claims to
+ be a prophet. I am to ask about %g2
+ in %g3 hometown, __tavern_.
+ _contact_ is waiting for
+ me there to give me %g3 further
+ instructions. I am to meet %g2
+ at _tavern_.
+
+Message:  1011
+    I scarcely remember my voyage to the place
+ called ___mondung_: I expect I was
+ still partly dreaming. Deep within the stinking
+ recesses of the profaned temple, I was met with
+ a great fire and from the flames I heard the
+ same voice speak: "Welcome."
+      "Who art thou?" I addressed the flame.
+      "I am what __qgiver_ doth
+ proclaim to worship, but with every act and
+ thought defile my divinity. To thee I called
+ so that a new __qgiver_ might be
+ created, one led by truth and true insight,
+ and understanding of my Being. The heathen
+ need insight, and you shall be it."
+      The God told me more that day, but while
+ the wicked __qgiver_ continues
+ their policy of quashing any who dare to
+ challenge their corrupted, contemptible
+ theology, I must keep my tracts short. More
+ will follow shortly hereafter.
+
+Message:  1012
+                          __qgiver_
+                           ___qgiver_
+ 
+ %pct %pcn,
+ 
+      _priest_ has failed to
+ meet with the man to whom %g was to report
+ %g3 findings in ___mondung_.
+ We must assume the worst.
+      You are hereby ordered to find either
+ _priest_ %g2-self or %g3 body
+ in ___mondung_ and report back
+ to me. All other assignments and investigations
+ take lower priority.
+ 
+<ce>                               _qgiver_
+
+Message:  1013
+<ce>                 Ah hello, %pcf. Welcome to __tavern_.
+<ce>              The whole town's in a buzz about that young
+<ce>                     _prophet_. But %g isn't even
+<ce>                   here -- %g's in __prophouse_ at a
+<ce>                  tavern called _prophouse_, working
+<ce>               on a new tract about what this mysterious
+<ce>                     spirit of ___mondung_ had to
+<ce>                 say about the moral disintegration of
+<ce>                      __qgiver_. Here's a copy of
+<ce>                the original tractate, so you know what
+<ce>                      this _prophet_'s all about.
+<ce>              Dangerous character from what I've seen so
+<ce>                 far. I'm communicating with _lover_,
+<ce>                   a =lover_ in ___lover_ with whom
+<ce>                      _prophet_ had some kind of
+<ce>                relationship. It wouldn't be a bad idea
+<ce>                      for you to go to ___lover_
+<ce>                   and see if you can't persuade %g2
+<ce>                to talk to us. Hope all this is helpful
+<ce>                          information, %pcf.
+
+Message:  1014
+                   _tavern_
+                    __tavern_
+ 
+ 
+ Dear %pcn,
+ 
+ 
+      There's been a horrible accident
+ here at _tavern_, involving
+ _contact_. Please come here
+ when you can.
+ 
+ 
+ Yours sincerely,
+ 
+ _replace_
+
+Message:  1015
+<ce>                        A young lad hands you a
+<ce>                       letter and scurries off.
+
+Message:  1016
+<ce>                     %oth, %pcf, it was dreadful.
+<ce>                    The tavernkeep found _contact_
+<ce>                     in one of the rooms, %g3 body
+<ce>                    defiled in the most horrifying
+<ce>                     way, a grim parody of the old
+<ce>                       __qgiver_ mortuary rites.
+<ce>                         It was _prophet_, no
+<ce>                    doubt. This relic was found in
+<ce>                       _contact_'s chest cavity.
+<ce>                            See if _lover_
+<ce>                        in ___lover_ recognizes
+<ce>                                  it.
+
+Message:  1017
+_lover_ -- ah, poor =lover_. Well, %g keeps mostly to %g2self.
+<--->
+_lover_ is a =lover_ in __lover_. They say %g mourns for %g3 lost love.
+<--->
+No matter what anyone tells you, _lover_'s lover is not dead. Mad, not dead.
+<--->
+_lover_ is one of the tragedies in ___lover_. They say %g3 lover went mad.
+
+Message:  1018
+<ce>                 Whatever they say, I never knew that
+<ce>                       _prophet_. Tell _contact_
+<ce>                       %g has the wrong =lover_.
+
+Message:  1019
+<ce>                      _prophet_ would kill me if
+<ce>                   %g knew I was talking to you. But
+<ce>                  I know that you couldn't be working
+<ce>                   for %g2. Here's a letter %g wrote
+<ce>                   to me about a month ago. I think
+<ce>                        it explains everything.
+
+Message:  1020
+<ce>                      _relartifact_! %oth, that's
+<ce>                      poor _prophet_'s property.
+<ce>                     %oth, I knew %g was unstable,
+<ce>                but I never thought %g'd really do it.
+<ce>                      %oth, poor _contact_. If I
+<ce>                  had helped %g2, %g'd still be alive
+<ce>                  today. This won't make up for what
+<ce>                 I've done by failing to act, but you
+<ce>                will know what to do with this letter.
+<ce>                         May %god forgive me.
+
+Message:  1021
+_lover_, My Love,
+ 
+ 
+      First, forgive the silence of your
+ love. It was not another attack of brain
+ fever. For some months now, I have been
+ in spiritual turmoil, unfit to for any
+ company, even for the comfort of your
+ dulcet fellowship. My days of pain are
+ over, but for this -- I can never see you
+ again. My life has a higher purpose than
+ the fulfillment of a ridiculous love affair
+ now.
+      No longer can I suffer the evil of
+ __qgiver_, the evil they did
+ to me, and the evil they are doing to all
+ of Tamriel. The days the prophet Marukh
+ spoke of are on us again. I must rally the
+ people by any and all lies, innuendo, bigotry,
+ and threats to rise against the spiritual
+ tyranny of __qgiver_.
+     Forgive me, my former love. And if you
+ can, forget me. And if you can do neither,
+ do not see me. If you do, I will slay you
+ and stick candles in your eyes and twine
+ your organs with beads for the greater
+ glory of the gods of the universe. Filthy
+ =lover_, torment me no longer.
+ 
+<ce>                               _prophet_
+
+Message:  1022
+It used to be used in __qgiver_ burial rituals.
+
+Message:  1023
+_replace_ is that =replace_. Affiliated with __qgiver_ somehow.
+<--->
+_replace_ was an old friend of _contact_ before the ... accident.
+
+Message:  1024
+<ce>                        Oh! That's _prophet_'s
+<ce>                       _relartifact_! %oth, poor
+<ce>                       _contact_. Why don't you
+<ce>                    bring that letter I gave you to
+<ce>                         someone at __qgiver_?
+<ce>                  Surely, that is enough to discredit
+<ce>                         _prophet_, isn't it?
+
+Message:  1025
+<ce>                       %pcf, I thought that you
+<ce>                   were supposed to be investigating
+<ce>                      the situation in __tavern_.
+<ce>                     Well, as long as you're here,
+<ce>                    I have something different for
+<ce>                    you to do. I've found some torn
+<ce>                   up letters, scraps really, about
+<ce>                          a =lover_ somewhere
+<ce>                          in ___lover_ by the
+<ce>                        name of _lover_. See if
+<ce>                   you can't find something on %g2.
+<ce>                    I don't know if %g'll talk, but
+<ce>                           it's worth a try.
+
+Message:  1026
+<ce>                     You pick up a scrap of flesh,
+<ce>               carefully, even ritually ritualistically
+<ce>                      stripped from a =priest_'s
+<ce>                    hand. This was once a finger of
+<ce>                               _priest_.
+
+Message:  1027
+Truly nauseating.
+<--->
+A hacked off finger.
+<--->
+A chunk of somebody's hand.
+<--->
+Extremely tasteless.
+<--->
+Not bad with a little salt and honey.
+<--->
+It looks like an old __qgiver_ ceremony. They used to do that to corpses.
+<--->
+When in __qgiver_, _prophet_ used to disect cadavers just that precisely.
+<--->
+__qgiver_ abandoned that kind of funereal disection, but _prophet_ espouses it.
+
+Message:  1028
+<ce>                        It was nice of _priest_
+<ce>                  to give me a hand, don't you think?
+                                     <--->
+<ce>                   %oth, what was I supposed to do?
+<ce>                        _priest_ threatened to
+<ce>                         finger me, after all.
+                                     <--->
+<ce>                  What an amusing plaything you have,
+<ce>                       %pcf. See how it points.
+
+Message:  1029
+<ce>                    How they come to persecute me.
+<ce>                  Abandon your unholy abuse, hound of
+<ce>                         __qgiver_. I am under
+<ce>                   protection of my god ... and the
+<ce>                              %t of %reg.
+
+Message:  1030
+<ce>                       _lover_! False creature,
+<ce>                      deceiver! How %g will pay!
+<ce>                            =fighter_, deal
+<ce>                            with this %ra!
+
+Message:  1031
+<ce>                       Thank %god, I was afraid
+<ce>                      I had lost that. Thank you,
+<ce>                               good %ra.
+
+Message:  1032
+%qdt:
+ _contact_ tells
+ me that _prophet_ is in
+ _prophouse_ in __prophouse_,
+ but it might be a good idea to go
+ visit a =lover_ named
+ _lover_ in ___lover_.
+ _contact_ doesn't know the
+ relationship between the two,
+ but it's worth investigating.
+
+Message:  1033
+%qdt:
+ _priest_ told
+ me that the name _lover_
+ and the town ___lover_
+ were found on several scraps of
+ paper in ___mondung_,
+ bearing investigation.
+
+Message:  1034
+%qdt:
+ _replace_ told
+ me about the ritualistic murder of
+ _contact_ and gave me
+ some _relartifact_ found on
+ the body. _replace_
+ suggested that I go to ___lover_,
+ show it to _lover_,
+ and see if it convinces %g2
+ to speak to me.
+
+Message:  1035
+%qdt:
+ I just read a letter
+ that _prophet_ sent _lover_
+ a month ago and %g gave me. The
+ letter should thoroughly
+ discredit _prophet_
+ to any and all of %g3 potential
+ converts. The =prophet_
+ was mad as a monkey.
+
+Message:  1036
+%qdt:
+ I received a letter
+ from _qgiver_ telling
+ me to get to ___mondung_
+ and see what happened to the priest,
+ _priest_. I am to either
+ find the =priest_ or
+ evidence of %g3 death.
+
+Message:  1037
+%qdt:
+ I found a finger which I presume was once attached
+ to _priest_. It was curiously,
+ even ceremoniously severed.
+ 
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 19 times.
+--               %g2 occurs 16 times.
+--               %g3 occurs 79 times.
+--              %god occurs 7 times.
+--              %oth occurs 6 times.
+--              %pcf occurs 6 times.
+--              %pcn occurs 5 times.
+--              %pct occurs 6 times.
+--              %qdt occurs 7 times.
+--               %ra occurs 5 times.
+--              %reg occurs 2 times.
+--                %t occurs 1 time.
+--         =fighter_ occurs 1 time.
+--           =lover_ occurs 8 times.
+--          =priest_ occurs 2 times.
+--         =prophet_ occurs 1 time.
+--         =queston_ occurs 1 time.
+--         =replace_ occurs 1 time.
+--                 _ occurs 1 time.
+--         ___lover_ occurs 10 times.
+--       ___mondung_ occurs 7 times.
+--        ___qgiver_ occurs 5 times.
+--          __lover_ occurs 1 time.
+--      __prophouse_ occurs 2 times.
+--         __qgiver_ occurs 30 times.
+--         __tavern_ occurs 13 times.
+--         _contact_ occurs 16 times.
+--           _lover_ occurs 13 times.
+--          _priest_ occurs 10 times.
+--         _prophet_ occurs 117 times.
+--       _prophouse_ occurs 3 times.
+--          _qgiver_ occurs 3 times.
+--     _relartifact_ occurs 3 times.
+--         _replace_ occurs 5 times.
+--          _tavern_ occurs 5 times.
+
+QBN:
+--moved erroneous 1009 entries to 1006
+Item _letter7_ letter used 1011
+Item _letter_ letter used 1012
+Item _letter8_ letter used 1014
+Item _relartifact_ religious anyInfo 1022
+Item _letter9_ letter used 1021
+Item _finger_ finger anyInfo 1027
+Item _reward_ gem
+--added underscores to letter7,8,9
+
+Person _qgiver_ group Questor
+Person _contact_ face 105 group Local_3.0
+Person _priest_ face 49 group Group_5.0
+Person _prophet_ face 1 group Local_4.0 anyInfo 1009
+--changed anyInfo QuestorPostFailure to 1009
+Person _replace_ face 3 factiontype Temple female anyInfo 1023
+Person _lover_ face 104 group Group_7.0 remote anyInfo 1017
+
+Place _mondung_ remote dungeon4
+Place _tavern_ remote tavern
+Place _prophouse_ remote tavern
+
+Clock _queston_ 00:00 flag 1 range 0 1
+--quest timer was too short, edited to more generous
+Clock _S.04_ 2.02:00 20.20:00
+Clock _S.06_ 03:20 11:40
+Clock _S.14_ 2.02:00 20.20:00
+Clock _S.16_ 05:00 11:40
+
+Foe _fighter_ is Warrior
+
+--	Quest start-up:
+	dialog link for location _prophouse_ person _replace_ item _relartifact_ 
+	dialog link for person _priest_ 
+	dialog link for person _lover_ 
+	dialog link for person _replace_ 
+	dialog link for item _finger_ 
+	start timer _S.04_ 
+	start timer _S.14_ 
+	start timer _queston_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	_letter9_ used do _readletter_ 
+	create npc _lover_ 
+	place npc _contact_ at _tavern_ 
+	place npc _prophet_ at _prophouse_ 
+	place npc _priest_ at _mondung_ 
+
+_queston_ task:
+	end quest 
+
+_pcgetsgold_ task:
+	toting _letter9_ and _qgiver_ clicked 
+	toting _finger_ and _qgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+variable _S.02_
+_S.03_ task:
+	clicked npc _contact_ 
+	add dialog for location _prophouse_ person _lover_ 
+	log 1032 step 1 
+	get item _letter7_ 
+	say 1013 
+	clear _S.06_ 
+
+_S.04_ task:
+	start timer _S.06_ 
+	hide npc _contact_ 
+	place npc _replace_ at _tavern_ 
+
+variable _S.05_
+_S.06_ task:
+	give pc _letter8_ notify 1015 
+
+_S.07_ task:
+	clicked npc _replace_ 
+	add dialog for person _lover_ item _relartifact_ 
+	log 1034 step 3 
+	get item _relartifact_ 
+	say 1016 
+
+_S.08_ task:
+	clicked npc _lover_ 
+	repute with _lover_ exceeds 5 do _S.09_ 
+
+_S.09_ task:
+	get item _letter9_ 
+	say 1019 
+
+_S.10_ task:
+	toting _relartifact_ and _lover_ clicked 
+
+_S.11_ task:
+	when _S.10_ and not _S.09_ 
+	get item _letter9_ 
+	say 1020 
+	clear _S.08_ 
+
+_S.12_ task:
+	when _S.10_ and _S.09_ 
+	say 1024 
+
+_S.13_ task:
+	when _S.08_ and not _S.09_ 
+	say 1018 
+
+_S.14_ task:
+	place item _finger_ at _mondung_ 
+	start timer _S.16_ 
+	hide npc _priest_ 
+
+_S.15_ task:
+	clicked npc _priest_ 
+	add dialog for person _lover_ 
+	log 1033 step 2 
+	say 1025 
+
+_S.16_ task:
+	have _letter_ set _S.16a_
+	give pc _letter_ notify 1015 
+
+_S.16a_ task:
+	log 1036 step 5 
+--this log was getting written too soon
+
+_S.17_ task:
+	clicked item _finger_ 
+	add dialog for item _finger_ 
+	log 1037 step 6 
+	say 1026 
+
+_S.18_ task:
+	clicked npc _prophet_ 
+	say 1029 
+
+_S.19_ task:
+	toting _finger_ and _prophet_ clicked 
+	say 1028 
+
+_S.20_ task:
+	toting _letter9_ and _prophet_ clicked 
+	hide npc _prophet_ 
+	say 1030 
+	place foe _fighter_ at _prophouse_ 
+
+_S.21_ task:
+	toting _relartifact_ and _prophet_ clicked 
+	say 1031 
+
+_readletter_ task:
+	log 1035 step 4 

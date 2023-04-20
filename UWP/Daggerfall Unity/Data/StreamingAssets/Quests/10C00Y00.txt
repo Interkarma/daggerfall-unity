@@ -1,0 +1,175 @@
+-- Quest: C:\QUESTS\WORKING\10C00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: Meridia
+-- Repute: 0
+-- QuestId: 0
+Messages: 41
+Quest: 10C00Y00
+DisplayName: Meridia's Quest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>           Oh, yes my dear, I think I can help you with your
+<ce>           ambition. If I give you something quite valuable,
+<ce>                  will you do something for me first?
+
+RefuseQuest:  [1001]
+<ce>            Oh, that's a shame. As a friendly warning, bad
+<ce>            things happen to greedy %ra adventurers willing
+<ce>                   to take, but not willing to give.
+
+AcceptQuest:  [1002]
+<ce>          You will? Oh, that's very sweet. Much sweeter than
+<ce>              a certain _monster_ I know named =monster_,
+<ce>          who made a certain arrangement with me, but decided
+<ce>           later to renege. If you would be so kind as to pay
+<ce>              =monster_ a visit in ___mondung_ and
+<ce>            let %g2 know that such ungallant behavior is fatal. Then go to
+<ce>         my dear friend, _qgfriend_, who will wait for =1stparton_ days
+<ce>                for you at __qgfriend_ in ___qgfriend_,
+<ce>         and give you my _artifact_ when you arrive. It's just
+<ce>        the thing you need. Now, you'd best be off. Be careful.
+
+QuestFail:  [1003]
+<ce>          You aren't planning on repaying Meridia's kindness
+<ce>               by telling me that you've slain =monster_
+<ce>               when both of us know you haven't, are you?
+<ce>                         I certainly hope not.
+
+QuestComplete:  [1004]
+<ce>                %pcn? I'm _qgfriend_. I believe you're
+<ce>              looking for me. I have here the _artifact_,
+<ce>           as Meridia promised. Meridia is impressed with you
+<ce>         for fulfilling your end of the contract, I might add.
+
+RumorsDuringQuest:  [1005]
+The sorcerer in ___mondung_ is a notorious collector of strange artifacts.
+<--->
+I hear that =monster_ contracts with spirits for additions to %g3 collections.
+
+RumorsPostfailure:  [1006]
+That packrat sorcerer finally left ___mondung_. I guess to acquire more stuff.
+<--->
+That =qgfriend_ _qgfriend_ left __qgfriend_ muttering about a dishonest %ra.
+
+RumorsPostsuccess:  [1007]
+They say that some creature from =monster_'s collection rose up and killed %g2.
+<--->
+=monster_ was apparently killed by someone interested in %g3 vast collection.
+
+Message:  1011
+_qgfriend_ is the name of that =qgfriend_ at __qgfriend_, just %di of here.
+<--->
+_qgfriend_ is a quiet =qgfriend_ I met at __qgfriend_. That's to the %di.
+
+Message:  1012
+_qgfriend_ is one of Meridia's collectors in %reg. Charming, as %g has to be.
+<--->
+_qgfriend_ is a servitor of the Daedra Lady of Greed, Meridia.
+
+Message:  1013
+Meridia is a Daedra Regent and a collector of human specimens.
+<--->
+Meridia is a kind of acting Daedra Prince, and ruthless in her acquisitiveness.
+
+Message:  1014
+<ce>   The ring is an ancient item of power. Reputedly, it can make its
+<ce>          wearer as invisible, silent, and swift as the wind.
+
+Message:  1020
+%qdt:
+ I have =1stparton_ days to find and slay a
+ _monster_ named =monster_, be in
+ ___qgfriend_ to meet a =qgfriend_
+ named _qgfriend_, and receive Meridia's
+ promised artifact, the _artifact_.
+ I know =monster_'s location is
+ ___mondung_, and _qgfriend_ is
+ in ___qgfriend_.
+
+
+Message:  1030
+<ce>                   =monster_ lies dead at your feet.
+<ce>                   Lady Meridia is now in your debt.
+
+Message:  1040
+<ce>               So, Meridia sends her lackeys against me.
+<ce>                 But I am not without allies of my own.
+<ce>                Come to me, children of Oblivion!  Serve
+<ce>               your master =monster_ in %g3 hour of need!
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 2 times.
+--                %g occurs 3 times.
+--               %g2 occurs 2 times.
+--               %g3 occurs 9 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--              %reg occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--         =monster_ occurs 12 times.
+--        =qgfriend_ occurs 4 times.
+--       ___mondung_ occurs 3 times.
+--      ___qgfriend_ occurs 9 times.
+--        _artifact_ occurs 3 times.
+--         _monster_ occurs 2 times.
+--        _qgfriend_ occurs 9 times.
+
+QBN:
+Item _artifact_ artifact Ring_of_Khajiit anyInfo 1014
+
+Person _questgiver_ face 112 named Meridia anyInfo 1013
+Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
+
+Place _mondung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+
+Foe _monster_ is Sorceror
+Foe _daedra1_ is Fire_daedra
+Foe _daedra2_ is Daedroth
+--added dungeon name to block 1002. Quest previously did not name dungeon except in journal.
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	place foe _monster_ at _mondung_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+--unused variable
+_pcgetsgold_ task:
+	when _npcclicked_ and _mondead_ 
+	give pc _artifact_ 
+	end quest 
+--removed unnecessary delay
+
+_mondead_ task:
+	killed 1 _monster_ 
+	say 1030 
+	clear _S.08_ 
+
+_npcclicked_ task:
+	clicked npc _qgfriend_ 
+
+_clearclick_ task:
+	when _npcclicked_ and not _mondead_ 
+	say 1003
+	clear _npcclicked_ _clearclick_ 
+
+_S.07_ task:
+	injured _monster_ 
+	say 1040 
+
+_S.08_ task:
+	when _S.07_ and not _mondead_ 
+	create foe _daedra2_ every 3 minutes 3 times with 100% success 
+	create foe _daedra1_ every 2 minutes 2 times with 100% success 

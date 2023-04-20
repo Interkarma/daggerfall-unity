@@ -1,0 +1,70 @@
+- Text database for mod and mod settings windows.
+
+schema: *key,text
+
+modLoadPriority,            Load Priority
+modTitle,                   Selected
+modDescription,             Mod Description
+modVersion,                 Version
+modAuthor,                  Author
+modAuthorContact,           Contact
+modDFTFUVersion,            DFUnity Version
+
+emptyTitle,                 <title>
+missingTitle,               <Unknown>
+emptyDescription,           <description>
+missingDescription,         <Missing description>
+title,                      Title
+description,                Description
+author,                     Author
+ok,                         OK
+versionMismatch,            Version mismatch!
+
+increase,                   Increase
+lower,                      Lower
+enableAll,                  ALL ON
+enableAllInfo,              Enable All Mods
+disableAll,                 ALL OFF
+disableAllInfo,             Disable All Mods
+enabled,                    Enabled
+enabledInfo,                Toggle Mod
+refresh,                    Refresh
+refreshInfo,                Check for changes in mod directory
+saveClose,                  Save and Close
+saveCloseInfo,              Save changes and return to options menu
+extractText,                Extract Text
+extractTextInfo,            Extract Text Assets
+extractTextConfirmation,    All text assets from this mod have been extracted to {0}.
+new,                        New
+load,                       Load
+save,                       Save
+delete,                     Delete
+cancel,                     Cancel
+export,                     Export
+exportMessage,              {0} will be exported to {1}.
+reset,                      Reset
+resetConfirmation,          Revert all settings to default values?
+cleanConfigurationDir,      Found configuration files for unknown or uninstalled mods. Do you want to remove them?
+
+backToOptions,              Options
+backToOptionsInfo,          Back to options without saving changes
+modsFound,                  Mods Found
+settings,                   Settings
+settingsInfo,               Change mod settings
+presets,                    Presets
+
+presetCreator,              Preset Creator
+presetNewInfo,              Create a new preset from current settings.
+presetLoadInfo,             Load and apply preset to current settings.
+presetSaveInfo,             Save current settings to selected preset.
+presetDeleteInfo,           Delete selected presets.
+presetExportInfo,           Export selected preset to a file that can be shared.
+titleOrDescriptionMissing,  Title and Description are mandatory fields.
+
+dependencyErrorMessage,                 One or more mods might not work correctly:
+dependencyIsMissing,                    Failed to retrieve mod {0}
+dependencyNotEnabled,                   Mod dependency {0} is not enabled
+dependencyWithIncorrectPosition,        {0} must be positioned above in the load order
+dependencyWithIncompatibleVersion,      {0} has version {1} but {2} or higher is requested
+sortModsQuestion,                       Do you want to sort mods automatically?
+gameVersionUnsatisfied,                 Requires Daggerfall Unity v.{0} or higher

@@ -1,0 +1,223 @@
+-- Quest: C:\QUESTS\WORKING\A0C01Y09.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 01
+-- QuestId: 9
+Messages: 62
+Quest: A0C01Y09
+DisplayName: The Birthday Present
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   Excuse me? _questg_ is the name.
+<ce>                   I don't know how I feel about you,
+<ce>              but I do need a favor. My sister, _sister_,
+<ce>              is having a birthday next month and I could
+<ce>              really use some _item_ for the celebration.
+<ce>            It's worth _gold_ gold pieces. What do you say?
+
+RefuseQuest:  [1001]
+<ce>                  Just as well, I suppose. Good day.
+                                     <--->
+<ce>                            Sorry I asked.
+                                     <--->
+<ce>                  Then we never talked. I'd hate for
+<ce>                       you to spoil the surprise.
+                                     <--->
+<ce>                 Whatever. It was easy gold, you know.
+                                     <--->
+<ce>             Leave me then. I have a celebration to plan.
+
+AcceptQuest:  [1002]
+<ce>                    Excellent! You are a smart one.
+<ce>                    This is easy gold. Go to _store_
+<ce>                and find _merchant_. %g has the specific
+<ce>                   _item_ I need. Remember, there is
+<ce>                   only a month 'til the celebration.
+                                     <--->
+<ce>          Very good. This is easy gold. You'll have to go to
+<ce>                 _store_ to find the exact kind I need.
+<ce>                 Talk to _merchant_. %g runs the place.
+
+
+QuestComplete:  [1004]
+<ce>             Very good, %pcn. Here's the gold I promised.
+
+RumorsDuringQuest:  [1005]
+<ce>                  I hear that _questg_ really doesn't
+<ce>                  like %g3 sister, _sister_. And %g is
+<ce>                         about to get married.
+
+RumorsPostfailure:  [1006]
+<ce>                 Did you hear that _sister_ uncovered
+<ce>                       an attempt to poison %g2?
+
+RumorsPostsuccess:  [1007]
+<ce>                     _sister_ was found dead! And
+<ce>                   on the eve of %g3 wedding day, too.
+
+QuestorPostsuccess:  [1008]
+<ce>                 Ahem. Well, yes. I suppose since you
+<ce>                  did get that... item for my sister's
+<ce>                     nuptials, I do owe you a debt.
+
+QuestorPostfailure:  [1009]
+<ce>                 Traitor! I send you on a simple fetch
+<ce>                   mission and you have to blab it to
+<ce>                 _sister_. You'll get no help from me.
+
+
+Message:  1011
+<ce>                     You are carrying the _item_.
+<ce>                  Do you want to give it to _sister_?
+
+Message:  1013
+<ce>                     You are carrying the _item_.
+<ce>                       Do you want to give it to
+<ce>                               _questg_?
+
+Message:  1025
+%qdt:
+ I have promised _questg_ of ___questg_
+ that I will obtain some _item_ from
+ _merchant_ at _store_
+ in return for _gold_ gold pieces. I must return with
+ the _item_ before the birthday celebration
+ of _questg_'s sister, _sister_,
+ which is in one month.
+
+Message:  1040
+<ce>                     Hello. Yes, I am _merchant_.
+<ce>               Some _item_? Yes, I have it. I'll take your
+<ce>              20 gold pieces and you can have the _item_.
+<ce>                        Thanks for stopping by.
+
+Message:  1041
+<ce>                     Hello. Yes, I am _merchant_.
+<ce>               Some _item_? Yes, I have it. I'll take your
+<ce>              20 gold pieces and you can have the _item_.
+<ce>             Oh, I'm sorry. You don't seem to have enough
+<ce>                         gold to pay for that.
+
+Message:  1050
+<ce>                   Hello? Why are you here? You say
+<ce>                       _questg_ wants some _item_
+<ce>           for my birthday celebration? Oh, what a wonderful
+<ce>               idea! I promise not to spoil the surprise!
+
+Message:  1051
+<ce>                 Hello? How did you get in here? What?
+<ce>                  _questg_ asked you to bring %g2 some
+<ce>                 _item_? Oh my... do you have any idea
+<ce>                   what he plans to do with it? I do.
+<ce>                    _item_ is part of a potion that
+<ce>               my loving brother likes to make. A potion
+<ce>                that kills. You must not give it to %g2!
+<ce>                    Please! Bring the _item_ to me.
+<ce>                 You must do this or I may be killed!
+
+Message:  1060
+<ce>                        I'll take it, I guess.
+<ce>                  But doesn't this ruin the surprise?
+<ce>                      You are a strange one, %pcn.
+
+Message:  1061
+<ce>                     Thank you. My brother cannot
+<ce>                    use it now. You have done well.
+<ce>                               Thank you.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 7 times.
+--               %g2 occurs 5 times.
+--               %g3 occurs 3 times.
+--              %pcn occurs 4 times.
+--              %qdt occurs 1 time.
+--        ___questg_ occurs 1 time.
+--            _gold_ occurs 3 times.
+--            _item_ occurs 18 times.
+--        _merchant_ occurs 7 times.
+--          _questg_ occurs 7 times.
+--          _sister_ occurs 8 times.
+--           _store_ occurs 3 times.
+
+QBN:
+Item _item_ large_plant
+Item _gold_ gold
+
+Person _questg_ face 4 group Questor
+Person _sister_ face 2 group Resident2 female local
+Person _merchant_ face 1 faction The_Merchants local
+
+Place _item0_ local house2
+-added underscores to item0
+Place _store_ local generalstore
+
+Clock _questtime_ 31.00:00 0 flag 1 range 0 1
+Clock _shortdelay_ 01:00 0 flag 1 range 0 1
+
+
+--	Quest start-up:
+	start timer _questtime_ 
+	log 1025 step 0 
+	pick one of _S.01_ _S.02_ _S.01_ _S.02_ 
+	create npc _sister_ 
+	place npc _merchant_ at _store_ 
+
+_questtime_ task:
+	end quest 
+
+variable _S.01_
+variable _S.02_
+variable _S.03_
+_S.04_ task:
+	clicked _merchant_ and at least 20 gold otherwise do _S.05_ 
+	get item _item_ 
+	say 1040 
+
+_S.05_ task:
+	say 1041 
+
+_S.06_ task:
+	toting _item_ and _questg_ clicked 
+	prompt 1013 yes _S.13_ no _S.11_ 
+
+_S.07_ task:
+	clicked npc _sister_ 
+
+_S.08_ task:
+	when _S.07_ and _S.01_ 
+	say 1050 
+
+_S.09_ task:
+	when _S.07_ and _S.02_ 
+	say 1051 
+
+_S.10_ task:
+	toting _item_ and _sister_ clicked 
+	prompt 1011 yes _S.12_ no _S.11_ 
+
+_S.11_ task:
+	get item _item_ 
+
+variable _S.12_
+_S.13_ task:
+	give pc _gold_ 
+
+_S.14_ task:
+	when _S.01_ and _S.12_ 
+	say 1060 
+
+_S.15_ task:
+	when _S.02_ and _S.12_ 
+	say 1061 
+
+_shortdelay_ task:
+	end quest 
+
+_S.17_ task:
+	when _S.06_ or _S.10_ 
+	start timer _shortdelay_ 

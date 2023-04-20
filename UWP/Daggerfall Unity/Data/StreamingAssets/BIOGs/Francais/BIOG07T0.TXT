@@ -1,0 +1,224 @@
+1.	Quand vous etiez jeune, votre famille pensait 
+	qu'il etait important que vous appreniez a ...
+a.	guerir les blessures simples
+	#4500
+	0 +6
+b.	vous integrer
+	#4501
+	1 +6
+c.	diriger votre entourage
+	#4502
+	2 +6
+d.	negocier avec les marchands
+	#4503
+	14 +6
+e.	vous battre a la dague
+	#4504
+	28 +6
+
+2.	Vous etiez un enfant tres actif, ... que 
+	n'importe quel autre enfant de votre age.
+a.	plus rapide
+	#4505
+	21 +6
+b.	plus discret
+	#4506
+	16 +6
+c.	meilleur grimpeur
+	#4507
+	18 +6
+d.	meilleur nageur
+	#4508
+	17 +6
+e.	meilleur bagarreur
+	#4509
+	30 +6
+
+3.	Vous pouvez obtenir la plupart des choses que
+	vous souhaitez en les volant ...
+a.	aux riches nobles
+	#4510
+	!4511
+	?4512
+	IT 25 3 0
+b.	aux mages et aux sages
+	#4513
+	!4514
+	?4515
+	IT 7 0 0
+c.	aux temples 
+	#4516
+	!4517
+	?4518
+	IT 10 4 0
+d.	a des marchands divers
+	#4519
+	!4520
+	?4521
+	IT 25 5 0
+
+4.	Le talent dont vous ne pourriez vous passer
+	pour travailler est ...
+a.	le crochetage
+	#4522
+	13 +6
+b.	le vol a la tire
+	#4523
+	15 +6
+c.	la discretion
+	#4524
+	16 +6
+d.	l'esquive
+	#4525
+	20 +6
+e.	l'escalade
+	#4526
+	18 +6
+f.	l'embuscade
+	#4527
+	19 +6
+
+5.	Meme si ce n'est pas du a un travail acharne,
+	vous avez reussi a obtenir ...
+a.	plus de 200 pieces d'or
+	#4528
+	GP +250
+b.	une dague en ebene
+	#4529
+	IT 3 0 7
+c.	un livre
+	#4530
+	IT 7 0 0
+d.	un rubis
+	#4531
+	IT 14 0 0
+e.	un baton en argent
+	#4532
+	IT 3 2 2 
+f.	de l'eau benite
+	#4533
+	IT 10 4 0
+
+6.	Quel talent de voleur avez-vous le plus
+	pratique ?
+a.	L'esquive
+	20 +6
+b.	La discretion
+	16 +6
+c.	Les attaques par derriere
+	19 +6
+d.	Le crochetage
+	13 +6
+e.	Le vol a la tire
+	15 +6
+f.	L'escalade
+	18 +6
+g.	Les coups critiques
+	34 +6
+h.	La course
+	21 +6
+i.	Le saut
+	3 +6
+
+7.	En quoi etes-vous specialise au combat ?
+a.	Les lames courtes
+	28 +6
+	IT 3 3 0
+b.	Le corps a corps
+	30 +6
+	IT 2 1 0
+c.	La hache
+	31 +6
+	IT 3 14 0
+d.	Les armes contondantes
+	32 +6
+	IT 3 11 0
+e.	Le tir a l'arc
+	33 +6
+	IT 3 16 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+
+8.	Quand vous etiez enfant, on vous surnommait ...
+a.	La grenouille
+	3 +6
+b.	L'anguille
+	17 +6
+c.	Vif-argent
+	21 +6
+d.	Le bagarreur
+	30 +6
+e.	Le singe
+	18 +6
+
+9.	Qu'est-ce qui vous pousse a mener une vie de 
+	cambriolages ?
+a.	La richesse
+	GP +500
+b.	La gloire
+	r4 +10
+	r2 +10
+c.	Le savoir
+	IT 7 0 0
+d.	Le plaisir
+	1 +3
+	2 +3
+e.	Aider les autres
+	r0 +10
+
+10.	Vers quel Dieu se tourne votre devotion ?
+a.	Aucun
+	r2 +5
+b.	Arkay, La Vie et la Mort
+	rf82 +5
+c.	Zenithar, le Commerce
+	rf84 +5
+d.	Mara, la deesse Mere
+	rf88 +5
+e.	Dibella, deesse de la Beaute
+	rf98 +5
+f.	Julianos, la Logique
+	rf94 +5
+g.	Akatosh, le Temps
+	rf92 +5
+h.	Stendarr, la Pitie
+	rf106 +5
+i.	Kynareth, deesse de l'Air
+	rf36 +5
+
+11.	Votre frele sante, quand vous etiez enfant, vous
+	a rendu ...
+a.	moins resistant aux poisons
+	RP -5
+b.	moins resistant a la maladie
+	RD -5
+c.	moins energique
+	FT -5
+d.	moins resistant a la magie
+	MR -5
+
+12.	Votre pratique criminelle preferee est ...
+a.	le cambriolage
+	#4534
+	AF F 7 12 +1
+b.	l'agression
+	#4535
+	AF F 7 12 +1
+c.	le vol a la tire
+	#4536
+	AF F 7 12 +1
+d.	l'escroquerie
+	#4537
+	AF F 7 12 +1
+e.	la contrebande
+	#4538
+	AF F 7 12 +1
+f.	les vols de banque
+	#4539
+	AF F 7 12 +1
+
+

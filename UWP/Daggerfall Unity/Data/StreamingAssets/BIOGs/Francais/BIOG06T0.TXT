@@ -1,0 +1,224 @@
+1.	Quelle ecole de magie avez-vous
+	la plus etudiee ?
+a.	Destruction
+	#4156
+	22 +6
+b.	Guerison
+	#4157
+	23 +6
+c.	Illusion
+	#4158
+	24 +6
+d.	Alteration
+	#4159
+	25 +6
+e.	Thaumaturgie
+	#4160
+	26 +6
+f.	Mysticisme
+	#4161
+	27 +6
+
+2.	Enfant, votre surnom etait ...
+a.	la grenouille
+	#4450
+	3 +6
+b.	Vif-argent
+	#4451
+	21 +6
+c.	le bagarreur
+	#4452
+	30 +6
+d.	le singe
+	#4453
+	18 +6
+
+3.	Vous avez un certain entrainement avec ...
+a.	l'epee courte
+	#4454
+	28 +6
+	IT 3 0 3
+b.	vos poings
+	#4455
+	30 +6
+	IT 2 1 0
+c.	la hache
+	#4456
+	31 +6
+	IT 3 14 0
+d.	les armes contondantes
+	#4457
+	32 +6
+	IT 3 2 0
+e.	l'arc
+	#4458
+	33 +6
+	IT 3 16 1
+	IT 3 18 1
+	IT 3 18 1
+	IT 3 18 1
+	IT 3 18 1
+	IT 3 18 1
+	IT 3 18 1
+f.	l'epee longue
+	#4459
+	29 +6
+	IT 3 9 0
+
+4.	Chaque fois que vous pouviez, vous
+	aimiez passez du temps a ...
+a.	frequenter l'aristocratie
+	#4223
+	1 +6
+	r3 +5
+	r0 -5
+b.	marchander dans la rue
+	#4224
+	2 +6
+	r0 +2
+	r4 +3
+	r3 -5
+c.	faire des acrobaties
+	#4225
+	3 +2
+	20 +2
+	18 +2
+d.	apprendre l'economie
+	#4226
+	14 +6
+e.	nager
+	#4228
+	17 +6
+f.	vous bagarrer
+	#4229
+	34 +6
+
+5.	Quelle competence de voleur avez vous
+	la plus etudiee ?
+a.	L'esquive
+	20 +6
+b.	La discretion
+	16 +6
+c.	Poignarder dans le dos
+	19 +6
+d.	Crocheter des serrures
+	13 +6
+e.	Le vol a la tire
+	15 +6
+f.	L'escalade
+	18 +6
+g.	Les coups critiques
+	34 +6
+h.	La course
+	21 +6
+i.	Le saut
+	3 +6
+
+6.	Comme recompense, vous choisiriez ...
+a.	plus de 200 pieces d'or
+	#4528
+	GP +250
+b.	une dague d'ebene
+	#4529
+	IT 3 0 7
+c.	un livre
+	#4530
+	IT 7 0 0
+d.	un rubis
+	#4531
+	IT 14 0 0
+e.	un baton en argent
+	#4532
+	IT 3 2 2
+f.	une amulette
+	#4192
+	IT 25 0 0
+
+7.	Que-ce qui vous motive dans la vie d'aventurier ?
+a.	La richesse
+	GP +500
+b.	La gloire
+	r4 +10
+	r2 +10
+c.	Le savoir
+	IT 7 0 0
+d.	Le plaisir
+	1 +3
+	2 +3
+e.	Aider son prochain
+	r0 +10
+
+8.	Vers quel Dieu se tourne votre devotion ?
+a.	Aucun
+	r2 +5
+b.	Arkay, la Vie et la Mort
+	rf82 +5
+c.	Zenithar, le Commerce
+	rf84 +5
+d.	Mara, deesse Mere
+	rf88 +5
+e.	Dibella, deesse de la Beaute
+	rf98 +5
+f.	Julianos, la Logique
+	rf94 +5
+g.	Akatosh, le Temps
+	rf92 +5
+h.	Stendarr, la Pitie
+	rf106 +5
+i.	Kynareth, deesse de l'Air
+	rf36 +5
+
+9.	Vous avez des difficultes pour ...
+a.	resister au poison
+	RP -10
+b.	rester eveille et alerte 
+	FT -5
+c.	etre sociable
+	RR -5
+d.	resister au maladies
+	RD -5
+e.	resister a la magie
+	MR -5
+f.	se battre sans magie
+	TH -5
+
+10.	De votre enfance, vous avez preserve ...
+a.	100 pieces d'or
+	GP +100
+b.	votre livre favori
+	IT 7 0 0
+c.	une cuirasse
+	IT 2 0 0
+d.	un bouclier
+	IT 2 7 1
+
+11.	Vous eprouvez le plus de sympathie envers les ...
+a.	Harpies sauvages
+	5 +6
+b.	Geants naifs 
+	6 +6
+c.	Dragons glorieux
+	7 +6
+d.	Nymphes impudiques
+	8 +6
+e.	Daedras infernaux
+	9 +6
+f.	Spriggans bucoliques
+	10 +6
+g.	Centaures primitifs
+	11 +6
+h.	Diablotins malfaisants
+	12 +6
+
+12.	Votre meilleur ami est ...
+a.	un pretre
+	AF O 8 12 +1
+b.	un mage
+	AF O 8 2 +1
+c.	un voleur
+	AF O 8 8 +1
+d.	Un guerrier
+	AF O 8 17 +1
+e.	un assassin
+	AF O 8 11 +1
+

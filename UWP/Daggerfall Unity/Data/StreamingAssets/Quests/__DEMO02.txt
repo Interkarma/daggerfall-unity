@@ -1,0 +1,21 @@
+- This quest is for testing early task condition support
+
+Quest: __DEMO02
+
+QRC:
+
+Message: 1010
+Wearing hat and shades
+
+QBN:
+
+variable hat
+variable shades
+
+- Entry point
+setvar hat
+setvar shades
+
+_HatAndShades_ task:
+when hat and shades
+say 1010

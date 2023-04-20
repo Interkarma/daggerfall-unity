@@ -1,0 +1,244 @@
+1.	Welche Diebesfertigkeit habt Ihr am l#ngsten ge}bt?
+a.	Ausweichen
+	#4400
+	20 +6
+b.	Schleichen
+	#4401
+	16 +6
+c.	Meucheln
+	#4402
+	19 +6
+d.	Schl&sser &ffnen
+	#4404
+	13 +6
+e.	Taschendiebstahl
+	#4405
+	15 +6
+f.	Klettern
+	#4406
+	18 +6
+g.	Kritischer Schlag
+	#4407
+	34 +6
+h.	Rennen
+	#4408
+	21 +6
+i.	Springen
+	#4409
+	3 +6
+
+2.	Welche Schule der Magie habt Ihr am l#ngsten studiert?
+a.	Zerst&rung
+	#4410
+	22 +6
+b.	Wiederherstellung
+	#4411
+	23 +6
+c.	Illusion
+	#4412
+	24 +6
+d.	Ver#nderung
+	#4413
+	25 +6
+e.	Thaumaturgie
+	#4414
+	26 +6
+f.	Mystik
+	#4415
+	27 +6
+
+3.	In welcher Kampftechnik habt Ihr die meiste Erfahrung?
+a.	Kurzwaffen
+	#4416
+	28 +6
+	IT 3 4 1
+b.	Nahkampf
+	#4417
+	30 +6
+	IT 2 1 0
+c.	Axtkampf
+	#4418
+	31 +6
+	IT 3 14 0
+d.	Stumpfe Waffe
+	#4419
+	32 +6
+	IT 3 11 0
+e.	Bogenschie*en
+	#4420
+	33 +6
+	IT 3 16 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+
+4.	Euer Spitzname als Kind war ___.
+a.	Sprunghase
+	#4421
+	3 +6
+b.	Guppyfisch
+	#4422
+	17 +6
+c.	Wieselflink
+	#4423
+	21 +6
+d.	Streithahn
+	#4424
+	30 +6
+e.	Affenstrolch
+	#4425
+	18 +6
+
+5.	Ihr seid freundlicher als die meisten anderen
+	im Umgang mit ___.
+a.	den wilden Harpyien
+	#4428
+	5 +6
+b.	den einf#ltigen Riesen
+	#4429
+	6 +6
+c.	den pr#chtigen Drachen
+	#4430
+	7 +6
+d.	den schamlosen Nymphen
+	#4431
+	8 +6
+e.	den infernalischen Daedra
+	#4432
+	9 +6
+f.	den l#ndlichen Zweiglingen
+	#4433
+	10 +6
+g.	den primitiven Zentauren
+	#4434
+	11 +6
+h.	den schadenfrohen Kobolden
+	#4435
+	12 +6
+
+6.	Als Ihr #lter wurdet, erhieltet Ihr zus#tzliche
+	magische Ausbildung in der ___.
+a.	Schule der Zerst&rung
+	#4436
+	22 +6
+b.	Schule der Wiederherstellung
+	#4437
+	23 +6
+c.	Schule der Illusion
+	#4438
+	24 +6
+d.	Schule der Ver#nderung
+	#4439
+	25 +6
+e.	Schule der Thaumaturgie
+	#4440
+	26 +6
+f.	Schule der Mystik
+	#4441
+	27 +6
+
+7.	Neben Eurer formellen Ausbildung, habt Ihr
+	Euch auch mit ___ besch#ftigt.
+a.	Kontakten zu Aristokraten
+	1 +6
+	r3 +5
+	r0 -5
+b.	Lektionen in Gerissenheit
+	2 +6
+	r0 +2
+	r4 +3
+	r3 -5
+c.	der Aus}bung von Akrobatik
+	3 +2
+	20 +2
+	18 +2
+d.	Schleich}bungen
+	16 +6
+e.	dem Erlernen von Handel
+	14 +6
+f.	Schwimm}bungen
+	17 +6
+g.	Kampf}bungen
+	34 +6
+
+8.	Von allen unangenehmen Typen hasst Ihr
+	pers&nlich ___ am meisten.
+a.	scheinheilige Priester
+	#4442
+	AE M 8 12 +3
+b.	diabolische Zauberer
+	#4443
+	AE M 8 2 +4
+c.	dumme Bauern
+	#4444
+	AE M 8 8 +3
+d.	machthungrige Raubritter
+	#4445
+	AE M 8 17 +4
+e.	amoralische Assassinen
+	#4446
+	AE M 8 11 +2
+
+9.	Was bewegt Euch zu einem Leben als Abenteurer?
+a.	Reicht}mer
+	GP +500
+b.	Ruhm
+	r4 +10
+	r2 +10
+c.	Wissen
+	IT 7 0 0
+d.	Spa*
+	1 +3
+	2 +3
+e.	Anderen zu helfen
+	r0 +10
+
+10.	Zu welchem Gott betet Ihr, wenn }berhaupt?
+a.	Zu keinem
+	r2 +5
+b.	Arkay, Gott v. Geburt u. Tod
+	rf82 +5
+c.	Zenithar, Gott des Handels
+	rf84 +5
+d.	Mara, der Mutterg&ttin
+	rf88 +5
+e.	Dibella, G&ttin der Sch&nheit
+	rf98 +5
+f.	Julianos, Gott der Logik
+	rf94 +5
+g.	Akatosh, Gott der Zeit
+	rf92 +5
+h.	Stendarr, Gott der Gnade
+	rf106 +5
+i.	Kynareth, G&ttin der Luft
+	rf36 +5
+
+11.	Bevor Ihr in die Kaiserstadt aufgebrochen seid,
+	gab Euch Eure Mutter ___.
+a.	100 Goldst}cke
+	GP +100
+b.	ihr Lieblingsbuch
+	IT 7 0 0
+c.	einen Brustharnisch
+	IT 2 0 0
+d.	eine Perle
+	IT 22 1 0
+
+12.	Euer gr&*tes Problem besteht darin ___.
+a.	Giften zu widerstehen
+	RP -10
+b.	wach und alarmiert zu bleiben
+	FT -5
+c.	Kontakte zu kn}pfen
+	RR -5
+d.	Krankheiten zu verhindern
+	RD -5
+e.	Magie zu widerstehen
+	MR -5
+f.	ohne Magie zu k#mpfen
+	TH -5
+
+

@@ -1,0 +1,164 @@
+-- Quest: C:\QUESTS\WORKING\C0B00Y04.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: temple
+-- Repute: 0
+-- QuestId: 4
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 13
+Quest: C0B00Y04
+DisplayName: The Insane Priest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                        __qgiver_ often delves
+<ce>                 into mysteries of cosmic proportions,
+<ce>                  and occasionally we misjudge one of
+<ce>                 our priests' suppleness of sanity in
+<ce>                 the face of eternity. In other words,
+<ce>                  one of our priests has gone off his
+<ce>                    nut. Will you help us bring the
+<ce>                       lunatic back to __qgiver_?
+                                     <--->
+<ce>                         Old =priest_ is on a
+<ce>                    rampage again. Could be that %g
+<ce>                        got into __qgiver_ wine
+<ce>                   cellars again. Regardless, are you
+<ce>                    available to help bring the old
+<ce>                            loony back home?
+
+RefuseQuest:  [1001]
+<ce>                        %oth, I hope that when
+<ce>                     you lose your mind, someone is
+<ce>                      kind enough to come to your
+<ce>                             rescue, %pct.
+
+AcceptQuest:  [1002]
+<ce>                     Good of you, %pct. Now then,
+<ce>                       =priest_ has run off to a
+<ce>                     place called ___mondung_. Try
+<ce>                 not to hurt the poor maniac too much.
+<ce>                         =priest_ doesn't know
+<ce>                  what %g's doing right now. Just give
+<ce>                   %g2 a little knock on the head and
+<ce>                bring %g2 back here. I'll wait =queston_
+<ce>                       days for you. Be careful.
+
+QuestComplete:  [1004]
+<ce>                     Good to see you again, %pct.
+<ce>                      Don't worry about =priest_.
+<ce>                      We'll take good care of %g2.
+
+RumorsDuringQuest:  [1005]
+That lunatic =priest_ is holed up in ___mondung_. Only an idiot would go there.
+<--->
+___mondung_ is a dangerous place for sane people. _priest_ won't last long.
+
+RumorsPostfailure:  [1006]
+Apparently, =priest_ is never coming back home.
+<--->
+=priest_ is still out of %g3 mind, wandering about ___mondung_.
+
+RumorsPostsuccess:  [1007]
+A %ra rescued that crazy =priest_. Whether %g3 sanity was saved is a question.
+<--->
+=priest_ is either very holy, very drunk, or very mad. Or possibly all three.
+
+QuestorPostsuccess:  [1008]
+You were kindhearted to rescue =priest_, I recall. What can I do for you?
+
+QuestorPostfailure:  [1009]
+I have nothing to say to you. You see, I remember =priest_.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ __qgiver_, ___qgiver_
+ has sent me to find a priest by
+ the name of =priest_,
+ who went berserk and ran away to
+ a place called ___mondung_.
+ I have =queston_ days to go there,
+ find the nut, and get back to
+ _qgiver_.
+
+Message:  1011
+<ce>                       "%oth, that was my head!"
+<ce>                          =priest_ falls down
+<ce>                    unconscious and you pick %g2 up.
+                                     <--->
+<ce>                        =priest_ rolls %g3 eyes
+<ce>                      in pain and madness. With a
+<ce>                        low groan, %g falls into
+<ce>                               your arms.
+
+Message:  1012
+<ce>                      You hear a light, maniacal
+<ce>                          giggle, and =priest_
+<ce>                    disappears, as if into thin air.
+                                     <--->
+<ce>                     "I have a kingdom to rule, I
+<ce>                    can't spend all my time picking
+<ce>                          damn lint!" =priest_
+<ce>                    slips your grasp with surprising
+<ce>                           agility and flees.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 4 times.
+--               %g2 occurs 7 times.
+--               %g3 occurs 3 times.
+--              %oth occurs 1 time.
+--              %pct occurs 4 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--          _priest_ occurs 49 times.
+--         =queston_ occurs 8 times.
+--       ___mondung_ occurs 5 times.
+--        ___qgiver_ occurs 8 times.
+
+QBN:
+
+Person _qgiver_ group Questor
+
+Place _mondung_ remote dungeon
+--removed fake dungeon
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _priest_ is Monk
+
+--	Quest start-up:
+	start timer _queston_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	place foe _priest_ at _mondung_ 
+
+variable _reward_
+_bonk_ task:
+	injured _priest_ 
+	say 1011 
+	add foe _priest_ face 
+	remove foe _priest_
+	--changed "place foe in fake dungeon" to remove foe action.
+
+_queston_ task:
+	end quest 
+
+_cick_ task:
+	when _bonk_ and _queston_ 
+	say 1012 
+
+_S.04_ task:
+	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.04_ and _bonk_ 
+	give pc nothing 
+	end quest 
+
+_nope_ task:
+	when _S.04_ and not _bonk_ 
+	clear _S.04_ _nope_ 

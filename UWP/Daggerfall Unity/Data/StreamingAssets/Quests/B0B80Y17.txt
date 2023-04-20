@@ -1,0 +1,135 @@
+-- Quest: C:\QUESTS\WORKING\B0B80Y17.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: knight
+-- Repute: 80
+-- QuestId: 17
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: B0B80Y17
+DisplayName: The Army of Undead
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      I am _qgiver_ of ==qgiver_.
+<ce>                     I have a most dangerous quest
+<ce>                        %pcn. You are one of the
+<ce>                      few that could possibly take
+<ce>                      it on. A lich is raising an
+<ce>                    army of undead. We need someone
+<ce>                     to go in and put a stop to it.
+
+RefuseQuest:  [1001]
+<ce>                          I understand, %pcn.
+<ce>                     This is too dangerous even for
+<ce>                    you. There are one or two other
+<ce>                      heroes that might be able to
+<ce>                     pull this one off. I'll go ask
+<ce>                                 them.
+
+AcceptQuest:  [1002]
+<ce>                    You are brave indeed. The lich
+<ce>                       has made ___dungeon_ into
+<ce>                     its lair. Go there and destroy
+<ce>                    the foul thing. In =2dung_ days
+<ce>                     we will send out someone else,
+<ce>                         should you not return.
+
+QuestComplete:  [1004]
+<ce>                        Hail to the hero, %pcn!
+<ce>                      Well done! You name will be
+<ce>                     recorded in all the histories.
+
+RumorsDuringQuest:  [1005]
+The Great Lich of ___dungeon_ is awake again.
+
+RumorsPostfailure:  [1006]
+The Lich of ___dungeon_ went across the Bay, I hear.
+<--->
+The Lich is gathering forces outside of %reg.
+
+RumorsPostsuccess:  [1007]
+Thank %god for ==qgiver_. They saved us all.
+<--->
+A %ra from ==qgiver_ destroyed the Lich of ___dungeon_.
+
+QuestorPostsuccess:  [1008]
+I would be honored to help you in any way, hero.
+
+QuestorPostfailure:  [1009]
+After the ___dungeon_ debacle, you have a lot of nerve returning.
+<--->
+I trusted you to slay that lich. Think of my situation!
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ ==qgiver_ in ___qgiver_
+ charged me with the duty of
+ destroying the lich of
+ ___dungeon_. I have =2dung_
+ days to finish the task.
+
+Message:  1011
+<ce>                       The lich is dead. Without
+<ce>                        his magical support, the
+<ce>                     army of undead will return to
+<ce>                               the grave.
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 1 time.
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--           =2dung_ occurs 2 times.
+--         ==qgiver_ occurs 4 times.
+--       ___dungeon_ occurs 6 times.
+--        ___qgiver_ occurs 3 times.
+
+QBN:
+
+Person _qgiver_ group Questor
+Person _local_ face 1 group Resident2 local
+
+Place _dungeon_ remote dungeon0
+
+Clock _2dung_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Ancient_lich
+Foe _F.01_ is Lich
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	pick one of _old_ _S.04_ _S.04_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _F.00_ saying 1011 
+	killed 1 _F.01_ saying 1011 
+
+_S.02_ task:
+	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.02_ and _S.01_ 
+	give pc nothing 
+	change repute with _local_ by +4 
+	end quest 
+
+_clearclick_ task:
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_ 
+
+_S.04_ task:
+	place foe _F.01_ at _dungeon_ 
+
+_old_ task:
+	place foe _F.00_ at _dungeon_ 

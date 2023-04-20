@@ -1,0 +1,175 @@
+-- Quest: C:\QUESTS\WORKING\50C00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: Peryite
+-- Repute: 0
+-- QuestId: 0
+Messages: 16
+Quest: 50C00Y00
+DisplayName: Peryite's Quest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 You can't really have too much power,
+<ce>                       can you, %pcf? You look a
+<ce>                   lot like someone I used to know --
+<ce>                  but that was back during your First
+<ce>                 Era, so it couldn't very well be you,
+<ce>                  could it? Now then, if you'd like, I
+<ce>                  can give you a little shield of mine
+<ce>                   called the Spell Breaker. It will
+<ce>                 certainly give you the power you want,
+<ce>                  but first, I need a little proof of
+<ce>                   your seriousness. You are serious,
+<ce>                              aren't you?
+
+RefuseQuest:  [1001]
+<ce>                   Changed your mind, eh? Don't feel
+<ce>                    bad. It's a sign of maturity to
+<ce>                    be brave enough to say no. Just
+<ce>                     give me a call when you change
+<ce>                      your mind. I know you will.
+
+AcceptQuest:  [1002]
+<ce>                  Excellent. It's wonderful seeing a
+<ce>                   %ra with clear objectives. So rare
+<ce>                 in this day and age. Now then, there's
+<ce>                 this _monster_, frankly a vampire, who
+<ce>                 I know you'd hate. Thoroughly stupid,
+<ce>                 unattractive, and mean-spirited sort.
+<ce>                  He needs to go on a one-way trip to
+<ce>                   you-know-where. Then, after you've
+<ce>                taken care of that unpleasant business,
+<ce>                    go visit my friend, _qgfriend_,
+<ce>                         a charming =qgfriend_,
+<ce>                    who will meet you at __qgfriend_
+<ce>                     in ___qgfriend_. Now, I don't
+<ce>                 want to rush you, but I can't ask %g2
+<ce>                   to wait more than =1stparton_ days
+<ce>                for you. And just getting to ___mondung_
+<ce>                  may take a good while, so you ought
+<ce>                 not dawdle along the way.  _qgfriend_
+<ce>                  will be happy to show you the Spell
+<ce>                  Breaker. Now, I've prattled on long
+<ce>                     enough. It's been a pleasure.
+
+QuestFail:  [1003]
+<ce>                       You must be looking for a
+<ce>                         different =qgfriend_.
+
+QuestComplete:  [1004]
+<ce>                         There you are, %pct.
+<ce>                            I'm _qgfriend_,
+<ce>              I believe the Master wanted you to find me?
+<ce>               The Master is very pleased with your work
+<ce>                        on the dread _monster_,
+<ce>               if you don't mind me saying so. The Master
+<ce>               seems very fond of you in general. Here is
+<ce>               the shield you wanted, the Spell Breaker.
+<ce>                  Spellcasters will come to fear you.
+<ce>                        I hope it pleases, %pct.
+
+RumorsDuringQuest:  [1005]
+=monster_ of ___mondung_, they say, has made powerful enemies as well as friends.
+<--->
+I met a very nice =qgfriend_ at __qgfriend_. Wonder why I never met %g2 before?
+
+RumorsPostfailure:  [1006]
+Old =monster_ moved up north. So I guess we know where plague will follow.
+<--->
+I hear the Daedra themselves fear =monster_ and its power.
+
+RumorsPostsuccess:  [1007]
+=monster_ they say fancied itself more powerful than the daedra themselves.
+<--->
+=monster_ got its reward for boasting about its power over life and death.
+
+Message:  1011
+They say _qgfriend_ is a very pleasant and charming =qgfriend_, who is also a daedra-worshipper.
+<--->
+_qgfriend_ is rumored to be Peryite's slave in %reg.
+
+Message:  1012
+Peryite is the Daedra of Pestilence and Plague.
+<--->
+Peryite is the most affable of the Daedra Princes with the worst reputation.
+
+Message:  1013
+The Spell Breaker is the ultimate defense against spells.
+<--->
+Spell Breaker can dispel or even reflect spells back on offensive casters.
+
+Message:  1014
+<ce>                       You have slain =monster_.
+<ce>                     Peryite's revenge is complete.
+
+Message:  1015
+%qdt:
+ The Daedra Prince Peryite wants me
+ to go to ___mondung_
+ and slay a vampire named =monster_
+ After that, I am to meet _qgfriend_
+ in a place called __qgfriend_ in
+ ___qgfriend_ to claim the famous
+ Spell Breaker shield.  I have =1stparton_
+ days for the whole journey.
+
+
+-- Symbols used in the QRC file:
+--
+--               %g2 occurs 2 times.
+--              %pcf occurs 1 time.
+--              %pct occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--       =1stparton_ occurs 5 times.
+--         =monster_ occurs 7 times.
+--        =qgfriend_ occurs 5 times.
+--       ___mondung_ occurs 3 times.
+--      ___qgfriend_ occurs 5 times.
+--         _monster_ occurs 2 times.
+--        _qgfriend_ occurs 6 times.
+
+QBN:
+Item _artifact_ artifact Spell_Breaker anyInfo 1013
+
+Person _questgiver_ face 112 named Peryite anyInfo 1012
+Person _qgfriend_ group Cleric female remote anyInfo 1011
+Person _dummyvamp_ face 1 factiontype Vampire_Clan remote
+
+Place _mondung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 1 range 1 5
+
+Foe _monster_ is Ancient_vampire
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1015 step 0 
+	place foe _monster_ at _mondung_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_pcgetsgold_ task:
+	when _npcclicked_ and _mondead_ 
+	give pc _artifact_ 
+	end quest 
+--removed unnecessary delay
+
+_mondead_ task:
+	killed 1 _monster_ 
+	say 1014 
+	change repute with _dummyvamp_ by -20 
+
+_npcclicked_ task:
+	clicked npc _qgfriend_ 
+
+_clearclick_ task:
+	when _npcclicked_ and not _mondead_
+	say 1003 
+	clear _npcclicked_ _clearclick_ 

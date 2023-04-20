@@ -1,0 +1,127 @@
+-- Quest: C:\QUESTS\WORKING\B0B00Y01.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: knight
+-- Repute: 0
+-- QuestId: 1
+Messages: 12
+Quest: B0B00Y01
+DisplayName: Retribution
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                    We have a traitor in __qgiver_,
+<ce>                 a villianous _monster_ who has turned
+<ce>                 against %g3 brethren. Our honor is at
+<ce>                         stake, %pct. Join our
+<ce>                            righteous fury.
+                                     <--->
+<ce>                      __qgiver_ has been betrayed
+<ce>                       by a perfidious _monster_.
+<ce>                  Will you help us track the cowardly
+<ce>                     villian down and destroy %g2?
+
+RefuseQuest:  [1001]
+<ce>                 An ignoble reply. I expected better.
+
+AcceptQuest:  [1002]
+<ce>                 Very good. The traitor is a _monster_
+<ce>                     named =monster_ who has taken
+<ce>                      refuge in ___mondun_ to the
+<ce>                     %di. If you have not returned
+<ce>                 in =queston_ days, your honor will be
+<ce>               forfeit and another will take your place.
+<ce>                     Do not fail us in this, %pcf.
+
+QuestFail:  [1003]
+<ce>                 The _monster_ is not dead. Do not try
+<ce>                       to convince me otherwise.
+
+QuestComplete:  [1004]
+<ce>                Well done. You have reason to be proud.
+
+RumorsDuringQuest:  [1005]
+That _monster_ ran off to ___mondun_ like the hounds of hell were behind him.
+<--->
+_qgiver_ can't just let =monster_ go after what %g did to the %kno.
+
+RumorsPostfailure:  [1006]
+=monster_ is apparently tougher than _qgiver_ thought. What an escape.
+<--->
+=monster_ has moved north I hear, but %g3 memory still plagues the order.
+
+RumorsPostsuccess:  [1007]
+=monster_'s story just proves it. You don't play around with the %kno.
+<--->
+I always thought the Order would be more merciful to a dolt like =monster_.
+
+QuestorPostsuccess:  [1008]
+You have proven yourself in the =monster_ affair. How can we help you?
+
+QuestorPostfailure:  [1009]
+__qgiver_ has been embarrassed by the =monster_ affair. What do you want now?
+
+QuestLogEntry:  [1010]
+%qdt:
+ The %kno in ___qgiver_
+ has sent me to find and slay a _monster_
+ called =monster_ in
+ %g3 hideout, ___mondun_. I have
+ =queston_ days to accomplish this.
+
+Message:  1011
+<ce>               You have slain =monster_, the _monster_.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 1 time.
+--                %g occurs 1 time.
+--               %g2 occurs 2 times.
+--               %g3 occurs 3 times.
+--              %kno occurs 3 times.
+--              %pcf occurs 2 times.
+--              %pct occurs 1 time.
+--              %qdt occurs 1 time.
+--         =monster_ occurs 14 times.
+--         =queston_ occurs 2 times.
+--        ___mondun_ occurs 3 times.
+--        ___qgiver_ occurs 4 times.
+--         _monster_ occurs 10 times.
+--          _qgiver_ occurs 2 times.
+
+QBN:
+
+Person _qgiver_ group Questor
+
+Place _mondun_ remote dungeon
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Nightblade
+
+--	Quest start-up:
+	start timer _queston_ 
+	reveal _mondun_ 
+	log 1010 step 0 
+	place foe _monster_ at _mondun_ 
+
+_queston_ task:
+	end quest 
+
+_pcgetsgold_ task:
+	when _mondead_ and _qgclicked_ 
+	give pc nothing 
+	end quest 
+
+_mondead_ task:
+	killed 1 _monster_ saying 1011 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_clearclick_ task:
+	when not _mondead_ and _qgclicked_
+	say 1003 
+	clear _qgclicked_ _clearclick_ 

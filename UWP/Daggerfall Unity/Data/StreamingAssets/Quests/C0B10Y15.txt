@@ -1,0 +1,195 @@
+-- Quest: C:\QUESTS\WORKING\C0B10Y15.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: temple
+-- Repute: 10
+-- QuestId: 15
+Messages: 41
+Quest: C0B10Y15
+DisplayName: The Relic
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                     %pct, __questgiver_ needs you
+<ce>                  for a dangerous mission to retrieve
+<ce>                    one of the lost _item_s of %god.
+<ce>                    You will have to defy the power
+<ce>                    of =lich_, its creator who then
+<ce>                   betrayed the temple and sank into
+<ce>                   evil.  He is now a lich, and still
+<ce>                  guards the _item_.  Are you willing?
+
+RefuseQuest:  [1001]
+<ce>                  I understand.  A lich is a fearsome
+<ce>                   opponent for one of your youth and
+<ce>                     inexperience.  Perhaps as you
+<ce>                      mature you will take up this
+<ce>                       again.  %god go with you.
+
+AcceptQuest:  [1002]
+<ce>                  I admire your courage, but tremble
+<ce>                  to think of the danger you are about
+<ce>                   to face.  =lich_ guards his _item_
+<ce>                   of %god in ___mondung_.  Remember,
+<ce>                   there is no need to slay the lich,
+<ce>                  just retrieve the _item_ and return
+<ce>                       it to __questgiver_ here.
+<ce>                     If we have no word from you in
+<ce>                    =qtime_ days, we will chant the
+<ce>                     Song of the Departed for you.
+<ce>                    %god's blessings upon you, %pcn.
+
+QuestFail:  [1003]
+<ce>                I understand your reluctance to depart,
+<ce>                    %pcf, but waiting will not make
+<ce>                          the danger any less.
+
+QuestComplete:  [1004]
+<ce>                   Praise to great %god!  I had not
+<ce>                    allowed myself to hope that you
+<ce>                        would actually succeed.
+<ce>                     %god's favor will surely shine
+<ce>                     upon you for this deed.  As a
+<ce>                      small token of the Temple's
+<ce>                     gratitude, please accept this
+<ce>                          enchanted _reward_.
+
+RumorsDuringQuest:  [1005]
+<ce>        __questgiver_ hopes to recover their long-lost _item_,
+<ce>        but who will they find willing to face the lich =lich_?
+
+RumorsPostfailure:  [1006]
+<ce>            I hear that __questgiver_ now believes that the
+<ce>               _item_ was never in ___mondung_ after all.
+
+RumorsPostsuccess:  [1007]
+<ce>         Did you hear about the %ra who went into ___mondung_
+<ce>               and returned with __questgiver_'s _item_?
+
+QuestorPostsuccess:  [1008]
+<ce>                %pcf, you are always welcome here after
+<ce>                         you braved that lich!
+
+QuestorPostfailure:  [1009]
+<ce>              I do not blame you for failing to retrieve
+<ce>                 our _item_ from ___mondung_, but I am
+<ce>              disappointed that you accepted an assignment
+<ce>                      that you could not complete.
+
+Message:  1015
+<ce>                A sinister voice whispers from nowhere,
+<ce>                                    
+<ce>               "The _item_ does not belong to you or the
+<ce>                   sentimental fools of __questgiver_.
+<ce>              I therefore reclaim what is rightfully mine."
+<ce>                                    
+<ce>                          The _item_ vanishes.
+
+Message:  1020
+%qdt:
+ __questgiver_ of ___questgiver_
+ has sent me to retrieve a sacred
+ object, a _item_, from ___mondung_.
+ The catch is that it is guarded by
+ =lich_, a lich.  I do not have to
+ slay =lich_, however, just retrieve
+ the _item_ and return to _questgiver_
+ within =qtime_ days.
+
+Message:  1030
+<ce>                    This is surely __questgiver_'s
+<ce>                           long-lost _item_.
+
+Message:  1035
+<ce>                     What?  You not only retrieved
+<ce>                   the sacred _item_, but also killed
+<ce>                  the evil =lich_?  You are truly one
+<ce>                   of %god's favored ones.  You will
+<ce>                     surely rise far in our order.
+
+Message:  1040
+<ce>                        =lich_ hisses in fury:
+<ce>                                    
+<ce>                       "You dogs of __questgiver_
+<ce>                       will never have my _item_!
+<ce>                        I made it and I will keep
+<ce>                       it.  Nothing will stop me,
+<ce>                          not even the grave."
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 8 times.
+--              %pcf occurs 2 times.
+--              %pcn occurs 2 times.
+--              %pct occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--            =lich_ occurs 11 times.
+--           =qtime_ occurs 3 times.
+--       ___mondung_ occurs 6 times.
+--    ___questgiver_ occurs 11 times.
+--            _item_ occurs 19 times.
+--      _questgiver_ occurs 3 times.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _item_ talisman
+Item _reward_ magic_item
+
+Person _questgiver_ group Questor
+
+Place _mondung_ remote dungeon
+
+Clock _qtime_ 00:00 0 flag 17 range 0 2
+Clock _shortdelay_ 00:02 0 flag 1 range 0 1
+
+Foe _lich_ is Lich
+
+--	Quest start-up:
+	place item _item_ at _mondung_ 
+	start timer _qtime_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	place foe _lich_ at _mondung_ 
+
+_qtime_ task:
+	have _item_ set _S.07_ 
+
+_S.01_ task:
+	toting _item_ and _questgiver_ clicked 
+	give pc _reward_ 
+
+_qgclicked_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.01_
+	say 1003
+	clear _qgclicked_ _clearclick_
+
+_S.02_ task:
+	killed 1 _lich_ 
+
+_S.03_ task:
+	when _S.01_ and _S.02_ 
+	say 1035 
+	change repute with _questgiver_ by +7 
+
+_pickupitem_ task:
+	clicked item _item_ 
+	start timer _shortdelay_ 
+	say 1030 
+
+variable _shortdelay_
+_S.06_ task:
+	when _shortdelay_ and not _S.02_ 
+	say 1040 
+
+_S.07_ task:
+	say 1015 
+
+_S.08_ task:
+    when _S.01_ or _qtime_
+    end quest

@@ -1,0 +1,239 @@
+1.	Vos armes preferees sont ...
+a.	les lames courtes
+	#4200
+	!4900
+	28 +12
+	IT 3 4 2
+b.	les haches
+	#4202
+	!4902
+	31 +12
+	IT 3 15	0
+c.	les armes contondantes
+	#4203
+	!4903
+	32 +12
+	IT 3 13	0
+d.	les arcs
+	#4204
+	!4904
+	33 +12
+	IT 3 17	0
+	IT 3 18	1
+	IT 3 18	1
+	IT 3 18	1
+	IT 3 18 1
+	IT 3 18 1
+	IT 3 18 1
+e.	les lames longues
+	#4205
+	!4905
+	29 +12
+	IT 3 8 0
+
+2.	Qu'est-ce qui vous pousse a mener
+	une vie d'aventurier ?
+a.	La richesse
+	#4560
+	GP +500
+b.	La gloire
+	#4561
+	r4 +10
+	r2 +10
+c.      Le savoir
+	#4562
+	IT 7 0 0
+d.	Le plaisir
+	#4563
+	1 +3
+	2 +3
+e.	Aider les autres
+	#4564
+	r0 +10
+	
+3.	Quel talent avez-vous le plus etudie ?
+a.	L'esquive
+	#4550
+	!4400
+	20 +6
+b.	La discretion
+	#4551
+	!4401
+	16 +6
+c.	L'embuscade
+	#4552
+	!4402
+	19 +6
+d.	Le crochetage
+	#4554
+	!4404
+	13 +6
+e.	Le vol a la tire
+	#4555
+	!4405
+	15 +6
+f.	L'escalade
+	#4453
+	!4406
+	18 +6
+g.	Les coups critiques
+	#4452
+	!4407
+	34 +6
+h.	La course
+	#4451
+	!4408
+	21 +6
+i.	Le saut
+	#4450
+	!4409
+	3 +6
+
+4.	Enfant, votre surnom etait ...
+a.      la grenouille
+	3 +6
+b.      l'anguille
+	17 +6
+c.      Vif-argent
+	21 +6
+d.      le bagarreur
+	30 +6
+e.      le singe
+	18 +6
+
+5.	On vous a prete puis plus tard donne ...
+a.	200 pieces d'or
+	GP +200
+b.      un livre
+	IT 7 0 0
+c.	un fleau elfique
+	IT 3 12 3
+d.	un dai-katana
+	IT 3 10 0
+
+6.	Vers quel dieu se tourne votre devotion ?
+a.	Aucun
+	r2 +5
+b.	Arkay, la Vie et la Mort
+	rf82 +5
+c.	Zenithar, le Commerce
+	rf84 +5
+d.	Mara, deesse Mere
+	rf88 +5
+e.	Dibella, deesse de la Beaute
+	rf98 +5
+f.	Julianos, la Logique
+	rf94 +5
+g.	Akatosh, le Temps
+	rf92 +5
+h.	Stendarr, la Pitie
+	rf106 +5
+i.	Kynareth, deesse de l'Air
+	rf36 +5
+
+7.	Vous avez le plus de mal a ...
+a.	resister aux poisons
+	RP -10
+b.	rester eveille et alerte
+	FT -5
+c.	vous entendre avec les autres
+	RR -5
+d.	eviter les maladies
+	RD -5
+e.	resister a la magie
+	MR -5
+f.	vous battre et parer
+	TH -5
+
+8.	De votre enfance, vous avez preserve ...
+a.	100 pieces d'or
+	GP + 100
+b.	votre livre favori
+	IT 7 0 0
+c.	une douzaine de fleches
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+	IT 3 18 0
+d.	une perle
+	IT 22 1 0
+
+9.	Vous eprouvez le plus de sympathie envers les ...
+a.	Harpies sauvages
+	#4764
+	5 +6
+b.	Geants naifs 
+	#4765
+	6 +6
+c.	Les Dragons glorieux
+	#4766
+	7 +6
+d.	Les Nymphes impudiques
+	#4767
+	8 +6
+e.	Les Daedras infernaux
+	#4768
+	9 +6
+f.	Les Spriggans bucoliques
+	#4769
+	10 +6
+g.	Les Centaures primitifs
+	#4770
+	11 +6
+h.	Les Diablotins malfaisants
+	#4771
+	12 +6
+
+10.	Avec 200 pieces d'or recues en recompense,
+	vous decidez ...
+a.	de les epargner
+	GP +200
+b.	d'acheter une dague en ebene
+	IT 3 0 7
+c.	d'acheter un bon livre
+	IT 7 0 0
+d.	d'acheter un rubis
+	IT 14 0 0
+e.	d'acheter un baton en argent
+	IT 3 2 2
+
+11.	Vous passez votre temps libre a vous
+	entrainer ...
+a.	aux lames courtes
+	28 +6
+b.	au corps-a-corps
+	30 +6
+c.	a la hache
+	31 +6
+d.	aux armes contondantes
+	32 +6
+e.	a l'arc
+	33 +6
+f.	aux lames longues
+	29 +6
+
+12.	Votre meilleur ami est ...
+a.	un moine
+	#4212
+	AF O 8 12 +1
+b.	un mage
+	#4213
+	AF O 8 2 +1
+c.	un voleur
+	#4214
+	AF O 8 8 +1
+d.	un guerrier
+	#4215
+	AF O 8 17 +1
+e.	un assassin
+	#4216
+	AF O 8 11 +1
+

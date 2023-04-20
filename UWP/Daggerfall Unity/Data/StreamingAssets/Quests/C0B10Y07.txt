@@ -1,0 +1,150 @@
+-- Quest: C:\QUESTS\WORKING\C0B10Y07.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: temple
+-- Repute: 10
+-- QuestId: 7
+Messages: 12
+Quest: C0B10Y07
+DisplayName: A Delivery
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       Blessings upon you, %pcn.
+<ce>                       __qgiver_ needs you to run
+<ce>                         an errand for us. This
+<ce>                          _religitem_ needs to
+<ce>                       be delivered to ___priest_
+<ce>                     within =traveltime_ days. You
+<ce>                       will receive a temple fee
+<ce>                       of _gold_ gold pieces. Can
+<ce>                           you do it for us?
+
+RefuseQuest:  [1001]
+<ce>                      Sigh. I shall have to find
+<ce>                       some other temple servant
+<ce>                         to perform this task.
+
+AcceptQuest:  [1002]
+<ce>                       Here is the _religitem_.
+<ce>                          Take it to _priest_
+<ce>                      of __priest_ in ___priest_.
+<ce>                     Oh, I almost forgot to mention
+<ce>                        that a rival temple may
+<ce>                      send out thugs to stop you.
+
+QuestComplete:  [1004]
+<ce>                         %god's favor upon you
+<ce>                         %pcn. This _religitem_
+<ce>                        is sorely needed here. I
+<ce>                       understand that you are to
+<ce>                        be given a temple fee of
+<ce>                          _gold_ gold pieces.
+
+RumorsDuringQuest:  [1005]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has it good points and bad ones.
+
+RumorsPostfailure:  [1006]
+__qgiver_ has been cursing the name %pcn.
+
+RumorsPostsuccess:  [1007]
+_priest_ seems pleased with %g3 gift from __qgiver_.
+
+QuestorPostsuccess:  [1008]
+_priest_ sends %g3 regards, %pcf. What can I do for you?
+
+QuestorPostfailure:  [1009]
+_priest_ would never forgive me if I spoke with you.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of __qgiver_ has given me
+ a charge to deliver the _religitem_
+ to _priest_ in __priest_ in
+ ___priest_. It must be there
+ within =traveltime_ days.
+
+Message:  1011
+<ce>                         That _religitem_ will
+<ce>                      never make it to __priest_.
+<ce>                        Instead, I shall deliver
+<ce>                            them your head!
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 1 time.
+--               %g3 occurs 2 times.
+--              %god occurs 1 time.
+--              %jok occurs 3 times.
+--              %oth occurs 5 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--      =traveltime_ occurs 3 times.
+--        ___priest_ occurs 6 times.
+--         __qgiver_ occurs 4 times.
+--            _gold_ occurs 2 times.
+--          _priest_ occurs 5 times.
+--          _qgiver_ occurs 1 time.
+--       _religitem_ occurs 5 times.
+
+QBN:
+Item _religitem_ religious
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+Person _priest_ group Group_5.0 remote
+Person _enemy_ face 176 group Local_4.0 remote
+
+Clock _traveltime_ 00:00 0 flag 1 range 1 2
+
+Foe _thief_ is Thief
+Foe _spellsword_ is Spellsword
+
+--	Quest start-up:
+	create foe _thief_ every 12 minutes 2 times with 5% success 
+	create foe _spellsword_ every 12 minutes 2 times with 5% success 
+	start timer _traveltime_ 
+	log 1010 step 0 
+	get item _religitem_ 
+
+_traveltime_ task:
+	end quest 
+
+_questdone_ task:
+	toting _religitem_ and _priest_ clicked 
+	give pc _gold_ 
+	end quest 
+
+_S.02_ task:
+	injured _thief_ saying 1011 
+	injured _spellsword_ saying 1011 

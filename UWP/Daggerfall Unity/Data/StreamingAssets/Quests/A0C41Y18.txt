@@ -1,0 +1,257 @@
+-- Quest: C:\QUESTS\WORKING\A0C41Y18.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 41
+-- QuestId: 18
+Quest: A0C41Y18
+DisplayName: The Mummy's Finger
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  I need someone to deliver something
+<ce>                  for me, and I'm willing to pay very
+<ce>              generously. _gold1_ gold up front, _gold2_
+<ce>                       more when the job is done.
+<ce>                         Will you help me out?
+
+RefuseQuest:  [1001]
+<ce>                    %oth, I'll never be rid of this
+<ce>                    thing! Why will no one help me?
+
+AcceptQuest:  [1002]
+<ce>                 Thank %god! You don't know how much
+<ce>                  this means to me. Here's your gold.
+<ce>                Now, take this to _dummy_ in ___dummy_.
+<ce>                 %g'll pay you the rest. I really must
+<ce>                   be going now. Thank you so much!
+
+QuestComplete:   [1004]
+<ce>                  _giver_ hands you a letter wrapped
+<ce>                around a small object and hurries away.
+
+RumorsDuringQuest:  [1005]
+<ce>                  The pirates have been particularly
+<ce>                           active this year.
+
+RumorsPostfailure:  [1006]
+<ce>                 Have you heard the story of the curse
+<ce>                  of the mummy's finger? Oh. Sorry. I
+<ce>                           didn't realize...
+
+RumorsPostsuccess:  [1007]
+<ce>                 Some brave %ra went into ___dungeon_.
+<ce>                               Poor fool.
+
+QuestorPostsuccess:  [1008]
+<ce>                The loons will be back early this year.
+
+QuestorPostfailure:  [1009]
+<ce>                  Do you think I'm fat? Everyone says
+<ce>                      I am, but I don't think so.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I have been hired to make a delivery
+ to a _dummy_ of ___dummy_.
+ My mysterious employer paid me _gold1_
+ gold and promised _gold2_ more when I
+ complete my assignment. No time frame
+ was specified, but my employer seemed
+ very anxious for me to be on my way.
+
+Message:  1011
+%qdt:
+ I have been tricked. The supposed
+ delivery to _dummy_ was actually
+ a cursed mummy finger.
+
+Message:  1012
+%qdt:
+ I have learned that the mummy whose
+ curse I suffer is buried in ___dungeon_.
+ I must destroy his true form or his
+ spirit will continue to haunt me for
+ 1001 nights.
+
+Message:  1013
+<ce> Package? From _giver_? No, %g1
+<ce> would've told me beforehand. You must
+<ce> be mistaken. Why don't you read the
+<ce> contents to see who it's for?
+
+Message:  1015
+<ce>     I wouldn't know anything about that. Try asking at a temple.
+                                     <--->
+<ce>              _sage_ knows about such things. Go ask %g2.
+                                     <--->
+<ce>         Have you tried asking around at __sage_ in ___sage_?
+                                     <--->
+<ce>     I hear that someone in ___sage_ might know about such things.
+                                     <--->
+<ce>      They say that _sage_ is the foremost expert in such things.
+                                     <--->
+<ce>                   Maybe that sage at __sage_ knows.
+
+Message:  1016
+<ce>                  He who stole my _finger_ must die!
+                                     <--->
+<ce>                        I come for my _finger_.
+                                     <--->
+<ce>                Accept your doom. Lay down your weapon.
+                                     <--->
+<ce>                       My _finger_, my _finger_.
+                                     <--->
+<ce>            You have my _finger_. Without it, I cannot rest.
+                                     <--->
+<ce>          You may destroy me this night, but I shall return.
+                                     <--->
+<ce>              I will rise again to come for my _finger_.
+
+Message:  1020
+<ce>              All who violate my tomb must be destroyed!
+
+Message:  1025
+<ce>                    Let me see the _finger_. Ah...
+<ce>                Yes, it bears the curse of =realmummy_.
+<ce>                  Each night, for 1001 nights, at the
+<ce>                    stroke of midnight the spirit of
+<ce>                    =realmummy_ will visit the owner
+<ce>                   of this _finger_. The only way to
+<ce>                   break the curse is to destroy the
+<ce>                    real =realmummy_ in his tomb at
+<ce>                              ___dungeon_.
+
+Message:  1026
+<ce>                What you describe sounds like a classic
+<ce>                mummy's curse, but without the _finger_
+<ce>               itself, I cannot tell you more than that.
+<ce>             Bring it to me, and I may be able to determine
+<ce>                          from whence it came.
+
+Message:  1030
+<ce>               With =realmummy_ dead, you know you have
+<ce>                   rid yourself of %g3 curse forever.
+
+Message:  1040
+Dear Stranger,
+ 
+ I hope you will forgive me for what I have
+ done, but I had no choice. The mummy has
+ haunted me every night since I found this
+ cursed finger. I've tried throwing it away,
+ but it did no good. A learned sage advised me
+ that only by finding the mummy's tomb or by giving
+ the finger away could I be rid of its hateful
+ curse. I am no warrior, and who would knowingly
+ take up this burden for me? You looked brave
+ enough to endure the curse and perhaps solve it.
+ Please understand, I meant you no harm, but I
+ would have been killed or driven mad otherwise!
+
+Message:  1050
+<ce>                 _sage_ is a noted sage from ___sage_.
+                                     <--->
+<ce>                     You'll find _sage_ in __sage_
+<ce>                              in ___sage_.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g2 occurs 6 times.
+--              %god occurs 1 time.
+--              %oth occurs 1 time.
+--              %qdt occurs 3 times.
+--               %ra occurs 1 time.
+--       =realmummy_ occurs 4 times.
+--         ___dummy_ occurs 2 times.
+--       ___dungeon_ occurs 5 times.
+--          ___sage_ occurs 17 times.
+--           _dummy_ occurs 3 times.
+--          _finger_ occurs 15 times.
+--           _giver_ occurs 1 time.
+--           _gold1_ occurs 2 times.
+--           _gold2_ occurs 8 times.
+--            _sage_ occurs 5 times.
+
+QBN:
+Item _finger_ finger anyInfo 1015
+Item _letter_ letter used 1040
+Item _gold1_ gold
+Item _gold2_ gold
+--changed msg 1030 %g2 to %g3
+
+Person _sage_ group Cleric remote anyInfo 1050 rumors 1050
+Person _giver_ group Questor
+Person _dummy_ group Innkeeper remote
+
+Place _dungeon_ remote dungeon0
+
+Clock _S.10_ 1001.00:00 0 flag 1 range 0 1
+
+Foe _F.00_ is Mummy
+Foe _realmummy_ is Mummy
+
+--	Quest start-up:
+	dialog link for person _sage_ item _finger_ 
+	start timer _S.10_ 
+	log 1010 step 0 
+	get item _letter_ 
+	get item _finger_ 
+	get item _gold1_ 
+	start task _S.03_ 
+	give pc nothing
+--changed "say 1045" to "give pc nothing." This ensures faction increase for completing this quest.
+	_letter_ used do _readletter_ 
+	place foe _realmummy_ at _dungeon_ 
+	destroy _giver_ 
+
+variable _S.00_
+_S.01_ task:
+	daily from 00:00 to 01:00 
+	create foe _F.00_ every 35 minutes 1001 times with 100% success 
+
+_S.02_ task:
+	injured _F.00_ saying 1016 
+	unset _S.02_ 
+
+_dummytalk_ task:
+	clicked npc _dummy_
+	say 1013
+
+variable _S.03_
+_S.04_ task:
+	clicked npc _sage_ 
+	have _finger_ set _S.07_ 
+
+_S.05_ task:
+	killed 1 _realmummy_ 
+	say 1030 
+	make _gold1_ permanent 
+	end quest 
+
+_S.06_ task:
+	when _S.04_ and _S.07_ 
+	reveal _dungeon_ 
+	log 1012 step 2 
+	say 1025 
+	unset _S.06_ _S.08_ _S.04_ _S.07_ 
+
+variable _S.07_
+_S.08_ task:
+	when _S.04_ and not _S.07_ 
+	say 1026 
+
+_S.09_ task:
+	injured _realmummy_ 
+	say 1020 
+
+_S.10_ task:
+	make _gold1_ permanent 
+	end quest 
+
+_readletter_ task:
+	add dialog for item _finger_ 
+	log 1011 step 1 

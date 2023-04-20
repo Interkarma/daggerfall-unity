@@ -1,0 +1,184 @@
+-- Quest: C:\QUESTS\WORKING\60C00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: Sheogorath
+-- Repute: 0
+-- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 31
+Quest: 60C00Y00
+DisplayName: Sheogorath's Quest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                Oh, my. I bet ye weren't expecting me!
+<ce>               My unbrothers and nonsisters are sometimes
+<ce>                 a bit slow, so I step in for them. Too
+<ce>                 bad for thou. You'll just have to cut
+<ce>                  thy deal with me. Be quick about it!
+<ce>                 Before the hour of the pale be passed,
+<ce>                   have I plenty to do elsewhere. So!
+<ce>                     Power the %ra craves to rub on
+<ce>                   the body and ease the four hundred
+<ce>                 sores of mortal life? Yes, Sheogorath
+<ce>                  has power, power enough to pull the
+<ce>                  branches across the eyes of the moon
+<ce>                 and rain blood over Tamriel. For this
+<ce>                    power, wilt thou send someone an
+<ce>                       invitation to tea for me?
+
+RefuseQuest:  [1001]
+<ce>                     La, rejected by a squalid %ra
+<ce>                   with lice in its hair. How far has
+<ce>                   Sheogorath risen! I shall have to
+<ce>                    ask for a raise in my allowance.
+<ce>                             Tirrah, %pct.
+
+AcceptQuest:  [1002]
+<ce>                To tea, to a tea party with me! Go, go
+<ce>                     to a place called ___mondung_,
+<ce>                 where the object of my gallous desires
+<ce>                 doth trip and pose and wear blackberry
+<ce>                  crowns. Wait ... do not invite this
+<ce>                    battlemage to tea with me. Now I
+<ce>                        remember. This =monster_
+<ce>                    the name is. Kill %g2 to death,
+<ce>                murder %g2 fatally, that's what I wish.
+<ce>                     Then go from ___mondung_ to a
+<ce>                 lunatic asylum called ___contactdung_
+<ce>                         and see my =qgfriend_,
+<ce>                       _qgfriend_. _artifact_ for
+<ce>                you %g will have. Will wait for you for
+<ce>                  =1stparton_ days and then will go to
+<ce>                marry the unknown heir of Rowanda. Now I
+<ce>                     bid you a yapow and gazeenza.
+
+QuestFail:  [1003]
+<ce>                    Excuse me, you don't know this,
+<ce>                   but I'm completely mad. And if you
+<ce>                  don't shove off, I'll vomit on you.
+
+QuestComplete:  [1004]
+<ce>                  Ah, nice of you to let me out of my
+<ce>                 cell, madam jailer. Sheogorath changed
+<ce>                 his mind and decided that he wanted to
+<ce>                         take =monster_ to tea
+<ce>                  after all. But when he found out, %g
+<ce>                  was dead, he decided that was best.
+<ce>                           That way =monster_
+<ce>                 wouldn't eat all the posy pies. Before
+<ce>                   I forget, here's _artifact_. Don't
+<ce>                            point it at me.
+
+RumorsDuringQuest:  [1005]
+A mad battlemage is terrorizing the countryside around ___mondung_.
+
+RumorsPostfailure:  [1006]
+<ce>___mondung_ is quiet now that that =monster_ moved on, but %g'll be back,
+<ce>                              I'll wager.
+
+RumorsPostsuccess:  [1007]
+Good riddance on the battlemage =monster_ in ___mondung_. I hear %g was mad as a magister.
+<--->
+So, someone finally killed that mad battlemage in ___mondung_. Thank %god.
+
+Message:  1011
+_qgfriend_ is that mad, slobbering =qgfriend_ who lives in ___contactdung_.
+<--->
+<ce>  _qgfriend_ is that crazy =qgfriend_ that came to town a while back.
+ They say %g actually lives in ___contactdung_.
+
+Message:  1012
+Sheogorath is the Daedra Prince of Insanity. Not a good one to count on.
+<--->
+Sheogorath is the Mad One, the Daedra who revels in chaos and lunacy.
+
+Message:  1013
+_artifact_ is an ancient artifact with wildly random magical effects.
+<--->
+_artifact_ can transform its targets into other other creatures.
+
+Message:  1014
+_qgfriend_ is one of the Daedra Prince Sheogorath's most loyal servants.
+<--->
+_qgfriend_ is the name of the =qgfriend_ who is a slave of Sheogorath.
+
+Message:  1020
+%qdt:
+ The Daedra Prince Sheogorath has
+ promised me an artifact called _artifact_
+ in exchange for the death of a battlemage
+ named =monster_. If this battlemage,
+ who resides in a placed called ___mondung_,
+ is dead and I meet Sheogorath's contact in
+ ___contactdung_, _qgfriend_
+ will give me _artifact_. But I have to
+ have this all accomplished in =1stparton_ days.
+
+Message:  1030
+<ce>                     You have dispatched =monster_
+<ce>                    from this mortal plane.  Now to
+<ce>                   see if Sheogorath still remembers
+<ce>                            your agreement.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 7 times.
+--               %g2 occurs 2 times.
+--              %god occurs 7 times.
+--              %pct occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--       =1stparton_ occurs 4 times.
+--         =monster_ occurs 9 times.
+--        =qgfriend_ occurs 5 times.
+--   ___contactdung_ occurs 4 times.
+--       ___mondung_ occurs 13 times.
+--        _artifact_ occurs 8 times.
+--        _qgfriend_ occurs 6 times.
+
+QBN:
+Item _artifact_ artifact Wabbajack anyInfo 1013
+
+Person _questgiver_ face 112 named Sheogorath anyInfo 1012
+Person _qgfriend_ face 1 group Innkeeper remote anyInfo 1011 rumors 1014
+
+Place _mondung_ remote dungeon
+Place _contactdung_ remote dungeon3
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+
+Foe _monster_ is Battle_mage
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _contactdung_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	place foe _monster_ at _mondung_ 
+	place npc _qgfriend_ at _contactdung_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_pcgetsgold_ task:
+	when _npcclicked_ and _mondead_ 
+	give pc _artifact_ 
+	end quest 
+--removed unnecessary delay
+
+_mondead_ task:
+	killed 1 _monster_ 
+	say 1030 
+
+_npcclicked_ task:
+	clicked npc _qgfriend_ 
+
+--defining clearclick to prevent out-of-place victory condition
+_clearclick_ task:
+	when _npcclicked_ and not _mondead_
+	say 1003
+	clear _npcclicked_ _clearclick_

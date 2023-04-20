@@ -1,0 +1,6379 @@
+; This is an example of a comment.
+; It can continue across many lines just
+; remember a semi-colon in front of each line.
+
+;For face, a straight number is a specific face (one of Louise's)
+;If there's a *, choose either a Male or Female Face
+;If there's a !, choose a Male Face
+;If there's a ?, choose a Female Face
+;If the *,!,? is followed by a A, any race will do
+;If the *,!,? is followed by a B, choose a Breton face
+;If the *,!,? is followed by a R, choose a Redguard face
+;
+; The field sgroup should be set to one of the following values:
+; COMMONER	0
+; MERCHANT	1
+; SCHOLAR	2
+; NOBILITY	3
+; UNDERWORLD	4
+;
+; The faction type is one of the following:
+; facDAEDRA		0
+; facGOD		1
+; facGROUP		2
+; facSUBGROUP		3
+; facINDIVIDUAL		4
+; facONEPER		5
+; facVAMPIRE		6
+; facNOBLE		7
+; facWITCHES		8
+; facTEMPLE		9
+; facGENERICG		12
+; facTHIEVES		13
+; facCOURTS		14
+; facPEOPLE		15
+
+
+#17
+type: 2
+name: Oblivion
+rep: 0
+summon: -1
+region: -1
+power: 100
+flags: 129
+face: -1
+race: -1
+flat: -1
+sgroup: 6
+ggroup: 2
+minf: 20
+maxf: 70
+
+	#1
+	type: 0
+	name: Clavicus Vile
+	rep: 0
+	summon: -1
+	region: -1
+	power: 50
+	flags: 1
+	enemy: 25
+	face: -1
+	race: -1
+	flat: 175 2
+	sgroup: 6
+	ggroup: 2
+	minf: 20
+	maxf: 90
+
+	#2
+	type: 0
+	name: Mehrunes Dagon
+	rep: 0
+	summon: -1
+	region: -1
+	power: 45
+	flags: 1
+	enemy: 25
+	face: -1
+	race: -1
+	flat: 175 6
+	sgroup: 6
+	ggroup: 2
+	minf: 20
+	maxf: 90
+
+	#3
+	type: 0
+	name: Molag Bal
+	rep: 0
+	summon: -1
+	region: -1
+	power: 50
+	flags: 1
+	ally: 16
+	enemy: 25
+	enemy: 15
+	face: -1
+	race: -1
+	flat: 175 9
+	sgroup: 6
+	ggroup: 2
+	minf: 25
+	maxf: 70
+
+	#4
+	type: 0
+	name: Hircine
+	rep: 0
+	summon: -1
+	region: -1
+	power: 40
+	flags: 1
+	enemy: 25
+	face: -1
+	race: -1
+	flat: 175 3
+	sgroup: 6
+	ggroup: 2
+	minf: 10
+	maxf: 60
+
+	#5
+	type: 0
+	name: Sanguine
+	rep: 0
+	summon: -1
+	region: -1
+	power: 45
+	flags: 1
+	enemy: 25
+	enemy: 88
+	face: -1
+	race: -1
+	flat: 175 13
+	sgroup: 6
+	ggroup: 2
+	minf: 15
+	maxf: 90
+
+	#6
+	type: 0
+	name: Peryite
+	rep: 0
+	summon: -1
+	region: -1
+	power: 45
+	flags: 1
+	enemy: 25
+	enemy: 13
+	face: -1
+	race: -1
+	flat: 175 12
+	sgroup: 6
+	ggroup: 2
+	minf: 20
+	maxf: 70
+
+	#7
+	type: 0
+	name: Malacath
+	rep: 0
+	summon: -1
+	region: -1
+	power: 45
+	flags: 1
+	ally: 15
+	enemy: 25
+	face: -1
+	race: -1
+	flat: 175 5
+	sgroup: 6
+	ggroup: 2
+	minf: 20
+	maxf: 80
+
+	#8
+	type: 0
+	name: Hermaeus Mora
+	rep: 0
+	summon: -1
+	region: -1
+	power: 45
+	flags: 1
+	enemy: 13
+	enemy: 25
+	face: -1
+	race: -1
+	flat: 175 4
+	sgroup: 6
+	ggroup: 2
+	minf: 20
+	maxf: 80
+
+	#10
+	type: 0
+	name: Boethiah
+	rep: 0
+	summon: -1
+	region: -1
+	power: 45
+	flags: 1
+	enemy: 106
+	enemy: 25
+	face: -1
+	race: -1
+	flat: 175 1
+	sgroup: 6
+	ggroup: 2
+	minf: 20
+	maxf: 90
+
+	#11
+	type: 0
+	name: Namira
+	rep: 0
+	summon: -1
+	region: -1
+	power: 45
+	flags: 1
+	enemy: 25
+	face: -1
+	race: -1
+	flat: 175 10
+	sgroup: 6
+	ggroup: 2
+	minf: 20
+	maxf: 60
+
+	#12
+	type: 0
+	name: Meridia
+	rep: 0
+	summon: -1
+	region: -1
+	power: 50
+	flags: 1
+	enemy: 25
+	enemy: 3
+	face: -1
+	race: -1
+	flat: 175 8 
+	sgroup: 6
+	ggroup: 2
+	minf: 25
+	maxf: 80
+
+	#13
+	type: 0
+	name: Vaernima
+	rep: 0
+	summon: -1
+	region: -1
+	power: 45
+	flags: 1
+	ally: 5
+	enemy: 25
+	enemy: 10
+	face: -1
+	race: -1
+	flat: 175 15
+	sgroup: 6
+	ggroup: 2
+	minf: 20
+	maxf: 90
+
+	#14
+	type: 0
+	name: Nocturnal
+	rep: 0
+	summon: -1
+	region: -1
+	power: 45
+	flags: 1
+	enemy: 25
+	enemy: 16
+	face: -1
+	race: -1
+	flat: 175 11
+	sgroup: 6
+	ggroup: 2
+	minf: 20
+	maxf: 80
+
+	#15
+	type: 0
+	name: Mephala
+	rep: 0
+	summon: -1
+	region: -1
+	power: 50
+	flags: 1
+	ally: 3
+	enemy: 6
+	enemy: 25
+	face: -1
+	race: -1
+	flat: 175 7
+	sgroup: 6
+	ggroup: 2
+	minf: 15
+	maxf: 90
+
+		#356
+		type: 4
+		name: The Night Mother
+		rep: 0
+		summon: -1
+		region: -1
+		power: 20
+		flags: 1
+		face: 9
+		race: 1
+		flat: 176 6
+		sgroup: 4
+		ggroup: -1
+		minf: 10
+		maxf: 90
+
+			#108
+			type: 2
+			name: The Dark Brotherhood
+			rep: 0
+			summon: 15
+			region: -1
+			power: 45
+			flags: 1
+			face: 11
+			race: -1
+			flat: 176 5
+			flat: 182 56
+			sgroup: 4
+			ggroup: 3
+			minf: 20
+			maxf: 50
+
+				#839
+				type: 3
+				name: Dark Trainers
+				rep: 0
+				summon: -1
+				region: -1
+				power: 10
+				flags: 1
+				face: 11
+				race: -1
+				flat: 176 5
+				flat: 182 56
+				sgroup: 4
+				ggroup: 3
+				minf: 20
+				maxf: 90
+
+				#840
+				type: 3
+				name: Dark Mixers
+				rep: 0
+				summon: -1
+				region: -1
+				power: 10
+				flags: 1
+				face: 11
+				race: -1
+				flat: 176 5
+				flat: 182 56
+				sgroup: 4
+				ggroup: 3
+				minf: 20
+				maxf: 90
+
+				#841
+				type: 3
+				name: Venom Masters
+				rep: 0
+				summon: -1
+				region: -1
+				power: 10
+				flags: 1
+				face: 11
+				race: -1
+				flat: 176 5
+				flat: 182 56
+				sgroup: 4
+				ggroup: 3
+				minf: 20
+				maxf: 90
+
+				#842
+				type: 3
+				name: Dark Plotters
+				rep: 0
+				summon: -1
+				region: -1
+				power: 10
+				flags: 1
+				face: 11
+				race: -1
+				flat: 176 5
+				flat: 182 56
+				sgroup: 4
+				ggroup: 3
+				minf: 20
+				maxf: 90
+
+				#843
+				type: 3
+				name: Dark Binders
+				rep: 0
+				summon: 15
+				region: -1
+				power: 10
+				flags: 1
+				face: 11
+				race: -1
+				flat: 176 5
+				flat: 182 56
+				sgroup: 4
+				ggroup: 3
+				minf: 20
+				maxf: 90
+
+				#807
+				type: 3
+				name: Dark Slayers
+				rep: 0
+				summon: -1
+				region: -1
+				power: 10
+				flags: 1
+				face: 11
+				race: -1
+				flat: 176 5
+				flat: 182 56
+				sgroup: 4
+				ggroup: 3
+				minf: 20
+				maxf: 90
+	#16
+	type: 0
+	name: Azura
+	rep: 0
+	summon: -1
+	region: -1
+	power: 45
+	flags: 1
+	ally: 3
+	enemy: 14
+	enemy: 25
+	face: -1
+	race: -1
+	flat: 175 0
+	sgroup: 6
+	ggroup: 2
+	minf: 20
+	maxf: 80
+
+#9
+type: 0
+name: Sheogorath
+rep: 10
+summon: -1
+region: -1
+power: 35
+flags: 1
+face: -1
+race: -1
+flat: 175 14
+sgroup: 6
+ggroup: 2
+minf: 10
+maxf: 70
+
+#450
+type: 9
+name: Generic Temple
+rep: 0
+summon: -1
+region: -1
+power: 45
+flags: 129
+face: -1
+race: -1
+flat: 182 23
+flat: 182 27
+sgroup: 7
+ggroup: -1
+minf: 50
+maxf: 90
+
+	#240
+	type: 3
+	name: Temple Missionaries
+	rep: 0
+	summon: -1
+	region: -1
+	power: 3
+	flags: 128
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 26
+	sgroup: 7
+	ggroup: 17
+	minf: 5
+	maxf: 60
+
+	#810
+	type: 3
+	name: Temple Treasurers
+	rep: 0
+	summon: -1
+	region: -1
+	power: 3
+	flags: 128
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 28
+	sgroup: 7
+	ggroup: 17
+	minf: 10
+	maxf: 50
+
+	#813
+	type: 3
+	name: Temple Healers
+	rep: 0
+	summon: -1
+	region: -1
+	power: 4
+	flags: 128
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 26
+	sgroup: 7
+	ggroup: 17
+	minf: 10
+	maxf: 50
+
+	#811
+	type: 3
+	name: Temple Blessers
+	rep: 0
+	summon: -1
+	region: -1
+	power: 3
+	flags: 128
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 27
+	sgroup: 7
+	ggroup: 17
+	minf: 10
+	maxf: 50
+
+#25
+type: 1
+name: Ebonarm
+rep: 0
+summon: -1
+region: -1
+power: 45
+flags: 1
+face: -1
+race: -1
+flat: -1
+sgroup: 6
+ggroup: -1
+minf: 70
+maxf: 95
+
+	#90
+	type: 9
+	name: The Citadel of Ebonarm
+	rep: 0
+	summon: -1
+	region: -1
+	power: 25
+	ally: 41
+	enemy: 106
+	flags: 0
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 27
+	sgroup: 7
+	ggroup: 17
+	minf: 20
+	maxf: 80
+
+		#91
+		type: 3
+		name: The Battlelords
+		rep: 0
+		summon: -1
+		region: -1
+		power: 20
+		flags: 0
+		face: -1
+		race: -1
+		flat: 184 4
+		flat: 182 27
+		sgroup: 7
+		ggroup: 9
+		minf: 40
+		maxf: 90
+
+#21
+type: 1
+name: Arkay
+rep: 0
+summon: -1
+region: -1
+power: 45
+flags: 129
+face: -1
+race: -1
+flat: 182 23
+flat: 182 27
+sgroup: 6
+ggroup: -1
+minf: 50
+maxf: 90
+
+	#82
+	type: 9
+	name: The Order of Arkay
+	rep: 0
+	summon: 17
+	region: -1
+	power: 30
+	enemy: 98
+	flags: 0
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 27
+	sgroup: 7
+	ggroup: 17
+	minf: 10
+	maxf: 50
+
+		#83
+		type: 3
+		name: The Knights of the Circle
+		rep: 0
+		summon: -1
+		region: -1
+		power: 25
+		flags: 0
+		face: -1
+		race: -1
+		flat: 183 3
+		flat: 183 18
+		sgroup: 7
+		ggroup: 9
+		minf: 20
+		maxf: 50
+
+		#453
+		type: 3
+		name: Apothecaries of Arkay
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 28
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#454
+		type: 3
+		name: Mixers of Arkay
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 26
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#456
+		type: 3
+		name: Summoners of Arkay
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#455
+		type: 3
+		name: Binders of Arkay
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 26
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#241
+		type: 3
+		name: Teachers of Arkay
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+#22
+type: 1
+name: Zen
+rep: 0
+summon: -1
+region: -1
+power: 30
+flags: 129
+face: -1
+race: -1
+flat: 182 23
+flat: 182 27
+sgroup: 6
+ggroup: -1
+minf: 50
+maxf: 90
+
+	#84
+	type: 9
+	name: The Resolution of Z'en
+	rep: 0
+	summon: -1
+	region: -1
+	power: 25
+	enemy: 88
+	flags: 0
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 27
+	sgroup: 7
+	ggroup: 17
+	minf: 10
+	maxf: 40
+
+		#85
+		type: 3
+		name: The Knights of Iron
+		rep: 0
+		summon: -1
+		region: -1
+		power: 20
+		flags: 0
+		face: -1
+		race: -1
+		flat: 183 2
+		flat: 183 14
+		sgroup: 7
+		ggroup: 9
+		minf: 15
+		maxf: 40
+
+		#462
+		type: 3
+		name: Apothecaries of Z'en
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 28
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#463
+		type: 3
+		name: Mixers of Z'en
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 26
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#464
+		type: 3
+		name: Summonists of Z'en
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#243
+		type: 3
+		name: Teachers of Z'en
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+#24
+type: 1
+name: Mara
+rep: 0
+summon: -1
+region: -1
+power: 45
+flags: 129
+face: -1
+race: -1
+flat: 181 4 
+flat: 181 4 
+sgroup: 6
+ggroup: -1
+minf: 50
+maxf: 90
+
+	#88
+	type: 2
+	name: The Benevolence of Mara
+	rep: 0
+	summon: -1
+	region: -1
+	power: 35
+	ally: 106
+	flags: 0
+	face: -1
+	race: -1
+	flat: 181 4 
+	flat: 181 4 
+	sgroup: 7
+	ggroup: 17
+	minf: 5
+	maxf: 40
+
+		#402
+		Type: 4
+		name: Lord Quistley
+		rep: 0
+		summon: -1
+		region: 22
+		power: 15
+		flags: 0
+		face: 54
+		race: 3
+		flat: 183 5
+		sgroup: 7
+		ggroup: -1
+		minf: 5
+		maxf: 40
+
+		#89
+		type: 3
+		name: The Maran Knights
+		rep: 0
+		summon: -1
+		region: -1
+		power: 5
+		flags: 0
+		face: -1
+		race: -1
+		flat: 183 4
+		flat: 183 14
+		sgroup: 7
+		ggroup: 9
+		minf: 10
+		maxf: 60
+
+		#468
+		type: 3
+		name: Apothecaries of Mara
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 28
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#469
+		type: 3
+		name: Mixers of Mara
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 26
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#470
+		type: 3
+		name: Summoners of Mara
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#245
+		type: 3
+		name: Teachers of Mara
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+#26
+type: 1
+name: Akatosh
+rep: 0
+summon: -1
+region: -1
+power: 45
+flags: 129
+face: -1
+race: -1
+flat: 181 3
+flat: 181 1
+flat: -1
+sgroup: 6
+ggroup: -1
+minf: 50
+maxf: 90
+
+	#92
+	type: 9
+	name: The Akatosh Chantry
+	rep: 0
+	summon: 17
+	region: -1
+	power: 25
+	ally: 88
+	enemy: 98
+	flags: 0
+	face: -1
+	race: -1
+	flat: 181 3
+	flat: 181 1
+	sgroup: 7
+	ggroup: 17
+	minf: 5
+	maxf: 80
+
+		#93
+		type: 3
+		name: The Order of the Hour
+		rep: 0
+		summon: -1
+		region: -1
+		power: 20
+		flags: 0
+		face: -1
+		race: -1
+		flat: 182 20
+		flat: 182 27
+		sgroup: 7
+		ggroup: 9
+		minf: 20
+		maxf: 80
+
+		#385
+		Type: 4
+		name: Charvek-si
+		rep: 0
+		summon: -1
+		region: 21
+		power: 20
+		flags: 0
+		face: 37
+		race: 2
+		flat: 182 10
+		sgroup: 7
+		ggroup: -1
+		minf: 10
+		maxf: 70
+
+		#473
+		type: 3
+		name: Apothecaries of Akatosh
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 28
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#474
+		type: 3
+		name: Mixers of Akatosh
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 26
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#475
+		type: 3
+		name: Summoners of Akatosh
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#247
+		type: 3
+		name: Teachers of Akatosh
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+#27
+type: 1
+name: Julianos
+rep: 0
+summon: -1
+region: -1
+power: 45
+flags: 129
+face: -1
+race: -1
+flat: 182 23
+flat: 182 27
+sgroup: 6
+ggroup: -1
+minf: 60
+maxf: 90
+
+	#94
+	type: 9
+	name: The School of Julianos
+	rep: 0
+	summon: 17
+	region: -1
+	power: 30
+	enemy: 40
+	flags: 0
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 27
+	sgroup: 7
+	ggroup: 17
+	minf: 10
+	maxf: 40
+
+		#95
+		type: 3
+		name: The Knights Mentor
+		rep: 0
+		summon: -1
+		region: -1
+		power: 10
+		flags: 0
+		face: -1
+		race: -1
+		flat: 183 4
+		flat: 183 11
+		sgroup: 7
+		ggroup: 9
+		minf: 10
+		maxf: 50
+
+		#407
+		Type: 4
+		name: Br'itsa
+		rep: 0
+		summon: -1
+		region: 23
+		power: 20
+		flags: 0
+		ally: 355
+		face: 60
+		race: 5
+		flat: 182 9
+		sgroup: 7
+		ggroup: -1
+		minf: 20
+		maxf: 50
+
+		#480
+		type: 3
+		name: Crafters of Julianos
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 28
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#481
+		type: 3
+		name: Smiths of Julianos
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 26
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#482
+		type: 3
+		name: Summoners of Julianos
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#249
+		type: 3
+		name: Teachers of Julianos
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+#29
+type: 1
+name: Dibella
+rep: 0
+summon: -1
+region: -1
+power: 45
+flags: 129
+face: -1
+race: -1
+flat: 182 17
+flat: 182 11
+sgroup: 6
+ggroup: -1
+minf: 60
+maxf: 90
+
+	#98
+	type: 9
+	name: The House of Dibella
+	rep: 0
+	summon: -1
+	region: -1
+	power: 35
+	ally: 88
+	enemy: 5
+	flags: 0
+	face: -1
+	race: -1
+	flat: 182 17
+	flat: 182 11
+	sgroup: 7
+	ggroup: 17
+	minf: 10
+	maxf: 60
+
+		#99
+		type: 3
+		name: The Order of the Lily
+		rep: 0
+		summon: -1
+		region: -1
+		power: 5
+		flags: 0
+		face: -1
+		race: -1
+		flat: 182 16
+		flat: 182 28
+		sgroup: 7
+		ggroup: 9
+		minf: 10
+		maxf: 60
+
+		#485
+		type: 3
+		name: Apothecaries of Dibella
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 28
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#487
+		type: 3
+		name: Mixers of Dibella
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 26
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#488
+		type: 3
+		name: Summoners of Dibella
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#250
+		type: 3
+		name: Teachers of Dibella
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+#33
+type: 1
+name: Stendarr
+rep: 0
+summon: -1
+region: -1
+power: 30
+flags: 129
+face: -1
+race: -1
+flat: 181 2
+flat: 181 4
+sgroup: 6
+ggroup: -1
+minf: 20
+maxf: 90
+
+	#106
+	type: 9
+	name: The Temple of Stendarr
+	rep: 0
+	summon: 17
+	region: -1
+	power: 20
+	ally: 88
+	enemy: 25
+	flags: 0
+	face: -1
+	race: -1
+	flat: 181 2
+	flat: 181 4
+	sgroup: 7
+	ggroup: 17
+	minf: 5
+	maxf: 70
+
+		#107
+		type: 3
+		name: The Crusaders
+		rep: 0
+		summon: -1
+		region: -1
+		power: 30
+		flags: 0
+		face: -1
+		race: -1
+		flat: 183 2
+		flat: 183 9
+		sgroup: 7
+		ggroup: 9
+		minf: 20
+		maxf: 80
+
+		#490
+		type: 3
+		name: Apothecaries of Stendarr
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 28
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#491
+		type: 3
+		name: Mixers of Stendarr
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 26
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#492
+		type: 3
+		name: Summoners of Stendarr
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#252
+		type: 3
+		name: Teachers of Stendarr
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+#35
+type: 1
+name: Kynareth
+rep: 0
+summon: -1
+region: -1
+power: 35
+flags: 129
+face: -1
+race: -1
+flat: 183 12
+flat: 182 28
+sgroup: 6
+ggroup: -1
+minf: 70
+maxf: 95
+
+	#36
+	type: 9
+	name: The Temple of Kynareth
+	rep: 0
+	summon: -1
+	region: -1
+	power: 25
+	flags: 0
+	ally: 201
+	face: -1
+	race: -1
+	flat: 183 12
+	flat: 182 28
+	sgroup: 7
+	ggroup: 17
+	minf: 10
+	maxf: 70
+
+		#37
+		type: 3
+		name: The Kynaran Order
+		rep: 0
+		summon: -1
+		region: -1
+		power: 15
+		flags: 0
+		face: -1
+		race: -1
+		flat: 183 2
+		flat: 182 28
+		sgroup: 7
+		ggroup: 9
+		minf: 20
+		maxf: 50
+
+		#370
+		type: 4
+		name: Lord Coulder
+		rep: 0
+		summon: -1
+		region: 14
+		power: 20
+		flags: 0
+		face: 23
+		race: 3
+		flat: 183 12
+		sgroup: 7
+		ggroup: -1
+		minf: 20
+		maxf: 90
+
+		#497
+		type: 3
+		name: Spellsmiths of Kynareth
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#498
+		type: 3
+		name: Summoners of Kynareth
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#496
+		type: 3
+		name: Enchanters of Kynareth
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 28
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+		#254
+		type: 3
+		name: Teachers of Kynareth
+		rep: 0
+		summon: -1
+		region: -1
+		power: 4
+		flags: 128
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 7
+		ggroup: 17
+		minf: 10
+		maxf: 50
+
+#977
+type: 1
+name: Secret of Oblivion
+rep: 0
+summon: -1
+region: -1
+power: 35
+flags: 129
+face: -1
+race: -1
+flat: 183 12
+flat: 182 28
+sgroup: 10
+ggroup: -1
+minf: 70
+maxf: 95
+	
+#40
+type: 2
+name: The Mages Guild
+rep: 0
+summon: -1
+region: -1
+power: 60
+flags: 0
+face: -1
+race: -1
+flat: 177 0
+flat: 182 27
+sgroup: 2
+ggroup: 10
+minf: 10
+maxf: 70
+
+	#68
+	type: 5
+	name: The Archmagister
+	rep: 0
+	summon: -1
+	region: -1
+	power: 70
+	flags: 0
+	face: 4
+	race: 6
+	flat: 182 22
+	flat: 182 28
+	sgroup: 2
+	ggroup: -1
+	minf: 30
+	maxf: 90
+	rank: 20
+
+		#69
+		name: The Guildmagister
+		type: 5
+		rep: 0
+		summon: -1
+		region: -1
+		power: 20
+		flags: 0
+		face: -1
+		race: -1
+		flat: 177 1
+		flat: 177 3
+		sgroup: 2
+		ggroup: 10
+		minf: 10
+		maxf: 50
+		rank: 12
+
+		#369
+		type: 4
+		name: Popudax
+		rep: 0
+		summon: -1
+		region: 18
+		power: 25
+		flags: 0
+		ally: 364
+		face: 22
+		race: 3
+		flat:  334 1 
+		sgroup: 2
+		ggroup: -1
+		minf: 5
+		maxf: 20
+		rank: 12
+
+		#396
+		Type: 4
+		name: Karethys
+		rep: 0
+		summon: -1
+		region: 24
+		power: 30
+		flags: 0
+		ally: 393
+		face: 48
+		race: 7
+		flat: 346 11
+		sgroup: 2
+		ggroup: -1
+		minf: 10
+		maxf: 80
+		rank: 12
+					
+			#71
+			type: 5
+			name: The Master of Incunabula
+			rep: 0
+			summon: -1
+			region: -1
+			power: 20
+			flags: 0
+			face: -1
+			race: -1
+			flat: 177 2
+			flat: 182 10
+			sgroup: 2
+			ggroup: 10
+			minf: 20
+			maxf: 50
+			rank: 8
+
+				#70
+				type: 5
+				name: The Master of Academia
+				rep: 0
+				summon: -1
+				region: -1
+				power: 25
+				flags: 0
+				face: -1
+				race: -1
+				flat: 182 25
+				flat: 182 26
+				sgroup: 2
+				ggroup: 10
+				minf: 10
+				maxf: 40
+				rank: 4
+
+				#74
+				type: 5
+				name: The Master of the Scry
+				rep: 0
+				summon: 17
+				region: -1
+				power: 15
+				flags: 0
+				face: -1
+				race: -1
+				flat: 171 1
+				flat: 177 3
+				sgroup: 2
+				ggroup: 10
+				minf: 30
+				maxf: 80
+
+			#72
+			type: 5
+			name: The Master at Arms
+			rep: 0
+			summon: -1
+			region: -1
+			power: 20
+			flags: 0
+			face: -1
+			race: -1
+			flat: 182 16
+			flat: 182 27
+			sgroup: 2
+			ggroup: 10
+			minf: 20
+			maxf: 60
+			
+				#73
+				type: 5
+				name: The Palatinus
+				rep: 0
+				summon: -1
+				region: -1
+				power: 25
+				flags: 0
+				face: -1
+				race: -1
+				flat: 183 3
+				flat: 183 18
+				sgroup: 2
+				ggroup: 9
+				minf: 30
+				maxf: 80
+
+				#76
+				type: 5
+				name: The Master of Initiates
+				rep: 0
+				summon: -1
+				region: -1
+				power: 15
+				flags: 0
+				face: -1
+				race: -1
+				flat: 182 23
+				flat: 182 28
+				sgroup: 2
+				ggroup: 10
+				minf: 20
+				maxf: 90
+
+		#60
+		type: 3
+		name: The Academics
+		rep: 0
+		summon: -1
+		region: -1
+		power: 15
+		flags: 1
+		ally: 70
+		enemy: 61
+		face: -1
+		race: -1
+		flat: 182 24
+		flat: 182 26
+		sgroup: 2
+		ggroup: 10
+		minf: 20
+		maxf: 60
+
+		#61
+		type: 3
+		name: The Patricians
+		rep: 0
+		summon: -1
+		region: -1
+		power: 25
+		flags: 1
+		ally: 72
+		enemy: 63
+		face: -1
+		race: -1
+		flat: 183 5
+		flat: 183 14
+		sgroup: 2
+		ggroup: 10
+		minf: 40
+		maxf: 60
+
+		#62
+		type: 3
+		name: The Travelers League
+		rep: 0
+		summon: -1
+		region: -1
+		power: 20
+		flags: 1
+		ally: 74
+		enemy: 66
+		face: -1
+		race: -1
+		flat: 177 1
+		flat: 177 3
+		sgroup: 2
+		ggroup: 10
+		minf: 20
+		maxf: 80
+
+		#63
+		type: 3
+		name: The Mercenary Mages
+		rep: 0
+		summon: -1
+		region: -1
+		power: 15
+		flags: 1
+		ally: 73
+		enemy: 61
+		face: -1
+		race: -1
+		flat: 177 4
+		flat: 182 4
+		sgroup: 2
+		ggroup: 10
+		minf: 10
+		maxf: 40
+
+		#64
+		type: 3
+		name: The Isolationists
+		rep: 0
+		summon: -1
+		region: -1
+		power: 20
+		flags: 1
+		ally: 60
+		enemy: 65
+		face: -1
+		race: -1
+		flat: 182 19
+		flat: 182 10
+		sgroup: 2
+		ggroup: 10
+		minf: 40
+		maxf: 70
+
+		#65
+		type: 3
+		name: The Utility Mages
+		rep: 0
+		summon: -1
+		region: -1
+		power: 50
+		flags: 1
+		ally: 69
+		enemy: 64
+		face: -1
+		race: -1
+		flat: 177 1
+		flat: 182 50	    
+		sgroup: 2
+		ggroup: 10
+		minf: 10
+		maxf: 70
+
+		#66
+		type: 3
+		name: The Cabal
+		rep: 0
+		summon: 17
+		region: -1
+		power: 35
+		flags: 1
+		enemy: 62
+		enemy: 25
+		face: -1
+		race: -1
+		flat: 177 4
+		flat: 182 56
+		sgroup: 2
+		ggroup: 10
+		minf: 20
+		maxf: 90
+
+		#67
+		type: 3
+		name: The Order of the Lamp
+		rep: 0
+		summon: -1
+		region: -1
+		power: 35
+		flags: 1
+		ally: 73
+		face: -1
+		race: -1
+		flat: 183 3
+		flat: 182 26
+		sgroup: 2
+		ggroup: 9
+		minf: 10
+		maxf: 70
+
+		#801
+		type: 3
+		name: The Odylic Mages
+		rep: 0
+		summon: -1
+		region: -1
+		power: 15
+		flags: 1
+		face: -1
+		race: -1
+		flat: 182 25
+		flat: 182 28
+		sgroup: 2
+		ggroup: 10
+		minf: 30
+		maxf: 60
+
+		#802
+		type: 3
+		name: The Crafters
+		rep: 0
+		summon: -1
+		region: -1
+		power: 5
+		flags: 1
+		face: -1
+		race: -1
+		flat: 177 5
+		flat: 182 27
+		sgroup: 2
+		ggroup: 10
+		minf: 20
+		maxf: 50
+
+#150	
+type: 6
+name: The Vraseth
+rep: 0
+summon: -1
+region: 63
+power: 50
+flags: 1
+ally: 152
+enemy: 62
+face: -1
+race: 18
+flat: 182 55
+flat: 182 56
+sgroup: 7
+ggroup: 23
+minf: 20
+maxf: 90
+
+#151	
+type: 6
+name: The Haarvenu
+rep: 0
+summon: -1
+region: 64
+power: 50
+flags: 1
+enemy: 154
+face: -1
+race: 18
+flat: 182 55
+flat: 182 56
+sgroup: 7
+ggroup: 23
+minf: 20
+maxf: 90
+
+#152	
+type: 6
+name: The Thrafey
+rep: 0
+summon: -1
+region: 65
+power: 50
+flags: 1
+ally: 150
+enemy: 157
+face: -1
+race: 18
+flat: 182 55
+flat: 182 56
+sgroup: 7
+ggroup: 23
+minf: 20
+maxf: 60
+
+#153	
+type: 6
+name: The Lyrezi
+rep: 0
+summon: -1
+region: 66
+power: 50
+flags: 1
+enemy: 156
+face: -1
+race: 18
+flat: 182 55
+flat: 182 56
+sgroup: 7
+ggroup: 23
+minf: 20
+maxf: 80
+
+#154	
+type: 6
+name: The Montalion
+rep: 0
+summon: -1
+region: 67
+power: 50
+flags: 1
+enemy: 158
+face: -1
+race: 18
+flat: 182 55
+flat: 182 56
+sgroup: 7
+ggroup: 23
+minf: 20
+maxf: 90
+
+#155	
+type: 6
+name: The Khulari
+rep: 0
+summon: -1
+region: 68
+power: 50
+flags: 1
+enemy: 157
+face: -1
+race: 18
+flat: 182 56
+flat: 182 55
+sgroup: 7
+ggroup: 23
+minf: 10
+maxf: 60
+
+#156	
+type: 6
+name: The Garlythi
+rep: 0
+summon: -1
+region: 69
+power: 50
+flags: 1
+enemy: 158
+enemy: 153
+face: -1
+race: 18
+flat: 182 56
+flat: 182 55
+sgroup: 7
+ggroup: 23
+minf: 20
+maxf: 90
+
+#157	
+type: 6
+name: The Anthotis
+rep: 0
+summon: -1
+region: 70
+power: 50
+flags: 1
+enemy: 152
+face: -1
+race: 18
+flat: 182 55
+flat: 182 56
+sgroup: 7
+ggroup: 23
+minf: 20
+maxf: 60
+
+#158	
+type: 6
+name: The Selenu
+rep: 0
+summon: -1
+region: 71
+power: 50
+flags: 1
+enemy: 154
+enemy: 150
+face: -1
+race: 18
+flat: 182 55
+flat: 182 56
+sgroup: 7
+ggroup: 23
+minf: 20
+maxf: 60
+
+#41
+type: 2
+name: The Fighters Guild
+rep: 0
+summon: -1
+region: -1
+power: 50
+flags: 0
+face: -1
+race: -1
+flat: 182 15
+flat: 182 45
+sgroup: 0
+ggroup: 11
+minf: 20
+maxf: 40
+
+	#849
+	type: 3
+	name: Fighter Trainers
+	rep: 0
+	summon: -1
+	region: -1
+	power: 3
+	flags: 1
+	face: -1
+	race: -1
+	flat: 182 46
+	flat: 182 45
+	sgroup: 0
+	ggroup: 11
+	minf: 50
+	maxf: 90
+
+	#850
+	type: 3
+	name: Fighter Equippers
+	rep: 0
+	summon: -1
+	region: -1
+	power: 3
+	flags: 1
+	face: -1
+	race: -1
+	flat: 182 15
+	flat: 182 45
+	sgroup: 0
+	ggroup: 11
+	minf: 50
+	maxf: 90
+
+	#851
+	type: 3
+	name: Fighter Questers
+	rep: 0
+	summon: -1
+	region: -1
+	power: 3
+	flags: 1
+	face: -1
+	race: -1
+	flat: 182 20
+	flat: 182 27
+	sgroup: 0
+	ggroup: 11
+	minf: 50
+	maxf: 90
+
+#42
+type: 2
+name: The Thieves Guild
+rep: 0
+summon: -1
+region: -1
+power: 60
+flags: 1
+face: -1
+race: -1
+flat: 182 17
+flat: 182 45
+sgroup: 4
+ggroup: 4
+minf: 30
+maxf: 90
+
+	#77
+	type: 5
+	name: The Guildmaster
+	rep: 0
+	summon: -1
+	region: -1
+	power: 20
+	flags: 1
+	face: -1
+	race: -1
+	flat: 182 18
+	flat: 182 28
+	sgroup: 4
+	ggroup: 4
+	minf: 40
+	maxf: 90
+
+	#373
+	type: 4
+	name: The Crow
+	rep: 0
+	summon: -1
+	region: 18
+	power: 25
+	flags: 1
+	face: 27
+	race: 3
+	flat: 182 0
+	sgroup: 4
+	ggroup: -1
+	minf: 30
+	maxf: 90
+
+	#388
+	Type: 4
+	name: Thaik
+	rep: 0
+	summon: -1
+	region: 21
+	power: 20
+	flags: 1
+	face: 12
+	race: 2
+	flat: 182 19
+	sgroup: 4
+	ggroup: -1
+	minf: 20
+	maxf: 60
+
+	#399
+	Type: 4
+	name: The Squid
+	rep: 0
+	summon: -1
+	region: 24
+	power: 40
+	flags: 1
+	face: 51
+	race: 3
+	flat: 183 16
+	sgroup: 4
+	ggroup: -1
+	minf: 10
+	maxf: 90
+
+		#375
+		type: 4
+		name: Lord Bertram Spode
+		rep: 0
+		summon: -1
+		region: 18
+		power: 12
+		flags: 0
+		face: 29
+		race: 3
+		flat: 180 3
+		sgroup: 4
+		ggroup: -1
+		minf: 25
+		maxf: 80
+
+		#374
+		type: 4
+		name: Thyr Topfield
+		rep: 0
+		summon: -1
+		region: 18
+		power: 10
+		flags: 0
+		face: 28
+		race: 3
+		flat: 182 39 
+		sgroup: 4
+		ggroup: -1
+		minf: 50
+		maxf: 90
+
+		#389
+		Type: 4
+		name: Whitka
+		rep: 0
+		summon: -1
+		region: 21
+		power: 10
+		flags: 0
+		face: 41
+		race: 2
+		flat: 184 28
+		sgroup: 4
+		ggroup: -1
+		minf: 30
+		maxf: 60
+
+		#18
+		type: 5
+		name: The Master of Initiates
+		rep: 0
+		summon: -1
+		region: -1
+		power: 5
+		flags: 1
+		face: -1
+		race: -1
+		flat: 182 23
+		flat: 182 27
+		sgroup: 4
+		ggroup: 4
+		minf: 10
+		maxf: 60
+
+	#803
+	type: 3
+	name: The Shadow Trainers
+	rep: 0
+	summon: -1
+	region: -1
+	power: 5
+	flags: 1
+	face: -1
+	race: -1
+	flat: 182 25
+	flat: 182 28
+	sgroup: 4
+	ggroup: 4
+	minf: 10
+	maxf: 40
+
+	#804
+	type: 3
+	name: The Shadow Schemers
+	rep: 0
+	summon: -1
+	region: -1
+	power: 15
+	flags: 1
+	face: -1
+	race: -1
+	flat: 182 25
+	flat: 182 27
+	sgroup: 4
+	ggroup: 4
+	minf: 10
+	maxf: 90
+
+	#805
+	type: 3
+	name: The Shadow Appraisers
+	rep: 0
+	summon: -1
+	region: -1
+	power: 5
+	flags: 1
+	face: -1
+	race: -1
+	flat: 182 27
+	flat: 182 19
+	sgroup: 4
+	ggroup: 4
+	minf: 30
+	maxf: 60
+
+	#806
+	type: 3
+	name: The Shadow Spies
+	rep: 0
+	summon: -1
+	region: -1
+	power: 5
+	flags: 1
+	face: -1
+	race: -1
+	flat: 182 28
+	flat: 182 29
+	sgroup: 4
+	ggroup: 4
+	minf: 30
+	maxf: 90
+
+#852
+type: 7
+name: Random Ruler
+rep: 0
+summon: -1
+region: -1
+power: 65
+flags: 129
+face: -1
+race: -1
+flat: 183 6
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 10
+maxf: 60
+
+	#242
+	type: 5
+	name: Random Noble
+	rep: 0
+	summon: -1
+	region: -1
+	power: 65
+	flags: 129
+	face: -1
+	race: -1
+	flat: 183 6
+	flat: 183 8
+	sgroup: 3
+	ggroup: 15
+	minf: 10
+	maxf: 60
+
+	#853
+	type: 5
+	name: Random Knight
+	rep: 0
+	summon: -1
+	region: -1
+	power: 3
+	flags: 129
+	face: -1
+	race: -1
+	flat: 183 3
+	flat: 183 14
+	sgroup: 3
+	ggroup: 15
+	minf: 10
+	maxf: 60
+
+#200
+type: 7
+name: Dwynnen
+rep: 0
+summon: 14
+region: 6
+power: 70
+flags: 0
+ruler: 9
+face: -1
+race: 3
+flat: 183 11
+flat: 183 10
+sgroup: 3
+ggroup: 15
+minf: 10
+maxf: 60
+vam: 152
+
+	#516
+	type: 14
+	name: Court of Dwynnen
+	rep: 0
+	summon: -1
+	region: 6
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 183 14
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#517
+	type: 15
+	name: People of Dwynnen
+	rep: 0
+	summon: -1
+	region: 6
+	power: 50
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+	#414
+	type: 2
+	name: The Order of the Raven
+	rep: 0
+	summon: -1
+	region: 6
+	power: 25
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 182 9
+	sgroup: 7
+	ggroup: 9
+	flags: 0
+	minf: 20
+	maxf: 80
+
+#844
+type: 2
+name: Generic Knightly Order
+rep: 0
+summon: -1
+region: -1
+power: 5
+flags: 128
+face: -1
+race: -1
+flat: 183 3
+flat: 183 9
+sgroup: 7
+ggroup: 17
+minf: 5
+maxf: 60
+
+	#845
+	type: 3
+	name: Smiths
+	rep: 0
+	summon: -1
+	region: -1
+	power: 3
+	flags: 128
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 26
+	sgroup: 7
+	ggroup: 17
+	minf: 5
+	maxf: 60
+
+	#846
+	type: 3
+	name: Questers
+	rep: 0
+	summon: -1
+	region: -1
+	power: 3
+	flags: 128
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 28
+	sgroup: 7
+	ggroup: 17
+	minf: 5
+	maxf: 60
+
+	#847
+	type: 3
+	name: Healers
+	rep: 0
+	summon: -1
+	region: -1
+	power: 3
+	flags: 128
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 27  
+	sgroup: 7
+	ggroup: 17
+	minf: 5
+	maxf: 60
+
+	#848
+	type: 3
+	name: Seneschal
+	rep: 0
+	summon: -1
+	region: -1
+	power: 3
+	flags: 128
+	face: -1
+	race: -1
+	flat: 182 23
+	flat: 182 28
+	sgroup: 7
+	ggroup: 17
+	minf: 5
+	maxf: 60
+
+#201
+type: 7
+name: Daggerfall
+rep: 0
+summon: -1
+region: 18
+power: 80
+flags: 0
+flags: 4
+flags: 8
+flags: 16
+flags: 32
+ruler: 1
+face: -1
+race: 3
+flat: 183 13
+flat: 183 14
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 90
+vam: 150
+
+	#364
+	type: 4
+	name: King Gothryd
+	rep: 0
+	summon: -1
+	region: 18
+	power: 15
+	flags: 0
+	face: 18
+	race: 3
+	flat: 334 19
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 90
+
+	#371
+	type: 4
+	name: Mobar
+	rep: 0
+	summon: -1
+	region: 18
+	power: 4
+	flags: 0
+	face: 24
+	race: 3
+	flat: 334 18
+	sgroup: 3
+	ggroup: -1
+	minf: 5
+	maxf: 60
+
+		#372
+		type: 2
+		name: The Royal Guard
+		rep: 0
+		summon: -1
+		region: 18
+		power: 22
+		flags: 0
+		face: -1
+		race: 3
+		flat: 183 2
+		flat: 182 45
+		sgroup: 7
+		ggroup: 9
+		minf: 10
+		maxf: 40
+
+	#365
+	type: 4
+	name: Queen Aubk-i
+	rep: 0
+	summon: -1
+	region: 18
+	power: 3
+	flags: 0
+	face: 19
+	race: 2
+	flat: 334 21
+	sgroup: 3
+	ggroup: -1
+	minf: 30
+	maxf: 80
+
+		#500
+		type: 4
+		name: Cyndassa
+		rep: 0
+		summon: -1
+		region: 18
+		power: 1
+		flags: 0
+		face: 26
+		race: 3
+		flat: 334 5
+		sgroup: 0
+		ggroup: -1
+		minf: 5
+		maxf: 20
+
+	#366
+	type: 4
+	name: Mynisera
+	rep: 0
+	summon: -1
+	region: 18
+	power: 3
+	flags: 0
+	ally: 367
+	face: 20
+	race: 3
+	flat: 334 4
+	sgroup: 3
+	ggroup: -1
+	minf: 25
+	maxf: 40
+
+	#367
+	type: 4
+	name: Lord Bridwell
+	rep: 0
+	summon: -1
+	region: 18
+	power: 15
+	flags: 0
+	ally: 366
+	face: 21
+	race: 3
+	flat: 334 17
+	sgroup: 3
+	ggroup: -1
+	minf: 10
+	maxf: 80
+
+		#368
+		type: 2
+		name: The Knights of the Dragon
+		rep: 0
+		summon: -1
+		region: 18
+		power: 20
+		flags: 0
+		ally: 371
+		face: -1
+		race: 3
+		flat: 334 16
+		flat: 182 45
+		sgroup: 7
+		ggroup: 9
+		minf: 5
+		maxf: 40
+
+	#377
+	Type: 4
+	name: Lady Bridwell
+	rep: 0
+	summon: -1
+	region: 18
+	power: 4
+	flags: 0
+	face: 31
+	race: 3
+	flat: 182 10
+	sgroup: 3
+	ggroup: -1
+	minf: 10
+	maxf: 30
+
+	#501
+	type: 4
+	name: Lady Northbridge
+	rep: 0
+	summon: -1
+	region: 18
+	power: 3
+	flags: 0
+	face: 25
+	race: 3
+	flat: 334 10
+	sgroup: 7
+	ggroup: -1
+	minf: 10
+	maxf: 30
+
+	#595
+	type: 14
+	name: Court of Daggerfall
+	rep: 0
+	summon: -1
+	region: 18
+	power: 25
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 128
+	minf: 20
+	maxf: 80
+
+	#518
+	type: 15
+	name: People of Daggerfall
+	rep: 0
+	summon: -1
+	region: 18
+	power: 50
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+	#203
+	type: 7
+	name: Betony
+	rep: 0
+	summon: -1
+	region: 20
+	power: 50
+	flags: 0
+	flags: 4
+	face: -1
+	race: 3
+	flat: 182 18
+	flat: 182 27
+	sgroup: 3
+	ggroup: 15
+	minf: 20
+	maxf: 50
+	vam: 150
+
+		#519
+		type: 14
+		name: Court of Betony
+		rep: 0
+		summon: -1
+		region: 20
+		power: 25
+		face: -1
+		race: 3
+		flat: 182 20
+		flat: 182 28
+		sgroup: 3
+		ggroup: 15
+		flags: 0
+		minf: 20
+		maxf: 80
+
+		#520
+		type: 15
+		name: People of Betony
+		rep: 0
+		summon: -1
+		region: 20
+		power: 50
+		face: -1
+		race: 3
+		flat: 182 20
+		flat: 182 28
+		sgroup: 0
+		ggroup: 4
+		flags: 0
+		minf: 5
+		maxf: 30
+
+#202
+type: 7
+name: Glenpoint
+rep: 0
+summon: -1
+region: 19
+power: 50
+flags: 0
+ruler: 3
+face: -1
+race: 3
+flat: 183 5
+flat: 183 14
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 80
+vam: 150
+
+	#521
+	type: 14
+	name: Court of Glenpoint
+	rep: 0
+	summon: -1
+	region: 19
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 183 18
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#522
+	type: 15
+	name: People of Glenpoint
+	rep: 0
+	summon: -1
+	region: 19
+	power: 50
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 26
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+	#413
+	type: 2
+	name: The Knights of the Owl
+	rep: 0
+	summon: -1
+	region: 19
+	power: 15
+	flags: 0
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 183 19
+	sgroup: 7
+	ggroup: 9
+	minf: 10
+	maxf: 60
+
+#204
+type: 7
+name: Sentinel
+rep: 0
+summon: -1
+region: 21
+power: 75
+flags: 0
+flags: 4
+flags: 8
+flags: 16
+flags: 32
+ruler: 2
+face: -1
+race: 2
+flat: 183 7
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 70
+vam: 158
+
+	#380
+	Type: 4
+	name: Queen Akorithi
+	rep: 0
+	summon: -1
+	region: 21
+	power: 20
+	flags: 0
+	face: 33
+	race: 2
+	flat: 357 15
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 70
+
+		#383
+		Type: 4
+		name: Lord Vhosek
+		rep: 0
+		summon: -1
+		region: 21
+		power: 15
+		flags: 0
+		face: 36
+		race: 2
+		flat: 357 3
+		sgroup: 3
+		ggroup: -1
+		minf: 10
+		maxf: 40
+
+			#384
+			Type: 2
+			name: The Royal Guards
+			rep: 0
+			summon: -1
+			region: 21
+			power: 5
+			flags: 0
+			face: -1
+			race: 2
+			flat: 357 12
+			flat: 182 28
+			sgroup: 7
+			ggroup: 9
+			minf: 10
+			maxf: 60
+
+	#381
+	Type: 4
+	name: Prince Greklith
+	rep: 0
+	summon: -1
+	region: 21
+	power: 3
+	flags: 0
+	face: 35
+	race: 2
+	flat: 357 1
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 40
+
+	#382
+	Type: 4
+	name: Prince Lhotun
+	rep: 0
+	summon: -1
+	region: 21
+	power: 10
+	flags: 0
+	face: 34
+	race: 2
+	flat: 357 7
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 60
+
+	#386
+	Type: 4
+	name: Lord K'avar
+	rep: 0
+	summon: -1
+	region: 21
+	power: 18
+	flags: 0
+	face: 40
+	race: 2
+	flat: 182 25
+	sgroup: 3
+	ggroup: -1
+	minf: 10
+	maxf: 70
+
+		#408
+		type: 2
+		name: The Order of the Candle
+		rep: 0
+		summon: -1
+		region: 21
+		power: 20
+		flags: 1
+		face: -1
+		race: 2
+		flat: 183 2
+		flat: 182 27
+		sgroup: 7
+		ggroup: 9
+		minf: 20
+		maxf: 90
+
+	#387
+	Type: 4
+	name: Lord Provlith
+	rep: 0
+	summon: -1
+	region: 21
+	power: 5
+	flags: 0
+	face: 39
+	race: 2
+	flat: 334 0
+	sgroup: 3
+	ggroup: -1
+	minf: 5
+	maxf: 20
+
+	#596
+	type: 14
+	name: Court of Sentinel
+	rep: 0
+	summon: -1
+	region: 21
+	power: 25
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 128
+	minf: 20
+	maxf: 80
+
+	#523
+	type: 15
+	name: People of Sentinel
+	rep: 0
+	summon: -1
+	region: 21
+	power: 40
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#205
+type: 7
+name: Anticlere
+rep: 0
+summon: -1
+region: 22
+power: 60
+flags: 16
+ruler: 12
+face: -1
+race: 3
+flat: 182 20
+flat: 182 28
+sgroup: 3
+ggroup: 15
+minf: 10
+maxf: 80
+vam: 151
+
+	#400
+	Type: 4
+	name: Lady Doryanna Flyte
+	rep: 0
+	summon: -1
+	region: 22
+	power: 12
+	flags: 0
+	face: 52
+	race: 5
+	flat: 182 26
+	sgroup: 3
+	ggroup: -1
+	minf: 10
+	maxf: 80
+
+		#410
+		type: 2
+		name: The Knights of the Flame
+		rep: 0
+		summon: -1
+		region: 22
+		power: 20
+		flags: 0
+		ally: 400
+		face: -1
+		race: 3
+		flat: 183 2
+		flat: 182 27
+		sgroup: 7
+		ggroup: 9
+		minf: 20
+		maxf: 50
+
+	#401
+	Type: 4
+	name: Lord Auberon Flyte
+	rep: 0
+	summon: -1
+	region: 22
+	power: 3
+	flags: 1
+	face: 53
+	race: 3
+	flat: 182 24
+	sgroup: 3
+	ggroup: -1
+	minf: 10
+	maxf: 30
+
+	#403
+	Type: 4
+	name: Farrington
+	rep: 0
+	summon: -1
+	region: 22
+	power: 3
+	flags: 0
+	ally: 400
+	face: 55
+	race: 3
+	flat: 182 23
+	sgroup: 3
+	ggroup: -1
+	minf: 10
+	maxf: 40
+
+	#404
+	Type: 4
+	name: Lord Perwright
+	rep: 0
+	summon: -1
+	region: 22
+	power: 3
+	flags: 0
+	face: 56
+	race: 3
+	flat: 184 2
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 80
+
+	#597
+	type: 14
+	name: Court of Anticlere
+	rep: 0
+	summon: -1
+	region: 22
+	power: 25
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 128
+	minf: 20
+	maxf: 80
+
+	#524
+	type: 15
+	name: People of Anticlere
+	rep: 0
+	summon: -1
+	region: 22
+	power: 3
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 27
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#206
+type: 7
+name: Lainlyn
+rep: 0
+summon: -1
+region: 23
+power: 72
+flags: 16
+ruler: 9
+face: -1
+race: 2
+flat: 183 7
+flat: 183 9
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 154
+
+	#379
+	Type: 4
+	name: Baron Shrike
+	rep: 0
+	summon: -1
+	region: 23
+	power: 15
+	flags: 0
+	face: 57
+	race: 2
+	flat: 183 4
+	enemy: 406
+	enemy: 355
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 60
+
+		#411
+		type: 2
+		name: The Host of the Horn
+		rep: 0
+		summon: -1
+		region: 23
+		power: 25
+		flags: 0
+		face: -1
+		race: 2
+		flat: 183 2
+		flat: 183 9
+		enemy: 412
+		sgroup: 7
+		ggroup: 9
+		minf: 20
+		maxf: 80
+
+	#405
+	Type: 4
+	name: Baroness Dh'emka
+	rep: 0
+	summon: -1
+	region: 23
+	power: 5
+	flags: 0
+	face: 58
+	race: 2
+	flat: 183 11
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 60
+
+	#406
+	Type: 4
+	name: Lord Kain
+	rep: 0
+	summon: -1
+	region: 23
+	power: 10
+	flags: 0
+	ally: 355
+	enemy: 379
+	face: 59
+	race: 2
+	flat: 182 20
+	sgroup: 3
+	ggroup: -1
+	minf: 10
+	maxf: 40
+
+	#246
+	type: 14
+	name: Court of Lainlyn
+	rep: 0
+	summon: -1
+	region: 23
+	power: 25
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#525
+	type: 15
+	name: People of Lainlyn
+	rep: 0
+	summon: -1
+	region: 23
+	power: 3
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 1
+	maxf: 30
+
+#207
+type: 7
+name: Wayrest
+rep: 0
+summon: -1
+region: 24
+power: 80
+flags: 0
+flags: 4
+flags: 8
+flags: 16
+flags: 32
+ruler: 1
+face: -1
+race: 3
+flat: 183 6
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 154
+
+	#390
+	Type: 4
+	name: King Eadwyre
+	rep: 0
+	summon: -1
+	region: 24
+	power: 25
+	flags: 0
+	face: 42
+	race: 3
+	flat: 346 21
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 60
+
+	#391
+	Type: 4
+	name: Queen Barenziah
+	rep: 0
+	summon: -1
+	region: 24
+	power: 15
+	flags: 0
+	face: 43
+	race: 7
+	flat: 346 22
+	sgroup: 3
+	ggroup: -1
+	minf: 10
+	maxf: 80
+
+	#392
+	Type: 4
+	name: Princess Elysana
+	rep: 0
+	summon: -1
+	region: 24
+	power: 5
+	flags: 0
+	ally: 398
+	face: 44
+	race: 3
+	flat: 346 17
+	sgroup: 3
+	ggroup: -1
+	minf: 5
+	maxf: 30
+
+	#393
+	Type: 4
+	name: Prince Helseth
+	rep: 0
+	summon: -1
+	region: 24
+	power: 10
+	flags: 0
+	ally: 394
+	ally: 396
+	face: 46
+	race: 7
+	flat: 346 16
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 80
+
+	#394
+	Type: 4
+	name: Princess Morgiah
+	rep: 0
+	summon: -1
+	region: 24
+	power: 12
+	flags: 0
+	ally: 393
+	ally: 305
+	face: 45
+	race: 7
+	flat: 346 0
+	sgroup: 3
+	ggroup: -1
+	minf: 5
+	maxf: 80
+
+	#395
+	Type: 4
+	name: Lord Castellian
+	rep: 0
+	summon: -1
+	region: 24
+	power: 10
+	flags: 0
+	ally: 390
+	face: 47
+	race: 3
+	flat: 346 7
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 60
+
+	#397
+	Type: 4
+	name: Lord Darkworth
+	rep: 0
+	summon: -1
+	region: 24
+	power: 12
+	flags: 0
+	face: 49
+	race: 3
+	flat: 184 3
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 80
+
+		#409
+		type: 2
+		name: The Knights of the Rose
+		rep: 0
+		summon: -1
+		region: 24
+		power: 20
+		flags: 0
+		ally: 390
+		enemy: 357
+		face: -1
+		race: 3
+		flat: 346 19
+		flat: 182 28
+		sgroup: 7
+		ggroup: 9
+		minf: 10
+		maxf: 40
+
+	#398
+	Type: 4
+	name: Lord Woodborne
+	rep: 0
+	summon: -1
+	region: 24
+	power: 22
+	flags: 1
+	ally: 392
+	face: 50
+	race: 3
+	flat: 182 46
+	sgroup: 3
+	ggroup: -1
+	minf: 10
+	maxf: 90
+
+	#499
+	type: 14
+	name: Court of Wayrest
+	rep: 0
+	summon: -1
+	region: 24
+	power: 25
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 128
+	minf: 20
+	maxf: 80
+
+	#526
+	type: 15
+	name: People of Wayrest
+	rep: 0
+	summon: -1
+	region: 24
+	power: 5
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#208
+type: 7
+name: Northmoor
+rep: 0
+summon: -1
+region: 33
+power: 50
+flags: 0
+ruler: 3
+face: -1
+race: 3
+flat: 183 4
+flat: 183 9
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 156
+
+	#527
+	type: 14
+	name: Court of Northmoor
+	rep: 0
+	summon: -1
+	region: 33
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#528
+	type: 15
+	name: People of Northmoor
+	rep: 0
+	summon: -1
+	region: 33
+	power: 3
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#209
+type: 7
+name: Menevia
+rep: 0
+summon: -1
+region: 34
+power: 70
+flags: 0
+ruler: 8
+face: -1
+race: 3
+flat: 182 20
+flat: 182 28
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 153
+
+	#529
+	type: 14
+	name: Court of Menevia
+	rep: 0
+	summon: -1
+	region: 34
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 183 9
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#530
+	type: 15
+	name: People of Menevia
+	rep: 0
+	summon: -1
+	region: 34
+	power: 5
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#210
+type: 7
+name: Alcaire
+rep: 0
+summon: -1
+region: 35
+power: 60
+flags: 0
+ruler: 11
+face: -1
+race: 3
+flat: 183 5
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 153
+
+	#531
+	type: 14
+	name: Court of Alcaire
+	rep: 0
+	summon: -1
+	region: 35
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 183 11
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#532
+	type: 15
+	name: People of Alcaire
+	rep: 0
+	summon: -1
+	region: 35
+	power: 5
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#211
+type: 7
+name: Koegria
+rep: 0
+summon: -1
+region: 36
+power: 55
+flags: 0
+ruler: 12
+face: -1
+race: 3
+flat: 183 6
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 10
+maxf: 60
+vam: 153
+
+	#533
+	type: 14
+	name: Court of Koegria
+	rep: 0
+	summon: -1
+	region: 36
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 183 11
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#534
+	type: 15
+	name: People of Koegria
+	rep: 0
+	summon: -1
+	region: 36
+	power: 3
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 27
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#212
+type: 7
+name: Bhoriane
+rep: 0
+summon: -1
+region: 37
+power: 50
+flags: 0
+ruler: 7
+face: -1
+race: 3
+flat: 183 10
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 40
+vam: 154
+
+	#535
+	type: 14
+	name: Court of Bhoriane
+	rep: 0
+	summon: -1
+	region: 37
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#536
+	type: 15
+	name: People of Bhoriane
+	rep: 0
+	summon: -1
+	region: 37
+	power: 40
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#213
+type: 7
+name: Kambria
+rep: 0
+summon: -1
+region: 38
+power: 60
+flags: 0
+ruler: 6
+face: -1
+race: 3
+flat: 182 15
+flat: 183 9
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 150
+
+	#537
+	type: 14
+	name: Court of Kambria
+	rep: 0
+	summon: -1
+	region: 38
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#538
+	type: 15
+	name: People of Kambria
+	rep: 0
+	summon: -1
+	region: 38
+	power: 5
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#214
+type: 7
+name: Phrygias
+rep: 0
+summon: -1
+region: 39
+power: 60
+flags: 0
+ruler: 9
+face: -1
+race: 3
+flat: 183 10
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 156
+
+	#539
+	type: 14
+	name: Court of Phrygias
+	rep: 0
+	summon: -1
+	region: 39
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 182 27
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#540
+	type: 15
+	name: People of Phrygias
+	rep: 0
+	summon: -1
+	region: 39
+	power: 5
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#215
+type: 7
+name: Urvaius
+rep: 0
+summon: -1
+region: 40
+power: 55
+flags: 0
+ruler: 8
+face: -1
+race: 3
+flat: 182 15
+flat: 183 11
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 50
+vam: 152
+
+	#541
+	type: 14
+	name: Court of Urvaius
+	rep: 0
+	summon: -1
+	region: 40
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#542
+	type: 15
+	name: People of Urvaius
+	rep: 0
+	summon: -1
+	region: 40
+	power: 5
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#216
+type: 7
+name: Ykalon
+rep: 0
+summon: -1
+region: 41
+power: 55
+flags: 0
+ruler: 11
+face: -1
+race: 3
+flat: 183 16
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 152
+
+	#543
+	type: 14
+	name: Court of Ykalon
+	rep: 0
+	summon: -1
+	region: 41
+	power: 25
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#544
+	type: 15
+	name: People of Ykalon
+	rep: 0
+	summon: -1
+	region: 41
+	power: 15
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#217
+type: 7
+name: Daenia
+rep: 0
+summon: -1
+region: 42
+power: 42
+flags: 0
+ruler: 4
+face: -1
+race: 3
+flat: 182 15
+flat: 183 11
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 152
+
+	#545
+	type: 14
+	name: Court of Daenia
+	rep: 0
+	summon: -1
+	region: 42
+	power: 40
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 183 11
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#546
+	type: 15
+	name: People of Daenia
+	rep: 0
+	summon: -1
+	region: 42
+	power: 15
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#218
+type: 7
+name: Shalgora
+rep: 0
+summon: -1
+region: 43
+power: 52
+flags: 0
+ruler: 7
+face: -1
+race: 3
+flat: 183 10
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 10
+maxf: 60
+vam: 151
+
+	#547
+	type: 14
+	name: Court of Shalgora
+	rep: 0
+	summon: -1
+	region: 43
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 183 9
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#548
+	type: 15
+	name: People of Shalgora
+	rep: 0
+	summon: -1
+	region: 43
+	power: 3
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#219
+type: 7
+name: Abibon-Gora
+rep: 0
+summon: -1
+region: 44
+power: 71
+flags: 0
+ruler: 9
+face: -1
+race: 2
+flat: 183 16
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 70
+vam: 158
+
+	#549
+	type: 14
+	name: Court of Abibon-Gora
+	rep: 0
+	summon: -1
+	region: 44
+	power: 51
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 183 9
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#550
+	type: 15
+	name: People of Abibon-Gora
+	rep: 0
+	summon: -1
+	region: 44
+	power: 45
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 27
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+	#415
+	type: 2
+	name: The Knights of the Wheel
+	rep: 0
+	summon: -1
+	region: 44
+	power: 20
+	flags: 0
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 45
+	sgroup: 7
+	ggroup: 9
+	minf: 20
+	maxf: 60
+
+#220
+type: 7
+name: Kairou
+rep: 0
+summon: -1
+region: 45
+power: 52
+flags: 0
+ruler: 10
+face: -1
+race: 2
+flat: 182 15
+flat: 183 9
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 158
+
+	#551
+	type: 14
+	name: Court of Kairou
+	rep: 0
+	summon: -1
+	region: 45
+	power: 50
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 183 9
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#552
+	type: 15
+	name: People of Kairou
+	rep: 0
+	summon: -1
+	region: 45
+	power: 3
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 27
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#221
+type: 7
+name: Pothago
+rep: 0
+summon: 3
+region: 46
+power: 62
+flags: 0
+ruler: 4
+face: -1
+race: 2
+flat: 183 7
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 158
+
+	#553
+	type: 14
+	name: Court of Pothago
+	rep: 0
+	summon: -1
+	region: 46
+	power: 50
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 27
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#554
+	type: 15
+	name: People of Pothago
+	rep: 0
+	summon: -1
+	region: 46
+	power: 15
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#222
+type: 7
+name: Myrkwasa
+rep: 0
+summon: -1
+region: 47
+power: 60
+flags: 0
+ruler: 11
+face: -1
+race: 2
+flat: 183 7
+flat: 183 9
+sgroup: 3
+ggroup: 15
+minf: 10
+maxf: 70
+vam: 158
+
+	#555
+	type: 14
+	name: Court of Myrkwasa
+	rep: 0
+	summon: -1
+	region: 47
+	power: 50
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#556
+	type: 15
+	name: People of Myrkwasa
+	rep: 0
+	summon: -1
+	region: 47
+	power: 50
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#223
+type: 7
+name: Ayasofya
+rep: 0
+summon: -1
+region: 48
+power: 67
+flags: 0
+ruler: 7
+face: -1
+race: 2
+flat: 183 7
+flat: 183 9
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 158
+
+	#557
+	type: 14
+	name: Court of Ayasofya
+	rep: 0
+	summon: -1
+	region: 48
+	power: 51
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#558
+	type: 15
+	name: People of Ayasofya
+	rep: 0
+	summon: -1
+	region: 48
+	power: 25
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 27
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#224
+type: 7
+name: Tigonus
+rep: 0
+summon: -1
+region: 49
+power: 65
+flags: 0
+ruler: 12
+face: -1
+race: 2
+flat: 182 15
+flat: 182 28
+sgroup: 3
+ggroup: 15
+minf: 5
+maxf: 60
+vam: 157
+
+	#559
+	type: 14
+	name: Court of Tigonus
+	rep: 0
+	summon: -1
+	region: 49
+	power: 50
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 27
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#560
+	type: 15
+	name: People of Tigonus
+	rep: 0
+	summon: -1
+	region: 49
+	power: 5
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 27
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#225
+type: 7
+name: Kozanset
+rep: 0
+summon: -1
+region: 50
+power: 50
+flags: 0
+ruler: 10
+face: -1
+race: 2
+flat: 183 10
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 155
+
+	#561
+	type: 14
+	name: Court of Kozanset
+	rep: 0
+	summon: -1
+	region: 50
+	power: 50
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 183 9
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 60
+
+	#562
+	type: 15
+	name: People of Kozanset
+	rep: 0
+	summon: -1
+	region: 50
+	power: 60
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#226
+type: 7
+name: Satakalaam
+rep: 0
+summon: -1
+region: 51
+power: 74
+flags: 0
+ruler: 7
+face: -1
+race: 2
+flat: 183 7
+flat: 183 9
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 154
+
+
+	#563
+	type: 14
+	name: Court of Satakalaam
+	rep: 0
+	summon: -1
+	region: 51
+	power: 51
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 183 9
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#564
+	type: 15
+	name: People of Satakalaam
+	rep: 0
+	summon: -1
+	region: 51
+	power: 15
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#227
+type: 7
+name: Totambu
+rep: 0
+summon: -1
+region: 52
+power: 62
+flags: 0
+ruler: 11
+face: -1
+race: 2
+flat: 183 6
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 155
+
+	#565
+	type: 14
+	name: Court of Totambu
+	rep: 0
+	summon: -1
+	region: 52
+	power: 50
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#566
+	type: 15
+	name: People of Totambu
+	rep: 0
+	summon: -1
+	region: 52
+	power: 20
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 27
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+	#416
+	type: 2
+	name: The Order of the Scarab
+	rep: 0
+	summon: -1
+	region: 52
+	power: 17
+	flags: 0
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 28
+	sgroup: 7
+	ggroup: 9
+	minf: 10
+	maxf: 50
+
+#228
+type: 7
+name: Mournoth
+rep: 0
+summon: -1
+region: 53
+power: 72
+flags: 0
+ruler: 12
+face: -1
+race: 2
+flat: 183 6
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 154
+
+	#567
+	type: 14
+	name: Court of Mournoth
+	rep: 0
+	summon: -1
+	region: 53
+	power: 51
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 183 9
+	sgroup: 2
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#568
+	type: 15
+	name: People of Mournoth
+	rep: 0
+	summon: -1
+	region: 53
+	power: 2
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#229
+type: 7
+name: Ephesus
+rep: 0
+summon: 8
+region: 54
+power: 52
+flags: 0
+ruler: 5
+face: -1
+race: 2
+flat: 183 10
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 70
+vam: 155
+
+	#569
+	type: 14
+	name: Court of Ephesus
+	rep: 0
+	summon: -1
+	region: 54
+	power: 51
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 27
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#570
+	type: 15
+	name: People of Ephesus
+	rep: 0
+	summon: -1
+	region: 54
+	power: 5
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 27
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#230
+type: 7
+name: Santaki
+rep: 0
+summon: -1
+region: 55
+power: 50
+flags: 0
+ruler: 7
+face: -1
+race: 2
+flat: 183 5
+flat: 183 14
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 155
+
+	#571
+	type: 14
+	name: Court of Santaki
+	rep: 0
+	summon: -1
+	region: 55
+	power: 51
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#572
+	type: 15
+	name: People of Santaki
+	rep: 0
+	summon: -1
+	region: 55
+	power: 4
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#231
+type: 7
+name: Antiphyllos
+rep: 0
+summon: -1
+region: 56
+power: 50
+flags: 0
+ruler: 8
+face: -1
+race: 2
+flat: 182 15
+flat: 183 9
+sgroup: 3
+ggroup: 15
+minf: 10
+maxf: 60
+vam: 157
+
+	#573
+	type: 14
+	name: Court of Antiphyllos
+	rep: 0
+	summon: -1
+	region: 56
+	power: 25
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#574
+	type: 15
+	name: People of Antiphyllos
+	rep: 0
+	summon: -1
+	region: 56
+	power: 3
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+	#417
+	type: 2
+	name: The Knights of the Hawk
+	rep: 0
+	summon: -1
+	region: 56
+	power: 25
+	flags: 0
+	face: -1
+	race: 2
+	flat: 183 2
+	flat: 183 9
+	sgroup: 7
+	ggroup: 9
+	minf: 20
+	maxf: 60
+
+#232
+type: 7
+name: Bergama
+rep: 0
+summon: -1
+region: 57
+power: 50
+flags: 0
+ruler: 9
+face: -1
+race: 2
+flat: 183 7
+flat: 183 9
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 157
+
+	#575
+	type: 14
+	name: Court of Bergama
+	rep: 0
+	summon: -1
+	region: 57
+	power: 45
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 27
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#576
+	type: 15
+	name: People of Bergama
+	rep: 0
+	summon: -1
+	region: 57
+	power: 3
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 27
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#233
+type: 7
+name: Gavaudon
+rep: 0
+summon: -1
+region: 58
+power: 50
+flags: 0
+ruler: 11
+face: -1
+race: 3
+flat: 183 4
+flat: 183 9
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 154
+
+	#577
+	type: 14
+	name: Court of Gavaudon
+	rep: 0
+	summon: -1
+	region: 58
+	power: 4
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#578
+	type: 15
+	name: People of Gavaudon
+	rep: 0
+	summon: -1
+	region: 58
+	power: 1
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#234
+type: 7
+name: Tulune
+rep: 0
+summon: -1
+region: 59
+power: 62
+flags: 0
+ruler: 10
+face: -1
+race: 3
+flat: 182 46
+flat: 183 11
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 150
+
+	#579
+	type: 14
+	name: Court of Tulune
+	rep: 0
+	summon: -1
+	region: 59
+	power: 50
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#580
+	type: 15
+	name: People of Tulune
+	rep: 0
+	summon: -1
+	region: 59
+	power: 5
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 20
+
+#235
+type: 7
+name: Ilessan Hills
+rep: 0
+summon: -1
+region: 61
+power: 60
+flags: 0
+ruler: 9
+face: -1
+race: 3
+flat: 183 6
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 151
+
+	#581
+	type: 14
+	name: Court of Ilessan Hills
+	rep: 0
+	summon: -1
+	region: 61
+	power: 40
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#582
+	type: 15
+	name: People of Ilessan Hills
+	rep: 0
+	summon: -1
+	region: 61
+	power: 4
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#236
+type: 7
+name: Cybiades
+rep: 0
+summon: -1
+region: 62
+power: 25
+flags: 0
+ruler: 11
+face: -1
+race: 2
+flat: 182 16
+flat: 182 27
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 158
+
+	#583
+	type: 14
+	name: Court of Cybiades
+	rep: 0
+	summon: -1
+	region: 62
+	power: 3
+	face: -1
+	race: 2
+	flat: 183 3
+	flat: 182 27
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#584
+	type: 15
+	name: People of Cybiades
+	rep: 0
+	summon: -1
+	region: 62
+	power: 1
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 27
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#301
+type: 4
+name: The Oracle
+rep: 0
+summon: -1
+region: 1
+power: 30
+ally: 380
+flags: 1
+face: 0
+race: 2
+flat: 183 15
+sgroup: 7
+ggroup: -1
+minf: 5
+maxf: 80
+
+	#302
+	type: 4
+	name: The Acolyte
+	rep: 0
+	summon: -1
+	region: 1
+	power: 1
+	flags: 1
+	face: 1
+	race: 2
+	flat: 184 20
+	sgroup: 7
+	ggroup: -1
+	minf: 20
+	maxf: 50
+
+#303
+type: 4
+name: Nulfaga
+rep: 0
+summon: -1
+region: 17
+power: 50
+flags: 1
+face: 2
+race: 3
+flat: 183 17
+sgroup: 2
+ggroup: -1
+minf: 60
+maxf: 80
+
+	#304
+	type: 4
+	name: Skakmat
+	rep: 0
+	summon: -1
+	region: 17
+	power: 10
+	flags: 1
+	face: 3
+	race: 11
+	flat: -1
+	sgroup: 7
+	ggroup: -1
+	minf: 40
+	maxf: 80
+
+#305
+type: 4
+name: King of Worms
+rep: 0
+summon: -1
+region: -1
+power: 50
+flags: 1
+ally: 394
+enemy: 353
+face: 5
+race: -1
+flat: 178 4
+sgroup: 7
+ggroup: -1
+minf: 20
+maxf: 70
+
+	#306
+	type: 2
+	name: The Necromancers
+	rep: 0
+	summon: 17
+	region: -1
+	power: 50
+	flags: 1
+	enemy: 354
+	face: -1
+	race: -1
+	flat: 178 3
+	flat: 178 5
+	sgroup: 7
+	ggroup: 14
+	minf: 10
+	maxf: 70
+
+#350
+type: 7
+name: The Septim Empire
+rep: 0
+summon: -1
+region: -1
+power: 72
+flags: 0
+face: -1
+race: -1
+flat: 182 16
+flat: 182 27
+sgroup: 3
+ggroup: 15
+minf: 1
+maxf: 80
+vam: 150
+
+	#351
+	type: 4
+	name: The Great Knight
+	rep: 0
+	summon: -1
+	region: -1
+	power: 50
+	flags: 1
+	face: 6
+	race: 0
+	flat: 182 23
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 80
+	
+		#129
+		type: 2
+		name: The Blades
+		rep: 0
+		summon: -1
+		region: -1
+		power: 50
+		flags: 1
+		race: -1
+		flat: 183 3
+		flat: 182 45
+		sgroup: 7
+		ggroup: 9
+		minf: 20
+		maxf: 60
+
+			#352
+			type: 4
+			name: Lady Brisienna
+			rep: 0
+			summon: -1
+			region: -1
+			power: 10
+			flags: 1
+			face: 7
+			race: 0
+			flat: 182 27
+			sgroup: 3
+			ggroup: -1
+			minf: 10
+			maxf: 80
+#353
+type: 4
+name: The Underking
+rep: 0
+summon: -1
+region: -1
+power: 65
+flags: 1
+enemy: 350
+enemy: 305
+face: 8
+race: -1
+flat: 184 0
+sgroup: 7
+ggroup: -1
+minf: 50
+maxf: 80
+
+	#354
+	type: 2
+	name: Agents of The Underking
+	rep: 0
+	summon: -1
+	region: -1
+	power: 50
+	flags: 0
+	enemy: 306
+	race: -1
+	flat: 182 26
+	flat: 182 23
+	sgroup: 7
+	ggroup: 12
+	minf: 25
+	maxf: 90
+
+#355
+type: 4
+name: Lord Harth
+rep: 0
+summon: -1
+region: 7
+power: 5
+flags: 1
+ally: 406
+enemy: 379
+face: 38
+race: 2
+flat: 182 19
+sgroup: 7
+ggroup: -1
+minf: 10
+maxf: 40
+
+	#412
+	type: 2
+	name: The Host of the True Horn
+	rep: 0
+	summon: -1
+	region: 7
+	power: 5
+	flags: 0
+	enemy: 411
+	face: -1
+	race: -1
+	flat: 182 20
+	sgroup: 7
+	ggroup: 9
+	minf: 10
+	maxf: 60
+
+#358
+type: 7
+name: Orsinium
+rep: -5
+summon: -1
+region: 27
+power: 65
+flags: 1
+flags: 16
+ruler: 1
+race: 17
+flat: 182 3
+flat: 182 11
+sgroup: 3
+ggroup: 24
+minf: 20
+maxf: 50
+vam: 153
+
+	#357
+	type: 4
+	name: Gortwog
+	rep: -10
+	summon: -1
+	region: 27
+	power: 50
+	flags: 1
+	enemy: 409
+	enemy: 368
+	enemy: 408
+	face: 13
+	race: 17
+	flat: 183 19
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 50
+
+	#598
+	type: 14
+	name: Court of Orsinium
+	rep: 0
+	summon: -1
+	region: 27
+	power: 25
+	face: -1
+	race: 17
+	flat: 182 20
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 128
+	minf: 20
+	maxf: 80
+
+	#599
+	type: 15
+	name: People of Orsinium
+	rep: 0
+	summon: -1
+	region: 27
+	power: 5
+	face: -1
+	race: 17
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#359
+type: 4
+name: Lord Plessington
+rep: 0
+summon: -1
+region: 40
+power: 1
+flags: 0
+face: 14
+race: 3
+flat: 182 20
+sgroup: 7
+ggroup: -1
+minf: 5
+maxf: 30
+
+	#418
+	type: 2
+	name: The Order of the Cup
+	rep: 0
+	summon: -1
+	region: 40
+	power: 10
+	flags: 0
+	face: -1
+	race: 3
+	flat: 183 3
+	sgroup: 7
+	ggroup: 9
+	minf: 10
+	maxf: 30
+
+#360
+type: 4
+name: Lord Kilbar
+rep: 0
+summon: -1
+region: 24
+power: 3
+flags: 0
+ally: 108
+face: 15
+race: 3
+flat: 182 19
+sgroup: 3
+ggroup: -1
+minf: 20
+maxf: 70
+
+#361
+type: 4
+name: Chulmore Quill
+rep: 0
+summon: -1
+region: 25
+power: 3
+flags: 0
+ally: 108
+face: 16
+race: 3
+flat: 182 0
+sgroup: 1
+ggroup: -1
+minf: 5
+maxf: 60
+
+	#362
+	type: 2
+	name: The Quill Circus
+	rep: 0
+	summon: -1
+	region: 25
+	power: 3
+	flags: 0
+	face: -1
+	race: -1
+	flat: 182 6
+	sgroup: 1
+	ggroup: 5
+	minf: 5
+	maxf: 30
+
+#376
+Type: 4
+name: Baltham Greyman
+rep: 0
+summon: -1
+region: 18
+power: 20
+flags: 0
+face: 30
+race: 3
+flat: 182 23
+sgroup: 2
+ggroup: -1
+minf: 10
+maxf: 40
+
+#378
+Type: 4
+name: Sylch Greenwood
+rep: 0
+summon: -1
+region: 18
+power: 3
+flags: 1
+face: 32
+race: 5
+flat: 182 13
+sgroup: 7
+ggroup: -1
+minf: 20
+maxf: 40
+
+#419
+type: 8
+name: The Glenmoril Witches
+rep: 0
+summon: 4
+region: 19
+power: 25
+flags: 1
+face: -1
+race: -1
+flat: 184 8
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#420
+type: 8
+name: The Dust Witches 
+rep: 0
+summon: 17
+region: 56
+power: 25
+flags: 1
+face: -1
+race: -1
+flat: 179 2
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#421
+type: 8
+name: The Witches of Devilrock
+rep: 0
+summon: 17
+region: 2
+power: 25
+flags: 1
+face: -1
+race: -1
+flat: 179 4
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#422
+type: 8
+name: The Tamarilyn Witches
+rep: 0
+summon: 17
+region: 34
+power: 25
+flags: 1
+face: -1
+race: -1
+flat: 184 8
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#423
+type: 8
+name: The Sisters of the Bluff
+rep: 0
+summon: 17
+region: 18
+power: 15
+flags: 1
+face: -1
+race: -1
+flat: 179 2
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#424
+type: 8
+name: The Daughters of Wroth
+rep: 0
+summon: 17
+region: 17
+power: 25
+flags: 1
+face: -1
+race: -1
+flat: 179 4
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#425
+type: 8
+name: The Skeffington Witches
+rep: 0
+summon: 17
+region: 41
+power: 30
+flags: 1
+face: -1
+race: -1
+flat: 184 8
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#426
+type: 8
+name: The Witches of the Marsh
+rep: 0
+summon: 17
+region: 49
+power: 20
+flags: 1
+face: -1
+race: -1
+flat: 179 2
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#427
+type: 8
+name: The Mountain Witches
+rep: 0
+summon: 17
+region: 2
+power: 25
+flags: 1
+face: -1
+race: -1
+flat: 179 4
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#428
+type: 8
+name: The Daggerfall Witches
+rep: 0
+summon: 17
+region: 18
+power: 20
+flags: 1
+face: -1
+race: -1
+flat: 184 8
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#429
+type: 8
+name: The Beldama
+rep: 0
+summon: 17
+region: 33
+power: 25
+flags: 1
+face: -1
+race: -1
+flat: 179 2
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#430
+type: 8
+name: The Sisters of Kykos
+rep: 0
+summon: 17
+region: 12
+power: 20
+flags: 1
+face: -1
+race: -1
+flat: 179 4
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#431
+type: 8
+name: The Tide Witches
+rep: 0
+summon: 17
+region: 52
+power: 15
+flags: 1
+face: -1
+race: -1
+flat: 184 8
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#432
+type: 8
+name: The Witches of Alcaire
+rep: 0
+summon: 17
+region: 35
+power: 10
+flags: 1
+face: -1
+race: -1
+flat: 179 2
+sgroup: 7
+ggroup: 22
+minf: 20
+maxf: 45
+
+#510
+type: 2
+name: The Merchants
+rep: 0
+summon: -1
+region: -1
+power: 40
+flags: 63
+face: -1
+race: -1
+flat: 184 0
+flat: 182 26
+sgroup: 1
+ggroup: 11
+minf: 5
+maxf: 40
+
+#511
+type: 2
+name: The Bards
+rep: 0
+summon: -1
+region: -1
+power: 10
+flags: 191
+face: -1
+race: -1
+flat: 182 37
+flat: 182 50
+sgroup: 2
+ggroup: 5
+minf: 5
+maxf: 30
+
+#512
+type: 2
+name: The Prostitutes
+rep: 0
+summon: -1
+region: -1
+power: 3
+flags: 191
+face: -1
+race: -1
+flat: 184 8
+sgroup: 0
+ggroup: 7
+minf: 1
+maxf: 60
+
+#513
+type: 2
+name: The Fey
+rep: 0
+summon: -1
+region: 28
+power: 50
+flags: 191
+face: 10
+race: 19
+flat: 183 0
+flat: 183 1
+sgroup: 7
+ggroup: 6
+minf: 25
+maxf: 80
+
+#514
+type: 2
+name: Children
+rep: 0
+summon: -1
+region: -1
+power: 1
+flags: 191
+face: -1
+race: -1
+flat: 182 4
+flat: 182 38
+sgroup: 0
+ggroup: 4
+minf: 0
+maxf: 10
+
+#515
+type: 2
+name: Dancers
+rep: 0
+summon: -1
+region: -1
+power: 3
+flags: 191
+face: -1
+race: -1
+flat: 182 15
+flat: 182 10
+sgroup: 0
+ggroup: 4
+minf: 0
+maxf: 10
+
+#502
+type: 7
+name: Wrothgaria
+rep: 0
+summon: -1
+region: 17
+power: 5
+flags: 128
+flags: 4
+face: -1
+race: 3
+flat: 182 18
+flat: 182 27
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 50
+vam: 153
+
+
+	#503
+	type: 14
+	name: Court of Wrothgaria
+	rep: 0
+	summon: -1
+	region: 17
+	power: 4
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#504
+	type: 15
+	name: People of Wrothgaria
+	rep: 0
+	summon: -1
+	region: 17
+	power: 5
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#505
+type: 7
+name: Dragontail
+rep: 0
+summon: -1
+region: 2
+power: 35
+flags: 128
+flags: 4
+face: -1
+race: 2
+flat: 182 18
+flat: 182 27
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 50
+vam: 155
+
+	#506
+	type: 14
+	name: Court of Dragontail
+	rep: 0
+	summon: -1
+	region: 2
+	power: 5
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#507
+	type: 15
+	name: People of Dragontail
+	rep: 0
+	summon: -1
+	region: 2
+	power: 5
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#508
+type: 7
+name: Alik'ra
+rep: 0
+summon: -1
+region: 1
+power: 5
+flags: 128
+flags: 4
+face: -1
+race: 2
+flat: 182 18
+flat: 182 27
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 50
+vam: 157
+
+	#509
+	type: 14
+	name: Court of Alik'ra
+	rep: 0
+	summon: -1
+	region: 1
+	power: 25
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#590
+	type: 15
+	name: People of Alik'ra
+	rep: 0
+	summon: -1
+	region: 1
+	power: 3
+	face: -1
+	race: 2
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#591
+type: 7
+name: Dak'fron
+rep: 0
+summon: -1
+region: 12
+power: 5
+flags: 128
+flags: 4
+face: -1
+race: 3
+flat: 182 18
+flat: 182 27
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 50
+vam: 157
+
+	#592
+	type: 14
+	name: Court of Dak'fron
+	rep: 0
+	summon: -1
+	region: 12
+	power: 25
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#593
+	type: 15
+	name: People of Dak'fron
+	rep: 0
+	summon: -1
+	region: 12
+	power: 4
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+
+#199
+type: 7
+name: Isle of Balfiera
+rep: 0
+summon: -1
+region: 10
+power: 5
+flags: 16
+flags: 128
+ruler: 12
+face: -1
+race: 3
+flat: 183 10
+flat: 183 11
+sgroup: 3
+ggroup: 15
+minf: 40
+maxf: 70
+vam: 153
+
+	#363
+	type: 4
+	name: Medora
+	rep: 0
+	summon: -1
+	region: 10
+	power: 67
+	flags: 1
+	face: 17
+	race: 3
+	flat: 183 14
+	sgroup: 3
+	ggroup: -1
+	minf: 20
+	maxf: 80
+
+	#244
+	type: 14
+	name: Court of Balfiera
+	rep: 0
+	summon: -1
+	region: 10
+	power: 25
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 3
+	ggroup: 15
+	flags: 128
+	minf: 20
+	maxf: 80
+
+	#198
+	type: 15
+	name: People of Balfiera
+	rep: 0
+	summon: -1
+	region: 10
+	power: 1
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 128
+	minf: 40
+	maxf: 70
+
+#196
+type: 7
+name: Glenumbra Moors
+rep: 0
+summon: -1
+region: 60
+power: 30
+flags: 0
+ruler: 9
+face: -1
+race: 3
+flat: 183 7
+flat: 183 8
+sgroup: 3
+ggroup: 15
+minf: 20
+maxf: 60
+vam: 150
+
+	#195
+	type: 14
+	name: Court of Glenumbra Moors
+	rep: 0
+	summon: -1
+	region: 60
+	power: 20
+	face: -1
+	race: 3
+	flat: 183 3
+	flat: 183 14
+	sgroup: 3
+	ggroup: 15
+	flags: 0
+	minf: 20
+	maxf: 80
+
+	#194
+	type: 15
+	name: People of Glenumbra Moors
+	rep: 0
+	summon: -1
+	region: 60
+	power: 5
+	face: -1
+	race: 3
+	flat: 182 20
+	flat: 182 28
+	sgroup: 0
+	ggroup: 4
+	flags: 0
+	minf: 5
+	maxf: 30
+

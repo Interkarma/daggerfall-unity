@@ -1,0 +1,222 @@
+-- Quest: C:\QUESTS\WORKING\A0C10Y05.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 10
+-- QuestId: 5
+-- Edited for Daggerfall Unity by Jay_H
+Quest: A0C10Y05
+DisplayName: The Matchmaker
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                    I am betrothed to _betrothed_.
+<ce>                  My great misfortune is that _ruler_
+<ce>                    has other plans for _betrothed_.
+<ce>                My only hope is to get %g2 to the temple
+<ce>               and complete the marriage ceremony before
+<ce>                  _ruler_ catches us. Will you protect
+<ce>                   me while I get my betrothed to the
+<ce>               temple? I can pay you _gold_ gold pieces.
+                                     <--->
+<ce>                    In __betrothedhome_, my darling
+<ce>                    _betrothed_ awaits me, tormented
+<ce>                  by the tyranny of the cruel _ruler_.
+<ce>                    I cannot sleep while _betrothed_
+<ce>                is so imprisoned, but I fear the agents
+<ce>                    of _ruler_, who work to keep us
+<ce>                     apart. Will you go with me to
+<ce>                    __betrothedhome_ and protect me?
+
+RefuseQuest:  [1001]
+<ce>                  Alas, I shall have to find another
+<ce>                     guardian to protect my beloved
+<ce>                        _betrothed_ from _ruler_
+
+AcceptQuest:  [1002]
+<ce>                     My gratitude will be endless,
+<ce>                     %pcn. Quickly, let us away to
+<ce>                      get _betrothed_. We can find
+<ce>                         %g2 at _betrothedhome_
+<ce>                          in __betrothedhome_.
+
+QuestComplete:  [1004]
+<ce>                   %pcf, we are indebted to you. Now
+<ce>                     that the ceremony is underway,
+<ce>                    _ruler_ cannot prevent it. Here
+<ce>               are the _gold_ gold pieces I promised you.
+
+RumorsDuringQuest:  [1005]
+<ce>                    _ruler_ must be trying to build
+<ce>               a harem. I hear %g just sent %g3 guardsmen
+<ce>                      out to pick up _betrothed_.
+
+RumorsPostfailure:  [1006]
+<ce>                    I hear that _betrothed_ joined
+<ce>                  _ruler_'s harem. Not much difference
+<ce>               between that and kidnapping if you ask me.
+
+RumorsPostsuccess:  [1007]
+<ce>                     _qgiver_ and _betrothed_ just
+<ce>                got married. Isn't that wonderful news?
+
+QuestorPostsuccess:  [1008]
+<ce>                 _betrothed_ and I thank you. Without
+<ce>                your help, %g would have been forced to
+<ce>                             marry _ruler_.
+
+QuestorPostfailure:  [1009]
+<ce>                  I have lost my _betrothed_ forever!
+<ce>                   %g has been forced to wed _ruler_.
+<ce>                 And you want me to help you? Get out!
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of ___qgiver_
+ asked me to escort %g2 to
+ __betrothedhome_ to find
+ _betrothed_. _qgiver_
+ is betrothed to _betrothed_,
+ but _ruler_ wants to
+ kill _qgiver_ to prevent
+ the marriage. They are to
+ be wed at _temple_
+ in __temple_.
+
+Message:  1011
+<ce>                      Ah, my beloved _betrothed_!
+<ce>                           %pcn has agreed to
+<ce>                        protect us from _ruler_.
+<ce>                          Quickly, %pcn, take
+<ce>                             us to _temple_
+<ce>                             at __temple_.
+
+Message:  1012
+<ce>                       We are under orders from
+<ce>                           _ruler_ to prevent
+<ce>                     this marriage. If _betrothed_
+<ce>                       comes with us now, nobody
+<ce>                             will get hurt.
+
+Message:  1013
+<ce>                           So, _qgiver_, you
+<ce>                       have hired some puny runt
+<ce>                        to protect you. _ruler_
+<ce>                       will not be happy that you
+<ce>                        resisted him. Step aside
+<ce>                      and let us take _betrothed_.
+<ce>                       It can only get worse for
+<ce>                                  you.
+
+Message:  1014
+<ce>                           _qgiver_ whispers
+<ce>                         excitedly, "Yes!  This
+<ce>                      is the place where _ruler_'s
+<ce>                     thugs are holding my beloved.
+<ce>                            We must hurry!"
+
+Message:  1015
+<ce>                             "%oth," cries
+<ce>                           _qgiver_, "here is
+<ce>                         _temple_!  Now we just
+<ce>                         need _priest_ to marry
+<ce>                        us and _betrothed_ will
+<ce>                          be out of _ruler_'s
+<ce>                            reach for good!"
+
+Message:  1020
+<ce>                     _qgiver_ shakes %g2 head with
+<ce>                  disgust. "I'll have to try to save
+<ce>                      _betrothed_ myself, I guess.
+<ce>                        You let me down, %pcf."
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--               %g2 occurs 4 times.
+--               %g3 occurs 3 times.
+--              %pcf occurs 4 times.
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--  __betrothedhome_ occurs 5 times.
+--         __temple_ occurs 4 times.
+--       _betrothed_ occurs 19 times.
+--   _betrothedhome_ occurs 1 time.
+--            _gold_ occurs 4 times.
+--          _priest_ occurs 1 time.
+--          _qgiver_ occurs 8 times.
+--           _ruler_ occurs 18 times.
+--          _temple_ occurs 3 times.
+
+QBN:
+Item _gold_ gold
+
+Person _betrothed_ face 1 group Group_7.0 remote
+Person _qgiver_ group Questor
+Person _priest_ face 201 factiontype Temple remote
+Person _ruler_ factiontype Province remote
+
+Place _betrothedhome_ remote house2
+Place _temple_ remote temple
+
+Clock _traveltime_ 00:00 0 flag 1 range 0 5
+
+Foe _F.00_ is 3 Burglar
+Foe _F.01_ is 2 Warrior
+
+--	Quest start-up:
+	start timer _traveltime_ 
+	--this odd location marker has no use
+	log 1010 step 0 
+	pc at _temple_ set _S.03_ saying 1015 
+	pc at _betrothedhome_ set _S.02_ saying 1014 
+	hide npc _qgiver_ 
+	add _qgiver_ face 
+	place npc _betrothed_ at _betrothedhome_ 
+	place npc _priest_ at _temple_ 
+
+_traveltime_ task:
+	restore _qgiver_ 
+	say 1020 
+	drop _betrothed_ face 
+	drop _qgiver_ face 
+	end quest 
+
+_S.01_ task:
+	clicked npc _betrothed_ say 1011 
+	hide npc _betrothed_ 
+	add _betrothed_ face 
+
+_S.02_ task:
+	create foe _F.00_ every 1 minutes 1 times with 15% success 
+
+_S.03_ task:
+	create foe _F.01_ every 2 minutes 1 times with 50% success 
+
+_dummy_ task:
+	injured _F.01_ saying 1012 
+	injured _F.00_ saying 1013 
+
+_S.05_ task:
+	clicked npc _priest_
+
+_success_ task:
+    when _S.01_ and _S.05_
+	give pc _gold_ 
+	drop _qgiver_ face 
+	drop _betrothed_ face 
+	change repute with _ruler_ by -20 
+	place npc _qgiver_ at _temple_ 
+	place npc _betrothed_ at _temple_ 
+
+_clearclick_ task:
+	when not _S.01_ and _S.05_ 
+	clear _S.05_ _clearclick_ 
+
+_questdone_ task:
+	when _success_ and not _S.03_
+	restore _qgiver_ 
+	end quest 

@@ -1,0 +1,169 @@
+-- Quest: C:\QUESTS\WORKING\A0C10Y02.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 10
+-- QuestId: 2
+Quest: A0C10Y02
+DisplayName: The Abducted Child
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 I am desperate. The Dark Brotherhood
+<ce>                     has taken my child _child_ and
+<ce>                    will kill %g2 if I do not pay a
+<ce>                  ransom. I do not have enough to buy
+<ce>                     %g3 freedom, but I can pay you
+<ce>                    _money_ gold pieces if you will
+<ce>                               free %g2.
+                                     <--->
+<ce>                       My child, my poor _child_
+<ce>                    is gone, stolen away by the Dark
+<ce>                       Brotherhood for %god knows
+<ce>                  what hideous purpose. You must help
+<ce>                      me, %pcf. I'll give you all
+<ce>                      I have, _money_ gold, if you
+<ce>                  will bring my child back home to me.
+
+RefuseQuest:  [1001]
+<ce>                      This is a dark day for me.
+<ce>                  _child_ will surely be slain by the
+<ce>                    Dark Brotherhood. May %g3 ghost
+<ce>                  haunt you for the rest of your days!
+
+AcceptQuest:  [1002]
+<ce>                You are my savior! My name is _qgiver_.
+<ce>             Quickly now, for you only have =timeforq_ days
+<ce>                 before they kill _child_. %g is being
+<ce>                    held in _dbguild_ in __dbguild_.
+
+QuestFail:  [1003]
+<ce>                   _child_? Where is %g? Why haven't
+<ce>                    you brought %g2 back yet? If you
+<ce>                      would save %g3 life, go now!
+
+QuestComplete:  [1004]
+<ce>                   _child_! You are alive and well!
+<ce>                    %pcf, I owe you a debt that can
+<ce>                   never be fully repaid. This modest
+<ce>                     reward is the least that I can
+<ce>                               give you.
+
+RumorsDuringQuest:  [1005]
+<ce>                   The Dark Brotherhood has gone too
+<ce>                  far this time. Kidnapping _qgiver_'s
+<ce>                         child is unforgivable.
+
+RumorsPostfailure:  [1006]
+<ce>                   I don't think that _qgiver_ will
+<ce>                   survive the season. %g'll probably
+<ce>                 commit suicide. You did hear that the
+<ce>         Dark Brotherhood kidnapped and slew %g3 child, _child_?
+
+
+RumorsPostsuccess:  [1007]
+<ce>                   You're that %ra that rescued baby
+<ce>                         _child_! What a hero.
+
+QuestorPostsuccess:  [1008]
+<ce>                  The savior of my child! I thank you
+<ce>                   and _child_ thanks you for saving
+<ce>                       %g3 life. Bless you %pcf.
+
+QuestorPostfailure:  [1009]
+<ce>                   My child _child_ is dead because
+<ce>                 of you! Never darken my doorway again.
+
+QuestLogEntry:  [1010]
+<ce>                 Are you here to rescue me? My name is
+<ce>                         _child_. I don't like
+<ce>                   these people. Please take me back
+<ce>                             to my family.
+
+Message:  1011
+<ce>                         _dbguild_ is dark and
+<ce>                      ominous. It is certain that
+<ce>                        enemies lurk everywhere.
+
+Message:  1012
+On %qdt, _qgiver_
+ told me of the heartbreaking kidnapping of
+ %g3 child _child_ by the Dark
+ Brotherhood. I immediately agreed to
+ rescue %g2 from _dbguild_ in
+ __dbguild_. %g3 family will wait
+ =timeforq_ days for my return to
+ __qgiver_ in ___qgiver_.
+
+Message:  1020
+<ce>                No one messes with the Dark Brotherhood
+<ce>                               and lives!
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--               %g2 occurs 5 times.
+--               %g3 occurs 18 times.
+--              %god occurs 1 time.
+--              %pcf occurs 4 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--        =timeforq_ occurs 2 times.
+--        ___qgiver_ occurs 2 times.
+--        __dbguild_ occurs 3 times.
+--         __qgiver_ occurs 1 time.
+--           _child_ occurs 46 times.
+--         _dbguild_ occurs 4 times.
+--           _money_ occurs 2 times.
+--          _qgiver_ occurs 6 times.
+
+QBN:
+Item _money_ gold
+
+Person _child_ face 1 faction Children remote
+Person _qgiver_ face 121 group Questor
+Person _dummydarkb_ face 169 faction The_Dark_Brotherhood remote
+
+Place _dbguild_ remote house1
+
+Clock _timeforq_ 00:00 0 flag 17 range 1 4
+
+Foe _darkb_ is Assassin
+
+--	Quest start-up:
+	dialog link for person _child_ 
+	start timer _timeforq_ 
+	log 1012 step 0 
+	pc at _dbguild_ set _S.01_ saying 1011 
+	place npc _child_ at _dbguild_ 
+
+_timeforq_ task:
+	end quest 
+
+_S.01_ task:
+	create foe _darkb_ every 2 minutes 4 times with 30% success 
+
+_S.02_ task:
+	clicked npc _child_ say 1010 
+	hide npc _child_ 
+	add _child_ face 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_vamp1_ task:
+	when _qgclicked_ and _S.02_ 
+	give pc _money_ 
+	change repute with _dummydarkb_ by -15 
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.02_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 
+
+_S.06_ task:
+	injured _darkb_ 
+	say 1020 

@@ -1,0 +1,191 @@
+-- Quest: C:\QUESTS\WORKING\B0B10Y04.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: knight
+-- Repute: 10
+-- QuestId: 4
+Messages: 18
+Quest: B0B10Y04
+DisplayName: The Crazed Mercenary
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                           Welcome %pcn. My
+<ce>                      name is _qgiver_. The order
+<ce>                  has just been told of a crazed, orc
+<ce>                  mercenary that needs to be stopped.
+<ce>                    Are you willing to take up this
+<ce>                                 quest?
+
+RefuseQuest:  [1001]
+<ce>                    Your modesty does you justice,
+<ce>                       %pcf. Feel free to return
+<ce>                   when you are less faint of heart.
+
+AcceptQuest:  [1002]
+<ce>               Very well. In a dark pit not too far away,
+<ce>                   a cursed place called ___mondung_,
+<ce>                      an _soldier_ named =soldier_
+<ce>              has been conspiring with a group of renegade
+<ce>              mages, even worse than the Necromancers, to
+<ce>                  destroy %reg. Perhaps he feels that
+<ce>                he was wronged by the %t, perhaps it is
+<ce>              merely the unreasoning hate that orcs often
+<ce>             exhibit toward humans. The important thing is
+<ce>             that he must be stopped, before his blind fury
+<ce>                 and the magic of the mages have truly
+<ce>                   disastrous results. Stop him, %pcf
+<ce>               any way you can. If you have not returned
+<ce>            with the situation remedied in =2mondung_ days,
+<ce>              if it isn't too late, we knights will do the
+<ce>            job ourselves. Pray, do not let it come to that.
+
+QuestFail:  [1003]
+<ce>                         Should you not be in
+<ce>                         ___mondung_ now, %pcf?
+
+QuestComplete:  [1004]
+<ce>                 Well done, %pcf. The orcs are moving
+<ce>                out of ___mondung_, so your mission must
+<ce>                 have been successful. You are truly a
+<ce>                      worthy member of our order.
+
+RumorsDuringQuest:  [1005]
+___mondung_ is a perfect location for the orcs to gather -- it's so remote.
+<--->
+The orcs and the renegade mages are planning something horrible for %reg.
+
+RumorsPostfailure:  [1006]
+The land has been cursed by the mages. It may be war, plague, famine, or all.
+<--->
+No one could do anything to stop the unholy alliance of orc and mage.
+
+RumorsPostsuccess:  [1007]
+The orcs have left ___mondung_ suddenly. Their leader was sick or even dead.
+<--->
+%reg was saved by the sacrifice of a brave and resourceful %ra mercenary.
+
+QuestorPostsuccess:  [1008]
+Greetings, %pct. How goes it with you, Orc Slayer?
+
+QuestorPostfailure:  [1009]
+Dashed pity about those orcs and mages getting away. Well, it happens.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of __qgiver_
+ in ___qgiver_ wants me
+ to stop an _soldier_ bent on destroying
+ %reg. The orc lives in a hole
+ called ___mondung_ with
+ his troops. I have =2mondung_ days to deal
+ with this threat and return to
+ __qgiver_.
+
+Message:  1013
+<ce>                   You are handed a smudged note by
+<ce>                 an even more smudged little boy. He's
+<ce>               obviously not a professional courier, but
+<ce>                 he moves almost as quickly as he runs
+<ce>                                 away.
+
+Message:  1014
+<ce>                     You have slain the _soldier_.
+
+Message:  1015
+<ce>              Ah, that hair. So, she lives yet ... I must
+<ce>                 tell Skullsplitter that his lady love
+<ce>               has not left %reg. Thank you for bringing
+<ce>                 it to my attention, %pcf. If my master
+<ce>                had brought death to %reg with the help
+<ce>               of his mage allies, he might have slain a
+<ce>               woman that means more to him that the most
+<ce>                bloody revenge he could have on the %t.
+<ce>                    Once again, I thank you, friend.
+
+Message:  1017
+<ce>                  I heared you were a godsend, %pct.
+<ce>                     %god bless you and keep you. I
+<ce>               wish I could give ya something to aspress
+<ce>               my gratitude. Here, I got this from a lady
+<ce>                who felt sorry for me. It is so fine and
+<ce>                lovely, I couldn sell even when I was so
+<ce>                 hunger. Please take it for my thanks.
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 1 time.
+--              %pcf occurs 6 times.
+--              %pcn occurs 1 time.
+--              %pct occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--              %reg occurs 6 times.
+--                %t occurs 6 times.
+--        =2mondung_ occurs 2 times.
+--         =soldier_ occurs 1 time.
+--       ___mondung_ occurs 6 times.
+--        ___qgiver_ occurs 5 times.
+--         _soldier_ occurs 4 times.
+
+QBN:
+
+Person _qgiver_ group Questor
+
+Place _mondung_ remote dungeon1
+Place tavern local tavern
+
+Clock _2mondung_ 00:00 0 flag 17 range 0 2
+Clock _2letter_ 00:50 2.18:40
+
+Foe _soldier_ is Orc_warlord
+Foe _note_ is 2 Orc
+Foe _F.02_ is Orc_sergeant
+Foe _hunter_ is Orc_shaman
+
+--	Quest start-up:
+	start timer _2mondung_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+
+_2mondung_ task:
+	end quest 
+
+variable _2letter_
+_S.02_ task:
+	when _qgclicked_ and _questdone_ 
+	give pc nothing 
+	change repute with _qgiver_ by +10 
+	end quest 
+
+variable _S.03_
+variable _S.04_
+until _S.04_ performed:
+	pc at _mondung_ set _S.07_ 
+
+_S.05_ task:
+	killed 1 _soldier_ 
+	say 1014 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_S.07_ task:
+	create foe _note_ every 100 minutes 100 times with 12% success 
+	create foe _F.02_ every 107 minutes 50 times with 10% success 
+	create foe _hunter_ every 113 minutes 20 times with 8% success 
+	place foe _soldier_ at _mondung_ 
+
+_questdone_ task:
+	when _S.05_ or _S.04_ 
+
+_S.09_ task:
+	when _2mondung_ and not _questdone_ 
+
+variable _S.10_
+_clearclick_ task:
+	when _qgclicked_ and not _questdone_
+	say 1003 
+	clear _qgclicked_ _clearclick_ 

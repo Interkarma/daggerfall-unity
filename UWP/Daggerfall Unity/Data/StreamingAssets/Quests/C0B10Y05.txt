@@ -1,0 +1,154 @@
+-- Quest: C:\QUESTS\WORKING\C0B10Y05.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: temple
+-- Repute: 10
+-- QuestId: 5
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 13
+Quest: C0B10Y05
+DisplayName: The Cursed Weapon
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                            %pcn, we have a
+<ce>                  very dangerous mission for you. The
+<ce>                  temple has come into the possession
+<ce>                    of an evil, magical weapon long
+<ce>                   sought by the orcs. The temple has
+<ce>                   already been attacked twice by the
+<ce>                   creatures. It needs to be taken to
+<ce>                   a safehaven. Will you to this for
+<ce>                  us? The temple will pay _gold_ gold.
+
+RefuseQuest:  [1001]
+<ce>                        I am saddened that your
+<ce>                        loyalty to the temple is
+<ce>                        so low. But in light of
+<ce>                       the danger, I forgive you.
+
+AcceptQuest:  [1002]
+<ce>                         Take this _evilitem_.
+<ce>                            In ___dungeon_,
+<ce>                       you will find _custodian_,
+<ce>                   a servant of this temple for many
+<ce>                   years. %g will safeguard the item
+<ce>                  and keep it out of the hands of the
+<ce>                  orcs. We have bound it in spells to
+<ce>                   protect you from its evil effects.
+<ce>                  However, these spells will wear off
+<ce>                         in =traveltime_ days.
+
+QuestComplete:  [1004]
+<ce>                         Ah, this is the evil
+<ce>                        _evilitem_ that _qgiver_
+<ce>                       spoke of. I shall keep it
+<ce>                       here, where there are many
+<ce>                       defenses to keep it safe.
+<ce>                          _qgiver_ said that I
+<ce>                       should pay you _gold_ gold
+<ce>                       pieces for safe delivery.
+
+RumorsDuringQuest:  [1005]
+The orcs have been attacking __qgiver_ caravans.
+
+RumorsPostfailure:  [1006]
+The orcs finally got that _evilitem_.
+
+RumorsPostsuccess:  [1007]
+The _evilitem_ is safe from the hands of the orcs.
+
+QuestorPostsuccess:  [1008]
+I heard that you got rid of the _evilitem_. Now, what can I help you with?
+
+QuestorPostfailure:  [1009]
+I trusted you with the _evilitem_ and look what happened.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of __qgiver_,
+ in ___qgiver_, gave me an
+ evil _evilitem_ to
+ deliver to the ___dungeon_
+ so that the orcs could not
+ get it. I have =traveltime_ days
+ to make the delivery.
+
+Message:  1011
+<ce>                       You must be the bearer of
+<ce>                       Manshrieker, the holy orc
+<ce>                        weapon of war. Kill the
+<ce>                        human! We must have that
+<ce>                              _evilitem_.
+
+Message:  1012
+<ce>            The evil _evilitem_, sparks and disintegrates.
+<ce>                      You suddenly feel very sick.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--      =traveltime_ occurs 3 times.
+--       ___dungeon_ occurs 2 times.
+--        ___qgiver_ occurs 3 times.
+--       _custodian_ occurs 1 time.
+--        _evilitem_ occurs 10 times.
+--            _gold_ occurs 4 times.
+--          _qgiver_ occurs 3 times.
+
+QBN:
+Item _evilitem_ weapon
+Item _gold_ gold
+
+Person _qgiver_ face 1 group Questor
+Person _custodian_ face 1 group Group_5.0 remote
+
+Place _dungeon_ remote dungeon
+
+Clock _traveltime_ 00:00 0 flag 1 range 0 2
+
+Foe _orc1_ is Orc_shaman
+Foe _orc2_ is Orc_warlord
+Foe _orc3_ is 2 Orc_sergeant
+Foe _orc4_ is 3 Orc
+
+--	Quest start-up:
+	start timer _traveltime_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	get item _evilitem_ 
+	place npc _custodian_ at _dungeon_ 
+
+_traveltime_ task:
+	end quest 
+
+_S.01_ task:
+	toting _evilitem_ and _custodian_ clicked 
+	give pc _gold_ 
+	end quest 
+
+until _S.01_ performed:
+	create foe _orc2_ every 21 minutes 20 times with 5% success 
+	create foe _orc4_ every 41 minutes 20 times with 5% success 
+	create foe _orc1_ every 21 minutes 20 times with 5% success 
+	create foe _orc3_ every 31 minutes 20 times with 5% success 
+
+variable _gem1_
+variable _bear_
+variable _gem3_
+variable _gem4_
+_S.06_ task:
+	injured _orc2_ saying 1011 
+	injured _orc4_ saying 1011 
+	injured _orc3_ saying 1011 
+	injured _orc1_ saying 1011 
+
+_S.07_ task:
+	when _traveltime_ and not _S.01_ 
+	make pc ill with Witches'_Pox
+	say 1012 
+	--moved saying 1012 to its own line

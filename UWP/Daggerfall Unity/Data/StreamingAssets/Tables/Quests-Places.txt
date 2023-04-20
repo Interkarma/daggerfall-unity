@@ -1,0 +1,167 @@
+-- NOTE: Contents adapted from Template 1.11 by Donald Tipton
+
+schema: *name,p1,p2,p3
+
+--	Location classes for the Places section of a Qbn file.
+--	The cataloguer joins #2 and #3 to create a unique internal code,
+--	as does the game engine to create a unique location key.  The
+--	last byte of the sequence (01, 02, 03, 04, etc) indicates a
+--	site transfered to by the teleport cheat.
+--
+--	Permanent quest locations
+--
+AlcaireCoven,       0xc35a, 0x0001, -1
+BeldamaCoven,       0xc356, 0x0001, -1
+BluffCoven,         0xc360, 0x0001, -1
+Castle_Faallem,     0x5d6c, 0xfa01, -1
+Castle_Necromoghan, 0x4587, 0x0001, -1
+Coven_in_the_Marsh, 0xc374, 0x0001, -1
+Coven_of_Dust,      0xc376, 0x0001, -1
+Coven_of_the_Peaks, 0xc37a, 0x0001, -1
+DaggerfallCity1,    0xc36a, 0x0001, -1
+DaggerfallCity2,    0xc36a, 0x0002, -1
+DaggerfallCastle,   0xc36b, 0x0001, -1
+DaggerfallCastle1,  0xc36b, 0xfa01, -1
+DaggerfallCastle2,  0xc36b, 0xfa0c, -1
+DaggerfallWitchs,   0xc3b4, 0xfa0c, -1
+DevilRockCoven,     0xc36e, 0x0001, -1
+DirenniTowerEntry,  0xc364, 0xfa01, -1
+DirenniTower3,      0xc365, 0xfa08, -1
+DirenniTower2,      0xc365, 0xfa02, -1
+Fortress_Fhojum,    0x5fa8, 0xfa01, -1
+GlenmorilCoven,     0xc358, 0x0001, -1
+KykosCoven,         0xc37e, 0x0001, -1
+Llugwych,           0xc352, 0x0001, -1
+LlugwychCastle,     0xc353, 0xfa02, -1
+LysandusTomb2,      0xc368, 0x0002, -1
+LysandusTomb1,      0xc368, 0xfa01, -1
+
+--	It's a mess.  In the Mantellan Crux quest, the dungeon location is
+--	coded for 0xc352, which corresponds to Castle Llugwych.  But the
+--	teleport command codes for the Mantellan Crux dungeon (0xc350) as
+--	it should.  The (fake) entry Mantellan_Crux is to make the quest
+--	source catalogue `parse' correctly for human readers.  But the
+--	MantellanCrux is the true place to use for new scenarios.
+
+Mantellan_Crux,     0xc352, 0xfa01, -1
+MantellanCrux,      0xc350, 0xfa01, -1
+OrsiniumCity,       0xc35e, 0x0001, -1
+OrsiniumCastle1,    0xc35f, 0xfa01, -1
+OrsiniumCastle2,    0xc35f, 0x0002, -1
+OrsiniumCastle3,    0xc35f, 0xfa03, -1
+OrsiniumCastle4,    0xc35f, 0xfa04, -1
+PirateerHold1,      0xc382, 0xfa01, -1
+PirateerHold2,      0xc382, 0xfa02, -1
+ScourgBarrowEntry,  0xc378, 0x0001, -1
+ScourgBarrow1,      0xc379, 0xfa01, -1
+ScourgBarrow2,      0xc379, 0xfa0c, -1
+SentinelCity,       0xc370, 0x0001, -1
+SentinelCastle,     0xc371, 0xfa01, -1
+SentinelCastle4,    0xc371, 0xfa04, -1
+ShedungentEntry,    0xc354, 0x0001, -1
+Shedungent1,        0xc355, 0xfa01, -1
+Shedungent2,        0xc355, 0x0002, -1
+Shedungent4,        0xc355, 0xfa04, -1
+SkeffingtonCoven,   0xc738, 0x0001, -1
+TamarilynCoven,     0xc366, 0x0001, -1
+MyrkwasaCoven,      0xc372, 0x0001, -1
+WayrestCity,        0xc36c, 0x0001, -1
+WayrestCastle,      0xc36d, 0xfa01, -1
+WayrestCastle2,     0xc36d, 0xfa09, -1
+WoodbourneHall5,    0xc363, 0xfa05, -1
+WoodbourneHall4,    0xc363, 0xfa04, -1
+WrothCoven,         0xc35c, 0x0001, -1
+--
+--	Building detail for local/random towns
+-- 	NOTE: Not all location/building types are present in all regions!
+--
+apothecary,         0, 0 , 0
+town1,              0, 1 , 0
+armory,             0, 2 , 0
+bank,               0, 3 , 0
+town4,              0, 4 , 0
+bookstore,          0, 5 , 0
+clothingshop,       0, 6 , 0
+furnitureshop,      0, 7 , 0
+jewelryshop,        0, 8 , 0
+generalstore,       0, 9 , 0
+library,            0, 10, 0
+--      NOTE: Building type 11 is technically just a guild hall but classic quests use this type for Mages Guild exclusively
+--      Daggerfall Unity has extended support for more guild halls by allowing p3 to specify factionID of target guild hall
+guildhall,          0, 11, 0
+magery,             0, 11, 40
+fighters,           0, 11, 41
+--
+pawnshop,           0, 12, 0
+weaponstore,        0, 13, 0
+temple,             0, 14, 0
+tavern,             0, 15, 0
+palace,             0, 16, 0
+house1,             0, 17, 0
+house2,             0, 18, 0
+house3,             0, 19, 0
+house4,             0, 20, 0
+house5,             0, 21, 0
+house6,             0, 22, 0
+house7,             0, 23, 0
+shop,               0, -1, 2
+house,              0, -1, 1
+random,             0, -1, 0
+dungeon,            1, -1, 0
+dungeon0,           1, 0 , 0
+dungeon1,           1, 1 , 0
+dungeon2,           1, 2 , 0
+dungeon3,           1, 3 , 0
+dungeon4,           1, 4 , 0
+dungeon5,           1, 5 , 0
+dungeon6,           1, 6 , 0
+dungeon7,           1, 7 , 0
+dungeon8,           1, 8 , 0
+dungeon9,           1, 9 , 0
+dungeon10,          1, 10, 0
+dungeon11,          1, 11, 0
+dungeon12,          1, 12, 0
+dungeon13,          1, 13, 0
+dungeon14,          1, 14, 0
+dungeon15,          1, 15, 0
+dungeon16,          1, 16, 0
+--	Dungeons17-18 contain no quest or item markers
+--	Can only be used with "remote dungeon exterior"
+dungeon17,          1, 17, 0
+dungeon18,          1, 18, 0
+---
+---	Exterior location types
+---	NOTE: Exteriors do not contain quest or item markers so cannot be used to "place item", "place foe", "place npc"
+---
+labyrinth,          2, 4,  0
+keep,               2, 7,  0
+ruin,               2, 10, 0
+graveyard,          2, 12, 0
+coven,              2, 13, 0
+farmhome,           2, 3,  0
+wealthyhome,        2, 8,  0
+poorhome,           2, 11, 0
+tavernhome,         2, 6,  0
+templehome,         2, 5,  0
+cult,               2, 9,  0
+city,               2, 0,  0
+hamlet,             2, 1,  0
+village,            2, 2,  0
+anywhere,           2,  -1, 0
+--
+--	Shrines to Mephala
+--
+-- a) in Daggerfall province
+Anvil_of_Ebonarm,     0x5440, 1, -1
+Old_Masterham_Place,  0x54dc, 1, -1
+Copperfield_Manor,    0x550d, 1, -1
+Castle_Necromoghan4,  0x4587, 0xfa04, -1
+Castle_Necromoghan2,  0x4587, 0xfa02, -1
+Castle_Necromoghan1,  0x4587, 0xfa01, -1
+Tristore_Laboratory4, 0x5825, 0xfa04, -1
+Tristore_Laboratory2, 0x5825, 0xfa02, -1
+Tristore_Laboratory1, 0x5825, 0xfa01, -1
+Ship_Deck,            0x03de, 1, -1
+Ship_Cabin,           0x03de, 4, -1
+Large_Ship_Deck,      0x03e0, 1, -1
+Large_Ship_Cabin,     0x03e0, 4, -1

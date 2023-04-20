@@ -1,0 +1,163 @@
+---- Example quest based on M0B00Y16 (kill a giant, rescue NPC)
+---- Have modified as only testing specific parts of this quest
+
+Quest: __DEMO08
+
+
+QRC:
+
+QuestorOffer:  [1000]
+<ce>               Howdy, %pcf.  If you got a few days free,
+<ce>             a job just came in for some giant-killin', and
+<ce>                     I thought of you.  Interested?
+
+RefuseQuest:  [1001]
+<ce>                  Too busy, eh?  When I was your age,
+<ce>                  I was never too busy to off a giant
+<ce>                  or two.  Kids these days, I tell ya.
+
+AcceptQuest:  [1002]
+<ce>                Right.  Seems there's this giant, moved
+<ce>                   into ___mondung_ a while back and
+<ce>                has been having a fine old time feastin'
+<ce>                  on _dummy_'s sheep in the area.  Ate
+<ce>               a few of the local villagers too, I guess,
+<ce>                but old _dummy_ don't seem so concerned
+<ce>             about that.  At any rate, %g wants this giant
+<ce>           taken care of within =qtime_ days, and %g's payin'
+<ce>                 _gold_ gold for it.  See ya in a bit.
+
+QuestFail:  [1003]
+<ce>                  What, the giant died of overeating?
+<ce>                 Get going, %pcf.  You got a job to do.
+
+QuestComplete:  [1004]
+<ce>                  Hail the giant-killer!  I knew you
+<ce>                     was the right one for the job.
+<ce>                        Here's the _gold_ gold.
+
+RumorsDuringQuest:  [1005]
+<ce> A giant in ___mondung_ is terrorizing the locals, but _dummy_ doesn't
+<ce>                             seem to care.
+                                     <--->
+<ce> That giant in ___mondung_ carried off another villager the other day.
+
+RumorsPostfailure:  [1006]
+<ce> I'm glad that giant finally moved out of ___mondung_.  I guess it got
+<ce>       bored with it's bland diet of villager night after night.
+
+RumorsPostsuccess:  [1007]
+<ce>      Thank %god _dummy_ finally sent someone to kill that giant
+<ce>     in ___mondung_.  It must have killed one of %g precious sheep.
+
+QuestorPostsuccess:  [1008]
+<ce>                 It's my old friend Giant-Killer %pcf!
+
+QuestorPostfailure:  [1009]
+<ce>                In my day, you could get kicked out of
+<ce>                the Fighter's Guild if you couldn't kill
+<ce>                a simple giant.  Times change, I guess.
+
+Message:  1020
+%qdt:
+ _questgiver_ of the Fighter's Guild
+ of ___questgiver_ has hired me to
+ kill a giant in ___mondung_.
+ I am to report back within =qtime_ days
+ for my reward of _gold_ gold.
+
+Message:  1021
+%qdt:
+ I rescued a merchant the giant was
+ apparently saving for a snack.
+ _villager_ asked me to take %g2
+ to _store_ in __store_.
+
+Message:  1030
+<ce>                  The giant roars in pain.  You hear
+<ce>                  the sound of heavy footsteps coming
+<ce>                    towards you.  Perhaps the giant
+<ce>                invited a few friends over for dinner...
+
+Message:  1040
+<ce>                    Thank %god you're here!  I was
+<ce>                     on my way to market yesterday
+<ce>                  when the giant carried me off along
+<ce>                    with four other merchants I was
+<ce>                 travelling with.  It already ate them,
+<ce>                  I guess it was saving me for later.
+<ce>                Will you please help me get out of this
+<ce>               place?  I'll never make it out on my own.
+
+Message:  1041
+<ce>             You're a true hero.  Let me introduce myself:
+<ce>                      _villager_ of ___villager_.
+<ce>                     I was on my way to _store_ in
+<ce>                    __store_.  If you could drop me
+<ce>              off there, I would be forever in your debt.
+
+Message:  1042
+<ce>                  I appreciate your help, but I think
+<ce>                    I can find my own way from here.
+
+Message:  1043
+<ce>                       You are truly heartless.
+
+Message:  1044
+<ce>                   I've enjoyed your company, %pcf.
+<ce>               You saved my life, and I won't forget it.
+
+Message:  1080
+<ce>                   Hey, here's a map to ___newdung_
+<ce>                    one of the other chaps found the
+<ce>                  other day.  If I was a couple years
+<ce>                   younger, we could tear through it
+<ce>                   together, just like the old days.
+
+
+QBN:
+Item _gold_ gold
+
+Person _villager_ face 8 group Shopkeeper
+
+Place _mondung_ permanent PirateerHold1
+Place _store_ remote generalstore
+
+Foe _giant_ is Giant
+Foe _F.01_ is Giant
+
+--	Quest start-up:
+	log 1020 step 0 
+	start task _victim_
+	place foe _giant_ at _mondung_ 
+
+_victim_ task:
+	place npc _villager_ at _mondung_ 
+
+_S.09_ task:
+	hide npc _villager_ 
+
+_S.10_ task:
+	clicked npc _villager_ 
+	prompt 1040 yes yes no _no_ 
+
+yes task:
+	pc at _store_ set _S.13_ 
+	log 1021 step 1 
+	hide npc _villager_ 
+	say 1041 
+	add _villager_ face
+
+_no_ task:
+	say 1043 
+	-change repute with _villager_ by -10 
+
+_S.13_ task:
+	say 1044 
+	drop _villager_ face 
+	-change repute with _villager_ by +15 
+	place npc _villager_ at _store_ 
+
+_S.14_ task:
+	when yes and not _S.13_
+

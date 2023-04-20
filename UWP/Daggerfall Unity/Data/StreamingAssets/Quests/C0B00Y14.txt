@@ -1,0 +1,215 @@
+-- Quest: C:\QUESTS\WORKING\C0B00Y14.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: temple
+-- Repute: 0
+-- QuestId: 14
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 62
+Quest: C0B00Y14
+DisplayName: Hunt for Undead
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>               %pct, I have a dangerous mission for you.
+<ce>              I will tell you up front it involves slaying
+<ce>                   a rather powerful undead creature.
+<ce>                   Are you still willing to undertake
+<ce>                      this task for __questgiver_?
+
+RefuseQuest:  [1001]
+<ce>                  Well, I certainly cannot blame you.
+<ce>                      I myself would not dare it.
+
+AcceptQuest:  [1002]
+<ce>                 Your courage honors our order, %pcf.
+<ce>                   We wish to begin cleansing a place
+<ce>                    called ___mondung_.  Long ago it
+<ce>                    was one of our temples, but its
+<ce>                  desecrated corridors are now haunted
+<ce>                  by some undead apparition.  You must
+<ce>                 slay this unquiet spirit and sprinkle
+<ce>                 its body with this specially prepared
+<ce>                 holy water.  If you have not returned
+<ce>                in =qtime_ days I will burn incense for
+<ce>                your departed soul and send someone else
+<ce>                 to avenge you.  May %god go with you.
+
+QuestFail:  [1003]
+<ce>                   %pct, if you did not wish to help
+<ce>                    cleanse ___mondung_, you should
+<ce>                        have told me so before.
+
+QuestComplete:  [1004]
+<ce>                Praise %god, you have returned safely!
+<ce>                    Our seers already reported that
+<ce>                    the evil within ___mondung_ had
+<ce>                   been cleansed.  You have done well
+<ce>                    in the service of __questgiver_.
+
+RumorsDuringQuest:  [1005]
+__questgiver_ is planning to restore ___mondung_ to its former glory.
+
+RumorsPostfailure:  [1006]
+<ce>It looks like the evil within ___mondung_ is too strong for __questgiver_
+<ce>                             to drive out.
+
+RumorsPostsuccess:  [1007]
+<ce> __questgiver_ sent one of their order to begin cleansing ___mondung_.
+
+QuestorPostsuccess:  [1008]
+<ce>       Greetings, %pcf.  Your foray into ___mondung_ was a great
+<ce>                              help to us.
+
+QuestorPostfailure:  [1009]
+<ce>        What can I do for you?  You failed me when I asked you
+<ce>             for help with the evil spirit of ___mondung_.
+
+Message:  1020
+%qdt:
+ _questgiver_ of __questgiver_
+ in ___questgiver_ has sent me
+ to slay an undead creature haunting
+ ___mondung_.  %g gave me a vial
+ of specially prepared holy water
+ which I must sprinkle on the monster's
+ body in order to prevent its spirit
+ from returning.  I have =qtime_ days
+ to return to _questgiver_ or %g
+ will have to send someone else.
+
+Message:  1021
+%qdt:
+ _questgiver_ of __questgiver_
+ in ___questgiver_ has sent me
+ to slay an undead creature haunting
+ ___mondung_.  First, however, I
+ must visit _priest_ in __priest_
+ of ___priest_, who will place the
+ final blessing on a vial of specially
+ prepared holy water.  I need to sprinkle
+ it on the monster's body in order to
+ prevent its spirit from returning to
+ ___mondung_.  I have =qtime_ days
+ to return to _questgiver_ or %g
+ will have to send someone else.
+
+Message:  1050
+<ce>                Ah, wait, I am so forgetful these days!
+<ce>                 You first need to take the holy water
+<ce>                      to _priest_, of __priest_ in
+<ce>                  ___priest_.  %g will place the final
+<ce>                            blessing on it.
+
+Message:  1051
+<ce>                   _priest_ takes the vial from you
+<ce>                  without a word.  %g gravely blesses
+<ce>                    it, then you.  %g hands it back
+<ce>                    and returns to %g3 meditations.
+
+Message:  1060
+<ce>                      "I am =monster1_!  You may
+<ce>                       slay my material form, but
+<ce>                       I will always return to my
+<ce>                       home here in ___mondung_!"
+
+Message:  1061
+<ce>                    As you sprinkle the holy water
+<ce>                      over =monster1_'s remains, a
+<ce>                     despairing wail echoes through
+<ce>                     the dark halls of ___mondung_,
+<ce>                    slowly fading into the distance.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 6 times.
+--               %g3 occurs 2 times.
+--              %god occurs 3 times.
+--              %pcf occurs 2 times.
+--              %pct occurs 2 times.
+--              %qdt occurs 2 times.
+--        =monster1_ occurs 2 times.
+--           =qtime_ occurs 3 times.
+--       ___mondung_ occurs 23 times.
+--        ___priest_ occurs 2 times.
+--    ___questgiver_ occurs 2 times.
+--         __priest_ occurs 2 times.
+--     __questgiver_ occurs 11 times.
+--          _priest_ occurs 3 times.
+--      _questgiver_ occurs 4 times.
+
+QBN:
+Item _I.00_ item class 10 subclass 4
+
+Person _questgiver_ group Questor
+Person _priest_ group Cleric remote
+
+Place _mondung_ remote dungeon4
+
+Clock _qtime_ 00:00 0 flag 17 range 1 5
+
+Foe _monster1_ is Zombie
+Foe _monster2_ is Mummy
+Foe _monster3_ is Ghost
+
+--	Quest start-up:
+	start timer _qtime_ 
+	reveal _mondung_ 
+	get item _I.00_ 
+	pick one of _S.05_ _S.05_ _S.04_ 
+	pick one of _S.00_ _S.01_ _S.02_ 
+
+_S.00_ task:
+	place foe _monster1_ at _mondung_ 
+
+_S.01_ task:
+	place foe _monster2_ at _mondung_ 
+
+_S.02_ task:
+	place foe _monster3_ at _mondung_ 
+
+_qtime_ task:
+	end quest 
+
+_S.04_ task:
+	log 1021 step 0 
+	say 1050 
+
+_S.05_ task:
+	log 1020 step 0 
+
+_mondead_ task:
+	killed 1 _monster1_ 
+	killed 1 _monster2_ 
+	killed 1 _monster3_ 
+	say 1060 
+	have _I.00_ set _S.09_ 
+
+_S.07_ task:
+	when _mondead_ and _S.09_ and not _S.10_ 
+	take _I.00_ from pc 
+	say 1061 
+
+_S.08_ task:
+	toting _I.00_ and _priest_ clicked 
+	get item _I.00_ 
+	say 1051 
+
+variable _S.09_
+_S.10_ task:
+	when _S.09_ and not _S.08_ and _S.04_ 
+
+_clickqgiver_ task:
+	clicked npc _questgiver_ 
+
+_success_ task:
+	when _clickqgiver_ and _S.07_ 
+	give pc nothing 
+	end quest 
+
+_clearclick_ task:
+	when not _S.07_ and _clickqgiver_ 
+	say 1003
+	clear _clickqgiver_ _clearclick_ 

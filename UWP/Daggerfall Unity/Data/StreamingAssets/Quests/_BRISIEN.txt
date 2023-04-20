@@ -1,0 +1,284 @@
+-- Quest: C:\QUESTS\WORKING\_BRISIEN.Qbn.
+-- StartsBy: letter
+-- Questee: anyone
+-- Repute: 0
+-- QuestId: 0
+Messages: 27
+Quest: _BRISIEN
+DisplayName: Lady Brisienna
+-- Message panels
+QRC:
+
+RefuseQuest:  [1001]
+Error: Questtext 1001 called on BRISIEN.Q
+
+AcceptQuest:  [1002]
+Error: Questtext 1002 called on BRISIEN.Q
+
+QuestFail:  [1003]
+Error: Questtext 1003 called on BRISIEN.Q
+
+RumorsDuringQuest:  [1005]
+The prophets say that soon what was unclaimed will be claimed.
+<--->
+Lady Brisienna awaits someone at _dirtypit_ in __dirtypit_.
+<--->
+That was some storm. Magically created, many are saying.
+<--->
+Lady Brisienna has taken up lodging at _dirtypit_ in __dirtypit_.
+
+RumorsPostfailure:  [1006]
+Lady Brisienna has left _dirtypit_, muttering about traitors to the Empire.
+
+RumorsPostsuccess:  [1007]
+Lady Brisienna has left _dirtypit_. She must've found who she was looking for.
+
+QuestorPostsuccess:  [1008]
+<ce>        I hope your investigations are going well so far, %pcf.
+<ce>                                    
+<ce>                              -- Lady B.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I am on a mission from the emperor to investigate
+ the shade of King Lysandus. His spirit has been
+ haunting the city of Daggerfall. The emperor
+ himself has charged me with the duty of laying
+ his ghost to rest.
+    There is also the minor matter of a letter
+ he sent to the Queen of Daggerfall. If I should
+ find out what happened to the letter, he would be
+ most appreciative.
+    Before landing in Daggerfall, a sudden storm
+ capsized the ship. I barely made it into this cave.
+
+Message:  1011
+%qdt:
+ I met with Lady Brisienna in a tavern room. She
+ told me that the three major powers of the Iliac
+ bay are Daggerfall, Wayrest, and Sentinel. If I
+ am to investigate the mystery of Lysandus' ghost,
+ I should start by speaking with the royal families
+ of these fiefdoms.
+
+Message:  1012
+Lady Magnessen? She's the emmisary of the Blades in Daggerfall.
+<--->
+Lady Magnessen is a part of the set regularly at Castle Daggerfall.
+<--->
+Lady Magnessen was formerly in the employ of Mynisera, when she was Queen.
+
+Message:  1013
+Lady Magnessen once worked for the Queen Mother, but always for the Emperor.
+<--->
+Lady Magnessen is the sister of the Great Knight, leader of the Blades.
+<--->
+I heard Lady Magnessen was accused of spying. Nobody knows where she is now.
+
+Message:  1015
+<ce>              Ah, thank you for responding to my letter,
+<ce>                    %pcf. I am Lady Brisienna. Let
+<ce>             me bring you to date on affairs. The spectre
+<ce>                of King Lysandus haunts the streets of
+<ce>              Daggerfall at night. Trying to communicate
+<ce>               with him is futile. He will occasionally
+<ce>              moan the word "Vengeance", but that is the
+<ce>               only coherent word I have ever heard him
+<ce>             utter. If you are ever in Daggerfall, do not
+<ce>             wander the city at night. You are certain to
+<ce>                 be attacked by his legion of ghosts.
+<ce>                                    
+<ce>                 It would be probably more gainful to
+<ce>               investigate those who might have wronged
+<ce>            Lysandus to find the cause behind his torment.
+<ce>            I do not know if the royal family of Daggerfall
+<ce>                or another person or persons merit more
+<ce>                suspicion. The major powers of the Bay,
+<ce>               Sentinel, Wayrest, and Daggerfall may be
+<ce>                         good places to start.
+<ce>                            (continued...)
+
+Message:  1016
+<ce>              In the matter of the letter, the Emperor's
+<ce>             agent says that he was unable to hand-deliver
+<ce>            it to the Queen because of the war. He hired a
+<ce>              courier who supposedly delivered the letter
+<ce>             in his stead. We do not even know the name of
+<ce>               this courier. Obviously, there is little
+<ce>            information of use, but it would be worthwhile
+<ce>              to see whether the letter arrived at Castle
+<ce>             Daggerfall at all. How you decide to do this
+<ce>             is entirely your decision. I will contact you
+<ce>                if any new information should surface.
+<ce>                                    
+<ce>            I am leaving Daggerfall soon. My position here
+<ce>            has been compromised and my life is in danger.
+<ce>              Do not mention my name in court. It is more
+<ce>               likely to hurt than help. Good luck, and
+<ce>                        watch your back, %pcf.
+
+Message:  1020
+Dear %pcn,
+ 
+     I heard about your accident at sea, and feared the
+ worst. Now that I've heard you're alive and well, I
+ would like the opportunity to meet with you and discuss
+ our beloved Emperor's mission in the Iliac Bay.
+ 
+     Allow me to introduce myself. I am Lady Magnessen,
+ the Emperor's agent in the court of Daggerfall. My
+ position is not so official as an ambassador. None but
+ other agents of the Emperor know of my true affiliation.
+ The Iliac Bay is rife with rebels against the Imperial
+ throne, so your discretion is required.
+ 
+     For the purpose of our meeting, I will take a room
+ at an inn, _dirtypit_ in __dirtypit_
+ of Daggerfall, for a month. After that, I will no longer
+ be available. I will expect you as soon as possible.
+ 
+<ce>                           Yours sincerely,
+ 
+<ce>                       Brisienna, Lady Magnessen
+
+Message:  1021
+%pcn,
+ 
+     I sent you a letter weeks ago. I only hope
+ it caught up with you. If this one crosses your path
+ after you have visited me on your way to see me in
+ __dirtypit_ please do not take offense.
+ As I mentioned in the previous letter, I am the
+ Emperor's agent in Daggerfall and it is imperative
+ that I speak with you. I have extend my stay at
+ _dirtypit_ in __dirtypit_ for two more weeks.
+ 
+ Of course there is the possibility that you have
+ intentionally snubbed me and shirked your duty to
+ the Emperor. I hope that is not the case. If you
+ fail to arrive, I will be forced to assume you are
+ a traitor to his Imperial Majesty, Uriel Septim VII.
+ 
+<ce>                           Yours sincerely,
+ 
+<ce>                       Brisienna, Lady Magnessen
+
+Message:  1022
+%pcn,
+ 
+ I waited and you never arrived. I shall report
+ this to the Emperor. If I have my way, you will
+ be barred from service.
+ 
+<ce>                            Lady Magnessen
+
+Message:  1026
+<ce>           	You are approached by a young page who smiles in
+<ce>             recognition and does not ask your name before
+<ce>              he hands you a letter addressed to you. To
+<ce>               all of your questions, he merely responds
+<ce>                    with a blank look and a smile.
+                                     <--->
+<ce>             A letter is pressed into your hand. You spin
+<ce>            to see who gave it to you. You catch a glimpse
+<ce>                of livery that vanishes into the crowd.
+                                     <--->
+<ce>              A page steps forward saying "Letter for you
+<ce>                     %pcn," and hands you a note.
+                                     <--->
+<ce>              A courier steps up to you with a letter in
+<ce>               hand. "I was told to give this letter to
+<ce>                someone fitting your description," says
+<ce>               the courier. As you take it, the courier
+<ce>                     turns and walks quickly away.
+                                     <--->
+<ce>               Reaching into your pack for something to
+<ce>             eat, you spy a note. It wasn't there before.
+                                     <--->
+<ce>             A redfaced courier startles you with a cry of
+<ce>                  "Letter for %pcn! Hey that must be
+<ce>                 you. Here, take this. Gotta go. Other
+<ce>                        deliveries to be made.
+
+Message:  1025
+<ce>             You wake and look around the room. Some hours
+<ce>           ago, you were in a boat, en route to Daggerfall,
+<ce>             when a storm of supernatural strength boiled
+<ce>           over the Iliac Bay like a malefic creature. Your
+<ce>              boat was destroyed, but you managed to swim
+<ce>           through the churning water to a promontory rock.
+<ce>          There you found a cave and escaped the fury of the
+<ce>           storm. You had only just lit a small fire when a
+<ce>            mudslide sealed you within. Your fear of being
+<ce>             buried alive calmed when you saw the corridor
+<ce>           leading out of the cavern. Perhaps there is a way
+<ce>          out of this cave after all. Once free of the cave,
+<ce>                  you can begin the Emperor's quest.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 10 times.
+--              %pcn occurs 6 times.
+--              %qdt occurs 2 times.
+--       __dirtypit_ occurs 16 times.
+
+QBN:
+Item _letter1_ letter used 1020
+Item _letter2_ letter used 1021
+Item stopMainQuest letter used 1022
+
+Person ladyBrisienna face 1 named Lady_Brisienna anyInfo 1012 rumors 1013
+
+Place PiratesHold permanent PirateerHold1
+Place _dirtypit_ remote tavern
+
+Clock _invitepc_ 7.00:00 14.00:00
+Clock _remindpc_ 30.00:00 0 flag 1 range 0 1
+Clock _pcfailed_ 14.00:00 0 flag 1 range 0 1
+Clock _oneday_ 1.00:00 0 flag 1 range 0 1
+
+
+--	Quest start-up:
+	dialog link for person ladyBrisienna 
+	log 1010 step 0 
+	pc at PiratesHold set _exitstarter_ 
+	say 1025 
+
+_invitepc_ task:
+	add dialog for person ladyBrisienna 
+	start timer _remindpc_ 
+	give pc _letter1_ notify 1026 
+	create npc at _dirtypit_ 
+	place npc ladyBrisienna at _dirtypit_ 
+
+_remindpc_ task:
+	start timer _pcfailed_ 
+	give pc _letter2_ notify 1026 
+
+_pcfailed_ task:
+	start timer _oneday_ 
+	change repute with ladyBrisienna by -15 
+	give pc stopMainQuest notify 1026 
+
+_meetladyb_ task:
+	clicked npc ladyBrisienna 
+	start timer _oneday_ 
+	stop timer _invitepc_ 
+	stop timer _pcfailed_ 
+	stop timer _remindpc_ 
+	log 1011 step 1 
+	start task _S.06_ 
+	say 1015 
+	say 1016 
+
+_oneday_ task:
+	end quest 
+
+variable _exitstarter_
+until _exitstarter_ performed:
+	start quest 999 999 
+	start timer _invitepc_ 
+	remove log step 0 
+
+MetLadyBrisienna _S.06_

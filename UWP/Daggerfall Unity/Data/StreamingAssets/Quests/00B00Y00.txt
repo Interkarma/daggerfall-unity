@@ -1,0 +1,127 @@
+-- Quest: C:\QUESTS\WORKING\00B00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Julianos
+-- Repute: 0
+-- QuestId: 0
+Messages: 32
+Quest: 00B00Y00
+DisplayName: The Price of Knowledge
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>      We have but one rule at the School of Julianos -- knowledge
+<ce>        is to be shared. Unfortunately, we have a former member
+<ce>        of our order who has forsaken this rule and needs to be
+<ce>        punished. If we offered you _reward_ gold pieces, would
+<ce>        you pursue and slay this erstwhile member of our School?
+
+RefuseQuest:  [1001]
+<ce>       Disappointing. Well, we'll find someone else doubtlessly.
+
+AcceptQuest:  [1002]
+<ce>                      Good. The prodigal one is a
+<ce>                      nightblade called =monster_
+<ce>                who has taken refuge in %g3 laboratory,
+<ce>                      ___mondung_. If you have not
+<ce>             returned in =1stparton_ days with _monster_'s
+<ce>      blood on your hands, we will assume you have failed or have
+<ce>                       joined =monster_ and your
+<ce>        reward will be forfeited to someone who will not fail. I
+<ce>          trust I've made myself clear. Good luck and goodbye.
+
+QuestFail:  [1003]
+While that nightblade lives, I am not interested in chatting on any subject, %pcf.
+
+QuestComplete:  [1004]
+<ce>                           Very nice, %pcf.
+<ce>              Very nice indeed. Here is your _reward_ gold
+<ce>                  pieces. We are very grateful to you.
+
+
+RumorsDuringQuest:  [1005]
+I hear there's a nightblade in ___mondung_, selling spells for money.
+<--->
+Renegade spellcasters are very dangerous. I hope they get that _monster_.
+
+RumorsPostfailure:  [1006]
+=monster_ has supposedly moved on, still selling spells for money.
+<--->
+I hear the School of Julianos has unleashed the Knights Mentor after someone.
+
+RumorsPostsuccess:  [1007]
+They finally got that _monster_. You can't have undisciplined mages loose.
+<--->
+Pity about them catching that _monster_. I hear he had a lot of juicy dirt.
+
+QuestorPostsuccess:  [1008]
+<ce>              You're %pcn. Good job with that =monster_,
+<ce>                you remember, the renegade spellcaster?
+
+QuestorPostfailure:  [1009]
+<ce>                Hmmph. You really blew that job to slay
+<ce>            the renegade spellcaster =monster_, didn't you?
+
+Message:  1030
+%qdt:
+ The School of Julianos in ___questgiver_
+ has hired me to kill a prodigal
+ _monster_ of their temple,
+ =monster_. I have =1stparton_ days to
+ get to %g3 hideout, ___mondung_,
+ and back to the School.
+
+Message:  1031
+<ce>                       You have slain =monster_.
+<ce>                       The School will be proud.
+
+
+-- Symbols used in the QRC file:
+--
+--               %g3 occurs 2 times.
+--              %pcf occurs 10 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--         =monster_ occurs 9 times.
+--       ___mondung_ occurs 3 times.
+--    ___questgiver_ occurs 1 time.
+--         _monster_ occurs 5 times.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ group Questor
+
+Place _mondung_ remote dungeon9
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Nightblade
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1030 step 0 
+	place foe _monster_ at _mondung_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+_mondead_ task:
+	killed 1 _monster_ saying 1031 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_
+	say 1003 
+	clear _qgclicked_ _clearclick_ 

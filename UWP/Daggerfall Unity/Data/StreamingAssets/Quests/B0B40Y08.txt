@@ -1,0 +1,115 @@
+-- Quest: C:\QUESTS\WORKING\B0B40Y08.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: knight
+-- Repute: 40
+-- QuestId: 8
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: B0B40Y08
+DisplayName: Still More Trouble with Orcs
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                        They call me _qgiver_.
+<ce>                       I have a quest for you, if
+<ce>                      you are feeling up to it. A
+<ce>                       powerful orc band has been
+<ce>                       raiding caravans in %reg.
+<ce>                     Someone needs to slay the orc
+<ce>                        warlord that leads them.
+
+RefuseQuest:  [1001]
+<ce>                                 Wimp.
+
+AcceptQuest:  [1002]
+<ce>                    The orcs are using ___dungeon_
+<ce>                        as a base of operations.
+<ce>                      Kill as many of them as you
+<ce>                        want, but be sure to cut
+<ce>                          =monster_'s throat.
+<ce>                     He's their warlord. If I hear
+<ce>                     from you within =2dung_ days,
+<ce>                    your honor will be untarnished.
+
+QuestComplete:  [1004]
+<ce>                        The orc menace has been
+<ce>                           stricken from %reg.
+<ce>                             All hail %pcn!
+
+RumorsDuringQuest:  [1005]
+The orcs of ___dungeon_ are making life for the merchants of ___qgiver_ difficult.
+
+RumorsPostfailure:  [1006]
+The orcs of ___dungeon_ went to plunder someone else. But for how long?
+
+RumorsPostsuccess:  [1007]
+___dungeon_ has been cleared of orcs, thanks to a brave %ra.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ ==qgiver_ in ___qgiver_
+ gave me the chance to slay
+ =monster_, the _monster_
+ of a powerful orc band in
+ ___dungeon_. I have =2dung_ days
+ to save %reg from being overrun.
+
+Message:  1011
+<ce>                          =monster_ is dead.
+<ce>                       The orcs will no longer be
+<ce>                            a theat to %reg.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 1 time.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 15 times.
+--              %reg occurs 7 times.
+--           =2dung_ occurs 2 times.
+--         ==qgiver_ occurs 1 time.
+--         =monster_ occurs 3 times.
+--       ___dungeon_ occurs 5 times.
+--        ___qgiver_ occurs 1 time.
+--         _monster_ occurs 1 time.
+--          _qgiver_ occurs 2 times.
+
+QBN:
+
+Person _qgiver_ group Questor
+Person _local_ face 207 group Resident2 female local
+
+Place _dungeon_ remote dungeon1
+
+Clock _2dung_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Orc_warlord
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	place foe _monster_ at _dungeon_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _monster_ saying 1011 
+
+_S.02_ task:
+	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.02_ and _S.01_ 
+	give pc nothing 
+	change repute with _local_ by +4 
+	end quest 
+
+_clearclick_ task:
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_ 

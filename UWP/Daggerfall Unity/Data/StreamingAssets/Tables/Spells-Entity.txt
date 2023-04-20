@@ -1,0 +1,65 @@
+-- Defines links to Entity stats, skills, and vitals for spell system
+-- name = reference key
+-- p1 = type of item (0=stats, 1=skills, 2=vitals)
+-- p2 = index of item
+
+schema: *name,p1,p2
+
+
+-- Stats (p1=0)
+
+Strength,          0, 0
+Intelligence,      0, 1
+Willpower,         0, 2
+Agility,           0, 3
+Endurance,         0, 4
+Personality,       0, 5
+Speed,             0, 6
+Luck,              0, 7
+
+
+-- Skills (p1=1)
+
+Medical,           1, 0
+Etiquette,         1, 1
+Streetwise,        1, 2
+Jumping,           1, 3
+Orcish,            1, 4
+Harpy,             1, 5
+Giantish,          1, 6
+Dragonish,         1, 7
+Nymph,             1, 8
+Daedric,           1, 9
+Spriggan,          1, 10
+Centaurian,        1, 11
+Impish,            1, 12
+Lockpicking,       1, 13
+Mercantile,        1, 14
+Pickpocket,        1, 15
+Stealth,           1, 16
+Swimming,          1, 17
+Climbing,          1, 18
+Backstabbing,      1, 19
+Dodging,           1, 20
+Running,           1, 21
+Destruction,       1, 22
+Restoration,       1, 23
+Illusion,          1, 24
+Alteration,        1, 25
+Thaumaturgy,       1, 26
+Mysticism,         1, 27
+ShortBlade,        1, 28
+LongBlade,         1, 29
+HandToHand,        1, 30
+Axe,               1, 31
+BluntWeapon,       1, 32
+Archery,           1, 33
+CriticalStrike,    1, 34
+
+
+-- Vitals (p1=2)
+
+Health,            2, 0
+Fatigue,           2, 1
+SpellPoints,       2, 2
+

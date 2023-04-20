@@ -1,0 +1,96 @@
+- This is for testing log action + journal ui
+
+Quest: __DEMO02
+
+QRC:
+
+QuestLogEntry: [1010]
+%qdt:
+ _qgiver_ of the Dark Brotherhood
+ in __qgiver_, ___qgiver_
+ has me paying a visit on =assassin_,
+ a competing assassin, where %g is completing a contract
+ in ___mondung_. If I can find any
+ clues about =assassin_'s employer,
+ I am to account him or her also.
+ Either way, the whole bloody business needs
+ to be done in =queston_ days.
+
+Message:	1012
+%qdt:
+ The Fighters Guild of ___qgiver_
+ has asked me to slay a wild beast which
+ has gotten into _house_. It's got
+ be done in one day.
+
+Message:	1013
+%qdt:
+ _qgiver_ in ___qgiver_ gave
+ me the job of killing a tiger or bear
+ that got into _house_
+ in __house_. If I get back
+ to him within =2dung_ days I get
+ _gold_ gold pieces.
+
+
+Message:	1014
+On %qdt,
+ I met with _agent_ of ___agent_.
+ %g told me that a mysterious client of
+ %g3 was looking for daedric _ingredient_.
+ If I can find it, I will get the _artifact_.
+ The daedric _ingredient_ is somewhere
+ in ___dungeon_.  When I find it, I am
+ to meet a _qgiver_ at
+ _meetingplace_ here in __meetingplace_.
+
+Message:	1015
+%qdt:
+ I met secretly with _qgiver_ in
+ ___qgiver_ who gave me a
+ falsified letter. I am to sneak into the
+ _inn_ in __inn_ and
+ replace the true letter. I have =traveltime_ days
+ to complete this quest. If I am caught,
+ I am on my own.
+
+Message:	1016
+%qdt
+ _giver_ of ___giver_ has offered me _gold_
+ gold to find %g3 book, _book_.
+
+Message:	1017
+%qdt:
+ _qgiver_ of
+ ==qgiver_ in ___qgiver_
+ says that Daedras are pouring
+ through a dimensional rift.
+ I must go to ___dungeon_
+ and kill them all. They will
+ contact me by spell when I
+ have slain the last of them.
+ I have =2dung_ days before it
+ is too late.
+
+Message:	1018
+%qdt:
+ _qgiver_ of __qgiver_,
+ in ___qgiver_, told me that %g3 god was
+ angered. %g needs untainted
+ _ingredient_ from ___dungeon_
+ for a rite of atonement. It
+ must be in _qgiver_'s
+ hands at __qgiver_
+ within =traveltime_ days.
+
+QBN:
+
+- Headless entry point with custom action
+log 1010 step 0
+log 1012 step 1
+log 1013 step 2
+log 1014 step 3
+log 1015 step 4
+log 1016 step 5
+log 1017 step 6
+log 1018 step 7

@@ -1,0 +1,179 @@
+-- Quest: C:\QUESTS\WORKING\90C00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: Vaernima
+-- Repute: 0
+-- QuestId: 0
+Messages: 21
+Quest: 90C00Y00
+DisplayName: Vaernima's Quest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                    A very wise %ra once said that
+<ce>                   power corrupts, and absolute power
+<ce>                   is absolutely fabulous. That's why
+<ce>                    I am going to help you. Now, I'm
+<ce>                  sure you have certain moral problems
+<ce>                  with murdering an innocent who never
+<ce>                   hurt you in any way. But you'll do
+<ce>                 it to win my Skull of Corruption, yes?
+
+RefuseQuest:  [1001]
+<ce>                          No? Why ... you ...
+<ce>                        contemptible, sniveling,
+<ce>                        virtuous, sterling piece
+<ce>                        of goblin snot! I'm not
+<ce>                        going waste my precious
+<ce>                          time with anyone so
+<ce>                           poisonously moral.
+
+AcceptQuest:  [1002]
+<ce>               Grand. The particular innocent I have in
+<ce>                      mind is a _monster_. You're
+<ce>               probably thinking, an innocent lich? Well,
+<ce>                    innocent to you. To me, he is a
+<ce>                  treacherous former servant who took
+<ce>                all the power I offered him, and ignored
+<ce>                my orders. You will find his cadaverous
+<ce>                        presence in ___mondung_.
+<ce>                He's nervous, so be ready for a battle.
+<ce>                After your victory, go to ___qgfriend_,
+<ce>                  and look for my servant _qgfriend_,
+<ce>                      a =qgfriend_ at __qgfriend_.
+
+QuestFail:  [1003]
+<ce>                       Why, you treacherous %ra.
+<ce>                    Are you pretending you've slain
+<ce>                   the lich to get your grabby hands
+<ce>                    on the Skull? Vaernima would be
+<ce>                     amused, but, alas, I am under
+<ce>                     strict orders. Come back when
+<ce>                    you've fulfilled your contract.
+
+QuestComplete:  [1004]
+<ce>                 So, did the lich cough up a cloud of
+<ce>                     dust when it died? _qgfriend_
+<ce>                    here, %pcf. Vaernima will be so
+<ce>                   pleased with the news. I hope you
+<ce>                   won't mind if I embellish a little
+<ce>                  about some horrible outrageous sins
+<ce>                   you committed in your journey. Here
+<ce>                   is _artifact_. Use it whenever you
+<ce>                  want a target to be faced with their
+<ce>                     darkest side. Farewell, %pcf,
+<ce>                              but do bad.
+
+RumorsDuringQuest:  [1005]
+There is a curse on this land while that lich remains in ___mondung_.
+<--->
+If only some great hero would come to slay that ancient lich in ___mondung_.
+
+RumorsPostfailure:  [1006]
+That lich left ___mondung_, but it's not dead. It'll be back when it's ready.
+<--->
+I'm just happy that lich is gone, even if it isn't dead.
+
+RumorsPostsuccess:  [1007]
+I hear %god sent us an angel to rid ___mondung_ of that accursed lich.
+<--->
+We may never know who destroyed that lich in ___mondung_, but he's in our prayers.
+
+Message:  1011
+_qgfriend_ is that creepy =qgfriend_ over at __qgfriend_ to the %di.
+<--->
+_qgfriend_ is the foul-smelling =qgfriend_ I saw at __qgfriend_.
+
+Message:  1012
+_qgfriend_ is one of Vaernima's agents of corruption in %reg.
+<--->
+_qgfriend_ is one of Vaernima's dirty little spreaders of corruption.
+
+Message:  1013
+Vaernima is the Daedra Lady of Corruption and Decay. Not nice to look at.
+<--->
+Vaernima is a Regent of Oblivion, and her sphere is Corruption and Decay.
+
+Message:  1014
+The Skull of Corruptions creates dark and oppositional duplicates of a target.
+<--->
+The Skull brings forth a target's dark half from Vaernima's plane of Oblivion.
+
+Message:  1015
+<ce>                     You have slain the _monster_,
+<ce>                  fulfilling your part of the bargain
+<ce>                          with Lady Vaernima.
+
+Message:  1020
+%qdt:
+ I have made a contract with the Daedra Prince Vaernima.
+ She will order her agent in ___qgfriend_
+ to give me her artifact, _artifact_, if
+ I can meet %g2 at __qgfriend_ with the
+ dust of a certain _monster_ on my hands
+ in =1stparton_ days or less.
+ All I know about the _monster_ is that it
+ lives in ___mondung_.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 1 time.
+--               %g2 occurs 1 time.
+--              %god occurs 1 time.
+--              %pcf occurs 4 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--              %reg occurs 1 time.
+--       =1stparton_ occurs 1 time.
+--        =qgfriend_ occurs 4 times.
+--       ___mondung_ occurs 9 times.
+--      ___qgfriend_ occurs 14 times.
+--        _artifact_ occurs 2 times.
+--         _monster_ occurs 4 times.
+--        _qgfriend_ occurs 7 times.
+
+QBN:
+Item _artifact_ artifact Skull_of_Corruption anyInfo 1014
+
+Person _questgiver_ face 112 named Vaernima anyInfo 1013
+Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
+
+Place _mondung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+
+Foe _monster_ is Lich
+--fixed msg 1020 to not share qdt line
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	place foe _monster_ at _mondung_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+--unused variable
+_pcgetsgold_ task:
+	when _npcclicked_ and _mondead_ 
+	give pc _artifact_ 
+	end quest 
+--removed unnecessary delay
+
+variable _queston_
+--unused variable
+_mondead_ task:
+	killed 1 _monster_ 
+	say 1015 
+
+_npcclicked_ task:
+	clicked npc _qgfriend_ 
+
+_clearclick_ task:
+	when _npcclicked_ and not _mondead_ 
+	say 1003
+	clear _npcclicked_ 

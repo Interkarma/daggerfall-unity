@@ -1,0 +1,155 @@
+-- Quest: C:\QUESTS\WORKING\C0B00Y03.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: temple
+-- Repute: 0
+-- QuestId: 3
+Messages: 13
+Quest: C0B00Y03
+DisplayName: The Missing Scholar
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       %pct, one of our clerics,
+<ce>                            a =cleric_ named
+<ce>                     _cleric_ has disappeared while
+<ce>                     on an archaeological dig. Will
+<ce>                         you help us find %g2?
+                                     <--->
+<ce>                    I fear that one of our noblest
+<ce>                           scholars, _cleric_
+<ce>                  has disappeared while investigating
+<ce>                     an old ruined temple. Will you
+<ce>                           help us find %g2?
+
+RefuseQuest:  [1001]
+<ce>                        That's a rather callous
+<ce>                       point of view to be quite
+<ce>                              frank, %pcf.
+
+AcceptQuest:  [1002]
+<ce>                     That's good, good. Now then,
+<ce>                            _cleric_ went to
+<ce>                          ___mondung_ close to
+<ce>                      a fortnight ago to conduct a
+<ce>                     dig. It's possible that all is
+<ce>                      well, but ... I'll give you
+<ce>                    =queston_ days to go there, find
+<ce>                           _cleric_ and come
+<ce>                       back. %god walk with you,
+<ce>                            %pct. Fare well.
+
+QuestComplete:  [1004]
+<ce>                           Ah, %pct and good
+<ce>                          _cleric_, it is good
+<ce>                     to have you back in __qgiver_
+<ce>                        again. I had feared the
+<ce>                          worst, to be honest.
+
+RumorsDuringQuest:  [1005]
+_cleric_ was a fool to go unarmed into ___mondung_.
+<--->
+___mondung_ is no place for a scholarly =cleric_ like _cleric_.
+
+RumorsPostfailure:  [1006]
+Everyone's given up hope of ever seeing _cleric_ again.
+<--->
+__qgiver_ is grieving over the disappearance of _cleric_.
+
+RumorsPostsuccess:  [1007]
+Thanks to that %ra, _cleric_ has started work on a history of ___mondung_.
+<--->
+Rescuing _cleric_ increased __qgiver_'s estimation of you.
+
+QuestorPostsuccess:  [1008]
+For what you did for _cleric_, of course I'll help you, %pcf.
+
+QuestorPostfailure:  [1009]
+I still remember _cleric_, %pcf. Leave me.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of __qgiver_
+ has sent me to ___mondung_
+ to rescue a cleric named _cleric_
+ who disappeared down there. I
+ have =queston_ days to find
+ the =cleric_ and
+ return to ___qgiver_
+ and __qgiver_.
+
+Message:  1011
+<ce>                      Goodness, you gave me quite
+<ce>                          a start, young %ra.
+<ce>                    Have I really been down here for
+<ce>                      so long? How time does fly.
+<ce>                     Well, if you would be so kind
+<ce>                  as to escort me back to the temple,
+<ce>                            my good %pcf ...
+                                     <--->
+<ce>                         Thank %god you came.
+<ce>                      I've been searching for the
+<ce>                      way out for close to a week.
+<ce>                  I'll follow you back to the temple.
+
+Message:  1012
+<ce>                    "Ah, I know the way from here,"
+<ce>                         _cleric_ totters off.
+
+
+-- Symbols used in the QRC file:
+--
+--               %g2 occurs 4 times.
+--              %god occurs 2 times.
+--              %pcf occurs 36 times.
+--              %pct occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--          =cleric_ occurs 3 times.
+--         =queston_ occurs 2 times.
+--       ___mondung_ occurs 6 times.
+--        ___qgiver_ occurs 7 times.
+--          _cleric_ occurs 16 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+
+Person _qgiver_ group Questor
+Person _cleric_ face 105 factiontype Temple
+
+Place _mondung_ remote dungeon4
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+
+--	Quest start-up:
+	start timer _queston_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	place npc _cleric_ at _mondung_ 
+
+_queston_ task:
+	end quest 
+
+_S.01_ task:
+	clicked npc _cleric_ 
+	hide npc _cleric_ 
+	say 1011 
+	add _cleric_ face 
+
+_reward_ task:
+	when _qgclicked_ and _S.01_ 
+	give pc nothing 
+	end quest 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_S.04_ task:
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _S.04_ 
+
+_cick_ task:
+	when _S.01_ and _queston_ 
+	say 1012 

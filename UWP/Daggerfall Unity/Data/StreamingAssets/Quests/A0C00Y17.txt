@@ -1,0 +1,265 @@
+-- Quest: C:\QUESTS\WORKING\A0C00Y17.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 0
+-- QuestId: 17
+Messages: 51
+Quest: A0C00Y17
+DisplayName: The Escort
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                          I am _questgiver_.
+<ce>              I am in need of an escort. Would you protect
+<ce>                  me on my journey to __destination_?
+<ce>               It's less than =traveltime_ days from here.
+                                     <--->
+<ce>                       My name is _questgiver_.
+<ce>                  I have to get out of ___questgiver_
+<ce>             right away. I want to hire you to guard me on
+<ce>                     my journey to __destination_.
+<ce>                   I can pay you _gold_ gold pieces.
+                                     <--->
+<ce>             You have to help me! My name is _questgiver_.
+<ce>                 I need to get to __destination_ within
+<ce>                =traveltime_ days and I need an escort.
+
+RefuseQuest:  [1001]
+<ce>                   I guess I'll have to find someone
+<ce>                   else to protect me on my journey.
+                                     <--->
+<ce>                            Heartless oaf!
+
+AcceptQuest:  [1002]
+<ce>                       Blessings upon you, %pcn.
+<ce>                  I travel light, so I'm ready to go.
+<ce>                    I know you don't work for free.
+<ce>                      Take me to _destination_ in
+<ce>              __destination_ and I'll pay you _gold_ gold
+<ce>                           when we get there.
+
+QuestComplete:  [1004]
+<ce>                        Ah! _destination_! You
+<ce>                    have fulfilled your part of the
+<ce>                      bargain. Here is the gold I
+<ce>                             promised you.
+
+RumorsDuringQuest:  [1005]
+<ce>                   I hear the guards are looking for
+<ce>                 _questgiver_. %g had to flee the town.
+                                     <--->
+<ce>                 Don't you know? The Thieves Guild is
+<ce>                   after _questgiver_. Or was it the
+<ce>                      Dark Brotherhood? I forget.
+                                     <--->
+<ce>                     I heard _questgiver_ has been
+<ce>                   forced to marry. %g has to get to
+<ce>                       __destination_ before the
+<ce>                       pregnancy begins to show.
+
+RumorsPostfailure:  [1006]
+<ce>                     They caught _questgiver_. %g
+<ce>                      will stand trial next week.
+
+RumorsPostsuccess:  [1007]
+<ce>                    Did you hear? Some %ra smuggled
+<ce>                     _questgiver_ out of town just
+<ce>                   in time. Otherwise they would have
+<ce>                         beheaded %g2 for sure.
+
+QuestorPostsuccess:  [1008]
+<ce>                   Thanks for getting me out of that
+<ce>                     town, %pcf. I have recommended
+<ce>                     you to several of my friends.
+
+QuestorPostfailure:  [1009]
+<ce>                    You! Because you wouldn't help
+<ce>                    me get out of town, the Thieves
+<ce>                      Guild took my shop! Go away.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I met _questgiver_
+ in ___questgiver_. %g
+ will pay me to escort %g2 to
+ _destination_ in __destination_.
+ In particular, %g needs to get to _destination_
+ within =traveltime_ days.
+
+Message:  1019
+<ce>                        _questgiver_ says, "Ha!
+<ce>                     I hired this %ra to protect me
+<ce>                        from this. %pcn, are you
+<ce>                        going to turn me over?"
+
+Message:  1020
+<ce>                    Halt! I have a warrant for the
+<ce>                     arrest of _questgiver_ in the
+<ce>                    name of %reg. We don't want you,
+<ce>                    just %g2. Turn %g2 over and you
+<ce>                              can go free.
+
+Message:  1021
+<ce>                   There is no need for us to fight.
+<ce>                   Our quarrel is with _questgiver_.
+<ce>                    The Mages Guild does not accept
+<ce>                     treachery lightly. Give %g2 to
+<ce>                     us and you can be on your way.
+
+Message:  1022
+<ce>                      Out of the way, %ra. We want
+<ce>                         _questgiver_, and you
+<ce>                   can't stop us. Just turn %g2 over.
+<ce>                         Hey, _questgiver_. You
+<ce>                    didn't think you could cheat the
+<ce>                    Thieves Guild and live, did you?
+
+Message:  1023
+<ce>                           Stand aside, %ra.
+<ce>                       _questgiver_ is wanted by
+<ce>                       the Dark Brotherhood. You
+<ce>                      aren't such a fool as to try
+<ce>                        to protect %g2, are you?
+
+Message:  1030
+<ce>                         _questgiver_ is slain
+<ce>                        right before your eyes.
+
+Message:  1040
+<ce>                  Have it your way. Kill them both!
+
+Message:  1050
+<ce>                          Are you lost, %pcn?
+<ce>                      I guess I'll have to find my
+<ce>                       own way to __destination_.
+<ce>                     Thanks for nothing, worthless
+<ce>                                wretch.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 6 times.
+--               %g2 occurs 12 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 4 times.
+--              %reg occurs 1 time.
+--      =traveltime_ occurs 5 times.
+--    ___questgiver_ occurs 2 times.
+--    __destination_ occurs 20 times.
+--            _gold_ occurs 6 times.
+--      _questgiver_ occurs 16 times.
+
+QBN:
+Item _gold_ gold
+
+Person _questgiver_ group Questor
+Person _mage_ faction The_Mages_Guild remote
+Person _thief_ faction The_Thieves_Guild remote
+Person _darkb_ faction The_Dark_Brotherhood remote
+
+Place _destination_ remote random
+
+Clock _traveltime_ 00:00 0 flag 1 range 0 2
+Clock _extratime_ 03:00 0 flag 1 range 0 1
+
+Foe _mages_ is 2 Mage
+Foe _F.01_ is 2 Thief
+Foe _guards_ is 2 Warrior
+Foe _F.03_ is 2 Assassin
+
+--	Quest start-up:
+	start timer _traveltime_ 
+	log 1010 step 0 
+	pick one of _S.01_ _S.02_ _S.14_ _S.03_ 
+	hide npc _questgiver_ 
+	add _questgiver_ face 
+	create npc at _destination_ 
+
+variable _traveltime_
+_S.01_ task:
+	create foe _guards_ every 5 minutes 5 times with 20% success 
+
+_S.02_ task:
+	create foe _mages_ every 5 minutes 3 times with 25% success 
+
+_S.03_ task:
+	create foe _F.01_ every 5 minutes 3 times with 25% success 
+
+variable _S.04_
+_S.05_ task:
+	injured _mages_ saying 1021 
+	injured _guards_ saying 1020 
+	injured _F.03_ saying 1023 
+	injured _F.01_ saying 1022 
+	prompt 1019 yes _yes_ no _no_ 
+--added underscores to yes
+
+_S.06_ task:
+	give pc _gold_ 
+	drop _questgiver_ face 
+	place npc _questgiver_ at _destination_ 
+	end quest 
+
+_extratime_ task:
+	end quest 
+
+_yes_ task:
+	start timer _extratime_ 
+	say 1030 
+	drop _questgiver_ face 
+
+until _yes_ performed:
+	pc at _destination_ set _S.06_ 
+
+_no_ task:
+	say 1040 
+
+variable _S.10_
+_S.11_ task:
+	when _yes_ and _S.01_ 
+	legal repute +10 
+	restrain foe _guards_ 
+
+_S.12_ task:
+	when _yes_ and _S.02_ 
+	change repute with _mage_ by +10 
+	restrain foe _mages_ 
+
+_S.13_ task:
+	when _yes_ and _S.03_ 
+	change repute with _thief_ by +10 
+	restrain foe _F.01_ 
+
+_S.14_ task:
+	create foe _F.03_ every 5 minutes 3 times with 25% success 
+
+_S.15_ task:
+	when _yes_ and _S.14_ 
+	change repute with _darkb_ by +10 
+	restrain foe _F.03_ 
+
+_S.16_ task:
+	when _no_ and _S.03_ 
+	change repute with _thief_ by -20 
+
+_S.17_ task:
+	when _no_ and _S.01_ 
+	legal repute -20 
+
+_S.18_ task:
+	when _no_ and _S.02_ 
+	change repute with _mage_ by -20 
+
+_S.19_ task:
+	when _no_ and _S.14_ 
+	change repute with _darkb_ by -20 
+
+_S.20_ task:
+	when _traveltime_ and not _S.06_ 
+	say 1050 
+	drop _questgiver_ face 
+	end quest 

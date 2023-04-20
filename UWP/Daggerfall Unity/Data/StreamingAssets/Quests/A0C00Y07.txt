@@ -1,0 +1,178 @@
+-- Quest: C:\QUESTS\WORKING\A0C00Y07.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: peasant
+-- Repute: 0
+-- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 11
+Quest: A0C00Y07
+DisplayName: The Exterminator
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                I need help. _qgiver_ at your service,
+<ce>                 although I hope yours will be at mine.
+<ce>                   _house_ is infested with monsters.
+<ce>                Can you kill them for me? I can pay you
+<ce>                          _gold_ gold pieces.
+
+RefuseQuest:  [1001]
+<ce>                 I need help! Won't somebody help me?
+
+AcceptQuest:  [1002]
+<ce>             Thank you, thank you, thank you! If they are
+<ce>            not gone by this time tomorrow, I'll be ruined.
+
+QuestComplete:  [1004]
+<ce>                What a relief. I hate those things. You
+<ce>                     have been most helpful, %pcn.
+<ce>                Here is the _gold_ gold that I promised.
+
+RumorsDuringQuest:  [1005]
+<ce>                   I think it's hilarious! _qgiver_'s
+<ce>                  _house_ is overrun with giant bugs!
+                                     <--->
+<ce>                    I feel sorry for _qgiver_. %g3
+<ce>                    _house_ has been virtually taken
+<ce>                over by 12 foot long rats with poisonous
+<ce>                stingers. I hear they can turn a man to
+<ce>                      stone with a single glance!
+
+RumorsPostfailure:  [1006]
+<ce>                     _qgiver_ had to sell _house_.
+                                     <--->
+<ce>               I hear someone in the Fighters Guild died
+<ce>                   trying to clear the infestation of
+<ce>                          _qgiver_'s _house_.
+
+RumorsPostsuccess:  [1007]
+<ce>                    Aren't you the %ra that helped
+<ce>                     _qgiver_ get rid of the beasts
+<ce>                    that had taken over %g3 _house_?
+                                     <--->
+<ce>                       I hear that _qgiver_ paid
+<ce>                   someone to kill all the creatures
+<ce>                     that had overrun %g3 _house_.
+
+QuestorPostsuccess:  [1008]
+<ce>                %pcf, I owe you a debt of gratitude for
+<ce>                    clearing my _house_ of monsters.
+                                     <--->
+<ce>                Everyone, listen up. I want you to meet
+<ce>             my friend, %pcn, exterminator extraordinaire.
+<ce>               %g rid my _house_ of three dozen monsters!
+
+QuestorPostfailure:  [1009]
+<ce>                  You! You ruined me! I lost _house_
+<ce>                 because you weren't able to take care
+<ce>                    of a handful of monsters in it.
+                                     <--->
+<ce>                  Aren't you the %ra that failed me?
+<ce>                   I hired you to kill some monsters
+<ce>                     infesting my _house_, and you
+<ce>                     just couldn't do it. Go away.
+
+QuestLogEntry:  [1010]
+%qdt:
+ In ___qgiver_, I met _qgiver_.
+ %g asked me to rid _house_ in
+ __house_ of monsters. %g needs
+ them gone within a day.
+
+Message:  1011
+<ce>  That should be enough.
+
+Message:  1012
+<ce>  You hear scratching noises coming from the walls.
+<ce>  The creatures will most certainly react poorly
+<ce>  to your intrusion on their territory.
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--               %g3 occurs 5 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--        ___qgiver_ occurs 1 time.
+--          __house_ occurs 1 time.
+--            _gold_ occurs 3 times.
+--           _house_ occurs 18 times.
+--          _qgiver_ occurs 8 times.
+
+QBN:
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _house_ local random
+
+--time set to 24 strict hours. if it carries flags in DFU, time becomes variable
+Clock _oneday_ 1.00:00
+
+Foe _spiders_ is Spider
+Foe _rats_ is Giant_rat
+Foe _scorpions_ is Giant_scorpion
+Foe _bats_ is Giant_bat
+
+--	Quest start-up:
+	start timer _oneday_ 
+	log 1010 step 0 
+	pc at _house_ set _S.01_ 
+	create npc at _house_ 
+
+_oneday_ task:
+	end quest 
+
+--instant reward glitch fixed.
+_questdone_ task:
+	clicked npc _qgiver_
+
+_S.01_ task:
+	say 1012
+	start task _pickspawn_
+--preventing multiple spawns by using static pick
+
+_pickspawn_ task:
+	pick one of _S.04_ _S.05_ _S.06_ _S.07_ 
+
+--this quest had a rare case of no victory message
+_S.03_ task:
+	killed 6 _bats_ 
+	killed 3 _spiders_ 
+	killed 7 _rats_ 
+	killed 3 _scorpions_
+	say 1011
+
+variable _S.04_
+_spawn1_ task:
+	when _S.01_ and _S.04_ and not _S.03_
+	create foe _bats_ every 2 minutes indefinitely with 100% success 
+
+variable _S.05_
+_spawn2_ task:
+	when _S.01_ and _S.05_ and not _S.03_
+	create foe _rats_ every 2 minutes indefinitely with 100% success 
+
+variable _S.06_
+_spawn3_ task:
+	when _S.01_ and _S.06_ and not _S.03_
+	create foe _scorpions_ every 3 minutes indefinitely with 100% success 
+
+variable _S.07_
+_spawn4_ task:
+	when _S.01_ and _S.07_ and not _S.03_
+	create foe _spiders_ every 3 minutes indefinitely with 100% success 
+
+_clearclick_ task:
+	when not _S.03_ and _questdone_ 
+	clear _questdone_ _clearclick_ 
+
+
+_pcgetsgold_ task:
+	when _questdone_ and _S.03_
+	give pc _gold_ 
+	end quest

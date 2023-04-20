@@ -1,0 +1,157 @@
+-- Quest: C:\QUESTS\WORKING\B0B60Y12.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: knight
+-- Repute: 60
+-- QuestId: 12
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: B0B60Y12
+DisplayName: Eternal Rest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                    Have I got a good one for you.
+<ce>                        It seems _nobleman_ just
+<ce>                      read about an ancient family
+<ce>                      curse. Now %g is scared out
+<ce>                     of %g3 mind. %g wants someone
+<ce>                    to go destroy %g3 great, great,
+<ce>                       great grandmother, whom %g
+<ce>                      fears walks the earth as an
+<ce>                      undead monstrosity. Are you
+<ce>                           interested, %pct?
+                                     <--->
+<ce>                 This may potentially be nothing more
+<ce>                   than a simple poke around a tomb,
+<ce>                      but _nobleman_ has asked us
+<ce>                    to investigate the resting place
+<ce>                    of %g3 great, great, great grand
+<ce>                   mother. Apparently %g had a dream
+<ce>                    that %g had been brought to life
+<ce>                    and would escape from the family
+<ce>                     burial mound in =2dung_ days.
+<ce>                   Perhaps it is all perfect rot, but
+<ce>                   perhaps not. Will you investigate,
+<ce>                                 %pct?
+
+RefuseQuest:  [1001]
+<ce>                   If you run into any knights that
+<ce>                     might take this job, send them
+<ce>                                 to me.
+
+AcceptQuest:  [1002]
+<ce>                     _nobleman_'s ancient ancestor
+<ce>                    is entombed in a mausoleum named
+<ce>                          ___dungeon_ that was
+<ce>                   designed to prevent graverobbing.
+<ce>                     There is no proof she is even
+<ce>                     undead. Odds are she's just a
+<ce>                    corpse. If so, burn the body in
+<ce>                    a proper funeral pyre. Get back
+<ce>                   within =2dung_ days, or _nobleman_
+<ce>                   says the curse will be triggered.
+
+QuestComplete:  [1004]
+<ce>                     Well I'll be. I didn't figure
+<ce>                       _nobleman_'s ancestor was
+<ce>                    really one of the walking dead!
+<ce>                    You have saved the local people
+<ce>                       much misery and suffering.
+
+RumorsDuringQuest:  [1005]
+_nobleman_ is a superstitious fool, but %g3 great grandmother was an odd one.
+<--->
+_nobleman_ comes a strange family. Maybe %g3 great grandmother is a zombie.
+
+RumorsPostfailure:  [1006]
+%kno looked into _nobleman_'s story and, I guess, decided it was a hoax.
+
+RumorsPostsuccess:  [1007]
+_nobleman_'s great, great grandmother was undead after all! How about that?
+
+QuestorPostsuccess:  [1008]
+After saving %reg from an undead menace we didn't know we had, what can I do?
+
+QuestorPostfailure:  [1009]
+As a matter of fact, I know _nobleman_'s story wasn't a hoax, you sluggard!
+<--->
+I happen to know there was a real monster in ___dungeon_, you dormouse!
+<--->
+You failed %kno when you failed _nobleman_, %pcf.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ ==qgiver_ in ___qgiver_
+ charged me with the duty of
+ cremating the corpse of
+ _nobleman_'s ancient ancestor
+ in ___dungeon_. There is
+ a chance it is an undead
+ horror, which will need to
+ be put to rest. I have =2dung_
+ days to finish the quest.
+
+Message:  1011
+<ce>                    The _monster_ is laid to rest.
+<ce>                       _nobleman_ need not worry
+<ce>                         about that curse now.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 5 times.
+--               %g3 occurs 5 times.
+--              %kno occurs 3 times.
+--              %pcf occurs 18 times.
+--              %pct occurs 3 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--           =2dung_ occurs 3 times.
+--         ==qgiver_ occurs 1 time.
+--       ___dungeon_ occurs 3 times.
+--        ___qgiver_ occurs 1 time.
+--         _monster_ occurs 1 time.
+--        _nobleman_ occurs 22 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+Person _nobleman_ group Resident1 remote
+Person _local_ face 1 group Resident2 local
+
+Place _dungeon_ remote dungeon0
+
+Clock _2dung_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Mummy
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	place foe _monster_ at _dungeon_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _monster_ saying 1011 
+
+_S.02_ task:
+	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.02_ and _S.01_ 
+	give pc nothing 
+	change repute with _local_ by +4 
+	change repute with _nobleman_ by +10 
+	end quest 
+
+_clearclick_ task:
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_ 

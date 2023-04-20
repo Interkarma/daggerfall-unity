@@ -1,0 +1,46 @@
+---- Example quest to track entering "home" location types or wilderness
+---- Start from console: 'startquest __demo20"
+
+Quest: __DEMO20
+
+
+QRC:
+
+QuestLogEntry:  [1010]
+%qdt
+  You must find any home location
+and also explore the wilderness.
+
+
+QBN:
+
+---- Quest startup
+log 1010 step 0
+
+variable _atAnyHome_
+variable _inWilderness_
+
+---- Clear wilderness var when entering any location type
+---- Also re-arms exit anywhere task so it can fire again
+_entersAnywhere task:
+	when pc enters anywhere
+	clear _inWilderness_
+	clear _exitsAnywhere_
+
+---- Set wilderness var when exiting any location type
+---- Also re-arms enters home task so it can fire again
+_exitsAnywhere_ task:
+	when pc exits anywhere
+	setvar _inWilderness_
+	clear _atAnyHome_
+	clear _entersAnywhere_
+	clear _entersAnyHome_
+	
+---- Set home var when entering any "home" location type
+_entersAnyHome_ task:
+	when pc enters farmhome
+	when pc enters wealthyhome
+	when pc enters poorhome
+	when pc enters tavernhome
+	when pc enters templehome
+	setvar _atAnyHome_

@@ -1,0 +1,23 @@
+---- Example quest to place an item at a location
+
+Quest: __DEMO10
+
+
+QRC:
+
+QuestLogEntry:  [1010]
+%qdt:
+ I need to find the item
+ at _tavern_ in __tavern_.
+
+
+QBN:
+
+Item _item1_ organs
+Item _item2_ artifact Chrysamere
+
+Place _tavern_ local tavern
+
+--	Quest start-up:
+	log 1010 step 0
+	place item _item1_ at _tavern_

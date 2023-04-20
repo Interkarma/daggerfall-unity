@@ -1,0 +1,127 @@
+-- Quest: C:\QUESTS\WORKING\B0C00Y10.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: knight
+-- Repute: 0
+-- QuestId: 10
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: B0C00Y10
+DisplayName: Trouble with Orcs
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                        I am _qgiver_. You are
+<ce>                  not a member of this knightly order.
+<ce>                 We are not sure if you can be trusted
+<ce>                  yet. If you were to slay the leader
+<ce>                  of the bandit band of orcs troubling
+<ce>                  our area, it might change our minds.
+<ce>                 Do you have the stomach for such work?
+
+RefuseQuest:  [1001]
+<ce>                        Why am I not surprised?
+<ce>                      Come back when you are ready
+<ce>                          to earn our respect.
+
+AcceptQuest:  [1002]
+<ce>                     Kill as many orcs as you can,
+<ce>                       but be sure to kill their
+<ce>                           leader, =monster_.
+<ce>                     The foul band is hiding up in
+<ce>                         ___dungeon_. If you're
+<ce>                      not back in =2dung_ days, I
+<ce>                      will know you are the coward
+<ce>                         everyone says you are.
+
+QuestComplete:  [1004]
+<ce>                    Hmmm. Maybe we should consider
+<ce>                     you for membership. Not a bad
+<ce>                           job at all, %pcn.
+
+RumorsDuringQuest:  [1005]
+That orc tribe has eluded the knights so far.
+<--->
+That orc tribe would be lost without its leader.
+
+RumorsPostfailure:  [1006]
+The orcs will be back. Their leader still lives.
+
+RumorsPostsuccess:  [1007]
+Some %ra came out of nowhere, slew the orc leader, and left.
+
+QuestorPostsuccess:  [1008]
+What can I do for you, orc slayer?
+
+QuestorPostfailure:  [1009]
+You are not worth my time, orc fancier.
+<--->
+Why would I talk to a lousy orc lover?
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ the knightly order in ___qgiver_
+ gave me the task of wiping
+ out an orc band that makes
+ it's home in ___dungeon_.
+ In particular I must get the
+ leader, a certain =monster_
+ I need to get back to %g2
+ =2dung_ days or %g will
+ assume I'm dead.
+
+Message:  1011
+<ce>                          =monster_ is dead.
+<ce>                      Without a leader, these orcs
+<ce>                  will never be more than a nuisance.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g2 occurs 1 time.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--           =2dung_ occurs 2 times.
+--         =monster_ occurs 3 times.
+--       ___dungeon_ occurs 2 times.
+--        ___qgiver_ occurs 3 times.
+
+QBN:
+
+Person _qgiver_ group Questor
+Person _local_ face 1 group Resident2 local
+
+Place _dungeon_ remote dungeon1
+
+Clock _2dung_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Orc_sergeant
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	place foe _monster_ at _dungeon_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _monster_ saying 1011 
+
+_S.02_ task:
+	clicked npc _qgiver_ 
+
+_success_ task:
+	when _S.02_ and _S.01_ 
+	give pc nothing 
+	change repute with _local_ by +4 
+	end quest 
+
+_clearclick_ task:
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_ 

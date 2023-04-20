@@ -1,0 +1,56 @@
+Title: The Wild Elves
+Author: Kiergo Chorvak
+IsNaughty: False
+Price: 580
+IsUnique: False
+WhenVarSet: 
+Content:
+
+
+[/font=2]
+
+[/center]The Wild Elves
+
+
+
+[/font=4]
+
+
+
+ In the wilds of most every province of Tamriel, descended
+philosophically if not directly from the original
+inhabitants of the land are the Ayleids, commonly called the
+Wild Elves. While three races of elven stock, Salache (or
+High), Boiche (or Wood), and Moriche (or Dark) have
+assimilated well to the new cultures of Tamriel, the
+Ayleids and their brethren have remained aloof of our
+civilization, preferring to practice the old ways far from
+the eyes of the world.
+
+ The Wild Elves speak a variation of Old Cyrodilic and not
+Tamrielic, separating themselves further even than their
+more urbanized Elven cousins. In temperament they are
+dark-spirited and taciturn, though they doubtless act
+differently with outsiders (or "Pellani" in their tongue)
+than within their own tribes. Indeed, one of the finest sages
+of the University of Gwilym was a civilized Ayleid elf,
+Tjurhane Fyrre (1E 2790 - 2E 227) whose published work on Wild
+Elves suggests a lively, vibrant culture. Fyrre is one of
+the very few Ayleids to speak freely on his people and
+religion, and even he said "the nature of the tribes of Ayleid
+are multi-hued, their personalities often wildly different
+from their neighbor tribes." (Fyrre, T. "Nature of Ayleidic
+Poesy" p. 8, Univ of Gwilym Press, 2E 12) Like any alien
+culture, Wild Elves are often feared by the simple people
+of Tamriel.
+
+ The Ayleids continue to be one of the greatest enigmas of the
+continent of Tamriel. They seldom appear in the pages of
+written history in any role, and then only as a strange sight
+a chronicler stumbles upon before they vanish into the wood.
+When probable fiction is filtered from common legend, we
+are left with almost nothing. The mysterious ways of the
+Ayleids have remained shrouded since before the first era, and
+may well remain so for thousands of years to come.
+
+ 

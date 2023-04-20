@@ -1,0 +1,126 @@
+-- Quest: C:\QUESTS\WORKING\C0B10Y06.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: temple
+-- Repute: 10
+-- QuestId: 6
+Messages: 12
+Quest: C0B10Y06
+DisplayName: The Expiatory Sacrifice
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 They tell me that you quite loyal to
+<ce>                 the temple. I need you perform a vital
+<ce>                   task for us. %god has become angry
+<ce>                 with us. You need not concern yourself
+<ce>                  with why. Our only hope is to hold a
+<ce>                rite of atonement. We need _ingredient_
+<ce>                  for the ceremony. My sources tell me
+<ce>                 that some can be found in ___dungeon_.
+<ce>                        Will you bring it to us?
+
+RefuseQuest:  [1001]
+<ce>                      Your loyalty to the temple
+<ce>                        is not what I thought it
+<ce>                               was, %pcn.
+
+AcceptQuest:  [1002]
+<ce>                       The ceremony must be held
+<ce>                     within =traveltime_ days. The
+<ce>                         temple will reward you
+<ce>                       with _gold_ gold for this.
+<ce>                      Only untainted _ingredient_
+<ce>                        will do. %god's blessing
+<ce>                        is upon you so that you
+<ce>                         will know it when you
+<ce>                                find it.
+
+QuestComplete:  [1004]
+<ce>                      You have it? _ingredient_!
+<ce>                         %god will be pacified.
+<ce>                      You have done well. Here is
+<ce>                              your reward.
+
+RumorsDuringQuest:  [1005]
+Things have been rather ... tense around __qgiver_ lately.
+<--->
+There was supposedly an unauthorized orgy in __qgiver_.
+<--->
+Someone spoke %god's name backwards in a ceremony at __qgiver_.
+
+RumorsPostfailure:  [1006]
+__qgiver_ is still out of favor with their god.
+
+RumorsPostsuccess:  [1007]
+__qgiver_ is back in favor with their god.
+
+QuestorPostsuccess:  [1008]
+You have pacified %god, %pct. Of course, how can I help you?
+
+QuestorPostfailure:  [1009]
+While %god hates __qgiver_, I shall hate thee, %pct.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of __qgiver_,
+ in ___qgiver_, told me that %g3 god was
+ angered. %g needs untainted
+ _ingredient_ from ___dungeon_
+ for a rite of atonement. It
+ must be in _qgiver_'s
+ hands at __qgiver_
+ within =traveltime_ days.
+
+Message:  1011
+<ce>                      This is it! I can feel the
+<ce>                      purity of the _ingredient_.
+<ce>                         Now to get it back to
+<ce>                               _qgiver_.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g3 occurs 1 time.
+--              %god occurs 6 times.
+--              %pcn occurs 2 times.
+--              %pct occurs 18 times.
+--              %qdt occurs 1 time.
+--      =traveltime_ occurs 3 times.
+--       ___dungeon_ occurs 4 times.
+--        ___qgiver_ occurs 12 times.
+--            _gold_ occurs 1 time.
+--      _ingredient_ occurs 5 times.
+--          _qgiver_ occurs 3 times.
+
+QBN:
+Item _ingredient_ organs
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _dungeon_ remote dungeon
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+
+--	Quest start-up:
+	place item _ingredient_ at _dungeon_ 
+	start timer _traveltime_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+
+_traveltime_ task:
+	end quest 
+
+_questdone_ task:
+	toting _ingredient_ and _qgiver_ clicked 
+	give pc _gold_ 
+	end quest 
+
+_S.02_ task:
+	clicked item _ingredient_
+	say 1011 
+	--illegal argument

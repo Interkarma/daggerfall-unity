@@ -1,0 +1,440 @@
+-- Quest: C:\QUESTS\WORKING\C0B00Y02.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: temple
+-- Repute: 0
+-- QuestId: 2
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 27
+Quest: C0B00Y02
+DisplayName: The Possessed Child
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 Would you be willing to assist in an
+<ce>                            exorcism, %pct?
+                                     <--->
+<ce>                      _guardian_, a local knight,
+<ce>                          has entreated us to
+<ce>                  help %g3 ward, who has been showing
+<ce>                signs of daedric possession. Would you
+<ce>                be willing to assist with the exorcism,
+<ce>                if that's what the situation requires?
+
+RefuseQuest:  [1001]
+<ce>                   That's unfortunate. I hope we can
+<ce>                        find someone else then.
+
+AcceptQuest:  [1002]
+<ce>                      Would you? %oth, you have a
+<ce>                      heart as big as %reg, %pct.
+<ce>                     The child's name is _child_,
+<ce>                          %g's a =child_ over
+<ce>                     at _house_ here in __house_,
+<ce>               but the person you'll want to speak with
+<ce>                      is %g3 guardian, _guardian_
+<ce>                         over in _tavern_. If
+<ce>                 based on what %g has to say, you feel
+<ce>                 that an exorcism is in order, go see
+<ce>                         _priest_ in _house3_
+<ce>                       of __house3_. I'll expect
+<ce>                  this whole unfortunate affair to be
+<ce>                 resolved in =queston_ days and to see
+<ce>                       you here then. Good luck,
+<ce>                           %god be with you.
+
+QuestComplete:  [1004]
+<ce>                      Thank %god that situation's
+<ce>                  resolved. You can never really tell
+<ce>                  from the start whether an exorcism
+<ce>       is really merited or not. You've done well, %pcf. Accept
+<ce>                       this _reward_ as a small
+<ce>                 token of our thanks for your efforts.
+
+RumorsDuringQuest:  [1005]
+Poor little _child_. And poor _guardian_ having to watch %g3 ward suffer so.
+<--->
+The heart of ___house_ has really gone out to _child_ and %g3 terrible crisis.
+
+RumorsPostfailure:  [1006]
+_child_ and _guardian_ left ___guardian_.
+<--->
+We'll never know if _child_ was really possessed.
+
+RumorsPostsuccess:  [1007]
+Everyone's thanking %god for the %ra who saved little _child_'s life.
+<--->
+Everything turned out all right for little _child_, so maybe %god does care.
+
+QuestorPostsuccess:  [1008]
+You helped __qgiver_ in that exorcism. What can I do for you?
+
+QuestorPostfailure:  [1009]
+You left that child to suffer. I have nothing to say to you.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of ___qgiver_
+ wants me to see if a =child_ named
+ _child_ in _house_
+ is a victim of possession, and, if so,
+ to cure %g2. I am to talk first with %g3
+ guardian, _guardian_ of _tavern_.
+
+Message:  1011
+<ce>                  You've come from __qgiver_? Please
+<ce>                 tell me you can help little _child_,
+<ce>                  I can't stand to see %g2 suffer so.
+<ce>               I don't know what to do with %g2. Please,
+<ce>                take a look at %g2 and then see if you
+<ce>                      can persuade that _priest_
+<ce>                      to help. _child_ has always
+<ce>                      been such a sweet =child_,
+<ce>                but now ... If you want to see %g2, %g
+<ce>                        is at _house_. I don't
+<ce>                       know what else I can do.
+
+Message:  1012
+<ce>                     You're from __qgiver_? Thank
+<ce>                    %god you're here. They say you
+<ce>                         can get to _priest_,
+<ce>                       the exorcist in _house3_
+<ce>                    and %g has some special _item_
+<ce>                  for possessions like this. I can't
+<ce>                         convince _priest_ to
+<ce>                     get me the _item_ myself, but
+<ce>                  someone like you with the authority
+<ce>                       of __qgiver_ could. Go to
+<ce>                     __house3_ and talk to %g2. I
+<ce>                      know you can convince %g2.
+
+Message:  1013
+%qdt:
+ _guardian_,
+ the guardian of _child_,
+ asked me to look at the child and
+ then see if _priest_
+ of _house3_, __house3_
+ needs to perform an exorcism or
+ not. _child_ is in
+ _house_.
+
+Message:  1014
+%qdt:
+ _guardian_,
+ the guardian of _child_
+ asked me to go to _house3_
+ in __house3_ to ask
+ _priest_ for some special
+ _item_ to exorcise the daedric
+ spirit from the child.
+
+Message:  1015
+<ce>                      "=daedra_ ... oh, %oth ...
+<ce>                       =daedra_ is out of me ...
+<ce>                       but ... it's still here."
+<ce>                          _child_ runs away.
+<ce>                  And you can, indeed, feel an alien
+<ce>                         presence in _house_.
+
+Message:  1016
+<ce>                          Oh, %oth, %oth ...
+<ce>                      I feel ... so much better.
+<ce>                          _guardian_ told me
+<ce>                         that the _item_ would
+<ce>                          help us, and %g was
+<ce>                       right. Oh thank you, kind
+<ce>                            %pct. I'll keep
+<ce>                      this _item_ for protection.
+<ce>                               Goodbye!
+
+Message:  1017
+<ce>                  Gruh, you colly-eyed mortal greel,
+<ce>                    I would open all your veins and
+<ce>                  swim in your blood, steaming. They
+<ce>                         call me =daedra_, the
+<ce>                       licker of cat droppings!
+                                     <--->
+<ce>                         Poor little _child_,
+<ce>                   %g's rotting in Oblivion, and no
+<ce>                  one will help %g2, but kind, kind,
+<ce>                     kind, kind, kind, kind, kind,
+<ce>                     kind, kind, kind, kind, kind,
+<ce>                         kind, kind =daedra_.
+                                     <--->
+<ce>                  There once was a girl named Vivian,
+<ce>                     Who met =daedra_ of Oblivion,
+<ce>                         They decided to mate,
+<ce>                          and later they ate
+<ce>                    _child_, their child, yum, yum.
+
+Message:  1018
+<ce>                        I'm sorry, %pcf, but I
+<ce>                       can't give _item_ to just
+<ce>                anyone who suspects they know a victim
+<ce>                 of possession. It's far too rare and
+<ce>                 expensive. You're going to have to at
+<ce>                 least see the child before I agree to
+<ce>                       parting with the _item_.
+
+Message:  1019
+<ce>                         =daedra_? _child_ did
+<ce>                      mention the name =daedra_?
+<ce>                Well, if this possession is a sham, it
+<ce>                  is at least a well-researched one.
+<ce>                       Here then is the _item_.
+<ce>                  Just hold it with you when you next
+<ce>                 speak with the child. But beware, the
+<ce>                       daedra _child_ mentioned
+<ce>                  is a Daedroth of great power. When
+<ce>                   the exorcism is complete, it will
+<ce>                    leave %g2 and appear elsewhere
+<ce>                      in _house_. Be ready for a
+<ce>                    battle when it does. Good luck,
+<ce>                        %pcf. %god be with you.
+
+Message:  1020
+%qdt:
+ I don't know who =daedra_ is, but that was the name
+ _child_ spoke
+ when I saw %g2. That =child_
+ is possessed, mad, or the best
+ actor in ___house_. It may be
+ a good time to see the exorcist
+ in __house3_, _priest_
+ in _house3_.
+
+Message:  1021
+<ce>                       Good %pcf, I cannot thank
+<ce>                   you enough for what you have done
+<ce>                           for _child_. Now
+<ce>                      %g's a happy, normal child
+<ce>                       again. I've told _qgiver_
+<ce>                       at your __qgiver_ as such
+<ce>                    and %g's eager to congratulate
+<ce>                      you. Once again, thank you.
+
+Message:  1022
+<ce>                       I can tell you where that
+<ce>                        =guardian_, _guardian_
+<ce>                  slipped off to, sure. But until you
+<ce>                    got fifty gold to spare for the
+<ce>                      info, I don't know nothing.
+
+Message:  1023
+<ce>                        Good day to thee, %pct.
+<ce>                   You're probably looking for that
+<ce>                        =guardian_, _guardian_,
+<ce>                     who slipped out of here after
+<ce>                   boasting about stealing some kind
+<ce>                       of _item_ from __qgiver_.
+<ce>                   If you have fifty gold pieces to
+<ce>                    spare a friend, I could let you
+<ce>                         know where _guardian_
+<ce>                        went. What do you say?
+
+Message:  1024
+<ce>                     Nice doing business with you,
+<ce>                           %pcf. You'll find
+<ce>                         that =guardian_ over
+<ce>                             in _house2_.
+
+Message:  1025
+<ce>                      "Don't hurt me!" _guardian_
+<ce>                         hands you the _item_
+<ce>                              and flees.
+
+Message:  1026
+%qdt:
+ _hooker_, a =hooker_ over at
+ _tavern_ told me (for fifty gold
+ pieces) that that _guardian_ ran to
+ _house2_ after _child_
+ stole the _item_ from me. The possession was obviously
+ a scam, and _priest_ and
+ _qgiver_ will want the _item_ back.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 3 times.
+--                %g occurs 19 times.
+--               %g2 occurs 17 times.
+--               %g3 occurs 9 times.
+--              %god occurs 8 times.
+--              %oth occurs 4 times.
+--              %pcf occurs 8 times.
+--              %pct occurs 5 times.
+--              %qdt occurs 5 times.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--           =child_ occurs 4 times.
+--          =daedra_ occurs 9 times.
+--        =guardian_ occurs 3 times.
+--         =queston_ occurs 1 time.
+--         =sneaker_ occurs 1 time.
+--      ___guardian_ occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--         __house3_ occurs 5 times.
+--          __house_ occurs 1 time.
+--         __qgiver_ occurs 7 times.
+--           _child_ occurs 24 times.
+--        _guardian_ occurs 13 times.
+--          _house2_ occurs 3 times.
+--          _house3_ occurs 6 times.
+--           _house_ occurs 6 times.
+--            _item_ occurs 18 times.
+--          _priest_ occurs 10 times.
+--          _qgiver_ occurs 3 times.
+--          _reward_ occurs 1 time.
+--         _hooker_ occurs 1 time.
+--          _tavern_ occurs 4 times.
+
+QBN:
+Item _item_ religious
+Item _reward_ religious
+Item _gold_ gold range 50 to 50
+
+Person _qgiver_ group Questor
+Person _child_ face 1 faction Children local
+Person _guardian_ face 1 factiontype Knightly_Guard local
+Person _priest_ face 104 factiontype Temple remote
+Person _hooker_ face 1 faction The_Prostitutes local
+
+Place _house_ local house2
+Place _house2_ local house2
+Place _house3_ remote random
+Place _tavern_ local tavern
+
+Clock _queston_ 5.00:00 10.00:00 flag 17 range 1 4
+
+Foe _daedra_ is Daedroth
+
+--	Quest start-up:
+	dialog link for location _house2_ person _hooker_ 
+	start timer _queston_ 
+	log 1010 step 0 
+	pick one of _sham_ _real_
+	place npc _child_ at _house_ 
+	place npc _guardian_ at _tavern_ 
+	place npc _priest_ at _house3_
+	have _item_ set _haverelic_  
+
+_queston_ task:
+	end quest 
+
+_talkguardian_ task:
+	clicked npc _guardian_ 
+
+variable _real_
+variable _sham_
+_realtalk_ task:
+	when _talkguardian_ and _real_ 
+	log 1013 step 1 
+	say 1011 
+
+_shamtalk_ task:
+	when _talkguardian_ and _sham_ and not _revealsham_
+	log 1014 step 2 
+	say 1012 
+
+_clickchild_ task:
+	clicked npc _child_ 
+
+_exorcise_ task:
+	when _haverelic_ and _real_ and _clickchild_
+	take _item_ from pc 
+	hide npc _child_ 
+	say 1015 
+	place foe _daedra_ at _house_ 
+	clear _talkguardian_
+
+-until _exorcise_ performed:
+-	clear _clickpriest_ _qgclicked_ 
+
+_revealsham_ task:
+	when _haverelic_ and _sham_ and _clickchild_ 
+	take _item_ from pc
+	hide npc _child_ 
+	say 1016 
+	place npc _guardian_ at _house2_ 
+	place npc _hooker_ at _tavern_ 
+	clear _talkguardian_
+
+variable _haverelic_
+_firstclickchild_ task:
+	when _clickchild_ and not _haverelic_ 
+	log 1020 step 3 
+	say 1017 
+-	clear _clickchild_
+
+_clickpriest_ task:
+	clicked npc _priest_ 
+
+_rebuff_ task:
+	when _clickpriest_ and not _firstclickchild_ and not _rescueitem_ and not _exorcise_ and not _givenitem_
+	say 1018 
+	clear _clickpriest_
+
+_priestgivesitem_ task:
+	when _clickpriest_ and _firstclickchild_ and not _exorcise_ and not _rescueitem_
+	say 1019 
+	start task _givenitem_
+-	start task _giverelictask_
+-
+-_giverelictask_ task:
+	get item _item_ 
+	clear _clickpriest_
+	clear _clickchild_
+
+variable _givenitem_
+_thanks_ task:
+	when _talkguardian_ and _exorcise_ 
+	say 1021 
+
+_hookerconfess_ task:
+	add dialog for location _house2_ 
+	log 1026 step 6 
+	say 1024 
+
+_toopoor_ task:
+	say 1022 
+
+_bribe_ task:
+	clicked _hooker_ and at least 50 gold otherwise do _toopoor_ 
+	prompt 1023 yes _hookerconfess_ no _refuseconfess_ 
+
+_refuseconfess_ task:
+	get item _gold_ 
+	make _gold_ permanent 
+
+_rescueitem_ task:
+	when _talkguardian_ and _revealsham_ 
+	get item _item_ 
+	hide npc _guardian_ 
+	say 1025 
+
+-until _rescueitem_ performed:
+-	clear _itemtopriest_ _itemtoqg_ _talkguardian_ 
+
+-_itemtoqg_ task:
+-	toting _item_ and _qgiver_ clicked 
+
+-_itemtopriest_ task:
+-	toting _item_ and _priest_ clicked 
+
+_victory_ task:
+	when _qgclicked_ and _rescueitem_
+	when _qgclicked_ and _exorcise_ 
+	when _clickpriest_ and _rescueitem_
+	when _clickpriest_ and _exorcise_
+	give pc _reward_ 
+	end quest
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_clearclick_ task:
+	when _qgclicked_ and not _rescueitem_ and not _exorcise_
+	clear _qgclicked_ _clearclick_

@@ -1,0 +1,37 @@
+---- Example quest used to test place selection and arrival
+
+Quest: __DEMO05
+
+
+QRC:
+
+QuestLogEntry:  [1010]
+%qdt
+    You have been summoned to _TestBuilding_
+ at __TestBuilding_ in ____TestBuilding_.
+ Please make haste, %pcn. There's no time to lose!
+
+Message: 1050
+You have arrived at _TestBuilding_ in __TestBuilding_.
+
+
+QBN:
+
+---- Define a target site using Place resource
+Place _TestBuilding_ remote house2
+
+
+---- Quest startup
+log 1010 step 0
+
+
+---- This task triggers when player arrives at target site, basically: 'when pc at _place_ set _target_'
+_PlayerArrived_ task:
+pc at _TestBuilding_ set _ShowResult_
+
+
+---- This task is set by _PlayerArrived_ 'pc at' conditional task
+_ShowResult_ task:
+say 1050
+remove log step 0
+end quest
