@@ -1,1 +1,0 @@
-Stores data for world replacement.
