@@ -983,6 +983,10 @@ namespace DaggerfallWorkshop.Game.Entity
                     Debug.LogErrorFormat("Failed to create effect bundle while importing classic spell '{0}'.", spell.ParsedData.spellName);
                     continue;
                 }
+
+                // Always use spell name from imported classic save as player might have custom names
+                bundle.Name = spell.ParsedData.spellName;
+
                 AddSpell(bundle);
             }
         }
