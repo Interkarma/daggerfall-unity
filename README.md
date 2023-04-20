@@ -9,7 +9,7 @@
 ## Compile From Source Requirements
 - Ability to follow simple & complex instructions in English!
 - Visual Studio 2019 or newer (the project solution should prompt you to install any requirements.)
-- Unity with Unity 2019 Engine (project will not build correctly if you update the proiject to a newer version)
+- Unity with Unity 2019 Engine (project will not build correctly if you update to a newer version)
 
 Check that you are building for Universal Windows Platform (UWP) and have the correct build setup as shown below -
 ![BuildGuide](https://github.com/Misunderstood-Wookiee/daggerfall-unity-UWP/blob/63996e2c16c483322cebda3bf359ff721c6d1445/BuildGuide.jpg)
