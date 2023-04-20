@@ -586,7 +586,7 @@ namespace DaggerfallWorkshop.Game.Items
                 materialValue = 0x200 + materialValue;
 
             // Assign new data
-            shortName = magicItemTemplate.name; // LOCALIZATION_TODO: Lookup magic item template name from localization
+            shortName = TextManager.Instance.GetLocalizedMagicItemName((int)magicItemTemplate.index, magicItemTemplate.name);
             this.itemGroup = (ItemGroups)magicItemTemplate.group;
             this.groupIndex = magicItemTemplate.groupIndex;
             playerTextureArchive = archive;

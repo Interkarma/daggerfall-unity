@@ -465,12 +465,27 @@ namespace DaggerfallWorkshop.Game
         /// Gets localized version of item template name from its ID.
         /// Caller must provide a fallback template name.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Item ID.</param>
         /// <returns>Localized item template name or fallback name.</returns>
         public string GetLocalizedItemName(int id, string fallback)
         {
             string name;
             if (TryGetLocalizedText(TextCollections.TextItems, id.ToString(), out name))
+                return name;
+            else
+                return fallback;
+        }
+
+        /// <summary>
+        /// Gets localized version of magic item template name from its ID.
+        /// Caller must provide a fallback template name.
+        /// </summary>
+        /// <param name="id">Magic item ID.</param>
+        /// <returns>Localized magic item template name or fallback name.</returns>
+        public string GetLocalizedMagicItemName(int id, string fallback)
+        {
+            string name;
+            if (TryGetLocalizedText(TextCollections.TextMagicItems, id.ToString(), out name))
                 return name;
             else
                 return fallback;
