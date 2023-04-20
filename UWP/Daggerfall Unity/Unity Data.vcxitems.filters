@@ -2,121 +2,121 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Data">
-      <UniqueIdentifier>{b75ea60f-4fdf-4dc5-8e00-501b687bb487}</UniqueIdentifier>
+      <UniqueIdentifier>{9b2e4e17-110f-49a4-888d-cf00f23b1ecd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data\etc\mono">
-      <UniqueIdentifier>{f8df102b-84d1-4877-9513-79177813b9ca}</UniqueIdentifier>
+      <UniqueIdentifier>{bff4dafa-14b0-4fd5-ad0f-32707ba3d5c9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data\etc\mono\2.0">
-      <UniqueIdentifier>{3fd0eec3-47ec-4c17-9a4f-d2e30e71c41d}</UniqueIdentifier>
+      <UniqueIdentifier>{86505914-fc27-4f3a-a4de-31da4d98eb55}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data\etc\mono\2.0\Browsers">
-      <UniqueIdentifier>{3768c232-fe71-4db0-8742-9b9c217ba767}</UniqueIdentifier>
+      <UniqueIdentifier>{3a823f89-614c-4be2-8985-695f08eb918c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data\etc\mono\4.0">
-      <UniqueIdentifier>{e11218c8-175b-4e1e-ad16-c05761987b84}</UniqueIdentifier>
+      <UniqueIdentifier>{8c19653f-32bf-4dc5-9f0d-415132140f2b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data\etc\mono\4.0\Browsers">
-      <UniqueIdentifier>{611cabbd-ed22-4427-9872-a6b8b92b6ed6}</UniqueIdentifier>
+      <UniqueIdentifier>{ddc7fe1d-50bb-48da-94cf-09e28196b620}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data\etc\mono\4.5">
-      <UniqueIdentifier>{dbdeb429-45c8-4193-9d03-52bd81db19d3}</UniqueIdentifier>
+      <UniqueIdentifier>{b521aac9-c882-4ea8-b881-2bbb3c722da9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data\etc\mono\4.5\Browsers">
-      <UniqueIdentifier>{50e313a1-228d-48a5-bf69-0a87c8cd25e3}</UniqueIdentifier>
+      <UniqueIdentifier>{0fbf8514-7650-4fdd-80da-d557860794c0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data\etc\mono\mconfig">
-      <UniqueIdentifier>{7a082d65-9b50-4121-ba3a-dfdbf99f8526}</UniqueIdentifier>
+      <UniqueIdentifier>{7e401f02-7075-4ee2-86b5-6d855ce48d24}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data\Metadata">
-      <UniqueIdentifier>{c3c5665d-4110-437b-97b2-ef233c087a8e}</UniqueIdentifier>
+      <UniqueIdentifier>{e73e4a84-293d-4627-9f42-3a6be8a0c1c8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data\Resources">
-      <UniqueIdentifier>{c72949b9-51c7-4e06-9b63-8ecc5301c473}</UniqueIdentifier>
+      <UniqueIdentifier>{ca9044c7-996d-443e-bada-4c539a7e21fb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\Resources">
-      <UniqueIdentifier>{adb23c1f-d703-41ad-8f35-12f196f56533}</UniqueIdentifier>
+      <UniqueIdentifier>{c15b5169-cd2c-4357-9b39-51b17b802b0a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\BIOGs">
-      <UniqueIdentifier>{1dea9588-b636-4f36-9036-e9769a2c637a}</UniqueIdentifier>
+      <UniqueIdentifier>{b95f7747-9d8d-4984-be4d-ff5934e0e9e8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\BIOGs\Deutsch">
-      <UniqueIdentifier>{b76e27b9-2f91-40d0-b2eb-1dbca5e57fc8}</UniqueIdentifier>
+      <UniqueIdentifier>{5aca2800-d2de-4b4f-947d-317d1e09578c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\BIOGs\Francais">
-      <UniqueIdentifier>{88ec38aa-aa91-47dd-bd3f-0cc355ef8475}</UniqueIdentifier>
+      <UniqueIdentifier>{fa0eefe5-061e-4cf7-8c69-3c44e1b182ca}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Books">
-      <UniqueIdentifier>{387bc84b-e176-447e-ab7f-2f57a5d0da45}</UniqueIdentifier>
+      <UniqueIdentifier>{4b152bfb-73a9-48a8-8e7c-73f9c4ac7790}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Docs">
-      <UniqueIdentifier>{ed12e63d-ef49-4aff-890c-d69e422fd1eb}</UniqueIdentifier>
+      <UniqueIdentifier>{bfe8ad5c-c288-4ab0-871e-91ac4a5d386d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Factions">
-      <UniqueIdentifier>{48a0f9a7-9d89-4c49-8f65-ccf2001c9dc7}</UniqueIdentifier>
+      <UniqueIdentifier>{0e605128-5843-431f-ae6e-1bde6a446214}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Fonts">
-      <UniqueIdentifier>{16cfd150-5304-4a42-9dba-1d25ce64b476}</UniqueIdentifier>
+      <UniqueIdentifier>{2bf91a30-9de1-439a-9e98-b0c21a156bcd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\GameFiles">
-      <UniqueIdentifier>{d6a0b01a-e313-4989-b9fa-45b40e59ece1}</UniqueIdentifier>
+      <UniqueIdentifier>{9c116ea2-e5af-4b3c-9743-afb4b304ba53}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Mods">
-      <UniqueIdentifier>{84ab1c43-1e20-41a8-9e11-5bca05f4ecf5}</UniqueIdentifier>
+      <UniqueIdentifier>{719dab23-2e6b-46cb-851e-7b1194b0a7d4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Movies">
-      <UniqueIdentifier>{b03eddb0-e945-45bf-9ed7-4acebf68589f}</UniqueIdentifier>
+      <UniqueIdentifier>{7f2eb20a-f1ae-465b-8da9-09f7fdeb034f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Presets">
-      <UniqueIdentifier>{1bdecf62-e7b9-4659-a608-7e0ee306a225}</UniqueIdentifier>
+      <UniqueIdentifier>{d6e29617-af73-4101-82c1-ee08ccab5de3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\QuestPacks">
-      <UniqueIdentifier>{7bf497fd-a8e6-43e1-973f-dda7d50580ac}</UniqueIdentifier>
+      <UniqueIdentifier>{1016b1b8-0990-4516-af1d-5cfc3e813993}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Quests">
-      <UniqueIdentifier>{5ee06135-075a-41b8-b48f-56b811f725b8}</UniqueIdentifier>
+      <UniqueIdentifier>{ef71ed0c-a302-4d4f-a0a5-3ba0a7309116}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Sound">
-      <UniqueIdentifier>{271ad9ab-527a-48c1-a31e-638bb72bc395}</UniqueIdentifier>
+      <UniqueIdentifier>{4a08f3d5-707f-4bfe-a251-4b63e2dfce09}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\SoundFonts">
-      <UniqueIdentifier>{4a0f7d42-5405-4eca-b82e-185928ca0342}</UniqueIdentifier>
+      <UniqueIdentifier>{00b41750-7366-4680-b079-102744327b0c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\SpellIcons">
-      <UniqueIdentifier>{dcec13a1-a441-4ade-92ea-8b5672dc278c}</UniqueIdentifier>
+      <UniqueIdentifier>{185ab167-2403-4631-b716-7fa7ba801c9c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Tables">
-      <UniqueIdentifier>{6fa103e0-709e-4218-a08e-c772d6aa9574}</UniqueIdentifier>
+      <UniqueIdentifier>{6e58b56f-6615-4852-9f0a-a3bc34e4bff0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Text">
-      <UniqueIdentifier>{2f2202b8-81b7-4316-888b-494c1c59aacb}</UniqueIdentifier>
+      <UniqueIdentifier>{5dae240c-b008-4885-9f8e-9e718cad4776}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Text\Books">
-      <UniqueIdentifier>{324cc34b-15ce-4fbe-b8ae-e13f48e2758a}</UniqueIdentifier>
+      <UniqueIdentifier>{3c4ca708-b42c-4905-b436-3cc0ebcc3dd2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Text\Books\BookImages">
-      <UniqueIdentifier>{e9d08e6e-9ca2-4223-bea8-e3ebdb5fcd01}</UniqueIdentifier>
+      <UniqueIdentifier>{97b73913-d6fb-414d-9dbf-5ae095192a50}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Textures">
-      <UniqueIdentifier>{8771a795-124c-475b-8d1c-60c51cb6ca74}</UniqueIdentifier>
+      <UniqueIdentifier>{e03f2962-6408-4965-a87d-54d27809d139}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Textures\CifRci">
-      <UniqueIdentifier>{8d7a9d2f-12b7-4d5f-b5c0-6a3301dbe1d3}</UniqueIdentifier>
+      <UniqueIdentifier>{1f4e6c16-55cd-4e0d-94ba-b53a87ca3059}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\Textures\Img">
-      <UniqueIdentifier>{e51be3a2-195e-436a-9b5a-88d09b1fab5b}</UniqueIdentifier>
+      <UniqueIdentifier>{b111111e-7faf-4a24-8981-67e19b835be3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets\WorldData">
-      <UniqueIdentifier>{fba4930c-c05f-4010-a1f8-2c68fd4855bc}</UniqueIdentifier>
+      <UniqueIdentifier>{0153c285-8b40-4762-b96c-db061cde4f3c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data\etc">
-      <UniqueIdentifier>{39ea592f-7d54-4bcd-9b62-7fc4a3ae890f}</UniqueIdentifier>
+      <UniqueIdentifier>{48fcb765-bd17-4077-961b-04de2a1606fb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\il2cpp_data">
-      <UniqueIdentifier>{76ea5ff2-9fa1-42e3-8f88-3a566840a470}</UniqueIdentifier>
+      <UniqueIdentifier>{f8611a1d-f986-4336-ae44-a3afb45c4d28}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\StreamingAssets">
-      <UniqueIdentifier>{a78eda75-f3e0-47b5-8756-0956031eee20}</UniqueIdentifier>
+      <UniqueIdentifier>{6f35f074-cec6-4ece-9792-7a738ec6f27b}</UniqueIdentifier>
     </Filter>
     <Resource Include="$(MSBuildThisFileDirectory)Resource.res" />
     <None Include="$(MSBuildThisFileDirectory)StoreManifest.xml" />
@@ -1598,7 +1598,6 @@
     <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\WorldData\readme.txt">
       <Filter>Data\StreamingAssets\WorldData</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)lib_burst_generated.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(OutDir)GameAssembly.dll" />
