@@ -1,0 +1,182 @@
+-- Quest: C:\QUESTS\WORKING\M0B00Y06.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 0
+-- QuestId: 6
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 81
+Quest: M0B00Y06
+DisplayName: Wild Animal
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                            I am _qgiver_.
+<ce>                We have a request from a local citizen.
+<ce>                It seems a wild animal has gotten into
+<ce>                 his place. We need someone to go kill
+<ce>              the thing. The guild will pay _gold_ gold.
+<ce>                         Do you want it %pcn?
+
+RefuseQuest:  [1001]
+<ce>                      I'm sure someone else will
+<ce>                      be willing to take care of
+<ce>                          this nuisance bear.
+
+AcceptQuest:  [1002]
+<ce>                    "OK, %pcf. Get over to _house_
+<ce>                 here in town. Get it done in one day.
+<ce>               Nobody wants a animal left roaming around
+<ce>                in their place. Come back here when the
+<ce>                 beast is dead and I'll have your pay
+<ce>                           waiting for you."
+<ce>                                    
+<ce>                  _qgiver_ calls out, "Hey, what kind
+<ce> of animal is it in _house_?"
+
+QuestComplete:  [1004]
+<ce>                           Well done, %pcf.
+<ce>                       Here's your _gold_ gold.
+
+RumorsDuringQuest:  [1005]
+<ce>                   Did you hear? An animal got into
+<ce>                    a building in town. I hope they
+<ce>                             kill it soon.
+
+RumorsPostfailure:  [1006]
+<ce>                    The Fighter's Guild killed that
+<ce>                      bear that got into _house_.
+<ce>                 It's a good thing we have them around.
+
+RumorsPostsuccess:  [1007]
+<ce>                That creature mauled some woman before
+<ce>                being chased out of town. What a pity.
+
+QuestorPostsuccess:  [1008]
+<ce>                     Good job killin' that beast.
+<ce>                        What can I do for you?
+
+QuestorPostfailure:  [1009]
+<ce>                   I hear that a critter ate the guy
+<ce>                    that owned the house. Gave us a
+<ce>                 bad rep. Try to do better next time.
+
+QuestLogEntry:  [1010]
+%qdt:
+ The Fighters Guild of ___qgiver_
+ has asked me to slay a wild beast which
+ has gotten into _house_. It's got
+ be done in one day.
+
+Message:  1011
+<ce>                           The bear is dead.
+
+Message:  1012
+<ce>                          The harpy is dead.
+
+Message:  1013
+<ce>                          The spider is dead.
+
+Message:  1014
+<ce>                          The tiger is dead.
+
+Message:  1021
+<ce>                   You hear a voice call out from an
+<ce>                      upper floor, "Its a bear."
+
+Message:  1022
+<ce>                   You hear a voice call out from an
+<ce>                      upper floor, "Its a harpy."
+
+Message:  1023
+<ce>                   You hear a voice call out from an
+<ce>                     upper floor, "Its a spider."
+
+Message:  1024
+<ce>                   You hear a voice call out from an
+<ce>                      upper floor, "Its a tiger."
+
+Message:  1080
+<ce>                 By the way, since you seemed to have
+<ce>                  so much fun with that beast, here's
+<ce>              a map to ___newdung_.  Knock yourself out.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 2 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--       ___newdung_ occurs 3 times.
+--        ___qgiver_ occurs 1 time.
+--            _gold_ occurs 9 times.
+--           _house_ occurs 6 times.
+--          _qgiver_ occurs 2 times.
+
+QBN:
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _house_ local random
+Place _newdung_ remote dungeon
+
+Clock _2dung_ 1.00:00 0 flag 1 range 0 1
+
+Foe _bear_ is Grizzley_bear
+Foe _tiger_ is Sabretooth_tiger
+Foe _harpy_ is Harpy
+Foe _spider_ is Spider
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _house_ 
+	log 1010 step 0 
+	pick one of _map_ _nomap_ _nomap_ _nomap_ 
+	pick one of _monster1_ _monster2_ _monster3_ _monster4_ 
+	create npc at _house_ 
+
+_2dung_ task:
+	end quest 
+
+_mondead_ task:
+	killed 1 _spider_ saying 1013 
+	killed 1 _tiger_ saying 1014 
+	killed 1 _harpy_ saying 1012 
+	killed 1 _bear_ saying 1011 
+
+_S.02_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _gold_ 
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	clear _qgclicked_ _clearclick_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+variable _map_
+variable _nomap_
+_S.06_ task:
+	when _map_ and _S.02_ 
+	reveal _newdung_ readmap
+    say 1080 
+
+_monster1_ task:
+	say 1021 
+	place foe _bear_ at _house_ 
+
+_monster2_ task:
+	say 1022 
+	place foe _harpy_ at _house_ 
+
+_monster3_ task:
+	say 1023 
+	place foe _spider_ at _house_ 
+
+_monster4_ task:
+	say 1024 
+	place foe _tiger_ at _house_ 

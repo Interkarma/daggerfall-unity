@@ -1,0 +1,143 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y06.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 6
+Messages: 12
+Quest: R0C10Y06
+DisplayName: The Heirloom
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                I have a _item_ that's very precious to
+<ce>              me. It's been handed down from generation to
+<ce>                generation in my family. Knowing this, a
+<ce>                small pack of orcish bandits have stolen
+<ce>                it and are holding it for ransom. I have
+<ce>                no intention of rewarding them for this
+<ce>                 outrage. On the other hand, I will pay
+<ce>              the full amount of the ransom, _reward_ gold
+<ce>                 pieces to you if you would go to their
+<ce>                   holdout and steal the _item_ back.
+<ce>                               Will you?
+
+RefuseQuest:  [1001]
+<ce>                      %oth! You will not do this
+<ce>                  for me? Then I will have to pay the
+<ce>                    ransom. You disappoint me, %pcf.
+
+AcceptQuest:  [1002]
+<ce>                  Good. Now, I am given to understand
+<ce>                  that the orcs' hideout is in the old ruin,
+<ce>                      ___itemdung_. That's where,
+<ce>                  I suppose, they're keeping my _item_
+<ce>               as well. If you're not back in =1stparton_
+<ce>                  days, I'll presume you haven't found
+<ce>                 the _item_, and will give your reward
+<ce>                money to the orcs as ransom. Don't fail
+<ce>                      me on this, %pcf. Good luck.
+
+QuestFail:  [1003]
+<ce>                      I don't want to talk, %pcf.
+<ce>                      I want my _item_. Go get it.
+
+QuestComplete:  [1004]
+<ce>                 Somehow I knew you'd find my _item_,
+<ce>                       %pcf. I will happily give
+<ce>                   you the gold I was saving for the
+<ce>                  _item_'s ransom. I cannot thank you
+<ce>                                enough.
+
+RumorsDuringQuest:  [1005]
+There's a bunch of orcs hanging out at ___itemdung_.
+<--->
+Those orcs at ___itemdung_ are figuring they'll get rich off _questgiver_.
+
+RumorsPostfailure:  [1006]
+The orcs at ___itemdung_ cleared out after _questgiver_ paid them off.
+<--->
+_questgiver_ is apparently furious at some %ra adventurer.
+
+RumorsPostsuccess:  [1007]
+<ce>                 A bunch of orcs are complaining that
+<ce>                 _questgiver_ stole a relic of theirs.
+                                     <--->
+<ce>              ___itemdung_ is apparently as not as secure
+<ce>                   a hiding spot as one might think.
+
+QuestorPostsuccess:  [1008]
+<ce>           Hello again, my young friend. I haven't forgotten
+<ce>                    about the orc affair, you know.
+                                     <--->
+I hope you haven't spent all my reward gold already, my friend.
+
+QuestorPostfailure:  [1009]
+<ce>                         Go to Oblivion, %pcf.
+<ce>                   I haven't forgot about you failing
+<ce>                         that mission of mine.
+
+QuestLogEntry:  [1010]
+%qdt:
+_questgiver_ of
+ __questgiver_ in ___questgiver_
+ has sent me to ___itemdung_ to
+ find an old family heirloom, a _item_
+ stolen by a band of orcs. If I do not
+ have it back in _questgiver_'s
+ hands in =1stparton_ days, %g will
+ pay the ransom, and my reward gold
+ will be gone.
+
+Message:  1011
+You have found the _item_.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--              %oth occurs 1 time.
+--              %pcf occurs 7 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 4 times.
+--       =1stparton_ occurs 2 times.
+--      ___itemdung_ occurs 6 times.
+--    ___questgiver_ occurs 2 times.
+--            _item_ occurs 14 times.
+--      _questgiver_ occurs 6 times.
+--          _reward_ occurs 1 time.
+
+QBN:
+Item _item_ trinket
+Item _reward_ gold
+
+Person _questgiver_ face 112 group Questor
+
+Place _itemdung_ remote dungeon1
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+
+--	Quest start-up:
+	place item _item_ at _itemdung_ 
+	start timer _1stparton_ 
+	reveal _itemdung_ 
+	log 1010 step 0 
+
+_pcgetsgold_ task:
+	toting _item_ and _questgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+variable _queston_
+_pchasitem_ task:
+	clicked item _item_ say 1011 
+
+_1stparton_ task:
+	make _item_ permanent 
+	change repute with _questgiver_ by -5 
+	end quest 
+
+variable _qgclicked_
+variable _clearclick_

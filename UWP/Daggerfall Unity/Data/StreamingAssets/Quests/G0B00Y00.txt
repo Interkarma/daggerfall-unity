@@ -1,0 +1,140 @@
+-- Quest: C:\QUESTS\WORKING\G0B00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Kynaran
+-- Repute: 0
+-- QuestId: 0
+Messages: 21
+Quest: G0B00Y00
+DisplayName: The Arm of Fury
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>               Our order demands retribution on a former
+<ce>                member who has turned traitor. Will you
+<ce>                  be the strong arm of our fury, %pcf?
+                                     <--->
+<ce>                  The Goddess has spoken to us in our
+<ce>                 auguries, and she demands the blood of
+<ce>                 the foul villain who has profaned her
+<ce>                  name. Help us to appease our angered
+<ce>                           mistress Kynareth.
+
+RefuseQuest:  [1001]
+<ce>                 An ignoble reply. I expected better.
+
+AcceptQuest:  [1002]
+<ce>                  Very good. The traitor is a killer
+<ce>                   who has taken refuge in ___mondun_
+<ce>                  to the %di. If you have not returned
+<ce>                 in =queston_ days, your honor will be
+<ce>               forfeit and another will take your place.
+<ce>                     Do not fail us in this, %pcf.
+
+QuestFail:  [1003]
+<ce>                  The traitor is not dead. Do not try
+<ce>                       to convince me otherwise.
+
+QuestComplete:  [1004]
+<ce>                Well done. You have reason to be proud.
+
+RumorsDuringQuest:  [1005]
+That skulker ran off to ___mondun_ like the hounds of hell were behind him.
+<--->
+<ce>             _qgiver_ can't just let the shiftless bum go
+<ce>                after what %g did to the Kynaran Order.
+
+RumorsPostfailure:  [1006]
+The traitor is apparently tougher than _qgiver_ thought. What an escape.
+<--->
+The renegade has moved north I hear, but the memory still plagues the order.
+
+RumorsPostsuccess:  [1007]
+The traitor's story just proves it. You don't play around with the Kynaran Order.
+<--->
+I always thought the Order would be more merciful to that dolt.
+
+QuestorPostsuccess:  [1008]
+Well, you slew that traitor for the Order. The least I can do is say hello.
+
+QuestorPostfailure:  [1009]
+You let that traitor go. I have nothing to say to you.
+
+QuestLogEntry:  [1010]
+%qdt:
+ The Kynaran Order in ___qgiver_
+ has sent me to find and slay a traitor
+ to the Order in a hideout,
+ ___mondun_. I have
+ =queston_ days to accomplish this.
+
+Message:  1020
+<ce>                    "So...the Kynaran Order...sent
+<ce>                    you to kill...me. Tell them...I
+<ce>                           spit on their..."
+<ce>                          The traitor is dead.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 1 time.
+--                %g occurs 2 times.
+--              %pcf occurs 4 times.
+--              %qdt occurs 1 time.
+--         =queston_ occurs 2 times.
+--        ___mondun_ occurs 3 times.
+--        ___qgiver_ occurs 3 times.
+
+QBN:
+
+Person _qgiver_ group Questor
+
+Place _mondun_ remote dungeon
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _nightblade_ is Nightblade
+Foe _assassin_ is Assassin
+Foe _spellsword_ is Spellsword
+Foe _knight_ is Knight
+
+--	Quest start-up:
+	start timer _queston_ 
+	reveal _mondun_ 
+	log 1010 step 0 
+	pick one of _S.05_ _S.06_ _S.07_ _S.08_ 
+
+_queston_ task:
+	end quest 
+
+_pcgetsgold_ task:
+	when _mondead_ and _qgclicked_ 
+	give pc nothing 
+	end quest 
+
+_mondead_ task:
+	killed 1 _assassin_ saying 1020 
+	killed 1 _knight_ saying 1020 
+	killed 1 _spellsword_ saying 1020 
+	killed 1 _nightblade_ saying 1020 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 
+
+_S.05_ task:
+	place foe _assassin_ at _mondun_ 
+
+_S.06_ task:
+	place foe _knight_ at _mondun_ 
+
+_S.07_ task:
+	place foe _spellsword_ at _mondun_ 
+
+_S.08_ task:
+	place foe _nightblade_ at _mondun_ 

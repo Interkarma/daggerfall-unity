@@ -1,0 +1,218 @@
+-- Quest: C:\QUESTS\WORKING\P0B10L07.Qbn.
+-- StartsBy: letter
+-- Questee: member
+-- Questor: vampire
+-- Repute: 10
+-- QuestId: 7
+Messages: 18
+Quest: P0B10L07
+DisplayName: Intimidation
+-- Message panels
+QRC:
+
+RefuseQuest:  [1001]
+Error: Questtext 1001 Called.
+
+AcceptQuest:  [1002]
+Error: Questtext 1002 Called.
+
+QuestComplete:  [1004]
+<ce>                         _knight_ is half out
+<ce>                    of %g3 mind, %pcf. What a terror
+<ce>                           you are. %vam feel
+<ce>                    that you deserve this _jewelry_
+<ce>                   in recognition of your loyalty and
+<ce>                    remarkable ... restraint in this
+<ce>                     matter. Well done, tribesman.
+
+RumorsDuringQuest:  [1005]
+If _knight_ doesn't watch out, those vampires are going to turn on %g2.
+<--->
+_knight_ thinks %g knows about vampires. But %g's a fool.
+
+RumorsPostfailure:  [1006]
+_knight_ has moved across the Bay, but %g's keeping an eye on the vampires.
+<--->
+_knight_'s not afraid of any vampires. Killed thousands of 'em, I hear.
+
+RumorsPostsuccess:  [1007]
+_knight_ got taught the lesson of %g3 life. It doesn't pay to fight vampires.
+<--->
+_knight_ was a stupid do-gooder. Just leave the vampires alone, I say.
+
+QuestorPostsuccess:  [1008]
+Error: Questtext 1008 Called.
+
+QuestorPostfailure:  [1009]
+Error: Questtext 1009 Called.
+
+QuestLogEntry:  [1010]
+              __vamp_
+               ___vamp_
+ 
+ 
+ Dear %pcn,
+ 
+     %vam need you. Come
+ immediately.
+ 
+ 
+               Yours in Death,
+ 
+ 
+               _vamp_
+
+Message:  1011
+<ce>                  Ah, good evening, my tribesman. We
+<ce>                   are having difficulty with a local
+<ce>                  warlord who, despite our many, many
+<ce>                   polite verbal and written threats,
+<ce>                    continues to wage a war against
+<ce>                 %vam. Ordinarily, this irksome knight
+<ce>                    would have been in the hereafter
+<ce>                   weeks ago. Our mercy is not sprung
+<ce>                      from sentiment. We could use
+<ce>                          _knight_ as an ally
+<ce>                   in %reg, but %g needs to be taught
+<ce>                  obedience. I want you to have a talk
+<ce>                        with %g2 in ___mondung_
+<ce>                   where %g feels most secure. Don't
+<ce>                  kill %g2 -- just rough %g2 up a bit.
+<ce>                 I'll expect you back in =queston_ days
+<ce>                           after _knight_ has
+<ce>                           been ... softened.
+
+Message:  1012
+%qdt:
+ I received a letter
+ from _vamp_, of
+ %vam of ___vamp_. I
+ am needed in __vamp_
+ as soon as possible.
+
+Message:  1013
+%qdt:
+ _vamp_ wants me
+ to go to ___mondung_
+ and throttle _knight_,
+ a knight who refuses to bend to the
+ will of %vam. I am
+ ordered not to kill %g2, just
+ frighten %g2, and be back in
+ ___vamp_ in =queston_ days.
+
+Message:  1014
+<ce>                         Sweet %god, tell %vam
+<ce>                         that I'll do anything!
+<ce>                          Just don't kill me!
+                                     <--->
+<ce>                          %oth, I surrender!
+<ce>                      I'll do anything they want,
+<ce>                      just please, in the name of
+<ce>                            %god, don't kill
+<ce>                                  me!
+
+Message:  1015
+<ce>                           _knight_ is dead.
+<ce>                           _vamp_ will not be
+<ce>                                pleased.
+
+Message:  1016
+<ce>                       I've already heard, %pcf.
+<ce>                           You slew _knight_
+<ce>                 though I specifically told you only to
+<ce>                       frighten %g2. %oth, you're
+<ce>                    no better than a thug, are you?
+<ce>                          %vam and I are very
+<ce>                          disappointed, %pcf.
+
+Message:  1017
+<ce>                     A pale young boy hands you a
+<ce>                      letter before scurrying away
+<ce>                        with surprising agility.
+
+
+-- Symbols used in the QRC file:
+--
+--              %dat occurs 1 time.
+--                %g occurs 5 times.
+--               %g2 occurs 8 times.
+--               %g3 occurs 2 times.
+--              %god occurs 2 times.
+--              %oth occurs 2 times.
+--              %pcf occurs 5 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--              %vam occurs 7 times.
+--         =queston_ occurs 14 times.
+--       ___mondung_ occurs 2 times.
+--          ___vamp_ occurs 9 times.
+--         _jewelry_ occurs 1 time.
+--          _knight_ occurs 12 times.
+--            _vamp_ occurs 5 times.
+
+QBN:
+Item _letter_ letter used 1010
+Item _jewelry_ trinket
+
+Person _vamp_ factiontype Vampire_Clan local
+Person _knight_ face 69 factiontype Knightly_Guard male remote
+
+Place _mondung_ remote dungeon2
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Knight
+
+--	Quest start-up:
+	dialog link for person _vamp_ 
+	_letter_ used do _readletter_ 
+	have _letter_ set _S.09_ 
+	give pc _letter_ notify 1017 
+	place foe _F.00_ at _mondung_ 
+
+variable _S.00_
+_queston_ task:
+	change repute with _vamp_ by -5 
+	end quest 
+
+_vampclicked_ task:
+	clicked npc _vamp_ 
+	reveal _mondung_ 
+	log 1013 step 1 
+	say 1011 
+
+_S.03_ task:
+	when _vampclicked_ and not _S.05_ and not _S.04_ 
+	clear _vampclicked_ _S.03_ 
+
+_S.04_ task:
+	injured _F.00_ 
+	say 1014 
+	restrain foe _F.00_
+--task _S.04_ 
+--This was appended to the restrain foe action, not sure why
+
+_S.05_ task:
+	killed 1 _F.00_ 
+	say 1015 
+
+_reward_ task:
+	when _vampclicked_ and _S.04_ and not _S.05_ 
+	give pc _jewelry_ 
+	end quest 
+
+_S.07_ task:
+	when _vampclicked_ and _S.05_ 
+	say 1016 
+	change repute with _vamp_ by -5 
+	end quest 
+
+_readletter_ task:
+	add dialog for location _mondung_ person _vamp_ 
+	log 1012 step 0 
+	create npc _vamp_ 
+
+_S.09_ task:
+	start timer _queston_ 

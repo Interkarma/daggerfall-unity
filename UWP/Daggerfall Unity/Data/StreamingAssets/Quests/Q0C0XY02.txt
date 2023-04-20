@@ -1,0 +1,204 @@
+-- Quest: C:\QUESTS\WORKING\Q0C0XY02.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: witch
+-- Repute: 0X
+-- QuestId: 2
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 21
+Quest: Q0C0XY02
+DisplayName: A Treacherous Gift
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                     Thou wouldst help ==qgiver_,
+<ce>                    %pcf? Many come to us for aid,
+<ce>                   and then turn from us once their
+<ce>                   wishes have been met, their oaths
+<ce>                    are curses, their promises are
+<ce>                    abominations. For the gratitude
+<ce>                         of ==qgiver_, wouldst
+<ce>                     thou punish one transgressor
+<ce>                          for the sisterhood?
+
+RefuseQuest:  [1001]
+<ce>                    Not even that wouldst thou do?
+<ce>                         %oth, by ==daedra_, I
+<ce>                  suppose it is better not to promise
+<ce>                  what thou cannot deliver, yet still
+<ce>                            I am aggrieved.
+
+AcceptQuest:  [1002]
+<ce>                 Wilt thou truly? If thou wilt, a fine
+<ce>                        _mitem_ will be crafted
+<ce>                for thee. Now, journey thou to farthest
+<ce>                     __tavern_ and seek the one who has
+<ce>                    betrayed us, a villainous =man_
+<ce>                       who calls %g2-self _man_.
+<ce>                Give to %g2 this _jewelry_, tell %g2 it
+<ce>                is a gift from %g3 old lover, and then
+<ce>                 come back to us. Thou must to hurry,
+<ce>                 for the _jewelry_ will transform %g3
+<ce>                 outerself to a semblance of %g3 inner
+<ce>                        beauty. ==qgiver_ wilt
+<ce>                  expect thee in =queston_ days. May
+<ce>                        ==daedra_ smile on thy
+<ce>                             sacred quest.
+
+--needed to change %g on line 36 due to gender mismatches
+
+QuestComplete:  [1004]
+<ce>                       Good %pcf, thy promise to
+<ce>                      ==qgiver_ is fulfilled.
+<ce>                         Here is the _mitem_ I
+<ce>                         promised. Poor _man_.
+<ce>                I hope they allow %g2 to suffer deeply,
+<ce>                      before %g is put to death.
+
+RumorsDuringQuest:  [1005]
+_man_ is a true example of self-made =man_. A marvel to behold.
+<--->
+==qgiver_ can be extremely vengeful.
+
+RumorsPostfailure:  [1006]
+_man_ is laughing at the idea that %g owes anything to ==qgiver_.
+<--->
+_man_ has left __tavern_. And %g will be sorely missed.
+
+RumorsPostsuccess:  [1007]
+_man_ transformed into a horrible beast before the tavernfolk at _tavern_.
+<--->
+_man_ must have been trafficking with daedra. %oth, what a fate.
+
+QuestorPostsuccess:  [1008]
+Truly, I hope thou art enjoying thy _mitem_, %pcf.
+
+QuestorPostfailure:  [1009]
+<ce>                      Our vengeance against _man_
+<ce>                 is not complete! Get thee from here,
+<ce>                 or %g3 deserved fate wilt be visited
+<ce>                           upon thou, %pcf.
+
+Message:  1011
+<ce>                         _man_ thanks you for
+<ce>                   the _jewelry_. %g tries it on as
+<ce>                 you are telling %g2 who sent it. %g3
+<ce>                   eyes light up in fear at the name
+<ce>                      of ==qgiver_, and then the
+<ce>                          fear turns to pain.
+
+Message:  1012
+<ce>                     Thou wert not to kill _man_,
+<ce>                   merely give to %g2 the _jewelry_!
+<ce>                         Oaf! Assassin! _man_
+<ce>                was to suffer deeply for %g3 insolence,
+<ce>                       not be painlessly slain.
+<ce>                            ==daedra_ curse
+<ce>                              thee, %pcf.
+
+Message:  1020
+%qdt:
+ ==qgiver_ of
+ %reg has sent me to bring a
+ _jewelry_ to a =man_ by the name of
+ _man_ in __tavern_.
+ I was told to move hastily for the
+ _jewelry_ would "transform %g3
+ outerself to a semblance of %g3
+ inner beauty." I must have the
+ _jewelry_ in %g3 hands and
+ get back with ==qgiver_ in
+ no more than =queston_ days.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 7 times.
+--               %g2 occurs 6 times.
+--               %g3 occurs 10 times.
+--              %oth occurs 3 times.
+--              %pcf occurs 42 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--         ==daedra_ occurs 3 times.
+--         ==qgiver_ occurs 9 times.
+--             =man_ occurs 2 times.
+--         =queston_ occurs 4 times.
+--         __tavern_ occurs 4 times.
+--         _jewelry_ occurs 8 times.
+--             _man_ occurs 12 times.
+--           _mitem_ occurs 5 times.
+--          _tavern_ occurs 1 time.
+
+QBN:
+Item _jewelry_ trinket
+Item _mitem_ magic_item
+
+Person _qgiver_ group Questor
+Person _daedra_ face 1 factiontype Daedra remote
+Person _man_ faction Dancers male remote
+--Group 7.0 wouldn't work, needed a local site. Dancers is sufficient for the quest
+
+Place _tavern_ remote tavern
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _zombie_ is Zombie
+Foe _harpy_ is Harpy
+Foe _daedroth_ is Daedroth
+Foe _giant_ is Giant
+
+--	Quest start-up:
+	dialog link for person _daedra_ 
+	start timer _queston_ 
+	log 1020 step 0 
+	get item _jewelry_ 
+	place npc _man_ at _tavern_ 
+
+_queston_ task:
+	end quest 
+
+_S.01_ task:
+	toting _jewelry_ and _man_ clicked 
+	pick one of _S.04_ _S.02_ _S.03_ _S.05_ 
+	hide npc _man_ 
+	say 1011 
+
+_S.02_ task:
+	place foe _giant_ at _tavern_ 
+
+_S.03_ task:
+	place foe _harpy_ at _tavern_ 
+
+_S.04_ task:
+	place foe _daedroth_ at _tavern_ 
+
+_S.05_ task:
+	place foe _zombie_ at _tavern_ 
+
+_S.06_ task:
+	killed 1 _giant_ 
+	killed 1 _harpy_ 
+	killed 1 _zombie_ 
+	killed 1 _daedroth_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_S.08_ task:
+	when _qgclicked_ and _S.06_ 
+	say 1012
+	--this was 1020, could not be correct. changed to 1012.
+	change repute with _man_ by -15 
+	make pc ill with Witches'_Pox 
+	end quest 
+
+_reward_ task:
+	when _qgclicked_ and _S.01_ and not _S.06_ 
+	give pc _mitem_ 
+	end quest 
+
+_S.10_ task:
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _S.10_ 

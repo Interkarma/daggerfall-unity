@@ -1,0 +1,164 @@
+-- Quest: C:\QUESTS\WORKING\L0B30Y03.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Brotherhood
+-- Repute: 30
+-- QuestId: 3
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 21
+Quest: L0B30Y03
+DisplayName: Contract on a Mage
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  I recognize your expression, %pcf.
+<ce>                 You are growing arrogant, egotistical,
+<ce>                and vain. It's wonderful to see. Still,
+<ce>                 you need to exercise your humility and
+<ce>                  take on an assignment with dangerous
+<ce>                   political connotations. We have a
+<ce>                  contract on a high ranking member of
+<ce>                  the Mages Guild. Are you up for it?
+
+RefuseQuest:  [1001]
+<ce>                      Then strike that giddy grin
+<ce>                        from your face until you
+<ce>                         develop some bravery.
+
+AcceptQuest:  [1002]
+<ce>                    You don't disappoint me, %pcf.
+<ce>                   Yes, we have been asked to account
+<ce>                   this wizard, who by the way is no
+<ce>                 sparkcaster. To make matters a little
+<ce>                   more interesting, this mage never
+<ce>                 leaves the Mages Guild -- so you must
+<ce>                   run the risk of disturbing several
+<ce>                  dozen of the best, most destructive
+<ce>                  spellcasters in the realm. You will
+<ce>                find the sorcerer in the Mages Guild in
+<ce>                        ___mondung_. The contract
+<ce>                     is valid for =1stparton_ days,
+<ce>                     and then you must be back and
+<ce>                     this wizard must be dead. Fair
+<ce>                   luck to thee and may her infernal
+<ce>                    highness Mephala guide thy hand
+<ce>                               and foot.
+
+QuestFail:  [1003]
+<ce>                       The sorcerer still lives,
+<ce>                          %pcf. Do not fail in
+<ce>                            this assignment.
+
+QuestComplete:  [1004]
+<ce>                  The proud accounter returns, hands
+<ce>                  drenched with the blood of the hated
+<ce>                     wizard. You have accomplished
+<ce>                        something now, %pcf. You
+<ce>                    have a reason to be proud. Enjoy
+<ce>                    your _reward_ gold pieces, %pcf.
+<ce>                     And you can keep that grin on
+<ce>                               your face.
+
+RumorsDuringQuest:  [1005]
+Things are quiet at the Mages Guild. Makes me think of a sleeping dragon.
+<--->
+Sometime somebody's gonna do something about that wicked sorcerer.
+
+RumorsPostfailure:  [1006]
+<ce>                 Well, the mage left the Mages Guild,
+<ce>              but I'm sure we'll see that scoundrel again.
+                                     <--->
+<ce>               Much more excitement than the Mages Guild
+<ce>                 usually gets with that wizard leaving.
+
+RumorsPostsuccess:  [1007]
+I think the Mages Guild is as relieved as everyone else at the mage's death.
+<--->
+If you ask me, that wizard was a bad influence on the Mages Guild anyway.
+
+QuestorPostsuccess:  [1008]
+That __mondung_ must have been a wretched place, %pcf. How lovely.
+
+QuestorPostfailure:  [1009]
+<ce>                  You left that mage alive and still
+<ce>                   you think you deserve my time. You
+<ce>                     are egotistical indeed, %pcf.
+
+Message:  1020
+%qdt:
+ My latest quarry from the Dark Brotherhood is a wizard
+ at the Mages Guild of __mondung_.
+ The mage must be dead and I, back
+ with the Brotherhood in ___questgiver_,
+ in =1stparton_ days.
+
+Message:  1011
+<ce>                       You have slain the mage.
+<ce>                     The Brotherhood will be proud.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 14 times.
+--              %qdt occurs 1 time.
+--       =1stparton_ occurs 3 times.
+--    ___questgiver_ occurs 3 times.
+--        __mondung_ occurs 3 times.
+--          _reward_ occurs 1 time.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ face 112 group Questor
+
+Place _mondung_ remote magery
+
+Clock _1stparton_ 00:00 0 flag 18 range 0 2
+
+Foe _monster1_ is Sorceror
+Foe _monster2_ is Battle_mage
+Foe _monster3_ is Mage
+Foe _monster4_ is Spellsword
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1020 step 0 
+	pick one of _week_ _plot_ _time_ _vend_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _S.02_ 
+	give pc _reward_ 
+	end quest 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_S.02_ task:
+	killed 1 _monster1_ 
+	killed 1 _monster3_ 
+	killed 1 _monster2_ 
+	killed 1 _monster4_ 
+	say 1011 
+
+variable _queston_
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_week_ task:
+	place foe _monster4_ at _mondung_ 
+
+_plot_ task:
+	place foe _monster3_ at _mondung_ 
+
+_time_ task:
+	place foe _monster2_ at _mondung_ 
+
+_vend_ task:
+	place foe _monster1_ at _mondung_ 
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.02_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 

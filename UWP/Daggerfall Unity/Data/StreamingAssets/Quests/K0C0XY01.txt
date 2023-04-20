@@ -1,0 +1,265 @@
+-- Quest: C:\QUESTS\WORKING\K0C0XY01.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: merchant
+-- Repute: 0X
+-- QuestId: 1
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 100
+Quest: K0C0XY01
+DisplayName: The Harpies' Nest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>          I have a not uncommon situation on my hands. A nest
+<ce>           of harpies has moved into an old property of mine,
+<ce>          and while I personally couldn't care less, our wise
+<ce>            and benevolent %rt has decreed that the owner of
+<ce>          any structure infested by harpies is responsible for
+<ce>           extermination. There is apparently a fine involved
+<ce>           for noncompliance. Frankly, I don't have the time
+<ce>           for this; but if you wouldn't mind bloodying your
+<ce>              sword a bit, I could use your help. The last
+<ce>              mercenary I hired didn't make it, so I would
+<ce>             understand if you're hesitant. I'd be happy to
+<ce>          pay you, say, _reward_ gold pieces for your trouble.
+
+RefuseQuest:  [1001]
+<ce>                    %oth. Well, I can't blame you.
+<ce>            Never could abide the stench of harpies myself.
+
+AcceptQuest:  [1002]
+<ce>            Would you? Marvelous. Now, the catch is that I
+<ce>             must have proof that a serious effort has been
+<ce>              made to clear out ___mondung_ in =2mondung_
+<ce>              days. Obviously that does not leave a lot of
+<ce>                   time. I had hoped that _contact_,
+<ce>          the mercenary I had hired earlier from the Fighters
+<ce>            Guild would have been more capable. And, listen,
+<ce>                   %pcf, you don't have to clear out
+<ce>                all ___mondung_. Just kill four or five
+<ce>             of the critters and get back here. I know! The
+<ce>               clan leaders wear specially dyed gryphon's
+<ce>                   feathers. Bring back one of those
+<ce>               and I'll have the proof I need. Just make
+<ce>             certain you don't fail to return in =2mondung_
+<ce>                              days, %pcf.
+
+QuestFail:  [1003]
+<ce>                 %oth. That wasn't much of an effort.
+
+QuestComplete:  [1004]
+<ce>                Well done, %pcf. Now I can prove to the
+<ce>             %rt that I've done my civic duty, or at least
+<ce>           attempted to do it. You have earned your _reward_
+<ce>                        gold indeed. Thank you.
+
+RumorsDuringQuest:  [1005]
+The %rt demands physical proof of harpy extermination from some mercenaries.
+<--->
+_qgiver_ has really let ___mondung_ go to seed. It's hardly a storehouse now.
+<--->
+_qgiver_ ought to have ___mondung_ destroyed if it isn't going to be used.
+
+RumorsPostfailure:  [1006]
+The %rt slapped _qgiver_ with so many fines, I wonder if %g'll recover.
+<--->
+_qgiver_ has had some real bad luck with harpy exterminators from what I see.
+
+RumorsPostsuccess:  [1007]
+The %rt seems happy with _qgiver_'s efforts to get ___mondung_ cleaned out.
+<--->
+_qgiver_ has made %g3 first effort to get that filthy ___mondung_ cleaned up.
+
+QuestorPostsuccess:  [1008]
+You helped me with those harpies, %pcf. What can I help you with?
+
+QuestorPostfailure:  [1009]
+I have nothing to say to a %ra who can't pick up a few feathers.
+
+Message:  1030
+A large, white feather, dyed a repulsive shade of red.
+
+Message:  1031
+A gray feather, dyed a sickly shade of green.
+
+Message:  1032
+A large, white feather, dyed pure black.
+
+Message:  1033
+A gray feather, dyed dull blue.
+
+Message:  1011
+<ce>                      Thank you, %pcf. I know my
+<ce>                          way home from here.
+
+Message:  1012
+__qgiver_, ___qgiver_
+ Dear %pcn,
+ 
+      I am sorry to annoy you while I'm sure you're
+ busy, but I received a caller from the Fighters Guild
+ on the subject of _contact_, that
+ mercenary I first hired to clean out ___mondung_.
+      Without boring you with the details of the
+ interview, let me tell you that I promised the
+ Guildmaster I'd ask you to look for _contact_
+ while you're in ___mondung_. _contact_
+ looks is a =contact_, so %g should
+ stick out at ___mondung_.
+      Well, I've fulfilled my promise to the Guildmaster.
+ Personally, I don't care if you throw this letter away
+ and let _contact_ rot in ___mondung_.
+ 
+      I am eagerly awaiting your return.
+ 
+<ce>                              Yours truly,
+<ce>                                _qgiver_
+
+Message:  1013
+<ce>                         You're from _qgiver_?
+<ce>                        Thank %god you arrived,
+<ce>                          %pcf. Hope you don't
+<ce>                          mind if I join you.
+<ce>                         Take this _jewelry_ as
+<ce>                        a sign of my gratitude.
+
+Message:  1014
+<ce>            A young courier appears at your side, hands you
+<ce>                a letter, and disappears without a word.
+
+Message:  1020
+%qdt:
+ _qgiver_, a
+ merchant in ___qgiver_ has hired me
+ to clear out %g3 desolate property,
+ ___mondung_, which is infested by
+ harpies. Apparently, the place does not
+ have to be cleared out, but some sort of
+ effort needs to be made or at least the
+ appearance of an effort. I must return
+ with a clan feather from one of the leaders in
+ =2mondung_ days for a reward of _reward_ gold pieces.
+
+Message:  1050
+1 harpie dead
+
+Message:  1051
+2 harpies dead
+
+Message:  1052
+3 harpies dead
+
+Message:  1053
+4 harpies dead
+
+--changed these msgs from 103X to 105X since those numbers were already taken above
+
+Message:  1040
+<ce>                I need some proof before I can pay you.
+
+Message:  1099
+<ce>                    You have found a clan feather.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 2 times.
+--               %g3 occurs 2 times.
+--              %god occurs 1 time.
+--              %oth occurs 2 times.
+--              %pcf occurs 7 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--               %rt occurs 5 times.
+--        =2mondung_ occurs 5 times.
+--         =contact_ occurs 1 time.
+--       ___mondung_ occurs 12 times.
+--        ___qgiver_ occurs 3 times.
+--         _contact_ occurs 6 times.
+--         _jewelry_ occurs 1 time.
+--          _qgiver_ occurs 9 times.
+--          _reward_ occurs 15 times.
+
+QBN:
+Item _item_ book2
+Item _reward_ gold
+Item _clanfeather1_ harpy_feather
+-- feather "dialogue" was weird and out of place. Removed from quest since they contribute nothing
+Item _letter26_ letter used 1012
+Item _jewelry_ trinket
+
+Person _qgiver_ group Questor
+Person _contact_ face 1 faction The_Fighters_Guild remote
+
+Place _mondung_ remote dungeon10
+
+Clock _2mondung_ 00:00 0 flag 17 range 0 2
+Clock _S.05_ 16:40 1.09:20
+Clock _S.06_ 05:00 10:00
+
+Foe _F.00_ is Harpy
+Foe _F.01_ is Harpy
+
+--	Quest start-up:
+	start timer _2mondung_ 
+	start timer _S.05_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	give item _clanfeather1_ to _F.01_ 
+	pc at _mondung_ set _S.08_ 
+	_letter26_ used do _S.15_ 
+	place foe _F.01_ at _mondung_
+	have _clanfeather1_ set _S.14_
+
+_2mondung_ task:
+	end quest 
+
+variable _pcgetsgold_
+_S.02_ task:
+	toting _clanfeather1_ and _qgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_S.03_ task:
+	clicked npc _contact_ 
+	start timer _S.06_ 
+	get item _jewelry_ 
+	hide npc _contact_ 
+	say 1013 
+	make _jewelry_ permanent 
+	add _contact_ face 
+	change repute with _contact_ by +10 
+
+_S.04_ task:
+	clicked npc _qgiver_ 
+
+_S.05_ task:
+	give pc _letter26_ notify 1014 
+
+_S.06_ task:
+	say 1011 
+	drop _contact_ face 
+
+variable _S.07_
+_S.08_ task:
+	create foe _F.00_ every 21 minutes 15 times with 25% success 
+
+_clearclick_ task:
+	when _S.04_ and not _S.02_ 
+	clear _S.04_ _clearclick_
+	say 1003
+	say 1040 
+
+variable _S.10_
+variable _S.11_
+variable _S.12_
+variable _S.13_
+_S.14_ task:
+	say 1099 
+--changed "clicked item clanfeather1 say 1099" to "have item do this" since feather is on enemy body
+
+_S.15_ task:
+	place npc _contact_ at _mondung_ 

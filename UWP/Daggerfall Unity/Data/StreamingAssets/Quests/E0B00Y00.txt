@@ -1,0 +1,164 @@
+-- Quest: C:\QUESTS\WORKING\E0B00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Arkay
+-- Repute: 0
+-- QuestId: 0
+Messages: 21
+Quest: E0B00Y00
+DisplayName: The Desecrated Temple
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>             As a matter of fact, we could doubtlessly use
+<ce>             someone like you. There's a desecrated temple
+<ce>                     nearby called ___mondung_. You
+<ce>              may have heard of it. For some time, it has
+<ce>              been a home to evil, but we have ignored its
+<ce>               influence. It is a counterbalance to other
+<ce>              forces, after all. Now the balance has been
+<ce>                upset. I need someone to right it. Sound
+<ce>                  like something you could help with?
+                                     <--->
+<ce>                    The Balance in ___mondung_ has
+<ce>             been unbound by a new intrusion that threatens
+<ce>                our efforts at bringing harmony to %reg.
+<ce>              We need a champion, someone like you, to set
+<ce>                 ___mondung_ to right. Will you do it?
+
+RefuseQuest:  [1001]
+<ce>                Disappointing. Well, we'll find someone
+<ce>                           else doubtlessly.
+
+AcceptQuest:  [1002]
+<ce>                       Excellent, %pcf. What we
+<ce>             need is to have a certain powerful lycanthrope
+<ce>              who has established its lair in that unholy
+<ce>                        ___mondung_ slain. It is
+<ce>               threatening the expansion of our order in
+<ce>               that area. If you are not back here after
+<ce>               =1stparton_ days have passed, we will move
+<ce>             against it ourselves, and your reward will be
+<ce>              forfeit. Obviously, you had best be on your
+<ce>                 way. Fare thee well and best of luck.
+                                     <--->
+<ce>                     %oth, that's good, %pcf. Now,
+<ce>           there are but =1stparton_ days we can give you to
+<ce>                  restore equilibrium in ___mondung_,
+<ce>            and the fastest, most appropriate way we know of
+<ce>            is for you to slay the lycanthrope who has made
+<ce>                 its foul nest in ___mondung_'s bowels.
+<ce>                 Pray hurry, %pcf. If you are not here
+<ce>              when =1stparton_ suns have set, your reward
+<ce>                            with be forfeit.
+
+
+QuestFail:  [1003]
+<ce>                    You had best move along, %pcf.
+<ce>                 You do not have very much more time to
+<ce>                kill that werebeast. =1stparton_ days
+<ce>                             to be precise.
+
+QuestComplete:  [1004]
+<ce>              You have done a great service to the Temple
+<ce>                     of Arkay, %pcf. One that will
+<ce>               not be forgotten. Enjoy your _reward_ gold
+<ce>                      -- you certainly deserve it.
+
+RumorsDuringQuest:  [1005]
+I've heard there's some kind of werewolf on the loose around here.
+<--->
+I hear the wereboar's found a lair in someplace called ___mondung_.
+<--->
+Didja hear that howling last night? Wolf howling?
+
+RumorsPostfailure:  [1006]
+Lupines are real nomads, I guess. I hear our loup moved down south.
+<--->
+My cousin tells me that our wereboar was spotted down south aways.
+
+RumorsPostsuccess:  [1007]
+I hear they found out that werewolf was a priest during the day!
+<--->
+A lot of people feel safer knowing that wereboar is dead.
+<--->
+You heard about that werecreature some %ra hunted down?
+
+QuestorPostsuccess:  [1008]
+How may I assist thee who restored the balance within ___mondung_?
+
+QuestorPostfailure:  [1009]
+You failed to slay that lupine, %pcf. I am sorely aggrieved.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _questgiver_ of
+ the Temple of Arkay offered to
+ pay me _reward_ gold pieces to slay
+ a werecreature lurking in
+ ___mondung_, a former
+ temple of theirs. I have =1stparton_
+ days to do it and be back to
+ ___questgiver_.
+
+Message:  1020
+<ce>                    You have slain the lycanthrope
+<ce>                            of ___mondung_.
+
+
+-- Symbols used in the QRC file:
+--
+--              %oth occurs 1 time.
+--              %pcf occurs 8 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--       =1stparton_ occurs 7 times.
+--       ___mondung_ occurs 13 times.
+--    ___questgiver_ occurs 2 times.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ group Questor
+
+Place _mondung_ remote dungeon4
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _wolf_ is Werewolf
+Foe boar is Wereboar
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	pick one of _wereboar_ _werewolf_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+_mondead_ task:
+	killed 1 _wolf_ saying 1020 
+	killed 1 boar saying 1020 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_
+	say 1003 
+	clear _qgclicked_ _clearclick_ 
+
+_werewolf_ task:
+	place foe _wolf_ at _mondung_ 
+
+_wereboar_ task:
+	place foe boar at _mondung_ 

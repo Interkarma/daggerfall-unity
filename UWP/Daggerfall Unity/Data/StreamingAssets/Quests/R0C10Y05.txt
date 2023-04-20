@@ -1,0 +1,204 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y05.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 5
+Messages: 31
+Quest: R0C10Y05
+DisplayName: Deadly Diplomacy
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      You may be aware that I am
+<ce>                        forming an alliance with
+<ce>                       _qgfriend_. To cement our
+<ce>                       friendship, I have agreed
+<ce>                        to arrange the death of
+<ce>                         a consistent threat to
+<ce>                          %g2 -- some sort of
+<ce>                      monster. This foul parasite
+<ce>                        lives in a decrepit old
+<ce>                       place called ___mondung_.
+<ce>                          %g has agreed to pay
+<ce>                    the creature's assassin _reward_
+<ce>                        gold in return. Not too
+<ce>                      bad, I'm sure you'll agree.
+<ce>                        So, does this sound like
+<ce>                       your sort of an adventure,
+<ce>                                 %pcn?
+
+RefuseQuest:  [1001]
+<ce>            Really? How inconsiderate of you to leave me in
+<ce>                          the lurch like this.
+
+AcceptQuest:  [1002]
+<ce>                      Recognize a good deal when
+<ce>                        you hear it, eh? I told
+<ce>                      _qgfriend_ that the monster
+<ce>                   would be dead in =1stparton_ days
+<ce>                      or %g could go out and hire
+<ce>                       someone else. So kill the
+<ce>                        creature and get over to
+<ce>                         ___qgfriend_ and find
+<ce>                     %g2 before the time runs out.
+
+QuestFail:  [1003]
+<ce>                     Better get on the road, %pcf.
+<ce>                             Time is short.
+
+QuestComplete:  [1004]
+<ce>                 Yes, I've already heard word that our
+<ce>                _giant_ pestilence is at an end. I don't
+<ce>                     know where _questgiver_ found
+<ce>             you, but I'm glad %g did. Here's your _reward_
+<ce>                 gold piece reward. Thank you for your
+<ce>                             service, %pcf.
+
+RumorsDuringQuest:  [1005]
+There's a monster in ___mondung_ that's been bothering _qgfriend_.
+<--->
+That monster in ___mondung_ has a horde of bats and rats apparently.
+
+RumorsPostfailure:  [1006]
+Now that monster =giant_ knows its lair is known, it's moved on.
+<--->
+<ce>           The monster =giant_ has moved out of ___mondung_,
+<ce>                     but still plagues _qgfriend_.
+
+RumorsPostsuccess:  [1007]
+The curse of =giant_ has finally been wiped from %reg.
+<--->
+A holy %ra warrior has destroyed =giant_, blight of our land.
+
+QuestorPostsuccess:  [1008]
+Ah, my friend, =giant_'s nemesis! What may I do for you?
+<--->
+<ce>           You have aided me in forming my alliances, %pcf.
+<ce>                       With what can I help you?
+
+QuestorPostfailure:  [1009]
+<ce>                   Your failure to slay that monster
+<ce>                  complicated matters. I have no time
+<ce>                            for such as you.
+
+Message:  1011
+<ce>                   =qgfriend_, yes? A possible ally
+<ce>                     of _questgiver_ with a problem
+<ce>                    with that thing in ___mondung_.
+                                     <--->
+_qgfriend_ is the blood enemy of =giant_.
+
+Message:  1012
+You have slain =giant_.
+
+Message:  1015
+%qdt:
+_questgiver_ of
+ ___questgiver_ hired me on behalf
+ of an ally, _qgfriend_ of
+ ___qgfriend_, to slay a
+ monster known only as =giant_, which
+ has been terrorizing the land around
+ ___mondung_. If the monster is dead
+ and I have made it to _qgfriend_ in =1stparton_
+ days, I will earn my reward.
+
+Message:  1021
+<ce>                   Oh, I almost forgot. I don't know
+<ce>                what kind of monster haunts ___mondung_,
+<ce>                 but the name =giant_ has been rumored
+<ce>                    to be the source of the terror.
+
+Message:  1030
+<ce>               Who dares disturb =giant_ the Terrible in
+<ce>               %g3 lair?  Your skull will soon hang on my
+<ce>                           wall as a trophy!
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--               %g2 occurs 2 times.
+--               %g3 occurs 1 time.
+--              %pcf occurs 25 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--       =1stparton_ occurs 5 times.
+--           =giant_ occurs 12 times.
+--        =qgfriend_ occurs 1 time.
+--       ___mondung_ occurs 10 times.
+--      ___qgfriend_ occurs 2 times.
+--    ___questgiver_ occurs 1 time.
+--           _giant_ occurs 1 time.
+--        _qgfriend_ occurs 8 times.
+--      _questgiver_ occurs 3 times.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ face 112 group Questor
+Person _qgfriend_ group Local_3.0 remote anyInfo 1011 rumors 1011
+
+Place _mondung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _vampire_ is Vampire
+Foe _wereboar_ is Wereboar
+Foe _mage_ is Battle_mage
+Foe _giant_ is Giant
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1015 step 0 
+	pick one of _S.06_ _S.07_ _orsinium_ _S.09_ 
+	say 1021 
+
+_1stparton_ task:
+	end quest 
+
+_pcgetsgold_ task:
+	when _npcclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+variable _queston_
+_mondead_ task:
+	killed 1 _giant_ 
+	killed 1 _wereboar_ 
+	killed 1 _vampire_ 
+	killed 1 _mage_ 
+	say 1012 
+	create npc _qgfriend_ 
+
+_npcclicked_ task:
+	clicked npc _qgfriend_ 
+
+_clearclick_ task:
+	when _npcclicked_ and not _mondead_ 
+	clear _npcclicked_ _clearclick_ 
+
+_S.06_ task:
+	place foe _giant_ at _mondung_ 
+
+_S.07_ task:
+	place foe _mage_ at _mondung_ 
+
+_orsinium_ task:
+	place foe _wereboar_ at _mondung_ 
+
+_S.09_ task:
+	place foe _vampire_ at _mondung_ 
+
+_S.10_ task:
+	injured _wereboar_ 
+	injured _vampire_ 
+	injured _mage_ 
+	injured _giant_ 
+	say 1030 

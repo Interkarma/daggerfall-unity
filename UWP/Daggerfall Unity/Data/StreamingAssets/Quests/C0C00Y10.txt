@@ -1,0 +1,222 @@
+-- Quest: C:\QUESTS\WORKING\C0C00Y10.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: temple
+-- Repute: 0
+-- QuestId: 10
+Messages: 26
+Quest: C0C00Y10
+DisplayName: The Healing
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   The best way to get in good with
+<ce>                   the temple is to heal someone. I
+<ce>                   know of a case that might do the
+<ce>                         trick for you, %pcn.
+<ce>                           Are you willing?
+                                     <--->
+<ce>                           I am _giver_. You
+<ce>                     aren't high in the hierarchy
+<ce>                             of __giver_.
+<ce>                       I might be able to speak
+<ce>                    favorably of you if you were to
+<ce>                  find a way to cure someone I know.
+
+RefuseQuest:  [1001]
+<ce>                     If you aren't even willing or
+<ce>                    able to do a simple healing, I
+<ce>                     surely can't recommend you to
+<ce>                            temple leaders.
+
+AcceptQuest:  [1002]
+<ce>                        _cousin_ in ___cousin_
+<ce>                  suffering from an unusual disease.
+<ce>                   I was about to dispatch a cleric
+<ce>                   to treat %g2. I will delay them a
+<ce>                   day or so. If you can find a cure
+<ce>                   it would increase your favor with
+<ce>                         __giver_. I can only
+<ce>                      give you =questtime_ days.
+
+QuestFail:  [1003]
+%qdt:
+ I have been given the chance by
+ _giver_ of __giver_
+ in ___giver_ to heal
+ _cousin_ of ___cousin_.
+ If I do not have %g2 healed in =questtime_ days
+ someone else will be sent to do the
+ job instead.
+
+QuestComplete:  [1004]
+<ce>                            _cousin_ looks
+<ce>                        much healthier to you.
+<ce>                        Obviously, %g is cured.
+
+RumorsDuringQuest:  [1005]
+Poor _cousin_. How that =cousin_ suffers!
+
+RumorsPostfailure:  [1006]
+_giver_ of __giver_ is plenty furious with that %ra.
+
+RumorsPostsuccess:  [1007]
+That _cousin_ who was cured was _giver_ of __giver_'s cousin.
+
+QuestorPostsuccess:  [1008]
+I have heard that _cousin_ was cured. %god bless thee, %pcf. What do you need?
+
+QuestorPostfailure:  [1009]
+_cousin_ has died, and I blame thee, %pcf.
+
+Message:  1025
+<ce>                  I'll be watching you. Remember, the
+<ce>                    patient's name is _cousin_ and
+<ce>                     %g is in ___cousin_. You have
+<ce>                  =questtime_ days to prove yourself.
+
+--duplicate 1006 removed
+
+QuestLogEntry:  [1010]
+<ce>                     I feel so weak. I don't know
+<ce>                 what is wrong with me. Have you come
+<ce>             to help me? Yes? Do you have the cure? If so,
+<ce>               please use it on me, so that I may heal.
+
+Message:  1011
+<ce>                          Wilt thou do this?
+
+Message:  1012
+I heard about %g3 disease. Some say that _healer_ of ___healer_ has a cure.
+<--->
+I did hear something of %g2. Something about a disease and someone named _healer_ in ___healer_ who had a cure.
+
+Message:  1013
+<ce>                   Hello there. Yes, I have heard of
+<ce>                    _cousin_ of ___cousin_ and %g3
+<ce>                    problem. Caliron's Curse it is.
+<ce>                    Often mistaken for Gray Fever.
+<ce>                     Anyway, I do have a some Hoar
+<ce>                     Frost Root that will cure it.
+<ce>                   It can only be used once though.
+<ce>                   I'll sell it to you for 20 gold.
+
+Message:  1014
+<ce>                Do you wish to buy the Hoar Frost Root?
+
+Message:  1015
+<ce>                   I'm sorry, you don't seem to have
+<ce>                  enough gold for the Hoar Frost Root.
+
+Message:  1016
+<ce>           Thank you, %pcn. I will use the Hoar Frost Root.
+<ce>                I really can't thank you enough. I hope
+<ce>              the rest of your travels are safe for you.
+
+Message:  1017
+%qdt:
+ I have bought some Hoar Frost Root
+ from _healer_ of ___healer_
+ that cures Caliron's Curse, the
+ disease that is inflicting _cousin_.
+
+Message:  1018
+%qdt:
+ I have given Hoar Frost Root to _cousin_
+ and cured %g2 of the Caliron's Curse.
+ Maybe now __giver_ will think
+ more highly of me.
+
+Message:  1019
+<ce>                 The Hoar Frost Root dissolves quickly
+<ce>                            as you use it.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--               %g2 occurs 5 times.
+--               %g3 occurs 2 times.
+--              %god occurs 2 times.
+--              %pcf occurs 29 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 3 times.
+--               %ra occurs 2 times.
+--          =cousin_ occurs 2 times.
+--       =questtime_ occurs 5 times.
+--        ___cousin_ occurs 4 times.
+--         ___giver_ occurs 1 time.
+--        ___healer_ occurs 39 times.
+--          __giver_ occurs 8 times.
+--          _cousin_ occurs 16 times.
+--           _giver_ occurs 5 times.
+--          _healer_ occurs 39 times.
+
+QBN:
+Item _talisman_ root_tendrils
+-added underscores to talisman
+
+Person _giver_ group Questor
+Person _cousin_ group Local_3.0 remote anyInfo 1012 rumors 1012
+Person _healer_ face 64 group Chemist remote
+
+
+Clock _questtime_ 00:00 0 flag 1 range 3 5
+
+--	Quest start-up:
+	start timer _questtime_ 
+	prompt 1011 yes _S.01_ no _S.02_ 
+	pick one of _S.06_ _S.07_ 
+	_talisman_ used do _S.08_ 
+
+_questtime_ task:
+	end quest 
+
+_S.01_ task:
+	log 1003 step 0 
+	say 1025 
+
+_S.02_ task:
+	say 1005
+	end quest
+-removed illogical "saying RumorsPostfailure" from this task. replaced with 1005.
+
+_S.03_ task:
+	clicked npc _cousin_ 
+	say 1010 
+
+_S.04_ task:
+	when _S.03_ and _S.06_ 
+	make pc ill with Swamp_Rot 
+
+variable _S.05_
+variable _S.06_
+variable _S.07_
+_S.08_ task:
+	take _talisman_ from pc saying 1019 
+	cure Swamp_Rot 
+
+_S.09_ task:
+	toting _talisman_ and _cousin_ clicked 
+	log 1018 step 2 
+	say 1016 
+	give pc nothing 
+	end quest 
+--removed unnecessary delay
+--moved "give pc nothing" to end of task, more sensible for dialogue
+
+_S.10_ task:
+	clicked npc _healer_ say 1013 
+	prompt 1014 yes _S.11_ no _no_ 
+
+_no_ task:
+	clear _S.10_ 
+
+_S.11_ task:
+	clicked _healer_ and at least 20 gold otherwise do _S.12_ 
+	log 1017 step 1 
+	get item _talisman_ 
+
+_S.12_ task:
+	say 1015 

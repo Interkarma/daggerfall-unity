@@ -1,0 +1,65 @@
+-- Quest: C:\QUESTS\WORKING\S0000100.Qbn.
+-- Main story quest.
+-- QuestId: 100
+Messages: 16
+Quest: S0000100
+-- Message panels
+QRC:
+
+Message:  1015
+<ce>                 Queen Akorithi has sent us to relieve
+<ce>                 you of a heavy burden. The Totem must
+<ce>                  be such a weight on your mind. Its
+<ce>                 too bad you didn't try harder to stay
+<ce>                 on her good side. She also ordered us
+<ce>                 to kill you. No witnesses of course.
+                                     <--->
+<ce>                     We're here to kill you %pcn.
+<ce>                  No hard feelings. We just want the
+<ce>                     Totem and you're in the way.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcn occurs 1 time.
+
+QBN:
+
+
+
+Clock _S.01_ 01:15 0 flag 1 range 0 1
+Clock _S.02_ 444.10:40 0 flag 1 range 0 1
+
+Foe _F.00_ is 3 Battle_mage
+
+--	Quest start-up:
+	create foe _F.00_ every 100 minutes 30 times with 5% success 
+	start timer _S.02_ 
+
+_S.00_ task:
+	injured _F.00_ 
+	start timer _S.01_ 
+	say 1015 
+
+_S.01_ task:
+	clear _S.01_ _S.00_ 
+
+_S.02_ task:
+	end quest 
+
+GothrydGotTotem _S.03_
+KingOfWormsGotTotem _S.04_
+GortwogGotTotem _S.05_
+AkorithiGotTotem _S.06_
+UnderkingGotTotem _S.07_
+EadwyreGotTotem _S.08_
+BrisiennaGotTotem _S.09_
+_S.10_ task:
+	when _S.03_ or _S.04_ or _S.05_ or _S.06_ 
+
+_S.11_ task:
+	when _S.07_ or _S.08_ or _S.09_ 
+
+_S.12_ task:
+	when _S.10_ or _S.11_ 
+	start task _S.02_ 

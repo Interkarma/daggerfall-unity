@@ -1,0 +1,180 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y04.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 4
+Messages: 21
+Quest: R0C10Y04
+DisplayName: The Evil Wizard
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>              The whining peasants who work my land near
+<ce>                    ___mondung_ have long complained
+<ce>                 about evil wizardry being practiced in
+<ce>                that dungeon. It appears that this time
+<ce>                 they may be right. I am in need of an
+<ce>                 assassin with enough time to travel to
+<ce>                      ___mondung_ and destroy the
+<ce>               necromantic sorcerer there. I am prepared
+<ce>             to pay _reward_ gold pieces for this service.
+<ce>                          Are you interested?
+
+RefuseQuest:  [1001]
+<ce>            Really? I would have thought this was your sort
+<ce>                  of an assignment. How inconvenient.
+
+AcceptQuest:  [1002]
+<ce>                %oth, that's grand. I need to have this
+<ce>          wizard extinguished in =1stparton_ days, so you will
+<ce>           probably want to get on the road right away. Good
+<ce>                     luck, %pcf, and show no mercy.
+
+QuestFail:  [1003]
+<ce>           I don't want to see you again until that sorcerer
+<ce>                                is dead.
+
+QuestComplete:  [1004]
+<ce>          The mighty hero returns! The farmers are overjoyed
+<ce>             that their land is free of black magic, and I
+<ce>           share their joy. Accept the _reward_ gold pieces,
+<ce>                        %pcf, with my gratitude.
+
+RumorsDuringQuest:  [1005]
+You can almost feel the malevolent magicka building.
+<--->
+Some sorcerer has vowed to reduce _questgiver_'s land to rubble.
+
+RumorsPostfailure:  [1006]
+That sorcerer in ___mondung_ has apparently moved on.
+<--->
+Apparently some adventurer spooked the sorcerer out of ___mondung_.
+
+RumorsPostsuccess:  [1007]
+The Mad Wizard of ___mondung_ was apparently slain by a brave %ra.
+<--->
+Had that sorcerer survived, _questgiver_ would have been in deep trouble.
+
+QuestorPostsuccess:  [1008]
+Ah, the slayer of the mad wizard is back. How are you, my friend?
+<--->
+A pleasure to see you again, o killer of mad wizards.
+
+QuestorPostfailure:  [1009]
+<ce>                  You weren't expecting a reward for
+<ce>                  your failure to slay that wizard, I
+<ce>                    hope. You're lucky I don't have
+<ce>                              you flogged.
+                                     <--->
+<ce>                         So, the %ra returns.
+<ce>                   So, I imagine, will the wizard you
+<ce>                     failed to slay. Run along now.
+
+Message:  1011
+<ce>              _questgiver_ is a noble with a real hatred
+<ce>                   for a sorcerer called _fakename_.
+                                     <--->
+<ce>             _questgiver_ is a noble who has been plagued
+<ce>                    by a sorcerer called _fakename_.
+
+Message:  1012
+_fakename_ the wizard is dead.
+
+Message:  1015
+%qdt:
+_questgiver_
+ of __questgiver_ in ___questgiver_
+ has sent me to ___mondung_,
+ where I am to slay a mad wizard.
+ If I can have the deed accomplished
+ and be back to %g2 in =1stparton_ days,
+ I will earn my gold.
+
+Message:  1020
+<ce>                   You must be the latest poor fool
+<ce>                    _questgiver_ has hired to try to
+<ce>                  kill me.  Your bones will soon join
+<ce>                  those of your compatriots, scattered
+<ce>                           about my dungeon!
+
+
+-- Symbols used in the QRC file:
+--
+--               %g2 occurs 1 time.
+--              %oth occurs 1 time.
+--              %pcf occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--       =1stparton_ occurs 4 times.
+--       ___mondung_ occurs 6 times.
+--    ___questgiver_ occurs 2 times.
+--        _fakename_ occurs 5 times.
+--      _questgiver_ occurs 6 times.
+--          _reward_ occurs 4 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ face 112 group Questor anyInfo 1011 rumors 1011
+Person _fakename_ group Local_4.0 female remote
+
+Place _mondung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Sorceror
+Foe _battlemage_ is Battle_mage
+Foe _F.02_ is Orc_shaman
+Foe _mage_ is Mage
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1015 step 0 
+	pick one of _week_ _plot_ _time_ _vend_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _S.02_ 
+	give pc _reward_ 
+	end quest 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_S.02_ task:
+	killed 1 _battlemage_ 
+	killed 1 _F.02_ 
+	killed 1 _F.00_ 
+	killed 1 _mage_ 
+	say 1012 
+	change repute with _fakename_ by -20 
+
+variable _queston_
+_1stparton_ task:
+	change repute with _questgiver_ by -15 
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.02_ 
+	clear _qgclicked_ _clearclick_ 
+
+_week_ task:
+	place foe _battlemage_ at _mondung_ 
+
+_plot_ task:
+	place foe _mage_ at _mondung_ 
+
+_time_ task:
+	place foe _F.02_ at _mondung_ 
+
+_vend_ task:
+	place foe _F.00_ at _mondung_ 
+
+_dummy_ task:
+	injured _mage_ 
+	injured _battlemage_ 
+	injured _F.00_ 
+	injured _F.02_ 
+	say 1020 

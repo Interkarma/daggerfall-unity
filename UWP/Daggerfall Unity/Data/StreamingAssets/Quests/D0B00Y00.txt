@@ -1,0 +1,158 @@
+-- Quest: C:\QUESTS\WORKING\D0B00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Akatosh
+-- Repute: 0
+-- QuestId: 0
+Messages: 31
+Quest: D0B00Y00
+DisplayName: Avenge the Dragons
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  If you are, by chance, looking for
+<ce>               work, an easy _reward_ gold pieces, I just
+<ce>                    might have a job for you. It'll
+<ce>                   involve some combat, but you look
+<ce>                      like you wouldn't mind that.
+<ce>                   Does it sound like a possibility?
+
+RefuseQuest:  [1001]
+<ce>                  I see. Well, that is disappointing.
+
+AcceptQuest:  [1002]
+<ce>                  Very good. You know that Akatosh is
+<ce>                   the God of Time, but He is also a
+<ce>                   Dragon God, and we hold dragons as
+<ce>                  our holy symbol. One of the members
+<ce>                  of our fighting order, the Order of
+<ce>                 the Hour, has apparently gone berserk
+<ce>                   and taken to attacking our dragons
+<ce>                 right in our sacred grove. Of course,
+<ce>                   the murderer must be stopped. You
+<ce>                     will find the dragonslayer in
+<ce>                      a place called ___mondung_.
+<ce>                    If you are not successful within
+<ce>                =1stparton_ days, we will send the Order
+<ce>                     of the Hour in and your reward
+<ce>                     will be forfeited. May Akatosh
+<ce>                        bless you in your quest.
+
+QuestFail:  [1003]
+<ce>                    You had best move along, %pcf.
+<ce>                 You do not have very much more time to
+<ce>                        kill that Dragonslayer.
+
+QuestComplete:  [1004]
+<ce>                   I am glad to see you back, %pcf.
+<ce>                   And your mission was a success. As
+<ce>                 promised, here are your _reward_ gold.
+<ce>                      Thank you for your service.
+
+RumorsDuringQuest:  [1005]
+The Akatosh Chantry's pretty angry that one of their own is a dragonslayer.
+<--->
+I say that sneak has every right to kill dragons. Nasty violent creatures.
+
+RumorsPostfailure:  [1006]
+It's a good thing that the dragonslayer got away.
+<--->
+Now more dragons will be killed.
+<--->
+I hear the Order of the Hour is chasing the dragonslayer across %reg.
+
+RumorsPostsuccess:  [1007]
+I wonder if the Akatosh Chantry is going to try and stop every dragonslayer.
+<--->
+Ah, it's getting so you can't even slay a dragon anymore without trouble.
+
+QuestorPostsuccess:  [1008]
+What can I do for the great protector of the dragons, %pcf?
+
+QuestorPostfailure:  [1009]
+I trusted you to slay that dragonslayer, %pcf. Never shall I do that again.
+
+Message:  1020
+<ce>                   "The Akatosh Chanty...wins. All I
+<ce>                     ever...wanted to...do was free
+<ce>                            the...dragons."
+<ce>                       The dragonslayer is dead.
+
+Message:  1030
+%qdt:
+ The Akatosh Chantry has asked me
+ to hunt down someone who has been
+ attacking the dragons in their sacred grove.
+ I need to go to ___mondung_,
+ kill the dragonslayer, and be
+ back at the Chantry in ___questgiver_
+ in =1stparton_ days.
+
+
+-corrected %qdat to %qdt
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 12 times.
+--             %qdat occurs 1 time.
+--              %reg occurs 1 time.
+--       =1stparton_ occurs 4 times.
+--       ___mondung_ occurs 2 times.
+--    ___questgiver_ occurs 4 times.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ group Questor
+
+Place _mondung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _archer_ is Archer
+Foe _spellsword_ is Spellsword
+Foe _knight_ is Knight
+Foe _ranger_ is Ranger
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1030 step 0 
+	pick one of _S.05_ _S.06_ _S.07_ _S.08_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+_mondead_ task:
+	killed 1 _spellsword_ saying 1020 
+	killed 1 _ranger_ saying 1020 
+	killed 1 _knight_ saying 1020 
+	killed 1 _archer_ saying 1020 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 
+
+_S.05_ task:
+	place foe _spellsword_ at _mondung_ 
+
+_S.06_ task:
+	place foe _ranger_ at _mondung_ 
+
+_S.07_ task:
+	place foe _knight_ at _mondung_ 
+
+_S.08_ task:
+	place foe _archer_ at _mondung_ 

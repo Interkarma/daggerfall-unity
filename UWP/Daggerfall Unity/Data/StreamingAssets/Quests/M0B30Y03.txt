@@ -1,0 +1,155 @@
+-- Quest: C:\QUESTS\WORKING\M0B30Y03.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 30
+-- QuestId: 3
+Messages: 81
+Quest: M0B30Y03
+DisplayName: Hunt for a Daedroth
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   Something's come up. I don't know
+<ce>                   who else could handle it but you,
+<ce>                          %pcf. There's this
+<ce>                      bad critter in ___mondung_,
+<ce>                   a Daedroth. Now, I ain't lying --
+<ce>                   no one knows why it's there, but
+<ce>                 everyone wants it gone. For _reward_
+<ce>                   gold, you think you could handle
+<ce>                               it, %pcf?
+
+RefuseQuest:  [1001]
+<ce>                       I don't blame you, %pcf.
+<ce>                      I wouldn't wanna take on a
+<ce>                           Daedroth either.
+
+AcceptQuest:  [1002]
+<ce>                   Hey, alright, your funeral, %pcf.
+<ce>                  Listen, knock off that Daedroth and
+<ce>                 get back here in =1stparton_ days for
+<ce>                  your reward. I don't know how long
+<ce>                that thing's gonna be around, so you're
+<ce>                   gonna want to move your ass. And
+<ce>                      listen to me on this, %pcf --
+<ce>                 go prepared for a hell of a fight.
+
+QuestFail:  [1003]
+<ce>                   Are you waiting for that Daedroth
+<ce>                       to die of old age, %pcf?
+
+QuestComplete:  [1004]
+<ce>                       Hey, you're a better %ra
+<ce>                    than me, %pcf. Daedroth-killer.
+<ce>                     I like it. Here's your gold.
+
+RumorsDuringQuest:  [1005]
+I don't know what that big lizard thing is in ___mondung_, but I don't like it.
+<--->
+Everyone's talking about that big, nasty thing over in ___mondung_.
+
+RumorsPostfailure:  [1006]
+I don't know what happened to that Daedroth. It's still around here somewhere.
+<--->
+Liked it best when I knew where the Daedroth was. I don't know where's safe.
+
+RumorsPostsuccess:  [1007]
+Thank %god the Fighters Guild is around to take care of Daedroths.
+<--->
+I wonder what that big nasty lizard thing was anyway.
+
+QuestorPostsuccess:  [1008]
+<ce>                 You're the %ra that slew the Daedroth
+<ce>                        in ___mondung_ for me.
+<ce>                        Let me shake your hand.
+
+QuestorPostfailure:  [1009]
+<ce>                  Failure is not taken lightly in the
+<ce>                Fighter's Guild. If you couldn't handle
+<ce>                 a Daedroth, you shouldn't have taken
+<ce>                 the job. I've got better things to do
+<ce>                  than waste my time talking to you.
+
+Message:  1020
+<ce>                         The Daedroth is dead.
+
+Message:  1030
+%qdt:
+ The Fighters Guild in
+ ___questgiver_ will pay me _reward_ gold pieces
+ if I slay the Daedroth in ___mondung_ in
+ =1stparton_ days or less.
+
+-lowered first line of 1030 from %qdt line
+
+Message:  1080
+<ce>                 Since you didn't even blink at offing
+<ce>               a Daedroth, take this map to ___newdung_.
+<ce>                  Plenty of fun for a %pct like you.
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 1 time.
+--              %pcf occurs 9 times.
+--              %pct occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--       =1stparton_ occurs 2 times.
+--       ___mondung_ occurs 6 times.
+--       ___newdung_ occurs 1 time.
+--    ___questgiver_ occurs 1 time.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ group Questor
+
+Place _mondung_ remote dungeon
+Place _newdung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Daedroth
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1030 step 0 
+	pick one of _map_ _nomap_ _nomap_ _map_ 
+	place foe _monster_ at _mondung_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+
+_mondead_ task:
+	killed 1 _monster_ saying 1020 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 
+
+variable _map_
+variable _nomap_
+_S.07_ task:
+	when _map_ and _pcgetsgold_ 
+	reveal _newdung_ readmap
+    say 1080 
+
+_S.08_ task:
+	when _nomap_ and _pcgetsgold_ 
+
+_S.09_ task:
+	when _S.07_ or _S.08_ 
+	end quest 

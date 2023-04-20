@@ -1,0 +1,158 @@
+-- Quest: C:\QUESTS\WORKING\M0B00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 0
+-- QuestId: 0
+Messages: 81
+Quest: M0B00Y00
+DisplayName: Hunt for a Lycanthrope
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>          We've got a little job you might be interested in.
+<ce>            Seems there's a loup -- whatcha call your basic
+<ce>             werewolf, wereboar, or some kind 'o werebeasty
+<ce>                 that's been bothering a lot of farmers
+<ce>              in the area, and we need someone to kill it.
+<ce>          It'll mean _reward_ gold in your pocket. That sound
+<ce>                          interesting to you?
+
+RefuseQuest:  [1001]
+<ce>              Fine. Guess someone else'll have to do it.
+
+AcceptQuest:  [1002]
+<ce>                  Great. You'll find the loup over in
+<ce>                     ___mondung_. We need the poor
+<ce>                 brute dead in =1stparton_ days, so you
+<ce>                      better be on your way, kid.
+
+QuestFail:  [1003]
+<ce>               Loup too much for you, kid, or didn't you
+<ce>               even try? Ah well, it's probably moved on
+<ce>                        by now anyhow. Too bad.
+
+QuestComplete:  [1004]
+<ce>                Good job, Loup-killer. Enjoy yer gold.
+
+RumorsDuringQuest:  [1005]
+I've heard there's some kind of werewolf on the loose around here.
+<--->
+I hear the wereboar's found a lair in someplace called ___mondung_.
+<--->
+Didja hear that howling last night? Wolf howling?
+
+RumorsPostfailure:  [1006]
+Werewolves are real nomads, I guess. I hear our loup moved down south.
+<--->
+My cousin tells me that our wereboar was spotted down south aways.
+
+RumorsPostsuccess:  [1007]
+I hear they found out that werething was a priest during the day!
+<--->
+A lot of people feel safer knowing that werebeast is dead.
+<--->
+You heard about that werewolf some %ra hunted down?
+
+QuestorPostsuccess:  [1008]
+<ce>           Thanks for taking care of that werecritter %pcf.
+
+QuestorPostfailure:  [1009]
+<ce>                  Get outta here. You're so pathetic.
+<ce>                   You couldn't even handle a werewolf.
+
+Message:  1020
+<ce>                   The lycanthrope threat is ended.
+
+Message:  1021
+<ce>                     This must be the "werebeast"
+<ce>                      everyone is afraid of. Just
+<ce>                       an ordinary grizzly bear.
+
+Message:  1030
+%qdt:
+ The Fighters Guild of
+ ___questgiver_ has hired
+ me to kill a troublesome werewolf,
+ wereboar, or whatever, in its lair,
+ ___mondung_. The beast needs
+ to be dead in =1stparton_ days
+ time for me to collect my payment.
+
+Message:  1080
+<ce>                    Here's a map to a place called
+<ce>                     ___newdung_.  All the killing
+<ce>                      and treasure you can handle.
+<ce>                          Knock yourself out.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 26 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--       ___mondung_ occurs 4 times.
+--       ___newdung_ occurs 1 time.
+--    ___questgiver_ occurs 1 time.
+--          _reward_ occurs 1 time.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ group Questor
+
+Place _mondung_ remote dungeon
+Place _newdung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _werewolf_ is Werewolf
+Foe _wereboar_ is Wereboar
+Foe _bear_ is Grizzley_bear
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1030 step 0 
+	pick one of _map_ _nomap_ _nomap_ _nomap_ 
+	pick one of _S.06_ _S.07_ _S.08_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+_mondead_ task:
+	killed 1 _werewolf_ saying 1020 
+	killed 1 _wereboar_ saying 1020 
+	killed 1 _bear_ saying 1021 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 
+
+_S.06_ task:
+	place foe _bear_ at _mondung_ 
+
+_S.07_ task:
+	place foe _wereboar_ at _mondung_ 
+
+_S.08_ task:
+	place foe _werewolf_ at _mondung_ 
+
+variable _map_
+variable _nomap_
+_S.11_ task:
+	when _map_ and _pcgetsgold_ 
+	reveal _newdung_ readmap
+    say 1080 

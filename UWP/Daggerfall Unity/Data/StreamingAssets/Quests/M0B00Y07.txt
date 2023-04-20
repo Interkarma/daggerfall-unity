@@ -1,0 +1,143 @@
+-- Quest: C:\QUESTS\WORKING\M0B00Y07.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 0
+-- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 81
+Quest: M0B00Y07
+DisplayName: Unwanted Houseguest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 Every once in a while we get an idiot
+<ce>                 like this client. Some fool left his
+<ce>               back door open and a wild animal got in.
+<ce>                He seems rather confused as to whether
+<ce>                it is a bear or a tiger, but in either
+<ce>                  case, it wanted to eat him. We need
+<ce>                  you to go and slay the animal. Your
+<ce>                     standard fee is _gold_ gold.
+<ce>                         Want to take it %pcn?
+
+RefuseQuest:  [1001]
+<ce>                  Gotcha. Let the tiger have him. The
+<ce>                  guy is a fool for letting it in in
+<ce>                         the first place, eh?
+
+AcceptQuest:  [1002]
+<ce>                     Great. Go over to _house_ in
+<ce>                    __house_. I'll give you =2dung_
+<ce>                  days to kill it and get back to me.
+
+QuestComplete:  [1004]
+<ce>                        No great difficulties I
+<ce>                      trust? Thought not. Here's
+<ce>                           your _gold_ gold.
+
+RumorsDuringQuest:  [1005]
+<ce>                   I hear there's a tiger trapped in
+<ce>                      _house_. He's going to have
+<ce>                        to pay to get it slain.
+
+RumorsPostfailure:  [1006]
+A tiger killed some poor bloke in his own home. A terrible tragedy.
+
+RumorsPostsuccess:  [1007]
+Didn't you kill that rampaging tiger that got into _house_?
+
+QuestorPostsuccess:  [1008]
+Good going with that tiger.
+
+QuestorPostfailure:  [1009]
+Tigers are tough. Maybe we should start you out with chipmunks. What a putz.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ in ___qgiver_ gave
+ me the job of killing a tiger or bear
+ that got into _house_
+ in __house_. If I get back
+ to him within =2dung_ days I get
+ _gold_ gold pieces.
+
+Message:  1011
+<ce>                        The _monster_ is dead.
+
+Message:  1012
+<ce>                          The _bear_ is dead.
+
+Message:  1080
+<ce>                      Hey, I just remembered, one
+<ce>                       of the members just found
+<ce>                       this map to ___newdung_.
+<ce>                   Don't kill everything in one day.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--           =2dung_ occurs 2 times.
+--       ___newdung_ occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--          __house_ occurs 2 times.
+--            _bear_ occurs 2 times.
+--            _gold_ occurs 4 times.
+--           _house_ occurs 5 times.
+--         _monster_ occurs 2 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _house_ remote random
+Place _newdung_ remote dungeon
+
+Clock _2dung_ 1.00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Sabretooth_tiger
+Foe _bear_ is Grizzley_bear
+
+--	Quest start-up:
+	start timer _2dung_ 
+	log 1010 step 0 
+	pick one of _map_ _nomap_ _nomap_ 
+	pick one of _monster1_ _monster2_ 
+	create npc at _house_ 
+
+_2dung_ task:
+	end quest 
+
+_mondead_ task:
+	killed 1 _monster_ saying 1011 
+	killed 1 _bear_ saying 1012 
+
+_S.02_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _gold_ 
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	clear _qgclicked_ _clearclick_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+variable _map_
+variable _nomap_
+_S.06_ task:
+	when _map_ and _S.02_ 
+	reveal _newdung_ readmap
+    say 1080 
+
+_monster1_ task:
+	place foe _bear_ at _house_ 
+
+_monster2_ task:
+	place foe _monster_ at _house_ 

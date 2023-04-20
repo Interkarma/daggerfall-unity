@@ -1,0 +1,192 @@
+-- Quest: C:\QUESTS\WORKING\K0C00Y08.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: merchant
+-- Repute: 0
+-- QuestId: 8
+Messages: 13
+Quest: K0C00Y08
+DisplayName: A Rare Book
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                        You've heard of _book_?
+<ce>               It is a very rare tome, almost never seen,
+<ce>               but I have located a copy buried away in a
+<ce>                      dungeon here in %reg. I will
+<ce>           give you _upfront_ gold pieces now and _gold_ gold
+<ce>                     once the book is in my hands.
+<ce>                                Agreed?
+                                     <--->
+<ce>               I am looking for a very special book, one
+<ce>            that is not available in any store, at least not
+<ce>           for any price less than astronomical. Recently, I
+<ce>           have heard that a copy of it has surfaced not too
+<ce>            far from here, in a dungeon. If you will accept
+<ce>             this quest to find this tome, I will give you
+<ce>           _upfront_ gold pieces now and another _gold_ gold
+<ce>                   pieces when you return. Do we have
+<ce>                           a deal then, %pcf?
+
+RefuseQuest:  [1001]
+<ce>                      Very well. I'll look for a
+<ce>                       different mercenary then.
+
+AcceptQuest:  [1002]
+<ce>             Good. I'll give you =queston_ days to get the
+<ce>                      book out of ___mondung_ and
+<ce>            return. After that time, the _gold_ gold pieces
+<ce>                will be forfeit. The name of the book is
+<ce>                           _book_. Good luck,
+<ce>                                 %pcf.
+
+QuestComplete:  [1004]
+<ce>                   Ah, marvelous. Here's the _gold_
+<ce>                 gold pieces I promised. Thank you very
+<ce>                              much, %pcf.
+
+RumorsDuringQuest:  [1005]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has good points and bad ones.
+
+RumorsPostfailure:  [1006]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has it good points and bad ones.
+
+RumorsPostsuccess:  [1007]
+_qgiver_ is happy as a harpy about %g3 new acquisition.
+
+QuestorPostsuccess:  [1008]
+What can I do for you, o %ra who brought me _book_?
+
+QuestorPostfailure:  [1009]
+<ce>                        As _book_ is lost once
+<ce>                      again, I find it in dubious
+<ce>                      taste that you are bothering
+<ce>                          me. Go get stuffed.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ __qgiver_, ___qgiver_ has
+ sent me to ___mondung_ in
+ search of _book_,
+ a very rare book. I will be given _gold_
+ gold pieces if I return in =queston_ days or less.
+
+Message:  1011
+<ce>                             You picked up
+<ce>                                _book_.
+
+Message:  1012
+<ce>                           _qgiver_ will be
+<ce>                   angry. This is past the time when
+<ce>                    you were to bring %g2 the book.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 2 times.
+--               %g2 occurs 3 times.
+--               %g3 occurs 1 time.
+--              %jok occurs 6 times.
+--              %oth occurs 10 times.
+--              %pcf occurs 5 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--              %reg occurs 3 times.
+--         =queston_ occurs 7 times.
+--       ___mondung_ occurs 2 times.
+--        ___qgiver_ occurs 2 times.
+--            _book_ occurs 17 times.
+--            _gold_ occurs 14 times.
+--          _qgiver_ occurs 3 times.
+--         _upfront_ occurs 2 times.
+
+QBN:
+Item _gold_ gold
+Item _upfront_ gold range 5 to 50
+Item _book_ book2
+
+Person _qgiver_ group Questor
+
+Place _mondung_ remote dungeon
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+
+--	Quest start-up:
+	place item _book_ at _mondung_ 
+	start timer _queston_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	get item _upfront_ 
+	make _upfront_ permanent 
+
+_queston_ task:
+	have _book_ set _S.03_ 
+	end quest 
+
+_S.01_ task:
+	clicked item _book_ 
+	say 1011 
+
+_S.02_ task:
+	toting _book_ and _qgiver_ clicked 
+	give pc _gold_ 
+	end quest 
+
+_S.03_ task:
+	say 1012 
+	make _book_ permanent 

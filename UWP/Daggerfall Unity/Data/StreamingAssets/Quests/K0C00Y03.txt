@@ -1,0 +1,253 @@
+-- Edited for Daggerfall Unity by Jay_H
+Quest: K0C00Y03
+DisplayName: Smuggling
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  You wouldn't have any problem doing
+<ce>                 a bit of smuggling for me, would you,
+<ce>                      %pcf? There's a possibility
+<ce>                 of risk, but a certainty of profit for
+<ce>                    both of us. Your share would be
+<ce>                  _gold_ gold pieces. What do you say?
+                                     <--->
+<ce>                 Smuggling is a nasty word, isn't it?
+<ce>                  I prefer to say I need some legally
+<ce>                   ambiguous stuff brought to a place
+<ce>                  where some elements will welcome it,
+<ce>                   and others, the law specifically,
+<ce>                         will not. Interested?
+
+RefuseQuest:  [1001]
+<ce>                      We never met then. Remember
+<ce>                              that, %pcf.
+                                     <--->
+<ce>                       In that case, I will deny
+<ce>                           ever meeting you.
+
+AcceptQuest:  [1002]
+<ce>                    Grand. Here's the scheme, %pcf.
+<ce>                I have a little side business exporting
+<ce>                         _item_ to __conhouse_,
+<ce>                but my regular agents are being watched
+<ce>                 by the %t's guard. If you can get the
+<ce>                        _item_ into __conhouse_
+<ce>                     to a place called _conhouse_,
+<ce>                     my client _contact_ will give
+<ce>                you the _gold_ gold pieces I mentioned.
+<ce>                Don't talk to any lawmen while you have
+<ce>                      the _item_ and don't fail to
+<ce>                  get to _conhouse_ in =queston_ days,
+<ce>                  or I'll make it my life business to
+<ce>                    destroy your reputation with the
+<ce>                 government, the underworld, and anyone
+<ce>                 else I can think of. But I'm sure you
+<ce>                  won't fail me. Good luck, my child.
+<ce>                          Make _qgiver_ proud.
+
+QuestComplete:  [1004]
+<ce>                  Jolly nerve-wracking sitting here,
+<ce>                       waiting for you, %pcf. Ah,
+<ce>                     the _item_. Good quality this.
+<ce>                  Here, here's the _gold_ gold pieces.
+<ce>                      Good doing business with you
+<ce>                             and _qgiver_.
+
+RumorsDuringQuest:  [1005]
+The _item_ smuggling between ___qgiver_ and __conhouse_ is a %reg disgrace.
+<--->
+The %t has vowed to do something about the _item_ smuggling spree.
+
+RumorsPostsuccess:  [1007]
+They'll never be able to end the _item_ smuggling in %reg. Too much demand.
+<--->
+%rt %rn has appointed _qgiver_ special enforcer in the war against smuggling.
+
+QuestorPostsuccess:  [1008]
+_contact_ tells me you arrived just fine. For that, I thank you.
+
+QuestorPostfailure:  [1009]
+<ce>               Maybe you betrayed me, maybe you're just
+<ce>                  a bad smuggler. Either way, sod off.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ ___qgiver_ has given me some
+ _item_ to smuggle into __conhouse_.
+ The name of my contact there is
+ _contact_ and %g will
+ be waiting at _conhouse_
+ there. Naturally, I'll need to
+ watch out for the city guards
+ in this enterprise. I have =queston_ days
+ to get there.
+
+Message:  1011
+Dear %pcf,
+ 
+      You have been set up. _contact_
+ is not at _conhouse_. A knight
+ named =guard_ is waiting there
+ to ambush you. If you want to get rid of
+ that _item_, bring it to me
+ at __contact2_ here in
+ ___contact2_.
+ 
+ 
+ _contact2_
+
+Message:  1012
+<ce>                           A letter has been
+<ce>                        slipped into your hands.
+
+Message:  1013
+%qdt:
+ I received a letter from someone by the name of
+ _contact2_, saying that
+ _conhouse_ is a trap. I
+ have been offered the option of giving
+ the _item_ to this _contact2_
+ at %g3 inn in ___contact2_,
+ __contact2_.
+
+Message:  1014
+<ce>                   Ah, you received my letter. Good
+<ce>                    thing for you. There was a nasty
+<ce>                   situation brewing and I'd hate to
+<ce>                     have you caught up in it. I'll
+<ce>                          take that _item_ in
+<ce>                    return for my services clearing
+<ce>                      up your involvement in this
+<ce>                       botched smuggling scheme.
+<ce>                          No need to thank me.
+
+Message:  1015
+<ce>                   Wait a minute, kid. We don't want
+<ce>                       you. Just _qgiver_ and the
+<ce>                      _item_. Hand it over and you
+<ce>                       can get out of here, okay?
+                                     <--->
+<ce>                  Listen, kid, nothing personal. Just
+<ce>                          gimme the _item_ and
+<ce>                       I'll tell my boss you got
+<ce>                              away. Deal?
+
+Message:  1016
+<ce>                         Yer a smart kid. Now,
+<ce>                            get outta here.
+
+Message:  1017
+<ce>                        _qgiver_ isn't going to
+<ce>                    be happy about you holding on to
+<ce>                        the _item_, but it's too
+<ce>                      late to deliver it anywhere.
+<ce>                       You might be able to sell
+<ce>                            it somewhere ...
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g3 occurs 1 time.
+--              %pcf occurs 7 times.
+--              %qdt occurs 2 times.
+--              %reg occurs 2 times.
+--               %rn occurs 1 time.
+--               %rt occurs 1 time.
+--                %t occurs 2 times.
+--           =guard_ occurs 1 time.
+--         =queston_ occurs 6 times.
+--      ___contact2_ occurs 4 times.
+--        ___qgiver_ occurs 2 times.
+--       __conhouse_ occurs 4 times.
+--       __contact2_ occurs 2 times.
+--        _conhouse_ occurs 5 times.
+--        _contact2_ occurs 3 times.
+--         _contact_ occurs 4 times.
+--            _gold_ occurs 3 times.
+--            _item_ occurs 14 times.
+--          _qgiver_ occurs 8 times.
+
+QBN:
+Item _gold_ gold
+Item _item_ drug
+Item _letter_ letter used 1011
+
+Person _qgiver_ group Questor
+Person _contact_ face 1 group Innkeeper remote
+Person _contact2_ group Innkeeper remote
+
+Place _conhouse_ remote house2
+
+Clock _2letter_ 03:20 06:40
+Clock _queston_ 00:00 0 flag 1 range 2 5
+
+Foe _guard_ is Knight
+
+--	Quest start-up:
+	dialog link for person _contact_ 
+	start timer _queston_ 
+	log 1010 step 0 
+	get item _item_ 
+	pick one of _whip_ _S.02_ 
+	legal repute -10
+	place npc _contact_ at _conhouse_ 
+--legal repute set to - and + 10 only. 100 for mere smuggling is ridiculous.
+
+variable _traveltime_
+_whip_ task:
+	pc at _conhouse_ set _S.04_ 
+	start timer _2letter_ 
+
+variable _S.02_
+variable _S.03_
+_S.04_ task:
+	hide npc _contact_ 
+	place foe _guard_ at _conhouse_ 
+
+_S.05_ task:
+	injured _guard_ 
+	prompt 1015 yes _deed_ no _no_ 
+
+_deed_ task:
+	take _item_ from pc
+	--classic would transfer the item from pc to guard. DFU requires a take item action.
+	give item _item_ to _guard_ 
+	say 1016 
+	restrain foe _guard_ 
+
+_2letter_ task:
+	_letter_ used do _S.08_ 
+	give pc _letter_ notify 1012 
+
+_S.08_ task:
+	log 1013 step 1 
+
+_reward_ task:
+	toting _item_ and _contact_ clicked 
+	give pc _gold_ 
+	legal repute +10
+	end quest 
+
+_S.10_ task:
+	toting _item_ and _contact2_ clicked 
+
+_S.11_ task:
+	when _S.10_ and _whip_ 
+	say 1014 
+	legal repute +10
+	end quest 
+
+_S.12_ task:
+	when _queston_ and _S.14_ 
+	say 1017 
+	make _item_ permanent 
+
+_queston_ task:
+	have _item_ set _S.14_ 
+	end quest 
+
+variable _S.14_
+variable _no_

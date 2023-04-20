@@ -1,0 +1,231 @@
+-- Quest: C:\QUESTS\WORKING\L0A01L00.Qbn.
+-- StartsBy: letter
+-- Questee: initiate
+-- Questor: Brotherhood
+-- Repute: 01
+-- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 21
+Quest: L0A01L00
+DisplayName: The Acceptance Test
+-- Message panels
+QRC:
+
+QuestComplete:  [1004]
+<ce>                           Well done, %pcn.
+<ce>                     _npc_ was stricken with sudden
+<ce>              heart failure. Poor bastard. You have shown
+<ce>               you can kill with care and not just with a
+<ce>               bared blade. You are now a full member of
+<ce>               the Dark Brotherhood. Anytime you enter a
+<ce>               town, you will know if there are any guild
+<ce>                  buildings there. It is customary for
+<ce>               the novice to receive payment of a single
+<ce>               gold coin for %pg3 first sanctioned death.
+<ce>                             Here is yours.
+
+RumorsDuringQuest:  [1005]
+_npc_ ought to watch %g3 step. %g has a number of enemies.
+
+RumorsPostfailure:  [1006]
+It is unwise to disregard the Dark Brotherhood. Unwise and fatal.
+
+RumorsPostsuccess:  [1007]
+Poor _npc_. I guess %g made too many enemies. One too many.
+<--->
+The wine in _npc_'s decanter must've gone bad. Wine does that.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I had a secret meeting with
+ _apothecary_, a member of the
+ Dark Brotherhood, the guild of
+ assassins, in ___apothecary_.
+ I was given a vial of _poison_
+ to secretly put into the wine of
+ _npc_ of _mansion_,
+ in __mansion_.  According to
+ _apothecary_, if I then go see
+ _darkbmember_ in ___darkbmember_,
+ I will become a member of the Dark
+ Brotherhood. I have =traveltime_ days to
+ reach him, or the Brotherhood will
+ assume I have failed in my quest.
+
+Message:  1011
+<ce>                     A young street urchin presses
+<ce>                      a letter into your hand. As
+<ce>                      you attempt to question him,
+<ce>                     it becomes obvious that he is
+<ce>                       both deaf and mute. With a
+<ce>                      wave of frustration you send
+<ce>                            him on his way.
+                                     <--->
+<ce>                      You feel a letter slip into
+<ce>                      your hand and hear the sound
+<ce>                     of footsteps scampering away.
+<ce>                       There is no other sign of
+<ce>                        the mysterious courier.
+
+Message:  1012
+%qdt:
+ I was handed a mysterious letter
+ by a street urchin. I dare not copy
+ its contents into this journal.
+
+Message:  1014
+<ce>                        You have failed, %pcn.
+<ce>                           _npc_ still lives.
+<ce>                        It is a guild rule that
+<ce>                        someone must die once a
+<ce>                       contract is accepted. You
+<ce>                     must take the place of _npc_.
+
+Message:  1015
+<ce>                         Ah, you must be %pcn.
+<ce>              The Dark Brotherhood has been watching you.
+<ce>               You have proven you can kill with a blade.
+<ce>                The Brotherhood does not tolerate rogue
+<ce>               assassins. You must either join us, or be
+<ce>                 marked for death. The Brotherhood will
+<ce>               initiate you as a full member if you take
+<ce>                   this _poison_ and place it in the
+<ce>                       wine decanter of _npc_ in
+<ce>                        _mansion_ of __mansion_.
+<ce>               You have =traveltime_ days to do this and
+<ce>                       report to _darkbmember_ in
+<ce>                     ___darkbmember_. The blessings
+<ce>                       of Mephala upon you, %pcn.
+
+Message:  1019
+<ce>                        The _poison_ clouds the
+<ce>                       wine but briefly. In a few
+<ce>                        seconds the drink looks
+<ce>                       normal again. Now all you
+<ce>                       have to do is put it back.
+
+Message:  1020
+%pcn
+ 
+    The Dark Brotherhood has been watching
+ you. You have slain without sanction several
+ times. You must now join us, or be counted
+ as our foe. Travel to ___apo_
+ in ____apo_ and see _apothecary_,
+ who will give you further instructions.
+ We give you =S.01_ days.
+ 
+<ce>                               A Brother
+
+--changed %reg to ____apo_ here to ensure region consistency
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 2 times.
+--               %g3 occurs 1 time.
+--              %pcn occurs 6 times.
+--              %qdt occurs 2 times.
+--              %reg occurs 1 time.
+--      =traveltime_ occurs 2 times.
+--    ___apothecary_ occurs 2 times.
+--   ___darkbmember_ occurs 2 times.
+--        __mansion_ occurs 2 times.
+--      _apothecary_ occurs 3 times.
+--     _darkbmember_ occurs 2 times.
+--         _mansion_ occurs 2 times.
+--             _npc_ occurs 11 times.
+--          _poison_ occurs 3 times.
+
+QBN:
+Item _letter_ letter used 1020
+Item _decanter_ decanter
+Item _poison_ snake_venom
+Item _gold_ gold range 1 to 1
+
+Person _darkbmember_ faction The_Dark_Brotherhood remote
+Person _apothecary_ face 144 group Chemist remote
+Person _npc_ face 1 group Resident1 remote
+
+Place _mansion_ remote house1
+Place _apo_ remote apothecary
+--added _apo_ place due to spawning problem for chemist
+
+Clock _traveltime_ 0:00 0 flag 1 range 2 5
+--changed 14.00:00 to 0:00. specified time limit was too short for some cases.
+Clock _S.01_ 30.00:00 0 flag 1 range 1 4
+
+Foe _F.00_ is 2 Assassin
+Foe _guards_ is Spellsword
+Foe _F.02_ is 2 Nightblade
+
+--	Quest start-up:
+	start timer _S.01_ 
+	log 1012 step 0 
+	get item _letter_ 
+	say 1011
+	place npc _apothecary_ at _apo_
+--added place npc command
+
+_traveltime_ task:
+	change repute with _darkbmember_ by -35 
+	end quest 
+
+variable _S.01_
+_S.02_ task:
+	clicked npc _apothecary_ 
+	pc at _mansion_ set _S.08_ 
+	place item _decanter_ at _mansion_ 
+	add dialog for location _mansion_ person _darkbmember_ 
+	start timer _traveltime_
+    stop timer _S.01_
+	log 1010 step 1 
+	get item _poison_ 
+	say 1015 
+
+_S.03_ task:
+    when _hasDecanter_ and _hasPoison_
+	give item _poison_ to _F.00_ 
+	say 1019 
+	take _poison_ from pc
+    --added take item action. poison would linger in inventory.
+
+variable _hasDecanter_
+variable _hasPoison_
+
+_S.04_ task:
+	clicked item _decanter_
+--	have decanter and _poison_ do _S.03_
+    have _decanter_ set _hasDecanter_
+    have _poison_ set _hasPoison_
+	clear _S.11_ 
+
+_S.05_ task:
+	clicked npc _darkbmember_ 
+
+_S.06_ task:
+	when _S.11_ and _S.05_ 
+--removed " and _S.03_." superfluous when decanter has been dropped
+	give pc _gold_ 
+	end quest 
+--removed unnecessary delay
+
+_S.07_ task:
+	when _S.01_ and not _S.02_ 
+	change repute with _darkbmember_ by -25 
+	end quest 
+
+_S.08_ task:
+	create foe _guards_ every 3 minutes 3 times with 25% success 
+
+_S.09_ task:
+	when not _S.11_ and not _S.03_ and _S.05_ 
+	create foe _F.00_ every 1 minutes 1 times with 100% success 
+	create foe _F.02_ every 1 minutes 1 times with 100% success 
+	say 1014 
+	change repute with _darkbmember_ by -50 
+	change repute with _darkbmember_ by -100 
+
+variable _S.10_
+_S.11_ task:
+	dropped _decanter_ at _mansion_ 
+	clear _S.04_

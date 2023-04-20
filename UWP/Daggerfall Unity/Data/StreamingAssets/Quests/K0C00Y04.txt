@@ -1,0 +1,272 @@
+-- Quest: C:\QUESTS\WORKING\K0C00Y04.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: merchant
+-- Repute: 0
+-- QuestId: 4
+Messages: 17
+Quest: K0C00Y04
+DisplayName: Two Cowards
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 I'm in an embarrassing predicament, I
+<ce>                       fear. _lover_ and I have
+<ce>                had ... an understanding, but %g3 lover
+<ce>                 is being distressingly old-fashioned
+<ce>                 about it. I have been challenged to a
+<ce>                     duel. Luckily, _competitor_,
+<ce>                 that's my rival's name, doesn't know
+<ce>                 what I look like. You could stand in
+<ce>                 for me. For _gold_ gold pieces, would
+<ce>                      you? I'd be very grateful.
+                                     <--->
+<ce>                        This =competitor_ here
+<ce>                   in %cn has sent me a challenge. I
+<ce>                  guess the word has gone around that
+<ce>                 I have ruined the honor of %g3 lover,
+<ce>                        _lover_. Not that most
+<ce>                     of %reg hasn't been with old
+<ce>                       _lover_ first. Basically,
+<ce>                I need someone like you to impersonate
+<ce>                   me in the duel. Would _gold_ gold
+<ce>                     pieces interest you in this?
+
+RefuseQuest:  [1001]
+<ce>                      No? That is too bad. Well,
+<ce>                     I probably should get someone
+<ce>                        who looks more like me
+<ce>                                anyhow.
+
+AcceptQuest:  [1002]
+<ce>                      Good show, %pcf. Bring this
+<ce>                     reply to _competitor_. You'll
+<ce>                    find %g2 over in __competitor_.
+<ce>                   I'll expect you back in =queston_
+<ce>                      days, victorious, for your
+<ce>                        just reward. Good luck,
+<ce>                              my friend.
+
+QuestComplete:  [1004]
+<ce>                    Honor is restored, eh, my fine
+<ce>                        %ra? Here's your _gold_
+<ce>                   gold pieces. And now, I should go
+<ce>                          visit dear _lover_
+<ce>                  and tell %g2 of the ordeal ... with
+<ce>                   certain alterations of the facts,
+<ce>                              of course.
+
+RumorsDuringQuest:  [1005]
+_lover_, they say, has caused more deaths than any plague.
+<--->
+_lover_'s last lover died in %g3 arms, trying to satisfy %g3 ... appetite.
+<--->
+If _lover_ finds out they're finding a duel over %g2 ... %oth, that'll be it.
+
+RumorsPostfailure:  [1006]
+_lover_ has left _competitor_ and _qgiver_ too.
+<--->
+It's all over between _lover_, _competitor_, and _qgiver_.
+
+RumorsPostsuccess:  [1007]
+_lover_ and _qgiver_ are together again. It's so romantic.
+<--->
+_qgiver_ killed a =competitor_, all for the love of _lover_.
+
+QuestorPostsuccess:  [1008]
+I'd be honored to help you, %pcf. And we all know about honor, don't we?
+
+QuestorPostfailure:  [1009]
+You were supposed to impersonate me, idiot! Or don't you remember?
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_
+ of __qgiver_, ___qgiver_
+ has been challenged to a duel and has
+ sent me to impersonate %g2. I am to
+ bring %g3 reply to _competitor_'s
+ challenge and fight the duel. I can find this
+ _competitor_ in __competitor_
+ here in ___competitor_. After
+ the duel, I am to return and collect my
+ reward from _qgiver_ in
+ __qgiver_. All for the
+ love of _lover_.
+
+Message:  1011
+<ce>                      I, _qgiver_ of ___qgiver_,
+<ce>                   do hereby answer your challenge.
+<ce>                                    
+<ce>                  As is my right by the formal rules
+<ce>                   of combat, I will call the place
+<ce>                  where we shall meet. That place is
+<ce>                       here and the time is now.
+<ce>                                    
+<ce>                   This contract is legally binding.
+<ce>                    To refuse to meet its challenge
+<ce>                     without formal apology is to
+<ce>                       sacrifice honor evermore.
+<ce>                                    
+<ce>                        _qgiver_ of ___qgiver_
+
+Message:  1012
+<ce>                       You're, uh, _qgiver_? You
+<ce>                 must be looking for the other person
+<ce>                         named _competitor_, a
+<ce>                      real tough, uh, _duelist_.
+<ce>                      You'll find %g2 in _arena_.
+<ce>                        Good luck, _qgiver_. I
+<ce>                             hope you win!
+                                     <--->
+<ce>                        If you're _qgiver_ ...
+<ce>                       %oth, I'll meet you over
+<ce>                       in _arena_. Let me just,
+<ce>                       ah, get into my _duelist_
+<ce>                             clothes. Bye!
+
+Message:  1013
+<ce>                          You're in _arena_,
+<ce>                      where _competitor_ said %g
+<ce>                            would meet you.
+
+Message:  1014
+<ce>                       In the guise of _qgiver_,
+<ce>                     you have slain a _duelist_ in
+<ce>                      the guise of _competitor_.
+<ce>                     You have merely to return to
+<ce>                      your employer and honor is
+<ce>                               restored.
+
+Message:  1015
+<ce>                  This is preposterous! On one hand,
+<ce>                       _competitor_ is a perfect
+<ce>                      boor to challenge _qgiver_
+<ce>                to a duel. On the other, what a perfect
+<ce>                        coward _qgiver_ is for
+<ce>                  sending you in %g3 place. Thank you
+<ce>                  for bringing this to my attention.
+<ce>                  Neither shall have me, but you may
+<ce>                 have _lovgold_ gold pieces since that
+<ce>                       fool promised to pay you.
+                                     <--->
+<ce>                 This is too romantic! Just imagine --
+<ce>                       _competitor_ and _qgiver_
+<ce>               tearing each other to pieces over little
+<ce>                   me. %oth, as thoughtful a gesture
+<ce>                as that is, I cannot let it be. I will
+<ce>                       leave ___lover_ forever,
+<ce>                  but first, please accept _lovgold_
+<ce>                   gold pieces to replace that which
+<ce>                   _qgiver_ offered you. I can't let
+<ce>             you be poor just because no duel will occur.
+<ce>                         Fare thee well, %pcf.
+                                     <--->
+<ce>                Let me get this straight. That idiotic
+<ce>                      _competitor_ is jealous of
+<ce>                        me and _qgiver_ and has
+<ce>              challenged %g2 to a duel. And that infernal
+<ce>                     coward _qgiver_ has sent you
+<ce>               to pretend to be %g2 in this duel? Is it
+<ce>                any wonder that I don't love either of
+<ce>                 them? I'll take care of this. Here's
+<ce>                 _lovgold_ gold pieces instead of what
+<ce>                         _qgiver_ offered you.
+<ce>                        There will be no duel.
+
+Message:  1016
+%qdt:
+ _competitor_ ran off when I
+ gave %g2 the reply to %g3 challenge.
+ The duel is still to take place,
+ in one form or the other,
+ at _arena_ here in __arena_.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 1 time.
+--                %g occurs 3 times.
+--               %g2 occurs 11 times.
+--               %g3 occurs 7 times.
+--              %oth occurs 5 times.
+--              %pcf occurs 5 times.
+--              %qdt occurs 2 times.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--      =competitor_ occurs 3 times.
+--         =queston_ occurs 1 time.
+--    ___competitor_ occurs 1 time.
+--         ___lover_ occurs 1 time.
+--        ___qgiver_ occurs 4 times.
+--          __arena_ occurs 3 times.
+--     __competitor_ occurs 2 times.
+--         __qgiver_ occurs 2 times.
+--           _arena_ occurs 6 times.
+--      _competitor_ occurs 14 times.
+--         _duelist_ occurs 5 times.
+--            _gold_ occurs 3 times.
+--           _lover_ occurs 16 times.
+--         _lovgold_ occurs 3 times.
+--          _qgiver_ occurs 20 times.
+
+QBN:
+Item _gold_ gold
+Item _dueler_ letter used 1011
+--added underscores to dueler
+Item _lovgold_ gold
+
+Person _qgiver_ group Questor
+Person _lover_ group Group_7.0 local
+Person _competitor_ group Group_7.1 local
+--UESP suggests any gender is possible
+
+Place _arena_ local house2
+Place _loverhome_ local house
+--lover wouldn't appear in any local place
+
+Clock _queston_ 3.01:20 5.23:20
+
+Foe _duelist_ is Spellsword
+
+--	Quest start-up:
+	start timer _queston_ 
+	log 1010 step 0 
+	get item _dueler_ 
+	place npc _lover_ at _loverhome_
+
+_queston_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _duelist_ 
+	say 1014 
+
+_S.02_ task:
+	toting _dueler_ and _competitor_ clicked 
+	pc at _arena_ set _S.04_ 
+	log 1016 step 1 
+	say 1012 
+	place foe _duelist_ at _arena_ 
+
+_S.03_ task:
+	toting _dueler_ and _lover_ clicked 
+	get item _lovgold_ 
+	say 1015 
+	make _lovgold_ permanent 
+	end quest 
+
+_S.04_ task:
+	say 1013 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_reward_ task:
+	when _qgclicked_ and _S.01_ 
+	give pc _gold_ 
+	end quest 
+
+until _reward_ performed:
+	clear _qgclicked_ 

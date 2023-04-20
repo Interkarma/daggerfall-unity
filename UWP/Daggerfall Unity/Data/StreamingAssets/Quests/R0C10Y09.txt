@@ -1,0 +1,182 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y09.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 9
+Messages: 21
+Quest: R0C10Y09
+DisplayName: The Procurer
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>              Yes, I do have something for an able-bodied
+<ce>               young %ra. It's nothing special -- just a
+<ce>            simple errand, but it'll mean an extra _reward_
+<ce>                        gold to you. Interested?
+
+RefuseQuest:  [1001]
+<ce>                   %oth, I suppose you wanted me to
+<ce>             give you _reward_ gold for nothing. Or perhaps
+<ce>                  you were hoping for something really
+<ce>                   interesting? Well, you'll have to
+<ce>                          wait for that, %pcf.
+
+AcceptQuest:  [1002]
+<ce>               Good. I have a ... procurer in my employ.
+<ce>                       Distinctive looking, =spy_
+<ce>                      going by the name of _spy_.
+<ce>                     Well, _spy_'s found a special
+<ce>                       _item_ of interest to me,
+<ce>                 but the former owners have %g2 trapped
+<ce>               somewhere in __hidingplace_. My hands are
+<ce>                 tied officially, but you could kindly
+<ce>                   go to __hidingplace_, find _spy_,
+<ce>                       and bring me my _item_. Of
+<ce>               course, if you're not back in =1stparton_
+<ce>            days, your _reward_ gold reward will have to be
+<ce>                forfeit. I'm sure you understand. Well,
+<ce>                 you ought to be on your way. Goodbye.
+
+QuestFail:  [1003]
+<ce>                      %pcf, you're back, which is
+<ce>                    pleasant, but without my _item_
+<ce>                    which is not so pleasant. Is the
+<ce>                    assignment too difficult for you
+<ce>                        to understand? Go get my
+<ce>                               _item_ and
+<ce>                             bring it here.
+
+QuestComplete:  [1004]
+<ce>                       Ah, marvelous. My _item_
+<ce>                   returned promptly with minimum of
+<ce>                   incident. Very good. Here is your
+<ce>                         _reward_ gold reward.
+
+RumorsDuringQuest:  [1005]
+They're scouring __hidingplace_, looking for a rare stolen _item_.
+<--->
+There was a rare _item_ stolen from a private collection recently.
+
+RumorsPostfailure:  [1006]
+They recovered that jewelry, and the guilty party was summarily executed.
+<--->
+The jewelry that they were looking for turned up eventually.
+
+RumorsPostsuccess:  [1007]
+They never did find that jewelry. The guards have given up.
+<--->
+<ce>            There was supposed to be some kind of rare gem
+ hidden in that stolen jewelry.
+
+QuestorPostsuccess:  [1008]
+Ah, my young champion. Still in the mercenary business, I see. That's good.
+<--->
+What may I do for you, %pcf? I haven't forgotten what you did for me.
+
+QuestorPostfailure:  [1009]
+I don't see why I should do anything for someone who failed me, but go on.
+<--->
+<ce>                    Rather plucky of you to return
+<ce>                   after failing to get my property.
+<ce>                             I hate pluck.
+
+QuestLogEntry:  [1010]
+<ce>            _questgiver_ sent you?  %oth, when I heard you
+<ce>             coming, I was afraid they had finally tracked
+<ce>              me down.  I'm glad you found me first, %pcf!
+<ce>                       Here's the _item_. Take it
+<ce>                          back to _questgiver_
+<ce>                  right away -- %g needs it in just a
+<ce>                few days.  And be careful -- the former
+<ce>               owner's agents are turning __hidingplace_
+<ce>              upside down looking for this little beauty.
+
+Message:  1011
+I hear that =spy_ is over %di of here -- around _hidingplace_.
+<--->
+A nervous =spy_? I've seen %g2 near _hidingplace_.
+
+Message:  1015
+%qdt:
+_questgiver_ of
+ __questgiver_, ___questgiver_,
+ has sent me to get a special
+ _item_ from someone by the name
+ of _spy_, who's hiding out somewhere in
+ __hidingplace_.  The real owners of the _item_
+ may try to stop me, but I must have
+ the _item_ in _questgiver_'s
+ hands in =1stparton_ days, or I won't get my
+ _reward_ gold piece reward.
+
+Message:  1020
+<ce>               Thanks for your help, %ra.  We knew you'd
+<ce>                lead us right to the _item_.  Now here's
+<ce>                         your payment -- death!
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 1 time.
+--                %g occurs 1 time.
+--               %g2 occurs 3 times.
+--              %oth occurs 2 times.
+--              %pcf occurs 8 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--       =1stparton_ occurs 2 times.
+--             =spy_ occurs 3 times.
+--    ___questgiver_ occurs 1 time.
+--    __hidingplace_ occurs 5 times.
+--     __questgiver_ occurs 1 time.
+--     _hidingplace_ occurs 6 times.
+--            _item_ occurs 14 times.
+--      _questgiver_ occurs 4 times.
+--          _reward_ occurs 8 times.
+--             _spy_ occurs 4 times.
+
+QBN:
+Item _reward_ gold
+Item _item_ trinket
+
+Person _questgiver_ face 112 group Questor
+Person _spy_ face 1 group Local_3.0 remote anyInfo 1011
+
+Place _hidingplace_ remote random
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+
+Foe _F.00_ is Assassin
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1015 step 0 
+	pc at _hidingplace_ set _S.06_ 
+	create npc at _hidingplace_ 
+	place npc _spy_ at _hidingplace_ 
+
+_pcgetsgold_ task:
+	toting _item_ and _questgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+variable _queston_
+_pchasitem_ task:
+	clicked npc _spy_ 
+	get item _item_ 
+	say 1010 
+
+variable _npcclicked_
+variable _qgclicked_
+_1stparton_ task:
+	make _item_ permanent 
+	change repute with _questgiver_ by -10 
+	end quest 
+
+_S.06_ task:
+	create foe _F.00_ every 2 minutes 4 times with 30% success 
+
+_S.07_ task:
+	injured _F.00_ saying 1020 

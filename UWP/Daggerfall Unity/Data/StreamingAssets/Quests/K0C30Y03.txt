@@ -1,0 +1,669 @@
+-- Quest: C:\QUESTS\WORKING\K0C30Y03.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: merchant
+-- Repute: 30
+-- QuestId: 3
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 56
+Quest: K0C30Y03
+DisplayName: A Noble's Debts
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>            Ah, my friend. I regret to admit that I made a
+<ce>            poor business decision, but facts are facts. I
+<ce>            loaned a certain sum of money to a noble by the
+<ce>                  name of _patsy_, who you may or may
+<ce>            not have heard of. The security on the loan was
+<ce>             the deed to a valuable piece of property. Now
+<ce>                    _patsy_ and the deed have both
+<ce>           vanished. Rumor has it that %g fell on some hard
+<ce>             time financially, but the sum I loaned is not
+<ce>             easily swallowed by my enterprises. Tangling
+<ce>                    with the likes of _patsy_ will
+<ce>              likely be dangerous, but I need a champion.
+<ce>             Will you help me, my friend, in exchange for
+<ce>                        a large uncut diamond?
+
+RefuseQuest:  [1001]
+<ce>                I am sorry to hear that. I understand,
+<ce>                  of course, but it is disappointing.
+
+AcceptQuest:  [1002]
+<ce>             That's good to hear. Now then, I have thirty
+<ce>              days before I will be forced to dip into my
+<ce>              capital. The deed was stolen out of a local
+<ce>                    establishment called _bank_ in
+<ce>              __bank_ together with some other valuables,
+<ce>                 but the coincidence between _patsy_'s
+<ce>              disappearance at the same time the deed did
+<ce>                    merits investigation. _patsy_'s
+<ce>                     old residence was _house2_ in
+<ce>                   __house2_, which I understand is
+<ce>             now empty. Other than that, I have no leads.
+<ce>                    I either need the gold _patsy_
+<ce>               borrowed, the deed to the house, or that
+<ce>                aristocrat's head on a stick in thirty
+<ce>                    days. Don't let me down, %pcf.
+
+QuestFail:  [1003]
+<ce>                        You could at least try
+<ce>                       to fulfill your promise.
+
+QuestComplete:  [1004]
+<ce>                 _patsy_'s trick didn't work, did it,
+<ce>                 %pcf? Here's the diamond I promised.
+<ce>                         Well done, my friend.
+
+RumorsDuringQuest:  [1005]
+_qgiver_ sure wasn't _patsy_'s only dupe. Lots of people loaned %g2 gold.
+<--->
+_patsy_ just left __house2_ suddenly, leaving debts and broken hearts behind.
+
+RumorsPostfailure:  [1006]
+_patsy_ got away with it all, looks like. I hear %g's up north with a fortune.
+<--->
+_patsy_'s supposedly dead. I don't believe that for a second.
+
+RumorsPostsuccess:  [1007]
+No one's going to try to default on _qgiver_, not after that _patsy_ affair.
+<--->
+All _patsy_ proved was it's not wise to try and cheat someone like _qgiver_.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I have thirty days
+ to find the deed that _qgiver_,
+ of __qgiver_, in ___qgiver_ was
+ given as collateral on a loan to a noble
+ named _patsy_, or to find the gold
+ _qgiver_ gave _patsy_,
+ or, if all else fails, to find the
+ nowhere-to-be-found _patsy_.
+ The collateral was in _bank_ in
+ __bank_, before the bank was robbed.
+ The only other place I've been told
+ of is _house2_,
+ _patsy_'s old place of residence
+ in __house2_.
+ If I am successful in any of these goals
+ in thirty days, _qgiver_ will
+ give me a large, uncut diamond.
+
+Message:  1011
+Do you give _hooker_ the gold?
+
+Message:  1012
+<ce>            Thank you, sweets. I've heard you're the decent
+<ce>            sort, and I thought I'd give you a break. I was
+<ce>                   hired by _patsy_ a few weeks ago --
+<ce>          not for the reason you're thinkin. All I had to
+<ce>           do was flirt with some old gaffer and get him to
+<ce>          ask me out to dinner on a specific day. I guess to
+<ce>          get him out of his house, because I found out later
+<ce>            that the bloke's house was burgled while we was
+<ce>          out. Lots of stuff was took, I hear. The old fella
+<ce>            was cute and sweet and I felt bad about it. You
+<ce>             may want to talk to him. His name's _gaffer_.
+<ce>             Or you could go to the place where I met that
+<ce>                    _patsy_, _house2_ in __house2_
+<ce>             and see if anyone there knows anything. Hope
+<ce>               all this helps, %pcf. I'd like to see old
+<ce>                       _patsy_ put away myself.
+
+Message:  1013
+%pcn,
+ 
+ If you are anticipating a long and healthy career
+ in the Bay area, I would advise dropping your pointless
+ and doomed hounding. Tragedy is the only possible
+ result, and the tragedy will be your own.
+ I won't be caught, %pcf. I have too much money
+ to be caught.
+ 
+ 
+ 
+ Yours truly,
+ 
+ 
+ _patsy_
+
+Message:  1014
+<ce>                      %pcn is your target, a %ra
+<ce>             adventurer and mercenary. Use extreme caution
+<ce>                     and be prepared for a fight.
+<ce>
+<ce>                        No jellyfish this one.
+<ce> 
+<ce>
+             _patsy_
+
+--eliminating unmarked white spaces. this problem was patched out in previous versions but i still prefer to have lines with blank spaces filled just in case.
+
+Message:  1015
+_banker_ works over at _bank_ in __bank_. Perfectly respectable sort.
+<--->
+A banker of typical tediousness. _banker_ works at _bank_ in __bank_.
+
+Message:  1016
+<ce>                  I'll tell you what I told _patsy_.
+<ce>                __banker_ will reimburse all gold lost
+<ce>                in the robbery down to the last penny.
+<ce>                    We just want to answer certain
+<ce>                  questions about the robbery itself.
+<ce>                      Things it would be best not
+<ce>                      discussed with a stranger,
+<ce>                            you understand.
+
+Message:  1017
+<ce>                     Ah, good to see you, %pcf. We
+<ce>                 are having a bit of excitement lately
+<ce>                with the robbery and all. Only certain
+<ce>                 accounts and deposits were targeted,
+<ce>                    so _guard_, our security agent,
+<ce>                 is looking into the holders of those
+<ce>                  accounts. Perhaps %g might be able
+<ce>                  to give you more information, %pcf.
+<ce>                        _guard_ is at __guard_
+<ce>                             in ___guard_.
+
+Message:  1018
+<ce>              I'm afraid I can't discuss this matter with
+<ce>                 you, %pcn. This affair only concerns
+<ce>                  _patsy_ and myself, no one else. If
+<ce>             you're really interested in helping, go chat
+<ce>                    with _hooker_, a prostitute who
+<ce>             had some kind of relationship with our friend
+<ce>                 _patsy_. She'll want ten gold pieces
+<ce>               to cooperate, and you'll find her over in
+<ce>                      __house1_ in a place called
+<ce>                      _house1_. Good luck, %pcf.
+<ce>               I may not be here when you get back, but
+<ce>               you are certainly capable of carrying on
+<ce>                    the investigations on your own.
+
+Message:  1019
+<ce>                    Ah, %pcn, my friend. I think we
+<ce>            may be able to help each other in this affair.
+<ce>                    I know where _patsy_ has gone,
+<ce>               but %g3 allies are making it difficult to
+<ce>              get to %g2. Millions of gold pieces can buy
+<ce>             some powerful friends. I need you to cut off
+<ce>              this connection, and then meet me so we can
+<ce>                       together cut off _patsy_
+<ce>                altogether. Drop this letter off in %g3
+<ce>                  allies' stronghold ___mondung_ and
+<ce>                 then come to ___mondung2_. With luck,
+<ce>               the letter should distract those soldiers
+<ce>                     so _patsy_ will be relatively
+<ce>                defenseless, except for %g3 own guards
+<ce>                 of course. Very good, %pcf, I will be
+<ce>                           seeing you soon.
+
+Message:  1020
+_guard_ has left __guard_. Apparently %g knows where _patsy_ has gone.
+<--->
+_guard_ wouldn't have left __guard_ unless %g knew where _patsy_ is hiding.
+<--->
+Everyone's trying to figure out why _guard_ left __guard_ so suddenly.
+
+Message:  1021
+<ce>           Change of agenda, folks. I need you in ___qgiver_
+<ce>         right away. Get over there and wait for my response.
+<ce>                Shouldn't take longer than a few days.
+<ce>
+<ce>
+<ce>
+<ce>                               _patsy_
+
+Message:  1023
+<ce>                       You know immediately that
+<ce>                         this must be _patsy_.
+
+Message:  1024
+<ce>               You have slain _patsy_, without a doubt.
+
+Message:  1025
+I'm going to need some reinforcements if the
+ rumors about this %ra are correct.
+ Keep the deed in hiding in ___mondung_
+ but bring the gold and your men over here to
+ ___mondung2_. We'll discuss this further
+ when you arrive.
+ 
+ 
+          _patsy_
+
+Message:  1026
+<ce>                There is a stamp on the piece of _rock_
+<ce>                        that reads ___mondung_.
+
+Message:  1027
+Just a piece of _rock_. Odd finding it lying around ___house2_.
+<--->
+The _rock_ seems to have some kind of stamp on it, or an engraving.
+<--->
+Looks like the stuff they used to mine out of ___mondung_.
+
+Message:  1028
+The _rock_ says ___mondung_ on it; that's an abandoned mine to the %di.
+<--->
+That _rock_ must have been mined years ago when ___mondung_ was a mine.
+
+Message:  1029
+<ce>                   This looks like the deed _patsy_
+<ce>                     gave _qgiver_ as collateral.
+
+Message:  1030
+<ce>                   This appears to be the gold that
+<ce>                      _qgiver_ loaned to _patsy_.
+
+Message:  1031
+                                             Nightside Asylum
+ 
+ 
+ Dear %pcf,
+ 
+ 
+      We understand that you are looking for _patsy_.
+ Because we respect you and your work, we have decided to help
+ you in this matter. _patsy_ used our services once
+ some weeks ago, and we received our payments through a small
+ but fierce band of %g3 allies garrisoned at a camp
+ called ___mondung_. If you are truly interested in
+ finding _patsy_, you would be smart to start there.
+      Good luck and may Mephala steady thy aim.
+ 
+ 
+ 
+             The Brotherhood
+
+Message:  1032
+<ce>         You do not even realize that the young boy is next to
+<ce>         you until you feel the letter slip into your hand. By
+<ce>         the time you turn, he has disappeared, scurrying away
+<ce>          so quickly you do not have a hope of catching him.
+
+Message:  1033
+%pcn,
+ 
+      _patsy_ is a thief, but not one of ours. We
+ would like %g2 to be caught as well. Please accept this
+ contribution to your expenses, and this other bit of
+ information: _patsy_ is not working alone.
+ There is a gang of mercenaries under %g3 direction
+ in a place called ___mondung_. Some of %g3
+ treasure may be kept there as well, but I do not think
+ _patsy_ is there.
+      Good luck, %pcf, and walk with Baan Dar.
+ 
+ 
+<ce>                              The Guild
+
+Message:  1034
+<ce>            Ah, %pcf, my friend. Again, I have been seduced
+<ce>         and betrayed. Truly I should join some monastery. My
+<ce>              life would be simpler without women, %oth.
+<ce>          Here, take this gold as my contribution toward the
+<ce>                capture of that wicked _patsy_. I only
+<ce>          wish I could afford to give more, but after recent
+<ce>           events, I am impoverished. For your information,
+<ce>                   _patsy_ has two hideouts in %reg,
+<ce>              one in ___mondung_ and one in ___mondung2_.
+<ce>         I do not know which if either of these is being used
+<ce>           currently, but I would advise you to prepare your
+<ce>                finest blade. _patsy_ will not go down
+<ce>                easily. Good luck and %god be with you.
+
+Message:  1035
+<ce>         Why should I tell you anything I know about anything?
+<ce>              You're just a patsy of _qgiver_ who'd screw
+<ce>            me like _patsy_ screwed me or that %god damned
+<ce>               _hooker_ screwed me. Find some hole like
+<ce>                ___mondung_ to crawl in, wither up, and
+<ce>                die, you child of a chancred %ra whore.
+
+Message:  1036
+Dear %pcn,
+ 
+      I might have some information that might help
+ your search for that rat _patsy_. If you're
+ interested, ask for me in __house1_ at a
+ dump called _house1_. And bring 10 gold
+ pieces with you. This information ain't free.
+ 
+<ce>                               _hooker_
+
+Message:  1037
+<ce>                   "This is from _hooker_," a voice
+<ce>            whispers and a young courier hands you a note.
+<ce>                Before you can react, he scurries away.
+
+Message:  1055
+<ce>                Sorry sweets, my knowledge has a price.
+
+Message:  1038
+%qdt:
+ _banker_ told me to see
+ _guard_, at __guard_,
+ in ___guard_, who is currently
+ looking into the bank robbery
+ and _patsy_ for _bank_.
+
+Message:  1039
+%qdt:
+ I have met with _guard_. %g has discovered
+ _patsy_'s location in ___mondung2_.
+ To distract %g3 soldiers, I
+ must drop a letter in %g3 allies
+ stronghold, ___mondung_, and then meet
+ _guard_ at ___mondung2_ to get
+ _patsy_.
+
+Message:  1040
+%qdt:
+ I have met with _guard_. %g told
+ me that _patsy_ had a relationship
+ with _hooker_, a prostitute in __house1_.
+ I'll find her at _house1_ there.
+
+Message:  1041
+%qdt:
+ _hooker_ told me that _patsy_ hired
+ her to distract someone named _gaffer_
+ one night. I can find him at _tavern_
+ in __tavern_.
+
+Message:  1042
+%qdt:
+ _gaffer_ told me that _patsy_
+ has two hideouts, one is ___mondung_
+ and the other is ___mondung2_.
+
+Message:  1050
+This document bears witness to the ownership
+ of _house3_ of __house3_ in %reg.
+ Let all who read this know that _patsy_
+ is the sole and rightful owner of the
+ aforementioned property.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 1 time.
+--                %g occurs 7 times.
+--               %g2 occurs 3 times.
+--               %g3 occurs 9 times.
+--              %god occurs 3 times.
+--              %oth occurs 1 time.
+--              %pcf occurs 33 times.
+--              %pcn occurs 7 times.
+--              %qdt occurs 6 times.
+--               %ra occurs 6 times.
+--              %reg occurs 2 times.
+--         ___guard_ occurs 3 times.
+--        ___house2_ occurs 1 time.
+--      ___mondung2_ occurs 10 times.
+--       ___mondung_ occurs 21 times.
+--        ___qgiver_ occurs 2 times.
+--           __bank_ occurs 56 times.
+--         __banker_ occurs 1 time.
+--          __guard_ occurs 6 times.
+--         __house1_ occurs 3 times.
+--         __house2_ occurs 5 times.
+--         __house3_ occurs 1 time.
+--         __qgiver_ occurs 1 time.
+--         __tavern_ occurs 2 times.
+--            _bank_ occurs 59 times.
+--          _banker_ occurs 4 times.
+--          _gaffer_ occurs 3 times.
+--           _guard_ occurs 10 times.
+--          _hooker_ occurs 8 times.
+--          _house1_ occurs 5 times.
+--          _house2_ occurs 3 times.
+--          _house3_ occurs 1 time.
+--           _patsy_ occurs 62 times.
+--          _qgiver_ occurs 74 times.
+--            _rock_ occurs 8 times.
+--          _tavern_ occurs 4 times.
+
+QBN:
+Item _deed_ letter used 1050
+Item _reward_ diamond
+Item _letter27_ letter used 1036
+Item _bribe4_ gold range 10 to 10
+Item _letter28_ letter used 1013
+Item _bribe2_ letter used 1014
+Item _deed3_ gold_bar
+Item _letter29_ letter used 1021
+Item _letter30_ letter used 1025
+Item _rock_ element anyInfo 1027
+Item _letter32_ letter used 1031
+Item _letter15_ letter used 1033
+Item _bothdorjii_ gold range 15 to 50
+Item _letter33_ gold range 20 to 40
+
+Person _qgiver_ group Questor
+Person _patsy_ face 1 factiontype Province
+Person _hooker_ face 187 faction The_Prostitutes female
+Person _gaffer_ face 73 named Chulmore_Quill
+Person _banker_ face 1 group Banker local anyInfo 1015
+Person _guard_ face 80 factiontype Knightly_Guard
+Person _darkb_ face 81 faction The_Dark_Brotherhood
+Person _tguild_ face 81 faction The_Thieves_Guild local
+
+Place _bank_ remote bank
+Place _house1_ remote house2
+Place _house2_ remote house1
+Place _mondung_ remote dungeon
+--changed from dungeon2 which is very restricted; in DF region it's only Privateer's Hold
+Place _mondung2_ remote dungeon
+Place _tavern_ remote tavern
+Place _house3_ local house2
+
+Clock _queston_ 30.00:00 0 flag 1 range 0 1
+Clock _S.03_ 1.09:20 2.03:40
+Clock _S.13_ 1.01:00 2.13:40
+Clock _S.26_ 1.09:20 2.02:00
+Clock _S.27_ 16:40 2.02:00 flag 9 range 0 0
+Clock _2letter_ 00:25 00:50
+
+Foe _warrior_ is Warrior
+Foe _F.01_ is Knight
+Foe _F.02_ is Barbarian
+Foe _F.03_ is Spellsword
+Foe _F.04_ is Rogue
+
+--	Quest start-up:
+	place item _deed_ at _mondung_ 
+	place item _rock_ at _house2_ 
+	place item _letter30_ at _mondung_ 
+	dialog link for location _house3_ person _gaffer_ item _rock_ 
+	dialog link for person _guard_ 
+	dialog link for location _house1_ person _hooker_ 
+	start timer _queston_ 
+	start timer _2letter_ 
+	log 1010 step 0 
+	repute with _hooker_ exceeds 10 do _S.02_ 
+	repute with _darkb_ exceeds 15 do _S.25_ 
+	repute with _victin_ exceeds 15 do _S.28_ 
+	pc at _mondung2_ set _S.16_ 
+	_letter30_ used do _S.35_ 
+	_rock_ used do _S.19_ 
+	place npc _hooker_ at _house1_ 
+	place npc _gaffer_ at _tavern_ 
+	place npc _banker_ at _bank_ 
+
+_pcgetsgold1_ task:
+	toting _deed3_ and _qgiver_ clicked 
+	give pc _reward_
+	end quest 
+
+_pcgetsgold2_ task:
+	toting _deed_ and _qgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_pcgetsgold3_ task:
+	when _qgclicked_ and _S.18_ 
+	give pc _reward_ 
+	end quest 
+
+_queston_ task:
+	end quest 
+
+_S.02_ task:
+	start timer _S.03_ 
+
+_S.03_ task:
+	add dialog for person _hooker_ 
+	add dialog for location _house1_ 
+	get item _letter27_ 
+	say 1037 
+
+_S.04_ task:
+	clicked _hooker_ and at least 10 gold otherwise do _S.34_ 
+	prompt 1011 yes _thankyou_ no _gimme_ 
+
+_thankyou_ task:
+	add dialog for person _gaffer_ 
+	log 1041 step 4 
+	give item _bribe2_ to _F.01_ 
+	say 1012 
+	change repute with _hooker_ by +5 
+	send _F.01_ every 80 minutes 30 times with 15% success 
+	--data taken from UESP
+
+_gimme_ task:
+	get item _bribe4_ 
+	make _bribe4_ permanent 
+
+_S.07_ task:
+	clicked npc _banker_ 
+	start timer _S.13_ 
+	repute with _banker_ exceeds 10 do _S.08_ 
+
+_S.08_ task:
+	log 1038 step 1 
+	say 1017 
+
+_S.09_ task:
+	when _S.07_ and not _S.08_ 
+	say 1016 
+
+_S.10_ task:
+	clicked npc _guard_ 
+	repute with _guard_ exceeds 10 do _S.11_ 
+
+_S.11_ task:
+	reveal _mondung_ 
+	reveal _mondung2_ 
+	log 1039 step 2 
+	get item _letter29_ 
+	say 1019 
+
+_S.12_ task:
+	when not _S.11_ and _S.10_ 
+	add dialog for location _house1_ 
+	add dialog for person _hooker_ 
+	log 1040 step 3 
+	say 1018 
+
+_S.13_ task:
+	rumor mill 1020 
+	hide npc _guard_ 
+
+_S.14_ task:
+	dropped _letter29_ at _mondung2_ 
+
+_S.15_ task:
+	when _S.16_ and not _S.14_ 
+	create foe _F.02_ every 221 minutes 200 times with 10% success 
+
+_S.16_ task:
+	place item _deed3_ at _mondung2_ 
+	create foe _F.04_ every 111 minutes 200 times with 5% success 
+	create foe _F.03_ every 100 minutes 200 times with 5% success 
+	place foe _warrior_ at _mondung2_ 
+
+_S.17_ task:
+	injured _warrior_ 
+	say 1023 
+
+_S.18_ task:
+	killed 1 _warrior_ 
+	say 1024 
+
+_S.19_ task:
+	say 1026 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+variable _S.21_
+variable _S.22_
+_S.23_ task:
+	clicked item _deed_ 
+	say 1029 
+
+_S.24_ task:
+	clicked item _deed3_ 
+	say 1030 
+
+_S.25_ task:
+	start timer _S.26_ 
+
+_S.26_ task:
+	reveal _mondung_ readmap
+	get item _letter32_ 
+	say 1032 
+
+_S.27_ task:
+	reveal _mondung_ readmap
+	get item _letter15_ 
+	get item _bothdorjii_ 
+	say 1032 
+	make _bothdorjii_ permanent 
+
+_S.28_ task:
+	start timer _S.27_ 
+
+_S.29_ task:
+	clicked npc _gaffer_ 
+	repute with _gaffer_ exceeds 10 do _S.30_ 
+
+_S.30_ task:
+	reveal _mondung_ readmap
+	reveal _mondung2_ readmap
+	log 1042 step 4 
+	get item _letter33_ 
+	say 1034 
+	make _letter33_ permanent 
+
+_S.31_ task:
+	when _S.29_ and not _S.30_ 
+	reveal _mondung_ 
+	say 1035 
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.18_
+	say 1003 
+	clear _qgclicked_ _clearclick_ 
+
+_S.33_ task:
+	clicked item _rock_
+	say 1026 
+	add dialog for item _rock_ 
+	reveal _mondung_ 
+
+_S.34_ task:
+	say 1055 
+
+_S.35_ task:
+	reveal _mondung2_ readmap
+
+_2letter_ task:
+	get item _letter28_ 
+	say 1032 

@@ -1,0 +1,267 @@
+-- Quest: C:\QUESTS\WORKING\L0B50Y11.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Brotherhood
+-- Repute: 50
+-- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 32
+Quest: L0B50Y11
+DisplayName: Taking on the Thieves Guild
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 We have an interesting job available
+<ce>                       to a high ranking member
+<ce>                  of the Thieves Guild. This will be
+<ce>                     a tough one. Do you want it?
+
+RefuseQuest:  [1001]
+<ce>                    It's not for the faint of heart.
+                                     <--->
+<ce>                  Understood. Come back when you are
+<ce>                       interested in real work.
+
+AcceptQuest:  [1002]
+<ce>                   You are a sharp one. The target's
+<ce>                      name is _marknpc_, here in
+<ce>                       ___questgiver_. %g moves
+<ce>                      around a lot and is usually
+<ce>                 protected by bodyguards. Be careful.
+<ce>                 You have seven days. When it is done,
+<ce>                 return here and I will pay you _gold_
+<ce>                      gold. Ask for _questgiver_.
+
+QuestComplete:  [1004]
+<ce>                         Excellent work %pcn.
+<ce>                  I hope it wasn't too rough for you.
+<ce>                        Here is your guild fee.
+
+RumorsDuringQuest:  [1005]
+_marknpc_ may find trouble after all the enemies %g's made.
+<--->
+_marknpc_ will come to a bloody end, mark my words.
+
+RumorsPostfailure:  [1006]
+_marknpc_ has moved out of %reg, but %g'll be back.
+
+RumorsPostsuccess:  [1007]
+_marknpc_ made too many mistakes -- %g was doomed long ago.
+<--->
+No one's surprised that _marknpc_ is dead -- %g was a troublemaker.
+
+QuestorPostsuccess:  [1008]
+I haven't forgotten what you did to _marknpc_, %pcf. Don't worry about that.
+
+QuestorPostfailure:  [1009]
+<ce>                     _marknpc_ still lives, %pcf.
+<ce>                'Tis not an honorable situation in any
+<ce>                way, and I am not the least bit amused.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I have accepted a job to assassinate
+ _marknpc_ of ___questgiver_ for
+ the Dark Brotherhood. My contact
+ _questgiver_ told me
+ that he moves around a lot. I
+ have seven days to finish the job.
+
+Message:  1015
+<ce>                       _marknpc_ is still alive.
+<ce>                        Don't toy with me %pcn.
+<ce>                  The Dark Brotherhood does not have
+<ce>                   a sense of humor. I did just hear
+<ce>                      that _fakeplace_ is a false
+<ce>                  address. Don't bother going there.
+<ce>                   See if you can dig up other clues
+<ce>                      about where %g spends time.
+
+Message:  1020
+<ce>                    _marknpc_ enjoys an occasional
+<ce>                rendezvous with me. %g never stays long.
+<ce>                   %g just uses me for %g3 pleasure.
+<ce>                 For 50 gold I'll gladly sell %g2 out.
+
+Message:  1021
+<ce>                       Help! _marknpc_! There is
+<ce>                      an assassin in the house!
+
+Message:  1022
+<ce>                      You killed _marknpc_! Just
+<ce>                    let me live and I swear I won't
+<ce>                         tell them who did it.
+
+Message:  1023
+<ce>                     _marknpc_ comes here every day
+<ce>                   at around 6 o'clock. %g sends %g3
+<ce>                   bodyguards away. %g is only here
+<ce>                          for an hour or so.
+
+Message:  1030
+<ce>                 _marknpc_ is a thief and a scoundrel.
+                                     <--->
+<ce>  Everyone thinks _marknpc_ hangs out at _fakeplace_, but %g doesn't.
+                                     <--->
+<ce>            _marknpc_ usually spends %g3 evenings at _inn_.
+                                     <--->
+<ce>            _marknpc_ spends %g3 mornings sleeping at home.
+                                     <--->
+<ce>   _marknpc_ lives at _house_, but %g doesn't spend much time there.
+                                     <--->
+<ce>       In the afternoons, _marknpc_ can be found at _guildhall_.
+                                     <--->
+<ce>  I've heard that _guildhall_ is a Thieves Guild hangout. Try there.
+                                     <--->
+<ce>                       _marknpc_ has a mistress.
+                                     <--->
+<ce>             _marknpc_'s mistress lives at _mistresshome_.
+                                     <--->
+<ce>                  _marknpc_ has a lot of bodyguards.
+                                     <--->
+<ce>   When _marknpc_ visits %g3 mistress, %g sends %g3 bodyguards away.
+                                     <--->
+<ce>            I wouldn't tangle with _marknpc_'s bodyguards.
+                                     <--->
+<ce>              They say _marknpc_ is protected by spells.
+
+Message:  1031
+<ce>                 _marknpc_ falls to the ground, dead.
+<ce>                    The Brotherhood will be proud.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 23 times.
+--               %g2 occurs 6 times.
+--               %g3 occurs 10 times.
+--              %pcf occurs 43 times.
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 2 times.
+--    ___questgiver_ occurs 2 times.
+--       _fakeplace_ occurs 3 times.
+--            _gold_ occurs 4 times.
+--       _guildhall_ occurs 4 times.
+--           _house_ occurs 2 times.
+--             _inn_ occurs 2 times.
+--         _marknpc_ occurs 35 times.
+--    _mistresshome_ occurs 2 times.
+--      _questgiver_ occurs 3 times.
+
+QBN:
+Item _gold_ gold
+Item _bribe3_ gold range 50 to 50
+
+Person _mistress_ face 3 group Group_7.2 female local
+Person _questgiver_ face 1 group Questor
+Person _marknpc_ face 5 faction The_Thieves_Guild male local anyInfo 1030
+
+Place _house_ local house2
+Place _inn_ local tavern
+Place _guildhall_ local random
+Place _mistresshome_ local house2
+Place _fakeplace_ local random
+
+Clock _S.00_ 7.00:00 0 flag 1 range 0 1
+
+Foe _home_ is Thief
+Foe _F.01_ is Sorceror
+Foe _F.02_ is Knight
+Foe _F.03_ is Rogue
+
+--	Quest start-up:
+	dialog link for location _mistresshome_ person _mistress_ 
+	dialog link for location _house_ 
+	dialog link for location _guildhall_ 
+	dialog link for location _fakeplace_ 
+	start timer _S.00_ 
+	log 1010 step 0 
+	pc at _fakeplace_ set _S.11_ 
+	place npc _mistress_ at _mistresshome_ 
+	place npc _marknpc_ at _fakeplace_ 
+
+_S.00_ task:
+	end quest 
+
+_S.01_ task:
+	daily from 00:00 to 10:00 
+	pc at _house_ set _S.05_ 
+	cast Shield spell on _home_ 
+	place foe _home_ at _house_ 
+
+_S.02_ task:
+	daily from 19:01 to 23:59 
+	pc at _inn_ set _S.05_ 
+	cast Shield spell on _home_ 
+	place foe _home_ at _inn_ 
+
+_S.03_ task:
+	daily from 10:01 to 18:00 
+	pc at _guildhall_ set _S.05_ 
+	cast Shield spell on _home_ 
+	place foe _home_ at _guildhall_ 
+
+_S.04_ task:
+	daily from 18:01 to 19:00 
+	pc at _mistresshome_ set _S.06_ 
+	place foe _home_ at _mistresshome_ 
+
+_S.05_ task:
+	create foe _F.03_ every 2 minutes 5 times with 50% success 
+	create foe _F.02_ every 4 minutes 5 times with 50% success 
+	create foe _F.01_ every 3 minutes 5 times with 50% success 
+
+variable _S.06_
+_S.07_ task:
+	killed 1 _home_ saying 1031 
+
+_S.08_ task:
+	clicked npc _mistress_ 
+
+_clearclick_ task:
+	when not _S.07_ and _S.21_ 
+	say 1015 
+	clear _S.21_ _clearclick_ 
+
+_vamp3_ task:
+	when _S.07_ and _S.21_ 
+	give pc _gold_ 
+	end quest 
+
+_S.11_ task:
+	hide npc _marknpc_ 
+
+until _S.11_ performed:
+	restore _marknpc_ 
+
+_S.12_ task:
+	when _S.04_ and _S.08_ and not _S.07_ 
+	say 1021 
+
+_S.13_ task:
+	when _S.04_ and _S.08_ and _S.07_ 
+	say 1022 
+
+_S.14_ task:
+	when not _S.04_ and _S.08_ and not _S.07_ 
+	prompt 1020 yes _yes_ no _no_ 
+
+variable _yes_
+variable _no_
+_S.17_ task:
+	clicked _mistress_ and at least 50 gold otherwise do _S.18_ 
+
+variable _S.18_
+_S.19_ task:
+	when _S.17_ and _no_ 
+	get item _bribe3_ 
+
+_S.20_ task:
+	when _S.17_ and _yes_ 
+	say 1023 
+	unset _S.08_ 
+
+_S.21_ task:
+	clicked npc _questgiver_ 

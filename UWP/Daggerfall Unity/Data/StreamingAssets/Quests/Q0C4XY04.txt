@@ -1,0 +1,181 @@
+-- Quest: C:\QUESTS\WORKING\Q0C4XY04.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: witch
+-- Repute: 4X
+-- QuestId: 4
+Messages: 41
+Quest: Q0C4XY04
+DisplayName: The Daedra's Heart
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 ==questgiver_ must once again call on
+<ce>                 thy kindness and might. We require a
+<ce>                 heart of a daedra for our spellcraft
+<ce>                    but the heart must be recently
+<ce>                    plucked and by thou. Wilt thou
+<ce>                     find and murder a daedra for
+<ce>                           your dear aunts?
+
+RefuseQuest:  [1001]
+<ce>                       No? Oh, sorrowful night.
+
+AcceptQuest:  [1002]
+<ce>                    The Goddess smiles on us, %pcn,
+<ce>                 for there is a dungeon near that has
+<ce>                   a daedric infestation. Any daedra
+<ce>                   heart will do but that of a Lord,
+<ce>                   for theirs is putrid with worms.
+<ce>                        Go thou to ___mondung_,
+<ce>                           %pcn, slay for us
+<ce>                   a daedra and bring it before the
+<ce>                      sun sets =1stparton_ days.
+
+QuestFail:  [1003]
+<ce>                           The heart, %pcn,
+<ce>                           is in ___mondung_
+<ce>                       in the breast of a daedra
+<ce>                         Look not for it here.
+
+QuestComplete:  [1004]
+<ce>                   Look, see how it still steams and
+<ce>                            beats in %pcn's
+<ce>                  bloody hand! Into the brackish soup
+<ce>                  it goes, before it loses heat. Ah,
+<ce>                         %pcn, take thee this
+<ce>                       _reward_ for thy trouble.
+<ce>                   Thou art good to us poor witches.
+
+RumorsDuringQuest:  [1005]
+The daedra of ___mondung_ must be up to something. What a congregation!
+<--->
+%god has cursed us. Why else would the daedra have fallen on ___mondung_?
+
+RumorsPostfailure:  [1006]
+Praise %god, the daedra have left ___mondung_. I couldn't sleep for nights!
+<--->
+The daedra left ___mondung_ as mysteriously as they arrived. Good riddance I say.
+
+RumorsPostsuccess:  [1007]
+When the stars darken like last night, it is to mark the death of a daedra.
+<--->
+Did you hear music in the woods last night? The witches must be celebrating.
+
+QuestorPostsuccess:  [1008]
+Friend to the ==questgiver_, how goes it with thee and thy _reward_?
+
+QuestorPostfailure:  [1009]
+<ce>                   We had hoped for a heart for our
+<ce>                       stew, %pcf. If thou wert
+<ce>                  too busy, thou should have told us.
+<ce>                    Plans were made that had to be
+<ce>                    destroyed. Thou art our friend,
+<ce>                       but still ... sad are we.
+
+Message:  1011
+_questgiver_ is a =questgiver_ and one of ==questgiver_.
+<--->
+She's one of the witches who makes her home in %reg.
+
+Message:  1012
+I heard that ___mondung_ is a vampire lair.
+<--->
+The night folk live in ___mondung_. They never come out in the day.
+<--->
+___mondung_? Isn't that an orc stronghold?
+<--->
+Undead wander the halls of ___mondung_. I'd stay away from it.
+
+Message:  1015
+%qdt:
+ _questgiver_ of
+ ==questgiver_ has sent me to
+ ___mondung_ to take the heart of
+ a daedra from any seducer, daedroth,
+ fire, or frost daedra I come across.
+ The heart must be back in ___questgiver_
+ in =1stparton_ days or less.
+
+Message:  1040
+<ce>                  You pluck a perfect heart from the
+<ce>                        still-quivering corpse.
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 2 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 5 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 3 times.
+--       =1stparton_ occurs 4 times.
+--     ==questgiver_ occurs 6 times.
+--       ___mondung_ occurs 16 times.
+--    ___questgiver_ occurs 3 times.
+--          _reward_ occurs 14 times.
+
+QBN:
+Item _reward_ malachite
+Item _heart_ daedra_heart
+
+Person _questgiver_ group Questor anyInfo 1011
+
+Place _mondung_ remote dungeon8 anyInfo 1012
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _seducer_ is Daedra_seducer
+Foe _daedroth_ is Daedroth
+Foe _firedaedra_ is Fire_daedra
+Foe _F.03_ is Frost_daedra
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1015 step 0 
+	pc at _mondung_ set _exitstarter_ 
+
+_pcgetsgold_ task:
+	toting _heart_ and _questgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_S.01_ task:
+	clicked item _heart_ say 1040 
+
+variable _S.02_
+variable _qgclicked_
+variable _queston_
+_1stparton_ task:
+	end quest 
+
+_S.06_ task:
+	injured _firedaedra_ 
+	give item _heart_ to _firedaedra_ 
+
+_S.07_ task:
+	injured _F.03_ 
+	give item _heart_ to _F.03_ 
+
+_S.08_ task:
+	injured _seducer_ 
+	give item _heart_ to _seducer_ 
+
+_S.09_ task:
+	injured _daedroth_ 
+	give item _heart_ to _daedroth_ 
+
+_S.10_ task:
+	when not _S.11_ and _exitstarter_ 
+	create foe _seducer_ every 15 minutes 7 times with 10% success 
+	create foe _F.03_ every 20 minutes 6 times with 30% success 
+	create foe _firedaedra_ every 18 minutes 5 times with 25% success 
+	create foe _daedroth_ every 12 minutes 5 times with 20% success 
+
+_S.11_ task:
+	when _S.06_ or _S.07_ or _S.09_ or _S.08_ 
+	clear _S.10_ 
+
+variable _exitstarter_

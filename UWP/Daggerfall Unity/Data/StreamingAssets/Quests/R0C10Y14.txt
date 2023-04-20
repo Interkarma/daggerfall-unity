@@ -1,0 +1,139 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y14.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 14
+Messages: 11
+Quest: R0C10Y14
+DisplayName: Forgotten Equipment
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  Are you by any chance available for
+<ce>                  a little assignment that should not
+<ce>                   take you any time at all and will
+<ce>                 make you _reward_ gold pieces richer?
+
+RefuseQuest:  [1001]
+<ce>                               No? Pity.
+
+AcceptQuest:  [1002]
+<ce>                      %oth, that's grand. I have
+<ce>                    a rather dimwitted associate of
+<ce>                     mine who left on an assignment
+<ce>                          without %g3 _item_.
+<ce>                    I need it rushed to ___contact_
+<ce>                    straight-away. There's a little
+<ce>                     place there called __contact_
+<ce>                     where you can find a =contact_
+<ce>                            named _contact_.
+<ce>                          Give %g2 the _item_
+<ce>                   and %g will give you the _reward_
+<ce>                      gold pieces. One final note,
+<ce>                     %g will be leaving __contact_
+<ce>                       in =queston_ days with or
+<ce>                          without the _item_,
+<ce>                     so you'd best be on your way.
+
+QuestFail:  [1003]
+<ce>                I've given you the _item_ and told you
+<ce>               where it is to be delivered.  What more is
+<ce>                           there to discuss?
+
+QuestComplete:  [1004]
+<ce>                   Are you from _questgiver_?  %oth,
+<ce>                   my _item_!  About time!  I thought
+<ce>                  I was going to have to leave without
+<ce>                  it.  What took you so long, anyway?
+<ce>                   What, I have to pay you for my own
+<ce>                   _item_?  Very well, if that's what
+<ce>                   _questgiver_ told you.  Now, I've
+<ce>                   wasted enough time.  I must be on
+<ce>                                my way.
+
+RumorsDuringQuest:  [1005]
+If I had a _item_, I'd sell to that =contact_ in __contact_. Seems desperate.
+<--->
+That =contact_ has been moping around __contact_ for days now.
+
+RumorsPostfailure:  [1006]
+Poor _contact_ -- %g3 delivery never came and %g had to leave without it.
+<--->
+I wonder what _contact_ was waiting for anyhow. Some kind of miracle?
+
+RumorsPostsuccess:  [1007]
+_contact_ left __contact_ happy as a harpy. Guess %g got what %g needed.
+<--->
+_questgiver_ was singing the praises of some %ra mercenary %g hired.
+
+QuestorPostsuccess:  [1008]
+Ah, my dear friend. How good of you to return. How are things?
+<--->
+I was informed that your mission was a success. I do graciously thank you.
+
+QuestorPostfailure:  [1009]
+<ce>                   You failed to get to my contact,
+<ce>                  but yet you return to me. Quite odd
+<ce>                               behavior.
+
+QuestLogEntry:  [1010]
+%qdt:
+I have been sent
+ by _questgiver_ to ___contact_
+ where a =contact_
+ named _contact_ is waiting
+ for a special _item_ in a place
+ called __contact_. This
+ _contact_ is planning to leave
+ ___contact_ in =queston_ days
+ with or without the _item_,
+ so I will need to hurry.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 6 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 2 times.
+--              %oth occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--         =contact_ occurs 6 times.
+--         =queston_ occurs 2 times.
+--       ___contact_ occurs 16 times.
+--            _item_ occurs 9 times.
+--      _questgiver_ occurs 4 times.
+--          _reward_ occurs 3 times.
+
+QBN:
+Item _reward_ gold
+Item _item_ magic_item
+
+Person _questgiver_ group Questor
+Person _contact_ group Local_3.0 remote
+--removed "female" parameter. UESP says it could be either.
+
+
+Clock _queston_ 00:00 0 flag 1 range 1 4
+
+
+--	Quest start-up:
+	start timer _queston_ 
+	log 1010 step 0 
+	get item _item_ 
+	create npc _contact_ 
+
+_pcgetsgold_ task:
+	toting _item_ and _contact_ clicked 
+	give pc _reward_ 
+	end quest 
+
+variable _pchasitem_
+_queston_ task:
+	make _item_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+variable _npcclicked_

@@ -1,0 +1,157 @@
+-- Quest: C:\QUESTS\WORKING\Q0C20Y02.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: witch
+-- Repute: 20
+-- QuestId: 2
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 26
+Quest: Q0C20Y02
+DisplayName: An Expensive Purchase
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   Thou art friend to ==questgiver_,
+<ce>                          this we know. But to
+<ce>                   help thee, a spell must be woven,
+<ce>                    a spell that first must destroy
+<ce>                     before it createth. Wilt thou
+<ce>                       bring to us a _magicitem_
+<ce>                     for our brew, so thou might be
+<ce>                       blessed by its ruination?
+
+RefuseQuest:  [1001]
+<ce>                   Too employed art thou to do this
+<ce>                   task, even knowing its importance?
+<ce>                   Unfortunate for ==questgiver_, and
+<ce>                      unfortunate for thee, %pcn.
+
+AcceptQuest:  [1002]
+<ce>                        The _magicitem_ we need
+<ce>                   is held by ==other_. We require it
+<ce>              before the day has dawned =1stparton_ times.
+<ce>                  ==other_ can be found in ___other_.
+<ce>                           Ask after _other_.
+<ce>                   Let the gods and spirits guide thy
+<ce>                              feet, %pcf.
+
+QuestFail:  [1003]
+<ce>                        The _magicitem_, %pcf.
+<ce>                           Hast thou forgot?
+
+QuestComplete:  [1004]
+<ce>                    Ah, there is the _magicitem_ we
+<ce>                  need for our spell. Quickly, sisters
+<ce>                   rend it and rip it and boil it in
+<ce>                     a covered tub. Here have we a
+<ce>                       lump of _reward_ for thee,
+<ce>                        %pcn, to thank thee for
+<ce>                          thy speed and valor.
+
+RumorsDuringQuest:  [1005]
+Remember that time when the Witches transformed our old %t into a snail?
+<--->
+The only thing worse than meeting ==questgiver_ is invoking their ire.
+
+RumorsPostfailure:  [1006]
+I heard a howl in the woods last night. I'd say the Witches are on a rampage.
+<--->
+Smell that sour smell in the breeze? That means ==questgiver_ are angry.
+
+RumorsPostsuccess:  [1007]
+They say ==questgiver_ have been celebrating the completion of some scheme.
+<--->
+You can get drunk on the smell in the air. A blessing from happy witches.
+
+QuestorPostsuccess:  [1008]
+Dost thou like thy _reward_, %pcf? It suits thee, I think.
+
+QuestorPostfailure:  [1009]
+<ce>                   Hast thou forgot the _magicitem_?
+<ce>                      %oth, 'tis too late now. But
+<ce>                  the ==questgiver_ art disappointed,
+<ce>                          %pcf. Truly, we are.
+
+QuestLogEntry:  [1010]
+<ce>                       The _magicitem_ you want?
+<ce>                         Yours for a thousand.
+<ce>                        Very good, here you go.
+
+Message:  1011
+She is a very wise woman of ==questgiver_.
+<--->
+She's a woman not to be trifled with from ==questgiver_.
+
+Message:  1020
+<ce>                        I ain't givin' up this
+<ce>                          _magicitem_ for less
+<ce>                         than 1000 gold pieces.
+<ce>                        And I'm only willin' ta
+<ce>                       do that for ==questgiver_.
+
+Message:  1025
+%qdt:
+ _questgiver_ of
+ ==questgiver_ has sent me
+ off to get a _magicitem_
+ held by ==other_, by
+ a =other_ named _other_
+ in ___other_. I have
+ =1stparton_ days to get the
+ _magicitem_ and get back to
+ ___questgiver_.
+
+
+-- Symbols used in the QRC file:
+--
+--              %oth occurs 1 time.
+--              %pcf occurs 5 times.
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--                %t occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--          ==other_ occurs 3 times.
+--     ==questgiver_ occurs 30 times.
+--           =other_ occurs 4 times.
+--    ___questgiver_ occurs 1 time.
+--       _magicitem_ occurs 9 times.
+--           _other_ occurs 2 times.
+--      _questgiver_ occurs 1 time.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _reward_ gem
+Item _magicitem_ magic_item
+
+Person _questgiver_ face 112 group Questor anyInfo 1011
+Person _other_ factiontype Knightly_Guard remote
+
+Clock _1stparton_ 00:00 0 flag 17 range 1 4
+
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1025 step 0 
+	create npc _other_ 
+
+_pcgetsgold_ task:
+	toting _magicitem_ and _questgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_pchasitem_ task:
+	clicked _other_ and at least 1000 gold otherwise do _S.07_ 
+	get item _magicitem_ 
+	say 1010 
+
+variable _npcclicked_
+variable _qgclicked_
+_1stparton_ task:
+	make _magicitem_ permanent 
+	end quest 
+
+variable _2ndparton_
+variable _queston_
+_S.07_ task:
+	say 1020 

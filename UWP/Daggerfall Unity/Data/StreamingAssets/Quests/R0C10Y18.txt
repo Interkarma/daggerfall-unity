@@ -1,0 +1,209 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y18.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 18
+Messages: 22
+Quest: R0C10Y18
+DisplayName: An Item on Loan
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 Are you free for a few days to do me
+<ce>                   a little favor, %pcf? I just need
+<ce>                  something I borrowed brought back to
+<ce>                 its owner. Nothing too strenuous, and
+<ce>                 you'll be _reward_ gold pieces richer.
+<ce>                         A tempting offer, eh?
+
+RefuseQuest:  [1001]
+<ce>                      That's too bad. Well, I'll
+<ce>                      just hire someone else then.
+
+AcceptQuest:  [1002]
+<ce>                    %oth, that's the spirit! I have
+<ce>                  this _item1_ I borrowed from my good
+<ce>                             friend _npc1_,
+<ce>                          a priest in __npc1_
+<ce>                           of ___npc1_. It's
+<ce>                   somewhat of a rush to get it back
+<ce>                        to %g2 -- %g needs it in
+<ce>                     =1stparton_ days. So please do
+<ce>                    hurry. Thank you for this, %pcf.
+
+QuestFail:  [1003]
+<ce>                     Didn't I say to hurry, %pcf?
+
+QuestComplete:  [1004]
+<ce>                      Ah, good. The _item2_ is as
+<ce>                    exquisite as I'd been told. Fine
+<ce>                    work, %pcf. Here's your _reward_
+<ce>                    gold for your speed and silence.
+
+RumorsDuringQuest:  [1005]
+There's been lots of traffic to and from __npc1_. Wonder what's going on.
+<--->
+_npc1_ has been looking for %g3 _item1_, but I didn't even know %g liked those things.
+
+RumorsPostfailure:  [1006]
+I wonder how long __npc1_ has been used as a smuggling station. It's a scandal.
+<--->
+They were smuggling gems in _item1_s. It seems so obvious now, don't you think?
+
+RumorsPostsuccess:  [1007]
+Funny. I know there was a shipment of _item1_s to __npc1_ but they didn't seem right.
+<--->
+___npc2_ is said to be a hotbed of _item2_ smuggling. Must be well-disguised.
+
+QuestorPostsuccess:  [1008]
+Look who's back. You understand I couldn't tell you about the gem, don't you?
+<--->
+Well, if it isn't %pcf. Great job with that gem smuggling business, my friend.
+
+QuestorPostfailure:  [1009]
+<ce>                      That was no small quest you
+<ce>                          failed, %pcf. Maybe
+<ce>                       I can forgive you in time.
+<ce>                                 Maybe.
+
+QuestLogEntry:  [1010]
+<ce>                Oh good, my _item1_'s back. Thank you,
+<ce>                      %pcf. But there seems to be
+<ce>                       something stuck in it. Oh,
+<ce>                   I see ... this stone. Would you be
+<ce>                 good enough to bring this pebble over
+<ce>                           to _questgiver_'s
+<ce>                        friend, _npc2_, over at
+<ce>                          __npc2_ in ___npc2_?
+<ce>                  I believe %g has your gold, but you
+<ce>                          better hurry. _npc2_
+<ce>                   runs out of patience if %g has to
+<ce>                   wait longer than =2ndparton_ days.
+
+Message:  1015
+%qdt:
+_questgiver_
+ of ___questgiver_ has sent me
+ to bring a _item1_ to a priest in
+ ___npc1_, a certain
+ =npc1_ named _npc1_
+ I'll find in __npc1_ if I
+ get there in =1stparton_ days or
+ less.
+
+Message:  1016
+%qdt:
+ There was a _item2_ hidden
+ in the _item1_. For the
+ _reward_ gold I was promised, I have to
+ deliver the _item2_ to a third party
+ in ___npc2_, _npc2_ of
+ __npc2_. I have =2ndparton_ days
+ to accomplish this.
+
+Message:  1020
+<ce>                        Here in %reg, only the
+<ce>                      Thieves Guild is allowed to
+<ce>                     smuggle. I guess _questgiver_
+<ce>                    thought %g was above the rules.
+<ce>                     %g was wrong. You're going to
+<ce>                       give me that _item2_, and
+<ce>                     _questgiver_ is going to learn
+<ce>                        not to cross the Thieves
+<ce>                    Guild. Do it, or I'll kill you.
+
+Message:  1021
+<ce>                      You tell everyone you know
+<ce>                      not to mess with the Thieves
+<ce>                      Guild. Now get out of here.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 6 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 1 time.
+--              %oth occurs 1 time.
+--              %pcf occurs 9 times.
+--              %qdt occurs 2 times.
+--              %reg occurs 1 time.
+--       =1stparton_ occurs 4 times.
+--       =2ndparton_ occurs 3 times.
+--            =npc1_ occurs 3 times.
+--          ___npc2_ occurs 3 times.
+--    ___questgiver_ occurs 1 time.
+--           __npc1_ occurs 5 times.
+--           __npc2_ occurs 2 times.
+--           _item1_ occurs 7 times.
+--           _item2_ occurs 5 times.
+--            _npc1_ occurs 3 times.
+--            _npc2_ occurs 3 times.
+--      _questgiver_ occurs 4 times.
+--          _reward_ occurs 3 times.
+
+QBN:
+Item _reward_ gold
+Item _item1_ religious
+Item _item2_ gem
+
+Person _questgiver_ face 140 group Questor
+Person _npc1_ group Cleric remote
+Person _npc2_ face 254 group Local_3.0 female remote
+Person _dummythief_ faction The_Thieves_Guild remote
+
+
+Clock _1stparton_ 00:00 0 flag 1 range 1 4
+Clock _2ndparton_ 00:00 0 flag 1 range 1 4
+
+Foe _thief_ is Rogue
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1015 step 0 
+	get item _item1_ 
+
+_pcgetsgold_ task:
+	toting _item2_ and _npc2_ clicked 
+	give pc _reward_ 
+	change repute with _dummythief_ by -20 
+	end quest 
+
+variable _pchasitem1_
+variable _pchasitem2_
+_S.03_ task:
+	toting _item1_ and _npc1_ clicked 
+	create foe _thief_ every 1 minutes 5 times with 20% success 
+	start timer _2ndparton_ 
+	log 1016 step 1 
+	get item _item2_ 
+	say 1010 
+	create npc _npc2_ 
+
+variable _S.04_
+_queston_ task:
+	when _1stparton_ and not _S.03_ 
+	make _item1_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+variable _1stparton_
+_2ndparton_ task:
+	make _item2_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+yes task:
+	have _item2_ set _S.10_ 
+
+variable _no_
+_S.10_ task:
+	give item _item2_ to _thief_
+	say 1021 
+	restrain foe _thief_ 
+--moved "saying 1021" to its own line, wouldn't work as was
+
+_S.11_ task:
+	injured _thief_ 
+	prompt 1020 yes yes no _no_ 

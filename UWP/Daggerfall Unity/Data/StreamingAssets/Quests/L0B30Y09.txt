@@ -1,0 +1,143 @@
+-- Quest: C:\QUESTS\WORKING\L0B30Y09.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Brotherhood
+-- Repute: 30
+-- QuestId: 9
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 22
+Quest: L0B30Y09
+DisplayName: An Anonymous Job
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 We have an anonymous job for you. It
+<ce>                happens every now and then that someone
+<ce>                 pays us to remove someone, but never
+<ce>                 reveals why, or may even work though
+<ce>                  a go between to keep their identity
+<ce>                 secret. At any rate, the job is yours
+<ce>                            if you want it.
+
+RefuseQuest:  [1001]
+<ce>                  Can't blame you for not wanting to
+<ce>                       get mixed up in this one.
+
+AcceptQuest:  [1002]
+<ce>                    Go to _mondung_ of ___mondung_.
+<ce>                  Your target has a scar on the left
+<ce>                    cheek. That's all we know. Come
+<ce>                  back in =1stparton_ days to collect
+<ce>                   your payment. Mephala bless your
+<ce>                             blade, %pcn.
+
+QuestFail:  [1003]
+<ce>                   I don't know who you think you've
+<ce>                killed, but it wasn't the right target.
+<ce>                  Get your butt over to _mondung_ and
+<ce>                    do what we were contracted for.
+
+QuestComplete:  [1004]
+<ce>                    Beautiful, %pcf, truly. Brings
+<ce>                 tears to these weary eyes. As lovely
+<ce>                  an accounting as I've ever seen. I
+<ce>                  feel like writing a poem. Why don't
+<ce>                you take your _reward_ gold pieces and
+<ce>                   get the hell out of here so I can
+<ce>                  write a ballad about it. Seriously,
+<ce>                         I'm very proud, %pcf.
+
+RumorsDuringQuest:  [1005]
+Lovely weather.
+
+RumorsPostfailure:  [1006]
+They say the king is having an affair.
+
+RumorsPostsuccess:  [1007]
+If you ask me, our taxes are too high.
+
+QuestorPostsuccess:  [1008]
+Good work with that anonymous job.
+
+QuestorPostfailure:  [1009]
+Too bad you couldn't complete that anonymous job. Definitely a stain on your record.
+
+Message:  1020
+%qdt:
+ My new contract for the Dark Brotherhood
+ in ___questgiver_ is an 
+ anonymous mark at _mondung_,
+ in ___mondung_. I'll only be able to
+ recognize the target by a scar on the
+ left cheek. The deed must be done in =1stparton_ days.
+
+Message:  1021
+<ce>              A fresh scar mars the target's left cheek.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 3 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--       =1stparton_ occurs 3 times.
+--    ___questgiver_ occurs 1 time.
+--        __mondung_ occurs 5 times.
+--          _reward_ occurs 1 time.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ face 112 group Questor
+
+Place _mondung_ remote palace
+
+Clock _1stparton_ 00:00 0 flag 18 range 0 2
+
+Foe _F.00_ is Healer
+Foe _F.01_ is Rogue
+Foe _F.02_ is Burglar
+Foe _F.03_ is Daedra_seducer
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	pick one of _S.06_ _S.07_ _S.08_ _onehour_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _S.02_ 
+	give pc _reward_ 
+	end quest 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_S.02_ task:
+	killed 1 _F.03_ saying 1021 
+	killed 1 _F.02_ saying 1021 
+	killed 1 _F.01_ saying 1021 
+	killed 1 _F.00_ saying 1021 
+
+variable _queston_
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_S.06_ task:
+	place foe _F.00_ at _mondung_ 
+
+_S.07_ task:
+	place foe _F.01_ at _mondung_ 
+
+_S.08_ task:
+	place foe _F.02_ at _mondung_ 
+
+_onehour_ task:
+	place foe _F.03_ at _mondung_ 
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.02_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 

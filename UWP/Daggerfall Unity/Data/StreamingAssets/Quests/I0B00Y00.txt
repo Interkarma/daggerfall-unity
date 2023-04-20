@@ -1,0 +1,145 @@
+-- Quest: C:\QUESTS\WORKING\I0B00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Stendarr
+-- Repute: 0
+-- QuestId: 0
+Messages: 31
+Quest: I0B00Y00
+DisplayName: A Special Plant
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                    Our healer needs some sort of a
+<ce>                   special plant, called _item_, for
+<ce>                     his healing potions. I cannot
+<ce>                     offer you much, but I can give
+<ce>                   you the holy symbol of the Temple
+<ce>                     of Stendarr if you'd bring us
+<ce>                    some _item_ for our sacred duty.
+
+RefuseQuest:  [1001]
+<ce>                    Unfortunately, such is a common
+<ce>                    response. We cannot offer great
+<ce>                      piles of gold and jewelry to
+<ce>                     entice questers. Nevertheless,
+<ce>                     I am particularly disappointed
+<ce>                        in you, %pcf. I expected
+<ce>                           a nobler response.
+
+AcceptQuest:  [1002]
+<ce>                  You have a kind heart indeed, %pcf.
+<ce>                  The _item_ we need is at a place in
+<ce>                     ___chemist_ called __chemist_.
+<ce>                           A =chemist_ named
+<ce>                         _chemist_ will give it
+<ce>                   to us for free if you are there in
+<ce>                    =1stparton_ days or less. Please
+<ce>                    do hurry, %pcf. We have a great
+<ce>                    many injured innocents to heal.
+
+QuestFail:  [1003]
+<ce>                    I am always happy to talk with
+<ce>                         thee, %pcf, but please
+<ce>                       do not delay in getting us
+<ce>                              that _item_.
+
+QuestComplete:  [1004]
+<ce>                    Is that _item_ you have, %pcf?
+<ce>                   Oh, thank Stendarr. Please accept
+<ce>                      our humble offering of this
+<ce>                          symbol of our order.
+
+RumorsDuringQuest:  [1005]
+The Temple of Stendarr is the only purely philanthropic order I can think of.
+<--->
+Mother waits for the healer at the Temple of Stendarr. Her condition is bad.
+
+RumorsPostfailure:  [1006]
+My sister died waiting for that damned healer at the Temple of Stendarr.
+<--->
+I hear the Temple's healer couldn't get the herbs he needed in time.
+
+RumorsPostsuccess:  [1007]
+They had a few scary moments at the Temple. More injured people than usual.
+<--->
+The god Stendarr was watching over His Temple, that's for certain.
+
+QuestorPostsuccess:  [1008]
+It would be unkind not to speak with one who brought us the _item_, %pcf.
+
+QuestorPostfailure:  [1009]
+I will control my temper, but didst thou forget the _item_, %pcf?
+<--->
+Perhaps you'd like to speak to those who died because you did not get the _item_.
+
+QuestLogEntry:  [1010]
+<ce>                     Here's the _item_, %pcf. Now
+<ce>                    hurry back to the Temple. There are
+<ce>                    many there waiting to be healed.
+
+Message:  1030
+%qdt:
+ The Temple of Stendarr in
+ ___questgiver_ has offered me
+ the symbol of their order if I would
+ find some _item_ and deliver it to them
+ in =1stparton_ days.
+ Someone named _chemist_ in
+ ___chemist_ in a place called
+ __chemist_ is willing to give some
+ if I am able to get there in time.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 9 times.
+--              %qdt occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--         =chemist_ occurs 3 times.
+--    ___questgiver_ occurs 1 time.
+--        __chemist_ occurs 5 times.
+--            _item_ occurs 28 times.
+
+QBN:
+Item _reward_ common_symbol
+Item _item_ large_plant
+
+Person _questgiver_ face 112 group Questor
+Person _chemist_ group Chemist remote
+
+
+Clock _1stparton_ 00:00 0 flag 17 range 1 4
+
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1030 step 0 
+
+_1stparton_ task:
+	end quest 
+
+variable _pcgetsgold_
+_npcclicked_ task:
+	clicked npc _chemist_ say 1010 
+	get item _item_ 
+
+_qgclicked_ task:
+	toting _item_ and _questgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_qgclick2_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgclick2_ and not _qgclicked_
+	say 1003
+	clear _clearclick_ _qgclick2_
+
+variable _queston_
+variable _S.05_
+_S.06_ task:
+	when _npcclicked_ and _1stparton_ 
+	make _item_ permanent 

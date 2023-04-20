@@ -1,0 +1,228 @@
+-- Quest: C:\QUESTS\WORKING\K0C00Y09.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: merchant
+-- Repute: 0
+-- QuestId: 9
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 15
+Quest: K0C00Y09
+DisplayName: The Recompense
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       My former partner here at
+<ce>                       __qgiver_, a _enemy_, has
+<ce>             taken more than %g3 fair share of our profits
+<ce>                     and run away from ___qgiver_.
+<ce>              Now, I'm not the vengeful sort, but I would
+<ce>              appreciate it if you would bring the _enemy_
+<ce>             back to me, so I can get some explanation for
+<ce>             this remarkable behavior. I'll pay you _gold_
+<ce>               gold pieces for %g2 alive, and _lessgold_
+<ce>                   gold if you accidentally kill %g2.
+                                     <--->
+<ce>                     That damnable _enemy_ let me
+<ce>               trust %g2, led me merrily along, and then
+<ce>            left without a word but with a sizeable portion
+<ce>              of my savings. Now the money does bother me,
+<ce>              but not as much as the betrayal. I want you
+<ce>              to track %g2 down, and bring %g2 to me, and
+<ce>                 I'm willing to pay _gold_ gold pieces
+<ce>                   for it. Are you willing and able?
+                                     <--->
+<ce>                   I am looking for a manhunter, or,
+<ce>                  more specifically, a _enemy_ hunter.
+<ce>                You see, %g left town without paying the
+<ce>               gold %g owes me. It's the principle of the
+<ce>               thing. I don't mind paying you _gold_ gold
+<ce>               pieces for %g3 capture, but my reputation
+<ce>                would be ruined if I let my debtors just
+<ce>                    leave ___qgiver_, owing me gold.
+<ce>                   Will you get this deadbeat for me?
+
+RefuseQuest:  [1001]
+<ce>                      No? Well, I'll just go down
+<ce>                     to the Fighters Guild and hire
+<ce>                             someone else.
+                                     <--->
+<ce>                    That's too bad. Let me know if
+<ce>                         you change your mind.
+
+AcceptQuest:  [1002]
+<ce>                      Good. The _enemy_'s name is
+<ce>                     =enemy_, and rumor has it that
+<ce>                     %g is holed up in ___mondung_
+<ce>              for =queston_ days at most. That will be the
+<ce>              deadline by which I expect to hear from you.
+<ce>                         Remember -- =enemy_ is
+<ce>                  a tough _enemy_, so expect a fight,
+<ce>               but try not to kill %g2. I want %g2 alive,
+<ce>                       not dead. Good luck, %pcf.
+                                     <--->
+<ce>                 That's fine then. My sources tell me
+<ce>                   that the _enemy_ has taken refuge
+<ce>                    in ___mondung_ and will probably
+<ce>               be there for =queston_ days or so. I fully
+<ce>                       expect =enemy_, that's the
+<ce>               _enemy_'s name, to put up a fight, but try
+<ce>               not to kill %g2. I will expect you back in
+<ce>                       =queston_ days. Good luck.
+                                     <--->
+<ce>                    Frightfully good of you, %pcf.
+<ce>             I've made some inquiries and it seems that our
+<ce>              _enemy_ friend is lurking about the vicinity
+<ce>                     of ___mondung_, unguarded and
+<ce>            alone except for the usual brutes in residence.
+<ce>                        =enemy_ is %g3 name and
+<ce>             I will expect %g2 before me in =queston_ days,
+<ce>                 preferably alive. Don't disappoint me.
+
+QuestComplete:  [1004]
+<ce>                        Ah, good day, =enemy_.
+<ce>              It seems to me that we have some business to
+<ce>                    discuss, don't we? %pcf, I thank
+<ce>                   you for making this _enemy_'s trip
+<ce>                as comfortable as possible. Here is the
+<ce>                        _gold_ gold I promised.
+
+RumorsDuringQuest:  [1005]
+_qgiver_ was a fool to do business with someone like =enemy_.
+<--->
+_qgiver_ should never have trusted =enemy_ -- %g is a notorious thief.
+
+RumorsPostfailure:  [1006]
+=enemy_ apparently got away with it. And _qgiver_ is mad as Oblivion.
+
+RumorsPostsuccess:  [1007]
+_qgiver_ is practicing ancient %ra torture techniques on =enemy_.
+<--->
+I'd hate to be _enemy_ right now -- in _qgiver_'s hands.
+
+QuestorPostsuccess:  [1008]
+Oh hello, %pcf. =enemy_ would say hello too ... if %g still had a tongue.
+
+QuestorPostfailure:  [1009]
+<ce> You don't really think I'd have anything to say to you, do you, %pcf?
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ __qgiver_, ___qgiver_
+ has sent me to ___mondung_
+ to find an errant _enemy_ named
+ =enemy_ and bring %g2
+ back to __qgiver_. I
+ have =queston_ days to accomplish this,
+ and _qgiver_ stressed
+ that %g wanted =enemy_
+ alive.
+
+Message:  1011
+<ce>                            _qgiver_ wanted
+<ce>                           =enemy_ alive, but
+<ce>                            you've slain %g2.
+
+Message:  1012
+<ce>                              Ow! %oth, I
+<ce>                               surrender!
+                                     <--->
+<ce>                              I give up!
+<ce>                               I give up!
+                                     <--->
+<ce>                            Don't kill me!
+<ce>                              I surrender!
+
+Message:  1013
+<ce>                          =enemy_ sneaks away
+<ce>                     when you aren't looking. It's
+<ce>                      just as well. It's too late
+<ce>                        to collect on the reward
+<ce>                                anyhow.
+
+Message:  1014
+<ce>                      Well, I had wanted =enemy_
+<ce>                alive, but I suppose I would have killed
+<ce>             %g2 eventually myself. Here's _lessgold_ gold
+<ce>                 pieces. Not the full amount, but I am
+<ce>                             appreciative.
+
+--removed erroneous blank msg inside 1014 
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 6 times.
+--               %g2 occurs 23 times.
+--               %g3 occurs 3 times.
+--              %oth occurs 1 time.
+--              %pcf occurs 45 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--           =enemy_ occurs 17 times.
+--         =queston_ occurs 5 times.
+--       ___mondung_ occurs 4 times.
+--        ___qgiver_ occurs 6 times.
+--           _enemy_ occurs 12 times.
+--            _gold_ occurs 4 times.
+--        _lessgold_ occurs 2 times.
+--          _qgiver_ occurs 8 times.
+
+QBN:
+Item _gold_ gold range 50 to 150
+Item _lessgold_ gold range 10 to 45
+
+Person _qgiver_ group Questor
+
+Place _mondung_ remote dungeon
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _enemy_ is Ranger
+
+--	Quest start-up:
+	start timer _queston_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	place foe _enemy_ at _mondung_ 
+
+_queston_ task:
+	end quest 
+
+_S.01_ task:
+	injured _enemy_ 
+	say 1012 
+
+_killmon_ task:
+	killed 1 _enemy_ 
+	say 1011 
+
+_S.03_ task:
+	when _S.01_ and not _killmon_ 
+	add foe _enemy_ face 
+	remove foe _enemy_
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+variable _S.05_
+_S.06_ task:
+	when _qgclicked_ and _killmon_ 
+	get item _lessgold_ 
+	say 1014 
+	make _lessgold_ permanent 
+	end quest 
+
+_reward_ task:
+	when _S.03_ and _qgclicked_ 
+	give pc _gold_ 
+	end quest 
+
+_S.08_ task:
+	when _queston_ and _S.03_ 
+	say 1013 
+	drop foe _enemy_ face 
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _clearclick_ 

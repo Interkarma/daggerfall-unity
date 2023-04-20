@@ -1,0 +1,191 @@
+-- Quest: C:\QUESTS\WORKING\Q0C00Y03.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: witch
+-- Repute: 0
+-- QuestId: 3
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 14
+Quest: Q0C00Y03
+DisplayName: Public Relation
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                        The ==qgiver_ actually
+<ce>                   could use thy assistance in a most
+<ce>                  absurd and yet serious matter. Thou
+<ce>                 hast no illusions that the witches of
+<ce>                        %reg are despised. None
+<ce>                  trust us for long, for our power and
+<ce>                 solitude make us a difficult force to
+<ce>                 manipulate. We have discovered a trap
+<ce>                  that will soon be sprung on us, and
+<ce>                  we need someone like thee to disable
+<ce>                   it. Art thou interested in such a
+<ce>                    quest, in exchange for a _gem_?
+
+RefuseQuest:  [1001]
+<ce>                         Wilt thou not? %oth,
+<ce>                        the ==qgiver_ is used to
+<ce>                      the cowardice of our allies.
+
+AcceptQuest:  [1002]
+<ce>                   Thou wilt? Take then this child,
+<ce>                        _child_ %g says %g3 name
+<ce>                is. We found %g2 some days ago abandoned
+<ce>               by %g3 people. Clearly, %g has been placed
+<ce>               here so our enemies can prove that we are
+<ce>               involved in -- what do you suppose? Human
+<ce>                sacrifice? The corruption of innocents?
+<ce>              Nothing so mundane as kidnapping I'd wager.
+<ce>                       _child_ tells us that %g3
+<ce>                   parents live at _home_ in __home_.
+<ce>               Lead the child back, but beware. Our fine
+<ce>                 enemies would rather murder the two of
+<ce>                ye than allow the child to return home.
+<ce>               Come back to us in =queston_ days or less
+<ce>                        and we'll have thy _gem_
+<ce>                          for thee. Good luck.
+
+QuestComplete:  [1004]
+<ce>                        It is good that _child_
+<ce>                   is home. Perhaps the kindness that
+<ce>                          the ==qgiver_ showed
+<ce>                  will dispel some of the myths of our
+<ce>                 iniquity for the next generation. Here
+<ce>                          is thy _gem_. Thanks
+<ce>                           be to thee, %pcf.
+
+RumorsDuringQuest:  [1005]
+==qgiver_ are whispered to be much worse than kidnappers.
+<--->
+If that _child_ isn't found, ==qgiver_ will burn.
+
+RumorsPostfailure:  [1006]
+==qgiver_, they say, kidnapped a =child_. Poor thing.
+<--->
+==qgiver_ can't disprove that they kidnapped a child.
+
+RumorsPostsuccess:  [1007]
+==qgiver_ didn't kidnap _child_ -- %g %g3-self says they didn't.
+<--->
+If you can trust _child_'s word, %g was helped not hurt by ==qgiver_.
+
+QuestorPostsuccess:  [1008]
+For thy kindness to _child_ and the ==qgiver_, I'm happy to talk with thee.
+
+QuestorPostfailure:  [1009]
+<ce>                    We asked thou to escort little
+<ce>                         _child_ to %g3 house,
+<ce>                    but thou didst fail. 'Twasn't an
+<ce>                idle request, nor are the recriminations
+<ce>                         mild. Leave ==qgiver_
+<ce>                            now, cursed %ra.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I am bringing a child who was abandoned
+ at the coven of ==qgiver_ back home.
+ _child_, the child,
+ lives in _home_ in __home_.
+ The witches' enemies, I'm told, would
+ sooner kill us than let the child
+ return home safely.
+
+Message:  1011
+<ce>                    "This is where I live! This is
+<ce>                           my home!" _child_
+<ce>                     gives you a kiss on the cheek,
+<ce>                           "Thank you, %pcf!"
+
+Message:  1012
+<ce>                        "Witch lover! Child of
+<ce>                           _daedra_!" a voice
+<ce>                                shrieks.
+                                     <--->
+<ce>                       "Suffer not the Child of
+<ce>                      ==daedra_ and the ==qgiver_
+<ce>                       to live!" someone screams.
+                                     <--->
+<ce>                          "%god strengthen my
+<ce>                     hand against the pawn and the
+<ce>                      child of the infernal ones,
+<ce>                           the ==qgiver_!" a
+<ce>                              voice cries.
+
+Message:  1013
+<ce>                     "I'll go the rest of the way
+<ce>                   myself," says the child, slipping
+<ce>                       away and disappearing with
+<ce>                          surprising agility.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 4 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 5 times.
+--              %oth occurs 1 time.
+--              %pcf occurs 4 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 3 times.
+--              %reg occurs 1 time.
+--         ==daedra_ occurs 1 time.
+--         ==qgiver_ occurs 17 times.
+--           =child_ occurs 1 time.
+--         =queston_ occurs 1 time.
+--           __home_ occurs 2 times.
+--           _child_ occurs 10 times.
+--          _daedra_ occurs 1 time.
+--             _gem_ occurs 5 times.
+--            _home_ occurs 2 times.
+
+QBN:
+Item _gem_ gem
+
+Person _qgiver_ group Questor
+Person _child_ face 105 faction Children
+Person _daedra_ face 69 factiontype Daedra male remote
+
+Place _home_ remote house2
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _warrior_ is Warrior
+
+--	Quest start-up:
+	create foe _warrior_ every 15 minutes 40 times with 100% success msg 1012 
+	start timer _queston_ 
+	log 1010 step 0 
+	pc at _home_ set _S.01_ 
+	add _child_ face 
+
+_queston_ task:
+	end quest 
+
+_S.01_ task:
+	say 1011 
+	drop _child_ face
+	start task _S.07_
+--added start task S.07. 07 was turning off when S.01 deactivated.
+
+_reward_ task:
+	when _S.03_ and _S.07_ 
+	give pc _gem_ 
+	end quest 
+
+_S.03_ task:
+	clicked npc _qgiver_ 
+
+_S.04_ task:
+	when _S.03_ and not _S.07_ 
+	clear _S.03_ _S.04_ 
+
+_S.05_ task:
+	when _queston_ and not _S.07_ 
+	say 1013 
+
+variable _S.06_
+variable _S.07_
+--changed S.07 to empty variable instead of "when S.01"

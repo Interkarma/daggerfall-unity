@@ -1,0 +1,112 @@
+---- Custom quest to slay zombies and skeletons until a necromancer comes out of hiding.
+
+Quest: CUSTOM01
+DisplayName: From Dusk Till Dead
+
+QRC:
+
+QuestorOffer:  [1000]
+<ce>I hope you're not afraid of the dark, %pcn...
+<ce>Some necromancer is raising hordes of zombies
+<ce>and skeletons at ___graveyard_.
+<ce>We have a contract to end this villian's life
+<ce>and put a stop to their evil deeds.
+<ce>There's _reward_ gold in it for you.
+
+RefuseQuest:  [1001]
+<ce>Necromancers are tricky business, %pcn.
+<ce>I don't blame you for passing on this one.
+
+AcceptQuest:  [1002]
+<ce>Great. Go to ___graveyard_
+<ce>after dark and slay zombies and skeletons
+<ce>in the graveyard outside until
+<ce>the necromancer is enraged enough
+<ce>to come out of hiding and face you.
+<ce>You'll have =timeLimit_ days to get back to me when done.
+<ce>I'll have your _reward_ gold waiting for you.
+
+QuestFail:  [1003]
+<ce>I'm disappointed in you, %pcn.
+<ce>Now I have to give the contract to someone more reliable.
+
+QuestComplete:  [1004]
+<ce>Good job, hero. You've saved many innocent lives.
+
+Message:  1020
+<ce>As this undead falls, you feel the ground
+<ce>vibrate underfoot. The necromancer is here!
+
+Message:  1030
+<ce>"You'll pay... with your... soul!"
+<ce>The necromancer slumps to the ground.
+<ce>Their undead army will disperse and
+<ce>no longer threaten nearby villages.
+
+Message:  1040
+%qdt:
+ The Fighters Guild of
+ ___questgiver_ has hired
+ me to kill a troublesome necromancer
+ at their lair, ___graveyard_.
+ I am to slay skeletons and zombies
+ in the graveyard outside at night
+ until the fiend emerges from hiding.
+ I have =timeLimit_ days time to kill the necromancer
+ and return to collect my payment.
+
+
+QBN:
+
+Item _reward_ gold
+
+Person _questgiver_ group Questor male
+
+Place _graveyard_ remote graveyard
+
+Clock _timeLimit_ 00:00 0 flag 17 range 0 2
+
+Foe _zombie_ is Zombie
+Foe _skeleton_ is Skeletal_warrior
+Foe _necromancer_ is Battle_mage
+
+--	Quest start-up:
+	start timer _timeLimit_
+	reveal _graveyard_
+	pc at _graveyard_ set _onsite_
+	log 1040 step 0
+
+_timeLimit_ task:
+	end quest 
+
+variable _onsite_
+_daytime_ task:
+	daily from 05:00 to 18:00
+
+_attackPlayer_ task:
+	when _onsite_ and not _daytime_ and not _necromancerDead_
+	create foe _zombie_ every 5 minutes indefinitely with 60% success
+	create foe _skeleton_ every 5 minutes indefinitely with 60% success
+
+_summonNecromancer_ task:
+	killed 4 _zombie_
+	killed 4 _skeleton_
+	say 1020
+	create foe _necromancer_ every 1 minutes 1 times with 100% success
+
+_necromancerDead_ task:
+	killed _necromancer_
+	say 1030
+
+_questorClicked_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _questorClicked_ and not _necromancerDead_
+	say 1003
+	clear _questorClicked_ _clearclick_
+
+_rewardPlayer_ task:
+	when _questorClicked_ and _necromancerDead_
+	give pc _reward_
+	end quest

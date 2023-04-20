@@ -1,0 +1,181 @@
+-- Quest: C:\QUESTS\WORKING\C0C00Y11.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: temple
+-- Repute: 0
+-- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 81
+Quest: C0C00Y11
+DisplayName: The Spook
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                        You are not a member of
+<ce>                            __qgiver_, %pcn.
+<ce>                        However, you seem honest
+<ce>                      enough. I'll tell you what.
+<ce>                        A house over in __house_
+<ce>                        is being haunted by some
+<ce>                        sort of undead. We need
+<ce>                        someone to exorcise the
+<ce>                         spirit. Do this and it
+<ce>                         may change how we feel
+<ce>                               about you.
+
+RefuseQuest:  [1001]
+<ce>                       This isn't going to look
+<ce>                           good to __qgiver_.
+
+AcceptQuest:  [1002]
+<ce>                       If the haunt is too tough
+<ce>                      for you to handle yourself,
+<ce>                       don't do anything stupid.
+<ce>                       Go to _house_ in __house_.
+<ce>                    You have =traveltime_ days or we
+<ce>                        send someone else out to
+<ce>                              do the job.
+
+QuestComplete:  [1004]
+<ce>                    So you exorcised the place, eh?
+<ce>                    This will look good for you when
+<ce>                   I speak with the temple hierarchs.
+
+RumorsDuringQuest:  [1005]
+_house_ is haunted by many powerful, evil spirits, they say.
+
+RumorsPostfailure:  [1006]
+_house_ is still haunted, despite the attempts of ==qgiver_.
+
+RumorsPostsuccess:  [1007]
+At last, _house_ has only good, household spirits within.
+
+QuestorPostsuccess:  [1008]
+Oh, hullo, my friend, the exorcist. How may I help thee?
+
+QuestorPostfailure:  [1009]
+I gave thee a chance before, and it was a waste of breath.
+<--->
+Do you think that I forgot _house_ already, %pct?
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of __qgiver_,
+ in ___qgiver_ has given
+ me the chance to rid _house_
+ in __house_ of an
+ undead haunting. I have =traveltime_
+ days to do the job.
+
+Message:  1011
+<ce>                      In life I built this house.
+<ce>                     What right do the living have
+<ce>                    to interrupt my deathly dreams?
+
+Message:  1012
+<ce>                    Well, at least you tried. I'll
+<ce>                     not speak ill of you, but that
+<ce>                      is all I can promise, %pcn.
+
+Message:  1080
+<ce>                      In addition, here is a map
+<ce>                           to ___newdung_, an
+<ce>                    unclean pit of a place if there
+<ce>                     ever was one.  Do %reg a favor
+<ce>                       and exterminate the vermin
+<ce>                             infesting it.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcn occurs 3 times.
+--              %pct occurs 25 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--         ==qgiver_ occurs 1 time.
+--      =traveltime_ occurs 4 times.
+--       ___newdung_ occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--          __house_ occurs 3 times.
+--         __qgiver_ occurs 4 times.
+--           _house_ occurs 10 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+Item boobyprize gold range 2 to 2
+
+Person _qgiver_ group Questor
+
+Place _house_ remote house2
+Place _newdung_ remote dungeon
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _ghost_ is Ghost
+Foe _skeleton_ is Skeletal_warrior
+Foe _wraith_ is Wraith
+Foe _zombie_ is Zombie
+
+--	Quest start-up:
+	start timer _traveltime_ 
+	log 1010 step 0 
+	pick one of _map_ _nomap_ _nomap_ 
+	pick one of _S.02_ _S.03_ _S.04_ _S.05_ 
+	pc at _house_ set _S.08_ 
+	create npc at _house_ 
+
+_traveltime_ task:
+	end quest 
+
+_questdone_ task:
+	clicked npc _qgiver_ 
+
+_success_ task:
+	when _questdone_ and _S.06_ 
+	give pc nothing 
+	end quest 
+
+_S.02_ task:
+	place foe _ghost_ at _house_ 
+
+_S.03_ task:
+	place foe _skeleton_ at _house_ 
+
+_S.04_ task:
+	place foe _wraith_ at _house_ 
+
+_S.05_ task:
+	place foe _zombie_ at _house_ 
+
+_S.06_ task:
+	killed 1 _ghost_ 
+	killed 1 _skeleton_ 
+	killed 1 _wraith_ 
+	killed 1 _zombie_ 
+
+_S.07_ task:
+	injured _wraith_ saying 1011 
+	injured _zombie_ saying 1011 
+	injured _ghost_ saying 1011 
+	injured _skeleton_ saying 1011 
+
+_S.08_ task:
+               start task _try_
+
+variable _try_
+_S.09_ task:
+	when _try_ and _questdone_ and not _S.06_ 
+	say 1012 
+	end quest 
+
+_clearclick_ task:
+	when _questdone_ and not _S.06_ 
+	clear _questdone_ _clearclick_ 
+
+variable _map_
+variable _nomap_
+_S.13_ task:
+	when _map_ and _questdone_ 
+    say 1080 
+	reveal _newdung_ readmap

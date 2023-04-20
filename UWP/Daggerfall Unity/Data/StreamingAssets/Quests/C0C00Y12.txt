@@ -1,0 +1,181 @@
+-- Quest: C:\QUESTS\WORKING\C0C00Y12.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: temple
+-- Repute: 0
+-- QuestId: 12
+Messages: 21
+Quest: C0C00Y12
+DisplayName: The Stolen Item
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       Normally I would not give
+<ce>                         work to someone not a
+<ce>                          member of __qgiver_.
+<ce>                      However, we are short handed
+<ce>                       right now. A brazen thief
+<ce>                          stole a _religitem_
+<ce>                       from the temple. A priest
+<ce>                    got a good look at the criminal.
+<ce>                    It was a common street thief, a
+<ce>                         =thief_ named _thief_
+<ce>                   who was in the temple on that day,
+<ce>                         pretending to worship.
+<ce>                  Track down this thief and return our
+<ce>                     stolen _religitem_, and I will
+<ce>                    speak well of you in the future.
+
+RefuseQuest:  [1001]
+<ce>                      I give you a chance and you
+<ce>                      spit in my face. Don't come
+<ce>                       looking to me for favors.
+
+AcceptQuest:  [1002]
+<ce>                        You need to get it back
+<ce>                       within =traveltime_ days.
+<ce>                       By then our knightly order
+<ce>                        will be able to dispatch
+<ce>                      a search party and you will
+<ce>                         have lost your chance.
+
+QuestComplete:  [1004]
+<ce>                       All praises to you, %pcn.
+<ce>                          The _religitem_ has
+<ce>                      been restored to the temple.
+<ce>                       You have earned the favor
+<ce>                                of %god.
+
+RumorsDuringQuest:  [1005]
+<ce>     _thief_ is holed up in _thiefplace_ in __thiefplace_.  A good
+<ce>                     place to hide from __qgiver_.
+
+RumorsPostfailure:  [1006]
+__qgiver_ will never get that _religitem_ back it seems.
+
+RumorsPostsuccess:  [1007]
+_thief_ was brought to justice, and __qgiver_ got their _religitem_ back.
+
+QuestorPostsuccess:  [1008]
+Don't think that I forgot who brought us our _religitem_ already, %pcf.
+
+QuestorPostfailure:  [1009]
+Our _religitem_ is lost forever and you want to talk. Unbelievable.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_, of __qgiver_
+ in ___qgiver_, has given me
+ the chance to find the _religitem_
+ which had been stolen by a
+ =thief_ named _thief_.
+ I have =traveltime_ days to get it back.
+
+Message:  1011
+<ce>                       %oth!  The temple hired a
+<ce>                       bounty hunter just to get
+<ce>                   back their worthless _religitem_?
+<ce>                       %oth, it sure ain't worth
+<ce>                      dying over.  Here, take it.
+<ce>                      Now, we'll see if you think
+<ce>                        it's worth dying over...
+<ce>                       Help!!  This %ra is making
+<ce>                           off with our loot!
+
+Message:  1012
+<ce>                      Intruder! Raise the alarm!
+<ce>                      There is an intruder in the
+<ce>                               building!
+
+Message:  1013
+<ce>      _thief_... The name sounds familiar, but I can't place it.
+<ce>     I'm thinking maybe someone I ran into in __thiefplace_?  Sorry
+<ce>                        I can't be more helpful.
+                                     <--->
+<ce>          A =decoy_?  Sure, I know %g2.  Lives in ___decoy_.
+                                     <--->
+<ce>   If you're talking about a =thief_, %g sounds like a little weasel
+<ce>          from __thiefplace_ who tried to pick my pocket once.
+
+Message:  1014
+<ce>  Sure, I know that squirrelly little sneak.  Check out _thiefplace_
+ in __thiefplace_.
+<ce>                                   
+<ce> _thief_?  Yeah, %g's "laying low" over at _thiefplace_ in __thiefplace_.
+<ce> Not keeping too low a profile though, since you and I know where %g is!
+
+Message:  1020
+<ce>                  _thief_ tosses you the _religitem_,
+<ce>                    then vanishes into the shadows.
+<ce>                        Now to make your escape!
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 9 times.
+--               %g2 occurs 2 times.
+--              %god occurs 2 times.
+--              %oth occurs 2 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--           =decoy_ occurs 2 times.
+--           =thief_ occurs 3 times.
+--      =traveltime_ occurs 3 times.
+--         ___decoy_ occurs 2 times.
+--        ___qgiver_ occurs 7 times.
+--     __thiefplace_ occurs 11 times.
+--          _qgiver_ occurs 1 time.
+--       _religitem_ occurs 10 times.
+--           _thief_ occurs 7 times.
+--      _thiefplace_ occurs 5 times.
+
+QBN:
+Item _religitem_ religious
+
+Person _qgiver_ group Questor
+Person _thief_ face 229 faction The_Thieves_Guild male remote anyInfo 1014 rumors 1013
+Person _decoy_ face 92 group Local_3.1 male remote
+
+Place _thiefplace_ remote house2
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _burglar_ is Burglar
+Foe _rogue_ is Rogue
+
+--	Quest start-up:
+	dialog link for person _decoy_ 
+	start timer _traveltime_ 
+	log 1010 step 0 
+	pc at _thiefplace_ set _S.04_ 
+	place npc _thief_ at _thiefplace_ 
+
+_traveltime_ task:
+	make _religitem_ permanent 
+	end quest 
+
+_questdone_ task:
+	toting _religitem_ and _qgiver_ clicked 
+	give pc nothing 
+	end quest 
+
+_S.02_ task:
+	injured _rogue_ saying 1012 
+	injured _burglar_ saying 1012 
+
+_S.03_ task:
+	clicked npc _thief_ 
+	get item _religitem_ saying 1011
+	hide npc _thief_ 
+	say 1020
+--exchanged 1011 and 1020 for better dialogue
+
+variable _S.04_
+_S.05_ task:
+	when _S.04_ and _S.03_ 
+	create foe _rogue_ every 5 minutes 2 times with 80% success 
+	create foe _burglar_ every 5 minutes 2 times with 70% success 
+--drastically increased spawn chance, from 3 and 2%. Nearly impossible to see them otherwise. Also reduced spawn time from 50 to 5.

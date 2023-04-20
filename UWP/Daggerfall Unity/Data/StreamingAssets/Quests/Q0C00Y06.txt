@@ -1,0 +1,155 @@
+-- Quest: C:\QUESTS\WORKING\Q0C00Y06.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: witch
+-- Repute: 0
+-- QuestId: 6
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 21
+Quest: Q0C00Y06
+DisplayName: Problems with Vampires
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  We have a potential problem I fear.
+<ce>                 A vampire ancient hateful of witches
+<ce>                  hath moved into an abandoned castle
+<ce>                  in our territory. Obviously this is
+<ce>                   a situation we must remedy, doth
+<ce>                           thou agree, %pcf?
+
+RefuseQuest:  [1001]
+<ce>                    I can understand thy fear. Only
+<ce>                   the very able or the very foolish
+<ce>                    would agree to slay a vampiric
+<ce>                               ancient.
+
+AcceptQuest:  [1002]
+<ce>                   Wouldst thou? And yet, a vampiric
+<ce>                    ancient is no feeble adversary.
+<ce>                     Do not go into battle without
+<ce>                     preparation. This creature is
+<ce>                          called =vamprival_,
+<ce>                    and its new sanctuary is called
+<ce>                    ___mondung_. Thou wilt find it
+<ce>                           in ____mondung_.
+<ce>                     I will expect ye back here in
+<ce>                      =1stparton_ nights. Do not
+<ce>                       get thyself killed, %pcf.
+
+QuestFail:  [1003]
+<ce>                      Perhaps you were hoping for
+<ce>                            =vamprival_ to
+<ce>                       commit suicide? Unlikely.
+<ce>                       You must be the agent of
+<ce>                              %g3 death.
+
+QuestComplete:  [1004]
+<ce>                  We could almost hear the screams of
+<ce>                     that ancient from here, %pcf.
+<ce>                   Thou hast the witches' gratitude.
+
+RumorsDuringQuest:  [1005]
+There's been a lot of activity at ___mondung_, but it's been abandoned for years.
+<--->
+That =vamprival_ is an aristocrat. Says %g's cleaning up ___mondung_ and %reg.
+
+RumorsPostfailure:  [1006]
+=vamprival_ finally moved out of ___mondung_, I hear. No place for an aristocrat.
+<--->
+Now that =vamprival_ moved out of ___mondung_, %g's over at the palace a lot.
+
+RumorsPostsuccess:  [1007]
+It turns out that nice =vamprival_ was a vampire! I had no idea!
+<--->
+Thank %god that wonderful %ra mercenary killed the vampire in ___mondung_.
+
+QuestorPostsuccess:  [1008]
+We have not forgot =vamprival_, %pcf. What may we do for thee?
+
+QuestorPostfailure:  [1009]
+<ce>                        =vamprival_ still walks
+<ce>                  the night, feeding on our sisters.
+<ce>                    Thou should have said that thou
+<ce>                    could not defeat it. Go from us
+<ce>                   now. We would not speak further.
+
+Message:  1011
+_witch_ is a very nice and intelligent =witch_ at __witch_.
+<--->
+_witch_ is that nice =witch_ you'll find at __witch_, %di of here.
+
+Message:  1012
+_witch_ is a witch of ___witch_.
+<--->
+_witch_ is a ___witch_ witch, a =witch_.
+
+Message:  1015
+%qdt:
+ _witch_ of
+ ___witch_ has sent me to slay
+ a vampire ancient bent on the destruction
+ of the witches of %reg. I
+ have promised to have the undead creature
+ in ___mondung_ permanently dead in
+ =1stparton_ days and be back in ___witch_.
+
+Message:  1020
+<ce>                      You have slain =vamprival_.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 16 times.
+--                %g occurs 4 times.
+--               %g3 occurs 1 time.
+--              %god occurs 2 times.
+--              %pcf occurs 8 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--              %reg occurs 3 times.
+--       =1stparton_ occurs 2 times.
+--       =vamprival_ occurs 14 times.
+--           =witch_ occurs 7 times.
+--      ____mondung_ occurs 11 times.
+--         ___witch_ occurs 26 times.
+
+QBN:
+Item _reward_ magic_item
+
+Person _witch_ face 44 group Questor anyInfo 1011 rumors 1012
+
+Place _mondung_ remote dungeon8
+--removed extraneous underscore from __mondung_.
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _vamprival_ is Ancient_vampire
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1015 step 0 
+	place foe _vamprival_ at _mondung_ 
+
+falseAide0 task:
+	when _vampclicked_ and _S.01_ 
+	give pc _reward_ 
+	end quest 
+
+_S.01_ task:
+	killed 1 _vamprival_ 
+	say 1020 
+
+_vampclicked_ task:
+	clicked npc _witch_ 
+
+_clearclick_ task:
+	when _vampclicked_ and not _S.01_ 
+	say 1003
+	clear _vampclicked_ _clearclick_
+	--replaced "until _vampclicked_ performed" action with _clearclick_. this is more flexible, allowing 1003 message.
+
+_1stparton_ task:
+	end quest 

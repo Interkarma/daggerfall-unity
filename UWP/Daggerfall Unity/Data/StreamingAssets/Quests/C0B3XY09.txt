@@ -1,0 +1,181 @@
+-- Quest: C:\QUESTS\WORKING\C0B3XY09.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: temple
+-- Repute: 3X
+-- QuestId: 9
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 13
+Quest: C0B3XY09
+DisplayName: The Great Evil
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                           %pcn, my name is
+<ce>                          _qgiver_. %god has
+<ce>                        prophesied a great evil
+<ce>                        growing in the heart of
+<ce>                         a nearby dungeon. We
+<ce>                        need you to go destroy
+<ce>                         this thing. Will you
+<ce>                                do it?
+
+RefuseQuest:  [1001]
+<ce>                       I have no time to spare.
+<ce>                        I must find someone to
+<ce>                          take up this quest.
+
+AcceptQuest:  [1002]
+<ce>                      There is no time to waste.
+<ce>                      Travel to the ___dungeon_.
+<ce>                        There you will find the
+<ce>                        _evilfocus_. Destroy it
+<ce>                   within =traveltime_ days and all
+<ce>                         will be well again. A
+<ce>                        sign will appear in the
+<ce>                       temple when this is done.
+<ce>                        Return to me and I will
+<ce>                             pay you well.
+
+QuestComplete:  [1004]
+<ce>                          %pcn, you have the
+<ce>                       thanks of all our clergy.
+<ce>                             The evil has
+<ce>                         been destroyed. As I
+<ce>                     promised, here is _gold_ gold
+<ce>                        pieces for your reward.
+
+RumorsDuringQuest:  [1005]
+__qgiver_ are very interested in ___dungeon_ suddenly.
+
+RumorsPostfailure:  [1006]
+The Evil is still within ___dungeon_, but it's changed its form.
+
+RumorsPostsuccess:  [1007]
+__qgiver_ destroyed an Evil within ___dungeon_ few knew existed.
+
+QuestorPostsuccess:  [1008]
+You're the destroyer of The _evilfocus_, of course, I remember you.
+
+QuestorPostfailure:  [1009]
+The _evilfocus_ yet thrives. I have nothing for you but scorn.
+
+QuestLogEntry:  [1010]
+%qdt:
+ A member of __qgiver_
+ in ___qgiver_ named
+ _qgiver_ charged me
+ with the task of destroying
+ the evil _evilfocus_ in
+ the ___dungeon_. It
+ must be done within =traveltime_
+ days or the evil will be
+ unleashed upon an innocent
+ world. Or mostly innocent anyway.
+
+Message:  1011
+<ce>                   As you reach for the _evilfocus_
+<ce>                 it transforms into a beautiful woman.
+<ce>                                    
+<ce>                      "What a tasty young mortal!
+<ce>                       I see you came to destroy
+<ce>                        the _evilfocus_. I have
+<ce>                       a better idea. If I give
+<ce>                      you this magic _magicitem_,
+<ce>                       you go back to the temple
+<ce>                        and tell them that you
+<ce>                    couldn't find the _evilfocus_.
+<ce>                      They can hardly blame you,
+<ce>                        and you get to keep the
+<ce>                             _magicitem_."
+
+Message:  1012
+<ce>                        "Then die like the pious
+<ce>                            mortal you are!"
+
+Message:  1013
+<ce>  The curse is lifted. You should report to _qgiver_.
+
+Message:  1014
+<ce>  __qgiver_'s wrath will not
+<ce> be easily placated for this betrayal.
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 1 time.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--      =traveltime_ occurs 2 times.
+--       ___dungeon_ occurs 8 times.
+--        ___qgiver_ occurs 4 times.
+--       _evilfocus_ occurs 9 times.
+--            _gold_ occurs 1 time.
+--       _magicitem_ occurs 2 times.
+--          _qgiver_ occurs 2 times.
+
+QBN:
+Item _evilfocus_ religious
+Item _gold_ gold
+Item _magicitem_ magic_item
+
+Person _qgiver_ group Questor
+
+Place _dungeon_ remote dungeon
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _guardian_ is Daedra_seducer
+Foe _spiders_ is 6 Spider
+Foe _F.02_ is Gargoyle
+Foe _F.03_ is Harpy
+Foe _lesserdaedra_ is Daedroth
+
+--	Quest start-up:
+	place item _evilfocus_ at _dungeon_ 
+	start timer _traveltime_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+
+_traveltime_ task:
+	end quest 
+
+_S.01_ task:
+	clicked item _evilfocus_ 
+	place foe _guardian_ at _dungeon_ 
+	prompt 1011 yes _yes_ no _no_ 
+	take _evilfocus_ from pc
+
+_yes_ task:
+	remove foe _guardian_
+--better to just remove the daedra and avoid confusion
+	get item _magicitem_ 
+	make _magicitem_ permanent 
+	change repute with _qgiver_ by -10 
+	say 1014
+	end quest 
+
+_no_ task:
+	create foe _F.02_ every 5 minutes 1 times with 100% success 
+	create foe _spiders_ every 9 minutes 1 times with 100% success 
+	create foe _lesserdaedra_ every 7 minutes 1 times with 100% success 
+	create foe _F.03_ every 3 minutes 1 times with 100% success 
+	say 1012 
+
+_S.04_ task:
+	killed 1 _guardian_ 
+	say 1013
+--added a victory message. original quest was confusing up to this point.
+
+_questdone_ task:
+	clicked npc _qgiver_ 
+
+_success_ task:
+	when _questdone_ and _S.04_
+	give pc _gold_ 
+	end quest 
+
+_clearclick_ task:
+	when _questdone_ and not _S.04_ 
+	clear _questdone_ _clearclick_
+--permits repeated clearclick
