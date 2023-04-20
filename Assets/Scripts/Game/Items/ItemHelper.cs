@@ -263,12 +263,13 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public string ResolveItemName(DaggerfallUnityItem item)
         {
-            // Get item template
+            // Get item template and localized template name
             ItemTemplate template = item.ItemTemplate;
+            string templateName = TextManager.Instance.GetLocalizedItemName(template.index, template.name);
 
             // Return just the template name if item is unidentified.
             if (!item.IsIdentified)
-                return template.name;
+                return templateName;
 
             // Return the shortName if item is an artifact
             if (item.IsArtifact)
@@ -282,10 +283,10 @@ namespace DaggerfallWorkshop.Game.Items
             string result = item.shortName;
 
             // Resolve %it parameter
-            if (!string.IsNullOrEmpty(template.name))
-                result = result.Replace("%it", template.name);
+            if (!string.IsNullOrEmpty(templateName))
+                result = result.Replace("%it", templateName);
             else
-                Debug.LogErrorFormat("Item template index {0} has a null template.name", template.index);
+                Debug.LogErrorFormat("Item template index {0} has a null templateName", template.index);
 
             return result;
         }
