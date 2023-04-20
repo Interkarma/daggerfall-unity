@@ -1,6 +1,6 @@
 # What is Daggerfall Unity UWP
 
-> Daggerfall Unity UWP is a port of DaggerFall Unity for the Universal Windows Platform (UWP) targeting Xbox One & Series S|X Devices.
+> Daggerfall Unity UWP is a port of DaggerFall Unity for the Universal Windows Platform (UWP) targeting Windows, Xbox One & Series S|X Devices.
 
 # Requirements
 - A Windows PC or supported Xbox Console
