@@ -15,7 +15,7 @@ Check that you are building for Universal Windows Platform (UWP) and have the co
 ![BuildGuide](https://github.com/Misunderstood-Wookiee/daggerfall-unity-UWP/blob/bbba91d45bf56166e7ee33b8b4d0fe75129190b0/BuildGuide.jpg)
 
 
-###Note:
+### Note:
 You will find a folder called UWP, this is where the UWP build path should be set-to when prompted by Unity, when you open the whole project into Unity & build UWP make sure you set the Build path into the UWP folder if you plan on contributing to this repository.
 
 # An Open Platform
