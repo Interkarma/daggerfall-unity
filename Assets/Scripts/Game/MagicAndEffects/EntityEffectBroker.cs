@@ -126,7 +126,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Below is an example of how to register a fully custom effect and spell bundle
             // This call should remain commented out except for testing and example purposes
             // Mods would do this kind of work after capturing OnRegisterCustomEffects event
-            RegisterCustomEffectDemo();
+            //RegisterCustomEffectDemo();
 
             // Raise event for custom effects to register
             RaiseOnRegisterCustomEffectsEvent();
