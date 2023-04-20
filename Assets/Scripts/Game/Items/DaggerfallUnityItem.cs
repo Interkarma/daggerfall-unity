@@ -535,7 +535,7 @@ namespace DaggerfallWorkshop.Game.Items
             ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, groupIndex);
 
             // Assign new data
-            shortName = itemTemplate.name; // LOCALIZATION_TODO: Lookup item template name from localization
+            shortName = TextManager.Instance.GetLocalizedItemName(itemTemplate.index, itemTemplate.name);
             this.itemGroup = itemGroup;
             this.groupIndex = groupIndex;
             playerTextureArchive = itemTemplate.playerTextureArchive;

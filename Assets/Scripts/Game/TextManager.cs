@@ -457,6 +457,21 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Gets localized version of item template name from its ID.
+        /// Caller must provide a fallback template name.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Localized item template name or fallback name.</returns>
+        public string GetLocalizedItemName(int id, string fallback)
+        {
+            string name;
+            if (TryGetLocalizedText(TextCollections.TextItems, id.ToString(), out name))
+                return name;
+            else
+                return fallback;
+        }
+
+        /// <summary>
         /// Tries to gets text value from localization in TextProvider.
         /// Will use current locale if available in collection.
         /// </summary>
