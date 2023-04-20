@@ -1,1 +1,0 @@
-Extract quest packs to this folder before running the game.
