@@ -533,11 +533,13 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Gets an artifact sub type from an items' short name. (throws exception if no match)
+        /// Gets artifact sub type by converting short name to enum type.
+        /// Not compatible with localized artifact names.
+        /// Should only be used when importing classic saves or older save data where artifactIndexBitfield is not present.
         /// </summary>
-        /// <param name="itemShortName">Item short name</param>
-        /// <returns>Artifact sub type.</returns>
-        public static ArtifactsSubTypes GetArtifactSubType(string itemShortName)
+        /// <param name="itemShortName">Item short name.</param>
+        /// <returns>Artifact sub type or ArtifactsSubTypes.None.</returns>
+        public static ArtifactsSubTypes LegacyGetArtifactSubType(string itemShortName)
         {
             itemShortName = itemShortName.Replace("\'", "").Replace(' ', '_');
             foreach (var artifactName in Enum.GetNames(typeof(ArtifactsSubTypes)))
@@ -545,7 +547,25 @@ namespace DaggerfallWorkshop.Game.Items
                 if (itemShortName.Contains(artifactName))
                     return (ArtifactsSubTypes)Enum.Parse(typeof(ArtifactsSubTypes), artifactName);
             }
-            throw new KeyNotFoundException("No match found for: " + itemShortName);
+            return ArtifactsSubTypes.None;
+        }
+
+        /// <summary>
+        /// Gets artifact sub type using ArtifactIndexBitfield on item.
+        /// This method is compatible with localized artifact names.
+        /// Throws exception if not an artifact or item's ArtifactIndexBitfield not properly set.
+        /// </summary>
+        /// <param name="item">DaggerfalUnityItem.</param>
+        /// <returns>ArtifactsSubTypes.</returns>
+        public static ArtifactsSubTypes GetArtifactSubType(DaggerfallUnityItem item)
+        {
+            if (!item.IsArtifact)
+                throw new Exception("GetArtifactSubType() item is not an artifact.");
+
+            if ((item.ArtifactIndexBitfield & 1) == 0)
+                throw new Exception("GetArtifactSubType() item does not have an artifact index. Item most likely imported from old save data where item shortName was changed.");
+
+            return (ArtifactsSubTypes)(item.ArtifactIndexBitfield >> 1);
         }
 
         /// <summary>

@@ -299,6 +299,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public ItemRepairData_v1 repairData;
         public uint timeForItemToDisappear;
         public uint timeHealthLeechLastUsed;
+        public int artifactIndexBitfield;
     }
 
     [fsObject("v1")]

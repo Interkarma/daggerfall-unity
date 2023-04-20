@@ -256,7 +256,7 @@ namespace DaggerfallWorkshop.Game.Items
                 {
                     // Use appropriate artifact description message. (8700-8721)
                     try {
-                        ArtifactsSubTypes artifactType = ItemHelper.GetArtifactSubType(parent.shortName);
+                        ArtifactsSubTypes artifactType = ItemHelper.GetArtifactSubType(parent);
                         return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(8700 + (int)artifactType);
                     } catch (KeyNotFoundException e) {
                         Debug.Log(e.Message);
