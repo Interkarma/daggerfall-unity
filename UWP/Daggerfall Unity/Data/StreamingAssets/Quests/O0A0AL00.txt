@@ -1,0 +1,226 @@
+-- Quest: C:\QUESTS\WORKING\O0A0AL00.Qbn.
+-- StartsBy: letter
+-- Questee: initiate
+-- Questor: thief
+-- Repute: 0
+-- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 31
+Quest: O0A0AL00
+DisplayName: The Qualifying Examination
+-- Message panels
+QRC:
+
+QuestComplete:  [1004]
+<ce>                Another initiate. Sometimes I wonder if
+<ce>              the guild can hold them all. Ah, I see they
+<ce>               sent you after a mage's _clothing_. It's a
+<ce>                 popular choice of late. You are now a
+<ce>               member of the Thieves Guild. Whenever you
+<ce>              enter a town, you will know if there are any
+<ce>               guild buildings there. Unfortunately guild
+<ce>                  rules say I have to pay you for this
+<ce>               worthless piece of trash because you stole
+<ce>                    it in the service of the guild.
+<ce>                          Here's a gold piece.
+<ce>                                    
+<ce>                                    
+<ce>              Oh, I almost forgot. You are also entitled
+<ce>             to a dungeon map. Here, let me show you where
+<ce>                        ___dungeon_ is on yours.
+
+
+RumorsDuringQuest:  [1005]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has its good points and bad ones.
+
+RumorsPostfailure:  [1006]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has it good points and bad ones.
+
+RumorsPostsuccess:  [1007]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has its good points and bad ones.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I was handed a note by a beggar.
+ The Thieves Guild has targeted me for 'unapproved'
+ criminal activity. I must either join them or become
+ their enemy.
+
+Message:  1020
+<ce>                      A one-eyed beggar hands you
+<ce>                       a letter. "A woman in gray
+<ce>                     paid me to give this to you."
+<ce>                                he says.
+
+Message:  1018
+<ce>                     As you pick up the _clothing_
+<ce>                      you hear the soft rustle of
+<ce>                        paper. A note is tucked
+<ce>                         inside the _clothing_.
+
+Message:  1019
+<ce>                             _thiefmember_
+<ce>                            ___endbuilding_
+
+Message:  1024
+%pcn,
+    You are a thief. Do not
+ try to deny it, you have
+ been seen in the act. There
+ is honor among thieves.
+ Either join the guild or
+ face the consequences. Steal
+ the _clothing_ from
+ _mansion_
+ in ___mansion_
+ if you desire to join us.
+ You have =traveltime_ days.
+
+Message:  1030
+<ce>                  Thief! I'll teach you to steal from
+<ce>                   a wizard. It will be a lesson you
+<ce>                           won't soon forget!
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 3 times.
+--              %jok occurs 9 times.
+--              %oth occurs 15 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--              %reg occurs 4 times.
+--      =traveltime_ occurs 2 times.
+--       ___dungeon_ occurs 1 time.
+--   ___endbuilding occurs 1 time.
+--        __mansion_ occurs 1 time.
+--        _clothing_ occurs 5 times.
+--         _mansion_ occurs 1 time.
+--     _thiefmember_ occurs 1 time.
+
+QBN:
+Item _clothing_ womens_clothing
+Item _letter_ letter used 1024
+Item _note_ letter used 1019
+Item _gold_ gold range 1 to 1
+
+Person _thiefmember_ face 88 faction The_Thieves_Guild remote
+Person _npc_ face 218 group Group_6.0 female remote
+
+Place _mansion_ remote house1
+Place _dungeon_ remote dungeon
+-- Added to allow joining while quest system is still being finished:
+Place _endbuilding_ remote random
+
+Clock _traveltime_ 90.00:01 0 flag 1 range 0 1
+
+Foe _F.00_ is Mage
+
+--	Quest start-up:
+	place item _clothing_ at _mansion_ 
+	_letter_ used do _readletter_ 
+	give pc _letter_ notify 1020 
+                place npc _thiefmember_ at _endbuilding_
+
+_traveltime_ task:
+	end quest 
+
+_questdone_ task:
+	toting _clothing_ and _thiefmember_ clicked 
+	give pc _gold_ 
+	reveal _dungeon_ readmap
+	end quest 
+
+_S.02_ task:
+	create foe _F.00_ every 3 minutes 3 times with 25% success 
+
+_S.03_ task:
+	clicked item _clothing_ say 1018 
+	get item _note_ 
+
+_readletter_ task:
+	pc at _mansion_ set _S.02_ 
+	start timer _traveltime_ 
+	log 1010 step 0 
+
+_S.05_ task:
+	injured _F.00_ 
+	say 1030 

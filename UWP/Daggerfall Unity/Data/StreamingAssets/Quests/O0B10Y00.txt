@@ -1,0 +1,199 @@
+-- Quest: C:\QUESTS\WORKING\O0B10Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 10
+-- QuestId: 0
+Messages: 21
+Quest: O0B10Y00
+DisplayName: A Stolen Gem
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       Listen, %pcf, we got one
+<ce>                    of our family who's in trouble.
+<ce>                     You got a couple days to help
+<ce>                        out one of the family?
+
+RefuseQuest:  [1001]
+<ce>                      Alright then. Guess you're
+<ce>                      countin' on not bein' in a
+<ce>                        fix yourself some day.
+
+AcceptQuest:  [1002]
+<ce>                       Good %ra. One of our best
+<ce>                      catburglars in ___contact_
+<ce>                   is holed up in a rat-trap called
+<ce>                       __contact_. On %g3 person
+<ce>                     is a hot stone %g lifted from
+<ce>                   the palace. Now the word is that
+<ce>                    someone saw it on %g2, and the
+<ce>                   guards are casing the place. Out
+<ce>                      of respect for the owner of
+<ce>                      __contact_, they're waiting
+<ce>                    =1stparton_ days before moving
+<ce>                      in. Get over to __contact_
+<ce>                          and give _contact_
+<ce>                 this hunk of _metal_ in exchange for
+<ce>                  the _gems_, and then you bring the
+<ce>                     it back here. You understand?
+<ce>                  Good. Now, hurry, there ain't time.
+
+QuestFail:  [1003]
+<ce>                        Good to see you, %pcf,
+<ce>                     but you ain't supposed to be
+<ce>                     empty-handed. You're supposed
+<ce>                      to have a _gems_, remember?
+
+QuestComplete:  [1004]
+<ce>                      Good job, %pcf. I hear that
+<ce>                         _contact_ showed the
+<ce>               guards the piece of _metal_ they thought
+<ce>                   was a _gems_, and they bought %g2
+<ce>                  a drink as an apology. I tell you,
+<ce>                   ain't no life like the life of a
+<ce>                  scoundrel. Here's your share of the
+<ce>                  _gems_ -- _reward_ gold. You earned
+<ce>                               it, %pcf.
+
+RumorsDuringQuest:  [1005]
+Well, everyone knows that _contact_ stole that jewel. Why don't they get %g2?
+<--->
+There's a lot of poshes at __contact_. Guards aren't wanted in there.
+
+RumorsPostfailure:  [1006]
+The guards finally got _contact_. Guess %g couldn't hold 'em out forever.
+<--->
+Yeah, they found the %t's _gems_ and arrested that =contact_ alright.
+
+RumorsPostsuccess:  [1007]
+They had to let _contact_ go after all. Turns out %g was innocent.
+<--->
+Now how do you mistake _metal_ for a _gems_? They're both rocks, but come on!
+
+QuestorPostsuccess:  [1008]
+What is it, %pcf? Want that _gems_ back? I bet you do!
+
+QuestorPostfailure:  [1009]
+<ce>                      Don't you remember that you
+<ce>                 were s'posed to get that _gems_ from
+<ce>                      _contact_, and give %g2 the
+<ce>                       _metal_ I gave you? %oth!
+<ce>                   You'd think it was hard science.
+
+QuestLogEntry:  [1010]
+<ce>                   %oth, %pcf, you're a life saver.
+<ce>                    Turns out someone saw me with a
+<ce>                _gems_ and they figure it's the stolen
+<ce>                   gem. This hunk of _metal_ will be
+<ce>                  my ticket out of here. Remind me to
+<ce>                  buy you a drink sometime. Now hurry
+<ce>                         back to _questgiver_.
+<ce>                  They're gonna be real suspicious if
+<ce>                 you're not back in =1stparton_ days.
+
+Message:  1015
+%qdt:
+ _questgiver_ of
+ the Thieves Guild in ___questgiver_
+ has sent me to ___contact_
+ to a dive called __contact_.
+ I have a _metal_ I am
+ supposed to give _contact_
+ in exchange for the stolen rock %g
+ was seen with. I have =1stparton_
+ days to get this done.
+
+Message:  1020
+<ce>                      I have it on good authority
+<ce>                       that you have the _gems_
+<ce>                         that _contact_ stole.
+<ce>                       Hand it over and I'll let
+<ce>                           you go unharmed.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 4 times.
+--               %g2 occurs 6 times.
+--               %g3 occurs 1 time.
+--              %oth occurs 2 times.
+--              %pcf occurs 8 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--                %t occurs 2 times.
+--       =1stparton_ occurs 6 times.
+--         =contact_ occurs 4 times.
+--    ___questgiver_ occurs 1 time.
+--        __contact_ occurs 14 times.
+--            _gems_ occurs 14 times.
+--           _metal_ occurs 7 times.
+--      _questgiver_ occurs 2 times.
+--          _reward_ occurs 1 time.
+
+QBN:
+Item _reward_ gold
+Item _metal_ element
+Item _gems_ gem
+
+Person _questgiver_ face 72 group Questor
+Person _contact_ face 80 group Innkeeper remote
+
+
+Clock _1stparton_ 00:00 0 flag 18 range 1 4
+
+Foe _guards_ is Knight
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1015 step 0 
+	get item _metal_ 
+
+_qgclicked_ task:
+	toting _gems_ and _questgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_qgtalk_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgtalk_ and not _qgclicked_
+	say 1003
+	clear _clearclick_ _qgtalk_
+--added _qgtalk_ and _clearclick_
+
+_npcclicked_ task:
+	toting _metal_ and _contact_ clicked 
+	create foe _guards_ every 173 minutes 3 times with 25% success 
+	get item _gems_ 
+	say 1010 
+
+_1stparton_ task:
+	have _metal_ set _keptmetal_ 
+	have _gems_ set _keptgems_ 
+	end quest 
+--removed unnecessary delay
+
+_greklith_ task:
+	injured _guards_ 
+	prompt 1020 yes _S.05_ no _S.06_ 
+
+_S.05_ task:
+	take _gems_ from pc 
+	change repute with _questgiver_ by -40 
+	restrain foe _guards_ 
+	end quest 
+--removed unnecessary delay
+
+variable _S.06_
+_keptmetal_ task:
+	make _metal_ permanent 
+
+_keptgems_ task:
+	make _gems_ permanent 
+
+_S.09_ task:
+	when _npcclicked_ and _1stparton_ 
+	change repute with _questgiver_ by -20 

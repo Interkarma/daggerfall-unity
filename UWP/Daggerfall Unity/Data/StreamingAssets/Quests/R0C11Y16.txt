@@ -1,0 +1,185 @@
+-- Quest: C:\QUESTS\WORKING\R0C11Y16.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 11
+-- QuestId: 16
+Messages: 17
+Quest: R0C11Y16
+DisplayName: Espionage Equipment
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                If you have a couple days to spare and
+<ce>                wouldn't mind being _reward_ gold pieces
+<ce>                   richer, I have a mission requiring
+<ce>                        some speed and delicacy.
+
+RefuseQuest:  [1001]
+<ce>                     No? I wasn't expecting you to
+<ce>                   turn down _reward_ gold for a few
+<ce>                   days work. How many peasants would
+<ce>                   murder for that kind of money? Ah,
+<ce>                      well. Your life, I suppose.
+
+AcceptQuest:  [1002]
+<ce>                     Excellent, %pcf. Now, I have
+<ce>                       a spy, _npc1_ in ___npc1_
+<ce>                 who needs a telescope to continue %g3
+<ce>                  survelliance activities. I am given
+<ce>                  to understand %g has found something
+<ce>                   of interest to a mutual friend of
+<ce>                  ours, which needs to be delivered as
+<ce>                 well. So, here is the telescope. Take
+<ce>                           it to a =npc1_ in
+<ce>                       a place called __npc1_ in
+<ce>                        ___npc1_, and there you
+<ce>                  will get further instructions. Good
+<ce>                           luck to you, %pcf.
+
+QuestFail:  [1003]
+<ce>                  Hanging around here won't make you
+<ce>                          any wealthier, %pcf.
+
+QuestComplete:  [1004]
+<ce>                           You must be %pcn.
+<ce>                     _npc1_ told me to expect you.
+<ce>                          I am _npc2_. Let me
+<ce>                    have a look at that relic. Very
+<ce>                    interesting indeed. Well, here's
+<ce>                  your _reward_ gold pieces. You never
+<ce>                            saw me, got it?
+
+RumorsDuringQuest:  [1005]
+If _questgiver_ really has a spy network, it must be pretty well hidden.
+<--->
+It's said that _npc1_ is a spy, but %g never leaves __npc1_.
+
+RumorsPostfailure:  [1006]
+Turns out they caught _npc1_ and confiscated %g3 illgotten loot.
+<--->
+They say _npc1_ was a spy in the service of _questgiver_.
+
+RumorsPostsuccess:  [1007]
+I always get the feeling I'm being watched everywhere in ___npc1_.
+<--->
+I wonder if they'll ever find that relic that was lifted from the palace.
+
+QuestorPostsuccess:  [1008]
+Well, if it isn't my favorite spy. How goes it with you, young %pcf?
+<--->
+I understand that the enterprise went off without a hitch. Well done, %pcf.
+
+QuestorPostfailure:  [1009]
+<ce>                  That quest I sent you on was rather
+<ce>                 a failure, wasn't it? There isn't any
+<ce>                  pressing reason why I should talk to
+<ce>                         you at all, is there?
+
+QuestLogEntry:  [1010]
+<ce>                     Excellent timing, %pcf. Allow
+<ce>                   me to introduce myself. My name is
+<ce>                          _npc1_ and I believe
+<ce>                  that's my telescope you're carrying.
+<ce>                        _questgiver_, I believe,
+<ce>                   told you I would have a little job
+<ce>                    for you. Take this relic over to
+<ce>                         a =npc2_ in ___npc2_.
+<ce>                         The name's _npc2_ and
+<ce>                      you'll find %g2 at __npc2_.
+<ce>                Your gold will be waiting for you there
+<ce>                 as well. Be better be on your way; %g
+<ce>                 expects you there in =2ndparton_ days.
+
+Message:  1015
+%qdt:
+ A spy in the employ of
+ _questgiver_ of ___questgiver_
+ needs a telescope and I have been asked
+ to deliver it. I have =1stparton_ days
+ to get to _npc1_ in
+ ___npc1_ at a place called __npc1_.
+ Once there, I will be given further
+ instructions.
+
+Message:  1016
+%qdt:
+ I gave _npc1_ %g3
+ telescope and %g sent me on to someone named
+ _npc2_ of ___npc2_ with
+ a relic of some kind. I have =2ndparton_
+ days to get to _npc2_'s
+ place in ___npc2_, __npc2_.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 4 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 3 times.
+--              %pcf occurs 44 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 2 times.
+--       =1stparton_ occurs 2 times.
+--       =2ndparton_ occurs 7 times.
+--            =npc1_ occurs 1 time.
+--            =npc2_ occurs 1 time.
+--          ___npc1_ occurs 4 times.
+--          ___npc2_ occurs 5 times.
+--    ___questgiver_ occurs 1 time.
+--           __npc1_ occurs 3 times.
+--           __npc2_ occurs 4 times.
+--            _npc1_ occurs 8 times.
+--            _npc2_ occurs 4 times.
+--      _questgiver_ occurs 4 times.
+--          _reward_ occurs 3 times.
+
+QBN:
+Item _reward_ gold
+Item _item1_ telescope
+Item _item2_ Holy_relic
+
+Person _questgiver_ face 140 group Questor
+Person _npc1_ group Local_3.0 remote
+Person _npc2_ face 248 group Local_3.1 remote
+
+
+Clock _1stparton_ 00:00 0 flag 1 range 1 4
+Clock _2ndparton_ 00:00 0 flag 1 range 1 4
+
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1015 step 0 
+	get item _item1_ 
+	create npc _npc1_ 
+
+_pcgetsgold_ task:
+	toting _item2_ and _npc2_ clicked 
+	give pc _reward_ 
+	end quest 
+
+variable _pchasitem1_
+variable _pchasitem2_
+_S.03_ task:
+	toting _item1_ and _npc1_ clicked 
+	start timer _2ndparton_ 
+	log 1016 step 1 
+	get item _item2_ 
+	say 1010 
+	create npc _npc2_ 
+
+variable _S.04_
+_queston_ task:
+	when _1stparton_ and not _S.03_ 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+_1stparton_ task:
+	make _item1_ permanent 
+
+_2ndparton_ task:
+	make _item2_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 

@@ -1,0 +1,200 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 0
+Messages: 22
+Quest: R0C10Y00
+DisplayName: Jewel Smuggling
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>             If you are available for hire, I need someone
+<ce>            reliable to carry out a certain, covert mission.
+<ce>            It might be rather time-consuming, but I assure
+<ce>             you that you will be suitably compensated. Are
+<ce>                            you interested?
+
+RefuseQuest:  [1001]
+<ce>              Really? Too busy, perhaps. That is a shame.
+
+AcceptQuest:  [1002]
+<ce>            Very good. I'm giving you an emerald for you to
+<ce>                       give my contact, _npc1_ of
+<ce>                    ___npc1_.  %g will be waiting in
+<ce>                      __npc1_.  The item needs to
+<ce>               be there in =1stparton_ days. That's very
+<ce>                important. Once you've made it that far,
+<ce>                        _npc1_ will have further
+<ce>            instructions. I am counting on your discretion,
+<ce>                     %pcf, and you will be watched.
+<ce>                        Good luck and thank you.
+
+QuestFail:  [1003]
+<ce>           I don't believe we have anything else to discuss
+<ce>                               right now.
+                                     <--->
+<ce>                            Do I know you?
+
+QuestComplete:  [1004]
+<ce>                   Ah, good to see you %pcf. And the
+<ce>          _item2_ too. Excellent. And here is a _reward_ gold
+<ce>           reward for your effort and, I might add, for your
+<ce>              discretion. Your name will not be forgotten.
+
+RumorsDuringQuest:  [1005]
+<ce>       _questgiver_ is still in the smuggling business, I hear.
+                                     <--->
+<ce>      There's been an extraordinary increase in smuggling lately.
+
+RumorsPostfailure:  [1006]
+<ce>      I hear _questgiver_ is mad as hell at some %ra adventurer.
+
+RumorsPostsuccess:  [1007]
+<ce>     No one knows who the kingpin is behind the _item2_ smuggling.
+
+QuestorPostsuccess:  [1008]
+<ce>            Ah, my occasional smuggler. How may I help you?
+                                     <--->
+<ce>       Hello again. I'm afraid I have no more deliveries needed.
+
+QuestorPostfailure:  [1009]
+<ce>                Crawling back to apologize for failing
+<ce>                 that mission, eh? Well, it's too late.
+                                     <--->
+<ce>                       You're the %ra who failed
+<ce>                   that delivery mission, aren't you?
+<ce>                            Go to Oblivion.
+
+QuestLogEntry:  [1010]
+<ce>                Ah good. The last carrier _questgiver_
+<ce>           hired never found me and we had to hunt him down.
+<ce>             Most unpleasant.  Here's the _item2_. It goes
+<ce>                         to _npc2_, this =npc2_
+<ce>                         in ___npc2_. You need
+<ce>             to get it there in less than =2ndparton_ days.
+<ce>                            Good luck, %pcf.
+
+Message:  1011
+%qdt:
+ _questgiver_ of __questgiver_
+ in ___questgiver_ has sent me to
+ __npc1_ in ___npc1_
+ to deliver an emerald to _npc1_.
+ I have =1stparton_ days to accomplish this.
+ Once there, I may be given further instructions.
+
+Message:  1012
+%qdt:
+ _npc1_ sent me
+ on to ___npc2_ with a _item2_
+ to bring to _npc2_ in a place
+ called __npc2_. _npc1_
+ described _npc2_ as a
+ =npc2_. _npc2_ will
+ give me my reward if I make it to %g2
+ in =2ndparton_ days.
+
+Message:  1020
+<ce>                    The Thieves Guild has word that
+<ce>                     you are carrying a gemstone of
+<ce>                    considerable value. Hand it over
+<ce>                       and I'll let you off easy.
+
+Message:  1021
+<ce>                    Like taking coin from a child.
+<ce>                     Now, get out of my sight, you
+<ce>                          weak-kneed courier.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g2 occurs 13 times.
+--              %pcf occurs 5 times.
+--              %qdt occurs 2 times.
+--               %ra occurs 3 times.
+--       =1stparton_ occurs 2 times.
+--       =2ndparton_ occurs 6 times.
+--            =npc2_ occurs 2 times.
+--          ___npc1_ occurs 2 times.
+--          ___npc2_ occurs 2 times.
+--    ___questgiver_ occurs 1 time.
+--           __npc1_ occurs 2 times.
+--           __npc2_ occurs 1 time.
+--     __questgiver_ occurs 1 time.
+--           _item2_ occurs 7 times.
+--            _npc1_ occurs 5 times.
+--            _npc2_ occurs 4 times.
+--      _questgiver_ occurs 5 times.
+--          _reward_ occurs 1 time.
+
+QBN:
+Item _reward_ gold
+Item _item1_ emerald
+Item _item2_ drug
+
+Person _questgiver_ face 136 group Questor
+Person _npc1_ group Local_3.0 remote
+Person _npc2_ face 248 group Shopkeeper remote
+
+Clock _1stparton_ 00:00 0 flag 1 range 1 4
+Clock _2ndparton_ 00:00 0 flag 1 range 1 4
+
+Foe _thief_ is Thief
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1011 step 0 
+	get item _item1_ 
+	create npc _npc1_ 
+
+variable _pcgetsgold_
+variable _pchasitem1_
+variable _pchasitem2_
+_S.03_ task:
+	toting _item1_ and _npc1_ clicked 
+	start timer _2ndparton_ 
+	log 1012 step 1 
+	get item _item2_ 
+	say 1010 
+	create npc _npc2_ 
+
+until _S.03_ performed:
+	create foe _thief_ every 10 minutes 5 times with 50% success 
+
+_S.04_ task:
+	toting _item2_ and _npc2_ clicked 
+	give pc _reward_ 
+	end quest 
+--removed unnecessary delay
+
+_queston_ task:
+	when _1stparton_ and not _S.03_ 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+variable _1stparton_
+_2ndparton_ task:
+	change repute with _questgiver_ by -20 
+	end quest 
+
+_S.08_ task:
+	injured _thief_ 
+	prompt 1020 yes _yes_ no _no_ 
+
+_yes_ task:
+	have _item1_ set _S.11_ 
+
+variable _no_
+_S.11_ task:
+	give item _item1_ to _thief_ 
+	say 1021 
+	restrain foe _thief_ 
+
+_S.13_ task:
+	when _queston_ or _2ndparton_ 
+	make _item2_ permanent 
+	make _item1_ permanent 

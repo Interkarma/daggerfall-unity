@@ -1,0 +1,201 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y08.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 8
+Messages: 21
+Quest: R0C10Y08
+DisplayName: Theft from a Temple
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      If you could, %pcf, I am in
+<ce>              need of assistance from someone I know isn't
+<ce>              a complete buffoon. I sent another mercenary
+<ce>              out to deliver a small package to a temple,
+<ce>            nothing of great value, but damned if it wasn't
+<ce>               stolen. Well, at least this idiotic hired
+<ce>                hand paid attention to where the bandits
+<ce>                   went. Do you think you could help
+<ce>                     me out and get my parcel back?
+
+RefuseQuest:  [1001]
+<ce>                 %oth, I was afraid you were going to
+<ce>              say that. Ah well, I suppose that is better
+<ce>                      than saying yes and failing.
+
+AcceptQuest:  [1002]
+<ce>                      Thank you in advance, %pcf.
+<ce>              Now, the complications. The bandits sold the
+<ce>                    _item_ to a temple, _itemplace_
+<ce>                     in __itemplace_. It apparently
+<ce>               has some sort of religious significance to
+<ce>              them. In order to avoid embarassment, I need
+<ce>                   you to steal the _item_ out of the
+<ce>                  temple and get it to _transporter_.
+<ce>                  You'll find %g2 at _inn_ in __inn_.
+<ce>           The _item_ must be in the moronic _transporter_'s
+<ce>          hands within =1stparton_ days; and you must be back
+<ce>            here from __inn_ in =2ndparton_ days after that,
+<ce>          understand?  Not a lot of time. I'm counting on you,
+<ce>                     %pcf. Good luck and farewell.
+
+QuestFail:  [1003]
+<ce>              Yes? You didn't expect a reward before you
+<ce>                 actually did anything, did you, %pcf?
+
+QuestComplete:  [1004]
+<ce>                   %oth, welcome back, %pcf. I don't
+<ce>             know why I hired that mental deficient in the
+<ce>              first place. Well, here's your _reward_ gold
+<ce>                   pieces. You certainly deserve it.
+
+RumorsDuringQuest:  [1005]
+_itemplace_ is tightening up their security for some reason.
+<--->
+For some reason, _itemplace_ is more worried about thieves than usual.
+
+RumorsPostfailure:  [1006]
+_itemplace_ recovered some kind of _item_ that was stolen.
+<--->
+_itemplace_ recovered their stolen _item_ and moved it to a safer place.
+
+RumorsPostsuccess:  [1007]
+Some kind of valuable _item_ was stolen from _itemplace_.
+<--->
+It's getting so even temples are having break-ins. Shocking.
+
+QuestorPostsuccess:  [1008]
+Fearfully good to see you again. How may I help you?
+<--->
+You're the %ra who helped me with that unpleasantness with the temple, yes?
+
+QuestorPostfailure:  [1009]
+<ce>                        %oth, it's you. Come to
+<ce>                  apologize for your sloppy questing,
+<ce>                     I suppose. Well, don't bother.
+<ce>                          I haven't the time.
+
+QuestLogEntry:  [1010]
+<ce>                     Thank %god you arrived, %pcf.
+<ce>                   Listen, hurry back to _questgiver_
+<ce>                 -- %g will pretend to forget you ever
+<ce>                 existed and you won't get a copper if
+<ce>                  you're not back in =2ndparton_ days.
+<ce>                      Believe me, I know %g3 ways.
+
+Message:  1011
+<ce>           _transporter_ is a nervous-looking =transporter_
+<ce>                   with connections to _questgiver_.
+                                     <--->
+A =transporter_ -- %g's %di of here at __transporter_.
+
+Message:  1012
+<ce>                        You pick up the _item_.
+<ce>                    Now to get it to _transporter_.
+
+Message:  1015
+%qdt:
+_questgiver_
+ has sent me to _itemplace_
+ in __itemplace_ to steal
+ a certain _item_, then deliver it to
+ _transporter_ in __inn_
+ at a place called _inn_.
+ I have =1stparton_ days to make the delivery.
+ Finally, I have to return for my reward.
+ I have =2ndparton_ days to travel from
+ __inn_ to __questgiver_,
+ _questgiver_'s home in ___questgiver_.
+
+Message:  1020
+<ce>           Stop thief!  Vile desecrator of our holy _item_!
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 1 time.
+--                %g occurs 2 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 2 times.
+--              %god occurs 1 time.
+--              %oth occurs 3 times.
+--              %pcf occurs 7 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--       =2ndparton_ occurs 3 times.
+--     =transporter_ occurs 2 times.
+--    ___questgiver_ occurs 2 times.
+--            __inn_ occurs 4 times.
+--      __itemplace_ occurs 2 times.
+--     __questgiver_ occurs 11 times.
+--             _inn_ occurs 2 times.
+--            _item_ occurs 11 times.
+--       _itemplace_ occurs 7 times.
+--      _questgiver_ occurs 5 times.
+--          _reward_ occurs 1 time.
+--     _transporter_ occurs 6 times.
+
+QBN:
+Item _reward_ gold
+Item _item_ religious
+
+Person _questgiver_ face 112 group Questor
+Person _transporter_ face 1 group Local_3.0 remote anyInfo 1011
+Person _dummypriest_ factiontype Temple remote
+
+Place _itemplace_ remote temple
+Place _inn_ remote tavern
+
+Clock _1stparton_ 00:00 0 flag 1 range 0 5
+Clock _2ndparton_ 00:00 0 flag 1 range 2 3
+
+Foe _F.00_ is Monk
+
+--	Quest start-up:
+	place item _item_ at _itemplace_ 
+	start timer _1stparton_ 
+	reveal _inn_ 
+	log 1015 step 0 
+	place npc _transporter_ at _inn_ 
+
+_pcgetsgold_ task:
+	when _S.05_ and _qgclicked_ 
+	give pc _reward_ 
+	end quest 
+
+_pchasitem_ task:
+	clicked item _item_ 
+	pc at _itemplace_ set _S.09_ 
+	say 1012 
+	change repute with _dummypriest_ by -10 
+
+_queston_ task:
+	when _2ndparton_ 
+	when _1stparton_ and not _S.05_ 
+	make _item_ permanent 
+	end quest 
+
+variable _npcclicked_
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_S.05_ task:
+	toting _item_ and _transporter_ clicked 
+	start timer _2ndparton_ 
+	say 1010 
+
+variable _1stparton_
+variable _2ndparton_
+_clearclick_ task:
+	when _qgclicked_ and not _S.05_ 
+	clear _qgclicked_ _clearclick_ 
+
+_S.09_ task:
+	create foe _F.00_ every 3 minutes 4 times with 50% success 
+
+totemLetter5 task:
+	injured _F.00_ saying 1020 

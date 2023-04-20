@@ -1,0 +1,118 @@
+-- Quest: C:\QUESTS\WORKING\M0C00Y11.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: fighter
+-- Repute: 0
+-- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: M0C00Y11
+DisplayName: Hunt for a Giant Scorpion
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       You can call me _qgiver_.
+<ce>             Normally we only give jobs to guild members.
+<ce>              But you show promise %pcn. I tell ya what.
+<ce>                 I got a request to dispose of a giant
+<ce>              scorpion. Do that and I'll see if the guild
+<ce>            will overlook your reputation. Is that a deal?
+
+RefuseQuest:  [1001]
+<ce>                       I try to be nice and look
+<ce>                       what it gets me. Just get
+<ce>                              outta here.
+
+AcceptQuest:  [1002]
+<ce>                 You got guts %pcf, I'll give ya that.
+<ce>            Apparently this scorpion escaped from someone's
+<ce>             personal collection. Right now it's cornered in
+<ce>                   _house_. Kill the thing today and
+<ce>                        I'll speak well of you.
+
+QuestComplete:  [1004]
+<ce>              I guess you aren't the weak kneed jellyfish
+<ce>               everyone says you are. I'll make sure the
+<ce>                     right people hear about this.
+
+RumorsDuringQuest:  [1005]
+<ce>                Have you heard about the poor fool that
+<ce>               found a giant scorpion in his house? He's
+<ce>                       getting drunk right now.
+
+RumorsPostfailure:  [1006]
+<ce>               Some drunken fool stumbled into his house
+<ce>               and got killed by a giant scorpion. Seems
+<ce>               he thought the Fighter's Guild had taken
+<ce>                          care of the beast.
+
+RumorsPostsuccess:  [1007]
+<ce>                 The Fighter's Guild is a good bunch.
+<ce>                They killed a giant scorpion that found
+<ce>                     its way into someone's house.
+
+QuestorPostsuccess:  [1008]
+<ce>                  Good work with that giant scorpion.
+<ce>                At this rate you'll be admitted to the
+<ce>                           guild real soon.
+
+QuestorPostfailure:  [1009]
+<ce>                 All I asked was that you kill a giant
+<ce>                   scorpion. You are worthless %pcf.
+
+QuestLogEntry:  [1010]
+%qdt:
+ The Fighters Guild of ___qgiver_
+ has offered to let me to slay a
+ giant scorpion which has gotten into
+ _house_. It's got be done today.
+
+Message:  1011
+<ce>                        The _monster_ is dead.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 4 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--           _house_ occurs 2 times.
+--         _monster_ occurs 3 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+
+Person _qgiver_ group Questor
+
+Place _house_ local random
+
+Clock _2dung_ 1.00:00 0 flag 1 range 0 1
+
+Foe _monster_ is Giant_scorpion
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _house_ 
+	log 1010 step 0 
+	place foe _monster_ at _house_ 
+	create npc at _house_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _monster_ saying 1011 
+
+_S.02_ task:
+	when _qgclicked_ and _S.01_ 
+	give pc nothing 
+	end quest 
+
+_qgclicked_ task:
+               clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _clearclick_ 

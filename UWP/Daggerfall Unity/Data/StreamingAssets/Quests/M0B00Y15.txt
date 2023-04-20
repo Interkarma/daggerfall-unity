@@ -1,0 +1,151 @@
+-- Quest: C:\QUESTS\WORKING\M0B00Y15.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 0
+-- QuestId: 15
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 21
+Quest: M0B00Y15
+DisplayName: Hunt for Giant Rodents
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                            I am _qgiver_.
+<ce>                I have a relatively menial job, if you
+<ce>                are willing to take it. Actually, some
+<ce>                members prefer these jobs because they
+<ce>                pay just as well as the more difficult
+<ce>                ones. A house here in town has infested
+<ce>                by giant rodents. The wife claims they
+<ce>                 are rats, the husband claims they are
+<ce>                bats. Either way, they want them gone.
+<ce>                          Are you interested?
+
+RefuseQuest:  [1001]
+<ce>                  Obviously you have no love for the
+<ce>                 Fighter's Guild. I will make sure to
+<ce>                   tell them what you really think.
+
+AcceptQuest:  [1002]
+<ce>                    The bats have infested _house_.
+<ce>                 Go there and kill them all and you'll
+<ce>                 get your pay. I can only give you one
+<ce>                        day to finish this one.
+
+QuestComplete:  [1004]
+<ce>                    Killing bats, even giant ones,
+<ce>                    doesn't take much skill, but it
+<ce>                          pays the same, eh?
+
+RumorsDuringQuest:  [1005]
+<ce>                   Some idiot didn't repair his roof
+<ce>                   for a couple of months. Now she's
+<ce>                     got giant bats in her house.
+
+RumorsPostfailure:  [1006]
+<ce>                   Did you hear about the woman that
+<ce>                    had to abandon her home? It was
+<ce>                    overrun with giant bats and she
+<ce>                  didn't have enough gold to pay the
+<ce>                     Fighters Guild to kill them.
+
+RumorsPostsuccess:  [1007]
+<ce>                 I heard the Fighters Guild sent some
+<ce>                   %ra over to kill the bats in that
+<ce>                 woman's home. Cost her a bundle, but
+<ce>                 I suppose its better than abandoning
+<ce>                               her home.
+
+QuestorPostsuccess:  [1008]
+<ce>                  So you killed the giant bats. Don't
+<ce>                  get too full of yourself. They were
+<ce>                           only giant bats.
+
+QuestorPostfailure:  [1009]
+<ce>                 You couldn't even take care of giant
+<ce>                     bats. You are hopeless %pcn.
+
+QuestLogEntry:  [1010]
+%qdt:
+ The Fighters Guild of ___qgiver_
+ has asked me rid _house_
+ of the giant rats or bats that have
+ infested it. I have one day to get it done.
+
+Message:  1011
+<ce>  You faintly hear the sound of several rats' claws
+<ce>  scratching the ground. They seem to be drawing closer.
+
+Message:  1012
+<ce>  You faintly hear the sound of several bats chittering.
+<ce>  They seem to be drawing closer.
+
+Message:  1020
+<ce>                That's most of them. The Fighters Guild
+<ce>                     won't quibble over the rest.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--           _house_ occurs 2 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+Item _reward_ gold
+
+Person _qgiver_ group Questor
+
+Place _house_ local random
+
+Clock _2dung_ 1.00:00 0 flag 1 range 0 1
+
+Foe _monster_ is Giant_bat
+Foe _rats_ is Giant_rat
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _house_ 
+	log 1010 step 0 
+	pick one of _monster1_ _monster2_ 
+	create npc at _house_ 
+
+_2dung_ task:
+	end quest 
+
+_mondead_ task:
+	killed 4 _rats_ 
+	killed 4 _monster_ 
+	say 1020 
+
+_S.02_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	clear _qgclicked_ _clearclick_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_S.04_ task:
+	say 1011
+	create foe _rats_ every 2 minutes 7 times with 100% success 
+
+_monster1_ task:
+	pc at _house_ set _S.04_ 
+
+_monster2_ task:
+	pc at _house_ set _S.07_ 
+
+_S.07_ task:
+	say 1012
+	create foe _monster_ every 2 minutes 7 times with 100% success 
+--slowed enemy spawn due to feedback

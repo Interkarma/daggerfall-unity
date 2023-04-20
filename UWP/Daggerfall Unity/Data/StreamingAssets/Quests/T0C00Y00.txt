@@ -1,0 +1,175 @@
+-- Quest: C:\QUESTS\WORKING\T0C00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: Lady Azura
+-- Repute: 0
+-- QuestId: 0
+Messages: 31
+Quest: T0C00Y00
+DisplayName: Lady Azura's Quest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>              You dare summon forth Azura of the Crimson
+<ce>               Gate, pleading for power? I don't know if
+<ce>                you are worthy of such favor. In fact, I
+<ce>                doubt it very much. I suppose that if I
+<ce>               demanded that you murder a priest who has
+<ce>                been saying very, very rude things about
+<ce>                 me, you would refuse even that small,
+<ce>               simple request. Would you do that for me?
+
+RefuseQuest:  [1001]
+<ce>                No! You're supposed to say yes! You're
+<ce>                 supposed to say: Yes, beautiful Azura,
+<ce>                  I would gladly murder at the snap of
+<ce>                          your ivory fingers.
+<ce>                                 Boor!
+<ce>                                 Bigot!
+<ce>                               Barbarian!
+<ce>                        Now, I must go before I
+<ce>                    forget that I am a lady and say
+<ce>                     something that I'll regret ...
+
+AcceptQuest:  [1002]
+<ce>                 You would! Oh jolly good. Well, this
+<ce>                perfectly awful priest is also a Healer,
+<ce>                if that means anything. Isn't that just
+<ce>              typical?  As usual with these self-righteous
+<ce>                      types, =monster_ is secluded
+<ce>                       in ___mondung_, cleansing
+<ce>                or some such ridiculous thing.  Anyway,
+<ce>               why don't you hop on over there and stick
+<ce>                 a sword in %g2 or something. And then
+<ce>                      scurry over to ___qgfriend_
+<ce>                   and see my dear darling _qgfriend_
+<ce>                who will give you my Star. That's enough
+<ce>               power for anyone. I think =1stparton_ days
+<ce>                is time enough for this, don't you? Oh,
+<ce>                   good. Hurry along then, %pcf. And
+<ce>                     don't be a stranger. Say hi to
+<ce>                     _qgfriend_ for me. Okay, 'bye.
+
+QuestFail:  [1003]
+<ce>                              Hmm? What?
+<ce>                             Do I know you?
+
+QuestComplete:  [1004]
+<ce>                          Oh. Oh, %pcn! Have
+<ce>                  you been here long? I'm sorry, I was
+<ce>                  just day-dreaming about my mistress,
+<ce>                  the Lady Azura. That candle reminded
+<ce>                  me of the scintillation of her eyes,
+<ce>                 you see. How silly of me. Well, here's
+<ce>                  _artifact_. She doesn't give this to
+<ce>                  just anyone, but don't let it go to
+<ce>                     your bean. She was mine first.
+
+RumorsDuringQuest:  [1005]
+Did you hear =monster_'s speech about the sin of vanity when %g came to town?
+<--->
+If you talk to =monster_, you'll recognize how egotism is the worst of sins.
+
+RumorsPostfailure:  [1006]
+=monster_ has moved on, but %g3 message about the virtues of humility remain.
+<--->
+=monster_ has left %reg, still spreading %g3 messages about vanity, I hear.
+
+RumorsPostsuccess:  [1007]
+It's not a real tragedy about =monster_ -- I mean, %g was a real goody-goody.
+<--->
+<ce>I'm not glad =monster_'s dead, but %g3 message was ... well, rather extreme
+ don't you think?
+
+Message:  1011
+_qgfriend_ is that =qgfriend_ I saw daydreaming at __qgfriend_ to the %di.
+<--->
+_qgfriend_ is that sleepy-eyed =qgfriend_ in __qgfriend_, %di of here.
+
+Message:  1012
+_qgfriend_ is one of the Lady Azura's lovers and an agent of hers in %reg.
+<--->
+_qgfriend_ is a =qgfriend_ who Lady Azura has bewitched into a virtual slave.
+
+Message:  1013
+Azura is one of the Daedric Regents of Oblivion. Her sphere is vanity.
+<--->
+Lady Azura is the Daedra Prince of Vanity and Egotism.
+
+Message:  1014
+_artifact_ can transform living creatures into statues forever.
+
+Message:  1020
+%qdt:
+ I have an arrangement with one of the
+ Daedra Princes, Azura. If I will slay a
+ monk who lives in a deserted temple,
+ ___mondung_, and meet her contact,
+ _qgfriend_ of ___qgfriend_
+ within =1stparton_ days, I will be given
+ _artifact_.
+
+Message:  1030
+<ce>                     You have killed the _monster_
+<ce>                   =monster_, as you promised Azura.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 2 times.
+--                %g occurs 2 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 4 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--              %reg occurs 2 times.
+--       =1stparton_ occurs 2 times.
+--         =monster_ occurs 8 times.
+--        =qgfriend_ occurs 3 times.
+--       ___mondung_ occurs 2 times.
+--      ___qgfriend_ occurs 4 times.
+--        _artifact_ occurs 3 times.
+--         _monster_ occurs 1 time.
+--        _qgfriend_ occurs 7 times.
+
+QBN:
+Item _artifact_ artifact Azuras_Star anyInfo 1014
+
+Person _questgiver_ face 112 named Azura anyInfo 1013
+Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
+
+Place _mondung_ remote dungeon4
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+
+Foe _monster_ is Healer
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	place foe _monster_ at _mondung_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_pcgetsgold_ task:
+	when _npcclicked_ and _mondead_ 
+	give pc _artifact_ 
+	end quest 
+--removed unnecessary delay
+
+_mondead_ task:
+	killed 1 _monster_ 
+	say 1030 
+
+_npcclicked_ task:
+	clicked npc _qgfriend_ 
+
+_clearclick_ task:
+	when _npcclicked_ and not _mondead_ 
+	say 1003
+	clear _npcclicked_ _clearclick_ 

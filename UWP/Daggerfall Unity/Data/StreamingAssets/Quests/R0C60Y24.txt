@@ -1,0 +1,255 @@
+-- Quest: C:\QUESTS\WORKING\R0C60Y24.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 60
+-- QuestId: 24
+Messages: 41
+Quest: R0C60Y24
+DisplayName: Business with Vampires
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  %pcf, always a pleasure to see you,
+<ce>             my dear friend, especially when I need help.
+<ce>                    I need to get this _item_ to my
+<ce>                   contact in ___contact_, but I've
+<ce>             received word that a vampiric tribe does not
+<ce>              want my courier to get through. You're the
+<ce>               only person I can think of who might get
+<ce>                       it through. Will you try?
+
+RefuseQuest:  [1001]
+<ce>              Really? Too busy, perhaps. That is a shame.
+
+AcceptQuest:  [1002]
+<ce>                   Ah, marvelous. Here's the _item_.
+<ce>                    Now, _contact_ needs to have it
+<ce>                   in __contact_ in =queston_ days.
+<ce>                   Look for a =contact_.  You can't
+<ce>            miss %g2.  And don't get yourself killed in the
+<ce>                   process. Good luck and thank you.
+
+QuestFail:  [1003]
+<ce>                 %pcf, you are wasting precious time.
+<ce>                    Get on the road to ___contact_
+<ce>                             immediately.
+
+QuestComplete:  [1004]
+<ce>                   Ah, good to see you %pcf. And the
+<ce>              _item_ too. Excellent. Those nightstalkers
+<ce>            were wise to try to keep this out of my hands.
+<ce>                Here's a little gold for your trouble.
+<ce>                        Take care of yourself.
+
+RumorsDuringQuest:  [1005]
+They're doing some research into some vampiric matters in __contact_, I hear.
+<--->
+_contact_, one of the greatest of the vampire hunters, has joined __contact_.
+
+RumorsPostfailure:  [1006]
+Someone found a very lovely _item_ around here recently.
+<--->
+I hear _questgiver_ is mad as hell at some %ra adventurer.
+
+RumorsPostsuccess:  [1007]
+It seems safer to walk the streets in %reg I've noticed.
+<--->
+Sure vampire attacks are becoming rarer. But it's not time to get cocky yet.
+
+QuestorPostsuccess:  [1008]
+I guess the bloodsuckers learned their lesson, eh, %pcf? What can I do for you?
+<--->
+I understand that the delivery went through. Of course, no surprise to me.
+
+QuestorPostfailure:  [1009]
+<ce>                  The vampires proved too much, %pcf?
+<ce>              Don't feel bad -- they are a powerful lot.
+<ce>                   Now is not a good time to speak.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _questgiver_ wants
+ me to deliver a particular _item_ to
+ %g3 contact in ___contact_, a shaman
+ named _contact_ at __contact_.
+ The local vampires apparently do not want
+ me to complete the delivery, but I need to
+ get the _item_ to ___contact_ within =queston_
+ days or my reward is forfeit.
+
+Message:  1011
+<ce>                   So, you must be the doughty %pcn.
+<ce>                  Welcome to my humble abode.  When I
+<ce>                  heard that =vampleader_'s attack on
+<ce>                  you failed, I wondered if you might
+<ce>                look me up.  Let me introduce myself --
+<ce>                I am _vampire_ of ==vampire_, the most
+<ce>                 ancient and respected of the vampire
+<ce>                   bloodlines.  Now, I realize that
+<ce>                 you have agreed to deliver a certain
+<ce>                 _item_ to that notorious executioner
+<ce>                   _contact_.  ==vampire_ would very
+<ce>                 much prefer if you made that delivery
+<ce>             to me instead.  Purely a semantic difference,
+<ce>               don't you agree?  Especially since we are
+<ce>               willing to pay you _vampreward_ gold plus
+<ce>                a magical _vampitem_ as a bonus.  What
+<ce>                do you say to that most generous offer?
+
+Message:  1012
+<ce>              Marvelous. The up and coming %ra adventurer
+<ce>            makes a wise change of allegiance. _questgiver_
+<ce>            won't be pleased, but %g had best learn to love
+<ce>           disappointment.  It has been a distinct pleasure
+<ce>           doing business with you.  Perhaps you and I will
+<ce>              meet again on a more...intimate...occasion.
+
+Message:  1013
+<ce>               Your loyalty to _questgiver_ is touching,
+<ce>                 but quite unfortunate for both of us.
+<ce>                You can let yourself out, %pcf.  Oh, by
+<ce>              the way, don't sleep too soundly at night.
+<ce>                 ==vampire_ always settle their debts.
+
+Message:  1015
+_contact_ has been leading the crusade to drive the vampires out of %reg.
+<--->
+<ce>Sometimes I wonder if all the people _contact_ has burned at the stake
+<ce> were really vampires.  It's hard to believe there are so many around.
+
+Message:  1030
+<ce>                  The parchment shows the location of
+<ce>              Kykos Coven in Dak'fron, whatever that is.
+<ce>                 You quickly mark it down on your map.
+
+Message:  1040
+=vampleader_,
+ 
+ That thrice-damned _questgiver_ has finally
+ acquired the _item_ %g has been looking for,
+ and is sending it over to _contact_.
+ You know as well as I that ==vampire_
+ cannot allow it to arrive.  _questgiver_
+ is expecting us to try to stop %g2, so %g is looking
+ for a %ra named %pcn to act as courier.
+ Do not underestimate this one -- %pcf has
+ quite a reputation.  Bring the _item_ to me at
+ once -- I will wait for you at _vamphouse_ in
+ __vamphouse_.
+ 
+                            Yours in death,
+ 
+                            _vampire_
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--               %g2 occurs 2 times.
+--               %g3 occurs 1 time.
+--              %pcf occurs 7 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 4 times.
+--              %reg occurs 2 times.
+--        ==vampire_ occurs 4 times.
+--         =contact_ occurs 1 time.
+--         =queston_ occurs 8 times.
+--      =vampleader_ occurs 2 times.
+--       ___contact_ occurs 15 times.
+--      __vamphouse_ occurs 1 time.
+--         _contact_ occurs 7 times.
+--            _item_ occurs 9 times.
+--      _questgiver_ occurs 7 times.
+--       _vamphouse_ occurs 3 times.
+--         _vampire_ occurs 4 times.
+--        _vampitem_ occurs 1 time.
+--      _vampreward_ occurs 1 time.
+
+QBN:
+Item _reward_ gold
+Item _item_ Holy_relic
+Item _map_ letter used 1030
+Item _note_ letter used 1040
+Item _vampreward_ gold
+Item _vampitem_ magic_item
+
+Person _questgiver_ group Questor
+Person _contact_ group Cleric remote anyInfo 1015 rumors 1015
+Person _vampire_ face 1 factiontype Vampire_Clan remote
+
+Place kykosCoven permanent KykosCoven
+Place _vamphouse_ remote house1
+
+Clock _queston_ 00:00 0 flag 1 range 1 4
+
+Foe _vampires_ is Vampire
+Foe _vampleader_ is Ancient_vampire
+
+--	Quest start-up:
+	dialog link for location _vamphouse_ person _vampire_ 
+	start timer _queston_ 
+	log 1010 step 0 
+	get item _item_ 
+	pick one of _yesmap_ _nomap_ _nomap_ _nomap_ 
+
+_queston_ task:
+	change repute with _questgiver_ by -20 
+	end quest 
+
+_npcclicked_ task:
+	toting _item_ and _contact_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_vampclicked_ task:
+	toting _item_ and _vampire_ clicked 
+	prompt 1011 yes _thankyou_ no _gimme_ 
+
+_thankyou_ task:
+	get item _vampreward_ 
+	get item _vampitem_ 
+	say 1012 
+	make _vampitem_ permanent 
+	make _vampreward_ permanent 
+	change repute with _vampire_ by +10 
+	end quest
+--eliminates long wait for quest to end. quest is impossible with this choice
+
+_gimme_ task:
+	get item _item_ 
+	say 1013 
+	change repute with _vampire_ by -5 
+
+_S.07_ task:
+	daily from 05:50 to 17:30 
+
+_S.08_ task:
+	injured _vampires_ 
+
+_readmap_ task:
+	reveal kykosCoven in province 11 at 484567 
+
+variable _yesmap_
+variable _nomap_
+_placemap_ task:
+	when _yesmap_ and _S.08_ 
+	_map_ used do _readmap_ 
+	give item _map_ to _vampires_ 
+
+_S.13_ task:
+	injured _vampleader_ 
+	_note_ used do _readnote_ 
+	give item _note_ to _vampleader_ 
+
+_readnote_ task:
+	add dialog for location _vamphouse_ 
+	create npc at _vamphouse_ 
+	place npc _vampire_ at _vamphouse_ 
+
+_conhouse_ task:
+	when not _S.07_ and not _thankyou_ 
+	create foe _vampires_ every 10 minutes 8 times with 25% success 
+	create foe _vampleader_ every 20 minutes 1 times with 100% success 

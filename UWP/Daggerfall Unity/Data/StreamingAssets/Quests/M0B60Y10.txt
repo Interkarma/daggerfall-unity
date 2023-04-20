@@ -1,0 +1,166 @@
+-- Quest: C:\QUESTS\WORKING\M0B60Y10.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 60
+-- QuestId: 10
+Messages: 81
+Quest: M0B60Y10
+DisplayName: Hunt for an Atronach
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                We have a new client who wants someone
+<ce>                to hunt down an atronach, an elemental
+<ce>              golem type critter. The pay is _gold_ gold.
+<ce>                          Are you interested?
+
+RefuseQuest:  [1001]
+<ce>                     You must prefer the low risk
+<ce>                       jobs, like hunting rats.
+
+AcceptQuest:  [1002]
+<ce>                  A young dandy what I have sworn to
+<ce>                   keep unnamed, was screwing around
+<ce>               with magic, illegally. Like a melonhead,
+<ce>                  he up and conjures an atronach. The
+<ce>                thing's gotta be destroyed before those
+<ce>                Mages Guild blokes find out. The thing
+<ce>                 fled into the depths of ___dungeon_.
+<ce>                      If you can do this quest in
+<ce>                    =2dung_ days, you'll get paid.
+
+QuestComplete:  [1004]
+<ce>                          Bang-up job, %pct.
+<ce>                    Those Mages Guild bananas ain't
+<ce>                   wise to our client's shenanigans.
+<ce>                     He'll be happy to pay up the
+<ce>                          _gold_ gold pieces.
+
+RumorsDuringQuest:  [1005]
+<ce>                The Viscount's son has not been himself
+<ce>                lately. That's what he gets for trying
+<ce>                to learn magic. Ought to stick to what
+<ce>                            he knows best.
+
+RumorsPostfailure:  [1006]
+<ce>                  The Mages Guild has requested that
+<ce>                         %t %rn give them the
+<ce>                  right to punish the Viscount's son.
+<ce>                   It seems he summoned an atronach
+<ce>                           which went rogue.
+
+RumorsPostsuccess:  [1007]
+<ce>                  The Viscount's son joined the Mages
+<ce>                 Guild recently. Wonder why he changed
+<ce>                         his mind about them?
+
+QuestorPostsuccess:  [1008]
+<ce>                       Atronachs zero, %pcf one.
+<ce>               You'll go far in the guild at this rate.
+
+QuestorPostfailure:  [1009]
+<ce>                  You shouldn't have taken the job to
+<ce>               kill the atronach if you couldn't handle
+<ce>     it. Now the Viscount's son faces charges of illegal sorcery.
+
+QuestLogEntry:  [1010]
+On %qdt,
+ The Fighters Guild of ___qgiver_
+ hired me to discreetly off an atronach
+ some non-guild mage summoned up.
+ It's holed up in __dungeon_.
+ I have =2dung_ days to finish the task.
+
+Message:  1011
+<ce>                         The atronach is dead.
+<ce>                       Hopefully the Mages Guild
+<ce>                       won't find out about it.
+
+Message:  1080
+<ce>                       And, since you was such a
+<ce>                     sport about it, here's a map
+<ce>                     to a place called ___newdung_
+<ce>                      that's supposed to be chock
+<ce>                     full o' loot.  Knock yerself
+<ce>                              out, %pcf.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 4 times.
+--              %pct occurs 1 time.
+--              %qdt occurs 1 time.
+--               %rn occurs 1 time.
+--                %t occurs 1 time.
+--           =2dung_ occurs 2 times.
+--       ___dungeon_ occurs 1 time.
+--       ___newdung_ occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--            _gold_ occurs 7 times.
+
+QBN:
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _dungeon_ remote dungeon
+Place _newdung_ remote dungeon
+
+Clock _2dung_ 00:00 0 flag 17 range 0 2
+
+Foe _fire_ is Fire_atronach
+Foe _flesh_ is Flesh_atronach
+Foe _iron_ is Iron_atronach
+Foe _ice_ is Ice_atronach
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	pick one of _map_ _nomap_ _nomap_ _nomap_ 
+	pick one of _S.04_ _S.05_ _S.06_ _S.07_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _ice_ saying 1011 
+	killed 1 _fire_ saying 1011 
+	killed 1 _flesh_ saying 1011 
+	killed 1 _iron_ saying 1011 
+
+_S.02_ task:
+	clicked npc _qgiver_ 
+
+_clearclick_ task:
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_ 
+
+_S.04_ task:
+	place foe _iron_ at _dungeon_ 
+
+_S.05_ task:
+	place foe _ice_ at _dungeon_ 
+
+_S.06_ task:
+	place foe _flesh_ at _dungeon_ 
+
+_S.07_ task:
+	place foe _fire_ at _dungeon_ 
+
+variable _map_
+variable _nomap_
+_S.10_ task:
+	when _map_ and _S.02_ 
+	reveal _newdung_ readmap
+    say 1080 
+
+_S.11_ task:
+	when _nomap_ and _S.02_ 
+
+_S.12_ task:
+	when _S.10_ or _S.11_ 
+	give pc _gold_
+	end quest 

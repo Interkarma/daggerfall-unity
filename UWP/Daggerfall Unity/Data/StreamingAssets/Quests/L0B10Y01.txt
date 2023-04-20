@@ -1,0 +1,145 @@
+-- Quest: C:\QUESTS\WORKING\L0B10Y01.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Brotherhood
+-- Repute: 10
+-- QuestId: 1
+Messages: 21
+Quest: L0B10Y01
+DisplayName: A Fateful Song
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                Here's a rather amusing accounting that
+<ce>               may appeal to your morbid sense of humor.
+<ce>                   Seems there's this untalented bard
+<ce>                   with a penchant for rude limericks
+<ce>                 about former patrons. As it turns out,
+<ce>                %g3 knowledge of genealogy was lacking,
+<ce>                 and %g sang a song about an incestuous
+<ce>                 duke to %g3 new patroness, the duke's
+<ce>                daughter. Interested in accounting this
+<ce>               uncouth artiste for _reward_ gold pieces?
+
+RefuseQuest:  [1001]
+<ce>                  Did I misunderstand you, or did you
+<ce>                  really say no? How do you expect to
+<ce>                    appreciate the rich tapestry of
+<ce>                    humanity if you don't have time
+<ce>                      to butcher a lousy musician?
+
+AcceptQuest:  [1002]
+<ce>                I thought it would appeal. Apparently,
+<ce>                   the bard is aware of our contract
+<ce>                 and is hiding in a dismal hole called
+<ce>                              ___mondung_.
+<ce>                     Shouldn't be more than a minor
+<ce>                   scuffle, but do not let down your
+<ce>                   guard. A desperate songster can be
+<ce>                  an unpredictable adversary. Be back
+<ce>                     in =1stparton_ days to collect
+<ce>                    your accounting fee. Good luck.
+
+QuestFail:  [1003]
+<ce>                     I'm willing to bet that bard
+<ce>                     is not launched into Oblivion
+<ce>                       yet. But you're here. That
+<ce>                    seems odd to me. Does it to you?
+
+QuestComplete:  [1004]
+<ce>                  Ah, did you stay to hear the final
+<ce>                note from that boorish instrumentalist?
+<ce>                Here's your cut for being the instrument
+<ce>                         of the bard's requiem:
+<ce>                      _reward_ gold pieces. Enjoy.
+
+RumorsDuringQuest:  [1005]
+I wonder whether that duke really did have incest with his daughter.
+<--->
+That poor _monster_ couldn't even carry a tune anyhow.
+
+RumorsPostfailure:  [1006]
+Well, =monster_ may have moved on but we'll always remember %g3 songs.
+<--->
+I hear that duchess is madder than a magister about the bard getting away.
+
+RumorsPostsuccess:  [1007]
+They say you can still hear =monster_'s mocking song in the breeze at night.
+<--->
+I, for one, am happy that =monster_'s dead; %g was an awful bore.
+
+QuestorPostsuccess:  [1008]
+Ah, hello, %pcf. 'Tis music to my eyes to see thee again.
+
+QuestorPostfailure:  [1009]
+<ce>                      How can I greet thee, %pcf?
+<ce>                You have failed to slay the bard. A very
+<ce>                   sour note on your record, indeed.
+
+QuestLogEntry:  [1010]
+<ce>                       You have slain =monster_.
+
+Message:  1020
+%qdt:
+ The Dark Brotherhood has sent me to assassinate
+ a bard by the name of =monster_ and be
+ back to _questgiver_ of ___questgiver_
+ in =1stparton_ days. This bard is apparently
+ in hiding in a dungeon
+ called ___mondung_.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 2 times.
+--               %g3 occurs 3 times.
+--              %pcf occurs 2 times.
+--              %qdt occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--         =monster_ occurs 7 times.
+--       ___mondung_ occurs 4 times.
+--    ___questgiver_ occurs 1 time.
+--         _monster_ occurs 1 time.
+--      _questgiver_ occurs 1 time.
+--          _reward_ occurs 3 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ face 112 group Questor
+
+Place _mondung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 18 range 0 2
+Clock _2ndparton_ 2.18:40 4.04:00 flag 2 range 0 0
+
+Foe _monster_ is Bard
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	place foe _monster_ at _mondung_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _S.02_ 
+	give pc _reward_ 
+	end quest 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_S.02_ task:
+	killed 1 _monster_ 
+	say 1010 
+
+variable _queston_
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_clearclick_ task:
+	when _qgclicked_ and not _S.02_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 

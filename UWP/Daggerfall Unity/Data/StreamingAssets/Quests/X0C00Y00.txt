@@ -1,0 +1,161 @@
+-- Quest: C:\QUESTS\WORKING\X0C00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: Hircine
+-- Repute: 0
+-- QuestId: 0
+Messages: 31
+Quest: X0C00Y00
+DisplayName: Hircine's Quest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  If you would not mind doing a small
+<ce>                    favor for me, I can put in your
+<ce>                  possession a most excellent reward,
+<ce>                      _artifact_. I have a child,
+<ce>                   apparently miserable with all the
+<ce>                    blessings I have given him, who
+<ce>                   needs ... what is the euphemism?
+<ce>                     To be taught a lesson? A very
+<ce>                    serious lesson. Does this sound
+<ce>                   like an agreeable contract, %pct?
+
+RefuseQuest:  [1001]
+<ce>                   I am gravely disappointed, %pct.
+                                     <--->
+<ce>                 Seldom am I summoned, even rarer are
+<ce>                    the occasions when I am free to
+<ce>                 answer a summoning. To be perfectly
+<ce>                  blunt, this was a waste of my very
+<ce>                            precious time.
+
+AcceptQuest:  [1002]
+<ce>                   Ah, good. This child of mine is a
+<ce>                  wereboar who has made his den in a
+<ce>                       place called ___mondung_.
+<ce>                You should have no trouble finding it.
+<ce>                   After you have put him out of his
+<ce>                 obvious misery, which should not take
+<ce>                  more than =1stparton_ days, go to a
+<ce>                place called __contact_ in ___contact_
+<ce>                and look for a person named _contact_.
+<ce>           If you arrive there within =1stparton_ days from
+<ce>                  now with the wereboar dead, %g will
+<ce>                         give you _artifact_.
+<ce>                  A pleasure doing business with you,
+<ce>                     %pct. Good luck and farewell.
+
+QuestFail:  [1003]
+<ce>                           Listen, %pcf, you
+<ce>                    and I both know that wereboar's
+<ce>                    still breathing. A contract is
+<ce>                              a contract.
+
+QuestComplete:  [1004]
+<ce>                       Hello, %pcf. You made it.
+<ce>                     Hircine's impressed with you,
+<ce>                   which is no small accomplishment.
+<ce>                         Here's _artifact_ you
+<ce>                       were promised. Take care.
+
+RumorsDuringQuest:  [1005]
+Real nasty squeals and grunts coming out of ___mondung_, %di of here.
+<--->
+I hear there's some kind of mad half-pig thing in ___mondung_ to the %di.
+
+RumorsPostfailure:  [1006]
+That pig-thing that was here ran up north, like there was something after it.
+<--->
+Wonder what would spook a wereboar, make it run away like it did.
+
+RumorsPostsuccess:  [1007]
+Real quiet around ___mondung_ lately.
+<--->
+Wonder what happened to that pig-thing that used to run around these parts.
+
+Message:  1011
+The least of the daedra princes. He is their Master of the Hunt.
+<--->
+Hircine is supposed to be the creator of all lycanthropes.
+
+Message:  1012
+Some weird-acting =contact_ in __contact_, %di of here.
+<--->
+A =contact_ by that name was in __contact_, %di of here, fairly recently.
+
+Message:  1013
+<ce>                 I have no idea what _artifact_ does.
+
+Message:  1020
+%qdt:
+ In return for _artifact_
+ I have been asked by the Daedra
+ Prince Hircine to slay a wereboar
+ in ___mondung_.
+ The wereboar must be dead in =1stparton_ days,
+ and I must be in __contact_ in ___contact_
+ in =1stparton_ days to meet with _contact_,
+ a =contact_, about _artifact_.
+
+Message:  1030
+<ce>                         The wereboar is dead,
+<ce>                        as you promised Daedra
+<ce>                            Prince Hircine.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 13 times.
+--                %g occurs 2 times.
+--              %pcf occurs 2 times.
+--              %pct occurs 5 times.
+--              %qdt occurs 1 time.
+--       =1stparton_ occurs 4 times.
+--         =contact_ occurs 7 times.
+--       ___mondung_ occurs 6 times.
+--        __contact_ occurs 5 times.
+--        _artifact_ occurs 9 times.
+--         _contact_ occurs 9 times.
+
+QBN:
+Item _artifact_ artifact Hircine_Ring anyInfo 1013
+
+Person _questgiver_ face 112 named Hircine anyInfo 1011
+Person _contact_ face 238 faction The_Cabal female remote
+
+Place _mondung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Wereboar
+
+--	Quest start-up:
+	start timer _1stparton_
+	reveal _mondung_
+	log 1020 step 0
+	place foe _monster_ at _mondung_
+
+_pcgetsgold_ task:
+	when _mondead_ and _qgclicked_
+	give pc _artifact_
+	end quest 
+--removed unnecessary delay
+
+_mondead_ task:
+	killed 1 _monster_
+	say 1030
+	create npc _contact_
+
+_qgclicked_ task:
+	clicked npc _contact_
+
+_1stparton_ task:
+	end quest
+
+variable _2ndparton_
+_clearclick_ task:
+	when not _mondead_ and _qgclicked_
+	say 1003
+	clear _qgclicked_ _clearclick_

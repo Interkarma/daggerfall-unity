@@ -1,0 +1,257 @@
+-- Quest: C:\QUESTS\WORKING\P0B10L08.Qbn.
+-- StartsBy: letter
+-- Questee: member
+-- Questor: vampire
+-- Repute: 10
+-- QuestId: 8
+Messages: 22
+Quest: P0B10L08
+DisplayName: A Test of Determination
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+Error: Questtext 1000 Called.
+
+RefuseQuest:  [1001]
+Error: Questtext 1001 Called.
+
+AcceptQuest:  [1002]
+Error: Questtext 1002 Called.
+
+QuestFail:  [1003]
+Error: Questtext 1003 Called.
+
+QuestComplete:  [1004]
+<ce>                         You have honored %vam
+<ce>                      this night, %pcf. ==daedra_
+<ce>                  has respect for us and for you that
+<ce>                no other vampire tribe has ever earned.
+<ce>                  Your bloodfather told me to give you
+<ce>                this _gem_ as a symbol of the permanence
+<ce>                         of your place in %vam.
+
+RumorsDuringQuest:  [1005]
+Strange things are afoot in ___mondung_. Even stranger than usual, I should say.
+
+RumorsPostfailure:  [1006]
+Things have quieted down around ___mondung_. But the daedra stars burn at night.
+
+RumorsPostsuccess:  [1007]
+___mondung_ has quieted. Even the daedra stars glowed softer last night.
+
+QuestorPostsuccess:  [1008]
+Error: Questtext 1008 Called.
+
+QuestorPostfailure:  [1009]
+Error: Questtext 1009 Called.
+
+QuestLogEntry:  [1010]
+                    __vamp_
+                     ___vamp_
+ 
+ 
+ Dear %pcn,
+ 
+      %vam have need
+ of you. Come immediately.
+ 
+ 
+ 
+                    Yours in Death,
+ 
+                    _vamp_
+
+Message:  1011
+<ce>                   Ah, %pcf, you received my letter.
+<ce>              The ancient of our tribe, your bloodfather,
+<ce>              has asked that you investigate a matter that
+<ce>               disturbs him greatly. Here is a copy of a
+<ce>               letter he found wrapped around a knife in
+<ce>                his sanctuary. Obviously whoever sent it
+<ce>                 is of no mean power and wants to test
+<ce>                      the strength of %vam. Go to
+<ce>               the dungeon mentioned in the letter, this
+<ce>                    ___mondung_, find this _daedra_
+<ce>                 who wrote the letter and show %g2 that
+<ce>                  %vam are no cluster of mollycoddles
+<ce>                to be idly threatened or ridiculed. The
+<ce>                      pride of %vam goes with you,
+<ce>                    %pcf. I will expect you back in
+<ce>                    =queston_ days with this matter
+<ce>                     settled. Do not fail us, %pcf.
+
+Message:  1012
+%qdt:
+ _vamp_ of ___vamp_
+ has given me a letter, written
+ by a _daedra_ of
+ ___mondung_, insulting
+ our tribe, %vam. I am
+ to go to ___mondung_ and
+ make this _daedra_ eat
+ %g3 words. I have =queston_ days to
+ do this and return to
+ __vamp_.
+
+Message:  1013
+Blood Sponge,
+ 
+      My coven tells me that your monsters,
+ your weird little pack of blood snorting
+ bugaboos, have a monopoly on the terror
+ business in %reg, and that my
+ own children are afraid to expand their
+ dominion because of the raw power of %vam.
+ The cowards have been appropriately punished
+ and now my coven moves forward.
+       If the complacent vultures who call
+ themselves %vam truly have an ounce
+ of the potency my coven once believed, answer
+ my challenge. Otherwise, be prepared for there
+ to be a little less room in %reg for %vam
+ and your petty criminalities.
+       I am _daedra_ of The Coven of
+ ==daedra_. Consider the gauntlet dropped.
+ I await your response in ___mondung_.
+
+Message:  1014
+%qdt:
+ I have received a letter from
+ _vamp_ of %vam, asking for my
+ immediate presence in a place
+ called __vamp_ in ___vamp_.
+
+Message:  1015
+<ce>                        Welcome to ___mondung_,
+<ce>                      %pcn. I take it you are here
+<ce>                           on behalf of %vam
+<ce>                    to acknowledge that the Coven of
+<ce>                     ==daedra_, Prince of Oblivion
+<ce>                     is henceforth supreme in %reg?
+
+Message:  1016
+<ce>                        Cowardly bloodsucker. I
+<ce>                      expected no more, yet I had
+<ce>                       hoped. Go back to _vamp_,
+<ce>                                 child.
+
+Message:  1017
+<ce>                       You dare to challenge the
+<ce>                        supremacy of ==daedra_,
+<ce>                     to my very face, undead worm?
+<ce>                     =daedroth_ will enjoy crushing
+<ce>                    your impudent bones!  Show me a
+<ce>                      member of %vam who can fight
+<ce>                            as well as brag!
+
+Message:  1018
+<ce>                          You hear ==daedra_
+<ce>                     speaking to you in your head:
+<ce>                      "You have proven to me that
+<ce>                           %vam are worthy of
+<ce>                         respect. You may tell
+<ce>                            _vamp_ that %reg
+<ce>                    is yours. You are an interesting
+<ce>                            specimen, %pcn.
+<ce>                   I am certain we will meet again."
+
+Message:  1019
+<ce>                         You have failed %vam,
+<ce>                      %pcf. The Coven of ==daedra_
+<ce>                     challenged us, and you were an
+<ce>                 embarrassment. It is a night of shame.
+
+Message:  1021
+<ce>                    A terribly pale, wild-eyed boy
+<ce>                   hands you a letter and disappears
+<ce>                           into the darkness.
+
+
+-- Symbols used in the QRC file:
+--
+--               %g2 occurs 1 time.
+--               %g3 occurs 1 time.
+--              %pcf occurs 8 times.
+--              %pcn occurs 4 times.
+--              %qdt occurs 2 times.
+--              %reg occurs 6 times.
+--              %vam occurs 18 times.
+--         ==daedra_ occurs 6 times.
+--        =daedroth_ occurs 1 time.
+--         =queston_ occurs 2 times.
+--       ___mondung_ occurs 11 times.
+--          ___vamp_ occurs 12 times.
+--          _daedra_ occurs 4 times.
+--             _gem_ occurs 1 time.
+--            _vamp_ occurs 8 times.
+
+QBN:
+Item _letter_ letter used 1010
+Item _letter2_ letter used 1013
+Item _gem_ gem
+
+Person _vamp_ factiontype Vampire_Clan local
+Person _daedra_ face 1 factiontype Daedra remote
+
+Place _mondung_ remote dungeon7
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _daedroth_ is Daedroth
+
+--	Quest start-up:
+	dialog link for person _vamp_ 
+	start timer _queston_ 
+	_letter_ used do _readletter_ 
+	give pc _letter_ notify 1021 
+
+_queston_ task:
+	end quest 
+
+_vampclicked_ task:
+	clicked npc _vamp_ 
+	reveal _mondung_ 
+	log 1012 step 1 
+	get item _letter2_ 
+	say 1011 
+	place npc _daedra_ at _mondung_ 
+
+_failure_ task:
+	say 1016 
+	change repute with _vamp_ by -5 
+	change repute with _daedra_ by -10 
+	destroy _daedra_ 
+
+_success_ task:
+	killed 1 _daedroth_ 
+	say 1018 
+	change repute with _daedra_ by +10 
+
+_nononono_ task:
+	when _vampclicked_ and not _failure_ and not _success_ 
+	clear _vampclicked_ 
+
+_daedclicked_ task:
+	clicked npc _daedra_ 
+	prompt 1015 yes _failure_ no _challenge_ 
+
+_challenge_ task:
+	create foe _daedroth_ every 1 minutes 1 times with 100% success 
+	hide npc _daedra_ 
+	say 1017 
+
+_badpcn_ task:
+	when _vampclicked_ and _failure_ 
+	say 1019 
+	end quest 
+
+_reward_ task:
+	when _vampclicked_ and _success_ 
+	give pc _gem_ 
+	make _gem_ permanent 
+	end quest 
+
+_readletter_ task:
+	add dialog for person _vamp_ 
+	log 1014 step 0 

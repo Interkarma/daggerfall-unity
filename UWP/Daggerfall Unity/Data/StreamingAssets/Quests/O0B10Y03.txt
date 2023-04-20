@@ -1,0 +1,168 @@
+-- Quest: C:\QUESTS\WORKING\O0B10Y03.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 10
+-- QuestId: 3
+Messages: 11
+Quest: O0B10Y03
+DisplayName: A Temple Visit
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      Got a guild job for ya, if
+<ce>                        yer innerested. Name is
+<ce>                        _qgiver_. Some guy wants
+<ce>                       the _religiousitem_ lifted
+<ce>                             from _temple_.
+<ce>                             Wanna take it?
+
+RefuseQuest:  [1001]
+<ce>                       I'll keep ya in mind %pcn
+<ce>                       if a more interestin' job
+<ce>                               comes up.
+
+AcceptQuest:  [1002]
+<ce>                        OK. Here's the skinny.
+<ce>                         You go to _temple_ in
+<ce>                          __temple_. Take the
+<ce>                       _religiousitem_ and bring
+<ce>                         it back to me. You get
+<ce>                         the usual guild fee of
+<ce>                         _gold_ gold pieces. Ya
+<ce>                      got =traveltime_ days ta put
+<ce>                            it in my hands.
+
+QuestComplete:  [1004]
+<ce>                      Boy, some guys are hard ta
+<ce>                      figure out. Can you believe
+<ce>                      he paid to have this lifted
+<ce>                      Wasn't as if there was some
+<ce>                      "hideous guardian" stoppin'
+<ce>                      from doin' it himself. Huh?
+<ce>                       There was! Maybe he wasn't
+<ce>                       so screwy. Here's yer fee
+<ce>                           %pcf. Good workin'
+<ce>                                with ya.
+
+RumorsDuringQuest:  [1005]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has its good points and bad ones.
+
+RumorsPostfailure:  [1006]
+_temple_ is pretty well-guarded against thieves, it seems.
+
+RumorsPostsuccess:  [1007]
+The guy who owns _temple_ paid some thieves to break into his own place.
+
+QuestorPostsuccess:  [1008]
+How are you, %pcf? I'm still waiting to hear from the guy who hired us.
+
+QuestorPostfailure:  [1009]
+<ce>                       I don't care whether that
+<ce>                     temple was guarded by the Lord
+<ce>                         of All Oblivion, %pcf.
+<ce>                     There is no excuse for failing
+<ce>                         an assignment for the
+<ce>                             Thieves Guild.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of ___qgiver_
+ of the Thieves Guild gave me a job
+ to heist a _religiousitem_
+ from the _temple_ in
+ __temple_. I have
+ =traveltime_ days to get it back
+ to %g2 for my fee.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 1 time.
+--               %g2 occurs 3 times.
+--              %jok occurs 3 times.
+--              %oth occurs 5 times.
+--              %pcf occurs 3 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--      =traveltime_ occurs 2 times.
+--        ___qgiver_ occurs 1 time.
+--         __temple_ occurs 2 times.
+--            _gold_ occurs 1 time.
+--          _qgiver_ occurs 2 times.
+--   _religiousitem_ occurs 3 times.
+--          _temple_ occurs 5 times.
+
+QBN:
+Item _religiousitem_ religious
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _temple_ remote temple
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is 2 Knight
+Foe _F.01_ is Giant_scorpion
+Foe _F.02_ is Monk
+Foe _F.03_ is Zombie
+
+--	Quest start-up:
+	place item _religiousitem_ at _temple_ 
+	start timer _traveltime_ 
+	log 1010 step 0 
+	pc at _temple_ set _S.01_ 
+
+_traveltime_ task:
+	make _religiousitem_ permanent 
+	change repute with _qgiver_ by -5 
+	end quest 
+
+_S.01_ task:
+	pick one of _guard1_ _guard2_ _guard3_ _guard4_ 
+
+_questdone_ task:
+	toting _religiousitem_ and _qgiver_ clicked 
+	give pc _gold_ 
+	end quest 
+
+_guard1_ task:
+	create foe _F.00_ every 4 minutes 1 times with 10% success 
+
+_guard2_ task:
+	create foe _F.01_ every 4 minutes 1 times with 10% success 
+
+_guard3_ task:
+	create foe _F.02_ every 4 minutes 1 times with 10% success 
+
+_guard4_ task:
+	create foe _F.03_ every 4 minutes 1 times with 10% success 

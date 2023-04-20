@@ -1,0 +1,159 @@
+-- Quest: C:\QUESTS\WORKING\O0B10Y05.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 10
+-- QuestId: 5
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 11
+Quest: O0B10Y05
+DisplayName: Valuable Artwork
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                            Ho there %pcf!
+<ce>                       You remember me, _qgiver_?
+<ce>                         Are up for a guild job
+<ce>                       today? I got one here that
+<ce>                       seems right up your alley.
+
+RefuseQuest:  [1001]
+<ce>                           Maybe next time.
+
+AcceptQuest:  [1002]
+<ce>                       This rich guy just got a
+<ce>                             painting that
+<ce>                      could fetch a nice price. He
+<ce>                       stashed it at _townhouse_
+<ce>                            in __townhouse_.
+<ce>                       Bring it back and you get
+<ce>                       a guild fee of _gold_ gold
+<ce>                       pieces. Oh yeah, I need it
+<ce>                       within =traveltime_ days.
+
+QuestComplete:  [1004]
+<ce>                     Hardly a scratch on it. Sorry
+<ce>                     about the guardian. We didn't
+<ce>                    know he had gone and done that.
+<ce>                            Here's your pay.
+
+RumorsDuringQuest:  [1005]
+_townhouse_ is a veritable art gallery.
+
+RumorsPostfailure:  [1006]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has its good points and bad ones.
+
+RumorsPostsuccess:  [1007]
+_townhouse_ was robbed, even though it had a powerful guardian.
+<--->
+Whoever robbed _townhouse_ must've known what he was doing.
+
+QuestorPostsuccess:  [1008]
+That painting fetched a great price on the black market, %pcf.
+
+QuestorPostfailure:  [1009]
+<ce>                     Well, I see you, but I don't
+<ce>                     see the painting that you were
+<ce>                    supposed to get. Why did I even
+<ce>                        waste my breath on you?
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ sent me out to steal a
+ painting from _townhouse_
+ in __townhouse_. I got
+ =traveltime_ days to get it back to
+ _qgiver_ in The Thieves Guild in
+ ___qgiver_.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 1 time.
+--              %jok occurs 3 times.
+--              %oth occurs 5 times.
+--              %pcf occurs 16 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--      =traveltime_ occurs 3 times.
+--        ___qgiver_ occurs 2 times.
+--      __townhouse_ occurs 2 times.
+--            _gold_ occurs 1 time.
+--          _qgiver_ occurs 3 times.
+--       _townhouse_ occurs 5 times.
+
+QBN:
+Item _painting_ painting
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _townhouse_ remote house4
+--reverted to house4 as original
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Barbarian
+Foe _F.01_ is Giant_bat
+Foe _F.02_ is Spider
+Foe _F.03_ is Sabretooth_tiger
+
+--	Quest start-up:
+	place item _painting_ at _townhouse_ 
+	start timer _traveltime_ 
+	log 1010 step 0 
+	pc at _townhouse_ set _S.01_ 
+
+_traveltime_ task:
+	end quest 
+
+_S.01_ task:
+	start task _S.01a_
+
+_S.01a_ task:
+	pick one of _guard1_ _guard2_ _guard3_ _guard4_ 
+--set this apart to a permanent task, previous setup would randomly pick again upon re-entering the house
+
+_questdone_ task:
+	toting _painting_ and _qgiver_ clicked 
+	give pc _gold_ 
+	end quest 
+
+_guard1_ task:
+	create foe _F.00_ every 4 minutes 1 times with 10% success 
+
+_guard2_ task:
+	create foe _F.01_ every 4 minutes 1 times with 10% success 
+
+_guard3_ task:
+	create foe _F.02_ every 4 minutes 1 times with 10% success 
+
+_guard4_ task:
+	create foe _F.03_ every 4 minutes 1 times with 10% success 

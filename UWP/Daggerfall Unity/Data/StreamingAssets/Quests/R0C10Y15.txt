@@ -1,0 +1,177 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y15.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 15
+Messages: 17
+Quest: R0C10Y15
+DisplayName: The Fourth Man
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>              I have a somewhat complicated mission that
+<ce>              needs a fourth man involved. It might take
+<ce>                a couple of days to accomplish, but it
+<ce>           will mean an extra _reward_ gold in your pocket.
+<ce>                           Sound intriguing?
+
+RefuseQuest:  [1001]
+<ce>                       That is a disappointment.
+<ce>                               Ah well.
+
+AcceptQuest:  [1002]
+<ce>                   I have a contact in ___npc1_ who
+<ce>            has a certain item needed by another associate
+<ce>                        of mine in ___npc2_. Of
+<ce>                     course, _npc1_, my contact in
+<ce>                       ___npc1_ needs to be paid
+<ce>                for %g3 item. That is why I need you to
+<ce>                   bring this diamond as payment to
+<ce>                       _npc1_. The diamond needs
+<ce>                        to be in %g3 possession
+<ce>             in =1stparton_ days. Once you have made it to
+<ce>                       __npc1_, _npc1_ will give
+<ce>                 you further instructions. Thank you,
+<ce>                      %pcf, and %god be with you.
+
+QuestFail:  [1003]
+<ce>                   I know it was complicated, %pcf,
+<ce>                but I assumed you had at least a small
+<ce>                 brain encased in that thick skull of
+<ce>                 yours.  I hope you were taking notes,
+<ce>               because I'm not in the habit of repeating
+<ce>                                myself.
+
+QuestComplete:  [1004]
+<ce>                           Ah, the _item2_.
+<ce>                  I was afraid it would never arrive.
+<ce>             Well, here's your _reward_ gold, as promised.
+<ce>                        Tell _npc1_ I am in %g3
+<ce>                     debt. And thank you as well.
+
+RumorsDuringQuest:  [1005]
+_npc2_ in __npc2_ is still screeching about %g3 _item2_.
+<--->
+%oth, that _npc1_ is greedy. Wouldn't help %g3 own mother without payment.
+
+RumorsPostfailure:  [1006]
+I hear _questgiver_ is mad as hell at some %ra adventurer.
+<--->
+_npc2_ left __npc2_ in a rage over some kinda lost magical item of %g3.
+
+RumorsPostsuccess:  [1007]
+I wonder what the connection is between _questgiver_ and _npc2_.
+<--->
+I hear _npc1_ sold %g3 _item2_. What in Tamriel could the price have been?
+
+QuestorPostsuccess:  [1008]
+Well, if it isn't %pcn, the ultimate courier. How are you, my friend?
+<--->
+You helped me when I was in need, %pcf. What can I do for you?
+
+QuestorPostfailure:  [1009]
+<ce>                       I take it you've come to
+<ce>                     apologize for your incomplete
+<ce>                           couriering, %pcf.
+<ce>                         Apology not accepted.
+<ce>                             Leave me now.
+
+QuestLogEntry:  [1010]
+<ce>                   Thank %god you've arrived, %pcf.
+<ce>               Give me the diamond quick. Now take this
+<ce>                        _item2_ and bring it to
+<ce>                       _npc2_ over in __npc2_ --
+<ce>                       that's in ___npc2_. Once
+<ce>                    you're there, %g will pay you.
+
+Message:  1015
+%qdt:
+ _questgiver_ of ___questgiver_
+ has sent me to a
+ contact of %g3 in ___npc1_,
+ a =npc1_ named _npc1_,
+ at __npc1_. I am to deliver
+ a _item1_ to %g2, and then
+ receive further instructions. I have
+ =1stparton_ days to get to ___npc1_.
+
+Message:  1016
+%qdt:
+ _npc1_ has sent me on to
+ _npc2_ in __npc2_
+ of ___npc2_. I am to bring
+ %g2 a _item2_ within =2ndparton_ days.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--               %g2 occurs 2 times.
+--               %g3 occurs 12 times.
+--              %god occurs 3 times.
+--              %oth occurs 1 time.
+--              %pcf occurs 13 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 2 times.
+--               %ra occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--       =2ndparton_ occurs 3 times.
+--            =npc1_ occurs 9 times.
+--          ___npc2_ occurs 3 times.
+--    ___questgiver_ occurs 1 time.
+--           __npc1_ occurs 2 times.
+--           __npc2_ occurs 5 times.
+--           _item1_ occurs 1 time.
+--           _item2_ occurs 8 times.
+--            _npc1_ occurs 10 times.
+--            _npc2_ occurs 5 times.
+--      _questgiver_ occurs 3 times.
+--          _reward_ occurs 4 times.
+
+QBN:
+Item _reward_ gold
+Item _item1_ diamond
+Item _item2_ magic_item
+
+Person _questgiver_ face 136 group Questor
+Person _npc1_ group Local_3.0 remote
+Person _npc2_ face 248 group Local_3.1 remote
+
+
+Clock _1stparton_ 00:00 0 flag 1 range 1 4
+Clock _2ndparton_ 00:00 0 flag 1 range 1 4
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1015 step 0 
+	get item _item1_ 
+
+_pcgetsgold_ task:
+	toting _item2_ and _npc2_ clicked 
+	give pc _reward_ 
+	end quest 
+--removed unnecessary delay
+
+variable _pchasitem1_
+variable _pchasitem2_
+_S.03_ task:
+	toting _item1_ and _npc1_ clicked 
+	start timer _2ndparton_ 
+	log 1016 step 1 
+	get item _item2_ 
+	say 1010 
+
+variable _S.04_
+_queston_ task:
+	when _1stparton_ and not _S.03_ 
+	make _item1_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+variable _1stparton_
+_2ndparton_ task:
+	make _item2_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 

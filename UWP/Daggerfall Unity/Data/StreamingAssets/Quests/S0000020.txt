@@ -1,0 +1,172 @@
+-- Quest: C:\QUESTS\WORKING\S0000020.Qbn.
+-- Main story quest.
+-- QuestId: 20
+Messages: 41
+Quest: S0000020
+DisplayName: Orcish Treaty
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>               So Morgiah says Gortwog has the emperor's
+<ce>               letter. Very interesting. I think I have a
+<ce>              way to get Gortwog to turn over that letter.
+<ce>                 Are you willing to brave the depths of
+<ce>                    Orsinium to try to retrieve it?
+
+RefuseQuest:  [1001]
+<ce>                 You are obviously not as loyal to the
+<ce>                     empire as I thought. Be gone.
+
+AcceptQuest:  [1002]
+<ce>               Gortwog wants very badly to be recognized
+<ce>               by the empire. It would mean the beginning
+<ce>                of peace between the orcs and the other
+<ce>              races of the empire. Present this letter to
+<ce>                Gortwog. Hopefully it will persuade him
+<ce>                             to cooperate.
+
+QuestLogEntry:  [1010]
+%qdt:
+ Mynisera, Queen Mother to King Gothryd
+ of Daggerfall, has asked me to retrieve
+ the stolen letter sent to her by the
+ emperor. I have to go to the hall of
+ Orsinium in Orsinium and give Gortwog,
+ the orc warlord, a letter from her.
+
+Message:  1015
+So, Mynisera seeks to sweet talk me.
+ Bah! Her letter is of no value to me
+ anymore. She may have it. However, my
+ people may not be so lenient toward a
+ %ra wandering the halls of Orsinium.
+ If you can survive my realm and find
+ the letter, you may take it back to
+ her. I will also consider you to be
+ a worthy %ra.
+
+Message:  1020
+Lord Gortwog,
+ King of Orcs,
+ Warlord of the Subterranean Realms
+ 
+    Hail and long life King Gortwog. Long
+ have you and the Orcish people sought
+ formal recognition by the empire. My dead
+ husband King Lysandus supported your claim
+ to sovereign rule. I would now help you in
+ your cause. Sadly, a minor missive from
+ the emperor has been misplaced. For me to
+ truly hold the trust and ear of Emperor
+ Uriel Septim, I need to reclaim this note.
+ Should you be able to place in my servant's
+ hand this trifling letter, I would be far
+ better able to forward your claim to the
+ emperor and his court.
+ 
+ The Dowager Mynisera,
+ Queen Mother to King Gothryd of Daggerfall
+
+Message:  1021
+Queen Mynisera,
+ 
+    I have grave news. The Totem of Tiber
+ Septim has been found. You know what this
+ means. The power behind Tiber Septim could
+ be unleashed upon Tamriel again. Rumor has it
+ that Lord Woodborne, a minor lord of Wayrest,
+ has possession of it. He will doubtless
+ "lose" it soon. You must persuade him to turn
+ it over to you or Lady Brisienna. The court of
+ Wayrest has no love of King Lysandus, but you
+ still have influence there. I am asking you to
+ use it on my behalf.
+ 
+ Uriel Septim
+ Emperor of Tamriel
+
+Message:  1030
+<ce>                    %pcf, this letter is dangerous.
+ Gortwog had undoubtedly sold copies of it
+ to everyone from Wayrest to the Underking.
+ After all, if the powers of the Iliac Bay
+ become embroiled in war over the Totem, he
+ stands to gain quite a lot.
+ 
+ Go now. You have done your job. I am sure
+ the Totem will find its way into your life
+ somehow. You seem to have a knack for such
+ things. Just remember, the only safe master
+ of the Totem is the emperor.
+
+Message:  1040
+<ce>               You still don't know where the Emperor's
+<ce>                letter is. Come back when you know that.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 3 times.
+
+QBN:
+Item EmperorsLetter letter used 1021
+Item GortwogsLetter letter used 1020
+
+Person _Mynisera_ named Mynisera atHome
+Person _gortwog_ face 88 named Gortwog atHome
+
+Place _Orsinium_ permanent OrsiniumCastle1
+
+
+
+--	Quest start-up:
+	add _Mynisera_ as questor 
+	add _gortwog_ as questor 
+
+_S.00_ task:
+	clicked npc _Mynisera_ 
+
+MorgiahSatisfied _S.01_
+_S.02_ task:
+	when _S.00_ and _S.09_ 
+	prompt QuestorOffer yes yes no _no_ 
+
+until _S.02_ performed:
+	clear _S.00_ _S.10_ 
+
+yes task:
+	log 1010 step 0 
+	get item GortwogsLetter 
+	reveal _Orsinium_ in province 26 at 146892 
+	say AcceptQuest 
+
+_no_ task:
+	say RefuseQuest 
+
+_S.05_ task:
+	toting GortwogsLetter and _gortwog_ clicked 
+	place item EmperorsLetter at _Orsinium_ marker 0
+	say 1015 
+
+_S.06_ task:
+	toting EmperorsLetter and _Mynisera_ clicked 
+	start quest 988 988 
+	start task _S.07_ 
+	say 1030 
+	change repute with _Mynisera_ by +15 
+	change repute with _gortwog_ by +10 
+	drop _gortwog_ as questor 
+	drop _Mynisera_ as questor 
+	end quest 
+
+MyniseraSatisfied _S.07_
+BarenziahSatisfied _S.08_
+_S.09_ task:
+	when _S.08_ or _S.01_ 
+
+_S.10_ task:
+	when _S.00_ and not _S.09_ 
+	say 1040 

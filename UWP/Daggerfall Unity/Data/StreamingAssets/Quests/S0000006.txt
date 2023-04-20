@@ -1,0 +1,261 @@
+-- Quest: C:\QUESTS\WORKING\S0000006.Qbn.
+-- Main story quest.
+-- QuestId: 6
+Messages: 31
+Quest: S0000006
+DisplayName: Elysana's Robe
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      Hello, %pcf. I am Elysana,
+<ce>               King Eadwyre's child and heir apparent to
+<ce>                Wayrest. Perhaps you could help me out
+<ce>               of a bit of an embarrassing predicament.
+<ce>                The senior member of the elder council,
+<ce>               my father's good friend Lord Castellian,
+<ce>                has left court on holiday and I forgot
+<ce>                to return a cloak I borrowed from him.
+<ce>                If it isn't too much of a bore to you,
+<ce>                 would you mind bringing it to him in
+<ce>                    ___casfort_? I could offer you
+<ce>                    a lovely _jewelry_ as payment.
+
+RefuseQuest:  [1001]
+<ce>                             No? Oh, %oth.
+
+AcceptQuest:  [1002]
+<ce>                 How frightfully nice of you to help a
+<ce>               silly girl like myself. Here's the robe.
+<ce>                 Now, it's very important that milord
+<ce>                Castellian has the robe soon. He is at
+<ce>                     one of his houses, _casfort_
+<ce>               in ___casfort_. Lord Castellian shouldn't
+<ce>               be too hard to find, just ask around for
+<ce>                   him or for _casfort_ and give him
+<ce>                the robe. I do really appreciate this,
+<ce>                       %pcf. It really shouldn't
+<ce>              take you longer than =queston_ days to get
+<ce>                      to ___casfort_ and back, so
+<ce>                          I'll see you then.
+
+QuestFail:  [1003]
+<ce>                I know Lord Castellian doesn't have his
+<ce>                 robe yet, and he's not a patient man.
+
+QuestComplete:  [1004]
+<ce>             Oh, how marvelous you are. Here, let me give
+<ce>               you the _jewelry_ I promised you. I hope
+<ce>             Lord Castellian appreciates the extra work I
+<ce>               put into the robe. It is a real attention
+<ce>              getter now. Let me give you something more
+<ce>                  than the _jewelry_, %pcf. My father
+<ce>             is very interested in a certain ancient relic
+<ce>               called the Totem of Tiber Septim. He has
+<ce>             spies all over the place looking for it. When
+<ce>             they find it, my father will need someone to
+<ce>             secure it. Obviously, whoever he chooses will
+<ce>              be fabulously well rewarded. I'll give him
+<ce>                your name. That is the least I can do.
+
+RumorsDuringQuest:  [1005]
+Lord Castellian is backing legislation which will make Helseth heir apparent.
+<--->
+Princess Elysana is out of favor with the senior member of the elder council.
+
+RumorsPostfailure:  [1006]
+Lord Castellian returned to Castle Wayrest from _casfort_. Holiday's over.
+<--->
+Princess Elysana does not look happy to see Lord Castellian back from holiday.
+
+RumorsPostsuccess:  [1007]
+Lord Castellian has disappeared from _casfort_ where he was on holiday.
+<--->
+King Eadwyre is suspecting foul play in the disappearance of Lord Castellian.
+
+QuestorPostsuccess:  [1008]
+Beautiful robes. Nothing particularly unusual about them.
+<--->
+Excellent craftsmanship. Someone put a lot of heart into the embroidery.
+
+QuestorPostfailure:  [1009]
+Some kind of daedric incantations embroidered into the cloth.
+<--->
+A daedra summoning ritual has been embroidered into this robe.
+
+QuestLogEntry:  [1010]
+%qdt:
+ Princess Elysana has asked me to bring a
+ robe to the elder member of the Wayrest
+ Elder Council, Lord Castellian at his
+ manor in ___casfort_, _casfort_.
+ I need to be back at Castle Wayrest
+ in =queston_ days.
+
+Message:  1020
+<ce>                     Fool! Some enterprising soul
+<ce>                       has given you a robe that
+<ce>                       summoned me to slay you.
+<ce>                            How delicious!
+
+Message:  1021
+<ce>                       Death to the traitor that
+<ce>                     assasinated Lord Castellian!
+                                     <--->
+<ce>                       You shall pay for killing
+<ce>                            my liege lord.
+                                     <--->
+<ce>                     Assassin! Lord Castellian was
+<ce>                    the best of men. You shall die
+<ce>                           for what you did.
+
+Message:  1022
+<ce>                   "A gift from Lady Elysana. Thank
+<ce>                         you, %pcn. It fits me
+<ce>                            like a glove."
+<ce>                                    
+<ce>                    You feel a tearing sound, as if
+<ce>                   the fabric of reality were being
+<ce>                             ripped open.
+
+Message:  1023
+<ce>                      Leave this place litte %ra.
+<ce>                      We have come to claim Lord
+<ce>                    Castellian. You have done your
+<ce>                    part by delivering his funeral
+<ce>                       shroud which summoned us.
+
+Message:  1030
+Lord Castellian is the most powerful council member of Wayrest.
+<--->
+They say that Princess Elysana has little love for Lord Castellian.
+<--->
+Lord Castellian makes no secret of his desire to wed Princess Elysana.
+
+
+-- Symbols used in the QRC file:
+--
+--              %oth occurs 2 times.
+--              %pcf occurs 3 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--         =queston_ occurs 3 times.
+--       ___casfort_ occurs 9 times.
+--         _jewelry_ occurs 4 times.
+
+QBN:
+Item _I.00_ Formal_cloak anyInfo QuestorPostsuccess used QuestorPostfailure
+Item _jewelry_ trinket
+Item _I.04_ dead_body
+
+Person _elysana_ named Princess_Elysana atHome
+Person Castellian face 1 named Lord_Castellian anyInfo 1030
+
+Place _casfort_ remote house1
+
+Clock _S.04_ 04:00 01:40
+Clock _queston_ 00:00 0 flag 17 range 0 2
+Clock _S.16_ 1.00:00 0 flag 1 range 0 1
+
+Foe _F.00_ is Daedra_seducer
+Foe _F.01_ is 2 Knight
+Foe _F.02_ is 2 Spellsword
+Foe _F.03_ is Daedra_seducer
+Foe _F.04_ is Daedroth
+Foe _F.05_ is Daedroth
+
+--	Quest start-up:
+	prompt QuestorOffer yes yes no _no_ 
+	have _I.04_ set _deadbody_
+
+_pcgetsgold_ task:
+	when _S.01_ and _S.03_ 
+	give pc _jewelry_ 
+	start task _S.07_ 
+	change repute with _elysana_ by +10 
+	drop _elysana_ as questor 
+
+_S.01_ task:
+	clicked npc _elysana_ 
+
+variable _S.02_
+_S.03_ task:
+	toting _I.00_ and Castellian clicked saying 1022 
+	pc at _casfort_ set _S.12_ 
+	place item _I.04_ at _casfort_
+	start timer _S.04_ 
+	hide npc Castellian 
+
+_S.04_ task:
+	create foe _F.02_ every 53 minutes 20 times with 15% success 
+
+_queston_ task:
+	when _S.15_ and _S.02_ 
+	drop _elysana_ as questor 
+	end quest 
+
+_deadbody_ task:
+	take _I.04_ from pc
+--added deadbody task. otherwise body would clog inventory
+
+UnknownElysanna _S.06_
+ElysannaSatisfied _S.07_
+	end quest 
+
+yes task:
+	_I.00_ used do _S.02_ 
+	start timer _queston_ 
+	log 1010 step 0 
+	get item _I.00_ 
+	say AcceptQuest 
+	add _elysana_ as questor 
+	create npc at _casfort_ 
+	place npc Castellian at _casfort_ 
+
+_no_ task:
+	say RefuseQuest 
+	end quest 
+
+_S.10_ task:
+	injured _F.03_ saying 1020 
+	injured _F.04_ 
+	say 1020 
+
+_clearclick_ task:
+	when _S.01_ and not _S.03_ 
+	clear _S.01_ _clearclick_ 
+
+_S.12_ task:
+	create foe _F.01_ every 2 minutes 4 times with 50% success 
+
+_S.13_ task:
+	injured _F.00_ 
+	injured _F.05_ 
+	say 1023 
+	restrain foe _F.00_ 
+
+_greklith_ task:
+	injured _F.01_ saying 1021 
+	injured _F.02_ saying 1021 
+
+_S.15_ task:
+	killed 3 _F.03_ 
+
+variable _S.16_
+UnknownHelseth _S.17_
+_S.18_ task:
+	when not _S.17_ and _S.02_ 
+	create foe _F.03_ every 1 minutes 3 times with 20% success 
+
+_S.19_ task:
+	when _S.17_ and _S.02_ 
+	create foe _F.04_ every 1 minutes 3 times with 20% success 
+
+_S.20_ task:
+	when not _S.17_ and _S.12_ 
+	create foe _F.00_ every 1 minutes 3 times with 50% success 
+
+_S.21_ task:
+	when _S.17_ and _S.12_ 
+	create foe _F.05_ every 1 minutes 32768 times with 100% success 

@@ -1,0 +1,182 @@
+-- Quest: C:\QUESTS\WORKING\N0B00Y06.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 0
+-- QuestId: 6
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: N0B00Y06
+DisplayName: Mummy Wrappings
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                     %oth, is there anything more
+<ce>             exasperating than the discovery that the mummy
+<ce>               wrappings you were planning on using in a
+<ce>              potion have gone all sort-of green? I could
+<ce>               use the Guild's wrappings, but the recipe
+<ce>              specifically calls for "superlatively fresh
+<ce>             mummy wrappings," whatever that means. I don't
+<ce>              suppose you'd be willing to scare me up some
+<ce>               cloth off a mummy I know has more wrapping
+<ce>                     than it knows what to do with?
+                                     <--->
+<ce>                  Recipes are a daft business, %pct.
+<ce>               I'm working on a formula that calls for a
+<ce>                  "goodly piece of =mummy_. What is a
+<ce>                   =mummy_? An herb? A mineral? Well,
+<ce>              I've researched the matter and found =mummy_
+<ce>            is a mummy. Imagine that. And this particularly
+<ce>                  mummy is right here in %reg. Could I
+<ce>              talk you into going to its tomb and grabbing
+<ce>            a piece of =mummy_ for, say, _gold_ gold pieces?
+
+RefuseQuest:  [1001]
+<ce>                           Oh, %oth. I know
+<ce>                     it's not a swing by the local
+<ce>                     general store, but I had hoped
+<ce>                      for a little enthusiasm and
+<ce>                          adventurous whatnot.
+
+AcceptQuest:  [1002]
+<ce>                      Jolly good, %pct. It'll be
+<ce>                     worth _gold_ gold to you. Now
+<ce>                    this mummy's tomb is not too far
+<ce>                   away at all, so it shouldn't take
+<ce>                 you any longer than =queston_ days to
+<ce>                   get there, make your grab, and get
+<ce>                     back. Remember, it's got to be
+<ce>                   fresh -- preferably off its body.
+<ce>                   The name of the place is something
+<ce>                           like ___mondung_.
+<ce>                    It's sure to be gruesome there.
+<ce>                    You might want to bring a sword
+<ce>                     or some such thing. Well, good
+<ce>                            luck, young %ra.
+
+QuestComplete:  [1004]
+<ce>                     Now that is a lovely piece of
+<ce>                      wrapping. Thanks awfully. I
+<ce>                    believe we agreed on _gold_ gold
+<ce>                              pieces, yes?
+
+RumorsDuringQuest:  [1005]
+=mummy_ in ___mondung_ is supposedly all that's left of an ancient %t of %reg.
+<--->
+=mummy_ was supposedly a %t in ancient %reg who was too wicked to die.
+
+RumorsPostfailure:  [1006]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has it good points and bad ones.
+
+RumorsPostsuccess:  [1007]
+=mummy_'s reign in %reg began before the First Era and ended with you.
+<--->
+_qgiver_ finally can finish %g3 potion thanks to =mummy_'s contribution.
+
+QuestorPostsuccess:  [1008]
+How are you, %pcf? I hope you aren't coming down with mummy rot or anything.
+
+QuestorPostfailure:  [1009]
+<ce>                     I needed that wrapping, %pcf.
+<ce>                  It's very annoying to need something
+<ce>                            and not have it.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of the Mages Guild
+ in ___qgiver_ has sent me to
+ ___mondung_ to grab some
+ wrappings off of a mummy
+ named =mummy_. I have
+ =queston_ days to complete this quest.
+
+Message:  1011
+<ce>                        You find the wrappings
+<ce>                             that _qgiver_
+<ce>                         wanted you to get from
+<ce>                                =mummy_.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 1 time.
+--               %g3 occurs 1 time.
+--              %jok occurs 3 times.
+--              %oth occurs 7 times.
+--              %pcf occurs 2 times.
+--              %pct occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--              %reg occurs 21 times.
+--                %t occurs 2 times.
+--           =mummy_ occurs 11 times.
+--         =queston_ occurs 2 times.
+--       ___mondung_ occurs 3 times.
+--        ___qgiver_ occurs 1 time.
+--            _gold_ occurs 7 times.
+--          _qgiver_ occurs 3 times.
+
+QBN:
+Item _wrappings_ mummy_wrappings
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _mondung_ remote dungeon0
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _mummy_ is Mummy
+
+--	Quest start-up:
+	start timer _queston_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	place foe _mummy_ at _mondung_ 
+
+_queston_ task:
+	end quest 
+
+_reward_ task:
+	toting _wrappings_ and _qgiver_ clicked 
+	give pc _gold_ 
+	take _wrappings_ from pc
+	end quest 
+--forums discussion, failsafe to ensure removal of wrappings
+
+variable _qgclicked_
+_S.03_ task:
+	clicked item _wrappings_ 
+	say 1011 
+
+_S.04_ task:
+	injured _mummy_ 
+	give item _wrappings_ to _mummy_ 

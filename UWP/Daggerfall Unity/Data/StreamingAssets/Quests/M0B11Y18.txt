@@ -1,0 +1,560 @@
+-- Quest: C:\QUESTS\WORKING\M0B11Y18.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 11
+-- QuestId: 18
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 74
+Quest: M0B11Y18
+DisplayName: Lord K'avar Quest Part I
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   %pcf, I have an important mission
+<ce>               that will require the utmost discretion.
+<ce>                I can't tell you more unless you agree
+<ce>                     to help me. What do you say?
+
+RefuseQuest:  [1001]
+<ce>                %oth, I had expected much more of you.
+
+AcceptQuest:  [1002]
+<ce>               An old friend of mine is in grave danger,
+<ce>                and needs an escort who is handy with a
+<ce>                blade and can keep a secret. Naturally,
+<ce>                    I thought of you. _target_ will
+<ce>              meet you at 10:00 tonight at _targethouse_.
+<ce>                %g will tell you more when you arrive.
+<ce>              I would come with you, but since I am known
+<ce>                as %g3 friend, I might lead %g3 enemies
+<ce>                 to %g2. Watch your back on this one.
+
+QuestFail:  [1003]
+<ce>                We have nothing more to discuss, %pcn.
+
+QuestComplete:  [1004]
+<ce>            You alerted me to a grave threat to the realm.
+<ce>              Please accept my sincere thanks as well as
+<ce>                          this _reward_ gold.
+
+RumorsDuringQuest:  [1005]
+<ce>      _enemy_ has been recruiting mercenaries at ___stronghold_.
+<ce>                          I wonder what for?
+
+RumorsPostfailure:  [1006]
+<ce>      Did you hear about that ambush in __targethouse_? An agent
+<ce>                 of the Queen of Sentinel was killed.
+
+RumorsPostsuccess:  [1007]
+<ce>    It seems that one of the court nobles of Sentinel was plotting
+<ce>     against the throne, but the Queen found out and destroyed his
+<ce>                      fortress at ___stronghold_.
+                                     <--->
+<ce>       _ruler_'s forces attacked ___stronghold_, but I hear that
+<ce>        the target of the whole attack, a _traitor_, got away.
+
+QuestorPostsuccess:  [1008]
+<ce> I hear you got through to _ruler_, although _target_ bought the farm.
+
+QuestorPostfailure:  [1009]
+<ce>   What happened with that mission to escort  _target_  to  _ruler_?
+
+Message:  1020
+%qdt:
+ _questgiver_ of the __questgiver_
+ in ___questgiver_ asked me
+ to meet _target_ at
+ _targethouse_ at 10:00
+ tonight. I know nothing else
+ except that _target_ is
+ in danger from powerful enemies.
+
+Message:  1021
+%qdt:
+ I met with _target_, and
+ we are proceeding to Sentinel.
+
+Message:  1022
+%qdt:
+ I was ambushed leaving _targethouse_,
+ and _target_ was killed. Before
+ %g died, however, %g slipped me a letter
+ exposing _traitor_, a member of
+ _ruler_'s court in Sentinel,
+ as a traitor. _target_'s dying
+ wish was that I deliver the letter
+ to _ruler_. She will want
+ to see this before =patsy_ days have passed.
+
+Message:  1023
+%qdt:
+ I showed _ruler_ the treasonous
+ letter, but _traitor_ had
+ already fled to his fortress
+ of ___stronghold_.
+ The Queen asked me to infiltrate
+ the fortress and capture or kill
+ _traitor_. She gave me =gettraitor_
+ days to accomplish this mission
+ and return to Sentinel.
+
+Message:  1030
+Dear %pcn,
+ 
+ Change of plans. _questgiver_
+ had to leave town quickly, and asked
+ me to meet you in _tavern_.
+ Please come at once. The matter
+ is extremely urgent.
+ 
+<ce>                                _enemy_
+
+Message:  1031
+My dear _enemy_,
+ 
+ I am pleased to hear of your progress
+ in training my forces at ___stronghold_.
+ I will send more money as soon as I can
+ raise it, as you will need to hire more
+ troops if we hope to defeat _ruler_.
+ You are surely correct that going into open
+ battle against her is a lost cause, but I believe
+ that even for a coup de main against the
+ Castle itself, we will need more men.
+ 
+ We can discuss this matter further in
+ person when I arrive at ___stronghold_
+ in a few weeks. If you need to reach me
+ in the meantime, I am staying in the Palace
+ at __palace_. If all goes well, we may soon
+ have a new ally. Once the situation here
+ is proceeding smoothly again, I must return
+ to Sentinel to pay my respects (perhaps my
+ "final respects"!) to our dear Queen. Her
+ agents have been dogging my steps lately,
+ so I shall allay her suspicions by a show of
+ fawning subservience which she so appreciates.
+ 
+ Keep me informed of your progress.
+ 
+<ce>                            Most sincerely,
+<ce>                                    
+<ce>                              _traitor_,
+<ce>                               __palace_
+
+Message:  1032
+<ce>                 A small child of indeterminate gender
+<ce>                    hands you a note, and runs away
+<ce>                  before you have a chance to react.
+
+Message:  1040
+<ce>                         %pcn, right? I'm glad
+<ce>                     I managed to contact you. Did
+<ce>                      _questgiver_ tell you much
+<ce>                   about what was going on? I didn't
+<ce>                   think so. Suffice it to say that
+<ce>                    the Necromancers are involved.
+<ce>                Dangerous people to cross, indeed. But,
+<ce>                 I have an _amulet_ for you which will
+<ce>                warn you if agents of the Necromancers
+<ce>                   are nearby. Should come in handy.
+<ce>                     Keep a wary eye out, friend.
+
+Message:  1041
+<ce>                      You are %pcn? _questgiver_
+<ce>                  described you well. I am _target_.
+<ce>                 We must proceed to Sentinel at once.
+<ce>                  I can tell you no more, except that
+<ce>                     the enemies of _ruler_ would
+<ce>                         give much to stop us.
+
+Message:  1042
+<ce>                     _target_ gasps, and you turn
+<ce>               to see a feathered shaft protruding from
+<ce>                 %g3 chest. As %g sinks to %g3 knees,
+<ce>            %g slips a letter into your hand, and murmurs,
+<ce>                                    
+<ce>                 "_traitor_ is a traitor to Sentinel.
+<ce>                    You must get this to _ruler_."
+<ce>                                    
+<ce>                           _target_ is dead.
+
+Message:  1043
+<ce>                You are suddenly surrounded by a bright
+<ce>                 glow. Looking down, you see that the
+<ce>                    light is coming from the amulet
+<ce>                     _enemy_ gave you. The ground
+<ce>                   seems to open beneath your feet,
+<ce>                       and darkness engulfs you.
+
+Message:  1050
+<ce>                   Do you give the treasonous letter
+<ce>                              to _ruler_?
+
+Message:  1051
+<ce>                 "Yes? What's this letter? Dear %god,
+<ce>                  _traitor_ is plotting against me?!
+<ce>                Guards! Search the Castle for _traitor_
+<ce>                     and bring him to me at once."
+<ce>                                    
+<ce>                Several guards run from the room. A few
+<ce>             minutes later one returns. With a salute, he
+<ce>            reports that _traitor_ is nowhere to be found.
+<ce>                                    
+<ce>                         _ruler_ turns to you:
+<ce>                                    
+<ce>              "He must have been alerted that his treason
+<ce>               was about to be uncovered. Most likely he
+<ce>                 has retired to this ___stronghold_ he
+<ce>           refers to in his letter. Under the circumstances,
+<ce>           I would prefer to avoid a direct attack. You are
+<ce>          familiar with the area, yes? Would you perform one
+<ce>        more service for me and bring this traitor to justice?"
+
+Message:  1052
+<ce>                %pcn, you are proving most loyal to the
+<ce>           throne of Sentinel. I will wait =gettraitor_ days
+<ce>                before assaulting _traitor_'s fortress.
+<ce>             I hereby proclaim _traitor_ outlaw -- capture
+<ce>               him if you can, but kill him if you must.
+
+Message:  1053
+<ce>                Very well. I will deal with him myself.
+
+Message:  1054
+<ce>                _ruler_ opens the letter and reads it.
+<ce>                     Her face darkens with anger.
+<ce>                                    
+<ce>                        "There can be no doubt.
+<ce>                         This is his personal
+<ce>                          seal and signature.
+<ce>                           Guards! Go to the
+<ce>                         Great Hall and seize
+<ce>                          _traitor_ at once,
+<ce>                    and throw him in the dungeon."
+<ce>                                    
+<ce>                           She turns to you.
+
+Message:  1055
+<ce>                 So be it. _traitor_ chose his course,
+<ce>               and paid the consequences, thanks to you.
+<ce>                  Here is an enchanted _queenreward_
+<ce>                     for your service to Sentinel.
+
+Message:  1056
+<ce>                  %oth! _traitor_ is a slippery one,
+<ce>                  indeed. Well, I will track him down
+<ce>                  eventually, never fear. Sentinel's
+<ce>                  justice will pursue him wherever he
+<ce>                   may hide. His associates have all
+<ce>                  been arrested or fled the realm, so
+<ce>                 _traitor_ no longer poses any threat,
+<ce>                     at least. %pcn, please accept
+<ce>                     this enchanted _queenreward_
+<ce>                     for your service to Sentinel.
+
+Message:  1060
+<ce>            Do you give the treasonous letter to _traitor_?
+
+Message:  1061
+<ce>              I seem to have misjudged you, %pcn. Perhaps
+<ce>             we can be friends after all. Here, take this
+<ce>                  _traitorreward_ for your troubles.
+
+Message:  1062
+<ce>                 _traitor_ looks at you intently. The
+<ce>               color drains from his face as he realizes
+<ce>                who you are, and before anyone can stop
+<ce>                 him he turns and bolts for the door.
+
+Message:  1070
+<ce>                    %ra dog, you will pay for your
+<ce>                   meddling in _traitor_'s affairs.
+
+Message:  1071
+<ce>                   Surrender and be dragged through
+<ce>                  the streets of Sentinel as a public
+<ce>                           spectacle? Never!
+
+Message:  1072
+<ce>                          _traitor_ is dead.
+
+Message:  1073
+<ce>                   _traitor_ throws down his weapon.
+<ce>                   Thinking he is surrendering, you
+<ce>                   pause in your attack, but instead
+<ce>                    he twists a ring on his finger.
+<ce>                   As _traitor_ disappears in a haze
+<ce>                 of light, you faintly hear him shout,
+<ce>                                    
+<ce>                       "Tell that bitch that she
+<ce>                     hasn't seen the last of me!"
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 10 times.
+--               %g2 occurs 6 times.
+--               %g3 occurs 8 times.
+--              %god occurs 1 time.
+--              %oth occurs 2 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 9 times.
+--              %qdt occurs 4 times.
+--               %ra occurs 1 time.
+--      =gettraitor_ occurs 2 times.
+--    ___questgiver_ occurs 1 time.
+--    ___stronghold_ occurs 10 times.
+--         __palace_ occurs 2 times.
+--     __questgiver_ occurs 1 time.
+--    __targethouse_ occurs 1 time.
+--          _amulet_ occurs 1 time.
+--           _enemy_ occurs 5 times.
+--     _queenreward_ occurs 2 times.
+--      _questgiver_ occurs 4 times.
+--          _reward_ occurs 2 times.
+--           _ruler_ occurs 225 times.
+--          _target_ occurs 64 times.
+--     _targethouse_ occurs 3 times.
+--          _tavern_ occurs 1 time.
+--         _traitor_ occurs 24 times.
+--   _traitorreward_ occurs 1 time.
+
+QBN:
+Item _amulet_ amulet
+Item _reward_ gold
+Item _I.02_ letter used 1030
+Item _I.03_ letter used 1031
+Item _I.04_ dead_body
+Item _queenreward_ magic_item
+Item _traitorreward_ diamond
+
+Person _ruler_ named Queen_Akorithi atHome
+Person _questgiver_ group Questor
+Person _target_ face 1 factiontype Knightly_Guard remote
+Person _enemy_ face 1 group Resident2 remote
+Person _traitor_ face 1 named Lord_K'avar
+
+Place _L.00_ remote dungeon
+Place _stronghold_ remote dungeon2
+Place _tavern_ local tavern
+Place _targethouse_ local house2
+Place _palace_ remote palace
+Place _aide_ remote dungeon
+
+Clock _S.00_ 00:05 0 flag 1 range 0 1
+Clock _patsy_ 30.00:00 0 flag 1 range 0 1
+Clock _S.02_ 3.11:20 13.21:20
+Clock _S.03_ 00:35 0 flag 1 range 0 1
+Clock _S.05_ 02:00
+--removed flags from S.05, could vary too much
+Clock _gettraitor_ 30.00:00 0 flag 1 range 0 1
+Clock _S.35_ 00:01
+--removed flags from S.35, needed to be precise
+
+Foe _F.00_ is 3 Archer
+Foe _mages_ is 2 Mage
+Foe _F.03_ is 3 Archer
+Foe _mtraitor_ is Ranger
+
+--	Quest start-up:
+	dialog link for person _enemy_ 
+	start timer _S.03_ 
+	start timer _S.02_ 
+	start timer _patsy_ 
+	log 1020 step 0 
+	place npc _enemy_ at _tavern_ 
+	place npc _traitor_ at _palace_ 
+	have _I.04_ set _deadbody_
+
+_S.00_ task:
+	have _amulet_ set _S.11_ 
+
+variable _patsy_
+_S.02_ task:
+	place npc _traitor_ at _stronghold_ 
+
+_S.03_ task:
+	hide npc _questgiver_ 
+	give pc _I.02_ notify 1032 
+
+_S.04_ task:
+	daily from 22:00 to 23:59 
+	start timer _S.05_ 
+	hide npc _enemy_ 
+	place npc _target_ at _targethouse_ 
+
+_S.05_ task:
+	place item _I.04_ at _targethouse_ 
+	hide npc _target_ 
+
+_deadbody_ task:
+	take _I.04_ from pc
+--added deadbody task. otherwise body would clog inventory
+
+_S.06_ task:
+	clicked npc _target_ 
+	pc at _targethouse_ set _S.08_ 
+	stop timer _S.05_ 
+	log 1021 step 1 
+	hide npc _target_ 
+	say 1041 
+	add _target_ face 
+
+_S.07_ task:
+	toting _I.02_ and _enemy_ clicked 
+	get item _amulet_ 
+	say 1040 
+
+variable _S.08_
+_S.09_ task:
+	when _S.06_ and not _S.08_ 
+	_I.03_ used do _S.27_ 
+	say 1042
+	create foe _F.00_ every 1 minutes 1 times with 100% success 
+	create foe _mages_ every 2 minutes 1 times with 100% success 
+	start timer _S.00_ 
+	log 1022 step 2 
+	get item _I.03_ 
+	drop _target_ face 
+
+_S.10_ task:
+	pc at _L.00_ set _S.12_ 
+	when _S.11_ and _S.00_ 
+	reveal _L.00_ 
+	say 1043 
+	teleport pc to _L.00_ 
+
+variable _S.11_
+_S.12_ task:
+	clear _conhouse_ 
+
+_conhouse_ task:
+	when _S.00_ and not _S.12_ 
+	create foe _F.03_ every 30 minutes 5 times with 10% success 
+
+_S.14_ task:
+	injured _F.03_ 
+	say 1070 
+
+_S.15_ task:
+	toting _I.03_ and _traitor_ clicked 
+	prompt 1060 yes _S.17_ no _S.19_ 
+
+_S.16_ task:
+	toting _I.03_ and _ruler_ clicked 
+	prompt 1050 yes _S.18_ no _S.20_ 
+	stop timer _patsy_
+
+_S.17_ task:
+	start quest 500 500 
+	get item _traitorreward_ 
+	say 1061 
+	make _traitorreward_ permanent 
+	change repute with _traitor_ by +15 
+	remove foe _F.03_
+--added remove foe action. K'avar's forces shouldn't try to kill you now
+
+_S.18_ task:
+	give pc _reward_ 
+	change repute with _ruler_ by +15 
+
+_S.19_ task:
+	stop timer _S.02_ 
+	get item _I.03_ 
+	start task _S.02_ 
+	say 1062 
+
+_S.20_ task:
+	get item _I.03_ 
+
+_S.21_ task:
+	when _S.18_ and not _S.02_ 
+	say 1054 
+
+_S.22_ task:
+	when _S.18_ and _S.02_ 
+	prompt 1051 yes _S.23_ no _S.24_ 
+
+_S.23_ task:
+	pc at _stronghold_ set _S.26_ 
+	start timer _gettraitor_ 
+	reveal _stronghold_ 
+	log 1023 step 3 
+	say 1052 
+
+_S.24_ task:
+	say 1053 
+
+variable _gettraitor_
+_S.26_ task:
+	hide npc _traitor_ 
+	place foe _mtraitor_ at _stronghold_ 
+
+_S.27_ task:
+	reveal _stronghold_ 
+
+_hittraitor_ task:
+	injured _mtraitor_ 
+	start timer _S.35_ 
+	stop timer _gettraitor_ 
+	say 1071 
+
+_S.29_ task:
+	killed 1 _mtraitor_ 
+	say 1072 
+
+_S.30_ task:
+	clicked npc _ruler_ 
+
+_success_ task:
+	when _S.29_ and _S.30_ 
+	get item _queenreward_ 
+	say 1055 
+	make _queenreward_ permanent 
+
+_S.32_ task:
+	when _patsy_ and not _S.23_ 
+
+_S.33_ task:
+	when _S.21_ or _success_ 
+	destroy _traitor_ 
+
+_S.34_ task:
+	when _S.21_ or _S.24_ 
+
+variable _S.35_
+_S.36_ task:
+	when _S.35_ and not _S.29_ 
+	say 1073 
+	remove foe _mtraitor_
+--changed "place foe in false dungeon" to remove foe.
+
+_S.37_ task:
+	when _S.36_ and _S.30_ 
+	get item _queenreward_ 
+	say 1056 
+	make _queenreward_ permanent 
+	unset _S.30_ 
+
+_S.38_ task:
+	when _S.34_ or _S.37_ 
+	start quest 501 501 
+
+_S.39_ task:
+	when _S.17_ or _gettraitor_ or _success_ 
+
+_S.40_ task:
+	when _S.32_ or _S.38_ 
+
+_S.41_ task:
+	when _S.39_ or _S.40_ 
+	restore _questgiver_ 
+	make _amulet_ permanent 
+	end quest 
+
+_qgclicked_ task:
+	clicked npc _questgiver_
+	say 1003

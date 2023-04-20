@@ -1,0 +1,234 @@
+-- Quest: C:\QUESTS\WORKING\K0C00Y02.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: merchant
+-- Repute: 0
+-- QuestId: 2
+Messages: 16
+Quest: K0C00Y02
+DisplayName: Counterfeit Gold
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 %pcf, I may be in very great trouble
+<ce>             indeed. It would appear that one of my former
+<ce>             associates, in an effort to make my life more
+<ce>               hellish, has passed some counterfeit gold
+<ce>               bricks to me. Innocently I passed them on
+<ce>              to four of my most valued allies in return
+<ce>                for services rendered. I obviously must
+<ce>              retrieve those bricks before they discover
+<ce>               that the gold is foscarium, which may be
+<ce>             in =2mondung_ days or less. I am paying about
+<ce>           _reward1_ gold pieces for each bar of false gold
+<ce>                that you can retrieve. Sound agreeable?
+
+RefuseQuest:  [1001]
+<ce>               No? Really? Very well. Someone else will
+<ce>                be more agreeable, I'm certain of that.
+
+AcceptQuest:  [1002]
+<ce>                %oth, that's good. Now, one of the bars
+<ce>                  is in a bank called _depository_ in
+<ce>                 __depository_; one is in a stronghold
+<ce>                          called ___mondung_;
+<ce>                   one is in __palace_ at the palace
+<ce>                         there; the last is in
+<ce>                       _mansion_ in __mansion_.
+<ce>            Now, recall that you only have =2mondung_ days
+<ce>               for this, and I'd rather have one in that
+<ce>                 time than all four. Good luck, %pcf.
+<ce>                       %god bless your journey.
+
+QuestFail:  [1003]
+<ce>                     %god, would you please hurry?
+
+QuestComplete:  [1004]
+<ce>                  It seems, that you have taken care
+<ce>                    of _qgiver_'s problems by now.
+
+RumorsDuringQuest:  [1005]
+Some chap just asked directions to _depository_. He didn't look like a banker.
+<--->
+<ce>             They're apparently recruiting at ___mondung_.
+ At least, it's pretty active there.
+                                     <--->
+_palace_ is improving its security, due to rumors about thieves in the area.
+<--->
+The maid at _mansion_ said she saw some undesirables watching the place.
+
+RumorsPostfailure:  [1006]
+%t %rn seems to think that the head of the smuggling operation is _qgiver_.
+<--->
+_qgiver_ has apparently been smuggling foscarium, pretending its gold.
+<--->
+_palace_ has cut off relations with _qgiver_ completely, from what I hear.
+<--->
+___mondung_ is working toward breaking up every aspect of _qgiver_'s business.
+
+RumorsPostsuccess:  [1007]
+_qgiver_ has kindly replaced all the gold %g3 clumsy allies lost to theft.
+<--->
+_qgiver_'s popularity with the top business leaders in %reg continues to rise.
+
+QuestorPostsuccess:  [1008]
+Hail and hello, you bearer of false gold.
+
+QuestorPostfailure:  [1009]
+I trusted you with my financial future once, remember, %pcf?
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of ___qgiver_ has
+ asked me to retrieve at least one of
+ the four bars of false gold %g gave
+ to %g3 allies before they discover the
+ truth about the gold -- in =2mondung_ days
+ or less. One bar of gold is in each
+ of the following places:
+ _palace_ in __palace_,
+ ___mondung_,
+ _mansion_ in __mansion_,
+ and _depository_ in __depository_.
+ I will be given about _reward1_ gold pieces
+ for each bar of gold I can get for him.
+
+Message:  1015
+<ce>                       %oth, well done, %pcf. I
+<ce>                 was afraid I hadn't given you enough
+<ce>                time. Here's your real gold in exchange
+<ce>                         for that false gold.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g3 occurs 2 times.
+--              %god occurs 2 times.
+--              %oth occurs 2 times.
+--              %pcf occurs 30 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 4 times.
+--               %rn occurs 1 time.
+--                %t occurs 1 time.
+--        =2mondung_ occurs 3 times.
+--       ___mondung_ occurs 4 times.
+--        ___qgiver_ occurs 1 time.
+--     __depository_ occurs 2 times.
+--        __mansion_ occurs 2 times.
+--         __palace_ occurs 2 times.
+--      _depository_ occurs 3 times.
+--         _mansion_ occurs 4 times.
+--          _palace_ occurs 3 times.
+--          _qgiver_ occurs 10 times.
+--         _reward1_ occurs 2 times.
+
+QBN:
+Item _goldBrick1_ gold_bar
+Item _goldBrick2_ gold_bar
+Item _goldBrick3_ gold_bar
+Item _goldBrick4_ gold_bar
+Item _reward1_ gold
+Item _reward2_ gold
+Item _reward3_ gold
+Item _I.07_ gold
+
+Person _qgiver_ group Questor
+
+Place _depository_ remote bank
+Place _mondung_ remote dungeon2
+Place _palace_ remote palace
+Place _mansion_ remote house1
+
+Clock _2mondung_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is 2 Knight
+Foe _F.01_ is 2 Battle_mage
+Foe _F.02_ is 2 Spellsword
+
+--	Quest start-up:
+	place item _goldBrick1_ at _depository_ 
+	place item _goldBrick2_ at _mansion_ 
+	place item _goldBrick3_ at _mondung_ 
+	place item _goldBrick4_ at _palace_ 
+	start timer _2mondung_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	pc at _depository_ set _letter2_ 
+	pc at _mansion_ set _S.10_ 
+	pc at _palace_ set _S.08_ 
+
+variable _S.00_
+variable _S.01_
+variable _2mondung_
+variable _2palace_
+_S.04_ task:
+	toting _goldBrick1_ and _qgiver_ clicked 
+	get item _reward1_ 
+	say 1015 
+	make _reward1_ permanent 
+
+_S.05_ task:
+	toting _goldBrick2_ and _qgiver_ clicked 
+	get item _reward2_ 
+	say 1015 
+	make _reward2_ permanent 
+
+_S.06_ task:
+	toting _goldBrick3_ and _qgiver_ clicked 
+	get item _reward3_ 
+	say 1015 
+	make _reward3_ permanent 
+
+_S.07_ task:
+	toting _goldBrick4_ and _qgiver_ clicked 
+	get item _I.07_ 
+	say 1015 
+	make _I.07_ permanent 
+
+_qgclick2_ task:
+	clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclick2_ and not _S.04_ and not _S.05_ and not _S.06_ and not _S.07_
+	say 1003
+	clear _clearclick_ _qgclick2_
+
+_S.08_ task:
+	create foe _F.00_ every 10 minutes 10 times with 20% success 
+
+_letter2_ task:
+	create foe _F.01_ every 10 minutes 10 times with 20% success 
+
+_S.10_ task:
+	create foe _F.02_ every 10 minutes 10 times with 20% success 
+
+variable _S.11_
+_mggold_ task:
+	when _S.04_ or _S.05_ or _S.06_ or _S.07_ 
+
+_lesser_ task:
+	when _S.04_ and _S.05_ and _S.06_ and _S.07_ 
+
+_S.14_ task:
+	when _lesser_ 
+	give pc nothing 
+	end quest 
+
+_success_ task:
+	when _2mondung_ and _mggold_ 
+	give pc nothing 
+	make _goldBrick1_ permanent 
+	make _goldBrick2_ permanent 
+	make _goldBrick3_ permanent 
+	make _goldBrick4_ permanent 
+	end quest 
+
+_S.16_ task:
+	when _2mondung_ and not _mggold_ 
+	make _goldBrick1_ permanent 
+	make _goldBrick2_ permanent 
+	make _goldBrick3_ permanent 
+	make _goldBrick4_ permanent 
+	end quest 

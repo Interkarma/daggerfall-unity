@@ -1,0 +1,299 @@
+-- Quest: C:\QUESTS\WORKING\M0B00Y17.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 0
+-- QuestId: 17
+Messages: 62
+Quest: M0B00Y17
+DisplayName: Runaway Pet
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                            %pcn, isn't it?
+<ce>                      Just who I was looking for.
+<ce>                   We have a rather interesting job,
+<ce>                   requiring a bit of brains rather
+<ce>                    than brawn. Are you interested?
+
+RefuseQuest:  [1001]
+<ce>                  Yeah, you're right, I did say this
+<ce>                      job needed brains didn't I?
+
+AcceptQuest:  [1002]
+<ce>                  Here's the situation. Seems _dummy_
+<ce>                has this pet sabertooth tiger -- don't
+<ce>                 ask -- and it ran off a few days ago.
+<ce>                   %g had it tracked to ___mondung_,
+<ce>                but now we need someone to go in there
+<ce>                  and bring it out. Alive. The trick
+<ce>                 is that it's been trained to respond
+<ce>                 to this bell. The tiger should become
+<ce>               docile if you ring the bell in its face.
+<ce>                  Of course, _dummy_ did say it isn't
+<ce>               trained too well -- are you surprised? --
+<ce>                so you may have to smack it upside the
+<ce>               head once or twice to get its attention.
+<ce>                Just don't kill it, OK?  Bring it back
+<ce>                  to _dummy_ at __dummy_ in one piece
+<ce>                  within =qtime_ days, and %g'll pay
+<ce>                      you _gold_ gold. Good luck.
+
+QuestFail:  [1003]
+<ce>                    Don't look at me. The tiger is
+<ce>                       in ___mondung_. Take your
+<ce>                      little bell and get going.
+
+QuestComplete:  [1004]
+<ce>                  Oh, =tiger_, darling, you're safe!
+<ce>                   Thank you so much for bringing my
+<ce>                    baby back home to me. I'm sure
+<ce>                    he didn't give you any trouble,
+<ce>                   did he? He's just a big kitty cat
+<ce>                    at heart, wouldn't hurt a fly.
+<ce>                  Here's your _gold_ gold, just like
+<ce>                   I promised that nice _questgiver_
+<ce>                        at the Fighter's Guild.
+
+RumorsDuringQuest:  [1005]
+<ce>     Did you hear that _dummy_'s tiger escaped again?  Killed and
+<ce>                      ate three people this time.
+
+RumorsPostfailure:  [1006]
+<ce>    _dummy_'s tiger seems to have disappeared for good. Thank %god!
+
+RumorsPostsuccess:  [1007]
+<ce>     _dummy_ actually hired someone from the Fighter's Guild to go
+<ce>fetch %g3 pet tiger for %g2. What sap would take a silly job like that?
+
+QuestorPostsuccess:  [1008]
+<ce>                Howdy, %pcf, you old tiger-lover, you!
+
+QuestorPostfailure:  [1009]
+<ce>  I can't really think of an easier job than finding a pet tiger, but
+<ce>           you managed to screw it up. What do you want now?
+
+Message:  1020
+%qdt:
+ I have been hired by ___questgiver_'s
+ Fighters Guild to find a pet sabertooth
+ tiger that has run off into ___mondung_.
+ Supposedly the tiger is trained to respond
+ to a bell I was given, but _questgiver_
+ warned me that it may not really be trained
+ very well. I am to bring the tiger back
+ to its owner, _dummy_, at __dummy_
+ of ___dummy_ within =qtime_ days.
+ %g'll pay me _gold_ gold.
+
+Message:  1021
+%qdt:
+ I found the tiger in ___mondung_,
+ and now it seems to like me. It has
+ started following me, at least. Now
+ I just have to get it back to _dummy_
+ in ___dummy_.
+
+ Message:  1022
+%qdt:
+ I found the tiger in ___mondung_,
+ but I killed it. The best I can do now
+ is go to __dummy_ of ___dummy_
+ and apologize to _dummy_
+ for the botched job.
+
+Message:  1030
+<ce>                      Oops. You killed the tiger.
+<ce>                    I wonder what _dummy_ will say?
+
+Message:  1040
+<ce>                       You ring the bell loudly,
+<ce>                      but it doesn't seem to have
+<ce>                              any effect.
+
+Message:  1041
+<ce>                      The tiger's ears perk up at
+<ce>                       the sound of the bell. It
+<ce>                    shakes its great head from side
+<ce>                     to side, and begins emitting
+<ce>                      a low growling sound. Is it
+<ce>                     purring? The tiger pads over
+<ce>                      and rubs against your legs,
+<ce>                       nearly knocking you over.
+<ce>                                    
+<ce>                    The tiger is now following you.
+
+Message:  1050
+<ce>                      You horrible horrible %ra!
+<ce>                     I can't believe you killed my
+<ce>                      poor innocent =tiger_. Just
+<ce>                      a sweet lost kitty, and you
+<ce>                       just had to slaughter it.
+<ce>                       Get out of here at once,
+<ce>                      before I have you arrested
+<ce>                         for murder. Get out!
+
+Message:  1060
+Dear _love_,
+ 
+ I am sorry I can't be with you today
+ in __lovehouse_, but I wanted to take a
+ moment to let you know that you are
+ in my thoughts as always, my sweet.
+ I am sitting here under a tree, on a
+ beautiful afternoon that reminds me
+ of you. Everything reminds me of you,
+ my darling, the shining sun in the sky,
+ the chirping birds in the trees, even
+ the pretty pet tiger walking with its
+ owner over there. Ha ha! The tiger has
+ gotten loose, the scamp. It is bounding
+ over my way. See how its coat gleams in
+ the sun, like your hair in the firelight.
+ Its owner is shouting something and ringing
+ a little bell, but it doesn't listen. Such
+ a high spirited beast! It seems friendly
+ enough, here it comes to say hello...
+
+Message:  1061
+<ce>                   Yes, what do you want?  Oh...good
+<ce>                   gracious, a letter from _victim_!
+<ce>                     Why is it stained with blood?
+<ce>                    %g's dead?  Dear me. %g always
+<ce>                    was so sweet to me, I'm afraid
+<ce>                   %g had the delusion that we were
+<ce>                   in love. Poor soul, what a tragic
+<ce>                    end. I certainly appreciate you
+<ce>                    telling me what happened. I'll
+<ce>                   make sure %g3 family knows. Here,
+<ce>                    why don't you take this _magic_
+<ce>                     %g gave me. I certainly don't
+<ce>                         have any use for it.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 7 times.
+--               %g2 occurs 2 times.
+--               %g3 occurs 3 times.
+--              %god occurs 2 times.
+--              %pcf occurs 2 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 2 times.
+--               %ra occurs 1 time.
+--           =qtime_ occurs 2 times.
+--           =tiger_ occurs 2 times.
+--         ___dummy_ occurs 3 times.
+--       ___mondung_ occurs 4 times.
+--    ___questgiver_ occurs 1 time.
+--          __dummy_ occurs 2 times.
+--      __lovehouse_ occurs 1 time.
+--           _dummy_ occurs 13 times.
+--            _gold_ occurs 6 times.
+--            _love_ occurs 2 times.
+--           _magic_ occurs 1 time.
+--      _questgiver_ occurs 2 times.
+--          _victim_ occurs 1 time.
+
+QBN:
+Item _I.00_ bell
+Item _I.01_ dead_body
+Item _gold_ gold
+Item _letter_ letter used 1060
+Item _magic_ magic_item
+
+Person _questgiver_ group Questor
+Person _victim_ face 1 group Group_6.0 remote
+Person _love_ face 1 group Group_7.0 remote
+Person _dummy_ group Noble local
+
+Place _mondung_ remote dungeon6
+Place _newdung_ remote dungeon
+--unneeded dungeon variable
+Place _lovehouse_ local house2
+
+Clock _qtime_ 00:00 0 flag 17 range 0 2
+
+Foe _tiger_ is Sabretooth_tiger
+
+--	Quest start-up:
+	place item _I.01_ at _mondung_ 
+	dialog link for location _lovehouse_ person _love_ 
+	start timer _qtime_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	get item _I.00_ 
+	pick one of _S.10_ _S.10_ _S.11_ _S.11_ 
+	place foe _tiger_ at _mondung_ 
+	create npc _dummy_ 
+	have _I.01_ set _deadbody_
+
+_deadbody_ task:
+	take _I.01_ from pc
+--added deadbody task. otherwise body would clog inventory
+
+_qtime_ task:
+	end quest 
+
+_S.01_ task:
+	say 1040 
+
+_S.02_ task:
+	injured _tiger_ 
+	_I.00_ used do _S.04_ 
+
+until _S.02_ performed:
+	_I.00_ used do _S.01_ 
+
+_S.03_ task:
+	killed 1 _tiger_ 
+	say 1030 
+	log 1022 step 1
+--adds log in case user missed kill message
+
+variable _S.04_
+_S.05_ task:
+	when _S.04_ and not _S.03_ 
+	log 1021 step 1 
+	say 1041 
+	--remove foe action used here instead of attempting to transfer it to another dungeon
+	remove foe _tiger_
+-	unset _S.01_ _S.04_ 
+--prevented quest from giving reward. don't know the purpose of this unset.
+
+_S.06_ task:
+	clicked npc _dummy_ 
+
+_pcgetsgold_ task:
+	when _S.06_ and _S.05_ 
+	give pc _gold_  
+	take _I.00_ from pc
+	end quest 
+--removed unnecessary delay
+
+_S.08_ task:
+	when _S.06_ and _S.03_ 
+	say 1050 
+	unset _S.06_ 
+
+variable _duelist_
+-unused variable
+_S.10_ task:
+	_letter_ used do _readletter_ 
+	place item _letter_ at _mondung_ 
+	place npc _love_ at _lovehouse_ 
+
+variable _S.11_
+_S.12_ task:
+	toting _letter_ and _love_ clicked 
+	get item _magic_ 
+	say 1061 
+	make _magic_ permanent 
+
+_readletter_ task:
+	add dialog for location _lovehouse_ person _love_ 
+
+_qgclicked_ task:
+	clicked npc _questgiver_
+	say 1003

@@ -1,0 +1,210 @@
+-- Quest: C:\QUESTS\WORKING\W0C00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: Hermaeus Mora
+-- Repute: 0
+-- QuestId: 0
+Messages: 46
+Quest: W0C00Y00
+DisplayName: Hermaeus Mora's Quest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                Power, yes, is an allusive but eloquent
+<ce>               prosecution. One of my minions possesses
+<ce>              an ancient tome called the Oghma Infinium,
+<ce>               which bequeaths great power on those who
+<ce>                 read its pages. If you exterminate a
+<ce>                 certain scrofulous patrician who has
+<ce>                aroused my displeasure, I will arrange
+<ce>                  a meeting between you and the book.
+<ce>                          Is this agreeable?
+
+RefuseQuest:  [1001]
+<ce>               You answer negatively. Am I to understand
+<ce>                that you sought power, but seek it for
+<ce>                 free? You ought to have sought wisdom
+<ce>                 instead, for that is what you need. I
+<ce>                 bid you a very disappointed goodbye.
+
+AcceptQuest:  [1002]
+<ce>                Very well. This socialite I referred to
+<ce>                  resides at the palace of __palace_.
+<ce>                For the record, the name of your quarry
+<ce>                              is _enemy_.
+<ce>                 Kill %g2 and proceed to ___contact_,
+<ce>                      where my servant _contact_
+<ce>                 will wait for you in a library. I do
+<ce>                   not think there is anything to be
+<ce>                 gained by continuing this interview.
+<ce>                    Fail me not in this, %pcf, and
+<ce>                 the power thou craves will be thine.
+
+QuestFail:  [1003]
+<ce>                        Listen, if you're %pcf,
+<ce>                       go back and kill _enemy_
+<ce>                     again. Hermaeus Mora tells me
+<ce>                       not to give you the book,
+<ce>                       'cause %g's still alive.
+<ce>                      I'm sorry, but that's that.
+
+QuestComplete:  [1004]
+<ce>                %pcf, I underestimated you. I told Mora
+<ce>             you couldn't do it, but here you are, and all
+<ce>                  %reg is in an uproar over _enemy_'s
+<ce>                death. As promised, the book. Remember:
+<ce>                      you can only read it once.
+<ce>                         See you later, maybe.
+
+RumorsDuringQuest:  [1005]
+They say _enemy_ got all %g3 power direct from the daedras themselves.
+<--->
+_enemy_ must have made a deal with the daedra. No one can be that lucky.
+
+RumorsPostfailure:  [1006]
+_enemy_ left %reg quick as you like. I guess %g's past caught up with %g2.
+<--->
+You can cheat the daedra. _enemy_ did. Had to run away, but %g's still alive.
+
+RumorsPostsuccess:  [1007]
+What goes around, comes around. _enemy_ tried to cheat fate, so they say.
+<--->
+I can still hear _enemy_ bragging about cheating the daedra. What a fool.
+
+Message:  1011
+Just a =contact_ who deals with the daedra.
+<--->
+Some =contact_ who practically lives at __contact_.
+
+Message:  1012
+The Daedra Prince of Forbidden Knowledge, the wisest of the infernal ones.
+<--->
+Hermaeus Mora has a mind as old as Tamriel. And a body of slime.
+
+Message:  1013
+The Oghma Infinium is the book of knowledge. But knowledge can be forgotten.
+<--->
+It is the book that gifts its reader with stronger bodies and abler minds.
+
+Message:  1020
+%qdt:
+ The Daedric Prince Hermaeus Mora
+ wants me to assassinate a spellsword who went
+ back on a contract with him. _enemy_
+ resides in the Palace of __palace_.
+ In exchange for killing %g2 and getting to
+ Hermaeus Mora's contact in ___contact_,
+ _contact_, in =1stparton_ days or
+ less, I will be given the book of knowledge,
+ the Oghma Infinium. _contact_
+ will be waiting in a library there.
+
+Message:  1030
+<ce>                    Hermaeus Mora will be pleased--
+<ce>                        you have slain _enemy_.
+
+Message:  1035
+<ce>             No!  Wait!  I swear, I meant to pay Lord Mora
+<ce>                  back.  Don't kill me, I beg of you!
+<ce>            Here, spare my life and take this _magic_ back
+<ce>              to him as a token of my goodwill and a down
+<ce>               payment on what I owe.  Please, will you?
+
+Message:  1040
+<ce>             Hmm, well, thanks for the _magic_, I guess...
+<ce>                   Now, let's get down to business.
+
+QuestTimeLapse:  [1045]
+<ce>              You're telling me you let that little worm
+<ce>             live, and you bring me this pathetic _magic_
+<ce>               instead of _enemy_'s blood on your hands?
+<ce>             Hermaeus Mora will be very unhappy with this
+<ce>                                 news.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 4 times.
+--               %g2 occurs 3 times.
+--               %g3 occurs 1 time.
+--              %pcf occurs 3 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 2 times.
+--       =1stparton_ occurs 1 time.
+--         =contact_ occurs 7 times.
+--         __palace_ occurs 2 times.
+--         _contact_ occurs 3 times.
+--           _enemy_ occurs 15 times.
+--           _magic_ occurs 3 times.
+
+QBN:
+Item _artifact_ artifact Oghma_Infinium anyInfo 1013
+Item _magic_ magic_item
+
+Person _questgiver_ face 112 named Hermaeus_Mora anyInfo 1012
+Person _contact_ group Librarian remote anyInfo 1011
+Person _enemy_ face 1 factiontype Province remote
+
+Place _palace_ remote palace
+Place _L.01_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+
+Foe _monster_ is Spellsword
+Foe _guard1_ is Barbarian
+Foe _guard2_ is Ranger
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1020 step 0 
+	pc at _palace_ set _S.06_ 
+	place npc _enemy_ at _palace_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_pcgetsgold_ task:
+	when _npcclicked_ and _mondead_ 
+	when _S.10_ and _mondead_ 
+	give pc _artifact_ 
+	end quest 
+--removed unnecessary delay
+
+_mondead_ task:
+	killed 1 _monster_ 
+	create foe _guard2_ every 3 minutes 5 times with 50% success 
+	say 1030 
+
+_npcclicked_ task:
+	clicked npc _contact_ 
+
+_clearclick_ task:
+	when not _mondead_ and _npcclicked_
+	say 1003 
+	clear _npcclicked_ _clearclick_ 
+
+_S.06_ task:
+	hide npc _enemy_ 
+	restrain foe _monster_ 
+	place foe _monster_ at _palace_ 
+
+_S.07_ task:
+	injured _monster_ 
+	prompt 1035 yes yes no _no_ 
+
+yes task:
+	get item _magic_ 
+	place foe _monster_ at _L.01_ 
+
+_no_ task:
+	create foe _guard1_ every 2 minutes 5 times with 35% success 
+
+_S.10_ task:
+	toting _magic_ and _contact_ clicked 
+	say 1040 
+
+_S.11_ task:
+	when _S.10_ and not _mondead_ 
+	say 1045 

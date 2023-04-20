@@ -1,0 +1,427 @@
+-- Quest: C:\QUESTS\WORKING\S0000002.Qbn.
+-- Main story quest.
+-- QuestId: 2
+Messages: 51
+Quest: S0000002
+DisplayName: Blackmailing Prince Helseth
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                    I need a courier, %pcf, but no
+<ce>          common, jelly-armed, gas-headed pox of a mercenary
+<ce>           will do. I have a letter of utmost importance to
+<ce>             be delivered to a high dignitary who will be
+<ce>            defended against unwelcome intrusion. In return
+<ce>              for this, I will not only reward you with a
+<ce>                _magicitem_, but also put in a positive
+<ce>           word for you with the king and queen of Wayrest,
+<ce>          but I will give you some information on the affair
+<ce>         with Daggerfall I doubt you would receive elsewhere.
+<ce>            Does this sound like an agreeable arrangement?
+
+RefuseQuest:  [1001]
+<ce>               Dullard. Why did you let me waste my time
+<ce>                        with the likes of you?
+
+AcceptQuest:  [1002]
+<ce>            Excellent. Meet me here this time tomorrow and
+<ce>              I will give you the letter and the name and
+<ce>                      location of the recipient.
+
+QuestFail:  [1003]
+<ce>                The letter needs to be delivered, %pcf.
+<ce>                        Do not fail me in this.
+
+QuestComplete:  [1004]
+<ce>                   Anyway, here is the _magicitem_ I
+<ce>              promised. Never let it be said that Prince
+<ce>                   Helseth is not a man of his bond.
+<ce>                                    
+<ce>              Oh yes, I promised to tell you something of
+<ce>               the situation in Daggerfall. I suspect my
+<ce>            family has more to do with it than is commonly
+<ce>             known. We sent advisors to urge King Lysandus
+<ce>             and King Camaron to mend their differences on
+<ce>               the eve of the Battle of Cryngaine Field.
+<ce>            Lysandus was digustingly loyal to the emperor,
+<ce>             where Camaron was fighting for more autonomy.
+<ce>            According to the advisor's report, they arrived
+<ce>            too late because they were waylaid by the orcs
+<ce>              of Gortwog en route. However, I have heard
+<ce>              stories that, at least some of our advisors
+<ce>              arrived at Lysandus' tent and spoke to him
+<ce>             briefly. At this time, I cannot say more. If
+<ce>            I receive more information or if the situation
+<ce>              progresses, I will certainly send you word.
+
+RumorsDuringQuest:  [1005]
+Lord Castellian is admitting no visitors while on holiday in __castfort_.
+<--->
+The question of succession has been distracting Lord Castellian terribly.
+
+RumorsPostfailure:  [1006]
+Lord Castellian seems to be favoring Princess Elysana in the succession.
+<--->
+The Elder Council seems inclined to uphold the venerable law of succession.
+
+RumorsPostsuccess:  [1007]
+Lord Castellian is constantly in Prince Helseth's company since his holiday.
+<--->
+The Elder Council is talking earnestly about eliminating the law of succession.
+
+QuestorPostsuccess:  [1008]
+Yes, %pcf? Our stars seem to be rising in syndesis. What would you need?
+
+QuestorPostfailure:  [1009]
+<ce>                I had an important assignment for you,
+<ce>                    %pcf, if you recall. Having to
+<ce>               do with Lord Castellian? Well, now it is
+<ce>                too late, and I am not the most patient
+<ce>                    man in Tamriel. Pray, leave me
+<ce>                       before I become brusque.
+
+QuestLogEntry:  [1010]
+My Dear Lord Castellian,
+ 
+      Sorry about the necessity of delivering this
+ letter by the roughest possible service, but it
+ would be unthinkable to approach you at the castle
+ on such a delicate matter. I have long admired your
+ loyalty to the crown and neutrality in internal
+ affairs. Understand that I only want to save your
+ dignity from a possibly embarrassing scenario.
+      The problem rests in your sister, the Lady
+ Pasipha, who though she resides abroad still
+ communicates regularly with members of court.
+ I understand and respect the depth of your sibling
+ love and affection for one another, for, in
+ response to a curious inquiry of mine, Lady
+ Pasipha sent me several touching letters penned
+ in your hand.
+      "Have you ever espied with delight a red berry
+ half-drowned in cream? So I dreamed of you, my
+ dearest love, pouring my soul into you, sweet,
+ for your touch, dear, my soul is quite forfeit."
+      While you and I know the innocence of your
+ fondness for the lady, the more prurient minds at
+ court, as you are aware, are inclined toward
+ grotesque misintepretation. Her husband, I
+ understand, is famous for his jealous rages. I am
+ of several minds on the matter, how to best avoid
+ possible negative reaction, and would appreciate
+ your response at the soonest possible opportunity.
+ I will await you at Castle Wayrest.
+ 
+<ce>                               Helseth,
+<ce>                           Prince of Wayrest
+
+Message:  1011
+<ce>                            Well done %pcn.
+<ce>            Your budding reputation appears to be deserved.
+<ce>                 Lord Castellian is quite pliable now.
+
+Message:  1012
+<ce>             It is really too bad that you were not a bit
+<ce>                   faster %pcf. My sister Elysana is
+<ce>             betrothed. Without her opposition, it was not
+<ce>            truly necessary to deliver that letter to Lord
+<ce>             Castellian. However, I'm sure I can turn this
+<ce>                       to my advantage somehow.
+
+Message:  1014
+<ce>               Why that conniving, manipulative weasel.
+<ce>                  You did well by bringing this to my
+<ce>                      attention, %pcf. Thank you.
+
+Message:  1017
+<ce>               A page wearing the colors and pale yellow
+<ce>            rose of Wayrest appears silently at your side.
+<ce>                He hands you a letter and disappears as
+<ce>                        quietly as he arrived.
+
+Message:  1018
+<ce>              A breathless courier shoves a leather pouch
+<ce>            into your hands. A cautious examination reveals
+<ce>                      a letter and a sum of gold.
+
+Message:  1019
+%qdt:
+ Prince Helseth wants me
+ to meet him tomorrow at the Castle
+ for the details of a quest. I will
+ be acting as a courier.
+
+Message:  1020
+%qdt:
+ Prince Helseth wants me to deliver a letter
+ to Lord Castellian, leader of the elder
+ council of Wayrest, in his holiday manor,
+ _castfort_ in __castfort_.
+ I have =1stparton_ days to deliver the letter and
+ return.
+
+Message:  1024
+Prince Helseth,
+    I appreciate your kindness, and I
+ will meet with you very shortly at
+ your convenience."
+ 
+<ce>                            Lord Castellian
+
+Message:  1025
+<ce>                   Lord Castellian has ordered your
+<ce>                    death. He wanted me to tell you
+<ce>                        that you know too much.
+
+Message:  1026
+My Dear Lord Castellian,
+ 
+      Forgive this rough delivery, but it
+ would have been impolitic to approach you
+ at the palace with this potential problem.
+ Unfortunately, your much deserved vacation
+ will have to be temporarily suspended until
+ this matter is settled.
+ 
+      I refer to your sister, Lady Pasipha.
+ For years, she has been one of the most
+ glamorous figures at the Wayrest court,
+ the darling of all who appreciate beauty
+ and grace. Rather recently, rumors have
+ circulated that the gold she has spent on
+ her gowns and jewels could not have possibly
+ come from her husband, who is at present,
+ impecunious. Distasteful conjectures followed,
+ none of which worth the ink I would use for
+ recitation.
+ 
+      To be quite blunt, a person, who must
+ remain anonymous, postulated to me that you
+ were borrowing funds from the royal treasury
+ to support your sister's extravagance. Of
+ course, I defended your honor, but copies of
+ the Royal books were produced that seemed to
+ support the allegation. I am thus uncertain
+ of the best procedure to take next.
+ 
+      Do not doubt, sir, that I am convinced
+ of your integrity as senior member of the
+ Elder Circle of Wayrest. I only wish for the
+ matter of the financial records be straightened
+ so if they are brought to Eadwyre's attention,
+ they can be confidently defended.
+ 
+      Please send a reply with this trusted
+ courier. I would prefer to meet with you as
+ soon as possible, of course.
+ 
+<ce>                           Very truly yours,
+ 
+<ce>                                Helseth
+
+Message:  1027
+<ce>                  Ah, hello again, %pcf. Here is the
+<ce>           letter. It is to be given to Lord Castellian, the
+<ce>            head of the elder council, who is currently at
+<ce>                 his house _castfort_ in __castfort_.
+<ce>             I need the letter delivered and you back here
+<ce>             in no later than =1stparton_ days -- that is
+<ce>               essential. Like I mentioned before, Lord
+<ce>              Castellian values his privacy to an excess.
+<ce>                Be prepared for some resistance at your
+<ce>                  arrival in _castfort_. I would ask
+<ce>             that you not read the letter as it is private
+<ce>             correspondence. If word of its contents gets
+<ce>                        out, I will blame you.
+
+Message:  1028
+<ce>               You wait while Lord Castellian reads the
+<ce>               letter. His skin grows pale and his hand
+<ce>                           begins to shake.
+<ce>                                    
+<ce>                   "I see. Please wait while I pen a
+<ce>                     response to Prince Helseth."
+<ce>                  It only takes him a minute to write
+<ce>                the response, which he then hands you.
+
+Message:  1030
+<ce>                     This letter has been opened.
+<ce>                      You exceed the bounds of a
+<ce>                            courier, %pcn.
+
+Message:  1031
+<ce>                   So you like to read the missives
+<ce>                   of your betters. Don't expect me
+<ce>                     trust you again anytime soon.
+
+Message:  1040
+Dear %pcn,
+ 
+ Due to the recent marraige of my sister Elysana,
+ I shall not be needing your services with regard
+ to the delivery of the letter to Lord Castellian.
+ Since you have acted on my behalf with honor, I
+ have instructed the courier to give you 100 gold
+ pieces for your time and effort so far.
+ 
+<ce>                                Helseth
+<ce>                           Prince of Wayrest
+
+Message:  1050
+Lord Castellian is the most powerful of Wayrest's councilors.
+<--->
+I hear that Lord Castellian has the backing to block Prince Helseth's war plans.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 11 times.
+--              %pcn occurs 5 times.
+--              %qdt occurs 2 times.
+--       =1stparton_ occurs 2 times.
+--       __castfort_ occurs 6 times.
+--       _magicitem_ occurs 2 times.
+
+QBN:
+Item letter39 letter used 1010
+Item _magicitem_ magic_item
+Item letter41 letter used 1024
+Item letter42 letter used 1026
+Item letter43 letter used 1040
+Item _I.06_ gold range 100 to 100
+
+Person _helseth_ named Prince_Helseth atHome
+Person Castellian face 1 named Lord_Castellian anyInfo 1050
+Person Eadwyre face 80 named King_Eadwyre atHome
+
+Place _castfort_ remote house1
+
+Clock _S.00_ 1.00:00 0 flag 1 range 0 1
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+Clock _S.15_ 3.00:00 7.00:00
+
+Foe _F.00_ is Knight
+Foe _battlemage_ is Battle_mage
+
+--	Quest start-up:
+	start timer _S.00_ 
+	log 1019 step 0 
+	prompt QuestorOffer yes yes no _no_ 
+	pick one of _S.13_ _S.24_ 
+
+_S.00_ task:
+	create npc at _castfort_ 
+	place npc Castellian at _castfort_ 
+
+_S.01_ task:
+	clicked npc _helseth_ 
+
+_S.02_ task:
+	toting letter42 and Castellian clicked 
+	toting letter39 and Castellian clicked 
+
+_S.03_ task:
+	when _S.01_ and _S.00_ 
+	add dialog for person Castellian 
+	start timer _1stparton_ 
+	log 1020 step 1 
+	remove log step 0 
+	say 1027 
+
+_S.04_ task:
+	toting letter41 and _helseth_ clicked 
+	give pc _magicitem_ 
+	change repute with _helseth_ by +10 
+	drop Eadwyre as questor 
+	drop _helseth_ as questor 
+
+_S.05_ task:
+	toting letter42 and Eadwyre clicked 
+	toting letter39 and Eadwyre clicked 
+	say 1014 
+	change repute with Eadwyre by +5 
+
+ElysannaSatisfied _S.06_
+	start timer _S.15_ 
+
+variable _S.07_
+_S.08_ task:
+	injured _F.00_ saying 1025 
+	injured _battlemage_ saying 1025 
+
+_clearclick_ task:
+	when _S.01_ and not _S.03_ 
+	clear _S.01_ _clearclick_ 
+
+yes task:
+	dialog link for person Castellian 
+	say AcceptQuest 
+	add _helseth_ as questor 
+	add Eadwyre as questor 
+
+_no_ task:
+	say RefuseQuest 
+	end quest 
+
+_S.12_ task:
+	when _S.03_ and _S.13_ 
+	letter39 used do _S.07_ 
+	get item letter39 
+
+variable _S.13_
+_S.14_ task:
+	when _S.03_ and _S.24_ 
+	letter42 used do _S.07_ 
+	get item letter42 
+
+_S.15_ task:
+	get item letter43 
+	get item _I.06_ 
+	say 1018 
+	make letter43 permanent 
+	make _I.06_ permanent 
+	drop Eadwyre as questor 
+	drop _helseth_ as questor 
+	end quest 
+
+_1stparton_ task:
+	drop Eadwyre as questor 
+	drop _helseth_ as questor 
+	end quest 
+
+_S.17_ task:
+	when _S.04_ and _S.06_ 
+	say 1012 
+
+_S.18_ task:
+	when _S.04_ and not _S.06_ 
+	say 1011 
+
+_S.19_ task:
+	when _S.02_ and _S.07_ 
+	create foe _F.00_ every 4 minutes 6 times with 100% success 
+	create foe _battlemage_ every 7 minutes 2 times with 100% success 
+	say 1030 
+	change repute with Castellian by -10 
+
+_S.20_ task:
+	when _S.02_ and not _S.07_ 
+	letter41 used do _S.21_ 
+	get item letter41 
+	say 1028 
+
+variable _S.21_
+_S.22_ task:
+	when _S.04_ and _S.21_ 
+	say 1031 
+	change repute with _helseth_ by -25 
+
+_S.23_ task:
+	when _S.04_ and not _S.21_ 
+	start quest 11 11 
+
+variable _S.24_
+_S.25_ task:
+	when _S.22_ or _S.23_ 
+	end quest 

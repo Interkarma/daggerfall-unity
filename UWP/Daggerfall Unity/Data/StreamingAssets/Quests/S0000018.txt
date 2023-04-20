@@ -1,0 +1,164 @@
+-- Quest: C:\QUESTS\WORKING\S0000018.Qbn.
+-- Main story quest.
+-- QuestId: 18
+Messages: 31
+Quest: S0000018
+DisplayName: Dust of Restful Death
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>              So Medora wants the Dust of Restful Death.
+<ce>               Only because I respect the memory of King
+<ce>                Lysandus will I do this. The Dust can be
+<ce>                       found in ___crypt_ on her
+<ce>               own island. Tell Medora that the price is
+<ce>                 her support of my claim to the heart.
+<ce>                       She'll know what it means.
+
+QuestLogEntry:  [1010]
+%qdt:
+ Medora came to me in a vision and told me
+ that Lysandus ghost could be soothed if I
+ can convince Gortwog, Lord of the Orcs in
+ Orsinium, to tell me where it is.
+
+Message:  1011
+%qdt:
+ I have spoken with Gortwog. He claims that
+ the Dust of Restful Death can be found in
+ ___crypt_ on the Isle of
+ Balfiera. He also instructed me to tell
+ Medora that she must support his claim to
+ the heart of Tiber Septim, whatever that is.
+
+Message:  1015
+<ce>                 Your vision hazes and the world grows
+<ce>                  dim. Out of the gray, a woman's face
+<ce>                            appears. Medora!
+<ce>                                    
+ "%pcf. Your efforts to free me
+ have not been in vain. I have discovered
+ a powder that will soothe the ghost of
+ my beloved Lysandus. However, it is in the
+ hands of Gortwog, Warlord of the Orcs, in
+ his steel citidel of Orsinium. Go to him
+ in Orsinium and see if there is anything
+ that can be done to persuade him to give
+ it to you. Bring the powder to me in
+ Direnni Tower once you have it."
+<ce>                                    
+<ce>                 The vision clears. Sometimes you wish
+<ce>                sorceresses would just send letters like
+<ce>                            other folks do.
+
+Message:  1016
+A packet of midnight black powder.
+
+Message:  1020
+<ce>               This parchment was used as a wrap for the
+<ce>                packet of powder. Some of its message is
+<ce>                             now illegible.
+<ce>                                    
+ Lady Med...
+ 
+ ...favor. They intend to slay him. I am
+ sending ........ers to stop them. You must
+ support me. If the empire finds I have
+ attacked royal advisors of Wayr......ven
+ if they are assassins, my people will never
+ win the same status and respect as the
+ Khaji................ians. However, with
+ your support I c............. a hero of the
+ empire, and win respect for my people.
+ 
+<ce>                                Gortwog
+<ce>                                Warl...
+
+Message:  1030
+This is indeed the Dust of Restful Death.
+ As for that letter, it was from Gortwog
+ to me, though I never got it. I heard from
+ him later that his orc warriors were slain
+ attempting to ambush the assassins. Gortwog
+ and his orcs are not the villains most
+ people seem them as.
+ 
+ Eadwyre and the court of Wayrest have never
+ been particularly loyal to the empire. To
+ assassinate a king is treason. I will have
+ my revenge, but first I must find out why
+ Eadwyre would risk this.
+ 
+ I will need a month to prepare the Dust.
+ Come back to me at that time and I will
+ give it to you, along with instructions
+ for its use.
+
+
+-- Symbols used in the QRC file:
+--
+--              %qdt occurs 2 times.
+--         ___crypt_ occurs 2 times.
+
+QBN:
+Item _spider_ lich_dust used 1016
+Item _letter_ letter used 1020
+
+Person _medora_ named Medora atHome
+Person _gortwog_ named Gortwog atHome
+
+Place _orsinium_ permanent OrsiniumCastle2
+Place _crypt_ remote dungeon0
+
+Clock _delay_ 00:02 0 flag 1 range 0 1
+Clock _S.01_ 00:02 0 flag 1 range 0 1
+Clock _S.06_ 30.00:00 0 flag 1 range 0 1
+
+Foe _mummy_ is Mummy
+
+--	Quest start-up:
+	dialog link for item _spider_ 
+	dialog link for item _letter_ 
+	start timer _S.06_ 
+	reveal _crypt_ 
+
+_delay_ task:
+	start timer _S.01_ 
+	log 1010 step 0 
+	reveal _orsinium_ in province 26 at 146892 
+	say 1015 
+
+_S.01_ task:
+	drop _medora_ face 
+
+_S.02_ task:
+	clicked npc _gortwog_ 
+	log 1011 step 1 
+	give item _letter_ to _mummy_ 
+	give item _spider_ to _mummy_ 
+	say QuestorOffer 
+	place foe _mummy_ at _crypt_ 
+
+_S.03_ task:
+	toting _spider_ and _medora_ clicked 
+	start quest 22 22 
+	say 1030 
+	change repute with _gortwog_ by +10 
+	change repute with _medora_ by +15 
+	end quest 
+
+variable _S.04_
+_S.05_ task:
+	repute with _medora_ exceeds 0 do _S.04_ 
+	level 10 completed 
+
+variable _S.06_
+_S.07_ task:
+	when _S.06_ and _S.04_ and _S.05_ 
+	start timer _delay_ 
+	add _medora_ face 
+
+until _S.07_ performed:
+	mute npc _medora_ 
+	mute npc _gortwog_ 

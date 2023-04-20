@@ -1,0 +1,201 @@
+-- Quest: C:\QUESTS\WORKING\P0B10L10.Qbn.
+-- StartsBy: letter
+-- Questee: member
+-- Questor: vampire
+-- Repute: 10
+-- QuestId: 10
+Messages: 18
+Quest: P0B10L10
+DisplayName: The Chaperone
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+Error: Questtext 1000 Called.
+
+RefuseQuest:  [1001]
+Error: Questtext 1001 Called.
+
+AcceptQuest:  [1002]
+Error: Questtext 1002 Called.
+
+QuestComplete:  [1004]
+<ce>                  It is not an easy thing for one of
+<ce>                   our kind to travel. With the added
+<ce>                        encumbrance of _vamp_,
+<ce>                  I can only imagine your tribulation.
+<ce>                 Add to it the terror of that venomous
+<ce>                         =mage_, and I can see
+<ce>                        why %vam speak so highly
+<ce>                           of you, good %pcf.
+
+RumorsDuringQuest:  [1005]
+=mage_ is the only decent vampire-hunter left in %reg, according to some.
+<--->
+=mage_ could give most vampires a decent fight.
+
+RumorsPostfailure:  [1006]
+Some =vamp2_ in __vamp2_ was looking for a %ra named %pcn.
+
+RumorsPostsuccess:  [1007]
+=mage_ apparently isn't the vampire-hunter %g claims to be.
+<--->
+=mage_ was supposed to be a great vampire-hunter. Guess %g wasn't so great.
+
+QuestorPostsuccess:  [1008]
+Error: Questtext 1008 Called.
+
+QuestorPostfailure:  [1009]
+Error: Questtext 1009 Called.
+
+QuestLogEntry:  [1010]
+                    __vamp_
+                     ___vamp_
+ 
+ Dear %pcn,
+ 
+      %vam need you.
+ Come immediately.
+ 
+ 
+                    Yours in Death,
+ 
+                    _vamp_
+
+Message:  1011
+%qdt:
+ I have received
+ a letter from _vamp_,
+ a vampire of %vam urgently
+ requesting my presence in
+ ___vamp_ at a
+ place called __vamp_.
+
+Message:  1012
+<ce>                Thank you for coming so promptly. There
+<ce>               is a dangerous enemy of our tribe here in
+<ce>                      %reg, a mage called =mage_.
+<ce>                I myself had an unfortunate meeting with
+<ce>                   %g2. It is imperative that I speak
+<ce>                          with _vamp2_ over in
+<ce>                      ___vamp2_ about this matter,
+<ce>                       but I know that =mage_ is
+<ce>               looking for me. I am too weak to make the
+<ce>                 journey myself. You must escort me to
+<ce>                         __vamp2_ in ___vamp2_,
+<ce>                and we must hurry before the devil mage
+<ce>                brings in more allies. =queston_ nights,
+<ce>                          %pcf. It isn't long,
+<ce>                            but we must try.
+
+Message:  1013
+<ce>                     A bloodsucker with some sting
+<ce>                    left. This ought to make things
+<ce>                           more interesting!
+
+Message:  1014
+%qdt:
+ I am escorting _vamp_
+ to _vamp2_ in ___vamp2_.
+ I must make it to __vamp2_
+ before the mage who is stalking us
+ has a chance to call reinforcements.
+
+Message:  1015
+<ce>                         "%pcf!" says _vamp_,
+<ce>                        "You have slain =mage_,
+<ce>                         the scourge of %vam!"
+
+Message:  1016
+<ce>                          "You are taking too
+<ce>                          long," says _vamp_,
+<ce>                       staggering off on %g3 own.
+
+Message:  1017
+<ce>                        A pale, fierce-eyed boy
+<ce>                      hands you a letter and then
+<ce>                      disappears into the shadows.
+
+
+-- Symbols used in the QRC file:
+--
+--              %dat occurs 1 time.
+--                %g occurs 65 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 2 times.
+--              %pcf occurs 3 times.
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 3 times.
+--              %vam occurs 5 times.
+--            =mage_ occurs 8 times.
+--         =queston_ occurs 4 times.
+--           =vamp2_ occurs 4 times.
+--          ___vamp_ occurs 5 times.
+--          __vamp2_ occurs 3 times.
+--           __vamp_ occurs 3 times.
+--           _vamp2_ occurs 2 times.
+--            _vamp_ occurs 9 times.
+
+QBN:
+Item _letter_ letter used 1010
+
+Person _vamp_ factiontype Vampire_Clan local
+Person _vamp2_ factiontype Vampire_Clan remote
+
+
+Clock _queston_ 00:00 0 flag 1 range 1 2
+
+Foe _mage_ is Mage
+
+--	Quest start-up:
+	dialog link for person _vamp2_ 
+	dialog link for person _vamp_ 
+	_letter_ used do _readletter_ 
+	have _letter_ set _S.10_ 
+	give pc _letter_ notify 1017 
+
+_queston_ task:
+	end quest 
+
+_vampclicked_ task:
+	clicked npc _vamp_ 
+	log 1014 step 1 
+	hide npc _vamp_ 
+	say 1012 
+	add _vamp_ face 
+	create npc _vamp2_ 
+
+variable _S.02_
+_S.03_ task:
+	when _vampclicked_ and not _S.04_ 
+	create foe _mage_ every 15 minutes 5 times with 50% success 
+
+_S.04_ task:
+	injured _mage_ 
+	say 1013 
+
+variable _reward_
+_S.06_ task:
+	killed 1 _mage_ 
+	say 1015 
+
+_S.07_ task:
+	clicked npc _vamp2_ 
+	give pc nothing 
+	change repute with _vamp_ by +5 
+	end quest 
+
+_S.08_ task:
+	when _queston_ and not _S.07_ 
+	say 1016 
+	change repute with _vamp_ by -10 
+
+_readletter_ task:
+	add dialog for person _vamp_ 
+	log 1011 step 0 
+	create npc _vamp_ 
+
+_S.10_ task:
+	start timer _queston_ 

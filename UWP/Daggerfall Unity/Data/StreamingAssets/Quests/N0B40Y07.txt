@@ -1,0 +1,220 @@
+-- Quest: C:\QUESTS\WORKING\N0B40Y07.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 40
+-- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 61
+Quest: N0B40Y07
+DisplayName: Banish Daedra
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 I don't know if you can assist me at
+<ce>                        all, %pcf. I'm looking
+<ce>                  for a mage powerful enough to cast
+<ce>                  the spell Banish Daedra with little
+<ce>                     chance of failure. Could you?
+                                     <--->
+<ce>                   Banish Daedra is one of the most
+<ce>                  difficult of the standard circinate
+<ce>                  spells to cast. Few spells require
+<ce>                  more innate magicka and skill. You
+<ce>                  wouldn't happen to be able to cast
+<ce>                       Banish Daedra, would you?
+                                     <--->
+<ce>                  It is a great irony that summoning
+<ce>                    a daedra is a relatively simple
+<ce>                  matter, but banishing them, not so.
+<ce>                    You wouldn't happen to have the
+<ce>                 power to cast the standard circinate
+<ce>                    spell Banish Daedra, would you?
+
+RefuseQuest:  [1001]
+<ce>                     Ah, well, the search goes on.
+
+AcceptQuest:  [1002]
+<ce>                   I sincerely hope you're not lying
+<ce>                     about this. I don't want this
+<ce>                    particular daedra slain, for I
+<ce>                   may need its services later, but
+<ce>                    it's a vexatious presence right
+<ce>                    now. And don't make up a spell
+<ce>                    like Banish Daedra in the Spell
+<ce>                   Maker. It has to be the standard,
+<ce>                  basic circinate spell. Now, because
+<ce>                    I was the one who summoned this
+<ce>                 daedra, I can make your job somewhat
+<ce>                    easier, but you must follow my
+<ce>               instructions exactly.  Take this scroll,
+<ce>                 which contains a spell to momentarily
+<ce>                  imprison the daedra using its true
+<ce>                 name.  Before using it, however, you
+<ce>                 must be sure to draw blood from your
+<ce>                  target, or it may backfire with un-
+<ce>                 predictable results.  Once the daedra
+<ce>                 is imprisoned, Banish Daedra has very
+<ce>                 little chance of failing.  The daedra
+<ce>                  in question is over in ___mondung_.
+<ce>                I'll expect you back in =queston_ days.
+<ce>                        Good luck to you, %pct.
+
+QuestComplete:  [1004]
+<ce>                        Well done, %pct. Now, I
+<ce>                   don't have any gold to offer you,
+<ce>                   but here's a book I particularly
+<ce>                               enjoyed.
+
+RumorsDuringQuest:  [1005]
+Daedras seem to be attracted to ___mondung_. Must be some spiritual about it.
+<--->
+<ce>      Old _qgiver_ is forever summoning things up and
+<ce>                           getting %g2-self in trouble.
+
+RumorsPostfailure:  [1006]
+The daedric stars last night shone particularly bright.
+
+RumorsPostsuccess:  [1007]
+_qgiver_'s daedra is gone for now. But daedras have a habit of returning.
+<--->
+___mondung_ is relatively purged of daedric influence, at least for now.
+
+QuestorPostsuccess:  [1008]
+Are you enjoying that book, %pcf? I found it rather illuminating, myself.
+
+QuestorPostfailure:  [1009]
+<ce>                     If you didn't have the spell
+<ce>                   Banish Daedra, you shouldn't have
+<ce>                    taken the quest. Now leave me.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of the Mages
+ Guild in ___qgiver_
+ has sent me to ___mondung_
+ where I am to cast the spell Banish
+ Daedra on a daedra. _qgiver_
+ gave me a scroll with a spell to
+ imprison the daedra briefly in order
+ to make it easier to banish, but the spell
+ will only work if I first draw blood.
+ Within =queston_ days, I am to return, mission successful.
+
+Message:  1030
+Zanoth na' =daedra_.
+ Zanoth na' ==dummydaedra_.
+ Senet seneth mor.
+
+Message:  1040
+<ce>                  You blundering fool, I specifically
+<ce>                instructed you to banish =daedra_, not
+<ce>                  kill it.  Now I will have to go to
+<ce>                    the trouble of learning another
+<ce>                  daedra's true name.  Your presence
+<ce>                   here has become oppressive, %pcf.
+<ce>                         Please leave at once.
+
+Message:  1050
+<ce>                     A burst of flame consumes the
+<ce>                   scroll as you read the last word.
+
+Message:  1051
+<ce>                          I am =firedaedra_.
+<ce>                           Who calls me from
+<ce>                         my home in Oblivion?
+
+Message:  1060
+<ce>                        The daedra =daedra_ has
+<ce>                      been properly banished back
+<ce>                       to the Plane of Oblivion.
+   
+
+
+-- Symbols used in the QRC file:
+--
+--               %g2 occurs 3 times.
+--              %pcf occurs 6 times.
+--              %pct occurs 3 times.
+--              %qdt occurs 1 time.
+--    ==dummydaedra_ occurs 1 time.
+--          =daedra_ occurs 3 times.
+--      =firedaedra_ occurs 1 time.
+--         =queston_ occurs 3 times.
+--       ___mondung_ occurs 4 times.
+--        ___qgiver_ occurs 5 times.
+
+--in msg 1015, shifted text downward to avoid exposed hyphen
+
+QBN:
+Item _book_ book
+Item _spellScroll_ letter used 1030
+--added underscores to spellScroll
+
+Person _qgiver_ group Questor
+Person _dummydaedra_ face 249 factiontype Daedra remote
+
+Place _mondung_ remote dungeon9
+Place aide remote dungeon
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _daedra_ is Frost_daedra
+Foe _firedaedra_ is Fire_daedra
+
+--	Quest start-up:
+	start timer _queston_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	get item _spellScroll_ 
+	place foe _daedra_ at _mondung_ 
+
+_queston_ task:
+	end quest 
+
+_reward_ task:
+	when _qgclicked_ and _S.10_ and not _S.06_ 
+	give pc _book_ 
+	unset _qgclicked_ 
+	end quest 
+
+_out_ task:
+	remove foe _daedra_
+	--changed faulty "place enemy at other dungeon" task with simple "remove" for reliability
+
+variable _S.03_
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_S.05_ task:
+	take _spellScroll_ from pc 
+	--changed "place item spellScroll at aide" to this "take from pc" action. 
+	say 1050
+	--"say 1050" transferred from middle of "until _S.07_ performed," had faulty placing and this is a better ordering
+	create foe _firedaedra_ every 1 minutes 1 times with 100% success
+	say 1051 
+	--transferred "msg 1051" from previous line to this one, not known to be a valid argument
+
+_S.06_ task:
+	killed 1 _daedra_ 
+
+_S.07_ task:
+	injured _daedra_ 
+	_spellScroll_ used do _S.08_ 
+
+until _S.07_ performed:
+	_spellScroll_ used do _S.05_ 
+	
+_S.08_ task:
+	cast Banish_Daedra spell do _out_ 
+	restrain foe _daedra_ 
+
+_S.09_ task:
+	when _qgclicked_ and _S.06_ 
+	say 1040 
+	end quest 
+
+_S.10_ task:
+	when _out_ and not _S.06_ 
+	say 1060 

@@ -1,0 +1,188 @@
+-- Quest: C:\QUESTS\WORKING\S0000005.Qbn.
+-- Main story quest.
+-- QuestId: 5
+Messages: 12
+Quest: S0000005
+DisplayName: Concern for Nulfaga
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                My husband's poor grandmother, Nulfaga,
+<ce>                is rumored to be in very frail health,
+<ce>                her once brilliant mind almost utterly
+<ce>                 destroyed. She has locked herself in
+<ce>                her castle in the Wrothgarian Mountains
+<ce>                and experiments in magical studies with
+<ce>                 no regard for her own safety. I would
+<ce>              know of her condition, but few possess the
+<ce>               bravery to face the horrors of her castle
+<ce>              and speak with her. My reward for a report
+<ce>                    on her health is a magical _magicitem_.
+<ce>                   Will you be my champion in this?
+
+RefuseQuest:  [1001]
+<ce>                  A common enough response. But very
+<ce>                      disappointing nevertheless.
+
+AcceptQuest:  [1002]
+<ce>                    %oth, I am glad to have found a
+<ce>                  champion. The name of her castle is
+<ce>                Shedungent, and it should not take you
+<ce>              longer than =2shedungent_ days to go there
+<ce>              and return. If she is insane, Shedungent
+<ce>               may be a very dangerous place indeed.
+<ce>           Be very careful. May Kynareth and Mara protect you.
+
+QuestFail:  [1003]
+<ce>                  Until you have spoken with Nulfaga,
+<ce>                 I am not interested in conversation.
+
+QuestComplete:  [1004]
+<ce>               I confess I doubted I would ever see you
+<ce>                again. Your news that Nulfaga is still
+<ce>               among the living does my heart much good.
+<ce>                       Here is your _magicitem_.
+
+RumorsDuringQuest:  [1005]
+Why has the Queen developed this sudden affection for crazy old Nulfaga?
+<--->
+Nulfaga is nothing but an insane witch. Why does Queen Aubk-i care if she dies?
+
+RumorsPostfailure:  [1006]
+The Queen has sent yet another mercenary after that %ra failed to find Nulfaga.
+<--->
+Queen Aubk-i couldn't wait for that %ra any longer. She sent another mercenary.
+
+RumorsPostsuccess:  [1007]
+It is nice to see Queen Aubk-i happy at last. She has a very pretty smile.
+<--->
+Queen Aubk-i seems more than happy lately. She seems almost ... relieved.
+
+QuestorPostsuccess:  [1008]
+Thank you once again for taking that dangerous trip to Shedungent to look in on Nulfaga for me.
+
+QuestorPostfailure:  [1009]
+Ah, %pcn. The %ra that refused to visit my husband's grandmother.
+
+QuestLogEntry:  [1010]
+%qdt:
+ Aubk-i, the Queen of Daggerfall has asked
+ me to check on the condition of her
+ grandmother-in-law, Nulfaga. I am to go
+ to Nulfaga's castle, Shedungent of Wrothgaria,
+ and talk to her to see if she is well.
+ I have =2shedungent_ days to report her condition
+ to Aubk-i and get my reward.
+
+Message:  1011
+<ce>               United thoughts and counsels, equal hope
+<ce>              and hazard in the once glorious enterprise
+<ce>              joined with me once, now misery hath joined
+<ce>               in equal ruin! Eternal, eternal, eternal
+<ce>               ruin. I tell the door to my soul to shut
+<ce>                up. Oh, my child, why wouldst thou not
+<ce>              listen, thy ear, thy glorious mortal face,
+<ce>                 thy throat, and the arrow. Oh misery.
+                                     <--->
+<ce>                 Choosing out few words most horrible,
+<ce>               let none them read! Verses, verses frame
+<ce>               which with and other spells like terrible
+<ce>                curses Heaven! Curse Oblivion! My boy!
+<ce>                My boy is dead and let Tamriel tremble
+<ce>                 until he and I findeth peace denied.
+<ce>               Shut up the door to his tomb and my home.
+                                     <--->
+<ce>            Say, what strange motive, Goddess! could compel
+<ce>             an arrow to my beloved Lysandus' bare throat?
+<ce>              Did he die there mourned and blessed or are
+<ce>              my pretty birdies all turned to graywings?
+<ce>             Oh doorway to my heart, shut up lest I sunder
+<ce>            thee. I search the afterworld, the underworld,
+<ce>             and the world-between and no where do I find
+<ce>              the lightness of my son. Oh, madness to thy
+<ce>                       breast I cling suckling!
+                                     <--->
+<ce>                We are only like dead walls or vaulted
+<ce>               graves, that, ruined, yield no echo. Oh,
+<ce>                this gloomy world, in what a shadow or
+<ce>                deep pit of darkness doth, womanish and
+<ce>               fearful, mankind live. How came Lysandus
+<ce>               by his death? In a mist, I know not how.
+<ce>             Oblivion not come yet? Shut up mine door and
+<ce>             keep out its gray skies. I'll move it nearer
+<ce>             by a perspective, or make a glass that shall
+<ce>              set all the world on fire upon an instant.
+<ce>               I cannot sleep; my pillow is stuffed with
+<ce>                        a litter of porcupines.
+
+
+-- Symbols used in the QRC file:
+--
+--              %oth occurs 1 time.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 5 times.
+--     =2shedungent_ occurs 2 times.
+--       _magicitem_ occurs 3 times.
+
+QBN:
+Item _magicitem_ magic_item
+
+Person _nulfaga_ named Nulfaga atHome
+Person _aubki_ named Queen_Aubk-i atHome
+
+Place _huntstart_ permanent Shedungent2
+
+Clock _2shedungent_ 150.00:00 0 flag 1 range 0 1
+
+
+--	Quest start-up:
+	start timer _2shedungent_ 
+	log 1010 step 0 
+	prompt QuestorOffer yes yes no _no_ 
+
+_2shedungent_ task:
+	drop _aubki_ as questor 
+	end quest 
+
+_S.01_ task:
+	clicked npc _nulfaga_ 
+	say 1011 
+
+_pcgetsgold_ task:
+	when _S.03_ and _S.01_ 
+	give pc _magicitem_ 
+	start quest 107 107 
+	stop timer _2shedungent_ 
+	repute with _aubki_ exceeds 15 do _S.11_ 
+	change repute with _aubki_ by +10 
+	mute npc _aubki_ 
+	drop _aubki_ as questor 
+
+_S.03_ task:
+	clicked npc _aubki_ 
+
+variable _2letter_
+variable _S.05_
+variable _S.06_
+variable _S.07_
+yes task:
+	reveal _huntstart_ in province 16 at 50966 
+	say AcceptQuest 
+	add _aubki_ as questor 
+
+_no_ task:
+	say RefuseQuest 
+	drop _aubki_ as questor 
+	end quest 
+
+_clearclick_ task:
+	when _S.03_ and not _S.01_ 
+	clear _S.03_ _clearclick_ 
+
+variable _S.11_
+_S.12_ task:
+	when _S.11_ and _pcgetsgold_ 
+	start quest 13 13 
+	end quest 

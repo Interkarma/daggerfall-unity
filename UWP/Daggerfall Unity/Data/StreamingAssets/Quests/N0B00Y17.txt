@@ -1,0 +1,443 @@
+-- Quest: C:\QUESTS\WORKING\N0B00Y17.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 0
+-- QuestId: 17
+Messages: 61
+Quest: N0B00Y17
+DisplayName: Azimuthal Vectors
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  %pct, I am perplexed.  Perhaps you
+<ce>                    can help me with some research.
+                                     <--->
+<ce>                  Hmm, yes, if the internal azimuthal
+<ce>                vectors really do cross at the anterior
+<ce>                  pole, it should be possible ... eh?
+<ce>                  Oh, %pct, I didn't see you standing
+<ce>                  there.  But how fortuitous!  I need
+<ce>                  someone to help me with my research.
+<ce>                           Are you available?
+
+RefuseQuest:  [1001]
+<ce>                 Oh, too bad.  Now, where was I?  Mmm,
+<ce>              the azimuthal vectors, right.  Let's see...
+
+AcceptQuest:  [1002]
+<ce>                 Splendid!  You see, I'm working on a
+<ce>               particularly thorny problem in theoretical
+<ce>                applied magicka, and I need a particular
+<ce>                  magic _item_.  Made by _maker_ %g2-
+<ce>               self.  By all reports, a masterful little
+<ce>              piece of work, but according to my research,
+<ce>             impossible.  The internal azimuth vectors are
+<ce>              such that I cannot reconcile the externally
+<ce>             manifested lateral flow lines ... Well, having
+<ce>             the piece to study would help me immeasurably,
+<ce>             but I have not had much luck tracking it down.
+<ce>             The only reference I've come across mentioned
+<ce>              a catalogue once held by the library at ...
+<ce>              oh yes, nowadays it's known as ___hintdung_.
+<ce>                You might also try a colleague of mine,
+<ce>                _scholar_.  %g is an expert on _maker_.
+<ce>              Wrote the definitive biography, although in
+<ce>              my opinion ... ah, well, no time to get into
+<ce>                that old debate.  You'll find _scholar_
+<ce>                 in a dank hole called ___scholardung_.
+<ce>          I don't see how %g can abide working in such places.
+<ce>            Hmm, yes, come back and see me in, say, =time1_
+<ce>            days and report your findings.  Yes?  Splendid.
+
+QuestFail:  [1003]
+<ce>                What do you make of these vector lines?
+<ce>                 I've tried using Mencipha's Theorem to
+<ce>                 reconcile the coefficients, but I just
+<ce>               end up with a mess.  Perhaps if I tried...
+
+QuestComplete:  [1004]
+<ce>               Who are you?  Oh good heavens, I remember
+<ce>                now.  _maker_'s _item_, of course!  And
+<ce>                here it is.  Well, as it happens, while
+<ce>               you were gone, I had quite a breakthrough
+<ce>                in my research.  You see, it wasn't the
+<ce>                 azimuth vectors at all, the key to the
+<ce>                whole problem is actually ... well, the
+<ce>                 point is, I no longer need the _item_.
+<ce>                It is a beautiful piece of work, though,
+<ce>                isn't it?  Why don't you keep it, since
+<ce>                  you went to all the trouble to find
+<ce>                  it for me.  Now if you'll excuse me,
+<ce>                        I must get back to work.
+
+RumorsDuringQuest:  [1005]
+<ce>  Did you see _questgiver_ wandering the streets last night, mumbling
+<ce>              something under %g3 breath?  Crazy old coot!
+
+RumorsPostfailure:  [1006]
+<ce>       Crazy old _questgiver_ seems more despondent than usual.
+
+RumorsPostsuccess:  [1007]
+<ce>    _questgiver_ has been telling everyone about some %ra who saved
+<ce>                %g3 research.  Hey, that was you, right?
+
+QuestorPostsuccess:  [1008]
+<ce>        Eh?  Oh, my good friend %pcf.  You searched all of %reg
+<ce>                       for that _item_ I wanted.
+
+QuestorPostfailure:  [1009]
+<ce>                           Eh?  Have we met?
+
+Message:  1020
+%qdt:
+ _questgiver_ of ___questgiver_'s
+ Mages Guild has sent me to search
+ for a certain magic _item_ made by
+ a _maker_.  _questgiver_
+ suggested I should either look
+ in ___hintdung_ for an old
+ catalogue, or visit _scholar_,
+ an expert on _maker_, who is
+ currently doing research in
+ ___scholardung_.  I am to
+ report my findings within
+ =time1_ days to _questgiver_.
+
+Message:  1021
+%qdt:
+ I found _scholar_ in ___scholardung_,
+ but %g was not able to help me in my
+ search for _maker_'s _item_.
+
+Message:  1022
+%qdt:
+ _scholar_ suggested that I might
+ find _maker_'s _item_ somewhere
+ in a place called ___itemdung_.
+
+Message:  1023
+%qdt:
+ I believe I have found a good
+ lead on the _item_.  The old
+ catalogue from ___hintdung_
+ said that it was once held
+ in a place called ___itemdung_.
+
+Message:  1024
+%qdt:
+ I found part of the old catalogue
+ in ___hintdung_, but it gave no
+ indication of the location of
+ _maker_'s _item_.
+
+Message:  1025
+%qdt:
+ I spoke with _scholar_ in ___scholardung_.
+ %g was unable to help me in my search for
+ the _item_, but I agreed to get
+ some alchemical ingredients for %g2 from
+ _contact_ of __contact_ in
+ ___contact_ and return in =time2_ days.
+
+Message:  1030
+Item No. 476-A-LCX-08
+ 
+ Type: _item_
+ Creator: _maker_ of ___maker_
+ 
+ Description:
+ This _item_ is one of _maker_'s
+ lesser works, ranking below %g3 famous Wand
+ of Verbosity in craftsmanship, and not even
+ close to a masterpiece of sheer audacity like
+ %g3 Scissors of Styling.  Still, this _item_
+ shows _maker_'s distinctive style in the
+ many small touches %g puts on all %g3 work:
+ the embossed brass fittings with %g3 signature
+ stamp, the unusual choice of an enameled finish,
+ and especially the mellow amber sparking along
+ its exterior flow lines.
+ 
+ (on loan from ___itemdung_)
+
+Message:  1031
+Item No. 476-A-LCX-08
+ 
+ Type: _item_
+ Creator: _maker_ of ___maker_
+ 
+ Description:
+ This _item_ is one of _maker_'s
+ lesser works, ranking below %g3 famous Wand
+ of Verbosity in craftsmanship, and not even
+ close to a masterpiece of sheer audacity like
+ %g3 Scissors of Styling.  In the years since
+ _maker_'s death, this piece has dropped out
+ of sight, perhaps held by some private collector.
+ By the extant descriptions of it, this _item_
+ showed _maker_'s distinctive style in the
+ many small touches %g puts on all %g3 work:
+ the embossed brass fittings with %g3 signature
+ stamp, the unusual choice of an enameled finish,
+ and especially the mellow amber sparking along
+ its exterior flow lines.
+ 
+ (not on display)
+
+Message:  1032
+_contact_ --
+ 
+ Please send me:
+   3 doz. newt's tongues (desiccated)
+   4.25 oz. powdered unicorn horn (pure northern ONLY!)
+   1 _ingredient_ (FRESH this time, for %god's sake)
+   A jar of basilisk eyes
+ 
+ Charge to my account.
+ 
+<ce>                              -- _scholar_
+
+Message:  1040
+<ce>                   Hullo.  _maker_'s _item_ you say?
+<ce>                Yes, I believe I ran across a reference
+<ce>               to that very thing just last week.  Where
+<ce>              did I put those notes ... Here we are, mmm-
+<ce>                 hmm, "mellow amber sparking" -- that's
+<ce>                    vintage _maker_ for sure.  Looks
+<ce>                 like it was in ___itemdung_, at least
+<ce>               it was when this was written.  Good luck!
+
+Message:  1041
+<ce>                 Good morning!  Did _contact_ send you
+<ce>                  with those supplies that I ordered?
+<ce>                   Oh, _questgiver_ said I might know
+<ce>                    where to find _maker_'s _item_?
+<ce>                   I'm sorry, but that seems to have
+<ce>                  disappeared shortly after %g3 death,
+<ce>                   and hasn't been heard of since.  A
+<ce>                real shame.  But could you do me a favor
+<ce>                since you're here?  I need a few things
+<ce>                for my work here, and if you could fetch
+<ce>                   them for me, I'd be most grateful.
+
+Message:  1042
+<ce>                Excellent.  Here, let me jot down what
+<ce>                  I need.  Take this list to _contact_
+<ce>                     of __contact_ in ___contact_.
+<ce>                   %g's the only one I trust to give
+<ce>                    me the exact ingredients I need.
+<ce>                    I'll expect you back here within
+<ce>                    =time2_ days.  Please be prompt.
+
+Message:  1043
+<ce>               Too busy, eh?  Well, it was nice talking
+<ce>                 to you.  I won't walk you to the door,
+<ce>                     if you don't mind.  Good day!
+
+Message:  1044
+<ce>                 Another shopping list from _scholar_,
+<ce>                eh?  I swear, if I send another shipment
+<ce>                  out to %g2 without getting paid ...
+<ce>               "Charge to my account", ha!  That's rich.
+<ce>                 Listen, I'll give you the _ingredient_
+<ce>                %g asked for, but the rest will have to
+<ce>               be special ordered, and I'm not doing that
+<ce>                  until %g pays me for everything else
+<ce>                I've sent to %g2.  I'm sorry, but that's
+<ce>                           the best I can do.
+
+QuestTimeLapse:  [1045]
+<ce>             Oh, it's you.  Did you bring me the supplies
+<ce>                I asked for?  What, _contact_ would only
+<ce>                give you this _ingredient_?  That crusty
+<ce>              old goat!  I'll give %g2 a piece of my mind
+<ce>               when I get out of here.  Well, it's better
+<ce>                than nothing I suppose.  Listen, are you
+<ce>              still looking for that _item_?  I ran across
+<ce>                a reference to an old catalogue from an
+<ce>                  exhibition of _maker_'s works.  This
+<ce>                catalogue is in ___hintdung_.  In fact,
+<ce>              I can teleport you to the very spot, if you
+<ce>                like.  You'll have to find your own way
+<ce>                   out, of course.  Shall I teleport
+<ce>                          you to ___hintdung_?
+
+Message:  1046
+<ce>             Hold on to your hat!  By the way, before you
+<ce>                go, take this _scholarreward_.  I really
+<ce>              do appreciate you fetching the _ingredient_
+<ce>                  for me.  Now, away to ___hintdung_.
+
+Message:  1047
+<ce>                 As you wish.  By the way, before you
+<ce>                go, take this _scholarreward_.  I really
+<ce>              do appreciate you fetching the _ingredient_
+<ce>                  for me.  I hope you find the _item_.
+
+Message:  1050
+<ce>                 This is undoubtedly _maker_'s _item_.
+
+Message:  1060
+<ce>                 Hullo, %pcn.  Did you manage to track
+<ce>                     down that _item_ of _maker_'s?
+<ce>                 Ah well, that's too bad, but I'm sure
+<ce>                I will manage to work around the problem
+<ce>                 without it.  I know you did your best.
+<ce>                  Here's _gold_ gold for your trouble.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 9 times.
+--               %g2 occurs 6 times.
+--               %g3 occurs 12 times.
+--              %god occurs 8 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 1 time.
+--              %pct occurs 2 times.
+--              %qdt occurs 6 times.
+--               %ra occurs 85 times.
+--           =time1_ occurs 2 times.
+--           =time2_ occurs 6 times.
+--       ___contact_ occurs 2 times.
+--      ___hintdung_ occurs 9 times.
+--      ___itemdung_ occurs 9 times.
+--         ___maker_ occurs 6 times.
+--    ___questgiver_ occurs 1 time.
+--   ___scholardung_ occurs 4 times.
+--        __contact_ occurs 7 times.
+--            _gold_ occurs 3 times.
+--      _ingredient_ occurs 5 times.
+--            _item_ occurs 29 times.
+--           _maker_ occurs 26 times.
+--      _questgiver_ occurs 10 times.
+--         _scholar_ occurs 9 times.
+--   _scholarreward_ occurs 2 times.
+
+QBN:
+Item _item_ magic_item
+Item _ingredient_ organs
+Item _map2_ letter used 1030
+Item _I.03_ letter used 1031
+Item _I.04_ letter used 1032
+Item _scholarreward_ magic_item
+Item _gold_ gold
+
+Person _questgiver_ face 8 group Questor
+Person _scholar_ group Chemist local
+Person _maker_ face 1 group Spellcaster remote
+Person _contact_ face 14 group Chemist female remote
+
+Place _scholardung_ remote dungeon
+Place _hintdung_ remote dungeon
+Place _itemdung_ remote dungeon
+
+Clock _time1_ 00:00 0 flag 17 range 0 5
+Clock _time2_ 00:00 0 flag 17 range 1 2
+
+
+--	Quest start-up:
+	place item _item_ at _itemdung_ 
+	start timer _time1_ 
+	reveal _hintdung_ 
+	reveal _scholardung_ 
+	log 1020 step 0 
+	pick one of _S.02_ _cousin_ _cousin_ _S.03_ 
+	_map2_ used do _S.15_ 
+	--added underscores to map2
+	_I.03_ used do _S.16_ 
+	place npc _scholar_ at _scholardung_
+	
+
+_time1_ task:
+	end quest 
+
+_cousin_ task:
+	place item _map2_ at _hintdung_ 
+
+_S.02_ task:
+	place item _I.03_ at _hintdung_ 
+
+_S.03_ task:
+	place item _I.03_ at _hintdung_ 
+
+_success_ task:
+	toting _item_ and _questgiver_ clicked 
+	give pc _item_ 
+	end quest 
+
+_S.05_ task:
+	clicked npc _scholar_ 
+
+_S.06_ task:
+	toting _I.04_ and _contact_ clicked 
+	get item _ingredient_ 
+	say 1044 
+
+_S.07_ task:
+	toting _ingredient_ and _scholar_ clicked 
+	get item _scholarreward_ 
+	prompt 1045 yes _S.08_ no _S.09_ 
+	make _scholarreward_ permanent 
+
+_S.08_ task:
+	say 1046 
+	teleport pc to _hintdung_ 
+
+_S.09_ task:
+	say 1047 
+
+_S.10_ task:
+	start timer _time2_ 
+	log 1025 step 1 
+	get item _I.04_ 
+	say 1042 
+
+_S.11_ task:
+	log 1021 step 1 
+	say 1043 
+
+_S.12_ task:
+	when _S.05_ and _S.02_ 
+	reveal _itemdung_ 
+	log 1022 step 1 
+	say 1040 
+
+_S.13_ task:
+	when _S.03_ or _cousin_ 
+
+_S.14_ task:
+	when _S.13_ and _S.05_ 
+	prompt 1041 yes _S.10_ no _S.11_ 
+
+_S.15_ task:
+	reveal _itemdung_ readmap
+	log 1023 step 2 
+
+_S.16_ task:
+	log 1024 step 2 
+
+_dummymage_ task:
+	clicked item _item_ say 1050 
+
+_clickqgiver_ task:
+	clicked npc _questgiver_ 
+
+_S.19_ task:
+	when _S.03_ and _S.05_ and _S.16_ and _clickqgiver_ 
+	get item _gold_ 
+	say 1060 
+	make _gold_ permanent 
+	change repute with _questgiver_ by +5 
+	unset _clickqgiver_ 
+	end quest 
+
+_clearclick_ task:
+	when _clickqgiver_ and not _S.19_ and not _S.07_
+	say 1003
+	clear _clearclick_ _clickqgiver_
+
+_time2_ task:
+	hide npc _scholar_ 

@@ -1,0 +1,133 @@
+-- Quest: C:\QUESTS\WORKING\S0000016.Qbn.
+-- Main story quest.
+-- QuestId: 16
+Messages: 51
+Quest: S0000016
+DisplayName: Journey to Aetherius
+-- Message panels
+QRC:
+
+QuestLogEntry:  [1010]
+%qdt:
+ Nulfaga has sent me to the Mantellan Crux
+ to find the Mantella, the heart of the great
+ Numidium. It is supposed to be a big, green
+ gem. All I have to do is touch it.
+
+Message:  1012
+<ce>              Only Crowned Heads will hold the Totem True
+<ce>           First is One Who Killed, But Did Not Kill Another
+<ce>            Second is One Who Is Two Devoured By Its Young
+<ce>             Third is One Who Made One Slave and Many Free
+<ce>             Fourth and Fifth are Two Who Compete for Mud
+<ce>            Sixth is One Who Brings a Home to the Homeless
+<ce>        Seventh is One Who Lords All, But Does Not Lord At All
+<ce>                                    
+<ce>          I do not know who of these seven is most worthy of
+<ce>          the Power, for too long have I let my passions make
+<ce>           me mad. Sometimes the fate of a world hang on the
+<ce>           decision of one person. You have chosen who will
+<ce>          command great Numidium. You bear the burden for the
+<ce>                             consequences.
+<ce>                                    
+<ce>         I send you now to the Mantellan Crux, the safeguarded
+<ce>           prison of the Mantella. Look for a green jewel of
+<ce>           unusual size. Merely touch the Mantella and it is
+<ce>            freed. You will be transported back to my side.
+
+Message:  1020
+<ce>                   Your work is done %pcn. The world
+<ce>            is no longer as it once was. Such is the way of
+<ce>             things. Oh, and if you tell my lich statue to
+<ce>              shut up, the door to my chamber will open.
+
+Message:  1050
+<ce>                  Nulfaga cackles, "Not so fast %pcn.
+<ce>          Don't you want to see the result of your handiwork?
+<ce>           Look now into the Book of the Time. Read upon its
+<ce>            pages the history of what shall pass within the
+<ce>           next few days. Read fate as it shall be recorded
+<ce>                       upon the Elder Scrolls."
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+
+QBN:
+
+
+Place _L.00_ permanent MantellanCrux
+Place _shedungent_ permanent Shedungent1
+
+Clock _delay_ 00:01 0 flag 1 range 0 1
+
+
+--	Quest start-up:
+	dialog link for location _L.00_ 
+	log 1010 step 0 
+	say 1012 
+	transfer pc inside _L.00_ marker 0
+
+_delay_ task:
+	play video 3 
+	say 1050 
+
+FinishedMantellanCrux _S.01_
+	start timer _delay_ 
+	transfer pc inside _shedungent_ marker 0
+
+GothrydGotTotem _S.02_
+	when _S.20_ and _S.21_ 
+
+BrisiennaGotTotem _S.03_
+KingOfWormsGotTotem _S.04_
+GortwogGotTotem _S.05_
+AkorithiGotTotem _S.06_
+UnderkingGotTotem _S.07_
+EadwyreGotTotem _S.08_
+GothrydEnding _S.09_
+	when _S.01_ and _S.02_ and _delay_ 
+	play video 14 
+
+BrisiennaEnding _S.10_
+	when _S.01_ and _S.03_ and _delay_ 
+	play video 10 
+
+KingOfWormsEnding _S.11_
+	when _S.01_ and _S.04_ and _delay_ 
+	play video 6 
+
+GortwogEnding _S.12_
+	when _S.01_ and _S.05_ and _delay_ 
+	play video 8 
+
+AkorithiEnding _S.13_
+	when _S.01_ and _S.06_ and _delay_ 
+	play video 9 
+
+UnderkingEnding _S.14_
+	when _S.01_ and _S.07_ and _delay_ 
+	play video 15 
+
+EadwyreEnding _S.15_
+	when _S.01_ and _S.08_ and _delay_ 
+	play video 7 
+
+_S.16_ task:
+	when _S.18_ or _S.19_ 
+	say 1020 
+	end quest 
+
+_S.18_ task:
+	when _S.09_ or _S.10_ or _S.11_ or _S.12_ 
+
+_S.19_ task:
+	when _S.13_ or _S.14_ or _S.15_ 
+
+_S.20_ task:
+	when not _S.03_ and not _S.04_ and not _S.05_ 
+
+_S.21_ task:
+	when not _S.06_ and not _S.07_ and not _S.08_ 

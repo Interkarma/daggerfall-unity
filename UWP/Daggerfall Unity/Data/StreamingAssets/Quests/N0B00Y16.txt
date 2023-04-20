@@ -1,0 +1,253 @@
+-- Quest: C:\QUESTS\WORKING\N0B00Y16.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 0
+-- QuestId: 16
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 52
+Quest: N0B00Y16
+DisplayName: Open a chest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   %pct, I need someone who can cast
+<ce>                    the Open spell.  Please tell me
+<ce>                     you have learned this by now.
+
+RefuseQuest:  [1001]
+<ce>                  Really, you need to devote yourself
+<ce>                    to your studies if you expect to
+<ce>                         advance in the Guild.
+
+AcceptQuest:  [1002]
+<ce>                 Well, that's a start.  The job I need
+<ce>                 you for is quite simple.  Even a child
+<ce>                could probably do it, but here you are.
+<ce>                  A local merchant, _merchant_, bought
+<ce>                an antique chest, but has been unable to
+<ce>                  get it open.  The best locksmiths in
+<ce>                     __shop_ have tried and failed,
+<ce>                so %g has asked us if we can help.  Now,
+<ce>              we really don't have time for such trifling
+<ce>                  matters, but the Guild could use %g3
+<ce>                patronage, so I agreed to send someone.
+<ce>                From what I am told, it sounds like one
+<ce>                   of _mage_'s trick boxes.  %g made
+<ce>                 hundreds of them in %g3 day, mainly as
+<ce>                 gifts for %g3 friends, and they still
+<ce>               turn up from time to time, as the workman-
+<ce>               ship really is outstanding... where was I?
+<ce>                Oh yes, well, the secret to these boxes
+<ce>               is that they are almost impossible to open
+<ce>              in any way except by the use of the simple,
+<ce>               standard Open spell.  %g specifically made
+<ce>             them resistant to the fancy alternative spells
+<ce>              %g3 friends liked to use.  Yes, %g tended to
+<ce>              waste %g3 considerable talents on jokes like
+<ce>                 this.  A real shame.  Well, run along.
+
+QuestFail:  [1003]
+<ce>                %pct, leave me in peace and run along.
+<ce>                    I have work to do and so do you,
+<ce>                          if I'm not mistaken.
+
+QuestComplete:  [1004]
+<ce>                  Eh?  What do you want?  Oh yes, the
+<ce>                   trick box.  I trust it didn't give
+<ce>                   you any difficulty.  A little good
+<ce>                     publicity for the Mages Guild
+<ce>                     and all that rot.  Jolly good.
+
+RumorsDuringQuest:  [1005]
+<ce>        Did you hear about _merchant_?  %g bought an old chest
+<ce>                and now %g can't open it.  What a hoot!
+
+RumorsPostfailure:  [1006]
+<ce>_merchant_ finally gave up on his magic box and sold it to someone else.
+
+RumorsPostsuccess:  [1007]
+<ce>  _merchant_ got the Mages Guild to open %g3 trick box, and it turned
+<ce>            out to be empty!  At least that's what I heard.
+
+QuestorPostsuccess:  [1008]
+<ce>        Hullo, %pcn.  I remember you.  _mage_'s magic box, yes?
+
+QuestorPostfailure:  [1009]
+<ce>         For heaven's sake, what do you want now?  You're the
+<ce>      fool that couldn't even open that trick box of _merchant_'s.
+
+Message:  1020
+%qdt:
+ _questgiver_ of ___questgiver_'s
+ Mages Guild has asked me to open
+ an old chest for _merchant_,
+ a local merchant.  _questgiver_
+ believes it is probably a trick
+ box that only a standard Open
+ spell will open.  I suppose
+ I should return to see %g2 when
+ I am done.
+
+Message:  1030
+<ce>                 The Mages Guild sent you?  Very good.
+<ce>                   I knew my old friend _questgiver_
+<ce>                   wouldn't let me down.  Here is the
+<ce>                   box.  I hope you have some idea of
+<ce>                  how to open it.  I'm at my wits end.
+
+Message:  1040
+<ce>                  As you cast Open on the chest, the
+<ce>                 lid springs open and an imp flies out.
+<ce>                                    
+<ce>                "Happy birthday, =mage2_ you old fart!"
+<ce>                   the imp cackles in an unnaturally
+<ce>                          deep gravelly voice.
+
+Message:  1041
+<ce>                  You hear the lock click as you cast
+<ce>                  Open on the chest.  Inside is a wand
+<ce>                  inscribed: "To =mage3_ on your 110th
+<ce>                   birthday.  Use me for a preview of
+<ce>                         your 120th birthday!"
+
+Message:  1042
+<ce>                Smoke pours from the chest as you cast
+<ce>               Open on it.  The lid pops open, revealing
+<ce>                           an engraved card:
+<ce>                                    
+ Dear =mage4_,
+ 
+ Hope you like the new place.  Did
+ you remember to call the exterminator
+ before you moved in?
+ 
+ Your friend,
+ 
+ _mage_
+
+Message:  1043
+<ce>                    The lid of the chest pops open.
+<ce>                      Inside is nothing but a few
+<ce>                       scraps of faded confetti.
+
+Message:  1050
+<ce>                    Tell _questgiver_ I appreciate
+<ce>                   %g2 sending you to help...I guess.
+<ce>                     Of course, if I had known what
+<ce>                      was inside, I might not have
+<ce>                       been so eager to open it!
+
+Message:  1051
+<ce>                     If you can't open it, you may
+<ce>                        as well keep it.  I have
+<ce>                         no use for it anymore.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 7 times.
+--               %g2 occurs 4 times.
+--               %g3 occurs 6 times.
+--              %pcn occurs 2 times.
+--              %pct occurs 2 times.
+--              %qdt occurs 1 time.
+--           =mage2_ occurs 1 time.
+--           =mage3_ occurs 1 time.
+--           =mage4_ occurs 2 times.
+--    ___questgiver_ occurs 1 time.
+--           __shop_ occurs 1 time.
+--            _mage_ occurs 4 times.
+--        _merchant_ occurs 66 times.
+--      _questgiver_ occurs 4 times.
+
+QBN:
+Item _crn_ item class 1 subclass 8
+--changed %crn to _crn_. variables should have underscores
+Item _I.01_ wand
+
+Person _questgiver_ face 86 group Questor
+Person _merchant_ face 87 group Pawnbroker female
+Person _mage_ face 1 group Spellcaster remote
+
+Place _shop_ local pawnshop
+
+Clock _qtime_ 2.00:00 0 flag 1 range 0 1
+
+Foe _mage2_ is Battle_mage
+Foe _mage3_ is Sorceror
+Foe _imp_ is Imp
+Foe _rats_ is Giant_rat
+Foe _bats_ is Giant_bat
+Foe _mage4_ is Mage
+Foe _skeleton_ is Skeletal_warrior
+
+--	Quest start-up:
+	start timer _qtime_ 
+	log 1020 step 0 
+	place npc _merchant_ at _shop_ 
+
+_qtime_ task:
+	end quest 
+
+_clickqgiver_ task:
+	clicked npc _questgiver_ 
+
+_S.10_ task:
+	toting _crn_ and _merchant_ clicked 
+
+_S.02_ task:
+	clicked npc _merchant_ 
+	cast Open spell do _S.07_ 
+	get item _crn_ 
+	say 1030 
+
+_a3_ task:
+	create foe _imp_ every 1 minutes 1 times with 100% success 
+	say 1040 
+
+_a4_ task:
+	_I.01_ used do _S.09_ 
+	get item _I.01_ 
+	say 1041 
+
+_a5_ task:
+	create foe _rats_ every 3 minutes 3 times with 100% success 
+	create foe _bats_ every 2 minutes 2 times with 100% success 
+	say 1042 
+
+_a6_ task:
+	say 1043 
+
+_S.07_ task:
+	have _crn_ set _S.08_
+
+_S.08_ task:
+	pick one of _a3_ _a4_ _a5_ _a6_ 
+
+_S.09_ task:
+	create foe _skeleton_ every 1 minutes 1 times with 100% success 
+	make _I.01_ permanent 
+
+_S.11_ task:
+	when _S.08_ and _S.10_ 
+	say 1050 
+
+_success_ task:
+	when _S.11_ and _clickqgiver_ 
+	give pc nothing 
+	unset _clickqgiver_ 
+	end quest 
+
+_clearclick_ task:
+	when _clickqgiver_ and not _S.11_
+	say 1003
+	clear _clearclick_ _clickqgiver_
+
+_S.13_ task:
+	when _S.10_ and not _S.08_ 
+	get item _crn_ 
+	say 1051 
+	clear _S.10_
+	clear _S.13_ 

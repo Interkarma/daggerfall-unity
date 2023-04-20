@@ -1,0 +1,163 @@
+-- Quest: C:\QUESTS\WORKING\Q0C00Y08.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: witch
+-- Repute: 0
+-- QuestId: 8
+Messages: 14
+Quest: Q0C00Y08
+DisplayName: A Rare Tome
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 Yes, as a matter of fact, thou could
+<ce>                       help us, %pcf. We are an
+<ce>                 isolated coven, viewed with fear and
+<ce>                  hostility in the outside world. If
+<ce>                  thou would procure for us a certain
+<ce>                    rare tome being held for us in
+<ce>                         ___contact_, we would
+<ce>                 be happy to give you, say, a special
+<ce>                  _mitem_ personally created for you.
+
+RefuseQuest:  [1001]
+<ce>                   Well, then we shall wait for the
+<ce>                   next wandering traveler. Our need
+<ce>                        is not that desperate.
+
+AcceptQuest:  [1002]
+<ce>                 Wouldst thou? The name of the tome is
+<ce>                           _book_ -- a very
+<ce>                 rare book indeed. Even if one were to
+<ce>                 find a copy, the price would be quite
+<ce>                 prohibitive. We are lucky, therefore,
+<ce>                   to have a friend in ___contact_,
+<ce>                      a =contact_ named _contact_
+<ce>                who has stolen a copy. If thou wouldst
+<ce>                        meet %g2 at __contact_,
+<ce>                  %g will give thee the book. We will
+<ce>                  expect thee back in =queston_ days.
+<ce>                    After that time, the book will
+<ce>                        be of no use to us. May
+<ce>                     ==daedra_ watch thy journey.
+
+QuestComplete:  [1004]
+<ce>                  Ah, there it is. I hoped you had an
+<ce>                 opportunity to peruse the page, good
+<ce>                       %pcf. You are not likely
+<ce>                   to find its like again very soon.
+<ce>                      Well, here is your _mitem_.
+
+RumorsDuringQuest:  [1005]
+_contact_ is under some suspicion. They say %g consorts with witches.
+<--->
+_contact_, some say, is a secret witch.
+
+RumorsPostfailure:  [1006]
+_contact_ was arrested and burned at the stake. Serves %g2 right.
+<--->
+Poor _contact_ never could keep %g3 mouth shut. Well, 'tis shut now.
+
+RumorsPostsuccess:  [1007]
+That _contact_ was arrested, but they didn't find _book_.
+<--->
+They caught _contact_, but %g wasn't apparently the =contact_ who stole _book_
+
+QuestorPostsuccess:  [1008]
+Oh, hello, %pcf. I was just reading _book_ -- the copy thou got for us.
+
+QuestorPostfailure:  [1009]
+<ce>                            _book_ is lost,
+<ce>                     probably forever. Now is not
+<ce>                     the time to speak. Go, leave
+<ce>                          ==qgiver_. Thou art
+<ce>                            not wanted now.
+
+QuestLogEntry:  [1010]
+%qdt:
+ ==qgiver_ have sent
+ me to ___contact_
+ to meet a =contact_
+ named _contact_ at
+ __contact_ about
+ a very rare book. I am to return the
+ book to ==qgiver_
+ in =queston_ days or less.
+
+Message:  1011
+<ce>                       Awright, %pcf, here's the
+<ce>                 book. Just watch yourself. The guards
+<ce>                        are combing ___contact_
+<ce>                            for that thing.
+
+Message:  1012
+<ce>                             Stop! Thief!
+
+Message:  1013
+<ce>                         It suddenly occurs to
+<ce>                     you that the witches expected
+<ce>                     the book at this very moment.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 6 times.
+--               %g2 occurs 2 times.
+--               %g3 occurs 2 times.
+--              %pcf occurs 5 times.
+--              %qdt occurs 1 time.
+--         ==daedra_ occurs 1 time.
+--         ==qgiver_ occurs 3 times.
+--         =contact_ occurs 4 times.
+--         =queston_ occurs 3 times.
+--       ___contact_ occurs 6 times.
+--            _book_ occurs 19 times.
+--         _contact_ occurs 10 times.
+--           _mitem_ occurs 3 times.
+
+QBN:
+Item _mitem_ magic_item
+Item _book_ book2
+
+Person _qgiver_ group Questor
+Person _daedra_ face 1 factiontype Daedra remote
+Person _contact_ face 68 group Innkeeper male remote
+
+
+Clock _queston_ 00:00 0 flag 17 range 1 2
+
+Foe _guard_ is Knight
+
+--	Quest start-up:
+	hide npc _daedra_
+	start timer _queston_ 
+	log 1010 step 0 
+-- hide NPC added to ensure this dummy character won't appear in the wild somewhere.
+-- this NPC is never used in the game world, only as a name drop.
+
+variable _queston_
+_S.01_ task:
+	when _queston_ and _S.05_ 
+	say 1013 
+	make _book_ permanent 
+	end quest 
+
+_S.02_ task:
+	when _queston_ and not _S.05_ 
+	end quest 
+
+_qgclicked_ task:
+	toting _book_ and _qgiver_ clicked 
+	give pc _mitem_ 
+	end quest 
+
+_S.04_ task:
+	clicked npc _contact_ 
+	get item _book_ 
+	say 1011 
+	have _book_ set _S.05_ 
+
+_S.05_ task:
+	create foe _guard_ every 20 minutes 20 times with 50% success msg 1012 
+	legal repute -30 

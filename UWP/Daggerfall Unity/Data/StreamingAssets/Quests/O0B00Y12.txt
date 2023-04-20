@@ -1,0 +1,168 @@
+-- Quest: C:\QUESTS\WORKING\O0B00Y12.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 0
+-- QuestId: 12
+Messages: 36
+Quest: O0B00Y12
+DisplayName: Drugs Delivery
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                     %pcf, I got a job for you if
+<ce>                      you're interested.  A little
+<ce>                        package needs delivering
+<ce>                            to ___contact1_.
+<ce>                            What do you say?
+
+RefuseQuest:  [1001]
+<ce>                     Don't do me any favors, pal.
+
+AcceptQuest:  [1002]
+<ce>                   Great.  Here's the package, some
+<ce>                      _drugs_.  It needs to be in
+<ce>                        ___contact1_ as soon as
+<ce>                       possible.  _contact1_ will
+<ce>                     meet you there in __contact1_.
+<ce>                      Be careful.  If word of this
+<ce>                       shipment leaks out, we may
+<ce>                    have a bit of trouble with some
+<ce>                     freelance smugglers who think
+<ce>                     they own the business in %reg.
+
+QuestFail:  [1003]
+<ce>                  Didn't I say "as soon as possible"?
+
+QuestComplete:  [1004]
+<ce>                 I'm glad you made it through.  These
+<ce>                 amateurs don't stand a chance against
+<ce>                 our organization.  Here's _gold_ gold
+<ce>                     for your services.  Good work.
+
+RumorsDuringQuest:  [1005]
+<ce>        I hear the Thieves Guild is having some trouble with an
+<ce>                        upstart smuggling ring.
+
+RumorsPostfailure:  [1006]
+<ce>       It looks like the Thieves Guild is going to have to give
+<ce>                 up its monopoly on smuggling in %reg.
+
+RumorsPostsuccess:  [1007]
+<ce>     The Thieves Guild seems to have quashed those rival smugglers
+<ce>                     that were giving them trouble.
+
+QuestorPostsuccess:  [1008]
+<ce>       Hey, good old %pcn, I remember you.  My reliable courier.
+
+QuestorPostfailure:  [1009]
+<ce>So, the smuggler who can't deliver the goods returns.  What do you want?
+
+Message:  1020
+%qdt:
+ I am on my way to ___contact1_
+ with a shipment of _drugs_
+ for _contact1_, who will
+ meet me in __contact1_.
+ I was warned to watch out
+ for thugs from a rival smuggling
+ ring.
+
+Message:  1021
+%qdt:
+ I just got a note from _contact1_
+ saying %g was unable to meet me in
+ ___contact1_.  %g told me to
+ go to ___contact2_ instead,
+ and deliver the shipment to a
+ =contact2_ in __contact2_.
+
+Message:  1030
+%pcn --
+ 
+ Sorry I couldn't meet you in ___contact1_
+ as planned.  The heat got too intense for me
+ to wait around.  I've arranged an alternate
+ drop in ___contact2_.  Look for a =contact2_
+ waiting for you in __contact2_.
+ 
+<ce>                            Watch your back,
+<ce>                                    
+<ce>                               _contact1_
+
+Message:  1031
+<ce>                A small, dirty boy tugs on your sleeve.
+<ce>                   He hands you a scrap of paper then
+<ce>                       dashes off down an alley.
+
+Message:  1035
+<ce>                When are you Thieves Guild thugs going
+<ce>                  to learn that we control the _drugs_
+<ce>                         business around %reg?
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 2 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 3 times.
+--              %qdt occurs 2 times.
+--              %reg occurs 7 times.
+--        =contact2_ occurs 8 times.
+--      ___contact1_ occurs 5 times.
+--      ___contact2_ occurs 2 times.
+--       __contact1_ occurs 2 times.
+--       __contact2_ occurs 10 times.
+--        _contact1_ occurs 4 times.
+--           _drugs_ occurs 6 times.
+--            _gold_ occurs 1 time.
+
+QBN:
+Item _drugs_ drug
+Item _note_ letter used 1030
+Item _gold_ gold
+
+Person _contact1_ group Group_5.1 remote
+Person _questgiver_ group Questor
+Person _contact2_ group Local_3.0 remote
+
+
+Clock _qtime_ 00:00 0 flag 1 range 3 5
+Clock _S.01_ 1.00:00 2.18:40
+
+Foe _enemy_ is Assassin
+
+--	Quest start-up:
+	start timer _S.01_ 
+	start timer _qtime_ 
+	log 1020 step 0 
+	get item _drugs_ 
+
+_qtime_ task:
+	end quest 
+
+_qgclicked_ task:
+	clicked npc _questgiver_
+	say 1003
+
+_S.01_ task:
+	_note_ used do _readnote_ 
+	create foe _enemy_ every 10 minutes 10 times with 10% success 
+	hide npc _contact1_ 
+	give pc _note_ notify 1031 
+
+_readnote_ task:
+	log 1021 step 1 
+
+variable _S.03_
+_success_ task:
+	toting _drugs_ and _contact1_ clicked 
+	toting _drugs_ and _contact2_ clicked 
+	give pc _gold_ 
+	end quest 
+--removed unnecessary delay
+
+_S.06_ task:
+	injured _enemy_ 
+	say 1035 

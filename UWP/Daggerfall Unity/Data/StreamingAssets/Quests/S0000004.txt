@@ -1,0 +1,232 @@
+-- Quest: C:\QUESTS\WORKING\S0000004.Qbn.
+-- Main story quest.
+-- QuestId: 4
+Messages: 16
+Quest: S0000004
+DisplayName: Morgiah's Wedding
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                You're trying to track down that letter
+<ce>               of the Emperor's, yes? There are very few
+<ce>               scandals in the Bay of which I am totally
+<ce>             ignorant. I could give you some information,
+<ce>              but nothing is without a price, that I know
+<ce>               well. I need a champion who doesn't fear the
+<ce>                 fire of Oblivion. Are you interested?
+
+RefuseQuest:  [1001]
+<ce>              Pity. I will find someone else to help me.
+<ce>             But who will you find to help you, I wonder.
+
+AcceptQuest:  [1002]
+<ce>               %oth, that is a relief to me. Do not ask
+<ce>             any questions -- get this letter to a certain
+<ce>               high level sorcerer at the Necromancers'
+<ce>                crypt, Scourg Barrow in the Dragontail
+<ce>               Mountains. Avoid the rift. If you see it,
+<ce>                        you have gone too far.
+<ce>                                    
+<ce>                  They will not be expecting you and
+<ce>               will not wait for any introductions. The
+<ce>               necromancers feel that death is a reward
+<ce>              for the living, not a punishment. Once you
+<ce>              have delivered the letter, they would feel
+<ce>                no need to guarantee your safety. It is
+<ce>                their way. I need the letter delivered
+<ce>                     and a response from _necs_ in
+<ce>              my hand one month from now at the absolute
+<ce>                   latest. The risks are very high,
+<ce>                       %pcf, please do not fail.
+
+QuestFail:  [1003]
+<ce>                    I need a response to my letter
+<ce>                          from _necs_, %pcf.
+
+QuestComplete:  [1004]
+<ce>                It's done! I'll be queen of Firsthold!
+<ce>            Although I'm sure the engagement will be quite
+<ce>            lengthy. Now, I promised you information about
+<ce>                         the Emperor's letter.
+<ce>                                    
+<ce>            The letter you seek is in the hands of Gortwog,
+<ce>            the Warlord of the Orcs. He bought it from the
+<ce>            Thieves Guild of Daggerfall after one of their
+<ce>                  number stole it from Queen Aubk-i.
+<ce>                                    
+<ce>            I confess I don't know why the Emperor sent it
+<ce>            to Aubk-i. The girl is innocent to a fault, and
+<ce>             everyone knows that Gothryd is not the loyal
+<ce>           empire toady that Lysandus was. Of course my own
+<ce>           family...well enough of this boring court gossip.
+<ce>                                    
+<ce>              If you really want to find this letter, you
+<ce>             should get in good with Mynisera, the former
+<ce>               Queen of Daggerfall, and Queen Mother to
+<ce>              Gothryd. I wouldn't directly approach her.
+<ce>                 Start with someone of lower station.
+
+RumorsDuringQuest:  [1005]
+If it weren't for Morgiah's reputation, Wayrest would embrace her brother.
+<--->
+How could we crown the brother of a manipulative witch like Princess Morgiah?
+
+RumorsPostfailure:  [1006]
+Princess Morgiah's mood has worsened. And no one has as bad a temper as she.
+<--->
+I suppose it is time that Princess Morgiah married. But who would want her?
+
+RumorsPostsuccess:  [1007]
+Princess Morgiah is engaged to the King of Firsthold. A miracle of %god indeed.
+<--->
+What could've possessed the King of Firsthold to propose marriage to Morgiah?
+<--->
+Morgiah has a three year engagement! Royals are a strange lot.
+
+QuestorPostfailure:  [1009]
+<ce>                  You've failed me, %pcf. I required an answer from _necs_ within one month.
+<ce>                  Now you dare return to me so late? Begone!
+
+QuestLogEntry:  [1010]
+_necs_,
+<ce>                                    
+<ce>                I agree to your terms. I will give you
+<ce>              my first and you will exert your influence
+<ce>              on the King of Firsthold on Sumerset Isle.
+<ce>               Only you can let him speak with his dead
+<ce>              son. For that, he would even marry Nulfaga!
+<ce>                                    
+<ce>                                 -- M
+
+Message:  1011
+Princess,
+<ce>                                    
+ Done.
+<ce>                                    
+<ce>                               -- _necs_
+
+Message:  1012
+%qdt:
+ Princess Morgiah of Wayrest has
+ asked me to deliver a letter to the
+ _necs_ of the Necromancers
+ of Scourg Barrow in the Dragontail
+ Mountains. She said to avoid the rift,
+ whatever that is. If I see it, I have
+ gone too far. She wants a reply back
+ in a month.
+
+Message:  1013
+Princess Morgiah has left Wayrest for Sumurset Isle and the King of Firsthold.
+<--->
+Wayrest has cemented relations with the High Elves of Firsthold by marriage.
+<--->
+Firsthold has a new queen, and Wayrest has lost a princess.
+<--->
+Morgiah will be happy being Karoodil's queen in Firsthold.
+<--->
+Morgiah will be the first queen of Firsthold who isn't a High Elf.
+
+Message:  1014
+<ce>                           King Eadwyre and
+<ce>                           Queen Barenziah,
+<ce>                       Sovereigns of the Kingdom
+<ce>                              of Wayrest
+<ce>                 Are Proud to Announce The Engagement
+<ce>                   of Morgiah, Princess of Wayrest,
+<ce>                             to Karoodil,
+<ce>                           King of Firsthold
+<ce>                       in the Isle of Sumurset.
+
+Message:  1015
+<ce>           A young lad with the Rose of Wayrest embroidered
+<ce>           on his surcoat appears at your side, hands you an
+<ce>                    engraved card, and disappears.
+
+Message:  1016
+<ce>                  Very good. If you are not rewarded
+<ce>                   with death by the loyal servants
+<ce>                   of the Barrow, give this note to
+<ce>                       Princess Morgiah please.
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 1 time.
+--              %oth occurs 1 time.
+--              %pcf occurs 3 times.
+--              %qdt occurs 1 time.
+--            _necs_ occurs 7 times.
+
+QBN:
+Item letter44 letter used 1010
+Item letter13 letter used 1011
+Item _reward_ trinket
+Item engagement letter used 1014
+
+Person _morgiah_ named Princess_Morgiah
+Person _necs_ named King_of_Worms atHome
+
+Place _scourgbarrow_ permanent ScourgBarrow1
+
+Clock _2ndgo_ 30.00:00 0 flag 1 range 0 1
+Clock _S.01_ 7.00:00 14.00:00
+Clock _letterdelay_ 1.00:00
+
+--	Quest start-up:
+	prompt QuestorOffer yes yes no _no_ 
+
+_2ndgo_ task:
+	drop _morgiah_ as questor 
+	end quest 
+
+_S.01_ task:
+	repute with _morgiah_ exceeds 10 do _S.07_ 
+	rumor mill 1013 
+
+_S.07_ task:
+	have engagement set _S.10_ 
+	give pc engagement notify 1015 
+
+_S.02_ task:
+	toting letter13 and _morgiah_ clicked 
+	give pc _reward_ 
+	start timer _S.01_ 
+	stop timer _2ndgo_ 
+	remove log step 0 
+	start task _S.08_ 
+	change repute with _morgiah_ by +10 
+	drop _morgiah_ as questor 
+
+_S.03_ task:
+	toting letter44 and _necs_ clicked saying 1016 
+	get item letter13 
+	change repute with _necs_ by +10 
+
+variable _S.04_
+yes task:
+	start timer _2ndgo_ 
+	log 1012 step 0 
+	get item letter44 
+	reveal _scourgbarrow_ in province 1 at 450958 
+	say AcceptQuest 
+	add _morgiah_ as questor 
+
+_no_ task:
+	say RefuseQuest 
+	end quest 
+
+MorgiahSatisfied _S.08_
+_S.09_ task:
+	when _S.01_ and not _S.07_
+	start quest 21 21 
+	end quest 
+
+_S.10_ task:
+	start timer _letterdelay_
+--adding 24-hour delay to allow to read letter. this is a very common bug report
+
+_letterdelay_ task:
+	start quest 21 21 
+	end quest 

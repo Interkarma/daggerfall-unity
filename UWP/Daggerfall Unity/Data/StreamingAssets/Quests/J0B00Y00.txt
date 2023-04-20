@@ -1,0 +1,149 @@
+-- Quest: C:\QUESTS\WORKING\J0B00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Zenithar
+-- Repute: 0
+-- QuestId: 0
+Messages: 31
+Quest: J0B00Y00
+DisplayName: The Bounty
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>               If you are available for employment, I may
+<ce>                 have a job for you. It's a messy little
+<ce>                  affair, involving punishing a thief.
+<ce>               It will mean a _reward_ gold piece reward.
+<ce>                 Sounds like something you'd be at all
+<ce>                             interested in?
+
+RefuseQuest:  [1001]
+<ce>                Disappointing. Well, we'll find someone
+<ce>                           else doubtlessly.
+
+AcceptQuest:  [1002]
+<ce>                We seldom take a vigilante stand in our
+<ce>                   affairs, but in this case, we feel
+<ce>                 justified. This thief, you see, stole
+<ce>                 directly from one of our caravans and
+<ce>                is ransoming us for use of the highway.
+<ce>               Such nerve. You will find the little thug
+<ce>                    in a hideout called ___mondung_.
+<ce>                      Be back in =1stparton_ days.
+
+QuestFail:  [1003]
+<ce>                    You had best move along, %pcf.
+<ce>                     You only have =1stparton_ days
+<ce>                          to kill that crook.
+
+QuestComplete:  [1004]
+<ce>                         Very good job, %pcf.
+<ce>                     That ought to discourage other
+<ce>                    highwaymen. Here's your _reward_
+<ce>                            gold. Thank you.
+
+RumorsDuringQuest:  [1005]
+That footpad is single-handedly ruining the economy.
+<--->
+<ce>         They think that highwayman is a thief, but the crook
+<ce>                    is highly trained with a blade.
+
+RumorsPostfailure:  [1006]
+That robber moved to a different hideout, but the roads still aren't safe.
+<--->
+I don't know why they can't arrest that highwayman. It ought to be easy.
+
+RumorsPostsuccess:  [1007]
+The merchants are pretty happy that they finally got that thief.
+<--->
+I don't care that they got that nightblade. The roads still aren't safe.
+
+QuestorPostsuccess:  [1008]
+Of course I'll chat with you, %pcf. I remember those highwaymen you killed.
+
+QuestorPostfailure:  [1009]
+The Resolution continues to lose gold to those highwaymen. Not very amusing.
+
+Message:  1020
+<ce>                   You must be from the Resolution.
+<ce>                     Prepare to die, bounty hunter!
+
+Message:  1030
+%qdt:
+ The Resolution of Zenithar
+ has sent me to kill a thief who has been ransacking
+ their caravans. ___mondung_ is
+ the crook's hideout. I need to
+ kill the thief and be back at
+ ___questgiver_ in =1stparton_ days.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 3 times.
+--              %qdt occurs 1 time.
+--       =1stparton_ occurs 6 times.
+--       ___mondung_ occurs 2 times.
+--    ___questgiver_ occurs 1 time.
+--          _reward_ occurs 4 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ group Questor
+
+Place _mondung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _monster1_ is Nightblade
+Foe _monster2_ is Assassin
+Foe _monster3_ is Thief
+Foe _monster4_ is Spellsword
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1030 step 0 
+	pick one of _S.05_ _S.06_ _S.07_ _S.08_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+_mondead_ task:
+	killed 1 _monster4_ 
+	killed 1 _monster2_ 
+	killed 1 _monster1_ 
+	killed 1 _monster3_ 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_
+	say 1003 
+	clear _qgclicked_ _clearclick_ 
+
+_S.05_ task:
+	place foe _monster1_ at _mondung_ 
+
+_S.06_ task:
+	place foe _monster2_ at _mondung_ 
+
+_S.07_ task:
+	place foe _monster3_ at _mondung_ 
+
+_S.08_ task:
+	place foe _monster4_ at _mondung_ 
+
+_S.09_ task:
+	injured _monster4_ saying 1020 
+	injured _monster3_ saying 1020 
+	injured _monster2_ saying 1020 
+	injured _monster1_ saying 1020 

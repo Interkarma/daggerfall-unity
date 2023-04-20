@@ -1,0 +1,151 @@
+-- Quest: C:\QUESTS\WORKING\R0C20Y07.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 20
+-- QuestId: 7
+Messages: 12
+Quest: R0C20Y07
+DisplayName: The Lost Sapphire
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>             I have a friend, a potential ally, who is in
+<ce>             need of discreet assistance. It's a relatively
+<ce>               simple salvage operation, one for which my
+<ce>              friend would happily pay very handsomely and
+<ce>              I would greatly appreciate. It will need to
+<ce>             be accomplished very soon, within =1stparton_
+<ce>            days. I'll go into detail, if you're interested.
+
+RefuseQuest:  [1001]
+<ce>           Well, saying no from the beginning is definitely
+<ce>          preferable to saying yes and failing. I am a little
+<ce>                    disappointed, but that'll pass.
+
+AcceptQuest:  [1002]
+<ce>           Excellent, I knew you'd help. Now then, my friend
+<ce>                     is _qgfriend_ of ___qgfriend_.
+<ce>        %g has lost a gem, a sapphire, and my spies have tracked
+<ce>                it down to ___itemdung_, of all places.
+<ce>                      _qgfriend_ needs this stone,
+<ce>               because %g borrowed it from a third party.
+<ce>             If it's not in %g3 hands in =1stparton_ days,
+<ce>         well, there will be considerable trouble. Furthermore,
+<ce>         the persons who now possess the stone will, according
+<ce>            to my spy, be vacating ___itemdung_ any day now.
+<ce>           Obviously, you'd best leave immediately to get to
+<ce>          ___qgfriend_ in =1stparton_ days with the sapphire.
+<ce>                    Good luck, %pcf.  Make me proud.
+
+QuestFail:  [1003]
+<ce>                     The sapphire, %pcf? Have you
+<ce>                       forgotten something? %oth!
+
+QuestComplete:  [1004]
+<ce>                     Oh, %pcf, you don't know how
+<ce>              relieved I am that you found that sapphire.
+<ce>               I don't even want to think about it if you
+<ce>              hadn't. Here's the finest reward I can give
+<ce>                   you, a _reward_. Please accept it,
+<ce>                        with my sincere thanks.
+
+RumorsDuringQuest:  [1005]
+Those thieves in ___itemdung_ have some pretty powerful guards.
+<--->
+_qgfriend_ has been awfully nervous lately.
+
+RumorsPostfailure:  [1006]
+Apparently some powerful wizard has it in for _qgfriend_.
+<--->
+_questgiver_ has been complaining about the dearth of decent %ra mercenaries.
+
+RumorsPostsuccess:  [1007]
+Turns out _qgfriend_ didn't steal that gem after all. They found it.
+<--->
+_qgfriend_ was called a thief, but they found the gem %g supposedly stole.
+
+QuestorPostsuccess:  [1008]
+My friend tells me that you got the sapphire. Now, what can I do for you?
+<--->
+I'm glad to see you again. My friend appreciated the little blue gift.
+
+QuestorPostfailure:  [1009]
+<ce>                     I'm impressed by your nerve,
+<ce>                          %pcn. You failed the
+<ce>                      quest and yet return with no
+<ce>                               sapphire.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _questgiver_ of
+ ___questgiver_ has sent me
+ on a mission to find a sapphire stolen from
+ %g3 friend, _qgfriend_ of
+ __qgfriend_, ___qgfriend_.
+ I have =1stparton_ days to get the sapphire from
+ ___itemdung_ to __qgfriend_
+ to earn my reward.
+
+Message:  1011
+You have found the sapphire.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--               %g3 occurs 2 times.
+--              %oth occurs 2 times.
+--              %pcf occurs 4 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--       =1stparton_ occurs 4 times.
+--      ___itemdung_ occurs 4 times.
+--      ___qgfriend_ occurs 3 times.
+--    ___questgiver_ occurs 1 time.
+--       __qgfriend_ occurs 9 times.
+--      _questgiver_ occurs 2 times.
+--          _reward_ occurs 1 time.
+
+QBN:
+Item _reward_ magic_item
+Item _item_ sapphire
+
+Person _questgiver_ face 112 group Questor
+Person _qgfriend_ group Local_3.0 remote
+
+Place _itemdung_ remote dungeon13
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+--changed flags on timer, was giving very short time limits before
+Clock _2ndparton_ 00:00 0 flag 3 range 1 2
+
+Foe _giant_ is Giant
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _itemdung_ 
+	log 1010 step 0 
+	give item _item_ to _giant_ 
+	place foe _giant_ at _itemdung_ 
+
+_pcgetsgold_ task:
+	toting _item_ and _qgfriend_ clicked 
+	give pc _reward_ 
+	end quest 
+--removed unnecessary delay
+
+variable _queston_
+_pchasitem_ task:
+	clicked item _item_ 
+	say 1011 
+	create npc _qgfriend_ 
+
+_1stparton_ task:
+	make _item_ permanent 
+	change repute with _qgfriend_ by -10 
+	end quest 
+
+variable _2ndparton_

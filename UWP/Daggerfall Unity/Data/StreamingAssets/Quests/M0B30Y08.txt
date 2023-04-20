@@ -1,0 +1,154 @@
+-- Quest: C:\QUESTS\WORKING\M0B30Y08.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 30
+-- QuestId: 8
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 81
+Quest: M0B30Y08
+DisplayName: Domestic Squabble
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                Bit of a rummy domestic squabble, %pcf.
+<ce>                   Seems that this woman in __house_
+<ce>                has asked that someone rid her place of
+<ce>               her husband. The only problem is that he
+<ce>               is dead. Are you willing to take this on?
+
+RefuseQuest:  [1001]
+<ce>                Too bad. Normally only the temples get
+<ce>                jobs like this. You've passed up a good
+<ce>                               one %pcn.
+
+AcceptQuest:  [1002]
+<ce>                 Her husband is a zombie. He hides out
+<ce>               somewhere during day. She never sees him
+<ce>                 in _house_ then. At night he wanders
+<ce>                 around the place. Put him out of his
+<ce>               misery and get back here in =2dung_ days,
+<ce>                  and it's worth _gold_ gold to you.
+
+QuestComplete:  [1004]
+<ce>               Was the old boy as foul smelling as they
+<ce>                say? Like a drawer of knickers left in
+<ce>                  the rain for a month. Well, here is
+<ce>                            your pay, %pcn.
+
+RumorsDuringQuest:  [1005]
+<ce>                 Did you hear? Some old biddy says her
+<ce>                husband has returned from the grave to
+<ce>                              haunt her.
+
+RumorsPostfailure:  [1006]
+<ce>                 They found a woman dead in her home.
+<ce>                  The rotted corpse of her long dead
+<ce>                    husband was found next to her.
+
+RumorsPostsuccess:  [1007]
+<ce>                 I hear the Fighter's Guild sent some
+<ce>                tough over to take care of that zombie.
+<ce>                    They're a good lot, the guild.
+
+QuestorPostsuccess:  [1008]
+<ce>                  You did well with that zombie %pcn.
+
+QuestorPostfailure:  [1009]
+<ce>                The zombie was too much, huh? Shouldn't
+<ce>                     ever take a job you can't do.
+
+QuestLogEntry:  [1010]
+On %qdt,
+ the Fighters Guild of ___qgiver_
+ hired me to rid _house_ in
+ __house_ of a zombie that is
+ haunting it. I have =2dung_ days
+ to finish the task.
+
+Message:  1011
+<ce>                        The _monster_ is dead.
+<ce>                      His wife can sleep safely.
+
+Message:  1080
+<ce>                       Hey %pcf, if you thought
+<ce>                     zombie-killing was fun, take
+<ce>                    this map to a monster-infested
+<ce>                       hole called ___newdung_.
+<ce>                       Should be a vacation for
+<ce>                            a %ra like you.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 2 times.
+--              %pcn occurs 6 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 3 times.
+--           =2dung_ occurs 2 times.
+--       ___newdung_ occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--          __house_ occurs 2 times.
+--            _gold_ occurs 2 times.
+--           _house_ occurs 2 times.
+--         _monster_ occurs 1 time.
+
+QBN:
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _house_ remote random
+Place _newdung_ remote dungeon
+
+Clock _2dung_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Zombie
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _house_ 
+	log 1010 step 0 
+	pick one of _map_ _map_ _nomap_ _nomap_ 
+	pc at _house_ set _S.04_ 
+	create npc at _house_ 
+
+_2dung_ task:
+	end quest 
+
+_mondead_ task:
+	killed 1 _monster_ saying 1011 
+
+_S.02_ task:
+	when _qgclicked_ and _mondead_ and _nomap_
+	give pc _gold_ 
+	end quest 
+
+_mapvict_ task:
+	when _qgclicked_ and _mondead_ and _map_
+	give pc _gold_ 
+	reveal _newdung_ readmap
+    say 1080
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	clear _qgclicked_ _clearclick_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_
+
+variable _S.04_
+_S.05_ task:
+	daily from 05:00 to 19:00 
+
+_S.06_ task:
+	when _S.04_ and not _S.05_ 
+	place foe _monster_ at _house_ 
+
+variable _map_
+variable _nomap_
+_S.09_ task:
+	when _map_ and _S.02_ 
+

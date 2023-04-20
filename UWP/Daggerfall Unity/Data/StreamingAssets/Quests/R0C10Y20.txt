@@ -1,0 +1,158 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y20.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 20
+Messages: 16
+Quest: R0C10Y20
+DisplayName: A Rare Ingredient
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  How would you like to have a lovely
+<ce>                    _reward_ from my treasury, %pcf?
+<ce>                  My alchemist has ordered a very rare
+<ce>                  ingredient he needs for an important
+<ce>                   experiment and we need someone to
+<ce>                   pick it up. Do you think you could
+<ce>                           handle that, %pcf?
+
+RefuseQuest:  [1001]
+<ce>                      Well, that's odd. You might
+<ce>                   try not to have such a mercenary's
+<ce>                              heart, %pcf.
+
+AcceptQuest:  [1002]
+<ce>                        Excellent, %pcf, I knew
+<ce>                      you would be game. Take this
+<ce>                       _item1_ down to __contact_
+<ce>                        in ___contact_. There's
+<ce>                           a =contact_ there
+<ce>                       by the name of _contact_.
+<ce>                    Ask %g2 to give you the _item2_
+<ce>                        %g's brought up from the
+<ce>                   south. Make sure you're there and
+<ce>                  back in =1stparton_ days. All righty
+<ce>                        then, %pcf. I'm relying
+<ce>                           on you. Don't make
+<ce>                             me regret it.
+
+QuestFail:  [1003]
+<ce>                          The _item2_, %pcf?
+<ce>                      Remember? And don't dawdle.
+
+QuestComplete:  [1004]
+<ce>                    Good timing, %pcf. My alchemist
+<ce>                   will be so pleased -- it is a most
+<ce>                   excellent _item2_. As I promised,
+<ce>                         here is your _reward_.
+<ce>                           Pretty, isn't it?
+
+RumorsDuringQuest:  [1005]
+_questgiver_'s alchemist once refused a chip of ebonium -- it wasn't "fresh".
+<--->
+_questgiver_'s alchemist always requires very fresh elements. Don't know why.
+
+RumorsPostfailure:  [1006]
+_questgiver_ is having trouble with %g3 alchemist. Very temperamental, I hear.
+<--->
+A whole batch of _questgiver_'s alchemist's potions had to be thrown away.
+
+RumorsPostsuccess:  [1007]
+Really strange smells coming out of _questgiver_'s palace lately, you notice?
+<--->
+I saw this puff of red smoke rise out of _questgiver_'s palace like a bird.
+
+QuestorPostsuccess:  [1008]
+Don't think for a minute I've forgotten you, %pcf. How are you, friend?
+<--->
+My alchemist wanted to thank you personally, %pcf, but he's busy. How are you?
+
+QuestorPostfailure:  [1009]
+<ce>                    If my alchemist were here, he'd
+<ce>                         demand the _item2_ you
+<ce>                  were to retrieve, and then brain you
+<ce>                    with it. But, as it is, consider
+<ce>                      this a warning. Do not fail
+<ce>                       me in the future, should I
+<ce>                          need your services.
+<ce>                              That is all.
+
+QuestLogEntry:  [1010]
+<ce>                      And you must be %pcf, sent
+<ce>                         by _questgiver_, yes?
+<ce>                      Well, here's that _item2_ %g
+<ce>                   wanted. You better hurry back with
+<ce>                  it -- %g3 alchemist has very strong
+<ce>                    feelings about the freshness of
+<ce>                   ingredients. Misplaced, of course.
+<ce>                     _item2_ doesn't spoil. Still,
+<ce>                    you know what they say about one
+<ce>                   man's poison ... Now hurry along.
+
+Message:  1015
+%qdt:
+I will be given a _reward_
+ by _questgiver_ of __questgiver_,
+ ___questgiver_, if I get a
+ fresh _item2_ for %g2 from
+ _contact_ in =1stparton_ days or
+ less. _contact_ is in __contact_
+ in ___contact_.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 2 times.
+--               %g2 occurs 2 times.
+--               %g3 occurs 2 times.
+--              %pcf occurs 41 times.
+--              %qdt occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--         =contact_ occurs 5 times.
+--    ___questgiver_ occurs 1 time.
+--        __contact_ occurs 5 times.
+--     __questgiver_ occurs 1 time.
+--         _contact_ occurs 3 times.
+--           _item1_ occurs 1 time.
+--           _item2_ occurs 7 times.
+--      _questgiver_ occurs 8 times.
+--          _reward_ occurs 3 times.
+
+QBN:
+Item _reward_ gem
+Item _item1_ turquoise
+Item _item2_ skin
+
+Person _questgiver_ face 72 group Questor
+Person _contact_ face 80 group Chemist remote
+
+
+Clock _1stparton_ 00:00 0 flag 17 range 1 4
+
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1015 step 0 
+	get item _item1_ 
+
+_pcgetsgold_ task:
+	toting _item2_ and _questgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+variable _qgclicked_
+variable _npcclicked_
+_1stparton_ task:
+	make _item2_ permanent 
+	make _item1_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+variable _pchasitem1_
+_pchasitem2_ task:
+	toting _item1_ and _contact_ clicked 
+	get item _item2_ 
+	say 1010 

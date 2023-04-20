@@ -1,0 +1,216 @@
+-- Quest: C:\QUESTS\WORKING\N0C00Y13.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: mage
+-- Repute: 0
+-- QuestId: 13
+Messages: 46
+Quest: N0C00Y13
+DisplayName: An Ancient Scroll
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   Hmmph. You're not a guild member.
+<ce>                    I really shouldn't give out jobs
+<ce>                    to non-members. However, I have
+<ce>                    something that I need done that
+<ce>                    I don't really want anyone else
+<ce>                    in the guild to find out about.
+<ce>                    If you do this for me for free,
+<ce>                     I'll spread it around that you
+<ce>                       are our kind of %ra. What
+<ce>                            do you say %pcf?
+
+RefuseQuest:  [1001]
+<ce>                        Go away. You bother me.
+                                     <--->
+<ce>                               Ingrate.
+
+AcceptQuest:  [1002]
+<ce>                       My name is _questgiver_.
+<ce>                  There is an ancient text supposedly
+<ce>                         hidden in ___dungeon_.
+<ce>              Bring it back to me within =traveltime_ days
+<ce>                    and I'll consider the job done.
+
+QuestComplete:  [1004]
+<ce>                Excellent. I remembered to warn you not
+<ce>                to read this, didn't I?  Could be quite
+<ce>                dangerous if you pronounced "nagog" with
+<ce>            the hard g, as laymen are apt.  Well, thanks for
+<ce>                     your help, %pcn. Keep this up
+<ce>                 and we'll consider you for membership
+<ce>                          in the Mages Guild.
+
+RumorsDuringQuest:  [1005]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has some good points and bad ones.
+
+RumorsPostfailure:  [1006]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has some good points and bad ones.
+
+RumorsPostsuccess:  [1007]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has some good points and bad ones.
+
+QuestorPostsuccess:  [1008]
+Certainly I remember you, %pcf. You brought me that text, right?
+
+QuestorPostfailure:  [1009]
+<ce>               I can't imagine a simpler assignment than
+<ce>               the one I gave you -- just find a rare old
+<ce>               scroll. Now, I can't imagine a reason why
+<ce>                    I should keeping talking to you.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I met _questgiver_
+ of the Mages Guild of ___questgiver_
+ who sent me on a quest to find an
+ ancient text hidden in ___dungeon_.
+ I have =traveltime_ days to get it to %g2.
+
+Message:  1020
+Zephrim alga n' nagog. Carti
+ alga n' belyl. Azuth Zephrim ne'
+ nagog. Partik aloy partik frae i
+ eyominathraq n' toyl. Berik azuth
+ n' nagog. Charlaq gimle n' maluk
+ Zephrim qork.
+
+Message:  1040
+<ce>                      This must be the parchment
+<ce>                     _questgiver_ sent you to find.
+
+QuestTimeLapse:  [1045]
+<ce>                      As you read the final word,
+<ce>                      a frigid blast almost whirls
+<ce>                      the paper out of your hands.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 3 times.
+--               %g2 occurs 17 times.
+--              %jok occurs 9 times.
+--              %oth occurs 15 times.
+--              %pcf occurs 3 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 3 times.
+--      =traveltime_ occurs 3 times.
+--       ___dungeon_ occurs 2 times.
+--    ___questgiver_ occurs 4 times.
+
+QBN:
+Item _ingredient_ letter used 1020
+
+Person _questgiver_ group Questor
+
+Place _dungeon_ remote dungeon
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _atronach_ is Ice_atronach
+
+--	Quest start-up:
+	place item _ingredient_ at _dungeon_ 
+	start timer _traveltime_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+
+_traveltime_ task:
+	end quest 
+
+_S.01_ task:
+	toting _ingredient_ and _questgiver_ clicked 
+	give pc nothing 
+	end quest 
+
+_S.02_ task:
+	clicked item _ingredient_ 
+	_ingredient_ used do _S.03_ 
+	--moved "saying 1045" from used do, not a valid argument, to S.03.
+	say 1040 
+
+_S.03_ task:
+	say 1045
+	create foe _atronach_ every 1 minutes 1 times with 100% success 

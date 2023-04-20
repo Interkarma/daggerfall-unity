@@ -1,0 +1,182 @@
+-- Quest: C:\QUESTS\WORKING\S0000988.Qbn.
+-- Main story quest.
+-- QuestId: 988
+Messages: 21
+Quest: S0000988
+DisplayName: Mantella Revealed
+-- Message panels
+QRC:
+
+QuestLogEntry:  [1010]
+Dear %pcf,
+ 
+ You have probably not heard the fairy tale of
+ Numidium, but you need to.
+ 
+ The legend dates back to the earliest parts of
+ the Third Era.
+ 
+ Numidium was supposed to be a giant so big his
+ hands could knock the moons from the sky. I do
+ not recall from the stories whether Numidium was
+ supposed to be good or bad, but the legends used
+ to scare me as a child.
+ 
+ The legends are, in fact, true. There was a
+ Numidium, and, if situations continue, he will
+ come again. The Totem of Tiber Septim is used
+ to control Numidium. However, legend has it that
+ great Numidium lost his Mantellan heart,
+ whatever that is, in the final battle with Tiber
+ Septim's Battlemage. Until his heart is found,
+ the Totem is useless.
+ 
+<ce>                               A Friend
+
+Message:  1011
+Dear %pcf,
+ 
+ Numidium was Tiber Septim's secret weapon in his
+ bid for supreme power: a thousand foot tall automaton,
+ a golem or an atronach of sorts powered by a gem called
+ the Mantella. The Mantella was infused with the life
+ force of Tiber Septim's Imperial Battlemage, and with
+ it, Septim crushed all who stood in his way. After the
+ complete and total defeat of all his opponents, Septim
+ began using Numidium to crush the neutral royal families
+ of Tamriel so that he could enthrone only persons he
+ knew to be loyal. His Imperial Battlemage was furious
+ at this use of his creation, and fought to reclaim the
+ Mantella. In the ensuing battle, both the created and
+ the creator were vanquished: the heart they shared
+ blown out of this reality into the netherworld they
+ call Aetherius. Numidium's body was scattered throughout
+ Tamriel and the Imperial Battlemage, without his life
+ force went into a semi-slumber in a subterranean vault.
+ In the centuries that followed, the Emperor's elite
+ soldiers, for generation after generation, collected the
+ pieces of the Numidium and became known as the Blades.
+ Tiber Septim's Imperial Battlemage became known as the
+ Underking, and sent his forces out to find the Mantella.
+ 
+ Be warned, therefore. Those who search for the Totem of
+ Tiber Septim are searching for the mechanism the first
+ Emperor of Tamriel used to control Numidium. Should
+ Numidium return, he or she who holds the Totem will
+ control Tamriel's fate.
+ 
+<ce>                               A Friend
+
+Message:  1012
+Dear %pcf,
+ 
+ I must tell you about the Totem of Tiber Septim, which
+ all covet. You must know the truth about what you are asked.
+ 
+ The Totem was crafted by the original Imperial Battlemage
+ of Tamriel, by orders of Tiber Septim. It is essentially a
+ means of controlling a gargantuan creature called the
+ Numidium. Without it, the Numidium would simply not
+ function. The Imperial Battlemage placed a seal on the
+ Totem so that anyone not of Septim lineage or possessing
+ a special supernatural affinity, such as himself, would be
+ instantly killed if they attempted to use it. The Totem,
+ with the rest of Numidium, was lost during the epic battle
+ between the Imperial Battlemage and his own creation.
+ 
+<ce>                               A Friend
+
+Message:  1020
+<ce>       You are approached by a young page who smiles in recognition
+<ce>        and does not ask your name before he hands you a letter
+<ce>         addressed to you. To all of your questions, he merely
+<ce>                responds with a blank look and a smile.
+                                     <--->
+<ce>             A letter is pressed into your hand. You spin
+<ce>            to see who gave it to you. You catch a glimpse
+<ce>                of livery that vanishes into the crowd.
+                                     <--->
+<ce>              A page steps forward saying "Letter for you
+<ce>                     %pcn," and hands you a note.
+                                     <--->
+<ce>              A courier steps up to you with a letter in
+<ce>               hand. "I was told to give this letter to
+<ce>                someone fitting your description," says
+<ce>               the courier. As you take it, the courier
+<ce>                     turns and walks quickly away.
+                                     <--->
+<ce>                Reaching into you pack for something to
+<ce>             eat, you spy a note. It wasn't there before.
+                                     <--->
+<ce>             A redfaced courier startles you with a cry of
+<ce>                  "Letter for %pcn! Hey that must be
+<ce>                 you. Here, take this. Gotta go. Other
+<ce>                        deliveries to be made."
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 6 times.
+--              %pcn occurs 2 times.
+
+QBN:
+Item _letter1_ letter used 1010
+Item _letter2_ letter used 1011
+Item _letter3_ letter used 1012
+
+Person _darkb_ face 1 faction Dark_Plotters remote
+Person _lhotun_ named Prince_Lhotun atHome
+Person _vampires_ face 113 factiontype Vampire_Clan remote
+Person _gortwog_ face 144 named Gortwog atHome
+Person _underking_ named The_Underking
+Person _aubk-i_ named Queen_Aubk-i atHome
+Person _thievesguild_ face 1 faction The_Thieves_Guild remote
+Person _kingofworms_ named King_of_Worms atHome
+Person _elysana_ named Princess_Elysana atHome
+Person _witches_ face 1 factiontype Witches_Coven remote
+Person _magesguild_ face 13 faction The_Mages_Guild male remote
+
+
+Clock _delay_ 1.00:00 0 flag 1 range 0 1
+
+
+--	Quest start-up:
+	dialog link for person _darkb_ 
+	dialog link for person _gortwog_ 
+	dialog link for person _kingofworms_ 
+	dialog link for person _magesguild_ 
+	dialog link for person _thievesguild_ 
+	dialog link for person _vampires_ 
+	dialog link for person _witches_ 
+	dialog link for person _underking_ 
+	repute with _darkb_ exceeds 50 do _S.00_ 
+	repute with _lhotun_ exceeds 25 do _S.00_
+	repute with _vampires_ exceeds 10 do _S.00_
+	repute with _gortwog_ exceeds 25 do _S.00_ 
+	repute with _underking_ exceeds 5 do _S.01_ 
+	repute with _aubk-i_ exceeds 25 do _S.01_
+	repute with _thievesguild_ exceeds 50 do _S.01_ 
+	repute with _kingofworms_ exceeds 15 do _S.02_ 
+	repute with _elysana_ exceeds 25 do _S.02_ 
+	repute with _witches_ exceeds 25 do _S.02_ 
+	repute with _magesguild_ exceeds 50 do _S.02_ 
+
+_S.00_ task:
+	give pc _letter1_ notify 1020 
+
+_S.01_ task:
+	give pc _letter2_ notify 1020 
+
+_S.02_ task:
+	give pc _letter3_ notify 1020 
+
+_S.03_ task:
+	when _S.00_ or _S.01_ or _S.02_ 
+	start quest 9 9 
+	start timer _delay_ 
+
+_delay_ task:
+	end quest 
+
+FinishedMantellanCrux _S.05_
+	end quest 

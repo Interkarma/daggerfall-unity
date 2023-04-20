@@ -1,0 +1,161 @@
+-- Quest: C:\QUESTS\WORKING\S0000017.Qbn.
+-- Main story quest.
+-- QuestId: 17
+Messages: 23
+Quest: S0000017
+DisplayName: Wayrest Painting
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      %pcn! Welcome to Sentinel.
+<ce>                  I trust you have had a comfortable
+<ce>                 stay so far. Let me get right to the
+<ce>                  point. My son, Prince Lhotun, says
+<ce>                 you are a well respected and trusted
+<ce>                    %ra. I have need of your sort.
+<ce>                  I am willing to pay you _gold_ gold
+<ce>                   to infiltrate Castle Wayrest and
+<ce>                    recover an heirloom of the late
+<ce>                 King Lysandus for me. Will you do it?
+
+RefuseQuest:  [1001]
+<ce>                  Hmmm. I shall have to rethink your
+<ce>                        standing in this court.
+
+AcceptQuest:  [1002]
+<ce>                   What Bounty! There is an item, a
+<ce>                  painting, that is hidden somewhere
+<ce>                    within Castle Wayrest. I desire
+<ce>                  this item for reasons you need not
+<ce>                   worry about. Bring it to me and I
+<ce>                      will pay your _gold_ gold.
+
+QuestComplete:  [1004]
+<ce>                    Here is your _gold_ gold %pcf.
+
+QuestLogEntry:  [1010]
+%qdt:
+ Queen Akorithi has set me to infiltrate
+ Castle Wayrest. Somewhere in its
+ dungeons is a painting that she
+ desires. If I can place it in her hands,
+ she will pay me _gold_ gold.
+
+Message:  1011
+Dear %pcn,
+ 
+ Your presence in our court is desired
+ before the end of the next season.
+ Prince Lhotun has recommended you with
+ high praise. I await your arrival.
+ 
+<ce>                               Akorithi
+<ce>                           Queen of Sentinel
+
+Message:  1012
+<ce>               A page girl bearing the crest of Sentinel
+<ce>                stiffly presents you a crisply pressed
+<ce>              envelope. Ignoring your queries, she turns
+<ce>                            and walks away.
+
+Message:  1013
+<ce>               The longer you stare, the more the image
+<ce>                  in the painting seems to be moving.
+<ce>                You tear your eyes away before anything
+<ce>                        worse begins to happen.
+
+Message:  1015
+<ce>                 The scene in the painting shifts and
+<ce>                twists. You can clearly see the inside
+<ce>                of a tent. Several men in the livery of
+<ce>                 Wayrest are intensely debating with a
+<ce>              man bearing the coat of arms of Daggerfall.
+<ce>                One of the Wayrest men slips behind the
+<ce>                  Daggerfall man, draws a dagger and
+<ce>                 casually slides it between his ribs.
+<ce>                 The image fades as the life ebbs from
+<ce>                               his body.
+
+Message:  1020
+<ce>                 Did you attempt to use the painting?
+
+Message:  1021
+<ce>                     Excellent. Its properties are
+<ce>                 inappropriate for those not of royal
+<ce>                 blood. You have shown yourself to be
+<ce>                  not only loyal, but also obedient.
+
+Message:  1022
+<ce>                        You presume much %pcn.
+<ce>                  What you saw is not for the prying
+<ce>                    eyes of the masses. It concerns
+<ce>                 matters of royalty and will be dealt
+<ce>                           with by royalty.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 3 times.
+--              %pcn occurs 4 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--            _gold_ occurs 10 times.
+
+QBN:
+Item _letter_ letter used 1011
+Item _item_ Lysandus_death used 1013
+Item _gold_ gold
+
+Person _Akorithi_ named Queen_Akorithi atHome
+
+Place _wayrest_ permanent WayrestCastle
+
+Clock _2letter_ 7.00:00 14.00:00
+
+
+--	Quest start-up:
+	dialog link for item _item_ 
+	start timer _2letter_ 
+	add _Akorithi_ as questor 
+
+_2letter_ task:
+	give pc _letter_ notify 1012 
+
+yes task:
+	_item_ used do _S.05_ 
+	place item _item_ at _wayrest_ marker 0
+	add dialog for item _item_ 
+	log 1010 step 0 
+	say AcceptQuest 
+
+_no_ task:
+	say RefuseQuest 
+	drop _Akorithi_ as questor 
+	end quest 
+
+_S.03_ task:
+	clicked npc _Akorithi_ 
+
+_S.04_ task:
+	when _S.03_ and _2letter_ 
+	prompt QuestorOffer yes yes no _no_ 
+
+_S.05_ task:
+	say 1015 
+
+_S.06_ task:
+	toting _item_ and _Akorithi_ clicked 
+	give pc _gold_ 
+	start quest 10 10 
+	prompt 1020 yes _S.07_ no _S.08_ 
+	drop _Akorithi_ as questor 
+	end quest 
+
+_S.07_ task:
+	say 1022 
+	change repute with _Akorithi_ by +10 
+
+_S.08_ task:
+	say 1021 
+	change repute with _Akorithi_ by +15 

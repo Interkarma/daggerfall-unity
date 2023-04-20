@@ -1,0 +1,67 @@
+-- Quest: C:\QUESTS\WORKING\S0000104.Qbn.
+-- Main story quest.
+-- QuestId: 104
+Messages: 16
+Quest: S0000104
+-- Message panels
+QRC:
+
+Message:  1015
+<ce>                    The Underking wants the Totem.
+<ce>                             You must die.
+                                     <--->
+<ce>                   You have shown no loyalty to the
+<ce>                   Underking. Therefore you must die
+<ce>                       for him to get the Totem.
+                                     <--->
+<ce>                  I have come for the Totem of Tiber
+<ce>                    Septim. You will join the ranks
+<ce>                             of the dead.
+
+
+-- Symbols used in the QRC file:
+--    ***  None  ***
+
+QBN:
+
+
+
+Clock _S.01_ 01:15 0 flag 1 range 0 1
+Clock _S.02_ 444.10:40 0 flag 1 range 0 1
+
+Foe _F.00_ is 3 Frost_daedra
+Foe _F.01_ is 3 Fire_daedra
+
+--	Quest start-up:
+	create foe _F.01_ every 101 minutes 15 times with 3% success 
+	create foe _F.00_ every 97 minutes 15 times with 3% success 
+	start timer _S.02_ 
+
+_S.00_ task:
+	injured _F.01_ 
+	injured _F.00_ 
+	start timer _S.01_ 
+	say 1015 
+
+_S.01_ task:
+	clear _S.01_ _S.00_ 
+
+_S.02_ task:
+	end quest 
+
+GothrydGotTotem _S.03_
+KingOfWormsGotTotem _S.04_
+GortwogGotTotem _S.05_
+AkorithiGotTotem _S.06_
+UnderkingGotTotem _S.07_
+EadwyreGotTotem _S.08_
+BrisiennaGotTotem _S.09_
+_S.10_ task:
+	when _S.03_ or _S.04_ or _S.05_ or _S.06_ 
+
+_S.11_ task:
+	when _S.07_ or _S.08_ or _S.09_ 
+
+_S.12_ task:
+	when _S.10_ or _S.11_ 
+	start task _S.02_ 

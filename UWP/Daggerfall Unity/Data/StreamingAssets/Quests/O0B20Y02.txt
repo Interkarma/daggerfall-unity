@@ -1,0 +1,125 @@
+-- Quest: C:\QUESTS\WORKING\O0B20Y02.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 20
+-- QuestId: 2
+Messages: 11
+Quest: O0B20Y02
+DisplayName: A Prized Item
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       Keep your voice down. My
+<ce>                      name is ... er, just call me
+<ce>                           _qgiver_. I have a
+<ce>                      guild job for you. Standard
+<ce>                        pay. Interested so far?
+
+RefuseQuest:  [1001]
+<ce>                      Glad I didn't tell you any
+<ce>                     details. Now get out of here.
+
+AcceptQuest:  [1002]
+<ce>                         You need to steal the
+<ce>                       _magicitem_ from _mansion_
+<ce>                           in __mansion_. You
+<ce>                     have =traveltime_ days or the
+<ce>                       deal is off. Did I mention
+<ce>                       that the place is guarded?
+<ce>                      Could have sworn I said so.
+
+QuestComplete:  [1004]
+<ce>                     Got the goods? Ah! Well done.
+<ce>                      Standard pay for this job is
+<ce>                    _gold_ gold pieces. Don't spend
+<ce>                          it all in one place.
+
+RumorsDuringQuest:  [1005]
+_mansion_ in __mansion_ has an extensive collection of magical exotica.
+
+RumorsPostfailure:  [1006]
+They moved the _magicitem_ out of _mansion_ for security's sake.
+
+RumorsPostsuccess:  [1007]
+That _magicitem_ was stolen from _mansion_. It's a real scandal.
+
+QuestorPostsuccess:  [1008]
+Surprised to see me, %pcf? Thought I'd run off with the _magicitem_, maybe?
+
+QuestorPostfailure:  [1009]
+<ce>                  They already moved the _magicitem_
+<ce>                       out of _mansion_, %pcf. In
+<ce>                 other words, you failed your mission.
+<ce>                             Now, go away.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_, (or so %g called %g2-self)
+ of the guild contracted me to
+ steal the _magicitem_ from
+ _mansion_ in __mansion_.
+ I have =traveltime_ days to get
+ it back to %g2 in __qgiver_
+ in ___qgiver_.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g2 occurs 2 times.
+--              %pcf occurs 2 times.
+--              %qdt occurs 1 time.
+--      =traveltime_ occurs 2 times.
+--        ___qgiver_ occurs 3 times.
+--        __mansion_ occurs 3 times.
+--         __qgiver_ occurs 4 times.
+--            _gold_ occurs 1 time.
+--       _magicitem_ occurs 21 times.
+--         _mansion_ occurs 6 times.
+--          _qgiver_ occurs 2 times.
+
+QBN:
+Item _magicitem_ magic_item
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _mansion_ remote house1
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is 2 Spellsword
+Foe _F.01_ is Gargoyle
+Foe _F.02_ is Flesh_atronach
+Foe _F.03_ is Ghost
+
+--	Quest start-up:
+	place item _magicitem_ at _mansion_ 
+	start timer _traveltime_ 
+	log 1010 step 0 
+	pc at _mansion_ set _S.01_ 
+
+_traveltime_ task:
+	end quest 
+
+_S.01_ task:
+	pick one of _guard1_ _guard2_ _guard3_ _guard4_ 
+
+_questdone_ task:
+	toting _magicitem_ and _qgiver_ clicked 
+	give pc _gold_ 
+	end quest 
+
+_guard1_ task:
+	create foe _F.00_ every 4 minutes 1 times with 10% success 
+
+_guard2_ task:
+	create foe _F.01_ every 4 minutes 1 times with 10% success 
+
+_guard3_ task:
+	create foe _F.02_ every 4 minutes 1 times with 10% success 
+
+_guard4_ task:
+	create foe _F.03_ every 4 minutes 1 times with 10% success 

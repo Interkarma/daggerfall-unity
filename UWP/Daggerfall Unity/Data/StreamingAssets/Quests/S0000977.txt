@@ -1,0 +1,80 @@
+-- Quest: C:\QUESTS\WORKING\S0000977.Qbn.
+-- Main story quest.
+-- QuestId: 977
+Messages: 10
+Quest: S0000977
+DisplayName: Curse of Daggerfall
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+
+
+RefuseQuest:  [1001]
+
+
+AcceptQuest:  [1002]
+
+
+QuestFail:  [1003]
+
+
+QuestComplete:  [1004]
+
+
+RumorsDuringQuest:  [1005]
+Ghosts are haunting the streets of Daggerfall.
+<--->
+Don't walk the streets of Daggerfall at night.
+<--->
+<ce>      The ghost of King Lysandus haunts his old capital at night.
+<ce>                           No one knows why.
+
+RumorsPostfailure:  [1006]
+
+
+RumorsPostsuccess:  [1007]
+
+
+QuestorPostsuccess:  [1008]
+
+
+QuestorPostfailure:  [1009]
+
+
+
+-- Symbols used in the QRC file:
+--    ***  None  ***
+
+QBN:
+
+
+Place _daggerfall_ permanent DaggerfallCity1
+
+Clock _delay_ 00:04 00:15 flag 12 range 0 0
+Clock _S.05_ 00:01 0 flag 9 range 0 1
+
+Foe _F.00_ is Ghost
+Foe _wraith_ is Wraith
+
+--	Quest start-up:
+	pc at _daggerfall_ set _S.02_ 
+
+LiftedCurse _S.00_
+	end quest 
+
+_S.01_ task:
+	daily from 05:00 to 19:00 
+
+variable _S.02_
+_S.03_ task:
+	when not _S.01_ and _S.02_ 
+	create foe _wraith_ every 21 minutes indefinitely with 50% success 
+	create foe _F.00_ every 31 minutes indefinitely with 50% success 
+	play sound vengence 5 0
+
+variable _delay_
+variable _S.05_
+_S.06_ task:
+	when _S.01_ or not _S.02_ 
+	clear _S.03_ 

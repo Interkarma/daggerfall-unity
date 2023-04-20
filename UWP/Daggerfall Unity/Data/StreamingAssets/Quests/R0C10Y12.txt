@@ -1,0 +1,151 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y12.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 12
+Messages: 24
+Quest: R0C10Y12
+DisplayName: Smuggled Goods
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  Yes, this is a potentially awkward
+<ce>                  situation I'm in. Not the worst, but
+<ce>                  awkward indeed. I'm in possession of
+<ce>                   a certain ... item that is not, to
+<ce>                  be blunt, legally mine. If you would
+<ce>                     carry it to a contact of mine in
+<ce>                        ___contact_, you will be
+<ce>                handsomely rewarded. Does _reward_ gold
+<ce>                       pieces sound fair to you?
+
+RefuseQuest:  [1001]
+<ce>                     You abandon me in my hour of
+<ce>                           need, young %ra. I
+<ce>                         am sorely displeased.
+
+AcceptQuest:  [1002]
+<ce>                  You will help me? %god be praised.
+<ce>                      Now, hurry, take this _item_
+<ce>                          and go to __contact_
+<ce>                          in ___contact_. Look
+<ce>                            for a =contact_
+<ce>                            named _contact_.
+<ce>                  Don't think about taking the _item_
+<ce>                      elsewhere. If you're not in
+<ce>                        __contact_ in =queston_
+<ce>                       days, _contact_ will come
+<ce>                      looking for you. Now, hurry,
+<ce>                        time is of the essence.
+
+QuestFail:  [1003]
+<ce>                        Why are you still here?
+<ce>                       My instructions were quite
+<ce>                       clear, now carry them out.
+
+QuestComplete:  [1004]
+<ce>                          Good day, %pcf. I'm
+<ce>                          _contact_. Thank you
+<ce>                  for your discretion in this matter.
+<ce>                    You will find that discretion is
+<ce>                    a valuable quality. Here is your
+<ce>                           payment. Good day.
+
+RumorsDuringQuest:  [1005]
+Those guards are even searching _questgiver_'s house for that _item_ shipment.
+<--->
+It's a complete mystery where that _item_ disappeared. Everyone's curious.
+
+RumorsPostfailure:  [1006]
+What an embarrassment for _questgiver_. The stolen _item_ was traced to %g2.
+<--->
+I hear _questgiver_ tried to smuggle the _item_ to ___contact_.
+
+RumorsPostsuccess:  [1007]
+The guards have given up their search for that stolen _item_.
+<--->
+Imagine them suspecting that _questgiver_ had something to do with that _item_.
+
+QuestorPostsuccess:  [1008]
+Lovely to see you again, %pcf. I understand that your mission was accomplished.
+<--->
+I'm glad you returned, %pcf. You helped me out of a potential embarrassment.
+
+QuestorPostfailure:  [1009]
+<ce>                  My contact says you never arrived.
+<ce>                  That was very unprofessional, %pcf.
+<ce>                    Now leave me. I have work to do.
+
+Message:  1011
+_questgiver_ is a rather small-time ruler, but a big-time _item_ smuggler.
+<--->
+_questgiver_'s in over %g3 head in this _item_ smuggling business.
+
+Message:  1012
+Supposedly _contact_ is a fence for stolen merchandise.
+<--->
+_contact_, eh? A mysterious =contact_ who operates out of __contact_, %di of here.
+
+Message:  1015
+%qdt:
+I have accepted a
+ mission from _questgiver_ of
+ ___questgiver_ to bring a stolen
+ _item_ to _contact_,
+ at __contact_ in ___contact_.
+ I have =queston_ days to get
+ the _item_ to ___contact_.
+
+Message:  1023
+Who is calling 1023?
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 11 times.
+--               %g2 occurs 3 times.
+--               %g3 occurs 1 time.
+--              %god occurs 1 time.
+--              %pcf occurs 4 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--         =contact_ occurs 3 times.
+--         =queston_ occurs 2 times.
+--       ___contact_ occurs 6 times.
+--    ___questgiver_ occurs 1 time.
+--        __contact_ occurs 20 times.
+--            _item_ occurs 20 times.
+--      _questgiver_ occurs 7 times.
+--          _reward_ occurs 1 time.
+
+QBN:
+Item _reward_ gold
+Item _item_ drug
+
+Person _questgiver_ group Questor anyInfo 1011
+Person _contact_ group Local_3.0 remote anyInfo 1012
+
+
+Clock _queston_ 00:00 0 flag 1 range 1 4
+
+
+--	Quest start-up:
+	start timer _queston_ 
+	log 1015 step 0 
+	get item _item_ 
+	create npc _contact_ 
+
+_pcgetsgold_ task:
+	toting _item_ and _contact_ clicked 
+	give pc _reward_ 
+	end quest 
+
+variable _pchasitem_
+_queston_ task:
+	make _item_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+variable _npcclicked_

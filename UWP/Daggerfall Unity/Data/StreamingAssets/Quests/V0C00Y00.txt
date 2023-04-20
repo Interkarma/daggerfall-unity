@@ -1,0 +1,164 @@
+-- Quest: C:\QUESTS\WORKING\V0C00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: Clavicus Vile
+-- Repute: 0
+-- QuestId: 0
+Messages: 31
+Quest: V0C00Y00
+DisplayName: Clavicus Vile's Quest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                My needs are rather ... modest, but my
+<ce>             offer, I think you will agree, is altruism
+<ce>               and generosity indissoluble. In return for
+<ce>                        _artifact_, an artifact
+<ce>            of great power, I only ask that you exterminate
+<ce>            a nasty little bit of fur that has been preying
+<ce>                  on some of my friends who live near
+<ce>                   ___mondung_. Lupines are generally
+<ce>               quite friendly with me and my associates,
+<ce>                    but this one ... well, kids will
+<ce>                 be kids. Do we understand one another?
+
+RefuseQuest:  [1001]
+<ce>              Why, you nauseating insect. You poison the
+<ce>             air with your thickwitted insolence. How dare
+<ce>              you summon forth the greatest of the Princes
+<ce>              of Oblivion and refuse the simplest request
+<ce>             I could possibly propose? In return for water,
+<ce>             I offer you wine and you spit both in my face.
+<ce>                     I will not forget this, %pcn.
+
+AcceptQuest:  [1002]
+<ce>              Ah, recognize a good deal, do you? You will
+<ce>              find the lupine menace somewhere in a place
+<ce>                   called ___mondung_. Unfortunately,
+<ce>               time is not our friend in this matter. For
+<ce>              reasons too dull to discuss, I need the oaf
+<ce>                dead in =1stparton_ days. After you have
+<ce>                murdered the creature, meet my friend at
+<ce>                    __contact_ in ___contact_. Just
+<ce>                    look for a =contact_. Nice doing
+<ce>                        business with you, %pcn.
+<ce>                       I'm sure we'll meet again.
+
+QuestFail:  [1003]
+<ce>              Listen, kid. I don't know how much business
+<ce>               you've done with Clavicus Vile before, but
+<ce>              I'll tell you this -- he don't like anything
+<ce>                done halfway. I know that werewolf ain't
+<ce>               dead, and if you think you can fool Vile,
+<ce>  you're an idiot. No dead werewolf, no _artifact_.  Simple as that.
+
+QuestComplete:  [1004]
+<ce>                   Ah, %pcf, Vile told me to expect
+<ce>             you. Well, you fulfilled your end I understand
+<ce>           so here's the _artifact_, just like Vile promised.
+<ce>             He's impressed with you, by the way. Not a bad
+<ce>                    friend to have. Take it from me.
+
+RumorsDuringQuest:  [1005]
+I've heard there's some kind of werewolf on the loose around here.
+<--->
+I hear the werewolf's found a lair in someplace called ___mondung_.
+<--->
+Didja hear that howling last night? Wolf howling?
+
+RumorsPostfailure:  [1006]
+Werewolves are real nomads, I guess. I hear our loop moved down south.
+<--->
+My cousin tells me that our werewolf was spotted down south aways.
+
+RumorsPostsuccess:  [1007]
+Some kind of weird cult activity started up over by ___mondung_.
+<--->
+A lot of people feel safer knowing that werewolf is dead.
+<--->
+You heard about that werewolf some %ra hunted down?
+
+Message:  1011
+Clavicus Vile is the consummate politician of Oblivion.
+<--->
+You won't find a more carefully neutral Daedric Prince that Clavicus Vile.
+
+Message:  1012
+That smooth talking =contact_ is %di of here in __contact_.
+<--->
+If you go %di of here in __contact_, just look for a =contact_.
+
+Message:  1014
+Supposedly, the Masque enhances the personality of the wearer.
+
+Message:  1020
+%qdt:
+ Clavicus Vile wants me to kill a werewolf
+ located in the dungeon ___mondung_.
+ A =contact_ named _contact_ will
+ wait for =1stparton_ days for me at __contact_
+ in ___contact_ to give me the Masque
+ of Clavicus Vile.
+
+Message:  1030
+<ce>                     You have slain the werewolf,
+<ce>                      as ordered by Clavicus Vile.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 2 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--         =contact_ occurs 7 times.
+--       ___mondung_ occurs 6 times.
+--        __contact_ occurs 4 times.
+--        _artifact_ occurs 11 times.
+--         _contact_ occurs 1 time.
+
+QBN:
+Item _artifact_ artifact Masque_of_Clavicus_Vile anyInfo 1014
+
+Person _questgiver_ face 112 named Clavicus_Vile anyInfo 1011
+Person _contact_ face 238 faction The_Cabal female remote anyInfo 1012
+
+Place _mondung_ remote dungeon
+Place _tavern_ remote tavern
+
+Clock _1stparton_ 00:00 0 flag 1 range 0 5
+
+Foe _monster_ is Werewolf
+--removed period from 1003
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	place foe _monster_ at _mondung_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _artifact_ 
+	end quest 
+--removed unnecessary delay
+
+variable _queston_
+_mondead_ task:
+	killed 1 _monster_ 
+	say 1030 
+
+_qgclicked_ task:
+	clicked npc _contact_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_
+	say 1003 
+	clear _qgclicked_ _clearclick_ 

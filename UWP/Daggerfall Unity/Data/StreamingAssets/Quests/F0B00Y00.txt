@@ -1,0 +1,182 @@
+-- Quest: C:\QUESTS\WORKING\F0B00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Dibella
+-- Repute: 0
+-- QuestId: 0
+Messages: 31
+Quest: F0B00Y00
+DisplayName: Desired Artwork
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                One of the more important functions of
+<ce>                the House of Dibella is the preservation
+<ce>                 of great works of art. We have scouts
+<ce>                 all over Tamriel who look for rare and
+<ce>                 beautiful pieces. Are you available to
+<ce>                  retrieve one such masterpiece? It is
+<ce>                 not far from here, and we will gladly
+<ce>                  pay you _reward_ gold pieces for it.
+                                     <--->
+<ce>                  In over four thousand years of high
+<ce>                 civilization in Tamriel, the House of
+<ce>                 Dibella has worked tirelessly to save
+<ce>                 and preserve objects of antiquity and
+<ce>                  artistry from ruin at the avaricious
+<ce>                   and uncouth hands of time. We have
+<ce>                  developed a sophisticated network of
+<ce>                 archaeologists, dealers, and couriers
+<ce>                   who are goodly paid to procure art
+<ce>                   for the house. Would you assist in
+<ce>                       one such enterprise, %pcf?
+
+
+RefuseQuest:  [1001]
+<ce>                     Alas, it saddens me that time
+<ce>                     is considered too precious to
+<ce>                       spend on that most rare of
+<ce>                      all pleasures, true beauty.
+
+AcceptQuest:  [1002]
+<ce>                Oh marvelous. Now, the procurer of this
+<ce>                particular work is a rather funny little
+<ce>                            =contact_ named
+<ce>                           _contact_. What %g
+<ce>                  has found is apparently so rare and
+<ce>                  wondrous, %g fears bandits will rob
+<ce>                   %g2 before %g gets to our House. I
+<ce>                  do not know how dangerous it is, but
+<ce>                     if you would go to __contact_
+<ce>                         in ___contact_ and get
+<ce>                 the artifact from %g2, I would be most
+<ce>                 appreciative. Time is of the essence,
+<ce>                  for %g says that %g will abandon the
+<ce>                  artifact if someone is not there to
+<ce>               take it in =1stparton_ days. Meanwhilst, I
+<ce>             will expect you back here in =1stparton_ days.
+<ce>                     Fare thee well and may Dibella
+<ce>                           lighten thy load.
+
+QuestFail:  [1003]
+<ce>                       Hello, %pcf. You haven't
+<ce>                      forgotten about the artifact
+<ce>                        in __contact_, have you?
+
+QuestComplete:  [1004]
+<ce>            It's beautiful! See how the symmetrical lines,
+<ce>              the stylized figures, the delicate folds and
+<ce>                   ornamentation... Oh, %pcf, what a
+<ce>               gift you've given us with this icon. Your
+<ce>           _reward_ gold pieces is certainly the least we can
+<ce>                       offer. Dibella bless you.
+
+RumorsDuringQuest:  [1005]
+That quivering =contact_ is really annoying with %g3 conspiracy theories.
+<--->
+I wonder if that =contact_ actually has something worth stealing or not.
+
+RumorsPostfailure:  [1006]
+The House of Dibella acts as if losing that icon were the end of the world.
+<--->
+The House is so trusting, no wonder that %ra mercenary took advantage of them.
+
+RumorsPostsuccess:  [1007]
+After all those rumors, I hear that icon was just a forgery anyhow.
+<--->
+Wonder whether the House of Dibella is going to show the icon or just store it.
+
+QuestorPostsuccess:  [1008]
+What can I do for the %ra who brought us the lovely icon?
+
+QuestorPostfailure:  [1009]
+When you failed art, you failed the House, %pcf. Begone!
+
+QuestLogEntry:  [1010]
+<ce>                 By Dibella, I've been a nervous wreck
+<ce>                 waitin' for you to show up. Here's the
+<ce>                icon -- I'm glad to be rid of it. I can
+<ce>                  feel every cutthroat's eyes on on it.
+<ce>                You better get back to the House before
+<ce>                    they think you ran off with it.
+
+Message:  1011
+_contact_ is a common archaeologist-adventurer who works for the House of Dibella.
+<--->
+That =contact_ over in __contact_? Just some kind of thief or mercenary.
+
+Message:  1013
+It's a fake, I bet. But the House probably won't know the difference.
+<--->
+A forgery, in all probability. But very pretty, nevertheless.
+
+Message:  1030
+%qdt:
+ The House of Dibella has hired
+ me to meet with an archaeologist
+ who has uncovered an icon for them, pay for it,
+ and bring the icon back to the House. This
+ _contact_ is in __contact_
+ in ___contact_. I need to have
+ the icon back to _questgiver_
+ in ___questgiver_ in =1stparton_ days.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 5 times.
+--               %g2 occurs 2 times.
+--               %g3 occurs 1 time.
+--              %pcf occurs 13 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--       =1stparton_ occurs 5 times.
+--         =contact_ occurs 6 times.
+--    ___questgiver_ occurs 3 times.
+--        __contact_ occurs 8 times.
+--      _questgiver_ occurs 1 time.
+--          _reward_ occurs 3 times.
+
+QBN:
+Item _reward_ gold
+Item _item_ scarab anyInfo 1013
+
+Person _questgiver_ face 112 group Questor
+Person _contact_ group Innkeeper remote anyInfo 1011
+
+
+Clock _1stparton_ 00:00 0 flag 17 range 1 4
+
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1030 step 0 
+
+_1stparton_ task:
+	end quest 
+
+variable _pcgetsgold_
+_npcclicked_ task:
+	clicked npc _contact_ 
+	get item _item_ 
+	say 1010 
+
+_qgclicked_ task:
+	toting _item_ and _questgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_qgclick2_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgclick2_ and not _qgclicked_
+	say 1003
+	clear _clearclick_ _qgclick2_
+
+variable _S.04_
+variable _S.05_
+_S.06_ task:
+	when _npcclicked_ and _1stparton_ 
+	make _item_ permanent 

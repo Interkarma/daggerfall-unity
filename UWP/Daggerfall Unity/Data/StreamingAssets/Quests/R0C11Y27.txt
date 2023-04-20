@@ -1,0 +1,181 @@
+-- Quest: C:\QUESTS\WORKING\R0C11Y27.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 11
+-- QuestId: 27
+Messages: 13
+Quest: R0C11Y27
+DisplayName: A Special Substance
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 I was wondering if you might do me a
+<ce>                 small favor. You see, I have a friend
+<ce>                  who requires a certain shipment of a
+<ce>                 certain substance brought by a certain
+<ce>                 time. I trust I'm making myself clear.
+<ce>               Are you available for such an assignment,
+<ce>             given a payment of, say, _reward_ gold pieces?
+
+RefuseQuest:  [1001]
+<ce>                   Well, I'm certainly disappointed.
+<ce>                  I would've expected more enthusiasm.
+<ce>                     Ah well, it's these times that
+<ce>                 breed sloth and indolence, I suppose.
+
+AcceptQuest:  [1002]
+<ce>                  So, you are available. Well, that's
+<ce>                 grand, I must say. Now then, here's a
+<ce>                       whatsamajig, a _item1_. It
+<ce>                 needs to be brought to an alchemist I
+<ce>                      know by the name of _npc1_.
+<ce>                       You'll find %g2 at __npc1_
+<ce>                       in ___npc1_. With luck, %g
+<ce>                will have something for you to bring to
+<ce>                        my friend, _npc2_. Well,
+<ce>                        you best be off. _npc1_
+<ce>                     told me %g needed the _item1_
+<ce>                      in =1stparton_ days or less.
+<ce>                   Thank you and have a good journey.
+
+QuestFail:  [1003]
+<ce>                We'll have plenty of time to chat more
+<ce>                 once you've completed your assignment.
+
+QuestComplete:  [1004]
+<ce>                   %oth, I was wondering when you'd
+<ce>                        get here. You are %pcf?
+<ce>                            I'm _npc2_, and
+<ce>                    that, I believe, is my _item2_.
+<ce>                  If you haven't tried it before, you
+<ce>                 really should. The effect is heavenly.
+<ce>               Anyway, here's your _reward_ gold pieces.
+<ce>                          Thanks a lot, %pcf.
+<ce>                          You're a life saver.
+
+RumorsDuringQuest:  [1005]
+I've heard that _npc2_ is a _item2_ addict, but I haven't seen any proof.
+<--->
+They say it's tough to concoct a good dose of _item2_, takes years of study.
+
+RumorsPostfailure:  [1006]
+It turns out _npc2_ was a _item2_ addict after all. They caught %g2 buying it.
+<--->
+I wonder who was supplying that _npc1_ with the ingredients %g needed.
+
+RumorsPostsuccess:  [1007]
+_npc2_ finally got that shipment %g was waiting for. He's happy as a harpy.
+<--->
+_questgiver_ seems pretty pleased with a %ra mercenary, but won't say why.
+
+QuestorPostsuccess:  [1008]
+You did a fine job on that delivery, my friend. What can I do for you?
+<--->
+%oth, good to see you again, %pcf. You did a good job on that ... little job.
+
+QuestorPostfailure:  [1009]
+<ce>                      As I recall, you failed the
+<ce>                      last assignment I gave you.
+<ce>                     I see little point in talking
+<ce>                             with you now.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I am bringing _npc1_
+ of __npc1_,
+ ___npc1_ a _item1_ in
+ exchange for some item that
+ _questgiver_ wants to be
+ delivered to a third party.
+ I have =1stparton_ days to accomplish
+ the first part of this delivery.
+
+Message:  1011
+%qdt:
+ _npc1_ sent
+ me on to _npc2_, the third
+ party in ___npc2_, with some
+ _item2_. I will recognize
+ _npc2_ as the =npc2_
+ in __npc2_, provided I get it to
+ %g2 in =2ndparton_ days.
+
+Message:  1012
+<ce>                      Lovely, %pcf, lovely. Now,
+<ce>                        here's the _item2_ that
+<ce>                      needs to be given to _npc2_
+<ce>                      over in __npc2_ in ___npc2_.
+<ce>                          Don't dawdle, %pct.
+<ce>                     _npc2_ needs it in =2ndparton_
+<ce>                             days or less.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 4 times.
+--               %g2 occurs 3 times.
+--              %oth occurs 2 times.
+--              %pcf occurs 6 times.
+--              %pct occurs 1 time.
+--              %qdt occurs 2 times.
+--               %ra occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--       =2ndparton_ occurs 6 times.
+--            =npc2_ occurs 1 time.
+--          ___npc1_ occurs 2 times.
+--          ___npc2_ occurs 2 times.
+--           __npc1_ occurs 2 times.
+--           __npc2_ occurs 2 times.
+--           _item1_ occurs 3 times.
+--           _item2_ occurs 6 times.
+--            _npc1_ occurs 5 times.
+--            _npc2_ occurs 9 times.
+--      _questgiver_ occurs 2 times.
+--          _reward_ occurs 3 times.
+
+QBN:
+Item _reward_ gold
+Item _item1_ misc
+Item _item2_ drug
+
+Person _questgiver_ face 136 group Questor
+Person _npc1_ group Chemist female
+Person _npc2_ face 248 group Local_3.0
+
+Clock _1stparton_ 00:00 0 flag 1 range 1 4
+Clock _2ndparton_ 00:00 0 flag 1 range 1 4
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1010 step 0 
+	get item _item1_ 
+
+_pcgetsgold_ task:
+	toting _item2_ and _npc2_ clicked 
+	give pc _reward_ 
+	end quest 
+--removed unnecessary delay
+
+variable _pchasitem1_
+variable _pchasitem2_
+_S.03_ task:
+	toting _item1_ and _npc1_ clicked 
+	start timer _2ndparton_ 
+	log 1011 step 1 
+	get item _item2_ 
+	say 1012 
+
+variable _S.04_
+_queston_ task:
+	when _1stparton_ and not _S.03_ 
+	make _item1_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+variable _1stparton_
+_2ndparton_ task:
+	make _item2_ permanent 
+	change repute with _questgiver_ by -2 
+	end quest 

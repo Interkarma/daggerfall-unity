@@ -1,0 +1,190 @@
+-- Quest: C:\QUESTS\WORKING\N0B00Y04.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 0
+-- QuestId: 4
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 46
+Quest: N0B00Y04
+DisplayName: Retrieve an Ingredient
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       We need you to get a rare
+<ce>                       ingredient that is hidden
+<ce>                       away in a nearby dungeon.
+<ce>                        You will get a finder's
+<ce>                       fee of _gold_ gold pieces.
+<ce>                          Are you interested?
+                                     <--->
+<ce>                  One of our more brilliant students
+<ce>                    is absolutely mad for something
+<ce>                          called _ingredient_,
+<ce>                   which we haven't had much call for
+<ce>                   before. Would you, if it's not too
+<ce>                    much of a bother, scurry on over
+<ce>                     to this particular locale and
+<ce>                           grab some for us?
+
+RefuseQuest:  [1001]
+<ce>                     Humph. I hope the next guild
+<ce>                        member is more helpful.
+
+AcceptQuest:  [1002]
+<ce>                         An excellent attitude
+<ce>                         %pcf. You are looking
+<ce>                        for _ingredient_, which
+<ce>                      can be found in ___dungeon_.
+<ce>                     You have =traveltime_ days to
+<ce>                             bring it back.
+
+QuestComplete:  [1004]
+<ce>                        I suppose this will do.
+<ce>                       Couldn't you have brought
+<ce>                       back a fresher sample? The
+<ce>                        quality of guild members
+<ce>                       just isn't what it used to
+<ce>                         be. Well, here is your
+<ce>                          finder's fee, %pcf.
+
+RumorsDuringQuest:  [1005]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has good points and bad ones.
+
+RumorsPostfailure:  [1006]
+_qgiver_ has been complaining about the quality of Mages Guildmembers.
+
+RumorsPostsuccess:  [1007]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has some good points and bad ones.
+
+QuestorPostsuccess:  [1008]
+Well, after getting that _ingredient_, how can I not be happy to see you?
+
+QuestorPostfailure:  [1009]
+<ce>                  We really needed that _ingredient_.
+<ce>                I guess we know better now than to trust
+<ce>                   you with any important assignment.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I was asked to find a sample of
+ _ingredient_ that is
+ supposed to be hidden away
+ in ___dungeon_.
+ _qgiver_ of the Mages
+ Guild of ___qgiver_
+ gave me =traveltime_ days to get
+ it back to %g2.
+
+Message:  1040
+<ce>                   This looks like the _ingredient_
+<ce>                            _qgiver_ wanted.
+
+QuestTimeLapse:  [1045]
+<ce>                      You suddenly remember that
+<ce>                       _qgiver_ had asked you to
+<ce>                      bring him a _ingredient_ by
+<ce>                      today.  %g will no doubt be
+<ce>                             disappointed.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 2 times.
+--                %g occurs 1 time.
+--               %g2 occurs 2 times.
+--              %jok occurs 6 times.
+--              %oth occurs 10 times.
+--              %pcf occurs 3 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 2 times.
+--      =traveltime_ occurs 2 times.
+--       ___dungeon_ occurs 2 times.
+--        ___qgiver_ occurs 1 time.
+--            _gold_ occurs 1 time.
+--      _ingredient_ occurs 9 times.
+--          _qgiver_ occurs 4 times.
+
+QBN:
+Item _ingredient_ organs
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _dungeon_ remote dungeon
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+
+--	Quest start-up:
+	place item _ingredient_ at _dungeon_ 
+	start timer _traveltime_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+
+_traveltime_ task:
+	make _ingredient_ permanent
+                say 1045 
+	end quest 
+
+_S.01_ task:
+	clicked item _ingredient_ 
+	say 1040 
+
+_questdone_ task:
+	toting _ingredient_ and _qgiver_ clicked 
+	give pc _gold_ 
+	end quest 

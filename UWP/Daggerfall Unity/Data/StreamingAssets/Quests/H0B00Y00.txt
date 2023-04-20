@@ -1,0 +1,150 @@
+-- Quest: C:\QUESTS\WORKING\H0B00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Mara
+-- Repute: 0
+-- QuestId: 0
+Messages: 21
+Quest: H0B00Y00
+DisplayName: A Powerful Spirit
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>              The whole philosophy of the Benevolence of
+<ce>                 Mara forbids us to harm another living
+<ce>                creature willingly. We do, however, have
+<ce>                a situation that unfortunately calls for
+<ce>                direct and fatal action. If we agreed to
+<ce>              pay you _reward_ gold, would you be prepared
+<ce>                  to destroy an unclean spirit that is
+<ce>                  haunting one of our sacred shrines?
+
+RefuseQuest:  [1001]
+<ce>                  It is an assignment of considerable
+<ce>                 danger, but I'm disappointed that you
+<ce>                       will not even consider it.
+
+AcceptQuest:  [1002]
+<ce>                 There is an abandoned temple, not too
+<ce>                   far from here called ___mondung_.
+<ce>               It has been sacred to our Benevolence for
+<ce>                centuries. We do not worship there, but
+<ce>             we attempt to keep it free of evil influence.
+<ce>                Unfortunately, the spirit that haunts it
+<ce>                is too powerful for us to repel. If you
+<ce>                  are not back in =1stparton_ days, we
+<ce>               will assume that you have failed and send
+<ce>               the Maran Knights instead. Obviously, your
+<ce>                  reward will then be forfeit. Go with
+<ce>                      the blessing of the Goddess.
+
+QuestFail:  [1003]
+<ce>                       Why do you linger, %pcf?
+<ce>                The spirit still desecrates our temple.
+
+QuestComplete:  [1004]
+<ce>                 You have done a great service to the
+<ce>                       Benevolence of Mara, %pcf.
+<ce>                     A favor that will not soon be
+<ce>                  forgotten. Enjoy your _reward_ gold
+<ce>                           -- you deserve it.
+
+RumorsDuringQuest:  [1005]
+That ___mondung_ has always been creepy. Now it supposed to be haunted.
+<--->
+As far as I'm concerned, leave the haunt alone. No one goes near it anyway.
+
+RumorsPostfailure:  [1006]
+I wish they had just left ___mondung_ alone. Now the wraith's out here with us.
+<--->
+Typical. They chase the ghosts out to where they can do real harm.
+
+RumorsPostsuccess:  [1007]
+You know, even with ___mondung_ free of ghosts, I ain't going there.
+<--->
+The Benevolence of Mara's happy that their ___mondung_ is clean again.
+
+QuestorPostsuccess:  [1008]
+After trudging through ___mondung_ for us, the least I can do is say hello.
+
+QuestorPostfailure:  [1009]
+___mondung_ is still cursed with spirits, damn you, %pcf!
+
+QuestLogEntry:  [1010]
+%qdt:
+ _questgiver_ of
+ ___questgiver_ asked me to
+ rid ___mondung_, a holy
+ place for the Benevolence of Mara,
+ of a haunting spirit of some sort.
+ I have =1stparton_ days to cleanse
+ ___mondung_ of it's haunt.
+
+Message:  1020
+<ce>                  "My spirit will now rest at peace."
+<ce>                     ___mondung_ has been cleansed.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 16 times.
+--              %qdt occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--       ___mondung_ occurs 10 times.
+--    ___questgiver_ occurs 2 times.
+--          _reward_ occurs 4 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ group Questor
+
+Place _mondung_ remote dungeon4
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _wraith_ is Wraith
+Foe _ghost_ is Ghost
+Foe _zombie_ is Zombie
+Foe _mummy_ is Mummy
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	pick one of _S.05_ _S.06_ _S.07_ _S.08_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+_mondead_ task:
+	killed 1 _mummy_ saying 1020 
+	killed 1 _ghost_ saying 1020 
+	killed 1 _wraith_ saying 1020 
+	killed 1 _zombie_ saying 1020 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 
+
+_S.05_ task:
+	place foe _ghost_ at _mondung_ 
+
+_S.06_ task:
+	place foe _mummy_ at _mondung_ 
+
+_S.07_ task:
+	place foe _zombie_ at _mondung_ 
+
+_S.08_ task:
+	place foe _wraith_ at _mondung_ 

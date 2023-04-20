@@ -1,0 +1,204 @@
+-- Quest: C:\QUESTS\WORKING\R0C11Y03.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 11
+-- QuestId: 3
+Messages: 21
+Quest: R0C11Y03
+DisplayName: The Heartless Daedra
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>             I have an acquaintance, an alchemist of some
+<ce>                    skill by the name of _chemist_.
+<ce>               In order to complete a project of mine, %g
+<ce>               needs a rather rare item -- the heart of a
+<ce>              daedra. I won't lie to you; the daedra want
+<ce>              this heart back, and you may encounter some
+<ce>               of them along the way. Are you willing to
+<ce>                risk this, in reward for a generous fee?
+
+RefuseQuest:  [1001]
+<ce>               I'm disappointed, but I can't say I don't
+<ce>               understand. Volunteering for an assignment
+<ce>              involving the daedra certainly requires more
+<ce>               bravery and valor than is commonly seen in
+<ce>                            %ra adventurers.
+
+AcceptQuest:  [1002]
+<ce>             You will? Then good luck to you. Here is the
+<ce>               daedra's heart. If it is not in my friend
+<ce>                 _chemist_'s hands in =1stparton_ days,
+<ce>                it will be too old to be used. After you
+<ce>               have delivered it, return for your reward.
+<ce>                        Good luck and godspeed to ___chemist_.
+
+--in 1002, added the name of the city you need to go to at the end.
+
+QuestFail:  [1003]
+<ce>             You don't think I know you haven't delivered
+<ce>                  the daedra's heart to my alchemist?
+<ce>               I hope you don't expect a reward for your
+<ce>            obvious failure. Without a fresh daedra's heart,
+<ce>            the project will be delayed once again. Blast it
+<ce>                           back to Oblivion!
+
+QuestComplete:  [1004]
+<ce>                  Outstanding job, %pcf. I knew those
+<ce>           daedralings wouldn't slow you down. Your superior
+<ce>            skill has been duly noted. Thank you and here is
+<ce>                    the =reward_ gold we agreed on.
+
+--in 1004, changed _reward_ to =reward_ to ensure specific gold amount.
+
+RumorsDuringQuest:  [1005]
+Dire portents have been read in the sky. The daedric stars glow bright.
+<--->
+The Cabal at the Mages Guild say the daedra are active tonight.
+
+RumorsPostfailure:  [1006]
+The daedra appear to be sated, from all astrological signs.
+<--->
+I could almost smell sulphur in the air, but it seems to be gone now.
+
+RumorsPostsuccess:  [1007]
+Lot of activity at _chemist_'s shop. A big experiment in progress, they say.
+<--->
+_questgiver_ is very happy with a surprisingly reliable %ra mercenary.
+
+QuestorPostsuccess:  [1008]
+And what can I do for my brave young %ra?
+<--->
+Hail, hero. I hope you're not worried about those daedra holding a grudge.
+
+QuestorPostfailure:  [1009]
+<ce>                  I was disappointed by your failure
+<ce>                 to deliver that daedra heart. I expect
+<ce>                 you thought I had forgotten about it.
+<ce>                  That's the only explanation for your
+<ce>                      decision to return to court.
+
+QuestLogEntry:  [1010]
+<ce>             Oh marvelous. An outstanding aortas daedrae,
+<ce>               with minimal decomposition. Hurry back to
+<ce>                        _questgiver_ now, %pcf.
+<ce>                There's a lot on %g3 mind, and if you're
+<ce>                  not back in =2ndparton_ days, %g may
+<ce>                         forget you even left.
+
+Message:  1011
+_chemist_? Resembles a sort of =chemist_? I think %g's %di of here.
+<--->
+There's an alchemist named _chemist_ who works for _questgiver_ %di of here.
+
+Message:  1012
+_questgiver_? Why, %g's a noble. Involved in some daedric activity lately.
+<--->
+_questgiver_'s a noble, %di of here.
+<--->
+Like so many other nobles, _questgiver_ has about a dozen projects brewing.
+<--->
+_questgiver_ has a lot of faith in alchemistry, like a lot of nobles do.
+
+Message:  1013
+A daedra's heart. It never spoils, but some recipes call for it to be fresh.
+<--->
+The heart of a daedra. Not the sort of thing daedras like in mortals' hands.
+
+Message:  1015
+%qdt:
+ _questgiver_ of
+ ___questgiver_ asked me
+ to bring the heart of a daedra to
+ %g3 alchemist in __chemist_ of
+ ___chemist_. This alchemist
+ is a =chemist_ named
+ _chemist_, and if I can get
+ to %g2 with all the daedra trying
+ to stop me, and get there within
+ =1stparton_ days, _questgiver_
+ will give me my reward upon my
+ return to __questgiver_.
+
+Message:  1020
+<ce>                       The daedra hisses, "%pcn,
+<ce>                      you meddle in affairs beyond
+<ce>                      your ken.  Yes, your name is
+<ce>                   now known to us.  And we will not
+<ce>                      rest until the heart of our
+<ce>                     brother is back in our hands.
+<ce>                    Prepare to fulfill your destiny,
+<ce>                               mortal..."
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 3 times.
+--                %g occurs 6 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 2 times.
+--              %pcf occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 4 times.
+--       =2alch_ occurs 2 times.
+--       =2questgiver_ occurs 1 time.
+--         =chemist_ occurs 3 times.
+--    ___questgiver_ occurs 1 time.
+--        __chemist_ occurs 1 time.
+--     __questgiver_ occurs 2 times.
+--         _chemist_ occurs 6 times.
+--      _questgiver_ occurs 9 times.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _reward_ gold
+Item _item_ daedra_heart anyInfo 1013
+
+Person _questgiver_ face 112 group Questor anyInfo 1012
+Person _chemist_ group Chemist remote anyInfo 1011
+Person _dummydaedra_ face 102 factiontype Daedra female remote
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+Clock _2ndparton_ 00:00 0 flag 1 range 2 5
+--reverted timer names and removed chaining. works this way, and better.
+
+Foe _daedra_ is Daedroth
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1015 step 0 
+	get item _item_
+
+variable _1stparton_
+_2ndparton_ task:
+	change repute with _questgiver_ by -30 
+	end quest 
+
+_pcgetsgold_ task:
+	when _S.06_ and _npcclicked_ 
+	give pc _reward_ 
+	end quest 
+
+_npcclicked_ task:
+	toting _item_ and _chemist_ clicked 
+	start timer _2ndparton_ 
+	say 1010 
+	change repute with _dummydaedra_ by -20 
+
+until _npcclicked_ performed:
+	create foe _daedra_ every 5 minutes 10 times with 33% success 
+
+variable _qgclicked_
+_queston_ task:
+	when _1stparton_ and not _npcclicked_ 
+	make _item_ permanent 
+	change repute with _questgiver_ by -30 
+	end quest 
+
+_S.06_ task:
+	clicked npc _questgiver_ 
+
+_S.07_ task:
+	injured _daedra_ saying 1020 

@@ -1,0 +1,358 @@
+-- Quest: C:\QUESTS\WORKING\N0B21Y14.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 21
+-- QuestId: 14
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 25
+Quest: N0B21Y14
+DisplayName: Oracle
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       Are you %pcn?  The %pct?
+
+RefuseQuest:  [1001]
+<ce>                    Very well, forgive the mistake.
+
+AcceptQuest:  [1002]
+<ce>                  Ah, good.  I have a letter for you.
+<ce>                  Apparently more than simple chance
+<ce>                           brought you here.
+
+QuestComplete:  [1004]
+<ce>                  You are a credit to the guild %pcf.
+
+RumorsDuringQuest:  [1005]
+_noble_ is certainly one of the greatest nobles in %reg.
+<--->
+If anything were to happen to _noble_, I shudder to think.
+
+RumorsPostfailure:  [1006]
+The stars last night spoke of calamity and death.
+
+RumorsPostsuccess:  [1007]
+The stars last night spoke of a disaster narrowly averted.
+<--->
+The Acolyte passed through town recently. I wonder what he wanted.
+
+Message:  1011
+                     _temple_
+                      __temple_
+ 
+ 
+ Dear %pcn,
+ 
+     Far have I come to speak with you on
+ behalf of the Oracle, the wise woman of
+ Hammerfell. The Archmagister of the Mages
+ Guild has spoken highly of you as an
+ honorable and talented caster of magicka.
+ Please come meet with me as soon as
+ possible; time is a circumscribed
+ commodity.
+      Without your help, the Oracle's dark
+ prophesy will come to pass in =queston1_ days,
+ and all %reg will weep.
+      I must see you soon.
+ 
+                     Yours cordially,
+ 
+ 
+                     The Acolyte
+
+Message:  1012
+The Acolyte was said to be nobleman before he became the Oracle's disciple.
+<--->
+The Acolyte does all of the Oracle's footwork. Understandable at her age.
+<--->
+The Acolyte used to be a nobleman, but he is devoted to serving the Oracle.
+<--->
+The Acolyte is that =acolyte_ down at _temple_.
+<--->
+The Acolyte has been the Oracle's servant for years, since he was very young.
+<--->
+When the Oracle gives the Acolyte his prophesy, he will leave her at last.
+
+Message:  1013
+The Oracle has no eyes but she is said to be the wisest woman in Tamriel.
+<--->
+The Oracle has traditionally been the counselor to the monarchs of Sentinel.
+<--->
+The Oracle advised King Camaron against warring with Daggerfall.
+<--->
+King Camaron didn't listen to the Oracle's advice against warring with Daggerfall.
+<--->
+The Oracle knew that Sentinel would lose the war with Daggerfall.
+<--->
+If Camaron of Sentinel had listened to the Oracle, he'd be alive today.
+
+Message:  1014
+%qdt:
+ I got a letter from The Acolyte 
+ asking for a meeting.
+ He is staying at _temple_
+ in __temple_.
+
+Message:  1015
+<ce>                      Thank you for coming, %pcf.
+<ce>                The Oracle has foreseen the death of one
+<ce>                   of the great nobles of __temple_,
+<ce>                      the noble _noble_, and like
+<ce>               a pebble in a still pond, %g3 death will
+<ce>             lead to great calamity for %reg. I have tried
+<ce>               speaking with %g2, but I am not permitted
+<ce>                 to enter %g3 company in _noblehouse_.
+<ce>              My mistress, the Oracle, intends to come to
+<ce>                      __temple_ to speak with %g3
+<ce>                Grace, and I last heard that she was in
+<ce>                  __oracletemple_. I am not familiar
+<ce>               with these parts, so I don't know how far
+<ce>                away that is. I need you to either talk
+<ce>              to _noble_ and convince %g2 to protect %g2-
+<ce>                self, or find the Oracle somewhere near
+<ce>               __oracletemple_ and bring her to see %g2.
+<ce>       There is precious little time. Please, I beg thee, hurry.
+
+Message:  1016
+%qdt:
+ The Acolyte told me that
+ he is attempting to convince
+ _noble_, to leave _noblehouse_
+ lest %g die and by dying, bring
+ calamity to all %reg. I have been
+ asked either to speak with _noble_
+ myself or go to __oracletemple_
+ to escort the Oracle, the Acolyte's
+ mistress, here. She might be able to
+ convince _noble_, but, then again,
+ so might I.
+
+-changed 1016 to shorter lines, was running offscreen in journal
+
+Message:  1017
+<ce>                         You are %pcn, the %ra
+<ce>                    my Acolyte sent to escort me to
+<ce>                          _noble_. I gave my
+<ce>                 eyes to the gods, you see, and I saw
+<ce>                your approach through their eyes. Now,
+<ce>                    let us hurry to _noblehouse_ in
+<ce>                    __noblehouse_ before _noble_'s
+<ce>                             fate is set.
+
+Message:  1018
+<ce>                     The Oracle speaks to _noble_,
+<ce>               and her calm, persuasive tones work their
+<ce>                magic. It takes only a few moments for
+<ce>              %g2 to recognize the wisdom in her advice,
+<ce>               and %g agrees to go into hiding for a few
+<ce>                    days for the good of %reg. The
+<ce>                Oracle thanks you for escorting her and
+<ce>               tells you that she will recommend you to
+<ce>                the court of Sentinel for your bravery
+<ce>                         and resourcefulness.
+
+Message:  1019
+<ce>                      _noble_ and _love_ embrace,
+<ce>                 and then %g pleads that, for the good
+<ce>                   of all %reg, _noble_ must go into
+<ce>                 hiding with %g3 most trusted guards.
+<ce>                  At once, %g agrees, but not before
+<ce>                   giving you _gold_ gold pieces in
+<ce>                   gratitude for rescuing %g3 love.
+
+Message:  1020
+<ce>               As I told that blasted Acolyte, I am not
+<ce>               interested in hiding my head because some
+<ce>                mad old crone had a bad dream about me.
+<ce>               As it happens, I am waiting for some word
+<ce>                         about my love, _love_
+<ce>                who was kidnapped. I will listen to %g3
+<ce>               advice on this matter, but I will not go
+<ce>                into hiding while %g remains in danger.
+<ce>                 I should never have let %g2 go within
+<ce>                     a hundred feet of ___mondung_
+<ce>              without proper escort, but I will certainly
+<ce>                not abandon my love now. There is your
+<ce>                             answer, %pct.
+
+Message:  1021
+%qdt:
+ _noble_ refuses to go
+ into hiding until %g knows
+ that %g3 love, _love_,
+ has been freed from %g3 kidnappers. If
+ I rescued %g2 from ___mondung_,
+ _noble_ might listen
+ to reason.
+
+Message:  1022
+<ce>                       You've come from _noble_
+<ce>                    to rescue me? %oth, let us make
+<ce>                  haste then. I've had a terrible --
+<ce>              and, I fear, prophetic -- dream about %g2.
+
+Message:  1023
+<ce>                     It is too late. The hour has
+<ce>                    come when fate has won the war
+<ce>                   with human will. The wind itself
+<ce>                           whispers _noble_
+<ce>                          is dead. %reg will
+<ce>                               tremble.
+
+Message:  1024
+                    _temple_
+                     __temple_
+ 
+ 
+ Dear %pcn,
+ 
+     It is imperative that I speak with you
+ as soon as possible. I represent the Oracle
+ of Hammerfell. For the next several days I
+ will be staying at _temple_.
+ There are but =queston2_ days before the future
+ is irrevocably set, so I must see you soon.
+     This matter is grave indeed. Please do
+ not fail to meet me.
+ 
+ 
+ 
+                   The Acolyte
+
+
+-- Symbols used in the QRC file:
+--
+--              %dat occurs 1 time.
+--                %g occurs 6 times.
+--               %g2 occurs 22 times.
+--               %g3 occurs 9 times.
+--              %oth occurs 1 time.
+--              %pcf occurs 3 times.
+--              %pcn occurs 7 times.
+--              %pct occurs 5 times.
+--              %qdt occurs 2 times.
+--               %ra occurs 1 time.
+--              %reg occurs 7 times.
+--         =acolyte_ occurs 1 time.
+--        =queston1_ occurs 4 times.
+--        =queston2_ occurs 1 time.
+--       ___mondung_ occurs 2 times.
+--     __noblehouse_ occurs 1 time.
+--   __oracletemple_ occurs 3 times.
+--         __temple_ occurs 14 times.
+--            _gold_ occurs 1 time.
+--            _love_ occurs 3 times.
+--           _noble_ occurs 22 times.
+--      _noblehouse_ occurs 3 times.
+--          _temple_ occurs 7 times.
+
+QBN:
+Item _oracleNote_ letter used 1011
+Item _oracleMsg_ letter used 1024
+--added underscores to oracleNote and oracleMsg because they are variables
+Item _gold_ gold
+
+Person _oracle_ face 251 named The_Oracle anyInfo 1013
+Person _acolyte_ face 5 named The_Acolyte anyInfo 1012
+-changed oracle and acolyte to Named instead of Faction to prevent dialogue beginning
+Person _noble_ face 25 factiontype Province local
+Person _thd_ named Queen_Akorithi
+--%thd corrected to _thd_
+Person _love_ face 1 group Group_7.0
+Person _giver_ group Questor
+
+Place _mondung_ remote dungeon
+Place _temple_ local temple
+Place _noblehouse_ local house2
+Place _oracletemple_ remote temple
+
+Clock _queston1_ 00:00 0 flag 17 range 0 2
+Clock _queston2_ 00:00 0 flag 17 range 0 2
+
+
+--	Quest start-up:
+	dialog link for location _temple_ person _acolyte_ 
+	dialog link for location _mondung_ person _thd_ 
+	dialog link for location _noblehouse_ person _love_ 
+	dialog link for person _noble_ 
+	pick one of _S.02_ _S.01_ 
+	_oracleNote_ used do _readletter_ 
+	_oracleMsg_ used do _readletter_ 
+	create npc at _noblehouse_ 
+	place npc _oracle_ at _oracletemple_ 
+	place npc _acolyte_ at _temple_ 
+	place npc _noble_ at _noblehouse_ 
+
+_S.00_ task:
+	clicked npc _acolyte_ 
+	add dialog for person _oracle_ 
+	add dialog for location _noblehouse_ person _noble_ 
+	log 1016 step 1 
+	say 1015 
+
+_S.01_ task:
+	start timer _queston1_ 
+	get item _oracleNote_ 
+
+_S.02_ task:
+	start timer _queston2_ 
+	get item _oracleMsg_ 
+
+_S.03_ task:
+	clicked npc _oracle_ 
+	hide npc _oracle_ 
+	say 1017 
+	add _oracle_ face 
+
+_S.04_ task:
+	clicked npc _noble_ 
+
+_S.05_ task:
+	when _S.04_ and _S.03_ 
+	say 1018 
+	give pc nothing 
+	change repute with _thd_ by +10 
+	end quest 
+--victory message changed to after 1018, more logical dialogue
+
+_S.06_ task:
+	when _S.04_ and _S.07_ 
+	get item _gold_ 
+	say 1019 
+	give pc _gold_ 
+	end quest 
+-victory message changed to after 1019, more logical dialogue
+
+_S.07_ task:
+	clicked npc _love_ 
+	hide npc _love_ 
+	say 1022 
+	add _love_ face 
+
+_S.08_ task:
+	when _S.04_ and not _S.03_ and not _S.07_ 
+	reveal _mondung_ 
+	log 1021 step 2 
+	say 1020 
+	place npc _love_ at _mondung_ 
+	clear _S.04_ 
+
+_npc1_ task:
+	when _S.10_ and not _S.05_ and not _S.06_ 
+	say 1023 
+
+_S.10_ task:
+	when _queston1_ or _queston2_ 
+
+_readletter_ task:
+	add dialog for person _acolyte_ 
+	log 1014 step 0 
+
+_queston1_ task:
+	end quest 
+
+_queston2_ task:
+	end quest 

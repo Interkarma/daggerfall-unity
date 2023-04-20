@@ -1,0 +1,142 @@
+-- Quest: C:\QUESTS\WORKING\N0C00Y12.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: mage
+-- Repute: 0
+-- QuestId: 12
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 21
+Quest: N0C00Y12
+DisplayName: The Loose Pet Imp
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       You may call me _qgiver_.
+<ce>                 Normally I can only give work to guild
+<ce>                members. However, one of my students has
+<ce>               a minor problem that would be embarrassing
+<ce>                if it were to get out. I can't pay you,
+<ce>               but if you would be willing to chase down
+<ce>                an escaped experiment, at small risk to
+<ce>                yourself, I would be grateful enough to
+<ce>              speak kindly of you to other guild members.
+
+RefuseQuest:  [1001]
+<ce>                   So, why did you ask me for work?
+<ce>                  Sometimes I really cannot understand
+<ce>                        you common adventurers.
+
+AcceptQuest:  [1002]
+<ce>                Good. My student keeps a pet imp. These
+<ce>               magical creatures are not very dangerous,
+<ce>                but it could be potentially embarrassing
+<ce>                for him. Our scrying has determined that
+<ce>                    the imp has fled to ___mondung_.
+<ce>                  Kill the thing and report back to me
+<ce>                        within =1stparton_ days.
+
+QuestFail:  [1003]
+<ce>               I scried earlier today. The imp is still
+<ce>                    alive. What are you doing here?
+
+QuestComplete:  [1004]
+<ce>                 What a relief. I owe you a small debt
+<ce>                      %pcn. You have improved your
+<ce>                      favor with the Mages Guild.
+
+RumorsDuringQuest:  [1005]
+I hear something escaped from the Mages Guild lab the other night.
+<--->
+%oth, I saw a small shape skulking in the shadows last night.
+
+RumorsPostfailure:  [1006]
+Well, there's a minor scandal involving the Mages Guild's lab security.
+<--->
+The Mages Guild lost another experiment apparently.
+
+RumorsPostsuccess:  [1007]
+I hear they torture imps in the Mages Guild laboratories!
+<--->
+<ce>                    Those imps have a mean streak.
+<ce>                  %nam's house was overrun with mice,
+<ce>                just for chasing after it with a broom.
+                                     <--->
+<ce>                 I heard an imp familiar escaped from
+<ce>                the Mages Guild. They say that a wizard
+<ce>                 that loses his familiar is vulnerable
+<ce>                        to his enemies' spells.
+
+QuestorPostsuccess:  [1008]
+How are you, %pcf? No more troubles with imps, I hope, eh?
+
+QuestorPostfailure:  [1009]
+<ce>                 I sent you off after that imp, if you
+<ce>              recall. I don't see any reason why I should
+<ce>                    waste my breath with you again.
+
+QuestLogEntry:  [1010]
+<ce>                      "I would rather die than go
+<ce>                        back to the Mages Guild
+<ce>                              laboratory."
+
+Message:  1020
+%qdt:
+ The Mages Guild of ___qgiver_
+ has hired me to find an imp that
+ escaped from their laboratory.
+ Apparently it is hiding out in ___mondung_.
+ I need to have the creature dead and be back
+ in ___qgiver_ in =1stparton_ days.
+
+
+-- Symbols used in the QRC file:
+--
+--              %nam occurs 1 time.
+--              %oth occurs 1 time.
+--              %pcf occurs 1 time.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--       =1stparton_ occurs 5 times.
+--       ___mondung_ occurs 2 times.
+--        ___qgiver_ occurs 5 times.
+
+QBN:
+
+Person _qgiver_ group Questor
+
+Place _mondung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _imp_ is Imp
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	place foe _imp_ at _mondung_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc nothing 
+	end quest 
+
+variable _queston_
+_mondead_ task:
+	killed 1 _imp_ 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_clearclick_ task:
+    when _qgclicked_ and not _mondead_
+	say 1003
+    clear _qgclicked_ _clearclick_
+--merged unused _clearclick_ variable into this _reset_ task and renamed it.
+
+_1stparton_ task:
+	end quest 
+
+_S.06_ task:
+	injured _imp_ saying 1010 

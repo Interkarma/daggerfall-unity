@@ -1,0 +1,183 @@
+-- Quest: C:\QUESTS\WORKING\P0B20L09.Qbn.
+-- StartsBy: letter
+-- Questee: member
+-- Questor: vampire
+-- Repute: 20
+-- QuestId: 9
+Messages: 22
+Quest: P0B20L09
+DisplayName: The Vanguard
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+Error: Questtext 1000 Called
+
+RefuseQuest:  [1001]
+Error: Questtext 1001 Called
+
+AcceptQuest:  [1002]
+Error: Questtext 1002 Called
+
+QuestFail:  [1003]
+Error: Questtext 1003 Called
+
+QuestComplete:  [1004]
+<ce>                  I salute you, slayer of werebeasts.
+<ce>                 Your bloodfather will be very pleased
+<ce>                  to hear about the efficiency of your
+<ce>                 extermination.  Keep =wereboar_'s tusk
+<ce>                    as a badge of honor among %vam.
+
+RumorsDuringQuest:  [1005]
+___mondung_ is the one dungeon no one should ever enter. Ever.
+
+RumorsPostfailure:  [1006]
+There was triumphant howling coming out of ___mondung_ the other night.
+
+RumorsPostsuccess:  [1007]
+Things are peaceful, still as a grave, in ___mondung_ again.
+
+QuestorPostsuccess:  [1008]
+Error: Questtext 1008 Called
+
+QuestorPostfailure:  [1009]
+Error: Questtext 1009 Called
+
+QuestLogEntry:  [1010]
+                   __vamp_
+                    ___vamp_
+ 
+ 
+ Dear %pcn,
+ 
+      %vam need you.
+ Come immediately.
+ 
+ 
+                  Yours in death,
+ 
+                  _vamp_
+
+Message:  1011
+<ce>                      Honored %pcn, good evening.
+<ce>                The ancients of %vam are to meet shortly
+<ce>               in %reg, but as if in mockery, a group of
+<ce>                 lycanthropes have set up residence in
+<ce>                  ___mondung_, where the ancients plan
+<ce>                to convene.  Pray, show these vermin and
+<ce>                 others of their kind that ___mondung_
+<ce>          belongs to %vam and we will tolerate no trespassers.
+<ce>           Kill as many of them as possible, including their
+<ce>             leader, a wereboar.  Return back here with one
+<ce>             of his tusks in =queston_ nights time and %vam
+<ce>                 will be most grateful. Fare thee well.
+
+Message:  1012
+%qdt:
+ I have received a letter
+ from _vamp_ of %vam,
+ urgently requesting my presence
+ at __vamp_ in ___vamp_.
+
+Message:  1013
+%qdt:
+ _vamp_ has sent me to
+ ___mondung_, where a group of impudent
+ werecreatures have dared intrude on
+ %vam ground. I am to show the misshaped
+ creatures the error of their ways
+ and return to _vamp_ in =queston_ nights
+ with the tusk of their leader as a trophy.
+
+Message:  1017
+<ce>                    A pale, wild-eyed boy hands you
+<ce>                   a letter and then disappears into
+<ce>                             the darkness.
+
+Message:  1020
+<ce>                    You have slain =wereboar_, the
+<ce>                    lycanthropes' leader.  They will
+<ce>                    now know better than to trespass
+<ce>                        in a stronghold of %vam.
+
+Message:  1021
+<ce>                 Don't make me kill you, bloodsucker.
+<ce>                 Go back and tell %vam that =wereboar_
+<ce>              sent you home because you didn't play nice.
+ 
+
+-- Symbols used in the QRC file:
+--
+--              %dat occurs 1 time.
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--              %vam occurs 26 times.
+--         =queston_ occurs 2 times.
+--        =wereboar_ occurs 3 times.
+--       ___mondung_ occurs 23 times.
+--          ___vamp_ occurs 16 times.
+
+QBN:
+Item _letter_ letter used 1010
+Item _I.01_ tusk
+
+Person _vamp_ factiontype Vampire_Clan local
+
+Place _mondung_ remote dungeon
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Werewolf
+Foe _wereboar_ is Wereboar
+
+--	Quest start-up:
+	dialog link for person _vamp_ 
+	pc at _mondung_ set _S.07_ 
+	_letter_ used do _readletter_ 
+	have _letter_ set _S.09_ 
+	give pc _letter_ notify 1017 
+	place foe _wereboar_ at _mondung_ 
+
+_queston_ task:
+	change repute with _vamp_ by -5 
+	end quest 
+
+_vampclicked_ task:
+	clicked npc _vamp_ 
+
+_S.06_ task:
+	when _vampclicked_ 
+	reveal _mondung_ 
+	log 1013 step 1 
+	say 1011 
+
+_nononono_ task:
+	when _vampclicked_ and not _S.04_ 
+	clear _vampclicked_ _nononono_ 
+
+_reward_ task:
+	toting _I.01_ and _vamp_ clicked 
+	give pc _I.01_ 
+	end quest 
+
+_S.04_ task:
+	killed 1 _wereboar_ 
+	say 1020 
+
+_readletter_ task:
+	add dialog for person _vamp_ 
+	log 1012 step 0 
+	create npc _vamp_ 
+
+_S.07_ task:
+	create foe _F.00_ every 12 minutes 30 times with 50% success 
+
+_S.08_ task:
+	injured _wereboar_ 
+	give item _I.01_ to _wereboar_ 
+	say 1021 
+
+_S.09_ task:
+	start timer _queston_ 

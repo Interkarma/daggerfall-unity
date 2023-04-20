@@ -1,0 +1,152 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y21.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 21
+Messages: 16
+Quest: R0C10Y21
+DisplayName: The Temple of the Orcs
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                        My cousin, _qgfriend_,
+<ce>                 has appealed to me for aid in a rather
+<ce>                 distasteful situation. It appears that
+<ce>                 there is a ... temple of some variety
+<ce>                being consecrated, if that's the proper
+<ce>                   phrase for these disgusting orcish
+<ce>                  activities. Well, obviously, we need
+<ce>                  to crush it while it's budding. I am
+<ce>                willing to go as high as _reward_ gold.
+<ce>                    Can I count on your help, %pcf?
+
+
+RefuseQuest:  [1001]
+<ce>                      What are you, some kind of
+<ce>                      orc-friend? %oth, get out of
+<ce>                               my sight!
+
+AcceptQuest:  [1002]
+<ce>                 Thank you in advance for this, %pcf.
+<ce>                 What I think would be the best use of
+<ce>              your abilities is to infiltrate ___mondung_
+<ce>           and eliminate the so-called shaman of the temple.
+<ce>                  If we can kill it before our assault
+<ce>              in =1stparton_ days that would make our job
+<ce>               much easier. When the deed is done, report
+<ce>                 to my cousin's palace in ___qgfriend_.
+<ce>                  %g's the one who's going to pay you
+<ce>                             for all this.
+
+QuestFail:  [1003]
+<ce>                Better get on the road to ___mondung_,
+<ce>               %pcf.  The plan is already in motion, and
+<ce>                         we're counting on you.
+
+QuestComplete:  [1004]
+<ce>                     Greetings to you, %pcf. First
+<ce>                  rate job with that stinking, rancid
+<ce>                  shaman. How dare they set up one of
+<ce>                   their cannibal temples in my land!
+<ce>                    The leaderless rabble should be
+<ce>                  easier to deal with now. Here's your
+<ce>                     _reward_ gold pieces. Go wild.
+
+RumorsDuringQuest:  [1005]
+There's an orc community in ___mondung_ that's been bothering _qgfriend_.
+<--->
+___mondung_ was, I think, an orc temple years ago. Now they're bringing it back.
+
+RumorsPostfailure:  [1006]
+That whole orcish community got a whiff of _qgfriend_ and it's moved on.
+<--->
+Poor _qgfriend_ didn't get to exact his revenge on the orcs in ___mondung_.
+
+RumorsPostsuccess:  [1007]
+That'll teach those pig-faced degenerate cannibals to come to %reg.
+<--->
+%god bless _qgfriend_ and _questgiver_ and that unknown %ra soldier.
+
+QuestorPostsuccess:  [1008]
+Heard any good orc jokes lately? My cousin told me what a good job you did.
+<--->
+My cousin was mightily impressed with your work on that orc shaman, my friend.
+
+QuestorPostfailure:  [1009]
+<ce>                       My cousin says you didn't
+<ce>                    kill that orc shaman after all.
+<ce>                     I'm not interested in speaking
+<ce>                        on the subject anymore.
+
+Message:  1011
+=qgfriend_, yes? A possible ally of _questgiver_ with a problem with orcs.
+<--->
+_qgfriend_ is a violent bigot when it comes to orcs.
+
+Message:  1012
+<ce>                    You have killed the orc shaman.
+
+Message:  1015
+%qdt:
+ I have =1stparton_ days to slay an orc shaman
+ in ___mondung_, and then get to _qgfriend_'s
+ palace in ___qgfriend_.  %g
+ will pay me my _reward_ gold pieces
+ for the shaman's death.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 2 times.
+--              %god occurs 1 time.
+--              %oth occurs 3 times.
+--              %pcf occurs 6 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--        =qgfriend_ occurs 1 time.
+--       ___mondung_ occurs 6 times.
+--      ___qgfriend_ occurs 10 times.
+--      _questgiver_ occurs 2 times.
+--          _reward_ occurs 3 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ face 112 group Questor
+Person _qgfriend_ group Noble remote anyInfo 1011
+Person _dummyorc_ faction Orsinium remote
+
+Place _mondung_ remote dungeon4
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+
+Foe _monster_ is Orc_shaman
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1015 step 0 
+	place foe _monster_ at _mondung_ 
+
+_1stparton_ task:
+	end quest 
+
+_pcgetsgold_ task:
+	when _mondead_ and _npcclicked_ 
+	give pc _reward_ 
+	change repute with _qgfriend_ by +20 
+	end quest 
+
+variable _queston_
+_mondead_ task:
+	killed 1 _monster_ 
+	say 1012 
+	change repute with _dummyorc_ by -30 
+	create npc _qgfriend_ 
+
+_npcclicked_ task:
+	clicked npc _qgfriend_ 

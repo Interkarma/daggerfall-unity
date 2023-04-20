@@ -1,0 +1,177 @@
+-- Quest: C:\QUESTS\WORKING\R0C11Y19.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 11
+-- QuestId: 19
+Messages: 22
+Quest: R0C11Y19
+DisplayName: The Emperor's Gift
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>               I'm in rather a delicate situation, %pcf.
+<ce>              If I could count on your diligence and your
+<ce>                 silence, you could earn yourself, say,
+<ce>              _reward_ gold pieces profiting on my misery.
+<ce>                            Sound enticing?
+
+RefuseQuest:  [1001]
+<ce>                        %oth, blast, and %oth!
+<ce>                 I'm surrounded by apathetic lazybones!
+<ce>                        Nothing personal, %pcf.
+
+AcceptQuest:  [1002]
+<ce>                Well, that's good anyway. Not long ago,
+<ce>                during a time of financial stagnancy, I
+<ce>                pawned a ring given to me by the Emperor
+<ce>                  himself. I figured that Uriel Septim
+<ce>                 never makes it down to this corner of
+<ce>               the Empire, but now I hear his agents are
+<ce>               in the area, and I must have to have that
+<ce>                  ring back. _contact_, of __contact_
+<ce>           in ___contact_, will only hold it for =1stparton_
+<ce>            more days.  Here's the gold to pay for the ring.
+<ce>                 Good luck and %god speed your journey.
+
+QuestFail:  [1003]
+<ce>                        My ring, %pcf? The %god
+<ce>                    forsaken ring I sent you to get?
+<ce>                    Where is it? If you've lost it,
+<ce>                    I'll have your rotten %ra hide!
+
+QuestComplete:  [1004]
+<ce>               Oh good, oh good, the ring. Oh thank you,
+<ce>                        thank you, %pcf. Here's
+<ce>                  the _reward_ gold pieces I promised.
+<ce>                    An expensive delivery, but truly
+<ce>                           worth every piece.
+
+RumorsDuringQuest:  [1005]
+The Emperor's men don't make a big production when they come to town, I hear.
+<--->
+They're not very flashy; the Emperor's men could be here even as we speak.
+
+RumorsPostfailure:  [1006]
+I hear _questgiver_ did not have a very pleasant meeting with the Imperials.
+<--->
+For some reason, _questgiver_ is out of favor with the Emperor.
+
+RumorsPostsuccess:  [1007]
+_questgiver_ entertained the Imperial statesmen in great style, I understand.
+<--->
+The Imperial statesmen were apparently very satisfied with their visit.
+
+QuestorPostsuccess:  [1008]
+Ah, hello, ring bearer. What can I do for you?
+<--->
+You helped keep me in good standing with the Empire. Now, what I can do for you?
+
+QuestorPostfailure:  [1009]
+<ce>                    The Imperial emissaries didn't
+<ce>                 notice the ring was gone, thank %god.
+<ce>                 Still, you are not one of my favorite
+<ce>                        people right now, %pcf.
+
+QuestLogEntry:  [1010]
+<ce>                    You must be %pcf. You're lucky
+<ce>                 you made it when you did. I was about
+<ce>                 to sell the ring to a very eager third
+<ce>              party.  Well, if I understand correctly and
+<ce>                         _questgiver_ wants the
+<ce>                   ring before the Imperial statesmen
+<ce>                   arrive, you better be on your way.
+<ce>                   You only have a very little time.
+
+Message:  1015
+%qdt:
+ _questgiver_ of
+ ___questgiver_ has sent me to
+ ___contact_ to __contact_
+ where _contact_ is holding
+ a ring _questgiver_
+ pawned. I need to pay for the ring with
+ the gold _questgiver_ gave me,
+ and then get back to __questgiver_.
+ All in less than =1stparton_ days.
+
+Message:  1020
+<ce>                     Give me the ring. This can go
+<ce>                      easy or hard. It's really up
+<ce>                       to you. Either way, we get
+<ce>                               the ring.
+
+Message:  1021
+<ce>                      Fool. Now you will die. Did
+<ce>                       you really think we would
+<ce>                          let a witness live?
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 4 times.
+--              %oth occurs 2 times.
+--              %pcf occurs 8 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--       =1stparton_ occurs 3 times.
+--       ___contact_ occurs 2 times.
+--    ___questgiver_ occurs 1 time.
+--        __contact_ occurs 2 times.
+--     __questgiver_ occurs 1 time.
+--         _contact_ occurs 2 times.
+--      _questgiver_ occurs 7 times.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _reward_ gold
+Item _item1_ gold_bar
+Item _item2_ ring
+
+Person _questgiver_ face 72 group Questor
+Person _contact_ face 80 group Pawnbroker remote
+
+
+Clock _1stparton_ 00:00 0 flag 17 range 1 4
+
+Foe _F.00_ is 2 Knight
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1015 step 0 
+	get item _item1_ 
+
+_pcgetsgold_ task:
+	toting _item2_ and _questgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+variable _queston_
+variable _qgclicked_
+variable _npcclicked_
+_1stparton_ task:
+	make _item2_ permanent 
+	make _item1_ permanent 
+	change repute with _questgiver_ by -50 
+	end quest 
+
+variable _pchasitem1_
+_pchasitem2_ task:
+	toting _item1_ and _contact_ clicked 
+	create foe _F.00_ every 5 minutes 3 times with 35% success
+	get item _item2_ 
+	say 1010 
+
+yes task:
+	have _item2_ set _S.09_ 
+
+variable _no_
+_S.09_ task:
+	give item _item2_ to _F.00_
+	say 1021 
+--moved "saying 1021" to its own line, wouldn't work otherwise
+
+_S.10_ task:
+	injured _F.00_ 
+	prompt 1020 yes yes no _no_ 

@@ -1,0 +1,134 @@
+-- Quest: C:\QUESTS\WORKING\O0B10Y06.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 10
+-- QuestId: 6
+Messages: 11
+Quest: O0B10Y06
+DisplayName: The Jewel Heist
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       Here's somethin' right up
+<ce>                    your thing. Jewelry heist in the
+<ce>                      works. Want to get in on it?
+<ce>                         Standard guild pay of
+<ce>                          _gold_ gold pieces.
+
+RefuseQuest:  [1001]
+<ce>                      See ya. Got to find a guild
+<ce>                       member who wants this job.
+
+AcceptQuest:  [1002]
+<ce>                        %oth, bloody brilliant.
+<ce>                          Go to the _mansion_
+<ce>                             in __mansion_.
+<ce>                           Find the _jewelry_
+<ce>                         and get it back here.
+<ce>                       Keep an eye open. There's
+<ce>                        supposed to be some sort
+<ce>                        of guardian in the dump.
+
+QuestComplete:  [1004]
+<ce>                            Nice work %pcn.
+<ce>                         Here's your guild fee.
+
+RumorsDuringQuest:  [1005]
+They say _mansion_ is impenetrable.
+
+RumorsPostfailure:  [1006]
+Someone tried to break into _mansion_, but they failed.
+
+RumorsPostsuccess:  [1007]
+_mansion_ got robbed. It seems barely conceivable.
+<--->
+If _mansion_ can get robbed, no place is safe.
+
+QuestorPostsuccess:  [1008]
+How are you doing, %pcf? Didn't spend all that _gold_ gold already, didja?
+
+QuestorPostfailure:  [1009]
+<ce>                      %oth, it's you. The guy who
+<ce>                      owns _mansion_ already moved
+<ce>                   the _jewelry_, so the whole thing
+<ce>                     is over. Thanks a lot for all
+<ce>                       your so-called hard work.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ in ___qgiver_
+ freelanced me to slip the _jewelry_
+ out of _mansion_
+ in ___mansion_. I've
+ got =traveltime_ days to get it back to %g2.
+
+
+-- Symbols used in the QRC file:
+--
+--               %g2 occurs 3 times.
+--              %oth occurs 2 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--      =traveltime_ occurs 3 times.
+--       ___mansion_ occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--        __mansion_ occurs 1 time.
+--            _gold_ occurs 16 times.
+--         _jewelry_ occurs 5 times.
+--         _mansion_ occurs 7 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+Item _jewelry_ trinket
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _mansion_ remote house1
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Grizzley_bear
+Foe _F.01_ is Giant_scorpion
+Foe _F.02_ is Ranger
+Foe _F.03_ is Thief
+
+--	Quest start-up:
+	place item _jewelry_ at _mansion_ 
+	start timer _traveltime_ 
+	log 1010 step 0 
+	pc at _mansion_ set _S.01_ 
+
+_traveltime_ task:
+	end quest 
+
+_S.01_ task:
+	pick one of _guard1_ _guard2_ _guard3_ _guard4_ 
+
+_questdone_ task:
+	toting _jewelry_ and _qgiver_ clicked 
+	give pc _gold_ 
+	end quest 
+
+_guard1_ task:
+	create foe _F.00_ every 4 minutes 1 times with 10% success 
+
+_guard2_ task:
+	create foe _F.01_ every 4 minutes 1 times with 10% success 
+
+_guard3_ task:
+	create foe _F.02_ every 4 minutes 1 times with 10% success 
+
+_guard4_ task:
+	create foe _F.03_ every 4 minutes 1 times with 10% success 
+
+wizard0 task:
+	clicked item _jewelry_ 
+
+_S.08_ task:
+	when wizard0 and _traveltime_ 
+	make _jewelry_ permanent 
+	change repute with _qgiver_ by -20 

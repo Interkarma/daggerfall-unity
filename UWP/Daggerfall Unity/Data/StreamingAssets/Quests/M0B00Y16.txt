@@ -1,0 +1,257 @@
+-- Quest: C:\QUESTS\WORKING\M0B00Y16.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 0
+-- QuestId: 16
+Messages: 81
+Quest: M0B00Y16
+DisplayName: Giant Killing
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>               Howdy, %pcf.  If you got a few days free,
+<ce>            a job just came in for some giant-killin', and
+<ce>                    I thought of you.  Interested?
+
+RefuseQuest:  [1001]
+<ce>                  Too busy, eh?  When I was your age,
+<ce>                  I was never too busy to off a giant
+<ce>                 or two.  Kids these days, I tell ya.
+
+AcceptQuest:  [1002]
+<ce>                Right.  Seems there's this giant, moved
+<ce>                   into ___mondung_ a while back and
+<ce>               has been having a fine old time feastin'
+<ce>                 on _dummy_'s sheep in the area.  Ate
+<ce>              a few of the local villagers too, I guess,
+<ce>                but old _dummy_ don't seem so concerned
+<ce>             about that.  At any rate, %g wants this giant
+<ce>          taken care of within =qtime_ days, and %g's payin'
+<ce>                 _gold_ gold for it.  See ya in a bit.
+
+QuestFail:  [1003]
+<ce>                  What, the giant died of overeating?
+<ce>                Get going, %pcf.  You got a job to do.
+
+QuestComplete:  [1004]
+<ce>                  Hail the giant-killer!  I knew you
+<ce>                    was the right one for the job.
+<ce>                        Here's the _gold_ gold.
+
+RumorsDuringQuest:  [1005]
+<ce> A giant in ___mondung_ is terrorizing the locals, but _dummy_ doesn't
+<ce>                             seem to care.
+                                     <--->
+<ce> That giant in ___mondung_ carried off another villager the other day.
+
+RumorsPostfailure:  [1006]
+<ce> I'm glad that giant finally moved out of ___mondung_.  I guess it got
+<ce>       bored with it's bland diet of villager night after night.
+
+RumorsPostsuccess:  [1007]
+<ce>      Thank %god _dummy_ finally sent someone to kill that giant
+<ce>    in ___mondung_.  It must have killed one of %g3 precious sheep.
+
+QuestorPostsuccess:  [1008]
+<ce>                 It's my old friend Giant-Killer %pcf!
+
+QuestorPostfailure:  [1009]
+<ce>                In my day, you could get kicked out of
+<ce>               the Fighter's Guild if you couldn't kill
+<ce>                a simple giant.  Times change, I guess.
+
+Message:  1020
+%qdt:
+ _questgiver_ of the Fighter's Guild
+ of ___questgiver_ has hired me to
+ kill a giant in ___mondung_.
+ I am to report back within =qtime_ days
+ for my reward of _gold_ gold.
+
+Message:  1021
+%qdt:
+ I rescued a merchant the giant was
+ apparently saving for a snack.
+ _villager_ asked me to take %g2
+ to _store_ in __store_.
+
+Message:  1030
+<ce>                  The giant roars in pain.  You hear
+<ce>                  the sound of heavy footsteps coming
+<ce>                    towards you.  Perhaps the giant
+<ce>               invited a few friends over for dinner...
+
+Message:  1031
+<ce>  You have slain the giant you came for.
+
+Message:  1040
+<ce>                    Thank %god you're here!  I was
+<ce>                     on my way to market yesterday
+<ce>                  when the giant carried me off along
+<ce>                    with four other merchants I was
+<ce>                travelling with.  It already ate them,
+<ce>                  I guess it was saving me for later.
+<ce>                Will you please help me get out of this
+<ce>               place?  I'll never make it out on my own.
+
+Message:  1041
+<ce>             You're a true hero.  Let me introduce myself:
+<ce>                      _villager_ of ___villager_.
+<ce>                     I was on my way to _store_ in
+<ce>                    __store_.  If you could drop me
+<ce>              off there, I would be forever in your debt.
+
+Message:  1042
+<ce>                  I appreciate your help, but I think
+<ce>                   I can find my own way from here.
+
+Message:  1043
+<ce>                       You are truly heartless.
+
+Message:  1044
+<ce>                   I've enjoyed your company, %pcf.
+<ce>               You saved my life, and I won't forget it.
+
+Message:  1080
+<ce>                   Hey, here's a map to ___newdung_
+<ce>                   one of the other chaps found the
+<ce>                  other day.  If I was a couple years
+<ce>                   younger, we could tear through it
+<ce>                   together, just like the old days.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 40 times.
+--               %g2 occurs 3 times.
+--              %god occurs 2 times.
+--              %pcf occurs 6 times.
+--              %qdt occurs 2 times.
+--           =qtime_ occurs 2 times.
+--       ___mondung_ occurs 8 times.
+--       ___newdung_ occurs 1 time.
+--    ___questgiver_ occurs 1 time.
+--      ___villager_ occurs 1 time.
+--          __store_ occurs 3 times.
+--           _dummy_ occurs 6 times.
+--            _gold_ occurs 6 times.
+--      _questgiver_ occurs 1 time.
+--           _store_ occurs 3 times.
+--        _villager_ occurs 2 times.
+
+QBN:
+Item _gold_ gold
+Item _magic_ magic_item
+
+Person _questgiver_ group Questor
+Person _dummy_ face 9 group Noble remote
+Person _villager_ face 8 group Shopkeeper remote
+
+Place _mondung_ remote dungeon
+Place _newdung_ remote dungeon
+Place _store_ remote generalstore
+
+Clock _qtime_ 00:00 0 flag 17 range 0 2
+
+Foe _giant_ is Giant
+Foe _giantFriends_ is Giant
+
+--	Quest start-up:
+	start timer _qtime_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	pick one of _victim_ _S.09_ _S.09_ 
+	pick one of _map_ _nomap_ _nomap_ 
+	pick one of _magicItem_ _noMagicItem_ _noMagicItem_ _noMagicItem_
+	place foe _giant_ at _mondung_ 
+
+variable _map_
+variable _nomap_
+_S.02_ task:
+	injured _giant_ 
+	start task _giantWaveWhileInDungeon_
+	say 1030 
+
+_S.03_ task:
+	killed 1 _giant_ 
+	say 1031
+
+_clickqgiver_ task:
+	clicked npc _questgiver_ 
+
+_clearclick_ task:
+	when _clickqgiver_ and not _S.03_
+	say 1003
+	clear _clickqgiver_ _clearclick_
+
+_success_ task:
+	when _clickqgiver_ and _S.03_ 
+	give pc _gold_ 
+
+variable _qtime_
+_duelist_ task:
+	when _success_ and _map_ 
+	reveal _newdung_ readmap
+	say 1080 
+
+_victim_ task:
+	place npc _villager_ at _mondung_ 
+
+variable _noMagicItem_
+_magicItem_ task:
+	give item _magic_ to _giant_ 
+	make _magic_ permanent 
+
+_S.09_ task:
+	hide npc _villager_ 
+
+_S.10_ task:
+	clicked npc _villager_ 
+	prompt 1040 yes _yes_ no _no_ 
+
+_yes_ task:
+	pc at _store_ set _S.13_ 
+	log 1021 step 1 
+	hide npc _villager_ 
+	say 1041 
+	add _villager_ face 
+
+_no_ task:
+	say 1043 
+	change repute with _villager_ by -10 
+
+variable _escortComplete_
+_S.13_ task:
+	say 1044 
+	drop _villager_ face 
+	change repute with _villager_ by +15 
+	place npc _villager_ at _store_ 
+	start task _escortComplete_
+
+_S.14_ task:
+	when _yes_ and not _escortComplete_ and _qtime_ 
+	say 1042 
+
+_S.15_ task:
+	when _success_ and _no_ 
+
+_S.16_ task:
+	when _success_ and _S.09_
+
+_S.17_ task:
+	when _success_ and _escortComplete_ 
+
+_S.18_ task:
+	when _qtime_ or _S.15_ or _S.16_ or _S.17_ or _S.19_
+	end quest 
+
+_S.19_ task:
+	when _success_ and _victim_ and not _S.10_
+
+_giantWaveWhileInDungeon_ task:
+	pc at _mondung_ set _spawnGiants_
+
+_spawnGiants_ task:
+	create foe _giantFriends_ every 3 minutes 6 times with 50% success 

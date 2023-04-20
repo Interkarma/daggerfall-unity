@@ -1,0 +1,158 @@
+-- Quest: C:\QUESTS\WORKING\Q0C00Y01.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: witch
+-- Repute: 0
+-- QuestId: 1
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 14
+Quest: Q0C00Y01
+DisplayName: The Libel
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      We would use thee to find
+<ce>                  a perfidious document circulated by
+<ce>                  our enemies in an effort to suppress
+<ce>                 our coven. I know wherein this packet
+<ce>                  of printed lies has been placed, but
+<ce>                   we need someone like thee to fight
+<ce>                   its guardian and bring it us. Wilt
+<ce>                      thou assist ==qgiver_ thus?
+
+RefuseQuest:  [1001]
+<ce>                         Wilt thou not? %oth,
+<ce>                      then do not ask for favor of
+<ce>                               ==qgiver_.
+
+AcceptQuest:  [1002]
+<ce>                   Wilt thou? Then you will have our
+<ce>                most unconfuted gratitude. The document
+<ce>                    lies in a temple, here in %reg,
+<ce>                      in a town called __temple_.
+<ce>                      _temple_ keeps it somewhere,
+<ce>                perhaps behind locked doors, guarded by
+<ce>                  a _guardian_ of unquestioned power.
+<ce>                If thou wilt bring the document here, to
+<ce>                   me, I will give to thee a _mitem_
+<ce>                of the coven's manufacture. Return in no
+<ce>                       later than =queston_ days.
+
+QuestComplete:  [1004]
+<ce>                  Ah, the accursed document. Thou art
+<ce>                 to be commended for thy service to our
+<ce>                     sisterhood, %pct. Here is the
+<ce>                        _mitem_ I promised thee.
+<ce>                    The gratitude of ==qgiver_ need
+<ce>                      not be physical to be felt.
+
+RumorsDuringQuest:  [1005]
+Have you read the next History of ==qgiver_. Shocking!
+
+RumorsPostfailure:  [1006]
+The History of ==qgiver_ is being reproduced in the Imperial City.
+
+RumorsPostsuccess:  [1007]
+Some have read the History of ==qgiver_, but the only copy disappeared.
+
+QuestorPostsuccess:  [1008]
+Art thou pleased with thy _mitem_, %pcf? Thou surely didst deserve it.
+
+QuestorPostfailure:  [1009]
+<ce>                      The accursed document hath
+<ce>                    gone to the Imperial City to be
+<ce>                      reproduced for the ignorant
+<ce>                           masses, %pcf. Thou
+<ce>                         hast failed ==qgiver_.
+<ce>                          Go from this place.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I have agreed to get a document
+ about ==qgiver_ from _temple_
+ in __temple_ and return with it
+ in =queston_ days or less. The document
+ will likely be guarded by a _guardian_.
+
+Message:  1011
+<ce>                    This is apparently the document
+<ce>                         that ==qgiver_ wanted.
+
+Message:  1012
+Among the more fiendish practices of the
+ ==qgiver_ is the rite they
+ perform in honor of ==daedra_.
+ The flesh of a newborn infant is boiled over
+ the flames of burning brimstone for three and
+ a half days until it is hard and leathery.
+ The resultant fiber is sewn over the head of
+ a black cat, who is kept in a cage until it
+ has chewed through the caul or has died of
+ suffocation. If the cat dies, the witches
+ know that ==daedra_ will
+ not answer their entreaties, but if the cat
+ lives, ==qgiver_ may ask
+ ==daedra_ for anything -- the
+ death or mutilation of princes, economic
+ catastrophe, famine, plague, war ...
+
+Message:  1013
+<ce>                     Pawn of the Fiends! Slave of
+<ce>                           the ==qgiver_! The
+<ce>                         Righteous Hand of %god
+<ce>                            will smite thee!
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 4 times.
+--              %oth occurs 1 time.
+--              %pcf occurs 13 times.
+--              %pct occurs 1 time.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--         ==daedra_ occurs 3 times.
+--         ==qgiver_ occurs 14 times.
+--         =queston_ occurs 3 times.
+--         __temple_ occurs 2 times.
+--        _guardian_ occurs 3 times.
+--           _mitem_ occurs 3 times.
+--          _temple_ occurs 2 times.
+
+QBN:
+Item _document_ letter used 1012
+--added underscores to document
+Item _mitem_ magic_item
+
+Person _qgiver_ group Questor
+Person _daedra_ face 80 factiontype Daedra remote
+
+Place _temple_ remote temple
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _guardian_ is Spellsword
+
+--	Quest start-up:
+	place item _document_ at _temple_ 
+	dialog link for person _daedra_ 
+	start timer _queston_ 
+	log 1010 step 0 
+
+_queston_ task:
+	end quest 
+
+_S.01_ task:
+	clicked item _document_ 
+	create foe _guardian_ every 1 minutes 1 times with 100% success 
+	say 1011 
+
+_S.02_ task:
+	injured _guardian_ 
+	say 1013 
+
+_reward_ task:
+	toting _document_ and _qgiver_ clicked 
+	give pc _mitem_ 
+	end quest 

@@ -1,0 +1,201 @@
+-- Quest: C:\QUESTS\WORKING\S0000010.Qbn.
+-- Main story quest.
+-- QuestId: 10
+Messages: 23
+Quest: S0000010
+DisplayName: Stronghold of the Blades
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      Good day, %pcf. My name is
+<ce>                     _agentuk_. I must admit that
+<ce>              I am surprised to see you. Are you perhaps
+<ce>               able to help the Underking in an endeavor
+<ce>               against the Necromancers? We will reward
+<ce>              you liberally for this service, and provide
+<ce>               information you will probably not be able
+<ce>                          to find elsewhere.
+
+RefuseQuest:  [1001]
+<ce>                         No. I see. Very well.
+
+AcceptQuest:  [1002]
+<ce>              You will. Hmm. Remarkable. The Necromancers
+<ce>                have taken an item of ours, a _reward_
+<ce>               of some value. The value is of secondary
+<ce>             concern. The true problem is that they cursed
+<ce>              this item and gave it to the Blades. If you
+<ce>              are unaware, the Blades were once the honor
+<ce>             guard for Tiber Septim. Today they are loyal
+<ce>                to the empire and Tiber's code, but not
+<ce>             always to the current emperor. The Underking
+<ce>             has reason to not wish harm upon the Blades.
+<ce>               We want you to infiltrate Castle Llugwych
+<ce>                  in Ykalon and remove the _reward_.
+<ce>             Please have this done in =itemindung_ days if
+<ce>                 you want your information and reward.
+
+QuestFail:  [1003]
+<ce>                       No _reward_, as they say,
+<ce>                         no information, %pcf.
+
+QuestComplete:  [1004]
+<ce>                     Well done, %pcf. Let me cast
+<ce>                     this spell upon the _reward_
+<ce>                    ... there. The _reward_ is now
+<ce>                        safe and yours to keep.
+<ce>                                    
+<ce>               Not even death can hide a true descendant
+<ce>               of Tiber Septim from the Underking. King
+<ce>                 Lysandus did not die in the battle of
+<ce>              Cryngaine. He was slain by treachery before
+<ce>              it. The monument to him in High Rock is an
+<ce>                 empty tomb. His remains were secretly
+<ce>              taken to an ancient tomb in Menevia, which
+<ce>                I will now reveal to you. I do not know
+<ce>               who betrayed Lysandus, nor why his spirit
+<ce>               haunts the city of Daggerfall and not the
+<ce>               battlefield of Cryngaine. I have kept my
+<ce>               part of the bargain, and you have earned
+<ce>                    the gratitude of the Underking.
+
+RumorsDuringQuest:  [1005]
+The King of Worms and the Underking are supposed to be one and the same.
+<--->
+The Underking is supposedly dead, but his agents still carry out his goals.
+
+RumorsPostfailure:  [1006]
+Stealing from the Underking is a lunatic's profession. Ask that %ra mercenary.
+<--->
+Did you hear about the %ra who tried to steal from the Underking? Poor idiot.
+
+RumorsPostsuccess:  [1007]
+Strange portents were in the stars last night. Angry passions of a demi-god.
+<--->
+Necromancers are supposedly scouring the countryside looking for a _reward_.
+
+QuestorPostsuccess:  [1008]
+%qdt:
+ An agent of the Underking has sent me to
+ Castle Llugwych in Ykalon to find a certain
+ _reward_ the Necromancers stole from
+ the Underking. I have =itemindung_ days to find
+ and return the _reward_.
+
+QuestLogEntry:  [1010]
+<ce>               You interfere with the plans of The King
+<ce>                 of Worms. Fear for your mortal life!
+                                     <--->
+<ce>                The King of Worms demands vengence. You
+<ce>                stole what was rightfully his. Now you
+<ce>                  must join the kingdom of the dead.
+                                     <--->
+<ce>                 Foolish flesh and blood. Do not defy
+<ce>                the Lord of the Dead. The King of Worms
+<ce>                        will have his vengence.
+                                     <--->
+<ce>                  You should never have touched that
+<ce>                     _reward_. It is a gateway to
+<ce>                the land of the dead. Now you must join
+<ce>                       us there. Prepare to die!
+
+Message:  1021
+Dear %pcn,
+ 
+    Queen Akorithi of Sentinel spoke highly of you as a
+ brave, able, and unprejudiced %ra. Her actual
+ words were 'a hero.' For some time, we have been
+ looking for someone like that.
+    I will not lie to you about our loyalties. We
+ serve the Underking. If you are a believer in fairy
+ tales and consider the Underking the ultimate force of
+ evil, we apologize for misjudging you. Otherwise, we
+ need your help. You can find me at _agentplace_
+ of __agentplace_ in Sentinel. I will wait one month.
+ 
+ 
+<ce>                             -- _agentuk_
+
+Message:  1022
+<ce>                   A young courier drily hands you a
+<ce>                  letter and then stalks off without
+<ce>                            saying a word.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 4 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 4 times.
+--      =itemindung_ occurs 2 times.
+--     __agentplace_ occurs 4 times.
+--         _agentuk_ occurs 3 times.
+--          _reward_ occurs 55 times.
+
+QBN:
+Item _reward_ magic_item
+Item letter14 letter used 1021
+
+Person _agentuk_ face 1 faction Agents_of_The_Underking remote
+Person _necromancer_ face 1 faction The_Necromancers remote
+
+Place _llugwych_ permanent LlugwychCastle
+Place _agentplace_ remote house2
+Place _lysandustomb_ permanent LysandusTomb2
+
+Clock _S.04_ 6.23:20 0 flag 1 range 0 1
+Clock _itemindung_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Wraith
+
+--	Quest start-up:
+	repute with _agentuk_ exceeds 0 do _S.07_ 
+
+_pcgetsgold_ task:
+	toting _reward_ and _agentuk_ clicked 
+	give pc _reward_ 
+	reveal _lysandustomb_ in province 33 at 210794 
+	change repute with _necromancer_ by -20 
+	change repute with _agentuk_ by +15 
+	end quest 
+
+_S.01_ task:
+	injured _F.00_ saying 1010 
+
+yes task:
+	place item _reward_ at _llugwych_ marker 0
+	start timer _itemindung_ 
+	log 1008 step 0 
+	reveal _llugwych_ in province 40 at 26340 
+	say AcceptQuest 
+	have _reward_ set _S.06_ 
+
+_no_ task:
+	say RefuseQuest 
+	end quest 
+
+_S.04_ task:
+	add dialog for location _agentplace_ person _agentuk_ 
+	give pc letter14 notify 1022 
+	create npc at _agentplace_ 
+	place npc _agentuk_ at _agentplace_ 
+
+_S.05_ task:
+	clicked npc _agentuk_ 
+	prompt QuestorOffer yes yes no _no_ 
+
+_S.06_ task:
+	send _F.00_ every 50 minutes 10 times with 5% success 
+
+variable _S.07_
+_S.08_ task:
+	level 8 completed 
+
+_S.09_ task:
+	when _S.07_ and _S.08_ 
+	start timer _S.04_ 
+
+_itemindung_ task:
+	end quest 

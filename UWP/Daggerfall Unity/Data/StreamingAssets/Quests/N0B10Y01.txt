@@ -1,0 +1,175 @@
+-- Quest: C:\QUESTS\WORKING\N0B10Y01.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 10
+-- QuestId: 1
+Messages: 21
+Quest: N0B10Y01
+DisplayName: Atronach Hunting
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>          Rather embarrassing, but one of our experiments has
+<ce>           prematurely evacuated our laboratory. Even worse,
+<ce>              it left before it was fed so it's doubtless
+<ce>             going to be ill-tempered. Thankfully, it is a
+<ce>             disposable creature, a common atronach. On the
+<ce>                other hand, we certainly do not need our
+<ce>              reputation sullied by a maddened atronach's
+<ce>               rampage. If you'd be willing to track the
+<ce>               sad beast down and put it out of its, and
+<ce>             our, misery, we could offer you, say, _reward_
+<ce>                      gold in return. Interested?
+                                     <--->
+<ce>               Actually, we have had a bit of excitement
+<ce>               in this dull old place lately. In a rather
+<ce>              routine atronachy class, one of the subjects
+<ce>                managed to ... well, the details are not
+<ce>                 important. What is, is that there's an
+<ce>                     atronach on the loose in %reg
+<ce>              that can easily be traced back to this Guild
+<ce>               and our maladministration. You're the type
+<ce>                   who could end this affair with the
+<ce>                     minimum of embarrassment, yes?
+
+RefuseQuest:  [1001]
+<ce>               A pity indeed. Well, I suppose some other
+<ce>                    fervent adventurer will aid us.
+
+AcceptQuest:  [1002]
+<ce>                  You will? %oth, what a relief. The
+<ce>               miserable creature has apparently taken up
+<ce>               residence in a nasty little hole they call
+<ce>                   ___mondung_. For our reputation's
+<ce>                sake, it is essential that this be done
+<ce>                 quickly and quietly, so if you're not
+<ce>              able to dispatch the atronach in =1stparton_
+<ce>                days, don't bother coming back for your
+<ce>                           reward. Good day.
+
+QuestFail:  [1003]
+<ce>                 Am I wearing a silly hat and grinning
+<ce>                inanely? No? Then why do you take me for
+<ce>                  a fool? I'm perfectly aware that the
+<ce>                  atronach still lives. In the future,
+<ce>                 do not ask for jobs you are unable or
+<ce>                         unwilling to fulfill.
+
+QuestComplete:  [1004]
+<ce>              The hunter returns! You have saved us some
+<ce>                  considerable discomfiture with your
+<ce>                precipitate amelioration of our atronach
+<ce>                 crisis. A first-rate job, all around.
+<ce>                   Accept your gold and my gratitude.
+
+RumorsDuringQuest:  [1005]
+I hear something escaped from the Mages Guild lab the other night.
+<--->
+%oth, I saw a shape skulking in the shadows right about then.
+
+RumorsPostfailure:  [1006]
+Well, there's a minor scandal involving the Mages Guild's lab security.
+<--->
+The Mages Guild lost another experiment apparently.
+
+RumorsPostsuccess:  [1007]
+I hear they found out that atronach was made with the soul of %t's brother!
+<--->
+A lot of people feel safer knowing that atronach is dead.
+<--->
+Everybody's talking about that atronach that %ra hunted down?
+
+QuestorPostsuccess:  [1008]
+I haven't forgotten about the atronach crisis, if that's what's concerning you.
+
+QuestorPostfailure:  [1009]
+<ce>                 I sent you to stop that atronach and
+<ce>                     you failed. No excuses, %pcf.
+<ce>                    Just leave me to my melancholia.
+
+QuestLogEntry:  [1010]
+<ce>                      "I would rather die than go
+<ce>                        back to the Mages Guild
+<ce>                      laboratory." The life fades
+<ce>                       from the atronach's eyes.
+
+Message:  1020
+%qdt:
+ The Mages Guild of ___questgiver_
+ has hired me to find an atronach
+ that escaped from their laboratory.
+ It has laired in ___mondung_.
+ I need to have the creature dead and be back
+ in ___questgiver_ in =1stparton_ days.
+
+
+-- Symbols used in the QRC file:
+--
+--              %oth occurs 2 times.
+--              %pcf occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--                %t occurs 2 times.
+--       =1stparton_ occurs 4 times.
+--       ___mondung_ occurs 2 times.
+--    ___questgiver_ occurs 4 times.
+--          _reward_ occurs 3 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ group Questor
+
+Place _mondung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Iron_atronach
+Foe _F.01_ is Ice_atronach
+Foe _F.02_ is Fire_atronach
+Foe _F.03_ is Flesh_atronach
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	pick one of _fire_ _flesh_ _ice_ _iron_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+variable _queston_
+_mondead_ task:
+	killed 1 _F.02_ saying 1010 
+	killed 1 _F.03_ saying 1010 
+	killed 1 _F.01_ saying 1010 
+	killed 1 _F.00_ saying 1010 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_fire_ task:
+	place foe _F.02_ at _mondung_ 
+
+_iron_ task:
+	place foe _F.00_ at _mondung_ 
+
+_flesh_ task:
+	place foe _F.03_ at _mondung_ 
+
+_ice_ task:
+	place foe _F.01_ at _mondung_ 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 

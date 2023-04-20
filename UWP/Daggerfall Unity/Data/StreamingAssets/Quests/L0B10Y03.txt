@@ -1,0 +1,188 @@
+-- Quest: C:\QUESTS\WORKING\L0B10Y03.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Brotherhood
+-- Repute: 10
+-- QuestId: 3
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 15
+Quest: L0B10Y03
+DisplayName: Unauthorized Absence
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   The Brotherhood prides itself on
+<ce>                   always knowing where each Brother
+<ce>                   is at all times. I could tell you
+<ce>                   where you were last Tirdas within
+<ce>                 a foot of dirt. One of our Brothers,
+<ce>                  however, has disappeared and while
+<ce>                  on assignment. You will attempt to
+<ce>                            find =target_,
+<ce>                  and, unless %g has suitable excuse
+<ce>                   for %g3 absence, you will account
+<ce>                    %g2. I trust you have time for
+<ce>                              this, yes?
+                                     <--->
+<ce>                  As you know, no one ever leaves the
+<ce>                   Dark Brotherhood. One Brother has
+<ce>                   disappeared on assignment, and we
+<ce>                         must know if =target_
+<ce>                    is dead or alive. You have been
+<ce>                      picked for this assignment.
+
+RefuseQuest:  [1001]
+<ce>                     Truly? Well, I suppose you're
+<ce>                   entitled to refuse an occasional
+<ce>                              assignment.
+
+AcceptQuest:  [1002]
+<ce>                          Good. =target_ has
+<ce>                      a cousin in ___contact_ --
+<ce>                          a =contact_ called
+<ce>                             _contact_ who
+<ce>                   generally can be found at a place
+<ce>                        called __contact_. Talk
+<ce>                  to %g2 -- firmly -- and find where
+<ce>                %g3 cousin is. I'll give you =queston_
+<ce>                  days to take care of this business
+<ce>                              and return.
+
+QuestComplete:  [1004]
+<ce>                            =target_ was a
+<ce>                   vampire? Well, that does explain
+<ce>                    things. If you haven't already,
+<ce>                      you'll want to get yourself
+<ce>                   healed at a temple, so you don't
+<ce>                         end up in =target_'s
+<ce>                         bloodsucking family.
+
+RumorsDuringQuest:  [1005]
+Nobody, but nobody, doublecrosses the Dark Brotherhood.
+<--->
+=target_ supposedly went after some baron somewhere in %reg before %g vanished.
+
+RumorsPostfailure:  [1006]
+Some say that =target_ is dead. But others have seen %g2 ... at night only.
+
+RumorsPostsuccess:  [1007]
+Funny, the Brotherhood offing that bloodsucker. You think they'd get along.
+<--->
+Apparently, =target_'s last target was more than %g expected him to be.
+
+QuestorPostsuccess:  [1008]
+Hello, %pcf. I hope you've had a priest look at you after that vampire battle.
+
+QuestorPostfailure:  [1009]
+<ce>                     I have nothing but scorn for
+<ce>                   those who fail their assignments.
+<ce>                        Begone with you, %pcf.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of the Dark Brotherhood,
+ in ___qgiver_ wants me to track
+ down a Brother who disappeared,
+ and, if no reasonable explanation
+ is offered, to do the accounting.
+ This character, named =target_,
+ has a cousin living in ___contact_,
+ a =contact_ named _contact_.
+ I have =queston_ days to find what
+ this cousin knows, track =target_
+ down, and get back to __qgiver_.
+
+Message:  1011
+<ce>                     I haven't heard from =target_
+<ce>              since %g went off looking for that baron in
+<ce>                     ___mondung_. Weird character,
+<ce>               that baron. Never came around during the
+<ce>               day, lived in that creepy place. It's no
+<ce>               wonder someone wanted him dead. Still, if
+<ce>                 someone was going to stop my cousin's
+<ce>              career in the Brotherhood, I wouldn't have
+<ce>                    expected him to be that skinny,
+<ce>                              pale baron.
+
+Message:  1012
+%qdt:
+ _contact_ told me that
+ =target_ went to
+ ___mondung_, looking for
+ some mysterious baron for an accounting.
+ ___mondung_ will be my next stop.
+
+Message:  1013
+<ce>                      "Let me share with you the
+<ce>                    immortality the baron gave me,"
+<ce>                           =target_ hisses.
+
+Message:  1014
+<ce>                         The Vampire, =target_
+<ce>                          is at last at rest.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 6 times.
+--               %g2 occurs 4 times.
+--               %g3 occurs 2 times.
+--              %pcf occurs 5 times.
+--              %qdt occurs 2 times.
+--              %reg occurs 2 times.
+--         =contact_ occurs 2 times.
+--         =queston_ occurs 2 times.
+--          =target_ occurs 16 times.
+--       ___contact_ occurs 2 times.
+--       ___mondung_ occurs 3 times.
+--        ___qgiver_ occurs 1 time.
+--        __contact_ occurs 1 time.
+--         __qgiver_ occurs 2 times.
+--         _contact_ occurs 3 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+
+Person _qgiver_ group Questor
+Person _contact_ face 176 group Innkeeper
+
+Place _mondung_ remote dungeon8
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _target_ is Vampire
+
+--	Quest start-up:
+	start timer _queston_ 
+	log 1010 step 0 
+	place foe _target_ at _mondung_ 
+
+_queston_ task:
+	end quest 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_reward_ task:
+    when _qgclicked_ and _S.04_
+    give pc nothing 
+	end quest 
+
+_S.02_ task:
+	clicked npc _contact_ 
+	reveal _mondung_ 
+	log 1012 step 1 
+	say 1011 
+
+_S.03_ task:
+	injured _target_ saying 1013 
+
+_S.04_ task:
+	killed 1 _target_ saying 1014 
+
+variable _S.06_
+--unused variables
+_clearclick_ task:
+	when _qgclicked_ and not _S.04_ 
+	clear _qgclicked_ _clearclick_ 

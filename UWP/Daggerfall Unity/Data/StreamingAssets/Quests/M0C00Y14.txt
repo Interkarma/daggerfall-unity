@@ -1,0 +1,131 @@
+-- Quest: C:\QUESTS\WORKING\M0C00Y14.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: fighter
+-- Repute: 0
+-- QuestId: 14
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 21
+Quest: M0C00Y14
+DisplayName: A Rat Infestation
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                         My name is _qgiver_.
+<ce>             We only give jobs to guild members. However,
+<ce>               from time to time there are jobs that are
+<ce>                too menial for fighters of the guild to
+<ce>               accept. I have one such job. If you take
+<ce>              it, it will show that you really want to be
+<ce>                  on our good side. What do you say?
+
+RefuseQuest:  [1001]
+<ce>                  Obviously you have no love for the
+<ce>                 Fighter's Guild. I will make sure to
+<ce>                   tell them what you really think.
+
+AcceptQuest:  [1002]
+<ce>                   Giant rats have infested _house_.
+<ce>                There may be as many as half a dozen of
+<ce>                 them. Go there and kill them all and
+<ce>               I'll see what strings I can pull on your
+<ce>                 behalf. I can only give you one day.
+
+QuestComplete:  [1004]
+<ce>                    Killing rats, even giant ones,
+<ce>                      doesn't take much skill. It
+<ce>                      does put you in favor with
+<ce>                         us though. Good work.
+
+RumorsDuringQuest:  [1005]
+<ce>                   Some idiot bought four barrels of
+<ce>                  cheese. Now he's got giant rats in
+<ce>                              his house.
+
+RumorsPostfailure:  [1006]
+<ce>                  Some woman had to abandon her home.
+<ce>                It was overrun with giant rats and she
+<ce>                  didn't have enough gold to pay the
+<ce>                     Fighters Guild to kill them.
+
+RumorsPostsuccess:  [1007]
+<ce>                 I heard the Fighters Guild sent some
+<ce>                   %ra over to kill the rats in that
+<ce>                 woman's home. They didn't even charge
+<ce>                              her for it.
+
+QuestorPostsuccess:  [1008]
+<ce>                 So you killed the rats. Don't get too
+<ce>                full of yourself. They were only rats.
+
+QuestorPostfailure:  [1009]
+<ce>                 You couldn't even take care of giant
+<ce>                     rats. You are hopeless %pcn.
+
+QuestLogEntry:  [1010]
+%qdt:
+ The Fighters Guild of
+ ___qgiver_ has
+ offered to let me rid _house_
+ of a giant rat infestation.
+ I have one day to get it done.
+
+Message:  1011
+<ce>  This building smells terribly of rats.
+<ce>  Your entry has likely disturbed them into activity.
+
+Message:  1020
+<ce>                   That's most of them. The Fighters
+<ce>                  Guild won't quibble over the rest.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--           _house_ occurs 2 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+
+Person _qgiver_ group Questor
+
+Place _house_ local random
+
+Clock _2dung_ 1.00:00 0 flag 1 range 0 1
+
+Foe _monster_ is Giant_rat
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _house_ 
+	log 1010 step 0 
+	pc at _house_ set _S.04_ 
+	create npc at _house_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 4 _monster_ 
+	say 1020
+
+_S.02_ task:
+	when _qgclicked_ and _S.01_ 
+	give pc nothing 
+	end quest 
+
+_qgclicked_ task:
+    clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _clearclick_ 
+
+_S.04_ task:
+	say 1011
+	create foe _monster_ every 2 minutes 7 times with 100% success 
+--slowed enemy spawn due to feedback

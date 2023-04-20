@@ -1,0 +1,91 @@
+-- Quest: C:\QUESTS\WORKING\S0000022.Qbn.
+-- Main story quest.
+-- QuestId: 22
+Messages: 12
+Quest: S0000022
+DisplayName: Lysandus' Revelation
+-- Message panels
+QRC:
+
+RefuseQuest:  [1001]
+<ce>                     I thought I told you it would
+<ce>                    take a month. The powder is not
+<ce>                      ready yet. Come back later.
+
+AcceptQuest:  [1002]
+<ce>                   The powder is ready. All you need
+<ce>                    to do is sprinkle it on his true
+<ce>                   corpse. I must warn you. It will
+<ce>                  not put his shade to rest, but will
+<ce>                  soothe it sufficiently to allow you
+<ce>                 a chance to speak with him. The final
+<ce>                  exorcism is for Lysandus to choose.
+<ce>                                    
+<ce>                  I do not know where he was buried.
+<ce>                 I do know that it is not on the field
+<ce>                 of Cryngaine where they erected that
+<ce>                  monument to him. If you do speak to
+<ce>                   him...could you tell him I still
+<ce>                     love him. Death will not be a
+<ce>                        barrier to us for long.
+
+QuestLogEntry:  [1010]
+%qdt:
+ Medora has told me, it would take her
+ a month to prepare the Dust. When this
+ time has passed, I should visit her
+ again at her home in the Direnni Tower.
+
+Message:  1011
+%qdt:
+ Medora has given me a powder that will
+ soothe the spirit of Lysandus. However,
+ it will not lay his shade to rest, but
+ only calm it. Now I need only to find
+ his tomb and use it.
+
+
+-- Symbols used in the QRC file:
+--
+--              %qdt occurs 2 times.
+
+QBN:
+Item _spider_ lich_dust
+
+Person _medora_ named Medora atHome
+
+
+Clock _S.00_ 30.00:00 0 flag 1 range 0 1
+
+
+--	Quest start-up:
+	start timer _S.00_ 
+	log 1010 step 0 
+
+variable _S.00_
+_S.01_ task:
+	clicked npc _medora_ 
+
+_S.02_ task:
+	when _S.01_ and _S.00_ 
+	log 1011 step 1 
+	get item _spider_ 
+	say AcceptQuest 
+
+_S.03_ task:
+	when not _S.00_ and _S.01_ 
+	say RefuseQuest 
+	clear _S.01_ _S.03_ 
+
+LysandusSatisfied _S.04_
+	have _spider_ set _S.05_ 
+
+_S.05_ task:
+	start quest 15 15 
+	take _spider_ from pc 
+	play video 5 
+	end quest 
+
+_S.06_ task:
+	when _S.04_ and not _S.05_ 
+	clear _S.04_ _S.06_ 

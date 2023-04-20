@@ -1,0 +1,146 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y11.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 11
+Messages: 16
+Quest: R0C10Y11
+DisplayName: Contraband Goods
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   You are not by any chance free to
+<ce>                    run a little errand for me? It's
+<ce>                   very simple, I would do it myself
+<ce>                     or have one of my runners take
+<ce>                   care of it, but we are all so very
+<ce>                 busy. It would mean an extra _reward_
+<ce>                    gold pieces. That's not too bad.
+<ce>                           Are you available?
+
+RefuseQuest:  [1001]
+<ce>                         No? %god save me from
+<ce>                            idle %ra hands.
+
+AcceptQuest:  [1002]
+<ce>                   What luck. Now, take this _item_
+<ce>                         and go to ___qgfriend_
+<ce>                     to a place called __qgfriend_.
+<ce>                       There's an odd =qgfriend_
+<ce>                        there named _qgfriend_.
+<ce>                       Give %g2 the _item_ and %g
+<ce>                    will give you the _reward_ gold.
+<ce>                    Oh, and you need to be there in
+<ce>                  =queston_ days, but that should not
+<ce>                  be a problem. You have sturdy young
+<ce>                       legs. Off with you, what.
+
+QuestFail:  [1003]
+<ce>                          You look like %pcf,
+<ce>                        but you can't be.  %pcn
+<ce>                     is on the way to ___qgfriend_.
+
+QuestComplete:  [1004]
+<ce>                  _questgiver_ hired you as a runner?
+<ce>                  Ah, the _item_ I've been expecting.
+<ce>                Very good. Here's your gold. Thank you.
+
+RumorsDuringQuest:  [1005]
+_questgiver_ is still in the smuggling business, I hear.
+<--->
+There's been an extraordinary increase in smuggling lately.
+
+RumorsPostfailure:  [1006]
+I heard someone came across a _item_ out in the middle of nowhere.
+<--->
+_questgiver_ is mad as hell at some incompetent %ra courier.
+
+RumorsPostsuccess:  [1007]
+Some =qgfriend_ was just here, waving around some _item_.
+<--->
+<ce>             I guess _questgiver_ didn't steal that _item_
+<ce>                      after all or else %g ate it.
+
+QuestorPostsuccess:  [1008]
+I recognize those sturdy young legs. How are you, my old courier?
+<--->
+Come back to visit your old employer, have you, %pcf?
+
+QuestorPostfailure:  [1009]
+<ce>                      I remember you. You're the
+<ce>                       %ra who failed that simple
+<ce>                     delivery assignment.  %oth, I
+<ce>                         have no time for you.
+
+Message:  1011
+%g's a thoroughly respectable ruler, with kleptomanic tendencies.
+<--->
+A big-time jewelry smuggler, from what I hear.
+
+Message:  1012
+One of _questgiver_'s fences. _qgfriend_ practically lives at __qgfriend_.
+<--->
+That =qgfriend_? _qgfriend_ is a fence for a den of smugglers at __qgfriend_.
+
+Message:  1015
+%qdt:
+_questgiver_ of
+ __questgiver_ has asked me
+ to deliver a certain _item_ to
+ an associate named _qgfriend_.
+ _qgfriend_'s current haunt is
+ __qgfriend_ in ___qgfriend_,
+ a journey of about =queston_ days.
+ That's how long I have, anyway.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 4 times.
+--               %g2 occurs 1 time.
+--              %god occurs 1 time.
+--              %oth occurs 1 time.
+--              %pcf occurs 7 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 4 times.
+--        =qgfriend_ occurs 3 times.
+--         =queston_ occurs 2 times.
+--      ___qgfriend_ occurs 18 times.
+--     __questgiver_ occurs 1 time.
+--            _item_ occurs 13 times.
+--        _qgfriend_ occurs 5 times.
+--      _questgiver_ occurs 6 times.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _reward_ gold
+Item _item_ ring
+
+Person _questgiver_ group Questor anyInfo 1011
+Person _qgfriend_ group Local_3.0 remote anyInfo 1012
+
+
+Clock _queston_ 00:00 0 flag 1 range 1 4
+
+
+--	Quest start-up:
+	start timer _queston_ 
+	log 1015 step 0 
+	get item _item_ 
+	create npc _qgfriend_ 
+
+_pcgetsgold_ task:
+	toting _item_ and _qgfriend_ clicked 
+	give pc _reward_ 
+	end quest 
+
+variable _pchasitem_
+_queston_ task:
+	make _item_ permanent 
+	change repute with _questgiver_ by -30 
+	end quest 
+
+variable _npcclicked_

@@ -1,0 +1,174 @@
+-- Quest: C:\QUESTS\WORKING\P0A01L00.Qbn.
+-- StartsBy: letter
+-- Questee: initiate
+-- Questor: vampire
+-- Repute: 01
+-- QuestId: 0
+Messages: 31
+Quest: P0A01L00
+DisplayName: The Rite of Acceptance
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+Dear %pcn,
+ 
+    For some time, we have watched you. In fact,
+ we have watched you since you received the unholy
+ blessing of vampirism. You have had your odd
+ and awkward moments, but we are not displeased
+ with the vampire you have become.
+    The time has come for you to learn of your
+ heritage, the proud lineage of %vam,
+ the greatest of the vampiric bloodlines. To
+ prove your allegiance, however, we require a
+ sacrifice.
+     There is a haunt nearby where lodges a
+ member of a lesser bloodline. Go to the place
+ called ___mondung_, and slay =monster_,
+ this foul insult to our race. When the deed
+ is completed, come to __questgiver_ in
+ ___questgiver_ and find me. I am instantly
+ recognizable: look for a =questgiver_.
+     I will wait for =1stparton_ days,
+ %pcf. After that time, I will leave.
+ I hope we do not miss one another.
+ 
+<ce>                              _questgiver_
+
+RefuseQuest:  [1001]
+Error: Questtext 1001 Called!
+
+AcceptQuest:  [1002]
+Error: Questtext 1002 Called!
+
+QuestFail:  [1003]
+<ce>                    Look, I don't want to be rude,
+<ce>                     but I'm expecting someone, so
+<ce>                            just shove off.
+
+QuestComplete:  [1004]
+<ce>                     Excellent, %pcf. You'll make
+<ce>                 a fine member of %vam. Welcome to the
+<ce>                  family.  I am known as _questgiver_.
+<ce>                    %vam will continue to watch your
+<ce>                 progress, and we may contact you from
+<ce>                    time to time on family business.
+<ce>                  Here is a ring that marks you as one
+<ce>                                 of us.
+
+RumorsDuringQuest:  [1005]
+They say ___mondung_ is inhabited again by someone or something.
+<--->
+There's some weird =questgiver_ over at __questgiver_.
+
+RumorsPostfailure:  [1006]
+Thank %god that weird =questgiver_ left __questgiver_.
+<--->
+It seems that ___mondung_ has been abandoned once again.
+
+RumorsPostsuccess:  [1007]
+Lots of people are wondering what could have possibly slain a _monster_.
+<--->
+Wonder whether that _monster_ was killed by something much worse than it.
+
+QuestorPostsuccess:  [1008]
+Error: Questtext 1008 Called. Not sposed to be.
+
+QuestorPostfailure:  [1009]
+Error: Questtext 1009 Called. Not sposed to be.
+
+QuestLogEntry:  [1010]
+_questgiver_?  Never heard of %g2.  Does %g live around here?
+
+Message:  1011
+That =questgiver_ is a mentor of the vampiric bloodline, %vam.
+<--->
+_questgiver_ is a proud and capable member of %vam bloodline.
+
+Message:  1015
+%qdt:
+ I received a letter from
+ a member of my "family."
+ I have been told to slay a "member
+ of a lesser bloodline," presumably
+ not one of %vam, in a
+ place called ___mondung_.
+ Then I am to go to ___questgiver_
+ to __questgiver_ and see
+ a =questgiver_ by the
+ name of _questgiver_
+ before %g leaves in =1stparton_
+ days.
+
+Message:  1020
+<ce>                     A gaunt, pale child hands you
+<ce>                       a letter then darts away.
+
+Message:  1030
+<ce>                      You have slain the vampire
+<ce>                               =monster_.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 4 times.
+--               %g2 occurs 1 time.
+--              %god occurs 1 time.
+--              %pcf occurs 2 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--              %vam occurs 26 times.
+--       =1stparton_ occurs 4 times.
+--         =monster_ occurs 2 times.
+--      =questgiver_ occurs 5 times.
+--       ___mondung_ occurs 4 times.
+--    ___questgiver_ occurs 6 times.
+--         _monster_ occurs 2 times.
+--      _questgiver_ occurs 5 times.
+
+QBN:
+Item _reward_ ring
+Item _letter_ letter used QuestorOffer
+
+Person _questgiver_ factiontype Vampire_Clan remote anyInfo 1010 rumors 1011
+
+Place _mondung_ remote dungeon0
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+
+Foe _monster_ is Vampire
+
+--	Quest start-up:
+	_letter_ used do _readletter_ 
+	have _letter_ set _S.06_ 
+	give pc _letter_ notify 1020 
+	place foe _monster_ at _mondung_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+_mondead_ task:
+	killed 1 _monster_ 
+	say 1030 
+	create npc _questgiver_ 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 
+
+_readletter_ task:
+	reveal _mondung_ readmap
+	log 1015 step 0 
+
+_S.06_ task:
+	start timer _1stparton_ 

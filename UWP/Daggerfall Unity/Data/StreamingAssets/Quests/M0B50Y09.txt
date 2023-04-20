@@ -1,0 +1,139 @@
+-- Quest: C:\QUESTS\WORKING\M0B50Y09.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 50
+-- QuestId: 9
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 81
+Quest: M0B50Y09
+DisplayName: Hunt for a Gargoyle
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>              A certain merchant needs to have a monster,
+<ce>               a gargoyle to be precise, dispatched. The
+<ce>               pay is a modest _gold_ gold pieces. Can I
+<ce>                     have your help in this matter?
+
+RefuseQuest:  [1001]
+<ce>                      Hmmm. Not the brave, heroic
+<ce>                             sort I guess.
+
+AcceptQuest:  [1002]
+<ce>               It seems this merchant hired a wizard to
+<ce>                build him a grand mansion. Then the poor
+<ce>               fool tried to cheat the mage of his wages.
+<ce>               The wizard grew angry and animated one of
+<ce>                the stone gargoyles on the new mansion.
+<ce>                   It has been attacking the merchant
+<ce>                   ceaselessly. Go out to ___dungeon_
+<ce>                     and kill the thing. You've got
+<ce>                   =2dung_ days to complete the task.
+
+QuestComplete:  [1004]
+<ce>                        Hail to the hero, %pcn!
+<ce>                     Well done! This paltry fee of
+<ce>                    _gold_ is hardly a worthy reward
+<ce>                            for such a deed.
+
+RumorsDuringQuest:  [1005]
+<ce>                  The Mages Guild has refused to kill
+<ce>                that rampaging gargoyle. They claim its
+<ce>                    not their fault. Lazy bastards.
+
+RumorsPostfailure:  [1006]
+<ce>                 Some merchant was killed recently. I
+<ce>                 hear that a gargoyle was seen hovering
+<ce>                             over his body.
+
+RumorsPostsuccess:  [1007]
+<ce>                The Fighters Guild took out a gargoyle.
+<ce>                  Those guys are good to have around.
+
+QuestorPostsuccess:  [1008]
+<ce>                   Well done with the gargoyle %pcn.
+
+QuestorPostfailure:  [1009]
+<ce>                  That gargoyle killed the merchant.
+<ce>                  You should never have taken the job.
+<ce>                    Now you've made yourself and the
+<ce>                            guild look bad.
+
+QuestLogEntry:  [1010]
+On %qdt,
+ The Fighters Guild of ___qgiver_
+ charged me with the duty of destroying a
+ gargoyle that lairs in ___dungeon_.
+ I have =2dung_ days to finish the task.
+
+Message:  1011
+<ce>                        The _monster_ is dead.
+<ce>                         Hopefully that foolish
+<ce>                       merchant has learned never
+<ce>                            to cheat a mage.
+
+Message:  1080
+<ce>                     Maybe this map to ___newdung_
+<ce>                    will sweeten the deal a little.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--           =2dung_ occurs 3 times.
+--       ___dungeon_ occurs 2 times.
+--       ___newdung_ occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--            _gold_ occurs 2 times.
+--         _monster_ occurs 1 time.
+
+QBN:
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _dungeon_ remote dungeon
+Place _newdung_ remote dungeon8
+
+Clock _2dung_ 00:00 0 flag 17 range 0 2
+Clock _end_ 00:00
+
+Foe _monster_ is Gargoyle
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	pick one of _map_ _nomap_ 
+	place foe _monster_ at _dungeon_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _monster_ saying 1011 
+
+_victory_ task:
+                when _S.01_ and _qgclicked_
+	give pc _gold_ 
+                start timer _end_
+
+_end_ task:
+	end quest 
+
+_qgclicked_ task:
+               clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _clearclick_ 
+
+variable _map_
+variable _nomap_
+_S.06_ task:
+	when _map_ and _victory_ 
+	reveal _newdung_ readmap
+    say 1080

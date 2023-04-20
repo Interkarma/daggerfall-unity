@@ -1,0 +1,359 @@
+-- Quest: C:\QUESTS\WORKING\K0C00Y07.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: merchant
+-- Repute: 0
+-- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 100
+Quest: K0C00Y07
+DisplayName: The Ransom
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       My poor darling _victim_
+<ce>                has been kidnapped by the Thieves Guild.
+<ce>                           Could you help me?
+                                     <--->
+<ce>                    The Thieves Guild has taken my
+<ce>                       dearest _victim_ away from
+<ce>             me and now they're demanding a ransom. I need
+<ce>                 someone to bring my lover back to me,
+<ce>                       any way they can. Please,
+<ce>                           will you help me?
+
+RefuseQuest:  [1001]
+<ce>                        You have a cold heart,
+<ce>                          %pcf. I guess I will
+<ce>                    have to face these kidnappers on
+<ce>                                my own.
+                                     <--->
+<ce>                        Then I'll find someone
+<ce>                              else, %pcn.
+
+AcceptQuest:  [1002]
+<ce>                   I can't pay you very much, %pcf.
+<ce>             I used most of my gold to buy this gem for the
+<ce>              ransom, but you can have the remainder of my
+<ce>              savings, _gold_ gold pieces, when my dearest
+<ce>                       _victim_ is back with me.
+<ce>                  The kidnappers want the _gem_ to be
+<ce>                      delivered to __kidnapper_ in
+<ce>                   ___kidnapper_ and I am to take no
+<ce>              longer than =2ransom_ days. At __kidnapper_,
+<ce>                    I am to look for a =kidnapper_,
+<ce>                       whose name's _kidnapper_.
+<ce>                     Nothing matters but _victim_'s
+<ce>           safety, but if you ensure that without paying the
+<ce>              ransom, I'll be very grateful. Like I said,
+<ce>                   it's all I have. Good luck and may
+<ce>                            %god Bless You.
+                                     <--->
+<ce>                     Thank %god. Here's the _gem_
+<ce>               the kidnappers want for ransom. If you can
+<ce>                     find a way to rescue _victim_
+<ce>               without paying the ransom, I would be very
+<ce>             grateful. After buying that gem, my savings is
+<ce>             almost entirely gone. You can, of course, have
+<ce>                     _gold_ gold, once _victim_ has
+<ce>            returned -- that will make my life savings gone
+<ce>             entirely, but it'll be worth it. If the ransom
+<ce>               must be paid, be sure to take no more than
+<ce>              =2ransom_ days to do it. The kidnappers have
+<ce>                     an agent in __kidnapper_ over
+<ce>                    in ___kidnapper_, a =kidnapper_
+<ce>                   named _kidnapper_. Once =2ransom_
+<ce>           days have passed, %g will send word to %g3 friends
+<ce>                   whereever they're keeping _victim_
+<ce>              and they'll kill %g2. Please don't let that
+<ce>                       happen. Good luck, friend.
+
+Message:  1099
+<ce>                          _victim_! Oh, thank
+<ce>                   %god you're alive. And, good %pcf,
+<ce>                 you didn't even use the ransom _gem_.
+<ce>                 I cannot thank you enough. Here is the
+<ce>                   _gold_ gold I promised, but it is
+<ce>                   hardly enough. You have my deepest
+<ce>                         gratitude, my friend.
+
+QuestComplete:  [1004]
+<ce>                    Take it. It's yours my friend.
+
+RumorsDuringQuest:  [1005]
+_qgiver_ can scarcely afford to pay _victim_'s ransom.
+<--->
+_victim_'s kidnapping has scared everyone in ___qgiver_.
+
+RumorsPostfailure:  [1006]
+The thieves who kidnapped _victim_ will probably never come to justice.
+
+RumorsPostsuccess:  [1007]
+_victim_ was rescued from the thieves by a wonderful %ra mercenary.
+
+QuestorPostsuccess:  [1008]
+You rescued _victim_, %pcf. Of course, I'll help you any way I can.
+
+QuestorPostfailure:  [1009]
+<ce>                    Listen, I don't want to talk to
+<ce>                   you or anyone else right now. Why
+<ce>                         don't you get stuffed?
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ __qgiver_, ___qgiver_
+ has sent me with a _gem_ to
+ ransom %g3 lover, _victim_
+ from the Thieves Guild. The ransom
+ must be paid in =2ransom_ days or they
+ will kill _victim_.
+ _kidnapper_ is the agent
+ of the kidnappers who awaits me in
+ __kidnapper_ in ___kidnapper_.
+ Of course, _qgiver_
+ wants me, if possible, to rescue %g3
+ lover without paying the ransom.
+
+Message:  1011
+<ce>                         Do you give the _gem_
+<ce>                            to _kidnapper_?
+
+Message:  1012
+<ce>                   You're %pcf, aintcha? The Thieves
+<ce>                 Guild's fond of you, kid. Oh, %oth, I
+<ce>                    see. You're working for _qgiver_
+<ce>              to make sure %g pays us with no funny stuff,
+<ce>                                 right?
+
+Message:  1013
+<ce>                         _victim_ will pay for
+<ce>                      your stupidity! %oth, %g'll
+<ce>                   be dead before =queston_ days have
+<ce>                            passed! =thug_!
+<ce>                          Rip this %ra apart!
+                                     <--->
+<ce>                           =thug_! Kill this
+<ce>                     very stupid %ra while I do the
+<ce>                           same to _victim_.
+
+Message:  1014
+<ce>                          _qgiver_ sent you?
+<ce>                        %oth, thank %god! Quick,
+<ce>                          let's get out here!
+
+Message:  1015
+=thug_,
+ 
+      The Guild could use your muscle on a
+ fairly routine kidnapping. The name of the
+ victim is _victim_
+ and after you've taken %g2 from %g3 home in
+ __qgiver_ in ___qgiver_,
+ go to ___mondung_.
+      Directions to ___mondung_
+ follow. I hope this isn't too difficult a
+ plan for you.
+ 
+<ce>                              _kidnapper_
+
+Message:  1016
+<ce>                         %pcf, I sure hope you
+<ce>                  know what you're doing. I'm glad to
+<ce>                      have my _gem_ back, but not
+<ce>                      at the expense of _victim_.
+<ce>                    If %g gets killed, do not expect
+<ce>                             my gratitude.
+
+Message:  1017
+<ce>                         _victim_! Thank %god
+<ce>                    you're all right! Thank you, my
+<ce>                   friend. I wish you didn't have to
+<ce>                         pay the ransom, %pcf,
+<ce>                    but it's most important that my
+<ce>                            dear _victim_ is
+<ce>                        back. Here is the _gold_
+<ce>                        gold pieces I promised.
+
+Message:  1018
+<ce>                    No wonder the Guild likes you.
+<ce>                  I'll make sure they hear about this
+<ce>                         too, %pcf. Now, go on
+<ce>                          back to _qgiver_ and
+<ce>                         tell %g2 that _victim_
+<ce>                      will be there shortly. Nice
+<ce>                        doing business with you.
+
+Message:  1019
+<ce>                        Ah, good. Let _qgiver_
+<ce>                         know that %g3 _victim_
+<ce>                       will be safe in ___qgiver_
+<ce>                        very shortly. Farewell.
+
+Message:  1020
+<ce>                           Yes, _victim_ was
+<ce>                   delivered just before you arrived,
+<ce>                       %pcf. Thank you for facing
+<ce>                       that dreadful _kidnapper_
+<ce>                    for me. Here is the _gold_ gold
+<ce>                           pieces I promised.
+
+Message:  1021
+<ce>                          _victim_ tells you
+<ce>                    %g can find %g3 way to %g3 lover
+<ce>                          _qgiver_ from here,
+<ce>                     thanks you, and sprints away.
+
+Message:  1022
+<ce>                           By now, _victim_
+<ce>                            is surely dead.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 7 times.
+--               %g2 occurs 3 times.
+--               %g3 occurs 12 times.
+--              %god occurs 5 times.
+--              %oth occurs 3 times.
+--              %pcf occurs 9 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 4 times.
+--         =2ransom_ occurs 4 times.
+--       =kidnapper_ occurs 2 times.
+--         =queston_ occurs 1 time.
+--            =thug_ occurs 3 times.
+--     ___kidnapper_ occurs 3 times.
+--       ___mondung_ occurs 2 times.
+--        ___qgiver_ occurs 4 times.
+--      __kidnapper_ occurs 4 times.
+--         __qgiver_ occurs 2 times.
+--             _gem_ occurs 6 times.
+--            _gold_ occurs 8 times.
+--       _kidnapper_ occurs 7 times.
+--          _qgiver_ occurs 8 times.
+--          _victim_ occurs 27 times.
+
+QBN:
+Item _gem_ gem
+Item _gold_ gold range 5 to 25
+Item _map_ letter used 1015
+
+Person _qgiver_ group Questor
+Person _victim_ face 1 group Group_7.0 local
+Person _kidnapper_ face 36 faction The_Thieves_Guild male remote
+
+Place _mondung_ remote dungeon
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+Clock _2ransom_ 00:00 0 flag 17 range 1 2
+
+Foe _thug_ is Rogue
+
+--	Quest start-up:
+	start timer _2ransom_ 
+	start timer _queston_ 
+	log 1010 step 0 
+	get item _gem_ 
+	_map_ used do _S.08_ 
+	place npc _victim_ at _mondung_ 
+
+_queston_ task:
+	have _gem_ set _S.20_ 
+	end quest 
+
+variable _2ransom_
+_S.02_ task:
+	toting _gem_ and _kidnapper_ clicked 
+	repute with _kidnapper_ exceeds 10 do _S.05_ 
+
+_S.03_ task:
+	say 1019 
+
+_S.04_ task:
+	create foe _thug_ every 1 minutes 1 times with 100% success 
+	get item _gem_ 
+	give item _map_ to _thug_ 
+	hide npc _kidnapper_ 
+	say 1013 
+
+_S.05_ task:
+	prompt 1012 yes _S.07_ no _S.04_ 
+
+_S.06_ task:
+	when _S.02_ and not _S.05_ 
+	prompt 1011 yes _S.03_ no _S.04_ 
+
+_S.07_ task:
+	get item _gem_ 
+	say 1018 
+
+_S.08_ task:
+	reveal _mondung_
+
+_S.09_ task:
+	clicked npc _victim_ 
+	hide npc _victim_ 
+	say 1014 
+	add _victim_ face 
+
+_reward_ task:
+	when _S.11_ and _S.09_ 
+	say 1099 
+	change repute with _qgiver_ by +15 
+	change repute with _kidnapper_ by -10 
+
+_S.11_ task:
+	toting _gem_ and _qgiver_ clicked 
+	clear _qgclicked_ 
+
+_S.12_ task:
+	when _S.11_ and not _S.09_ and not _S.04_ 
+	get item _gem_ 
+
+_S.13_ task:
+	when _S.11_ and not _S.09_ and _S.04_ 
+	say 1016 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+	have _gem_ set _S.15_ 
+
+variable _S.15_
+_S.16_ task:
+	when _qgclicked_ and not _S.15_ and _S.09_ 
+	say 1017 
+	change repute with _qgiver_ by +8 
+
+_S.17_ task:
+	when _qgclicked_ and _S.07_ 
+	when _qgclicked_ and _S.03_ 
+	say 1020 
+
+_S.18_ task:
+	when not _S.15_ or not _S.09_ or not _S.03_ or not _S.07_ 
+	clear _qgclicked_ 
+
+_S.19_ task:
+	when _queston_ and _S.09_ and not _qgclicked_ 
+	say 1021 
+
+_S.20_ task:
+	make _gem_ permanent 
+
+_S.21_ task:
+	when _queston_ and not _S.09_ and not _S.07_ and not _S.17_ 
+	say 1022 
+	change repute with _qgiver_ by -5 
+
+_S.22_ task:
+	when not _S.09_ and _S.11_ 
+	get item _gem_ 
+	clear _S.11_ 
+
+_givereward_ task:
+	when _reward_ or _S.16_ or _S.17_ 
+	give pc _gold_ 
+	end quest 

@@ -1,0 +1,186 @@
+-- Quest: C:\QUESTS\WORKING\S0000021.Qbn.
+-- Main story quest.
+-- QuestId: 21
+Messages: 13
+Quest: S0000021
+DisplayName: Lich's Soul
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                        %pcf, I am so glad you
+<ce>                answered my letter. I hope my messenger
+<ce>                   was gentle. You have been a loyal
+<ce>                servant in the past. Not as loyal as my
+<ce>                  living dead, but far more versatile.
+<ce>                 My need involves the lowest depths of
+<ce>                   Castle Sentinel, and the reward is
+<ce>               knowledge that only the dead can provide.
+<ce>                            Are you willing?
+
+RefuseQuest:  [1001]
+<ce>                  You must have strong sentiments for
+<ce>                      Queen Akorithi. What a pity.
+
+AcceptQuest:  [1002]
+<ce>                   How amusing. I am looking for the
+<ce>                 answer to a question. It doesn't exist
+<ce>                 among the living, but may exist among
+<ce>                 the dead. I want you to bring me back
+<ce>                 the ghost of Prince Karolis, the great
+<ce>                  grandfather of the late King Camaron
+<ce>                  of Sentinel. Karolis was a sorcerer
+<ce>                   of no mean skill. He is now a lich
+<ce>                   deep in the bowels of the Castle.
+<ce>                 I am giving you a special _scarab_. If
+<ce>                  it is close to him when you destroy
+<ce>                    his physical body, his soul will
+<ce>                  be trapped in the _scarab_. Bring it
+<ce>                   back to me, and I will tell you a
+<ce>                      tale few mortals have heard.
+
+QuestComplete:  [1004]
+<ce>                     Well done %pcf. I am sure the
+<ce>                prince will be most cooperative. Please
+<ce>                       accept this _magicitem_ as
+<ce>                a token of my appreciation. In addition,
+<ce>               I have decided that it is time for someone
+<ce>               outside of Tiber Septim's line to know the
+<ce>                truth about the Underking. As you know,
+<ce>             Tiber Septim was the first emperor of Tamriel.
+<ce>               Toward the end of his wars of conquest, he
+<ce>              betrayed his Battlemage, Zurin Arctus. When
+<ce>               Zurin died, his soul refused to leave his
+<ce>               body. Something to do with the mysterious
+<ce>               Numidium. Since that time Zurin Arctus has
+<ce>                       lived on as the Underking.
+<ce>                                    
+<ce>                 The Underking and his agents have been
+<ce>                 a thorn in my side for centuries. Just
+<ce>               remember, should the Underking regain his
+<ce>                 mortal body, he would surely throw all
+<ce>                       of Tamriel into conflict.
+
+QuestLogEntry:  [1010]
+%qdt:
+ The King of Worms has promised to tell
+ me dark secrets if I fetch the spirit
+ of a lich. Not just any lich, but the
+ former Prince Karolis of Sentinel that
+ haunts the dungeons of the royal castle.
+ I must destroy his body while carrying
+ a special _scarab_ that will trap Prince
+ Karolis' soul.
+
+Message:  1011
+<ce>               Stitched into the zombie's decaying flesh
+<ce>                     you see the following message:
+<ce>                                    
+ %pcn,
+ 
+ It would be an honor to have you visit
+ me in my demense at your convenience.
+ I have a small matter that you are
+ ideally suited for. As always, my
+ servants will test your mettle. Feel
+ free to dispense with them. They can
+ always be raised again.
+ 
+<ce>                           The King of Worms,
+<ce>                        Master of Scourg Barrow
+
+Message:  1012
+<ce>             The scarab given to you by the King of Worms.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 2 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--       _magicitem_ occurs 1 time.
+--          _scarab_ occurs 3 times.
+
+QBN:
+Item _scarab_ scarab used 1012
+Item _magicitem_ magic_item
+
+Person _kingoworms_ named King_of_Worms atHome
+Person _lichface_ face 169 named Lord_Darkworth
+Person _fakekow_ face 1 named King_of_Worms
+
+Place _sentinel_ permanent SentinelCastle
+
+
+Foe _zombie_ is Zombie
+Foe _lich_ is Lich
+
+--	Quest start-up:
+	dialog link for item _magicitem_ 
+	dialog link for item _scarab_ 
+	repute with _kingoworms_ exceeds 0 do _S.01_ 
+
+_S.00_ task:
+	level 7 completed 
+
+variable _S.01_
+_S.02_ task:
+	clicked npc _kingoworms_ 
+
+_S.03_ task:
+	when _S.02_ and _S.15_ 
+	prompt QuestorOffer yes yes no _no_ 
+
+until _killmon_ performed:
+	clear _S.02_ 
+
+yes task:
+	log 1010 step 0 
+	get item _scarab_ 
+	say AcceptQuest 
+	place foe _lich_ at _sentinel_ marker 0
+
+_no_ task:
+	say RefuseQuest 
+	end quest 
+
+_S.06_ task:
+	when _S.00_ and _S.01_ 
+	send _zombie_ every 1410 minutes with 100% success 
+
+until _S.06_ performed:
+	mute npc _kingoworms_ 
+
+_S.07_ task:
+	injured _zombie_ 
+
+_S.08_ task:
+	killed 1 _lich_ 
+	setvar _killmon_
+	add _lichface_ face 
+
+variable _killmon_
+_S.10_ task:
+	when _S.02_ and _killmon_
+
+_S.11_ task:
+	when not _S.08_ and _S.10_ 
+	get item _scarab_ 
+
+_givereward_ task:
+	when _S.10_ and _S.08_ 
+	give pc _magicitem_ 
+	start task _S.14_ 
+	drop _lichface_ face 
+	change repute with _kingoworms_ by +15 
+	end quest 
+
+KingOfWormsGotTotem _S.13_
+KingOfWormsSatisfied _S.14_
+_S.15_ task:
+	killed 1 _zombie_ 
+	say 1011 
+	unset _S.06_ 
+
+variable _S.16_
+variable _delay_

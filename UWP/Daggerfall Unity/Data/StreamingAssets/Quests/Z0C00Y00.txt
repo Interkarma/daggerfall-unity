@@ -1,0 +1,195 @@
+-- Quest: C:\QUESTS\WORKING\Z0C00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: Mephala
+-- Repute: 0
+-- QuestId: 0
+Messages: 42
+Quest: Z0C00Y00
+DisplayName: Mephala's Quest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>              I might have known it would be you. I ought
+<ce>            to never answer these summonings. Well, perhaps
+<ce>               it is natural for a worm to want to evolve
+<ce>                  into a wasp. Very well, %pcf, I will
+<ce>             give you power, but you must do something for
+<ce>               me first. I need someone to assassinate a
+<ce>              certain troublesome minor noble. Can I rely
+<ce>                            on you for that?
+
+RefuseQuest:  [1001]
+<ce>               That is just as well. I have better uses
+<ce>                 for my time than building a power base
+<ce>                   for ungrateful, lazy guttersnipes.
+
+AcceptQuest:  [1002]
+<ce>             Well, that's something, anyhow. You can find
+<ce>                     this irksome official _enemy_
+<ce>              in __palace_, snug and secure in his palace,
+<ce>                as he believes. I don't know how you're
+<ce>             going to gain entry, but perhaps you will come
+<ce>             up with an idea. Perhaps. If you don't manage
+<ce>                  to kill yourself, go to ___qgfriend_
+<ce>              and I'll arrange for a servant to bring you
+<ce>                your new power source, the _artifact_. I
+<ce>                   will ask my servant _qgfriend_ to
+<ce>           wait for you for =1stparton_ days at __qgfriend_.
+<ce>                 Do not, please, be late. That is all.
+
+QuestFail:  [1003]
+<ce>                     No, no, no, no! You kill the
+<ce>                          knight in __palace_
+<ce>                    first, then you come to see me!
+<ce>                        %oth, Mephala was right.
+
+QuestComplete:  [1004]
+<ce>                    Good day, %pcf, I'm _qgfriend_.
+<ce>            Mephala told me that you might show up, but she
+<ce>             did cast some doubts about the chances of you
+<ce>                 surviving the encounter with _enemy_.
+<ce>           Well, it's a good thing I brought the Blade, then,
+<ce>              isn't it? Sorry if you got a bad talking to
+<ce>                       from Mephala. With _enemy_
+<ce>               dead, she should be in a lot better mood.
+<ce>                    And for that alone, I thank you.
+
+--removed odd <---> in 1004.
+
+RumorsDuringQuest:  [1005]
+_enemy_ says %g can find %g3 way to the headquarters of the Dark Brotherhood.
+<--->
+The Dark Brotherhood must be terrified with _enemy_ working against them.
+
+RumorsPostfailure:  [1006]
+The Dark Brotherhood sent someone to get _enemy_, but they couldn't kill %g2!
+<--->
+After that failed assassination attempt, _enemy_ has moved out of __palace_.
+
+RumorsPostsuccess:  [1007]
+_enemy_ must have been too close to finding the location of Nightside Asylum.
+<--->
+I guess the Dark Brotherhood heard about _enemy_ and %g3 ambitions.
+
+Message:  1011
+_qgfriend_ is that snobby =qgfriend_ slumming in __qgfriend_, %di of here.
+<--->
+_qgfriend_ is the name of that =qgfriend_ %di of here in __qgfriend_.
+
+Message:  1012
+_qgfriend_ is one of Mephala's agents in %reg, operating out of __qgfriend_.
+<--->
+_qgfriend_ is a pawn of Mephala; %g's a =qgfriend_ at __qgfriend_.
+
+Message:  1013
+Mephala is the Daedra Regent of Murder and Patroness of the Dark Brotherhood.
+<--->
+Mephala is one of the Princes of Oblivion whose sphere is Murder.
+
+Message:  1014
+<ce> The _artifact_ is an artifact of vampiric power, draining its victim
+ of life, even as it feeds its owner.
+
+Message:  1020
+%qdt:
+ I have made a contract with one of the Daedra
+ Princes, Mephala -- I will slay an official
+ named _enemy_ and she will give me
+ an artifact called the _artifact_. Her contact
+ _qgfriend_ will wait for me for =1stparton_
+ days in __qgfriend_ of ___qgfriend_.
+ The only other complication is that Mephala tells me
+ that _enemy_ lives in the palace
+ at __palace_. Could be difficult to
+ get to %g2.
+
+Message:  1030
+<ce>                       Mephala would be proud--
+<ce>                         _enemy_ is dead.  Time
+<ce>                          to make your escape.
+
+Message:  1040
+<ce>              Who are you and what are you doing in here?
+
+Message:  1041
+<ce>           You sneaking assassins are all the same.  That's
+<ce>           why I decided to get myself some real protection.
+<ce>               =bodyguard_!  Wake up, you big oaf.  Kill!
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 2 times.
+--                %g occurs 2 times.
+--               %g2 occurs 3 times.
+--               %g3 occurs 8 times.
+--              %oth occurs 1 time.
+--              %pcf occurs 3 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--       =1stparton_ occurs 2 times.
+--       =bodyguard_ occurs 1 time.
+--        =qgfriend_ occurs 5 times.
+--         __palace_ occurs 4 times.
+--       __qgfriend_ occurs 6 times.
+--        _artifact_ occurs 3 times.
+--           _enemy_ occurs 18 times.
+--        _qgfriend_ occurs 8 times.
+
+QBN:
+Item _artifact_ artifact Ebony_Blade anyInfo 1014
+
+Person _questgiver_ face 112 named Mephala remote anyInfo 1013
+Person _qgfriend_ group Librarian remote anyInfo 1011
+Person _enemy_ face 1 factiontype Knightly_Guard remote
+
+Place _palace_ remote palace
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+
+Foe _monster_ is Knight
+Foe _guards_ is Warrior
+Foe _bodyguard_ is Giant
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1020 step 0 
+	pc at _palace_ set _S.06_ 
+	place npc _enemy_ at _palace_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_pcgetsgold_ task:
+	when _npcclicked_ and _mondead_ 
+	give pc _artifact_ 
+	end quest 
+--removed unnecessary delay
+
+_mondead_ task:
+	killed 1 _monster_ 
+	say 1030 
+
+_npcclicked_ task:
+	clicked npc _qgfriend_ 
+
+_clearclick_ task:
+	when _npcclicked_ and not _mondead_ 
+	say 1003
+	clear _npcclicked_ _clearclick_ 
+
+_S.06_ task:
+	create foe _guards_ every 2 minutes 10 times with 25% success 
+	hide npc _enemy_ 
+	place foe _monster_ at _palace_ 
+
+_S.07_ task:
+	injured _monster_ 
+	create foe _bodyguard_ every 1 minutes 1 times with 100% success 
+	say 1041 
+
+_greklith_ task:
+	injured _guards_ saying 1040 

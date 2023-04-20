@@ -1,0 +1,327 @@
+-- Quest: C:\QUESTS\WORKING\N0B11Y18.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 11
+-- QuestId: 18
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 64
+Quest: N0B11Y18
+DisplayName: Former Student Part I
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>               You are a loyal member of the Mages Guild,
+<ce>                 are you not, %pct?  I have some guild
+<ce>                  business of the gravest import that
+<ce>                      I would like you to handle.
+
+RefuseQuest:  [1001]
+<ce>              Perhaps you are not as loyal as I thought.
+
+AcceptQuest:  [1002]
+<ce>               Very good. There is a rebel mage that we
+<ce>                need eliminated, by the name of _rebel_.
+<ce>              A former pupil of mine, showed some promise
+<ce>            but lacked the loyalty to the ancient principles
+<ce>               of the Guild that are so important to its
+<ce>               continued survival.  We have learned that
+<ce>            %g is currently doing some kind of unsanctioned
+<ce>               research over in ___rebelhouse_, apparently
+<ce>            oblivious to %g3 danger.  You have =qtime_ days
+<ce>            to dispose of this menace and report back to me.
+
+QuestFail:  [1003]
+<ce>                             Begone, %pcn.
+
+QuestComplete:  [1004]
+<ce>                   I made this _reward_ myself as a
+<ce>               token of my appreciation for your service
+<ce>                          to the Mages Guild.
+
+Message:  1020
+%qdt:
+ I have undertaken to find and
+ destroy a rebel mage, who currently
+ resides in ___rebelhouse_.  Once I
+ have disposed of this mage, _rebel_,
+ I am to report back to _questgiver_ of
+ ___questgiver_'s Mages Guild.
+ I have =qtime_ days.
+
+Message:  1021
+%qdt:
+ I agreed to spare _rebel_'s life.
+ He said I should just tell _questgiver_
+ that I found no sign of _rebel_ in 
+ ___rebelhouse_, except for a letter which
+ he gave me.
+
+Message:  1030
+<ce>                   So, _questgiver_ has sent another
+<ce>                  of %g3 lackeys to bring me to heel.
+<ce>                 The old women who run the Mages Guild
+<ce>               have no sense of adventure, take no risks,
+<ce>                dare nothing, and learn nothing.  I have
+<ce>               never lifted a finger against them, except
+<ce>                to repudiate their control.  Yet, simply
+<ce>               because I refuse to abide by their rules,
+<ce>               the Mages Guild would slay me!  Why do you
+<ce>               give them your blind obedience, killing on
+<ce>                command like a hired assassin?  Join me
+<ce>                       and we will defy them all!
+
+Message:  1031
+<ce>                Wonderful!  Just tell old _questgiver_
+<ce>               that I was not here, but left this letter
+<ce>                  for %g2.  I must depart, but I will
+<ce>                  contact you as soon as I can cook us
+<ce>                 up a truly smashing adventure.  Ta ta!
+
+Message:  1032
+<ce>                Well then, I shall have to convince you
+<ce>               the hard way.  Defend yourself, mageling!
+
+Message:  1040
+Dear _questgiver_,
+ 
+   So sorry I missed you.  I would love
+ to catch up on old times with you. Do you
+ remember the days when I dutifully learned
+ at your knee, as if you had more to teach me
+ than the stale repetition of past greatness?
+ =mage1_, the Archmagister =mage3_ --
+ in their day the Mages Guild was an institution
+ worthy of respect.  No more. I cannot offer my
+ allegiance to a Guild whose sole purpose is to
+ quash all original thought.
+ 
+   If you send more of your enforcers against
+ me, I will be forced to defend myself.  Consider
+ yourself warned.
+ 
+<ce>                           Your humble pupil,
+<ce>                                    
+<ce>                                _rebel_
+
+Message:  1041
+<ce>                     Why...that impertinent!  I am
+<ce>                      speechless!  You can now see
+<ce>                      why _rebel_ must be stopped
+<ce>                   at all costs, before he undermines
+<ce>                    everything the Guild stands for.
+<ce>                   It is unfortunate that you missed
+<ce>                 that miserable little sot, but I have
+<ce>                       no doubt that we will soon
+<ce>                         track him down again.
+
+Message:  1042
+<ce>                   Very good, %pct.  The Mages Guild
+<ce>                  cannot survive if we do not enforce
+<ce>                 our own rules, harsh as they may seem.
+
+Message:  1050
+<ce>                    Stop this pointless attack, and
+<ce>                            join me instead!
+
+Message:  1051
+<ce>                    Surely you are ready to concede
+<ce>              my point.  We could have such fun together!
+
+Message:  1052
+<ce>               _questgiver_ has taught you persistence,
+<ce>                at least.  But why remain a slave to the
+<ce>                rules and regulations of the hidebound?
+<ce>                  Join my merry band of Guild defiers!
+
+Message:  1053
+<ce>                 You are beginning to try my patience,
+<ce>                  but I will give you one last chance.
+<ce>                   Cease your attack, and I will let
+<ce>                          bygones be bygones.
+
+Message:  1060
+<ce>                 Perhaps we should take this outside.
+
+Message:  1061
+<ce>                          Yoo-hoo, over here!
+
+Message:  1062
+<ce>               Did _questgiver_ forget to tell you about
+<ce>               my skill in magicka when %g was preaching
+<ce>                about my disloyalty and insubordination?
+
+Message:  1063
+<ce>          Missed me again, my good Guild Drone.  Why haven't
+<ce>              your Guild masters taught you these tricks?
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 5 times.
+--               %g2 occurs 3 times.
+--               %g3 occurs 2 times.
+--              %pcn occurs 2 times.
+--              %pct occurs 2 times.
+--              %qdt occurs 2 times.
+--           =mage1_ occurs 1 time.
+--           =mage3_ occurs 1 time.
+--           =qtime_ occurs 4 times.
+--    ___questgiver_ occurs 1 time.
+--     __rebelhouse_ occurs 3 times.
+--      _questgiver_ occurs 8 times.
+--           _rebel_ occurs 6 times.
+--          _reward_ occurs 1 time.
+
+QBN:
+Item _letter_ letter used 1040
+Item _reward_ magic_item
+
+Person _rebel_ named Baltham_Greyman
+Person _questgiver_ group Questor
+
+Place aide remote dungeon
+Place _rebelhouse_ remote house1
+
+Clock _qtime_ 00:00 0 flag 17 range 0 2
+Clock _S.04_ 00:01 00:05
+Clock _S.05_ 00:01 00:10
+Clock _S.06_ 00:01 00:14
+Clock _healer_ 00:02 00:18
+
+Foe _mage1_ is Mage
+Foe _mage2_ is Mage
+Foe _mage3_ is Mage
+Foe _mage4_ is Mage
+Foe _F.04_ is Mage
+
+--	Quest start-up:
+	start timer _qtime_
+	log 1020 step 0 
+	place npc _rebel_ at _rebelhouse_ 
+
+_qtime_ task:
+	end quest 
+
+_S.01_ task:
+	clicked npc _rebel_ 
+	prompt 1030 yes _S.02_ no _S.03_ 
+	hide npc _rebel_
+	--changed "place npc _rebel_ at aide" to "hide" action. Classic would transfer the NPC away, hiding is far easier
+
+_qgclicked_ task:
+  clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.01_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 
+
+_S.02_ task:
+	start quest 502 502 
+	log 1021 step 1 
+	get item _letter_ 
+	say 1031 
+	remove foe _mage2_
+	remove foe _F.04_
+	remove foe _mage1_
+	remove foe _mage4_
+	remove foe _mage3_
+	--changed "place foe _mage2_ at aide" etc to "remove foe," same as with hide npc reason
+
+_S.03_ task:
+	start timer _S.04_ 
+	--S.14 timer was nonexistent. changed to S.04
+	say 1032 
+    hide npc _rebel_
+	place foe _mage1_ at _rebelhouse_ 
+	cast Spell_Reflection spell on _mage1_ 
+
+_S.04_ task:
+	pc at _rebelhouse_ set _S.19_ 
+	remove foe _mage1_
+	say 1060 
+--"place foe" not known to support "say ###." moved to its own line.
+--changed "place foe at false dungeon" to "remove foe"
+
+_S.05_ task:
+	create foe _mage3_ every 1 minutes 1 times with 100% success
+	say 1061 
+	start timer _S.06_ 
+	remove foe _mage2_
+--"create foe" not known to support "say ###." moved to its own line.
+--changed "place foe at false dungeon" to "remove foe"
+
+_S.06_ task:
+	create foe _mage4_ every 1 minutes 1 times with 100% success
+	say 1062 
+	start timer _healer_ 
+	remove foe _mage3_
+	--"create foe" not known to support "say ###." moved to its own line.
+	--changed "place foe at false dungeon" to "remove foe"
+
+_healer_ task:
+	create foe _F.04_ every 1 minutes 1 times with 100% success
+	say 1063 
+	remove foe _mage4_
+	--"create foe" not known to support "say ###." moved to its own line.
+	--changed "place foe at false dungeon" to "remove foe"
+
+_S.08_ task:
+	killed 1 _mage2_ 
+	killed 1 _F.04_ 
+	killed 1 _mage4_ 
+	killed 1 _mage3_ 
+	killed 1 _mage1_ 
+
+_S.09_ task:
+	when _S.08_ or _S.02_ 
+	stop timer _healer_ 
+	stop timer _S.06_ 
+	stop timer _S.05_ 
+	stop timer _S.04_ 
+
+_S.10_ task:
+	injured _mage1_ 
+	cast Heal spell on _mage1_ 
+
+_S.11_ task:
+	injured _mage2_ 
+	prompt 1050 yes _S.02_ no _S.03_ 
+	cast Heal spell on _mage2_ 
+
+_S.12_ task:
+	injured _mage3_ 
+	prompt 1051 yes _S.02_ no _S.03_ 
+	cast Heal spell on _mage3_ 
+
+_S.13_ task:
+--boar task renamed to _S.13_. Variables should have underscores
+	injured _mage4_ 
+	prompt 1052 yes _S.02_ no _S.03_ 
+
+
+_S.14_ task:
+	injured _F.04_ 
+	prompt 1053 yes _S.02_ no _S.03_ 
+
+_S.15_ task:
+	toting _letter_ and _questgiver_ clicked 
+	say 1041 
+
+_success_ task:
+	when _qgclicked_ and _S.08_ 
+	say 1042 
+
+_pcgetsgold_ task:
+	when _S.15_ or _success_ 
+	give pc _reward_ 
+	end quest 
+
+variable _S.19_
+_S.20_ task:
+	when _S.04_ and not _S.19_ and not _S.08_ 
+	create foe _mage2_ every 1 minutes 1 times with 100% success 
+	start timer _S.05_ 
+	cast Spell_Reflection spell on _mage2_ 

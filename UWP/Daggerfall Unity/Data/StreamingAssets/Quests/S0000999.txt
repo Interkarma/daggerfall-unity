@@ -1,0 +1,369 @@
+-- Quest: C:\QUESTS\WORKING\S0000999.Qbn.
+-- Main story quest.
+-- QuestId: 999
+Messages: 42
+Quest: S0000999
+DisplayName: Main Quest Backbone
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+Error: Questtext 1000 called on MAIN.Q
+
+RefuseQuest:  [1001]
+Error: Questtext 1001 called on MAIN.Q
+
+AcceptQuest:  [1002]
+Error: Questtext 1002 called on MAIN.Q
+
+QuestFail:  [1003]
+Error: Questtext 1003 called on MAIN.Q
+
+QuestLogEntry:  [1010]
+%qdt:
+ I am on a mission from the emperor to investigate
+ the shade of King Lysandus. His spirit has been
+ haunting the city of Daggerfall. The emperor
+ himself has charged me with the duty of laying
+ his ghost to rest.
+    There is also the minor matter of a letter
+ he sent to the Queen of Daggerfall. If I should
+ find out what happened to the letter, he would be
+ most appreciative.
+    Before landing in Daggerfall, a sudden storm
+ capsized the ship. I barely made it into this cave.
+
+Message:  1011
+%qdt:
+ I met with Lady Brisienna in a tavern room. She
+ told me that the three major powers of the Iliac
+ bay are Daggerfall, Wayrest, and Sentinel. If I
+ am to investigate the mystery of Lysandus' ghost,
+ I should start by speaking with the royal families
+ of these fiefdoms.
+
+Message:  1026
+<ce>       You are approached by a young page who smiles in recognition
+<ce>        and does not ask your name before he hands you a letter
+<ce>         addressed to you. To all of your questions, he merely
+<ce>                responds with a blank look and a smile.
+                                     <--->
+<ce>             A letter is pressed into your hand. You spin
+<ce>            to see who gave it to you. You catch a glimpse
+<ce>                of livery that vanishes into the crowd.
+                                     <--->
+<ce>              A page steps forward saying "Letter for you
+<ce>                     %pcn," and hands you a note.
+                                     <--->
+<ce>              A courier steps up to you with a letter in
+<ce>               hand. "I was told to give this letter to
+<ce>                someone fitting your description," says
+<ce>               the courier. As you take it, the courier
+<ce>                     turns and walks quickly away.
+                                     <--->
+<ce>               Reaching into your pack for something to
+<ce>             eat, you spy a note. It wasn't there before.
+                                     <--->
+<ce>             A redfaced courier startles you with a cry of
+<ce>                  "Letter for %pcn! Hey that must be
+<ce>                 you. Here, take this. Gotta go. Other
+<ce>                        deliveries to be made.
+
+Message:  1031
+<ce>                        %pcn, I have a special
+<ce>              task in mind for you. However, to be blunt
+<ce>             you have yet to prove yourself to me. I don't
+<ce>               know if I can trust you yet. I will watch
+<ce>            your actions and how you conduct yourself with
+<ce>             other members of my court and my family. That
+<ce>            will tell me if you have the proper character.
+                                     <--->
+<ce>              Your bravery and skill are beyond reproach.
+<ce>             If I felt I could trust you, I would send you
+<ce>            on a particularly sensative mission. Come back
+<ce>             and visit me when you shown I can trust you.
+
+Message:  1032
+<ce>                      %pcn, I have a special task
+<ce>            that would be perfect for you. However, I would
+<ce>            just be signing your death warrant if I were to
+<ce>            give it to you now. When you are more skillful
+<ce>              return to me and I may give it to you then.
+                                     <--->
+<ce>                   Its really too bad, %pcf. I have
+<ce>             a special assignment that requires someone I
+<ce>            trust, such as yourself. However, it also needs
+<ce>             someone of greater skill in order to survive.
+<ce>             Come back and visit me when you have improved
+<ce>                        your skills some more.
+
+Message:  1033
+<ce>                      %pcn, You might be just the
+<ce>               person ta help me. But I don't trusts ya
+<ce>                well nuff yet. If I hears that you are
+<ce>                 a standup %ra, maybe you should come
+<ce>                        back and ask me again.
+
+Message:  1034
+<ce>                    I could sure use yer help %pcn.
+<ce>               But you just ain't tough enough ta handle
+<ce>              what I gotta have done. You get better and
+<ce>                           then come see me.
+
+Message:  1035
+<ce>                I have delicate matters that might need
+<ce>               your touch. First you must prove yourself
+<ce>               worthy. Return to me when you have earned
+<ce>                  the trust to deserve my patronage.
+
+Message:  1036
+<ce>              You are trustworthy, that I know. However,
+<ce>              to be blunt, you are unskilled. Should you
+<ce>               gain greater skill and become a deadlier
+<ce>               opponent, I think I could give some very
+<ce>                           interesting work.
+
+Message:  1040
+%pcn,
+ 
+    Greetings and salutations. I hope your trip
+ was uneventful. They say that you are keenly
+ interested in the haunting of Daggerfall. My
+ father and King Lysandus were somewhat close.
+ Should you come visit me, I might be able to shed
+ some light upon recent events involving Lysandus.
+ 
+ Prince Lhotun,
+ Castle Sentinel
+
+Message:  1041
+Dear %pcf,
+ 
+    My eyes and ears abroad say that you are
+ interested in the fate of a certain letter.
+ Any emperor should not be so careless, nor should
+ a queen. You really should come visit me in
+ Castle Wayrest. I have some most interesting
+ tidbits that I am sure you would enjoy hearing.
+ 
+<ce>                              -- Morgiah
+<ce>                          Princess of Wayrest
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 3 times.
+--              %pcn occurs 7 times.
+--              %qdt occurs 2 times.
+--               %ra occurs 1 time.
+
+QBN:
+Item _I.00_ letter used 1040
+Item _I.01_ letter used 1041
+
+
+
+Clock mainquestclock 00:00 0 flag 9 range 0 0
+
+
+--	Quest start-up:
+	log 1010 step 0 
+
+_S.00_ task:
+	when Prince_Lhotun is available 
+
+_S.01_ task:
+	when Prince_Helseth is available 
+
+_S.02_ task:
+	when Medora is available 
+
+_S.03_ task:
+	when Princess_Morgiah is available 
+
+_S.04_ task:
+	when Queen_Aubk-i is available 
+
+_S.05_ task:
+	when Princess_Elysana is available 
+
+_S.06_ task:
+	when Cyndassa is available 
+
+_S.07_ task:
+	when _S.47_ and _S.48_ 
+	end quest 
+
+_S.08_ task:
+	when repute with Cyndassa is at least 0 
+
+_S.09_ task:
+	when repute with Princess_Elysana is at least 0 
+
+_S.10_ task:
+	when repute with Queen_Aubk-i is at least 0 
+
+_S.11_ task:
+	when repute with Princess_Morgiah is at least 0 
+
+_S.12_ task:
+	when repute with Medora is at least 0 
+
+_S.13_ task:
+	when repute with Prince_Helseth is at least 0 
+
+_S.14_ task:
+	when repute with Prince_Lhotun is at least 0 
+
+_S.15_ task:
+	level 5 completed 
+
+_S.16_ task:
+	level 4 completed 
+
+_S.17_ task:
+	level 8 completed 
+
+_S.18_ task:
+	level 3 completed 
+
+_S.19_ task:
+	level 3 completed 
+
+_S.20_ task:
+	level 6 completed 
+
+_S.21_ task:
+	level 5 completed 
+
+_S.22_ task:
+	when _S.04_ and _S.10_ and not _S.19_ 
+	say 1032 
+
+_S.23_ task:
+	when _S.06_ and _S.08_ and not _S.21_ 
+	say 1034 
+
+_S.24_ task:
+	when _S.05_ and _S.09_ and not _S.20_ 
+	say 1032 
+
+_S.25_ task:
+	when _S.01_ and _S.13_ and not _S.16_ 
+	say 1032 
+
+_S.26_ task:
+	when _S.00_ and _S.14_ and not _S.15_ 
+	say 1032 
+
+_S.27_ task:
+	when _S.02_ and _S.12_ and not _S.17_ 
+	say 1036 
+
+_S.28_ task:
+	when _S.03_ and _S.11_ and not _S.18_ 
+	say 1032 
+
+_S.29_ task:
+	when _S.04_ and not _S.10_ 
+	say 1031 
+
+_S.30_ task:
+	when _S.06_ and not _S.08_ 
+	say 1033 
+
+_S.31_ task:
+	when _S.05_ and not _S.09_ 
+	say 1031 
+
+_S.32_ task:
+	when _S.01_ and not _S.13_ 
+	say 1031 
+
+_S.33_ task:
+	when _S.00_ and not _S.14_ 
+	say 1031 
+
+_S.34_ task:
+	when _S.02_ and not _S.12_ 
+	say 1035 
+
+_S.35_ task:
+	when _S.03_ and not _S.11_ 
+	say 1031 
+
+_S.36_ task:
+	when _S.10_ and _S.19_ and _S.04_ 
+	start quest 5 5 
+	unset _S.04_ 
+
+_S.37_ task:
+	when _S.06_ and _S.08_ and _S.21_ 
+	start quest 7 7 
+	unset _S.30_ _S.23_ _S.06_ 
+
+_S.38_ task:
+	when _S.05_ and _S.09_ and _S.20_ and not _S.47_ 
+	start quest 6 6 
+	unset _S.05_ 
+
+_S.39_ task:
+	when _S.01_ and _S.13_ and _S.16_ and not _S.43_ 
+	start quest 2 2 
+	unset _S.01_ 
+
+_S.40_ task:
+	when _S.00_ and _S.14_ and _S.15_ 
+	start quest 1 1 
+	unset _S.00_ 
+
+_S.41_ task:
+	when _S.02_ and _S.12_ and _S.17_ 
+	start quest 3 3 
+	unset _S.34_ _S.27_ _S.02_ 
+
+_S.42_ task:
+	when _S.03_ and _S.11_ and _S.18_ 
+	start quest 4 4 
+	unset _S.03_ 
+
+ElysannaSatisfied _S.43_
+MetLadyBrisienna _S.44_
+	log 1011 step 1 
+
+_S.45_ task:
+	when _S.14_ and _S.15_ 
+	give pc _I.00_ notify 1026 
+
+_S.46_ task:
+	when _S.11_ and _S.18_ 
+	give pc _I.01_ notify 1026 
+
+MyniseraSatisfied _S.47_
+LiftedCurse _S.48_
+variable mainquestclock
+TookTheCure _S.50_
+variable _S.51_
+variable _S.52_
+variable _S.53_
+_S.54_ task:
+	when _S.51_ 
+	start quest 997 997 
+	clear _S.50_ 
+
+_S.55_ task:
+	when _S.52_ 
+	start quest 998 998 
+	clear _S.50_ 
+
+_S.56_ task:
+	when _S.53_ 
+	start quest 998 998 
+	clear _S.50_ 
+
+_S.57_ task:
+	when _S.50_ 
+	clear _S.52_ _S.51_ _S.54_ _S.55_ 
+	clear _S.50_ _S.57_ _S.53_ _S.56_ 
+
+OpenedShapeshifters _S.58_

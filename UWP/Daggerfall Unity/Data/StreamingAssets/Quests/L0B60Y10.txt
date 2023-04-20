@@ -1,0 +1,157 @@
+-- Quest: C:\QUESTS\WORKING\L0B60Y10.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Brotherhood
+-- Repute: 60
+-- QuestId: 10
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 24
+Quest: L0B60Y10
+DisplayName: The Veteran
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  This could be a tough one, even for
+<ce>                    you %pcf. It's one of the best
+<ce>                     fighters in all of %reg. Are
+<ce>                      you sure you want this job?
+
+RefuseQuest:  [1001]
+<ce>                   Don't blame you a bit. This could
+<ce>                        be a bit too dangerous.
+
+AcceptQuest:  [1002]
+<ce>                  Somehow I thought you might try for
+<ce>     this one. It's your funeral. This mark is no arena gladiator.
+<ce>                   We're talking about a veteran of
+<ce>                 the Betony war. Killed 9 men, if the
+<ce>                  stories are right. Go to _mondung_
+<ce>                     in ___mondung_. You'll be able
+<ce>                  to identify the mark easily because
+<ce>                   of the limp. A spear in the knee
+<ce>                  during the war caused it. Get back
+<ce>                       here in =1stparton_ days.
+
+QuestFail:  [1003]
+<ce>                   I don't know who you think you've
+<ce>                   killed, but it wasn't the target.
+<ce>                      Get back to ___mondung_ and
+<ce>                  finish what we were contracted for.
+
+QuestComplete:  [1004]
+<ce>                    What a battle! I heard about it
+<ce>                 already. Street gossip is faster than
+<ce>              a horse you know. Here's the _reward_ gold
+<ce>                       pieces for the job, %pcf.
+
+RumorsDuringQuest:  [1005]
+Such a shame, what's happening in Daggerfall.
+
+RumorsPostfailure:  [1006]
+I hear the queen is pregnant. At least that's what everyone is saying.
+
+RumorsPostsuccess:  [1007]
+Did you hear about that war hero? Killed in a duel. What a shame.
+
+QuestorPostsuccess:  [1008]
+You battle with that war hero is still being told %pcn.
+
+QuestorPostfailure:  [1009]
+You failed in your contract to kill the war hero. The brotherhood never forgets failure.
+
+Message:  1020
+%qdt:
+ My contract for the Dark Brotherhood
+ in ___questgiver_ is a war hero at _mondung_,
+ in ___mondung_. The deed must be
+ done in =1stparton_ days.
+
+Message:  1021
+<ce>                 "You have succeeded...where all...the
+<ce>               soldiers in the...war of Betony failed."
+<ce>                                    
+<ce>                   The contract has been fulfilled.
+
+Message:  1022
+<ce>                   "Do not think me a cripple, just
+<ce>                   because I have a limp. I'll still
+<ce>                       tear you limb from limb!"
+
+Message:  1023
+<ce>                   This isn't a man! It's a vampire!
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 3 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--       =1stparton_ occurs 4 times.
+--    ___questgiver_ occurs 1 time.
+--        __mondung_ occurs 8 times.
+--          _reward_ occurs 3 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ face 112 group Questor
+
+Place _mondung_ remote weaponstore
+
+Clock _1stparton_ 00:00 0 flag 18 range 0 2
+
+Foe _F.00_ is Ancient_vampire
+Foe _F.01_ is Ranger
+Foe _F.02_ is Monk
+Foe _F.03_ is Barbarian
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1020 step 0 
+	pick one of _S.06_ _S.07_ _S.08_ _onehour_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _S.02_ 
+	give pc _reward_ 
+	end quest 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+--removed duplicate clearclick here
+
+_S.02_ task:
+	killed 1 _F.00_ saying 1021 
+	killed 1 _F.03_ saying 1021 
+	killed 1 _F.02_ saying 1021 
+	killed 1 _F.01_ saying 1021 
+
+variable _queston_
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_S.06_ task:
+	place foe _F.00_ at _mondung_ 
+
+_S.07_ task:
+	place foe _F.01_ at _mondung_ 
+
+_S.08_ task:
+	place foe _F.02_ at _mondung_ 
+
+_onehour_ task:
+	place foe _F.03_ at _mondung_ 
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.02_
+	say 1003 
+	clear _qgclicked_ _clearclick_ 
+
+_S.11_ task:
+	injured _F.03_ saying 1022 
+	injured _F.02_ saying 1022 
+	injured _F.01_ saying 1022 
+	injured _F.00_ saying 1023 

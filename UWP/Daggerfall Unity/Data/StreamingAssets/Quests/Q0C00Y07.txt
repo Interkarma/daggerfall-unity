@@ -1,0 +1,155 @@
+-- Quest: C:\QUESTS\WORKING\Q0C00Y07.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: witch
+-- Repute: 0
+-- QuestId: 7
+Messages: 14
+Quest: Q0C00Y07
+DisplayName: The Imprisoned Witch
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                          Our sister _witch_
+<ce>                    has been imprisoned. We need
+<ce>                   someone like thee to rescue her.
+<ce>                           Art thou willing?
+
+RefuseQuest:  [1001]
+<ce>                       Thou hast a heart of ice,
+<ce>                           %pcf. For shame.
+
+AcceptQuest:  [1002]
+<ce>                   If thou does this for us, we will
+<ce>                   be very grateful indeed. Give her
+<ce>                  these clothes to disguise her when
+<ce>                     you find her in ___mondung_.
+<ce>                 We will expect both of you back here
+<ce>                   in =queston_ days if not sooner.
+
+QuestComplete:  [1004]
+<ce>                          _witch_, it does my
+<ce>                 heart good to see thee here and well.
+<ce>                         %pcf, you have today
+<ce>                         earned the respect of
+<ce>                              ==qgiver_.
+
+RumorsDuringQuest:  [1005]
+After they've finished interrogating _witch_, she's fire food.
+<--->
+There's going to be a hanging or a burning for _witch_ real soon.
+
+RumorsPostfailure:  [1006]
+_witch_'s execution was quite a sight. Fun for the whole family.
+<--->
+_witch_ is just ash now. All her spells couldn't help her.
+
+RumorsPostsuccess:  [1007]
+_witch_ got away. They say ==qgiver_ was behind it.
+<--->
+_witch_ was never brought to justice. Never even really tortured.
+
+QuestorPostsuccess:  [1008]
+_witch_ is recovering nicely, %pcf, you'll be glad to know.
+
+QuestorPostfailure:  [1009]
+<ce>                          Our sister _witch_
+<ce>                    is dead, burned alive. Perhaps
+<ce>                   thou could've saved her, perhaps
+<ce>                  not. But you are not welcome here.
+<ce>                  Perhaps not for quite a long time.
+
+QuestLogEntry:  [1010]
+%qdt:
+ ==qgiver_ have sent
+ me to ___mondung_
+ where _witch_, a
+ sister of the witches has been
+ imprisoned. I am to give her
+ a _clothes_ to disguise
+ her, and return to ==qgiver_
+ before =queston_ days
+ have passed.
+
+Message:  1011
+<ce>                          ==qgiver_ sent you?
+<ce>                        Praise ==daedra_! I'll
+<ce>                         put on the _clothes_
+<ce>                     and we can slip out of here.
+
+Message:  1012
+<ce>                          "It's _witch_, the
+<ce>                        prisoner! Stop! Witch!"
+                                     <--->
+<ce>                       "No more prison for you,
+<ce>                           _witch_! Straight
+<ce>                       to execution this time!"
+                                     <--->
+<ce>                             "Halt! You're
+<ce>                               _witch_!"
+
+Message:  1013
+<ce>                      "I think I can get back to
+<ce>                         ==qgiver_ from here,"
+<ce>                          _witch_ thanks you
+<ce>                         and goes on her way.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 5 times.
+--              %qdt occurs 1 time.
+--         ==daedra_ occurs 1 time.
+--         ==qgiver_ occurs 6 times.
+--         =queston_ occurs 3 times.
+--       ___mondung_ occurs 2 times.
+--         _clothes_ occurs 2 times.
+--           _witch_ occurs 16 times.
+
+QBN:
+Item _clothes_ womens_robe
+
+Person _qgiver_ group Questor
+Person _witch_ face 1 faction The_Prostitutes female remote
+Person _daedra_ face 105 factiontype Daedra
+
+Place _mondung_ remote dungeon3
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _guard_ is Warrior
+
+--	Quest start-up:
+	dialog link for person _daedra_ 
+	start timer _queston_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	get item _clothes_ 
+	place npc _witch_ at _mondung_ 
+
+_queston_ task:
+	end quest 
+
+_S.01_ task:
+	toting _clothes_ and _witch_ clicked 
+	create foe _guard_ every 2 minutes 30 times with 50% success msg 1012 
+	hide npc _witch_ 
+	say 1011 
+	add _witch_ face 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_S.03_ task:
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _S.03_ 
+
+_reward_ task:
+	when _qgclicked_ and _S.01_ 
+	give pc nothing 
+	end quest 
+
+_S.05_ task:
+	when _queston_ and _S.01_ 
+	say 1013 

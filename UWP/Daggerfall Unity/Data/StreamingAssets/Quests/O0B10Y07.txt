@@ -1,0 +1,145 @@
+-- Quest: C:\QUESTS\WORKING\O0B10Y07.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 10
+-- QuestId: 7
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 21
+Quest: O0B10Y07
+DisplayName: The Noble's Jewelry
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      We have had our eye on you
+<ce>                          %pcf. Never mind who
+<ce>                       "we" are. You're an up and
+<ce>                      coming member of this guild.
+<ce>                      If you were to do a special
+<ce>                       job for us, for no pay, we
+<ce>                      might look favorably on you
+<ce>                             in the future.
+<ce>                            What do you say?
+
+RefuseQuest:  [1001]
+<ce>                       Watch your back you dirty
+<ce>                            little turncoat!
+
+AcceptQuest:  [1002]
+<ce>                    Your assignment is very simple.
+<ce>                          The %rt in __palace_
+<ce>                   has recently "bought" a _jewelry_
+<ce>                of decent enough worksmanship that we're
+<ce>                innerested in taking a closer look. Yer
+<ce>             gonna have precisely =2palace_ days to find a
+<ce>             way into the palace, abscond with said bauble,
+<ce>              and be back here. Not impossible for a true
+<ce>                member of the Thieves Guild. So, what're
+<ce>                         you waiting for, %pcf?
+<ce>                             Off with you!
+
+QuestFail:  [1003]
+<ce>                         I said, off with you!
+
+QuestComplete:  [1004]
+<ce>                        Congratulations, %pcf.
+<ce>                       You'll be hearing from us
+<ce>                           not long from now.
+
+RumorsDuringQuest:  [1005]
+%t %rn is evidently proud of %g3 new _jewelry_. Everyone wants to see it.
+<--->
+Security is up in _palace_, apparently because of the new _jewelry_.
+
+RumorsPostfailure:  [1006]
+The %t's men managed to recover that _jewelry_ after the botched burglary.
+<--->
+The Thieves Guild wouldn't botch such an opportunity to get the _jewelry_.
+
+RumorsPostsuccess:  [1007]
+The Thieves Guild is getting pretty daring, stealing directly from the %t.
+<--->
+The Thieves Guild has successfully hidden the identity of the _palace_ burglar.
+
+QuestLogEntry:  [1010]
+%qdt:
+ To gain influence in the Thieves Guild,
+ I have agreed to break into
+ _palace_, the %t's palace
+ in __palace_ and steal the
+ %t's new _jewelry_. I have =2palace_ days to
+ have the _jewelry_ in _qgiver_'s
+ hands in ___qgiver_.
+
+Message:  1015
+<ce>                        You have the _jewelry_
+<ce>                       you have been sent to get.
+
+Message:  1020
+<ce>                        This must be the piece!
+
+
+-- Symbols used in the QRC file:
+--
+--               %g3 occurs 1 time.
+--              %pcf occurs 5 times.
+--              %qdt occurs 1 time.
+--               %rn occurs 1 time.
+--               %rt occurs 1 time.
+--                %t occurs 5 times.
+--         =2palace_ occurs 2 times.
+--        ___qgiver_ occurs 2 times.
+--         __palace_ occurs 2 times.
+--         _jewelry_ occurs 8 times.
+--          _palace_ occurs 18 times.
+--          _qgiver_ occurs 3 times.
+
+QBN:
+Item _jewelry_ trinket
+
+Person _qgiver_ group Questor
+
+Place _palace_ remote palace
+
+Clock _2palace_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Knight
+Foe _battlemage_ is Battle_mage
+Foe _F.02_ is 3 Archer
+Foe _F.03_ is Gargoyle
+
+--	Quest start-up:
+	place item _jewelry_ at _palace_ 
+	start timer _2palace_ 
+	log 1010 step 0 
+	pc at _palace_ set _S.02_ 
+
+_2palace_ task:
+	end quest 
+
+_S.01_ task:
+	toting _jewelry_ and _qgiver_ clicked 
+	give pc nothing 
+	change repute with _qgiver_ by +5 
+	end quest
+
+_qgtalk_ task:
+	clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgtalk_ and not _S.01_
+	say 1003
+	clear _clearclick_ _qgtalk_
+--added _qgtalk_ and _clearclick_
+
+_S.02_ task:
+	create foe _F.03_ every 11 minutes 3 times with 15% success 
+	create foe _F.00_ every 10 minutes 10 times with 15% success 
+	create foe _battlemage_ every 12 minutes 5 times with 15% success 
+	create foe _F.02_ every 13 minutes 20 times with 15% success 
+
+_S.04_ task:
+	clicked item _jewelry_
+                say 1020
+	say 1015 

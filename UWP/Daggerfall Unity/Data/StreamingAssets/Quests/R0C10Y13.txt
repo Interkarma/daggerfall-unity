@@ -1,0 +1,140 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y13.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 13
+Messages: 21
+Quest: R0C10Y13
+DisplayName: A Peace Offering
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  I have a mission of some diplomatic
+<ce>                    importance. A gift of peace that
+<ce>                 needs be exchanged.  As a favor to me,
+<ce>                 would you bring my gift to my friend,
+<ce>                               _contact_?
+
+RefuseQuest:  [1001]
+<ce>                  Is it the price, the inconvenience,
+<ce>                  or the lowliness of the mission that
+<ce>                       irks you, %pcf? No matter,
+<ce>                     I can easily find another %ra
+<ce>                        interested in furthering
+<ce>                        his political standing.
+
+AcceptQuest:  [1002]
+<ce>                           Very good, %pcf.
+<ce>                Now, listen carefully: take this _item_
+<ce>            to the palace in __palace_ and find a =contact_.
+<ce>                   That will be _contact_. %g will be
+<ce>                 expecting you, and will likely reward
+<ce>                  you for your trouble.  You'd best be
+<ce>                  on your way.  Do not fail me, %pcf.
+
+QuestFail:  [1003]
+<ce>                     Quickly now, begone!  This is
+<ce>                   no time for idle conversation. You
+<ce>                            have work to do.
+
+QuestComplete:  [1004]
+<ce>                       Oh, what a lovely _item_.
+<ce>                        It's from _questgiver_?
+<ce>                      Well, perhaps this was just
+<ce>                     a misunderstanding after all.
+<ce>                     Here's _reward_ gold for your
+<ce>                          good services, %pcf.
+
+RumorsDuringQuest:  [1005]
+I hear _contact_ is considering breaking allegiance with _questgiver_.
+<--->
+_questgiver_ better do something to cement relations with _contact_.
+
+RumorsPostfailure:  [1006]
+_questgiver_ and _contact_ seem more estranged than ever.
+<--->
+I wouldn't be surprised if _contact_ and _questgiver_ broke ties altogether.
+
+RumorsPostsuccess:  [1007]
+_contact_ is supposed to be very pleased with the present from _questgiver_.
+<--->
+Thank %god _questgiver_ got that _item_ to _contact_. Could've been nasty.
+
+QuestorPostsuccess:  [1008]
+Ah, it's my agent of peace. How goes it with you, my friend?
+<--->
+%oth, if it isn't my favorite courier. How are you doing?
+
+QuestorPostfailure:  [1009]
+<ce>                   By failing to bring _contact_ the
+<ce>                      _item_ you promised to get,
+<ce>                 you've made my peace plans rather more
+<ce>                            difficult, %pcf.
+<ce>                            Out of my sight.
+
+QuestLogEntry:  [1010]
+%qdt:
+_questgiver_ has
+ given me _reward_ gold to go
+ to __palace_ palace
+ to bring a peace offering, a _item_
+ to _contact_.  I must be there in
+ =queston_ days or less.
+
+Message:  1020
+<ce>                           Did _questgiver_
+<ce>                       not give you something for
+<ce>                   me?  Damnation, if this is one of
+<ce>                             %g3 tricks ...
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g3 occurs 1 time.
+--              %god occurs 1 time.
+--              %oth occurs 1 time.
+--              %pcf occurs 8 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 5 times.
+--         =contact_ occurs 2 times.
+--         =queston_ occurs 1 time.
+--         __palace_ occurs 2 times.
+--         _contact_ occurs 10 times.
+--            _item_ occurs 5 times.
+--      _questgiver_ occurs 9 times.
+--          _reward_ occurs 2 times.
+
+QBN:
+Item _reward_ gold
+Item _item_ trinket
+
+Person _questgiver_ group Questor
+Person _contact_ face 1 group Local_3.0 remote
+
+Place _palace_ remote palace
+
+Clock _queston_ 00:00 0 flag 1 range 0 2
+
+--	Quest start-up:
+	start timer _queston_ 
+	log 1010 step 0 
+	get item _item_ 
+	place npc _contact_ at _palace_ 
+
+_pcgetsgold_ task:
+	toting _item_ and _contact_ clicked 
+	give pc _reward_ 
+	change repute with _questgiver_ by +20 
+	end quest 
+--removed unnecessary delay
+
+_queston_ task:
+	make _item_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+_npcclicked_ task:
+	clicked npc _contact_ say 1020 

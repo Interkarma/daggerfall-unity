@@ -1,0 +1,370 @@
+-- Quest: C:\QUESTS\WORKING\N0B00Y09.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 0
+-- QuestId: 9
+Messages: 23
+Quest: N0B00Y09
+DisplayName: Research Notes
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>           As the premier research institution in the Empire
+<ce>            of Tamriel, the Mages Guild employs a number of
+<ce>                mystics and scholars all over the land.
+<ce>            If we can get a representative of the Guild over
+<ce>            to a place within a reasonable distance of here,
+<ce>                    the eminent scholar, _scholar_,
+<ce>            has agreed to share %g3 research. Would you
+<ce>                         be available for this?
+                                     <--->
+<ce>                     The Mages Guild of ___qgiver_
+<ce>            has an exciting opportunity to benefit from the
+<ce>              work of the renowned researcher and scholar,
+<ce>                   _scholar_. %g has agreed to donate
+<ce>              some of %g3 research to the Guild if we send
+<ce>                 someone to ___scholar_ to pick it up.
+<ce>                 Not surprisingly, %g fears Necromancer
+<ce>             intervention. I take it that you're as excited
+<ce>                 about this possibility as I am, %pct?
+
+RefuseQuest:  [1001]
+<ce>                  That's rather disappointing, %pct.
+<ce>             If I were in better condition, I'd jump at the
+<ce>                  chance to meet the great _scholar_.
+<ce>                    You're wasting your youth, %pct.
+
+AcceptQuest:  [1002]
+<ce>                   Grand, just grand. Now, _scholar_
+<ce>                  is staying in ___scholar_ in a place
+<ce>                    called __scholar_ for just a few
+<ce>              days. The danger is the Necromancers. Those
+<ce>               reprobate spellslingers are interested in
+<ce>                      getting to _scholar_ and %g3
+<ce>            research. I will give you =queston_ days to get
+<ce>                         to _scholar_ and back
+<ce>                 before I send someone else. Good luck.
+
+QuestComplete:  [1004]
+<ce>              Oh, this is brilliant stuff. I guess those
+<ce>               damned Necromancers were not too difficult
+<ce>               to handle, at least, not for you. Spiffing
+<ce>                               job, %pct.
+
+RumorsDuringQuest:  [1005]
+Maybe that _scholar_ is a celebrity to scholar types, but %g's just a =scholar_
+<--->
+It's an honor for ___scholar_ to host the renowned _scholar_'s visit to %reg.
+
+RumorsPostfailure:  [1006]
+The Necromancers will be the dominant magical power in Tamriel in a few years.
+<--->
+The Mages Guild is unable to defend itself against the Necromancers.
+
+RumorsPostsuccess:  [1007]
+_scholar_'s research will help the Mages Guild in a number of ways.
+<--->
+The Necromancers didn't seem to get their hands on _scholar_ ... or did they?
+
+QuestorPostsuccess:  [1008]
+Well, if it isn't the %ra who brought us that manuscript. How are you?
+
+QuestorPostfailure:  [1009]
+<ce>                 As you haven't got the manuscript you
+<ce>                 swore you would retrieve, I see little
+<ce>                   point in conversing with you. Take
+<ce>                        your business elsewhere.
+
+QuestLogEntry:  [1010]
+%qdt:
+ The Mages Guild of ___qgiver_
+ has sent me to ___scholar_
+ where _scholar_, a renowned
+ scholar, is staying at a place
+ called __scholar_. I am
+ to avoid the agents of the Necromancers,
+ get _scholar_'s research
+ from %g2 and return to the Mages Guild in
+ no more than =queston_ days.
+
+Message:  1011
+                                __db_
+                                 ___db_
+ 
+ 
+ 
+ Dear Old %pcf,
+ 
+     Well done, %pcf. _scholar_
+ was characteristically pigheaded about giving
+ us %g3 research notes, but %g'd be pleased
+ as a pumpkin to give it to a "representative"
+ of the right-minded Mages Guild.
+ 
+     You'll have a lovely bit of gold waiting
+ for you here in ___db_ when you
+ get here with the notes.
+ 
+ 
+ 
+                               Yours,
+ 
+ 
+                               _db_
+
+Message:  1012
+%pcn,
+ 
+ 
+     Do not make an enemy of the Dark Brotherhood.
+ We can be great help to one another, but you could
+ not wish for a worse enemy. When you have
+ _scholar_'s research paper, bring it to
+ me here at __db_ in ___db_.
+ 
+     Fail not, or the wrath of Mephala, Queen of
+ Oblivion be on you.
+ 
+ 
+                             _db_
+
+Message:  1013
+<ce>                  You're the %ra the Mages Guild sent
+<ce>                over to protect my work, yes? Marvelous
+<ce>                to meet you, my child. Here's the bally
+<ce>                  thing. Good luck getting past those
+<ce>                    infernal Necromancers with it. I
+<ce>                          certainly couldn't.
+
+Message:  1014
+<ce>                        Do you give _scholar_'s
+<ce>                          work to _db_ of the
+<ce>                           Dark Brotherhood?
+
+Message:  1015
+The manner by which the diastolic pressure
+ of any two scarce commodities (creating a
+ type of propulsion with no moving parts
+ and virtual silence) has been postulated
+ by thyrionic mathematicians for many years.
+ In conventional thinking, the default
+ parameters of any formula (objectively
+ speaking, it is essential to remember that
+ objectivity is indeed subjective) will
+ always return to what Mornthaur called the
+ "back medium." However, starting with a
+ grid of complex numbers that more than covers
+ the unit circle and three cube roots of one,
+ we can backtrace, by uptracking the negative
+ "half numbers," and create an infinite basin
+ with dual natures of blackness and whiteness.
+ The rate of adiabatic cooling or warming in
+ unsaturated air can thus be made directly
+ proportional to the fourth power of its
+ absolute temperature.
+
+Message:  1016
+When white light is passed through a gas
+ under a medium dense gas at a high temperature,
+ a dynamic thermal instability occurs. Since
+ magicka is usually a very faint source of
+ illumination, gases, under much greater
+ pressure, are forced to combine with degenerated
+ matter, creating dual forces, beyond and
+ beneath. The end result is a quasi-horizontal
+ chonolith composed of anastomosing ductoliths,
+ whose distal ends curl like a harpolith, thin
+ like a sphenolith, or bulge discordantly like
+ an akmolith or ethmolith. There are thus five
+ elements that must be contributed towards a
+ universal confederation of what Galerion
+ Vanus called "gray matter" -- perception,
+ evidence, essense, morality, and extraction.
+
+Message:  1017
+_scholar_ is only one of the most respected scholars in Tamriel
+<--->
+_scholar_ is a =scholar_, a very well-respected scholar
+<--->
+_scholar_ is only going to be visiting %reg for a short time
+<--->
+One of the finest minds of the third era, so they say
+<--->
+_scholar_ would definitely agree that %g's a genius
+<--->
+_scholar_ is a typical intellectual. No idea of what's going on
+<--->
+_scholar_'s very clever, but %g3 brains sometimes go to %g3 head
+<--->
+Talk to _db_ over in ___db_ -- %g's been asking about _scholar_ too.
+<--->
+A =db_ in __db_ was asking about _scholar_ as well.
+
+Message:  1018
+<ce>                  What a thoughtful gift. I hope your
+<ce>                Mages Guild pals aren't too upset about
+<ce>                 losing it. What would they know about
+<ce>                 practical application of dry research
+<ce>               anyhow? Here, take _dbgold_ gold for your
+<ce>                 trouble. Buy yourself something nice.
+
+Message:  1019
+<ce>                 How kind. The Dark Brotherhood would
+<ce>               gratefully offer you _dbgold_ gold pieces
+<ce>                for your service. In addition, here's a
+<ce>                little something I whipped together that
+<ce>                should keep you from getting in trouble
+<ce>                      with _qgiver_ and the other
+<ce>                 Mages Guildmembers. All research notes
+<ce>                look alike anyhow. When they don't yield
+<ce>                results, the Guild will just throw more
+<ce>                assistants at it or give up the project
+<ce>                  in embarrassment. The Mages Guild is
+<ce>                  simply a tedious pack of researchers
+<ce>                   who don't have to worry about gold
+<ce>                  and thus are never happier than when
+<ce>                     they are doing pointless work.
+
+Message:  1020
+%qdt:
+ I received a threatening letter from
+ _db_ of the Dark Brotherhood,
+ telling me to bring _scholar_'s
+ research paper to __db_ in
+ ___db_ instead of the Mages Guild.
+
+Message:  1021
+%qdt:
+ _db_ of the Dark Brotherhood
+ sent me a letter, congratulating me on my
+ guile, and telling me that %g would be at
+ a place called __db_ in ___db_
+ with a gold reward for bringing the
+ research paper to %g2 instead of the
+ Mages Guild.
+
+Message:  1022
+<ce>                     A young lad with fierce eyes
+<ce>                      hands you a letter and runs
+<ce>                         away into the alleys.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 7 times.
+--               %g2 occurs 4 times.
+--               %g3 occurs 8 times.
+--              %pcf occurs 3 times.
+--              %pcn occurs 1 time.
+--              %pct occurs 7 times.
+--              %qdt occurs 3 times.
+--               %ra occurs 2 times.
+--              %reg occurs 2 times.
+--              =db_ occurs 1 time.
+--         =queston_ occurs 4 times.
+--         =scholar_ occurs 2 times.
+--            ___db_ occurs 13 times.
+--        ___qgiver_ occurs 2 times.
+--       ___scholar_ occurs 4 times.
+--             __db_ occurs 6 times.
+--        __scholar_ occurs 2 times.
+--              _db_ occurs 11 times.
+--          _dbgold_ occurs 2 times.
+--          _qgiver_ occurs 1 time.
+--         _scholar_ occurs 69 times.
+
+QBN:
+Item research1 letter used 1015
+Item letter34 letter used 1011
+Item letter35 letter used 1012
+Item research2 letter used 1016
+Item _dbgold_ gold
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+Person _db_ face 78 faction The_Dark_Brotherhood female local
+Person _scholar_ factiontype Temple remote anyInfo 1017
+
+
+Clock _queston_ 00:00 0 flag 17 range 1 2
+Clock _S.02_ 01:40 13:20
+Clock _S.05_ 06:40 23:20
+
+Foe _hunter_ is Orc_shaman
+
+--	Quest start-up:
+	start timer _queston_ 
+	log 1010 step 0 
+	pick one of _letter_ _letter_ _S.04_ _S.04_ 
+	repute with _db_ exceeds 10 do _S.00_ 
+	letter34 used do _S.15_ 
+	letter35 used do _S.16_ 
+
+_S.00_ task:
+	start timer _S.02_ 
+	clear _letter_ 
+
+until _S.00_ performed:
+	dialog link for person _db_ 
+
+_queston_ task:
+	end quest 
+
+_S.02_ task:
+	give pc letter34 notify 1022 
+
+_letter_ task:
+	start timer _S.05_ 
+
+variable _S.04_
+_S.05_ task:
+	give pc letter35 notify 1022 
+
+_S.06_ task:
+	clicked npc _scholar_ 
+	get item research1 
+	say 1013 
+
+_S.07_ task:
+	toting research1 and _db_ clicked 
+	prompt 1014 yes _S.08_ no _nononono_ 
+
+_S.08_ task:
+	pick one of _S.10_ _S.11_ 
+	change repute with _db_ by +10 
+
+_nononono_ task:
+	get item research1 
+
+_S.10_ task:
+	get item research2 
+	get item _dbgold_ 
+	say 1019 
+	make _dbgold_ permanent 
+
+_S.11_ task:
+	get item _dbgold_ 
+	say 1018 
+	make _dbgold_ permanent 
+	end quest 
+
+_S.12_ task:
+	toting research1 and _qgiver_ clicked 
+
+_S.13_ task:
+	toting research2 and _qgiver_ clicked 
+
+_reward_ task:
+	when _S.12_ or _S.13_ 
+	give pc _gold_ 
+	end quest 
+
+_S.15_ task:
+	add dialog for person _db_ 
+	log 1021 step 1 
+
+_S.16_ task:
+	add dialog for person _db_ 
+	log 1020 step 1 

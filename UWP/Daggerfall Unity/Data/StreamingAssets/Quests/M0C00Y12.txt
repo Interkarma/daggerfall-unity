@@ -1,0 +1,120 @@
+-- Quest: C:\QUESTS\WORKING\M0C00Y12.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: fighter
+-- Repute: 0
+-- QuestId: 12
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: M0C00Y12
+DisplayName: Hunt for a Giant Spider
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                         My name is _qgiver_.
+<ce>              I don't like handing out jobs to non-guild
+<ce>              members. You seem like the trustworthy sort
+<ce>              though. Some poor soul brought home a giant
+<ce>             spider's egg that hatched. Seems they mistook
+<ce>             it for a silkworm cocoon. The poor slob can't
+<ce>              afford to pay us to get rid of it. However,
+<ce>               if you take care of it for free the guild
+<ce>             looks good and I'll make sure you look good.
+<ce>                          Are you interested?
+
+RefuseQuest:  [1001]
+<ce>                     I should have known you were
+<ce>                          serious about work.
+
+AcceptQuest:  [1002]
+<ce>                     This is your shot at the big
+<ce>                      time. The spider is trapped
+<ce>                     in _house_. Kill it today and
+<ce>                   I'll put in a good word for you.
+
+QuestComplete:  [1004]
+<ce>                          You got spunk %pcf.
+<ce>                       Keep up the good work and
+<ce>                       you'll be Fighter's Guild
+<ce>                             material yet.
+
+RumorsDuringQuest:  [1005]
+<ce>               Did you hear about the idiot that brought
+<ce>                home a giant spider's egg. Now he's got
+<ce>                an eight legged pet thats trying to eat
+<ce>                            him for dinner!
+
+RumorsPostfailure:  [1006]
+<ce>              Some poor fool was stung and nearly killed
+<ce>              by a giant spider, in his own home no less!
+
+RumorsPostsuccess:  [1007]
+<ce>             You're that guy that killed the giant spider.
+<ce>           You should join the Fighter's Guild or something.
+
+QuestorPostsuccess:  [1008]
+<ce>                  Nicely done with that giant spider.
+
+QuestorPostfailure:  [1009]
+<ce>                If you can't handle spiders, how do you
+<ce>               expect to handle the other jobs the guild
+<ce>                         might want you to do?
+
+QuestLogEntry:  [1010]
+%qdt:
+ The Fighters Guild of
+ ___qgiver_ has
+ offered to let me to kill
+ a giant spider which hatched
+ in _house_.
+ It's got be done today.
+
+Message:  1011
+<ce>                        The _monster_ is dead.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 1 time.
+--              %qdt occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--           _house_ occurs 2 times.
+--         _monster_ occurs 3 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+
+Person _qgiver_ group Questor
+
+Place _house_ local random
+
+Clock _2dung_ 1.00:00 0 flag 1 range 0 1
+
+Foe _monster_ is Spider
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _house_ 
+	log 1010 step 0 
+	create npc at _house_ 
+	place foe _monster_ at _house_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _monster_ saying 1011 
+
+_S.02_ task:
+	when _qgclicked_ and _S.01_ 
+	give pc nothing 
+	end quest 
+
+_qgclicked_ task:
+    clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _clearclick_ 
+	--removed duplicate clearclick

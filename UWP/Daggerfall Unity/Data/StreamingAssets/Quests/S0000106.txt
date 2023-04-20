@@ -1,0 +1,86 @@
+-- Quest: C:\QUESTS\WORKING\S0000106.Qbn.
+-- Main story quest.
+-- QuestId: 106
+Messages: 10
+Quest: S0000106
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+
+
+RefuseQuest:  [1001]
+
+
+AcceptQuest:  [1002]
+
+
+QuestFail:  [1003]
+
+
+QuestComplete:  [1004]
+
+
+RumorsDuringQuest:  [1005]
+
+
+RumorsPostfailure:  [1006]
+
+
+RumorsPostsuccess:  [1007]
+
+
+QuestorPostsuccess:  [1008]
+
+
+QuestorPostfailure:  [1009]
+
+
+
+-- Symbols used in the QRC file:
+--    ***  None  ***
+
+QBN:
+
+Person _gothryd_ named King_Gothryd atHome
+Person _eadwyre_ named King_Eadwyre atHome
+Person _akorithi_ face 240 named Queen_Akorithi atHome
+Person _magesguild_ face 97 faction The_Mages_Guild remote
+Person _fightersguild_ face 72 faction The_Fighters_Guild remote
+Person _thievesguild_ face 1 faction The_Thieves_Guild remote
+Person _darkbrother_ face 201 faction The_Dark_Brotherhood remote
+Person _kynareth_ face 1 faction The_Temple_of_Kynareth remote
+Person _stendarr_ face 217 faction The_Temple_of_Stendarr remote
+Person _julianos_ faction The_School_of_Julianos remote
+Person _mara_ face 1 faction The_Benevolence_of_Mara remote
+Person _dibella_ face 1 faction The_House_of_Dibella remote
+Person _akatosh_ face 97 faction The_Akatosh_Chantry remote
+Person _arkay_ face 1 faction The_Order_of_Arkay remote
+Person _zen_ face 1 faction The_Resolution_of_Z'en remote
+Person _merchants_ face 1 faction The_Merchants remote
+
+
+Clock _delay_ 00:00
+
+
+--	Quest start-up:
+	start timer _delay_ 
+
+_delay_ task:
+	change repute with _akatosh_ by +100 
+	change repute with _akorithi_ by +100 
+	change repute with _arkay_ by +100 
+	change repute with _darkbrother_ by +100 
+	change repute with _dibella_ by +100 
+	change repute with _eadwyre_ by +100 
+	change repute with _fightersguild_ by +100 
+	change repute with _gothryd_ by +100 
+	change repute with _julianos_ by +100 
+	change repute with _kynareth_ by +100 
+	change repute with _magesguild_ by +100 
+	change repute with _mara_ by +100 
+	change repute with _merchants_ by +100 
+	change repute with _stendarr_ by +100 
+	change repute with _thievesguild_ by +100 
+	change repute with _zen_ by +100 
+	end quest 

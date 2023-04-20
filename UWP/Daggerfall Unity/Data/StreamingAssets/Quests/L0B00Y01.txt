@@ -1,0 +1,164 @@
+-- Quest: C:\QUESTS\WORKING\L0B00Y01.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Brotherhood
+-- Repute: 0
+-- QuestId: 1
+Messages: 14
+Quest: L0B00Y01
+DisplayName: No Escape
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       As you know, %pct, there
+<ce>                     is no room for failure in the
+<ce>                    Dark Brotherhood. Brothers who
+<ce>                     fail us are targeted for an
+<ce>                     accounting. You will find and
+<ce>                        correct one such errant
+<ce>                            former member.
+                                     <--->
+<ce>                    It is a solemn duty, and not an
+<ce>                     entirely disagreeable one, to
+<ce>                   account agents of the Brotherhood
+<ce>                       who have failed us in an
+<ce>                     assignment. You are, I trust,
+<ce>                        free to take on such an
+<ce>                              assignment?
+
+RefuseQuest:  [1001]
+<ce>                       Did I hear you correctly?
+<ce>                          %pct, I am grieved
+<ce>                      by your lack of cooperation
+<ce>                          with your brothers.
+
+AcceptQuest:  [1002]
+<ce>                           Very good, %pct.
+<ce>                       =target_, having learned
+<ce>                  something during %g3 tenure in the
+<ce>                Brotherhood, has wisely hidden %g2self,
+<ce>                  but we have a contact in __snitch_,
+<ce>                 a miserable =snitch_ named _snitch_.
+<ce>                    Talk to %g2 and get =target_'s
+<ce>               location. I will expect the accounting to
+<ce>                  be accomplished, and you to be back
+<ce>                        here in =queston_ days.
+
+QuestComplete:  [1004]
+<ce>                           Well done, %pct.
+<ce>                    A good lesson for all who might
+<ce>                         fail the Brotherhood.
+
+RumorsDuringQuest:  [1005]
+=target_ is at large somewhere in %reg, shaking like a willow, I wager.
+<--->
+=target_ was a pretty decent assassin. Not good enough, it seems.
+
+RumorsPostfailure:  [1006]
+Apparently you can beat the Brotherhood. Witness =target_, for example.
+<--->
+=target_ is really thumbing %g3 nose at the Dark Brotherhood.
+
+RumorsPostsuccess:  [1007]
+=target_, they say %g failed the Brotherhood once. And that was %g3 reward.
+<--->
+The Dark Brotherhood tolerates no failure. Look what happened to poor =target_.
+
+QuestorPostsuccess:  [1008]
+Hello, %pcn. How may I assist you who slew our errant brother?
+
+QuestorPostfailure:  [1009]
+<ce>                 Let me understand this. I sent you to
+<ce>                     account a _target_ who failed
+<ce>                the Brotherhood and ... you failed. And
+<ce>                 now, you want to chat. Unbelievable.
+
+QuestLogEntry:  [1010]
+%qdt:
+ The Dark Brotherhood in ___qgiver_
+ has sent me to a Brother who failed an
+ assigment. I am to talk to a squealer
+ named _snitch_ in __snitch_
+ of ___snitch_ who will tell
+ me whither =target_ has fled.
+
+Message:  1011
+<ce>                          %pcn? I'm _snitch_.
+<ce>                 The fish you're after has slipped the
+<ce>                 hook and is living a fancy life down
+<ce>                         in ___mondung_. Just
+<ce>                         watch yourself, %ra.
+<ce>                      =target_ knows how to fight
+<ce>                           and %g's scared.
+
+Message:  1012
+%qdt:
+ _snitch_ tells me that =target_
+ is in ___mondung_.
+
+Message:  1013
+<ce>                       You have slain =target_.
+<ce>                   The Brotherhood will be pleased.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--               %g2 occurs 2 times.
+--               %g3 occurs 4 times.
+--              %pcn occurs 3 times.
+--              %pct occurs 4 times.
+--              %qdt occurs 2 times.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--         =queston_ occurs 2 times.
+--          =snitch_ occurs 1 time.
+--          =target_ occurs 47 times.
+--       ___mondung_ occurs 3 times.
+--        ___qgiver_ occurs 1 time.
+--        ___snitch_ occurs 9 times.
+--          _target_ occurs 1 time.
+
+QBN:
+
+Person _qgiver_ group Questor
+Person _snitch_ factiontype Temple local
+
+Place _mondung_ remote dungeon
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _target_ is Assassin
+
+--	Quest start-up:
+	dialog link for location _mondung_ 
+	start timer _queston_ 
+	log 1010 step 0 
+	place foe _target_ at _mondung_ 
+
+_queston_ task:
+	end quest 
+
+_reward_ task:
+	when _qgclicked_ and _S.02_ 
+	give pc nothing 
+	end quest 
+
+_S.02_ task:
+	killed 1 _target_ 
+	say 1013 
+
+_S.03_ task:
+	clicked npc _snitch_ 
+	add dialog for location _mondung_ 
+	reveal _mondung_ 
+	log 1012 step 1 
+	say 1011 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_S.05_ task:
+	when _qgclicked_ and not _S.02_ 
+	clear _qgclicked_ _S.05_ 

@@ -1,0 +1,198 @@
+-- Quest: C:\QUESTS\WORKING\N0B10Y03.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 10
+-- QuestId: 3
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 14
+Quest: N0B10Y03
+DisplayName: Guard the Guild
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      The Mages Guild is in need
+<ce>                        of someone to guard the
+<ce>                      magical _treasure_ tonight.
+<ce>                     Is it feasible that you could
+<ce>                        do it for us? There's a
+<ce>                        _potion_ in it for you.
+                                     <--->
+<ce>                    The Guildhall -- how should one
+<ce>                   put this? In life, I think you'll
+<ce>                  agree, there are always some people
+<ce>                    who just ... well, the Guild has
+<ce>                   always stood for, or, rather, had
+<ce>                    problems with ... Listen, young
+<ce>                 %pct, we need a guard. Will you do it?
+
+RefuseQuest:  [1001]
+<ce>                     No problem. There are always
+<ce>                      other guild members looking
+<ce>                               for work.
+
+AcceptQuest:  [1002]
+<ce>                         Be at the Mages Guild
+<ce>                      by midnight. Your period of
+<ce>                         guardianship will last
+<ce>                       until 3:00 in the morning.
+
+QuestComplete:  [1004]
+<ce>                        Well done, %pcf. Those
+<ce>                     thieves didn't stand a chance
+<ce>                      against you. Here, take this
+<ce>                             _potion_. It's
+<ce>                      really the least we can do.
+
+RumorsDuringQuest:  [1005]
+The thieves must think that _treasure_ in the Mages Guild is very valuable.
+<--->
+The thieves have been threatening to steal the Mages Guild's _treasure_.
+
+RumorsPostfailure:  [1006]
+The thieves finally got that _treasure_ after all.
+<--->
+The Mages Guild should've got real guards. That's why they lost the _treasure_
+
+RumorsPostsuccess:  [1007]
+Those thieves aren't going to try to get that _treasure_ again, I bet.
+<--->
+The thieves who tried to get that _treasure_ didn't expect a real guard, I bet.
+
+QuestorPostsuccess:  [1008]
+How are you, %pcf? Found any use for that _potion_ yet?
+
+QuestorPostfailure:  [1009]
+<ce>                        The _treasure_ is gone,
+<ce>                   but you're here? That's hardly an
+<ce>                        equal exchange, I think.
+<ce>                            Leave me, %pcn.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I agreed to guard a
+ magic _treasure_
+ at the Mages Guild of
+ ___qgiver_. I have
+ to be there between midnight
+ and three.
+
+-moved line down from %qdt line.
+
+Message:  1011
+%qdt:
+ I couldn't resist it. I took
+ the _treasure_ I was
+ supposed to guard. They'll
+ be after me for sure.
+
+Message:  1012
+<ce>                      Lookee here boys. A guard.
+<ce>                        Gee, I'm all scared and
+<ce>                        shaking. Lets leave the
+<ce>                        tongue on the door as a
+<ce>                        warning not to mess with
+<ce>                      the thieves guild. Get him!
+
+Message:  1013
+<ce>                      I claim bounty on the thief
+<ce>                        and traitor to the Mages
+<ce>                                 Guild.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 2 times.
+--              %pcn occurs 2 times.
+--              %pct occurs 1 time.
+--              %qdt occurs 2 times.
+--        ___qgiver_ occurs 1 time.
+--          _potion_ occurs 33 times.
+--        _treasure_ occurs 11 times.
+
+QBN:
+Item _treasure_ magic_item
+Item _potion_ gem
+
+Person _qgiver_ group Questor
+
+Place _magesguild_ local magery
+
+Clock _oneday_ 1.03:00
+Clock _S.10_ 3.00:00
+
+Foe _F.00_ is Thief
+Foe _F.01_ is 4 Knight
+
+--	Quest start-up:
+	place item _treasure_ at _magesguild_ 
+	start timer _oneday_ 
+	log 1010 step 0
+	create npc at _magesguild_ 
+
+variable _oneday_
+
+_timeout_ task:
+	when _oneday_ and not _S.07_ 
+	end quest 
+
+_clickonqgiver_ task:
+	clicked npc _qgiver_ 
+
+_S.02_ task:
+	daily from 00:00 to 03:00 
+	pc at _magesguild_ set _S.03_ 
+
+_S.03_ task:
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	create foe _F.00_ every 3 minutes 1 times with 100% success 
+	--spawn times reduced. leaving them at classic values would be very disjointed; one thief would arrive nearly half an hour later. classic tended to spawn all at once
+
+_S.04_ task:
+	injured _F.00_ saying 1012 
+
+_S.05_ task:
+	killed 2 _F.00_ 
+
+_S.06_ task:
+	clicked item _treasure_ 
+	clear _dropped_
+
+_dropped_ task:
+	dropped _treasure_ at _magesguild_ 
+	clear _S.06_
+
+_S.07_ task:
+	when _S.06_ and not _S.02_ 
+	create foe _F.01_ every 60 minutes 5 times with 10% success 
+	start timer _S.10_ 
+	log 1011 step 1 
+	change repute with _qgiver_ by -30 
+
+_S.08_ task:
+	injured _F.01_ saying 1013 
+
+_questdone_ task:
+	when _S.10_ and _S.07_ 
+	make _treasure_ permanent 
+	end quest 
+
+variable _S.10_
+
+_pcgetsgold_ task:
+	when _clickonqgiver_ and _S.05_ and not _S.07_ and not _S.02_ 
+	give pc _potion_ 
+	end quest 
+
+_clearclick_ task:
+               when _clickonqgiver_ and not _S.05_
+               clear _clearclick_ _clickonqgiver_
+
+_clearclick2_ task:
+               when _clickonqgiver_ and _S.02_
+               clear _clearclick2_ _clickonqgiver_
+
+variable _S.13_

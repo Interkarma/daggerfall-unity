@@ -1,0 +1,135 @@
+-- Quest: C:\QUESTS\WORKING\L0B00Y03.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Brotherhood
+-- Repute: 0
+-- QuestId: 3
+Messages: 12
+Quest: L0B00Y03
+DisplayName: A Renegade Mage
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  The Mages Guild has come to us for
+<ce>                   a bit of messy business that's too
+<ce>                    gross and nasty for them to deal
+<ce>                     with. A renegade mage needs an
+<ce>                      accounting fast. Interested?
+                                     <--->
+<ce>                 We have the Mages Guild for a client
+<ce>                  again. Seems that one of their boys
+<ce>                  has been sniffing too much bat gut,
+<ce>                     and has gone off on a rampage.
+<ce>                        Sound interesting, %pct?
+
+RefuseQuest:  [1001]
+<ce>                         That's disappointing.
+
+AcceptQuest:  [1002]
+<ce>                  Good. Now, this mage -- the name is
+<ce>                             =mage_ -- has
+<ce>               absconded with a number of magic thingies
+<ce>                but the Mages Guild doesn't mind if you
+<ce>                 take whatever %g has stolen. They just
+<ce>              want %g2 dead. And you've only got =queston_
+<ce>                    days to bring in the accounting.
+<ce>                You'll find %g2 cowering down in a nasty
+<ce>                       place called ___mondung_.
+<ce>              Get back here with the world minus one rogue
+<ce>                 mage in =queston_ days. Mephala steady
+<ce>                            your arm, %pct.
+
+QuestComplete:  [1004]
+<ce>                   So, you put the spark out of that
+<ce>                         Sparkcaster, %pcf? Ah,
+<ce>                  Mephala is pleased with you, as are
+<ce>                             her children.
+
+RumorsDuringQuest:  [1005]
+The Mages Guild denies that =mage_ is beyond their control.
+<--->
+The Order of the Lamp is too official an organization to deal with =mage_.
+
+RumorsPostfailure:  [1006]
+=mage_ has fled across the Bay. Who can say what %g3 plans are?
+
+RumorsPostsuccess:  [1007]
+=mage_, the common people say, was done in by the Order of the Lamp.
+<--->
+Who can say what would've happened if that _mage_ had been suffered to live.
+
+QuestorPostsuccess:  [1008]
+Greeting and salutations. How may =qgiver_ assist thee, slayer of mages?
+
+QuestorPostfailure:  [1009]
+<ce>               You have failed your contract with us, so
+<ce>               we have failed our contract with the Mages
+<ce>               Guild. I have little but scorn for you at
+<ce>                            this time, %pcf.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of the Dark Brotherhood
+ in __qgiver_, ___qgiver_
+ has sent me to ___mondung_
+ to deal with a renegade mage from
+ the Mages Guild. I've =queston_ days to
+ put the matter to rest.
+
+Message:  1011
+<ce>                    =mage_'s light is snuffed out.
+<ce>          The Brotherhood and the Mages Guild will be pleased.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g2 occurs 2 times.
+--               %g3 occurs 1 time.
+--              %pcf occurs 4 times.
+--              %pct occurs 4 times.
+--              %qdt occurs 1 time.
+--            =mage_ occurs 7 times.
+--          =qgiver_ occurs 1 time.
+--         =queston_ occurs 4 times.
+--       ___mondung_ occurs 2 times.
+--        ___qgiver_ occurs 2 times.
+--            _mage_ occurs 1 time.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+
+Person _qgiver_ group Questor
+
+Place _mondung_ remote dungeon
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _mage_ is Mage
+
+--	Quest start-up:
+	start timer _queston_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	place foe _mage_ at _mondung_ 
+
+_queston_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _mage_ 
+	say 1011 
+
+_S.02_ task:
+	clicked npc _qgiver_ 
+
+variable _ma1_
+_S.04_ task:
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _S.04_ 
+
+_reward_ task:
+	when _S.02_ and _S.01_ 
+	give pc nothing 
+	end quest 

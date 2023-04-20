@@ -1,0 +1,218 @@
+-- Quest: C:\QUESTS\WORKING\O0B00Y01.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 0
+-- QuestId: 1
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 31
+Quest: O0B00Y01
+DisplayName: Arms Supply
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                    Awright, %pcf, this is a simple
+<ce>                sort of assignment. One you should have
+<ce>                  no trouble with. All you gotta do is
+<ce>               bring this _weapons_ over to our agent in
+<ce>                          ___contact_, get %g3
+<ce>                   payment for it, and bring it back.
+<ce>                    Think you can handle that, %pcf?
+
+RefuseQuest:  [1001]
+<ce>                   No? How much more simple you want
+<ce>                   yer assignment to be? Stand still
+<ce>                    while I slap you with eels? And
+<ce>                   that might not be such a bad idea!
+<ce>                          %oth, what a waste.
+
+AcceptQuest:  [1002]
+<ce>                     Okay then, your contact is a
+<ce>                            =contact_, about
+<ce>                   what you'd expect. Supposed to be
+<ce>                    hanging around a nook they call
+<ce>                       __contact_ in ___contact_.
+<ce>                           Now, _contact_ has
+<ce>                    picked up some loot out there in
+<ce>                         ___contact_ and wants
+<ce>                   you to bring it back to us. If you
+<ce>                  think you can handle all that, we'll
+<ce>                expect you back here in =1stparton_ days
+<ce>                  with no excuses. All right then. Go.
+
+QuestFail:  [1003]
+<ce>                    Yeah, you're back, but where's
+<ce>                           _contact_'s loot?
+<ce>                   You're not thinking about getting
+<ce>                      smart on us, are you, %pcf?
+<ce>                    'Cause if you are, think again.
+
+QuestComplete:  [1004]
+<ce>                       Oh, that's a nice _gems_.
+<ce>                           _contact_ gave you
+<ce>                      that? %oth, %g must be doing
+<ce>                        okay out in ___contact_.
+<ce>                        Good going, %pcf. Here's
+<ce>                    _reward_ gold for your trouble.
+
+RumorsDuringQuest:  [1005]
+The city guards are watching everyone with weapons like hawks these days.
+<--->
+The %t is apparently scared of assassination. The guards are out in force.
+
+RumorsPostfailure:  [1006]
+They arrested some =contact_. Apparently, %g was an arms dealer.
+<--->
+The Thieves Guild isn't so hot. One of them got arrested in __contact_.
+
+RumorsPostsuccess:  [1007]
+I hear they're smuggling _weapons_s in. That takes a lot of nerve.
+<--->
+The %t was paranoid about the Thieves Guild's smuggling, but %g's over it now.
+
+QuestorPostsuccess:  [1008]
+Yeah, whatcha want, %pcf? The _gems_ back, maybe?
+
+QuestorPostfailure:  [1009]
+<ce>               If you ain't got nothing from _contact_,
+<ce>                  I ain't innerested in talking, %pcf.
+
+QuestLogEntry:  [1010]
+<ce>                      Well done, %pcf. I couldn't
+<ce>                  have made it here as easily carrying
+<ce>                   that _weapons_. Here's a sample of
+<ce>                  what I've stolen so far...a _gems_.
+<ce>                   Bring it back to _questgiver_ and
+<ce>                     let %g2 know I'm fine. Thanks
+<ce>                      again, %pcf. See you later.
+
+Message:  1020
+<ce>                       Halt in the name of %nrn!
+<ce>                        I know you are smuggling
+<ce>                       weapons. Surrender or face
+<ce>                           the consequences.
+
+Message:  1021
+<ce>                      I heard you were smuggling
+<ce>                       _weapons_s for the Thieves
+<ce>                       Guild. Give them to me and
+<ce>                        I will spare your life.
+
+Message:  1022
+<ce>                       We want those _weapons_s.
+<ce>                         Turn them over and we
+<ce>                      won't rough you up too bad.
+
+Message:  1023
+<ce>                      Now get out of here before
+<ce>                             you get hurt.
+
+Message:  1030
+%qdt:
+ _questgiver_ of the Thieves Guild
+ in ___questgiver_ has asked that I
+ deliver this _weapons_ to _contact_
+ in __contact_ in ___contact_,
+ who will then give me some loot to bring back.
+ I have =1stparton_ days to complete the task.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 41 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 1 time.
+--              %nrn occurs 1 time.
+--              %oth occurs 2 times.
+--              %pcf occurs 12 times.
+--              %qdt occurs 1 time.
+--                %t occurs 2 times.
+--       =1stparton_ occurs 4 times.
+--         =contact_ occurs 7 times.
+--    ___questgiver_ occurs 1 time.
+--        __contact_ occurs 8 times.
+--            _gems_ occurs 3 times.
+--      _questgiver_ occurs 2 times.
+--          _reward_ occurs 1 time.
+--         _weapons_ occurs 6 times.
+
+QBN:
+Item _reward_ gold range 25 to 75
+Item _weapons_ weapon
+Item _gems_ gem
+
+Person _questgiver_ face 72 group Questor
+Person _contact_ face 80 group Group_5.0 remote
+
+
+Clock _1stparton_ 00:00 0 flag 18 range 1 4
+
+Foe _guards_ is Warrior
+Foe _F.01_ is 2 Thief
+Foe _F.02_ is Spellsword
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1030 step 0 
+	get item _weapons_ 
+
+variable _pcgetsgold_
+_qgclicked_ task:
+	toting _gems_ and _questgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_npcclicked_ task:
+	toting _weapons_ and _contact_ clicked 
+	get item _gems_ 
+	say 1010 
+
+until _npcclicked_ performed:
+	create foe _guards_ every 150 minutes 4 times with 5% success 
+	create foe _F.02_ every 179 minutes 4 times with 5% success 
+	create foe _F.01_ every 163 minutes 4 times with 5% success 
+
+_qgtalk_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgtalk_ and not _qgclicked_
+	say 1003
+	clear _clearclick_ _qgtalk_
+--added _qgtalk_ and _clearclick_
+
+_1stparton_ task:
+	make _weapons_ permanent 
+	make _gems_ permanent 
+	have _weapons_ set _S.11_ 
+	have _gems_ set _keptgems_ 
+	end quest 
+
+variable _pchasitem1_
+variable _pchasitem2_
+_S.06_ task:
+	injured _F.01_ 
+	prompt 1022 yes _yes_ no _no_ 
+
+_yes_ task:
+	take _weapons_ from pc saying 1023 
+	change repute with _questgiver_ by -20 
+	restrain foe _guards_ 
+	restrain foe _F.02_ 
+	restrain foe _F.01_ 
+
+variable _no_
+_S.09_ task:
+	injured _F.02_ 
+	prompt 1021 yes _yes_ no _no_ 
+
+_greklith_ task:
+	injured _guards_ 
+	prompt 1020 yes _yes_ no _no_ 
+
+_S.11_ task:
+	change repute with _questgiver_ by -10 
+
+_keptgems_ task:
+	change repute with _questgiver_ by -20 

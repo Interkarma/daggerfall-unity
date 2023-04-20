@@ -1,0 +1,351 @@
+-- Quest: C:\QUESTS\WORKING\P0B00L06.Qbn.
+-- StartsBy: letter
+-- Questee: member
+-- Questor: vampire
+-- Repute: 0
+-- QuestId: 6
+Messages: 24
+Quest: P0B00L06
+DisplayName: Deadly Knowledge
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+Error: Questtext 1000 Called
+
+RefuseQuest:  [1001]
+Error: Questtext 1001 Called
+
+AcceptQuest:  [1002]
+Error: Questtext 1002 Called
+
+QuestFail:  [1003]
+Error: Questtext 1003 Called
+
+QuestComplete:  [1004]
+<ce>                     Lovely. Did you read this? Of
+<ce>                  course you did. What rot. There was
+<ce>                   another mage who had similar views
+<ce>                    of the vampiric tribes, I cannot
+<ce>                   recall his name. You've done well,
+<ce>                      young one. Very well indeed.
+
+RumorsDuringQuest:  [1005]
+_mage_ is involved in terrifically important work down in ___mondung_.
+<--->
+___mondung_ is a grim place, but good for _mage_ to get %g3 work done in peace.
+
+RumorsPostfailure:  [1006]
+=mage_'s work on vampires apparently has reached the Mages Guild's attention.
+<--->
+The Archmagister of the Mages Guild himself is studying _mage_'s work.
+
+RumorsPostsuccess:  [1007]
+Tamriel may never know just what poor _mage_ had been working so hard on.
+<--->
+_mage_ was murdered, they say because %g was working on a charm against daedra.
+
+QuestorPostsuccess:  [1008]
+Error: Questtext 1008 Called. Whoopsy
+
+QuestorPostfailure:  [1009]
+Error: Questtext 1009 Called. My Bad
+
+QuestLogEntry:  [1010]
+                      __vamp_
+                       ___vamp_
+ 
+ 
+ Dear %pcn,
+ 
+      Those doddering, unenlightened
+ barbarians who call themselves the Mages
+ Guild are involved in yet another rather
+ pointless endeavor. This time, they may,
+ though accidentally, be on a path toward
+ breaking the shade and exposing %vam.
+ It seems inconceivable that the Mages Guild
+ actually accomplish anything, but we must
+ make provision for such an eventuality.
+ 
+       Come see me as soon as possible at
+ the address above.
+ 
+                      Yours in Death,
+ 
+ 
+                      _vamp_
+
+Message:  1011
+%qdt:
+ I received a letter
+ from _vamp_ of
+ %vam in ___vamp_.
+ I am to meet %g2 in a place
+ called __vamp_ as
+ soon as possible.
+
+Message:  1012
+<ce>               Good evening, kin. The fools at the Mages
+<ce>               Guild have blindly stumbled on a few bare
+<ce>               facts in their aimless dissections. It is
+<ce>               unlikely that they will get anywhere, but
+<ce>               the mage who is leading the research is at
+<ce>              least wise enough to hide. That, in itself,
+<ce>                is enough for our concern. Of course, it
+<ce>                     is pointless to hide from %vam
+<ce>                        anywhere in %reg. _mage_
+<ce>                    is in ___mondung_, a laboratory
+<ce>               of sorts. I want you to get the notes for
+<ce>                 this research and bring it back to me.
+<ce>                      _mage_, I understand, keeps
+<ce>              the notes on %g3 person under the laughable
+<ce>                misconception that they are safe there.
+<ce>                Go point out the error in %g3 thinking,
+<ce>                                 %pcf.
+
+Message:  1013
+My Dear Old %pcn,
+ 
+    Whenever you might find yourself in the
+ vicinity of ___mg_, your
+ ubiety at __mg_ would be
+ most efficacious to our present needs. In
+ return for your support in an endeavor, I can
+ offer you the gratification of personal
+ economonic prosperity and the more sublime
+ pleasure of aiding your Mages Guild compeers.
+ 
+     I hope to see you very soon.
+ 
+ 
+ 
+     Yours and all that,
+ 
+ 
+     _mg_
+
+Message:  1014
+<ce>                    A courier dressed in deep blue
+<ce>                   robes hands you a letter and, with
+<ce>                           a bow, disappears.
+
+Message:  1015
+<ce>                      Oh, oh, %oth, %pcn, is it?
+<ce>                   I, ah, understand that you are the
+<ce>                 right one for this, being sufficiently
+<ce>                 mettlesome, thewy, in short, puissant
+<ce>                            to aid _mage_, a
+<ce>                  sorcerer who fears that %g3 research
+<ce>                  has attracted the, ah, inquisitorial
+<ce>                attention of a local tribe of vampires.
+<ce>                  Too much work had made the poor old
+<ce>                 sorcerer, well, oversensitive. If you
+<ce>                   would just pop on over to %g3 lab,
+<ce>                       ___mondung_, and get these
+<ce>                 precious notes, I would be very, very,
+<ce>                  ah, beholden. Just watch out for old
+<ce>                         _mage_ -- %g's a mite,
+<ce>                      ah, agitated, I understand.
+
+Message:  1016
+<ce>                       %oth! My precious notes!
+<ce>                        Away, bloodsucker! Away!
+
+Message:  1017
+<ce>                      Wait a minute! Are you the
+<ce>                           %ra I was supposed
+<ce>                         to give the notes to?
+
+Message:  1018
+<ce>                      My sincere apologies, %pcn.
+<ce>                  I've been very nervous lately. Here
+<ce>                   are the notes. Be careful, though.
+<ce>                           Trust no one. %vam
+<ce>                       vampires could be anyone.
+
+Message:  1019
+%qdt:
+ _mg_ of
+ __mg_ in ___mg_
+ wants me to go to ___mondung_
+ to take _mage_'s
+ work out of %g3 hands and bring it
+ safely to ___mg_.
+ Even though _mage_
+ is expecting me, %g may be a little
+ nervous ... after all, anyone might
+ be a vampire ...
+
+Message:  1020
+%vam are the dominant
+ tribe of %reg, though they are
+ by no means the dominant tribe of the
+ whole Iliac Bay region. (Fill in this
+ about the Montalion, Vrasethi, Ghulari,
+ Selenu, et cetera, blah, blah, blah
+ Different powers but basically same
+ internal structure, blah, blah, blah).
+ How is one cured of vampirism (find
+ that Vampires of the Iliac Bay book,
+ references to a society of former
+ vampires)? Slaying the preeminent member
+ of the same bloodline, from what I can
+ gather from personal interviews and
+ whatnot. (Note to me: that rather
+ =vamp_ in ___vamp_ has
+ expressed interest in my work. Possible
+ interviewee or trap?) Vampires infiltrating
+ royal courts, Dark Brotherhood, even the
+ Mages Guild in %reg and else
+ where. Is the %t of %reg under
+ influence of %vam or perhaps
+ more than under the influence? Run the
+ standard test (pend that patent) and see
+ what's what. Need Nymph Hair, holy symbol,
+ et cetera, et cetera, fresh this time for
+ %god's sake. Talk to _mg_
+ about increasing funding. Going nowhere.
+
+Message:  1021
+%qdt:
+ A sorcerer named _mage_
+ has come close to major
+ discoveries about %vam
+ and _vamp_ has sent me
+ to the laboratory, ___mondung_
+ to retrieve the notes. It is likely that
+ _mage_ has them on
+ %g3 body, as if that is protection
+ against me.
+
+Message:  1022
+<ce>                      Is this what _mage_ wanted
+<ce>                  to protect? The meandering drivel of
+<ce>                   a madman. Still, not your fault I
+<ce>                  suppose. Here's _mggold_ gold pieces
+<ce>                    for your propitious conveyance.
+
+Message:  1023
+<ce>                     A pale young boy hands you a
+<ce>                  letter and scampers away like a rat.
+
+
+-- Symbols used in the QRC file:
+--
+--              %dat occurs 2 times.
+--                %g occurs 3 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 11 times.
+--              %god occurs 1 time.
+--              %oth occurs 2 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 6 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 4 times.
+--                %t occurs 1 time.
+--              %vam occurs 9 times.
+--            =mage_ occurs 1 time.
+--            =vamp_ occurs 1 time.
+--            ___mg_ occurs 3 times.
+--       ___mondung_ occurs 7 times.
+--          ___vamp_ occurs 7 times.
+--             __mg_ occurs 2 times.
+--           __vamp_ occurs 2 times.
+--            _mage_ occurs 14 times.
+--              _mg_ occurs 4 times.
+--          _mggold_ occurs 1 time.
+--            _vamp_ occurs 5 times.
+
+QBN:
+Item _letter_ letter used 1010
+Item letter37 letter used 1013
+Item research1 letter used 1020
+Item _mggold_ gold
+
+Person _vamp_ factiontype Vampire_Clan local
+Person _mg_ faction The_Mages_Guild local
+Person _mage_ face 1 group Group_5.1 remote
+
+Place _mondung_ remote dungeon9
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+Clock _2ndparton_ 00:10 00:30 flag 9 range 0 0
+
+Foe _sorceror_ is Sorceror
+
+--	Quest start-up:
+	dialog link for person _vamp_ 
+	dialog link for location _mondung_ person _mg_ 
+	repute with _mg_ exceeds 15 do _S.04_ 
+	give item research1 to _sorceror_ 
+	letter37 used do _S.14_ 
+	_letter_ used do _readletter_ 
+	have _letter_ set _S.15_ 
+	give pc _letter_ notify 1023 
+	place foe _sorceror_ at _mondung_ 
+
+_queston_ task:
+	change repute with _vamp_ by -10 
+	end quest 
+
+_vampclicked_ task:
+	clicked npc _vamp_ 
+	reveal _mondung_ 
+	log 1021 step 2 
+	say 1012 
+
+variable _S.02_
+_2ndparton_ task:
+	give pc letter37 notify 1014 
+
+_S.04_ task:
+	start timer _2ndparton_ 
+
+_S.05_ task:
+	clicked npc _mg_ 
+	reveal _mondung_ 
+	log 1019 step 3 
+	say 1015 
+
+_contact_ task:
+	injured _sorceror_ 
+
+variable _S.07_
+_S.08_ task:
+	when _contact_ and _S.05_ 
+	prompt 1017 yes _S.09_ no _S.10_ 
+
+_S.09_ task:
+	get item research1 
+	say 1018 
+	restrain foe _sorceror_ 
+
+_S.10_ task:
+	when _contact_ and not _S.05_ 
+	say 1016 
+
+_S.11_ task:
+	toting research1 and _mg_ clicked 
+	get item _mggold_ 
+	say 1022 
+	make _mggold_ permanent 
+	change repute with _vamp_ by -20 
+	change repute with _mg_ by +10 
+	end quest 
+
+_S.12_ task:
+	toting research1 and _vamp_ clicked 
+	give pc nothing 
+	end quest 
+
+_readletter_ task:
+	add dialog for person _vamp_ 
+	log 1011 step 0 
+
+_S.14_ task:
+	add dialog for person _mg_ 
+
+_S.15_ task:
+	start timer _queston_ 

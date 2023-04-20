@@ -1,0 +1,274 @@
+-- Quest: C:\QUESTS\WORKING\O0B00Y11.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 0
+-- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 64
+Quest: O0B00Y11
+DisplayName: Antique Ivory
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                     %pcf, a simple game.  An item
+<ce>                     in a house that needs lifting.
+<ce>                           Are you up for it?
+
+RefuseQuest:  [1001]
+<ce>                  You'll go far in the Thieves Guild
+<ce>                  with that attitude.  Sure you will.
+
+AcceptQuest:  [1002]
+<ce>                    That's the spirit.  As I said,
+<ce>                     nothing complicated about this
+<ce>                     job.  A client wants to get a
+<ce>                    hold of a certain antique ivory
+<ce>                     piece which currently resides
+<ce>                     in _target_ here in __target_.
+<ce>                     You have two days to bring it
+<ce>                      to me, for a finder's fee of
+<ce>                             _reward_ gold.
+
+QuestFail:  [1003]
+<ce>                      The _heist_?  Where is it?
+
+QuestComplete:  [1004]
+<ce>                  Excellent work, %pcf.  Just the way
+<ce>                  I like these jobs to go, no fuss, no
+<ce>                  muss.  Here's the _reward_ gold, and
+<ce>                  congratulations on a job well done.
+
+RumorsDuringQuest:  [1005]
+_dummy_ has hired on a lot of extra guards at _target_ for some reason.
+
+RumorsPostfailure:  [1006]
+Did you hear about the bungled break-in at _target_?
+
+RumorsPostsuccess:  [1007]
+<ce>Someone broke in to _target_ and got away with _dummy_'s precious antique
+<ce>           ivory, right under the noses of all those guards!
+
+QuestorPostsuccess:  [1008]
+What can I do for you, my catburgling friend?
+
+QuestorPostfailure:  [1009]
+I can't seem to forget the botch you made of that simple heist.
+
+Message:  1011
+<ce> _target_ is swarming with hired guards these days.  I don't know why.
+
+Message:  1020
+%qdt:
+ I have two days to steal a piece
+ of antique ivory from _target_
+ here in __target_.  I am to
+ deliver it to _questgiver_ at
+ __questgiver_ for _reward_ gold.
+
+
+Message:  1021
+%qdt:
+ My burglary did not go smoothly.
+ _questgiver_ told me to get out
+ of town with the ivory.  I am to
+ deliver it to _contact_ who
+ will meet me in _safehouse_
+ in __safehouse_.
+
+Message:  1040
+<ce>                  This looks like the piece of ivory
+<ce>                    _questgiver_ sent you to steal.
+
+Message:  1050
+<ce>                    %pcf, what are you doing here?
+<ce>                    I don't know how you could botch
+<ce>                     such a simple job, but if you
+<ce>                  don't get yourself and that blasted
+<ce>                   ivory out of town, we're all going
+<ce>                  to end up in the slammer, or worse.
+<ce>                  I don't give a damn about your skin,
+<ce>                 but the Thieves Guild has a reputation
+<ce>                 to uphold, and we promised our client
+<ce>                 that item.  Get over to __safehouse_.
+<ce>                 _contact_ will meet you in _safehouse_
+<ce>                     there.  Don't screw up again.
+
+Message:  1051
+<ce>                   Well, if it isn't %pcn, the Inept
+<ce>                   Catburglar?  At least you managed
+<ce>                  to get through with the item.  Says
+<ce>                   something about your brawn, if not
+<ce>                   your brains.  You didn't actually
+<ce>                   expect to still get paid, did you?
+
+Message:  1052
+<ce>                  You're smarter than you look.  Now
+<ce>                   run along before we decide to turn
+<ce>                    you over to the __target_ guard.
+
+Message:  1053
+<ce>                 Then we're just going to have to take
+<ce>                         it off your dead body.
+
+Message:  1060
+<ce>                  %oth, you're a feisty one, aintcha?
+<ce>                  Better get outta here before I have
+<ce>                           to really hurt ya.
+
+Message:  1061
+<ce>                     This %ra scum killed =guard_!
+
+Message:  1062
+<ce>                   Don't move, or I'll cut you down
+<ce>                  where you stand!  Give us the ivory
+<ce>                        you stole from _target_
+<ce>                          and I'll let you go.
+
+Message:  1063
+<ce>                  We know how to deal with murdering
+<ce>                     scum like you.  =posse_, just
+<ce>                    be careful not to get any blood
+<ce>                    on _dummy_'s ivory when you cut
+<ce>                           this %ra's throat.
+
+
+-- Symbols used in the QRC file:
+--
+--              %oth occurs 1 time.
+--              %pcf occurs 3 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 2 times.
+--               %ra occurs 5 times.
+--           =guard_ occurs 2 times.
+--           =posse_ occurs 1 time.
+--     __questgiver_ occurs 1 time.
+--      __safehouse_ occurs 3 times.
+--         __target_ occurs 4 times.
+--         _contact_ occurs 2 times.
+--           _dummy_ occurs 3 times.
+--           _heist_ occurs 2 times.
+--      _questgiver_ occurs 3 times.
+--          _reward_ occurs 6 times.
+--       _safehouse_ occurs 2 times.
+--          _target_ occurs 7 times.
+
+QBN:
+Item _heist_ ivory
+Item _reward_ gold
+
+Person _questgiver_ face 44 group Questor
+Person _contact_ face 1 group Local_3.0 remote
+Person _dummy_ face 209 group Resident1 local
+
+Place _target_ local house1 anyInfo 1011 rumors 1011
+Place _safehouse_ remote house3
+
+Clock _time_ 00:00 0 flag 1 range 0 2
+Clock _S.01_ 2.00:00 0 flag 1 range 0 1
+--removed unnecessary delay timer
+
+Foe _guard_ is Rogue
+Foe _posse_ is 3 Archer
+
+--	Quest start-up:
+	place item _heist_ at _target_ 
+	dialog link for location _safehouse_ person _contact_ 
+	start timer _S.01_ 
+	start timer _time_ 
+	log 1020 step 0 
+	pc at _target_ set _S.02_ 
+	place npc _contact_ at _safehouse_ 
+
+_time_ task:
+	end quest 
+
+variable _S.01_
+variable _S.02_
+until _S.02_ performed:
+	clear _S.06_ _S.05_ 
+
+_greklith_ task:
+	injured _guard_ 
+	say 1060 
+
+_S.04_ task:
+	daily from 05:30 to 19:00 
+
+_S.05_ task:
+	when _S.04_ and _S.02_ 
+	create foe _guard_ every 2 minutes 6 times with 50% success 
+
+_S.06_ task:
+	when not _S.04_ and _S.02_ 
+	create foe _guard_ every 10 minutes 3 times with 50% success 
+
+_S.07_ task:
+	toting _heist_ and _questgiver_ clicked 
+
+_S.08_ task:
+	killed 1 _guard_ 
+	killed 1 _posse_ 
+	say 1061 
+
+_S.09_ task:
+	when not _greklith_ and _S.07_ and not _S.01_ 
+	give pc _reward_ 
+	end quest
+--removed unnecessary delay ending
+
+_qgtalk_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgtalk_ and not _S.07_
+	say 1003
+	clear _clearclick_ _qgtalk_
+--added _qgtalk_ and _clearclick_
+
+_S.10_ task:
+	when _greklith_ and _S.07_ 
+	create foe _posse_ every 60 minutes 20 times with 50% success 
+	log 1021 step 1 
+	get item _heist_ 
+	say 1050 
+
+_S.10a_ task:
+	when _S.07_ and _S.01_ 
+	create foe _posse_ every 60 minutes 20 times with 50% success 
+	log 1021 step 1 
+	get item _heist_ 
+	say 1050 
+--recent troubles with multiple conditions on a single task, this is better layout
+
+_S.12_ task:
+	toting _heist_ and _contact_ clicked 
+	say 1051 
+	change repute with _questgiver_ by +2 
+	end quest
+
+_S.13_ task:
+	injured _posse_ 
+	have _heist_ set _S.18_ 
+
+_yes_ task:
+	give item _heist_ to _posse_ 
+	say 1052 
+	restrain foe _posse_ 
+	clear _S.10_ _S.07_ 
+
+_no_ task:
+	say 1053 
+
+_S.16_ task:
+	when _S.13_ and _S.08_ 
+	say 1063 
+
+_S.17_ task:
+	when _S.13_ and not _S.08_ and _S.18_ 
+	prompt 1062 yes _yes_ no _no_ 
+
+variable _S.18_
+_S.19_ task:
+	clicked item _heist_ say 1040 

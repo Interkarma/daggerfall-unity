@@ -1,0 +1,152 @@
+-- Quest: C:\QUESTS\WORKING\M0B1XY01.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 1X
+-- QuestId: 1
+Messages: 81
+Quest: M0B1XY01
+DisplayName: Hunt for Harpies
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                I like you, kid. This assignment ain't
+<ce>                 for just anyone. Seems there's a flock
+<ce>                 of flyin' carnivores -- harpies -- who
+<ce>               are making a bunch of travelling merchants
+<ce>                real nervous. Will _reward_ gold get you
+<ce>                       over to ___mondung_ and a
+<ce>                      little hackin' 'n slashin'?
+
+RefuseQuest:  [1001]
+<ce>                      Too bad. Seemed pretty like
+<ce>                   a pretty damn generous deal to me.
+
+AcceptQuest:  [1002]
+<ce>                  Okay then. There are five of these
+<ce>                        beauties in ___mondung_,
+<ce>               and they all gotta be dead in =1stparton_
+<ce>                 days or no deal. And a word of advice:
+<ce>                 you get back here in =1stparton_ days
+<ce>                         but get to ___mondung_
+<ce>                      as soon as possible or those
+<ce>                harpies are gonna migrate and you'll be
+<ce>                  outta luck. Okay kid, good luck and
+<ce>                            get outta here.
+
+QuestFail:  [1003]
+<ce>                  Listen kid, I'm know I'm a charmer,
+<ce>                     but them harpies are waiting,
+<ce>                     and make sure to get all five
+<ce>                            of 'em, get it?
+
+QuestComplete:  [1004]
+<ce>               Awright, kid, good goin'. That's _reward_
+<ce>                     gold your way. Not too shabby.
+
+RumorsDuringQuest:  [1005]
+Someone went up to check out ___mondung_ recently and was torn to shreds.
+<--->
+I only hope those harpies keep migrating south.
+
+RumorsPostfailure:  [1006]
+I hear the harpies soiled their nest at ___mondung_ and had to move on.
+<--->
+Those harpies are following the merchants' caravans like a moveable feast.
+
+RumorsPostsuccess:  [1007]
+The harpies were a real economic problem. Things should get better now.
+<--->
+I hear they found thousands and thousands of eggs over in that harpy nest.
+
+QuestorPostsuccess:  [1008]
+<ce>                      Hey! The %ra who took care
+<ce>                       of those Harpies is back.
+
+QuestorPostfailure:  [1009]
+<ce>                   You're the %ra that couldn't even
+<ce>               take care of a bunch of Harpies. Pathetic.
+
+Message:  1020
+<ce>                   That's five. That should be enough
+<ce>                         to hold _questgiver_.
+
+Message:  1030
+%qdt:
+ The Fighters Guild
+ of ___questgiver_ has hired me
+ to exterminate a nest of harpies
+ that has infested ___mondung_
+ I need to have at least five of them dead and
+ be back in =1stparton_ days if I want to
+ collect my reward.
+
+
+--separated qdt line, added s to Fighter
+
+
+Message:  1080
+<ce>                  Hey, since you've been so helpful,
+<ce>                      here's a map to ___newdung_.
+<ce>                    All the killing and looting you
+<ce>                         can stand.  My treat.
+
+
+-- Symbols used in the QRC file:
+--
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--       =1stparton_ occurs 3 times.
+--       ___mondung_ occurs 6 times.
+--       ___newdung_ occurs 1 time.
+--    ___questgiver_ occurs 3 times.
+--          _reward_ occurs 4 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ group Questor
+
+Place _mondung_ remote dungeon10
+Place _newdung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Harpy
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1030 step 0 
+	pick one of _map_ _nomap_ _nomap_ 
+	pc at _mondung_ set _S.04_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+_mondead_ task:
+	killed 5 _monster_ saying 1020 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+_S.04_ task:
+	create foe _monster_ every 15 minutes 20 times with 50% success 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_
+	say 1003 
+	clear _qgclicked_ _clearclick_ 
+
+variable _map_
+variable _nomap_
+_S.08_ task:
+	when _map_ and _pcgetsgold_ 
+	reveal _newdung_ readmap
+    say 1080 

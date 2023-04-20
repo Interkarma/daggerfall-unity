@@ -1,0 +1,398 @@
+-- Quest: C:\QUESTS\WORKING\S0000001.Qbn.
+-- Main story quest.
+-- QuestId: 1
+Messages: 41
+Quest: S0000001
+DisplayName: Missing Prince
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  Welcome to Sentinel, %pcf. I guess
+<ce>         you must have received my letter. I know some things
+<ce>        about Lysandus and why he might be haunting Daggerfall,
+<ce>           but before I tell you, you have to promise to do
+<ce>              something for me first. Is that all right?
+
+RefuseQuest:  [1001]
+<ce>                         %oth, %pcf, I thought
+<ce>                 you were a hero. I guess I was wrong.
+
+AcceptQuest:  [1002]
+<ce>               You will? Thank %god. You see, I used to
+<ce>          have an older brother, ten or eleven years older
+<ce>        than me, named _brother_. Whenever I ask what happened
+<ce>          to him, I'm told a different story. Some say he got
+<ce>            sick and died, some say he was kidnapped by the
+<ce>         Underking. I want to know the truth. If you can find
+<ce>         some proof of what really happened to him, I'll tell
+<ce>                  you all I know about King Lysandus.
+
+QuestFail:  [1003]
+<ce>                    I wanted some real proof, %pcf.
+
+QuestComplete:  [1004]
+<ce>             This is what I most feared. Poor _brother_. As I
+<ce>                promised, here's what I've heard about
+<ce>              Lysandus. I don't know how much of this is
+<ce>             secret, but I trust you. Lysandus was in love
+<ce>             with his court sorceress, a noblewoman named
+<ce>              Medora Direnni, and during the war with us,
+<ce>             his queen found out. They say that while her
+<ce>               husband was gone, Queen Mynisera banished
+<ce>              Medora from the court. My sister Aubk-i is
+<ce>            queen now, part of the treaty to ensure peace,
+<ce>            but Mynisera still resides at Castle Daggerfall
+<ce>                     as the dowager Queen mother.
+<ce>                                    
+<ce>              I don't know where Medora went, but I know
+<ce>              she has an enormous castle somewhere on the
+<ce>              Isle of Balfiera. But I also heard there is
+<ce>             some kind of curse on her, and she can never
+<ce>              leave. I don't know if that helps you, but
+<ce>                that's all I know. Again, thank you for
+<ce>            _brother_'s letter. Just knowing what happened
+<ce>             will ease my heart somewhat. Please take this
+<ce>              _magicitem_ as a token of my appreciation.
+
+RumorsDuringQuest:  [1005]
+Poor Prince Lhotun is in one of his moods. He's so different from Greklith.
+<--->
+Queen Akorithi doesn't know what to do with Prince Lhotun. He's so gloomy.
+
+RumorsPostfailure:  [1006]
+Prince Lhotun's black moods always lift eventually. Strange for a boy his age.
+<--->
+Prince Lhotun seems to be in an even darker mood than ever. Very odd boy.
+
+RumorsPostsuccess:  [1007]
+Prince Lhotun's mood has gotten better. He's still quiet, but that's normal.
+<--->
+Queen Akorithi happily reports that her youngest is back in good spirits again.
+
+QuestorPostsuccess:  [1008]
+Hello, %pct. I'm sorry. I'm still shaken from reading my brother's journal.
+
+QuestorPostfailure:  [1009]
+<ce>                    So you haven't any information
+<ce>                  for me? I must say, it seems highly
+<ce>                  suspicious that there is nothing to
+<ce>                  report. Perhaps you're working for
+<ce>                   my mother or one of the nobles. I
+<ce>                      think you should leave now.
+
+QuestLogEntry:  [1010]
+23 Morning Star 3E 400
+ ___ukcrypt_
+ 
+ Two days I was sealed within this crypt without food or
+ water. I do not know whether hunger or poor health or
+ one of the creatures who share this dank hole with me
+ will kill me first -- I only know that I will soon be
+ dead, and not even my bones will remain. My hope is that
+ in the years that come, this letter will be read and the
+ sad story of _brother_, Prince of Sentinel will be told.
+ 
+ I am fifteen years old at the time of this writing, and
+ have been plagued with bad health for most of my life,
+ to the frustration of my hearty parents. The finest
+ healers and apothecaries in western Tamriel have labored
+ over my every cough and fever, but while they could save
+ my life time and time again, they could not improve my
+ sickly constitution. In retrospect, I received little
+ real affection from the king and queen, embarrassed as
+ they were about begetting such a cripple as the heir of
+ the kingdom. I cannot say I missed the love; I received
+ much attention from the doctors, priests, and herbalists
+ constantly at court. Certainly I was not to be the sort
+ of warrior that King Camaron was, but one of my dearest
+ friends, a priest of Stendarr said that I might be the
+ first scholar-king in the history of Sentinel.
+ 
+ My younger sister Aubk-i was the true favorite of my
+ parents: athletic, beautiful, and charming. It is hard to
+ think of an uncomplimentary word for her. I am resigned
+ to my imminent death, and yet, I would like to see her
+ once again. For six years, Aubk-i and I were the only
+ children of Sentinel. Eight years ago, the queen had a
+ boy child and named him Greklith, after the ancient
+ Redguard word for Strong King. Few speak that tongue
+ any longer, but all the scholars and nobles of Hammerfell
+ understood. And Greklith is a strong boy indeed -- I have
+ never so much as seen him cough. The Queen's next child,
+ born only a year after Greklith, had an even more ominous
+ birthname -- Lhotun. Second Boy. Perhaps had I been less
+ sheltered, more suspicious by nature, I might have read
+ into these nominations. Lhotun and Greklith are common
+ enough names in our family, I reasoned. Now I know that
+ even then, I was disinherited -- even if it was
+ not official yet.
+ 
+ For several months before Lhotun's birth and over three
+ years afterward, I was in the throes of a very serious
+ fever. The doctors despaired of me, but somehow and very,
+ very gradually, I recovered. For the first time, and the
+ last, I read an expression on my father, the King's face
+ that was not indifference. It was disgust.
+ 
+ That was a fortnight ago. Three nights ago, I was seized
+ by men I had never seen while I was having a walk. My
+ nursemaid stood by watching placidly as I was gagged
+ and tied and thrown roughly into a sack. I do not know
+ how long they rode with me, but I was eventually left
+ here. When I finally freed myself from my bonds, I found
+ that I was alone. My wanders have gotten me nowhere.
+ This place is filled with undead creatures that prevent
+ me from finding any exit.
+ 
+ I have no hope left, but no fear either. A few regrets.
+ Perhaps had I studied magic instead of history and
+ science I could free myself of this place. One of my
+ tutors told the story of the Underking, how he had
+ placed his lifeforce in the body of a powerful being
+ and had thus conquered all Tamriel long, long ago.
+ Had I only had the strength of a more powerful body
+ like that.
+ 
+ But I did not study magic. I studied history, so I
+ leave this letter -- not to revenge myself, but as
+ an historic document.
+
+Message:  1011
+<ce>            A thin, rail of a woman steps forward and hands
+<ce>            you a note. She turns aside all your questions
+<ce>                  with a gaunt, expressionless face.
+
+Message:  1012
+The Underking used to have a crypt around here -- ___ukcrypt_, just %di of here.
+<--->
+No one has heard much of the Underking since his crypt ___ukcrypt_ was abandoned.
+<--->
+King Camaron himself drove the Underking's servants out of ___ukcrypt_.
+
+Message:  1013
+The Underking is supposed to be centuries old.
+<--->
+That other king is a buffoon. Oh...UNDERking! Sorry, I don't know anything about that.
+<--->
+He is a lich of great power. So they say.
+<--->
+I heard he kidnapped Prince _brother_.
+<--->
+King Camaron blamed the Underking for Prince _brother_'s death. Never made sense to me though.
+<--->
+They say Tiber Septim never really died. He became the Underking.
+<--->
+Aw, he's just some boogey man, you know, like Jagar Tharn.
+<--->
+The Underking is just a child's myth.
+<--->
+Underking? Never heard of him.
+
+Message:  1014
+                                       Castle Sentinel
+ 
+ 
+ Dear %pcn,
+ 
+     You do not know me but I know you. I know that you were
+ shipwrecked. I know that you are trying to dispell the ghost
+ of King Lisandus. If you want, I can tell you what I know,
+ but I need your help in return.
+     If you want to talk, my name is Prince Lhotun and I live
+ in Sentinel at Samaruik, which is usually called Castle
+ Sentinel. I hope that we can meet soon.
+ 
+ 
+<ce>                             Yours truly,
+ 
+<ce>                                Lhotun,
+<ce>                          Prince of Sentinel
+
+Message:  1015
+___ukcrypt_ used to be the Underking's crypt, but now it's a Sentilian prison.
+<--->
+___ukcrypt_ is just %di of here. Some say it's still a crypt of the Underking.
+
+Message:  1016
+___ukcrypt_ is directly %di of here. It used to be a crypt of the Underking.
+<--->
+___ukcrypt_ isn't used as a prison anymore, let alone a crypt of the Underking.
+
+Message:  1018
+<ce>            What is the meaning of this? Blackmail? Why you
+<ce>           contemptible scoundrel. You ought to be thrashed
+<ce>            for attempting to pass this cheap counterfeit.
+<ce>           Poor Prince _brother_ died of a fever many, many
+<ce>            years ago. Why can't you let him rest in peace?
+
+Message:  1019
+%qdt:
+ Prince Lhotun of Sentinel has asked
+ me to investigate the death of his
+ brother, _brother_, who was supposedly
+ kidnapped by the Underking years ago.
+
+Message:  1020
+<ce>                You pick up a death certificate.
+
+Message:  1030
+_brother_ was a prince of Sentinel. He died years ago.
+<--->
+_brother_ came down with a fever and eventually died.
+<--->
+Wasn't he the scholar prince?
+<--->
+_brother_ liked books more than swords. It used to drive King Camaron crazy.
+<--->
+He was the only prince never to receive a public funeral.
+
+Message:  1031
+<ce> Old King Camaron, may his soul rest in peace, never liked _brother_.
+ He would have preferred Greklith to be his heir.
+                                     <--->
+I heard that _brother_'s former nursemaid was sent to Skyrim with a chest full of gold. 
+<--->
+King Camaron seemed far too happy when _brother_ died.
+<--->
+I heard he died of a fever.
+<--->
+I always wondered about _brother_. The King refused to let the temple prepare the body for burial.
+
+Message:  1032
+Dear %pcf,
+ 
+ If you are interested in learning the truth,
+ about prince _brother_, meet me at
+ _agentplace_ in __agentplace_ of Sentinel.
+ 
+<ce>                              (unsigned)
+
+Message:  1035
+<ce>                    %pcn? Shhh. I would prefer that
+<ce>             nobody sees me talking with you. It has come
+<ce>             to our attention that the Underking is being
+<ce>                  wrongly accused of abducting prince
+<ce>                _brother_. Before you judge, check into
+<ce>                   ___ukcrypt_. I'll mark it on your
+<ce>                  map. Who am I? Just call me a loyal
+<ce>                 servant. Now move away before anyone
+<ce>                    gets suspicious. Go on, scram.
+
+Message:  1040
+%qdt:
+ I met secretly with an agent of the Underking.
+ Supposedly the Underking had nothing to do with
+ the abduction of _brother_. I am supposed
+ to check out ___ukcrypt_.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 4 times.
+--              %god occurs 1 time.
+--              %oth occurs 1 time.
+--              %pcf occurs 6 times.
+--              %pcn occurs 3 times.
+--              %pct occurs 2 times.
+--              %qdt occurs 2 times.
+--       ___ukcrypt_ occurs 14 times.
+--     __agentplace_ occurs 5 times.
+--         _brother_ occurs 24 times.
+--       _magicitem_ occurs 1 time.
+
+QBN:
+Item deathCertificate letter used 1010
+Item letter38 letter used 1032
+Item _magicitem_ magic_item
+
+Person _lhotun_ named Prince_Lhotun atHome
+Person _akorithi_ named Queen_Akorithi atHome
+Person _greklith_ face 88 named Prince_Greklith atHome
+Person Vhosek face 88 named Lord_Vhosek atHome
+Person _brother_ face 5 faction Children male remote anyInfo 1030 rumors 1031
+Person _agentuk_ face 1 faction Agents_of_The_Underking remote
+Person _underking_ face 1 named The_Underking anyInfo 1013
+
+Place _ukcrypt_ randompermanent Castle_Faallem,Fortress_Fhojum anyInfo 1015 rumors 1016
+Place _dirennitower_ permanent DirenniTowerEntry
+Place _agentplace_ remote tavern
+
+Clock _S.13_ 3.00:00 7.00:00
+
+--	Quest start-up:
+	dialog link for location _ukcrypt_ 
+	dialog link for location _dirennitower_ 
+	prompt QuestorOffer yes yes no _no_ 
+	place npc _agentuk_ at _agentplace_ 
+
+_S.00_ task:
+	toting deathCertificate and _lhotun_ clicked 
+	give pc _magicitem_ 
+	add dialog for location _dirennitower_ 
+	remove log step 0 
+	remove log step 1
+--added additional remove log. directions would linger in journal.
+	reveal _dirennitower_ in province 9 at 204718 
+	repute with _akorithi_ exceeds 0 do _S.16_ 
+	change repute with _lhotun_ by +15 
+	change repute with _agentuk_ by +25 
+	mute npc _lhotun_ 
+	mute npc _greklith_ 
+	mute npc _akorithi_ 
+	mute npc Vhosek 
+	drop _lhotun_ as questor 
+
+variable _S.01_
+variable _S.02_
+variable _queston_
+variable _S.04_
+_S.05_ task:
+	toting deathCertificate and _akorithi_ clicked 
+	toting deathCertificate and Vhosek clicked 
+	toting deathCertificate and _greklith_ clicked 
+	say 1018 
+	change repute with _akorithi_ by -20 
+	legal repute -20 
+	end quest 
+
+variable _S.06_
+variable _S.07_
+variable _S.08_
+variable _S.09_
+_S.10_ task:
+	clicked item deathCertificate say 1020 
+
+yes task:
+	place item deathCertificate at _ukcrypt_ 
+	start timer _S.13_ 
+	log 1019 step 0 
+	say AcceptQuest 
+	add _lhotun_ as questor 
+
+_no_ task:
+	say RefuseQuest 
+	drop _lhotun_ as questor 
+	end quest 
+
+_S.13_ task:
+	give pc letter38 notify 1011 
+
+_S.14_ task:
+	clicked npc _agentuk_ 
+	add dialog for location _ukcrypt_ 
+	reveal _ukcrypt_ 
+	log 1040 step 1 
+	say 1035 
+
+_S.15_ task:
+	level 7 completed 
+
+variable _S.16_
+_S.17_ task:
+	when _S.16_ and _S.15_ 
+	start quest 17 17 
+	end quest 
+
+variable _S.18_
+variable Castellian

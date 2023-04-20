@@ -1,0 +1,155 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y01.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 1
+Messages: 22
+Quest: R0C10Y01
+DisplayName: Contraband Trade
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  If you want work, I am looking for
+<ce>                  someone to take a special _item_ to
+<ce>                  an acquaintance of mine. The reward
+<ce>                 will be extremely liberal. Interested?
+
+RefuseQuest:  [1001]
+<ce>              Really? Too busy, perhaps. That is a shame.
+
+AcceptQuest:  [1002]
+<ce>                     Excellent. Here's the _item_.
+<ce>                    Now, _contact_ needs to have it
+<ce>                   in ___contact_ in =queston_ days.
+<ce>               That ought to be just enough time, I hope.
+<ce>                    You will recognize _contact_ --
+<ce>                  go to a place called __contact_ and
+<ce>                       just look for a =contact_.
+<ce>                        Good luck and thank you.
+
+QuestFail:  [1003]
+<ce>             %pcf, you had better get busy with our little
+<ce>                              arrangement.
+
+QuestComplete:  [1004]
+<ce>                   Ah, good to see you %pcf. And the
+<ce>                 _item_ too. Excellent. Here's a little
+<ce>               trinket for your trouble. I hope you like
+<ce>                      red. Take care of yourself.
+
+RumorsDuringQuest:  [1005]
+_questgiver_ is still in the smuggling business, I hear.
+<--->
+There's been an extraordinary increase in smuggling lately.
+
+RumorsPostfailure:  [1006]
+Someone found a very lovely _item_ around here recently.
+<--->
+I hear _questgiver_ is mad as hell at some %ra adventurer.
+
+RumorsPostsuccess:  [1007]
+Some =contact_ was just here, waving around some _item_.
+<--->
+Some jewelry store has reported the theft of a big ruby, I hear.
+
+QuestorPostsuccess:  [1008]
+Ah, %pcf. I hope you're keeping that ruby safe, my friend.
+<--->
+Hello again, my young friend.
+
+QuestorPostfailure:  [1009]
+<ce>                   I guess you've come to apologize
+<ce>                   for that botched smuggling affair.
+<ce>                         Apology not accepted.
+                                     <--->
+<ce>                      You're the %ra who couldn't
+<ce>                   even accomplish a simple delivery,
+<ce>                    eh? Why would I waste my breath
+<ce>                                on you?
+
+QuestLogEntry:  [1010]
+%qdt:
+_questgiver_
+ asked me to deliver a _item_ to a contact
+ in ___contact_ called _contact_.
+ I need to have the _item_ delivered to %g2 at
+ __contact_ in =queston_
+ days or my reward will be forfeit.
+
+Message:  1020
+<ce>                       Hand over da gem. I knows
+<ce>                      ya got it. Da guild says so.
+<ce>                      If ya don't, I gots ta kill
+<ce>                             ya real slow.
+
+Message:  1021
+<ce>                      How purdy. Now scram before
+<ce>                           I changes my mind.
+
+
+-- Symbols used in the QRC file:
+--
+--               %g2 occurs 13 times.
+--              %pcf occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--         =contact_ occurs 2 times.
+--         =queston_ occurs 2 times.
+--       ___contact_ occurs 7 times.
+--            _item_ occurs 7 times.
+--      _questgiver_ occurs 3 times.
+
+QBN:
+Item _reward_ ruby
+Item _item_ ruby
+
+Person _questgiver_ group Questor
+Person _contact_ group Local_3.0 remote
+
+
+Clock _queston_ 00:00 0 flag 1 range 1 4
+Clock _delay_ 00:30
+--removed flags from _delay_
+
+Foe _thief_ is Nightblade
+
+--	Quest start-up:
+	create foe _thief_ every 5 minutes 5 times with 25% success 
+	start timer _queston_ 
+	log 1010 step 0 
+	get item _item_ 
+	create npc _contact_ 
+
+variable _pcgetsgold_
+variable _pchasitem_
+_queston_ task:
+	change repute with _questgiver_ by -20 
+	end quest 
+
+_npcclicked_ task:
+	toting _item_ and _contact_ clicked 
+	give pc _reward_ 
+	start timer _delay_ 
+
+yes task:
+	have _item_ set _S.07_ 
+
+variable _no_
+_S.06_ task:
+	injured _thief_ 
+	prompt 1020 yes yes no _no_ 
+
+_S.07_ task:
+	give item _item_ to _thief_
+	say 1021
+--moved "saying 1021" to new line. bad argument 
+	restrain foe _thief_ 
+
+_delay_ task:
+	end quest 
+
+_S.09_ task:
+	when _queston_ or _delay_ 
+	make _item_ permanent 

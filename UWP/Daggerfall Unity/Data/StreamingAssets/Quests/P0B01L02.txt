@@ -1,0 +1,165 @@
+-- Quest: C:\QUESTS\WORKING\P0B01L02.Qbn.
+-- StartsBy: letter
+-- Questee: member
+-- Questor: vampire
+-- Repute: 01
+-- QuestId: 2
+Messages: 31
+Quest: P0B01L02
+DisplayName: The Vampire Relic
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+My dear %pcf,
+ 
+    We have a small task for you to perform to
+ prove your resolution to be one of us. There is
+ a _vamprelic_ of ours sequestered like a
+ bit of trite incunabula in the Mages Guild of
+ __itemdung_. Liberate it from its prison
+ within =1stparton_ days when they plan to move it
+ to a more secure location.
+    Once you have the _vamprelic_, come to me.
+ I will wait for you for =1stparton_ days at
+ __vampire_ in ___vampire_. I am
+ easy to recognize. Look for a =vampire_.
+    I am looking forward to making your acquaintance
+ less formally, %pcf. Do not fail to come.
+ 
+<ce>                               In death,
+<ce>                           _vampire_ of %vam
+
+RefuseQuest:  [1001]
+Error: Dagtext 1001 Called.
+
+AcceptQuest:  [1002]
+Error: Dagtext 1002 Called.
+
+QuestComplete:  [1004]
+<ce>                  Pleased to meet you at last, %pcf.
+<ce>                      I, of course, am _vampire_.
+<ce>                            %vam tribe will
+<ce>                       take proper possession of
+<ce>                       the _vamprelic_. Don't get
+<ce>                     any silly ideas about getting
+<ce>                     paid for this. It is an honor
+<ce>                          just to serve %vam.
+
+RumorsDuringQuest:  [1005]
+The Mages Guild is getting rid of a lot of its old useless junk, I hear.
+<--->
+I hear there's a dump where all the Mages Guilds are sending their old stuff.
+
+RumorsPostfailure:  [1006]
+With all the security at the Mages Guild, there's something worth stealing.
+<--->
+They sent that load of old dusty junk out of the Mages Guild at last.
+
+RumorsPostsuccess:  [1007]
+The three stars of Locanda glowed last night. That stands for unholy alliances.
+<--->
+The Mages Guild is perplexed about that burglary. Who would want that thing?
+
+QuestorPostsuccess:  [1008]
+Salutations, %pcn. Thank you again for the _vamprelic_.
+
+QuestorPostfailure:  [1009]
+<ce>                       %pcf, now is not the time
+<ce>                   to test the limits of my patience.
+<ce>                    My letter expressly asked you to
+<ce>                         bring the _vamprelic_,
+<ce>                      but where is it? A very poor
+<ce>                       showing, %pcf.  Very poor.
+
+QuestLogEntry:  [1010]
+A sinister-looking character by that name is %di of here in __vampire_.
+<--->
+An odd =vampire_ named _vampire_ is staying at __vampire_, %di of here.
+
+Message:  1011
+_vampire_ is a member of %vam tribe, a mentor to its youthlings.
+<--->
+_vampire_ is a fairly young member of %vam, but proud and strong too.
+
+Message:  1013
+Just a _vamprelic_. Not a very pretty sight.
+<--->
+A weird-looking _vamprelic_.
+
+Message:  1015
+From what I hear, it's a _vamprelic_ of the elder circle of %vam.
+<--->
+It's a _vamprelic_ used in certain secret rituals of %vam masters.
+
+Message:  1020
+%qdt:
+ I received a letter from _vampire_
+ of ___vampire_ who has given me =1stparton_ nights
+ to steal a _vamprelic_ out of its secured chamber
+ in the Mages Guild of __itemdung_. Once
+ the deed has been done, I am to bring the _vamprelic_
+ to _vampire_ at __vampire_.
+
+Message:  1030
+<ce>                   A rolled parchment on the ground
+<ce>                     catches your eye.  As you take
+<ce>                   a closer look, you are astonished
+<ce>                  to see that it is addressed to you.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 2 times.
+--              %pcf occurs 9 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--              %vam occurs 14 times.
+--       =1stparton_ occurs 3 times.
+--         =vampire_ occurs 4 times.
+--       __itemdung_ occurs 2 times.
+--        __vampire_ occurs 14 times.
+--       _vamprelic_ occurs 27 times.
+
+QBN:
+Item _vamprelic_ religious anyInfo 1013 used 1015
+Item _letter_ letter used QuestorOffer
+
+Person _vampire_ factiontype Vampire_Clan remote anyInfo 1011 rumors 1010
+
+Place _itemdung_ remote magery
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+
+Foe _mages_ is Mage
+Foe _battlemage_ is Battle_mage
+
+--	Quest start-up:
+	place item _vamprelic_ at _itemdung_ 
+	_letter_ used do _readletter_ 
+	have _letter_ set _S.06_ 
+	give pc _letter_ notify 1030 
+
+variable _pcgetsgold_
+_vampclicked_ task:
+	toting _vamprelic_ and _vampire_ clicked 
+	give pc nothing 
+	change repute with _vampire_ by +5 
+	end quest 
+
+_pchasitem_ task:
+	clicked item _vamprelic_ 
+	create foe _mages_ every 2 minutes 2 times with 25% success 
+	create foe _battlemage_ every 1 minutes 4 times with 25% success 
+
+_1stparton_ task:
+	make _vamprelic_ permanent 
+	change repute with _vampire_ by -5 
+	end quest 
+
+variable _clearclick_
+_readletter_ task:
+	log 1020 step 0 
+
+_S.06_ task:
+	start timer _1stparton_ 

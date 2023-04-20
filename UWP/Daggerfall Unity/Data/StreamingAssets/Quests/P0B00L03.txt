@@ -1,0 +1,219 @@
+-- Quest: C:\QUESTS\WORKING\P0B00L03.Qbn.
+-- StartsBy: letter
+-- Questee: member
+-- Questor: vampire
+-- Repute: 0
+-- QuestId: 3
+Messages: 27
+Quest: P0B00L03
+DisplayName: Territorial Battles
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       Might I interest you in a
+<ce>                      dangerous assignment for the
+<ce>                         greater glory of %vam?
+
+RefuseQuest:  [1001]
+<ce>                  You want to leave it to another of
+<ce>                     %vam and miss the honor? Very
+<ce>                      well, but I admit that I am
+<ce>                     disappointed by your docility.
+
+AcceptQuest:  [1002]
+<ce>                     You are beautifully obedient,
+<ce>                       %pcf. A rival vampire has
+<ce>                      moved into my territory. You
+<ce>                    are going to kill it. You should
+<ce>                     be careful, %pcf.  A vampiric
+<ce>                     ancient, even one from a tribe
+<ce>                     inferior to %vam, is no feeble
+<ce>                    adversary. Do not go into battle
+<ce>                    without preparation. This one is
+<ce>                           called _vampname_,
+<ce>                    and %g3 new sanctuary is called
+<ce>                     ___mondung_. He is known to be
+<ce>                    overly proud of his _vampproof_
+<ce>                   made from the skin of his victims.
+<ce>                    Bring them back with you. I will
+<ce>                        expect you back here in
+<ce>                =1stparton_ nights. Do not get yourself
+<ce>                             killed, %pcf.
+
+QuestFail:  [1003]
+<ce>                      Perhaps you were hoping for
+<ce>                             _vampname_ to
+<ce>                       commit suicide? Unlikely.
+<ce>                        You must be the agent of
+<ce>                               %g3 death.
+
+QuestComplete:  [1004]
+<ce>                     Welcome back, %pcf, my child.
+<ce>                  Curious thing: I was actually quite
+<ce>                    concerned about your well-being.
+<ce>                  What an absurdity -- sentimentality
+<ce>                 in a vampire of %vam! I bring you the
+<ce>                     congratulations of %vam elders
+<ce>                      who bade me to give you this
+<ce>                       _reward_. Do not think of
+<ce>                  it as anything so vulgar as pay. It
+<ce>                   is simply a gift from your family.
+
+RumorsDuringQuest:  [1005]
+There's been a lot of activity at ___mondung_, but it's been abandoned for years.
+<--->
+That _vampname_ is an aristocrat. Says %g's cleaning up ___mondung_ and %reg.
+
+RumorsPostfailure:  [1006]
+_vampname_ finally moved out of ___mondung_, I hear. No place for an aristocrat.
+<--->
+Now that _vampname_ moved out of ___mondung_, %g's over at the palace a lot.
+
+RumorsPostsuccess:  [1007]
+It turns out that nice _vampname_ was a vampire! I had no idea!
+<--->
+Thank %god that wonderful %ra mercenary killed the vampire in ___mondung_.
+
+QuestorPostsuccess:  [1008]
+Salutations, %pcf. I hope you're enjoying your new _reward_.
+
+QuestorPostfailure:  [1009]
+<ce>                        _vampname_ still walks
+<ce>                         the night, %pcf. This
+<ce>                      assignment was handled in an
+<ce>                      unacceptable manner. All of
+<ce>                        %vam is ... disappointed
+<ce>                                in you.
+
+Message:  1020
+Dear %pcn,
+ 
+    %vam have a potential
+ problem I fear. Come to me in
+ ___vampire_ soonest.
+ 
+ In death,
+<ce>                               _vampire_
+
+Message:  1011
+%g's a very nice and intelligent =vampire_ at __vampire_.
+<--->
+_vampire_ is that nice =vampire_ you'll find at __vampire_, %di of here.
+
+Message:  1012
+_vampire_ is a vampire of %vam bloodline.
+<--->
+_vampire_ is a young vampire of %vam who tutors even younger vampires.
+
+Message:  1013
+The _vampproof_ of _vampname_ are made of a curious pale leather.
+
+Message:  1015
+Error -- 1015 is being displayed
+
+Message:  1021
+You have received a letter.
+
+Message:  1022
+<ce>                     I have returned from the dead
+<ce>                     once. I shall do so again. And
+<ce>                     when I do I will hunt you and
+<ce>                      _vampire_ down like the pale
+<ce>                             worms you are!
+
+Message:  1025
+%qdt:
+   _vampire_ of
+ ___vampire_ has summoned
+ me to __vampire_
+ on %vam business.
+
+Message:  1026
+%qdt:
+ _vampire_ has sent
+ me to ___mondung_ to slay a
+ vampire ancient called _vampname_.
+ After slaughter time, I am to take some
+ very special _vampproof_ as proof of the
+ kill and return back to __vampire_
+ in =1stparton_ nights.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 2 times.
+--                %g occurs 3 times.
+--               %g3 occurs 2 times.
+--              %god occurs 1 time.
+--              %pcf occurs 7 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 2 times.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--              %vam occurs 12 times.
+--       =1stparton_ occurs 4 times.
+--         =vampire_ occurs 2 times.
+--       ___mondung_ occurs 25 times.
+--       ___vampire_ occurs 10 times.
+--          _reward_ occurs 18 times.
+--         _vampire_ occurs 7 times.
+--        _vampname_ occurs 9 times.
+--       _vampproof_ occurs 3 times.
+
+QBN:
+Item _reward_ magic_item
+Item _vampproof_ boots anyInfo 1013
+Item _letter_ letter used 1020
+
+Person _vampire_ face 40 factiontype Vampire_Clan local anyInfo 1011 rumors 1012
+Person _vampname_ face 4 factiontype Vampire_Clan male remote
+
+Place _mondung_ remote dungeon8
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+
+Foe _vamprival_ is Ancient_vampire
+
+--	Quest start-up:
+	dialog link for person _vampire_ item _vampproof_ 
+	pc at _mondung_ set _S.10_ 
+	_letter_ used do _readletter_ 
+	have _letter_ set _S.12_ 
+	give pc _letter_ notify 1021 
+	create npc _vampire_ 
+
+_falseAide0_ task:
+-added underscores to falseaide0
+	toting _vampproof_ and _vampire_ clicked 
+	give pc _reward_ 
+	end quest 
+
+variable _queston_
+_S.02_ task:
+	killed 1 _vamprival_ saying 1022 
+
+_vampclicked_ task:
+	clicked npc _vampire_ say AcceptQuest 
+	reveal _mondung_
+	log 1026 step 1 
+
+_1stparton_ task:
+	make _vampproof_ permanent 
+	end quest  
+
+_S.06_ task:
+	when _S.07_ and not _vampclicked_ 
+
+variable _S.07_
+_readletter_ task:
+	add dialog for person _vampire_ 
+	log 1025 step 0 
+
+variable _S.09_
+_S.10_ task:
+	give item _vampproof_ to _vamprival_ 
+	place foe _vamprival_ at _mondung_ 
+
+_S.12_ task:
+	start timer _1stparton_ 

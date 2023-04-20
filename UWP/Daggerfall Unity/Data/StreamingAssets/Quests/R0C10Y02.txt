@@ -1,0 +1,201 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y02.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 2
+Messages: 31
+Quest: R0C10Y02
+DisplayName: Gold Smuggling
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 I need someone to bring an item to a
+<ce>                    contact of mine in ___contact_.
+<ce>               You will receive an item in return. If you
+<ce>              bring that item back to me, I will happy to
+<ce>                 reward you with _reward_ gold pieces.
+<ce>                             Do you agree?
+
+RefuseQuest:  [1001]
+<ce>                No? What a shame. I was prepared to be
+<ce>                            quite generous.
+
+AcceptQuest:  [1002]
+<ce>                   Very good. Take this bar of gold
+<ce>                  and bring it to a certain =contact_
+<ce>                   called _contact_ in a place called
+<ce>                       __contact_ in ___contact_.
+<ce>             You will need to move quickly. If you are not
+<ce>                   at __contact_ in =1stparton_ days,
+<ce>                       _contact_ will leave, and
+<ce>               none of us will be happy. Especially you.
+<ce>                   Very well, good luck to you, %pcf.
+
+QuestFail:  [1003]
+<ce>                You either haven't started yet or else
+<ce>              you've come to apologize your failure. Have
+<ce>                      you, %pcf? Well, I am indeed
+<ce>                disappointed, gravely disappointed. Your
+<ce>               ineptitude has complicated matters. Well,
+<ce>              I suppose I'll know better next time, shan't
+<ce>                      I? Get a move on, %pcf. Now.
+
+QuestComplete:  [1004]
+<ce>                   Excellent, %pcf, you've returned
+<ce>                   with my _item2_ as promised. Your
+<ce>             valor and bravery are great indeed. I am sure
+<ce>             we will appreciate your further service in the
+<ce>                        near future. Thank you.
+
+RumorsDuringQuest:  [1005]
+<ce>   There was this =contact_ here recently asking if I'd seen a %ra.
+                                     <--->
+<ce>   Some =contact_ was looking for a %ra with a _item1_ a while back.
+
+RumorsPostfailure:  [1006]
+<ce>              Well, _questgiver_ is, I've heard, furious
+<ce>                         at some %ra mercenary.
+                                     <--->
+<ce>             _questgiver_ is still relying on mercenaries
+<ce>                    and I've heard %g's been burned.
+
+RumorsPostsuccess:  [1007]
+<ce>               I hear that _questgiver_ finally got some
+<ce>                           _item2_ %g needed.
+                                     <--->
+<ce>        _questgiver_ has been singing the praises of a certain
+<ce>                             %ra mercenary.
+
+QuestorPostsuccess:  [1008]
+Hello again, my young friend. I haven't forgotten your services.
+<--->
+Ah, %pcf. It's a pleasure to see you again.
+
+QuestorPostfailure:  [1009]
+<ce>                       Why, it's the inept %ra.
+<ce>               You have a lot of nerve coming back here.
+                                     <--->
+<ce>                      Well, if it isn't the inept
+<ce>                      courier. Why don't you crawl
+<ce>                             away now, hmm?
+
+
+QuestLogEntry:  [1010]
+%qdt:
+_questgiver_
+ of ___questgiver_ sent me to a
+ contact _contact_ of ___contact_
+ to deliver a bar of gold to this
+ =contact_'s base in __contact_.
+ The gold needs to be in %g3 hands in
+ =1stparton_ days for me to get my due
+ reward.
+
+Message:  1011
+%qdt:
+I delivered the gold to
+ _contact_, who gave me a _item2_
+ to take back to _questgiver_.
+
+Message:  1020
+<ce>                      That gold bar must be quite
+<ce>                       heavy. How about I relieve
+<ce>                      you of it? Just hand it over
+<ce>                          and I'll let you go.
+
+Message:  1021
+<ce>                     Such a brave little courier.
+<ce>                      I'll be sure to tell all my
+<ce>                      friends how helpful you can
+<ce>                              be to them.
+
+Message:  1030
+<ce>                     Ah, you must be the courier.
+<ce>                    Excellent, excellent.  Now, take
+<ce>                   this _item2_ back to _questgiver_
+<ce>            immediately, and %g will reward you as promised.
+<ce>                  A pleasure doing business with you,
+<ce>                                 %pcf!
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 5 times.
+--               %g3 occurs 1 time.
+--              %pcf occurs 8 times.
+--              %qdt occurs 2 times.
+--               %ra occurs 8 times.
+--       =1stparton_ occurs 2 times.
+--         =contact_ occurs 9 times.
+--    ___questgiver_ occurs 1 time.
+--        __contact_ occurs 7 times.
+--           _item1_ occurs 5 times.
+--           _item2_ occurs 4 times.
+--      _questgiver_ occurs 8 times.
+--          _reward_ occurs 3 times.
+
+QBN:
+Item _reward_ gold
+Item _item1_ gold_bar
+Item _item2_ magic_item
+
+Person _questgiver_ face 76 group Questor
+Person _contact_ face 80 group Local_3.0 remote
+
+
+Clock _1stparton_ 00:00 0 flag 1 range 1 4
+Clock _2ndparton_ 00:00 0 flag 1 range 1 4
+
+Foe _thief_ is Spellsword
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	log 1010 step 0 
+	get item _item1_ 
+	create npc _contact_ 
+
+_pcgetsgold_ task:
+	toting _item2_ and _questgiver_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_queston_ task:
+	when _1stparton_ and not _npcclicked_ 
+	when _2ndparton_ 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+variable _qgclicked_
+_npcclicked_ task:
+	toting _item1_ and _contact_ clicked 
+	start timer _2ndparton_ 
+	log 1011 step 1 
+	get item _item2_ saying 1030 
+
+until _npcclicked_ performed:
+	create foe _thief_ every 5 minutes 5 times with 25% success 
+
+variable _1stparton_
+variable _pchasitem1_
+variable _pchasitem2_
+yes task:
+	have _item1_ set _S.09_ 
+
+variable _no_
+_S.09_ task:
+	give item _item1_ to _thief_
+	say 1021
+--moved "saying 1021" to new line. bad argument 
+	restrain foe _thief_ 
+
+_S.10_ task:
+	injured _thief_ 
+	prompt 1020 yes yes no _no_ 
+
+variable _2ndparton_
+_S.12_ task:
+	when _queston_ or _pcgetsgold_ 
+	make _item2_ permanent 
+	make _item1_ permanent 

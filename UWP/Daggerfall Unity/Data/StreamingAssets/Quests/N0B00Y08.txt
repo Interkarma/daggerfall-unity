@@ -1,0 +1,161 @@
+-- Quest: C:\QUESTS\WORKING\N0B00Y08.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 0
+-- QuestId: 8
+Messages: 12
+Quest: N0B00Y08
+DisplayName: Cast the Sleep spell
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                          Noble _warrior_ has
+<ce>                  sponsored the Guild in many of our
+<ce>                   enterprises, and as we have made
+<ce>                   enemies, so has %g. We have word
+<ce>                   from %g2 courier that a witch has
+<ce>                  cursed %g2 with unending insomnia.
+<ce>                    A simple Sleep spell would cure
+<ce>                    %g2 -- perhaps you are willing
+<ce>                     and able to cast it? I would
+<ce>                    willingly pay you _gold_ gold.
+                                     <--->
+<ce>                   If you are capable of casting the
+<ce>                   standard circinate spell Sleep, a
+<ce>                    friend of the Guild is in need.
+<ce>                          _warrior_ has been
+<ce>                     cursed and is in need of that
+<ce>                       somniferous spell. I can
+<ce>                     offer you _gold_ gold pieces
+<ce>                     in exchange for this service.
+
+RefuseQuest:  [1001]
+<ce>                        I see. %oth, Sleep is a
+<ce>                   relatively simple spell. It would
+<ce>                   probably do you well to learn it.
+
+AcceptQuest:  [1002]
+<ce>                  Very good. Now, I told the courier
+<ce>                  that we wouldn't use any spell but
+<ce>                          Sleep on _warrior_.
+<ce>                  Given %g2 previous experience with
+<ce>                  cursed spells, you can hardly blame
+<ce>                   %g2 for this anxiety. You'll find
+<ce>                         _warrior_ in _castle_
+<ce>                        in __castle_. _warrior_
+<ce>                   will be the well-armored one. Be
+<ce>                 certain to be back in =queston_ days,
+<ce>                    with our friend in sound sopor.
+
+QuestComplete:  [1004]
+<ce>                         I hear that _warrior_
+<ce>                   dropped into sublime torpescence
+<ce>                    right on %g3 feet. I do hope %g
+<ce>                  wakes before next New Life. As for
+<ce>                         you, my fine %ra, you
+<ce>                   have certainly earned your _gold_
+<ce>                             gold pieces.
+
+RumorsDuringQuest:  [1005]
+Poor _warrior_ has been awake for days. I think %g2 sanity is going.
+<--->
+The witch who cursed _warrior_ with sleeplessness really did a job on %g2.
+
+RumorsPostfailure:  [1006]
+_warrior_ and the Mages Guild are at odds. They couldn't help %g2.
+<--->
+_warrior_ made peace with the witches, but hasn't forgiven the Mages Guild.
+
+RumorsPostsuccess:  [1007]
+_warrior_ is still sleeping I hear. Now they're afraid %g'll never wake up.
+<--->
+The witch who cursed _warrior_ has vowed vengeance on the man who cured %g2.
+
+QuestorPostsuccess:  [1008]
+You helped us maintain good relations with _warrior_. What may I do for you?
+
+QuestorPostfailure:  [1009]
+<ce>               You failed the Guild when you failed our
+<ce>                         friend _warrior_. Go
+<ce>               from here. Perhaps in time I may forgive
+<ce>                              thee, %pcn.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I have agreed to cast Sleep
+ on _warrior_, a patron
+ of the Mages Guild of
+ ___qgiver_. I have =queston_
+ days to get to _castle_
+ in __castle_ where
+ _warrior_ lives, cast
+ the spell successfully, and return
+ to _qgiver_ in the
+ Mages Guild.
+
+Message:  1011
+<ce>                            _warrior_ falls
+<ce>                     into a profound sleep, still
+<ce>                             on %g3 feet.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 3 times.
+--               %g2 occurs 9 times.
+--               %g3 occurs 7 times.
+--              %oth occurs 1 time.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--         =queston_ occurs 2 times.
+--        ___qgiver_ occurs 1 time.
+--         __castle_ occurs 4 times.
+--            _gold_ occurs 6 times.
+--          _qgiver_ occurs 1 time.
+--         _warrior_ occurs 42 times.
+
+QBN:
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+Person _warrior_ face 219 group Group_5.0 female remote
+Person _witch_ face 218 factiontype Witches_Coven female remote
+
+Place _castle_ remote house1
+
+Clock _queston_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Warrior
+
+--	Quest start-up:
+	start timer _queston_ 
+	log 1010 step 0 
+	pc at _castle_ set _S.05_ 
+	restrain foe _F.00_ 
+	create npc at _castle_ 
+	place foe _F.00_ at _castle_ 
+
+_queston_ task:
+	end quest 
+
+_reward_ task:
+	when _qgclicked_ and _out_ 
+	give pc _gold_ 
+	change repute with _witch_ by -5 
+	end quest 
+
+_S.02_ task:
+	when _qgclicked_ and not _out_ 
+	clear _qgclicked_ _S.02_ 
+
+_out_ task:
+	say 1011 
+
+_qgclicked_ task:
+	clicked npc _qgiver_ 
+
+_S.05_ task:
+	cast Sleep spell do _out_ 

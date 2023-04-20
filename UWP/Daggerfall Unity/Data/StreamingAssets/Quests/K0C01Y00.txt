@@ -1,0 +1,282 @@
+-- Quest: C:\QUESTS\WORKING\K0C01Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: merchant
+-- Repute: 01
+-- QuestId: 0
+Messages: 21
+Quest: K0C01Y00
+DisplayName: To Assist the Fate
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>               Imagine the purity of my delight when my
+<ce>               sniveling, cheating lover of the past two
+<ce>               years was abducted and presumably killed.
+<ce>               Then imagine my despair when I discovered
+<ce>                 that the =victim_ was still among the
+<ce>              living. Next, imagine my amusement when %g3
+<ce>             kidnappers demanded a ransom. Finally, please
+<ce>             imagine my annoyance when %g3 cousin actually
+<ce>              agreed to pay the ransom. This cannot be. I
+<ce>                 need someone to make certain that the
+<ce>                   ransoming fails. Will you help me?
+
+
+RefuseQuest:  [1001]
+<ce>                        %oth, what an attitude.
+<ce>                     Your selfish morality will get
+<ce>                        you in trouble some day.
+
+AcceptQuest:  [1002]
+<ce>                              %oth, %oth,
+<ce>                               and %oth.
+<ce>             The way I see it, there are three ways to stop
+<ce>             this ransoming. One is to make sure that dear
+<ce>                         _victim_ accidentally
+<ce>           dies before the ransom date in =queston1_ days. Of
+<ce>             course, I don't know where %g is, so that's a
+<ce>            difficult one. The next option is to see to %g3
+<ce>             cousin's accidental death within the same time
+<ce>                      frame. Now, =cousin_, that's
+<ce>                   the cousin, lives in ___mondung2_,
+<ce>             which is a well-fended fortress. So there's a
+<ce>            difficulty there. Finally, you could remove the
+<ce>                      _gem_ from ___mondung2_ that
+<ce>                     =cousin_ plans to use for the
+<ce>              ransom. Whatever way you do it, be back here
+<ce>            with the news in =queston1_ days or sooner, and
+<ce>                     you'll be _gold_ gold richer.
+<ce>                          Good luck, old %ra.
+
+QuestComplete:  [1004]
+<ce>                        So, poor _victim_ won't
+<ce>                 be coming home? Well done, my friend.
+<ce>               Here's the _gold_ gold pieces I promised.
+<ce>                        Best money I ever spent.
+
+RumorsDuringQuest:  [1005]
+Poor _qgiver_. Grief is terrible. You know, %g looks ten years younger.
+<--->
+=cousin_ suspects that _qgiver_ doesn't really want _victim_ back.
+
+RumorsPostfailure:  [1006]
+_qgiver_ is furious with a %ra named %pcn for some reason.
+
+RumorsPostsuccess:  [1007]
+It looks like _victim_ really never will come back to ___qgiver_.
+<--->
+_qgiver_ is now deeply in mourning for _victim_. It's very sad.
+
+QuestorPostsuccess:  [1008]
+You saved me from that corpulent toad _victim_, %pcf. Don't think I forgot.
+
+QuestorPostfailure:  [1009]
+<ce>                I asked you to do one thing, and I gave
+<ce>                you three ways to do it. And you failed.
+<ce>                 Why should I talk to you, you pickled
+<ce>                          vat of dung patties?
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ __qgiver_, ___qgiver_ has
+ sent me to prevent %g3 unloved lover's
+ ransom. I can either find and slay this
+ _victim_, but I have
+ no clue of where %g is. Or I can go to
+ ___mondung2_, %g3
+ cousin, =cousin_'s
+ stronghold and either slay %g2 or steal
+ the _gem_ %g was going to use for
+ ransom. In any case, I need to have
+ something done and be back with old
+ _qgiver_ in =queston1_ days
+ when the ransom is due to be paid.
+
+Message:  1011
+<ce>                        _victim_'s heart gives
+<ce>                    out at the shock of seeing a %ra
+<ce>                               mercenary.
+                                     <--->
+<ce>                         "Come violent death,"
+<ce>                        _victim_ says, quaffing
+<ce>                    a draught of poison. "I will be
+<ce>                       reunited with my true love
+<ce>                            _qgiver_ in the
+<ce>                              hereafter."
+                                     <--->
+<ce>                         "Assassin! Assassin!"
+<ce>                          _victim_ expires of
+<ce>                               hysteria.
+
+
+Message:  1013
+%pcf,
+ 
+     _victim_ is being held in
+ ___mondung_. Do your worst.
+ 
+     We don't mind. The kidnappers are bloody
+ freelancers.
+ 
+ 
+<ce>                          The Thieves Guild
+
+Message:  1015
+<ce>                     A nondescript fellow slips a
+<ce>                    note into your hand, winks, and
+<ce>                                departs.
+
+Message:  1017
+%qdt:
+ I received a
+ letter from the Thieves Guild. It
+ seems that the kidnappers are not
+ members of the Guild, so they have no
+ compunction in giving me their
+ location: ___mondung_.
+ If I want to put an end to the unloved
+ _victim_'s life, that's
+ the place to do it.
+
+Message:  1018
+<ce>                       Why, you bloody, bollocky
+<ce>                            %ra, that hurt!
+                                     <--->
+<ce>                        You probably think that
+<ce>                           hurts, don't cha?
+
+Message:  1019
+<ce>                        _victim_'s cousin, %g3
+<ce>                 only hope, is launched into eternity.
+                                     <--->
+<ce>                           =cousin_ will not
+<ce>                        be ransoming anyone now.
+
+Message:  1020
+<ce>                          You have found the
+<ce>                             _gem_ =cousin_
+<ce>                       was going to use to ransom
+<ce>                               _victim_.
+
+
+-- Symbols used in the QRC file:
+--
+--              %dat occurs 1 time.
+--                %g occurs 4 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 6 times.
+--              %oth occurs 4 times.
+--              %pcf occurs 83 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 9 times.
+--          =cousin_ occurs 6 times.
+--        =queston1_ occurs 3 times.
+--          =victim_ occurs 1 time.
+--      ___mondung2_ occurs 3 times.
+--       ___mondung_ occurs 2 times.
+--        ___qgiver_ occurs 3 times.
+--             _gem_ occurs 3 times.
+--            _gold_ occurs 2 times.
+--          _qgiver_ occurs 7 times.
+--          _victim_ occurs 14 times.
+
+QBN:
+Item _letter15_ letter used 1013
+Item _gold_ gold
+Item _gem_ gem
+
+Person _qgiver_ group Questor
+Person _victim_ face 1 group Group_7.0
+Person _tg_ faction The_Thieves_Guild local
+
+Place _mondung_ remote dungeon
+Place _mondung2_ remote dungeon2
+
+Clock _queston1_ 00:00 0 flag 17 range 0 2
+Clock _S.05_ 08:20 3.11:20
+
+Foe _cousin_ is Knight
+
+--	Quest start-up:
+	place item _gem_ at _mondung2_ 
+	dialog link for location _mondung_ person _victim_ 
+	dialog link for person _tg_ 
+	start timer _queston1_ 
+	reveal _mondung2_ 
+	log 1010 step 0 
+	repute with _tg_ exceeds 10 do _S.03_ 
+	place foe _cousin_ at _mondung2_ 
+	place npc _victim_ at _mondung_ 
+
+_queston1_ task:
+	have _gem_ set _S.15_ 
+	end quest 
+
+variable _queston2_
+variable _S.02_
+_S.03_ task:
+	start timer _S.05_ 
+
+variable _S.04_
+_S.05_ task:
+	_letter15_ used do _S.06_ 
+	get item _letter15_ 
+	say 1015 
+
+_S.06_ task:
+	reveal _mondung_ readmap
+	log 1017 step 2 
+
+variable _S.07_
+_S.08_ task:
+	clicked npc _victim_ 
+	hide npc _victim_ 
+	say 1011 
+
+_S.09_ task:
+	injured _cousin_ 
+	say 1018 
+
+_S.10_ task:
+	killed 1 _cousin_ 
+	say 1019 
+	start task _victory_
+
+variable _victory_
+_S.11_ task:
+	clicked item _gem_ 
+	say 1020 
+
+_qgclicked_ task:
+	clicked npc _qgiver_
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _victory_ 
+	give pc _gold_ 
+	end quest 
+
+_clearclick_ task:
+	when _qgclicked_ and not _victory_
+	clear _clearclick_ _qgclicked_
+
+_S.13_ task:
+	toting _gem_ and _qgiver_ clicked 
+	give pc _gold_
+	end quest 
+--added victory condition here, per message block 1002
+
+_S.14_ task:
+	when _S.10_ or _S.08_
+-or _S.13_ 
+-
+-until _S.14_ performed:
+-	clear _qgclicked_ 
+
+_S.15_ task:
+	make _gem_ permanent 
+
+variable _S.16_

@@ -1,0 +1,131 @@
+-- Quest: C:\QUESTS\WORKING\R0C10Y10.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 10
+-- QuestId: 10
+Messages: 11
+Quest: R0C10Y10
+DisplayName: Weapon Supply
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>               If you are interested in earning _reward_
+<ce>                    gold for doing nothing more than
+<ce>                    delivering a little parcel to an
+<ce>                      agent of mine, speak up now.
+                                     <--->
+<ce>                I could use the services of someone of
+<ce>               moderate talent, above average discretion,
+<ce>                 and willingness to assume the position
+<ce>                  of a lowly courier for _reward_ gold
+<ce>                      pieces. Are you that person?
+
+RefuseQuest:  [1001]
+<ce>                 Really? Too busy, perhaps? Your loss.
+
+AcceptQuest:  [1002]
+<ce>                    Excellent. Here's the _weapon_.
+<ce>                    Now, _contact_ needs to have it
+<ce>                      in ___contact_ in =queston_
+<ce>            days. That ought to be just enough time, I hope.
+<ce>                    You will recognize _contact_ --
+<ce>                       just look for a =contact_.
+<ce>                        Good luck and thank you.
+
+QuestFail:  [1003]
+<ce>             Couldn't accomplish a simple little delivery,
+<ce>                %pcf? I certainly hope you weren't still
+<ce>                          expecting a reward.
+
+QuestComplete:  [1004]
+<ce>                   Ah, good to see you %pcf. And the
+<ce>                  _weapon_ too. Excellent. Here's the
+<ce>                _reward_ gold pieces I believe you were
+<ce>                       promised by _questgiver_.
+
+RumorsDuringQuest:  [1005]
+_questgiver_ is still in the smuggling business, I hear.
+<--->
+There's been an extraordinary increase in smuggling lately.
+
+RumorsPostfailure:  [1006]
+Someone found a very lovely _weapon_ around here recently.
+<--->
+I hear _questgiver_ is mad as hell at some %ra adventurer.
+
+RumorsPostsuccess:  [1007]
+Someone named _contact_ has been waving around some _weapon_.
+<--->
+The smuggling of religious artifacts is apparently the big new crime.
+
+QuestorPostsuccess:  [1008]
+Oh, it's my old courier. How charming. How may I help you?
+<--->
+You look familiar. You made a little delivery for me recently, didn't you?
+
+QuestorPostfailure:  [1009]
+<ce>                     You look almost exactly like
+<ce>                      a %ra who failed a delivery
+<ce>                     for me. Curious. Go away now.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _questgiver_ of
+ __questgiver_, ___questgiver_
+ has sent me to deliver a _weapon_
+ to an ally named _contact_.
+ I need to have the _weapon_ in
+ _contact_'s hands in =queston_
+ days. The =contact_
+ can apparently be found in a place called
+ __contact_ in ___contact_.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--         =contact_ occurs 2 times.
+--         =queston_ occurs 3 times.
+--       ___contact_ occurs 4 times.
+--    ___questgiver_ occurs 1 time.
+--        __contact_ occurs 1 time.
+--     __questgiver_ occurs 1 time.
+--         _contact_ occurs 5 times.
+--      _questgiver_ occurs 5 times.
+--          _reward_ occurs 3 times.
+--          _weapon_ occurs 6 times.
+
+QBN:
+Item _weapon_ weapon
+Item _reward_ gold
+
+Person _questgiver_ face 112 group Questor
+Person _contact_ group Local_3.0 remote
+
+
+Clock _queston_ 00:00 0 flag 1 range 1 2
+
+
+--	Quest start-up:
+	start timer _queston_ 
+	log 1010 step 0 
+	get item _weapon_ 
+	create npc _contact_ 
+
+_pcgetsgold_ task:
+	toting _weapon_ and _contact_ clicked 
+	give pc _reward_ 
+	end quest 
+
+variable _pchasitem_
+variable _npcclicked_
+_queston_ task:
+	make _weapon_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+variable _1stparton_

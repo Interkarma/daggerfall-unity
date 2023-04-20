@@ -1,0 +1,236 @@
+-- Quest: C:\QUESTS\WORKING\U0C00Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: Boethiah
+-- Repute: 0
+-- QuestId: 0
+Messages: 43
+Quest: U0C00Y00
+DisplayName: Boethiah's Quest
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                Power, hah! Would a Mundus-crawling %ra
+<ce>             know what to do with real power? You mean you
+<ce>              want to be able to bully a few other mortals
+<ce>             around, don't you? Well that can be arranged.
+<ce>              I want you to show me you have the mettle to
+<ce>              actually use what I give you. Will you kill
+<ce>                            someone for it?
+
+RefuseQuest:  [1001]
+<ce>                  Pah, you make me sick. Don't summon
+<ce>                       me again, %pcf, unless you
+<ce>                  grow up or are looking for a fight.
+
+AcceptQuest:  [1002]
+<ce>             Well, that's a start in the right direction,
+<ce>             anyhow. The spellsword I have in mind for you
+<ce>                   to butcher for power is =monster_,
+<ce>             a perfectly charming and charitable ass who's
+<ce>              been annoying the hell out me for years. You
+<ce>             will find %g2 at %g3 fortress, a place called
+<ce>                     ___mondung_. Now, don't think
+<ce>                     that just because =monster_ is
+<ce>             a precious toff, %g doesn't know how to fight.
+<ce>            I want to make you work a little for this gift.
+<ce>                 After the murder, go meet _qgfriend_,
+<ce>                my agent in ___qgfriend_. Just look for
+<ce>                      a =qgfriend_ hanging out at
+<ce>                __qgfriend_. And don't keep %g2 waiting.
+<ce>              I'll tell %g2 you'll be there in =1stparton_
+<ce>                 days. That ought to be plenty of time.
+<ce>                           I'll be watching.
+
+QuestFail:  [1003]
+<ce>                        Move along, %ra. We've
+<ce>                         nothing to talk about.
+
+QuestComplete:  [1004]
+<ce>                         So, you're %pcn. Hmm,
+<ce>                     you're not as puny as Boethiah
+<ce>                 suggested. Take that as a compliment.
+<ce>                   Also, take this. Boethiah crafted
+<ce>                 this _artifact_. She thinks it should
+<ce>                aid you in your search for power. She's
+<ce>                 interested in you, that's for certain.
+<ce>                  I know from her smile when she said
+<ce>                            the word 'puny.'
+
+RumorsDuringQuest:  [1005]
+The next time there's a vote for mayor, I'm casting mine for =monster_.
+<--->
+What a sweet, kind, and generous person that =monster_ is. A credit to %reg.
+
+RumorsPostfailure:  [1006]
+Who in Tamriel would want to assassinate =monster_? Thank %god %g's fine.
+<--->
+=monster_ had a run-in with an assassin. Luckily, the assassin was incompetent.
+
+RumorsPostsuccess:  [1007]
+It's a tragedy for all of %reg. What monster would've killed =monster_?
+<--->
+%oth, I can't believe =monster_'s dead. Such a tragic, horrible waste.
+
+Message:  1011
+_qgfriend_ is the name of that tough-talking =qgfriend_ over at __qgfriend_.
+<--->
+That's the name of that bully at __qgfriend_, off over to the %di.
+
+Message:  1012
+_qgfriend_ is one of the Daedra Prince Boethiah's agents in Tamriel.
+<--->
+_qgfriend_ is a mean-spirited bully who works for the Daedra Prince Boethiah.
+
+Message:  1013
+Boethiah is the Daedra Prince of Cruelty and Torture. Not a nice lady.
+<--->
+She's a Prince of Oblivion, one of the Daedric Regents, and a real killer.
+
+Message:  1014
+_artifact_ protects it's wearer from many kinds of harm. Fire and life draining are the two commonly known.
+
+QuestLogEntry:  [1010]
+%qdt:
+ I have made a contract with Boethiah,
+ for the murder of a spellsword named =monster_,
+ who lives in %g3 fortress of ___mondung_,
+ in exchange for the artifact called _artifact_.
+ I need to slay the spellsword and meet Boethiah's
+ contact, _qgfriend_ in __qgfriend_
+ of ___qgfriend_ in =1stparton_ days.
+
+Message:  1030
+<ce>                You have kept your part of the bargain
+<ce>                  with Boethiah -- =monster_ is dead.
+
+Message:  1040
+=monster_:
+ 
+ Get out of ___mondung_ immediately!
+ I have learned that Boethiah has
+ arranged to have you killed.  We
+ can discuss your imprudent behavior
+ another time, but for now you should
+ go to our usual meeting place.  When
+ I have completed the arrangements for
+ getting you out of %reg, I will come
+ meet you myself.
+ 
+<ce>                            Watch your back,
+<ce>                                    
+<ce>                               _mfriend_
+<ce>                              ___mfriend_
+
+Message:  1041
+<ce>                   How did you get in here ... %oth!
+<ce>                         I knew =monster_ would
+<ce>                    get me killed one day.  Listen,
+<ce>                     since %g doesn't value my life
+<ce>                     enough not to leave my letter
+<ce>                      lying around, %g isn't worth
+<ce>                      protecting any longer.  You
+<ce>                      can find %g2 in ___hideout_.
+<ce>                    I wash my hands of %g2 at last.
+
+Message:  1042
+%qdt:
+ =monster_ eluded me in
+ ___mondung_, but I have
+ learned that %g is now
+ hiding in ___hideout_.
+ %g will not get away a
+ second time.
+
+
+-- Symbols used in the QRC file:
+--
+--               %di occurs 1 time.
+--                %g occurs 6 times.
+--               %g2 occurs 7 times.
+--               %g3 occurs 2 times.
+--              %god occurs 1 time.
+--              %oth occurs 3 times.
+--              %pcf occurs 1 time.
+--              %pcn occurs 1 time.
+--              %qdt occurs 2 times.
+--               %ra occurs 2 times.
+--              %reg occurs 10 times.
+--       =1stparton_ occurs 3 times.
+--         =monster_ occurs 16 times.
+--        =qgfriend_ occurs 2 times.
+--       ___hideout_ occurs 2 times.
+--       ___mfriend_ occurs 1 time.
+--       ___mondung_ occurs 4 times.
+--      ___qgfriend_ occurs 7 times.
+--        _artifact_ occurs 3 times.
+--         _mfriend_ occurs 1 time.
+--        _qgfriend_ occurs 5 times.
+
+QBN:
+Item _artifact_ artifact Ebony_Mail anyInfo 1014
+Item _letter_ letter used 1040
+
+Person _questgiver_ face 112 named Boethiah anyInfo 1013
+Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
+Person _mfriend_ group Local_4.0 remote
+
+Place _mondung_ remote dungeon2
+Place _hideout_ remote dungeon6
+
+Clock _1stparton_ 00:00 0 flag 1 range 2 5
+Clock _escapetime_ 00:00 0 flag 1 range 2 3
+
+Foe _monster_ is Spellsword
+Foe _monster1_ is Spellsword
+
+--	Quest start-up:
+	dialog link for person _mfriend_ 
+	start timer _escapetime_ 
+	reveal _mondung_ 
+	log 1010 step 0 
+	_letter_ used do _readletter_ 
+	place foe _monster_ at _mondung_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_pcgetsgold_ task:
+	when _npcclicked_ and _mondead_ 
+	give pc _artifact_ 
+	end quest 
+--removed unnecessary delay
+
+_mondead_ task:
+	killed 1 _monster_ 
+	killed 1 _monster1_
+	say 1030 
+
+_npcclicked_ task:
+	clicked npc _qgfriend_ 
+
+_clearclick_ task:
+	when _npcclicked_ and not _mondead_
+	say 1003 
+	clear _npcclicked_ _clearclick_ 
+
+_escapetime_ task:
+	start timer _1stparton_ 
+
+_S.08_ task:
+	when _escapetime_ and not _mondead_ 
+	place item _letter_ at _mondung_ 
+	remove foe _monster_
+	place foe _monster1_ at _hideout_ 
+--added monster1 due to duplicate monster issue
+
+_S.09_ task:
+	clicked npc _mfriend_ 
+	reveal _hideout_ 
+	log 1042 step 1 
+	say 1041 
+
+_readletter_ task:
+	add dialog for person _mfriend_ 

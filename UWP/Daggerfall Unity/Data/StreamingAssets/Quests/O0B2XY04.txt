@@ -1,0 +1,129 @@
+-- Quest: C:\QUESTS\WORKING\O0B2XY04.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 2X
+-- QuestId: 4
+Messages: 11
+Quest: O0B2XY04
+DisplayName: Valuable Pages
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                     I have a job. Ordinary guild
+<ce>                   work. Worth _gold_ gold. Just the
+<ce>                    standard guild fee. Interested?
+
+RefuseQuest:  [1001]
+<ce>                        Too bad for you, %pcn.
+
+AcceptQuest:  [1002]
+<ce>                           Go to __mansion_.
+<ce>                            Find _mansion_.
+<ce>                    Inside is a rare book, entitled
+<ce>                         _book_. Bring it back
+<ce>                    to me within =traveltime_ days,
+<ce>                        and I'll pay you. Simple
+<ce>                              enough, eh?
+
+QuestComplete:  [1004]
+<ce>                        Ah. %oth. Here is your
+<ce>                      guild fee. Maybe some day we
+<ce>                        can work together again.
+
+RumorsDuringQuest:  [1005]
+A collector in __mansion_ just bought a rare copy of _book_.
+
+RumorsPostfailure:  [1006]
+The security in _mansion_ wasn't great, so they moved the valuables out.
+
+RumorsPostsuccess:  [1007]
+That copy of _book_ that was stolen from _mansion_ was irreplaceable.
+
+QuestorPostsuccess:  [1008]
+Oh, hello, %pcf. Good work on getting that book, if I didn't mention it before.
+
+QuestorPostfailure:  [1009]
+<ce>                    Don't fumble for excuses, %pcf.
+<ce>               I told you where to find the book and told
+<ce>                 you to hurry, but you didn't. Now it's
+<ce>                  too late, and I'm tired. Just, be a
+<ce>                    good %ra and sod off, will you?
+
+QuestLogEntry:  [1010]
+%qdt:
+ A Thieves Guild member in
+ ___qgiver_ offered me a job to
+ steal a book, _book_
+ from _mansion_ in
+ __mansion_. I have
+ =traveltime_ days to get it
+ and return to _qgiver_.
+
+
+-- Symbols used in the QRC file:
+--
+--              %oth occurs 1 time.
+--              %pcf occurs 2 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--      =traveltime_ occurs 2 times.
+--        ___qgiver_ occurs 1 time.
+--        __mansion_ occurs 3 times.
+--            _book_ occurs 4 times.
+--            _gold_ occurs 1 time.
+--         _mansion_ occurs 4 times.
+--          _qgiver_ occurs 3 times.
+
+QBN:
+Item _book_ book3
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _mansion_ remote house1
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Battle_mage
+Foe _F.01_ is Iron_atronach
+Foe _F.02_ is Daedra_seducer
+Foe _F.03_ is Werewolf
+
+--	Quest start-up:
+	place item _book_ at _mansion_ 
+	start timer _traveltime_ 
+	log 1010 step 0 
+	pc at _mansion_ set _S.01_ 
+
+_traveltime_ task:
+	end quest 
+
+_S.01_ task:
+	pick one of _guard1_ _guard2_ _guard3_ _guard4_ 
+
+_questdone_ task:
+	toting _book_ and _qgiver_ clicked 
+	give pc _gold_ 
+	end quest 
+
+_guard1_ task:
+	create foe _F.00_ every 4 minutes 1 times with 10% success 
+
+_guard2_ task:
+	create foe _F.01_ every 4 minutes 1 times with 10% success 
+
+_guard3_ task:
+	create foe _F.02_ every 4 minutes 1 times with 10% success 
+
+_guard4_ task:
+	create foe _F.03_ every 4 minutes 1 times with 10% success 
+
+_S.07_ task:
+	clicked item _book_ 
+
+_S.08_ task:
+	when _traveltime_ and _S.07_ 
+	make _book_ permanent 

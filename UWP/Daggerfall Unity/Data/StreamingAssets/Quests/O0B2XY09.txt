@@ -1,0 +1,137 @@
+-- Quest: C:\QUESTS\WORKING\O0B2XY09.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 2X
+-- QuestId: 9
+Messages: 11
+Quest: O0B2XY09
+DisplayName: The Rich Merchant
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       You can call me _qgiver_.
+<ce>                     I have wind of some _coastal_
+<ce>                      that some pig of a merchant
+<ce>                       just bought. I want to you
+<ce>                       pinch it an bring it here.
+<ce>                       I'll pay you _gold_ gold.
+<ce>                          Are you interested?
+
+RefuseQuest:  [1001]
+<ce>                           Move along %pcn.
+<ce>                         I need to find a thief
+<ce>                          worthy of the name.
+
+AcceptQuest:  [1002]
+<ce>                          In __mansion_ go to
+<ce>                        _mansion_. It shouldn't
+<ce>                        be too tough to find the
+<ce>                         _coastal_. Get it back
+<ce>                      to me in =traveltime_ days,
+<ce>                          and I'll pay you. No
+<ce>                            questions? Good.
+
+QuestComplete:  [1004]
+<ce>                        Oh ho! This shipment is
+<ce>                       better than I had thought.
+<ce>                        Here's your _gold_ gold
+<ce>                        %pcn. Don't spend it all
+<ce>                           on drink or vice.
+
+RumorsDuringQuest:  [1005]
+A new shipment of _coastal_ came into __mansion_. No one knows exactly where.
+
+RumorsPostfailure:  [1006]
+Someone must've found the _coastal_ in __mansion_. They're shipping it out again.
+
+RumorsPostsuccess:  [1007]
+Turns out where they were keeping the _coastal_ was robbed the other day.
+
+QuestorPostsuccess:  [1008]
+Now, you ain't spending that gold on drink or vice, are you, %pcf?
+
+QuestorPostfailure:  [1009]
+<ce>                  What do you want? I told you where
+<ce>                 to find the _coastal_, but you diddled
+<ce>               around until it didn't do no one no good.
+<ce>                     Just get out, %pcf. Yer giving
+<ce>                             me a headache.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of
+ the Thieves Guild has hired
+ me to steal some _coastal_
+ from _mansion_ in
+ __mansion_. I have to get
+ it back to __qgiver_
+ in ___qgiver_ in =traveltime_
+ days for my payment.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 19 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--      =traveltime_ occurs 2 times.
+--        ___qgiver_ occurs 1 time.
+--        __mansion_ occurs 4 times.
+--         __qgiver_ occurs 1 time.
+--         _coastal_ occurs 7 times.
+--            _gold_ occurs 2 times.
+--         _mansion_ occurs 2 times.
+--          _qgiver_ occurs 2 times.
+
+QBN:
+Item _coastal_ mineral
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _mansion_ remote generalstore
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Battle_mage
+Foe _F.01_ is Iron_atronach
+Foe _F.02_ is Daedra_seducer
+Foe _F.03_ is Werewolf
+
+--	Quest start-up:
+	place item _coastal_ at _mansion_ 
+	start timer _traveltime_ 
+	log 1010 step 0 
+	pc at _mansion_ set _S.01_ 
+
+_traveltime_ task:
+	end quest 
+
+_S.01_ task:
+	pick one of _guard1_ _guard2_ _guard3_ _guard4_ 
+
+_questdone_ task:
+	toting _coastal_ and _qgiver_ clicked 
+	give pc _gold_ 
+	end quest 
+
+_guard1_ task:
+	create foe _F.00_ every 2 minutes 1 times with 10% success 
+
+_guard2_ task:
+	create foe _F.01_ every 2 minutes 1 times with 10% success 
+
+_guard3_ task:
+	create foe _F.02_ every 2 minutes 1 times with 10% success 
+
+_guard4_ task:
+	create foe _F.03_ every 2 minutes 1 times with 10% success 
+
+_S.07_ task:
+	clicked item _coastal_ 
+
+_S.08_ task:
+	when _S.07_ and _traveltime_ 
+	make _coastal_ permanent 

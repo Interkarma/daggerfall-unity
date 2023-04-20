@@ -1,0 +1,136 @@
+-- Quest: C:\QUESTS\WORKING\O0B2XY08.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 2X
+-- QuestId: 8
+Messages: 11
+Quest: O0B2XY08
+DisplayName: A Prized Herb
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                         _qgiver_ is my name.
+<ce>                      This one is a little touchy,
+<ce>                        %pcf. I have _gold_ gold
+<ce>                       for you if you will steal
+<ce>                         some _drugs_ for me. I
+<ce>                      assume you know what _drugs_
+<ce>                      is? It's a highly addictive
+<ce>                       herb. Do you want the job?
+
+RefuseQuest:  [1001]
+<ce>                       If word leaks out of this
+<ce>                      job, you know who I'll come
+<ce>                           looking for %pcn.
+
+AcceptQuest:  [1002]
+<ce>                           Go to __mansion_.
+<ce>                            Find _mansion_.
+<ce>                           Steal the _drugs_.
+<ce>                Bring it back within =traveltime_ days,
+<ce>                          and you'll get paid.
+
+QuestComplete:  [1004]
+<ce>                    Just slip them into my pocket.
+<ce>                     Good. I don't think anyone saw
+<ce>                     you do it. Here's your _gold_
+<ce>                              gold, %pcn.
+
+RumorsDuringQuest:  [1005]
+Everyone's wondering where the _drugs_ trade in __mansion_ is coming from.
+
+RumorsPostfailure:  [1006]
+There was a _drugs_ dealer living in _mansion_ in __mansion_ but he's moved.
+
+RumorsPostsuccess:  [1007]
+_mansion_ in __mansion_ was robbed, but the owner isn't going to the magistrate.
+
+QuestorPostsuccess:  [1008]
+Just be casual, %pcf. The _drugs_ deal is still hot in the air.
+
+QuestorPostfailure:  [1009]
+<ce>                         %oth, %pcf. I thought
+<ce>                    I could trust you to get me that
+<ce>                    _drugs_. Apparently, if you want
+<ce>                     a job done right, kill the %ra
+<ce>                         involved first. Go to
+<ce>                             Oblivion, kid.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_ of the
+ Thieves Guild in  ___qgiver_
+ will pay me to steal some
+ _drugs_ from _mansion_
+ in __mansion_.
+ I have to get back to him in
+ =traveltime_ days for my money.
+
+
+-- Symbols used in the QRC file:
+--
+--              %oth occurs 1 time.
+--              %pcf occurs 3 times.
+--              %pcn occurs 4 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 6 times.
+--      =traveltime_ occurs 2 times.
+--        ___qgiver_ occurs 1 time.
+--        __mansion_ occurs 5 times.
+--           _drugs_ occurs 9 times.
+--            _gold_ occurs 4 times.
+--         _mansion_ occurs 4 times.
+--          _qgiver_ occurs 2 times.
+
+QBN:
+Item _drugs_ drug
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _mansion_ remote house1
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Battle_mage
+Foe _F.01_ is Iron_atronach
+Foe _F.02_ is Daedra_seducer
+Foe _F.03_ is Werewolf
+
+--	Quest start-up:
+	place item _drugs_ at _mansion_ 
+	start timer _traveltime_ 
+	log 1010 step 0 
+	pc at _mansion_ set _S.01_ 
+
+_traveltime_ task:
+	end quest 
+
+_S.01_ task:
+	pick one of _guard1_ _guard2_ _guard3_ _guard4_ 
+
+_questdone_ task:
+	toting _drugs_ and _qgiver_ clicked 
+	give pc _gold_ 
+	end quest 
+
+_guard1_ task:
+	create foe _F.00_ every 4 minutes 1 times with 10% success 
+
+_guard2_ task:
+	create foe _F.01_ every 4 minutes 1 times with 10% success 
+
+_guard3_ task:
+	create foe _F.02_ every 4 minutes 1 times with 10% success 
+
+_guard4_ task:
+	create foe _F.03_ every 4 minutes 1 times with 10% success 
+
+_S.07_ task:
+	clicked item _drugs_ 
+
+_S.08_ task:
+	when _S.07_ and _traveltime_ 
+	make _drugs_ permanent 

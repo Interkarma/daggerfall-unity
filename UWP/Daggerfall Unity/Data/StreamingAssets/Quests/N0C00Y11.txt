@@ -1,0 +1,206 @@
+-- Quest: C:\QUESTS\WORKING\N0C00Y11.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: mage
+-- Repute: 0
+-- QuestId: 11
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 81
+Quest: N0C00Y11
+DisplayName: Grab an Ingredient
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                            I am _qgiver_.
+<ce>                   As a rule, only guild members are
+<ce>                   paid for work. However, I do have
+<ce>                  a small task that needs to be done.
+<ce>                    If you were to do it for free, I
+<ce>                    would put in a good word for you
+<ce>                    with the guild. Are you willing?
+                                     <--->
+<ce>                       I am _qgiver_. Guild work
+<ce>                   for guild members only. However, I
+<ce>                  do have a small job that nobody else
+<ce>                   is willing to do. One of our more
+<ce>                    eccentric masters is absolutely
+<ce>                    insistent we get her a sample of
+<ce>                       _ingredient_, which we are
+<ce>                   fresh out of. If you got some for
+<ce>                     me, I would be very grateful.
+<ce>                      Your standing with the guild
+<ce>                         would surely improve.
+
+RefuseQuest:  [1001]
+<ce>                     Should have known. I am tired
+<ce>                       of this conversation %pcn.
+<ce>                               Good day.
+
+AcceptQuest:  [1002]
+<ce>                      An excellent attitude %pcf.
+<ce>                       I need some _ingredient_.
+<ce>                     The only specimen I know of at
+<ce>                      the moment is to be found in
+<ce>                         ___dungeon_. You have
+<ce>                  =traveltime_ days to bring it back.
+
+QuestComplete:  [1004]
+<ce>                     I've seen better samples. Did
+<ce>                   you sit on it the whole way back?
+<ce>                     In any event, it will do. I'll
+<ce>                    make sure that you are spoken of
+<ce>                     with favor in the guild halls.
+
+RumorsDuringQuest:  [1005]
+That crazy mage at the Guild insists that ___dungeon_ has the best _ingredient_.
+
+RumorsPostfailure:  [1006]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has it good points and bad ones.
+
+RumorsPostsuccess:  [1007]
+I got a boil the other day ... but it healed.
+<--->
+I just had a three hour conversation about the weather.
+<--->
+The weather is pretty usual for this time of year.
+<--->
+It seems a trifle coolish in %cn for this time of year.
+<--->
+It sure is a lot warmer today than this time last year.
+<--->
+My great aunt is going to a specialist across the Bay.
+<--->
+It's always funny what time it gets dark around here.
+<--->
+We should erect a war statue around here.
+<--->
+The kids these days with their magic. %oth, I don't know.
+<--->
+I had the weirdest dream last night.
+<--->
+I heard a great joke. %jok
+<--->
+%jok Actually, that's a joke.
+<--->
+%jok Can you explain that to me?
+<--->
+The legal system in %reg has it good points and bad ones.
+
+QuestorPostsuccess:  [1008]
+I haven't forgotten you, %pcf. You're the %ra who got the _ingredient_.
+
+QuestorPostfailure:  [1009]
+<ce>               It wasn't a very difficult thing I asked
+<ce>                      you to do, %pcf. Just get me
+<ce>                 some _ingredient_. And you couldn't do
+<ce>                      that. Why should I waste my
+<ce>                             breath on you?
+
+QuestLogEntry:  [1010]
+%qdt:
+ I was asked to find a sample
+ of _ingredient_ that
+ is supposed to be hidden away
+ in ___dungeon_.
+ _qgiver_ of the Mages
+ Guild of ___qgiver_
+ gave me =traveltime_ days to get
+ it back to %g2.
+
+Message:  1040
+<ce>                     This must be the _ingredient_
+<ce>                      _qgiver_ asked you to find.
+
+Message:  1080
+<ce>                     As a special thanks from the
+<ce>                    Mages Guild, allow me to present
+<ce>                   you with this map to ___newdung_.
+<ce>                   I understand that people like you
+<ce>                       salivate over such things.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 2 times.
+--               %g2 occurs 2 times.
+--              %jok occurs 6 times.
+--              %oth occurs 10 times.
+--              %pcf occurs 3 times.
+--              %pcn occurs 3 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 27 times.
+--              %reg occurs 2 times.
+--      =traveltime_ occurs 2 times.
+--       ___dungeon_ occurs 3 times.
+--       ___newdung_ occurs 1 time.
+--        ___qgiver_ occurs 1 time.
+--      _ingredient_ occurs 61 times.
+--          _qgiver_ occurs 4 times.
+
+QBN:
+Item _ingredient_ organs
+
+Person _qgiver_ group Questor
+
+Place _dungeon_ remote dungeon
+Place _newdung_ remote dungeon
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+Clock _end_ 00:00
+
+
+--	Quest start-up:
+	place item _ingredient_ at _dungeon_ 
+	start timer _traveltime_ 
+	reveal _dungeon_ 
+	log 1010 step 0 
+	pick one of _map_ _nomap_ _nomap_ 
+
+_traveltime_ task:
+	end quest 
+
+_giveingredient_ task:
+	toting _ingredient_ and _qgiver_ clicked 
+	give pc nothing 
+                start timer _end_
+
+_end_ task:
+	end quest 
+
+_dummymage_ task:
+	clicked item _ingredient_ 
+	say 1040 
+
+variable _map_
+variable _nomap_
+_S.05_ task:
+	when _map_ and _giveingredient_ 
+	reveal _newdung_ readmap
+    say 1080 

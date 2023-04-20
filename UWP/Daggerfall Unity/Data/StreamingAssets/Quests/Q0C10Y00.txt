@@ -1,0 +1,228 @@
+-- Quest: C:\QUESTS\WORKING\Q0C10Y00.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: witch
+-- Repute: 10
+-- QuestId: 0
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 24
+Quest: Q0C10Y00
+DisplayName: A Great Errand
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                    If thou wisheth the help of the
+<ce>                         ==qgiver_, first thou
+<ce>                     must help us. Will thou bring
+<ce>                      us the three ingredients we
+<ce>                       need to complete our brew?
+
+RefuseQuest:  [1001]
+<ce>                 Then get thee from our coven ground,
+<ce>                    for ill favor follows those who
+<ce>                      expect the world for aught.
+
+AcceptQuest:  [1002]
+<ce>                   We witches need three ingredients
+<ce>                   we cannot find to make our brew of
+<ce>                   weather weaving.  First, a perfect
+<ce>                       _item1_ from ___dungeon1_.
+<ce>                    Second, search ___dungeon2_ for
+<ce>                  _item2_, which will make the clouds
+<ce>                  boil.  Lastly, the most efficacious
+<ce>                      _item3_ thou must bring from
+<ce>                     ___dungeon3_.  Bring us these
+<ce>                        things in =queston_ days
+<ce>                       before our stew doth cool.
+
+QuestFail:  [1003]
+<ce>                       We need _item1_, _item2_,
+<ce>                           and _item3_, %pcn.
+<ce>                     We have not time for chatter.
+
+QuestComplete:  [1004]
+<ce>                  Quick sister, take this %ra's load.
+<ce>                           Mince the _item1_,
+<ce>                         peel the _item2_, and
+<ce>                          grind the _item3_ to
+<ce>                  bits. Here we have three glittering
+<ce>                 baubles we have no use for. Take them,
+<ce>                   %pcn, as our way of thanking thee.
+
+RumorsDuringQuest:  [1005]
+The weather has been predictable lately. The Witches must be sleeping.
+<--->
+One of those witches tried to come to town on business, but we chased her out.
+
+RumorsPostfailure:  [1006]
+Remember when the witches cursed our %t. Guess they're losing their spark.
+<--->
+It's said that the ==qgiver_ are losing their skills.
+
+RumorsPostsuccess:  [1007]
+You can almost feel the energy. Like the air is getting ready to explode.
+<--->
+Whoever says the ==qgiver_ are losing their skills is a doomed fool.
+
+QuestorPostsuccess:  [1008]
+For the _item1_, _item2_, and _item3_, I am at thy service, %pcf.
+
+QuestorPostfailure:  [1009]
+<ce>                  I asked thee for ingredients three,
+<ce>                     but thou didst fail ==qgiver_.
+<ce>                        Get thee from my sight.
+
+Message:  1011
+She's one of the ==qgiver_. Someone to be polite to.
+<--->
+She's a mighty prophetess, affiliated with the ==qgiver_.
+
+Message:  1015
+%qdt:
+ If I want to win the regard of _qgiver_,
+ I must retrieve three items for %g2
+ and bring them back to the
+ ==qgiver_ in =queston_ days. The
+ three items -- _item1_, _item2_,
+ and _item3_ -- must be brought
+ from ___dungeon1_, ___dungeon2_,
+ and ___dungeon3_ respectively.
+ I seem to have my work cut out for me.
+
+Message:  1021
+<ce>                      You have found the _item1_
+<ce>                        that _qgiver_ asked for.
+
+Message:  1022
+<ce>                       This must be the _item2_
+<ce>                         that _qgiver_ wanted.
+
+Message:  1023
+<ce>                      This looks like the _item3_
+<ce>                         that _qgiver_ needed.
+
+Message:  1024
+<ce>  You offer up the _item1_.
+
+Message:  1025
+<ce>  You offer up the _item2_.
+
+Message:  1026
+<ce>  You offer up the _item3_.
+
+-- Symbols used in the QRC file:
+--
+--               %g2 occurs 2 times.
+--              %pcf occurs 28 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 4 times.
+--                %t occurs 1 time.
+--         ==qgiver_ occurs 28 times.
+--         =queston_ occurs 2 times.
+--      ___dungeon1_ occurs 2 times.
+--      ___dungeon2_ occurs 2 times.
+--      ___dungeon3_ occurs 2 times.
+--           _item1_ occurs 6 times.
+--           _item2_ occurs 6 times.
+--           _item3_ occurs 6 times.
+--          _qgiver_ occurs 8 times.
+
+QBN:
+Item _item1_ mythic
+Item _item2_ mineral
+Item _item3_ organs
+Item _reward1_ malachite
+Item _reward2_ turquoise
+Item _reward3_ jade
+--added messages 1024, 1025 and 1026 and their handling in the quest. previously you had to click the witch 3 times and turn in the items with no confirmation.
+
+Person _qgiver_ group Questor anyInfo 1011
+
+Place _dungeon1_ remote dungeon6
+Place _dungeon2_ remote dungeon12
+Place _dungeon3_ remote dungeon10
+
+Clock _queston_ 6.22:40 10.10:00 flag 17 range 0 5
+
+Foe _F.00_ is Gargoyle
+Foe _wereboar_ is Wereboar
+Foe _spriggan_ is Spriggan
+Foe _mummy_ is Mummy
+Foe _zombie_ is Zombie
+Foe _skeleton_ is Skeletal_warrior
+
+--	Quest start-up:
+	place item _item3_ at _dungeon3_ 
+	place item _item2_ at _dungeon2_ 
+	place item _item1_ at _dungeon1_ 
+	start timer _queston_ 
+	reveal _dungeon3_ 
+	reveal _dungeon2_ 
+	reveal _dungeon1_ 
+	log 1015 step 0 
+	pc at _dungeon1_ set _S.10_ 
+	pc at _dungeon2_ set _S.14_ 
+
+_pchasitem1_ task:
+	toting _item1_ and _qgiver_ clicked
+	say 1024
+
+_pchasitem2_ task:
+	toting _item2_ and _qgiver_ clicked 
+	say 1025
+
+_pchasitem3_ task:
+	toting _item3_ and _qgiver_ clicked 
+	say 1026
+
+_queston_ task:
+	end quest 
+
+_a1_ task:
+	create foe _zombie_ every 15 minutes 5 times with 5% success 
+	place foe _zombie_ at _dungeon1_ 
+
+_a2_ task:
+	create foe _mummy_ every 10 minutes 5 times with 5% success 
+	place foe _mummy_ at _dungeon1_ 
+
+_a3_ task:
+	create foe _skeleton_ every 12 minutes 5 times with 5% success 
+	place foe _skeleton_ at _dungeon1_ 
+
+_a4_ task:
+	create foe _F.00_ every 10 minutes 5 times with 5% success 
+	place foe _F.00_ at _dungeon2_ 
+
+_a5_ task:
+	create foe _spriggan_ every 15 minutes 5 times with 5% success 
+	place foe _spriggan_ at _dungeon2_ 
+
+_a6_ task:
+	create foe _wereboar_ every 12 minutes 5 times with 5% success 
+	place foe _wereboar_ at _dungeon2_ 
+
+_S.10_ task:
+	pick one of _a1_ _a2_ _a3_ _a1_ 
+
+_batty_ task:
+	clicked item _item1_ say 1021 
+
+_S.12_ task:
+	clicked item _item2_ say 1022
+
+_S.13_ task:
+	clicked item _item3_ say 1023 
+
+_S.14_ task:
+	pick one of _a4_ _a5_ _a6_ _a4_ 
+
+_S.15_ task:
+	when _pchasitem1_ and _pchasitem2_ and _pchasitem3_ 
+	give pc _reward1_
+	give pc _reward2_
+	give pc _reward3_ 
+	end quest 
+--changed to multi-line give pc reward, as I know this implementation works fine. --JayH

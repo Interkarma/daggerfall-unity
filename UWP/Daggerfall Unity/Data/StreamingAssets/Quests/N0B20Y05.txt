@@ -1,0 +1,160 @@
+-- Quest: C:\QUESTS\WORKING\N0B20Y05.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: mage
+-- Repute: 20
+-- QuestId: 5
+Messages: 41
+Quest: N0B20Y05
+DisplayName: A Dangerous Wizard
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                Doubtless, you have heard of the crazed
+<ce>                         wizard _wizard_. Given
+<ce>                    the enormous power %g has at %g3
+<ce>                          command, %rt %rn has
+<ce>                been delaying any offensive move against
+<ce>                           _wizard_, but that
+<ce>                   strategy is at an end. The %t has
+<ce>                asked us to send someone to destroy the
+<ce>                psychopathic mage. In return for a magic
+<ce>                  _reward_, would you do that for us?
+                                     <--->
+<ce>                        The people of %reg have
+<ce>                been demanding that the Mages Guild take
+<ce>                 a stand against the mad wizard who has
+<ce>                been terrorizing the land for some time
+<ce>                 now. Now, by order of the Archmagister
+<ce>                himself, we are doing just that. I know
+<ce>                 it's hardly the assignment a scholarly
+<ce>                 institution should give, but would you
+<ce>                   be willing and able to pay the mad
+<ce>                  wizard a call and then hack him into
+<ce>                                pieces?
+
+RefuseQuest:  [1001]
+<ce>                 Damn. I had hoped that we could count
+<ce>                         on you in this affair.
+
+AcceptQuest:  [1002]
+<ce>               Excellent. I knew that you would not let
+<ce>                        us down, %pcf. Now then,
+<ce>                        _wizard_ will be in %g3
+<ce>                      laboratory, ___mondung_, for
+<ce>                 at most =1stparton_ days before moving
+<ce>                   on to a new location. The %t wants
+<ce>               word that the mage is dead in =1stparton_
+<ce>                 days, so do not tarry after doing the
+<ce>               deed. I will see you in =1stparton_ days.
+<ce>                     Thank you and good luck, %pcf.
+
+QuestFail:  [1003]
+<ce>                 I think you ought to be moving along
+<ce>                 on that matter we spoke of, don't you?
+
+QuestComplete:  [1004]
+<ce>                 Once again, you astonish me with your
+<ce>                      skill and efficiency, %pcf.
+<ce>                    An excellent job -- the %t will
+<ce>                   be as pleased as I am. Here is the
+<ce>                          _reward_ I promised.
+<ce>                               Enjoy it.
+
+RumorsDuringQuest:  [1005]
+The Mages Guild has sent someone to deal with that mad wizard in ___mondung_.
+<--->
+Everyone's just holding their breath, waiting for that wizard's next move.
+
+RumorsPostfailure:  [1006]
+Not even the Mages Guild could do anything about that crazed sorcerer.
+<--->
+No one knows where that _wizard_ is, but nowhere's safe until %g1's gone.
+
+RumorsPostsuccess:  [1007]
+Hopefully, that's the last we hear of the mad wizard of ___mondung_.
+<--->
+It seems kind of quiet now that we don't have a mad wizard to worry about.
+
+QuestorPostsuccess:  [1008]
+Hello, %pcf. I hope that mad wizard didn't hurt you too much.
+
+QuestorPostfailure:  [1009]
+<ce>                       So, you're back, but you
+<ce>                     didn't slay the Mad Wizard of
+<ce>                         ___mondung_, did you?
+<ce>                            Hopeless, %pcf,
+<ce>                               hopeless.
+
+Message:  1030
+%qdt:
+ The Mages Guild of ___questgiver_ has
+ asked me to slay the Wizard of ___mondung_.
+ I need to have the deed done in =1stparton_ days
+ in order to collect my reward.
+
+Message:  1040
+<ce>                       You have slain _wizard_,
+<ce>                     the Mad Wizard of ___mondung_.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 1 time.
+--               %g1 occurs 1 time.
+--               %g3 occurs 3 times.
+--              %pcf occurs 6 times.
+--              %qdt occurs 1 time.
+--              %reg occurs 1 time.
+--               %rn occurs 1 time.
+--               %rt occurs 1 time.
+--                %t occurs 3 times.
+--       =1stparton_ occurs 10 times.
+--       ___mondung_ occurs 8 times.
+--    ___questgiver_ occurs 1 time.
+--          _reward_ occurs 2 times.
+--          _wizard_ occurs 5 times.
+
+QBN:
+Item _reward_ magic_item
+
+Person _questgiver_ group Questor
+Person _wizard_ face 249 faction The_Mages_Guild remote
+
+Place _mondung_ remote dungeon9
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Mage
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1030 step 0 
+	place foe _monster_ at _mondung_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	unset _qgclicked_ 
+	end quest 
+
+variable _queston_
+_mondead_ task:
+	killed 1 _monster_ 
+	say 1040 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 
+--added full clearclick action. was mere variable previously.

@@ -1,0 +1,191 @@
+-- Quest: C:\QUESTS\WORKING\S0000003.Qbn.
+-- Main story quest.
+-- QuestId: 3
+Messages: 21
+Quest: S0000003
+DisplayName: Freeing Medora
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                      Greetings %pcf. I am Medora
+<ce>               Direnni, former sorceress to the court of
+<ce>               Daggerfall. I have an interest in helping
+<ce>               you in your aim to exorcise the spirit of
+<ce>               King Lysandus, but I can do little in my
+<ce>               present circumstances. If you would pay a
+<ce>                 visit to a certain other sorceress, I
+<ce>               can lift the curse on Direnni Tower. Will
+<ce>                       you do this for me, %pcf?
+
+RefuseQuest:  [1001]
+<ce>                You refuse someone very much in need of
+<ce>                     your help, %pcf. I hope your
+<ce>                    conscience will give you peace.
+
+AcceptQuest:  [1002]
+<ce>                     I will be in your debt, %pcf.
+<ce>                   Nulfaga, the mother of my former
+<ce>                  Lord Lysandus is a renowned mystic,
+<ce>                  but I have heard whispers that the
+<ce>                  loss of her son has turned her mad
+<ce>                   with grief. If this is not true,
+<ce>                   she can and will help me. I need
+<ce>                   a certain rare item, the horn of
+<ce>                  a Great Unicorn to break the curse
+<ce>                    on Direnni Tower. If Nulfaga is
+<ce>                    indeed mad, you must search her
+<ce>                     castle for this horn yourself
+<ce>                    and bring it back to me. I will
+<ce>                expect you back in =2shedungent_ days.
+
+QuestFail:  [1003]
+<ce>                   Without that horn, I cannot help
+<ce>                           you at all, %pcf.
+
+QuestComplete:  [1004]
+<ce>                You have succeeded in a most dangerous
+<ce>                      enterprise, %pcf, but many
+<ce>                more such trials await you. By bringing
+<ce>                the horn to me, you have helped me lift
+<ce>               the curse the Queen Dowager placed on my
+<ce>                 tower. I hope I can count on you for
+<ce>                    further aid. For now, take this
+<ce>                      _magicitem_ as your reward.
+
+RumorsDuringQuest:  [1005]
+No one will go near the Isle of Balfiera since the Queen of Oblivion arrived.
+<--->
+Balfiera was once an exclusive resort. Now it is the land of the dead.
+
+RumorsPostfailure:  [1006]
+The fairy lady was supposedly trapped there by the evil of her own spellcraft.
+<--->
+%god's curse is on the former Witch of Daggerfall, damned forever in Balfiera.
+
+RumorsPostsuccess:  [1007]
+A great hero saved the poor Lady of Balfiera from the curse of a wicked queen.
+<--->
+A %ra has lifted the curse on the Lady of Balfiera and restored the land.
+
+QuestorPostsuccess:  [1008]
+<ce>               United thoughts and counsels, equal hope
+<ce>              And hazard in the once glorious enterprise
+<ce>              Joined with me once, now misery hath joined
+<ce>               In equal ruin! Eternal, eternal, eternal
+<ce>               ruin. Oh, my child, why wouldst thou not
+<ce>              listen, thy ear, thy glorious mortal face,
+<ce>                 thy throat, and the arrow. Oh misery.
+                                     <--->
+<ce>                 Choosing out few words most horrible,
+<ce>               Let none them read! Verses, verses frame
+<ce>               which with and other spells like terrible
+<ce>                curses Heaven! Curse Oblivion! My boy!
+<ce>                My boy is dead and let Tamriel tremble
+<ce>                 until he and I findeth peace denied.
+                                     <--->
+<ce>            Say, what strange motive, Goddess! could compel
+<ce>             an arrow to my beloved Lysandus' bare throat?
+<ce>              Did he die there mourned and blessed or are
+<ce>              my pretty birdies all turned to graywings?
+<ce>             I search the afterworld, the underworld, and
+<ce>             the world-between and no where do I find the
+<ce>                lightness of my son. Oh, madness to thy
+<ce>                       breast I cling suckling!
+                                     <--->
+<ce>                We are only like dead walls or vaulted
+<ce>               graves, that, ruined, yield no echo. Oh,
+<ce>                this gloomy world, in what a shadow or
+<ce>                deep pit of darkness doth, womanish and
+<ce>               fearful, mankind live. How came Lysandus
+<ce>               by his death? In a mist, I know not how.
+<ce>               Oblivion not come yet? I'll it nearer by
+<ce>               a perspective, or make a glass that shall
+<ce>              set all the world on fire upon an instant.
+<ce>               I cannot sleep; my pillow is stuffed with
+<ce>                        a litter of porcupines.
+
+QuestorPostfailure:  [1009]
+<ce>               Of course I will give Medora the horn of
+<ce>               the Great Unicorn. She was a favorite of
+<ce>                    my beloved Lysandus after all.
+
+QuestLogEntry:  [1010]
+%qdt:
+ Medora, the former court sorceress of
+ Daggerfall, has sent me to Shedungent in
+ the Wrothgarian Mountains. Shedungent is
+ home to Nulfaga, mother of Lysandus.
+ There I must retrieve the horn of the
+ Great Unicorn. If Nulfaga is unable to
+ help, I must search her castle Shedungent
+ for the horn myself. I have =2shedungent_ days
+ to return to Direnni Tower.
+
+Message:  1020
+<ce>                  The delicate, spiraled horn curves
+<ce>                  slightly before ending in a deadly,
+<ce>                   sharp point. You had always heard
+<ce>                   that unicorn horns were of purest
+<ce>                  alabaster ivory. This one seems to
+<ce>                         be more like silver.
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 1 time.
+--              %pcf occurs 8 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--     =2shedungent_ occurs 3 times.
+--       _magicitem_ occurs 1 time.
+
+QBN:
+Item horn horn used 1020
+Item _magicitem_ magic_item
+
+Person _medora_ named Medora atHome
+Person _nulfaga_ named Nulfaga atHome
+
+Place _huntstart_ permanent Shedungent4
+
+Clock _2shedungent_ 00:00 0 flag 17 range 0 2
+
+
+--	Quest start-up:
+	prompt QuestorOffer yes yes no _no_ 
+
+_2shedungent_ task:
+	end quest 
+
+_S.01_ task:
+	clicked npc _nulfaga_ 
+
+variable _S.02_
+variable _S.03_
+variable _S.04_
+_S.05_ task:
+	when _S.01_ and not _S.09_ 
+	say QuestorPostsuccess 
+	clear _S.01_ _S.05_ 
+
+variable _S.06_
+yes task:
+	place item horn at _huntstart_ marker 1
+	start timer _2shedungent_ 
+	log 1010 step 0 
+	reveal _huntstart_ in province 16 at 50966 
+	say AcceptQuest 
+
+_no_ task:
+	say RefuseQuest 
+	end quest 
+
+LiftedCurse _S.09_
+MedoraGotHorn _S.10_
+	toting horn and _medora_ clicked 
+	give pc _magicitem_ 
+	start quest 18 18 
+	change repute with _medora_ by +10 
+	mute npc _medora_ 
+	end quest 

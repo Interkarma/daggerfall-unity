@@ -1,0 +1,218 @@
+-- Quest: C:\QUESTS\WORKING\N0C00Y10.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: mage
+-- Repute: 0
+-- QuestId: 10
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 41
+Quest: N0C00Y10
+DisplayName: Missing Book
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                     My name is _giver_. You want
+<ce>               work but you aren't a member of the Mages
+<ce>              guild? I'm sure you can understand that we
+<ce>              only provide quality work for our members.
+<ce>                However, I do have a little errand that
+<ce>                 needs to be done. One of our books is
+<ce>              missing. If you were to find and return it,
+<ce>               I would consider it a personal favor, one
+<ce>                that would reflect well on you with the
+<ce>                             entire guild.
+
+RefuseQuest:  [1001]
+<ce>                  Obviously you are not interested in
+<ce>               being on good terms with the Mages Guild.
+
+AcceptQuest:  [1002]
+<ce>               We have no clues at the moment. The name
+<ce>                    of the book is _book_. You will
+<ce>                have to snoop around and ask people if
+<ce>               they have heard anything. Bring the book
+<ce>                      back to me if you find it.
+
+QuestFail:  [1003]
+%qdt:
+ I have agreed to find the book _book_
+ for the Mages Guild of ___giver_.
+ If I find it, I need to get it back to
+ _giver_ and %g will put in a
+ good word for me with the guild.
+
+QuestComplete:  [1004]
+<ce>                              Ah, _book_.
+<ce>                           Well done, %pcf.
+<ce>                      The Guild is certainly more
+<ce>                       favorably inclined toward
+<ce>                                 you.
+
+RumorsDuringQuest:  [1005]
+The Mages Guild has a very rare edition of _book_. Or at least, they had one.
+<--->
+_book_ is a rare book, but the edition the Mages Guild had was even more rare.
+
+RumorsPostfailure:  [1006]
+It's a great loss to the Mages Guild -- that special edition of _book_.
+<--->
+The Mages Guild library isn't what it used to be, now that _book_ is gone.
+
+RumorsPostsuccess:  [1007]
+The Mages Guild's library is enriched now that _book_ is back on the shelves.
+
+QuestorPostsuccess:  [1008]
+Did you happen to read _book_ when you had it? It's quite fascinating.
+
+QuestorPostfailure:  [1009]
+<ce>                      I gave you a chance, %pcf.
+<ce>                  Remember? If you had found _book_,
+<ce>                    I'd be happy to talk to you. As
+<ce>                      it is now, well, you can go
+<ce>                               away now.
+
+QuestLogEntry:  [1010]
+<ce>                          You may want to try
+<ce>                     _informant_ in _informant1_.
+<ce>                           %g seems to know
+<ce>                        everything that goes on
+<ce>                         around __informant1_.
+                                     <--->
+<ce>                         You should ask at the
+<ce>                       local inns. They are full
+<ce>                              of gossip.
+                                     <--->
+<ce>                            You should try
+<ce>               _informant1_. There's always talk there.
+                                     <--->
+<ce>                      It was stolen from _giver_.
+                                     <--->
+<ce>               _giver_ has been asking around about it.
+                                     <--->
+<ce>                  I really enjoyed it when I read it.
+                                     <--->
+<ce>                 You should probably visit a library.
+
+Message:  1011
+<ce>        This must be the book, which was stolen from __giver_.
+
+Message:  1025
+<ce>                   Hello, %pcn. Word is that you've
+<ce>                 been asking about me. I should know,
+<ce>                   all of __informant1_'s news comes
+<ce>                          through these ears.
+<ce>              Enough about me. I did hear something about
+<ce>                _giver_'s misfortunes. You want to find
+<ce>                     _thief_, %g has been looking
+<ce>                    for a first printing of _book_
+<ce>                for some time. And %g is also the type
+<ce>                   who takes things without asking,
+<ce>                       if you know what I mean.
+
+Message:  1027
+_thief_ lives at _house_ in __house_.
+<--->
+_thief_ does live in _house_.
+<--->
+_thief_ spends %g3 nights at _house_.
+<--->
+You should try to find _thief_ at home, %g does live in _house_.
+<--->
+_thief_ does a lot of trading at _store_.
+<--->
+You may want to start shopping at _store_, _thief_ does.
+<--->
+_store_ is a popular place to trade stolen goods, which _thief_ has a lot of.
+<--->
+_thief_ has been seen at _store_.
+<--->
+_inn_ is a hang out for many thieves.
+<--->
+_thief_ likes to drink at _inn_.
+<--->
+_thief_'s favorite tavern is _inn_.
+<--->
+_thief_'s favorite meals are served at _inn_.
+
+Message:  1040
+<ce>                I hear you've been looking for _thief_.
+<ce>             Well, you've found %g2.  Now get lost before
+<ce>                 you make me really want to hurt you.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 5 times.
+--               %g2 occurs 1 time.
+--               %g3 occurs 1 time.
+--              %pcf occurs 2 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--         ___giver_ occurs 23 times.
+--          __house_ occurs 1 time.
+--     __informant1_ occurs 3 times.
+--            _book_ occurs 14 times.
+--           _giver_ occurs 6 times.
+--           _house_ occurs 5 times.
+--      _informant1_ occurs 2 times.
+--       _informant_ occurs 1 time.
+--             _inn_ occurs 5 times.
+--           _store_ occurs 4 times.
+--           _thief_ occurs 24 times.
+
+QBN:
+Item _book_ book1 anyInfo 1010 used 1011
+
+Person _informant_ face 245 group Group_6.0 male local
+Person _giver_ group Questor
+Person _thief_ face 99 group Chemist female local anyInfo 1027 rumors 1027
+
+Place _inn_ local tavern
+Place _store_ local weaponstore
+Place _house_ local house2
+Place _informant1_ local tavern
+
+Clock _S.00_ 00:00 0 flag 9 range 0 0
+Clock _S.01_ 10.00:00 0 flag 9 range 0 1
+
+Foe _thiefFoe_ is Thief
+-added underscores to thiefFoe
+
+--	Quest start-up:
+	dialog link for person _thief_ 
+	dialog link for location _house_ person _informant_ 
+	start timer _S.01_ 
+	log 1003 step 0 
+	give item _book_ to _thiefFoe_ 
+	place npc _informant_ at _informant1_ 
+
+variable _S.00_
+_S.01_ task:
+	end quest 
+
+_S.02_ task:
+	daily from 00:00 to 08:00 
+	place foe _thiefFoe_ at _house_ 
+
+_S.03_ task:
+	daily from 16:02 to 23:59 
+--changed 24:00 to 23:59, 24:00 is not a valid time
+	place foe _thiefFoe_ at _inn_ 
+
+_S.04_ task:
+	daily from 08:01 to 16:01 
+	place foe _thiefFoe_ at _store_ 
+
+_S.05_ task:
+	clicked npc _informant_ say 1025 
+	add dialog for person _thief_ 
+
+_S.06_ task:
+	toting _book_ and _giver_ clicked 
+	give pc nothing 
+	end quest 
+
+variable _S.07_
+_S.08_ task:
+	injured _thiefFoe_ saying 1040 

@@ -1,0 +1,160 @@
+-- Quest: C:\QUESTS\WORKING\M0B20Y02.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: fighter
+-- Repute: 20
+-- QuestId: 2
+Messages: 81
+Quest: M0B20Y02
+DisplayName: Pack of Giants
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                  Yeah, I got a little job for you. I
+<ce>                   wouldn't give this to just anyone,
+<ce>                  but I know you do good work. There's
+<ce>                 this pack of giants that want killing.
+<ce>                 Pay is pretty standard, _reward_ gold
+<ce>                         pieces. You up for it?
+
+RefuseQuest:  [1001]
+<ce>                      Awright, whatever. Sounded
+<ce>                    like your kind of thing is all.
+
+AcceptQuest:  [1002]
+<ce>                      Good deal, %pcf. Our client
+<ce>                 places the giants at their stronghold,
+<ce>                       ___mondung_. He says there
+<ce>                   are six of 'em, and he ain't gonna
+<ce>                    pay unless all six are stiffed,
+<ce>                      and in =1stparton_ days. Got
+<ce>                            it, %pcf? Good.
+
+QuestFail:  [1003]
+<ce>                   You know, until those six giants
+<ce>                  ain't breathing no more, there ain't
+<ce>                         no time for chattin'.
+
+QuestComplete:  [1004]
+<ce>                     %oth, them giants didn't know
+<ce>                     what him 'em, did they, %pcf?
+<ce>                Here's your _reward_ gold, as promised.
+
+RumorsDuringQuest:  [1005]
+There's a bunch of giants in ___mondung_, but they don't bother anyone.
+<--->
+I hear the %t wants those giants in ___mondung_ dead once and for all.
+
+RumorsPostfailure:  [1006]
+Something scared those giants off. Wonder what it could've been.
+<--->
+If I were one of those giants, I would've ran off too. Too much traffic.
+
+RumorsPostsuccess:  [1007]
+I wonder how soon it'll be before a new group of giants move into ___mondung_.
+<--->
+I kinda feel sorry for those giants. They didn't really bother anyone.
+
+QuestorPostsuccess:  [1008]
+<ce>                    Giants are tough. You did well
+<ce>                   %pcf. You'll go far in the guild.
+
+QuestorPostfailure:  [1009]
+<ce>                   Giants were too much for you huh?
+<ce>                    Maybe the guild should have sent
+<ce>                     you out after pygmies instead.
+
+QuestLogEntry:  [1010]
+<ce>                      All of the giants are dead.
+
+Message:  1020
+<ce>                       This is GIANT territory!
+<ce>                       Go back to your puny lands
+<ce>                                %ra fly!
+                                     <--->
+<ce>                        I ate a %ra yesterday.
+<ce>                            It tasted good.
+                                     <--->
+<ce>                      Smash you! Smash you flat!
+
+Message:  1030
+%qdt:
+ The Fighters Guild of
+ ___questgiver_ has hired me
+ to kill a tribe of six giants in
+ their hideout, ___mondung_. I
+ need to have the assignment accomplished and be
+ back in =1stparton_ days to get my payment.
+
+Message:  1080
+<ce>                       Hey %pct, if it's killing
+<ce>                        you're looking for, take
+<ce>                        this map to ___newdung_.
+<ce>                          Plenty of it there.
+
+
+-- Symbols used in the QRC file:
+--
+--              %oth occurs 1 time.
+--              %pcf occurs 5 times.
+--              %pct occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 2 times.
+--                %t occurs 1 time.
+--       =1stparton_ occurs 3 times.
+--       ___mondung_ occurs 5 times.
+--       ___newdung_ occurs 1 time.
+--    ___questgiver_ occurs 1 time.
+--          _reward_ occurs 5 times.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ group Questor
+
+Place _mondung_ remote dungeon13
+Place _newdung_ remote dungeon
+
+Clock _1stparton_ 00:00 0 flag 17 range 0 2
+
+Foe _monster_ is Giant
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1030 step 0 
+	pick one of _map_ _nomap_ _nomap_ _nomap_ 
+	pc at _mondung_ set _S.01_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+	give pc _reward_ 
+	end quest 
+
+_S.01_ task:
+	create foe _monster_ every 15 minutes 15 times with 50% success 
+
+_mondead_ task:
+	killed 6 _monster_ 
+	say 1010 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_1stparton_ task:
+	end quest 
+
+_S.05_ task:
+	injured _monster_ saying 1020 
+
+_clearclick_ task:
+	when _qgclicked_ and not _mondead_ 
+	clear _qgclicked_ _clearclick_ 
+
+variable _map_
+variable _nomap_
+_S.09_ task:
+	when _map_ and _pcgetsgold_ 
+	reveal _newdung_ readmap
+    say 1080 

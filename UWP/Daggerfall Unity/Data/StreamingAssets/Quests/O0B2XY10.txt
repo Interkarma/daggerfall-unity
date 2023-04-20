@@ -1,0 +1,132 @@
+-- Quest: C:\QUESTS\WORKING\O0B2XY10.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: thief
+-- Repute: 2X
+-- QuestId: 10
+Messages: 11
+Quest: O0B2XY10
+DisplayName: A Treasured Potion
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                           %pcn, my name is
+<ce>                        _qgiver_. I have a line
+<ce>                         on a _potion_. I need
+<ce>                         someone to lift it for
+<ce>                      me. I'll pay you _gold_ gold
+<ce>                       to do it. What do you say?
+
+RefuseQuest:  [1001]
+<ce>                       Let me know when you want
+<ce>                        to get real work, %pcn.
+
+AcceptQuest:  [1002]
+<ce>                          At _alchemyshop_ in
+<ce>                        __alchemyshop_ you will
+<ce>                         find a _potion_. Take
+<ce>                        it and bring it to me in
+<ce>                      =traveltime_ days, and I'll
+<ce>                        pay you. That's not too
+<ce>                           tough now, is it?
+
+QuestComplete:  [1004]
+<ce>                         Not bad, %pcn. Here's
+<ce>                           your _gold_ gold.
+
+RumorsDuringQuest:  [1005]
+_alchemyshop_ has some of the best ingredients in __alchemyshop_.
+<--->
+If you want just about anything, go to _alchemyshop_ in __alchemyshop_.
+
+RumorsPostfailure:  [1006]
+There was a rare _potion_ in _alchemyshop_, but it's in a safer place now.
+
+RumorsPostsuccess:  [1007]
+Someone stole a bottle of _potion_ right out of _alchemyshop_. What cheek!
+
+QuestorPostsuccess:  [1008]
+Sure, I remember you, %pcf. The _potion_, right?
+
+QuestorPostfailure:  [1009]
+<ce>                  Don't tell me. You went all the way
+<ce>                      to _alchemyshop_, found the
+<ce>                       _potion_, and accidentally
+<ce>                    drank it, right? %oth, different
+<ce>                         thief, same old story.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_, a Thieves Guild member
+ in ___qgiver_ offered me a job to
+ steal a _potion_ from
+ _alchemyshop_ in
+ __alchemyshop_. I have
+ =traveltime_ days to get it to %g2.
+
+
+-- Symbols used in the QRC file:
+--
+--               %g2 occurs 3 times.
+--              %oth occurs 1 time.
+--              %pcf occurs 1 time.
+--              %pcn occurs 4 times.
+--              %qdt occurs 1 time.
+--      =traveltime_ occurs 2 times.
+--        ___qgiver_ occurs 1 time.
+--    __alchemyshop_ occurs 11 times.
+--            _gold_ occurs 3 times.
+--          _potion_ occurs 7 times.
+--          _qgiver_ occurs 2 times.
+
+QBN:
+Item _potion_ Elixir_vitae
+Item _gold_ gold
+
+Person _qgiver_ group Questor
+
+Place _alchemyshop_ remote apothecary
+
+Clock _traveltime_ 00:00 0 flag 17 range 0 2
+
+Foe _F.00_ is Battle_mage
+Foe _F.01_ is Iron_atronach
+Foe _F.02_ is Daedra_seducer
+Foe _F.03_ is Werewolf
+
+--	Quest start-up:
+	place item _potion_ at _alchemyshop_ 
+	start timer _traveltime_ 
+	log 1010 step 0 
+	pc at _alchemyshop_ set _S.01_ 
+
+_traveltime_ task:
+	end quest 
+
+_S.01_ task:
+	pick one of _guard1_ _guard2_ _guard3_ _guard4_ 
+
+_questdone_ task:
+	toting _potion_ and _qgiver_ clicked 
+	give pc _gold_ 
+	end quest 
+
+_guard1_ task:
+	create foe _F.00_ every 4 minutes 1 times with 10% success 
+
+_guard2_ task:
+	create foe _F.01_ every 4 minutes 1 times with 10% success 
+
+_guard3_ task:
+	create foe _F.02_ every 4 minutes 1 times with 10% success 
+
+_guard4_ task:
+	create foe _F.03_ every 4 minutes 1 times with 10% success 
+
+_S.07_ task:
+	clicked item _potion_ 
+
+_S.08_ task:
+	when _traveltime_ and _S.07_ 
+	make _potion_ permanent 

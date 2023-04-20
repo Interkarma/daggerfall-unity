@@ -1,0 +1,580 @@
+-- Quest: C:\QUESTS\WORKING\S0000008.Qbn.
+-- Main story quest.
+-- QuestId: 8
+Messages: 71
+Quest: S0000008
+DisplayName: Who Gets the Totem
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                     %pcf, I'm glad you could meet
+<ce>               me here. The Blades and your emperor need
+<ce>                you again. You may or may not be aware
+<ce>                that the Totem of Tiber Septim has been
+<ce>               found. For a brief time Lord Woodborne of
+<ce>                Wayrest had it. Where he got it from is
+<ce>                still a mystery. The Blades mounted an
+<ce>                assault upon Woodborne Hall to retrieve
+<ce>                it. Although the Hall fell, many of our
+<ce>                         number fell with it.
+<ce>                                    
+<ce>                 We sacked the Woodborne Hall, but the
+<ce>               Totem was gone. I have reason to believe
+<ce>               that Gothryd has the Totem. The Blades no
+<ce>                longer have the men to mount an assault
+<ce>                 on Castle Daggerfall. You have shown
+<ce>                yourself to be quite adept at getting in
+<ce>               and out of these places. Would you go into
+<ce>               Castle Daggerfall and retrieve the Totem
+<ce>                           of Tiber Septim?
+
+RefuseQuest:  [1001]
+<ce>                These are dark times indeed. If Gothryd
+<ce>                gets the Mantella as well, Tamriel will
+<ce>                      be thrown into a civil war.
+
+AcceptQuest:  [1002]
+<ce>                   I knew I could count on you %pcf.
+<ce>              The Totem is most likely in the Daggerfall
+<ce>                  treasury. It is a huge room, quite
+<ce>                unmistakable. I am leaving in a couple
+<ce>                of days. I shall send word to you where
+<ce>               you can meet me after you get the Totem.
+<ce>                  Should you succeed, the Emperor has
+<ce>                    instructed me to gift you with
+<ce>                an artifact of great power and renown.
+<ce>                             _artifact4_!
+
+QuestLogEntry:  [1010]
+%qdt:
+ Lady Brisienna has asked me to bring her
+ the Totem of Tiber Septim. It is hidden
+ in the treasury of Castle Daggerfall.
+ She fears that assassins are after her,
+ and will send me a letter revealing her
+ current whereabouts when I escape the
+ castle. Whoever holds the Totem has the
+ potential to control mighty Numidium and
+ forge a new empire, just like Tiber Septim
+ did so long ago.
+
+Message:  1011
+%pcn,
+ 
+ Come at once to __tavern_ in
+ ____tavern_. I will be waiting at
+ _tavern_ for you. The fate
+ of the empire could be at stake.
+ 
+<ce>                           -- Lady Brisienna
+
+Message:  1015
+<ce>                    A voice in your head intones...
+<ce>                                    
+<ce>                     "You are %pcn. You are my new
+<ce>            host. Know this now and resolutely. You are not
+<ce>            worthy to carry the Totem of Tiber Septim. Only
+<ce>             those of his blood line may carry me. I will
+<ce>            give you a year and a day to accomplish this."
+
+Message:  1017
+%qdt:
+ The Totem of Tiber Septim spoke to me in my
+ head! It claims that only those with royal
+ blood can lay claim to the Totem. It has given
+ me one year and one day to decide who shall
+ be its true wielder.
+
+Message:  1020
+%pcn,
+ 
+ You are on a quest to retrieve the Totem of
+ Tiber Septim. Do not deny it. My spies have
+ confirmed this. The Totem is not for commoners,
+ and you cannot use it. Bring the Totem to me
+ and I will pay you 100,000 gold pieces.
+ It is a king's ransom by any measure.
+ 
+ You should be warned, neither Wayrest nor
+ Daggerfall are loyal to the throne. I am the
+ only regent on the Iliac Bay that can be trusted.
+ The others will only use it to destroy me.
+ 
+<ce>                               Akorithi
+<ce>                           Queen of Sentinel
+
+Message:  1021
+Noble %pcf,
+ 
+ My ears have picked up rumors that you are
+ searching for the Totem of Tiber Septim. I
+ too have hunted for this wondrous artifact
+ for many years. Should you find it, I would
+ pay you a healthy ransom, enough to buy your
+ own ship. I will match or exceed any price
+ that Gothryd or Akorithi might offer. Never
+ forget your real friends.
+ 
+<ce>                             King Eadwyre,
+<ce>                              of Wayrest
+
+Message:  1022
+%pcn,
+ 
+ You are not orcish. How could you possibly
+ understand what it is like? My people are
+ treated like barbarians. Slaughtered upon
+ sight. Is it so unusual that we respond in
+ kind? Violence begets violence.
+ 
+ I aspire to raise my race from the mire. I
+ will bring them to equal standing with the
+ other races of Tamriel. To do this I must
+ have the Totem of Tiber Septim. I will not
+ insult you by promises that no blood will
+ be shed. I do swear by my crown and by my
+ heirs I shall not attempt to hold sway
+ beyond the borders of Orsinium. My goal is
+ not to conquer Tamriel, but to create the
+ orcish homeland. I am in possession of an
+ artifact that I am sure you would want to
+ possess. It is yours if you but give me
+ the Totem of Tiber Septim.
+ 
+<ce>                     -- Gortwog, Warlord and King
+
+Message:  1023
+%pcn,
+ 
+ You will soon have the Totem of Tiber Septim
+ in your hands. It is forseen in the stars,
+ and I have read them. Know you this. All of
+ mortal stature are filled with pride and greed.
+ To give the Totem to any of them is to let
+ loose mortal vanity upon this world. They will
+ destroy the very thing they covet.
+    I have no earthly desires. I have no mortal
+ pride, no petty greed. Only one such as I
+ can wield the Totem safely, for I would take
+ it into the Aetherius and leave behind this
+ earthly shell. So long as the Totem exists,
+ it is a danger to all on Tamriel. Bring me
+ the Totem and I will safeguard the world.
+    I will not offer you gold or gems. I will
+ offer you what only I can give. Fame. Your
+ reputation throughout Tamriel will soar.
+ 
+<ce>                       Lord of the Necromancers,
+<ce>                           King of the Worms
+
+Message:  1024
+%pcn,
+ 
+ Centuries ago, Tiber Septim ruled the land
+ and forged an empire with great Numidium. The
+ secret of Numidium's power lies in its heart,
+ carried within the Mantella. It is the heart
+ of Tiber Septim's battlemage. It is my heart. It
+ is my Mantella. It is my Totem. It belongs to
+ me, and to none other.
+ 
+ I have won and lost an empire. I have no desire
+ to tamper further with mortal affairs. I have in
+ my possession _artifact2_, one of the
+ world's greatest artifacts. You may have it in
+ in exchange for the Totem.
+ 
+ My most loyal agent will await your arrival in
+ __temple_ of ____temple_, at _temple_.
+ 
+<ce>                               Underking
+
+Message:  1025
+%pcn,
+ 
+ If you are reading this, you must have gotten
+ the Totem and escaped from the dungeons of
+ Castle Daggerfall. I am in __newplace_,
+ of ____newplace_ at _newplace_.
+ Bring the Totem there as soon as possible.
+ 
+<ce>                           -- Lady Brisienna
+
+Message:  1030
+<ce>            A page dressed in the livery of Sentinel hands
+<ce>                you a letter, and silently walks away.
+
+Message:  1031
+<ce>             A portly man bearing the standard of Wayrest
+<ce>               approaches you with a letter. His somber
+<ce>              expression never changes, and he speaks not
+<ce>             a word. He leaves as silently as he arrived.
+
+Message:  1032
+<ce>             A heavily cloaked figure shuffles toward you.
+<ce>             As you prepare to defend yourself, a gnarled
+<ce>            green hand shoots forth with a letter. Stunned,
+<ce>              you do nothing as the figure shuffles away.
+
+Message:  1033
+<ce>            A hand grips your wrist from behind. Spinning,
+<ce>             you open your mouth to shout for the guards.
+<ce>           A skeletal hand stuffs a letter into your mouth.
+<ce>            The heavily robed skeleton releases your wrist
+<ce>             and turns away, unnoticed by other passerby.
+
+Message:  1034
+<ce>              A letter floats through the air toward you.
+<ce>              Strangely, nobody else seems to notice it.
+<ce>                The letter tucks inself into your pack.
+
+Message:  1040
+<ce>              Hand over the Totem, or we'll slaughter you
+<ce>             where you stand. Well? Are you going to give
+<ce>                it to us, or make us take it from you?
+
+Message:  1041
+<ce>                   Then we'll just have to take it.
+
+Message:  1042
+<ce>                 Coward. Now get lost. Oh yeah. I was
+<ce>                    told you should go see Nalfuga,
+<ce>                           whoever that is.
+
+Message:  1043
+<ce>               You don't even have it! Now I'm going to
+<ce>                   kill you just for the fun of it.
+
+Message:  1050
+<ce>             The Totem of Tiber Septim! It is a priceless
+<ce>             artifact. I shall guard it well and keep the
+<ce>              rebellious powers of Daggerfall and Wayrest
+<ce>                 in check. Take your reward %pcf. You
+<ce>              have earned it ten fold. You must keep your
+<ce>              keen eyes open for the Mantella. Any rumors
+<ce>              must be hunted down with vigor. Without the
+<ce>                    Mantella, the Totem is useless.
+
+Message:  1051
+<ce>              Fool! Did you really think I would pay you
+<ce>                     for the Totem? Kill the %ra!
+
+Message:  1052
+<ce>               A nation of Orcs is within my grasp. You
+<ce>               have given my people a chance at freedom,
+<ce>                     %pcn. Should you ever recover
+<ce>                the Mantella itself, I shall reward you
+<ce>                          thrice over for it.
+
+Message:  1053
+<ce>             I see you have come to your senses. I should
+<ce>           have you slain, but I have more honor than that.
+<ce>           Instead I shall reward you. Here take _goldgoth_
+<ce>            gold pieces for your turnabout loyalty. Deliver
+<ce>             the Mantella to me, and my trust in you will
+<ce>                        be once again restored.
+
+Message:  1054
+<ce>               The Totem! At last it is within my grasp.
+<ce>                   You have done well, %pcf. I shall
+<ce>                remember this when I have transformed.
+<ce>               Search now for the Mantella. Without it,
+<ce>               the Totem is worthless. In the mean time,
+<ce>                   enjoy the adoration of the world.
+
+Message:  1055
+<ce>                The Underking will be most pleased. He
+<ce>              has searched many life times for this lost
+<ce>             item. I have been instructed to give you this
+<ce>             object. Use it wisely. Should you ever locate
+<ce>               the Mantella, the Underking would be most
+<ce>                             appreciative.
+
+Message:  1056
+<ce>             Your Emperor will be most grateful. The Totem
+<ce>              could have started a civil war in the wrong
+<ce>                  hands. Thank you %pcf. Now you must
+<ce>               away to Nulfaga. She holds the key to the
+<ce>             Mantella. Free the Mantella, and the Emperor
+<ce>              controls Great Numidium through the Totem.
+
+Message:  1060
+<ce>               The unmistakable voice of Nulfaga speaks
+<ce>              softly in your head, "I see that the Totem
+<ce>              has found its way into the hands of someone
+<ce>               with royal blood. I think it is time you
+<ce>               paid me another visit here in Shedungent
+<ce>                   %pcn. Your work is not yet done."
+
+Message:  1070
+<ce>               A cheerful young woman hands you a letter
+<ce>                    and then walks away, whistling.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 7 times.
+--              %pcn occurs 9 times.
+--              %qdt occurs 2 times.
+--               %ra occurs 2 times.
+--     ____newplace_ occurs 1 time.
+--       ____tavern_ occurs 1 time.
+--       ____temple_ occurs 6 times.
+--       __newplace_ occurs 1 time.
+--         __tavern_ occurs 1 time.
+--         __temple_ occurs 1 time.
+--       _artifact2_ occurs 1 time.
+--       _artifact4_ occurs 1 time.
+--        _goldgoth_ occurs 1 time.
+--        _newplace_ occurs 1 time.
+--          _tavern_ occurs 1 time.
+--          _temple_ occurs 6 times.
+
+QBN:
+Item _letter_ letter used 1011
+Item _totem_ totem
+Item totemLetter1 letter used 1020
+Item _letter4_ letter used 1022
+Item totemLetter3 letter used 1024
+Item totemLetter4 letter used 1023
+Item totemLetter5 letter used 1021
+Item totemReward1 gold range 25000 to 25000
+Item _goldgoth_ gold range 10000 to 10000
+Item _artifact2_ artifact Necromancers_Amulet
+Item totemLetter6 letter used 1025
+Item _artifact4_ artifact Warlocks_Ring
+Item _I.12_ artifact Chrysamere
+Item totemReward2 gold range 25000 to 25000
+Item totemReward3 gold range 25000 to 25000
+Item totemReward4 gold range 25000 to 25000
+
+Person Brisienna face 1 named Lady_Brisienna
+Person _Gothryd_ named King_Gothryd atHome
+Person Eadwyre named King_Eadwyre atHome
+Person _Akorithi_ named Queen_Akorithi atHome
+Person Gortwog named Gortwog atHome
+Person _Underking_ face 1 faction Agents_of_The_Underking remote
+Person _Kingoworms_ named King_of_Worms atHome
+
+Place _daggerfall_ permanent DaggerfallCastle2
+Place _tavern_ remote tavern
+Place _temple_ remote temple
+Place _newplace_ remote house2
+
+Clock _2letter_ 7.00:00 14.00:00
+Clock _delay_ 00:02 0 flag 1 range 0 1
+Clock _S.08_ 366.00:00 0 flag 1 range 0 1
+Clock _S.10_ 7.00:00 14.00:00
+Clock _S.13_ 7.00:00 14.00:00
+Clock _S.18_ 3.00:00 9.00:00
+Clock _S.19_ 7.00:00 14.00:00
+Clock _S.20_ 3.00:00 7.00:00
+Clock _S.38_ 7.00:00 14.00:00
+
+Foe _F.00_ is 3 Knight
+Foe _F.01_ is Battle_mage
+
+--	Quest start-up:
+	start timer _2letter_ 
+
+_2letter_ task:
+	give pc _letter_ notify 1070 
+	place npc Brisienna at _tavern_ 
+
+_meetladyb_ task:
+	clicked npc Brisienna 
+	prompt QuestorOffer yes yes no _no_ 
+
+yes task:
+	place item _totem_ at _daggerfall_ marker 5
+	log 1010 step 0 
+	say AcceptQuest 
+	add Brisienna as questor 
+
+_no_ task:
+	say RefuseQuest 
+	end quest 
+
+_S.04_ task:
+	clicked item _totem_ 
+	pc at _daggerfall_ set _S.06_ 
+	start timer _delay_ 
+
+_delay_ task:
+	start timer _S.08_ 
+	log 1017 step 1 
+	say 1015 
+
+variable _S.06_
+_S.07_ task:
+	when not _S.06_ and _S.04_ 
+	create foe _F.00_ every 1300 minutes 100 times with 10% success 
+	start timer _S.38_ 
+	repute with _Akorithi_ exceeds 5 do _S.09_ 
+	repute with Eadwyre exceeds 15 do _S.12_ 
+	repute with Gortwog exceeds 10 do _S.15_ 
+	repute with _Underking_ exceeds 0 do _S.16_ 
+	repute with _Kingoworms_ exceeds 0 do _S.17_ 
+	have _totem_ set _S.27_ 
+	add Gortwog as questor 
+	add _Akorithi_ as questor 
+	add _Gothryd_ as questor 
+	add Eadwyre as questor 
+	place npc Brisienna at _newplace_ 
+
+_S.08_ task:
+	take _totem_ from pc 
+
+_S.09_ task:
+	start timer _S.10_ 
+
+_S.10_ task:
+	give pc totemLetter1 notify 1030 
+
+_S.11_ task:
+	when not _S.09_ and _S.07_ 
+	start quest 100 100 
+
+_S.12_ task:
+	start timer _S.13_ 
+
+_S.13_ task:
+	give pc totemLetter5 notify 1031 
+
+_S.14_ task:
+	when not _S.12_ and _S.07_ 
+	start quest 101 101 
+
+_S.15_ task:
+	start timer _S.18_ 
+
+_S.16_ task:
+	start timer _S.20_ 
+
+_S.17_ task:
+	start timer _S.19_ 
+
+_S.18_ task:
+	give pc _letter4_ notify 1032 
+
+_S.19_ task:
+	give pc totemLetter4 notify 1033 
+
+_S.20_ task:
+	give pc totemLetter3 notify 1034 
+	place npc _Underking_ at _temple_ 
+
+_S.21_ task:
+	when not _S.15_ and _S.07_ 
+	start quest 102 102 
+
+_S.22_ task:
+	injured _F.00_ 
+	prompt 1040 yes _S.25_ no _S.26_ 
+	clear _S.22_ _S.26_ _S.28_ _S.29_ 
+
+_S.23_ task:
+	when not _S.17_ and _S.07_ 
+	start quest 103 103 
+
+_S.24_ task:
+	when not _S.16_ and _S.07_ 
+	start quest 104 104 
+
+variable _S.25_
+_S.26_ task:
+	say 1041 
+
+_S.27_ task:
+	clear _S.31_ 
+
+_S.28_ task:
+	when _S.27_ and _S.25_ 
+	start task _S.31_ 
+	give item _totem_ to _F.00_ 
+	say 1042 
+	restrain foe _F.00_ 
+
+_S.29_ task:
+	say 1043 
+
+AkorithiGotTotem _S.30_
+	toting _totem_ and _Akorithi_ clicked 
+	get item totemReward4 
+	get item totemReward3 
+	get item totemReward2 
+	get item totemReward1 
+	say 1050 
+	make totemReward3 permanent 
+	make totemReward2 permanent 
+	make totemReward4 permanent 
+	make totemReward1 permanent 
+
+GothrydGotTotem _S.31_
+BrisiennaGotTotem _S.32_
+	toting _totem_ and Brisienna clicked 
+	get item _artifact4_ 
+	say 1056 
+	make _artifact4_ permanent 
+
+KingOfWormsGotTotem _S.33_
+	toting _totem_ and _Kingoworms_ clicked 
+	start quest 106 106 
+	say 1054 
+
+GortwogGotTotem _S.34_
+	toting _totem_ and Gortwog clicked 
+	get item _I.12_ 
+	say 1052 
+	make _I.12_ permanent 
+
+UnderkingGotTotem _S.35_
+	toting _totem_ and _Underking_ clicked 
+	get item _artifact2_ 
+	say 1055 
+	make _artifact2_ permanent 
+
+EadwyreGotTotem _S.36_
+	toting _totem_ and Eadwyre clicked 
+	create foe _F.01_ every 1 minutes 5 times with 100% success 
+	say 1051 
+
+_S.38_ task:
+	give pc totemLetter6 notify 1070 
+
+_S.39_ task:
+	when Nulfaga is available 
+
+_S.40_ task:
+	when _S.43_ or _S.44_ 
+
+_S.41_ task:
+	when _S.39_ and _S.40_ and _S.07_ 
+	start quest 16 16 
+
+_S.42_ task:
+	when _S.40_ and _S.07_ 
+	say 1060 
+
+_S.43_ task:
+	when _S.28_ or _S.35_ or _S.36_ or _S.46_ 
+
+_S.44_ task:
+	when _S.30_ or _S.32_ or _S.33_ or _S.34_ 
+
+_S.45_ task:
+	when _S.08_ or _S.41_ 
+	drop _Akorithi_ as questor 
+	drop Brisienna as questor 
+	drop Eadwyre as questor 
+	drop Gortwog as questor 
+	drop _Gothryd_ as questor 
+	end quest 
+
+_S.46_ task:
+	toting _totem_ and _Gothryd_ clicked
+    get item _goldgoth_ from _Gothryd_ 
+    say 1053 
+    make _goldgoth_ permanent  
+	start task _S.31_ 

@@ -1,0 +1,119 @@
+-- Quest: C:\QUESTS\WORKING\M0C00Y13.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: fighter
+-- Repute: 0
+-- QuestId: 13
+-- Edited for Daggerfall Unity by Jay_H
+Messages: 12
+Quest: M0C00Y13
+DisplayName: Hunt for Barbarians
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                            I am _qgiver_.
+<ce>                 The Fighter's Guild doesn't hand out
+<ce>                  charity work. If I weren't short on
+<ce>                 fighters right now, I'd have to send
+<ce>                 you away %pcn. I do need a fighter to
+<ce>                  chase off some barbarian that's
+<ce>                  running wild. Do it for me and I'll
+<ce>                    make sure everyone knows you're
+<ce>                     a stand up %ra. Is it a deal?
+
+RefuseQuest:  [1001]
+<ce>                    You've just make a big mistake
+<ce>                     %pcn. Don't come looking for
+<ce>                        work here for a while.
+
+AcceptQuest:  [1002]
+<ce>                    Get your sorry carcass over to
+<ce>                         _house_. Run off the
+<ce>                        barbarian by this time
+<ce>                      tomorrow and you'll be OK.
+
+QuestComplete:  [1004]
+<ce>                        Did you get cut up bad?
+<ce>                     A couple more jobs like this
+<ce>                      and you can write your own
+<ce>                   ticket into the Fighter's Guild.
+
+RumorsDuringQuest:  [1005]
+<ce>                Barbarians are raiding the farms again.
+
+RumorsPostfailure:  [1006]
+<ce>                 The barbarians looted four farmsteads
+<ce>                before the Fighter's Guild stepped in.
+
+RumorsPostsuccess:  [1007]
+<ce>                  Aren't you the %ra that chased off
+<ce>                            the barbarian?
+
+QuestorPostsuccess:  [1008]
+<ce>               You managed that barbarian pretty well
+<ce>                         %pcf. Not bad at all.
+
+QuestorPostfailure:  [1009]
+<ce>                  I trusted you to take care of that
+<ce>               barbarian. You failed, so I had to send
+<ce>                        someone else to do it.
+
+QuestLogEntry:  [1010]
+%qdt:
+ The Fighters Guild of
+ ___qgiver_ has
+ offered to let me to take
+ care of some barbarian
+ marauding _house_.
+ I have one full day.
+
+Message:  1011
+<ce>                        The _monster_ is dead.
+
+
+-- Symbols used in the QRC file:
+--
+--              %pcf occurs 1 time.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 3 times.
+--        ___qgiver_ occurs 1 time.
+--           _house_ occurs 2 times.
+--         _monster_ occurs 3 times.
+--          _qgiver_ occurs 1 time.
+
+QBN:
+
+Person _qgiver_ group Questor
+
+Place _house_ local random
+
+Clock _2dung_ 1.00:00 0 flag 1 range 0 1
+
+Foe _monster_ is Barbarian
+
+--	Quest start-up:
+	start timer _2dung_ 
+	reveal _house_ 
+	log 1010 step 0 
+	place foe _monster_ at _house_ 
+	create npc at _house_ 
+
+_2dung_ task:
+	end quest 
+
+_S.01_ task:
+	killed 1 _monster_ saying 1011 
+
+_S.02_ task:
+	when _qgclicked_ and _S.01_ 
+	give pc nothing 
+	end quest 
+
+_qgclicked_ task:
+               clicked npc _qgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.01_ 
+	clear _qgclicked_ _clearclick_ 

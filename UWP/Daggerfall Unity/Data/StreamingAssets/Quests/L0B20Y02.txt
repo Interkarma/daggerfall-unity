@@ -1,0 +1,163 @@
+-- Quest: C:\QUESTS\WORKING\L0B20Y02.Qbn.
+-- StartsBy: NPC
+-- Questee: member
+-- Questor: Brotherhood
+-- Repute: 20
+-- QuestId: 2
+Messages: 22
+Quest: L0B20Y02
+DisplayName: A Knight Without Honor
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                 Ah, here's something to appeal to the
+<ce>                        romantic in you, %pcf: a
+<ce>                    caddish knight has besmeared the
+<ce>                 honor of a fair damsel and refuses to
+<ce>                  fight any who would defend her. The
+<ce>                 poor girl did the only thing she could
+<ce>                 do, and now we have some accounting to
+<ce>                   do. You're interested, I take it?
+
+RefuseQuest:  [1001]
+<ce>                     No? I would have thought this
+<ce>                    would be your good cheer. Well,
+<ce>                     we have plenty more accounters
+<ce>                     with a soft spot for corrupted
+<ce>                                wenches.
+
+AcceptQuest:  [1002]
+<ce>                As I thought. We think the knight does
+<ce>                 not yet know about the contract, being
+<ce>                 deeply entrenched in a fortress called
+<ce>                      ___mondung_. Obviously, this
+<ce>                 ill-bred warrior doesn't want to make
+<ce>                this too easy on us. Well, the contract
+<ce>             calls for the accounting to be in =1stparton_
+<ce>                  days and for you to report back here
+<ce>                      within that time. Go to it,
+<ce>                 %pcf. Defend that poor soiled damsel.
+
+QuestFail:  [1003]
+<ce>                    I don't hear the thanks of our
+<ce>                   client, so I take it the knight's
+<ce>                    still among the living. Hurry up
+<ce>                     and fix that oversight, %pcf.
+
+QuestComplete:  [1004]
+<ce>                    So the rogue knight has entered
+<ce>                the hereafter, yes? Perhaps in his next
+<ce>                 incarnation he will have the wisdom to
+<ce>                  keep his sword sheathed. Well done,
+<ce>                            as usual, %pcf.
+
+RumorsDuringQuest:  [1005]
+That soldier is one mangy mutt, I'll tell you. No honor whatsoever.
+<--->
+I hear that lady tried to seduce the knight and failed. That's why she's upset.
+
+RumorsPostfailure:  [1006]
+That warrior has moved on to new lands to corrupt their gentle womenfolk.
+<--->
+The soldier has left ____questgiver_ like a hurricane, leaving broken hearts behind.
+
+RumorsPostsuccess:  [1007]
+That soldier got what was coming to %g2 if you ask me. What a cad!
+<--->
+Good that someone isn't afraid to defend a damsel. Damned abominable rogue.
+
+QuestorPostsuccess:  [1008]
+I'd be enchanted to help the knight-slayer any way I can.
+
+QuestorPostfailure:  [1009]
+<ce>                   What makes you think that I'd be
+<ce>                    interested in talking with a %ra
+<ce>                     who can't even slay one lousy
+<ce>                    knight. Leave my sight at once.
+
+Message:  1020
+%qdt:
+ _questgiver_, of The Dark Brotherhood
+ in ___questgiver_, has sent me to
+ ___mondung_ to find and slay a knight.
+ The deed is to be done in =1stparton_ days.
+
+Message:  1021
+<ce>                       "Tell _damsel_...that she
+<ce>                     can share soiled...honor with
+<ce>                       every farmboy...in %reg,"
+<ce>                  says the knight as you account him.
+<ce>                    The contract has been fulfilled.
+
+
+-- Symbols used in the QRC file:
+--
+--               %cn occurs 1 time.
+--               %g2 occurs 1 time.
+--              %pcf occurs 6 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--              %reg occurs 1 time.
+--       =1stparton_ occurs 4 times.
+--       ___mondung_ occurs 2 times.
+--    ___questgiver_ occurs 1 time.
+--          _damsel_ occurs 1 time.
+--      _questgiver_ occurs 1 time.
+
+QBN:
+Item _reward_ gold
+
+Person _questgiver_ face 112 group Questor
+Person _damsel_ face 2 group Group_6.0 female local
+
+Place _mondung_ remote dungeon2
+
+Clock _1stparton_ 00:00 0 flag 18 range 0 2
+
+Foe _monster1_ is Knight
+Foe _monster2_ is Warrior
+Foe _monster3_ is Spellsword
+Foe _monster4_ is Nightblade
+
+--	Quest start-up:
+	start timer _1stparton_ 
+	reveal _mondung_ 
+	log 1020 step 0 
+	pick one of _S.06_ _S.07_ _S.08_ _S.09_ 
+
+_pcgetsgold_ task:
+	when _qgclicked_ and _S.02_ 
+	give pc _reward_ 
+	end quest 
+
+_qgclicked_ task:
+	clicked npc _questgiver_ 
+
+_S.02_ task:
+	killed 1 _monster4_ saying 1021 
+	killed 1 _monster3_ saying 1021 
+	killed 1 _monster2_ saying 1021 
+	killed 1 _monster1_ saying 1021 
+
+variable _queston_
+_1stparton_ task:
+	end quest 
+
+variable _2ndparton_
+_S.06_ task:
+	place foe _monster1_ at _mondung_ 
+
+_S.07_ task:
+	place foe _monster2_ at _mondung_ 
+
+_S.08_ task:
+	place foe _monster3_ at _mondung_ 
+
+_S.09_ task:
+	place foe _monster4_ at _mondung_ 
+
+_clearclick_ task:
+	when _qgclicked_ and not _S.02_ 
+	say 1003
+	clear _qgclicked_ _clearclick_ 

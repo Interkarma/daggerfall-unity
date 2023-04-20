@@ -1,0 +1,79 @@
+-- Quest: C:\QUESTS\WORKING\S0000103.Qbn.
+-- Main story quest.
+-- QuestId: 103
+Messages: 16
+Quest: S0000103
+-- Message panels
+QRC:
+
+Message:  1015
+<ce>                  None may defy the King of Worms and
+<ce>                  live to tell of it. You have denied
+<ce>                    him the Totem of Tiber Septim.
+<ce>                  Therefore I will slay you and bring
+<ce>                              it to him.
+                                     <--->
+<ce>                 I will take the Totem and drink from
+<ce>                you veins on this night. Just surrender
+<ce>                  and it will be relatively painless.
+                                     <--->
+<ce>                  The King of Worms wants the Totem.
+<ce>                   Since he has no reason to believe
+<ce>                 that you might give it to him of your
+<ce>                 own free will, I am here to kill you.
+
+
+-- Symbols used in the QRC file:
+--    ***  None  ***
+
+QBN:
+
+
+
+Clock _S.01_ 01:15 0 flag 1 range 0 1
+Clock _S.02_ 44.10:40 0 flag 1 range 0 1
+
+Foe _F.00_ is 3 Vampire
+Foe _F.01_ is 2 Ancient_vampire
+
+--	Quest start-up:
+	start timer _S.02_ 
+
+_S.00_ task:
+	injured _F.01_ 
+	injured _F.00_ 
+	start timer _S.01_ 
+	say 1015 
+
+_S.01_ task:
+	clear _S.01_ _S.00_ 
+
+_S.02_ task:
+	end quest 
+
+_S.03_ task:
+	daily from 04:10 to 20:50 
+
+until _S.03_ performed:
+	start task _S.04_ 
+
+_S.04_ task:
+	create foe _F.00_ every 1440 minutes 20 times with 5% success 
+	create foe _F.01_ every 1440 minutes 10 times with 3% success 
+
+GothrydGotTotem _S.05_
+KingOfWormsGotTotem _S.06_
+GortwogGotTotem _S.07_
+AkorithiGotTotem _S.08_
+UnderkingGotTotem _S.09_
+EadwyreGotTotem _S.10_
+BrisiennaGotTotem _S.11_
+_S.12_ task:
+	when _S.05_ or _S.06_ or _S.07_ or _S.08_ 
+
+_S.13_ task:
+	when _S.09_ or _S.10_ or _S.11_ 
+
+_S.14_ task:
+	when _S.12_ or _S.13_ 
+	start task _S.02_ 

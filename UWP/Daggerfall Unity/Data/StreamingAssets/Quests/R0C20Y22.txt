@@ -1,0 +1,220 @@
+-- Quest: C:\QUESTS\WORKING\R0C20Y22.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: royalty
+-- Repute: 20
+-- QuestId: 22
+Messages: 31
+Quest: R0C20Y22
+DisplayName: Business with Orcs
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                   Ah, %pcf, I am glad you're here.
+<ce>            If you are available for hire, I am looking for
+<ce>                 someone to purvey a special _item_ to
+<ce>             an acquaintance of mine. The reward, I think,
+<ce>                 you will find to be extremely liberal,
+<ce>              to compensate for the danger of the mission.
+<ce>                          Are you interested?
+
+RefuseQuest:  [1001]
+<ce>              Really? Too busy, perhaps. That is a shame.
+
+AcceptQuest:  [1002]
+<ce>                     Excellent. Here's the _item_.
+<ce>                    Now, _contact_ needs to have it
+<ce>          in ___contact_ in =queston_ days.  That ought to be
+<ce>               plenty of time, I hope.  _contact_ will be
+<ce>               easy to find -- just look for a =contact_
+<ce>                  at __contact_.  By the way, you may
+<ce>           encounter some orcs who do not want this shipment
+<ce>          made.  I trust you know how to deal with their kind.
+<ce>                               Good luck.
+
+QuestFail:  [1003]
+<ce>              Speed is vital, %pcf.  Orcs have been seen
+<ce>                prowling around ___questgiver_ at night.
+<ce>                You had best get on the road before they
+<ce>                             become bolder.
+
+QuestComplete:  [1004]
+<ce>                   Ah, good to see you %pcf. And the
+<ce>                 _item_ too. Excellent. Here's a little
+<ce>               trinket for your trouble. I hope you like
+<ce>                      red. Take care of yourself.
+
+RumorsDuringQuest:  [1005]
+_questgiver_ is still in the smuggling business, I hear.
+<--->
+<ce>  I hear the guards chased off a couple of orcs last night.  I wonder
+<ce>                    what would bring them into town?
+
+RumorsPostfailure:  [1006]
+Someone found a very lovely _item_ around here recently.
+<--->
+I hear _questgiver_ is mad as hell at some %ra adventurer.
+
+RumorsPostsuccess:  [1007]
+Some =contact_ was just here, waving around some _item_.
+<--->
+Some jewelry store has reported the theft of a big ruby, I hear.
+
+QuestorPostsuccess:  [1008]
+I hear that your mission was a success, %pcf. That's good. Very good.
+<--->
+I was pleased to hear of the success of the delivery. What can I do for you?
+
+QuestorPostfailure:  [1009]
+<ce>                    You're the courier who couldn't
+<ce>                  complete the delivery, yes? Wouldn't
+<ce>                   I be a fool to waste my breath on
+<ce>                    you again?  That's a rhetorical
+<ce>                         question, by the way.
+
+QuestLogEntry:  [1010]
+%qdt: 
+ _questgiver_ has hired me
+ to deliver a _item_ to someone
+ in ___contact_ named _contact_.
+ %g will meet me at __contact_
+ in =queston_ days to reward me if I have not
+ already been minced by the orcs who are also
+ after the _item_.
+
+Message:  1012
+You don't want to have anything to do with that orc-lover from ___orsinium_.
+<--->
+_orsinium_ of ___orsinium_?  They say %g actually talks to orcs.
+
+Message:  1013
+_orsinium_ is well-known in ___orsinium_ as an orc sympathizer.
+<--->
+<ce>I know for a fact that _orsinium_ is a filthy orc-lover.  I've seen %g2
+<ce> myself, meeting with the brutes outside of ___orsinium_.  %g should be run out
+<ce>                        of town, if you ask me.
+
+Message:  1015
+_questgiver_ will deny it, but they say %g's in the smuggling business.
+<--->
+<ce>_questgiver_ is said to be involved in a smuggling ring, bringing in loot
+<ce>                     plundered out of old Orsinium.
+
+Message:  1016
+<ce>_questgiver_ will bring the orcs down on all of us if he keeps dealing in
+<ce> plunder from Orsinium.  _orsinium_ has accused _questgiver_ publicly,
+<ce>              but nothing's been done about it, of course.
+                                     <--->
+<ce>I don't know where _questgiver_ gets it from, but I've seen %g2 wearing
+<ce> some exquisite antique jewelry lately.  Ancient Orsinium craftsmanship, if
+<ce>                           I'm not mistaken.
+
+Message:  1020
+<ce>                   I'm glad you sought me out, %pcn.
+<ce>            You should know that the _item_ you are carrying
+<ce>       was stolen from Orsinium, the ancient capital of the orcs.
+<ce>              _questgiver_, like most people, treats orcs
+<ce>        as beneath contempt, hence they are forced to resort to
+<ce>      violence to recover their stolen property.  However, I hope
+<ce>       that you are more enlightened than your employer.  If you
+<ce>       give me the _item_, I will see that it is returned to its
+<ce>                            rightful owners.
+
+Message:  1021
+<ce>                        Do you give the _item_?
+
+Message:  1022
+<ce>              I'm glad I was right about you.  Thank you,
+<ce>                    %pcf.  We will not forget this.
+
+Message:  1023
+<ce>                That is most regrettable.  Well, we all
+<ce>                 have our reasons.  I hope you can live
+<ce>                          with this decision.
+
+Message:  1030
+<ce>            As the orc crumples to the ground, it gasps in
+<ce>                    a barely comprehensible accent,
+<ce>                 "_orsinium_ ... go ... _orsinium_ ..."
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 6 times.
+--               %g2 occurs 2 times.
+--              %pcf occurs 5 times.
+--              %pcn occurs 1 time.
+--              %qdt occurs 1 time.
+--               %ra occurs 1 time.
+--         =contact_ occurs 2 times.
+--         =queston_ occurs 2 times.
+--       ___contact_ occurs 2 times.
+--      ___orsinium_ occurs 6 times.
+--    ___questgiver_ occurs 1 time.
+--        __contact_ occurs 5 times.
+--            _item_ occurs 12 times.
+--        _orsinium_ occurs 7 times.
+--      _questgiver_ occurs 11 times.
+
+QBN:
+Item _reward_ ruby
+Item _item_ trinket
+
+Person _questgiver_ group Questor anyInfo 1015 rumors 1016
+Person _contact_ group Local_3.0 remote
+Person _orsinium_ face 184 faction Orsinium remote anyInfo 1012 rumors 1013
+
+Place orcCastle permanent OrsiniumCastle3
+
+--changed flags on timer, was giving very short time limits before
+Clock _queston_ 00:00 0 flag 3 range 3 5
+
+Foe _note_ is 3 Orc
+Foe _F.01_ is Orc_sergeant
+
+--	Quest start-up:
+	dialog link for location orcCastle person _orsinium_ 
+	start timer _queston_ 
+	log 1010 step 0 
+	get item _item_ 
+	create npc _orsinium_ 
+	create npc _contact_ 
+
+variable _pcgetsgold_
+variable _pchasitem_
+_queston_ task:
+	make _item_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+_npcclicked_ task:
+	toting _item_ and _contact_ clicked 
+	give pc _reward_ 
+	end quest 
+
+_S.04_ task:
+	clicked npc _orsinium_ 
+	say 1020 
+
+_S.05_ task:
+	say 1022 
+	change repute with _orsinium_ by +30 
+
+until _S.05_ performed:
+	create foe _note_ every 5 minutes 12 times with 35% success 
+	create foe _F.01_ every 10 minutes 12 times with 35% success 
+
+_bookstore_ task:
+	get item _item_ 
+	say 1023 
+	change repute with _orsinium_ by -10 
+
+_S.07_ task:
+	killed 1 _F.01_ 
+	add dialog for person _orsinium_ 
+	say 1030 
+
+_S.08_ task:
+	toting _item_ and _orsinium_ clicked 
+	prompt 1021 yes _S.05_ no _bookstore_ 

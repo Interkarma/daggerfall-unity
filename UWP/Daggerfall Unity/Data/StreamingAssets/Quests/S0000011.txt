@@ -1,0 +1,451 @@
+-- Quest: C:\QUESTS\WORKING\S0000011.Qbn.
+-- Main story quest.
+-- QuestId: 11
+Messages: 62
+Quest: S0000011
+DisplayName: Barenziah's Book
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                Thank you for responding to my letter,
+<ce>                      %pcf. It is very difficult
+<ce>                for a queen of a powerful nation, and a
+<ce>                queen whose home is far away, to trust
+<ce>                any mercenary. That is why when my dear
+<ce>                child Helseth told me about you, I was
+<ce>                 so quick to write. There is a rather
+<ce>                sensitive situation brewing, and I need
+<ce>                  someone I can trust to correct some
+<ce>              wayward revolutionaries. For _reward_ gold
+<ce>                pieces, will you perform such a service
+<ce>                 for me? I am also prepared to reward
+<ce>            you with information as well as _reward_ gold.
+
+RefuseQuest:  [1001]
+<ce>                 That is a pity indeed. Prince Helseth
+<ce>                is usually correct in his assessment of
+<ce>                people, but it would appear that he is
+<ce>                         wrong in this matter.
+
+AcceptQuest:  [1002]
+<ce>         I am glad to hear it. Some years ago, a disgruntled,
+<ce>             and possibly deranged, scribe of mine wrote a
+<ce>            biography of me which my worst enemy would call
+<ce>            cruel and defamatory. Because the book was also
+<ce>             excessively critical of the Empire and Septim
+<ce>           Imperial family, it was wisely suppressed and its
+<ce>            author executed. Unfortunately, chapters of the
+<ce>          book resurface from time to time. I have reason to
+<ce>          believe one chapter of the book has been purchased
+<ce>            by the orcs of Orsinium, who are attempting to
+<ce>         publish it. I need it removed from their stronghold,
+<ce>           also named Orsinium. Time is of the essence. I'm
+<ce>         sure Gortwog will not wait long. Once the chapter is
+<ce>           safe, we will talk further about your ambitions.
+
+QuestFail:  [1003]
+<ce>                  I need that book chapter before we
+<ce>                          talk, my dear %pcf.
+
+QuestComplete:  [1004]
+<ce>                         Very well done, %pcf.
+
+RumorsDuringQuest:  [1005]
+Queen Barenziah is supposedly in a bad mood. You can never tell though.
+<--->
+A book's coming out with the real story about the former Queen of Mournhold.
+
+RumorsPostfailure:  [1006]
+The Necromancers supposedly have something they're blackmailing Barenziah with.
+<--->
+Queen Barenziah's men are searching for someone called the King of Worms.
+
+RumorsPostsuccess:  [1007]
+That book about Queen Barenziah apparently never made it as far as the presses.
+<--->
+Queen Barenziah has been singing the praises of some %ra adventurer she hired.
+
+QuestorPostsuccess:  [1008]
+
+
+QuestorPostfailure:  [1009]
+
+
+QuestLogEntry:  [1010]
+%qdt:
+ Queen Barenziah has hired
+ me to find a chapter of a libelous book about her
+ that has been circulating around the Bay. She
+ believes it to be in the dungeons of Orsinium,
+ home of the orc warlord Gortwog.
+
+Message:  1014
+<ce>                        Prince Helseth did not
+<ce>                 exaggerate your virtues. Here is the
+<ce>                   _reward_ gold pieces I promised.
+<ce>                                    
+
+Message:  1015
+Chapter 6
+ 
+ "You dance on the edge of a volcano, child," Drelliane
+ scolded, as Barenziah admired the emerald ring her lover
+ had given her to celebrate their one month anniversary.
+ 
+ "How so? We make one another happy. We harm no one.
+ Symmachus bade me to be discriminate and discreet. Who
+ better could I choose? And we've been most discreet. He
+ treats me as a daughter in public." Tiber Septim's
+ nightly visits were made through a secret passage.
+ 
+ "He slavers over you like a dog his dinner. Have you not
+ noticed the coolness of the Empress and her son toward you?"
+ 
+ Barenziah shrugged. Even before she and Septim had
+ become lovers she'd had no more from his family than bare
+ civility. Threadbare civility. "What matter? It is Tiber
+ who holds power."
+ 
+ "It is his son who holds the future. Do not hold his mother
+ up to public scorn, I beg you."
+ 
+ "Can I help it if that dry stick of a woman cannot hold her
+ husband's interest even in conversation at dinner?"
+ 
+ "Have less to say in public. That is all I ask. She matters
+ little, save that her children love her, and you do not
+ want them as enemies. Tiber Septim has not long to live. I
+ mean," Drelliane amended quickly, at Barenziah's scowl,
+ "Humans are all short-lived. Temporary, as we elves say.
+ They come and go as the seasons do, but the families of the
+ powerful live on for a time. You must be a family friend if
+ you would see lasting profit from your relationship. Ah,
+ how can I make you truly see, you who are so young and
+ human-bred as well! If you take care you and Mournhold are
+ like to live to see the fall of Septim's dynasty, if indeed
+ he has founded one, as you have seen its rise. It is the way
+ of human history. They ebb and flow like the tides. Their
+ cities and even their empires bloom like spring flowers,
+ only to wither and die in the summer sun."
+ 
+ Barenziah just laughed. She knew that rumors abounded about
+ her and Tiber Septim. She enjoyed the attention for all save
+ the Empress and her son seemed captivated by her. Bards sang
+ of her dark beauty and her charming ways. She was in fashion
+ and in love and if it was temporary, well, what was not? She
+ was happy for the first time she could remember, each day
+ filled with joy and pleasure, and the nights yet better.
+ 
+ "What is wrong with me?" Barenziah lamented. "Look, not one
+ of my skirts fit? What's become of my waist? Am I getting
+ fat?" Barenziah regarded her thin arms and legs and her
+ undeniably thickened waist in the mirror with displeasure.
+ 
+ Drelliane shrugged. "You appear to be with child, young as
+ you are. Constant pairing with a human has brought you early
+ to fertility. I see no choice but for you to speak with him
+ about it. You are in his power. It would be best, I think,
+ for you to go directly to Mournhold if he will agree, and
+ bear the child there."
+ 
+ "Alone?" Barenziah placed her hands on her swollen belly,
+ tears forming in her eyes. Everything in her yearned to
+ share the fruit of her love with her lover. "He'll ne'er
+ agree to that. He won't be parted from me now. You'll see."
+ 
+ Drelliane shook her gray head. Although she said no more,
+ a look of sympathy and sorrow had replaced her usual cool
+ scorn. That night Barenziah told Tiber Septim of it when he
+ came to her.
+ 
+ "With child?" He looked shocked. Stunned. "You're sure of
+ it? I was told elves do not bear so young."
+ 
+ Barenziah smile uneasily, "How can I be sure? I've never -- "
+ 
+ "I'll fetch my healer."
+ 
+ The healer, a high elf of middle years, confirmed that
+ Barenziah was indeed pregnant and that such a thing had
+ never before been known to happen. It was a testimony to
+ His Excellency's potency, the healer said sycophantically.
+ Tiber Septim snarled at him. "This must not be," he said.
+ "Undo it." 
+ 
+ "Sire," the healer gaped at him. "I cannot--"
+ 
+ "Of course you can," he snapped. "I command you do so."
+ 
+ Barenziah, wide-eyed with sudden terror, sat up in the bed.
+ "No!" she screamed. "No! What are you saying?"
+ 
+ "My dear child," Tiber Septim sat down beside her with his
+ winning smile. "I'm so sorry. Truly. But this cannot be.
+ Your child could be a threat to my son and his sons. I will
+ put it no more plainly than that."
+ 
+ "The child I bear is your child!" she wailed.
+ 
+ "No. It's but a possibility, a might be, not yet gifted
+ with a soul or quickened into life. I will not have it so."
+ He gave the healer another hard stare and the elf began to
+ tremble.
+ 
+ "It is her child. Children are few among elves. No woman
+ conceives more than four and that is very rare. Two is the
+ allotted number. Some bear none, some only one. If I take
+ this one from her, she may not conceive again."
+ 
+ "You told me she would not bear to me. I've little faith in
+ your prognostications."
+ 
+ Barenziah scrambled naked from her bed, and ran for the door,
+ not knowing where she was going, only that she could not
+ stay. She never reached the door for blackness took her.
+ 
+ Barenziah awoke to pain and emptiness. Drelliane was there
+ to soothe the pain and clean the blood that pooled under her
+ legs, but there was nothing to fill the emptiness. Tiber
+ Septim sent gifts and flowers, and came for short visits,
+ always well attended. Barenziah received these visits with
+ pleasure, but he came no more at night nor did she wish for
+ him. After a month, when she was physically recovered, it
+ was announced that Symmachus had requested she come to
+ Mournhold earlier than planned, and that she would leave
+ forthwith. She was given a splendid retinue, a wardrobe
+ befitting a queen and a ceremonial departure from the gates
+ of Imperial City.
+
+Message:  1016
+                                  Castle Wayrest
+ 
+ Dear %pcn,
+ 
+ My beloved son has brought your name to my
+ attention, and suggested that we might have some
+ business to discuss. I understand that we have a
+ mutual interest.
+ Please visit me at Castle Wayrest at your
+ earliest possible convenience.
+ 
+ Yours,
+ 
+<ce>                               Barenziah
+<ce>                    Queen of the Kingdom of Wayrest
+
+Message:  1017
+<ce>               A page wearing the colors and pale yellow
+<ce>            rose of Wayrest appears silently at your side.
+<ce>                He hands you a letter and disappears as
+<ce>                        quietly as he arrived.
+
+Message:  1020
+<ce>               Thank Boethiah you found it before those
+<ce>               horrible orcs could retrieve it again. I
+<ce>                heard all about them losing the chapter
+<ce>                  to the King of Worms. %god, what a
+<ce>                 crisis it would have been if they had
+<ce>                published it. Here is _reward_ gold for
+<ce>                            your services.
+
+Message:  1030
+<ce>                      You may not know this, but
+<ce>                not only is Gortwog the holder of that
+<ce>               letter the Emperor lost some months ago,
+<ce>               but he is also contending for an ancient
+<ce>                relic called the Totem of Tiber Septim.
+<ce>                If that cannibal gets his warted hands
+<ce>                on the Totem, it could mean the end of
+<ce>                Wayrest, and possibly all civilization
+<ce>                on the Iliac Bay. We may need your able
+<ce>                         services again, %pcf.
+
+Message:  1050
+<ce>                      Hello, %pcn. It would seem
+<ce>             that we have a mutual antagonist in the King
+<ce>             of Worms. I am Gortwog, King of the Orcs and
+<ce>             Lord of Orsinium. I am willing to give you a
+<ce>                  _jewelry_ if you would retrieve the
+<ce>            chapter of Barenziah's book from Scourg Barrow
+<ce>            in the Dragontail Mountains, where the King and
+<ce>                his Necromancers have taken it. Agreed?
+
+Message:  1051
+<ce>             What a shame. Ah well, we'll hire some other
+<ce>                            mercenary then.
+
+Message:  1052
+<ce>                     Very good. Off with you then.
+
+Message:  1054
+<ce>                        Here is your _jewelry_.
+<ce>              Nevermind what I will do with this chapter.
+<ce>            However, I would steer clear of Queen Barenziah
+<ce>                      for a while if I were you.
+
+Message:  1060
+%qdt:
+ The orcish warlord, Gortwog of Orsinium,
+ has hired me to continue the quest that
+ the Queen of Wayrest began: finding the
+ lost chapter of her biography. Rumor
+ has it that it is in the Necromancers
+ stronghold, Scourg Barrow, in the
+ Dragontail Mountains.
+
+Message:  1061
+<ce>           A misty shape forms in your mind. An orc shaman!
+<ce>             It gives way to a regal orc, wearing a crown.
+ 
+ "The book you are looking for is no longer in
+ Orsinium. The Necromancers have stolen it from us.
+ If you are available, we are interested in pooling
+ our resources against this mutual enemy.
+ Please do not be so foolish as to assume that the
+ orcs are your enemy, simply because we are orcs.
+ If you are interested, come to me at Orsinium Hall
+ in Orsinium."
+ 
+<ce>          The face vanishes, leaving you with only a memory.
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 1 time.
+--              %pcf occurs 7 times.
+--              %pcn occurs 3 times.
+--              %qdt occurs 2 times.
+--               %ra occurs 18 times.
+--         _jewelry_ occurs 2 times.
+--          _reward_ occurs 7 times.
+
+QBN:
+Item _reward_ gold
+Item Chapter6 letter used 1015
+Item letter40 letter used 1016
+Item _jewelry_ trinket
+
+Person Barenziah named Queen_Barenziah atHome
+Person _gortwog_ face 84 named Gortwog atHome
+Person KingOfWorms3 face 100 named King_of_Worms atHome
+
+Place _orsinium_ permanent OrsiniumCastle4
+Place _scourgbarrow_ permanent ScourgBarrow2
+
+Clock _S.01_ 6.00:01 0 flag 1 range 0 1
+Clock _S.11_ 7.00:00 10.00:00
+Clock _S.18_ 150.00:00 0 flag 1 range 0 1
+
+
+--	Quest start-up:
+	add Barenziah as questor 
+	add _gortwog_ as questor 
+
+_S.08_ task:
+	toting Chapter6 and Barenziah clicked 
+	say 1014 
+	give pc _reward_ 
+	start task _S.19_ 
+	change repute with Barenziah by +10 
+
+_S.00_ task:
+	clicked npc Barenziah 
+
+variable _S.01_
+_S.02_ task:
+	when repute with Queen_Barenziah is at least 15 
+
+_S.03_ task:
+	when _S.01_ and not _S.04_ 
+	place item Chapter6 at _scourgbarrow_ marker 5
+	say 1061 
+
+_S.04_ task:
+	clicked item Chapter6 
+	stop timer _S.01_ 
+
+_S.05_ task:
+	when _S.08_ or _S.15_ 
+
+yes task:
+	place item Chapter6 at _orsinium_ marker 2
+	start timer _S.01_ 
+	log 1010 step 0 
+	reveal _orsinium_ in province 26 at 146892 
+	say AcceptQuest 
+
+_no_ task:
+	say RefuseQuest 
+	end quest 
+
+_S.09_ task:
+	log 1060 step 1 
+	reveal _scourgbarrow_ in province 1 at 450958 
+	say 1052 
+
+_S.10_ task:
+	say 1051 
+
+_S.11_ task:
+	start timer _S.18_ 
+	give pc letter40 notify 1017 
+
+_S.12_ task:
+	when _S.00_ and _S.11_ 
+	prompt QuestorOffer yes yes no _no_ 
+
+until _S.12_ performed:
+	clear _S.00_ 
+
+_S.15_ task:
+	toting Chapter6 and _gortwog_ clicked 
+	get item _jewelry_ 
+	say 1054 
+	make _jewelry_ permanent 
+	change repute with Barenziah by -20 
+	change repute with _gortwog_ by +15 
+
+_S.13_ task:
+	clicked npc _gortwog_ 
+
+_S.14_ task:
+	when _S.03_ and _S.13_ 
+	prompt 1050 yes _S.09_ no _S.10_ 
+
+_clearclick_ task:
+	when _S.13_ and not _S.03_ 
+	clear _S.13_ _clearclick_ 
+
+_S.17_ task:
+	when _S.03_ and _S.05_ 
+	change repute with KingOfWorms3 by -20 
+
+_S.18_ task:
+	end quest 
+
+BarenziahSatisfied _S.19_
+_S.20_ task:
+	when _S.08_ or _S.15_ or _S.18_ 
+	drop _gortwog_ as questor 
+	drop Barenziah as questor 
+
+_S.21_ task:
+	when _S.08_ and _S.03_ 
+	say 1020 
+	say 1030 
+
+_S.22_ task:
+	when _S.08_ and not _S.03_ 
+	say 1030 
+
+_S.23_ task:
+	level 9 completed 
+
+_S.24_ task:
+	when _S.02_ and _S.23_ 
+	start timer _S.11_ 
+
+_S.25_ task:
+	when _S.15_ or _S.21_ or _S.22_ 
+	end quest 

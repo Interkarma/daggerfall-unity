@@ -1,0 +1,70 @@
+-- Quest: C:\QUESTS\WORKING\S0000102.Qbn.
+-- Main story quest.
+-- QuestId: 102
+Messages: 16
+Quest: S0000102
+-- Message panels
+QRC:
+
+Message:  1015
+<ce>                   Gortwog says you must die. We can
+<ce>                  keep all of your stuff, except the
+<ce>                      Totem, which is his bounty.
+                                     <--->
+<ce>                     You %ra have never given orcs
+<ce>                   the proper respect. It will be a
+<ce>                     pleasure to kill you for King
+<ce>                   Gortwog and bring him the Totem.
+                                     <--->
+<ce>                     King Gortwog says you are an
+<ce>                      untrustworthy %ra. I am to
+<ce>                   kill you and take him the Totem.
+
+
+-- Symbols used in the QRC file:
+--
+--               %ra occurs 2 times.
+
+QBN:
+
+
+
+Clock _S.01_ 01:15 0 flag 1 range 0 1
+Clock _S.02_ 444.10:40 0 flag 1 range 0 1
+
+Foe _F.00_ is 3 Orc_warlord
+Foe _F.01_ is 3 Orc_shaman
+
+--	Quest start-up:
+	create foe _F.01_ every 100 minutes 15 times with 3% success 
+	create foe _F.00_ every 100 minutes 15 times with 3% success 
+	start timer _S.02_ 
+
+_S.00_ task:
+	injured _F.01_ 
+	injured _F.00_ 
+	start timer _S.01_ 
+	say 1015 
+
+_S.01_ task:
+	clear _S.01_ _S.00_ 
+
+_S.02_ task:
+	end quest 
+
+GothrydGotTotem _S.03_
+KingOfWormsGotTotem _S.04_
+GortwogGotTotem _S.05_
+AkorithiGotTotem _S.06_
+UnderkingGotTotem _S.07_
+EadwyreGotTotem _S.08_
+BrisiennaGotTotem _S.09_
+_S.10_ task:
+	when _S.03_ or _S.04_ or _S.05_ or _S.06_ 
+
+_S.11_ task:
+	when _S.07_ or _S.08_ or _S.09_ 
+
+_S.12_ task:
+	when _S.10_ or _S.11_ 
+	start task _S.02_ 

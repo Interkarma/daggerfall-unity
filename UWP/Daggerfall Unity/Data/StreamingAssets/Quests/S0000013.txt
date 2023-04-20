@@ -1,0 +1,203 @@
+-- Quest: C:\QUESTS\WORKING\S0000013.Qbn.
+-- Main story quest.
+-- QuestId: 13
+Messages: 21
+Quest: S0000013
+DisplayName: Mynisera's Letters
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                    %pcf, I do not know even how to
+<ce>               broach this subject. I need you to promise
+<ce>               me on your ancestors' honor that you will
+<ce>              do what you can to help me and never breathe
+<ce>                of what I say or what you see to anyone
+<ce>                   else anywhere. Will you so swear?
+
+RefuseQuest:  [1001]
+<ce>               It would be worse, I suppose, for you to
+<ce>                swear and then not be true. Still, I had
+<ce>                   hoped for more gallantry from you.
+
+AcceptQuest:  [1002]
+<ce>                     I will trust you then, %pcf.
+<ce>               The matter concerns my mother-in-law, the
+<ce>                dowager queen of Daggerfall and widow of
+<ce>                 Lysandus, Mynisera. As mistress of the
+<ce>                household finances, I have noticed that
+<ce>                she has been paying for the upkeep of a
+<ce>                      fortress called ___myndung_
+<ce>               complete with a large platoon of soldiers.
+<ce>               A short while ago, she disappeared with a
+<ce>              wrapped parcel of papers and came back days
+<ce>                later with empty hands. She has recently
+<ce>               left again with another parcel of letters
+<ce>                and my spies have verified that she has
+<ce>                     gone to ___myndung_. You will
+<ce>                 have to trust that my suspicion of her
+<ce>               activities is justifiable, for I am not in
+<ce>               a position to offer proof. What I need for
+<ce>                     you to do is go to ___myndung_
+<ce>                 and find that parcel of letters or any
+<ce>                 other information about her activities
+<ce>                  there. Mynisera will be returning in
+<ce>               =2myndung_ days. You cannot have any more
+<ce>                   time than that, I fear. Good luck.
+
+QuestFail:  [1003]
+<ce>                     I need some kind of evidence
+<ce>                   in =2myndung_ days or less, %pcf.
+
+QuestComplete:  [1004]
+<ce>                How very sad. To be honest, this is not
+<ce>                what I expected the letters to contain.
+<ce>                 Poor Mynisera. Everyone at court knows
+<ce>               that her husband, the late King Lysandus,
+<ce>              preferred the face and form of another woman
+<ce>               to her, but she still attempts to hide all
+<ce>               evidence of it. Her loyalty to Lysandus is
+<ce>               almost as great as his foolish loyalty to
+<ce>                              the emperor.
+<ce>                                    
+<ce>              And those poor little children. How dreadful
+<ce>             the butchery of the innocents. We know of the
+<ce>               barbarism of the orcs, but surely they did
+<ce>                not deserve that. Hardly surprising that
+<ce>                Mynisera did not want it known that her
+<ce>              father was responsible for such a grotesque
+<ce>                  enterprise. Well, I thank you, %pcf,
+<ce>               for your valor and your discretion. Please
+<ce>               accept this small token of my esteem, not
+<ce>                      as a payment but as a gift.
+<ce>                          May %god bless thee.
+
+QuestorPostfailure:  [1009]
+<ce>                The letters are badly burned, but some
+<ce>                        words can still be read.
+
+QuestLogEntry:  [1010]
+<ce>                             (first page)
+<ce>             ... been from thee too long, my heart doth ...
+<ce>                                    
+<ce>                             (second page)
+<ce>      ... you loveth my lips, but forget the words they breath ...
+<ce>                                    
+<ce>                              (third page)
+<ce>       ... she doth suspect you cuckold her ... and I worship and
+<ce>      adore all parts of thee but thy hollow crown and thy hollow
+<ce>     wedding ring, those two empty circles that trap and bring thee
+<ce>      pain ... an I be so vain to be Lysandus' Medora evermore ...
+<ce>      body and sip nectar from thy hand ... love m ... forever ...
+<ce>                                    
+<ce>                             (fourth page)
+<ce>     ...rcs. But they did assume the worse of the settlement, even
+<ce>      after all the stallion orcs had been killed and the stro ...
+<ce>     (for mare orcs are seldom weaker than stallion orcs in an ...
+<ce>        only old and sick remained in the rude cam ... who could
+<ce>        speak base Cyrodilic ... ied and begged for mercy for the
+<ce>        children, but Prince Klaius said that the children would
+<ce>       grow strong and hearty and only an unwise leader would
+<ce>       show mercy to the subhumans. He gave his men leave to make
+<ce>      sport with killing the children, and they were all murdered
+<ce>        in ways that I cannot pen. I witnessed it, my lady, and
+<ce>      though I beg your pardon, your father did great evil th ...
+<ce>      the shame of mine that I didn't say no ... shame to all ...
+<ce>                                    
+<ce>                              (fifth page)
+<ce>           ...shall abandon mine responsibilities. You and...
+<ce>           together. The rest of the world be damned. Let me
+<ce>            put this...Betony behind. I shall crush them at
+<ce>           Cryngaine. During...dead. No one will suspect that
+<ce>                        a king would give up...
+
+Message:  1011
+%qdt:
+ Queen Aubk-i wants me to follow her mother-in-law,
+ the dowager queen of Daggerfall, to her fortress,
+ ___myndung_ to see what becomes of the parcels of
+ paper old Mynisera has been bringing there. I have
+ only =2myndung_ days to get back to Aubk-i with the
+ letters. She has promised me more information in return for this.
+
+Message:  1015
+<ce>             A stalwart young woman wearing the livery of
+<ce>             Daggerfall presents you with a letter. Turning
+<ce>              sharply she mounts her horse and rides away.
+
+Message:  1020
+Dear %pcn,
+ 
+ I need your assistance once more. Your valor and
+ discretion were invaluable when last you served
+ me in the matter with Nulfaga. Please meet with
+ me at Castle Daggerfall when next you pass through.
+ 
+<ce>                                 Aubk-i
+<ce>                          Queen of Daggerfall
+
+
+-- Symbols used in the QRC file:
+--
+--              %god occurs 2 times.
+--              %pcf occurs 5 times.
+--              %pcn occurs 2 times.
+--              %qdt occurs 1 time.
+--        =2myndung_ occurs 4 times.
+--       ___myndung_ occurs 4 times.
+
+QBN:
+Item _treasure_ letter used 1010
+Item _gold_ gold
+Item letter48 letter used 1020
+
+Person _aubki_ named Queen_Aubk-i atHome
+Person _mynisera_ face 184 named Mynisera
+
+Place _myndung_ permanent Castle_Necromoghan
+
+Clock _2myndung_ 00:00 0 flag 17 range 0 2
+Clock _S.04_ 10.00:00 20.00:00
+
+
+--	Quest start-up:
+	start timer _S.04_ 
+	add _aubki_ as questor 
+
+_2myndung_ task:
+	drop _aubki_ as questor 
+	end quest 
+
+_pcgetsgold_ task:
+	toting _treasure_ and _aubki_ clicked 
+	give pc _gold_ 
+	drop _aubki_ as questor 
+	end quest 
+
+_S.02_ task:
+	clicked npc _aubki_ 
+	prompt QuestorOffer yes yes no _no_ 
+
+variable _S.03_
+_S.04_ task:
+	hide npc _mynisera_ 
+	give pc letter48 notify 1015 
+
+until _S.04_ performed:
+	clear _S.02_ 
+
+yes task:
+	place item _treasure_ at _myndung_ anymarker
+	start timer _2myndung_ 
+	reveal _myndung_ 
+	log 1011 step 0 
+	say AcceptQuest 
+
+_no_ task:
+	say RefuseQuest 
+	drop _aubki_ as questor 
+	end quest 
+
+_dummy_ task:
+	clicked item _treasure_ say QuestorPostfailure 
+	_treasure_ used do _S.03_ 

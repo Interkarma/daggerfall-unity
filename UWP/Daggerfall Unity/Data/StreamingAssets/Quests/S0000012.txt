@@ -1,0 +1,255 @@
+-- Quest: C:\QUESTS\WORKING\S0000012.Qbn.
+-- Main story quest.
+-- QuestId: 12
+Messages: 22
+Quest: S0000012
+DisplayName: The Emperor's Courier
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       Hello %pcn. I have heard
+<ce>                much about you. Now you come to me with
+<ce>               a very interesting tale of deception. So
+<ce>               Cyndassa the maid says that Aubk-i opened
+<ce>              a letter from the emperor addressed to me.
+<ce>                  I can tell you %pcf, that she never
+<ce>                    delivered such a letter to me.
+<ce>                                    
+<ce>                 I would like you to investigate this
+<ce>                      further, %pcn. It could be
+<ce>                 dangerous to poke into the affairs of
+<ce>                 Aubk-i without enraging King Gothryd,
+<ce>                     even though he is my own son.
+<ce>                           Are you willing?
+
+RefuseQuest:  [1001]
+<ce>               Aubk-i must have you tightly wound around
+<ce>                       her finger, %pcn. I hope
+<ce>              you survive to benefit from her patronage.
+
+AcceptQuest:  [1002]
+<ce>               Good. I have long had my suspicions about
+<ce>               Aubk-i's loyalty to the emperor. She is a
+<ce>             daughter of the late King Camaron, who ruled
+<ce>               Hammerfell from his citadel in Sentinel.
+<ce>                                    
+<ce>                My husband King Lysandus, %god rest his
+<ce>             soul, died at Cryngaine, as did King Camaron.
+<ce>              Lysandus' body was not recovered, so he has
+<ce>              a monument erected there rather than a true
+<ce>                      tomb. Ah...my mind wanders.
+<ce>                                    
+<ce>                  The emperor uses _messenger_ as his
+<ce>             messenger in Daggerfall. %g could be anywhere
+<ce>              in the region delivering missives. However,
+<ce>                    _messenger_ is a member of the
+<ce>              Knights of the Dragon. Go to _location_ in
+<ce>                 __location_ and ask for _dispatcher_.
+<ce>                %g may know where to find _messenger_.
+<ce>               Try to find out why a letter addressed to
+<ce>                      me was delivered to Aubk-i.
+
+QuestComplete:  [1004]
+<ce>            Ah! Now it makes sense. Uriel Septim addressed
+<ce>            the message to the Queen of Daggerfall. When he
+<ce>             sent it, I was queen. By the time it arrived,
+<ce>            my dear Lysandus was dead and Aubk-i was queen.
+<ce>           We must find out what was in that letter. I have
+<ce>                         never trusted Aubk-i.
+<ce>                                    
+<ce>              Yesterday I received a letter from Princess
+<ce>             Morgiah of Wayrest claiming to know something
+<ce>            of the emperor's letter. Now there is a family
+<ce>              that seethes under the rule of the Emperor.
+<ce>               Return to me if you find out who has the
+<ce>                           emperor's letter.
+<ce>                                    
+<ce>                For now, you have proven yourself to me
+<ce>                  %pcn. Keep the _jewelry_ as a token
+<ce>               of my gratitude. I have no desire to own
+<ce>                     anything of Aubk-i's anymore.
+
+QuestLogEntry:  [1010]
+%qdt:
+ Mynisera, Queen Mother to Gothryd, has asked
+ me to investigate why a letter from the
+ emperor addressed to her ended up in the hands
+ of Queen Aubk-i. The emperor's messenger,
+ _messenger_, can only be reached
+ through _dispatcher_ of __location_.
+ Both are members of the Knights of the Dragon.
+ She has given me a signet ring to prove my
+ trustworthiness to them.
+
+Message:  1011
+%qdt:
+ Mynisera's signet ring bought the trust of
+ _dispatcher_. %g told me that _messenger_
+ would be in __palace_ at
+ _palace_ in =2palace_ days time.
+
+Message:  1015
+<ce>              The letter from the Emperor? Actually %pcf
+<ce>              this is rather embarrassing. The letter was
+<ce>             stolen from me the same day I received it. I
+<ce>              never did read it. I have been hoping that
+<ce>             the letter would turn up, or the Emperor
+<ce>              would send another letter. If you find the
+<ce>             letter, I would be most grateful if you would
+<ce>               let me personally deliver it to Mynisera.
+
+Message:  1016
+<ce>              You should never have tried to investigate
+<ce>                    the Emperor's letter %pcn. Now
+<ce>              you will have to pay for it with your life.
+
+Message:  1017
+Kill the %ra. An ambush on the way
+ to __location_ is your best
+ chance. The fool intends to question
+ _dispatcher_ there.
+<ce>                                    
+<ce>                                --- A.
+
+Message:  1019
+A signet ring emblazoned with the Daggerfall crest and Lysandus' personal crest.
+
+Message:  1020
+<ce>                          I am _dispatcher_.
+<ce>              I would not normally tell anyone who is not
+<ce>           a Knight of the Dragon where to find _messenger_.
+<ce>             However, I am loyal to Queen Mynisera. I also
+<ce>                   know that _messenger_ disembowled
+<ce>               the last person that tried to ambush %g2.
+<ce>             In =2palace_ days %g is due to be at _palace_
+<ce>                     in __palace_. Try %g2 there.
+
+Message:  1021
+<ce>              Ho! You should be warned that I am a Knight
+<ce>              of the Dragon in the service of the Emperor
+<ce>              himself. If this is some ruse to ambush me,
+<ce>                you will surely not live to regret it.
+<ce>                                    
+<ce>                  Hmmm. Yes, I am _messenger_. This
+<ce>             signet ring proves that you are indeed in the
+<ce>            service of Mynisera. Some time ago I delivered
+<ce>              a letter from the Emperor addressed to the
+<ce>              Queen of Daggerfall. If I am not mistaken,
+<ce>             Aubk-i is Queen of Daggerfall, not Mynisera.
+<ce>               Tell Mynisera that I take my duties quite
+<ce>             seriously. I would never knowingly deliver a
+<ce>             missive to the wrong party. Queen Aubk-i gave
+<ce>              me this _jewelry_ in gratitude. Show it to
+<ce>              Mynisera so that she may know I am a loyal
+<ce>                   servant and faithful to my Order.
+
+
+-- Symbols used in the QRC file:
+--
+--                %g occurs 4 times.
+--               %g2 occurs 3 times.
+--              %god occurs 1 time.
+--              %pcf occurs 2 times.
+--              %pcn occurs 5 times.
+--              %qdt occurs 2 times.
+--               %ra occurs 1 time.
+--         =2palace_ occurs 3 times.
+--       __location_ occurs 3 times.
+--         __palace_ occurs 3 times.
+--      _dispatcher_ occurs 6 times.
+--         _jewelry_ occurs 2 times.
+--        _location_ occurs 1 time.
+--       _messenger_ occurs 8 times.
+--          _palace_ occurs 4 times.
+
+QBN:
+Item signetRing ring anyInfo 1019
+Item letter47 letter used 1017
+Item _jewelry_ trinket
+
+Person _Mynisera_ face 96 named Mynisera atHome
+Person _messenger_ face 1 faction The_Knights_of_the_Dragon remote
+Person _dispatcher_ faction The_Knights_of_the_Dragon remote
+Person _aubki_ named Queen_Aubk-i atHome
+
+Place _location_ remote random
+Place _palace_ remote palace
+
+Clock _2palace_ 00:00 0 flag 1 range 0 2
+Clock _S.07_ 2.00:00 0 flag 1 range 0 1
+
+Foe _F.00_ is Nightblade
+
+--	Quest start-up:
+	dialog link for item signetRing 
+	add _Mynisera_ as questor 
+
+_S.00_ task:
+	clicked npc _Mynisera_ 
+	prompt QuestorOffer yes _yes_ no _no_ 
+	add _aubki_ as questor 
+
+_yes_ task:
+	add dialog for item signetRing 
+	log 1010 step 0 
+	get item signetRing 
+	say AcceptQuest 
+	create npc at _location_ 
+	place npc _dispatcher_ at _location_ 
+
+_no_ task:
+	say RefuseQuest 
+	end quest 
+
+_S.03_ task:
+	clicked npc _dispatcher_ 
+	start timer _2palace_ 
+	log 1011 step 1 
+	say 1020 
+
+_2palace_ task:
+	start timer _S.07_ 
+	place npc _messenger_ at _palace_ 
+
+_S.05_ task:
+	toting signetRing and _messenger_ clicked 
+	stop timer _S.07_ 
+	get item _jewelry_ 
+	get item signetRing 
+	say 1021 
+
+variable _S.06_
+_S.07_ task:
+	drop _aubki_ as questor 
+	drop _Mynisera_ as questor 
+	end quest 
+	destroy _messenger_ 
+
+_S.08_ task:
+	clicked npc _aubki_ 
+
+_preventspawn_ task:
+	when _S.08_ and not _yes_
+	clear _S.08_ _preventspawn_
+
+_S.09_ task:
+	injured _F.00_ saying 1016 
+	give item letter47 to _F.00_ 
+
+_S.10_ task:
+	toting _jewelry_ and _Mynisera_ clicked 
+	give pc _jewelry_ 
+	start quest 20 20 
+	take signetRing from pc 
+	change repute with _aubki_ by -10 
+	change repute with _Mynisera_ by +20 
+	drop _Mynisera_ as questor 
+	drop _aubki_ as questor 
+	end quest 
+
+_S.11_ task:
+	when _yes_ and _S.08_ 
+	say 1015 
+	change repute with _aubki_ by -10 
+	send _F.00_ every 500 minutes 10 times with 50% success 

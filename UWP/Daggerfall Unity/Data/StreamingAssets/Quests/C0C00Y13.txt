@@ -1,0 +1,118 @@
+-- Quest: C:\QUESTS\WORKING\C0C00Y13.Qbn.
+-- StartsBy: NPC
+-- Questee: anyone
+-- Questor: temple
+-- Repute: 0
+-- QuestId: 13
+Messages: 12
+Quest: C0C00Y13
+DisplayName: An Errand
+-- Message panels
+QRC:
+
+QuestorOffer:  [1000]
+<ce>                       Blessings upon you, %pcn,
+<ce>                     even though you are a heathen
+<ce>                        and do not patronize our
+<ce>                         temple. I am _qgiver_.
+<ce>                      So you are looking to curry
+<ce>                         favor with __qgiver_.
+<ce>                        Deliver this _religitem_
+<ce>                          to ___priest_ within
+<ce>                      =traveltime_ days and I can
+<ce>                           speak well of you.
+
+RefuseQuest:  [1001]
+<ce>                     It is your loss. Ask not for
+<ce>                      the favor of this temple any
+<ce>                            time soon, %pcn.
+
+AcceptQuest:  [1002]
+<ce>                       Here is the _religitem_.
+<ce>                          Take it to _priest_
+<ce>                      of __priest_ in ___priest_.
+<ce>                     Oh, I almost forgot to mention
+<ce>                        that a rival temple may
+<ce>                      send out thugs to stop you.
+
+QuestComplete:  [1004]
+<ce>                       The god's favor upon you
+<ce>                         %pcn. This _religitem_
+<ce>                         is sorely needed here.
+
+RumorsDuringQuest:  [1005]
+It's a race between two temples for that _religitem_.
+
+RumorsPostfailure:  [1006]
+_priest_ never got %g3 _religitem_ and _qgiver_ is wroth.
+
+RumorsPostsuccess:  [1007]
+_priest_ and __qgiver_ managed to get that _religitem_ thanks to a brave %ra.
+
+QuestorPostsuccess:  [1008]
+%god bless you, of course I remember %pcf. How are you, my child?
+
+QuestorPostfailure:  [1009]
+_priest_ never got the _religitem_ and I am not amused.
+
+QuestLogEntry:  [1010]
+%qdt:
+ _qgiver_, of __qgiver_,
+ has given me a charge to
+ deliver the _religitem_
+ to _priest_ in __priest_ in
+ ___priest_. It must be there within =traveltime_ days.
+
+Message:  1011
+<ce>                         That _religitem_ will
+<ce>                      never make it to __priest_.
+<ce>                        Instead, I shall deliver
+<ce>                            them your head!
+
+
+-- Symbols used in the QRC file:
+--
+--               %g3 occurs 1 time.
+--              %god occurs 1 time.
+--              %pcf occurs 1 time.
+--              %pcn occurs 4 times.
+--              %qdt occurs 1 time.
+--               %ra occurs 16 times.
+--      =traveltime_ occurs 9 times.
+--        ___priest_ occurs 6 times.
+--         __qgiver_ occurs 3 times.
+--          _priest_ occurs 5 times.
+--          _qgiver_ occurs 3 times.
+--       _religitem_ occurs 10 times.
+
+QBN:
+Item _religitem_ religious
+
+Person _qgiver_ group Questor
+Person _priest_ group Group_5.0 remote
+Person _enemy_ face 176 group Local_4.0 remote
+
+Clock _traveltime_ 00:00 0 flag 1 range 1 2
+
+Foe _thief_ is Thief
+Foe _spellsword_ is Spellsword
+
+--	Quest start-up:
+	create foe _thief_ every 12 minutes 2 times with 5% success 
+	create foe _spellsword_ every 12 minutes 2 times with 5% success 
+	start timer _traveltime_ 
+	log 1010 step 0 
+	get item _religitem_ 
+
+_traveltime_ task:
+	change repute with _qgiver_ by -5 
+	end quest 
+
+_questdone_ task:
+	toting _religitem_ and _priest_ clicked 
+	give pc nothing 
+	end quest 
+
+_S.02_ task:
+	injured _spellsword_ saying 1011 
+	injured _thief_ saying 1011 
