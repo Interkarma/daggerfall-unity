@@ -1,0 +1,1607 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Data">
+      <UniqueIdentifier>{b75ea60f-4fdf-4dc5-8e00-501b687bb487}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data\etc\mono">
+      <UniqueIdentifier>{f8df102b-84d1-4877-9513-79177813b9ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data\etc\mono\2.0">
+      <UniqueIdentifier>{3fd0eec3-47ec-4c17-9a4f-d2e30e71c41d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data\etc\mono\2.0\Browsers">
+      <UniqueIdentifier>{3768c232-fe71-4db0-8742-9b9c217ba767}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data\etc\mono\4.0">
+      <UniqueIdentifier>{e11218c8-175b-4e1e-ad16-c05761987b84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data\etc\mono\4.0\Browsers">
+      <UniqueIdentifier>{611cabbd-ed22-4427-9872-a6b8b92b6ed6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data\etc\mono\4.5">
+      <UniqueIdentifier>{dbdeb429-45c8-4193-9d03-52bd81db19d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data\etc\mono\4.5\Browsers">
+      <UniqueIdentifier>{50e313a1-228d-48a5-bf69-0a87c8cd25e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data\etc\mono\mconfig">
+      <UniqueIdentifier>{7a082d65-9b50-4121-ba3a-dfdbf99f8526}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data\Metadata">
+      <UniqueIdentifier>{c3c5665d-4110-437b-97b2-ef233c087a8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data\Resources">
+      <UniqueIdentifier>{c72949b9-51c7-4e06-9b63-8ecc5301c473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Resources">
+      <UniqueIdentifier>{adb23c1f-d703-41ad-8f35-12f196f56533}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\BIOGs">
+      <UniqueIdentifier>{1dea9588-b636-4f36-9036-e9769a2c637a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\BIOGs\Deutsch">
+      <UniqueIdentifier>{b76e27b9-2f91-40d0-b2eb-1dbca5e57fc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\BIOGs\Francais">
+      <UniqueIdentifier>{88ec38aa-aa91-47dd-bd3f-0cc355ef8475}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Books">
+      <UniqueIdentifier>{387bc84b-e176-447e-ab7f-2f57a5d0da45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Docs">
+      <UniqueIdentifier>{ed12e63d-ef49-4aff-890c-d69e422fd1eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Factions">
+      <UniqueIdentifier>{48a0f9a7-9d89-4c49-8f65-ccf2001c9dc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Fonts">
+      <UniqueIdentifier>{16cfd150-5304-4a42-9dba-1d25ce64b476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\GameFiles">
+      <UniqueIdentifier>{d6a0b01a-e313-4989-b9fa-45b40e59ece1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Mods">
+      <UniqueIdentifier>{84ab1c43-1e20-41a8-9e11-5bca05f4ecf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Movies">
+      <UniqueIdentifier>{b03eddb0-e945-45bf-9ed7-4acebf68589f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Presets">
+      <UniqueIdentifier>{1bdecf62-e7b9-4659-a608-7e0ee306a225}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\QuestPacks">
+      <UniqueIdentifier>{7bf497fd-a8e6-43e1-973f-dda7d50580ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Quests">
+      <UniqueIdentifier>{5ee06135-075a-41b8-b48f-56b811f725b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Sound">
+      <UniqueIdentifier>{271ad9ab-527a-48c1-a31e-638bb72bc395}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\SoundFonts">
+      <UniqueIdentifier>{4a0f7d42-5405-4eca-b82e-185928ca0342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\SpellIcons">
+      <UniqueIdentifier>{dcec13a1-a441-4ade-92ea-8b5672dc278c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Tables">
+      <UniqueIdentifier>{6fa103e0-709e-4218-a08e-c772d6aa9574}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Text">
+      <UniqueIdentifier>{2f2202b8-81b7-4316-888b-494c1c59aacb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Text\Books">
+      <UniqueIdentifier>{324cc34b-15ce-4fbe-b8ae-e13f48e2758a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Text\Books\BookImages">
+      <UniqueIdentifier>{e9d08e6e-9ca2-4223-bea8-e3ebdb5fcd01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Textures">
+      <UniqueIdentifier>{8771a795-124c-475b-8d1c-60c51cb6ca74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Textures\CifRci">
+      <UniqueIdentifier>{8d7a9d2f-12b7-4d5f-b5c0-6a3301dbe1d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\Textures\Img">
+      <UniqueIdentifier>{e51be3a2-195e-436a-9b5a-88d09b1fab5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets\WorldData">
+      <UniqueIdentifier>{fba4930c-c05f-4010-a1f8-2c68fd4855bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data\etc">
+      <UniqueIdentifier>{39ea592f-7d54-4bcd-9b62-7fc4a3ae890f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\il2cpp_data">
+      <UniqueIdentifier>{76ea5ff2-9fa1-42e3-8f88-3a566840a470}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\StreamingAssets">
+      <UniqueIdentifier>{a78eda75-f3e0-47b5-8756-0956031eee20}</UniqueIdentifier>
+    </Filter>
+    <Resource Include="$(MSBuildThisFileDirectory)Resource.res" />
+    <None Include="$(MSBuildThisFileDirectory)StoreManifest.xml" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)UnityGenerated.cpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)UnityGenerated.h" />
+    <None Include="$(MSBuildThisFileDirectory)Data\boot.config">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\globalgamemanagers">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\globalgamemanagers.assets">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\level0">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\level1">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\nativePlugins.txt">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\resources.assets">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\resources.assets.resS">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\sharedassets0.assets">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\sharedassets1.assets">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\sharedassets1.assets.resS">
+      <Filter>Data</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\browscap.ini">
+      <Filter>Data\il2cpp_data\etc\mono</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\config">
+      <Filter>Data\il2cpp_data\etc\mono</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\2.0\DefaultWsdlHelpGenerator.aspx">
+      <Filter>Data\il2cpp_data\etc\mono\2.0</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\2.0\machine.config">
+      <Filter>Data\il2cpp_data\etc\mono\2.0</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\2.0\settings.map">
+      <Filter>Data\il2cpp_data\etc\mono\2.0</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\2.0\web.config">
+      <Filter>Data\il2cpp_data\etc\mono\2.0</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\2.0\Browsers\Compat.browser">
+      <Filter>Data\il2cpp_data\etc\mono\2.0\Browsers</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\4.0\DefaultWsdlHelpGenerator.aspx">
+      <Filter>Data\il2cpp_data\etc\mono\4.0</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\4.0\machine.config">
+      <Filter>Data\il2cpp_data\etc\mono\4.0</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\4.0\settings.map">
+      <Filter>Data\il2cpp_data\etc\mono\4.0</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\4.0\web.config">
+      <Filter>Data\il2cpp_data\etc\mono\4.0</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\4.0\Browsers\Compat.browser">
+      <Filter>Data\il2cpp_data\etc\mono\4.0\Browsers</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\4.5\DefaultWsdlHelpGenerator.aspx">
+      <Filter>Data\il2cpp_data\etc\mono\4.5</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\4.5\machine.config">
+      <Filter>Data\il2cpp_data\etc\mono\4.5</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\4.5\settings.map">
+      <Filter>Data\il2cpp_data\etc\mono\4.5</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\4.5\web.config">
+      <Filter>Data\il2cpp_data\etc\mono\4.5</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\4.5\Browsers\Compat.browser">
+      <Filter>Data\il2cpp_data\etc\mono\4.5\Browsers</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\etc\mono\mconfig\config.xml">
+      <Filter>Data\il2cpp_data\etc\mono\mconfig</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\Metadata\global-metadata.dat">
+      <Filter>Data\il2cpp_data\Metadata</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\Resources\I18N.CJK.dll-resources.dat">
+      <Filter>Data\il2cpp_data\Resources</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\il2cpp_data\Resources\mscorlib.dll-resources.dat">
+      <Filter>Data\il2cpp_data\Resources</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\Resources\unity default resources">
+      <Filter>Data\Resources</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\Resources\unity_builtin_extra">
+      <Filter>Data\Resources</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG00T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG01T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG02T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG03T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG04T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG05T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG06T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG07T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG08T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG09T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG10T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG11T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG12T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG13T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG14T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG15T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG16T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\BIOG17T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\readme-deepfighter.txt">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\readme.txt">
+      <Filter>Data\StreamingAssets\BIOGs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG00T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG01T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG02T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG03T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG04T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG05T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG06T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG07T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG08T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG09T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG10T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG11T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG12T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG13T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG14T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG15T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG16T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Deutsch\BIOG17T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Deutsch</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG00T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG01T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG02T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG03T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG04T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG05T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG06T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG07T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG08T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG09T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG10T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG11T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG12T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG13T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG14T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG15T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG16T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\BIOGs\Francais\BIOG17T0.TXT">
+      <Filter>Data\StreamingAssets\BIOGs\Francais</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Books\.gitignore">
+      <Filter>Data\StreamingAssets\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Docs\.gitignore">
+      <Filter>Data\StreamingAssets\Docs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Docs\readme.txt">
+      <Filter>Data\StreamingAssets\Docs</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Factions\FACTION.TXT">
+      <Filter>Data\StreamingAssets\Factions</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Fonts\FONT0000.FNT">
+      <Filter>Data\StreamingAssets\Fonts</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Fonts\FONT0001.FNT">
+      <Filter>Data\StreamingAssets\Fonts</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Fonts\FONT0002.FNT">
+      <Filter>Data\StreamingAssets\Fonts</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Fonts\FONT0003.FNT">
+      <Filter>Data\StreamingAssets\Fonts</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Fonts\FONT0004.FNT">
+      <Filter>Data\StreamingAssets\Fonts</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\GameFiles\.gitignore">
+      <Filter>Data\StreamingAssets\GameFiles</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\GameFiles\readme.txt">
+      <Filter>Data\StreamingAssets\GameFiles</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Mods\.gitignore">
+      <Filter>Data\StreamingAssets\Mods</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Mods\readme.txt">
+      <Filter>Data\StreamingAssets\Mods</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Movies\.gitignore">
+      <Filter>Data\StreamingAssets\Movies</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Presets\.gitignore">
+      <Filter>Data\StreamingAssets\Presets</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\QuestPacks\.gitignore">
+      <Filter>Data\StreamingAssets\QuestPacks</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\QuestPacks\readme.txt">
+      <Filter>Data\StreamingAssets\QuestPacks</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\$CUREVAM.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\$CUREWER.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\00B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\10C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\20C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\30C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\40C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\50C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\60C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\70C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\80C0XY00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\90C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C00Y06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C00Y07.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C00Y08.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C00Y10.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C00Y11.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C00Y12.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C00Y14.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C00Y15.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C00Y16.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C00Y17.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C01Y01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C01Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C01Y06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C01Y09.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C01Y13.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C0XY04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C10Y02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C10Y05.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\A0C41Y18.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B00Y01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B10Y04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B20Y07.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B40Y08.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B40Y09.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B50Y11.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B60Y12.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B70Y14.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B70Y16.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B71Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B80Y17.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0B81Y02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0C00Y05.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0C00Y06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0C00Y10.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\B0C00Y13.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B00Y01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B00Y02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B00Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B00Y04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B00Y14.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B10Y05.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B10Y06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B10Y07.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B10Y15.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B20Y08.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0B3XY09.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0C00Y10.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0C00Y11.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0C00Y12.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\C0C00Y13.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\CUSTOM01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\D0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\E0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\F0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\G0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\H0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\I0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\J0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C00Y02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C00Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C00Y04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C00Y05.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C00Y06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C00Y07.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C00Y08.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C00Y09.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C01Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C01Y10.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C0XY01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\K0C30Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0A01L00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B00Y01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B00Y02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B00Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B10Y01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B10Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B20Y02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B30Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B30Y09.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B40Y04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B50Y11.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\L0B60Y10.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B00Y06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B00Y07.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B00Y15.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B00Y16.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B00Y17.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B11Y18.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B1XY01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B20Y02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B21Y19.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B30Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B30Y04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B30Y08.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B40Y05.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B50Y09.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0B60Y10.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0C00Y11.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0C00Y12.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0C00Y13.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\M0C00Y14.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B00Y04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B00Y06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B00Y08.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B00Y09.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B00Y16.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B00Y17.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B10Y01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B10Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B11Y18.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B20Y02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B20Y05.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B21Y14.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B30Y15.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0B40Y07.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0C00Y10.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0C00Y11.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0C00Y12.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\N0C00Y13.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0A0AL00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B00Y01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B00Y11.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B00Y12.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B10Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B10Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B10Y05.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B10Y06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B10Y07.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B20Y02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B2XY04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B2XY08.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B2XY09.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\O0B2XY10.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\P0A01L00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\P0B00L01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\P0B00L03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\P0B00L04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\P0B00L06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\P0B01L02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\P0B10L07.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\P0B10L08.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\P0B10L10.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\P0B20L09.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Q0C00Y01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Q0C00Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Q0C00Y04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Q0C00Y06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Q0C00Y07.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Q0C00Y08.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Q0C0XY02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Q0C10Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Q0C20Y02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Q0C4XY04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y05.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y08.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y09.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y10.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y11.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y12.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y13.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y14.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y15.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y17.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y18.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y20.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C10Y21.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C11Y03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C11Y16.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C11Y19.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C11Y26.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C11Y27.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C11Y28.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C20Y07.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C20Y22.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C30Y25.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C4XY23.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\R0C60Y24.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000001.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000002.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000003.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000004.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000005.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000006.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000007.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000008.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000009.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000010.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000011.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000012.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000013.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000015.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000016.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000017.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000018.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000020.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000021.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000022.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000100.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000101.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000102.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000103.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000104.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000106.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000107.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000500.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000501.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000502.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000503.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000977.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000988.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\S0000999.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\T0C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\U0C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\V0C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\W0C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\X0C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Y0C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\Z0C00Y00.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\_BRISIEN.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\_TUTOR__.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO01.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO02.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO03.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO04.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO05.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO06.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO07.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO08.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO09.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO10.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO11.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO12.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO13.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO14.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO15.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO16.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO17.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO18.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO19.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO20.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Quests\__DEMO21.txt">
+      <Filter>Data\StreamingAssets\Quests</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Sound\.gitignore">
+      <Filter>Data\StreamingAssets\Sound</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\SoundFonts\readme.txt">
+      <Filter>Data\StreamingAssets\SoundFonts</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\SpellIcons\vmblast-test.png">
+      <Filter>Data\StreamingAssets\SpellIcons</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\SpellIcons\vmblast-test.txt">
+      <Filter>Data\StreamingAssets\SpellIcons</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\QuestList-Classic.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\QuestList-DFU.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\Quests-Diseases.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\Quests-Factions.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\Quests-Foes.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\Quests-GlobalVars.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\Quests-Items.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\Quests-Places.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\Quests-Sounds.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\Quests-Spells.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\Quests-StaticMessages.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Tables\Spells-Entity.txt">
+      <Filter>Data\StreamingAssets\Tables</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\DialogShortcuts.txt">
+      <Filter>Data\StreamingAssets\Text</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\GameSettings.txt">
+      <Filter>Data\StreamingAssets\Text</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\MainMenu.txt">
+      <Filter>Data\StreamingAssets\Text</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Master Localization CSV Files v0.15.1.zip">
+      <Filter>Data\StreamingAssets\Text</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\ModSystem.txt">
+      <Filter>Data\StreamingAssets\Text</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00000-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00001-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00002-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00003-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00004-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00005-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00006-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00007-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00008-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00009-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00016-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00020-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00021-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00022-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00025-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00026-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00027-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00028-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00029-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00030-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00031-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00032-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00033-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00034-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00035-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00036-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00037-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00038-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00039-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00040-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00041-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00042-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00043-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00044-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00045-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00046-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00047-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00048-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00049-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00050-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00051-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00052-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00053-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00054-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00055-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00056-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00057-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00058-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00059-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00060-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00061-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00062-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00063-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00064-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00065-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00066-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00067-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00068-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00069-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00070-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00071-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00072-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00073-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00074-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00075-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00076-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00077-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00078-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00079-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00080-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00081-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00082-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00083-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00084-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00085-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00086-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00087-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00088-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00089-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00100-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00101-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00102-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00103-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00104-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00105-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00106-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00107-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00108-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00109-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00110-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BOK00111-LOC.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\readme.txt">
+      <Filter>Data\StreamingAssets\Text\Books</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Text\Books\BookImages\readme.txt">
+      <Filter>Data\StreamingAssets\Text\Books\BookImages</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Textures\.gitignore">
+      <Filter>Data\StreamingAssets\Textures</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Textures\readme.txt">
+      <Filter>Data\StreamingAssets\Textures</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Textures\CifRci\.gitignore">
+      <Filter>Data\StreamingAssets\Textures\CifRci</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\Textures\Img\.gitignore">
+      <Filter>Data\StreamingAssets\Textures\Img</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\WorldData\.gitignore">
+      <Filter>Data\StreamingAssets\WorldData</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Data\StreamingAssets\WorldData\readme.txt">
+      <Filter>Data\StreamingAssets\WorldData</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)lib_burst_generated.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(OutDir)GameAssembly.dll" />
+    <None Include="$(OutDir)GameAssembly.pdb" />
+  </ItemGroup>
+</Project>
