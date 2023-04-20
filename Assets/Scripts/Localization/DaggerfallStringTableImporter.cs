@@ -911,6 +911,72 @@ namespace DaggerfallWorkshop.Localization
             Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
         }
 
+        /// <summary>
+        /// Imports magic item template names into specified StringTable.
+        /// </summary>
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
+        public static void CopyMagicItemsToStringTable(string target, bool overwriteExistingKeys)
+        {
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
+
+            // Get all magic item template names including artifacts
+            MagicItemTemplate[] magicItemTemplate = DaggerfallUnity.Instance.ItemHelper.MagicItemTemplates;
+            if (magicItemTemplate == null || magicItemTemplate.Length == 0)
+            {
+                Debug.LogError("CopyMagicItemsToStringTable() could not get magic item template data.");
+                return;
+            }
+
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopyMagicItemsToStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
+
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                foreach (MagicItemTemplate item in magicItemTemplate)
+                {
+                    string key = item.index.ToString();
+                    string text = item.name;
+
+                    var targetEntry = targetTable.GetEntry(key);
+                    if (targetEntry == null)
+                    {
+                        targetTable.AddEntry(key, text);
+                        copiedNew++;
+                    }
+                    else if (targetEntry != null && overwriteExistingKeys)
+                    {
+                        if (targetTable.RemoveEntry(key))
+                        {
+                            targetTable.AddEntry(key, text);
+                            copiedOverwrite++;
+                        }
+                        else
+                        {
+                            Debug.LogErrorFormat("CopyMagicItemsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
+                        }
+                    }
+                }
+
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
+            }
+
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
+        }
+
         static void SplitQuestionnaireRecord(string text, string key, StringTable targetTable, bool overwriteExistingKeys, ref int copiedNew, ref int copiedOverwrite)
         {
             string[] splitText = text.Split('{');
