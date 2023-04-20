@@ -1,4 +1,4 @@
-﻿#include "il2cpp-config.h"
+#include "il2cpp-config.h"
 
 #ifndef _MSC_VER
 # include <alloca.h>
