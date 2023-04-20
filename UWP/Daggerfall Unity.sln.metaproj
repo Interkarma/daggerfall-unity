@@ -1,0 +1,391 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="ValidateSolutionConfiguration;ValidateToolsVersions;ValidateProjects" DefaultTargets="Build">
+  <PropertyGroup>
+    <MSBuildFileVersion>17.5.1.16304</MSBuildFileVersion>
+    <MSBuildSemanticVersion>17.5.1+f6fdcf537</MSBuildSemanticVersion>
+    <MSBuildExtensionsPath32>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild</MSBuildExtensionsPath32>
+    <MSBuildExtensionsPath>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild</MSBuildExtensionsPath>
+    <MSBuildToolsPath32>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin</MSBuildToolsPath32>
+    <MSBuildToolsPath64>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64</MSBuildToolsPath64>
+    <MSBuildSDKsPath>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks</MSBuildSDKsPath>
+    <FrameworkSDKRoot>C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\</FrameworkSDKRoot>
+    <MSBuildRuntimeVersion>4.0.30319</MSBuildRuntimeVersion>
+    <MSBuildFrameworkToolsPath>C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\</MSBuildFrameworkToolsPath>
+    <MSBuildFrameworkToolsPath32>C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\</MSBuildFrameworkToolsPath32>
+    <MSBuildFrameworkToolsPath64>C:\WINDOWS\Microsoft.NET\Framework64\v4.0.30319\</MSBuildFrameworkToolsPath64>
+    <MSBuildFrameworkToolsPathArm64>C:\WINDOWS\Microsoft.NET\FrameworkArm64\v4.0.30319\</MSBuildFrameworkToolsPathArm64>
+    <MSBuildFrameworkToolsRoot>C:\WINDOWS\Microsoft.NET\Framework\</MSBuildFrameworkToolsRoot>
+    <SDK35ToolsPath />
+    <SDK40ToolsPath>C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools\</SDK40ToolsPath>
+    <WindowsSDK80Path />
+    <VsInstallRoot>C:\Program Files\Microsoft Visual Studio\2022\Community</VsInstallRoot>
+    <MSBuildToolsRoot>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild</MSBuildToolsRoot>
+    <RoslynTargetsPath>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\Roslyn</RoslynTargetsPath>
+    <VCTargetsPath>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\</VCTargetsPath>
+    <VCTargetsPath14>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\</VCTargetsPath14>
+    <VCTargetsPath12>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\</VCTargetsPath12>
+    <VCTargetsPath11>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\</VCTargetsPath11>
+    <VCTargetsPath10>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\</VCTargetsPath10>
+    <AndroidTargetsPath>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\MDD\Android\V150\</AndroidTargetsPath>
+    <iOSTargetsPath>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\MDD\iOS\V150\</iOSTargetsPath>
+    <_DirectorySolutionPropsFile>Directory.Solution.props</_DirectorySolutionPropsFile>
+    <_DirectorySolutionPropsBasePath />
+    <AspNetConfiguration>Release</AspNetConfiguration>
+    <SolutionExt>.sln</SolutionExt>
+    <SolutionFileName>Daggerfall Unity.sln</SolutionFileName>
+    <SolutionName>Daggerfall Unity</SolutionName>
+    <SolutionPath>G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity.sln</SolutionPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <CurrentSolutionConfigurationContents>
+      <SolutionConfiguration xmlns="">
+  <ProjectConfiguration Project="{2FABDF39-A3A3-4497-95BA-5AEE089EBF0F}" AbsolutePath="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity\Daggerfall Unity.vcxproj" BuildProjectInSolution="True">Release|x64<ProjectDependency Project="{EA17D85E-DA6F-49EA-A879-8F48265B121D}" /></ProjectConfiguration>
+  <ProjectConfiguration Project="{EA17D85E-DA6F-49EA-A879-8F48265B121D}" AbsolutePath="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Il2CppOutputProject\Il2CppOutputProject.vcxproj" BuildProjectInSolution="True">Release|x64</ProjectConfiguration>
+</SolutionConfiguration>
+    </CurrentSolutionConfigurationContents>
+    <NuGetRestoreTargets>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\..\Common7\IDE\CommonExtensions\Microsoft\NuGet\NuGet.targets</NuGetRestoreTargets>
+    <IsRestoreTargetsFileLoaded>true</IsRestoreTargetsFileLoaded>
+    <RestoreTaskAssemblyFile>NuGet.Build.Tasks.dll</RestoreTaskAssemblyFile>
+    <HideWarningsAndErrors>false</HideWarningsAndErrors>
+    <RestoreRecursive>true</RestoreRecursive>
+    <RestoreUseSkipNonexistentTargets>true</RestoreUseSkipNonexistentTargets>
+    <ValidateRuntimeIdentifierCompatibility>false</ValidateRuntimeIdentifierCompatibility>
+    <RestoreContinueOnError>WarnAndContinue</RestoreContinueOnError>
+    <RestoreBuildInParallel>true</RestoreBuildInParallel>
+    <_RestoreSolutionFileUsed>true</_RestoreSolutionFileUsed>
+    <NuGetInteractive />
+    <PackageDownloadSupported>true</PackageDownloadSupported>
+    <GetReferenceNearestTargetFrameworkTaskSupportsTargetPlatformParameter>true</GetReferenceNearestTargetFrameworkTaskSupportsTargetPlatformParameter>
+    <_GenerateRestoreGraphProjectEntryInputProperties>
+      ExcludeRestorePackageImports=true;
+      _RestoreSolutionFileUsed=true;
+      SolutionDir=G:\\Dev Projects\\Universal Windows Platform\\daggerfall-unity-UWP\\UWP\;
+      SolutionName=Daggerfall Unity;
+      SolutionFileName=Daggerfall Unity.sln;
+      SolutionPath=G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity.sln;
+      SolutionExt=.sln;
+    </_GenerateRestoreGraphProjectEntryInputProperties>
+    <_DirectorySolutionTargetsFile>Directory.Solution.targets</_DirectorySolutionTargetsFile>
+    <_DirectorySolutionTargetsBasePath />
+    <MSBuildAllProjects>G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity.sln.metaproj</MSBuildAllProjects>
+  </PropertyGroup>
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <SolutionConfiguration Include="Debug|x64">
+      <Content>
+        <SolutionConfiguration xmlns="">
+  <ProjectConfiguration Project="{2FABDF39-A3A3-4497-95BA-5AEE089EBF0F}" AbsolutePath="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity\Daggerfall Unity.vcxproj" BuildProjectInSolution="True">Debug|x64<ProjectDependency Project="{EA17D85E-DA6F-49EA-A879-8F48265B121D}" /></ProjectConfiguration>
+  <ProjectConfiguration Project="{EA17D85E-DA6F-49EA-A879-8F48265B121D}" AbsolutePath="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Il2CppOutputProject\Il2CppOutputProject.vcxproj" BuildProjectInSolution="True">Debug|x64</ProjectConfiguration>
+</SolutionConfiguration>
+      </Content>
+      <Platform>x64</Platform>
+      <Configuration>Debug</Configuration>
+    </SolutionConfiguration>
+    <SolutionConfiguration Include="MasterWithLTCG|x64">
+      <Content>
+        <SolutionConfiguration xmlns="">
+  <ProjectConfiguration Project="{2FABDF39-A3A3-4497-95BA-5AEE089EBF0F}" AbsolutePath="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity\Daggerfall Unity.vcxproj" BuildProjectInSolution="True">MasterWithLTCG|x64<ProjectDependency Project="{EA17D85E-DA6F-49EA-A879-8F48265B121D}" /></ProjectConfiguration>
+  <ProjectConfiguration Project="{EA17D85E-DA6F-49EA-A879-8F48265B121D}" AbsolutePath="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Il2CppOutputProject\Il2CppOutputProject.vcxproj" BuildProjectInSolution="True">MasterWithLTCG|x64</ProjectConfiguration>
+</SolutionConfiguration>
+      </Content>
+      <Platform>x64</Platform>
+      <Configuration>MasterWithLTCG</Configuration>
+    </SolutionConfiguration>
+    <SolutionConfiguration Include="Master|x64">
+      <Content>
+        <SolutionConfiguration xmlns="">
+  <ProjectConfiguration Project="{2FABDF39-A3A3-4497-95BA-5AEE089EBF0F}" AbsolutePath="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity\Daggerfall Unity.vcxproj" BuildProjectInSolution="True">Master|x64<ProjectDependency Project="{EA17D85E-DA6F-49EA-A879-8F48265B121D}" /></ProjectConfiguration>
+  <ProjectConfiguration Project="{EA17D85E-DA6F-49EA-A879-8F48265B121D}" AbsolutePath="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Il2CppOutputProject\Il2CppOutputProject.vcxproj" BuildProjectInSolution="True">Master|x64</ProjectConfiguration>
+</SolutionConfiguration>
+      </Content>
+      <Platform>x64</Platform>
+      <Configuration>Master</Configuration>
+    </SolutionConfiguration>
+    <SolutionConfiguration Include="Release|x64">
+      <Content>
+        <SolutionConfiguration xmlns="">
+  <ProjectConfiguration Project="{2FABDF39-A3A3-4497-95BA-5AEE089EBF0F}" AbsolutePath="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity\Daggerfall Unity.vcxproj" BuildProjectInSolution="True">Release|x64<ProjectDependency Project="{EA17D85E-DA6F-49EA-A879-8F48265B121D}" /></ProjectConfiguration>
+  <ProjectConfiguration Project="{EA17D85E-DA6F-49EA-A879-8F48265B121D}" AbsolutePath="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Il2CppOutputProject\Il2CppOutputProject.vcxproj" BuildProjectInSolution="True">Release|x64</ProjectConfiguration>
+</SolutionConfiguration>
+      </Content>
+      <Platform>x64</Platform>
+      <Configuration>Release</Configuration>
+    </SolutionConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity\Daggerfall Unity.vcxproj.metaproj">
+      <AdditionalProperties>Configuration=Release; Platform=x64</AdditionalProperties>
+      <Platform>x64</Platform>
+      <Configuration>Release</Configuration>
+      <ToolsVersion>Current</ToolsVersion>
+      <SkipNonexistentProjects>Build</SkipNonexistentProjects>
+    </ProjectReference>
+    <ProjectReference Include="G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Il2CppOutputProject\Il2CppOutputProject.vcxproj">
+      <AdditionalProperties>Configuration=Release; Platform=x64</AdditionalProperties>
+      <Platform>x64</Platform>
+      <Configuration>Release</Configuration>
+      <ToolsVersion>
+      </ToolsVersion>
+      <SkipNonexistentProjects>False</SkipNonexistentProjects>
+    </ProjectReference>
+  </ItemGroup>
+  <Target Name="ValidateSolutionConfiguration">
+    <Error Condition="('$(CurrentSolutionConfigurationContents)' == '') and ('$(SkipInvalidConfigurations)' != 'true')" HelpKeyword="MSBuild.SolutionInvalidSolutionConfiguration" Code="MSB4126" Text="The specified solution configuration &quot;$(Configuration)|$(Platform)&quot; is invalid. Please specify a valid solution configuration using the Configuration and Platform properties (e.g. MSBuild.exe Solution.sln /p:Configuration=Debug /p:Platform=&quot;Any CPU&quot;) or leave those properties blank to use the default solution configuration." />
+    <Warning Condition="('$(CurrentSolutionConfigurationContents)' == '') and ('$(SkipInvalidConfigurations)' == 'true')" HelpKeyword="MSBuild.SolutionInvalidSolutionConfiguration" Code="MSB4126" Text="The specified solution configuration &quot;$(Configuration)|$(Platform)&quot; is invalid. Please specify a valid solution configuration using the Configuration and Platform properties (e.g. MSBuild.exe Solution.sln /p:Configuration=Debug /p:Platform=&quot;Any CPU&quot;) or leave those properties blank to use the default solution configuration." />
+    <Message Condition="'$(CurrentSolutionConfigurationContents)' != ''" Text="Building solution configuration &quot;$(Configuration)|$(Platform)&quot;." />
+  </Target>
+  <Target Name="ValidateToolsVersions">
+    <Error Condition="'$(MSBuildToolsVersion)' == '2.0' and ('$(ProjectToolsVersion)' != '2.0' and '$(ProjectToolsVersion)' != '')" HelpKeyword="MSBuild.SolutionToolsVersionDoesNotSupportProjectToolsVersion" Code="MSB4149" Text="The tools version &quot;$(MSBuildToolsVersion)&quot; of the solution does not support building projects with a different tools version." />
+  </Target>
+  <Target Name="ValidateProjects" />
+  <Target Name="GetSolutionConfigurationContents" Outputs="$(SolutionConfigurationContents)" />
+  <Target Name="Build" Outputs="@(CollectedBuildOutput)">
+    <MSBuild BuildInParallel="True" Projects="@(ProjectReference)" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="CollectedBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Clean">
+    <MSBuild BuildInParallel="True" Projects="@(ProjectReference-&gt;Reverse())" Targets="Clean" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="Rebuild" Outputs="@(CollectedBuildOutput)">
+    <MSBuild BuildInParallel="True" Projects="@(ProjectReference)" Targets="Rebuild" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="CollectedBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Publish">
+    <MSBuild BuildInParallel="True" Projects="@(ProjectReference)" Targets="Publish" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="Restore" DependsOnTargets="_GenerateRestoreGraph">
+    <RemoveDuplicates Inputs="@(_RestoreGraphEntry)">
+      <Output TaskParameter="Filtered" ItemName="_RestoreGraphEntryFiltered" />
+    </RemoveDuplicates>
+    <RestoreTask RestoreRecursive="$(RestoreRecursive)" RestoreIgnoreFailedSources="$(RestoreIgnoreFailedSources)" RestoreDisableParallel="$(RestoreDisableParallel)" RestoreForce="$(RestoreForce)" HideWarningsAndErrors="$(HideWarningsAndErrors)" Interactive="$(NuGetInteractive)" RestoreNoCache="$(RestoreNoCache)" RestoreGraphItems="@(_RestoreGraphEntryFiltered)" RestoreForceEvaluate="$(RestoreForceEvaluate)" RestorePackagesConfig="$(RestorePackagesConfig)" />
+  </Target>
+  <Target Name="GenerateRestoreGraphFile" DependsOnTargets="_GenerateRestoreGraph">
+    <Error Condition="$(RestoreGraphOutputPath) == ''" Text="Missing RestoreGraphOutputPath property!" />
+    <RemoveDuplicates Inputs="@(_RestoreGraphEntry)">
+      <Output TaskParameter="Filtered" ItemName="_RestoreGraphEntryFiltered" />
+    </RemoveDuplicates>
+    <WriteRestoreGraphTask RestoreGraphOutputPath="$(RestoreGraphOutputPath)" RestoreRecursive="$(RestoreRecursive)" RestoreGraphItems="@(_RestoreGraphEntryFiltered)" />
+  </Target>
+  <Target Name="CollectPackageReferences" Returns="@(PackageReference)">
+    <CheckForDuplicateNuGetItemsTask Condition="'$(DisableCheckingDuplicateNuGetItems)' != 'true' " ContinueOnError="$(CollectPackageReferencesContinueOnError)" NoWarn="$(NoWarn)" MSBuildProjectFullPath="$(MSBuildProjectFullPath)" WarningsNotAsErrors="$(WarningsNotAsErrors)" ItemName="PackageReference" LogCode="NU1504" Items="@(PackageReference)" TreatWarningsAsErrors="$(TreatWarningsAsErrors)" WarningsAsErrors="$(WarningsAsErrors)">
+      <Output TaskParameter="DeduplicatedItems" ItemName="DeduplicatedPackageReferences" />
+    </CheckForDuplicateNuGetItemsTask>
+  </Target>
+  <Target Name="CollectCentralPackageVersions" Returns="@(PackageVersion)">
+    <CheckForDuplicateNuGetItemsTask Condition="'$(DisableCheckingDuplicateNuGetItems)' != 'true' " ContinueOnError="$(CollectCentralPackageVersionsContinueOnError)" NoWarn="$(NoWarn)" MSBuildProjectFullPath="$(MSBuildProjectFullPath)" WarningsNotAsErrors="$(WarningsNotAsErrors)" ItemName="PackageVersion" LogCode="NU1506" Items="@(PackageVersion)" TreatWarningsAsErrors="$(TreatWarningsAsErrors)" WarningsAsErrors="$(WarningsAsErrors)">
+      <Output TaskParameter="DeduplicatedItems" ItemName="DeduplicatedPackageVersions" />
+    </CheckForDuplicateNuGetItemsTask>
+  </Target>
+  <Target Name="CollectPackageDownloads" Returns="@(PackageDownload)">
+    <CheckForDuplicateNuGetItemsTask Condition="'$(DisableCheckingDuplicateNuGetItems)' != 'true' " ContinueOnError="$(CollectPackageDownloadsContinueOnError)" NoWarn="$(NoWarn)" MSBuildProjectFullPath="$(MSBuildProjectFullPath)" WarningsNotAsErrors="$(WarningsNotAsErrors)" ItemName="PackageDownload" LogCode="NU1505" Items="@(PackageDownload)" TreatWarningsAsErrors="$(TreatWarningsAsErrors)" WarningsAsErrors="$(WarningsAsErrors)">
+      <Output TaskParameter="DeduplicatedItems" ItemName="DeduplicatedPackageDownloads" />
+    </CheckForDuplicateNuGetItemsTask>
+  </Target>
+  <Target Name="CollectFrameworkReferences" Returns="@(_FrameworkReferenceForRestore)" />
+  <Target Name="_LoadRestoreGraphEntryPoints" Returns="@(RestoreGraphProjectInputItems)">
+    <GetRestoreSolutionProjectsTask Condition=" $(MSBuildProjectFullPath.EndsWith('.metaproj')) == 'true' AND @(RestoreGraphProjectInputItems) == '' " SolutionFilePath="$(MSBuildProjectFullPath)" ProjectReferences="@(ProjectReference)">
+      <Output TaskParameter="OutputProjectReferences" ItemName="RestoreGraphProjectInputItems" />
+    </GetRestoreSolutionProjectsTask>
+  </Target>
+  <Target Name="_FilterRestoreGraphProjectInputItems" DependsOnTargets="_LoadRestoreGraphEntryPoints" Returns="@(FilteredRestoreGraphProjectInputItems)">
+    <RemoveDuplicates Inputs="@(_FilteredRestoreGraphProjectInputItemsTmp)">
+      <Output TaskParameter="Filtered" ItemName="FilteredRestoreGraphProjectInputItemsWithoutDuplicates" />
+    </RemoveDuplicates>
+    <MSBuild Condition=" '$(RestoreUseSkipNonexistentTargets)' == 'true' " BuildInParallel="$(RestoreBuildInParallel)" SkipNonexistentTargets="true" Projects="@(FilteredRestoreGraphProjectInputItemsWithoutDuplicates)" Targets="_IsProjectRestoreSupported" Properties="$(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="FilteredRestoreGraphProjectInputItems" />
+    </MSBuild>
+    <MSBuild Condition=" '$(RestoreUseSkipNonexistentTargets)' != 'true' " ContinueOnError="$(RestoreContinueOnError)" Projects="@(FilteredRestoreGraphProjectInputItemsWithoutDuplicates)" Targets="_IsProjectRestoreSupported" Properties="$(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="FilteredRestoreGraphProjectInputItems" />
+    </MSBuild>
+    <WarnForInvalidProjectsTask Condition=" '$(DisableWarnForInvalidRestoreProjects)' != 'true' AND '$(HideWarningsAndErrors)' != 'true' " AllProjects="@(FilteredRestoreGraphProjectInputItemsWithoutDuplicates)" ValidProjects="@(FilteredRestoreGraphProjectInputItems)" />
+  </Target>
+  <Target Name="_GenerateRestoreGraph" DependsOnTargets="_FilterRestoreGraphProjectInputItems;_GetAllRestoreProjectPathItems" Returns="@(_RestoreGraphEntry)">
+    <Message Importance="low" Text="Generating dg file" />
+    <Message Importance="low" Text="%(_RestoreProjectPathItems.Identity)" />
+    <MSBuild BuildInParallel="$(RestoreBuildInParallel)" Projects="@(_GenerateRestoreGraphProjectEntryInput)" Targets="_GenerateRestoreGraphProjectEntry" Properties="$(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreGraphEntry" />
+    </MSBuild>
+    <MSBuild BuildInParallel="$(RestoreBuildInParallel)" Projects="@(_RestoreProjectPathItems)" Targets="_GenerateProjectRestoreGraph" Properties="$(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreGraphEntry" />
+    </MSBuild>
+  </Target>
+  <Target Name="_GenerateRestoreGraphProjectEntry" DependsOnTargets="_GenerateRestoreSpecs;_GenerateDotnetCliToolReferenceSpecs" Returns="@(_RestoreGraphEntry)" />
+  <Target Name="_GenerateRestoreSpecs" DependsOnTargets="_GetRestoreProjectStyle" Returns="@(_RestoreGraphEntry)">
+    <Message Importance="low" Text="Restore entry point $(MSBuildProjectFullPath)" />
+  </Target>
+  <Target Name="_GenerateDotnetCliToolReferenceSpecs" DependsOnTargets="_GetRestoreSettings" Returns="@(_RestoreGraphEntry)">
+    <GetRestoreDotnetCliToolsTask Condition=" '$(RestoreDotnetCliToolReferences)' == '' OR '$(RestoreDotnetCliToolReferences)' == 'true' " RestorePackagesPath="$(_OutputPackagesPath)" RestoreConfigFilePaths="$(_OutputConfigFilePaths)" ToolFramework="$(DotnetCliToolTargetFramework)" RestoreFallbackFolders="$(_OutputFallbackFolders)" ProjectPath="$(MSBuildProjectFullPath)" RestoreSources="$(_OutputSources)" DotnetCliToolReferences="@(DotnetCliToolReference)">
+      <Output TaskParameter="RestoreGraphItems" ItemName="_RestoreGraphEntry" />
+    </GetRestoreDotnetCliToolsTask>
+  </Target>
+  <Target Name="_GetProjectJsonPath" Returns="$(_CurrentProjectJsonPath)">
+    <GetRestoreProjectJsonPathTask Condition=" '$(RestoreProjectStyle)' == 'ProjectJson' OR '$(RestoreProjectStyle)' == '' " ProjectPath="$(MSBuildProjectFullPath)">
+      <Output TaskParameter="ProjectJsonPath" ItemName="_CurrentProjectJsonPath" />
+    </GetRestoreProjectJsonPathTask>
+  </Target>
+  <Target Name="_GetRestoreProjectStyle" DependsOnTargets="_GetProjectJsonPath;CollectPackageReferences" Returns="$(RestoreProjectStyle);$(PackageReferenceCompatibleProjectStyle)">
+    <GetRestoreProjectStyleTask RestoreProjectStyle="$(RestoreProjectStyle)" MSBuildProjectDirectory="$(MSBuildProjectDirectory)" HasPackageReferenceItems="$(_HasPackageReferenceItems)" MSBuildProjectName="$(MSBuildProjectName)" ProjectJsonPath="$(_CurrentProjectJsonPath)">
+      <Output TaskParameter="ProjectStyle" ItemName="RestoreProjectStyle" />
+      <Output TaskParameter="IsPackageReferenceCompatibleProjectStyle" ItemName="PackageReferenceCompatibleProjectStyle" />
+    </GetRestoreProjectStyleTask>
+  </Target>
+  <Target Name="EnableIntermediateOutputPathMismatchWarning" Condition="'$(RestoreProjectStyle)' == 'PackageReference'" DependsOnTargets="_GetRestoreProjectStyle" />
+  <Target Name="_GetRestoreTargetFrameworksOutput" DependsOnTargets="_GetRestoreProjectStyle;_GetRestoreTargetFrameworkOverride" Returns="@(_RestoreTargetFrameworksOutputFiltered)">
+    <GetProjectTargetFrameworksTask Condition=" '$(RestoreProjectStyle)' != 'ProjectJson'" TargetPlatformIdentifier="$(TargetPlatformIdentifier)" TargetPlatformVersion="$(TargetPlatformVersion)" TargetFrameworkMoniker="$(TargetFrameworkMoniker)" TargetPlatformMinVersion="$(TargetPlatformMinVersion)" TargetFramework="$(TargetFramework)" ProjectPath="$(MSBuildProjectFullPath)" TargetFrameworks="$(_TargetFrameworkToBeUsed)">
+      <Output TaskParameter="ProjectTargetFrameworks" ItemName="_RestoreProjectFramework" />
+    </GetProjectTargetFrameworksTask>
+  </Target>
+  <Target Name="_GetRestoreTargetFrameworksAsItems" DependsOnTargets="_GetRestoreProjectStyle;_GetRestoreTargetFrameworkOverride" Returns="@(_RestoreTargetFrameworkItems)" />
+  <Target Name="_GetRestoreSettings" Condition=" '$(RestoreProjectStyle)' == 'PackageReference' OR '$(RestoreProjectStyle)' == 'ProjectJson' OR '$(RestoreProjectStyle)' == 'DotnetToolReference' OR '$(RestoreProjectStyle)' == 'PackagesConfig'" DependsOnTargets="_GetRestoreSettingsOverrides;_GetRestoreSettingsCurrentProject;_GetRestoreSettingsAllFrameworks" Returns="$(_OutputSources);$(_OutputPackagesPath);$(_OutputRepositoryPath);$(_OutputFallbackFolders);$(_OutputConfigFilePaths)">
+    <GetRestoreSettingsTask RestoreProjectStyle="$(RestoreProjectStyle)" RestorePackagesPath="$(RestorePackagesPath)" RestoreConfigFile="$(RestoreConfigFile)" RestoreSourcesOverride="$(_RestoreSourcesOverride)" RestoreFallbackFolders="$(RestoreFallbackFolders)" RestoreRepositoryPathOverride="$(_RestoreRepositoryPathOverride)" RestoreFallbackFoldersOverride="$(_RestoreFallbackFoldersOverride)" RestoreRootConfigDirectory="$(RestoreRootConfigDirectory)" RestorePackagesPathOverride="$(_RestorePackagesPathOverride)" MSBuildStartupDirectory="$(MSBuildStartupDirectory)" RestoreSolutionDirectory="$(RestoreSolutionDirectory)" RestoreSources="$(RestoreSources)" ProjectUniqueName="$(MSBuildProjectFullPath)" RestoreRepositoryPath="$(RestoreRepositoryPath)" RestoreSettingsPerFramework="@(_RestoreSettingsPerFramework)">
+      <Output TaskParameter="OutputSources" ItemName="_OutputSources" />
+      <Output TaskParameter="OutputPackagesPath" ItemName="_OutputPackagesPath" />
+      <Output TaskParameter="OutputRepositoryPath" ItemName="_OutputRepositoryPath" />
+      <Output TaskParameter="OutputFallbackFolders" ItemName="_OutputFallbackFolders" />
+      <Output TaskParameter="OutputConfigFilePaths" ItemName="_OutputConfigFilePaths" />
+    </GetRestoreSettingsTask>
+  </Target>
+  <Target Name="_GetRestoreSettingsCurrentProject" Condition=" '$(TargetFrameworks)' == '' AND '$(PackageReferenceCompatibleProjectStyle)' == 'true' " DependsOnTargets="_GetRestoreSettingsPerFramework" Returns="@(_RestoreSettingsPerFramework)" />
+  <Target Name="_GetRestoreSettingsAllFrameworks" Condition=" '$(TargetFrameworks)' != '' AND '$(PackageReferenceCompatibleProjectStyle)' == 'true' " DependsOnTargets="_GetRestoreTargetFrameworksAsItems;_GetRestoreProjectStyle" Returns="@(_RestoreSettingsPerFramework)">
+    <MSBuild BuildInParallel="$(RestoreBuildInParallel)" Projects="$(MSBuildProjectFullPath)" Targets="_GetRestoreSettingsPerFramework" Properties="TargetFramework=%(_RestoreTargetFrameworkItems.Identity);&#xD;&#xA;                  $(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreSettingsPerFramework" />
+    </MSBuild>
+  </Target>
+  <Target Name="_GetRestoreSettingsPerFramework" Returns="@(_RestoreSettingsPerFramework)" />
+  <Target Name="_GenerateRestoreProjectSpec" DependsOnTargets="_GetRestoreProjectStyle;_GetRestoreTargetFrameworksOutput;_GetRestoreSettings" Returns="@(_RestoreGraphEntry)">
+    <ConvertToAbsolutePath Condition=" '$(PackageReferenceCompatibleProjectStyle)' == 'true' OR '$(RestoreProjectStyle)' == 'ProjectJson'" Paths="$(RestoreOutputPath)">
+      <Output TaskParameter="AbsolutePaths" ItemName="RestoreOutputAbsolutePath" />
+    </ConvertToAbsolutePath>
+  </Target>
+  <Target Name="_GenerateProjectRestoreGraph" DependsOnTargets="&#xD;&#xA;      _GetRestoreProjectStyle;&#xD;&#xA;      _GenerateRestoreProjectSpec;&#xD;&#xA;      _GenerateRestoreDependencies" Returns="@(_RestoreGraphEntry)" />
+  <Target Name="_GenerateRestoreDependencies" DependsOnTargets="_GenerateProjectRestoreGraphAllFrameworks;_GenerateProjectRestoreGraphCurrentProject" Returns="@(_RestoreGraphEntry)" />
+  <Target Name="_GenerateProjectRestoreGraphAllFrameworks" Condition=" '$(TargetFrameworks)' != '' " DependsOnTargets="_GetRestoreTargetFrameworksAsItems" Returns="@(_RestoreGraphEntry)">
+    <MSBuild BuildInParallel="$(RestoreBuildInParallel)" Projects="$(MSBuildProjectFullPath)" Targets="_GenerateProjectRestoreGraphPerFramework" Properties="TargetFramework=%(_RestoreTargetFrameworkItems.Identity);&#xD;&#xA;                  $(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreGraphEntry" />
+    </MSBuild>
+  </Target>
+  <Target Name="_GenerateProjectRestoreGraphCurrentProject" Condition=" '$(TargetFrameworks)' == '' " DependsOnTargets="_GenerateProjectRestoreGraphPerFramework" Returns="@(_RestoreGraphEntry)" />
+  <Target Name="_GenerateProjectRestoreGraphPerFramework" DependsOnTargets="_GetRestoreProjectStyle;CollectPackageReferences;CollectPackageDownloads;CollectFrameworkReferences;CollectCentralPackageVersions" Returns="@(_RestoreGraphEntry)">
+    <GetRestoreProjectReferencesTask ProjectReferences="@(ProjectReference)" ParentProjectPath="$(MSBuildProjectFullPath)" TargetFrameworks="$(TargetFramework)" ProjectUniqueName="$(MSBuildProjectFullPath)">
+      <Output TaskParameter="RestoreGraphItems" ItemName="_RestoreGraphEntry" />
+    </GetRestoreProjectReferencesTask>
+    <GetRestorePackageReferencesTask Condition=" '$(PackageReferenceCompatibleProjectStyle)' == 'true' " PackageReferences="@(PackageReference)" TargetFrameworks="$(TargetFramework)" ProjectUniqueName="$(MSBuildProjectFullPath)">
+      <Output TaskParameter="RestoreGraphItems" ItemName="_RestoreGraphEntry" />
+    </GetRestorePackageReferencesTask>
+    <GetCentralPackageVersionsTask Condition=" '$(PackageReferenceCompatibleProjectStyle)' == 'true' AND '$(_CentralPackageVersionsEnabled)' == 'true' " CentralPackageVersions="@(PackageVersion)" TargetFrameworks="$(TargetFramework)" ProjectUniqueName="$(MSBuildProjectFullPath)">
+      <Output TaskParameter="RestoreGraphItems" ItemName="_RestoreGraphEntry" />
+    </GetCentralPackageVersionsTask>
+    <GetRestorePackageDownloadsTask Condition=" '$(PackageReferenceCompatibleProjectStyle)' == 'true' " PackageDownloads="@(PackageDownload)" TargetFrameworks="$(TargetFramework)" ProjectUniqueName="$(MSBuildProjectFullPath)">
+      <Output TaskParameter="RestoreGraphItems" ItemName="_RestoreGraphEntry" />
+    </GetRestorePackageDownloadsTask>
+    <GetRestoreFrameworkReferencesTask Condition=" '$(PackageReferenceCompatibleProjectStyle)' == 'true' " FrameworkReferences="@(FrameworkReference)" TargetFrameworks="$(TargetFramework)" ProjectUniqueName="$(MSBuildProjectFullPath)">
+      <Output TaskParameter="RestoreGraphItems" ItemName="_RestoreGraphEntry" />
+    </GetRestoreFrameworkReferencesTask>
+  </Target>
+  <Target Name="_GenerateRestoreProjectPathItemsCurrentProject" Condition=" '$(TargetFrameworks)' == '' " DependsOnTargets="_GenerateRestoreProjectPathItemsPerFramework" Returns="@(_RestoreProjectPathItems)" />
+  <Target Name="_GenerateRestoreProjectPathItemsPerFramework" Returns="@(_RestoreProjectPathItems)">
+    <ConvertToAbsolutePath Paths="@(ProjectReference)">
+      <Output TaskParameter="AbsolutePaths" ItemName="_RestoreGraphAbsoluteProjectPaths" />
+    </ConvertToAbsolutePath>
+  </Target>
+  <Target Name="_GenerateRestoreProjectPathItems" DependsOnTargets="_GenerateRestoreProjectPathItemsAllFrameworks;_GenerateRestoreProjectPathItemsCurrentProject" Returns="@(_CurrentRestoreProjectPathItems)">
+    <RemoveDuplicates Inputs="@(_RestoreProjectPathItems)">
+      <Output TaskParameter="Filtered" ItemName="_CurrentRestoreProjectPathItems" />
+    </RemoveDuplicates>
+  </Target>
+  <Target Name="_GenerateRestoreProjectPathItemsAllFrameworks" Condition=" '$(TargetFrameworks)' != '' " DependsOnTargets="_GetRestoreTargetFrameworksAsItems" Returns="@(_RestoreProjectPathItems)">
+    <MSBuild Condition=" '$(RestoreUseSkipNonexistentTargets)' == 'true' " BuildInParallel="$(RestoreBuildInParallel)" SkipNonexistentTargets="true" SkipNonexistentProjects="true" Projects="$(MSBuildProjectFullPath)" Targets="_GenerateRestoreProjectPathItemsPerFramework" Properties="TargetFramework=%(_RestoreTargetFrameworkItems.Identity);&#xD;&#xA;                  $(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreProjectPathItems" />
+    </MSBuild>
+    <MSBuild Condition=" '$(RestoreUseSkipNonexistentTargets)' != 'true' " ContinueOnError="$(RestoreContinueOnError)" Projects="$(MSBuildProjectFullPath)" Targets="_GenerateRestoreProjectPathItemsPerFramework" Properties="TargetFramework=%(_RestoreTargetFrameworkItems.Identity);&#xD;&#xA;                  $(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreProjectPathItems" />
+    </MSBuild>
+  </Target>
+  <Target Name="_GenerateRestoreProjectPathWalk" DependsOnTargets="_GenerateRestoreProjectPathItems" Returns="@(_RestoreProjectPathItems)">
+    <MSBuild Condition=" '$(RestoreUseSkipNonexistentTargets)' == 'true' " BuildInParallel="$(RestoreBuildInParallel)" SkipNonexistentTargets="true" SkipNonexistentProjects="true" Projects="@(_CurrentRestoreProjectPathItems)" Targets="_GenerateRestoreProjectPathWalk" Properties="$(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_GenerateRestoreProjectPathWalkOutputs" />
+    </MSBuild>
+    <MSBuild Condition=" '$(RestoreUseSkipNonexistentTargets)' != 'true' " ContinueOnError="$(RestoreContinueOnError)" Projects="@(_CurrentRestoreProjectPathItems)" Targets="_GenerateRestoreProjectPathWalk" Properties="$(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_GenerateRestoreProjectPathWalkOutputs" />
+    </MSBuild>
+    <RemoveDuplicates Inputs="@(_GenerateRestoreProjectPathWalkOutputs)">
+      <Output TaskParameter="Filtered" ItemName="_RestoreProjectPathItems" />
+    </RemoveDuplicates>
+  </Target>
+  <Target Name="_GetAllRestoreProjectPathItems" DependsOnTargets="_FilterRestoreGraphProjectInputItems" Returns="@(_RestoreProjectPathItems)">
+    <NuGetMessageTask Importance="High" Name="DeterminingProjectsToRestore" />
+    <MSBuild Condition=" '$(RestoreUseSkipNonexistentTargets)' == 'true' " BuildInParallel="$(RestoreBuildInParallel)" SkipNonexistentTargets="true" SkipNonexistentProjects="true" Projects="@(FilteredRestoreGraphProjectInputItems)" Targets="_GenerateRestoreProjectPathWalk" Properties="$(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreProjectPathItemsOutputs" />
+    </MSBuild>
+    <MSBuild Condition=" '$(RestoreUseSkipNonexistentTargets)' != 'true' " ContinueOnError="$(RestoreContinueOnError)" Projects="@(FilteredRestoreGraphProjectInputItems)" Targets="_GenerateRestoreProjectPathWalk" Properties="$(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreProjectPathItemsOutputs" />
+    </MSBuild>
+    <RemoveDuplicates Inputs="@(_RestoreProjectPathItemsOutputs)">
+      <Output TaskParameter="Filtered" ItemName="_RestoreProjectPathItemsWithoutDupes" />
+    </RemoveDuplicates>
+    <MSBuild Condition=" '$(RestoreUseSkipNonexistentTargets)' == 'true' " BuildInParallel="$(RestoreBuildInParallel)" SkipNonexistentTargets="true" SkipNonexistentProjects="true" Projects="@(_RestoreProjectPathItemsWithoutDupes)" Targets="_IsProjectRestoreSupported" Properties="$(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreProjectPathItems" />
+    </MSBuild>
+    <MSBuild Condition=" '$(RestoreUseSkipNonexistentTargets)' != 'true' " ContinueOnError="$(RestoreContinueOnError)" Projects="@(_RestoreProjectPathItemsWithoutDupes)" Targets="_IsProjectRestoreSupported" Properties="$(_GenerateRestoreGraphProjectEntryInputProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreProjectPathItems" />
+    </MSBuild>
+  </Target>
+  <Target Name="_GetRestoreSettingsOverrides" Returns="$(_RestorePackagesPathOverride);$(_RestoreRepositoryPathOverride);$(_RestoreSourcesOverride);$(_RestoreFallbackFoldersOverride)">
+    <MSBuild Condition=" '$(RestorePackagesPath)' != '' " BuildInParallel="$(RestoreBuildInParallel)" Projects="$(MSBuildThisFileFullPath)" Targets="_GetRestorePackagesPathOverride">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestorePackagesPathOverride" />
+    </MSBuild>
+    <MSBuild Condition=" '$(RestoreRepositoryPathOverride)' != '' " BuildInParallel="$(RestoreBuildInParallel)" Projects="$(MSBuildThisFileFullPath)" Targets="_GetRestoreRepositoryPathOverride">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreRepositoryPathOverride" />
+    </MSBuild>
+    <MSBuild Condition=" '$(RestoreSources)' != '' " BuildInParallel="$(RestoreBuildInParallel)" Projects="$(MSBuildThisFileFullPath)" Targets="_GetRestoreSourcesOverride">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreSourcesOverride" />
+    </MSBuild>
+    <MSBuild Condition=" '$(RestoreFallbackFolders)' != '' " BuildInParallel="$(RestoreBuildInParallel)" Projects="$(MSBuildThisFileFullPath)" Targets="_GetRestoreFallbackFoldersOverride">
+      <Output TaskParameter="TargetOutputs" ItemName="_RestoreFallbackFoldersOverride" />
+    </MSBuild>
+  </Target>
+  <Target Name="_GetRestorePackagesPathOverride" Returns="$(_RestorePackagesPathOverride)" />
+  <Target Name="_GetRestoreRepositoryPathOverride" Returns="$(_RestoreRepositoryPathOverride)" />
+  <Target Name="_GetRestoreSourcesOverride" Returns="$(_RestoreSourcesOverride)" />
+  <Target Name="_GetRestoreFallbackFoldersOverride" Returns="$(_RestoreFallbackFoldersOverride)" />
+  <Target Name="_GetRestoreTargetFrameworkOverride" Condition=" '$(_DisableNuGetRestoreTargetFrameworksOverride)' != 'true' " Returns="$(_TargetFrameworkOverride)">
+    <GetGlobalPropertyValueTask Condition=" '$(TargetFrameworks)' != '' " PropertyName="TargetFramework">
+      <Output TaskParameter="GlobalPropertyValue" ItemName="_TargetFrameworkOverride" />
+    </GetGlobalPropertyValueTask>
+  </Target>
+  <Target Name="_GetTargetFrameworkOverrides" Returns="$(_TargetFrameworkOverride)" />
+  <Target Name="_IsProjectRestoreSupported" Returns="@(_ValidProjectsForRestore)" />
+  <Target Name="Daggerfall Unity" Outputs="@(Daggerfall_UnityBuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity\Daggerfall Unity.vcxproj.metaproj'" ToolsVersion="Current" BuildInParallel="True" Projects="@(ProjectReference)" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="Daggerfall_UnityBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Daggerfall Unity:Clean">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity\Daggerfall Unity.vcxproj.metaproj'" ToolsVersion="Current" BuildInParallel="True" Projects="@(ProjectReference)" Targets="Clean" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="Daggerfall Unity:Rebuild" Outputs="@(Daggerfall_UnityBuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity\Daggerfall Unity.vcxproj.metaproj'" ToolsVersion="Current" BuildInParallel="True" Projects="@(ProjectReference)" Targets="Rebuild" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="Daggerfall_UnityBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Daggerfall Unity:Publish">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Daggerfall Unity\Daggerfall Unity.vcxproj.metaproj'" ToolsVersion="Current" BuildInParallel="True" Projects="@(ProjectReference)" Targets="Publish" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="Il2CppOutputProject" Outputs="@(Il2CppOutputProjectBuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Il2CppOutputProject\Il2CppOutputProject.vcxproj'" ToolsVersion="$(ProjectToolsVersion)" BuildInParallel="True" Projects="@(ProjectReference)" Properties="Configuration=Release; Platform=x64;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="Il2CppOutputProjectBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Il2CppOutputProject:Clean">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Il2CppOutputProject\Il2CppOutputProject.vcxproj'" ToolsVersion="$(ProjectToolsVersion)" BuildInParallel="True" Projects="@(ProjectReference)" Targets="Clean" Properties="Configuration=Release; Platform=x64;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="Il2CppOutputProject:Rebuild" Outputs="@(Il2CppOutputProjectBuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Il2CppOutputProject\Il2CppOutputProject.vcxproj'" ToolsVersion="$(ProjectToolsVersion)" BuildInParallel="True" Projects="@(ProjectReference)" Targets="Rebuild" Properties="Configuration=Release; Platform=x64;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="Il2CppOutputProjectBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Il2CppOutputProject:Publish">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'G:\Dev Projects\Universal Windows Platform\daggerfall-unity-UWP\UWP\Il2CppOutputProject\Il2CppOutputProject.vcxproj'" ToolsVersion="$(ProjectToolsVersion)" BuildInParallel="True" Projects="@(ProjectReference)" Targets="Publish" Properties="Configuration=Release; Platform=x64;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+</Project>
