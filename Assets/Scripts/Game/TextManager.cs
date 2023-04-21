@@ -303,17 +303,26 @@ namespace DaggerfallWorkshop.Game
                 case TextCollections.Internal:
                     collectionName = defaultInternalStringsCollectionName;
                     break;
-
                 case TextCollections.TextRSC:
                     collectionName = defaultInternalRSCCollectionName;
                     break;
-
                 case TextCollections.TextQuests:
                     collectionName = defaultInternalQuestsCollectionName;
                     break;
-
                 case TextCollections.TextLocations:
                     collectionName = defaultInternalLocationsCollectionName;
+                    break;
+                case TextCollections.TextSettings:
+                    collectionName = defaultInternalSettingsCollectionName;
+                    break;
+                case TextCollections.TextSpells:
+                    collectionName = defaultInternalSpellsCollectionName;
+                    break;
+                case TextCollections.TextItems:
+                    collectionName = defaultInternalItemsCollectionName;
+                    break;
+                case TextCollections.TextMagicItems:
+                    collectionName = defaultInternalMagicItemsCollectionName;
                     break;
             }
 
