@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game
         public static string defaultInternalSpellsCollectionName = "Internal_Spells";
         public static string defaultInternalItemsCollectionName = "Internal_Items";
         public static string defaultInternalMagicItemsCollectionName = "Internal_MagicItems";
+        public static string defaultInternalFactionsCollectionName = "Internal_Factions";
 
         const string localizedTextLookupError = "<LocaleText-NotFound>";
         const string textFolderName = "Text";
@@ -54,6 +55,7 @@ namespace DaggerfallWorkshop.Game
         public string runtimeSpellsStrings = defaultInternalSpellsCollectionName;
         public string runtimeItemsStrings = defaultInternalItemsCollectionName;
         public string runtimeMagicItemsStrings = defaultInternalMagicItemsCollectionName;
+        public string runtimeFactionsStrings = defaultInternalFactionsCollectionName;
 
         // String table copy editor properties
         public bool tableCopyOverwriteTargetStringTables = false;
@@ -284,6 +286,9 @@ namespace DaggerfallWorkshop.Game
                 case TextCollections.TextMagicItems:
                     collectionName = runtimeMagicItemsStrings;
                     break;
+                case TextCollections.Factions:
+                    collectionName = runtimeFactionsStrings;
+                    break;
             }
 
             return collectionName;
@@ -323,6 +328,9 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case TextCollections.TextMagicItems:
                     collectionName = defaultInternalMagicItemsCollectionName;
+                    break;
+                case TextCollections.Factions:
+                    collectionName = defaultInternalFactionsCollectionName;
                     break;
             }
 

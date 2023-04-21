@@ -777,6 +777,7 @@ namespace DaggerfallWorkshop
         TextSpells,
         TextItems,
         TextMagicItems,
+        Factions,
     }
 
     /// <summary>

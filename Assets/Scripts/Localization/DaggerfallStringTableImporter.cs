@@ -977,6 +977,67 @@ namespace DaggerfallWorkshop.Localization
             Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
         }
 
+        public static void CopyFactionsToStringTable(string target, bool overwriteExistingKeys)
+        {
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
+
+            // Get faction data
+            FactionFile factionFile = new FactionFile(DaggerfallUnity.Instance.ContentReader.GetFactionFilePath(), FileUsage.UseMemory, true);
+            if (factionFile == null || factionFile.FactionDict.Count == 0)
+            {
+                Debug.LogError("CopyFactionsToStringTable() could not get faction data.");
+                return;
+            }
+
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopyFactionsToStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
+
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                foreach (var item in factionFile.FactionDict)
+                {
+                    string key = item.Key.ToString();
+                    string text = item.Value.name;
+
+                    var targetEntry = targetTable.GetEntry(key);
+                    if (targetEntry == null)
+                    {
+                        targetTable.AddEntry(key, text);
+                        copiedNew++;
+                    }
+                    else if (targetEntry != null && overwriteExistingKeys)
+                    {
+                        if (targetTable.RemoveEntry(key))
+                        {
+                            targetTable.AddEntry(key, text);
+                            copiedOverwrite++;
+                        }
+                        else
+                        {
+                            Debug.LogErrorFormat("CopyMagicItemsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
+                        }
+                    }
+                }
+
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
+            }
+
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
+        }
+
         static void SplitQuestionnaireRecord(string text, string key, StringTable targetTable, bool overwriteExistingKeys, ref int copiedNew, ref int copiedOverwrite)
         {
             string[] splitText = text.Split('{');
