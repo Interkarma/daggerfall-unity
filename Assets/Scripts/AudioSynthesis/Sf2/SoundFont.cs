@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using DaggerfallWorkshop.AudioSynthesis.Util;
 
@@ -44,10 +44,10 @@ namespace DaggerfallWorkshop.AudioSynthesis.Sf2
             {
                 string id = new string(IOHelper.Read8BitChars(reader, 4));
                 int size = reader.ReadInt32();
-                if (!id.ToLower().Equals("riff"))
+                if (!id.Equals("riff", StringComparison.InvariantCultureIgnoreCase))
                     throw new Exception("Invalid soundfont. Could not find RIFF header.");
                 id = new string(IOHelper.Read8BitChars(reader, 4));
-                if (!id.ToLower().Equals("sfbk"))
+                if (!id.Equals("sfbk", StringComparison.InvariantCultureIgnoreCase))
                     throw new Exception("Invalid soundfont. Riff type is invalid.");
                 info = new SoundFontInfo(reader);
                 data = new SoundFontSampleData(reader);
