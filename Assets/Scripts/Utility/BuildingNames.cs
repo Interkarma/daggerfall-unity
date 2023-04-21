@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Utility
                     // Guild halls get the name from faction data
                     if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(factionID, out factionData))
                     {
-                        a = TextManager.Instance.GetLocalizedFactionName(factionData.id, factionData.name);
+                        a = factionData.name;
                         singleton = true;
                     }
                     break;
@@ -130,7 +130,7 @@ namespace DaggerfallWorkshop.Utility
                             FactionFile.FactionData firstChild;
                             if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(factionData.children[0], out firstChild))
                             {
-                                a = TextManager.Instance.GetLocalizedFactionName(firstChild.id, firstChild.name);
+                                a = firstChild.name;
                                 singleton = true;
                             }
                         }

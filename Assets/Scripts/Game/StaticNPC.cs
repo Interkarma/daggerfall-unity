@@ -296,7 +296,7 @@ namespace DaggerfallWorkshop.Game
             bool foundFaction = GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npcData.factionID, out factionData);
             if (foundFaction && factionData.type == (int)FactionFile.FactionTypes.Individual)
             {
-                return TextManager.Instance.GetLocalizedFactionName(factionData.id, factionData.name);
+                return factionData.name;
             }
             else
             {
