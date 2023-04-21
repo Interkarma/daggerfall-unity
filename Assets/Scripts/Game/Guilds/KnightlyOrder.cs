@@ -156,7 +156,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 return true;
 
             FactionFile.FactionData factionData;
-            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(GetFactionId(), out factionData)
+            if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(GetFactionId(), out factionData)
                 && GameManager.Instance.PlayerGPS.CurrentLocation.RegionIndex == factionData.region)
                 return true;
 

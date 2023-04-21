@@ -114,7 +114,7 @@ namespace DaggerfallWorkshop.Utility
 
                 case DFLocation.BuildingTypes.GuildHall:
                     // Guild halls get the name from faction data
-                    if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(factionID, out factionData))
+                    if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData))
                     {
                         a = factionData.name;
                         singleton = true;
@@ -123,12 +123,12 @@ namespace DaggerfallWorkshop.Utility
 
                 case DFLocation.BuildingTypes.Temple:
                     // Temples get name from faction data - always seem to be first child of factionID
-                    if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(factionID, out factionData))
+                    if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData))
                     {
                         if (factionData.children.Count > 0)
                         {
                             FactionFile.FactionData firstChild;
-                            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(factionData.children[0], out firstChild))
+                            if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionData.children[0], out firstChild))
                             {
                                 a = firstChild.name;
                                 singleton = true;

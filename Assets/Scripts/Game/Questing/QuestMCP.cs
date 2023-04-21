@@ -57,7 +57,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 // Only used for knightly order quests, %kno macro. (removing 'The ' prefix from name for readability)
                 FactionFile.FactionData factionData;
-                if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(parent.FactionId, out factionData))
+                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(parent.FactionId, out factionData))
                     return factionData.name.StartsWith("The ") ? factionData.name.Substring(4) : factionData.name;
                 else
                     return null;
