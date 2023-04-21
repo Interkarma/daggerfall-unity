@@ -3751,6 +3751,38 @@ MonoBehaviour:
     m_Key: longArmorNameFormatString
     m_Metadata:
       m_Items: []
+  - m_Id: 340024905667440640
+    m_Key: strRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340024972407205888
+    m_Key: intRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025019786063872
+    m_Key: wilRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025063192915968
+    m_Key: agiRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025139755741184
+    m_Key: endRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025171456290816
+    m_Key: perRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025210190688256
+    m_Key: spdRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025245175377920
+    m_Key: lucRatings
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -4731,5 +4731,171 @@ MonoBehaviour:
     m_Localized: '{0} {1}'
     m_Metadata:
       m_Items: []
+  - m_Id: 340024905667440640
+    m_Localized: 'pathetic
+
+      frail
+
+      weak
+
+      below average
+
+      about
+      average
+
+      fairly strong
+
+      athletic
+
+      very strong
+
+      powerful
+
+      superhuman'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340024972407205888
+    m_Localized: 'vegetable-like
+
+      idiotic
+
+      half-witted
+
+      dim
+
+      about
+      average
+
+      cunning
+
+      fairly clever
+
+      very intelligent
+
+      brilliant
+
+      genius'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025019786063872
+    m_Localized: 'inane
+
+      submissive
+
+      passive
+
+      distracted
+
+      unassertive
+
+      stable
+
+      confident
+
+      strong-willed
+
+      very
+      focused
+
+      enlightened'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025063192915968
+    m_Localized: "oafish\r\nbumbling\r\nclumsy\r\nawkward\r\nabout average\r\nspry\r\nnimble\r\ndexterous\r\nvery
+      agile\r\nacrobatic\r"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025139755741184
+    m_Localized: 'sickly
+
+      pitiable
+
+      unsteady
+
+      erratic
+
+      about
+      average
+
+      above average
+
+      very healthy
+
+      hardy
+
+      titanic
+
+      immortal'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025171456290816
+    m_Localized: 'abhorrent
+
+      unpopular
+
+      anonymous
+
+      unassuming
+
+      unremarkable
+
+      interesting
+
+      charming
+
+      arresting
+
+      authoritative
+
+      charismatic'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025210190688256
+    m_Localized: 'inactive
+
+      sluggish
+
+      very slow
+
+      slow
+
+      about
+      average
+
+      above average
+
+      fast
+
+      fleet-footed
+
+      lightning-fast
+
+      meteoric'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025245175377920
+    m_Localized: 'cursed
+
+      hopeless
+
+      ill-favored
+
+      unfortunate
+
+      about
+      average
+
+      fairly lucky
+
+      lucky
+
+      fortunate
+
+      very auspicious
+
+      divinely
+      favored'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
