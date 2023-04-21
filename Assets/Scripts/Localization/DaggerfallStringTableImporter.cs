@@ -977,6 +977,11 @@ namespace DaggerfallWorkshop.Localization
             Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
         }
 
+        /// <summary>
+        /// Imports faction names into specified StringTable.
+        /// </summary>
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
         public static void CopyFactionsToStringTable(string target, bool overwriteExistingKeys)
         {
             // Do nothing if target not set

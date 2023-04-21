@@ -509,6 +509,22 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Gets localized version of faction name from its ID.
+        /// Caller must provide a fallback name.
+        /// </summary>
+        /// <param name="id">Faction ID.</param>
+        /// <param name="fallback">Fallback name.</param>
+        /// <returns>Localized faction name or fallback.</returns>
+        public string GetLocalizedFactionName(int id, string fallback)
+        {
+            string name;
+            if (TryGetLocalizedText(TextCollections.Factions, id.ToString(), out name))
+                return name;
+            else
+                return fallback;
+        }
+
+        /// <summary>
         /// Tries to gets text value from localization in TextProvider.
         /// Will use current locale if available in collection.
         /// </summary>
