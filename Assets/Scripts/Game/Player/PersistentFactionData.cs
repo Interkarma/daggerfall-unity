@@ -165,6 +165,7 @@ namespace DaggerfallWorkshop.Game.Player
             if (factionDict.ContainsKey(factionID))
             {
                 factionDataOut = factionDict[factionID];
+                factionDataOut.name = TextManager.Instance.GetLocalizedFactionName(factionID, factionDataOut.name);
                 return true;
             }
 
