@@ -113,6 +113,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(ClearCrimeCommitted.name, ClearCrimeCommitted.description, ClearCrimeCommitted.usage, ClearCrimeCommitted.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ClearNegativeLegalRep.name, ClearNegativeLegalRep.description, ClearNegativeLegalRep.usage, ClearNegativeLegalRep.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(RefreshBuildingNames.name, RefreshBuildingNames.description, RefreshBuildingNames.usage, RefreshBuildingNames.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(PrintQuests.name, PrintQuests.description, PrintQuests.usage, PrintQuests.Execute);
 
@@ -2615,6 +2616,19 @@ namespace Wenzil.Console
                 }
 
                 return output;
+            }
+        }
+
+        private static class RefreshBuildingNames
+        {
+            public static readonly string name = "refresh_buildingnames";
+            public static readonly string description = "Refresh discovered building names in current location. Used for testing localization and debugging stale discovery data.";
+            public static readonly string usage = "refresh_buildingnames";
+
+            public static string Execute(params string[] args)
+            {
+                GameManager.Instance.PlayerGPS.RefreshBuildingNamesInCurrentLocation();
+                return "Finished";
             }
         }
 
