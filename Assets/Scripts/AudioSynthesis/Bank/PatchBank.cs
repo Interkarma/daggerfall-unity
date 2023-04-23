@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using DaggerfallWorkshop.AudioSynthesis.Bank.Patches;
@@ -192,14 +192,14 @@ namespace DaggerfallWorkshop.AudioSynthesis.Bank
                 //read riff chunk
                 string id = IOHelper.Read8BitString(reader, 4).ToLower();
                 int size = reader.ReadInt32();
-                if(!id.Equals("riff"))
+                if(!id.Equals("riff", StringComparison.InvariantCultureIgnoreCase))
                     throw new Exception("Invalid bank file. The riff header is missing.");
-                if(!new RiffTypeChunk(id, size, reader).TypeId.ToLower().Equals("bank"))
+                if(!new RiffTypeChunk(id, size, reader).TypeId.Equals("bank", StringComparison.InvariantCultureIgnoreCase))
                     throw new Exception("Invalid bank file. The riff type is incorrect.");
                 //read info chunk
                 id = IOHelper.Read8BitString(reader, 4).ToLower();
                 size = reader.ReadInt32();
-                if (!id.Equals("info"))
+                if (!id.Equals("info", StringComparison.InvariantCultureIgnoreCase))
                     throw new Exception("Invalid bank file. The INFO chunk is missing.");
                 if (reader.ReadSingle() != BankVersion)
                     throw new Exception(string.Format("Invalid bank file. The bank version is incorrect, the correct version is {0:0.000}.", BankVersion));
@@ -207,36 +207,36 @@ namespace DaggerfallWorkshop.AudioSynthesis.Bank
                 //read asset list chunk
                 id = IOHelper.Read8BitString(reader, 4).ToLower();
                 size = reader.ReadInt32();
-                if (!id.Equals("list"))
+                if (!id.Equals("list", StringComparison.InvariantCultureIgnoreCase))
                     throw new Exception("Invalid bank file. The ASET LIST chunk is missing.");
                 long readTo = reader.BaseStream.Position + size;
                 id = IOHelper.Read8BitString(reader, 4).ToLower();
-                if (!id.Equals("aset"))
+                if (!id.Equals("aset", StringComparison.InvariantCultureIgnoreCase))
                     throw new Exception("Invalid bank file. The LIST chunk is not of type ASET.");
                 //--read assets
                 while(reader.BaseStream.Position < readTo)
                 {
                     id = IOHelper.Read8BitString(reader, 4).ToLower();
                     size = reader.ReadInt32();
-                    if (!id.Equals("smpl"))
+                    if (!id.Equals("smpl", StringComparison.InvariantCultureIgnoreCase))
                         throw new Exception("Invalid bank file. Only SMPL chunks are allowed in the asset list chunk.");
                     assets.SampleAssetList.Add(new SampleDataAsset(size, reader));
                 }
                 //read instrument list chunk
                 id = IOHelper.Read8BitString(reader, 4).ToLower();
                 size = reader.ReadInt32();
-                if (!id.Equals("list"))
+                if (!id.Equals("list", StringComparison.InvariantCultureIgnoreCase))
                     throw new Exception("Invalid bank file. The INST LIST chunk is missing.");
                 readTo = reader.BaseStream.Position + size;
                 id = IOHelper.Read8BitString(reader, 4).ToLower();
-                if (!id.Equals("inst"))
+                if (!id.Equals("inst", StringComparison.InvariantCultureIgnoreCase))
                     throw new Exception("Invalid bank file. The LIST chunk is not of type INST.");
                 //--read instruments
                 while (reader.BaseStream.Position < readTo)
                 {
                     id = IOHelper.Read8BitString(reader, 4).ToLower();
                     size = reader.ReadInt32();
-                    if (!id.Equals("ptch"))
+                    if (!id.Equals("ptch", StringComparison.InvariantCultureIgnoreCase))
                         throw new Exception("Invalid bank file. Only PTCH chunks are allowed in the instrument list chunk.");
                     string patchName = IOHelper.Read8BitString(reader, 20);
                     string patchType = IOHelper.Read8BitString(reader, 4);

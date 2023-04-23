@@ -1,10 +1,11 @@
-﻿namespace DaggerfallWorkshop.AudioSynthesis.Wave
+namespace DaggerfallWorkshop.AudioSynthesis.Wave
 {
     using System;
     using System.IO;
     using System.Collections.Generic;
     using DaggerfallWorkshop.AudioSynthesis.Util;
     using DaggerfallWorkshop.AudioSynthesis.Util.Riff;
+    using System.Globalization;
 
     public sealed class WaveFileReader : IDisposable
     {
@@ -53,7 +54,7 @@
             long offset = reader.BaseStream.Position + 8;
             List<Chunk> chunks = new List<Chunk>();
             RiffTypeChunk head = new RiffTypeChunk(new string(IOHelper.Read8BitChars(reader, 4)), reader.ReadInt32(), reader);
-            if (!head.ChunkId.ToLower().Equals("riff") || !head.TypeId.ToLower().Equals("wave"))
+            if (!head.ChunkId.Equals("riff", StringComparison.InvariantCultureIgnoreCase) || !head.TypeId.Equals("wave", StringComparison.InvariantCultureIgnoreCase))
                 throw new Exception("The asset could not be loaded because the RIFF chunk was missing or was not of type WAVE.");
             while (reader.BaseStream.Position - offset < head.ChunkSize)
             {
@@ -67,7 +68,7 @@
         {
             string id = new string(IOHelper.Read8BitChars(reader, 4));
             int size = reader.ReadInt32();          
-            switch (id.ToLower())
+            switch (id.ToLower(CultureInfo.InvariantCulture))
             {
                 case "riff":
                     return new RiffTypeChunk(id, size, reader);

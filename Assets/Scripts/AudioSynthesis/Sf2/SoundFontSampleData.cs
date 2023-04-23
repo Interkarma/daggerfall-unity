@@ -1,6 +1,7 @@
-﻿namespace DaggerfallWorkshop.AudioSynthesis.Sf2
+namespace DaggerfallWorkshop.AudioSynthesis.Sf2
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using DaggerfallWorkshop.AudioSynthesis.Util;
 
@@ -21,11 +22,11 @@
         //--Methods
         public SoundFontSampleData(BinaryReader reader)
         {
-            if (new string(IOHelper.Read8BitChars(reader, 4)).ToLower().Equals("list") == false)
+            if (new string(IOHelper.Read8BitChars(reader, 4)).Equals("list", StringComparison.InvariantCultureIgnoreCase) == false)
                 throw new Exception("Invalid soundfont. Could not find SDTA LIST chunk.");
             long readTo = reader.ReadInt32();
             readTo += reader.BaseStream.Position;
-            if (new string(IOHelper.Read8BitChars(reader, 4)).Equals("sdta") == false)
+            if (new string(IOHelper.Read8BitChars(reader, 4)).Equals("sdta", StringComparison.InvariantCultureIgnoreCase) == false)
                 throw new Exception("Invalid soundfont. List is not of type sdta.");
             bitsPerSample = 0;
             byte[] rawSampleData = null;
@@ -33,7 +34,7 @@
             {
                 string subID = new string(IOHelper.Read8BitChars(reader, 4));
                 int size = reader.ReadInt32();
-                switch (subID.ToLower())
+                switch (subID.ToLower(CultureInfo.InvariantCulture))
                 {
                     case "smpl":
                         bitsPerSample = 16;

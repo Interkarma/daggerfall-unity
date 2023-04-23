@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using DaggerfallWorkshop.AudioSynthesis.Synthesis;
 using DaggerfallWorkshop.AudioSynthesis.Sf2;
@@ -123,7 +123,7 @@ namespace DaggerfallWorkshop.AudioSynthesis.Bank.Patches
             intervalList = new PatchInterval[description.CustomDescriptions.Length];
             for (int x = 0; x < intervalList.Length; x++)
             {
-                if (!description.CustomDescriptions[x].ID.ToLower().Equals("mpat"))
+                if (!description.CustomDescriptions[x].ID.Equals("mpat", StringComparison.InvariantCultureIgnoreCase))
                     throw new Exception(string.Format("The patch: {0} has an invalid descriptor with id {1}", this.patchName, description.CustomDescriptions[x].ID));
                 string patchName = (string)description.CustomDescriptions[x].Objects[0];
                 PatchAsset pAsset = assets.FindPatch(patchName);

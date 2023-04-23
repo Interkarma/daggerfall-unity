@@ -1,6 +1,7 @@
-﻿namespace DaggerfallWorkshop.AudioSynthesis.Sf2
+namespace DaggerfallWorkshop.AudioSynthesis.Sf2
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using DaggerfallWorkshop.AudioSynthesis.Util;
 
@@ -41,17 +42,17 @@
         {
             string id = new string(IOHelper.Read8BitChars(reader, 4));
             int size = reader.ReadInt32();
-            if(!id.ToLower().Equals("list"))
+            if(!id.Equals("list", StringComparison.InvariantCultureIgnoreCase))
                 throw new Exception("Invalid soundfont. Could not find INFO LIST chunk.");
             long readTo = reader.BaseStream.Position + size;
             id = new string(IOHelper.Read8BitChars(reader, 4));
-            if (!id.ToLower().Equals("info"))
+            if (!id.Equals("info", StringComparison.InvariantCultureIgnoreCase))
                 throw new Exception("Invalid soundfont. The LIST chunk is not of type INFO.");
             while (reader.BaseStream.Position < readTo)
             {
                 id = new string(IOHelper.Read8BitChars(reader, 4));
                 size = reader.ReadInt32();
-                switch (id.ToLower())
+                switch (id.ToLower(CultureInfo.InvariantCulture))
                 {
                     case "ifil":
                         verMajorSF = reader.ReadInt16();

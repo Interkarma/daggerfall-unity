@@ -1,4 +1,4 @@
-﻿namespace DaggerfallWorkshop.AudioSynthesis.Midi
+namespace DaggerfallWorkshop.AudioSynthesis.Midi
 {
     using System;
     using System.IO;
@@ -164,7 +164,7 @@
             int channelList = 0;
             int noteOnCount = 0;
             int totalTime = 0;
-            while (!new string(IOHelper.Read8BitChars(reader, 4)).Equals("MTrk"))
+            while (!new string(IOHelper.Read8BitChars(reader, 4)).Equals("MTrk", StringComparison.InvariantCultureIgnoreCase))
             {
                 int length = BigEndianHelper.ReadInt32(reader);
                 while (length > 0)

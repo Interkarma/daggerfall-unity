@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System;
 using System.Text;
 using System.IO;
 using DaggerfallWorkshop.AudioSynthesis.Bank.Components;
@@ -162,7 +163,7 @@ namespace DaggerfallWorkshop.AudioSynthesis.Sfz
                         region.offBy = int.Parse(parameter);
                         break;
                     case "off_mode":
-                        region.offMode = parameter.Equals("fast") ? SfzRegion.OffModeEnum.Fast : SfzRegion.OffModeEnum.Normal;
+                        region.offMode = parameter.Equals("fast", StringComparison.InvariantCultureIgnoreCase) ? SfzRegion.OffModeEnum.Fast : SfzRegion.OffModeEnum.Normal;
                         break;
                     case "delay":
                         region.delay = float.Parse(parameter);
