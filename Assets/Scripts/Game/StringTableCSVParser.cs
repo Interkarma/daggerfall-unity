@@ -97,12 +97,13 @@ public class StringTableCSVParser
                 m.Groups[1].Value.Trim(trimChars),
                 UnescapeCSVvalue(m.Groups[2].Value).Trim(trimChars)
                 )
-            )
-            // Remove first row if it contains "Key" as key and "Value" as value
-            // This is the expected header row but doesn't need to be present
-            // First row will be accepted if any other key/value pair is present instead
-            .Where((pair, index) => !(index == 0 && pair.Key == keyString && pair.Value == valueString))
-            .ToList();
+            ).ToList();
+
+        // Remove first row if it contains "Key" as key and "Value" as value
+        // This is the expected header row but doesn't need to be present
+        // First row will be accepted if any other key/value pair is present instead
+        if (rows.Count > 0 && rows[0].Key == keyString && rows[0].Value == valueString)
+            rows.RemoveAt(0);
 
         return rows;
     }
