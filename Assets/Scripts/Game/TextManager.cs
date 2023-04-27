@@ -46,6 +46,8 @@ namespace DaggerfallWorkshop.Game
         const string textFolderName = "Text";
         const string textColumn = "text";
 
+        readonly string[] newlineSequences = { "\r\n", "\r", "\n" };
+
         public string runtimeInternalStrings = defaultInternalStringsCollectionName;
         public string runtimeRSCStrings = defaultInternalRSCCollectionName;
         public string runtimeFlatStrings = defaultInternalFlatsCollectionName;
@@ -380,7 +382,7 @@ namespace DaggerfallWorkshop.Game
 
         /// <summary>
         /// Gets an array of text where each line is considered an item in array.
-        /// Entry will be read from table and split by newline '\n' character into array.
+        /// Entry will be read from table and split by newline characters into array.
         /// </summary>
         /// <param name="key">Key of text in table.</param>
         /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
@@ -575,7 +577,7 @@ namespace DaggerfallWorkshop.Game
 
         /// <summary>
         /// Gets an array of text where each line is considered an item in array.
-        /// Entry will be read from table and split by newline '\n' character into array.
+        /// Entry will be read from table and split by newline characters into array.
         /// </summary>
         /// <param name="collectionName">Name of table collection.</param>
         /// <param name="key">Key of text in table.</param>
@@ -597,7 +599,7 @@ namespace DaggerfallWorkshop.Game
                     return null;
             }
 
-            cachedList = localizedString.Split('\n');
+            cachedList = localizedString.Split(newlineSequences, StringSplitOptions.None);
             cachedLocalizedTextLists.Add(cacheKey, cachedList);
 
             return cachedList;
