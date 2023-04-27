@@ -36,7 +36,7 @@ public class StringTableCSVParser
     /// </summary>
     /// <param name="filename">Filename of StringTable CSV file.</param>
     /// <returns>KeyValuePair for each row if successful, otherwise null.</returns>
-    public static KeyValuePair<string, string>[] Load(string filename)
+    public static List<KeyValuePair<string, string>> Load(string filename)
     {
         string csvText = null;
 
@@ -64,7 +64,7 @@ public class StringTableCSVParser
             return null;
 
         // Parse into CSV rows
-        KeyValuePair<string, string>[] rows = null;
+        List<KeyValuePair<string, string>> rows;
         try
         {
             rows = ParseCSVRows(csvText);
@@ -84,7 +84,7 @@ public class StringTableCSVParser
     /// </summary>
     /// <param name="csvText">Source CSV data.</param>
     /// <returns>KeyValuePair for each row.</returns>
-    static KeyValuePair<string, string>[] ParseCSVRows(string csvText)
+    static List<KeyValuePair<string, string>> ParseCSVRows(string csvText)
     {
         // Regex pattern inspired by https://gist.github.com/awwsmm/886ac0ce0cef517ad7092915f708175f
         // but without the exponential behavior
@@ -97,14 +97,14 @@ public class StringTableCSVParser
                 m.Groups[1].Value.Trim(trimChars),
                 UnescapeCSVvalue(m.Groups[2].Value).Trim(trimChars)
                 )
-            ).ToList();
-        // Remove first row if it contains "Key" as key and "Value" as value
-        // This is the expected header row but doesn't need to be present
-        // First row will be accepted if any other key/value pair is present instead
-        if (rows.Count > 0 && rows[0].Key == keyString && rows[0].Value == valueString)
-            rows.RemoveAt(0);
+            )
+            // Remove first row if it contains "Key" as key and "Value" as value
+            // This is the expected header row but doesn't need to be present
+            // First row will be accepted if any other key/value pair is present instead
+            .Where((pair, index) => !(index == 0 && pair.Key == keyString && pair.Value == valueString))
+            .ToList();
 
-        return rows.ToArray();
+        return rows;
     }
 
     static string UnescapeCSVvalue(string value)
