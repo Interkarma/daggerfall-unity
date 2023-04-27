@@ -102,10 +102,12 @@ public class StringTableCSVParser
         // First row will be accepted if any other key/value pair is present instead
         if (rows.Count > 0 && rows[0].Key == keyString && rows[0].Value == valueString)
             rows.RemoveAt(0);
+
         return rows.ToArray();
     }
 
-    static string UnescapeCSVvalue(string value) {
+    static string UnescapeCSVvalue(string value)
+    {
         if (value.Length > 0 && value[0] == '"')
         {
             return value.Substring(1, value.Length - 2)
