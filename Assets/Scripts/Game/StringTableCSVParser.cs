@@ -28,6 +28,8 @@ public class StringTableCSVParser
     const string keyString = "Key";
     const string valueString = "Value";
 
+    static readonly char[] trimChars = { '\r', '\n' };
+
     /// <summary>
     /// Loads a CSV patch file for in-game text.
     /// Seeks mods first then StreamingAssets/Text folder.
@@ -89,7 +91,6 @@ public class StringTableCSVParser
         const string linePattern = "(?:\\n|^)([^\",\\n]*),((?:\"[^\"]*\")+|[^\",\\n]*)";
 
         // Split source CSV based on regex matches
-        char[] trimChars = { '\r', '\n' };
         List<KeyValuePair<string, string>> rows = (from Match m in
             Regex.Matches(csvText, linePattern)
             select new KeyValuePair<string, string>(
