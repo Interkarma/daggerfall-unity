@@ -603,6 +603,11 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>The filename of the book or null.</returns>
         internal string GetBookFileName(int id)
         {
+            // Map ID 10000 back to correct value of 5 for "Ark'ay The God" to ensure same book file used for both IDs
+            // This ID is present in some legacy save data and is retained for backwards compatibility only
+            if (id == 10000)
+                id = 5;
+
             // Get name for custom book
             BookMappingEntry entry;
             if (BookReplacement.BookMappingEntries.TryGetValue(id, out entry))
