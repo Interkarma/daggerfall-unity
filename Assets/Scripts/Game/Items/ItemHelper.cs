@@ -637,7 +637,7 @@ namespace DaggerfallWorkshop.Game.Items
                 int id = keys[UnityEngine.Random.Range(0, keys.Length)];
 
                 // Localized book conditions have overriding priority
-                if (id < 256 && LocalizedBook.Exists(id))
+                if (LocalizedBook.Exists(id))
                 {
                     if (LocalizedBookMeetsConditions(id))
                         return id;
