@@ -28,13 +28,15 @@ public class StringTableCSVParser
     const string keyString = "Key";
     const string valueString = "Value";
 
+    static readonly char[] trimChars = { '\r', '\n' };
+
     /// <summary>
     /// Loads a CSV patch file for in-game text.
     /// Seeks mods first then StreamingAssets/Text folder.
     /// </summary>
     /// <param name="filename">Filename of StringTable CSV file.</param>
     /// <returns>KeyValuePair for each row if successful, otherwise null.</returns>
-    public static KeyValuePair<string, string>[] Load(string filename)
+    public static List<KeyValuePair<string, string>> Load(string filename)
     {
         string csvText = null;
 
@@ -62,7 +64,7 @@ public class StringTableCSVParser
             return null;
 
         // Parse into CSV rows
-        KeyValuePair<string, string>[] rows = null;
+        List<KeyValuePair<string, string>> rows;
         try
         {
             rows = ParseCSVRows(csvText);
@@ -82,29 +84,20 @@ public class StringTableCSVParser
     /// </summary>
     /// <param name="csvText">Source CSV data.</param>
     /// <returns>KeyValuePair for each row.</returns>
-    static KeyValuePair<string, string>[] ParseCSVRows(string csvText)
+    static List<KeyValuePair<string, string>> ParseCSVRows(string csvText)
     {
-        // Regex pattern from https://gist.github.com/awwsmm/886ac0ce0cef517ad7092915f708175f
-        const string linePattern = "(?:,|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))";
+        // Regex pattern inspired by https://gist.github.com/awwsmm/886ac0ce0cef517ad7092915f708175f
+        // but without the exponential behavior
+        const string linePattern = "(?:\\n|^)([^\",\\n]*),((?:\"[^\"]*\")+|[^\",\\n]*)";
 
         // Split source CSV based on regex matches
-        char[] trimChars = { '\r', '\n', '\"', ',' };
-        List<KeyValuePair<string, string>> rows = new List<KeyValuePair<string, string>>();
-        string[] matches = (from Match m in Regex.Matches(csvText, linePattern, RegexOptions.ExplicitCapture) select m.Groups[0].Value).ToArray();
-        int pos = 0;
-        while (pos < matches.Length)
-        {
-            if (pos + 1 == matches.Length)
-            {
-                // Exit if no valid pair at end of csv (likely an empty line at end of source data)
-                break;
-            }
-            string key = matches[pos++].Trim(trimChars);
-            string value = matches[pos++].Trim(trimChars);
-            value = value.Replace("\"\"", "\""); // Replace escaped quotes in value with single quote marks
-            KeyValuePair<string, string> kvp = new KeyValuePair<string, string>(key, value);
-            rows.Add(kvp);
-        }
+        List<KeyValuePair<string, string>> rows = (from Match m in
+            Regex.Matches(csvText, linePattern)
+            select new KeyValuePair<string, string>(
+                m.Groups[1].Value.Trim(trimChars),
+                UnescapeCSVvalue(m.Groups[2].Value).Trim(trimChars)
+                )
+            ).ToList();
 
         // Remove first row if it contains "Key" as key and "Value" as value
         // This is the expected header row but doesn't need to be present
@@ -112,7 +105,17 @@ public class StringTableCSVParser
         if (rows.Count > 0 && rows[0].Key == keyString && rows[0].Value == valueString)
             rows.RemoveAt(0);
 
-        return rows.ToArray();
+        return rows;
+    }
+
+    static string UnescapeCSVvalue(string value)
+    {
+        if (value.Length > 0 && value[0] == '"')
+        {
+            return value.Substring(1, value.Length - 2)
+                .Replace("\"\"", "\""); // unescape quote marks
+        }
+        return value;
     }
 
     /// <summary>

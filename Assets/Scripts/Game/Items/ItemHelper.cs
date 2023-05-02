@@ -603,6 +603,11 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>The filename of the book or null.</returns>
         internal string GetBookFileName(int id)
         {
+            // Map ID 10000 back to correct value of 5 for "Ark'ay The God" to ensure same book file used for both IDs
+            // This ID is present in some legacy save data and is retained for backwards compatibility only
+            if (id == 10000)
+                id = 5;
+
             // Get name for custom book
             BookMappingEntry entry;
             if (BookReplacement.BookMappingEntries.TryGetValue(id, out entry))
@@ -630,11 +635,45 @@ namespace DaggerfallWorkshop.Game.Items
             for (int i = 0; i < attempts; i++)
             {
                 int id = keys[UnityEngine.Random.Range(0, keys.Length)];
+
+                // Localized book conditions have overriding priority
+                if (LocalizedBook.Exists(id))
+                {
+                    if (LocalizedBookMeetsConditions(id))
+                        return id;
+                    continue;
+                }
+
                 if (BookReplacement.BookMeetsConditions(id))
                     return id;
             }
 
             return keys.First(x => !BookReplacement.BookMappingEntries.ContainsKey(x));
+        }
+
+        /// <summary>
+        /// Checks if a localized book defines any conditions for distribution.
+        /// </summary>
+        /// <param name="id">ID of localized book.</param>
+        /// <returns>True if localized book exists and conditions met, otherise false.</returns>
+        public bool LocalizedBookMeetsConditions(int id)
+        {
+            // Read localized book file - unknown localized books are considered to not meet conditions
+            string filename = GetBookFileName(id);
+            LocalizedBook book = new LocalizedBook();
+            if (!book.OpenLocalizedBookFile(filename))
+                return false;
+
+            // Resolve global var - invalid global vars not matching table will be ignored
+            int globalVar = -1;
+            bool globalVarSet = false;
+            if (!string.IsNullOrEmpty(book.WhenVarSet) && QuestMachine.Instance.GlobalVarsTable.HasValue(book.WhenVarSet))
+            {
+                globalVar = int.Parse(QuestMachine.Instance.GlobalVarsTable.GetValue("id", book.WhenVarSet));
+                globalVarSet = GameManager.Instance.PlayerEntity.GlobalVars.GetGlobalVar(globalVar);
+            }
+
+            return !book.IsUnique && (globalVar == -1 || globalVarSet);
         }
 
         /// <summary>

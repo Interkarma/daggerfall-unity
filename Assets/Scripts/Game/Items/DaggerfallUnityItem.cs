@@ -1679,6 +1679,11 @@ namespace DaggerfallWorkshop.Game.Items
             repairData.RestoreRepairData(data.repairData);
 
             timeForItemToDisappear = data.timeForItemToDisappear;
+
+            // Map ID 10000 back to correct value of 5 for "Ark'ay The God" to remove bad ID from game.
+            // This ID is present in some legacy save data and is retained for backwards compatibility only
+            if (itemGroup == ItemGroups.Books && message == 10000)
+                message = 5;
         }
 
         /// <summary>
