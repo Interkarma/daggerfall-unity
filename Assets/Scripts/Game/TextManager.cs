@@ -46,6 +46,7 @@ namespace DaggerfallWorkshop.Game
         const string textFolderName = "Text";
         const string textColumn = "text";
 
+        readonly char[] trimAtEnd = { '\n', '\r' };
         readonly string[] newlineSequences = { "\r\n", "\r", "\n" };
 
         public string runtimeInternalStrings = defaultInternalStringsCollectionName;
@@ -599,7 +600,7 @@ namespace DaggerfallWorkshop.Game
                     return null;
             }
 
-            cachedList = localizedString.Split(newlineSequences, StringSplitOptions.None);
+            cachedList = localizedString.TrimEnd(trimAtEnd).Split(newlineSequences, StringSplitOptions.None);
             cachedLocalizedTextLists.Add(cacheKey, cachedList);
 
             return cachedList;
