@@ -33,8 +33,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         private readonly Rect upArrowRect = new Rect(0, 0, 9, 16);
         private readonly Rect downArrowRect = new Rect(0, 136, 9, 16);
         private readonly DFSize arrowsFullSize = new DFSize(9, 152);
-        private Texture2D arrowUpTexture;
-        private Texture2D arrowDownTexture;
+        private Texture2D closedMenuIcon;
+        private Texture2D openMenuIcon;
 
         private List<ListBox.ListItem> listItems;
         private List<Action> clickHandlers;
@@ -60,15 +60,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         void Setup()
         {
-            arrowUpTexture = Resources.Load<Texture2D>("chevron_up");
-            arrowDownTexture = Resources.Load<Texture2D>("chevron_down");
+            closedMenuIcon = Resources.Load<Texture2D>("hamburger_button");
+            openMenuIcon = Resources.Load<Texture2D>("hamburger_button");
 
             // Drop down button
             dropDownToggleButton = DaggerfallUI.AddButton(new Rect(0, 0, 7, 7), this);
             dropDownToggleButton.BackgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.5f);//0.5f);
             dropDownToggleButton.OnMouseClick += DropdownButton_OnMouseClick;
             dropDownToggleButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.OptionsDropdown);
-            dropDownToggleButton.BackgroundTexture = arrowUpTexture;
+            dropDownToggleButton.BackgroundTexture = closedMenuIcon;
 
             // Dropdown options panel
             dropdownPanel = new Panel();
@@ -142,9 +142,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             dropdownPanel.Enabled = expand;
 
             if (dropdownPanel.Enabled)
-                dropDownToggleButton.BackgroundTexture = arrowDownTexture;
+                dropDownToggleButton.BackgroundTexture = openMenuIcon;
             else
-                dropDownToggleButton.BackgroundTexture = arrowUpTexture;
+                dropDownToggleButton.BackgroundTexture = closedMenuIcon;
 
             HideOverlappingHUDElements(expand);
         }
