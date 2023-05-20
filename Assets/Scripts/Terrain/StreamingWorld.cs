@@ -679,7 +679,7 @@ namespace DaggerfallWorkshop
             if (init)
             {
                 DaggerfallUnity.Instance.PruneCache();
-                DaggerfallGC.ThrottledUnloadUnusedAssets();
+                DaggerfallGC.ForcedUnloadUnusedAssets();
             }
 
             // Set terrain neighbours
