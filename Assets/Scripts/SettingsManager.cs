@@ -239,6 +239,7 @@ namespace DaggerfallWorkshop
         public bool EnableQuestDebugger { get; set; }
         public int QuestRumorWeight { get; set; }
         public bool DisableEnemyDeathAlert { get; set; }
+        public bool HideLoginName { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -459,6 +460,7 @@ namespace DaggerfallWorkshop
             EnableQuestDebugger = GetBool(sectionGUI, "EnableQuestDebugger");
             QuestRumorWeight = GetInt(sectionGUI, "QuestRumorWeight", 1, 100);
             DisableEnemyDeathAlert = GetBool(sectionGUI, "DisableEnemyDeathAlert");
+            HideLoginName = GetBool(sectionGUI, "HideLoginName");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
@@ -646,6 +648,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "EnableQuestDebugger", EnableQuestDebugger);
             SetInt(sectionGUI, "QuestRumorWeight", QuestRumorWeight);
             SetBool(sectionGUI, "DisableEnemyDeathAlert", DisableEnemyDeathAlert);
+            SetBool(sectionGUI, "HideLoginName", HideLoginName);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);

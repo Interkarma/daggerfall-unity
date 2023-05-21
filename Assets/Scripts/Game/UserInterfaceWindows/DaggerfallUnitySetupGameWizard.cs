@@ -510,7 +510,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Add settings path text
             TextLabel settingsPathLabel = new TextLabel();
-            settingsPathLabel.Text = DaggerfallUnity.Settings.PersistentDataPath;
+            if (!DaggerfallUnity.Settings.HideLoginName)
+            {
+                settingsPathLabel.Text = DaggerfallUnity.Settings.PersistentDataPath;
+            }
             settingsPathLabel.Position = new Vector2(0, 170);
             settingsPathLabel.HorizontalAlignment = HorizontalAlignment.Center;
             settingsPathLabel.ShadowPosition = Vector2.zero;
