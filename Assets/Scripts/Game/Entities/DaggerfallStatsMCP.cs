@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -33,16 +33,7 @@ namespace DaggerfallWorkshop.Game.Entity
         private class StatsMacroDataSource : MacroDataSource
         {
             private readonly int[] statThresholds = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 1000 };
-            private readonly string[][] statRatings = {
-                new string[] { "pathetic", "frail", "weak", "below average", "about average", "fairly strong", "athletic", "very strong", "powerful", "superhuman" },
-                new string[] { "vegetable-like", "idiotic", "half-witted", "dim", "about average", "cunning", "fairly clever", "very intelligent", "brilliant", "genius" },
-                new string[] { "inane", "submissive", "passive", "distracted", "unassertive", "stable", "confident", "strong-willed", "very focused", "enlightened" },
-                new string[] { "oafish", "bumbling", "clumsy", "awkward", "about average", "spry", "nimble", "dexterous", "very agile", "acrobatic" },
-                new string[] { "sickly", "pitiable", "unsteady", "erratic", "about average", "above average", "very healthy", "hardy", "titanic", "immortal" },
-                new string[] { "abhorrent", "unpopular", "anonymous", "unassuming", "unremarkable", "interesting", "charming", "arresting", "authoritative", "charismatic" },
-                new string[] { "inactive", "sluggish", "very slow", "slow", "about average", "above average", "fast", "fleet-footed", "lightning-fast", "meteoric" },
-                new string[] { "cursed", "hopeless", "ill-favored", "unfortunate", "about average", "fairly lucky", "lucky", "fortunate", "very auspicious", "divinely favored" },
-            };
+            private readonly string[] statRatingKeys = { "strRatings", "intRatings", "wilRatings", "agiRatings", "endRatings", "perRatings", "spdRatings", "lucRatings", };
 
             private DFCareer.Stats lastStat = DFCareer.Stats.Strength;
             private int lastStatValue;
@@ -58,7 +49,7 @@ namespace DaggerfallWorkshop.Game.Entity
                 int i = 0;
                 while (lastStatValue >= statThresholds[i])
                     i++;
-                return statRatings[(int)lastStat][i];
+                return TextManager.Instance.GetLocalizedTextList(statRatingKeys[(int)lastStat])[i];
             }
 
             public override string Str()

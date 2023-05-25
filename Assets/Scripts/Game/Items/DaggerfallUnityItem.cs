@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop.Game.Items
         int worldTextureArchive;
         int worldTextureRecord;
         ItemGroups itemGroup;
+        int artifactIndexBitfield;
         int groupIndex;
         int currentVariant = 0;
         ulong uid;
@@ -171,6 +172,18 @@ namespace DaggerfallWorkshop.Game.Items
         {
             get { return groupIndex; }
             set { SetItem(itemGroup, value); }
+        }
+
+        /// <summary>
+        /// Bitfield used to determine both artifact index and if bitfield is set.
+        /// (ArtifactIndexBitfield & 1) ...check if this bitfield has been set.
+        /// (ArtifactIndexBitfield >> 1) ...to get artifact index or cast to ArtifactsSubTypes.
+        /// Only valid for items where IsArtifact is true.
+        /// If this item is an artifact and this bitfield is 0 then item most likely imported from edited legacy/classic save data.
+        /// </summary>
+        public virtual int ArtifactIndexBitfield
+        {
+            get { return artifactIndexBitfield; }
         }
 
         /// <summary>
@@ -535,7 +548,7 @@ namespace DaggerfallWorkshop.Game.Items
             ItemTemplate itemTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(itemGroup, groupIndex);
 
             // Assign new data
-            shortName = itemTemplate.name; // LOCALIZATION_TODO: Lookup item template name from localization
+            shortName = TextManager.Instance.GetLocalizedItemName(itemTemplate.index, itemTemplate.name);
             this.itemGroup = itemGroup;
             this.groupIndex = groupIndex;
             playerTextureArchive = itemTemplate.playerTextureArchive;
@@ -586,9 +599,10 @@ namespace DaggerfallWorkshop.Game.Items
                 materialValue = 0x200 + materialValue;
 
             // Assign new data
-            shortName = magicItemTemplate.name; // LOCALIZATION_TODO: Lookup magic item template name from localization
+            shortName = TextManager.Instance.GetLocalizedMagicItemName((int)magicItemTemplate.index, magicItemTemplate.name);
             this.itemGroup = (ItemGroups)magicItemTemplate.group;
             this.groupIndex = magicItemTemplate.groupIndex;
+            artifactIndexBitfield = groupIndex << 1 | 1;
             playerTextureArchive = archive;
             playerTextureRecord = record;
             worldTextureArchive = archive;                  // Not sure about artifact world textures, just using player texture for now
@@ -797,6 +811,7 @@ namespace DaggerfallWorkshop.Game.Items
             data.repairData = repairData.GetSaveData();
             data.timeForItemToDisappear = timeForItemToDisappear;
             data.timeHealthLeechLastUsed = timeHealthLeechLastUsed;
+            data.artifactIndexBitfield = artifactIndexBitfield;
 
             return data;
         }
@@ -1497,6 +1512,7 @@ namespace DaggerfallWorkshop.Game.Items
             message = other.message;
             potionRecipeKey = other.potionRecipeKey;
             timeHealthLeechLastUsed = other.timeHealthLeechLastUsed;
+            artifactIndexBitfield = other.artifactIndexBitfield;
 
             isQuestItem = other.isQuestItem;
             questUID = other.questUID;
@@ -1560,6 +1576,9 @@ namespace DaggerfallWorkshop.Game.Items
             // Convert classic recipes to DFU recipe key.
             if ((IsPotion || IsPotionRecipe) && typeDependentData < MagicAndEffects.PotionRecipe.classicRecipeKeys.Length)
                 potionRecipeKey = MagicAndEffects.PotionRecipe.classicRecipeKeys[typeDependentData];
+
+            // Try to generate artifactIndexBitfield if this data is missing from save
+            LegacyArtifactIndexBitfieldCheck();
 
             currentVariant = 0;
             enchantmentPoints = itemRecord.ParsedData.enchantmentPoints;
@@ -1649,13 +1668,41 @@ namespace DaggerfallWorkshop.Game.Items
                 poisonType = Poisons.None;
             potionRecipeKey = data.potionRecipe;
             timeHealthLeechLastUsed = data.timeHealthLeechLastUsed;
+            artifactIndexBitfield = data.artifactIndexBitfield;
             // Convert any old classic recipe items in saves to DFU recipe key.
             if (potionRecipeKey == 0 && (IsPotion || IsPotionRecipe) && typeDependentData < MagicAndEffects.PotionRecipe.classicRecipeKeys.Length)
                 potionRecipeKey = MagicAndEffects.PotionRecipe.classicRecipeKeys[typeDependentData];
 
+            // Try to generate artifactIndexBitfield if this data is missing from save
+            LegacyArtifactIndexBitfieldCheck();
+
             repairData.RestoreRepairData(data.repairData);
 
             timeForItemToDisappear = data.timeForItemToDisappear;
+
+            // Map ID 10000 back to correct value of 5 for "Ark'ay The God" to remove bad ID from game.
+            // This ID is present in some legacy save data and is retained for backwards compatibility only
+            if (itemGroup == ItemGroups.Books && message == 10000)
+                message = 5;
+        }
+
+        /// <summary>
+        /// Older DFU versions matched artifacts for Info text by name to determine index - this is not compatible with localized artifact names.
+        /// Newly created artifacts store their artifact index in artifactIndexBitfield as artifactIndex << 1 | 1.
+        /// When importing an artifact from older DFU saves or classic save the artifactIndexBitfield must be generated for the first time.
+        /// This requires artifact shortName in older/classic saves to be unchanged, but this is no different to older versions.
+        /// Once artifact has artifactIndexBitfield set it will be used to get correct index of Info text for artifact.
+        /// </summary>
+        void LegacyArtifactIndexBitfieldCheck()
+        {
+            // If this item has artifact flag raised and artifactIndexBitfield & 1 not set then item is missing this value from legacy save data
+            // Attempt to generate artifactIndexBitfield by reversing name to enum as used in older versions
+            if (IsArtifact && (artifactIndexBitfield & 1) == 0)
+            {
+                ArtifactsSubTypes artifactSubType = ItemHelper.LegacyGetArtifactSubType(shortName);
+                if (artifactSubType != ArtifactsSubTypes.None)
+                    artifactIndexBitfield = (int)artifactSubType << 1 | 1;
+            }
         }
 
         /// <summary>

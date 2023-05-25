@@ -1115,7 +1115,7 @@ namespace DaggerfallWorkshop.Game
                 panel.Components.Add(slider);
 
             setIndicator(slider);
-            slider.IndicatorOffset = 15;
+            slider.IndicatorOffset = 2;
             slider.Indicator.TextScale = textScale;
             slider.Indicator.TextColor = Color.white;
             slider.Indicator.ShadowColor = Color.clear;

@@ -700,11 +700,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
 
-            if (Input.GetKeyDown(exitKey) ||
+            if (InputManager.Instance.GetBackButtonDown() ||
                 // Toggle window closed with same hotkey used to open it
                 InputManager.Instance.GetKeyDown(automapBinding))
                 isCloseWindowDeferred = true;
-            else if ((Input.GetKeyUp(exitKey) ||
+            else if ((InputManager.Instance.GetBackButtonUp() ||
                 // Toggle window closed with same hotkey used to open it
                 InputManager.Instance.GetKeyUp(automapBinding)) && isCloseWindowDeferred)
             {

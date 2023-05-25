@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallConnect.FallExe;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -829,7 +830,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             EnchantmentSettings[] filteredEnchantments = GetFilteredEnchantments(effect);
 
             // If this is a singleton effect with no secondary options then add directly to powers/side-effects
-            if (filteredEnchantments.Length == 1)
+            // Exclude EnchantmentTypes.SoulBound enchantment where player must select soul to correctly assign enforced side-effects
+            if (filteredEnchantments.Length == 1 && filteredEnchantments[0].ClassicType != EnchantmentTypes.SoulBound)
             {
                 AddEnchantmentSettings(filteredEnchantments[0]);
                 enchantmentPrimaryPicker.CloseWindow();

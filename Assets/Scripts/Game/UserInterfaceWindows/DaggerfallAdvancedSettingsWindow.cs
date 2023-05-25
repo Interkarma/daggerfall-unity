@@ -50,8 +50,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float sectionSpacing = 12f;
         const float itemSpacing = 10f;
 
-        const string closeButtonText = "Close";
-
         // Panels
         List<Panel> pages = new List<Panel>();
         List<Button> pagesButton = new List<Button>();
@@ -208,7 +206,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             closeButton.VerticalAlignment = VerticalAlignment.Bottom;
             closeButton.BackgroundColor = closeButtonColor;
             closeButton.Outline.Enabled = true;
-            closeButton.Label.Text = closeButtonText;
+            closeButton.Label.Text = TextManager.Instance.GetLocalizedText("close", TextCollections.TextSettings);
             closeButton.OnMouseClick += CloseButton_OnMouseClick;
             closeButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GameSetupClose);
             NativePanel.Components.Add(closeButton);
@@ -245,13 +243,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             startInDungeon = AddCheckbox(leftPanel, "startInDungeon", DaggerfallUnity.Settings.StartInDungeon);
             smallerDungeons = AddCheckbox(leftPanel, "smallerDungeons", DaggerfallUnity.Settings.SmallerDungeons);
             randomDungeonTextures = AddSlider(leftPanel, "randomDungeonTextures",
-                DaggerfallUnity.Settings.RandomDungeonTextures, "classic", "climate", "climateOnly", "random", "randomOnly");
+                DaggerfallUnity.Settings.RandomDungeonTextures, TextManager.Instance.GetLocalizedTextList("dungeonTextureModes", TextCollections.TextSettings));
             cameraRecoilStrength = AddSlider(leftPanel, "cameraRecoilStrength",
-                DaggerfallUnity.Settings.CameraRecoilStrength, "Off", "Low (25%)", "Medium (50%)", "High (75%)", "V. High(100%)");
+                DaggerfallUnity.Settings.CameraRecoilStrength, TextManager.Instance.GetLocalizedTextList("cameraRecoilStrengths", TextCollections.TextSettings));
 
             // Controls
             AddSectionTitle(leftPanel, "controls");
-            mouseSensitivity = AddSlider(leftPanel, "mouseSensitivity", 0.1f, 8.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
+            mouseSensitivity = AddSlider(leftPanel, "mouseSensitivity", 0.1f, 16.0f, DaggerfallUnity.Settings.MouseLookSensitivity);
             //weaponSensitivity = AddSlider(leftPanel, "weaponSensitivity", 0.1f, 10.0f, DaggerfallUnity.Settings.WeaponSensitivity);
             movementAcceleration = AddCheckbox(leftPanel, "movementAcceleration", DaggerfallUnity.Settings.MovementAcceleration);
             weaponAttackThreshold = AddTextbox(leftPanel, "weaponAttackThreshold", DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
@@ -294,7 +292,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             vitalsIndicators = AddCheckbox(leftPanel, "vitalsIndicators", DaggerfallUnity.Settings.EnableVitalsIndicators);
             interactionModeIcon = AddSlider(leftPanel, "interactionModeIcon",
                 Enum.IsDefined(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) ? (int)Enum.Parse(typeof(InteractionModeIconModes), DaggerfallUnity.Settings.InteractionModeIcon) : 0,
-                Enum.GetNames(typeof(InteractionModeIconModes)));
+                TextManager.Instance.GetLocalizedTextList("interactionModeIconModes", TextCollections.TextSettings));
             arrowCounter = AddCheckbox(leftPanel, "arrowCounter", DaggerfallUnity.Settings.EnableArrowCounter);
 
             y = 0;
@@ -307,9 +305,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enableModernConversationStyleInTalkWindow = AddCheckbox(rightPanel, "enableModernConversationStyleInTalkWindow", DaggerfallUnity.Settings.EnableModernConversationStyleInTalkWindow);
             iconsPositioningScheme = AddSlider(rightPanel, "iconsPositioningScheme",
                 Enum.IsDefined(typeof(IconsPositioningSchemes), DaggerfallUnity.Settings.IconsPositioningScheme) ? (int)Enum.Parse(typeof(IconsPositioningSchemes), DaggerfallUnity.Settings.IconsPositioningScheme) : 0,
-                Enum.GetNames(typeof(IconsPositioningSchemes)));
+                TextManager.Instance.GetLocalizedTextList("iconsPositioningSchemes", TextCollections.TextSettings));
             helmAndShieldMaterialDisplay = AddSlider(rightPanel, "helmAndShieldMaterialDisplay",
-                DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, "off", "noLeatChai", "noLeat", "on");
+                DaggerfallUnity.Settings.HelmAndShieldMaterialDisplay, TextManager.Instance.GetLocalizedTextList("helmAndShieldMaterialDisplay", TextCollections.TextSettings));
             geographicBackgrounds = AddCheckbox(rightPanel, "geographicBackgrounds", DaggerfallUnity.Settings.EnableGeographicBackgrounds);
             dungeonExitWagonPrompt = AddCheckbox(rightPanel, "dungeonExitWagonPrompt", DaggerfallUnity.Settings.DungeonExitWagonPrompt);
             travelMapLocationsOutline = AddCheckbox(rightPanel, "travelMapLocationsOutline", DaggerfallUnity.Settings.TravelMapLocationsOutline);
@@ -361,9 +359,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             fullscreen.OnToggleState += Fullscreen_OnToggleState;
             //exclusiveFullscreen.OnToggleState += ExclusiveFullscreen_OnToggleState;
             runInBackground = AddCheckbox(leftPanel, "runInBackground", DaggerfallUnity.Settings.RunInBackground);
-            qualityLevel = AddSlider(leftPanel, "qualityLevel", DaggerfallUnity.Settings.QualityLevel, QualitySettings.names);
+            qualityLevel = AddSlider(leftPanel, "qualityLevel", DaggerfallUnity.Settings.QualityLevel, TextManager.Instance.GetLocalizedTextList("qualitySettings", TextCollections.TextSettings));
             qualityLevel.OnScroll += QualityLevel_OnScroll;
-            string[] filterModes = new string[] { "Point", "Bilinear", "Trilinear" };
+            string[] filterModes = TextManager.Instance.GetLocalizedTextList("filterModes", TextCollections.TextSettings);
             mainFilterMode = AddSlider(leftPanel, "mainFilterMode", DaggerfallUnity.Settings.MainFilterMode, filterModes);
             guiFilterMode = AddSlider(leftPanel, "guiFilterMode", DaggerfallUnity.Settings.GUIFilterMode, filterModes);
             videoFilterMode = AddSlider(leftPanel, "videoFilterMode", DaggerfallUnity.Settings.VideoFilterMode, filterModes);
@@ -375,17 +373,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             fovSlider = AddSlider(rightPanel, "fovSlider", 60, 120, DaggerfallUnity.Settings.FieldOfView);
             terrainDistance = AddSlider(rightPanel, "terrainDistance", 1, 4, DaggerfallUnity.Settings.TerrainDistance);
             shadowResolutionMode = AddSlider(rightPanel, "shadowResolutionMode",
-                DaggerfallUnity.Settings.ShadowResolutionMode, "Low", "Medium", "High", "Very High");
+                DaggerfallUnity.Settings.ShadowResolutionMode, TextManager.Instance.GetLocalizedTextList("shadowResolutionModes", TextCollections.TextSettings));
             dungeonLightShadows = AddCheckbox(rightPanel, "dungeonLightShadows", DaggerfallUnity.Settings.DungeonLightShadows);
             interiorLightShadows = AddCheckbox(rightPanel, "interiorLightShadows", DaggerfallUnity.Settings.InteriorLightShadows);
             exteriorLightShadows = AddCheckbox(rightPanel, "exteriorLightShadows", DaggerfallUnity.Settings.ExteriorLightShadows);
             ambientLitInteriors = AddCheckbox(rightPanel, "ambientLitInteriors", DaggerfallUnity.Settings.AmbientLitInteriors);
-            string textureArrayLabel = "Texture Arrays: ";
+            string textureArrayLabel = TextManager.Instance.GetLocalizedText("textureArrayLabel", TextCollections.TextSettings);
             if (!SystemInfo.supports2DArrayTextures)
-                textureArrayLabel += "Unsupported";
+                textureArrayLabel += TextManager.Instance.GetLocalizedText("unsupported", TextCollections.TextSettings);
             else
-                textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? "Enabled" : "Disabled";
-            AddInfo(rightPanel, textureArrayLabel, "Improved implementation of terrain textures, with better performance and modding support");
+                textureArrayLabel += DaggerfallUnity.Settings.EnableTextureArrays ? TextManager.Instance.GetLocalizedText("enabled", TextCollections.TextSettings) : TextManager.Instance.GetLocalizedText("disabled", TextCollections.TextSettings);
+            AddInfo(rightPanel, textureArrayLabel, TextManager.Instance.GetLocalizedText("textureArrayInfo", TextCollections.TextSettings));
         }
 
         private void Accessibility(Panel leftPanel, Panel rightPanel)

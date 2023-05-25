@@ -98,6 +98,7 @@ namespace DaggerfallWorkshop
             public int quality;
             public DFLocation.BuildingTypes buildingType;
             public int lastLockpickAttempt;
+            public string customUserDisplayName;
         }
 
         public struct NearbyObject
@@ -119,6 +120,15 @@ namespace DaggerfallWorkshop
             Humanoid = 32,
             Animal = 64,
         }
+
+        /// <summary>
+        /// Data used when performing building name refresh.
+        /// </summary>
+        struct BuildingRenameOperation
+        {
+            public int buildingKey;
+            public string displayName;
+        };
 
         #endregion
 
@@ -153,10 +163,24 @@ namespace DaggerfallWorkshop
         /// </summary>
         public int CurrentRegionIndex
         {
-            get { if (currentPoliticIndex == 64)
-                    return 31; // High Rock sea coast
+            get {
+                // Determine region from current politic index
+                int result = 0;
+                if (currentPoliticIndex == 64)
+                    result = 31; // High Rock sea coast
                   else
-                    return currentPoliticIndex - 128; }
+                    result = currentPoliticIndex - 128;
+
+                // Patch known bad value to Wrothgarian Mountains
+                if (result == 105)
+                    result = 16;
+
+                // Clamp any out of range results to 0
+                if (result < 0 || result >= 62)
+                    result = 0;
+
+                return result;
+            }
         }
 
         /// <summary>
@@ -212,11 +236,26 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Gets current region name based on world position.
+        /// Gets non-localized current region name based on world position.
+        /// IMPORTANT: This is used when matching regions for NPC knowledge in TalkManager and should not be localized.
         /// </summary>
         public string CurrentRegionName
         {
             get { return regionName; }
+        }
+
+        /// <summary>
+        /// Gets localized current region name based on world position.
+        /// This should only be used for display strings in UI.
+        /// </summary>
+        public string CurrentLocalizedRegionName
+        {
+            get { return TextManager.Instance.GetLocalizedRegionName(CurrentRegionIndex); }
+        }
+
+        public string CurrentLocalizedLocationName
+        {
+            get { return TextManager.Instance.GetLocalizedLocationName(currentLocation.MapTableData.MapId, currentLocation.Name); }
         }
 
         /// <summary>
@@ -553,9 +592,9 @@ namespace DaggerfallWorkshop
             if (currentPoliticIndex >= 128)
                 regionName = dfUnity.ContentReader.MapFileReader.GetRegionName(currentPoliticIndex - 128);
             else if (currentPoliticIndex == 64)
-                regionName = "Ocean";
+                regionName = TextManager.Instance.GetLocalizedText("ocean");
             else
-                regionName = "Unknown";
+                regionName = TextManager.Instance.GetLocalizedText("unknownUpper");
 
             // Get region data
             currentRegion = dfUnity.ContentReader.MapFileReader.GetRegion(CurrentRegionIndex);
@@ -1046,6 +1085,21 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Sets custom name field for discovered building in current location.
+        /// </summary>
+        /// <param name="buildingKey">Building key in current location.</param>
+        /// <param name="customName">Custom name of building. Set null or empty to remove custom name.</param>
+        public void SetDiscoveredBuildingCustomName(int buildingKey, string customName)
+        {
+            DiscoveredBuilding discoveredBuilding;
+            if (GetDiscoveredBuilding(buildingKey, out discoveredBuilding))
+            {
+                discoveredBuilding.customUserDisplayName = customName;
+                UpdateDiscoveredBuilding(discoveredBuilding);
+            }
+        }
+
+        /// <summary>
         /// Gets skill value of last lockpick attempt on this building in current location.
         /// </summary>
         /// <param name="buildingKey">Building key in current location.</param>
@@ -1072,6 +1126,68 @@ namespace DaggerfallWorkshop
 
             discoveredBuilding.lastLockpickAttempt = skillValue;
             UpdateDiscoveredBuilding(discoveredBuilding);
+        }
+
+        /// <summary>
+        /// Refresh any changed non-residence building names in current location.
+        /// Allows localized or otherwise changed building names to replace previously discovered building names.
+        /// Will change names on buildings with a random NPC name.
+        /// Does not affect player custom names or other properties of discovery data other than display name.
+        /// </summary>
+        public void RefreshBuildingNamesInCurrentLocation()
+        {
+            // Must have a location loaded
+            if (!CurrentLocation.Loaded)
+                return;
+
+            // Get building directory for location
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (!buildingDirectory)
+                return;
+
+            // Get discovered location
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+            DiscoveredLocation dl = discoveredLocations[mapPixelID];
+            if (dl.discoveredBuildings == null || dl.discoveredBuildings.Count == 0)
+                return;
+
+            // Enumerate changed building names
+            List<BuildingRenameOperation> ops = new List<BuildingRenameOperation>();            
+            foreach (DiscoveredBuilding db in dl.discoveredBuildings.Values)
+            {
+                // Get detailed building data from directory
+                BuildingSummary buildingSummary;
+                if (!buildingDirectory.GetBuildingSummary(db.buildingKey, out buildingSummary))
+                    continue;
+
+                // Ignore residences
+                if (RMBLayout.IsResidence(buildingSummary.BuildingType))
+                    continue;
+
+                // Expand building name
+                string displayName = BuildingNames.GetName(
+                    buildingSummary.NameSeed,
+                    buildingSummary.BuildingType,
+                    buildingSummary.FactionId,
+                    buildingDirectory.LocationData.Name,
+                    TextManager.Instance.GetLocalizedRegionName(buildingDirectory.LocationData.RegionIndex));
+
+                // Schedule name change
+                if (!string.Equals(displayName, db.displayName))
+                    ops.Add(new BuildingRenameOperation() { buildingKey = buildingSummary.buildingKey, displayName = displayName });
+            }
+
+            // Update building names
+            foreach (BuildingRenameOperation op in ops)
+            {
+                DiscoveredBuilding discoveredBuilding;
+                if (!GetDiscoveredBuilding(op.buildingKey, out discoveredBuilding))
+                    return;
+
+                Debug.LogFormat("Renaming '{0}' to '{1}'", discoveredBuilding.displayName, op.displayName);
+                discoveredBuilding.displayName = op.displayName;
+                UpdateDiscoveredBuilding(discoveredBuilding);
+            }
         }
 
         /// <summary>
@@ -1204,7 +1320,7 @@ namespace DaggerfallWorkshop
                     buildingSummary.BuildingType,
                     buildingSummary.FactionId,
                     buildingDirectory.LocationData.Name,
-                    buildingDirectory.LocationData.RegionName);
+                    TextManager.Instance.GetLocalizedRegionName(buildingDirectory.LocationData.RegionIndex));
             }
             buildingDiscoveryData.factionID = buildingSummary.FactionId;
             buildingDiscoveryData.quality = buildingSummary.Quality;

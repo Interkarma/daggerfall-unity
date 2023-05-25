@@ -754,7 +754,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         /// <param name="source">The content of source files.</param>
         /// <returns>The compiled assembly or null.</returns>
-        public static Assembly CompileFromSourceAssets(string[] source)
+        public static Assembly CompileFromSourceAssets(string[] source, string modName = "(no mod name)")
         {
             if (source == null || source.Length < 1)
             {
@@ -771,7 +771,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
             catch (Exception ex)
             {
-                Debug.LogError(ex.Message);
+                Debug.LogError($"[{modName}] {ex.Message}");
                 return null;
             }
         }

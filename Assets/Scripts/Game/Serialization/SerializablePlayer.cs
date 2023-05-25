@@ -185,6 +185,10 @@ namespace DaggerfallWorkshop.Game.Serialization
                 data.playerPosition.exteriorDoors = playerEnterExit.ExteriorDoors;
                 data.playerPosition.buildingDiscoveryData = playerEnterExit.BuildingDiscoveryData;
             }
+            if (playerEnterExit.IsPlayerInsideDungeon)
+            {
+                data.playerPosition.playerTeleportedIntoDungeon = playerEnterExit.PlayerTeleportedIntoDungeon;
+            }
             // Store guild memberships
             data.guildMemberships = GameManager.Instance.GuildManager.GetMembershipData();
             data.vampireMemberships = GameManager.Instance.GuildManager.GetMembershipData(true);
@@ -395,6 +399,11 @@ namespace DaggerfallWorkshop.Game.Serialization
                 playerEnterExit.IsPlayerInsideResidence = data.playerPosition.insideResidence;
             }
 
+            if (data.playerPosition.insideDungeon)
+            {
+                playerEnterExit.PlayerTeleportedIntoDungeon = data.playerPosition.playerTeleportedIntoDungeon;
+            }
+
             // Lower player position flag if inside with no doors
             if (data.playerPosition.insideBuilding && !hasExteriorDoors)
             {
@@ -464,8 +473,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             }
 
             // Restore orientation and crouch state
-            playerMouseLook.Yaw = positionData.yaw;
-            playerMouseLook.Pitch = positionData.pitch;
+            playerMouseLook.SetFacing(positionData.yaw, positionData.pitch); // Gives PlayerMouseLook the opportunity to initialize data members for new smoothing code
             playerMotor.IsCrouching = positionData.isCrouching;
         }
 

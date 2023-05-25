@@ -173,7 +173,7 @@ Message:  1022
 <ce>                            Lady Magnessen
 
 Message:  1026
-<ce>             You approached by a young page who smiles in
+<ce>           	You are approached by a young page who smiles in
 <ce>             recognition and does not ask your name before
 <ce>              he hands you a letter addressed to you. To
 <ce>               all of your questions, he merely responds

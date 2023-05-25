@@ -200,7 +200,7 @@ _S.03_ task:
 
 _greklith_ task:
 	injured _guards_ 
-	create foe _F.01_ every 2 minutes 20 times with 50% success 
+	create foe _F.01_ every 2 minutes 5 times with 50% success 
 	say 1050 
 
 _S.05_ task:

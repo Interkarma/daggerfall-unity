@@ -35,6 +35,8 @@ namespace DaggerfallConnect
 
         /// <summary>
         /// Name of the parent region.
+        /// IMPORTANT: This RegionName is used in many places as a string key and must always be the non-localized version as found in MAPS.BSA.
+        ///            Anywhere using this for display to player should use TextProvider.GetLocalizedRegionName() instead.
         /// </summary>
         public string RegionName;
 

@@ -22,6 +22,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     {
         public static readonly string EffectKey = "Levitate";
 
+        LevitateMotor levitateMotor;
+        EnemyMotor enemyMotor;
+
         public override void SetProperties()
         {
             properties.Key = EffectKey;
@@ -96,13 +99,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Enable levitation for player or enemies
             if (entityBehaviour.EntityType == EntityTypes.Player)
             {
-                GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>().IsLevitating = true;
+                SetLevitateMotor(true);
             }
             else if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
             {
-                EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
-                if (enemyMotor)
-                    enemyMotor.IsLevitating = true;
+                SetEnemyMotor(true);
             }
         }
 
@@ -116,13 +117,39 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             // Disable levitation for player or enemies
             if (entityBehaviour.EntityType == EntityTypes.Player)
             {
-                GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>().IsLevitating = GameManager.Instance.PlayerEntity.NoClipMode;
+                SetLevitateMotor(GameManager.Instance.PlayerEntity.NoClipMode);
             }
             else if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
             {
-                EnemyMotor enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
-                if (enemyMotor)
-                    enemyMotor.IsLevitating = false;
+                SetEnemyMotor(false);
+            }
+        }
+
+        void SetLevitateMotor(bool state)
+        {
+            if (levitateMotor)
+                levitateMotor.IsLevitating = state;
+            else
+            {
+                levitateMotor = GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>();
+                if (levitateMotor)
+                    levitateMotor.IsLevitating = state;
+            }
+        }
+
+        void SetEnemyMotor(bool state)
+        {
+            if (enemyMotor)
+                enemyMotor.IsLevitating = state;
+            else
+            {
+                DaggerfallEntityBehaviour entityBehaviour = GetPeeredEntityBehaviour(manager);
+                if (entityBehaviour)
+                {
+                    enemyMotor = entityBehaviour.GetComponent<EnemyMotor>();
+                    if (enemyMotor)
+                        enemyMotor.IsLevitating = state;
+                }
             }
         }
     }

@@ -93,7 +93,7 @@ namespace DaggerfallConnect.Arena2
         /// <summary>
         /// Special Text Resource formatting bytes.
         /// http://www.uesp.net/wiki/Daggerfall:Text_Record_Format
-        /// This is a work in progress.
+        /// New custom codes to be 0x100 and above
         /// </summary>
         public enum Formatting
         {
@@ -121,6 +121,11 @@ namespace DaggerfallConnect.Arena2
             InputCursorPositioner = 0xf8,
             SubrecordSeparator = 0xff,
             EndOfRecord = 0xfe,
+
+            // Custom codes
+            Color = 0x100,
+            Scale = 0x101,
+            Image = 0x102,
 
             Nothing = 0xffff,
         }

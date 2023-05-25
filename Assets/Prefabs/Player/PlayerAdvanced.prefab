@@ -717,7 +717,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.8, z: 0}
+  m_LocalPosition: {x: 0, y: 0.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4832112164805246}
@@ -798,11 +798,9 @@ MonoBehaviour:
   invertMouseY: 0
   lockCursor: 1
   sensitivity: {x: 1, y: 1}
-  smoothing: {x: 3, y: 3}
   sensitivityScale: 1
   joystickSensitivityScale: 1
   enableMouseLook: 1
-  enableSmoothing: 0
   simpleCursorLock: 0
   characterBody: {fileID: 100000}
 --- !u!114 &114619655177981728
@@ -855,6 +853,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRetroPresenter: 0
+  retroClearerCamera: {fileID: 0}
 --- !u!114 &1573166380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -913,7 +912,9 @@ MonoBehaviour:
   m_ShowCustomSorter: 0
   breakBeforeColorGrading: 0
   m_BeforeTransparentBundles: []
-  m_BeforeStackBundles: []
+  m_BeforeStackBundles:
+  - assemblyQualifiedName: ColorBoost, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
   m_AfterStackBundles: []
 --- !u!1 &100004
 GameObject:

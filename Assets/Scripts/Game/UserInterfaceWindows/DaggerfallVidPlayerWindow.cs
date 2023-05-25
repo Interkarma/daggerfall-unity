@@ -73,6 +73,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             PlayOnStart = playOnStart;
         }
 
+        public DaggerfallVidPlayerWindow(IUserInterfaceManager uiManager, string playOnStart, bool endOnAnyKey)
+            : base(uiManager)
+        {
+            PlayOnStart = playOnStart;
+            EndOnAnyKey = endOnAnyKey;
+        }
+
         protected override void Setup()
         {
             if (useCustomVideo = VideoReplacement.TryImportMovie(PlayOnStart, out customVideo))
@@ -115,7 +122,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (useCustomVideo)
             {
                 if (endOnAnyKey && InputManager.Instance.AnyKeyDownIgnoreAxisBinds ||
-                    Input.GetKeyDown(exitKey) ||
+                    InputManager.Instance.GetBackButtonDown() ||
                     !customVideo.IsPlaying)
                 {
                     customVideo.Stop();
@@ -131,7 +138,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 if (endOnAnyKey && InputManager.Instance.AnyKeyDownIgnoreAxisBinds ||
-                    Input.GetKeyDown(exitKey) ||
+                    InputManager.Instance.GetBackButtonDown() ||
                     video.VidFile.EndOfFile && video.Playing)
                 {
                     video.Playing = false;

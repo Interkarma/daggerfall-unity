@@ -97,8 +97,17 @@ namespace DaggerfallWorkshop.Game.Utility
                 var msg = new StringBuilder();
                 foreach (CompilerError error in result.Errors)
                 {
-                    msg.AppendFormat("Error ({0}): {1}\n",
-                        error.ErrorNumber, error.ErrorText);
+                    string errorCodeText = !string.IsNullOrEmpty(error.ErrorNumber) ? $"CS{error.ErrorNumber}" : string.Empty;
+                    string errorText = error.ErrorText;
+                    string numLineText = $"line#{error.Line}";
+                    string numColumnText = $"column#{error.Column}";
+                    string lineContentText = string.Empty;
+
+                    if (int.TryParse(error.FileName, out int fileIndex) && GetSpecificLine(sources[fileIndex], error.Line, out lineContentText))
+                        lineContentText = $"\"{lineContentText}\"";
+
+                    msg.AppendLine($"<b>Compilation Error {errorCodeText}</b>: {errorText}");
+                    msg.AppendLine($"\tat {numLineText} {numColumnText} {lineContentText}");
                 }
 
                 throw new Exception(msg.ToString());
@@ -107,5 +116,20 @@ namespace DaggerfallWorkshop.Game.Utility
             // Return the assembly
             return result.CompiledAssembly;
         }
+
+        static bool GetSpecificLine(string text, int lineNumber, out string line)
+        {
+            bool success;
+            var reader = new System.IO.StringReader(text);
+            {
+                int i = 0;
+                do line = reader.ReadLine();
+                while (line != null && ++i < lineNumber);
+                success = i == lineNumber;
+            }
+            reader.Close();
+            return success;
+        }
+
     }
 }

@@ -38,7 +38,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         internal string Title;
 
         /// <summary>
-        /// An unique ID used for serialization; must be between 112 and <see cref="int.MaxValue"/>.
+        /// An unique ID used for serialization; must be between 256 and <see cref="int.MaxValue"/> excluding 10000.
         /// </summary>
         [SerializeField]
         internal int ID;
@@ -88,7 +88,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         /// <param name="bookIDNameMapping">Map that associates id to title.</param>
         /// <remarks>
-        /// Each entry is associated to a numeric id; 1-111 and 10000 are reserved by classic books.
+        /// Each entry is associated to a numeric id; 0-255 and 10000 are reserved by classic books.
         /// Titles are added to given bookID dictionary with classic ids.
         /// File names (without TXT extension) are added to another dictionary for retrieval of book resource.
         /// </remarks>
@@ -116,6 +116,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                             if (bookIDNameMapping.ContainsKey(entry.ID))
                             {
                                 Debug.LogErrorFormat("Failed to register book {0} because id {1} is already in use by {2}.", entry.Title, entry.ID, bookIDNameMapping[entry.ID]);
+                                continue;
+                            }
+                            else if (entry.ID == 10000)
+                            {
+                                Debug.LogErrorFormat("Failed to register book {0} because id 10000 is reserved.", entry.Title);
                                 continue;
                             }
 

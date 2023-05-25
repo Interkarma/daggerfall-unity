@@ -870,6 +870,8 @@ namespace DaggerfallWorkshop.Game
 
             // Player is now outside building
             isPlayerInside = false;
+            isPlayerInsideOpenShop = false;
+            IsPlayerInsideTavern = false;
             PlayerTeleportedIntoDungeon = false;
             buildingType = DFLocation.BuildingTypes.None;
             factionID = 0;
@@ -1106,6 +1108,8 @@ namespace DaggerfallWorkshop.Game
             if (DungeonParent != null) DungeonParent.SetActive(true);
 
             isPlayerInside = true;
+            isPlayerInsideOpenShop = false;
+            IsPlayerInsideTavern = false;
             isPlayerInsideDungeon = true;
 
             GameManager.UpdateShadowDistance();
@@ -1380,7 +1384,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     // Show "You are entering %s"
                     string youAreEntering = TextManager.Instance.GetLocalizedText("youAreEntering");
-                    youAreEntering = youAreEntering.Replace("%s", location.Name);
+                    youAreEntering = youAreEntering.Replace("%s", TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name));
                     DaggerfallUI.AddHUDText(youAreEntering, 2);
 
                     // Check room rentals in this location, and display how long any rooms are rented for

@@ -1,0 +1,111 @@
+Title: Wayrest, Jewel of the Bay
+Author: Sathyr Longleat
+IsNaughty: False
+Price: 348
+IsUnique: False
+WhenVarSet: 
+Content:
+
+
+[/font=2]
+
+[/center]Wayrest,
+
+[/center]Jewel
+
+[/center]of the
+
+[/center]Bay
+
+
+
+[/font=4]
+
+[/center]
+
+[/center]     Wayrest is one of the most glorious cities of western
+Tamriel: sparkling in her contemporary beauty, lustrous by
+her past. She is prized above all cities in High Rock -- no
+other city has contributed, and continues to contribute so
+much to the culture of the Bretons. The spirits of her genius
+children continue to haunt the streets; you can see them in
+the gabled roofs, grand boulevards, aromatic
+marketplaces. The people of Wayrest have an instictive
+appreciation of their past, but are not obsessed by it, as
+the people of Daggerfall seem to be. One feels that one is in
+a modern city when one visits Wayrest, but there is a magic
+in the air that could only come from thirty-two centuries of
+civilization.
+
+     It is difficult for historians to declare a certain date
+for the foundation of Wayrest. A settlement of some variety
+had been existence where the Bjoulsae River feeds the Iliac
+Bay possibly since the 800th year of the First Era. The
+traders and fishermen of Wayrest were surrounded by hostile
+parties: the orc capitol Orsinium had grown like a poison
+weed to the north, and the Akaviri pirates and raiders
+crowded the islands to the west. There is no mystery to
+Wayrest's name. After the fighting most travellers had to
+endure passing through the eastern end of the Iliac Bay, the
+little fishing village on the Bjoulsae was a welcome rest.
+
+      Nowhere in the much vaunted censuses of the Skyrim
+Occupation is Wayrest mentioned. In the Annals of
+Daggerfall, King Joile's letter to Gaiden Shinji of the
+Order of Diagna contains the following reference: "The orcs
+have been much plaguing the Wayresters and impeding traffic
+to the heart of the land." The date given for the letter was
+1E 948.
+
+      Wayrest only truly bloomed after the razing of Orsinium
+in 1E 980. The hard-working traders and merchants were
+instrumental in forming the Masconian Trade Way and thus
+reducing the pirate activity on the Bay. At this time,
+Wayrest occupied both banks of the Bjoulsae. A successful
+mercantile family, the Gardners, built a walled palace on
+the High Rock side of the river and, over time, allowed banks
+and other businesses within its walls. It was a Gardner,
+Farangel, who was proclaimed king when Wayrest accepted
+ambassadors from the Camorian Empire, and was granted the
+right to call itself a kingdom in the 1100th year of the 1st
+Era.
+
+      Although Wayrest became a kingdom under the command of
+one family, the merchants continued to wield incredible
+power. Many economists have alleged that Wayrest's eternal
+wealth, despite all her hardships, comes from this rare
+relationship between the merchants and the crown. The Gardner
+Dynasty fell, followed by the Cumberland Dynasty, which was
+followed by the Horley Dynasty, and finally, in the Third
+Era, the Septim Dynasty. No citizen of another kingdom of
+comparable age can, with one hand, name all the families who
+have ever ruled. Never has a king of Wayrest been deposed by
+revolution or assassination. Except for those of the Septim
+family, every king of Wayrest can trace his line back to a
+merchant prince of Wayrest. The merchants and king respect
+one another, and this relationship strengthens both.
+
+      One need only walk down the great boulevard of Wayrest
+to see physical proof of this unique alliance. Going north
+to south, Wayrest Boulevard suddenly divides, one half
+going west and the other going east. Both halfs end in
+identical squares: one at Castle Wayrest, the original
+palace of Aphren Gardner, and the other at Cumberland
+Square, where the oldest and wealthiest marketplace in
+Wayrest. The message here is clear: the king and the merchants
+are joined and equal.
+
+      Wayrest has survived blights, droughts, plagues,
+piracy, invasions, and war with good humor and
+practicality. In 1E 2702, the entire population of the city
+was forced to move into the walled estate of the Gardners as
+protection against the pirates, Akaviri raiders, and
+Thrassian plague. A less resourceful community would have
+withered, but the Wayresters have survived to enrich Tamriel
+generation after generation.
+
+
+
+
+
+ 

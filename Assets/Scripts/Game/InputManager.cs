@@ -51,6 +51,24 @@ namespace DaggerfallWorkshop.Game
         const float controllerCursorHorizontalSpeed = 900.0f;
         const float controllerCursorVerticalSpeed = 900.0f;
 
+        // Use 'int' because Unity creates overhead for hashed lookups of enums
+        static readonly HashSet<int> unacceptedAnyKeys = new HashSet<int>()
+        {
+            (int)KeyCode.LeftShift,
+            (int)KeyCode.RightShift,
+            (int)KeyCode.LeftAlt,
+            (int)KeyCode.RightAlt,
+            (int)KeyCode.AltGr,
+            (int)KeyCode.LeftControl,
+            (int)KeyCode.RightControl,
+            (int)KeyCode.LeftWindows,
+            (int)KeyCode.RightWindows,
+            (int)KeyCode.LeftCommand,
+            (int)KeyCode.RightCommand,
+            (int)KeyCode.LeftApple,
+            (int)KeyCode.RightApple,
+        };
+
         KeyCode[] keyCodeList;
         KeyCode[] reservedKeys = new KeyCode[] { };
 
@@ -71,7 +89,7 @@ namespace DaggerfallWorkshop.Game
         Dictionary<int, bool> axisActionInvertDict = new Dictionary<int, bool>();
         Dictionary<KeyCode, JoystickUIActions> joystickUIDict = new Dictionary<KeyCode, JoystickUIActions>();
 
-        KeyCode[] joystickUICache = new KeyCode[3]; //leftClick, rightClick, MiddleClick
+        KeyCode[] joystickUICache = new KeyCode[4]; //leftClick, rightClick, MiddleClick, Back
         String[] cameraAxisBindingCache = new String[2];
         String[] movementAxisBindingCache = new String[2];
         Dictionary<int, bool> modifierHeldFirstDict = new Dictionary<int, bool>();
@@ -150,7 +168,7 @@ namespace DaggerfallWorkshop.Game
 
         public KeyCode[] KeyCodeList
         {
-            get { return GetKeyCodeList(); }
+            get { return keyCodeList ?? (keyCodeList = GetKeyCodeList()); }
         }
 
         public KeyCode[] ReservedKeys
@@ -297,9 +315,12 @@ namespace DaggerfallWorkshop.Game
         {
             LeftClick,
             RightClick,
-            MiddleClick
+            MiddleClick,
+            Back
         }
 
+        // Note: renaming any of these will break backwards compatibility
+        // for other players' saved keybinds.
         public enum Actions
         {
             Escape,
@@ -1016,8 +1037,9 @@ namespace DaggerfallWorkshop.Game
             setAxisBinding("Axis5", AxisActions.CameraVertical);
 
             setJoystickUIBinding(KeyCode.JoystickButton0, JoystickUIActions.LeftClick);
-            setJoystickUIBinding(KeyCode.JoystickButton1, JoystickUIActions.RightClick);
+            setJoystickUIBinding(KeyCode.JoystickButton3, JoystickUIActions.RightClick);
             setJoystickUIBinding(KeyCode.JoystickButton2, JoystickUIActions.MiddleClick);
+            setJoystickUIBinding(KeyCode.JoystickButton1, JoystickUIActions.Back);
             UpdateBindingCache();
 
             foreach (AxisActions axisAction in Enum.GetValues(typeof(AxisActions)))
@@ -1038,6 +1060,21 @@ namespace DaggerfallWorkshop.Game
         public bool GetMouseButton(int button)
         {
             return Input.GetMouseButton(button) || (EnableController && GetKey(joystickUICache[button], false));
+        }
+
+        public bool GetBackButtonDown()
+        {
+            return Input.GetKeyDown(KeyCode.Escape) || (EnableController && GetKeyDown(joystickUICache[3], false));
+        }
+
+        public bool GetBackButtonUp()
+        {
+            return Input.GetKeyUp(KeyCode.Escape) || (EnableController && GetKeyUp(joystickUICache[3], false));
+        }
+
+        public bool GetBackButton()
+        {
+            return Input.GetKey(KeyCode.Escape) || (EnableController && GetKey(joystickUICache[3], false));
         }
 
         public bool GetKey(KeyCode k, bool useSecondary = true)
@@ -1082,38 +1119,44 @@ namespace DaggerfallWorkshop.Game
             get => GetAnyKeyUpIgnoreAxisBinds() != KeyCode.None;
         }
 
-        public KeyCode GetAnyKeyDown()
+        public KeyCode GetAnyKeyDown(bool allowUnaccepted = false)
         {
             foreach (KeyCode k in KeyCodeList)
-                if (GetUnaryKey(k, getKeyDownMethod, true, false))
+                if ((allowUnaccepted || !unacceptedAnyKeys.Contains((int)k))
+                    && GetUnaryKey(k, getKeyDownMethod, true, false))
                     return k;
 
             return KeyCode.None;
         }
 
-        public KeyCode GetAnyKeyUp()
+        public KeyCode GetAnyKeyUp(bool allowUnaccepted = false)
         {
             foreach (KeyCode k in KeyCodeList)
-                if (GetUnaryKey(k, getKeyUpMethod, false, false))
+                if ((allowUnaccepted || !unacceptedAnyKeys.Contains((int)k))
+                    && GetUnaryKey(k, getKeyUpMethod, false, false))
                     return k;
 
             return KeyCode.None;
         }
 
-        public KeyCode GetAnyKeyDownIgnoreAxisBinds()
+        public KeyCode GetAnyKeyDownIgnoreAxisBinds(bool allowUnaccepted = false)
         {
             foreach (KeyCode k in KeyCodeList)
-                if (!IsUsedInAxisBinding(k) && GetUnaryKey(k, getKeyDownMethod, true, false))
+                if ((allowUnaccepted || !unacceptedAnyKeys.Contains((int)k))
+                    && !IsUsedInAxisBinding(k)
+                    && GetUnaryKey(k, getKeyDownMethod, true, false))
                     return k;
 
             return KeyCode.None;
         }
 
 
-        public KeyCode GetAnyKeyUpIgnoreAxisBinds()
+        public KeyCode GetAnyKeyUpIgnoreAxisBinds(bool allowUnaccepted = false)
         {
             foreach (KeyCode k in KeyCodeList)
-                if (!IsUsedInAxisBinding(k) && GetUnaryKey(k, getKeyUpMethod, false, false))
+                if ((allowUnaccepted || !unacceptedAnyKeys.Contains((int)k))
+                    && !IsUsedInAxisBinding(k)
+                    && GetUnaryKey(k, getKeyUpMethod, false, false))
                     return k;
 
             return KeyCode.None;
@@ -1274,6 +1317,7 @@ namespace DaggerfallWorkshop.Game
             joystickUICache[0] = GetJoystickUIBinding(JoystickUIActions.LeftClick);
             joystickUICache[1] = GetJoystickUIBinding(JoystickUIActions.RightClick);
             joystickUICache[2] = GetJoystickUIBinding(JoystickUIActions.MiddleClick);
+            joystickUICache[3] = GetJoystickUIBinding(JoystickUIActions.Back);
 
             cameraAxisBindingCache[0] = GetAxisBinding(AxisActions.CameraHorizontal);
             cameraAxisBindingCache[1] = GetAxisBinding(AxisActions.CameraVertical);
@@ -1528,9 +1572,6 @@ namespace DaggerfallWorkshop.Game
         // returns a list of all the Unity Input.KeyCodes and the custom axis KeyCodes
         KeyCode[] GetKeyCodeList()
         {
-            if (keyCodeList != null)
-                return keyCodeList;
-
             HashSet<KeyCode> list = new HashSet<KeyCode>();
 
             foreach (var e in Enum.GetValues(typeof(KeyCode)))

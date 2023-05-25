@@ -184,7 +184,8 @@ namespace DaggerfallWorkshop.Game.Entity
             // This can happen when exiting city area, after fast travel, or via console
             if (entityType == EntityTypes.EnemyClass &&
                 careerIndex == (int)MobileTypes.Knight_CityWatch - 128 &&
-                GameManager.Instance.PlayerEntity.CrimeCommitted == PlayerEntity.Crimes.None)
+                GameManager.Instance.PlayerEntity.CrimeCommitted == PlayerEntity.Crimes.None &&
+                !GameManager.Instance.PlayerEffectManager.IsTransformedLycanthrope())
             {
                 GameObject.Destroy(sender.gameObject);
             }
@@ -484,144 +485,17 @@ namespace DaggerfallWorkshop.Game.Entity
 
         public DFCareer.EnemyGroups GetEnemyGroup()
         {
-            switch (careerIndex)
-            {
-                case (int)MonsterCareers.Rat:
-                case (int)MonsterCareers.GiantBat:
-                case (int)MonsterCareers.GrizzlyBear:
-                case (int)MonsterCareers.SabertoothTiger:
-                case (int)MonsterCareers.Spider:
-                case (int)MonsterCareers.Slaughterfish:
-                case (int)MonsterCareers.GiantScorpion:
-                case (int)MonsterCareers.Dragonling:
-                case (int)MonsterCareers.Horse_Invalid:             // (grouped as undead in classic)
-                case (int)MonsterCareers.Dragonling_Alternate:      // (grouped as undead in classic)
-                    return DFCareer.EnemyGroups.Animals;
-                case (int)MonsterCareers.Imp:
-                case (int)MonsterCareers.Spriggan:
-                case (int)MonsterCareers.Orc:
-                case (int)MonsterCareers.Centaur:
-                case (int)MonsterCareers.Werewolf:
-                case (int)MonsterCareers.Nymph:
-                case (int)MonsterCareers.OrcSergeant:
-                case (int)MonsterCareers.Harpy:
-                case (int)MonsterCareers.Wereboar:
-                case (int)MonsterCareers.Giant:
-                case (int)MonsterCareers.OrcShaman:
-                case (int)MonsterCareers.Gargoyle:
-                case (int)MonsterCareers.OrcWarlord:
-                case (int)MonsterCareers.Dreugh:                    // (grouped as undead in classic)
-                case (int)MonsterCareers.Lamia:                     // (grouped as undead in classic)
-                    return DFCareer.EnemyGroups.Humanoid;
-                case (int)MonsterCareers.SkeletalWarrior:
-                case (int)MonsterCareers.Zombie:                    // (grouped as animal in classic)
-                case (int)MonsterCareers.Ghost:
-                case (int)MonsterCareers.Mummy:
-                case (int)MonsterCareers.Wraith:
-                case (int)MonsterCareers.Vampire:
-                case (int)MonsterCareers.VampireAncient:
-                case (int)MonsterCareers.Lich:
-                case (int)MonsterCareers.AncientLich:
-                    return DFCareer.EnemyGroups.Undead;
-                case (int)MonsterCareers.FrostDaedra:
-                case (int)MonsterCareers.FireDaedra:
-                case (int)MonsterCareers.Daedroth:
-                case (int)MonsterCareers.DaedraSeducer:
-                case (int)MonsterCareers.DaedraLord:
-                    return DFCareer.EnemyGroups.Daedra;
-                case (int)MonsterCareers.FireAtronach:
-                case (int)MonsterCareers.IronAtronach:
-                case (int)MonsterCareers.FleshAtronach:
-                case (int)MonsterCareers.IceAtronach:
-                    return DFCareer.EnemyGroups.None;
-
-                default:
-                    return DFCareer.EnemyGroups.None;
-            }
+            return FormulaHelper.GetEnemyEntityEnemyGroup(this);
         }
 
         public DFCareer.Skills GetLanguageSkill()
         {
-            if (entityType == EntityTypes.EnemyClass)
-            {
-                switch (careerIndex)
-                {   // BCHG: classic uses Ettiquette for all
-                    case (int)ClassCareers.Burglar:
-                    case (int)ClassCareers.Rogue:
-                    case (int)ClassCareers.Acrobat:
-                    case (int)ClassCareers.Thief:
-                    case (int)ClassCareers.Assassin:
-                    case (int)ClassCareers.Nightblade:
-                        return DFCareer.Skills.Streetwise;
-                    default:
-                        return DFCareer.Skills.Etiquette;
-                }
-            }
-
-            switch (careerIndex)
-            {
-                case (int)MonsterCareers.Orc:
-                case (int)MonsterCareers.OrcSergeant:
-                case (int)MonsterCareers.OrcShaman:
-                case (int)MonsterCareers.OrcWarlord:
-                    return DFCareer.Skills.Orcish;
-
-                case (int)MonsterCareers.Harpy:
-                    return DFCareer.Skills.Harpy;
-
-                case (int)MonsterCareers.Giant:
-                case (int)MonsterCareers.Gargoyle:
-                    return DFCareer.Skills.Giantish;
-
-                case (int)MonsterCareers.Dragonling:
-                case (int)MonsterCareers.Dragonling_Alternate:
-                    return DFCareer.Skills.Dragonish;
-
-                case (int)MonsterCareers.Nymph:
-                case (int)MonsterCareers.Lamia:
-                    return DFCareer.Skills.Nymph;
-
-                case (int)MonsterCareers.FrostDaedra:
-                case (int)MonsterCareers.FireDaedra:
-                case (int)MonsterCareers.Daedroth:
-                case (int)MonsterCareers.DaedraSeducer:
-                case (int)MonsterCareers.DaedraLord:
-                    return DFCareer.Skills.Daedric;
-
-                case (int)MonsterCareers.Spriggan:
-                    return DFCareer.Skills.Spriggan;
-
-                case (int)MonsterCareers.Centaur:
-                    return DFCareer.Skills.Centaurian;
-
-                case (int)MonsterCareers.Imp:
-                case (int)MonsterCareers.Dreugh:
-                    return DFCareer.Skills.Impish;
-
-                case (int)MonsterCareers.Vampire:
-                case (int)MonsterCareers.VampireAncient:
-                case (int)MonsterCareers.Lich:
-                case (int)MonsterCareers.AncientLich:
-                    return DFCareer.Skills.Etiquette;
-
-                default:
-                    return DFCareer.Skills.None;
-            }
+            return FormulaHelper.GetEnemyEntityLanguageSkill(this);
         }
 
         public int GetWeightInClassicUnits()
         {
-            int itemWeightsClassic = (int)(Items.GetWeight() * 4);
-            int baseWeight;
-
-            if (entityType == EntityTypes.EnemyMonster)
-                baseWeight = mobileEnemy.Weight;
-            else if (mobileEnemy.Gender == MobileGender.Female)
-                baseWeight = 240;
-            else
-                baseWeight = 350;
-
-            return itemWeightsClassic + baseWeight;
+            return FormulaHelper.GetEnemyEntityWeightInClassicUnits(this);
         }
 
         #endregion

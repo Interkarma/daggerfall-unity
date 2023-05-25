@@ -349,7 +349,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (DaggerfallUI.Instance.HotkeySequenceProcessed == HotkeySequence.HotkeySequenceProcessStatus.NotFound)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || Input.GetKeyUp(exitKey))
+                if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || InputManager.Instance.GetBackButtonUp())
                     CloseWindow();
             }
 
@@ -1495,6 +1495,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     questItem.PlayerDropped = true;
                 else if (from == remoteItems)
                     questItem.PlayerDropped = false;
+
+                // If transferring a cloned quest item that should be permanent then reset permanent status
+                if (questItem.MadePermanent)
+                    item.MakePermanent();
             }
             // Extinguish light sources when transferring out of player inventory
             if (item.IsLightSource && playerEntity.LightSource == item && from == localItems)
@@ -1653,6 +1657,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // This will need more work as more usable items are available
         protected void UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
         {
+            // Allow item to handle its own use.
+            if (item.UseItem(collection))
+                return;
+
             const int noSpellsTextId = 12;
 
             // Handle quest items on use clicks
@@ -1973,9 +1981,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (actionMode == ActionModes.Use)
             {
-                // Allow item to handle its own use, fall through to general use function if unhandled
-                if (!item.UseItem(localItems))
-                    UseItem(item, localItems);
+                UseItem(item, localItems);
                 Refresh(false);
             }
             else if (actionMode == ActionModes.Remove)
@@ -2037,9 +2043,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (actionMode == ActionModes.Use)
             {
-                // Allow item to handle its own use, fall through to general use function if unhandled
-                if (!item.UseItem(remoteItems))
-                    UseItem(item, remoteItems);
+                UseItem(item, remoteItems);
                 Refresh(false);
             }
             else if (actionMode == ActionModes.Remove)

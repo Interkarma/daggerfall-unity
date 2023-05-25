@@ -770,8 +770,14 @@ namespace DaggerfallWorkshop
     {
         Internal,
         TextRSC,
-        TextBOK,
         TextFlats,
+        TextQuests,
+        TextLocations,
+        TextSettings,
+        TextSpells,
+        TextItems,
+        TextMagicItems,
+        Factions,
     }
 
     /// <summary>

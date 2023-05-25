@@ -2727,6 +2727,378 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
         }
 
+        public static DFCareer.EnemyGroups GetEnemyEntityEnemyGroup(EnemyEntity e)
+        {
+            Func<EnemyEntity, DFCareer.EnemyGroups> del;
+            if (TryGetOverride("GetEnemyEntityEnemyGroup", out del))
+                return del(e);
+
+            switch (e.CareerIndex)
+            {
+                case (int)MonsterCareers.Rat:
+                case (int)MonsterCareers.GiantBat:
+                case (int)MonsterCareers.GrizzlyBear:
+                case (int)MonsterCareers.SabertoothTiger:
+                case (int)MonsterCareers.Spider:
+                case (int)MonsterCareers.Slaughterfish:
+                case (int)MonsterCareers.GiantScorpion:
+                case (int)MonsterCareers.Dragonling:
+                case (int)MonsterCareers.Horse_Invalid:             // (grouped as undead in classic)
+                case (int)MonsterCareers.Dragonling_Alternate:      // (grouped as undead in classic)
+                    return DFCareer.EnemyGroups.Animals;
+                case (int)MonsterCareers.Imp:
+                case (int)MonsterCareers.Spriggan:
+                case (int)MonsterCareers.Orc:
+                case (int)MonsterCareers.Centaur:
+                case (int)MonsterCareers.Werewolf:
+                case (int)MonsterCareers.Nymph:
+                case (int)MonsterCareers.OrcSergeant:
+                case (int)MonsterCareers.Harpy:
+                case (int)MonsterCareers.Wereboar:
+                case (int)MonsterCareers.Giant:
+                case (int)MonsterCareers.OrcShaman:
+                case (int)MonsterCareers.Gargoyle:
+                case (int)MonsterCareers.OrcWarlord:
+                case (int)MonsterCareers.Dreugh:                    // (grouped as undead in classic)
+                case (int)MonsterCareers.Lamia:                     // (grouped as undead in classic)
+                    return DFCareer.EnemyGroups.Humanoid;
+                case (int)MonsterCareers.SkeletalWarrior:
+                case (int)MonsterCareers.Zombie:                    // (grouped as animal in classic)
+                case (int)MonsterCareers.Ghost:
+                case (int)MonsterCareers.Mummy:
+                case (int)MonsterCareers.Wraith:
+                case (int)MonsterCareers.Vampire:
+                case (int)MonsterCareers.VampireAncient:
+                case (int)MonsterCareers.Lich:
+                case (int)MonsterCareers.AncientLich:
+                    return DFCareer.EnemyGroups.Undead;
+                case (int)MonsterCareers.FrostDaedra:
+                case (int)MonsterCareers.FireDaedra:
+                case (int)MonsterCareers.Daedroth:
+                case (int)MonsterCareers.DaedraSeducer:
+                case (int)MonsterCareers.DaedraLord:
+                    return DFCareer.EnemyGroups.Daedra;
+                case (int)MonsterCareers.FireAtronach:
+                case (int)MonsterCareers.IronAtronach:
+                case (int)MonsterCareers.FleshAtronach:
+                case (int)MonsterCareers.IceAtronach:
+                    return DFCareer.EnemyGroups.None;
+
+                default:
+                    return DFCareer.EnemyGroups.None;
+            }
+        }
+
+        public static DFCareer.Skills GetEnemyEntityLanguageSkill(EnemyEntity e)
+        {
+            Func<EnemyEntity, DFCareer.Skills> del;
+            if (TryGetOverride("GetEnemyEntityLanguageSkill", out del))
+                return del(e);
+
+            if (e.EntityType == EntityTypes.EnemyClass)
+            {
+                switch (e.CareerIndex)
+                {   // BCHG: classic uses Ettiquette for all
+                    case (int)ClassCareers.Burglar:
+                    case (int)ClassCareers.Rogue:
+                    case (int)ClassCareers.Acrobat:
+                    case (int)ClassCareers.Thief:
+                    case (int)ClassCareers.Assassin:
+                    case (int)ClassCareers.Nightblade:
+                        return DFCareer.Skills.Streetwise;
+                    default:
+                        return DFCareer.Skills.Etiquette;
+                }
+            }
+
+            switch (e.CareerIndex)
+            {
+                case (int)MonsterCareers.Orc:
+                case (int)MonsterCareers.OrcSergeant:
+                case (int)MonsterCareers.OrcShaman:
+                case (int)MonsterCareers.OrcWarlord:
+                    return DFCareer.Skills.Orcish;
+
+                case (int)MonsterCareers.Harpy:
+                    return DFCareer.Skills.Harpy;
+
+                case (int)MonsterCareers.Giant:
+                case (int)MonsterCareers.Gargoyle:
+                    return DFCareer.Skills.Giantish;
+
+                case (int)MonsterCareers.Dragonling:
+                case (int)MonsterCareers.Dragonling_Alternate:
+                    return DFCareer.Skills.Dragonish;
+
+                case (int)MonsterCareers.Nymph:
+                case (int)MonsterCareers.Lamia:
+                    return DFCareer.Skills.Nymph;
+
+                case (int)MonsterCareers.FrostDaedra:
+                case (int)MonsterCareers.FireDaedra:
+                case (int)MonsterCareers.Daedroth:
+                case (int)MonsterCareers.DaedraSeducer:
+                case (int)MonsterCareers.DaedraLord:
+                    return DFCareer.Skills.Daedric;
+
+                case (int)MonsterCareers.Spriggan:
+                    return DFCareer.Skills.Spriggan;
+
+                case (int)MonsterCareers.Centaur:
+                    return DFCareer.Skills.Centaurian;
+
+                case (int)MonsterCareers.Imp:
+                case (int)MonsterCareers.Dreugh:
+                    return DFCareer.Skills.Impish;
+
+                case (int)MonsterCareers.Vampire:
+                case (int)MonsterCareers.VampireAncient:
+                case (int)MonsterCareers.Lich:
+                case (int)MonsterCareers.AncientLich:
+                    return DFCareer.Skills.Etiquette;
+
+                default:
+                    return DFCareer.Skills.None;
+            }
+        }
+
+        public static int GetEnemyEntityWeightInClassicUnits(EnemyEntity e)
+        {
+            Func<EnemyEntity, int> del;
+            if (TryGetOverride("GetEnemyEntityWeightInClassicUnits", out del))
+                return del(e);
+
+            int itemWeightsClassic = (int)(e.Items.GetWeight() * 4);
+            int baseWeight;
+
+            if (e.EntityType == EntityTypes.EnemyMonster)
+                baseWeight = e.MobileEnemy.Weight;
+            else if (e.MobileEnemy.Gender == MobileGender.Female)
+                baseWeight = 240;
+            else
+                baseWeight = 350;
+
+            return itemWeightsClassic + baseWeight;
+        }
+
+        #endregion
+
+        #region Localization
+
+        /// <summary>
+        /// Construct a procedural building name from parts. See link below for more details how Daggerfall does this.
+        /// https://www.dfworkshop.net/building-names/
+        /// Unfortunately the default process does not translate well into other languages.
+        /// This overridable formula allows a translation mod to supply a whole new method that works for their specific language.
+        /// Replacement process can operate using whatever rules and string inputs it needs to produce valid results.
+        /// NOTES:
+        ///  * Discovered building names are cached to DiscoveryData.txt in user saves. Old names may appear while testing.
+        ///  * Use "refresh_buildingnames" from console to regenerate discovered building names in current location only.
+        ///  * Delete DiscoveryData.txt from save to erase all discovered building names.
+        ///  * Use "map_revealbuildings" from console to temporarily reveal undiscovered building names (not added to DiscoveryData.txt).
+        ///  * While testing, you may need to reload a save or close and restart game for some changes to appear.
+        /// </summary>
+        /// <param name="seed">Seed value from source building.</param>
+        /// <param name="type">Source building type (e.g. GeneralStore, WeaponSmith).</param>
+        /// <param name="factionID">Associated faction ID of source building.</param>
+        /// <param name="locationName">Location containing source building. Used for some names, e.g. "Penbrugh Alchemistry".</param>
+        /// <param name="regionName">Region containing source building. Used for some names, e.g. "Bank of Daggerfall".</param>
+        /// <returns></returns>
+        public static string GenerateBuildingName(int seed, DFLocation.BuildingTypes type, int factionID, string locationName, string regionName)
+        {
+            Func<int, DFLocation.BuildingTypes, int, string, string, string> del;
+            if (TryGetOverride("GenerateBuildingName", out del))
+                return del(seed, type, factionID, locationName, regionName);
+
+            const string firstNameTitleVar = "%ef";
+            const string cityNameTitleVar = "%cn";
+            const string royalTitleVar = "%rt";
+
+            string a = string.Empty, b = string.Empty;
+            string result = string.Empty;
+
+            bool singleton = false;
+            FactionFile.FactionData factionData;
+            DFRandom.srand(seed);
+            string[] StoresA = TextManager.Instance.GetLocalizedTextList("StoresA");
+            switch (type)
+            {
+                case DFLocation.BuildingTypes.HouseForSale:
+                    return TextManager.Instance.GetLocalizedText("houseForSale");
+
+                case DFLocation.BuildingTypes.Tavern:
+                    string[] TavernsB = TextManager.Instance.GetLocalizedTextList("TavernsB");
+                    string[] TavernsA = TextManager.Instance.GetLocalizedTextList("TavernsA");
+                    b = TavernsB[DFRandom.random_range(0, TavernsB.Length)];
+                    a = TavernsA[DFRandom.random_range(0, TavernsA.Length)];
+                    break;
+
+                case DFLocation.BuildingTypes.GeneralStore:
+                    string[] GeneralStoresB = TextManager.Instance.GetLocalizedTextList("GeneralStoresB");
+                    b = GeneralStoresB[DFRandom.random_range(0, GeneralStoresB.Length)];
+                    a = StoresA[DFRandom.random_range(0, StoresA.Length)];
+                    break;
+
+                case DFLocation.BuildingTypes.WeaponSmith:
+                    string[] WeaponStoresB = TextManager.Instance.GetLocalizedTextList("WeaponStoresB");
+                    b = WeaponStoresB[DFRandom.random_range(0, WeaponStoresB.Length)];
+                    a = StoresA[DFRandom.random_range(0, StoresA.Length)];
+                    break;
+
+                case DFLocation.BuildingTypes.Armorer:
+                    string[] ArmorStoresB = TextManager.Instance.GetLocalizedTextList("ArmorStoresB");
+                    b = ArmorStoresB[DFRandom.random_range(0, ArmorStoresB.Length)];
+                    a = StoresA[DFRandom.random_range(0, StoresA.Length)];
+                    break;
+
+                case DFLocation.BuildingTypes.Bookseller:
+                    string[] BookStoresB = TextManager.Instance.GetLocalizedTextList("BookStoresB");
+                    b = BookStoresB[DFRandom.random_range(0, BookStoresB.Length)];
+                    a = StoresA[DFRandom.random_range(0, StoresA.Length)];
+                    break;
+
+                case DFLocation.BuildingTypes.ClothingStore:
+                    string[] ClothingStoresB = TextManager.Instance.GetLocalizedTextList("ClothingStoresB");
+                    b = ClothingStoresB[DFRandom.random_range(0, ClothingStoresB.Length)];
+                    a = StoresA[DFRandom.random_range(0, StoresA.Length)];
+                    break;
+
+                case DFLocation.BuildingTypes.Alchemist:
+                    string[] AlchemyStoresB = TextManager.Instance.GetLocalizedTextList("AlchemyStoresB");
+                    b = AlchemyStoresB[DFRandom.random_range(0, AlchemyStoresB.Length)];
+                    a = StoresA[DFRandom.random_range(0, StoresA.Length)];
+                    break;
+
+                case DFLocation.BuildingTypes.GemStore:
+                    string[] GemStoresB = TextManager.Instance.GetLocalizedTextList("GemStoresB");
+                    b = GemStoresB[DFRandom.random_range(0, GemStoresB.Length)];
+                    a = StoresA[DFRandom.random_range(0, StoresA.Length)];
+                    break;
+
+                case DFLocation.BuildingTypes.PawnShop:
+                    string[] PawnStoresB = TextManager.Instance.GetLocalizedTextList("PawnStoresB");
+                    b = PawnStoresB[DFRandom.random_range(0, PawnStoresB.Length)];
+                    a = StoresA[DFRandom.random_range(0, StoresA.Length)];
+                    break;
+
+                case DFLocation.BuildingTypes.FurnitureStore:
+                    string[] FurnitureStoresB = TextManager.Instance.GetLocalizedTextList("FurnitureStoresB");
+                    b = FurnitureStoresB[DFRandom.random_range(0, FurnitureStoresB.Length)];
+                    a = StoresA[DFRandom.random_range(0, StoresA.Length)];
+                    break;
+
+                case DFLocation.BuildingTypes.Library:
+                    string[] LibraryStoresB = TextManager.Instance.GetLocalizedTextList("LibraryStoresB");
+                    b = LibraryStoresB[DFRandom.random_range(0, LibraryStoresB.Length)];
+                    a = StoresA[DFRandom.random_range(0, StoresA.Length)];
+                    break;
+
+                case DFLocation.BuildingTypes.Bank:
+                    // Banks always appear to be named "The Bank of RegionName"
+                    b = regionName;
+                    a = TextManager.Instance.GetLocalizedText("theBankOf");
+                    break;
+
+                case DFLocation.BuildingTypes.GuildHall:
+                    // Guild halls get the name from faction data
+                    if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData))
+                    {
+                        a = factionData.name;
+                        singleton = true;
+                    }
+                    break;
+
+                case DFLocation.BuildingTypes.Temple:
+                    // Temples get name from faction data - always seem to be first child of factionID
+                    if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData))
+                    {
+                        if (factionData.children.Count > 0)
+                        {
+                            FactionFile.FactionData firstChild;
+                            if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionData.children[0], out firstChild))
+                            {
+                                a = firstChild.name;
+                                singleton = true;
+                            }
+                        }
+                    }
+                    break;
+
+                case DFLocation.BuildingTypes.Palace:
+                    // Main palace names come from TEXT.RSC (e.g. "Castle Daggerfall")
+                    // Other palaces are just named "Palace"
+                    int textId = 0;
+                    if (locationName == TextManager.Instance.GetLocalizedText("daggerfall"))
+                        textId = 475;
+                    else if (locationName == TextManager.Instance.GetLocalizedText("wayrest"))
+                        textId = 476;
+                    else if (locationName == TextManager.Instance.GetLocalizedText("sentinel"))
+                        textId = 477;
+
+                    if (textId > 0)
+                    {
+                        TextFile.Token[] nameTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(textId);
+                        foreach (TextFile.Token token in nameTokens)
+                        {
+                            if (token.formatting == TextFile.Formatting.Text)
+                            {
+                                a = token.text;
+                                break;
+                            }
+                        }
+                        a = a.TrimEnd('.'); // remove character '.' from castle text record entry if it is last character
+                    }
+                    else
+                    {
+                        a = TextManager.Instance.GetLocalizedText("palace");
+                    }
+                    singleton = true;
+                    break;
+
+                default:
+                    // Do nothing for unknown/unsupported building type
+                    // Houses can actually change names based on active quests
+                    return string.Empty;
+            }
+
+            // Replace %cn
+            a = a.Replace(cityNameTitleVar, locationName);
+
+            // Replace %ef
+            if (a.Contains(firstNameTitleVar))
+            {
+                // Need to burn a rand() for %ef roll to be correct.
+                // Classic is always doing this when expanding a macro.
+                DFRandom.rand();
+
+                // In classic, the function expanding the %ef macro uses a global variable containing the current
+                // region race. However, this variable is never updated when the character travels
+                // and remains at 0. This explains why the Breton name bank is always used for shops.
+                // This global variable is probably a leftover from Daggerfall early development as,
+                // with the exception of %lp, which presents a similar issue and always returns
+                // "High Rock", all naming functions use a global array of 62 fixed race values, one for each region.
+                // As with %lp, we choose to fix the original bug in DFU and use this array, meaning that
+                // all shops in Hammerfell now use Redguard names.
+                NameHelper.BankTypes nameBank = (NameHelper.BankTypes)MapsFile.RegionRaces[GameManager.Instance.PlayerGPS.CurrentRegionIndex];
+                string firstName = DaggerfallUnity.Instance.NameHelper.FirstName(nameBank, Game.Entity.Genders.Male);
+                a = a.Replace(firstNameTitleVar, firstName);
+            }
+
+            // Replace %rt based on faction ruler
+            if (a.Contains(royalTitleVar))
+            {
+                a = a.Replace(royalTitleVar, MacroHelper.RegentTitle(null));
+            }
+
+            // Final text is "{a} {b}" for two-part names or just "{a}" for singleton names
+            if (!singleton)
+                result = string.Format("{0} {1}", a, b);
+            else
+                result = a;
+
+            return result;
+        }
+
         #endregion
 
         #region Formula Overrides

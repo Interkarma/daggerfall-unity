@@ -3985,5 +3985,917 @@ MonoBehaviour:
       dungeon exit.
     m_Metadata:
       m_Items: []
+  - m_Id: 263503556027629568
+    m_Localized: 'You note: '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 264997637513822208
+    m_Localized: 'Custom name: '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285674837707603968
+    m_Localized: '%ef''s
+
+      %cn''s Best
+
+      The Essential
+
+      Lord %ef''s
+
+      The
+      Adventurer''s
+
+      The Odd
+
+      %ef''s Finest
+
+      Bargain
+
+      Vintage
+
+      The
+      Emperor''s
+
+      %cn
+
+      %ef''s General
+
+      The Superior
+
+      %ef''s
+      Quality
+
+      First Class
+
+      The %rt''s
+
+      The Champion
+
+      Doctor
+      %ef''s
+
+      Lady %ef''s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285674968234344448
+    m_Localized: 'Supplies
+
+      Supply Store
+
+      Gear
+
+      Gear Store
+
+      Equipment
+
+      Equipment
+      Store
+
+      Sundries
+
+      Provisions
+
+      Merchandise
+
+      General Store
+
+      Retail
+      Store
+
+      Trading Post
+
+      Market
+
+      Wares
+
+      Warehouse'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675018800873472
+    m_Localized: "Weapons\r\nWeaponry\r\nArms\r\nArmaments\r\nArsenal\r\nArmsmaker\r\nBlades\r\nBlacksmith\r\nMetalsmith\r\nWeaponsmith\r"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675106491187200
+    m_Localized: 'Armory
+
+      Mail
+
+      Shielding
+
+      Armor
+
+      Shields
+
+      Aegis
+
+      Metalworks
+
+      Blacksmith
+
+      Metalsmith
+
+      Armorer
+
+      Smith
+
+      Smithy'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675156646674432
+    m_Localized: 'Books
+
+      Bookstore
+
+      Bookshop
+
+      Book Dealer
+
+      Book
+      Center
+
+      Bookseller
+
+      Bookstall
+
+      Incunabula'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675205288017920
+    m_Localized: 'Library
+
+      Bookroom
+
+      Athenaeum
+
+      Public Library
+
+      Historians
+
+      Bookroom
+
+      Seminary
+
+      Lyceum'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675243338743808
+    m_Localized: 'Clothing
+
+      Clothes
+
+      Garments
+
+      Apparel
+
+      Costumes
+
+      Vestments
+
+      Attire
+
+      Fashion
+
+      Tailoring
+
+      Outfits
+
+      Finery'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675323382841344
+    m_Localized: 'Herbs
+
+      Potherbs
+
+      Spices
+
+      Remedies
+
+      Antidotes
+
+      Physics
+
+      Medicines
+
+      Potions
+
+      Tinctures
+
+      Medicaments
+
+      Elixirs
+
+      Pharmacy
+
+      Apothecary
+
+      Unguents
+
+      Medicinal
+      Agents
+
+      Herb Garden
+
+      Pharmaceuticals
+
+      Chemistry
+
+      Chemicals
+
+      Experiental
+      Products
+
+      Alchemistry
+
+      Alchemical Solutions
+
+      Metallurgy'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675361865580544
+    m_Localized: 'Gems
+
+      Gemstones
+
+      Jewelry
+
+      Jewels
+
+      Precious
+      Stones
+
+      Bijoutry
+
+      Jewelers
+
+      Jewel Box
+
+      Jewelry Shop
+
+      Gemcutter'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675433093251072
+    m_Localized: 'Pawnshop
+
+      Pawnbrokers
+
+      Used Supplies
+
+      Used Gear
+
+      Used
+      Equipment
+
+      Used Merchandise
+
+      Hockshop
+
+      Antiquities'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675465657827328
+    m_Localized: 'Furniture
+
+      Furnishings
+
+      Interior Design
+
+      Furniture
+      Shop
+
+      Decor
+
+      Carpentry
+
+      Woodworking
+
+      Crafts
+
+      Woodwork'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675519206506496
+    m_Localized: 'Livestock
+
+      Breeders
+
+      Farm Animals
+
+      Beasts
+
+      Creatures
+
+      Game
+
+      Animalia
+
+      Fauna
+
+      Menagerie'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675582083317760
+    m_Localized: 'The Queen''s
+
+      The King''s
+
+      The Dirty
+
+      The Black
+
+      The
+      Mole and
+
+      The Green
+
+      The Red
+
+      The Gold
+
+      The White
+
+      The
+      Silver
+
+      The Crimson
+
+      The Flying
+
+      The Dancing
+
+      The Laughing
+
+      The
+      Restless
+
+      The Thirsty
+
+      The Unfortunate
+
+      The Lucky
+
+      The
+      Devil''s
+
+      The Rusty
+
+      The Howling
+
+      The Screaming
+
+      The
+      Bat and
+
+      The Lion and
+
+      The Lynx and
+
+      The Dwarf and
+
+      The
+      Beaver and
+
+      The Fox and
+
+      The Mouse and
+
+      The Pig and
+
+      The
+      Feather and
+
+      The Toad and
+
+      The Rat and
+
+      The Savage
+
+      The
+      Knave and
+
+      The Dead'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675625704079360
+    m_Localized: 'Chasm
+
+      Mug
+
+      Pit
+
+      Cat
+
+      Dog
+
+      Goblin
+
+      Griffin
+
+      Dragon
+
+      Ogre
+
+      Giant
+
+      Djinn
+
+      Wolf
+
+      Huntsman
+
+      Dagger
+
+      Skull
+
+      Sword
+
+      Guard
+
+      Dungeon
+
+      Helm
+
+      Castle
+
+      Jug
+
+      Bird
+
+      Gnome
+
+      Hedgehog
+
+      Muskrat
+
+      Woodchuck
+
+      Scorpion
+
+      Badger
+
+      Goat
+
+      Porcupine
+
+      Priest
+
+      Fawn
+
+      Stag
+
+      Barbarian
+
+      Rascal
+
+      Fairy'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285678855704035328
+    m_Localized: House for sale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679031546036224
+    m_Localized: The Bank of
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679698457149440
+    m_Localized: Daggerfall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679716257775616
+    m_Localized: Wayrest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679764228030464
+    m_Localized: Sentinel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285680166927351808
+    m_Localized: Palace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286284881981620224
+    m_Localized: 'Alik''r Desert
+
+      Dragontail Mountains
+
+      Glenpoint Foothills
+
+      Daggerfall
+      Bluffs
+
+      Yeorth Burrowland
+
+      Dwynnen
+
+      Ravennian Forest
+
+      Devilrock
+
+      Malekna
+      Forest
+
+      Isle of Balfiera
+
+      Bantha
+
+      Dak''fron
+
+      Islands
+      in the Western Iliac Bay
+
+      Tamarilyn Point
+
+      Lainlyn Cliffs
+
+      Bjoulsae
+      River
+
+      Wrothgarian Mountains
+
+      Daggerfall
+
+      Glenpoint
+
+      Betony
+
+      Sentinel
+
+      Anticlere
+
+      Lainlyn
+
+      Wayrest
+
+      Gen
+      Tem High Rock village
+
+      Gen Rai Hammerfell village
+
+      Orsinium Area
+
+      Skeffington
+      Wood
+
+      Hammerfell bay coast
+
+      Hammerfell sea coast
+
+      High Rock
+      bay coast
+
+      High Rock sea coast
+
+      Northmoor
+
+      Menevia
+
+      Alcaire
+
+      Koegria
+
+      Bhoriane
+
+      Kambria
+
+      Phrygias
+
+      Urvaius
+
+      Ykalon
+
+      Daenia
+
+      Shalgora
+
+      Abibon-Gora
+
+      Kairou
+
+      Pothago
+
+      Myrkwasa
+
+      Ayasofya
+
+      Tigonus
+
+      Kozanset
+
+      Satakalaam
+
+      Totambu
+
+      Mournoth
+
+      Ephesus
+
+      Santaki
+
+      Antiphyllos
+
+      Bergama
+
+      Gavaudon
+
+      Tulune
+
+      Glenumbra
+      Moors
+
+      Ilessan Hills
+
+      Cybiades'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286315014360678400
+    m_Localized: Ocean
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286315235807346688
+    m_Localized: Unknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286316113792614400
+    m_Localized: 'Switch To: {0} Region'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287414938670219264
+    m_Localized: '{0} in {1} province'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318179644662083584
+    m_Localized: 'Sundas
+
+      Morndas
+
+      Tirdas
+
+      Middas
+
+      Turdas
+
+      Fredas
+
+      Loredas'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180613974126592
+    m_Localized: 'Morning Star
+
+      Sun''s Dawn
+
+      First Seed
+
+      Rain''s
+      Hand
+
+      Second Seed
+
+      Midyear
+
+      Sun''s Height
+
+      Last Seed
+
+      Hearthfire
+
+      Frostfall
+
+      Sun''s
+      Dusk
+
+      Evening Star'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180665765392384
+    m_Localized: 'The Ritual
+
+      The Lover
+
+      The Lord
+
+      The Mage
+
+      The
+      Shadow
+
+      The Steed
+
+      The Apprentice
+
+      The Warrior
+
+      The
+      Lady
+
+      The Tower
+
+      The Atronach
+
+      The Thief'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180720735940608
+    m_Localized: 'Fall
+
+      Spring
+
+      Summer
+
+      Winter'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318183911657566208
+    m_Localized: '{0:00}:{1:00}:{2:00} on {3}, {4}{5} of {6:00}, 3E{7}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318184342387421184
+    m_Localized: '{0:00}:{1:00}:{2:00} on {3}{4} of {5:00}, 3E{6}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318184563599208448
+    m_Localized: '{0} the {1}{2} of {3:00}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338866630561361920
+    m_Localized: '{0} {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338866679752159232
+    m_Localized: '{0} {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338879523965104128
+    m_Localized: '{0} {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340024905667440640
+    m_Localized: 'pathetic
+
+      frail
+
+      weak
+
+      below average
+
+      about
+      average
+
+      fairly strong
+
+      athletic
+
+      very strong
+
+      powerful
+
+      superhuman'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340024972407205888
+    m_Localized: 'vegetable-like
+
+      idiotic
+
+      half-witted
+
+      dim
+
+      about
+      average
+
+      cunning
+
+      fairly clever
+
+      very intelligent
+
+      brilliant
+
+      genius'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025019786063872
+    m_Localized: 'inane
+
+      submissive
+
+      passive
+
+      distracted
+
+      unassertive
+
+      stable
+
+      confident
+
+      strong-willed
+
+      very
+      focused
+
+      enlightened'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025063192915968
+    m_Localized: "oafish\r\nbumbling\r\nclumsy\r\nawkward\r\nabout average\r\nspry\r\nnimble\r\ndexterous\r\nvery
+      agile\r\nacrobatic\r"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025139755741184
+    m_Localized: 'sickly
+
+      pitiable
+
+      unsteady
+
+      erratic
+
+      about
+      average
+
+      above average
+
+      very healthy
+
+      hardy
+
+      titanic
+
+      immortal'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025171456290816
+    m_Localized: 'abhorrent
+
+      unpopular
+
+      anonymous
+
+      unassuming
+
+      unremarkable
+
+      interesting
+
+      charming
+
+      arresting
+
+      authoritative
+
+      charismatic'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025210190688256
+    m_Localized: 'inactive
+
+      sluggish
+
+      very slow
+
+      slow
+
+      about
+      average
+
+      above average
+
+      fast
+
+      fleet-footed
+
+      lightning-fast
+
+      meteoric'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025245175377920
+    m_Localized: 'cursed
+
+      hopeless
+
+      ill-favored
+
+      unfortunate
+
+      about
+      average
+
+      fairly lucky
+
+      lucky
+
+      fortunate
+
+      very auspicious
+
+      divinely
+      favored'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

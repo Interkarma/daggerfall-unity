@@ -260,15 +260,26 @@ namespace DaggerfallWorkshop.Game.Questing
                     break;
 
                 case MacroTypes.NameMacro2:             // Name of location/dungeon (e.g. Gothway Garden)
-                    textOut = siteDetails.locationName;
+                    textOut = TextManager.Instance.GetLocalizedLocationName(siteDetails.mapId, siteDetails.locationName);
                     break;
 
                 case MacroTypes.NameMacro3:             // Name of dungeon (e.g. Privateer's Hold) - Not sure about this one, need to test
-                    textOut = siteDetails.locationName;
+                    textOut = TextManager.Instance.GetLocalizedLocationName(siteDetails.mapId, siteDetails.locationName);
                     break;
 
                 case MacroTypes.NameMacro4:             // Name of region (e.g. Tigonus)
-                    textOut = siteDetails.regionName;
+                    if (siteDetails.regionIndex == 0 && siteDetails.regionName != "Alik'r Desert")
+                    {
+                        // Workaround for older saves where regionIndex was not present and will always be 0 in save data (Alik'r Desert)
+                        // This can result in improper region name being displayed when loading an older save and quest not actually set in Alik'r Desert.
+                        // In these cases display name using the legacy regionName field stored in place data
+                        textOut = siteDetails.regionName;
+                    }
+                    else
+                    {
+                        // Return localized region name based on regionIndex
+                        textOut = TextManager.Instance.GetLocalizedRegionName(siteDetails.regionIndex);
+                    }
                     break;
 
                 default:                                // Macro not supported
@@ -325,6 +336,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = siteType;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.buildingKey = buildingKey;
             siteDetails.buildingName = buildingName;
             siteDetails.regionName = location.RegionName;
@@ -893,6 +905,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = SiteTypes.Dungeon;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
             siteDetails.questSpawnMarkers = questSpawnMarkers;
@@ -939,6 +952,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = SiteTypes.Town;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
             siteDetails.questSpawnMarkers = null;
@@ -1059,6 +1073,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = siteType;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
             siteDetails.buildingKey = buildingKey;

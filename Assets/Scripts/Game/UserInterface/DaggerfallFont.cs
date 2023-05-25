@@ -484,6 +484,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!tmpFont)
                 return false;
 
+            // Attempt to ingest a StreamingAssets/Fonts .ttf override file
+            TMP_FontAsset replacement;
+            if (ReplaceTMPFontFromFile(Path.GetFileNameWithoutExtension(path), tmpFont, out replacement))
+            {
+                tmpFont = replacement;
+                // TODO: Output debug text that font was replaced
+            }
+
             UseSDFFontAsset(tmpFont);
 
             return true;
@@ -620,6 +628,114 @@ namespace DaggerfallWorkshop.Game.UserInterface
         float GetGlyphSpacing()
         {
             return (!IsSDFCapable) ? classicGlyphSpacing : sdfGlyphSpacing;
+        }
+
+        /// <summary>
+        /// Replace TMP font asset using a .ttf or .otf font in StreamingAssets/Fonts.
+        /// TODO: Support loading font file from .dfmod.
+        /// </summary>
+        /// <param name="filename">Filename of replacement font including .ttf extension. Font file must be present in StreamingAssets/Fonts to load.</param>
+        /// <param name="source">Source TMP font for initial character table population.</param>
+        /// <param name="replacement">Replacement TMP font output.</param>
+        /// <returns>True is successfully created replacement TMP font.</returns>
+        bool ReplaceTMPFontFromFile(string filename, TMP_FontAsset source, out TMP_FontAsset replacement)
+        {
+            const string ttfExt = ".ttf";
+            const string otfExt = ".otf";
+
+            // Compose path to font file
+            string path = Path.Combine(Application.streamingAssetsPath, "Fonts", filename);
+
+            // Check file exists
+            replacement = null;
+            if (File.Exists(path + ttfExt))
+                path += ttfExt;
+            else if (File.Exists(path + otfExt))
+                path += otfExt;
+            else
+                return false;
+
+            // Create replacement TMP font asset from path
+            Font font = new Font(path);
+            replacement = TMP_FontAsset.CreateFontAsset(font, 45, 6, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 4096, 4096, AtlasPopulationMode.Dynamic);
+            if (replacement == null)
+                return false;
+
+            // Get characters of source font
+            List<uint> sourceUnicodes = new List<uint>();
+            foreach(TMP_Character c in source.characterTable)
+            {
+                sourceUnicodes.Add(c.unicode);
+            }
+
+            // Attempt to add unicode characters from source
+            uint[] missingUnicodesSource = null;
+            if (!replacement.TryAddCharacters(sourceUnicodes.ToArray(), out missingUnicodesSource))
+            {
+                // Format list of missing default characters in replacement font
+                // This isn't always a problem, and missing characters aren't always important to game
+                // Just log message to help with troubleshooting if needed
+                string missingCharsString = string.Empty;
+                for (int c = 0; c < missingUnicodesSource.Length; c++)
+                {
+                    missingCharsString += string.Format("{0}[{1}] ", Convert.ToChar(missingUnicodesSource[c]), missingUnicodesSource[c]);
+                }
+                Debug.LogFormat("Some default characters could not be found in font {0}: '{1}': ", filename, missingCharsString);
+            }
+
+            // Attempt to add user-specified unicode characters from a source file
+            LoadCustomFontChars(Path.GetFileNameWithoutExtension(path) + ".txt", replacement);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Attempt to add specific font characters to SDF font loaded from a .txt file with same name as font.
+        /// For example, "FONT0003-SDF.ttf" might be a Cyrillic font and "FONT0003-SDF.txt" the Cyrillic alphabet.
+        /// Some fonts (e.g. Noto Sans JP) may contain many thousands of character codes for different languages, far too many to add all to SDF atlas.
+        /// The .txt file tells DFU which character codes are actually required in SDF atlas by translator matching their alphabet and language.
+        /// All Latin character codes are added by default if present in font.
+        /// It is recommended custom fonts always have Latin characters for any parts of game not translated or supported yet.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="replacement"></param>
+        void LoadCustomFontChars(string filename, TMP_FontAsset replacement)
+        {
+            // Compose path to character file
+            string path = Path.Combine(Application.streamingAssetsPath, "Fonts", filename);
+
+            // Check file exists
+            if (!File.Exists(path))
+                return;
+
+            // Attempt to add unicode characters from source file
+            string text = File.ReadAllText(path);
+            if (!string.IsNullOrEmpty(text))
+            {
+                // Read unicodes from source file
+                List<uint> sourceUnicodes = new List<uint>(text.Length);
+                for (int c = 0; c < text.Length; c++)
+                {
+                    if (text[c] >= 0x09 && text[c] <= 0x0d || sourceUnicodes.Contains(text[c]))
+                        continue; // Filter out codes 09-0d (tab through carriage return) so input txt can format a bit
+                    else
+                        sourceUnicodes.Add(text[c]);
+                }
+
+                // Attempt to add unicode characters from source file
+                uint[] missingUnicodesSource = null;
+                if (!replacement.TryAddCharacters(sourceUnicodes.ToArray(), out missingUnicodesSource))
+                {
+                    // Format list of missing default characters in replacement font
+                    // This is considered a warning at least as modder specifically requested these characters from font
+                    string missingCharsString = string.Empty;
+                    for (int c = 0; c < missingUnicodesSource.Length; c++)
+                    {
+                        missingCharsString += string.Format("{0}[{1}] ", Convert.ToChar(missingUnicodesSource[c]), missingUnicodesSource[c]);
+                    }
+                    Debug.LogWarningFormat("Some requested characters could not be found in font {0}: '{1}': ", filename, missingCharsString);
+                }
+            }
         }
 
         #endregion

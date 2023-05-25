@@ -107,9 +107,9 @@ namespace DaggerfallWorkshop.Game
             mainCamera = GameManager.Instance.MainCamera;
             levitateMotor = GetComponent<LevitateMotor>();
             climbingMotor = GetComponent<ClimbingMotor>();
-            camSwimLevel = controllerSwimHeight / 2f;
-            camCrouchLevel = controllerCrouchHeight / 2f;
-            camStandLevel = controllerStandingHeight / 2f;
+            camSwimLevel = controllerSwimHeight / 2f - eyeHeight;
+            camCrouchLevel = controllerCrouchHeight / 2f - eyeHeight;
+            camStandLevel = controllerStandingHeight / 2f - eyeHeight;
             camRideLevel = controllerRideHeight / 2f - eyeHeight;
             //camSwimToCrouchDist = (controllerCrouchHeight - controllerSwimHeight) / 2f;
             camCrouchToStandDist = (controllerStandingHeight - controllerCrouchHeight) / 2f;
@@ -475,17 +475,9 @@ namespace DaggerfallWorkshop.Game
             bool dismounting = (heightAction == HeightChangeAction.DoDismounting);
             bool mounting = (heightAction == HeightChangeAction.DoMounting);
             controller.height = GetNearbyFloat(controller.height + heightChange);
-            float eyeChange = 0;
-            if (GameManager.Instance.PlayerMotor.OnExteriorWater != PlayerMotor.OnExteriorWaterMethod.Swimming)
-            {
-                if (dismounting)
-                    eyeChange = -1 * eyeHeight;
-                else if (mounting)
-                    eyeChange = eyeHeight;
-            }
-            controller.transform.position += new Vector3(0, heightChange / 2 + eyeChange);
+            controller.transform.position += new Vector3(0, heightChange / 2f);
 
-            return controller.height / 2 + eyeChange;
+            return controller.height / 2f;
         }
 
         /// <summary>

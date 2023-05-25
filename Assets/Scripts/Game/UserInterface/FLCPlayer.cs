@@ -48,7 +48,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             flcFile.TransparentGreen = tGreen;
             flcFile.TransparentBlue = tBlue;
 
-            string path = Path.Combine(DaggerfallUnity.Instance.Arena2Path, filename);
+            // Seek from loose files Movies or Arena2 path
+            string moviePath = Path.Combine(Application.streamingAssetsPath, "Movies");
+            string path = Path.Combine(moviePath, filename);
+            if (!File.Exists(path))
+                path = Path.Combine(DaggerfallUnity.Instance.Arena2Path, filename);
             if (!flcFile.Load(path))
                 return;
 

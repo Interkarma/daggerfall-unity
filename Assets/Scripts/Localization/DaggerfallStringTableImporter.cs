@@ -20,6 +20,9 @@ using DaggerfallWorkshop.Utility;
 using UnityEngine;
 using UnityEngine.Localization.Tables;
 using DaggerfallWorkshop.Game;
+using DaggerfallConnect;
+using DaggerfallConnect.Save;
+using DaggerfallConnect.FallExe;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Localization;
@@ -47,6 +50,10 @@ namespace DaggerfallWorkshop.Localization
         const string markupNewLine = "[/newline]";
         const string markupTextPosition = "[/pos:x={0},y={1}]";
         const string markupTextPositionPrefix = "[/pos";
+        const string markupFontPrefix = "[/font";
+        const string markupTextColorPrefix = "[/color";
+        const string markupTextScalePrefix = "[/scale";
+        const string markupImagePrefix = "[/image";
         const string markupInputCursor = "[/input]";
         const string markupSubrecordSeparator = "[/record]";
         const string markupEndRecord = "[/end]";
@@ -218,6 +225,14 @@ namespace DaggerfallWorkshop.Localization
                 tokens.Add(new TextFile.Token(TextFile.Formatting.NewLine));
             else if (markup.StartsWith(markupTextPositionPrefix))
                 tokens.Add(ParsePositionMarkup(markup));
+            else if (markup.StartsWith(markupFontPrefix))
+                tokens.Add(ParseFontMarkup(markup));
+            else if (markup.StartsWith(markupTextColorPrefix))
+                tokens.Add(ParseColorMarkup(markup));
+            else if (markup.StartsWith(markupTextScalePrefix))
+                tokens.Add(ParseScaleMarkup(markup));
+            else if (markup.StartsWith(markupImagePrefix))
+                tokens.Add(ParseImageMarkup(markup));
             else if (markup == markupSubrecordSeparator)
                 tokens.Add(new TextFile.Token(TextFile.Formatting.SubrecordSeparator));
             else if (markup == markupInputCursor)
@@ -244,6 +259,56 @@ namespace DaggerfallWorkshop.Localization
             int y = Parser.ParseInt(match.Groups["y"].Value);
 
             return new TextFile.Token(TextFile.Formatting.PositionPrefix, string.Empty, x, y);
+        }
+
+        /// <summary>
+        /// Reads font markup using regex.
+        /// If markup pattern not matched then returned as a string token.
+        /// </summary>
+        static TextFile.Token ParseFontMarkup(string markup)
+        {
+            const string pattern = @"font=(?<x>\d+)";
+
+            Match match = Regex.Match(markup, pattern);
+            if (!match.Success)
+                return new TextFile.Token(TextFile.Formatting.Text, markup);
+
+            int x = Parser.ParseInt(match.Groups["x"].Value);
+
+            return new TextFile.Token(TextFile.Formatting.FontPrefix, string.Empty, x, 0);
+        }
+
+        static TextFile.Token ParseColorMarkup(string markup)
+        {
+            const string pattern = @"color=(?<x>[0-9a-f]{6})";
+
+            Match match = Regex.Match(markup, pattern);
+            if (!match.Success)
+                return new TextFile.Token(TextFile.Formatting.Text, markup);
+
+            return new TextFile.Token(TextFile.Formatting.Color, match.Groups["x"].Value, 0, 0);
+        }
+
+        static TextFile.Token ParseScaleMarkup(string markup)
+        {
+            const string pattern = @"scale=(?<x>[+-]?([0-9]*[.])?[0-9]+)";
+
+            Match match = Regex.Match(markup, pattern);
+            if (!match.Success)
+                return new TextFile.Token(TextFile.Formatting.Text, markup);
+
+            return new TextFile.Token(TextFile.Formatting.Scale, match.Groups["x"].Value, 0, 0);
+        }
+
+        static TextFile.Token ParseImageMarkup(string markup)
+        {
+            const string pattern = @"\[\/image=(?<x>.*)\]";
+
+            Match match = Regex.Match(markup, pattern);
+            if (!match.Success)
+                return new TextFile.Token(TextFile.Formatting.Text, markup);
+
+            return new TextFile.Token(TextFile.Formatting.Image, match.Groups["x"].Value, 0, 0);
         }
 
         /// <summary>
@@ -576,23 +641,12 @@ namespace DaggerfallWorkshop.Localization
         /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
         public static void CopyTextFlatsToStringTable(string target, bool overwriteExistingKeys)
         {
-            // Use default Internal_Flat collection with EN locale code as source
-            // Note: Internal_Flats is reserved for future use
-            string sourceCollectionName = TextManager.defaultInternalFlatsCollectionName;
-
             // Do nothing if target not set
             if (string.IsNullOrEmpty(target))
                 return;
 
-            // Target cannot be same as default
-            if (string.Compare(target, sourceCollectionName, true) == 0)
-            {
-                Debug.LogError("CopyTextFlatsToStringTable() target cannot be same as default");
-                return;
-            }
-
             // Load default FLATS.CFG file
-            FlatsFile flatsFile = new FlatsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, FlatsFile.Filename), DaggerfallConnect.FileUsage.UseMemory, true);
+            FlatsFile flatsFile = new FlatsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, FlatsFile.Filename), FileUsage.UseMemory, true);
             if (flatsFile == null)
             {
                 Debug.LogError("CopyTextFlatsToStringTable() could not find default FLATS.CFG file");
@@ -646,6 +700,347 @@ namespace DaggerfallWorkshop.Localization
             EditorUtility.SetDirty(targetCollection.SharedData);
 
             Debug.LogFormat("Source collection FLATS.CFG has a total of {0} entries.\nTarget collection '{1}' received {2} new entries, {3} entries were overwritten.", totalSourceEntries, target, copiedNew, copiedOverwrite);
+        }
+
+        /// <summary>
+        /// Import MAPS.BSA EN location names from embedded game data into specified StringTable.
+        /// </summary>
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
+        public static void CopyLocationsToStringTable(string target, bool overwriteExistingKeys)
+        {
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
+
+            // Load default MAPS.BSA file
+            MapsFile mapsFile = new MapsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, MapsFile.Filename), FileUsage.UseMemory, true);
+            if (mapsFile == null)
+            {
+                Debug.LogError("CopyLocationsToStringTable() could not find default MAPS.BSA file");
+                return;
+            }
+
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopyLocationsToStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
+
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                // Copy all location names across all regions into target string table
+                for (int region = 0; region < mapsFile.RegionCount; region++)
+                {
+                    if (mapsFile.LoadRegion(region))
+                    {
+                        DFRegion regionData = mapsFile.GetRegion(region);
+                        for (int location = 0; location < regionData.LocationCount; location++)
+                        {
+                            DFLocation locationData = mapsFile.GetLocation(region, location);
+                            string key = locationData.MapTableData.MapId.ToString();
+                            string text = locationData.Name;
+
+                            var targetEntry = targetTable.GetEntry(key);
+                            if (targetEntry == null)
+                            {
+                                targetTable.AddEntry(key, text);
+                                copiedNew++;
+                            }
+                            else if (targetEntry != null && overwriteExistingKeys)
+                            {
+                                if (targetTable.RemoveEntry(key))
+                                {
+                                    targetTable.AddEntry(key, text);
+                                    copiedOverwrite++;
+                                }
+                                else
+                                {
+                                    Debug.LogErrorFormat("CopyLocationsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
+            }
+
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
+        }
+
+        /// <summary>
+        /// Import SPELLS.STD spell names into specified StringTable.
+        /// </summary>
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
+        public static void CopySpellsToStringTable(string target, bool overwriteExistingKeys)
+        {
+            const string spellsStd = "SPELLS.STD";
+
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
+
+            // Load default SPELLS.STD file
+            List<SpellRecord.SpellRecordData> standardSpells = DaggerfallSpellReader.ReadSpellsFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, spellsStd));
+            if (standardSpells == null || standardSpells.Count == 0)
+            {
+                Debug.LogError("CopySpellsToStringTable() could not find default SPELLS.STD file");
+                return;
+            }
+
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopySpellsToStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
+
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                foreach (var spell in standardSpells)
+                {
+                    string key = spell.index.ToString();
+                    string text = spell.spellName;
+
+                    var targetEntry = targetTable.GetEntry(key);
+                    if (targetEntry == null)
+                    {
+                        targetTable.AddEntry(key, text);
+                        copiedNew++;
+                    }
+                    else if (targetEntry != null && overwriteExistingKeys)
+                    {
+                        if (targetTable.RemoveEntry(key))
+                        {
+                            targetTable.AddEntry(key, text);
+                            copiedOverwrite++;
+                        }
+                        else
+                        {
+                            Debug.LogErrorFormat("CopySpellsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
+                        }
+                    }
+                }
+
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
+            }
+
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
+        }
+
+        /// <summary>
+        /// Imports item template names into specified StringTable.
+        /// </summary>
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
+        public static void CopyItemsToStringTable(string target, bool overwriteExistingKeys)
+        {
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
+
+            // Get item template names
+            ItemTemplate[] itemTemplates = DaggerfallUnity.Instance.ItemHelper.ItemTemplates;
+            if (itemTemplates == null || itemTemplates.Length == 0)
+            {
+                Debug.LogError("CopyItemsToStringTable() could not get item template data.");
+                return;
+            }
+
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopyItemsToStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
+
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                foreach (ItemTemplate item in itemTemplates)
+                {
+                    string key = item.index.ToString();
+                    string text = item.name;
+
+                    var targetEntry = targetTable.GetEntry(key);
+                    if (targetEntry == null)
+                    {
+                        targetTable.AddEntry(key, text);
+                        copiedNew++;
+                    }
+                    else if (targetEntry != null && overwriteExistingKeys)
+                    {
+                        if (targetTable.RemoveEntry(key))
+                        {
+                            targetTable.AddEntry(key, text);
+                            copiedOverwrite++;
+                        }
+                        else
+                        {
+                            Debug.LogErrorFormat("CopyItemsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
+                        }
+                    }
+                }
+
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
+            }
+
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
+        }
+
+        /// <summary>
+        /// Imports magic item template names into specified StringTable.
+        /// </summary>
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
+        public static void CopyMagicItemsToStringTable(string target, bool overwriteExistingKeys)
+        {
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
+
+            // Get all magic item template names including artifacts
+            MagicItemTemplate[] magicItemTemplate = DaggerfallUnity.Instance.ItemHelper.MagicItemTemplates;
+            if (magicItemTemplate == null || magicItemTemplate.Length == 0)
+            {
+                Debug.LogError("CopyMagicItemsToStringTable() could not get magic item template data.");
+                return;
+            }
+
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopyMagicItemsToStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
+
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                foreach (MagicItemTemplate item in magicItemTemplate)
+                {
+                    string key = item.index.ToString();
+                    string text = item.name;
+
+                    var targetEntry = targetTable.GetEntry(key);
+                    if (targetEntry == null)
+                    {
+                        targetTable.AddEntry(key, text);
+                        copiedNew++;
+                    }
+                    else if (targetEntry != null && overwriteExistingKeys)
+                    {
+                        if (targetTable.RemoveEntry(key))
+                        {
+                            targetTable.AddEntry(key, text);
+                            copiedOverwrite++;
+                        }
+                        else
+                        {
+                            Debug.LogErrorFormat("CopyMagicItemsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
+                        }
+                    }
+                }
+
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
+            }
+
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
+        }
+
+        /// <summary>
+        /// Imports faction names into specified StringTable.
+        /// </summary>
+        /// <param name="target">Target string table collection name.</param>
+        /// <param name="overwriteExistingKeys">When true will overwrite existing keys with source string. When false existing keys are left unchanged.</param>
+        public static void CopyFactionsToStringTable(string target, bool overwriteExistingKeys)
+        {
+            // Do nothing if target not set
+            if (string.IsNullOrEmpty(target))
+                return;
+
+            // Get faction data
+            FactionFile factionFile = new FactionFile(DaggerfallUnity.Instance.ContentReader.GetFactionFilePath(), FileUsage.UseMemory, true);
+            if (factionFile == null || factionFile.FactionDict.Count == 0)
+            {
+                Debug.LogError("CopyFactionsToStringTable() could not get faction data.");
+                return;
+            }
+
+            // Get target string table collection
+            var targetCollection = LocalizationEditorSettings.GetStringTableCollection(target);
+            if (targetCollection == null)
+            {
+                Debug.LogErrorFormat("CopyFactionsToStringTable() could not find target string table collection '{0}'", target);
+                return;
+            }
+
+            int copiedNew = 0;
+            int copiedOverwrite = 0;
+            foreach (StringTable targetTable in targetCollection.StringTables)
+            {
+                foreach (var item in factionFile.FactionDict)
+                {
+                    string key = item.Key.ToString();
+                    string text = item.Value.name;
+
+                    var targetEntry = targetTable.GetEntry(key);
+                    if (targetEntry == null)
+                    {
+                        targetTable.AddEntry(key, text);
+                        copiedNew++;
+                    }
+                    else if (targetEntry != null && overwriteExistingKeys)
+                    {
+                        if (targetTable.RemoveEntry(key))
+                        {
+                            targetTable.AddEntry(key, text);
+                            copiedOverwrite++;
+                        }
+                        else
+                        {
+                            Debug.LogErrorFormat("CopyMagicItemsToStringTable() could not remove key '{0}'. Overwrite failed.", key);
+                        }
+                    }
+                }
+
+                // Set table dirty
+                EditorUtility.SetDirty(targetTable);
+            }
+
+            // Set target collection shared data dirty
+            EditorUtility.SetDirty(targetCollection.SharedData);
+
+            Debug.LogFormat("Target collection '{0}' received {1} new entries, {2} entries were overwritten.", target, copiedNew, copiedOverwrite);
         }
 
         static void SplitQuestionnaireRecord(string text, string key, StringTable targetTable, bool overwriteExistingKeys, ref int copiedNew, ref int copiedOverwrite)

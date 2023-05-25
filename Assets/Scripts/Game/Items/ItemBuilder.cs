@@ -581,7 +581,7 @@ namespace DaggerfallWorkshop.Game.Items
                 throw new Exception("CreateRegularMagicItem() failed to create an item.");
 
             // Replace the regular item name with the magic item name
-            newItem.shortName = magicItem.name;
+            newItem.shortName = TextManager.Instance.GetLocalizedMagicItemName((int)magicItem.index, magicItem.name);
 
             // Add the enchantments
             newItem.legacyMagic = new DaggerfallEnchantment[magicItem.enchantments.Length];

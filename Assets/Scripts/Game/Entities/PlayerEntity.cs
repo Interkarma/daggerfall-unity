@@ -983,6 +983,10 @@ namespace DaggerfallWorkshop.Game.Entity
                     Debug.LogErrorFormat("Failed to create effect bundle while importing classic spell '{0}'.", spell.ParsedData.spellName);
                     continue;
                 }
+
+                // Always use spell name from imported classic save as player might have custom names
+                bundle.Name = spell.ParsedData.spellName;
+
                 AddSpell(bundle);
             }
         }
@@ -2346,6 +2350,22 @@ namespace DaggerfallWorkshop.Game.Entity
             bool suppressCrime = racialOverride != null && racialOverride.SuppressCrime;
 
             crimeCommitted = (!suppressCrime) ? crime : Crimes.None;
+
+            RaiseOnCrimeUpdateEvent(crimeCommitted);
+        }
+
+        // Allows modders to easily detect if a crime has been committed
+        // This will raise when the player's crime is set to None!
+        // Make sure to account for that when necessary.
+        public delegate void OnCrimeUpdateHandler(Crimes crime);
+        public event OnCrimeUpdateHandler OnCrimeUpdate;
+        protected void RaiseOnCrimeUpdateEvent(Crimes crime)
+        {
+            if (SaveLoadManager.Instance.LoadInProgress)
+                return;
+
+            if (OnCrimeUpdate != null)
+                OnCrimeUpdate(crime);
         }
 
         #endregion

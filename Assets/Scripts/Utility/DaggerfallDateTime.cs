@@ -12,6 +12,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -281,30 +282,6 @@ namespace DaggerfallWorkshop.Utility
 
         #endregion
 
-        #region Strings
-
-        static string[] dayNames = new string[] {
-            "Sundas", "Morndas", "Tirdas", "Middas", "Turdas", "Fredas", "Loredas",
-        };
-
-        static string[] monthNames = new string[] {
-            "Morning Star", "Sun's Dawn", "First Seed", "Rain's Hand", "Second Seed",
-            "Midyear", "Sun's Height", "Last Seed", "Hearthfire", "Frostfall", "Sun's Dusk",
-            "Evening Star",
-        };
-
-        static string[] birthSignNames = new string[] {
-            "The Ritual", "The Lover", "The Lord", "The Mage", "The Shadow", "The Steed",
-            "The Apprentice", "The Warrior", "The Lady", "The Tower", "The Atronach",
-            "The Thief",
-        };
-
-        static string[] seasonNames = new string[] {
-            "Fall", "Spring", "Summer", "Winter",
-        };
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
@@ -421,7 +398,8 @@ namespace DaggerfallWorkshop.Utility
         public string LongDateTimeString()
         {
             string suffix = GetSuffix(Day + 1);
-            return string.Format("{0:00}:{1:00}:{2:00} on {3}, {4}{5} of {6:00}, 3E{7}", Hour, Minute, Second, DayName, Day + 1, suffix, MonthName, Year);
+            string longDateTimeFormatString = TextManager.Instance.GetLocalizedText("longDateTimeFormatString");
+            return string.Format(longDateTimeFormatString, Hour, Minute, Second, DayName, Day + 1, suffix, MonthName, Year);
         }
 
         /// <summary>
@@ -430,7 +408,8 @@ namespace DaggerfallWorkshop.Utility
         public string DateTimeString()
         {
             string suffix = GetSuffix(Day + 1);
-            return string.Format("{0:00}:{1:00}:{2:00} on {3}{4} of {5:00}, 3E{6}", Hour, Minute, Second, Day + 1, suffix, MonthName, Year);
+            string dateTimeFormatString = TextManager.Instance.GetLocalizedText("dateTimeFormatString");
+            return string.Format(dateTimeFormatString, Hour, Minute, Second, Day + 1, suffix, MonthName, Year);
         }
 
         /// <summary>
@@ -439,7 +418,8 @@ namespace DaggerfallWorkshop.Utility
         public string DateString()
         {
             string suffix = GetSuffix(Day+1);
-            return string.Format("{0} the {1}{2} of {3:00}", DayName, Day + 1, suffix, MonthName);
+            string dateFormatString = TextManager.Instance.GetLocalizedText("dateFormatString");
+            return string.Format(dateFormatString, DayName, Day + 1, suffix, MonthName);
         }
 
 
@@ -574,7 +554,7 @@ namespace DaggerfallWorkshop.Utility
             int week = (int)(Day / DaysPerWeek);
             int day = (int)(Day - (week * DaysPerWeek));
 
-            return dayNames[day];
+            return TextManager.Instance.GetLocalizedTextList("dayNames")[day];
         }
 
         private string GetMonthName()
@@ -582,7 +562,7 @@ namespace DaggerfallWorkshop.Utility
             if (Month < 0 || Month >= MonthsPerYear)
                 RaiseTime(0);
 
-            return monthNames[(int)Month];
+            return TextManager.Instance.GetLocalizedTextList("monthNames")[Month];
         }
 
         private string GetBirthSignName()
@@ -590,7 +570,7 @@ namespace DaggerfallWorkshop.Utility
             if (Month < 0 || Month >= MonthsPerYear)
                 RaiseTime(0);
 
-            return birthSignNames[(int)Month];
+            return TextManager.Instance.GetLocalizedTextList("birthSignNames")[Month];
         }
 
         private Seasons GetSeasonValue()
@@ -630,7 +610,7 @@ namespace DaggerfallWorkshop.Utility
             if (Month < 0 || Month >= MonthsPerYear)
                 RaiseTime(0);
 
-            return seasonNames[(int)GetSeasonValue()];
+            return TextManager.Instance.GetLocalizedTextList("seasonNames")[(int)GetSeasonValue()];
         }
 
         private int GetMinuteOfDay()

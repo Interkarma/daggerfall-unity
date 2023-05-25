@@ -235,6 +235,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public bool insideOpenShop;
         public bool insideTavern;
         public bool insideResidence;
+        public bool playerTeleportedIntoDungeon;
         public string terrainSamplerName;
         public int terrainSamplerVersion;
         public QuestSmallerDungeonsState smallerDungeonsState;
@@ -298,6 +299,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public ItemRepairData_v1 repairData;
         public uint timeForItemToDisappear;
         public uint timeHealthLeechLastUsed;
+        public int artifactIndexBitfield;
     }
 
     [fsObject("v1")]
@@ -406,6 +408,7 @@ namespace DaggerfallWorkshop.Game.Serialization
         public string lootTableKey;
         public string entityName;
         public int stockedDate;
+        public ulong corpseQuestUID;
         public bool playerOwned;
         public bool customDrop;
         public bool isEnemyClass;

@@ -615,14 +615,17 @@ namespace DaggerfallWorkshop.Game.Serialization
             return (pretty) ? fsJsonPrinter.PrettyJson(data) : fsJsonPrinter.CompressedJson(data);
         }
 
-        public static object Deserialize(Type type, string serializedState)
+        public static object Deserialize(Type type, string serializedState, bool assertSuccess = false)
         {
             // Step 1: Parse the JSON data
             fsData data = fsJsonParser.Parse(serializedState);
 
             // Step 2: Deserialize the data
             object deserialized = null;
-            _serializer.TryDeserialize(data, type, ref deserialized).AssertSuccessWithoutWarnings();
+            if (assertSuccess)
+                _serializer.TryDeserialize(data, type, ref deserialized).AssertSuccess();
+            else
+                _serializer.TryDeserialize(data, type, ref deserialized).AssertSuccessWithoutWarnings();
 
             return deserialized;
         }
@@ -1374,7 +1377,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             // Restore quest machine state
             if (!string.IsNullOrEmpty(questDataJson))
             {
-                QuestMachine.QuestMachineData_v1 questData = Deserialize(typeof(QuestMachine.QuestMachineData_v1), questDataJson) as QuestMachine.QuestMachineData_v1;
+                QuestMachine.QuestMachineData_v1 questData = Deserialize(typeof(QuestMachine.QuestMachineData_v1), questDataJson, assertSuccess:true) as QuestMachine.QuestMachineData_v1;
                 QuestMachine.Instance.RestoreSaveData(questData);
             }
 

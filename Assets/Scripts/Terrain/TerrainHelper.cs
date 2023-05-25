@@ -235,6 +235,7 @@ namespace DaggerfallWorkshop
         #region Terrain Jobs
 
         // Calculates average and maximum heights of terrain data
+        [Unity.Burst.BurstCompile]
         struct CalcAvgMaxHeightJob : IJob
         {
             [ReadOnly]
@@ -258,6 +259,7 @@ namespace DaggerfallWorkshop
         }
 
         // Flattens location terrain and blends with surrounding terrain
+        [Unity.Burst.BurstCompile]
         struct BlendLocationTerrainJob : IJob
         {
             public NativeArray<float> heightmapData;
@@ -329,6 +331,7 @@ namespace DaggerfallWorkshop
         }
 
         // Converts tileMap data to color array for use by shader
+        [Unity.Burst.BurstCompile]
         struct UpdateTileMapDataJob : IJobParallelFor
         {
             [ReadOnly]

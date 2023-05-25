@@ -432,7 +432,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
             // Add note to journal
             playerEntity.Notebook.AddNote(
-                TextManager.Instance.GetLocalizedText("houseDeed").Replace("%town", location.Name).Replace("%region", MapsFile.RegionNames[regionIndex]));
+                TextManager.Instance.GetLocalizedText("houseDeed").Replace("%town", location.Name).Replace("%region", TextManager.Instance.GetLocalizedRegionName(regionIndex)));
         }
 
         public static TransactionResult SellHouse(int regionIndex)

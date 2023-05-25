@@ -344,6 +344,9 @@ _contact_ is dissecting the Slayer's victims and someone doesn't like that.
 <--->
 _contact_'s a scientist at _bookstore_, who has been getting threat letters.
 
+Message:  1029
+<ce>  The Mad Slayer is no more.
+
 Message:  1050
 <ce>                   By killing _rippername_, you have
 <ce>                 aided both %reg and myself. For this,
@@ -391,7 +394,7 @@ Item _I.00_ letter used 1011
 Item _I.01_ letter used 1012
 Item letter31 letter used 1013
 Item _I.03_ letter used 1014
-Item _I.04_ dead_body
+-Item _I.04_ dead_body
 Item _reward_ gold
 Item _reward2_ trinket
 Item _I.08_ item class 26 subclass 3
@@ -425,10 +428,14 @@ Foe _murder_ is Vampire
 	place npc _contact_ at _bookstore_ 
 	place npc _vamp_ at _hookerhouse_ 
 	place npc _widow_ at _widowhouse_ 
-	have _I.04_ set _deadbody_
+-	have _I.04_ set _deadbody_
+--removing everything related to the dead body. It's out of place for
+--the quest, has no relevance and no function. Also had a sprite change
+--since last checked? In any case, not useful.
 
 _S.00_ task:
 	killed 1 _murder_ 
+	say 1029
 
 _1stparton_ task:
 	start timer _2ndparton_ 
@@ -440,14 +447,22 @@ _S.03_ task:
 	place item _I.01_ at _bookstore_ 
 	place item _I.00_ at _bookstore_ 
 	place item letter31 at _bookstore_ 
-	place item _I.04_ at _bookstore_ 
+-	place item _I.04_ at _bookstore_ 
 	hide npc _contact_ 
 
 _vampclicked_ task:
 	clicked npc _vamp_ 
 
+_vampclearclick_ task:
+	when _vampclicked_ and not _S.00_
+	clear _vampclicked_ _vampclearclick_
+
 _qgclicked_ task:
 	clicked npc _qgiver_ 
+
+_qgclearclick_ task:
+	when not _S.00_ and _qgclicked_ 
+	clear _qgclicked_ _qgclearclick_
 
 _pcgetsgold_ task:
 	when _S.00_ and _qgclicked_ 
@@ -455,8 +470,8 @@ _pcgetsgold_ task:
 	unset _qgclicked_ 
 	end quest 
 
-_deadbody_ task:
-	take _I.04_ from pc
+-_deadbody_ task:
+-	take _I.04_ from pc
 --added deadbody task. otherwise body would clog inventory
 
 _S.07_ task:

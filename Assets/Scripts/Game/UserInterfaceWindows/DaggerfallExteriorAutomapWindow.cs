@@ -582,11 +582,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
 
-            if (Input.GetKeyDown(exitKey) ||
+            if (InputManager.Instance.GetBackButtonDown() ||
                 // Toggle window closed with same hotkey used to open it
                 InputManager.Instance.GetKeyDown(automapBinding))
                 isCloseWindowDeferred = true;
-            else if ((Input.GetKeyUp(exitKey) ||
+            else if ((InputManager.Instance.GetBackButtonUp() ||
                 // Toggle window closed with same hotkey used to open it
                 InputManager.Instance.GetKeyUp(automapBinding)) && isCloseWindowDeferred)
             {
@@ -877,8 +877,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].name;
                 panelRenderAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
 
+                // use long name or custom name for nameplate label
+                string displayName = !string.IsNullOrEmpty(exteriorAutomap.buildingNameplates[i].customName) ? exteriorAutomap.buildingNameplates[i].customName : exteriorAutomap.buildingNameplates[i].name;
+
                 exteriorAutomap.buildingNameplates[i].gameObject.name = String.Format("building name plate for [{0}]+", exteriorAutomap.buildingNameplates[i].name);
-                exteriorAutomap.buildingNameplates[i].textLabel.Text = exteriorAutomap.buildingNameplates[i].name; // use long name
+                exteriorAutomap.buildingNameplates[i].textLabel.Text = displayName;
                 exteriorAutomap.buildingNameplates[i].width = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth;
                 exteriorAutomap.buildingNameplates[i].height = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight;
                 exteriorAutomap.buildingNameplates[i].offset = Vector2.zero;
@@ -906,7 +909,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 exteriorAutomap.buildingNameplates[i].upperRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
                 exteriorAutomap.buildingNameplates[i].lowerLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
                 exteriorAutomap.buildingNameplates[i].lowerRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
-                exteriorAutomap.buildingNameplates[i].textLabel.Update();
+                //exteriorAutomap.buildingNameplates[i].textLabel.Update();
             }
         }
 

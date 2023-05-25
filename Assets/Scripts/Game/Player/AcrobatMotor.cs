@@ -7,9 +7,11 @@ namespace DaggerfallWorkshop.Game
     public class AcrobatMotor : MonoBehaviour
     {
         const float slowFallSpeed = 105f;
+        public const float defaultJumpSpeed = 4.5f;
+        public const float defaultGravity = 20.0f;
 
-        public float jumpSpeed = 4.5f;
-        public float gravity = 20.0f;
+        public float jumpSpeed = defaultJumpSpeed;
+        public float gravity = defaultGravity;
         public float crouchingJumpDelta = 0.8f;
         public float fallingDamageThreshold = 5.0f;
         public bool airControl = false;

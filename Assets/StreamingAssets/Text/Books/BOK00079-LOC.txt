@@ -1,0 +1,121 @@
+Title: Etiquette With Rulers
+Author: Erystera Ligen
+IsNaughty: False
+Price: 738
+IsUnique: False
+WhenVarSet: 
+Content:
+
+
+[/font=2]
+
+[/center]Etiquette With
+
+[/center]Rulers
+
+
+
+[/font=4]
+
+[/center]
+
+
+
+    Because the rules are so complex and the stakes are so high,
+many people blanche at the thought of speaking with a noble
+with a title. For starters, it is important to address them
+correctly, for just as no one likes to be misnamed, no one
+likes to be mistitled. The problem is that in High Rock,
+traditions of the peerage differ slightly from region to
+region. The base rules follow:
+
+    There are eight kingdoms in High Rock in the following
+regions: Northpoint, Daggerfall, Shornhelm, Camlorn,
+Farrun, Evermore, Wayrest, and Jehanna. If a woman is
+ruling one of these areas, she is called the Queen. The husband
+of a Queen and the wife of a King is not necessarily of equal
+rank -- they may not be Kings and Queens themselves. Their
+children are Princes and Princesses. Their grandchildren are
+also Princes and Princesses. If a male ruler dies, his wife
+takes the title Dowager Queen, providing there is not a
+Dowager Queen already. Like all rules, there are
+exceptions. One noted exception took place recently in
+Daggerfall, when King Lysandus died. In most regions, his
+wife Mynisera would not have become Dowager Queen of
+Daggerfall, because Lysandus' mother, the widow Nulfaga,
+still lived. In Daggerfall, however, it is permissable for
+there to be two persons with the same title. Thus, both
+Nulfaga and Mynisera have the title Dowager Queen.
+
+    If a female ruler, who does not share rank with her husband,
+dies, there is no male equivalent to the word Dowager.
+Widowers of Queens usually take another title, either a
+lesser family title or one given by their children. There
+have been a few men in the history of High Rock who have fallen
+from being addressed as King to being addressed as Mister at
+the death of their wife.
+
+    Other regions are ruled by Dukes and Duchesses, Marquises
+(or Marquesses) and Marquises (or Marchionesses), Counts and
+Countesses, Viscounts or Viscountesses, Barons or
+Baronesses, and Lords or Ladies. This list is
+theoretically listed from highest to lowest rank, but the
+ruler of a territory outranks all other nobles, regardless
+of title. Dwynnen, for example, is a Barony, and the Baron
+or Baroness of Dwynnen outrank any other noble in that
+territory, even Dukes and Counts.
+
+    In theory, (again, this may not be the case according to
+local custom) the eldest son or daughter of a noble takes
+their parents highest family title below their parents.
+Thus, the Duke of Northmoor, who is also the Marquis of
+Calder, had a daughter who became the Marchioness of Calder.
+
+    Kings and Queens are always addressed as "Your Majesty"
+in conversation; Dukes and Duchesses, "Your Grace". All
+other rulers may be addressed with their title and name, or
+Lord or Lady and their name.
+
+    A few hints may be needed to determine exactly who rules a
+territory. You may rely on people on the streets to make
+reference to their ruler, but that may not be enough. After
+all, if the gossip involved Lord Bemmish and Viscountess
+Byrd, neither or both could be the ruler of the territoy. I
+have found that a more predictable method is to pay some
+attention to the names of taverns and shops in a region. By
+tradition, many of these are called "The Duke's Fox" or "The
+Lady's Provisions." This, more often than not, is the name
+of the ruler. If the shop's name is "Lady Annisa's
+Provisions" or "Lord Boxworth's Fox," that is probably the
+name of a local titled merchant, not the ruler. A store with
+a unnamed ruler's title has probably been around for some
+time, and does not bother to change its name with the new name
+of the ruler.
+
+    In speaking with any person, a ruler or not, it is best to
+know what sort of a person they are first. Rulers tend to
+stand on ceremony, and prefer that people addressing them
+speak politely and deferentially. There are, of course,
+acceptions to this, particularly among younger rulers, or
+rulers new to their positions. They may prefer a bolder,
+slangy style. If you are unsure, or unsure of your ability
+to adopt the vocubulary of either an aristocrat or a
+criminal, choose to speak as plainly and directly as
+possible. You will seldom charm someone by plain talk, but
+you will also not alienate by mangled politesse or dated
+slang. Alienating a ruler, I need not tell you, can be the
+last mistake one can make.
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

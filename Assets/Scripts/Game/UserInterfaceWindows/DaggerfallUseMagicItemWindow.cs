@@ -70,9 +70,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Update();
 
             // Toggle window closed with same hotkey used to open it
-            if (InputManager.Instance.GetKeyDown(toggleClosedBinding) || Input.GetKeyDown(exitKey))
+            if (InputManager.Instance.GetKeyDown(toggleClosedBinding) || InputManager.Instance.GetBackButtonDown())
                 isCloseWindowDeferred = true;
-            else if ((InputManager.Instance.GetKeyUp(toggleClosedBinding) || Input.GetKeyUp(exitKey)) && isCloseWindowDeferred)
+            else if ((InputManager.Instance.GetKeyUp(toggleClosedBinding) || InputManager.Instance.GetBackButtonUp()) && isCloseWindowDeferred)
             {
                 isCloseWindowDeferred = false;
                 CloseWindow();

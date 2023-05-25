@@ -42,8 +42,8 @@ namespace DaggerfallWorkshop.Game.Items
                 DFRandom.srand(message);
                 uint paintingIndex = DFRandom.rand() % 180;
                 dataSource.paintingFileIdx = paintingIndex & 7;
-                char paintingFileChar = (char)((paintingIndex >> 3) + 97);
-                dataSource.paintingFilename = paintingFileChar + "paint.cif";
+                char paintingFileChar = (char)((paintingIndex >> 3) + 'A');
+                dataSource.paintingFilename = paintingFileChar + "PAINT.CIF";
 
                 byte[] paintingRecord = DaggerfallUnity.Instance.ContentReader.PaintFileReader.Read(paintingIndex);
                 Debug.LogFormat("painting file: {0}, index: {1}, cif idx: {2}, record: {3} {4} {5}", dataSource.paintingFilename, paintingIndex, dataSource.paintingFileIdx, paintingRecord[0], paintingRecord[1], paintingRecord[2]);
@@ -153,9 +153,15 @@ namespace DaggerfallWorkshop.Game.Items
 
             public override string BookAuthor()
             {   // %ba
-                BookFile bookFile = new BookFile();
 
+                // Get book author from localized book file as first preference
                 string name = GameManager.Instance.ItemHelper.GetBookFileName(parent.message);
+                LocalizedBook localizedBook = new LocalizedBook();
+                if (localizedBook.OpenLocalizedBookFile(name))
+                    return localizedBook.Author;
+
+                // Fallback to legacy book data
+                BookFile bookFile = new BookFile();
                 if (name != null)
                 {
                     if (!BookReplacement.TryImportBook(name, bookFile))
@@ -250,7 +256,7 @@ namespace DaggerfallWorkshop.Game.Items
                 {
                     // Use appropriate artifact description message. (8700-8721)
                     try {
-                        ArtifactsSubTypes artifactType = ItemHelper.GetArtifactSubType(parent.shortName);
+                        ArtifactsSubTypes artifactType = ItemHelper.GetArtifactSubType(parent);
                         return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(8700 + (int)artifactType);
                     } catch (KeyNotFoundException e) {
                         Debug.Log(e.Message);
@@ -336,7 +342,8 @@ namespace DaggerfallWorkshop.Game.Items
                             {
                                 if (spell.index == parent.legacyMagic[i].param)
                                 {
-                                    magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + spell.spellName));
+                                    string spellName = TextManager.Instance.GetLocalizedSpellName(spell.index);
+                                    magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + spellName));
                                     found = true;
                                     break;
                                 }

@@ -330,7 +330,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Send msg message on first spawn only
             if (msgMessageID != -1)
             {
-                ParentQuest.ShowMessagePopup(msgMessageID);
+                ParentQuest.ShowMessagePopup(msgMessageID, oncePerQuest:true);
                 msgMessageID = -1;
             }
 

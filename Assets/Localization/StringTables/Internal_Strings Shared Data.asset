@@ -3603,6 +3603,186 @@ MonoBehaviour:
     m_Key: smallerDungeonsChanged
     m_Metadata:
       m_Items: []
+  - m_Id: 263503556027629568
+    m_Key: youNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 264997637513822208
+    m_Key: customName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285674837707603968
+    m_Key: StoresA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285674968234344448
+    m_Key: GeneralStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675018800873472
+    m_Key: WeaponStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675106491187200
+    m_Key: ArmorStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675156646674432
+    m_Key: BookStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675205288017920
+    m_Key: LibraryStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675243338743808
+    m_Key: ClothingStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675323382841344
+    m_Key: AlchemyStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675361865580544
+    m_Key: GemStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675433093251072
+    m_Key: PawnStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675465657827328
+    m_Key: FurnitureStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675519206506496
+    m_Key: LivestockStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675582083317760
+    m_Key: TavernsA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675625704079360
+    m_Key: TavernsB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285678855704035328
+    m_Key: houseForSale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679031546036224
+    m_Key: theBankOf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679698457149440
+    m_Key: daggerfall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679716257775616
+    m_Key: wayrest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679764228030464
+    m_Key: sentinel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285680166927351808
+    m_Key: palace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286284881981620224
+    m_Key: regionNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286315014360678400
+    m_Key: ocean
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286315235807346688
+    m_Key: unknownUpper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286316113792614400
+    m_Key: switchToRegion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287414938670219264
+    m_Key: locationInRegionProvince
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318179644662083584
+    m_Key: dayNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180613974126592
+    m_Key: monthNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180665765392384
+    m_Key: birthSignNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180720735940608
+    m_Key: seasonNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318183911657566208
+    m_Key: longDateTimeFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318184342387421184
+    m_Key: dateTimeFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318184563599208448
+    m_Key: dateFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338866630561361920
+    m_Key: ingredientFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338866679752159232
+    m_Key: longWeaponNameFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338879523965104128
+    m_Key: longArmorNameFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340024905667440640
+    m_Key: strRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340024972407205888
+    m_Key: intRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025019786063872
+    m_Key: wilRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025063192915968
+    m_Key: agiRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025139755741184
+    m_Key: endRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025171456290816
+    m_Key: perRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025210190688256
+    m_Key: spdRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025245175377920
+    m_Key: lucRatings
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
