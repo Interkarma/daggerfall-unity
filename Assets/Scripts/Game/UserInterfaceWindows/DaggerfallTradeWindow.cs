@@ -405,6 +405,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             ClearSelectedItems();
+            // Unload assets
+            UnityEngine.Object.Destroy(costPanelTexture);
+            UnityEngine.Object.Destroy(actionButtonsTexture);
+            UnityEngine.Object.Destroy(actionButtonsGoldTexture);
+            UnityEngine.Object.Destroy(selectSelected);
+            UnityEngine.Object.Destroy(selectNotSelected);
+            localItemListScroller.Dispose();
+            remoteItemListScroller.Dispose();
         }
 
         public override void Refresh(bool refreshPaperDoll = true)

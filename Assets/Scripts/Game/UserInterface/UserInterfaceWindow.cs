@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             uiManager.PopWindow();
             RaiseOnCloseHandler();
-            DaggerfallGC.ThrottledUnloadUnusedAssets();
+            //DaggerfallGC.ThrottledUnloadUnusedAssets();
         }
 
         public void PopWindow()

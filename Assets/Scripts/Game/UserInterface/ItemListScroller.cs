@@ -621,5 +621,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         #endregion
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (itemListTextures != null)
+                foreach (var texture in itemListTextures)
+                    UnityEngine.Object.Destroy(texture);
+        }
     }
 }
