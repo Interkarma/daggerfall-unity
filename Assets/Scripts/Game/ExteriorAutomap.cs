@@ -710,11 +710,17 @@ namespace DaggerfallWorkshop.Game
                             }
                             else if (this.revealUndiscoveredBuildings)
                             {
-                                newBuildingNameplate.name = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+                                // Get localized name
+                                newBuildingNameplate.name = BuildingNames.GetName(buildingSummary.NameSeed,
+                                    buildingSummary.BuildingType,
+                                    buildingSummary.FactionId,
+                                    TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name),
+                                    TextManager.Instance.GetLocalizedRegionName(location.RegionIndex));
                             }                  
                         }
                         catch (Exception e)
                         {
+                            // Use canonical name in exception string in case translation was cause of error
                             string exceptionMessage = String.Format("exception occured in function BuildingNames.GetName (exception message: " + e.Message + @") with params: 
                                                                         seed: {0}, type: {1}, factionID: {2}, locationName: {3}, regionName: {4}",
                                                                         buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
