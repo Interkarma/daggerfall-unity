@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -117,6 +117,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Debug.Log("Sending double-click message " + DoubleClickMessage);
 #endif
             }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
         }
     }
 }

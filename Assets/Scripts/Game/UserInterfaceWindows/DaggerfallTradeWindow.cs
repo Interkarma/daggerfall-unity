@@ -405,14 +405,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             ClearSelectedItems();
-            // Unload assets
-            UnityEngine.Object.Destroy(costPanelTexture);
-            UnityEngine.Object.Destroy(actionButtonsTexture);
-            UnityEngine.Object.Destroy(actionButtonsGoldTexture);
-            UnityEngine.Object.Destroy(selectSelected);
-            UnityEngine.Object.Destroy(selectNotSelected);
-            localItemListScroller.Dispose();
-            remoteItemListScroller.Dispose();
+            UnloadTextures();
+            ParentPanel.Dispose();
+            NativePanel.Dispose();
         }
 
         public override void Refresh(bool refreshPaperDoll = true)
@@ -776,6 +771,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectSelected = ImageReader.GetSubTexture(actionButtonsGoldTexture, selectButtonRect, actionButtonsFullSize);
 
             costPanelTexture = ImageReader.GetTexture(costPanelTextureName);
+        }
+
+        protected override void UnloadTextures()
+        {
+            base.UnloadTextures();
+            GameObject.Destroy(costPanelTexture);
+            GameObject.Destroy(actionButtonsTexture);
+            GameObject.Destroy(actionButtonsGoldTexture);
+            GameObject.Destroy(selectSelected);
+            GameObject.Destroy(selectNotSelected);
         }
 
         #endregion

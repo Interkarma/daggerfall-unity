@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -79,7 +79,10 @@ namespace DaggerfallWorkshop.Utility
             if (imageData.texture == null)
                 UpdateTexture(ref imageData);
 
-            return imageData.texture.GetPixels32();
+            var pixels = imageData.texture.GetPixels32();
+            GameObject.Destroy(imageData.texture);
+
+            return pixels;
         }
 
         /// <summary>
@@ -420,6 +423,8 @@ namespace DaggerfallWorkshop.Utility
                 return;
 
             // Create new Texture2D
+            if (imageData.texture)
+                GameObject.Destroy(imageData.texture);
             imageData.texture = GetTexture(colors, imageData.width, imageData.height);
         }
 

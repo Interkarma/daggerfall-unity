@@ -971,6 +971,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (button == null || panel == null)
                     return;
 
+                if (panel.BackgroundTexture)
+                    GameObject.Destroy(panel.BackgroundTexture);
+
                 // Get item at this equip index (if any)
                 DaggerfallUnityItem item = PlayerEntity.ItemEquipTable.GetItem((EquipSlots)button.Tag);
                 if (item == null)
@@ -1033,6 +1036,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Cut out info panel texture from item maker
             Texture2D infoBaseTexture = ImageReader.GetTexture(infoTextureName);
             infoTexture = ImageReader.GetSubTexture(infoBaseTexture, infoCutoutRect, baseSize);
+            GameObject.Destroy(infoBaseTexture);
 
             // Load coins animation textures
             coinsAnimation = ImageReader.GetImageData(coinsAnimTextureName, 6, 0, true, false, true);
@@ -1040,6 +1044,41 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Load magic item animation textures
             magicAnimation = ImageReader.GetImageData(magicAnimTextureName, 5, 0, true, false, true);
 
+        }
+
+        protected virtual void UnloadTextures()
+        {
+            defaultToolTip.Dispose();
+            GameObject.Destroy(baseTexture);
+            GameObject.Destroy(goldTexture);
+            GameObject.Destroy(weaponsAndArmorNotSelected);
+            GameObject.Destroy(magicItemsNotSelected);
+            GameObject.Destroy(clothingAndMiscNotSelected);
+            GameObject.Destroy(ingredientsNotSelected);
+            GameObject.Destroy(weaponsAndArmorSelected);
+            GameObject.Destroy(magicItemsSelected);
+            GameObject.Destroy(clothingAndMiscSelected);
+            GameObject.Destroy(ingredientsSelected);
+            GameObject.Destroy(wagonNotSelected);
+            GameObject.Destroy(infoNotSelected);
+            GameObject.Destroy(equipNotSelected);
+            GameObject.Destroy(removeNotSelected);
+            GameObject.Destroy(useNotSelected);
+            GameObject.Destroy(wagonSelected);
+            GameObject.Destroy(wagonNotSelected);
+            GameObject.Destroy(infoSelected);
+            GameObject.Destroy(equipSelected);
+            GameObject.Destroy(removeSelected);
+            GameObject.Destroy(useSelected);
+            GameObject.Destroy(infoTexture);
+            GameObject.Destroy(coinsAnimation.texture);
+            foreach (var texture in coinsAnimation.animatedTextures)
+                GameObject.Destroy(texture);
+            GameObject.Destroy(magicAnimation.texture);
+            foreach (var texture in magicAnimation.animatedTextures)
+                GameObject.Destroy(texture);
+            foreach (var panel in accessoryIconPanels)
+                GameObject.Destroy(panel.BackgroundTexture);
         }
 
         void ShowWagon(bool show)

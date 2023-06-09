@@ -39,6 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         ToolTip toolTip = null;
         string toolTipText = string.Empty;
         bool suppressToolTip = false;
+        bool hasExternalBgColorTexture = false;
 
         Vector2 scale = Vector2.one;
         Vector2 localScale = Vector2.one;
@@ -370,7 +371,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public Texture2D BackgroundColorTexture
         {
             get { return backgroundColorTexture; }
-            set { backgroundColorTexture = value; }
+            set {
+                if (!hasExternalBgColorTexture)
+                {
+                    hasExternalBgColorTexture = true;
+                    GameObject.Destroy(backgroundColorTexture);
+                }
+
+                backgroundColorTexture = value;
+            }
         }
 
         /// <summary>
@@ -1020,6 +1029,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         /// </summary>
         public virtual void Dispose()
         {
+            if (!hasExternalBgColorTexture && backgroundColorTexture) // Only destroy if created by this instance.
+                GameObject.Destroy(backgroundColorTexture);
         }
 
         #endregion
