@@ -227,7 +227,7 @@ Message:  1033
 Message:  1034
 <ce>              A letter floats through the air toward you.
 <ce>              Strangely, nobody else seems to notice it.
-<ce>                The letter tucks inself into your pack.
+<ce>                The letter tucks itself into your pack.
 
 Message:  1040
 <ce>              Hand over the Totem, or we'll slaughter you

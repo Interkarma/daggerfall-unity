@@ -33,7 +33,7 @@ Page 7
  from childhood. I know that Gothryd would not refuse
  his aid, but I must bide my time to ask. After all,
  Elysana is still heiress of Wayrest and I am her
- bethrothed. So it should be that when Eadwyre dies
+ betrothed. So it should be that when Eadwyre dies
  (which he is bound to do, sooner rather than later)
  I will be king.
     If it weren't for that bitch queen and her brats,
@@ -101,7 +101,7 @@ Message:  1030
 Message:  1031
 <ce>             This is atrocious! After all the affection we
 <ce>          showered on that fool Woodborne! We nearly married
-<ce>           that villianous swine to Elysana -- nearly handed
+<ce>           that villainous swine to Elysana -- nearly handed
 <ce>          the throne of Wayrest to a cad of the first order!
 <ce>           Good %pcf, it was the right thing to do to bring
 <ce>             this to our attention. Rest assured that Lord

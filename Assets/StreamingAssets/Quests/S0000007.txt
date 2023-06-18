@@ -11,7 +11,7 @@ QuestorOffer:  [1000]
 <ce>                 Hey, if I told you I could give you a
 <ce>                 bit of information, let's say, about
 <ce>                  that letter of milady, would you be
-<ce>                   innerested there, %pcf? I thought
+<ce>                   interested there, %pcf? I thought
 <ce>                   so. Now, mind you, I ain't givin'
 <ce>                  it away. Before I scratch yer back,
 <ce>                     you gotta scratch mine. Deal?
@@ -90,7 +90,7 @@ QuestLogEntry:  [1010]
 <ce>                     to transform before your very
 <ce>                    eyes. In just a few minutes, it
 <ce>                   has become a young man who seems
-<ce>                    to bear a strong resemblence to
+<ce>                    to bear a strong resemblance to
 <ce>                               Cyndassa.
 
 Message:  1011
