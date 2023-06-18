@@ -115,6 +115,7 @@ CanDropQuestItems=False
 EnableQuestDebugger=False
 QuestRumorWeight = 50
 DisableEnemyDeathAlert=False
+HideLoginName=False
 
 [Spells]
 EnableSpellLighting=True
