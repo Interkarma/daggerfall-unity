@@ -223,7 +223,7 @@ namespace DaggerfallConnect.Arena2
                 else if (token.formatting == TextFile.Formatting.JustifyLeft)
                 {
                     if (lastToken.formatting == TextFile.Formatting.JustifyLeft)
-                        backStory.Add("\n");
+                        backStory.Add(string.Empty);
                 }
                 lastToken = token;
             }
