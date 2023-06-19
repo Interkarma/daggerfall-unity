@@ -65,8 +65,8 @@ QuestorPostfailure:  [1009]
 <ce>                   happened? You get scared and hid?
 
 QuestLogEntry:  [1010]
-On %qdt, The Fighters
- Guild of ___qgiver_
+On %qdt,
+ The Fighters Guild of ___qgiver_
  hired me to kill a spriggan
  that is molesting woodsmen.
  It's hiding in ___dungeon_.
@@ -81,7 +81,7 @@ Message:  1011
 Message:  1020
 <ce>                     You attack me without cause,
 <ce>                         %ra. Yes I did wreak
-<ce>                     vengence upon the slayers of
+<ce>                     vengeance upon the slayers of
 <ce>                     wood. Know that they did slay
 <ce>                     seedlings of mine. Would you
 <ce>                    stand rooted while someone slew
@@ -93,9 +93,9 @@ Message:  1020
 
 Message:  1021
 <ce>                    The main culprit is _woodsman_,
-<ce>                  who hacks down trees without care.
-<ce>                    Go to ___house_ and secure his
-<ce>                   promise. Do not visit me again. I
+<ce>                  who hacks down trees without care. Go to
+<ce>                    __woodsman_ in  ___woodsman_
+<ce>                   and secure %g3 promise. Do not visit me again. I
 <ce>                 shall know of your success or failure
 <ce>                  by how the woodsmen do their work.
 
@@ -124,8 +124,8 @@ Message:  1030
  The spriggan has convinced me that
  it is not the villain. Apparently a
  woodsman named _woodsman_
- in ___house_ has been
- cutting down its trees. If I can get
+ in __woodsman_, ___woodsman_
+ has been cutting down its trees. If I can get
  _woodsman_ to agree to log
  the forest more carefully, this whole
  thing can be settled without bloodshed.
@@ -159,7 +159,6 @@ Person _woodsman_ face 168 group Resident2 remote
 
 Place _dungeon_ remote dungeon
 Place _newdung_ remote dungeon
-Place _house_ remote house1
 
 Clock _2dung_ 00:00 0 flag 17 range 0 2
 Clock _end_ 00:00
@@ -167,7 +166,6 @@ Clock _end_ 00:00
 Foe _monster_ is Spriggan
 
 --	Quest start-up:
-	dialog link for location _house_ person _woodsman_ 
 	start timer _2dung_ 
 	reveal _dungeon_ 
 	log 1010 step 0 
@@ -179,19 +177,21 @@ _2dung_ task:
 
 _S.01_ task:
 	killed 1 _monster_ saying 1011 
+	hide npc _woodsman_
+	remove log step 1
 
 _qgclicked_ task:
 	clicked npc _qgiver_ 
 
 _normalvict_ task:
-                when _qgclicked_ and _S.01_
+    when _qgclicked_ and _S.01_
 	say 1003
-                start task _victory_
+    start task _victory_
 --1003 appears to be a victory statement for kill path
 
 _victory_ task:
 	give pc _gold_ 
-                start timer _end_
+    start timer _end_
 --	end quest 
 --this would cause double quest ending, for double reputation gain
 
@@ -210,20 +210,21 @@ _yes_ task:
 	add dialog for person _woodsman_ 
 	log 1030 step 1 
 	say 1021 
-	restrain foe _monster_ 
-	create npc at _house_ 
-	place npc _woodsman_ at _house_ 
+	restrain foe _monster_
 
 _no_ task:
 	say 1022 
 
 _S.07_ task:
 	clicked npc _woodsman_
-                say 1023 
+
+_notkill_ task:
+	when _S.07_ and _injtalk_ and not _S.01_
+    say 1023 
 	change repute with _woodsman_ by +10 
 
 _S.08_ task:
-	when _qgclicked_ and _S.07_ 
+	when _qgclicked_ and _notkill_ 
 	say 1025 
 	start task _victory_
 
@@ -235,4 +236,4 @@ _S.11_ task:
     say 1080 
 
 _end_ task:
-                end quest
+    end quest
