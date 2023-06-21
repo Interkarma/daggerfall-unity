@@ -88,6 +88,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             okButton.OnMouseClick += OkButton_OnMouseClick;
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(nativeTexture);
+        }
+
         #region Private Methods
 
         void SetCharacterSheet(CharacterDocument characterDocument)

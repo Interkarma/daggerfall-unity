@@ -11,16 +11,9 @@
 
 using UnityEngine;
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Player;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Utility.AssetInjection;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -53,9 +46,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Texture2D nativeTexture;
         Texture2D nativeOverlayTexture;
         DaggerfallFont font;
-        Panel advantagePanel = new Panel();
-        Panel overlayPanel = new Panel();
-        bool isDisadvantages;
+        readonly Panel advantagePanel = new Panel();
+        Panel overlayPanel;
+        readonly bool isDisadvantages;
 
         DaggerfallListPickerWindow primaryPicker;
         DaggerfallListPickerWindow secondaryPicker;
@@ -244,11 +237,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Panel buttonPanel = NativePanel;
             if (!isDisadvantages)  // Adding this overlay makes it appear as Special Advantages instead of Disadvantages
             {
-                overlayPanel.Size = TextureReplacement.GetSize(nativeOverlayTexture, nativeImgOverlayName);
-                overlayPanel.HorizontalAlignment = HorizontalAlignment.Left;
-                overlayPanel.VerticalAlignment = VerticalAlignment.Top;
-                overlayPanel.BackgroundTexture = nativeOverlayTexture;
-                overlayPanel.BackgroundTextureLayout = BackgroundLayout.StretchToFill;
+                overlayPanel = new Panel
+                {
+                    Size = TextureReplacement.GetSize(nativeOverlayTexture, nativeImgOverlayName),
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    BackgroundTexture = nativeOverlayTexture,
+                    BackgroundTextureLayout = BackgroundLayout.StretchToFill
+                };
                 advantagePanel.Components.Add(overlayPanel);
                 buttonPanel = overlayPanel;
             }
@@ -269,26 +265,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             primaryPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, advPickerItemCount);
             primaryPicker.OnItemPicked += PrimaryPicker_OnItemPicked;
+            primaryPicker.Persistent = true;
 
             secondaryPicker = new DaggerfallListPickerWindow(uiManager, this, DaggerfallUI.SmallFont, advPickerItemCount);
             secondaryPicker.ListBox.Font = DaggerfallUI.SmallFont;
             secondaryPicker.OnItemPicked += SecondaryPicker_OnItemPicked;
             secondaryPicker.OnCancel += SecondaryPicker_OnCancel;
+            secondaryPicker.Persistent = true;
 
             IsSetup = true;
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            primaryPicker.FreeResources();
+            secondaryPicker.FreeResources();
+            GameObject.Destroy(nativeTexture);
+            GameObject.Destroy(nativeOverlayTexture);
+        }
+
         #endregion
-
-        public override void Update()
-        {
-            base.Update();
-        }
-
-        public override void Draw()
-        {
-            base.Draw();
-        }
 
         #region Event Handlers
 
@@ -467,6 +464,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
         {
             CloseWindow();
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
 
         #endregion

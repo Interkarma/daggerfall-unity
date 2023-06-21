@@ -189,6 +189,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 OnVideoFinished();
         }
 
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
+        }
+
         #endregion
     }
 }

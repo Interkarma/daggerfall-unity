@@ -80,5 +80,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             get { return choseGenerate; }
         }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(nativeTexture);
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
+        }
     }
 }

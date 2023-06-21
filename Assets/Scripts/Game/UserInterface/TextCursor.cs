@@ -92,6 +92,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             blinkTimer = Time.realtimeSinceStartup;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            GameObject.Destroy(cursorTexture);
+        }
+
         #region Private Methods
 
         void DrawCursor()

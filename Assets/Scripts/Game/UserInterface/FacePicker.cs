@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -76,6 +76,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             this.raceTemplate = raceTemplate;
             this.raceGender = raceGender;
             UpdateFaceTextures();
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            foreach (var imageData in faceTextures)
+                GameObject.Destroy(imageData.texture);
         }
 
         #endregion

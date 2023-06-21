@@ -270,5 +270,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (OnGotUserInput != null)
                 OnGotUserInput(sender, userInput);
         }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
+        }
     }
 }

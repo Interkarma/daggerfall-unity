@@ -98,6 +98,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Draw();
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(nativeTexture);
+        }
+
         #region Private Methods
 
         void SetClass(DFCareer dfClass)

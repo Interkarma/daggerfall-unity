@@ -279,6 +279,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 prevWindow.nextMessageBox.CloseWindow();
             }
+
+            if (!Persistent)
+                FreeResources();
         }
 
         #region Public Methods
@@ -636,6 +639,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     AddButton(MessageBoxButtons.Teleport);
                     break;
             }
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            foreach (var button in buttons)
+                GameObject.Destroy(button.BackgroundTexture);
         }
 
         #endregion

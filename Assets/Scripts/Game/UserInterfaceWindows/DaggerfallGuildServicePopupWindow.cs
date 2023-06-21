@@ -43,10 +43,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Controls
 
         protected Panel mainPanel = new Panel();
-        protected Button joinButton = new Button();
-        protected Button talkButton = new Button();
-        protected Button serviceButton = new Button();
-        protected Button exitButton = new Button();
+        protected Button joinButton;
+        protected Button talkButton;
+        protected Button serviceButton;
+        protected Button exitButton;
         protected TextLabel serviceLabel = new TextLabel();
 
         #endregion
@@ -212,6 +212,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 EntityEffectManager playerEffectMgr = playerEntity.EntityBehaviour.GetComponent<EntityEffectManager>();
                 playerEffectMgr.CureAllAttributes();
             }
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(baseTexture);
         }
 
         #endregion
@@ -533,6 +539,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 messageBox.ClickAnywhereToClose = true;
                 messageBox.Show();
             }
+        }
+
+        #endregion
+
+        #region Event Handlers: UI
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
 
         #endregion

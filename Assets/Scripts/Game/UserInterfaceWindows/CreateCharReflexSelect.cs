@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -95,6 +95,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add "OK" button
             Button okButton = DaggerfallUI.AddButton(new Rect(263, 172, 39, 22), NativePanel);
             okButton.OnMouseClick += OkButton_OnMouseClick;
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(nativeTexture);
         }
 
         #region Event Handlers

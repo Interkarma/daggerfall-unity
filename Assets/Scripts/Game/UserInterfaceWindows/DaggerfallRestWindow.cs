@@ -289,6 +289,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 RaiseOnSleepEndEvent();
 
             //Debug.Log(string.Format("Resting raised time by {0} hours total", totalHours));
+
+            FreeResources();
         }
 
         #endregion
@@ -301,6 +303,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public void AbortRestForEnemySpawn()
         {
             abortRestForEnemySpawn = true;
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(baseTexture);
+            GameObject.Destroy(hoursPastTexture);
+            GameObject.Destroy(hoursRemainingTexture);
         }
 
         #endregion

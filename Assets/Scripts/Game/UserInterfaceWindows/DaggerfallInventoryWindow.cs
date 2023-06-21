@@ -1048,7 +1048,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected virtual void UnloadTextures()
         {
-            defaultToolTip.Dispose();
             GameObject.Destroy(baseTexture);
             GameObject.Destroy(goldTexture);
             GameObject.Destroy(weaponsAndArmorNotSelected);
@@ -1071,10 +1070,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             GameObject.Destroy(removeSelected);
             GameObject.Destroy(useSelected);
             GameObject.Destroy(infoTexture);
-            GameObject.Destroy(coinsAnimation.texture);
             foreach (var texture in coinsAnimation.animatedTextures)
                 GameObject.Destroy(texture);
-            GameObject.Destroy(magicAnimation.texture);
             foreach (var texture in magicAnimation.animatedTextures)
                 GameObject.Destroy(texture);
             foreach (var panel in accessoryIconPanels)

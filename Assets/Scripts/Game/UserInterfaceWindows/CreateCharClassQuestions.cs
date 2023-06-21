@@ -33,16 +33,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string classesFileName = "CLASSES.DAT";
         const string scroll0FileName = "SCRL00I0.GFX";
         const string scroll1FileName = "SCRL01I0.GFX";
-        const int questionLines = 2;
-        const int questionLineSpace = 9;
-        const float questionLeft = 20f;
-        const float questionTop = 135f;
-        const int questionWidth = 156;
-        const int questionHeight = 45;
         const int classQuestionsToken = 9000;
         const int classDescriptionsTokenBase = 2100;
         const int questionCount = 10;
-        public const byte noClassIndex = 255;
+        public const byte NoClassIndex = 255;
         const float leftTextOffset = 20f;
         const float topTextOffset = 16f;
         const int roguePaletteIndex = 160;
@@ -62,14 +56,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         MultiFormatTextLabel questionLabel = new MultiFormatTextLabel();
         Dictionary<int, string> questionLibrary;
         List<int> questionIndices;
-        byte classIndex = noClassIndex;
-        byte[] weights = new byte[] { 0, 0, 0 }; // Number of answers that steer class toward mage/rogue/warrior paths
+        byte classIndex = NoClassIndex;
+        readonly byte[] weights = new byte[] { 0, 0, 0 }; // Number of answers that steer class toward mage/rogue/warrior paths
         int questionsAnswered = 0;
-        Panel questionScroll = new Panel();
-        Panel textArea = new Panel();
-        FLCPlayer rogueAnim = new FLCPlayer();
-        FLCPlayer mageAnim = new FLCPlayer();
-        FLCPlayer warriorAnim = new FLCPlayer();
+        readonly Panel questionScroll = new Panel();
+        readonly Panel textArea = new Panel();
+        readonly FLCPlayer rogueAnim = new FLCPlayer();
+        readonly FLCPlayer mageAnim = new FLCPlayer();
+        readonly FLCPlayer warriorAnim = new FLCPlayer();
         int scrollFrame = 0;
         bool isScrolling = false;
         bool scrollingDown = false;
@@ -207,6 +201,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void Draw()
         {
             base.Draw();
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            rogueAnim.Dispose();
+            mageAnim.Dispose();
+            warriorAnim.Dispose();
+            GameObject.Destroy(nativeTexture);
+            foreach (var texture in scrollTextures)
+                GameObject.Destroy(texture);
         }
         #endregion Unity
 
@@ -424,7 +429,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ConfirmDialog_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.No)
-                classIndex = noClassIndex;
+                classIndex = NoClassIndex;
             sender.CloseWindow();
             CloseWindow();
         }
@@ -504,6 +509,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 backgroundBitmap.Palette.Set(roguePaletteIndex, 0, 0, rogueBlue);
                 backgroundBitmap.Palette.Set(magePaletteIndex, 0, 0, mageBlue);
                 backgroundBitmap.Palette.Set(warriorPaletteIndex, 0, 0, warriorBlue);
+                GameObject.Destroy(nativeTexture);
                 nativeTexture = new Texture2D(backgroundBitmap.Width, backgroundBitmap.Height, TextureFormat.ARGB32, false);
                 if (!nativeTexture)
                     throw new Exception("CreateCharClassQuestions: Could not load native texture.");
@@ -513,6 +519,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 NativePanel.BackgroundTexture = nativeTexture;
                 DisplayQuestion(questionIndices[questionsAnswered]);
             }
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
         #endregion Event Handlers
 

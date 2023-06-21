@@ -250,6 +250,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Draw();
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(nativeTexture);
+            GameObject.Destroy(nativeDaggerTexture);
+        }
+
         #region Event Handlers
 
         void skillButton_OnMouseClick(BaseScreenComponent sender, Vector2 pos)
@@ -433,6 +440,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             CloseWindow();
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
 
         #endregion

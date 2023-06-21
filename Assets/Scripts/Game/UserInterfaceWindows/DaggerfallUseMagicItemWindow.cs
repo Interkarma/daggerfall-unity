@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ParentPanel.BackgroundColor = Color.clear;
             // Prevent duplicate close calls with base class's exitKey (Escape)
             AllowCancel = false;
+            Persistent = true;
         }
 
         #endregion

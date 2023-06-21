@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -94,6 +94,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             OpenSaveGames();
             AddControls();
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(nativeTexture);
         }
 
         #region Private Methods
@@ -227,6 +233,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             SelectSaveGame((int)sender.Tag);
             OpenSelectedSaveGame();
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
 
         //private void QuickLoadButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

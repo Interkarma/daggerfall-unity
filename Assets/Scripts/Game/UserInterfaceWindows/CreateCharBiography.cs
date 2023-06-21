@@ -12,13 +12,8 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Utility.AssetInjection;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Player;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
@@ -33,8 +28,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int questionLineSpace = 11;
         const int questionLeft = 30;
         const int questionTop = 23;
-        const int questionWidth = 156;
-        const int questionHeight = 45;
         const int buttonCount = 10;
         const int buttonsLeft = 10;
         const int buttonsTop = 71;
@@ -44,9 +37,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         int questionIndex = 0;
         Texture2D nativeTexture;
-        TextLabel[] questionLabels = new TextLabel[questionLines];
-        Button[] answerButtons = new Button[buttonCount];
-        TextLabel[] answerLabels = new TextLabel[buttonCount];
+        readonly TextLabel[] questionLabels = new TextLabel[questionLines];
+        readonly Button[] answerButtons = new Button[buttonCount];
+        readonly TextLabel[] answerLabels = new TextLabel[buttonCount];
         BiogFile biogFile;
 
         public CreateCharBiography(IUserInterfaceManager uiManager, CharacterDocument document)
@@ -180,5 +173,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         public List<string> BackStory { get; set; }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(nativeTexture);
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
+        }
     }
 }

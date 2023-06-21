@@ -89,6 +89,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 promptLabel.Enabled = true;
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(nativeTexture);
+        }
+
         void ClickHandler(BaseScreenComponent sender, Vector2 position)
         {
             int offset = (int)position.y * racePickerBitmap.Width + (int)position.x;

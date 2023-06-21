@@ -289,6 +289,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(createCharSummaryWindow);
         }
 
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            createCharRaceSelectWindow?.FreeResources();
+            createCharGenderSelectWindow?.FreeResources();
+            createCharChooseClassGenWindow?.FreeResources();
+            createCharClassQuestionsWindow?.FreeResources();
+            createCharClassSelectWindow?.FreeResources();
+            createCharCustomClassWindow?.FreeResources();
+            createCharChooseBioWindow?.FreeResources();
+            createCharBiographyWindow?.FreeResources();
+            createCharNameSelectWindow?.FreeResources();
+            createCharFaceSelectWindow?.FreeResources();
+            createCharAddBonusStatsWindow?.FreeResources();
+            createCharAddBonusSkillsWindow?.FreeResources();
+            createCharReflexSelectWindow?.FreeResources();
+            createCharSummaryWindow?.FreeResources();
+        }
+
         #endregion
 
         #region Event Handlers
@@ -334,7 +359,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void CreateCharClassQuestions_OnClose()
         {
             byte classIndex = createCharClassQuestionsWindow.ClassIndex;
-            if (classIndex != CreateCharClassQuestions.noClassIndex)
+            if (classIndex != CreateCharClassQuestions.NoClassIndex)
             {
                 string fileName = "CLASS" + classIndex.ToString("00") + ".CFG";
                 string[] files = Directory.GetFiles(DaggerfallUnity.Instance.Arena2Path, fileName);

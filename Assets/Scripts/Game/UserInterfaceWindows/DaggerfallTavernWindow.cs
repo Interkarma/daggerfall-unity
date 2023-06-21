@@ -126,6 +126,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(mainPanel);
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(baseTexture);
+        }
+
         #endregion
 
         #region Event Handlers
@@ -352,6 +358,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 isFoodAndDrinkDeferred = false;
                 DoFoodAndDrink();
             }
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
 
         #endregion

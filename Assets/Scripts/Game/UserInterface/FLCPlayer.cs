@@ -118,5 +118,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (OnAnimEnd != null)
                 OnAnimEnd(this);
         }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            GameObject.Destroy(flcTexture);
+        }
     }
 }

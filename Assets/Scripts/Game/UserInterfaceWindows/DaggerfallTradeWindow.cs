@@ -405,9 +405,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             ClearSelectedItems();
+            FreeResources();
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
             UnloadTextures();
-            ParentPanel.Dispose();
-            NativePanel.Dispose();
         }
 
         public override void Refresh(bool refreshPaperDoll = true)

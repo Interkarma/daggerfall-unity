@@ -28,9 +28,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Controls
 
         protected Panel mainPanel = new Panel();
-        protected Button talkButton = new Button();
-        protected Button serviceButton = new Button();
-        protected Button exitButton = new Button();
+        protected Button talkButton;
+        protected Button serviceButton;
+        protected Button exitButton;
         protected TextLabel serviceLabel = new TextLabel();
 
         #endregion
@@ -105,6 +105,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(mainPanel);
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(baseTexture);
+        }
+
         #endregion
 
         #region Private Methods
@@ -168,6 +174,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             CloseWindow();
+        }
+
+        public override void OnPop()
+        {
+            FreeResources();
         }
 
         #endregion

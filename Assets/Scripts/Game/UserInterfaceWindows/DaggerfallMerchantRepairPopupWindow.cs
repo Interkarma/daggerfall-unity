@@ -31,10 +31,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Controls
 
         protected Panel mainPanel = new Panel();
-        protected Button repairButton = new Button();
-        protected Button talkButton = new Button();
-        protected Button sellButton = new Button();
-        protected Button exitButton = new Button();
+        protected Button repairButton;
+        protected Button talkButton;
+        protected Button sellButton;
+        protected Button exitButton;
 
         #endregion
 
@@ -103,6 +103,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             exitButton.OnKeyboardEvent += ExitButton_OnKeyboardEvent;
 
             NativePanel.Components.Add(mainPanel);
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(baseTexture);
         }
 
         #endregion
@@ -202,6 +208,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 isCloseWindowDeferred = false;
                 CloseWindow();
             }
+        }
+
+        public override void OnPop()
+        {
+            FreeResources();
         }
 
         #endregion

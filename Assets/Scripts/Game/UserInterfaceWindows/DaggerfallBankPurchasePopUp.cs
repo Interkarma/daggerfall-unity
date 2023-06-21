@@ -143,21 +143,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public override void OnPop()
         {
-            if (goModel)
-            {
-                Object.Destroy(goModel);
-                goModel = null;
-            }
-            if (goLight)
-                Object.Destroy(goLight);
-
-            if (goCameraBankPurchase)
-            {
-                RenderTexture renderTexture = camera.targetTexture;
-                camera.targetTexture = null;
-                Object.Destroy(renderTexture);
-                Object.Destroy(goCameraBankPurchase);
-            }
+            FreeResources();
         }
 
         public override void Update()
@@ -175,6 +161,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     goModel.transform.Rotate(Vector3.up, -1);
                 }
             }
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            if (goModel)
+            {
+                Object.Destroy(goModel);
+                goModel = null;
+            }
+
+            if (goLight)
+                Object.Destroy(goLight);
+
+            if (goCameraBankPurchase)
+            {
+                RenderTexture renderTexture = camera.targetTexture;
+                camera.targetTexture = null;
+                Object.Destroy(renderTexture);
+                Object.Destroy(goCameraBankPurchase);
+            }
+
+            GameObject.Destroy(baseTexture);
+            GameObject.Destroy(redUpArrow);
+            GameObject.Destroy(greenUpArrow);
+            GameObject.Destroy(redDownArrow);
+            GameObject.Destroy(greenDownArrow);
+            GameObject.Destroy(displayTexture);
         }
 
         #endregion
@@ -360,11 +374,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D redArrowsTexture = ImageReader.GetTexture(redArrowsTextureName);
             redUpArrow = ImageReader.GetSubTexture(redArrowsTexture, upArrowRect, arrowsFullSize);
             redDownArrow = ImageReader.GetSubTexture(redArrowsTexture, downArrowRect, arrowsFullSize);
+            GameObject.Destroy(redArrowsTexture);
 
             // Cut out green up/down arrows
             Texture2D greenArrowsTexture = ImageReader.GetTexture(greenArrowsTextureName);
             greenUpArrow = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRect, arrowsFullSize);
             greenDownArrow = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRect, arrowsFullSize);
+            GameObject.Destroy(greenArrowsTexture);
         }
 
         #endregion

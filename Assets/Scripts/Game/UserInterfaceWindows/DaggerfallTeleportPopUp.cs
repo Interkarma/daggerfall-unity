@@ -28,7 +28,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Controls
 
         Panel mainPanel = new Panel();
-        Panel destinationPanel = new Panel();
+        Panel destinationPanel;
         TextLabel destinationLabel;
         Button yesButton;
         Button noButton;
@@ -100,6 +100,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(mainPanel);
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(baseTexture);
+        }
+
         #endregion
 
         #region Private Methods
@@ -164,6 +170,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 isTeleportAwayDeferred = false;
                 TeleportAway();
             }
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
 
         #endregion

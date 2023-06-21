@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyl@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -403,6 +403,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(nativeTexture);
+            GameObject.Destroy(greenCheckboxTexture);
+        }
+
         #endregion
 
 
@@ -569,6 +576,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (OnPostFastTravel != null)
                 OnPostFastTravel();
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
 
         #endregion

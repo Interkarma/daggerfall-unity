@@ -207,6 +207,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.OnPop();
             DaggerfallBankManager.OnTransaction -= this.OnTransactionEventHandler;
+            FreeResources();
         }
 
         public override void Update()
@@ -334,6 +335,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             messageBox.Show();
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(mainPanel.BackgroundTexture);
         }
 
 

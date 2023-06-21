@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -38,6 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Controls
 
         protected Panel mainPanel = new Panel();
+        protected Panel namePanel = new Panel();
         protected Panel screenshotPanel = new Panel();
         protected TextBox saveNameTextBox = new TextBox();
         protected TextLabel promptLabel = new TextLabel();
@@ -119,7 +120,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Components.Add(promptLabel);
 
             // Name panel
-            Panel namePanel = new Panel();
             namePanel.Position = new Vector2(4, 12);
             namePanel.Size = new Vector2(272, 9);
             namePanel.Outline.Enabled = true;
@@ -305,6 +305,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 LoadGame();
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            GameObject.Destroy(mainPanel.BackgroundTexture);
+            GameObject.Destroy(namePanel.BackgroundTexture);
+            GameObject.Destroy(savesList.BackgroundTexture);
+            GameObject.Destroy(switchCharButton.BackgroundTexture);
+            GameObject.Destroy(screenshotPanel.BackgroundTexture);
+        }
+
         #endregion
 
         #region Protected Methods
@@ -365,6 +375,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Clear info if no save selected
             if (saveNameTextBox.Text.Length == 0 || savesList.SelectedIndex < 0)
             {
+                GameObject.Destroy(screenshotPanel.BackgroundTexture);
                 screenshotPanel.BackgroundTexture = null;
                 saveVersionLabel.Text = string.Empty;
                 saveFolderLabel.Text = string.Empty;
@@ -393,6 +404,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D saveTexture = GameManager.Instance.SaveLoadManager.GetSaveScreenshot(key);
             if (saveTexture != null)
             {
+                GameObject.Destroy(screenshotPanel.BackgroundTexture);
                 screenshotPanel.BackgroundTexture = saveTexture;
             }
 
@@ -680,6 +692,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Attempt to open path
             System.Diagnostics.Process.Start(path);
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
 
         #endregion

@@ -311,6 +311,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            textCursor.Dispose();
+        }
+
         #region Private Methods
 
         void MoveCursorLeft()
