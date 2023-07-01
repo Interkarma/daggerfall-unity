@@ -913,6 +913,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 int chanceBeingDetected = FormulaHelper.CalculateShopliftingChance(PlayerEntity, buildingDiscoveryData.quality, weightAndNumItems);
                 PlayerEntity.TallySkill(DFCareer.Skills.Pickpocket, 1);
 
+                // Here we ensure that stealing will always be random
+                // DaggerfallGuildServicePopupWindow.cs:231 sets a seed which will keep you from being able to steal from magic item shops, which I don't think is purposeful
+                UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);
+
                 if (Dice100.FailedRoll(chanceBeingDetected))
                 {
                     DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("stealSuccess"), 2);
