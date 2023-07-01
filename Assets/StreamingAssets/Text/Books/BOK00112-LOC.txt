@@ -1,0 +1,42 @@
+Title: Bourn in Wood, Part I
+Author: Lord Woodborne
+IsNaughty: False
+Price: 300
+IsUnique: False
+WhenVarSet: LiftedCurse
+Content:
+
+
+[/font=2]
+
+[/center]Bourn in Wood, Part I
+
+
+[/center]
+[/font=4]by Lord Woodborne
+
+[/center]
+
+[/center]
+
+ If you’re reading this, I am probably dead. At quite a young age, I became aware of the concept of mortality, which to me is intriguing, that we all come to dust. Some very intelligent friends of mine found this idea repellent and sought immortality, but from my later conversations with them as vampires or liches, there are things worse than death. If you’ve ever spent an evening reading “A Brief History of the Empire” or "The 36 Lessons of Vivec," you know exactly what I’m talking about.
+
+ So, I’ve never had a particular fear of death. To me, it’s what comes at the end of a meal, hopefully a long twelve courses with lots of exotic delights, but perhaps suddenly, unexpectedly, in the middle of the second cheese course. I’m dead, and if you’ve heard of me, you’ve probably heard terrible things. Let me set the record straight. They’re probably all true.
+
+ Like I said, I became aware of death at quite an early age, quite inauspiciously, by causing and witnessing the death of my older brother. I was actually responsible for the death of my eldest brother as well, but that came years later, and didn’t affect me as much. I was ten years of age, and my brother (my first victim, not my second) was sixteen. One evening at Woodborne Hall, we were in the library, discussing the family dynasty such as it is – more about that later – when the subject of primogeniture came up. Now, if you’re a peasant unfamiliar with the concept, it’s simply that wealthy landed gentry leave it all to their eldest.
+
+ “So the third eldest gets nothing?” I asked, being the third eldest.
+
+ “Not unless the eldest agrees to some light inheritance,” my brother, whose name by the way was Goriph, replied casually. “That’s why it’s a good idea to get along well with your brothers.”
+
+ Of course, that’s the idea behind the practice, but the loophole was right there. If you had no older brothers, you become the eldest. Honestly, I know it’s monstrous, but has any third-born not thought this? It was what was on my mind when I asked Goriph for another book on the twentieth shelf of the library and pulled the ladder from beneath him when he reached it. He fell, broke his back, but didn’t die right away. I came back to visit him several times over the next six hours while he lay paralyzed and bleeding, his face turning paler and paler, the blood on his lips going from scarlet to black. Until he turned cold. Then I called for our knights, pretending I had just discovered him.
+
+ What I discovered from this was that killing someone I loved, and I loved Goriph as much as someone like me can love, did not affect me at all. Though I am a liar by nature, I won’t lie about this. It bothers me a little that I don’t have feelings of remorse. I feel more guilt over my lack of guilt than my actual guilt. Oh well.
+
+ Ah, and I mentioned Woodborne Hall. Yes, I am Lord Woodborne. The hopefully infamous Lord Woodborne, the key behind the Daggerfall plot.
+
+ As I said, I am a liar, but if I am indeed dead when you read this, this is the unvarnished truth. I don’t come off particularly well in this narrative, but neither will some of those who no doubt will live on and pretend they never knew me and yet are ruling the Iliac Bay. There are of course a few decent people I’ve met in my life, and I tried to take advantage of them when I could. They were either the lowest of the low who had nothing and could give nothing, or the highest, who could give nearly everything and lose almost nothing. Everyone else I’ve met … well, I’ll get into the particulars in a moment.
+
+ You’re probably wondering about me killing my eldest brother and inheriting the title and wealth, how and why I orchestrated the death of King Lysandus of Daggerfall for the benefit of his son Gothryd, and my plot to marry Elysana, Princess of Wayrest, to become king.
+
+ Gather around, children, and listen.
