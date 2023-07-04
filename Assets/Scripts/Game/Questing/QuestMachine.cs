@@ -1574,6 +1574,17 @@ namespace DaggerfallWorkshop.Game.Questing
             storedExceptions.AddRange(exceptions);
         }
 
+        /// <summary>
+        /// Gets localized version of a quest display name.
+        /// Name is cached after first read for better performance.
+        /// </summary>
+        /// <param name="questName">Original name of quest. Do not append -LOC.</param>
+        /// <returns>Localized name of quest if found, otherwise string.Empty.</returns>
+        public string GetLocalizedQuestDisplayName(string questName)
+        {
+            return ParseLocalizedQuestText(questName) ? localizedQuestNames[questName] : string.Empty;
+        }
+
         #endregion
 
         #region Private Methods
@@ -1613,15 +1624,15 @@ namespace DaggerfallWorkshop.Game.Questing
             const string textFolderName = "Text";
             const string questsFolderName = "Quests";
 
-            // Do nothing if localized quest has previously been parsed
-            if (localizedQuestNames.ContainsKey(questName))
-                return true;
-
-            // Compose filename of localized book
+            // Compose filename of localized quest
             string filename = questName;
             string fileNoExt = Path.GetFileNameWithoutExtension(filename);
             if (!fileNoExt.EndsWith(localizedFilenameSuffix))
                 filename = fileNoExt + localizedFilenameSuffix + fileExtension;
+
+            // Do nothing if localized quest has previously been parsed
+            if (localizedQuestNames.ContainsKey(fileNoExt))
+                return true;
 
             // TODO: Also seek localized quest file from mods
 
@@ -1679,7 +1690,7 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             // Store localized display name
-            localizedQuestNames.Add(questName, displayName);
+            localizedQuestNames.Add(fileNoExt, displayName);
 
             return true;
         }

@@ -624,7 +624,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Partially loading the quest to get the human readable quest name.
                     Quest quest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[i], GetFactionIdForGuild(), true);
-                    questPicker.ListBox.AddItem(quest.DisplayName ?? quest.QuestName);
+                    string displayName = quest.DisplayName;
+                    string localizedDisplayName = QuestMachine.Instance.GetLocalizedQuestDisplayName(quest.QuestName);
+                    if (!string.IsNullOrEmpty(localizedDisplayName))
+                        displayName = localizedDisplayName;
+                    questPicker.ListBox.AddItem(displayName ?? quest.QuestName);
                     quest.Dispose();
                 }
                 catch (Exception)
