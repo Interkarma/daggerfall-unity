@@ -4897,5 +4897,81 @@ MonoBehaviour:
       favored'
     m_Metadata:
       m_Items: []
+  - m_Id: 366854425099628544
+    m_Localized: Mage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854452123529216
+    m_Localized: Spellsword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854481798230016
+    m_Localized: Battlemage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854503575056384
+    m_Localized: Sorcerer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854514425720832
+    m_Localized: Healer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854533220397056
+    m_Localized: Nightblade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854552321257472
+    m_Localized: Bard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854572416167936
+    m_Localized: Burglar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854590254542848
+    m_Localized: Rogue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854607426023424
+    m_Localized: Acrobat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854627416076288
+    m_Localized: Thief
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854647510986752
+    m_Localized: Assassin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854667815612416
+    m_Localized: Monk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854684865458176
+    m_Localized: Archer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854702443786240
+    m_Localized: Ranger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854719892090880
+    m_Localized: Barbarian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854736480563200
+    m_Localized: Warrior
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854751684915200
+    m_Localized: Knight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854768738955264
+    m_Localized: Custom
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
