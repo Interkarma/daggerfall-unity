@@ -336,6 +336,7 @@ namespace DaggerfallWorkshop
 
             // Assign renderer properties
             // Turning off receive shadows to prevent self-shadowing
+            Destroy(meshRenderer.sharedMaterial);
             meshRenderer.sharedMaterial = atlasMaterial;
             meshRenderer.receiveShadows = false;
 
@@ -383,6 +384,7 @@ namespace DaggerfallWorkshop
             atlasMaterial.mainTexture = customMaterial.mainTexture;
 
             // Assign renderer properties
+            Destroy(meshRenderer.sharedMaterial);
             meshRenderer.sharedMaterial = atlasMaterial;
             meshRenderer.receiveShadows = false;
             FramesPerSecond = 0;

@@ -578,12 +578,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 OnPostFastTravel();
         }
 
-        public override void OnPop()
-        {
-            base.OnPop();
-            FreeResources();
-        }
-
         #endregion
 
     }

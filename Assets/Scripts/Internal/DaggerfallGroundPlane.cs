@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -69,7 +69,10 @@ namespace DaggerfallWorkshop
             // Assign new season
             summary.archive = archive;
             summary.season = season;
-            GetComponent<MeshRenderer>().material = material;
+            var meshRenderer = GetComponent<MeshRenderer>();
+            GameObject.Destroy(meshRenderer.material.mainTexture);
+            GameObject.Destroy(meshRenderer.material);
+            meshRenderer.material = material;
         }
 
         /// <summary>

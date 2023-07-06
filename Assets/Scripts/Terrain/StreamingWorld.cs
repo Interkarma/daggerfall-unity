@@ -1046,6 +1046,7 @@ namespace DaggerfallWorkshop
                 {
                     if (looseObjectsList[i].gameObject != null)
                     {
+                        CleanAssets(looseObjectsList[i].gameObject.GetComponents<DaggerfallLocation>());
                         looseObjectsList[i].gameObject.SetActive(false);
                         StartCoroutine(DestroyGameObjectIterative(looseObjectsList[i].gameObject));
                     }
@@ -1066,6 +1067,19 @@ namespace DaggerfallWorkshop
 
             // Now destroy this object
             GameObject.Destroy(gameObject.transform.gameObject);
+        }
+
+        private static void CleanAssets(DaggerfallLocation[] locations)
+        {
+            foreach (var location in locations)
+            {
+                // Clean other flat meshes
+                var meshFilters = location.gameObject.GetComponentsInChildren<MeshFilter>();
+                foreach (var meshFilter in meshFilters)
+                {
+                    Destroy(meshFilter.sharedMesh);
+                }
+            }
         }
 
         #endregion

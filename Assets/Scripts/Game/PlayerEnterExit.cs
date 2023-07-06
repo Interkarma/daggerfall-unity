@@ -453,10 +453,16 @@ namespace DaggerfallWorkshop.Game
             // Mark any existing world data for destruction
             if (dungeon)
             {
+                var meshFilters = dungeon.gameObject.GetComponentsInChildren<MeshFilter>();
+                foreach (var meshFilter in meshFilters)
+                    Destroy(meshFilter.sharedMesh);
                 Destroy(dungeon.gameObject);
             }
             if (interior)
             {
+                var meshFilters = interior.gameObject.GetComponentsInChildren<MeshFilter>();
+                foreach (var meshFilter in meshFilters)
+                    Destroy(meshFilter.sharedMesh);
                 Destroy(interior.gameObject);
             }
 
@@ -1041,8 +1047,19 @@ namespace DaggerfallWorkshop.Game
 
             if (cleanup)
             {
-                if (dungeon) Destroy(dungeon.gameObject);
-                if (interior) Destroy(interior.gameObject);
+                if (dungeon)
+                {
+                    Destroy(dungeon.gameObject);
+                    DaggerfallGC.ForcedUnloadUnusedAssets();
+                }
+
+                if (interior)
+                {
+                    var meshFilters = interior.gameObject.GetComponentsInChildren<MeshFilter>();
+                    foreach (var meshFilter in meshFilters)
+                        Destroy(meshFilter.sharedMesh);
+                    Destroy(interior.gameObject);
+                }
             }
 
             if (ExteriorParent != null) ExteriorParent.SetActive(false);
@@ -1057,8 +1074,20 @@ namespace DaggerfallWorkshop.Game
         {
             if (cleanup)
             {
-                if (dungeon) Destroy(dungeon.gameObject);
-                if (interior) Destroy(interior.gameObject);
+                if (dungeon)
+                {
+                    Destroy(dungeon.gameObject);
+                    DaggerfallGC.ForcedUnloadUnusedAssets();
+                }
+
+                if (interior)
+                {
+                    var meshFilters = interior.gameObject.GetComponentsInChildren<MeshFilter>();
+                    foreach (var meshFilter in meshFilters)
+                        Destroy(meshFilter.sharedMesh);
+                    Destroy(interior.gameObject);
+                }
+
                 SetExteriorDoors(null);
             }
             DisableAllParents(false);
@@ -1078,7 +1107,11 @@ namespace DaggerfallWorkshop.Game
         {
             if (cleanup)
             {
-                if (dungeon) Destroy(dungeon.gameObject);
+                if (dungeon)
+                {
+                    Destroy(dungeon.gameObject);
+                    DaggerfallGC.ForcedUnloadUnusedAssets();
+                }
             }
             DisableAllParents(false);
             if (InteriorParent != null) InteriorParent.SetActive(true);
@@ -1098,6 +1131,9 @@ namespace DaggerfallWorkshop.Game
             {
                 if (interior)
                 {
+                    var meshFilters = interior.gameObject.GetComponentsInChildren<MeshFilter>();
+                    foreach (var meshFilter in meshFilters)
+                        Destroy(meshFilter.sharedMesh);
                     Destroy(interior.gameObject);
                     buildingType = DFLocation.BuildingTypes.None;
                     factionID = 0;

@@ -943,7 +943,14 @@ namespace DaggerfallWorkshop
         internal void PruneCache(float time, float threshold)
         {
             foreach (var item in materialDict.Where(x => time - x.Value.timeStamp > threshold).ToList())
+            {
+                Destroy(item.Value.albedoMap);
+                Destroy(item.Value.normalMap);
+                Destroy(item.Value.emissionMap);
+                Destroy(item.Value.material.mainTexture);
+                Destroy(item.Value.material);
                 materialDict.Remove(item.Key);
+            }
         }
 
         /// <summary>

@@ -637,7 +637,9 @@ namespace DaggerfallWorkshop.Game
                     material.color = new Color(0.43f, 0.34f, 0.85f, 1.0f);
                     material.SetFloat("_Metallic", 0.0f);
                     material.SetFloat("_Glossiness", 0.0f);
-                    gameobjectTeleporterConnection.GetComponent<MeshRenderer>().material = material;
+                    var meshRenderer = gameobjectTeleporterConnection.GetComponent<MeshRenderer>();
+                    Destroy(meshRenderer.material);
+                    meshRenderer.material = material;
 
                     TeleporterConnection connection = null;
                     // hit portal marker is an entrance portal
@@ -1462,7 +1464,14 @@ namespace DaggerfallWorkshop.Game
             if (gameobjectBeacons != null)
             {
                 // after Destroy() set GameObject to null - this is necessary so that the handle is invalid immediately
-                UnityEngine.Object.Destroy(gameobjectBeacons);
+                var meshFilters = gameobjectBeacons.GetComponentsInChildren<MeshFilter>();
+                /*
+                foreach (var meshFilter in meshFilters)
+                {
+                    Destroy(meshFilter.sharedMesh);
+                }
+                */
+                Destroy(gameobjectBeacons);
                 gameobjectBeacons = null;
             }
             // also do this for all sub-GameObjects inside gameobjectBeacons
@@ -1500,9 +1509,12 @@ namespace DaggerfallWorkshop.Game
         {
             if (gameObjectUserNoteMarkers != null)
             {
+                var meshFilters = gameObjectUserNoteMarkers.GetComponentsInChildren<MeshFilter>();
+                foreach (var meshFilter in meshFilters)
+                    Destroy(meshFilter.sharedMesh);
                 foreach (Transform child in gameObjectUserNoteMarkers.transform)
                 {
-                    GameObject.Destroy(child.gameObject);
+                    Destroy(child.gameObject);
                 }
             }
             listUserNoteMarkers.Clear();
@@ -1693,9 +1705,12 @@ namespace DaggerfallWorkshop.Game
         {
             if (gameobjectTeleporterMarkers != null)
             {
+                var meshFilters = gameobjectTeleporterMarkers.GetComponentsInChildren<MeshFilter>();
+                foreach (var meshFilter in meshFilters)
+                    Destroy(meshFilter.sharedMesh);
                 foreach (Transform child in gameobjectTeleporterMarkers.transform)
                 {
-                    GameObject.Destroy(child.gameObject);
+                    Destroy(child.gameObject);
                 }
             }
             dictTeleporterConnections.Clear();
@@ -1771,6 +1786,8 @@ namespace DaggerfallWorkshop.Game
             int microMapBlockSizeInPixels = 2;
             int width = sizeX * microMapBlockSizeInPixels;
             int height = sizeY * microMapBlockSizeInPixels;
+            if (textureMicroMap)
+                Destroy(textureMicroMap);
             textureMicroMap = new Texture2D(width, height, TextureFormat.ARGB32, false);
             textureMicroMap.filterMode = FilterMode.Point;
 
@@ -1867,7 +1884,10 @@ namespace DaggerfallWorkshop.Game
 
             if (gameobjectGeometry != null)
             {
-                UnityEngine.Object.Destroy(gameobjectGeometry);
+                var meshFilters = gameobjectGeometry.GetComponentsInChildren<MeshFilter>();
+                foreach (var meshFilter in meshFilters)
+                    Destroy(meshFilter.sharedMesh);
+                Destroy(gameobjectGeometry);
                 gameobjectGeometry = null;
             }
 
@@ -1921,7 +1941,10 @@ namespace DaggerfallWorkshop.Game
 
             if (gameobjectGeometry != null)
             {
-                UnityEngine.Object.Destroy(gameobjectGeometry);
+                var meshFilters = gameobjectGeometry.GetComponentsInChildren<MeshFilter>();
+                foreach (var meshFilter in meshFilters)
+                    Destroy(meshFilter.sharedMesh);
+                Destroy(gameobjectGeometry);
                 gameobjectGeometry = null;
             }
 
@@ -2554,7 +2577,10 @@ namespace DaggerfallWorkshop.Game
             // destroy automap geometry and beacons so that update function will create new automap geometry on its first iteration when a game has started
             if (gameobjectGeometry != null)
             {
-                UnityEngine.Object.Destroy(gameobjectGeometry);
+                var meshFilters = gameobjectGeometry.GetComponentsInChildren<MeshFilter>();
+                foreach (var meshFilter in meshFilters)
+                    Destroy(meshFilter.sharedMesh);
+                Destroy(gameobjectGeometry);
                 gameobjectGeometry = null;
             }
             DestroyBeacons();
