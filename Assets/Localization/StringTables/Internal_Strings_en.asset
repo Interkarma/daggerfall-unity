@@ -4973,5 +4973,149 @@ MonoBehaviour:
     m_Localized: Custom
     m_Metadata:
       m_Items: []
+  - m_Id: 367490637908930560
+    m_Localized: 'Apprentice
+
+      Journeyman
+
+      Operator
+
+      Slayer
+
+      Executioner
+
+      Punisher
+
+      Terminator
+
+      Assassin
+
+      Dark
+      Brother
+
+      Master Assassin'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490718334709760
+    m_Localized: 'Apprentice
+
+      Journeyman
+
+      Swordsman
+
+      Protector
+
+      Defender
+
+      Warder
+
+      Guardian
+
+      Champion
+
+      Warrior
+
+      Master'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490889273569280
+    m_Localized: 'Aspirant
+
+      Squire
+
+      Gallant
+
+      Chevalier
+
+      Keeper
+
+      Knight
+      Brother
+
+      Commander
+
+      Marshall
+
+      Seneschal
+
+      Paladin'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490959960174592
+    m_Localized: 'Apprentice
+
+      Journeyman
+
+      Evoker
+
+      Conjurer
+
+      Magician
+
+      Enchanter
+
+      Warlock
+
+      Wizard
+
+      Master
+      Wizard
+
+      Archmage'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490995796307968
+    m_Localized: 'Novice
+
+      Initiate
+
+      Acolyte
+
+      Adept
+
+      Curate
+
+      Disciple
+
+      Brother
+
+      Diviner
+
+      Master
+
+      Patriarch'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367491041929457664
+    m_Localized: 'Apprentice
+
+      Journeyman
+
+      Filcher
+
+      Crook
+
+      Robber
+
+      Bandit
+
+      Thief
+
+      Ringleader
+
+      Mastermind
+
+      Master
+      Thief'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367491802209972224
+    m_Localized: Dark Sister
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367492497524912128
+    m_Localized: non-member
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
