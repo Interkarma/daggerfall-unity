@@ -5117,5 +5117,9 @@ MonoBehaviour:
     m_Localized: non-member
     m_Metadata:
       m_Items: []
+  - m_Id: 367501174470340608
+    m_Localized: Knight Sister
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

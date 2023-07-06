@@ -3891,6 +3891,10 @@ MonoBehaviour:
     m_Key: nonMember
     m_Metadata:
       m_Items: []
+  - m_Id: 367501174470340608
+    m_Key: knightSister
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
