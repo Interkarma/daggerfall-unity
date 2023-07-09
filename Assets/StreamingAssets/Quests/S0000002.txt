@@ -44,7 +44,7 @@ QuestComplete:  [1004]
 <ce>             known. We sent advisors to urge King Lysandus
 <ce>             and King Camaron to mend their differences on
 <ce>               the eve of the Battle of Cryngaine Field.
-<ce>            Lysandus was digustingly loyal to the emperor,
+<ce>            Lysandus was disgustingly loyal to the emperor,
 <ce>             where Camaron was fighting for more autonomy.
 <ce>            According to the advisor's report, they arrived
 <ce>            too late because they were waylaid by the orcs
@@ -106,7 +106,7 @@ My Dear Lord Castellian,
       While you and I know the innocence of your
  fondness for the lady, the more prurient minds at
  court, as you are aware, are inclined toward
- grotesque misintepretation. Her husband, I
+ grotesque misinterpretation. Her husband, I
  understand, is famous for his jealous rages. I am
  of several minds on the matter, how to best avoid
  possible negative reaction, and would appreciate

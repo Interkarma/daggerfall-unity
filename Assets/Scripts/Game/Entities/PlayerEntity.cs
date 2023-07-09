@@ -1331,7 +1331,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     DaggerfallUnityItem loc = items.GetItem(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
                     if (loc == null) {
                         break;
-                    } else if (amount <= loc.value) {
+                    } else if (amount < loc.value) {
                         loc.value -= amount;
                         amount = 0;
                     } else {

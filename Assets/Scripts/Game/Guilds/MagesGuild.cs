@@ -34,10 +34,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Properties & Data
 
-        static string[] rankTitles = {
-                "Apprentice", "Journeyman", "Evoker", "Conjurer", "Magician", "Enchanter", "Warlock", "Wizard", "Master Wizard", "Archmage"
-        };
-
         static List<DFCareer.Skills> guildSkills = new List<DFCareer.Skills>() {
                 DFCareer.Skills.Alteration,
                 DFCareer.Skills.Destruction,
@@ -62,7 +58,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.Thaumaturgy
             };
 
-        public override string[] RankTitles { get { return rankTitles; } }
+        public override string[] RankTitles { get { return TextManager.Instance.GetLocalizedTextList("magesRanks"); } }
 
         public override List<DFCareer.Skills> GuildSkills { get { return guildSkills; } }
 

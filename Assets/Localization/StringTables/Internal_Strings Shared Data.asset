@@ -3783,6 +3783,118 @@ MonoBehaviour:
     m_Key: lucRatings
     m_Metadata:
       m_Items: []
+  - m_Id: 366854425099628544
+    m_Key: Mage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854452123529216
+    m_Key: Spellsword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854481798230016
+    m_Key: Battlemage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854503575056384
+    m_Key: Sorcerer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854514425720832
+    m_Key: Healer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854533220397056
+    m_Key: Nightblade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854552321257472
+    m_Key: Bard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854572416167936
+    m_Key: Burglar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854590254542848
+    m_Key: Rogue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854607426023424
+    m_Key: Acrobat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854627416076288
+    m_Key: Thief
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854647510986752
+    m_Key: Assassin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854667815612416
+    m_Key: Monk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854684865458176
+    m_Key: Archer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854702443786240
+    m_Key: Ranger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854719892090880
+    m_Key: Barbarian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854736480563200
+    m_Key: Warrior
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854751684915200
+    m_Key: Knight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854768738955264
+    m_Key: Custom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490637908930560
+    m_Key: darkBrotherhoodRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490718334709760
+    m_Key: fightersRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490889273569280
+    m_Key: knightlyOrderRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490959960174592
+    m_Key: magesRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490995796307968
+    m_Key: templeRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367491041929457664
+    m_Key: thievesRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367491802209972224
+    m_Key: darkSister
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367492497524912128
+    m_Key: nonMember
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367501174470340608
+    m_Key: knightSister
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

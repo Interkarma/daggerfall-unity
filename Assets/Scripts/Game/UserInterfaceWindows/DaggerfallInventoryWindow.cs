@@ -1861,9 +1861,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (string.IsNullOrEmpty(revealedLocation.Name))
                     throw new Exception();
 
-                playerGPS.LocationRevealedByMapItem = revealedLocation.Name;
+                string localizedLocation = TextManager.Instance.GetLocalizedLocationName(revealedLocation.MapTableData.MapId, revealedLocation.Name);
+                playerGPS.LocationRevealedByMapItem = localizedLocation;
                 GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                    TextManager.Instance.GetLocalizedText("readMap").Replace("%map", revealedLocation.Name));
+                    TextManager.Instance.GetLocalizedText("readMap").Replace("%map", localizedLocation));
 
                 DaggerfallMessageBox mapText = new DaggerfallMessageBox(uiManager, this);
                 mapText.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId));

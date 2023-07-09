@@ -56,11 +56,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     ClassFile classFile = new ClassFile(files[i]);
                     classList.Add(classFile.Career);
-                    listBox.AddItem(classFile.Career.Name);
+                    listBox.AddItem(TextManager.Instance.GetLocalizedText(classFile.Career.Name));
                 }
             }
             // Last option is for creating custom classes
-            listBox.AddItem("Custom");
+            listBox.AddItem(TextManager.Instance.GetLocalizedText("Custom"));
 
             OnItemPicked += DaggerfallClassSelectWindow_OnItemPicked;
         }
@@ -76,6 +76,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else 
             {
                 selectedClass = classList[index];
+                selectedClass.Name = className; // Ensures any localized display names are assigned after selection from list
                 selectedClassIndex = index;
 
                 TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(startClassDescriptionID + index);

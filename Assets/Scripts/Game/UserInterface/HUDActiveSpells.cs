@@ -301,7 +301,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // And offensive spells the player catches themselves with
                 // Will need to refine how this works as more effects and situations become available
                 ActiveSpellIcon item = new ActiveSpellIcon();
-                item.displayName = bundle.name;
+                item.displayName = bundle.name.TrimStart('!'); // Non-vendor spells start with !, don't show this on the UI
                 item.iconIndex = bundle.iconIndex;
                 item.icon = bundle.icon;
                 item.poolIndex = poolIndex++;
