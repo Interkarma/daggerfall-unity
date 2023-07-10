@@ -269,11 +269,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Properties & Data
 
-        readonly string[] rankTitles = {
-                "Novice", "Initiate", "Acolyte", "Adept", "Curate", "Disciple", "Brother", "Diviner", "Master", "Patriarch"
-        };
-
-        public override string[] RankTitles { get { return rankTitles; } }
+        public override string[] RankTitles { get { return TextManager.Instance.GetLocalizedTextList("templeRanks"); } }
 
         public override List<DFCareer.Skills> GuildSkills { get { return guildSkills[deity]; } }
 
@@ -385,11 +381,11 @@ namespace DaggerfallWorkshop.Game.Guilds
         {
             if (GameManager.Instance.PlayerEntity.Gender == Genders.Female)
                 if (rank == 9)
-                    return "Matriarch";     // Not calling female chars 'Patriarch'!
+                    return TextManager.Instance.GetLocalizedText("matriarch");     // Not calling female chars 'Patriarch'!
                 else if (rank == 6)
-                    return "Sister";        // Not calling female chars 'Brother'!
+                    return TextManager.Instance.GetLocalizedText("sister");        // Not calling female chars 'Brother'!
 
-            return IsMember() ? rankTitles[rank] : "non-member";
+            return IsMember() ? RankTitles[rank] : TextManager.Instance.GetLocalizedText("nonMember");
         }
 
         #endregion
