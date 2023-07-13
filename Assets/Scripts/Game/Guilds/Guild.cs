@@ -172,7 +172,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public virtual string GetTitle()
         {
-            return IsMember() ? RankTitles[rank] : "Expelled";
+            return IsMember() ? RankTitles[rank] : GameManager.Instance.PlayerEntity.Name;
         }
 
         #endregion
