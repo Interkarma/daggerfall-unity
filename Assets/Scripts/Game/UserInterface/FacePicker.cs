@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -82,7 +83,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Dispose();
             foreach (var imageData in faceTextures)
-                GameObject.Destroy(imageData.texture);
+                AssetCleanup.CleanAsset(imageData.texture);
         }
 
         #endregion

@@ -209,9 +209,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             rogueAnim.Dispose();
             mageAnim.Dispose();
             warriorAnim.Dispose();
-            GameObject.Destroy(nativeTexture);
+            Utility.AssetCleanup.CleanAsset(nativeTexture);
             foreach (var texture in scrollTextures)
-                GameObject.Destroy(texture);
+                Utility.AssetCleanup.CleanAsset(texture);
         }
         #endregion Unity
 
@@ -509,7 +509,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 backgroundBitmap.Palette.Set(roguePaletteIndex, 0, 0, rogueBlue);
                 backgroundBitmap.Palette.Set(magePaletteIndex, 0, 0, mageBlue);
                 backgroundBitmap.Palette.Set(warriorPaletteIndex, 0, 0, warriorBlue);
-                GameObject.Destroy(nativeTexture);
+                Utility.AssetCleanup.CleanAsset(nativeTexture);
                 nativeTexture = new Texture2D(backgroundBitmap.Width, backgroundBitmap.Height, TextureFormat.ARGB32, false);
                 if (!nativeTexture)
                     throw new Exception("CreateCharClassQuestions: Could not load native texture.");

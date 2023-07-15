@@ -281,8 +281,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.FreeResources();
             primaryPicker.FreeResources();
             secondaryPicker.FreeResources();
-            GameObject.Destroy(nativeTexture);
-            GameObject.Destroy(nativeOverlayTexture);
+            Utility.AssetCleanup.CleanAsset(nativeTexture);
+            Utility.AssetCleanup.CleanAsset(nativeOverlayTexture);
         }
 
         #endregion

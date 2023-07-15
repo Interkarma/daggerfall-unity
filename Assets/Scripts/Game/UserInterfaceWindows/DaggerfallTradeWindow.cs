@@ -780,11 +780,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected override void UnloadTextures()
         {
             base.UnloadTextures();
-            GameObject.Destroy(costPanelTexture);
-            GameObject.Destroy(actionButtonsTexture);
-            GameObject.Destroy(actionButtonsGoldTexture);
-            GameObject.Destroy(selectSelected);
-            GameObject.Destroy(selectNotSelected);
+            AssetCleanup.CleanAsset(costPanelTexture);
+            AssetCleanup.CleanAsset(actionButtonsTexture);
+            AssetCleanup.CleanAsset(actionButtonsGoldTexture);
+            AssetCleanup.CleanAsset(selectSelected);
+            AssetCleanup.CleanAsset(selectNotSelected);
         }
 
         #endregion

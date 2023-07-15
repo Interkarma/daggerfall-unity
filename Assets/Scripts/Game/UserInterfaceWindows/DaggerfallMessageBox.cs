@@ -645,7 +645,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.FreeResources();
             foreach (var button in buttons)
-                GameObject.Destroy(button.BackgroundTexture);
+                Utility.AssetCleanup.CleanAsset(button.BackgroundTexture);
         }
 
         #endregion

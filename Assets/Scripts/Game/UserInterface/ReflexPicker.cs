@@ -66,7 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Dispose()
         {
             base.Dispose();
-            GameObject.Destroy(highlightTexture);
+            Utility.AssetCleanup.CleanAsset(highlightTexture);
         }
 
         #region Private Methods

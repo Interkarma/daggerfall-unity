@@ -22,6 +22,8 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using UnityEditor;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -453,16 +455,14 @@ namespace DaggerfallWorkshop.Game
             // Mark any existing world data for destruction
             if (dungeon)
             {
-                var meshFilters = dungeon.gameObject.GetComponentsInChildren<MeshFilter>();
-                foreach (var meshFilter in meshFilters)
-                    Destroy(meshFilter.sharedMesh);
                 Destroy(dungeon.gameObject);
+                DaggerfallGC.ForcedUnloadUnusedAssets();
             }
             if (interior)
             {
                 var meshFilters = interior.gameObject.GetComponentsInChildren<MeshFilter>();
                 foreach (var meshFilter in meshFilters)
-                    Destroy(meshFilter.sharedMesh);
+                    AssetCleanup.CleanAsset(meshFilter.sharedMesh);
                 Destroy(interior.gameObject);
             }
 
@@ -1057,7 +1057,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     var meshFilters = interior.gameObject.GetComponentsInChildren<MeshFilter>();
                     foreach (var meshFilter in meshFilters)
-                        Destroy(meshFilter.sharedMesh);
+                        AssetCleanup.CleanAsset(meshFilter.sharedMesh);
                     Destroy(interior.gameObject);
                 }
             }
@@ -1084,7 +1084,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     var meshFilters = interior.gameObject.GetComponentsInChildren<MeshFilter>();
                     foreach (var meshFilter in meshFilters)
-                        Destroy(meshFilter.sharedMesh);
+                        AssetCleanup.CleanAsset(meshFilter.sharedMesh);
                     Destroy(interior.gameObject);
                 }
 
@@ -1133,7 +1133,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     var meshFilters = interior.gameObject.GetComponentsInChildren<MeshFilter>();
                     foreach (var meshFilter in meshFilters)
-                        Destroy(meshFilter.sharedMesh);
+                        AssetCleanup.CleanAsset(meshFilter.sharedMesh);
                     Destroy(interior.gameObject);
                     buildingType = DFLocation.BuildingTypes.None;
                     factionID = 0;

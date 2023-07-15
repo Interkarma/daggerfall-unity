@@ -18,6 +18,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -384,7 +385,7 @@ namespace DaggerfallWorkshop
             atlasMaterial.mainTexture = customMaterial.mainTexture;
 
             // Assign renderer properties
-            Destroy(meshRenderer.sharedMaterial);
+            AssetCleanup.CleanAsset(meshRenderer.sharedMaterial);
             meshRenderer.sharedMaterial = atlasMaterial;
             meshRenderer.receiveShadows = false;
             FramesPerSecond = 0;

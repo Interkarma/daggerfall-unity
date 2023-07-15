@@ -535,7 +535,7 @@ namespace DaggerfallWorkshop.Game
                 if (oldCustomAnimation != null && customWeaponAnimationCached != null)
                 {
                     foreach (var texture in customWeaponAnimationCached.Textures.Values) // Prune old cached custom textures
-                        GameObject.Destroy(texture);
+                        Utility.AssetCleanup.CleanAsset(texture);
                 }
             }
 

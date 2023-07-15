@@ -308,9 +308,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void FreeResources()
         {
             base.FreeResources();
-            GameObject.Destroy(baseTexture);
-            GameObject.Destroy(hoursPastTexture);
-            GameObject.Destroy(hoursRemainingTexture);
+            Utility.AssetCleanup.CleanAsset(baseTexture);
+            Utility.AssetCleanup.CleanAsset(hoursPastTexture);
+            Utility.AssetCleanup.CleanAsset(hoursRemainingTexture);
         }
 
         #endregion

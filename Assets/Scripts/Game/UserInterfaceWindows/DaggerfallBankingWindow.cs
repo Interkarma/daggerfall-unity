@@ -340,7 +340,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void FreeResources()
         {
             base.FreeResources();
-            GameObject.Destroy(mainPanel.BackgroundTexture);
+            Utility.AssetCleanup.CleanAsset(mainPanel.BackgroundTexture);
         }
 
 

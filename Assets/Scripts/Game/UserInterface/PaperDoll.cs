@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using UnityEditor;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -194,9 +195,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (lastBackgroundName != backgroundName)
             {
                 Texture2D texture = ImageReader.GetTexture(backgroundName, 0, 0, false);
-                Object.Destroy(backgroundPanel.BackgroundTexture);
+                AssetCleanup.CleanAsset(backgroundPanel.BackgroundTexture);
                 backgroundPanel.BackgroundTexture = ImageReader.GetSubTexture(texture, backgroundSubRect, backgroundFullSize);
-                Object.Destroy(texture);
+                AssetCleanup.CleanAsset(texture);
                 backgroundPanel.Size = new Vector2(paperDollWidth, paperDollHeight);
                 lastBackgroundName = backgroundName;
             }
@@ -238,7 +239,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Dispose()
         {
             base.Dispose();
-            GameObject.Destroy(backgroundPanel.BackgroundTexture);
+            AssetCleanup.CleanAsset(backgroundPanel.BackgroundTexture);
         }
     }
 }

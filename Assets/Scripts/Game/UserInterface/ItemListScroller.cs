@@ -12,6 +12,8 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using System;
+using UnityEditor;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -509,13 +511,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Texture2D redArrowsTexture = ImageReader.GetTexture(redArrowsTextureName);
                 redUpArrow = ImageReader.GetSubTexture(redArrowsTexture, upArrowRect, arrowsFullSize);
                 redDownArrow = ImageReader.GetSubTexture(redArrowsTexture, downArrowRect, arrowsFullSize);
-                GameObject.Destroy(redArrowsTexture);
+                AssetCleanup.CleanAsset(redArrowsTexture);
 
                 // Cut out green up/down arrows
                 Texture2D greenArrowsTexture = ImageReader.GetTexture(greenArrowsTextureName);
                 greenUpArrow = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRect, arrowsFullSize);
                 greenDownArrow = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRect, arrowsFullSize);
-                GameObject.Destroy(greenArrowsTexture);
+                AssetCleanup.CleanAsset(greenArrowsTexture);
             }
             if (enhanced)
             {
@@ -523,7 +525,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Texture2D baseInvTexture = ImageReader.GetTexture(baseInvTextureName);
                 for (int i = 0; i < itemCutoutRects16.Length; i++)
                     itemListTextures[i] = ImageReader.GetSubTexture(baseInvTexture, itemCutoutRects16[i], new DFSize(320, 200));
-                GameObject.Destroy(baseInvTexture);
+                AssetCleanup.CleanAsset(baseInvTexture);
             }
         }
 
@@ -631,11 +633,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             base.Dispose();
             if (itemListTextures != null)
                 foreach (var texture in itemListTextures)
-                    GameObject.Destroy(texture);
-            GameObject.Destroy(redUpArrow);
-            GameObject.Destroy(greenUpArrow);
-            GameObject.Destroy(redDownArrow);
-            GameObject.Destroy(greenDownArrow);
+                    AssetCleanup.CleanAsset(texture);
+            AssetCleanup.CleanAsset(redUpArrow);
+            AssetCleanup.CleanAsset(greenUpArrow);
+            AssetCleanup.CleanAsset(redDownArrow);
+            AssetCleanup.CleanAsset(greenDownArrow);
         }
     }
 }

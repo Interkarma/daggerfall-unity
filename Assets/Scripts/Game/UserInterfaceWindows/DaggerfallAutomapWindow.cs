@@ -666,12 +666,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (renderTextureAutomap != null)
             {
-                UnityEngine.Object.Destroy(renderTextureAutomap);
+                Utility.AssetCleanup.CleanAsset(renderTextureAutomap);
             }
 
             if (textureAutomap != null)
             {
-                UnityEngine.Object.Destroy(textureAutomap);
+                Utility.AssetCleanup.CleanAsset(textureAutomap);
             }
 
             automap.UpdateAutomapStateOnWindowPop(); // signal Automap script that automap window was closed

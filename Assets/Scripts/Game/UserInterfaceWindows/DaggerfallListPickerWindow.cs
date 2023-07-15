@@ -20,6 +20,8 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using UnityEditor;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -142,7 +144,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.FreeResources();
             pickerPanel.Dispose(); // Needed here since panel is instantiated but may not be added to components.
-            GameObject.Destroy(nativeTexture);
+            AssetCleanup.CleanAsset(nativeTexture);
         }
 
         #region Event Handlers

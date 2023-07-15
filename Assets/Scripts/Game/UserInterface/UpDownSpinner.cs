@@ -253,7 +253,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Dispose()
         {
             base.Dispose();
-            GameObject.Destroy(nativeTexture);
+            Utility.AssetCleanup.CleanAsset(nativeTexture);
         }
 
         #region Events

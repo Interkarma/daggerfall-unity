@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -303,11 +304,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void FreeResources()
         {
             base.FreeResources();
-            GameObject.Destroy(mainPanel.BackgroundTexture);
-            GameObject.Destroy(namePanel.BackgroundTexture);
-            GameObject.Destroy(savesList.BackgroundTexture);
-            GameObject.Destroy(switchCharButton.BackgroundTexture);
-            GameObject.Destroy(screenshotPanel.BackgroundTexture);
+            AssetCleanup.CleanAsset(mainPanel.BackgroundTexture);
+            AssetCleanup.CleanAsset(namePanel.BackgroundTexture);
+            AssetCleanup.CleanAsset(savesList.BackgroundTexture);
+            AssetCleanup.CleanAsset(switchCharButton.BackgroundTexture);
+            AssetCleanup.CleanAsset(screenshotPanel.BackgroundTexture);
         }
 
         #endregion
@@ -389,7 +390,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Destroy old background texture
             if (screenshotPanel.BackgroundTexture)
             {
-                UnityEngine.Object.Destroy(screenshotPanel.BackgroundTexture);
+                AssetCleanup.CleanAsset(screenshotPanel.BackgroundTexture);
                 screenshotPanel.BackgroundTexture = null;
             }
 

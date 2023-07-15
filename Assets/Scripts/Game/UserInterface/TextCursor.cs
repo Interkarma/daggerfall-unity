@@ -95,7 +95,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public override void Dispose()
         {
             base.Dispose();
-            GameObject.Destroy(cursorTexture);
+            Utility.AssetCleanup.CleanAsset(cursorTexture);
         }
 
         #region Private Methods

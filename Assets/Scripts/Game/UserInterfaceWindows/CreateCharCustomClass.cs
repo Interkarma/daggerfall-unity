@@ -253,8 +253,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void FreeResources()
         {
             base.FreeResources();
-            GameObject.Destroy(nativeTexture);
-            GameObject.Destroy(nativeDaggerTexture);
+            Utility.AssetCleanup.CleanAsset(nativeTexture);
+            Utility.AssetCleanup.CleanAsset(nativeDaggerTexture);
         }
 
         #region Event Handlers

@@ -1077,7 +1077,7 @@ namespace DaggerfallWorkshop
                 var meshFilters = location.gameObject.GetComponentsInChildren<MeshFilter>();
                 foreach (var meshFilter in meshFilters)
                 {
-                    Destroy(meshFilter.sharedMesh);
+                    AssetCleanup.CleanAsset(meshFilter.sharedMesh);
                 }
             }
         }

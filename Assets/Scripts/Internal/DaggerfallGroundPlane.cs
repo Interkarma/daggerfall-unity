@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -70,8 +71,8 @@ namespace DaggerfallWorkshop
             summary.archive = archive;
             summary.season = season;
             var meshRenderer = GetComponent<MeshRenderer>();
-            GameObject.Destroy(meshRenderer.material.mainTexture);
-            GameObject.Destroy(meshRenderer.material);
+            AssetCleanup.CleanAsset(meshRenderer.material.mainTexture);
+            AssetCleanup.CleanAsset(meshRenderer.material);
             meshRenderer.material = material;
         }
 

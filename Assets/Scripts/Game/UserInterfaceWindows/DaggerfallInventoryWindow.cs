@@ -972,7 +972,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     return;
 
                 if (panel.BackgroundTexture)
-                    GameObject.Destroy(panel.BackgroundTexture);
+                    AssetCleanup.CleanAsset(panel.BackgroundTexture);
 
                 // Get item at this equip index (if any)
                 DaggerfallUnityItem item = PlayerEntity.ItemEquipTable.GetItem((EquipSlots)button.Tag);
@@ -1036,7 +1036,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Cut out info panel texture from item maker
             Texture2D infoBaseTexture = ImageReader.GetTexture(infoTextureName);
             infoTexture = ImageReader.GetSubTexture(infoBaseTexture, infoCutoutRect, baseSize);
-            GameObject.Destroy(infoBaseTexture);
+            AssetCleanup.CleanAsset(infoBaseTexture);
 
             // Load coins animation textures
             coinsAnimation = ImageReader.GetImageData(coinsAnimTextureName, 6, 0, true, false, true);
@@ -1048,34 +1048,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected virtual void UnloadTextures()
         {
-            GameObject.Destroy(baseTexture);
-            GameObject.Destroy(goldTexture);
-            GameObject.Destroy(weaponsAndArmorNotSelected);
-            GameObject.Destroy(magicItemsNotSelected);
-            GameObject.Destroy(clothingAndMiscNotSelected);
-            GameObject.Destroy(ingredientsNotSelected);
-            GameObject.Destroy(weaponsAndArmorSelected);
-            GameObject.Destroy(magicItemsSelected);
-            GameObject.Destroy(clothingAndMiscSelected);
-            GameObject.Destroy(ingredientsSelected);
-            GameObject.Destroy(wagonNotSelected);
-            GameObject.Destroy(infoNotSelected);
-            GameObject.Destroy(equipNotSelected);
-            GameObject.Destroy(removeNotSelected);
-            GameObject.Destroy(useNotSelected);
-            GameObject.Destroy(wagonSelected);
-            GameObject.Destroy(wagonNotSelected);
-            GameObject.Destroy(infoSelected);
-            GameObject.Destroy(equipSelected);
-            GameObject.Destroy(removeSelected);
-            GameObject.Destroy(useSelected);
-            GameObject.Destroy(infoTexture);
+            AssetCleanup.CleanAsset(baseTexture);
+            AssetCleanup.CleanAsset(goldTexture);
+            AssetCleanup.CleanAsset(weaponsAndArmorNotSelected);
+            AssetCleanup.CleanAsset(magicItemsNotSelected);
+            AssetCleanup.CleanAsset(clothingAndMiscNotSelected);
+            AssetCleanup.CleanAsset(ingredientsNotSelected);
+            AssetCleanup.CleanAsset(weaponsAndArmorSelected);
+            AssetCleanup.CleanAsset(magicItemsSelected);
+            AssetCleanup.CleanAsset(clothingAndMiscSelected);
+            AssetCleanup.CleanAsset(ingredientsSelected);
+            AssetCleanup.CleanAsset(wagonNotSelected);
+            AssetCleanup.CleanAsset(infoNotSelected);
+            AssetCleanup.CleanAsset(equipNotSelected);
+            AssetCleanup.CleanAsset(removeNotSelected);
+            AssetCleanup.CleanAsset(useNotSelected);
+            AssetCleanup.CleanAsset(wagonSelected);
+            AssetCleanup.CleanAsset(wagonNotSelected);
+            AssetCleanup.CleanAsset(infoSelected);
+            AssetCleanup.CleanAsset(equipSelected);
+            AssetCleanup.CleanAsset(removeSelected);
+            AssetCleanup.CleanAsset(useSelected);
+            AssetCleanup.CleanAsset(infoTexture);
             foreach (var texture in coinsAnimation.animatedTextures)
-                GameObject.Destroy(texture);
+                AssetCleanup.CleanAsset(texture);
             foreach (var texture in magicAnimation.animatedTextures)
-                GameObject.Destroy(texture);
+                AssetCleanup.CleanAsset(texture);
             foreach (var panel in accessoryIconPanels)
-                GameObject.Destroy(panel.BackgroundTexture);
+                AssetCleanup.CleanAsset(panel.BackgroundTexture);
         }
 
         void ShowWagon(bool show)

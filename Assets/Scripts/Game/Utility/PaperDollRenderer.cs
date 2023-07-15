@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game.Utility
             // Destroy old output texture
             if (paperDollTexture != null)
             {
-                GameObject.Destroy(paperDollTexture);
+                AssetCleanup.CleanAsset(paperDollTexture);
                 paperDollTexture = null;
             }
 
@@ -350,9 +350,9 @@ namespace DaggerfallWorkshop.Game.Utility
             DrawTexture(head);
 
             // Release allocated texture assets
-            GameObject.Destroy(nudeBody.texture);
-            GameObject.Destroy(clothedBody.texture);
-            GameObject.Destroy(head.texture);
+            AssetCleanup.CleanAsset(nudeBody.texture);
+            AssetCleanup.CleanAsset(clothedBody.texture);
+            AssetCleanup.CleanAsset(head.texture);
         }
 
         // Special blit for upper half of player body
@@ -388,7 +388,7 @@ namespace DaggerfallWorkshop.Game.Utility
             {
                 ImageData interior2 = DaggerfallUnity.Instance.ItemHelper.GetCloakInteriorImage(cloak2);
                 DrawTexture(interior2, cloak2);
-                GameObject.Destroy(interior2.texture);
+                AssetCleanup.CleanAsset(interior2.texture);
                 return;
             }
 
@@ -398,7 +398,7 @@ namespace DaggerfallWorkshop.Game.Utility
             {
                 ImageData interior1 = DaggerfallUnity.Instance.ItemHelper.GetCloakInteriorImage(cloak1);
                 DrawTexture(interior1, cloak1);
-                GameObject.Destroy(interior1.texture);
+                AssetCleanup.CleanAsset(interior1.texture);
             }
         }
 

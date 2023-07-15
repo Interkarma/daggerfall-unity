@@ -183,12 +183,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 Object.Destroy(goCameraBankPurchase);
             }
 
-            GameObject.Destroy(baseTexture);
-            GameObject.Destroy(redUpArrow);
-            GameObject.Destroy(greenUpArrow);
-            GameObject.Destroy(redDownArrow);
-            GameObject.Destroy(greenDownArrow);
-            GameObject.Destroy(displayTexture);
+            Utility.AssetCleanup.CleanAsset(baseTexture);
+            Utility.AssetCleanup.CleanAsset(redUpArrow);
+            Utility.AssetCleanup.CleanAsset(greenUpArrow);
+            Utility.AssetCleanup.CleanAsset(redDownArrow);
+            Utility.AssetCleanup.CleanAsset(greenDownArrow);
+            Utility.AssetCleanup.CleanAsset(displayTexture);
         }
 
         #endregion
@@ -374,13 +374,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D redArrowsTexture = ImageReader.GetTexture(redArrowsTextureName);
             redUpArrow = ImageReader.GetSubTexture(redArrowsTexture, upArrowRect, arrowsFullSize);
             redDownArrow = ImageReader.GetSubTexture(redArrowsTexture, downArrowRect, arrowsFullSize);
-            GameObject.Destroy(redArrowsTexture);
+            Utility.AssetCleanup.CleanAsset(redArrowsTexture);
 
             // Cut out green up/down arrows
             Texture2D greenArrowsTexture = ImageReader.GetTexture(greenArrowsTextureName);
             greenUpArrow = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRect, arrowsFullSize);
             greenDownArrow = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRect, arrowsFullSize);
-            GameObject.Destroy(greenArrowsTexture);
+            Utility.AssetCleanup.CleanAsset(greenArrowsTexture);
         }
 
         #endregion
