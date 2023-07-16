@@ -8,7 +8,7 @@
 // 
 // Notes:
 //
-using UnityEditor;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -20,8 +20,22 @@ namespace DaggerfallWorkshop.Game.Utility
         /// <param name="obj"></param>
         public static void CleanAsset(UnityEngine.Object obj)
         {
-            if (obj && !AssetDatabase.Contains(obj))
-                UnityEngine.Object.Destroy(obj);
+            if (obj)
+            {
+                var mods = ModManager.Instance.EnumerateEnabledModsReverse();
+                var assetIsInBundles = false;
+                foreach (var mod in mods)
+                {
+                    if (mod.AssetBundle && mod.AssetBundle.Contains(obj.name))
+                    {
+                        assetIsInBundles = true;
+                        break;
+                    }
+                }
+
+                if (!assetIsInBundles)
+                    UnityEngine.Object.Destroy(obj);
+            }
         }
     }
 }
