@@ -944,7 +944,7 @@ namespace DaggerfallWorkshop.Game
 
             // Game not active when top window is neither null or HUD
             IUserInterfaceWindow topWindow = DaggerfallUI.UIManager.TopWindow;
-            if (topWindow != null && !(topWindow is DaggerfallHUD))
+            if (topWindow != null && !(topWindow is DaggerfallHUD) && topWindow.PauseWhileOpen)
                 return false;
 
             return true;
