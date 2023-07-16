@@ -49,10 +49,10 @@ namespace DaggerfallWorkshop.Game.Items
                 if (paintingIndex == 70 && // Known buggy paintingRecord
                     paintingRecord[30] == 0xFF) // not fixed in PAINT.DAT
                 {
-                    // That paintingRecord is used for Wayrest Painting, whose non-magic look resembles the fog on Cryngaine Field.
                     paintingRecord[30] = 3; // summer
-                    paintingRecord[31] = 8; // afternoon
-                    paintingRecord[32] = 10; // Highrock
+                    paintingRecord[31] = 6; // spring
+                    paintingRecord[32] = 8; // afternoon
+                    paintingRecord[33] = 10; // Highrock
                 }
                 Debug.LogFormat("painting file: {0}, index: {1}, cif idx: {2}, record: {3} {4} {5}", dataSource.paintingFilename, paintingIndex, dataSource.paintingFileIdx, paintingRecord[0], paintingRecord[1], paintingRecord[2]);
 
