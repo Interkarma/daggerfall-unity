@@ -247,7 +247,7 @@ Message:  1019
 Message:  1020
 %qdat:
  I am on the trail of the Slayer
- of ___bookstore_. %rt _qgiver_ wants
+ of ___bookstore_. The %rt wants
  the ___bookstore_ Slayer caught in =total_ days
  before the murders inflame the populace
  to riot. _qgiver_ has a scientist
