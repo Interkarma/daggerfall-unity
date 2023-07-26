@@ -35,6 +35,7 @@ namespace DaggerfallWorkshop.Game
         const float attackSpeedDivisor = 2f;        // How much to slow down during attack animations
         float stopDistance = 1.7f;                  // Used to prevent orbiting
         const float doorCrouchingHeight = 1.65f;    // How low enemies dive to pass thru doors
+        const float armLength = 1f;                 // Distance of cast spells origin
         bool flies;                                 // The enemy can fly
         bool swims;                                 // The enemy can swim
         bool pausePursuit;                          // pause to wait for the player to come closer to ground
@@ -677,6 +678,9 @@ namespace DaggerfallWorkshop.Game
             if (sphereCastDir == EnemySenses.ResetPlayerPos)
                 return false;
 
+            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
+            sphereCastDir = (sphereCastDir - transform.position).normalized;
+
             // No point blank shooting special handling here, makes enemies favor other attack types (melee, touch spells,...)
 
             bool myColliderWasEnabled = false;
@@ -686,15 +690,12 @@ namespace DaggerfallWorkshop.Game
                 // Exclude enemy collider from CheckSphere test
                 myCollider.enabled = false;
             }
-            bool isSpaceInsufficient = Physics.CheckSphere(transform.position, radius, ignoreMaskForShooting);
+            bool isSpaceInsufficient = Physics.CheckSphere(transform.position + sphereCastDir * armLength, radius, ignoreMaskForShooting);
             if (myCollider)
                 myCollider.enabled = myColliderWasEnabled;
 
             if (isSpaceInsufficient)
                 return false;
-
-            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
-            sphereCastDir = (sphereCastDir - transform.position).normalized;
 
             RaycastHit hit;
             if (Physics.SphereCast(transform.position, radius, sphereCastDir, out hit, sphereCastDist, ignoreMaskForShooting))
