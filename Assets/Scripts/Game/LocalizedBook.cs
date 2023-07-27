@@ -145,6 +145,10 @@ namespace DaggerfallWorkshop.Game
         /// <returns>True if successfull.</returns>
         public bool OpenLocalizedBookFile(string filename)
         {
+            // Book filename cannot be null or empty
+            if (string.IsNullOrEmpty(filename))
+                return false;
+
             // Append -LOC if missing from filename
             string fileNoExt = Path.GetFileNameWithoutExtension(filename);
             if (!fileNoExt.EndsWith(localizedFilenameSuffix))
