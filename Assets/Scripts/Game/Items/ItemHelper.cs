@@ -617,7 +617,7 @@ namespace DaggerfallWorkshop.Game.Items
             if (bookIDNameMapping.ContainsKey(id))
                 return BookFile.messageToBookFilename(id);
 
-            Debug.LogErrorFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", id);
+            Debug.LogWarningFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", id);
             return null;
         }
 

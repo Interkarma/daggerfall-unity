@@ -154,6 +154,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void OpenBook(string filename)
         {
+            // Book filename cannot be null or empty
+            if (string.IsNullOrEmpty(filename))
+                return;
+
             // Open book file - localized book is first preference with fallback to classic book data from ARENA2 or mods
             LocalizedBook localizedBook = new LocalizedBook();
             if (localizedBook.OpenBookFile(filename))
@@ -280,6 +284,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ImageLabel label = new ImageLabel();
 
             // TODO: Seek book images from mods
+
+            // Image filename cannot be null or empty
+            if (string.IsNullOrEmpty(filename))
+                return label;
 
             // Get path to localized book file and check it exists
             string path = Path.Combine(Application.streamingAssetsPath, textFolderName, bookImagesPath, filename);
