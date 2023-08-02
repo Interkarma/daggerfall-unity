@@ -35,7 +35,6 @@ namespace DaggerfallWorkshop.Game
         const float attackSpeedDivisor = 2f;        // How much to slow down during attack animations
         float stopDistance = 1.7f;                  // Used to prevent orbiting
         const float doorCrouchingHeight = 1.65f;    // How low enemies dive to pass thru doors
-        const float armLength = 1f;                 // Distance of cast spells origin
         bool flies;                                 // The enemy can fly
         bool swims;                                 // The enemy can swim
         bool pausePursuit;                          // pause to wait for the player to come closer to ground
@@ -690,7 +689,9 @@ namespace DaggerfallWorkshop.Game
                 // Exclude enemy collider from CheckSphere test
                 myCollider.enabled = false;
             }
-            bool isSpaceInsufficient = Physics.CheckSphere(transform.position + sphereCastDir * armLength, radius, ignoreMaskForShooting);
+
+            Vector3 shootOrigin = transform.position + sphereCastDir * radius;
+            bool isSpaceInsufficient = Physics.CheckSphere(shootOrigin, radius, ignoreMaskForShooting);
             if (myCollider)
                 myCollider.enabled = myColliderWasEnabled;
 
@@ -698,7 +699,7 @@ namespace DaggerfallWorkshop.Game
                 return false;
 
             RaycastHit hit;
-            if (Physics.SphereCast(transform.position, radius, sphereCastDir, out hit, sphereCastDist, ignoreMaskForShooting))
+            if (Physics.SphereCast(shootOrigin, radius, sphereCastDir, out hit, sphereCastDist, ignoreMaskForShooting))
             {
                 DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
 
