@@ -37,6 +37,7 @@ namespace DaggerfallWorkshop.Game
 
         public float MovementSpeed = 25.0f;                     // Speed missile moves through world
         public float ColliderRadius = 0.45f;                    // Radius of missile contact sphere
+        public static float ArmLength = 0.9f;                   // Distance of cast origin, >= ColliderRadius
         public float ExplosionRadius = 4.0f;                    // Radius of area of effect explosion
         public bool EnableLight = true;                         // Show a light with this missile - player can force disable from settings
         public bool EnableShadows = true;                       // Light will cast shadows - player can force disable from settings
@@ -430,7 +431,7 @@ namespace DaggerfallWorkshop.Game
         void DoMissile()
         {
             direction = GetAimDirection();
-            transform.position = GetAimPosition() + direction * ColliderRadius;
+            transform.position = GetAimPosition() + direction * ArmLength;
             missileReleased = true;
         }
 
