@@ -3903,6 +3903,14 @@ MonoBehaviour:
     m_Key: sister
     m_Metadata:
       m_Items: []
+  - m_Id: 384511549959041024
+    m_Key: daedricSkill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 384511601481871360
+    m_Key: orcishSkill
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

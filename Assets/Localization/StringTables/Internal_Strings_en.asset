@@ -5129,5 +5129,13 @@ MonoBehaviour:
     m_Localized: Sister
     m_Metadata:
       m_Items: []
+  - m_Id: 384511549959041024
+    m_Localized: Daedric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 384511601481871360
+    m_Localized: Orcish
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

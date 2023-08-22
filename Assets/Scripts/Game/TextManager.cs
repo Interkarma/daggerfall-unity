@@ -352,14 +352,17 @@ namespace DaggerfallWorkshop.Game
         /// <param name="key">Key of text in table.</param>
         /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
         /// <param name="exception">True to throw detailed exception if text not found. False to just return error string.</param>
-        /// <returns>Text if found, then fallback if found, then exception or error string if nothing found.</returns>
-        public string GetLocalizedText(string key, TextCollections collection = TextCollections.Internal, bool exception = false)
+        /// <param name="reversion">Revert to a string literal rather than error.</param>
+        /// <returns>Text if found, then fallback if found, then reversion if provided, then exception or error string if nothing found.</returns>
+        public string GetLocalizedText(string key, TextCollections collection = TextCollections.Internal, bool exception = false, string reversion = null)
         {
             string localizedText;
             if (TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedText))
                 return localizedText;
             else if (TryGetLocalizedText(GetDefaultCollectionName(collection), key, out localizedText))
                 return localizedText;
+            else if (!string.IsNullOrEmpty(reversion))
+                return reversion;
             else
             {
                 if (exception)

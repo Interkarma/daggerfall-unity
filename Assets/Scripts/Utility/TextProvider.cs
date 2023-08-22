@@ -420,7 +420,7 @@ namespace DaggerfallWorkshop.Utility
                 case DFCareer.Skills.Jumping:
                     return TextManager.Instance.GetLocalizedText("jumping");
                 case DFCareer.Skills.Orcish:
-                    return TextManager.Instance.GetLocalizedText("orcish");
+                    return TextManager.Instance.GetLocalizedText("orcishSkill", reversion: TextManager.Instance.GetLocalizedText("orcish"));
                 case DFCareer.Skills.Harpy:
                     return TextManager.Instance.GetLocalizedText("harpy");
                 case DFCareer.Skills.Giantish:
@@ -430,7 +430,7 @@ namespace DaggerfallWorkshop.Utility
                 case DFCareer.Skills.Nymph:
                     return TextManager.Instance.GetLocalizedText("nymph");
                 case DFCareer.Skills.Daedric:
-                    return TextManager.Instance.GetLocalizedText("daedric");
+                    return TextManager.Instance.GetLocalizedText("daedricSkill", reversion: TextManager.Instance.GetLocalizedText("daedric"));
                 case DFCareer.Skills.Spriggan:
                     return TextManager.Instance.GetLocalizedText("spriggan");
                 case DFCareer.Skills.Centaurian:
