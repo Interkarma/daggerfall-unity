@@ -3911,6 +3911,10 @@ MonoBehaviour:
     m_Key: orcishSkill
     m_Metadata:
       m_Items: []
+  - m_Id: 384529964098646016
+    m_Key: midDateTimeFormatString
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
