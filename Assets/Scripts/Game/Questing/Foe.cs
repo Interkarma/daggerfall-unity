@@ -58,7 +58,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public override Genders Gender
         {
-            get { return ((int)foeType < 128) ? Genders.Male : humanoidGender; }
+            get { return DaggerfallEntity.IsClassEnemyId((int)foeType) ? humanoidGender : Genders.Male; }
         }
 
         public int SpawnCount
@@ -314,11 +314,40 @@ namespace DaggerfallWorkshop.Game.Questing
             public ItemData_v1[] itemQueue;
         }
 
+        [fsObject("v2", typeof(SaveData_v1))]
+        public struct SaveData_v2
+        {
+            public int spawnCount;
+            public int foeId; // allows for custom foes
+            public Genders humanoidGender;
+            public bool injuredTrigger;
+            public bool restrained;
+            public int killCount;
+            public string displayName;
+            public string typeName;
+            public List<SpellReference> spellQueue;
+            public ItemData_v1[] itemQueue;
+
+            public SaveData_v2(SaveData_v1 v1)
+            {
+                spawnCount = v1.spawnCount;
+                foeId = (int)v1.foeType;
+                humanoidGender = v1.humanoidGender;
+                injuredTrigger = v1.injuredTrigger;
+                restrained = v1.restrained;
+                killCount = v1.killCount;
+                displayName = v1.displayName;
+                typeName = v1.typeName;
+                spellQueue = v1.spellQueue;
+                itemQueue = v1.itemQueue;
+            }
+        }
+
         public override object GetSaveData()
         {
-            SaveData_v1 data = new SaveData_v1();
+            SaveData_v2 data = new SaveData_v2();
             data.spawnCount = spawnCount;
-            data.foeType = foeType;
+            data.foeId = (int)foeType;
             data.humanoidGender = humanoidGender;
             data.injuredTrigger = injuredTrigger;
             data.restrained = restrained;
@@ -337,9 +366,19 @@ namespace DaggerfallWorkshop.Game.Questing
             if (dataIn == null)
                 return;
 
-            SaveData_v1 data = (SaveData_v1)dataIn;
+            SaveData_v2 data;
+
+            if (dataIn is SaveData_v1)
+            {
+                data = new SaveData_v2((SaveData_v1) dataIn);
+            }
+            else
+            {
+                data = (SaveData_v2)dataIn;
+            }
+
             spawnCount = data.spawnCount;
-            foeType = data.foeType;
+            foeType = (MobileTypes)data.foeId;
             humanoidGender = data.humanoidGender;
             injuredTrigger = data.injuredTrigger;
             restrained = data.restrained;
