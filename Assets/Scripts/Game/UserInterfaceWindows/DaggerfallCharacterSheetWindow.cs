@@ -348,10 +348,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 foreach (IGuild guild in guildMemberships)
                 {
+                    string affiliationText = string.Format(TextManager.Instance.GetLocalizedText("affiliationFormatString"), guild.GetTitle(), guild.GetReputation(playerEntity).ToString());
                     tokens.Add(TextFile.CreateTextToken(guild.GetAffiliation()));
                     tokens.Add(tab);
-                    tokens.Add(TextFile.CreateTextToken(guild.GetTitle() //)); DEBUG rep:
-                        + " (rep:" + guild.GetReputation(playerEntity).ToString() + ")"));
+                    tokens.Add(TextFile.CreateTextToken(affiliationText));
                     tokens.Add(TextFile.NewLineToken);
                 }
 

@@ -3919,6 +3919,10 @@ MonoBehaviour:
     m_Key: hthDamageFormatString
     m_Metadata:
       m_Items: []
+  - m_Id: 387103528328884224
+    m_Key: affiliationFormatString
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
