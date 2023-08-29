@@ -3915,6 +3915,10 @@ MonoBehaviour:
     m_Key: midDateTimeFormatString
     m_Metadata:
       m_Items: []
+  - m_Id: 387100728270254080
+    m_Key: hthDamageFormatString
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
