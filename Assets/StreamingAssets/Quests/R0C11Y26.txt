@@ -355,6 +355,10 @@ _deadbody2_ task:
 _qgclicked_ task:
 	clicked npc _qgiver_ 
 
+_clearclick_ task:
+	when _qgclicked_ and not _S.00_
+	clear _qgclicked_ _clearclick_
+
 _pcgetsgold_ task:
 	when _qgclicked_ and _S.00_ 
 	give pc _reward_ 
