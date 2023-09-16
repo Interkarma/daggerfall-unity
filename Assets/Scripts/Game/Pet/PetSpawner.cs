@@ -10,9 +10,9 @@ namespace Game.Pet
     {
         public GameObject PetPrefab;
         public float MaxDistance;
-        
+
         private GameObject pet;
-        
+
         [ContextMenu("Spawn Pet")]
         public void SpawnPet()
         {
@@ -23,6 +23,9 @@ namespace Game.Pet
 
         private void Update()
         {
+            if (GameManager.IsGamePaused)
+                return;
+
             if (pet != null &&
                 Vector3.Distance(pet.transform.position, GameManager.Instance.PlayerObject.transform.position) >
                 MaxDistance)
@@ -62,7 +65,7 @@ namespace Game.Pet
             // Configure enemy
             setupEnemy.ApplyEnemySettings(mobileType, mobileReaction, gender);
 
-            CharacterController controller = pet.GetComponent<CharacterController>();
+            CharacterController controller = go.GetComponent<CharacterController>();
             if (controller != null)
             {
                 // Align non-flying units with ground
@@ -71,7 +74,8 @@ namespace Game.Pet
                     GameObjectHelper.AlignControllerToGround(controller);
             }
 
-            GameManager.Instance?.RaiseOnEnemySpawnEvent(go);
+            if (GameManager.Instance != null)
+                GameManager.Instance.RaiseOnEnemySpawnEvent(go);
 
             return go;
         }

@@ -19,7 +19,7 @@ namespace Game.Pet
     /// <summary>
     /// Implements DaggerfallEntity with properties specific to enemies.
     /// </summary>
-    public class PetEntity : DaggerfallEntity
+    public class PetEntity : EnemyEntity
     {
         #region Fields
 

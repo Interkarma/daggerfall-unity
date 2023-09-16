@@ -83,11 +83,10 @@ namespace Game.Pet
         DaggerfallEntityBehaviour entityBehaviour;
         EnemyBlood entityBlood;
         EntityEffectManager entityEffectManager;
+
         EntityEffectBundle selectedSpell;
-        //EnemyAttack attack;
         PetEntity entity;
         [SerializeField] private float MeleeDistance;
-        [SerializeField] private float ClassicMeleeDistanceVsAI;
 
         #endregion
 
@@ -350,14 +349,8 @@ namespace Game.Pet
             if (isPlayingOneShot && DaggerfallUnity.Settings.EnhancedCombatAI)
                 moveSpeed /= attackSpeedDivisor;
 
-            // Classic AI moves only as close as melee range. It uses a different range for the player and for other AI.
-            if (!DaggerfallUnity.Settings.EnhancedCombatAI)
-            {
-                if (senses.Target == GameManager.Instance.PlayerEntityBehaviour)
-                    stopDistance = MeleeDistance;
-                else
-                    stopDistance = ClassicMeleeDistanceVsAI;
-            }
+
+            stopDistance = MeleeDistance;
 
             // Get location to move towards.
             GetDestination();
@@ -1028,7 +1021,7 @@ namespace Game.Pet
 
                 // If door didn't open, and we are trying to get to the target, bash
                 Bashing = DaggerfallUnity.Settings.EnhancedCombatAI && !senses.TargetInSight && moveInForAttack
-                          && senses.LastKnownDoor != null && senses.DistanceToDoor <= MeleeDistance &&
+                          && senses.LastKnownDoor != null &&
                           senses.LastKnownDoor.IsLocked;
             }
         }
