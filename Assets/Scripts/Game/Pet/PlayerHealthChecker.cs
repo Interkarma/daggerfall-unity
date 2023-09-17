@@ -17,12 +17,12 @@ namespace Game.Pet
 
         [SerializeField] private TimerService timerService;
         [SerializeField] private int lootDelay;
-        [SerializeField, Range(0, 1)] private float minHealthPercent = .5f;
+        [SerializeField, Range(0, 1)] private float minHealthPercent;
         [SerializeField] private PetMotor petMotor;
 
         private DaggerfallEntityBehaviour _playerEntityBehaviour;
-        private bool _readyForNextLoot = true;
         private DaggerfallLoot _currentLootContainer;
+        private bool _readyForNextLoot = true;
 
         private void Awake()
         {

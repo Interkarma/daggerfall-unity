@@ -181,13 +181,13 @@ GameObject:
   - component: {fileID: 11439840}
   - component: {fileID: 11435454}
   - component: {fileID: 11449422}
-  - component: {fileID: 114919659270182526}
   - component: {fileID: 749380236865339561}
   - component: {fileID: 7209716803657906088}
   - component: {fileID: 4480090568181480411}
   - component: {fileID: 6665997626388067706}
   - component: {fileID: 3610721468857306562}
   - component: {fileID: 6133282160988206857}
+  - component: {fileID: 2124978470547085299}
   m_Layer: 0
   m_Name: DaggerfallPet [Game Serializable]
   m_TagString: Untagged
@@ -413,28 +413,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 422771dffd07f114fabf12b1d03f5f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114919659270182526
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 140354}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9ffab243d560eb4698f5f394d36eb67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FireMissilePrefab: {fileID: 114701158002484598, guid: 738ed1902aee8694d83f5b5fbf151bd8,
-    type: 3}
-  ColdMissilePrefab: {fileID: 114701158002484598, guid: 481b796491f5b9543b5711183faef15a,
-    type: 3}
-  PoisonMissilePrefab: {fileID: 114701158002484598, guid: d6d8b5ee1acb1424591a58ec6aa291d1,
-    type: 3}
-  ShockMissilePrefab: {fileID: 114701158002484598, guid: f1cb8f301b9f6d74fb1e42543c002b1a,
-    type: 3}
-  MagicMissilePrefab: {fileID: 114701158002484598, guid: 7033bba38a223be4fab81dfb8f3b8f90,
-    type: 3}
 --- !u!114 &749380236865339561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -447,12 +425,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1557071e996a45659e1a8851afdff15c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnemyType: 3
-  EnemyReaction: 2
-  EnemyGender: 2
-  AlliedToPlayer: 1
-  ClassicSpawnDistanceType: 2
-  LightAura: {fileID: 0}
+  petType: 3
+  reaction: 1
+  gender: 0
+  classicSpawnDistanceType: 1
+  lightAura: {fileID: 0}
   entityBehaviour: {fileID: 11435454}
 --- !u!114 &7209716803657906088
 MonoBehaviour:
@@ -466,9 +443,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c937c43489243d691b0e59b3995a8d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SightRadius: 360
-  HearingRadius: 300
-  FieldOfView: 180
+  sightRadius: 360
+  hearingRadius: 300
+  fieldOfView: 180
 --- !u!114 &4480090568181480411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -481,8 +458,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a7dbf0955dd4d89b39d1b6e92731daa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OpenDoorDistance: 2
-  MeleeDistance: 4
+  maxApproachDistance: 4
+  openDoorDistance: 2
 --- !u!114 &6665997626388067706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -508,9 +485,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerService: {fileID: 6133282160988206857}
-  lootDelay: 5
-  minHealthPercent: 0.927
-  petEntityBehaviour: {fileID: 11435454}
+  lootDelay: 15
+  minHealthPercent: 0.873
   petMotor: {fileID: 4480090568181480411}
 --- !u!114 &6133282160988206857
 MonoBehaviour:
@@ -524,6 +500,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b505653cdff44513b8a4006711d8aa8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2124978470547085299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a4a0c25630445028a019b1296f9d204, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  petSenses: {fileID: 7209716803657906088}
+  maxDistance: 20
 --- !u!1 &3667402534367759475
 GameObject:
   m_ObjectHideFlags: 0
@@ -735,7 +725,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.71}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1, y: 0.1185}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5612124616906927935
@@ -790,3 +780,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   progressImage: {fileID: 3721216810978957761}
   petBehaviour: {fileID: 11435454}
+  canvas: {fileID: 7131153182570272436}
+  petBillboard: {fileID: 11478892}
