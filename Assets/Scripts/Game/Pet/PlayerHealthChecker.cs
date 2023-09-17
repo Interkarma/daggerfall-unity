@@ -3,7 +3,6 @@ using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Game.Pet
@@ -41,7 +40,7 @@ namespace Game.Pet
             }
         }
 
-        [Button]
+        [ContextMenu("AddHealth")]
         private void AddHealth() //todo remove
         {
             _playerEntityBehaviour.Entity.IncreaseHealth(5);
@@ -77,7 +76,6 @@ namespace Game.Pet
             lightComponent.intensity = 0.8f;
         }
 
-        [Button]
         private void ShowMagicSparkles(Vector3 sparklesPosition)
         {
             var dfUnity = DaggerfallUnity.Instance;

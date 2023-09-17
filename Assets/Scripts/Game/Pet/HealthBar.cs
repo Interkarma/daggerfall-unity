@@ -1,6 +1,5 @@
 ﻿using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.Entity;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,7 +20,6 @@ namespace Game.Pet
             canvas.worldCamera = _mainCamera;
         }
 
-        [Button]
         private void Start()
         {
             SetPositionDependsOnHeight();

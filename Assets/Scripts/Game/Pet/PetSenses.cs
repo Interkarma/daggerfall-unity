@@ -23,6 +23,7 @@ namespace Game.Pet
         private DaggerfallEntityBehaviour _player;
         private DaggerfallEntityBehaviour _target;
         private DaggerfallActionDoor _actionDoor;
+        private CharacterController _characterController;
         private Vector3 _directionToTarget;
         private Vector3 _lastKnownTargetPos = ResetPlayerPos;
         private Vector3 _oldLastKnownTargetPos = ResetPlayerPos;
@@ -77,6 +78,7 @@ namespace Game.Pet
             _mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
             _entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             _enemyEntity = _entityBehaviour.Entity as PetEntity;
+            _characterController = GetComponent<CharacterController>();
             _player = GameManager.Instance.PlayerEntityBehaviour;
 
             short[] classicSpawnXZDistArray = {1024, 384, 640, 768, 768, 768, 768};
@@ -85,7 +87,7 @@ namespace Game.Pet
             short[] classicDespawnXZDistArray = {1024, 1024, 1024, 1024, 768, 768, 768};
             short[] classicDespawnYDistArray = {384, 384, 384, 384, 768, 768, 768};
 
-            byte index = _mobile.ClassicSpawnDistanceType;
+            var index = _mobile.ClassicSpawnDistanceType;
 
             _classicSpawnXZDist = classicSpawnXZDistArray[index] * MeshReader.GlobalScale;
             _classicSpawnYDistUpper = classicSpawnYDistUpperArray[index] * MeshReader.GlobalScale;
@@ -312,7 +314,7 @@ namespace Game.Pet
                 assumedCurrentPosition = _predictedTargetPosWithoutLead;
             }
 
-            float divisor = PredictionInterval;
+            var divisor = PredictionInterval;
 
             // Account for mid-interval call by DaggerfallMissile
             if (_targetPosPredictTimer != 0)
@@ -322,22 +324,22 @@ namespace Game.Pet
             }
 
             // Let's solve cone / line intersection (quadratic equation)
-            Vector3 d = assumedCurrentPosition - transform.position;
-            Vector3 v = _lastPositionDiff / divisor;
-            float a = v.sqrMagnitude - interceptSpeed * interceptSpeed;
-            float b = 2 * Vector3.Dot(d, v);
-            float c = d.sqrMagnitude;
+            var d = assumedCurrentPosition - transform.position;
+            var v = _lastPositionDiff / divisor;
+            var a = v.sqrMagnitude - interceptSpeed * interceptSpeed;
+            var b = 2 * Vector3.Dot(d, v);
+            var c = d.sqrMagnitude;
 
-            Vector3 prediction = assumedCurrentPosition;
+            var prediction = assumedCurrentPosition;
 
             float t = -1;
             if (Mathf.Abs(a) >= 1e-5)
             {
-                float disc = b * b - 4 * a * c;
+                var disc = b * b - 4 * a * c;
                 if (disc >= 0)
                 {
                     // find the minimal positive solution
-                    float discSqrt = Mathf.Sqrt(disc) * Mathf.Sign(a);
+                    var discSqrt = Mathf.Sqrt(disc) * Mathf.Sign(a);
                     t = (-b - discSqrt) / (2 * a);
                     if (t < 0)
                         t = (-b + discSqrt) / (2 * a);
@@ -356,7 +358,7 @@ namespace Game.Pet
 
                 // Don't predict target will move through obstacles (prevent predicting movement through walls)
                 RaycastHit hit;
-                Ray ray = new Ray(assumedCurrentPosition, (prediction - assumedCurrentPosition).normalized);
+                var ray = new Ray(assumedCurrentPosition, (prediction - assumedCurrentPosition).normalized);
                 if (Physics.Raycast(ray, out hit, (prediction - assumedCurrentPosition).magnitude))
                     prediction = assumedCurrentPosition;
             }
@@ -418,30 +420,29 @@ namespace Game.Pet
                     RaycastHit hit;
 
                     // Set origin of ray to approximate eye position
-                    CharacterController controller = _entityBehaviour.transform.GetComponent<CharacterController>();
-                    Vector3 eyePos = transform.position + controller.center;
-                    eyePos.y += controller.height / 3;
+                    var eyePos = transform.position + _characterController.center;
+                    eyePos.y += _characterController.height / 3;
 
                     // Set destination to the target's approximate eye position
-                    controller = target.transform.GetComponent<CharacterController>();
-                    Vector3 targetEyePos = target.transform.position + controller.center;
-                    targetEyePos.y += controller.height / 3;
+                    _characterController = target.transform.GetComponent<CharacterController>();
+                    var targetEyePos = target.transform.position + _characterController.center;
+                    targetEyePos.y += _characterController.height / 3;
 
                     // Check if can see.
-                    Vector3 eyeToTarget = targetEyePos - eyePos;
-                    Vector3 eyeDirectionToTarget = eyeToTarget.normalized;
-                    Ray ray = new Ray(eyePos, eyeDirectionToTarget);
+                    var eyeToTarget = targetEyePos - eyePos;
+                    var eyeDirectionToTarget = eyeToTarget.normalized;
+                    var ray = new Ray(eyePos, eyeDirectionToTarget);
 
                     if (Physics.Raycast(ray, out hit, sightRadius))
                     {
                         // Check if hit was target
-                        DaggerfallEntityBehaviour entity =
+                        var entity =
                             hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
                         if (entity == target)
                             seen = true;
 
                         // Check if hit was an action door
-                        DaggerfallActionDoor door = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
+                        var door = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
                         if (door != null)
                         {
                             _actionDoor = door;

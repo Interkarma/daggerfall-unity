@@ -1,7 +1,6 @@
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Serialization;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Game.Pet
@@ -33,7 +32,7 @@ namespace Game.Pet
             SpawnPet();
         }
 
-        [Button]
+        [ContextMenu("SpawnPet")]
         private void SpawnPet()
         {
             _petObject = _petFactory.CreateEnemy(petType, GameManager.Instance.PlayerObject.transform.position);

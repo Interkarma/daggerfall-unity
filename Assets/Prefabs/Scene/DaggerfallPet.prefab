@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 6133282160988206857}
   - component: {fileID: 2124978470547085299}
   m_Layer: 0
-  m_Name: DaggerfallPet [Game Serializable]
+  m_Name: DaggerfallPet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

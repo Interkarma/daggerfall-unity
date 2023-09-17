@@ -73,8 +73,6 @@ namespace Game.Pet
 
                 if (controller.height < 1.6f)
                     AdjustControllerHeight(controller, 1.6f, ControllerJustification.Bottom);
-
-                //controller.gameObject.layer = LayerMask.NameToLayer("Enemies");
             }
 
             var sounds = GetComponent<EnemySounds>();
