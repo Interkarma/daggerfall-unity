@@ -1,197 +1,83 @@
-﻿// Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
-// Web Site:        http://www.dfworkshop.net
-// License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
-// Source Code:     https://github.com/Interkarma/daggerfall-unity
-// Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Allofich
-// 
-// Notes:
-//
-
-using DaggerfallConnect;
-using DaggerfallWorkshop;
+﻿using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Formulas;
-using DaggerfallWorkshop.Game.Questing;
-using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 using UnityEngine;
 
 namespace Game.Pet
 {
-    /// <summary>
-    /// Example enemy senses.
-    /// </summary>
     public class PetSenses : MonoBehaviour
     {
-        public static readonly Vector3 ResetPlayerPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+        private static readonly Vector3 ResetPlayerPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+        private const float PredictionInterval = 0.0625f;
+        private const float SystemTimerUpdatesDivisor = .0549254f;
+        private const float ClassicSpawnDespawnExterior = 4096 * MeshReader.GlobalScale;
 
-        public float SightRadius = 4096 * MeshReader.GlobalScale; // Range of enemy sight
-        public float HearingRadius = 25f; // Range of enemy hearing
-        public float FieldOfView = 180f; // Enemy field of view
+        [SerializeField] public float sightRadius = 4096 * MeshReader.GlobalScale;
+        [SerializeField] public float hearingRadius = 25f;
+        [SerializeField] public float fieldOfView = 180f;
 
-        const float predictionInterval = 0.0625f;
+        private MobileUnit _mobile;
+        private DaggerfallEntityBehaviour _entityBehaviour;
+        private PetEntity _enemyEntity;
+        private DaggerfallEntityBehaviour _player;
+        private DaggerfallEntityBehaviour _target;
+        private DaggerfallActionDoor _actionDoor;
+        private Vector3 _directionToTarget;
+        private Vector3 _lastKnownTargetPos = ResetPlayerPos;
+        private Vector3 _oldLastKnownTargetPos = ResetPlayerPos;
+        private Vector3 _predictedTargetPos = ResetPlayerPos;
+        private Vector3 _predictedTargetPosWithoutLead = ResetPlayerPos;
+        private Vector3 _lastPositionDiff;
+        private bool _awareOfTargetForLastPrediction;
+        private float _distanceToActionDoor;
+        private bool _hasEncounteredPlayer;
+        private bool _wouldBeSpawnedInClassic;
+        private uint _timeOfLastStealthCheck;
+        private float _lastHadLosTimer;
+        private float _targetPosPredictTimer;
+        private bool _targetInSight;
+        private bool _playerInSight;
+        private bool _targetInEarshot;
+        private float _distanceToPlayer;
+        private float _distanceToTarget;
+        private bool _targetPosPredict;
+        private float _classicTargetUpdateTimer;
+        private float _classicSpawnXZDist;
+        private float _classicSpawnYDistUpper;
+        private float _classicSpawnYDistLower;
+        private float _classicDespawnXZDist;
+        private float _classicDespawnYDist;
 
-        MobileUnit mobile;
-
-        DaggerfallEntityBehaviour entityBehaviour;
-
-        //QuestResourceBehaviour questBehaviour;
-        PetMotor motor;
-        PetEntity enemyEntity;
-        bool targetInSight;
-        bool playerInSight;
-        bool targetInEarshot;
-        Vector3 directionToTarget;
-        float distanceToPlayer;
-
-        float distanceToTarget;
-
-        DaggerfallEntityBehaviour player;
-        DaggerfallEntityBehaviour target;
-
-        DaggerfallEntityBehaviour targetOnLastUpdate;
-
-        //DaggerfallEntityBehaviour secondaryTarget;
-        bool sawSecondaryTarget;
-
-        Vector3 secondaryTargetPos;
-
-        // EnemySenses targetSenses;
-        float lastDistanceToTarget;
-        float targetRateOfApproach;
-        Vector3 lastKnownTargetPos = ResetPlayerPos;
-        Vector3 oldLastKnownTargetPos = ResetPlayerPos;
-        Vector3 predictedTargetPos = ResetPlayerPos;
-        Vector3 predictedTargetPosWithoutLead = ResetPlayerPos;
-        Vector3 lastPositionDiff;
-        bool awareOfTargetForLastPrediction;
-        DaggerfallActionDoor actionDoor;
-        float distanceToActionDoor;
-        bool hasEncounteredPlayer = false;
-        bool wouldBeSpawnedInClassic = false;
-        bool detectedTarget = false;
-        uint timeOfLastStealthCheck = 0;
-        float lastHadLOSTimer = 0f;
-
-        float targetPosPredictTimer = 0f;
-        bool targetPosPredict = false;
-
-        float classicTargetUpdateTimer = 0f;
-
-        const float
-            systemTimerUpdatesDivisor =
-                .0549254f; // Divisor for updates per second by the system timer at memory location 0x46C.
-
-        const float classicSpawnDespawnExterior = 4096 * MeshReader.GlobalScale;
-        float classicSpawnXZDist = 0f;
-        float classicSpawnYDistUpper = 0f;
-        float classicSpawnYDistLower = 0f;
-        float classicDespawnXZDist = 0f;
-        float classicDespawnYDist = 0f;
-
-        public DaggerfallEntityBehaviour Target
-        {
-            get { return target; }
-            set { target = value; }
-        }
-
-        public bool TargetInSight
-        {
-            get { return targetInSight; }
-        }
-
-        public bool DetectedTarget
-        {
-            get { return detectedTarget; }
-            set { detectedTarget = value; }
-        }
-
-        public bool TargetInEarshot
-        {
-            get { return targetInEarshot; }
-        }
-
-        public Vector3 DirectionToTarget
-        {
-            get { return directionToTarget; }
-        }
-
-        public float DistanceToPlayer
-        {
-            get { return distanceToPlayer; }
-        }
-
-        public float DistanceToTarget
-        {
-            get { return distanceToTarget; }
-        }
-
-        public Vector3 LastKnownTargetPos
-        {
-            get { return lastKnownTargetPos; }
-            set { lastKnownTargetPos = value; }
-        }
-
-        public Vector3 OldLastKnownTargetPos
-        {
-            get { return oldLastKnownTargetPos; }
-            set { oldLastKnownTargetPos = value; }
-        }
-
-        public Vector3 LastPositionDiff
-        {
-            get { return lastPositionDiff; }
-            set { lastPositionDiff = value; }
-        }
-
-        public Vector3 PredictedTargetPos
-        {
-            get { return predictedTargetPos; }
-            set { predictedTargetPos = value; }
-        }
+        public DaggerfallEntityBehaviour Target => _target;
+        public bool TargetInEarshot => _targetInEarshot;
+        public Vector3 DirectionToTarget => _directionToTarget;
+        public bool TargetInSight => _targetInSight;
+        public bool DetectedTarget { get; set; }
+        public float DistanceToPlayer => _distanceToPlayer;
+        public float DistanceToTarget => _distanceToTarget;
+        public Vector3 LastKnownTargetPos => _lastKnownTargetPos;
+        public Vector3 LastPositionDiff => _lastPositionDiff;
+        public Vector3 PredictedTargetPos => _predictedTargetPos;
 
         public DaggerfallActionDoor LastKnownDoor
         {
-            get { return actionDoor; }
-            set { actionDoor = value; }
+            get => _actionDoor;
+            set => _actionDoor = value;
         }
 
         public float DistanceToDoor
         {
-            get { return distanceToActionDoor; }
-            set { distanceToActionDoor = value; }
+            get => _distanceToActionDoor;
+            set => _distanceToActionDoor = value;
         }
 
-        public bool HasEncounteredPlayer
+        private void Start()
         {
-            get { return hasEncounteredPlayer; }
-            set { hasEncounteredPlayer = value; }
-        }
-
-        public bool WouldBeSpawnedInClassic
-        {
-            get { return wouldBeSpawnedInClassic; }
-            set { wouldBeSpawnedInClassic = value; }
-        }
-
-
-        public float TargetRateOfApproach
-        {
-            get { return targetRateOfApproach; }
-            set { targetRateOfApproach = value; }
-        }
-
-        void Start()
-        {
-            mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
-            entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
-            enemyEntity = entityBehaviour.Entity as PetEntity;
-            motor = GetComponent<PetMotor>();
-            //questBehaviour = GetComponent<QuestResourceBehaviour>();
-            player = GameManager.Instance.PlayerEntityBehaviour;
+            _mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
+            _entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            _enemyEntity = _entityBehaviour.Entity as PetEntity;
+            _player = GameManager.Instance.PlayerEntityBehaviour;
 
             short[] classicSpawnXZDistArray = {1024, 384, 640, 768, 768, 768, 768};
             short[] classicSpawnYDistUpperArray = {128, 128, 128, 384, 768, 128, 256};
@@ -199,298 +85,245 @@ namespace Game.Pet
             short[] classicDespawnXZDistArray = {1024, 1024, 1024, 1024, 768, 768, 768};
             short[] classicDespawnYDistArray = {384, 384, 384, 384, 768, 768, 768};
 
-            byte index = mobile.ClassicSpawnDistanceType;
+            byte index = _mobile.ClassicSpawnDistanceType;
 
-            classicSpawnXZDist = classicSpawnXZDistArray[index] * MeshReader.GlobalScale;
-            classicSpawnYDistUpper = classicSpawnYDistUpperArray[index] * MeshReader.GlobalScale;
-            classicSpawnYDistLower = classicSpawnYDistLowerArray[index] * MeshReader.GlobalScale;
-            classicDespawnXZDist = classicDespawnXZDistArray[index] * MeshReader.GlobalScale;
-            classicDespawnYDist = classicDespawnYDistArray[index] * MeshReader.GlobalScale;
+            _classicSpawnXZDist = classicSpawnXZDistArray[index] * MeshReader.GlobalScale;
+            _classicSpawnYDistUpper = classicSpawnYDistUpperArray[index] * MeshReader.GlobalScale;
+            _classicSpawnYDistLower = classicSpawnYDistLowerArray[index] * MeshReader.GlobalScale;
+            _classicDespawnXZDist = classicDespawnXZDistArray[index] * MeshReader.GlobalScale;
+            _classicDespawnYDist = classicDespawnYDistArray[index] * MeshReader.GlobalScale;
 
-            // 180 degrees is classic's value. 190 degrees is actual human FOV according to online sources.
             if (DaggerfallUnity.Settings.EnhancedCombatAI)
-                FieldOfView = 190;
+                fieldOfView = 190;
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
-            if (GameManager.Instance.DisableAI)
-                return;
-
-            targetPosPredictTimer += Time.deltaTime;
-            if (targetPosPredictTimer >= predictionInterval)
+            _targetPosPredictTimer += Time.deltaTime;
+            if (_targetPosPredictTimer >= PredictionInterval)
             {
-                targetPosPredictTimer = 0f;
-                targetPosPredict = true;
+                _targetPosPredictTimer = 0f;
+                _targetPosPredict = true;
             }
             else
-                targetPosPredict = false;
+                _targetPosPredict = false;
 
-            // Update whether enemy would be spawned or not in classic.
-            // Only check if within the maximum possible distance (Just under 1094 classic units)
             if (GameManager.ClassicUpdate)
             {
-                if (distanceToPlayer < 1094 * MeshReader.GlobalScale)
+                if (_distanceToPlayer < 1094 * MeshReader.GlobalScale)
                 {
                     float upperXZ;
                     float upperY = 0;
                     float lowerY = 0;
-                    bool playerInside = GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside;
+                    var playerInside = GameManager.Instance.PlayerGPS.GetComponent<PlayerEnterExit>().IsPlayerInside;
 
                     if (!playerInside)
                     {
-                        upperXZ = classicSpawnDespawnExterior;
+                        upperXZ = ClassicSpawnDespawnExterior;
                     }
                     else
                     {
-                        if (!wouldBeSpawnedInClassic)
+                        if (!_wouldBeSpawnedInClassic)
                         {
-                            upperXZ = classicSpawnXZDist;
-                            upperY = classicSpawnYDistUpper;
-                            lowerY = classicSpawnYDistLower;
+                            upperXZ = _classicSpawnXZDist;
+                            upperY = _classicSpawnYDistUpper;
+                            lowerY = _classicSpawnYDistLower;
                         }
                         else
                         {
-                            upperXZ = classicDespawnXZDist;
-                            upperY = classicDespawnYDist;
+                            upperXZ = _classicDespawnXZDist;
+                            upperY = _classicDespawnYDist;
                         }
                     }
 
-                    float YDiffToPlayer = transform.position.y - player.transform.position.y;
-                    float YDiffToPlayerAbs = Mathf.Abs(YDiffToPlayer);
-                    float distanceToPlayerXZ =
-                        Mathf.Sqrt(distanceToPlayer * distanceToPlayer - YDiffToPlayerAbs * YDiffToPlayerAbs);
+                    var yDiffToPlayer = transform.position.y - _player.transform.position.y;
+                    var yDiffToPlayerAbs = Mathf.Abs(yDiffToPlayer);
+                    var distanceToPlayerXZ =
+                        Mathf.Sqrt(_distanceToPlayer * _distanceToPlayer - yDiffToPlayerAbs * yDiffToPlayerAbs);
 
-                    wouldBeSpawnedInClassic = true;
+                    _wouldBeSpawnedInClassic = true;
 
                     if (distanceToPlayerXZ > upperXZ)
-                        wouldBeSpawnedInClassic = false;
+                        _wouldBeSpawnedInClassic = false;
 
                     if (playerInside)
                     {
                         if (lowerY == 0)
                         {
-                            if (YDiffToPlayerAbs > upperY)
-                                wouldBeSpawnedInClassic = false;
+                            if (yDiffToPlayerAbs > upperY)
+                                _wouldBeSpawnedInClassic = false;
                         }
-                        else if (YDiffToPlayer < lowerY || YDiffToPlayer > upperY)
-                            wouldBeSpawnedInClassic = false;
+                        else if (yDiffToPlayer < lowerY || yDiffToPlayer > upperY)
+                            _wouldBeSpawnedInClassic = false;
                     }
                 }
                 else
-                    wouldBeSpawnedInClassic = false;
+                    _wouldBeSpawnedInClassic = false;
             }
 
             if (GameManager.ClassicUpdate)
             {
-                classicTargetUpdateTimer += Time.deltaTime / systemTimerUpdatesDivisor;
+                _classicTargetUpdateTimer += Time.deltaTime / SystemTimerUpdatesDivisor;
 
-                if (target != null && target.Entity.CurrentHealth <= 0)
+                if (_target != null && _target.Entity.CurrentHealth <= 0)
                 {
-                    Debug.LogError("Health is 0");
-                    target = null;
+                    _target = null;
                 }
 
-
-                // Reset these values if no target
-                if (target == null)
+                if (_target == null)
                 {
-                    lastKnownTargetPos = ResetPlayerPos;
-                    predictedTargetPos = ResetPlayerPos;
-                    directionToTarget = ResetPlayerPos;
-                    lastDistanceToTarget = 0;
-                    targetRateOfApproach = 0;
-                    distanceToTarget = 0;
-                }
-
-                // Compare change in target position to give AI some ability to read opponent's movements
-                if (target != null && target == targetOnLastUpdate)
-                {
-                    if (DaggerfallUnity.Settings.EnhancedCombatAI)
-                        targetRateOfApproach = (lastDistanceToTarget - distanceToTarget);
-                }
-                else
-                {
-                    lastDistanceToTarget = 0;
-                    targetRateOfApproach = 0;
-                }
-
-                if (target != null)
-                {
-                    lastDistanceToTarget = distanceToTarget;
-                    targetOnLastUpdate = target;
+                    _lastKnownTargetPos = ResetPlayerPos;
+                    _predictedTargetPos = ResetPlayerPos;
+                    _directionToTarget = ResetPlayerPos;
+                    _distanceToTarget = 0;
                 }
             }
 
-            if (player != null)
+            if (_player != null)
             {
-                // Get distance to player
-                Vector3 toPlayer = player.transform.position - transform.position;
-                distanceToPlayer = toPlayer.magnitude;
+                var toPlayer = _player.transform.position - transform.position;
+                _distanceToPlayer = toPlayer.magnitude;
 
-                // If out of classic spawn range, still check for direct LOS to player so that enemies who see player will
-                // try to attack.
-                if (!wouldBeSpawnedInClassic)
+                if (!_wouldBeSpawnedInClassic)
                 {
-                    distanceToTarget = distanceToPlayer;
-                    directionToTarget = toPlayer.normalized;
-                    playerInSight = CanSeeTarget(player);
+                    _distanceToTarget = _distanceToPlayer;
+                    _directionToTarget = toPlayer.normalized;
+                    _playerInSight = CanSeeTarget(_player);
                 }
 
-                if (classicTargetUpdateTimer > 5)
+                if (_classicTargetUpdateTimer > 5)
                 {
-                    classicTargetUpdateTimer = 0f;
+                    _classicTargetUpdateTimer = 0f;
 
-                    // Is enemy in area around player or can see player?
-                    if (wouldBeSpawnedInClassic || playerInSight)
+                    if (_wouldBeSpawnedInClassic || _playerInSight)
                     {
-                        GetTargets();
+                        GetPlayerTarget();
                     }
                 }
 
-                if (target == null)
+                if (_target == null)
                 {
-                    targetInSight = false;
-                    detectedTarget = false;
+                    _targetInSight = false;
+                    DetectedTarget = false;
                     return;
                 }
 
-                if (!wouldBeSpawnedInClassic && target == player)
+                if (!_wouldBeSpawnedInClassic && _target == _player)
                 {
-                    distanceToTarget = distanceToPlayer;
-                    directionToTarget = toPlayer.normalized;
-                    targetInSight = playerInSight;
+                    _distanceToTarget = _distanceToPlayer;
+                    _directionToTarget = toPlayer.normalized;
+                    _targetInSight = _playerInSight;
                 }
                 else
                 {
-                    Vector3 toTarget = target.transform.position - transform.position;
-                    distanceToTarget = toTarget.magnitude;
-                    directionToTarget = toTarget.normalized;
-                    targetInSight = CanSeeTarget(target);
+                    var toTarget = _target.transform.position - transform.position;
+                    _distanceToTarget = toTarget.magnitude;
+                    _directionToTarget = toTarget.normalized;
+                    _targetInSight = CanSeeTarget(_target);
                 }
 
-                // Classic stealth mechanics would be interfered with by hearing, so only enable
-                // hearing if the enemy has detected the target. If target is visible we can omit hearing.
-                if (detectedTarget && !targetInSight)
-                    targetInEarshot = CanHearTarget();
+                if (DetectedTarget && !_targetInSight)
+                    _targetInEarshot = CanHearTarget();
                 else
-                    targetInEarshot = false;
+                    _targetInEarshot = false;
 
-                // Note: In classic an enemy can continue to track the player as long as their
-                // giveUpTimer is > 0. Since the timer is reset to 200 on every detection this
-                // would make chameleon and shade essentially useless, since the enemy is sure
-                // to detect the player during one of the many AI updates. Here, the enemy has to
-                // successfully see through the illusion spell each classic update to continue
-                // to know where the player is.
                 if (GameManager.ClassicUpdate)
                 {
-                    if (lastHadLOSTimer > 0)
-                        lastHadLOSTimer--;
+                    if (_lastHadLosTimer > 0)
+                        _lastHadLosTimer--;
                 }
 
-                if ((targetInSight || targetInEarshot))
+                if (_targetInSight || _targetInEarshot)
                 {
-                    detectedTarget = true;
-                    lastKnownTargetPos = target.transform.position;
-                    lastHadLOSTimer = 200f;
-                }
-                else if (StealthCheck())
-                {
-                    detectedTarget = true;
-
-                    // Only get the target's location from the stealth check if we haven't had
-                    // actual LOS for a while. This gives better pursuit behavior since enemies
-                    // will go to the last spot they saw the player instead of walking into walls.
-                    if (lastHadLOSTimer <= 0)
-                        lastKnownTargetPos = target.transform.position;
+                    DetectedTarget = true;
+                    _lastKnownTargetPos = _target.transform.position;
+                    _lastHadLosTimer = 200f;
                 }
                 else
-                    detectedTarget = false;
+                {
+                    DetectedTarget = true;
 
-                if (oldLastKnownTargetPos == ResetPlayerPos)
-                    oldLastKnownTargetPos = lastKnownTargetPos;
+                    if (_lastHadLosTimer <= 0)
+                        _lastKnownTargetPos = _target.transform.position;
+                }
 
-                if (predictedTargetPos == ResetPlayerPos || !DaggerfallUnity.Settings.EnhancedCombatAI)
-                    predictedTargetPos = lastKnownTargetPos;
+                if (_oldLastKnownTargetPos == ResetPlayerPos)
+                    _oldLastKnownTargetPos = _lastKnownTargetPos;
+
+                if (_predictedTargetPos == ResetPlayerPos || !DaggerfallUnity.Settings.EnhancedCombatAI)
+                    _predictedTargetPos = _lastKnownTargetPos;
 
                 // Predict target's next position
-                if (targetPosPredict && lastKnownTargetPos != ResetPlayerPos)
+                if (_targetPosPredict && _lastKnownTargetPos != ResetPlayerPos)
                 {
                     // Be sure to only take difference of movement if we've seen the target for two consecutive prediction updates
-                    if (targetInSight)
+                    if (_targetInSight)
                     {
-                        if (awareOfTargetForLastPrediction)
-                            lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
+                        if (_awareOfTargetForLastPrediction)
+                            _lastPositionDiff = _lastKnownTargetPos - _oldLastKnownTargetPos;
 
                         // Store current last known target position for next prediction update
-                        oldLastKnownTargetPos = lastKnownTargetPos;
+                        _oldLastKnownTargetPos = _lastKnownTargetPos;
 
-                        awareOfTargetForLastPrediction = true;
+                        _awareOfTargetForLastPrediction = true;
                     }
                     else
                     {
-                        awareOfTargetForLastPrediction = false;
+                        _awareOfTargetForLastPrediction = false;
                     }
 
                     if (DaggerfallUnity.Settings.EnhancedCombatAI)
                     {
-                        float moveSpeed = (enemyEntity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) *
-                                          MeshReader.GlobalScale;
-                        predictedTargetPos = PredictNextTargetPos(moveSpeed);
+                        var moveSpeed = (_enemyEntity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) *
+                                        MeshReader.GlobalScale;
+                        _predictedTargetPos = PredictNextTargetPos(moveSpeed);
                     }
                 }
 
-                if (detectedTarget && !hasEncounteredPlayer && target == player)
+                if (DetectedTarget && !_hasEncounteredPlayer && _target == _player)
                 {
-                    hasEncounteredPlayer = true;
+                    _hasEncounteredPlayer = true;
                 }
             }
-
-            // If target is player and in sight then raise enemy alert on player
-            // This can only be lowered again by killing an enemy or escaping for some amount of time
-            // Any enemies actively targeting player will continue to raise alert state
-            if (Target == GameManager.Instance.PlayerEntityBehaviour && TargetInSight)
-                GameManager.Instance.PlayerEntity.SetEnemyAlert(true);
         }
-
-        #region Public Methods
 
         public Vector3 PredictNextTargetPos(float interceptSpeed)
         {
             Vector3 assumedCurrentPosition;
             RaycastHit tempHit;
 
-            if (predictedTargetPosWithoutLead == ResetPlayerPos)
+            if (_predictedTargetPosWithoutLead == ResetPlayerPos)
             {
-                predictedTargetPosWithoutLead = lastKnownTargetPos;
+                _predictedTargetPosWithoutLead = _lastKnownTargetPos;
             }
 
             // If aware of target, if distance is too far or can see nothing is there, use last known position as assumed current position
-            if (targetInSight || targetInEarshot || (predictedTargetPos - transform.position).magnitude >
-                SightRadius + mobile.Enemy.SightModifier
-                || !Physics.Raycast(transform.position, (predictedTargetPosWithoutLead - transform.position).normalized,
-                    out tempHit, SightRadius + mobile.Enemy.SightModifier))
+            if (_targetInSight || _targetInEarshot || (_predictedTargetPos - transform.position).magnitude >
+                sightRadius + _mobile.Enemy.SightModifier
+                || !Physics.Raycast(transform.position,
+                    (_predictedTargetPosWithoutLead - transform.position).normalized,
+                    out tempHit, sightRadius + _mobile.Enemy.SightModifier))
             {
-                assumedCurrentPosition = lastKnownTargetPos;
+                assumedCurrentPosition = _lastKnownTargetPos;
             }
             // If not aware of target and predicted position may still be good, use predicted position
             else
             {
-                assumedCurrentPosition = predictedTargetPosWithoutLead;
+                assumedCurrentPosition = _predictedTargetPosWithoutLead;
             }
 
-            float divisor = predictionInterval;
+            float divisor = PredictionInterval;
 
             // Account for mid-interval call by DaggerfallMissile
-            if (targetPosPredictTimer != 0)
+            if (_targetPosPredictTimer != 0)
             {
-                divisor = targetPosPredictTimer;
-                lastPositionDiff = lastKnownTargetPos - oldLastKnownTargetPos;
+                divisor = _targetPosPredictTimer;
+                _lastPositionDiff = _lastKnownTargetPos - _oldLastKnownTargetPos;
             }
 
             // Let's solve cone / line intersection (quadratic equation)
             Vector3 d = assumedCurrentPosition - transform.position;
-            Vector3 v = lastPositionDiff / divisor;
+            Vector3 v = _lastPositionDiff / divisor;
             float a = v.sqrMagnitude - interceptSpeed * interceptSpeed;
             float b = 2 * Vector3.Dot(d, v);
             float c = d.sqrMagnitude;
@@ -529,155 +362,63 @@ namespace Game.Pet
             }
 
             // Store prediction minus lead for next prediction update
-            predictedTargetPosWithoutLead = assumedCurrentPosition + lastPositionDiff;
+            _predictedTargetPosWithoutLead = assumedCurrentPosition + _lastPositionDiff;
 
             return prediction;
         }
 
-        public bool StealthCheck()
-        {
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle && !motor.IsHostile)
-                return false;
-
-            if (!wouldBeSpawnedInClassic)
-                return false;
-
-            if (distanceToTarget > 1024 * MeshReader.GlobalScale)
-                return false;
-
-            uint gameMinutes = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
-            if (gameMinutes == timeOfLastStealthCheck)
-                return detectedTarget;
-
-            if (target == player)
-            {
-                PlayerMotor playerMotor = GameManager.Instance.PlayerMotor;
-                if (playerMotor.IsMovingLessThanHalfSpeed)
-                {
-                    if ((gameMinutes & 1) == 1)
-                        return detectedTarget;
-                }
-                else if (hasEncounteredPlayer)
-                    return true;
-
-                PlayerEntity player = GameManager.Instance.PlayerEntity;
-                if (player.TimeOfLastStealthCheck != gameMinutes)
-                {
-                    player.TallySkill(DFCareer.Skills.Stealth, 1);
-                    player.TimeOfLastStealthCheck = gameMinutes;
-                }
-            }
-
-            timeOfLastStealthCheck = gameMinutes;
-
-            int stealthChance = FormulaHelper.CalculateStealthChance(distanceToTarget, target);
-
-            return Dice100.FailedRoll(stealthChance);
-        }
-
-
         public bool TargetIsWithinYawAngle(float targetAngle, Vector3 targetPos)
         {
-            Vector3 toTarget = targetPos - transform.position;
+            var toTarget = targetPos - transform.position;
             toTarget.y = 0;
 
-            Vector3 enemyDirection2D = transform.forward;
+            var enemyDirection2D = transform.forward;
             enemyDirection2D.y = 0;
 
             return Vector3.Angle(toTarget, enemyDirection2D) < targetAngle;
         }
 
-        public bool TargetHasBackTurned()
-        {
-            Vector3 toTarget = predictedTargetPos - transform.position;
-            toTarget.y = 0;
-
-            Vector3 targetDirection2D;
-
-            if (target == player)
-            {
-                Camera mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-                targetDirection2D = -new Vector3(mainCamera.transform.forward.x, 0, mainCamera.transform.forward.z);
-            }
-            else
-                targetDirection2D = -new Vector3(target.transform.forward.x, 0, target.transform.forward.z);
-
-            return Vector3.Angle(toTarget, targetDirection2D) > 157.5f;
-        }
-
         public bool TargetIsWithinPitchAngle(float targetAngle)
         {
-            Vector3 toTarget = predictedTargetPos - transform.position;
-            Vector3 directionToLastKnownTarget2D = toTarget.normalized;
-            Plane verticalTransformToLastKnownPos =
-                new Plane(predictedTargetPos, transform.position, transform.position + Vector3.up);
-            // first project enemy direction to horizontal plane.
-            Vector3 enemyDirection2D = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
-            // next project enemy direction to vertical plane intersecting with last known position
+            var toTarget = _predictedTargetPos - transform.position;
+            var directionToLastKnownTarget2D = toTarget.normalized;
+            var verticalTransformToLastKnownPos =
+                new Plane(_predictedTargetPos, transform.position, transform.position + Vector3.up);
+            var enemyDirection2D = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
             enemyDirection2D = Vector3.ProjectOnPlane(enemyDirection2D, verticalTransformToLastKnownPos.normal);
-
-            float angle = Vector3.Angle(directionToLastKnownTarget2D, enemyDirection2D);
+            var angle = Vector3.Angle(directionToLastKnownTarget2D, enemyDirection2D);
 
             return angle < targetAngle;
         }
 
-        public bool TargetIsAbove()
+        public bool TargetIsAbove() =>
+            _predictedTargetPos.y > transform.position.y;
+
+        private void GetPlayerTarget()
         {
-            return predictedTargetPos.y > transform.position.y;
+            var toTarget = _player.transform.position - transform.position;
+            _directionToTarget = toTarget.normalized;
+            _distanceToTarget = toTarget.magnitude;
+            _targetInSight = CanSeeTarget(_player);
+            _target = _player;
         }
 
-        #endregion
-
-        #region Private Methods
-
-        void GetTargets()
+        public bool CanSeeTarget(DaggerfallEntityBehaviour target)
         {
-            DaggerfallEntityBehaviour highestPriorityTarget = null;
-            DaggerfallEntityBehaviour secondHighestPriorityTarget = null;
-            float highestPriority = -1;
-            float secondHighestPriority = -1;
-            bool sawSelectedTarget = false;
-            Vector3 directionToTargetHolder = directionToTarget;
-            float distanceToTargetHolder = distanceToTarget;
+            var seen = false;
+            _actionDoor = null;
 
-
-            DaggerfallEntityBehaviour targetBehaviour = player;
-
-
-            Vector3 toTarget = targetBehaviour.transform.position - transform.position;
-            directionToTarget = toTarget.normalized;
-            distanceToTarget = toTarget.magnitude;
-
-            bool see = CanSeeTarget(targetBehaviour);
-            sawSecondaryTarget = see;
-            sawSelectedTarget = see;
-            directionToTargetHolder = directionToTarget;
-            distanceToTargetHolder = distanceToTarget;
-
-            // Restore direction and distance values
-            directionToTarget = directionToTargetHolder;
-            distanceToTarget = distanceToTargetHolder;
-
-            targetInSight = sawSelectedTarget;
-            target = player;
-        }
-
-        bool CanSeeTarget(DaggerfallEntityBehaviour target)
-        {
-            bool seen = false;
-            actionDoor = null;
-
-            if (distanceToTarget < SightRadius + mobile.Enemy.SightModifier)
+            if (_distanceToTarget < sightRadius + _mobile.Enemy.SightModifier)
             {
                 // Check if target in field of view
-                float angle = Vector3.Angle(directionToTarget, transform.forward);
-                if (angle < FieldOfView * 0.5f)
+                var angle = Vector3.Angle(_directionToTarget, transform.forward);
+                if (angle < fieldOfView * 0.5f)
                 {
                     // Check if line of sight to target
                     RaycastHit hit;
 
                     // Set origin of ray to approximate eye position
-                    CharacterController controller = entityBehaviour.transform.GetComponent<CharacterController>();
+                    CharacterController controller = _entityBehaviour.transform.GetComponent<CharacterController>();
                     Vector3 eyePos = transform.position + controller.center;
                     eyePos.y += controller.height / 3;
 
@@ -691,7 +432,7 @@ namespace Game.Pet
                     Vector3 eyeDirectionToTarget = eyeToTarget.normalized;
                     Ray ray = new Ray(eyePos, eyeDirectionToTarget);
 
-                    if (Physics.Raycast(ray, out hit, SightRadius))
+                    if (Physics.Raycast(ray, out hit, sightRadius))
                     {
                         // Check if hit was target
                         DaggerfallEntityBehaviour entity =
@@ -703,8 +444,9 @@ namespace Game.Pet
                         DaggerfallActionDoor door = hit.transform.gameObject.GetComponent<DaggerfallActionDoor>();
                         if (door != null)
                         {
-                            actionDoor = door;
-                            distanceToActionDoor = Vector3.Distance(transform.position, actionDoor.transform.position);
+                            _actionDoor = door;
+                            _distanceToActionDoor =
+                                Vector3.Distance(transform.position, _actionDoor.transform.position);
                         }
                     }
                 }
@@ -713,26 +455,22 @@ namespace Game.Pet
             return seen;
         }
 
-        bool CanHearTarget()
+        private bool CanHearTarget()
         {
-            float hearingScale = 1f;
+            const float hearingScale = 1f;
 
             // If something is between enemy and target then return false (was reduce hearingScale by half), to minimize
             // enemies walking against walls.
             // Hearing is not impeded by doors or other non-static objects
             RaycastHit hit;
-            Ray ray = new Ray(transform.position, directionToTarget);
+            var ray = new Ray(transform.position, _directionToTarget);
             if (Physics.Raycast(ray, out hit))
             {
-                //DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
                 if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
                     return false;
             }
 
-            // TODO: Modify this by how much noise the target is making
-            return distanceToTarget < (HearingRadius * hearingScale) + mobile.Enemy.HearingModifier;
+            return _distanceToTarget < (hearingRadius * hearingScale) + _mobile.Enemy.HearingModifier;
         }
-
-        #endregion
     }
 }
