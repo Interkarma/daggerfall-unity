@@ -8,26 +8,42 @@ namespace Game.Pet
     public class HealthBar : MonoBehaviour
     {
         [SerializeField] private Image progressImage;
-        [SerializeField] DaggerfallEntityBehaviour petBehaviour;
+        [SerializeField] private DaggerfallEntityBehaviour petBehaviour;
+        [SerializeField] private Canvas canvas;
+        [SerializeField] private GameObject petBillboard;
 
         private Camera _mainCamera;
 
         private void Awake()
         {
             _mainCamera = Camera.main;
-            petBehaviour = GetComponentInParent<DaggerfallEntityBehaviour>();
+            canvas.worldCamera = _mainCamera;
+        }
+
+        [Button]
+        private void Start()
+        {
+            SetPositionDependsOnHeight();
         }
 
         private void Update()
         {
-            transform.LookAt(_mainCamera.transform);
-            transform.Rotate(0, 180, 0);
-
+            FaceToCamera();
             UpdateHealthBar(petBehaviour.Entity.CurrentHealthPercent);
         }
 
-        [Button]
-        public void UpdateHealthBar(float healthPercent)
+        private void SetPositionDependsOnHeight()
+        {
+            canvas.transform.localPosition = new Vector3(0, petBillboard.transform.localScale.y / 2f, 0);
+        }
+
+        private void FaceToCamera()
+        {
+            transform.LookAt(_mainCamera.transform);
+            transform.Rotate(0, 180, 0);
+        }
+        
+        private void UpdateHealthBar(float healthPercent)
         {
             progressImage.fillAmount = healthPercent;
         }
