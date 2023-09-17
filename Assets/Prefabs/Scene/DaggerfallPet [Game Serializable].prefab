@@ -186,6 +186,8 @@ GameObject:
   - component: {fileID: 7209716803657906088}
   - component: {fileID: 4480090568181480411}
   - component: {fileID: 6665997626388067706}
+  - component: {fileID: 3610721468857306562}
+  - component: {fileID: 6133282160988206857}
   m_Layer: 0
   m_Name: DaggerfallPet [Game Serializable]
   m_TagString: Untagged
@@ -491,6 +493,35 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 420769a70c7e2c84ca1bf7d3123e1feb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3610721468857306562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ccf3008910b490684262e800b508372, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerService: {fileID: 6133282160988206857}
+  lootDelay: 5
+  minHealthPercent: 0.927
+  petEntityBehaviour: {fileID: 11435454}
+  petMotor: {fileID: 4480090568181480411}
+--- !u!114 &6133282160988206857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b505653cdff44513b8a4006711d8aa8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3667402534367759475
