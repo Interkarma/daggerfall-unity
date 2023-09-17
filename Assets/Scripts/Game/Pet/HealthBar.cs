@@ -1,4 +1,5 @@
-﻿using DaggerfallWorkshop.Game.Entity;
+﻿using DaggerfallWorkshop;
+using DaggerfallWorkshop.Game.Entity;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ namespace Game.Pet
         [SerializeField] private Image progressImage;
         [SerializeField] private DaggerfallEntityBehaviour petBehaviour;
         [SerializeField] private Canvas canvas;
-        [SerializeField] private GameObject petBillboard;
+        [SerializeField] private MobileUnit petBillboard;
 
         private Camera _mainCamera;
 
@@ -34,7 +35,7 @@ namespace Game.Pet
 
         private void SetPositionDependsOnHeight()
         {
-            canvas.transform.localPosition = new Vector3(0, petBillboard.transform.localScale.y / 2f, 0);
+            canvas.transform.localPosition = new Vector3(0, petBillboard.GetSize().y / 2f, 0);
         }
 
         private void FaceToCamera()
@@ -42,7 +43,7 @@ namespace Game.Pet
             transform.LookAt(_mainCamera.transform);
             transform.Rotate(0, 180, 0);
         }
-        
+
         private void UpdateHealthBar(float healthPercent)
         {
             progressImage.fillAmount = healthPercent;
