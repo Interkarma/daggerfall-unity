@@ -540,7 +540,7 @@ namespace DaggerfallWorkshop.Game
                 world.TeleportToCoordinates(pos.X, pos.Y, StreamingWorld.RepositionMethods.None);
                 dfUnity.ContentReader.GetLocation(summary.RegionIndex, summary.MapIndex, out location);
                 StartDungeonInterior(location, true, importEnemies);
-                world.suppressWorld = true;
+                world.suppressWorld = false;
             }
             else if (hasLocation && insideBuilding && exteriorDoors != null)
             {

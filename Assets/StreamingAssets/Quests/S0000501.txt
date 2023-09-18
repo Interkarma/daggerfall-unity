@@ -169,7 +169,7 @@ _startpatsy_ task:
 _S.00_ task:
 	_letter_ used do _readletter_ 
 	give pc _letter_ notify 1031 
-	place npc _traitor_ at _wayrest_ 
+	place npc _traitor_ at _wayrest_ marker 3
 
 variable _patsy_
 _time2_ task:
@@ -185,7 +185,7 @@ _S.05_ task:
 	clicked npc _traitor_ 
 	hide npc _traitor_ 
 	say 1041 
-	place foe _mtraitor_ at _wayrest_ 
+	place foe _mtraitor_ at _wayrest_ marker 3
 
 _hittraitor_ task:
 	injured _mtraitor_ 

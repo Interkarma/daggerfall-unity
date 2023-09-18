@@ -39,10 +39,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Properties & Data
 
-        static string[] rankTitles = {
-                "Apprentice", "Journeyman", "Filcher", "Crook", "Robber", "Bandit", "Thief", "Ringleader", "Mastermind", "Master Thief"
-        };
-
         static List<DFCareer.Skills> guildSkills = new List<DFCareer.Skills>() {
                 DFCareer.Skills.Backstabbing,
                 DFCareer.Skills.Climbing,
@@ -67,7 +63,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.Swimming
             };
 
-        public override string[] RankTitles { get { return rankTitles; } }
+        public override string[] RankTitles { get { return TextManager.Instance.GetLocalizedTextList("thievesRanks"); } }
 
         public override List<DFCareer.Skills> GuildSkills { get { return guildSkills; } }
 
