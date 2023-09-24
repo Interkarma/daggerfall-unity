@@ -146,7 +146,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             UpdateSkillValueLabels();
         }
 
-        public void SetClassSkills(DFCareer dfClass)
+        public void SetClassSkills(DFCareer dfClass, bool doReroll = true)
         {
             // Set primary, major, minor skills from class template
             primarySkills[0] = dfClass.PrimarySkill1;
@@ -163,7 +163,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             minorSkills[5] = dfClass.MinorSkill6;
 
             UpdateSkillLabels();
-            Reroll();
+            if (doReroll)
+                Reroll();
         }
 
         #endregion
