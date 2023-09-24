@@ -61,7 +61,7 @@ namespace DaggerfallWorkshop.Game.Utility
         /// returns minutes taken to travel.
         /// </summary>
         /// <param name="endPos">Endpoint in map pixel coordinates.</param>
-        public int CalculateTravelTime(DFPosition endPos,
+        public virtual int CalculateTravelTime(DFPosition endPos,
             bool speedCautious = false,
             bool sleepModeInn = false,
             bool travelShip = false,
@@ -156,7 +156,7 @@ namespace DaggerfallWorkshop.Game.Utility
             return minutesTakenTotal;
         }
 
-        public void CalculateTripCost(int travelTimeInMinutes, bool sleepModeInn, bool hasShip, bool travelShip)
+        public virtual void CalculateTripCost(int travelTimeInMinutes, bool sleepModeInn, bool hasShip, bool travelShip)
         {
             int travelTimeInHours = (travelTimeInMinutes + 59) / 60;
             piecesCost = 0;
@@ -172,9 +172,9 @@ namespace DaggerfallWorkshop.Game.Utility
                 totalCost += 25 * (pixelsTraveledOnOcean / 24 + 1);
         }
 
-        public int PiecesCost { get { return piecesCost; } }
-        public int TotalCost { get { return totalCost; } }
-        public int OceanPixels { get { return pixelsTraveledOnOcean; } }
+        public virtual int PiecesCost { get { return piecesCost; } }
+        public virtual int TotalCost { get { return totalCost; } }
+        public virtual int OceanPixels { get { return pixelsTraveledOnOcean; } }
         #endregion
     }
 }
