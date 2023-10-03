@@ -43,6 +43,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private bool clickAnywhereToClose = false;
         private bool showAtTopOfScreen = false;
 
+        IMECompositionMode prevIME;
+
         public bool ClickAnywhereToClose
         {
             get { return clickAnywhereToClose; }
@@ -156,6 +158,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             textPanel.Components.Add(textBox);
             ParentPanel.BackgroundColor = ParentPanelColor;
             UpdatePanelSizes();
+        }
+
+        public override void OnPush()
+        {
+            base.OnPush();
+
+            // Enable IME composition during input
+            prevIME = Input.imeCompositionMode;
+            Input.imeCompositionMode = IMECompositionMode.On;
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            // Restore previous IME composition mode
+            Input.imeCompositionMode = prevIME;
         }
 
         public void Show()

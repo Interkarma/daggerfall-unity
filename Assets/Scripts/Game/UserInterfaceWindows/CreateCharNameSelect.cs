@@ -34,6 +34,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button randomNameButton = new Button();
         Button okButton = new Button();
 
+        IMECompositionMode prevIME;
+
         public RaceTemplate RaceTemplate
         {
             get { return raceTemplate; }
@@ -93,6 +95,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowRandomButton();
 
             base.OnPush();
+
+            // Enable IME composition during input
+            prevIME = Input.imeCompositionMode;
+            Input.imeCompositionMode = IMECompositionMode.On;
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            // Restore previous IME composition mode
+            Input.imeCompositionMode = prevIME;
         }
 
         void ShowRandomButton()
