@@ -440,7 +440,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsSDFCapable)
             {
                 GlyphInfo glyph = GetGlyph(code);
-                return code == SpaceCode ? glyph.width : glyph.width + spacing; // Only add extra spacing when not a space character
+                return glyph.width + spacing;
             }
             else
             {
