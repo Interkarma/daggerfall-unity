@@ -52,6 +52,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected Rect[] atlasRects;
         protected int asciiStart = defaultAsciiStart;
 
+        TMP_FontAsset runtimeFontAsset = null;
+        Dictionary<uint, uint> missingCharacters = new Dictionary<uint, uint>();
+
         protected SDFFontInfo? sdfFontInfo;
 
         #endregion
@@ -190,7 +193,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 // Get code and use ? for any character code not in dictionary
                 int code = BitConverter.ToInt32(utf32Bytes, i);
-                if (!sdfFontInfo.Value.glyphs.ContainsKey(code))
+                if (!HasSDFGlyph(code))
                     code = ErrorCode;
 
                 // Draw glyph and advance position
@@ -374,7 +377,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     // Get code and use ? for any character code not in dictionary
                     int code = BitConverter.ToInt32(utf32Bytes, i);
-                    if (!sdfFontInfo.Value.glyphs.ContainsKey(code))
+                    if (!HasSDFGlyph(code))
                         code = ErrorCode;
 
                     width += GetGlyphWidth(code, scale, GlyphSpacing);
@@ -411,7 +414,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsSDFCapable || sdfFontInfo == null)
                 return false;
 
-            return sdfFontInfo.Value.glyphs.ContainsKey(code);
+            bool glyphPresent = sdfFontInfo.Value.glyphs.ContainsKey(code);
+
+            // Attempt to load missing glyph
+            if (!glyphPresent)
+                glyphPresent = TryAddCharacter((uint)code);
+
+            return glyphPresent;
         }
 
         public void AddGlyph(int ascii, GlyphInfo info)
@@ -429,7 +438,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public SDFGlyphInfo GetSDFGlyph(int code)
         {
-            if (!IsSDFCapable || !sdfFontInfo.Value.glyphs.ContainsKey(code))
+            if (!IsSDFCapable || !HasSDFGlyph(code))
                 throw new Exception(invalidCode + code);
 
             return sdfFontInfo.Value.glyphs[code];
@@ -489,7 +498,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (ReplaceTMPFontFromFile(Path.GetFileNameWithoutExtension(path), tmpFont, out replacement))
             {
                 tmpFont = replacement;
-                // TODO: Output debug text that font was replaced
+                runtimeFontAsset = tmpFont;
             }
 
             UseSDFFontAsset(tmpFont);
@@ -678,7 +687,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 string missingCharsString = string.Empty;
                 for (int c = 0; c < missingUnicodesSource.Length; c++)
                 {
-                    missingCharsString += string.Format("{0}[{1}] ", Convert.ToChar(missingUnicodesSource[c]), missingUnicodesSource[c]);
+                    uint missingCode = missingUnicodesSource[c];
+                    missingCharsString += string.Format("{0}[{1}] ", Convert.ToChar(missingCode), missingCode);
+                    if (!missingCharacters.ContainsKey(missingCode))
+                        missingCharacters.Add(missingCode, missingCode);
                 }
                 Debug.LogFormat("Some default characters could not be found in font {0}: '{1}': ", filename, missingCharsString);
             }
@@ -731,11 +743,61 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     string missingCharsString = string.Empty;
                     for (int c = 0; c < missingUnicodesSource.Length; c++)
                     {
-                        missingCharsString += string.Format("{0}[{1}] ", Convert.ToChar(missingUnicodesSource[c]), missingUnicodesSource[c]);
+                        uint missingCode = missingUnicodesSource[c];
+                        missingCharsString += string.Format("{0}[{1}] ", Convert.ToChar(missingCode), missingCode);
+                        if (!missingCharacters.ContainsKey(missingCode))
+                            missingCharacters.Add(missingCode, missingCode);
                     }
                     Debug.LogWarningFormat("Some requested characters could not be found in font {0}: '{1}': ", filename, missingCharsString);
                 }
             }
+        }
+
+        /// <summary>
+        /// Attempt to load a missing glyph into dynamic font asset at runtime.
+        /// If character cannot be added then code is added to missing characters dictionary.
+        /// Codes in missing characters dictionary will not be tried again.
+        /// If character added successfully then glyph info is added to sdfFontInfo.
+        /// </summary>
+        /// <param name="code">Unicode of character.</param>
+        /// <returns>True if successful, otherwise false.</returns>
+        bool TryAddCharacter(uint code)
+        {
+            // Do nothing if font asset null or this character is missing
+            if (runtimeFontAsset == null || missingCharacters.ContainsKey(code))
+                return false;
+
+            // Attempt to add the character
+            if (!runtimeFontAsset.TryAddCharacters(new uint[1] { code }))
+            {
+                missingCharacters.Add(code, code);
+                return false;
+            }
+
+            // Compose glyph rect in atlas
+            float atlasWidth = runtimeFontAsset.atlasTexture.width;
+            float atlasHeight = runtimeFontAsset.atlasTexture.height;
+            TMP_Character character = runtimeFontAsset.characterLookupTable[code];
+            float atlasGlyphX = character.glyph.glyphRect.x / atlasWidth;
+            float atlasGlyphY = character.glyph.glyphRect.y / atlasHeight;
+            float atlasGlyphWidth = character.glyph.glyphRect.width / atlasWidth;
+            float atlasGlyphHeight = character.glyph.glyphRect.height / atlasHeight;
+            Rect atlasGlyphRect = new Rect(atlasGlyphX, atlasGlyphY, atlasGlyphWidth, atlasGlyphHeight);
+
+            // Store information about this glyph
+            SDFGlyphInfo glyphInfo = new SDFGlyphInfo()
+            {
+                code = (int)code,
+                rect = atlasGlyphRect,
+                offset = new Vector2(character.glyph.metrics.horizontalBearingX, character.glyph.metrics.horizontalBearingY),
+                size = new Vector2(character.glyph.metrics.width, character.glyph.metrics.height),
+                advance = character.glyph.metrics.horizontalAdvance,
+            };
+            sdfFontInfo.Value.glyphs.Add((int)code, glyphInfo);
+
+            //Debug.LogFormat("Added code: {0}", code);
+
+            return true;
         }
 
         #endregion
