@@ -47,6 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         string textComposition = string.Empty;
         Vector2 cursorControlPos;
         Panel compositionPanel = new Panel();
+        bool prevIMESelected;
 
         // Are those guaranteed to be strings of one character?
         readonly static char minus = CultureInfo.CurrentCulture.NumberFormat.NegativeSign[0];
@@ -185,6 +186,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 previousSDFState = sdfState;
             }
 
+            // Handle user toggling off IME selection in OS mid-composition
+            if (!Input.imeIsSelected && prevIMESelected)
+            {
+                textComposition = string.Empty;
+                curCompositionSize = Vector2.zero;
+                compositionPanel.Enabled = false;
+                SetCursorPosition(cursorPosition);
+            }
+
             // Return/enter is not a valid input character except at the end of IME composition
             if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Return ||
                 DaggerfallUI.Instance.LastKeyCode == KeyCode.KeypadEnter)
@@ -198,6 +208,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             HandleControlInput();
             HandleCharacterInput();
             UpdateInlineComposition();
+
+            prevIMESelected = Input.imeIsSelected;
         }
 
         public override void Draw()
