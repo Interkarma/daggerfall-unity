@@ -186,6 +186,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 previousSDFState = sdfState;
             }
 
+            // Update cursor screen position for IME composition popups
+            if (IMECompositionInProgress)
+            {
+                Rect imeRect = compositionPanel.Rectangle;
+                Input.compositionCursorPos = new Vector2(imeRect.xMin, imeRect.yMin + font.GlyphHeight * LocalScale.y * 2f);
+            }
+
             // Handle user toggling off IME selection in OS mid-composition
             if (!Input.imeIsSelected && prevIMESelected)
             {
@@ -485,10 +492,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Update composition panel
             compositionPanel.Position = cursorControlPos;
             compositionPanel.Size = curCompositionSize;
-
-            // Set screen position for IME composition popups
-            Rect imeRect = compositionPanel.Rectangle;
-            Input.compositionCursorPos = new Vector2(imeRect.xMin, imeRect.yMin + font.GlyphHeight * LocalScale.y * 2f);
         }
 
         // Inserts IME composition at current cursor position
