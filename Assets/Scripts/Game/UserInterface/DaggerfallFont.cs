@@ -37,7 +37,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int defaultAsciiStart = 33;
         public const string invalidCode = "Font does not contain glyph for code: ";
         float classicGlyphSpacing = 1;
-        float sdfGlyphSpacing = 0.2f;
+        float sdfGlyphSpacing = 0f;
         float sdfShadowPositionScale = 0.4f;
 
         int glyphHeight;
