@@ -557,6 +557,7 @@ namespace DaggerfallWorkshop
                 Debug.LogError(string.Format("Error: invalid key: {0} for action type 12, couldn't get answer(s)", textID));//todo - display error message
             }
             DaggerfallInputMessageBox inputBox = new DaggerfallInputMessageBox(DaggerfallUI.UIManager, textID, 20, " > ", false, true, null);
+            inputBox.AllowIME = false;
             inputBox.ParentPanel.BackgroundColor = Color.clear;
             inputBox.OnGotUserInput += thisAction.UserInputHandler;
             inputBox.Show();
