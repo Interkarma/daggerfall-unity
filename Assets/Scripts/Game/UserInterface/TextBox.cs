@@ -463,8 +463,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         // Update inline IME text composition
         void UpdateInlineComposition()
         {
-            // Do nothing if IME not enabled or input composition has not changed
-            if (!Input.imeIsSelected || Input.compositionString == curCompositionString)
+            // Do nothing if IME not enabled
+            if (!Input.imeIsSelected)
                 return;
 
             // Update composition string in progress
