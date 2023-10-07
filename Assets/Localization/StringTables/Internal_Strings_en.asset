@@ -5149,5 +5149,59 @@ MonoBehaviour:
     m_Localized: '{0} (rep:{1})'
     m_Metadata:
       m_Items: []
+  - m_Id: 401505019353362432
+    m_Localized: 'bow
+
+      bow arrow
+
+      crossbow
+
+      bows
+
+      crossbows'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401505141491494912
+    m_Localized: 'one
+
+      1'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401505212006133760
+    m_Localized: 'benefactor
+
+      the benefactor'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401505274576760832
+    m_Localized: 'shut up
+
+      shutup
+
+      shaddup'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401505331053064192
+    m_Localized: 'yes
+
+      ok
+
+      i agree
+
+      y
+
+      agreed
+
+      done
+
+      fine
+
+      okay
+
+      sure
+
+      yep'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
