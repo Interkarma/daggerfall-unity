@@ -441,10 +441,9 @@ namespace DaggerfallWorkshop
                 DaggerfallUnity.LogMessage(string.Format(("No answers to check for: {0} {1}"), this.gameObject.name, this.Index));
                 return;
             }
-            userInput = userInput.ToLower(System.Globalization.CultureInfo.InvariantCulture);
             for (int i = 0; i < type12_answers.Length; i++)
             {
-                if (userInput == type12_answers[i].ToLower())
+                if (string.Compare(userInput, type12_answers[i], true) == 0)
                 {
                     ActivateNext();
                     return;
