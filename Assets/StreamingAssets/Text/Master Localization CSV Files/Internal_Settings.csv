@@ -1,0 +1,75 @@
+﻿Key,Value
+weaponSwingModes,"Vanilla
+Click
+Hold"
+mouseLookSmoothingStrengths,"None
+Lowest
+Low
+Medium
+High
+Highest"
+configureAdvancedControls,Configure Advanced Controls
+continueUpper,CONTINUE
+mouseLookSmoothing,Mouse Look Smoothing
+mouseLookSensitivity,Mouse Look Sensitivity
+invertLookY,Invert Look-Y
+movementAcceleration,Movement Acceleration
+weaponSwingMode,Weapon Swing Mode
+bowDrawback,Bows - draw and release
+toggleSneak,Toggle Sneak
+mouseWeaponAttackThreshold,Mouse Weapon Attack Threshold
+Escape,Escape
+AutoRun,AutoRun
+ToggleConsole,Console
+PrintScreen,Screenshot
+QuickSave,QuickSave
+QuickLoad,QuickLoad
+close,Close
+dungeonTextureModes,"Classic
+Climate
+Climate Only
+Random
+Random Only"
+cameraRecoilStrengths,"Off
+Low (25%)
+Medium (50%)
+High (75%)
+V. High(100%)"
+interactionModeIconModes,"None
+Minimal
+Large
+Classic
+Colour
+Monochrome
+Classic Crosshair
+Colour Crosshair"
+iconsPositioningSchemes,"Classic
+Medium
+Small
+Small Deck Left
+Small Deck Right
+Small Vert Left
+Small Vert Right
+Small Horz Bottom"
+helmAndShieldMaterialDisplay,"Off
+No Leather Chain
+No Leather
+On"
+qualitySettings,"Fastest
+Fast
+Simple
+Good
+Beautiful
+Fantastic"
+filterModes,"Point
+Bilinear
+Trilinear"
+shadowResolutionModes,"Low
+Medium
+High
+Very High"
+textureArrayLabel,Texture Arrays: 
+unsupported,Unsupported
+enabled,Enabled
+disabled,Disabled
+textureArrayInfo,"Improved implementation of terrain textures, with better performance and modding support"
