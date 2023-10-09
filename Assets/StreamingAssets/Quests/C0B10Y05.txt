@@ -19,7 +19,7 @@ QuestorOffer:  [1000]
 <ce>                   sought by the orcs. The temple has
 <ce>                   already been attacked twice by the
 <ce>                   creatures. It needs to be taken to
-<ce>                   a safehaven. Will you to this for
+<ce>                   a safehaven. Will you do this for
 <ce>                  us? The temple will pay _gold_ gold.
 
 RefuseQuest:  [1001]

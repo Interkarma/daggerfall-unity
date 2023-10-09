@@ -1407,6 +1407,62 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUI.SetMidScreenText(TextManager.Instance.GetLocalizedText("interactionIsNowInMode").Replace("%s", modeText));
         }
 
+        /// <summary>
+        /// Cycle to next interaction mode.
+        /// Order is Steal > Grab > Info > Talk then wraps back to Steal.
+        /// </summary>
+        public void NextInteractionMode()
+        {
+            PlayerActivateModes nextMode;
+            switch (currentMode)
+            {
+                case PlayerActivateModes.Steal:
+                    nextMode = PlayerActivateModes.Grab;
+                    break;
+                case PlayerActivateModes.Grab:
+                    nextMode = PlayerActivateModes.Info;
+                    break;
+                case PlayerActivateModes.Info:
+                    nextMode = PlayerActivateModes.Talk;
+                    break;
+                case PlayerActivateModes.Talk:
+                    nextMode = PlayerActivateModes.Steal;
+                    break;
+                default:
+                    nextMode = currentMode;
+                    break;
+            }
+            ChangeInteractionMode(nextMode);
+        }
+
+        /// <summary>
+        /// Cycle to previous interaction mode.
+        /// Order is Talk > Info > Grab > Steal then wraps back to Talk.
+        /// </summary>
+        public void PreviousInteractionMode()
+        {
+            PlayerActivateModes nextMode;
+            switch (currentMode)
+            {
+                case PlayerActivateModes.Talk:
+                    nextMode = PlayerActivateModes.Info;
+                    break;
+                case PlayerActivateModes.Info:
+                    nextMode = PlayerActivateModes.Grab;
+                    break;
+                case PlayerActivateModes.Grab:
+                    nextMode = PlayerActivateModes.Steal;
+                    break;
+                case PlayerActivateModes.Steal:
+                    nextMode = PlayerActivateModes.Talk;
+                    break;
+                default:
+                    nextMode = currentMode;
+                    break;
+            }
+            ChangeInteractionMode(nextMode);
+        }
+
         // Output NPC info to HUD
         private void PresentNPCInfo(StaticNPC npc)
         {

@@ -109,6 +109,10 @@ namespace DaggerfallWorkshop.Game
         /// <returns>True if successful.</returns>
         public bool OpenClassicBookFile(string filename)
         {
+            // Book filename cannot be null or empty
+            if (string.IsNullOrEmpty(filename))
+                return false;
+
             // Try to open book
             BookFile bookFile = new BookFile();
             if (!BookReplacement.TryImportBook(filename, bookFile) &&
@@ -145,6 +149,10 @@ namespace DaggerfallWorkshop.Game
         /// <returns>True if successfull.</returns>
         public bool OpenLocalizedBookFile(string filename)
         {
+            // Book filename cannot be null or empty
+            if (string.IsNullOrEmpty(filename))
+                return false;
+
             // Append -LOC if missing from filename
             string fileNoExt = Path.GetFileNameWithoutExtension(filename);
             if (!fileNoExt.EndsWith(localizedFilenameSuffix))

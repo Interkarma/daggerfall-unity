@@ -59,6 +59,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         short nobilityRep = 0;
         short underworldRep = 0;
 
+        IMECompositionMode prevIME;
+
         #region Windows
 
         CreateCharReputationWindow createCharReputationWindow;
@@ -193,6 +195,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             skillsList.Sort(); // Sort skills alphabetically a la classic.
 
             IsSetup = true;
+        }
+
+        public override void OnPush()
+        {
+            base.OnPush();
+
+            // Enable IME composition during input
+            prevIME = Input.imeCompositionMode;
+            Input.imeCompositionMode = IMECompositionMode.On;
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            // Restore previous IME composition mode
+            Input.imeCompositionMode = prevIME;
         }
 
         protected void SetupButtons()

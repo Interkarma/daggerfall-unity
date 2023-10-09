@@ -5,6 +5,7 @@
 -- QuestId: 0
 Messages: 57
 Quest: _TUTOR__
+DisplayName: Tutorial
 -- Message panels
 QRC:
 
