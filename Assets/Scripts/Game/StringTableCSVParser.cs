@@ -79,6 +79,31 @@ public class StringTableCSVParser
     }
 
     /// <summary>
+    /// Loads CSV file into a generic dictionary.
+    /// CSV must have 2 rows only - first row is key, second row is value.
+    /// Seeks mods first then StreamingAssets/Text folder.
+    /// All entries must have a unique key or exception thrown.
+    /// If "key,value" is first row then first row will be ignored as a header.
+    /// </summary>
+    /// <param name="filename">Filename of StringTable CSV file.</param>
+    /// <returns>Dictionary<string,string> for each row if successful, otherwise null or empty.</returns>
+    public static Dictionary<string, string> LoadDictionary(string filename)
+    {
+        Dictionary<string, string> dict = new Dictionary<string, string>();
+
+        var rows = Load(filename);
+        if (rows == null || rows.Count == 0)
+            return dict;
+
+        foreach (var kvp in rows)
+        {
+            dict.Add(kvp.Key, kvp.Value);
+        }
+
+        return dict;
+    }
+
+    /// <summary>
     /// Parse source CSV data into key/value pairs separated by comma character.
     /// Source CSV file must have only two columns for Key and Value.
     /// </summary>

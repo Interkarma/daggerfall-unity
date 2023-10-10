@@ -568,6 +568,16 @@ namespace DaggerfallWorkshop.Game
             return TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedString);
         }
 
+        /// <summary>
+        /// Splits input string into array of strings using newline or return as separator.
+        /// </summary>
+        /// <param name="textList">Input string where each item is separated by newline or return.</param>
+        /// <returns>String array.</returns>
+        public string[] SplitTextList(string textList)
+        {
+            return textList.TrimEnd(trimAtEnd).Split(newlineSequences, StringSplitOptions.None);
+        }
+
         #endregion
 
         #region Private Localized Text Methods
