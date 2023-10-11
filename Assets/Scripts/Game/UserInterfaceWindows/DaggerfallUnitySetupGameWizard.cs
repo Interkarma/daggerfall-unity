@@ -510,7 +510,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Add settings path text
             TextLabel settingsPathLabel = new TextLabel();
-            settingsPathLabel.Text = DaggerfallUnity.Settings.PersistentDataPath;
+            if (!DaggerfallUnity.Settings.HideLoginName)
+            {
+                settingsPathLabel.Text = DaggerfallUnity.Settings.PersistentDataPath;
+            }
             settingsPathLabel.Position = new Vector2(0, 170);
             settingsPathLabel.HorizontalAlignment = HorizontalAlignment.Center;
             settingsPathLabel.ShadowPosition = Vector2.zero;
@@ -525,7 +528,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             vsync = AddOption(x, "vsync", DaggerfallUnity.Settings.VSync);
             swapHealthAndFatigue = AddOption(x, "swapHealthAndFatigue", DaggerfallUnity.Settings.SwapHealthAndFatigueColors);
             invertMouseVertical = AddOption(x, "invertMouseVertical", DaggerfallUnity.Settings.InvertMouseVertical);
-            mouseSmoothing = AddSlider(x, "mouseSmoothing", "mouseSmoothingInfo", SettingsManager.GetMouseLookSmoothingStrength(DaggerfallUnity.Settings.MouseLookSmoothingFactor), SettingsManager.GetMouseLookSmoothingStrengths());
+            mouseSmoothing = AddSlider(x, "mouseSmoothing", "mouseSmoothingInfo", SettingsManager.GetMouseLookSmoothingStrength(DaggerfallUnity.Settings.MouseLookSmoothingFactor), TextManager.Instance.GetLocalizedTextList("mouseLookSmoothingStrengths", TextCollections.TextSettings));
 
             x = 165;
             optionPos = 60;
@@ -540,8 +543,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             enableController = AddOption(x, "enableController", DaggerfallUnity.Settings.EnableController);
             enableController.OnToggleState += EnableController_OnToggleState;
-            
-            weaponSwingMode = AddSlider(x, "weaponSwingMode", "weaponSwingModeInfo", DaggerfallUnity.Settings.WeaponSwingMode, "Vanilla", "Click", "Hold");
+
+            weaponSwingMode = AddSlider(x, "weaponSwingMode", "weaponSwingModeInfo", DaggerfallUnity.Settings.WeaponSwingMode, TextManager.Instance.GetLocalizedTextList("weaponSwingModes", TextCollections.TextSettings));
 
             // Add mod note
             TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 130), GetText("modNote"), optionsPanel);

@@ -42,10 +42,18 @@ namespace DaggerfallWorkshop.Game.Items
                 DFRandom.srand(message);
                 uint paintingIndex = DFRandom.rand() % 180;
                 dataSource.paintingFileIdx = paintingIndex & 7;
-                char paintingFileChar = (char)((paintingIndex >> 3) + 97);
-                dataSource.paintingFilename = paintingFileChar + "paint.cif";
+                char paintingFileChar = (char)((paintingIndex >> 3) + 'A');
+                dataSource.paintingFilename = paintingFileChar + "PAINT.CIF";
 
                 byte[] paintingRecord = DaggerfallUnity.Instance.ContentReader.PaintFileReader.Read(paintingIndex);
+                if (paintingIndex == 70 && // Known buggy paintingRecord
+                    paintingRecord[30] == 0xFF) // not fixed in PAINT.DAT
+                {
+                    paintingRecord[30] = 3; // summer
+                    paintingRecord[31] = 6; // spring
+                    paintingRecord[32] = 8; // afternoon
+                    paintingRecord[33] = 10; // Highrock
+                }
                 Debug.LogFormat("painting file: {0}, index: {1}, cif idx: {2}, record: {3} {4} {5}", dataSource.paintingFilename, paintingIndex, dataSource.paintingFileIdx, paintingRecord[0], paintingRecord[1], paintingRecord[2]);
 
                 dataSource.paintingSub = GetPaintingRecordPart(paintingRecord, 0, 9) + 6100; // for %sub macro
@@ -256,7 +264,7 @@ namespace DaggerfallWorkshop.Game.Items
                 {
                     // Use appropriate artifact description message. (8700-8721)
                     try {
-                        ArtifactsSubTypes artifactType = ItemHelper.GetArtifactSubType(parent.shortName);
+                        ArtifactsSubTypes artifactType = ItemHelper.GetArtifactSubType(parent);
                         return DaggerfallUnity.Instance.TextProvider.GetRSCTokens(8700 + (int)artifactType);
                     } catch (KeyNotFoundException e) {
                         Debug.Log(e.Message);
@@ -342,7 +350,8 @@ namespace DaggerfallWorkshop.Game.Items
                             {
                                 if (spell.index == parent.legacyMagic[i].param)
                                 {
-                                    magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + spell.spellName));
+                                    string spellName = TextManager.Instance.GetLocalizedSpellName(spell.index);
+                                    magicPowersTokens.Add(TextFile.CreateTextToken(firstPart + spellName));
                                     found = true;
                                     break;
                                 }

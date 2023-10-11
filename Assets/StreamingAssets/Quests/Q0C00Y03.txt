@@ -86,12 +86,14 @@ QuestorPostfailure:  [1009]
 QuestLogEntry:  [1010]
 %qdt:
  I am bringing a child who was abandoned
- at the coven of ==qgiver_ back home.
+ at the coven of =qgiver_ back home.
  _child_, the child,
  lives in _home_ in __home_.
  The witches' enemies, I'm told, would
  sooner kill us than let the child
- return home safely.
+ return home safely. I should
+ then return to ___qgiver_ for my
+ reward from _qgiver_.
 
 Message:  1011
 <ce>                    "This is where I live! This is

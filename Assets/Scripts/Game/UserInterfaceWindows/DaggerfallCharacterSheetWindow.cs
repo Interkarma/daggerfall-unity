@@ -311,7 +311,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 TextFile.Token HandToHandDamageToken = new TextFile.Token();
                 int minDamage = FormulaHelper.CalculateHandToHandMinDamage(playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
                 int maxDamage = FormulaHelper.CalculateHandToHandMaxDamage(playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
-                HandToHandDamageToken.text = DaggerfallUnity.Instance.TextProvider.GetSkillName(DFCareer.Skills.HandToHand) + " dmg: " + minDamage + "-" + maxDamage;
+                HandToHandDamageToken.text = string.Format(TextManager.Instance.GetLocalizedText("hthDamageFormatString"), DaggerfallUnity.Instance.TextProvider.GetSkillName(DFCareer.Skills.HandToHand), minDamage, maxDamage);
                 HandToHandDamageToken.formatting = TextFile.Formatting.Text;
                 tokens.Add(HandToHandDamageToken);
             }
@@ -348,10 +348,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 foreach (IGuild guild in guildMemberships)
                 {
+                    string affiliationText = string.Format(TextManager.Instance.GetLocalizedText("affiliationFormatString"), guild.GetTitle(), guild.GetReputation(playerEntity).ToString());
                     tokens.Add(TextFile.CreateTextToken(guild.GetAffiliation()));
                     tokens.Add(tab);
-                    tokens.Add(TextFile.CreateTextToken(guild.GetTitle() //)); DEBUG rep:
-                        + " (rep:" + guild.GetReputation(playerEntity).ToString() + ")"));
+                    tokens.Add(TextFile.CreateTextToken(affiliationText));
                     tokens.Add(TextFile.NewLineToken);
                 }
 

@@ -115,6 +115,7 @@ CanDropQuestItems=False
 EnableQuestDebugger=False
 QuestRumorWeight = 50
 DisableEnemyDeathAlert=False
+HideLoginName=False
 
 [Spells]
 EnableSpellLighting=True
@@ -131,7 +132,7 @@ JoystickDeadzone=0.1
 EnableController=True
 HeadBobbing=True
 Handedness=0
-WeaponAttackThreshold=0.01
+WeaponAttackThreshold=0.005
 WeaponSensitivity=1.0
 MovementAcceleration=False
 ToggleSneak=False
@@ -154,7 +155,7 @@ AutomapTempleColor=457DC3FF
 AutomapShopColor=BE5518FF
 AutomapTavernColor=557530FF
 AutomapHouseColor=453C28FF
-DungeonMicMapQoL=False
+DungeonMicMapQoL=True
 DunMicMapInnerColor=D487D0FF
 DunMicMapBorderColor=FAB403FF
 

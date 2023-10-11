@@ -58,6 +58,8 @@ namespace DaggerfallWorkshop
         float cooldown;
 
         //lookup for action type12, temp. storing them here
+        // Note: These answer string arrays are now found in Internal_Strings table using keys: answers_5404, answers_5406, answers_5423, answers_5464
+        // Legacy answer strings here will be used for fallback
         static Dictionary<int, string[]> actionTypeTwelveLookup = new Dictionary<int, string[]>()
         {
             {5404, new string[]{"bow","bow arrow","crossbow","bows","crossbows"}},   //sheogorath answer index = 5660
@@ -439,10 +441,9 @@ namespace DaggerfallWorkshop
                 DaggerfallUnity.LogMessage(string.Format(("No answers to check for: {0} {1}"), this.gameObject.name, this.Index));
                 return;
             }
-            userInput = userInput.ToLower();
             for (int i = 0; i < type12_answers.Length; i++)
             {
-                if (userInput == type12_answers[i].ToLower())
+                if (string.Compare(userInput, type12_answers[i], true) == 0)
                 {
                     ActivateNext();
                     return;
@@ -550,13 +551,20 @@ namespace DaggerfallWorkshop
             int textID = thisAction.Index + TYPE_12_TEXT_INDEX;
             if (actionTypeTwelveLookup.ContainsKey(textID))
             {
-                thisAction.type12_answers = actionTypeTwelveLookup[textID];
+                // Get localized answer strings
+                string answerKey = "answers_" + textID.ToString();
+                thisAction.type12_answers = TextManager.Instance.GetLocalizedTextList(answerKey, exception:false);
+
+                // Fallback to legacy answer strings
+                if (thisAction.type12_answers == null || thisAction.type12_answers.Length == 0 )
+                    thisAction.type12_answers = actionTypeTwelveLookup[textID];
             }
             else
             {
                 Debug.LogError(string.Format("Error: invalid key: {0} for action type 12, couldn't get answer(s)", textID));//todo - display error message
             }
             DaggerfallInputMessageBox inputBox = new DaggerfallInputMessageBox(DaggerfallUI.UIManager, textID, 20, " > ", false, true, null);
+            inputBox.AllowIME = true;
             inputBox.ParentPanel.BackgroundColor = Color.clear;
             inputBox.OnGotUserInput += thisAction.UserInputHandler;
             inputBox.Show();

@@ -181,12 +181,13 @@ Message:  1024
  
  I have won and lost an empire. I have no desire
  to tamper further with mortal affairs. I have in
- my possession _artifact2_, one of the
+ my possession the _artifact2_, one of the
  world's greatest artifacts. You may have it in
  in exchange for the Totem.
  
  My most loyal agent will await your arrival in
- __temple_ of ____temple_, at _temple_.
+ __temple_ of ____temple_,
+ at _temple_.
  
 <ce>                               Underking
 
@@ -227,7 +228,7 @@ Message:  1033
 Message:  1034
 <ce>              A letter floats through the air toward you.
 <ce>              Strangely, nobody else seems to notice it.
-<ce>                The letter tucks inself into your pack.
+<ce>                The letter tucks itself into your pack.
 
 Message:  1040
 <ce>              Hand over the Totem, or we'll slaughter you
@@ -540,12 +541,6 @@ EadwyreGotTotem _S.36_
 	create foe _F.01_ every 1 minutes 5 times with 100% success 
 	say 1051 
 
-_S.37_ task:
-	when _S.46_ and _S.07_ 
-	get item _goldgoth_ from _Gothryd_ 
-	say 1053 
-	make _goldgoth_ permanent 
-
 _S.38_ task:
 	give pc totemLetter6 notify 1070 
 
@@ -579,5 +574,8 @@ _S.45_ task:
 	end quest 
 
 _S.46_ task:
-	toting _totem_ and _Gothryd_ clicked 
+	toting _totem_ and _Gothryd_ clicked
+    get item _goldgoth_ from _Gothryd_ 
+    say 1053 
+    make _goldgoth_ permanent  
 	start task _S.31_ 

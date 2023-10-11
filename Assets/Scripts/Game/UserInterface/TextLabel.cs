@@ -24,6 +24,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         #region Fields
 
+        const float totalWidthPadding = 1f;
+
         public const int limitMinTextureDim = 8; // the smallest possible value for minTextureDim (used to enforce minimum texture dimensions of 8x8 to avoid "degenerate image" error in Unity 5.2)
 
         int minTextureDim = limitMinTextureDim; // set this with property MinTextureDim to higher values if you experience scaling issues with small texts (e.g. inventory infopanel)
@@ -431,7 +433,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             for (int i = 0; i < codes.Length; i++)
             {
                 float glyphWidth = font.GetGlyphWidth(codes[i], LocalScale);
-                if (xpos + glyphWidth >= totalWidth)
+                if (xpos + glyphWidth > totalWidth + totalWidthPadding)
                     break;
 
                 GlyphLayoutData glyphPos = new GlyphLayoutData()
@@ -612,7 +614,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 for (int i = 0; i < row.Length; i++)
                 {
                     float glyphWidth = font.GetGlyphWidth(row[i], LocalScale);
-                    if (xpos + glyphWidth > totalWidth)
+                    if (xpos + glyphWidth > totalWidth + totalWidthPadding)
                         break;
 
                     if (row[i] == DaggerfallFont.SpaceCode)

@@ -3531,7 +3531,7 @@ namespace DaggerfallWorkshop.Game
             return TokensToString(tokens);
         }
 
-        private string TokensToString(TextFile.Token[] tokens, bool addSpaceAtTokenEnd = true)
+        public static string TokensToString(TextFile.Token[] tokens, bool addSpaceAtTokenEnd = true)
         {
             // Create return string from expanded tokens
             string separatorString = " ";
@@ -3614,6 +3614,7 @@ namespace DaggerfallWorkshop.Game
                     ConsoleCommandsDatabase.RegisterCommand(TalkNpcsKnowEverything.name, TalkNpcsKnowEverything.description, TalkNpcsKnowEverything.usage, TalkNpcsKnowEverything.Execute);
                     ConsoleCommandsDatabase.RegisterCommand(TalkNpcsKnowUsual.name, TalkNpcsKnowUsual.description, TalkNpcsKnowUsual.usage, TalkNpcsKnowUsual.Execute);
                     ConsoleCommandsDatabase.RegisterCommand(TalkNpcBehaviorOverride.name, TalkNpcBehaviorOverride.description, TalkNpcBehaviorOverride.usage, TalkNpcBehaviorOverride.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(TalkPrint.name, TalkPrint.description, TalkPrint.usage, TalkPrint.Execute);
                 }
                 catch (System.Exception ex)
                 {
@@ -3667,6 +3668,37 @@ namespace DaggerfallWorkshop.Game
                     }
 
                     return String.Format("NPC behaviors: " + GameManager.Instance.TalkManager.consoleCommand_NPCBehaviorOverride.ToString());
+                }
+            }
+
+            private static class TalkPrint
+            {
+                public static readonly string name = "talk_print";
+                public static readonly string description = "Output talk text from the RSC string database. ID must be a talk-related string. Record is selected at random.";
+                public static readonly string usage = "talk_print {id}";
+
+                public static string Execute(params string[] args)
+                {
+                    if (args == null || args.Length < 1)
+                        return usage;
+
+                    int id;
+                    if (!int.TryParse(args[0], out id))
+                        return usage;
+
+                    string output = "Nothing found.";
+                    try
+                    {
+                        TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(id);
+                        MacroHelper.ExpandMacros(ref tokens, GameManager.Instance.TalkManager);
+                        output = TokensToString(tokens);
+                    }
+                    catch (Exception ex)
+                    {
+                        output = string.Format("Command failed. ID {0} is not a talk string.", id);
+                    }
+
+                    return output;
                 }
             }
         }

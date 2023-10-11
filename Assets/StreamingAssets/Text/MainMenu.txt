@@ -34,13 +34,6 @@ sdfFontRenderingInfo,       Enable for smooth fonts at high resolutions
 enableController,           Enable Controller
 enableControllerInfo,       Allow joysticks or other controllers to be detected and used in-game
 
-mouseSmoothingStrength0,    None
-mouseSmoothingStrength1,    Lowest
-mouseSmoothingStrength2,    Low
-mouseSmoothingStrength3,    Medium
-mouseSmoothingStrength4,    High
-mouseSmoothingStrength5,    Highest
-
 findArena2Tip,              Tip: Daggerfall contains a folder called 'arena2'
 foundArena2But,             Found 'arena2' but
 missingTextures,            it's missing one or more TEXTURE files

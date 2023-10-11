@@ -74,6 +74,11 @@ namespace DaggerfallWorkshop.Game.Items
         #region Properties
 
         /// <summary>
+        /// Array of all mundane item templates. Does not include magic item data.
+        /// </summary>
+        public ItemTemplate[] ItemTemplates => itemTemplates.ToArray();
+
+        /// <summary>
         /// Array of all magic item templates including artifact data.
         /// Data is loaded from MagicItemTemplates.txt, a JSON dump of fixed MAGIC.DEF.
         /// </summary>
@@ -258,12 +263,13 @@ namespace DaggerfallWorkshop.Game.Items
         /// </summary>
         public string ResolveItemName(DaggerfallUnityItem item)
         {
-            // Get item template
+            // Get item template and localized template name
             ItemTemplate template = item.ItemTemplate;
+            string templateName = TextManager.Instance.GetLocalizedItemName(template.index, template.name);
 
             // Return just the template name if item is unidentified.
             if (!item.IsIdentified)
-                return template.name;
+                return templateName;
 
             // Return the shortName if item is an artifact
             if (item.IsArtifact)
@@ -277,10 +283,10 @@ namespace DaggerfallWorkshop.Game.Items
             string result = item.shortName;
 
             // Resolve %it parameter
-            if (!string.IsNullOrEmpty(template.name))
-                result = result.Replace("%it", template.name);
+            if (!string.IsNullOrEmpty(templateName))
+                result = result.Replace("%it", templateName);
             else
-                Debug.LogErrorFormat("Item template index {0} has a null template.name", template.index);
+                Debug.LogErrorFormat("Item template index {0} has a null templateName", template.index);
 
             return result;
         }
@@ -300,9 +306,9 @@ namespace DaggerfallWorkshop.Game.Items
             if (differentiatePlantIngredients)
             {
                 if (item.ItemGroup == ItemGroups.PlantIngredients1 && item.TemplateIndex < 18)
-                    return string.Format("{0} {1}", result, TextManager.Instance.GetLocalizedText("northern"));
+                    return string.Format(TextManager.Instance.GetLocalizedText("ingredientFormatString"), result, TextManager.Instance.GetLocalizedText("northern"));
                 if (item.ItemGroup == ItemGroups.PlantIngredients2 && item.TemplateIndex < 18)
-                    return string.Format("{0} {1}", result, TextManager.Instance.GetLocalizedText("southern"));
+                    return string.Format(TextManager.Instance.GetLocalizedText("ingredientFormatString"), result, TextManager.Instance.GetLocalizedText("southern"));
             }
 
             // Resolve weapon material
@@ -310,7 +316,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 WeaponMaterialTypes weaponMaterial = (WeaponMaterialTypes)item.nativeMaterialValue;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetWeaponMaterialName(weaponMaterial);
-                result = string.Format("{0} {1}", materialName, result);
+                result = string.Format(TextManager.Instance.GetLocalizedText("longWeaponNameFormatString"), materialName, result);
             }
 
             // Resolve armor material
@@ -318,7 +324,7 @@ namespace DaggerfallWorkshop.Game.Items
             {
                 ArmorMaterialTypes armorMaterial = (ArmorMaterialTypes)item.nativeMaterialValue;
                 string materialName = DaggerfallUnity.Instance.TextProvider.GetArmorMaterialName(armorMaterial);
-                result = string.Format("{0} {1}", materialName, result);
+                result = string.Format(TextManager.Instance.GetLocalizedText("longArmorNameFormatString"), materialName, result);
             }
 
             // Resolve potion names
@@ -336,7 +342,7 @@ namespace DaggerfallWorkshop.Game.Items
                     if (questItem.UsedMessageID >= 0)
                     {
                         Message msg = quest.GetMessage(questItem.UsedMessageID);
-                        TextFile.Token[] tokens = msg.GetTextTokens();
+                        TextFile.Token[] tokens = msg.GetTextTokens(expandMacros:false);
                         string signoff = "";
                         int lines = 0;
                         for (int i = tokens.Length-1; i >= 0; i--)
@@ -475,7 +481,7 @@ namespace DaggerfallWorkshop.Game.Items
                 // Change dye or just update texture
                 ItemGroups group = item.ItemGroup;
                 DyeColors dye = (DyeColors)color;
-                if (group == ItemGroups.Weapons || group == ItemGroups.Armor)
+                if ((group == ItemGroups.Weapons || group == ItemGroups.Armor) && !item.IsArtifact)
                     data = ChangeDye(data, dye, DyeTargets.WeaponsAndArmor);
                 else if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing)
                     data = ChangeDye(data, dye, DyeTargets.Clothing);
@@ -528,11 +534,13 @@ namespace DaggerfallWorkshop.Game.Items
         }
 
         /// <summary>
-        /// Gets an artifact sub type from an items' short name. (throws exception if no match)
+        /// Gets artifact sub type by converting short name to enum type.
+        /// Not compatible with localized artifact names.
+        /// Should only be used when importing classic saves or older save data where artifactIndexBitfield is not present.
         /// </summary>
-        /// <param name="itemShortName">Item short name</param>
-        /// <returns>Artifact sub type.</returns>
-        public static ArtifactsSubTypes GetArtifactSubType(string itemShortName)
+        /// <param name="itemShortName">Item short name.</param>
+        /// <returns>Artifact sub type or ArtifactsSubTypes.None.</returns>
+        public static ArtifactsSubTypes LegacyGetArtifactSubType(string itemShortName)
         {
             itemShortName = itemShortName.Replace("\'", "").Replace(' ', '_');
             foreach (var artifactName in Enum.GetNames(typeof(ArtifactsSubTypes)))
@@ -540,7 +548,25 @@ namespace DaggerfallWorkshop.Game.Items
                 if (itemShortName.Contains(artifactName))
                     return (ArtifactsSubTypes)Enum.Parse(typeof(ArtifactsSubTypes), artifactName);
             }
-            throw new KeyNotFoundException("No match found for: " + itemShortName);
+            return ArtifactsSubTypes.None;
+        }
+
+        /// <summary>
+        /// Gets artifact sub type using ArtifactIndexBitfield on item.
+        /// This method is compatible with localized artifact names.
+        /// Throws exception if not an artifact or item's ArtifactIndexBitfield not properly set.
+        /// </summary>
+        /// <param name="item">DaggerfalUnityItem.</param>
+        /// <returns>ArtifactsSubTypes.</returns>
+        public static ArtifactsSubTypes GetArtifactSubType(DaggerfallUnityItem item)
+        {
+            if (!item.IsArtifact)
+                throw new Exception("GetArtifactSubType() item is not an artifact.");
+
+            if ((item.ArtifactIndexBitfield & 1) == 0)
+                throw new Exception("GetArtifactSubType() item does not have an artifact index. Item most likely imported from old save data where item shortName was changed.");
+
+            return (ArtifactsSubTypes)(item.ArtifactIndexBitfield >> 1);
         }
 
         /// <summary>
@@ -577,6 +603,11 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>The filename of the book or null.</returns>
         internal string GetBookFileName(int id)
         {
+            // Map ID 10000 back to correct value of 5 for "Ark'ay The God" to ensure same book file used for both IDs
+            // This ID is present in some legacy save data and is retained for backwards compatibility only
+            if (id == 10000)
+                id = 5;
+
             // Get name for custom book
             BookMappingEntry entry;
             if (BookReplacement.BookMappingEntries.TryGetValue(id, out entry))
@@ -586,7 +617,7 @@ namespace DaggerfallWorkshop.Game.Items
             if (bookIDNameMapping.ContainsKey(id))
                 return BookFile.messageToBookFilename(id);
 
-            Debug.LogErrorFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", id);
+            Debug.LogWarningFormat("ID {0} is not assigned to any known book; a mod that provides books was probably removed.", id);
             return null;
         }
 
@@ -604,11 +635,45 @@ namespace DaggerfallWorkshop.Game.Items
             for (int i = 0; i < attempts; i++)
             {
                 int id = keys[UnityEngine.Random.Range(0, keys.Length)];
+
+                // Localized book conditions have overriding priority
+                if (LocalizedBook.Exists(id))
+                {
+                    if (LocalizedBookMeetsConditions(id))
+                        return id;
+                    continue;
+                }
+
                 if (BookReplacement.BookMeetsConditions(id))
                     return id;
             }
 
             return keys.First(x => !BookReplacement.BookMappingEntries.ContainsKey(x));
+        }
+
+        /// <summary>
+        /// Checks if a localized book defines any conditions for distribution.
+        /// </summary>
+        /// <param name="id">ID of localized book.</param>
+        /// <returns>True if localized book exists and conditions met, otherise false.</returns>
+        public bool LocalizedBookMeetsConditions(int id)
+        {
+            // Read localized book file - unknown localized books are considered to not meet conditions
+            string filename = GetBookFileName(id);
+            LocalizedBook book = new LocalizedBook();
+            if (!book.OpenLocalizedBookFile(filename))
+                return false;
+
+            // Resolve global var - invalid global vars not matching table will be ignored
+            int globalVar = -1;
+            bool globalVarSet = false;
+            if (!string.IsNullOrEmpty(book.WhenVarSet) && QuestMachine.Instance.GlobalVarsTable.HasValue(book.WhenVarSet))
+            {
+                globalVar = int.Parse(QuestMachine.Instance.GlobalVarsTable.GetValue("id", book.WhenVarSet));
+                globalVarSet = GameManager.Instance.PlayerEntity.GlobalVars.GetGlobalVar(globalVar);
+            }
+
+            return !book.IsUnique && (globalVar == -1 || globalVarSet);
         }
 
         /// <summary>

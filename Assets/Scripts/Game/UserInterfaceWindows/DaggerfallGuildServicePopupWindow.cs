@@ -224,6 +224,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ItemCollection items = new ItemCollection();
             int numOfItems = (buildingDiscoveryData.quality / 2) + 1;
 
+            // Store state of random sequence
+            UnityEngine.Random.State prevState = UnityEngine.Random.state;
+
             // Seed random from game time to rotate magic stock every 24 game hours
             // This more or less resolves issue of magic item stock not being deterministic every time player opens window
             // Doesn't match classic exactly as classic stocking method unknown, but should be "good enough" for now
@@ -262,6 +265,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     items.AddItem(magicItem);
                 }
             }
+            UnityEngine.Random.state = prevState;   // Restore random state
             return items;
         }
 
@@ -624,7 +628,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Partially loading the quest to get the human readable quest name.
                     Quest quest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[i], GetFactionIdForGuild(), true);
-                    questPicker.ListBox.AddItem(quest.DisplayName ?? quest.QuestName);
+                    string displayName = quest.DisplayName;
+                    string localizedDisplayName = QuestMachine.Instance.GetLocalizedQuestDisplayName(quest.QuestName);
+                    if (!string.IsNullOrEmpty(localizedDisplayName))
+                        displayName = localizedDisplayName;
+                    questPicker.ListBox.AddItem(displayName ?? quest.QuestName);
                     quest.Dispose();
                 }
                 catch (Exception)

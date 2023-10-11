@@ -42,6 +42,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private bool useParchmentStyle = true;          //if true, box will use PopupStyle Parchment background
         private bool clickAnywhereToClose = false;
         private bool showAtTopOfScreen = false;
+        private bool allowIME = true;
+
+        IMECompositionMode prevIME;
 
         public bool ClickAnywhereToClose
         {
@@ -76,6 +79,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public TextBox TextBox
         {
             get { return textBox; }
+        }
+
+        public bool AllowIME
+        {
+            get => allowIME;
+            set => allowIME = value;
         }
 
         //public int MinWidth
@@ -156,6 +165,29 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             textPanel.Components.Add(textBox);
             ParentPanel.BackgroundColor = ParentPanelColor;
             UpdatePanelSizes();
+        }
+
+        public override void OnPush()
+        {
+            base.OnPush();
+
+            if (allowIME)
+            {
+                // Enable IME composition during input
+                prevIME = Input.imeCompositionMode;
+                Input.imeCompositionMode = IMECompositionMode.On;
+            }
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            if (allowIME)
+            {
+                // Restore previous IME composition mode
+                Input.imeCompositionMode = prevIME;
+            }
         }
 
         public void Show()

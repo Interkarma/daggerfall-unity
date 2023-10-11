@@ -534,7 +534,7 @@ namespace DaggerfallWorkshop.Game
                 world.TeleportToCoordinates(pos.X, pos.Y, StreamingWorld.RepositionMethods.None);
                 dfUnity.ContentReader.GetLocation(summary.RegionIndex, summary.MapIndex, out location);
                 StartDungeonInterior(location, true, importEnemies);
-                world.suppressWorld = true;
+                world.suppressWorld = false;
             }
             else if (hasLocation && insideBuilding && exteriorDoors != null)
             {
@@ -870,6 +870,8 @@ namespace DaggerfallWorkshop.Game
 
             // Player is now outside building
             isPlayerInside = false;
+            isPlayerInsideOpenShop = false;
+            IsPlayerInsideTavern = false;
             PlayerTeleportedIntoDungeon = false;
             buildingType = DFLocation.BuildingTypes.None;
             factionID = 0;
@@ -1106,6 +1108,8 @@ namespace DaggerfallWorkshop.Game
             if (DungeonParent != null) DungeonParent.SetActive(true);
 
             isPlayerInside = true;
+            isPlayerInsideOpenShop = false;
+            IsPlayerInsideTavern = false;
             isPlayerInsideDungeon = true;
 
             GameManager.UpdateShadowDistance();

@@ -670,12 +670,15 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Returns true if can shoot projectile at target.
         /// </summary>
-        bool HasClearPathToShootProjectile(float speed, float radius)
+        bool HasClearPathToShootProjectile(float speed, float originDistance, float radius)
         {
             // Check that there is a clear path to shoot projectile
             Vector3 sphereCastDir = senses.PredictNextTargetPos(speed);
             if (sphereCastDir == EnemySenses.ResetPlayerPos)
                 return false;
+
+            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
+            sphereCastDir = (sphereCastDir - transform.position).normalized;
 
             // No point blank shooting special handling here, makes enemies favor other attack types (melee, touch spells,...)
 
@@ -686,18 +689,17 @@ namespace DaggerfallWorkshop.Game
                 // Exclude enemy collider from CheckSphere test
                 myCollider.enabled = false;
             }
-            bool isSpaceInsufficient = Physics.CheckSphere(transform.position, radius, ignoreMaskForShooting);
+
+            Vector3 shootOrigin = transform.position + sphereCastDir * originDistance;
+            bool isSpaceInsufficient = Physics.CheckSphere(shootOrigin, radius, ignoreMaskForShooting);
             if (myCollider)
                 myCollider.enabled = myColliderWasEnabled;
 
             if (isSpaceInsufficient)
                 return false;
 
-            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
-            sphereCastDir = (sphereCastDir - transform.position).normalized;
-
             RaycastHit hit;
-            if (Physics.SphereCast(transform.position, radius, sphereCastDir, out hit, sphereCastDist, ignoreMaskForShooting))
+            if (Physics.SphereCast(shootOrigin, radius, sphereCastDir, out hit, sphereCastDist, ignoreMaskForShooting))
             {
                 DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
 
@@ -723,7 +725,7 @@ namespace DaggerfallWorkshop.Game
 
             // Check that there is a clear path to shoot an arrow
             // All arrows are currently 35 speed.
-            return HasClearPathToShootProjectile(35f, 0.15f);
+            return HasClearPathToShootProjectile(35f, 0f, 0.15f);
         }
 
         /// <summary>
@@ -758,7 +760,7 @@ namespace DaggerfallWorkshop.Game
 
             // Check that there is a clear path to shoot a spell
             // All range spells are currently 25 speed and 0.45f radius
-            return HasClearPathToShootProjectile(25f, 0.45f);
+            return HasClearPathToShootProjectile(25f, DaggerfallMissile.ArmLength, 0.45f);
         }
 
         /// <summary>

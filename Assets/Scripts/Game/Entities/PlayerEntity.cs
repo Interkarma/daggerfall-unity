@@ -983,6 +983,10 @@ namespace DaggerfallWorkshop.Game.Entity
                     Debug.LogErrorFormat("Failed to create effect bundle while importing classic spell '{0}'.", spell.ParsedData.spellName);
                     continue;
                 }
+
+                // Always use spell name from imported classic save as player might have custom names
+                bundle.Name = spell.ParsedData.spellName;
+
                 AddSpell(bundle);
             }
         }
@@ -1327,7 +1331,7 @@ namespace DaggerfallWorkshop.Game.Entity
                     DaggerfallUnityItem loc = items.GetItem(ItemGroups.MiscItems, (int)MiscItems.Letter_of_credit);
                     if (loc == null) {
                         break;
-                    } else if (amount <= loc.value) {
+                    } else if (amount < loc.value) {
                         loc.value -= amount;
                         amount = 0;
                     } else {

@@ -40,6 +40,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         FacePicker facePicker = new FacePicker();
         CharacterDocument characterDocument;
 
+        IMECompositionMode prevIME;
+
         public CharacterDocument CharacterDocument
         {
             get { return characterDocument; }
@@ -86,6 +88,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add "OK" button
             Button okButton = DaggerfallUI.AddButton(new Rect(263, 172, 39, 22), NativePanel);
             okButton.OnMouseClick += OkButton_OnMouseClick;
+        }
+
+        public override void OnPush()
+        {
+            base.OnPush();
+
+            // Enable IME composition during input
+            prevIME = Input.imeCompositionMode;
+            Input.imeCompositionMode = IMECompositionMode.On;
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            // Restore previous IME composition mode
+            Input.imeCompositionMode = prevIME;
         }
 
         #region Private Methods

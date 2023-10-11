@@ -184,7 +184,7 @@ K0C00Y02, Merchants, N, 0, 0, Passed
 K0C00Y03, Merchants, M, 0, 0, Passed
 K0C00Y04, Merchants, M, 0, 0, Passed
 K0C00Y05, Merchants, M, 0, 0, Passed
-K0C00Y06, Merchants, M, 0, 0, enabled for testing
+-K0C00Y06, Merchants, M, 0, 0, disabled
 K0C00Y07, Merchants, M, 0, 0, Passed
 K0C00Y08, Merchants, M, 0, 0, Passed
 K0C00Y09, Merchants, M, 0, 0, Passed

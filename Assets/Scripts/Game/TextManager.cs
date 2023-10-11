@@ -20,6 +20,7 @@ using Wenzil.Console;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using UnityEngine.Localization.Tables;
+using DaggerfallWorkshop.Game.MagicAndEffects;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -35,16 +36,29 @@ namespace DaggerfallWorkshop.Game
         public static string defaultInternalFlatsCollectionName = "Internal_Flats";
         public static string defaultInternalQuestsCollectionName = "Internal_Quests";
         public static string defaultInternalLocationsCollectionName = "Internal_Locations";
+        public static string defaultInternalSettingsCollectionName = "Internal_Settings";
+        public static string defaultInternalSpellsCollectionName = "Internal_Spells";
+        public static string defaultInternalItemsCollectionName = "Internal_Items";
+        public static string defaultInternalMagicItemsCollectionName = "Internal_MagicItems";
+        public static string defaultInternalFactionsCollectionName = "Internal_Factions";
 
         const string localizedTextLookupError = "<LocaleText-NotFound>";
         const string textFolderName = "Text";
         const string textColumn = "text";
+
+        readonly char[] trimAtEnd = { '\n', '\r' };
+        readonly string[] newlineSequences = { "\r\n", "\r", "\n" };
 
         public string runtimeInternalStrings = defaultInternalStringsCollectionName;
         public string runtimeRSCStrings = defaultInternalRSCCollectionName;
         public string runtimeFlatStrings = defaultInternalFlatsCollectionName;
         public string runtimeQuestsStrings = defaultInternalQuestsCollectionName;
         public string runtimeLocationsStrings = defaultInternalLocationsCollectionName;
+        public string runtimeSettingsStrings = defaultInternalSettingsCollectionName;
+        public string runtimeSpellsStrings = defaultInternalSpellsCollectionName;
+        public string runtimeItemsStrings = defaultInternalItemsCollectionName;
+        public string runtimeMagicItemsStrings = defaultInternalMagicItemsCollectionName;
+        public string runtimeFactionsStrings = defaultInternalFactionsCollectionName;
 
         // String table copy editor properties
         public bool tableCopyOverwriteTargetStringTables = false;
@@ -263,6 +277,21 @@ namespace DaggerfallWorkshop.Game
                 case TextCollections.TextLocations:
                     collectionName = runtimeLocationsStrings;
                     break;
+                case TextCollections.TextSettings:
+                    collectionName = runtimeSettingsStrings;
+                    break;
+                case TextCollections.TextSpells:
+                    collectionName = runtimeSpellsStrings;
+                    break;
+                case TextCollections.TextItems:
+                    collectionName = runtimeItemsStrings;
+                    break;
+                case TextCollections.TextMagicItems:
+                    collectionName = runtimeMagicItemsStrings;
+                    break;
+                case TextCollections.Factions:
+                    collectionName = runtimeFactionsStrings;
+                    break;
             }
 
             return collectionName;
@@ -282,17 +311,29 @@ namespace DaggerfallWorkshop.Game
                 case TextCollections.Internal:
                     collectionName = defaultInternalStringsCollectionName;
                     break;
-
                 case TextCollections.TextRSC:
                     collectionName = defaultInternalRSCCollectionName;
                     break;
-
                 case TextCollections.TextQuests:
                     collectionName = defaultInternalQuestsCollectionName;
                     break;
-
                 case TextCollections.TextLocations:
                     collectionName = defaultInternalLocationsCollectionName;
+                    break;
+                case TextCollections.TextSettings:
+                    collectionName = defaultInternalSettingsCollectionName;
+                    break;
+                case TextCollections.TextSpells:
+                    collectionName = defaultInternalSpellsCollectionName;
+                    break;
+                case TextCollections.TextItems:
+                    collectionName = defaultInternalItemsCollectionName;
+                    break;
+                case TextCollections.TextMagicItems:
+                    collectionName = defaultInternalMagicItemsCollectionName;
+                    break;
+                case TextCollections.Factions:
+                    collectionName = defaultInternalFactionsCollectionName;
                     break;
             }
 
@@ -329,6 +370,34 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Gets text value from localized text collection with support for a default fallback string reversion.
+        /// If text not found for live collection then will try to fallback to internal text or reversion.
+        /// If text still not found will return an error string.
+        /// </summary>
+        /// <param name="key">Key of text in table.</param>
+        /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
+        /// <param name="exception">True to throw detailed exception if text not found. False to just return error string.</param>
+        /// <param name="reversion">Revert to a string literal rather than error.</param>
+        /// <returns>Text if found, then fallback if found, then reversion if provided, then exception or error string if nothing found.</returns>
+        public string GetLocalizedTextWithReversion(string key, TextCollections collection = TextCollections.Internal, bool exception = false, string reversion = null)
+        {
+            string localizedText;
+            if (TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedText))
+                return localizedText;
+            else if (TryGetLocalizedText(GetDefaultCollectionName(collection), key, out localizedText))
+                return localizedText;
+            else if (!string.IsNullOrEmpty(reversion))
+                return reversion;
+            else
+            {
+                if (exception)
+                    throw new Exception(string.Format("Localized text not found for collection='{0}', key='{1}'", collection.ToString(), key));
+                else
+                    return localizedTextLookupError;
+            }
+        }
+
+        /// <summary>
         /// Gets array of text from discrete items using a key array.
         /// </summary>
         /// <param name="keyArray">Array of keys to resolve back to text in list.</param>
@@ -342,7 +411,7 @@ namespace DaggerfallWorkshop.Game
 
         /// <summary>
         /// Gets an array of text where each line is considered an item in array.
-        /// Entry will be read from table and split by newline '\n' character into array.
+        /// Entry will be read from table and split by newline characters into array.
         /// </summary>
         /// <param name="key">Key of text in table.</param>
         /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
@@ -426,6 +495,67 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Gets localized version of spell name from its ID.
+        /// Fallback to default spell name if localized string not found.
+        /// </summary>
+        /// <param name="id">Spell ID.</param>
+        /// <returns>Localized name of spell or default spell name.</returns>
+        public string GetLocalizedSpellName(int id)
+        {
+            string name;
+            if (TryGetLocalizedText(TextCollections.TextSpells, id.ToString(), out name))
+                return name;
+            else
+                return GameManager.Instance.EntityEffectBroker.GetStandardSpellName(id);
+        }
+
+        /// <summary>
+        /// Gets localized version of item template name from its ID.
+        /// Caller must provide a fallback template name.
+        /// </summary>
+        /// <param name="id">Item ID.</param>
+        /// <returns>Localized item template name or fallback name.</returns>
+        public string GetLocalizedItemName(int id, string fallback)
+        {
+            string name;
+            if (TryGetLocalizedText(TextCollections.TextItems, id.ToString(), out name))
+                return name;
+            else
+                return fallback;
+        }
+
+        /// <summary>
+        /// Gets localized version of magic item template name from its ID.
+        /// Caller must provide a fallback template name.
+        /// </summary>
+        /// <param name="id">Magic item ID.</param>
+        /// <returns>Localized magic item template name or fallback name.</returns>
+        public string GetLocalizedMagicItemName(int id, string fallback)
+        {
+            string name;
+            if (TryGetLocalizedText(TextCollections.TextMagicItems, id.ToString(), out name))
+                return name;
+            else
+                return fallback;
+        }
+
+        /// <summary>
+        /// Gets localized version of faction name from its ID.
+        /// Caller must provide a fallback name.
+        /// </summary>
+        /// <param name="id">Faction ID.</param>
+        /// <param name="fallback">Fallback name.</param>
+        /// <returns>Localized faction name or fallback.</returns>
+        public string GetLocalizedFactionName(int id, string fallback)
+        {
+            string name;
+            if (TryGetLocalizedText(TextCollections.Factions, id.ToString(), out name))
+                return name;
+            else
+                return fallback;
+        }
+
+        /// <summary>
         /// Tries to gets text value from localization in TextProvider.
         /// Will use current locale if available in collection.
         /// </summary>
@@ -436,6 +566,16 @@ namespace DaggerfallWorkshop.Game
         public bool TryGetLocalizedText(TextCollections collection, string key, out string localizedString)
         {
             return TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedString);
+        }
+
+        /// <summary>
+        /// Splits input string into array of strings using newline or return as separator.
+        /// </summary>
+        /// <param name="textList">Input string where each item is separated by newline or return.</param>
+        /// <returns>String array.</returns>
+        public string[] SplitTextList(string textList)
+        {
+            return textList.TrimEnd(trimAtEnd).Split(newlineSequences, StringSplitOptions.None);
         }
 
         #endregion
@@ -476,7 +616,7 @@ namespace DaggerfallWorkshop.Game
 
         /// <summary>
         /// Gets an array of text where each line is considered an item in array.
-        /// Entry will be read from table and split by newline '\n' character into array.
+        /// Entry will be read from table and split by newline characters into array.
         /// </summary>
         /// <param name="collectionName">Name of table collection.</param>
         /// <param name="key">Key of text in table.</param>
@@ -498,7 +638,7 @@ namespace DaggerfallWorkshop.Game
                     return null;
             }
 
-            cachedList = localizedString.Split('\n');
+            cachedList = localizedString.TrimEnd(trimAtEnd).Split(newlineSequences, StringSplitOptions.None);
             cachedLocalizedTextLists.Add(cacheKey, cachedList);
 
             return cachedList;
@@ -650,7 +790,7 @@ namespace DaggerfallWorkshop.Game
         private static class Locale_Set
         {
             public static readonly string name = "locale_set";
-            public static readonly string description = "Sets current locale. Use local_print to list avilable locales.";
+            public static readonly string description = "Sets current locale. Use locale_print to list available locales.";
             public static readonly string usage = "locale_set <index>";
 
             public static string Execute(params string[] args)

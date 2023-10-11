@@ -735,8 +735,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem currentRightHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.RightHand);
                 if (currentRightHandWeapon != null)
                 {
+                    string templateName = TextManager.Instance.GetLocalizedItemName(currentRightHandWeapon.ItemTemplate.index, currentRightHandWeapon.ItemTemplate.name);
                     string message = TextManager.Instance.GetLocalizedText("equippingWeapon");
-                    message = message.Replace("%s", currentRightHandWeapon.ItemTemplate.name);
+                    message = message.Replace("%s", templateName);
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
             }
@@ -746,8 +747,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem currentLeftHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.LeftHand);
                 if (currentLeftHandWeapon != null)
                 {
+                    string templateName = TextManager.Instance.GetLocalizedItemName(currentLeftHandWeapon.ItemTemplate.index, currentLeftHandWeapon.ItemTemplate.name);
                     string message = TextManager.Instance.GetLocalizedText("equippingWeapon");
-                    message = message.Replace("%s", currentLeftHandWeapon.ItemTemplate.name);
+                    message = message.Replace("%s", templateName);
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
             }
@@ -1657,6 +1659,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // This will need more work as more usable items are available
         protected void UseItem(DaggerfallUnityItem item, ItemCollection collection = null)
         {
+            // Allow item to handle its own use.
+            if (item.UseItem(collection))
+                return;
+
             const int noSpellsTextId = 12;
 
             // Handle quest items on use clicks
@@ -1821,9 +1827,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (string.IsNullOrEmpty(revealedLocation.Name))
                     throw new Exception();
 
-                playerGPS.LocationRevealedByMapItem = revealedLocation.Name;
+                string localizedLocation = TextManager.Instance.GetLocalizedLocationName(revealedLocation.MapTableData.MapId, revealedLocation.Name);
+                playerGPS.LocationRevealedByMapItem = localizedLocation;
                 GameManager.Instance.PlayerEntity.Notebook.AddNote(
-                    TextManager.Instance.GetLocalizedText("readMap").Replace("%map", revealedLocation.Name));
+                    TextManager.Instance.GetLocalizedText("readMap").Replace("%map", localizedLocation));
 
                 DaggerfallMessageBox mapText = new DaggerfallMessageBox(uiManager, this);
                 mapText.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(mapTextId));
@@ -1977,9 +1984,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (actionMode == ActionModes.Use)
             {
-                // Allow item to handle its own use, fall through to general use function if unhandled
-                if (!item.UseItem(localItems))
-                    UseItem(item, localItems);
+                UseItem(item, localItems);
                 Refresh(false);
             }
             else if (actionMode == ActionModes.Remove)
@@ -2041,9 +2046,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else if (actionMode == ActionModes.Use)
             {
-                // Allow item to handle its own use, fall through to general use function if unhandled
-                if (!item.UseItem(remoteItems))
-                    UseItem(item, remoteItems);
+                UseItem(item, remoteItems);
                 Refresh(false);
             }
             else if (actionMode == ActionModes.Remove)

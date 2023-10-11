@@ -42,7 +42,7 @@ Message:  1015
  a powder that will soothe the ghost of
  my beloved Lysandus. However, it is in the
  hands of Gortwog, Warlord of the Orcs, in
- his steel citidel of Orsinium. Go to him
+ his steel citadel of Orsinium. Go to him
  in Orsinium and see if there is anything
  that can be done to persuade him to give
  it to you. Bring the powder to me in
@@ -82,7 +82,7 @@ This is indeed the Dust of Restful Death.
  him later that his orc warriors were slain
  attempting to ambush the assassins. Gortwog
  and his orcs are not the villains most
- people seem them as.
+ people see them as.
  
  Eadwyre and the court of Wayrest have never
  been particularly loyal to the empire. To

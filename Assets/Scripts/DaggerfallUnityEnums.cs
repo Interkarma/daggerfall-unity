@@ -773,6 +773,11 @@ namespace DaggerfallWorkshop
         TextFlats,
         TextQuests,
         TextLocations,
+        TextSettings,
+        TextSpells,
+        TextItems,
+        TextMagicItems,
+        Factions,
     }
 
     /// <summary>

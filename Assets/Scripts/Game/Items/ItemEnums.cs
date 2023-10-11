@@ -237,6 +237,7 @@ namespace DaggerfallWorkshop.Game.Items
 
     public enum ArtifactsSubTypes                   // Mapped to artifact definitions in MAGIC.DEF
     {
+        None = -1,
         Masque_of_Clavicus = 0,
         Mehrunes_Razor = 1,
         Mace_of_Molag_Bal = 2,

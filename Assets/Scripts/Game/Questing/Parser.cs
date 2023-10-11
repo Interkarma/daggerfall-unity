@@ -161,6 +161,141 @@ namespace DaggerfallWorkshop.Game.Questing
             return quest;
         }
 
+        /// <summary>
+        /// Special cut-down parser to read localized quest source containing only QRC text part.
+        /// Only reads lines related to quest display name and messages.
+        /// Does not tokenize message text. Messages are returned in a dictionary format suitable to store in string tables.
+        /// Keeping this process separate from standard QRC parser to avoid introducing additional complexity or regressions.
+        /// </summary>
+        /// <param name="lines">List of text lines from localized quest file.</param>
+        /// <param name="displayName">Localized display name out.</param>
+        /// <param name="messages">Localized message dictionary out.</param>
+        /// <returns>True if successful.</returns>
+        public bool ParseLocalized(List<string> lines, out string displayName, out Dictionary<int, string> messages)
+        {
+            const string parseIdError = "Could not parse localized quest message ID '{0}' to an int. Expected message ID value.";
+
+            displayName = string.Empty;
+            messages = new Dictionary<int, string>();
+
+            // Must have a valid lines array
+            if (lines == null || lines.Count == 0)
+            {
+                Debug.LogErrorFormat("ParseLocalized() lines input is null or empty.");
+                return false;
+            }
+
+            bool inQRC = false;
+            bool inQBN = false;
+            const string idCol = "id";
+            Table staticMessagesTable = QuestMachine.Instance.StaticMessagesTable;
+            for (int i = 0; i < lines.Count; i++)
+            {
+                // Trim white space from either end of source line data
+                string text = lines[i].Trim();
+
+                // Skip empty lines and comments
+                if (string.IsNullOrEmpty(text) || text.StartsWith("-", comparison))
+                    continue;
+
+                // Handle expected header values
+                if (text.StartsWith("quest:", comparison)) // Accepted but ignored
+                    continue;
+                else if (text.StartsWith("displayname:", comparison))
+                {
+                    displayName = GetFieldStringValue(text);
+                    continue;
+                }
+                else if (text.StartsWith("qrc:", comparison))
+                    inQRC = true;
+                else if (text.StartsWith("qbn:", comparison))
+                    inQBN = true;
+
+                // Don't try to read messages until QRC: section starts
+                // Everything else that follows in file must be message text.
+                if (!inQRC)
+                    continue;
+
+                // Ignore everything after QBN: section
+                // This really shouldn't be in localized quest sources at all, but can simply ignore rather than breaking execution
+                // It might appear if translator just copies and renames core quest sources for some reason
+                if (inQBN)
+                    continue;
+
+                // Check for start of message block
+                // Begins with field Message: (or fixed message type)
+                // Ignores any lines that cannot be split
+                string[] parts = SplitField(lines[i]);
+                if (parts == null || parts.Length == 0)
+                    continue;
+
+                // Read message lines
+                if (staticMessagesTable.HasValue(parts[0]))
+                {
+                    // Read ID of message
+                    int messageID = 0;
+
+                    if (parts[1].StartsWith("[") && parts[1].EndsWith("]"))
+                    {
+                        // Fixed message types use ID from table
+                        messageID = staticMessagesTable.GetInt(idCol, parts[0]);
+                        if (messageID == -1)
+                            throw new Exception(string.Format(parseIdError, staticMessagesTable.GetInt(idCol, parts[0])));
+                    }
+                    else
+                    {
+                        // Other messages use ID from message block header
+                        if (!int.TryParse(parts[1], out messageID))
+                            throw new Exception(string.Format(parseIdError, parts[1]));
+                    }
+
+                    // Keep reading message lines until empty line is found, indicating end of block
+                    string messageLines = string.Empty;
+                    while (true)
+                    {
+                        // Check for end of lines
+                        // This handles a case where final message block isn't terminated an empty line causing an overflow
+                        if (i + 1 >= lines.Count)
+                            break;
+
+                        // Read line
+                        string textLine = lines[++i].TrimEnd('\r');
+                        if (string.IsNullOrEmpty(textLine))
+                        {
+                            // Sometimes quest author will forget single space in front of an empty message line
+                            // Peek ahead to see if next line is really a new message header
+                            // Otherwise just treat this as a line break in message (add a single ' ' character)
+                            if (!PeekMessageEnd(lines, i))
+                            {
+                                messageLines += " " + "\n";
+                                continue;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            messageLines += textLine + "\n";
+                        }
+                    }
+
+                    // Trim trailing newline
+                    messageLines = messageLines.TrimEnd('\n');
+
+                    // Store message ID and lines to output dictionary
+                    messages.Add(messageID, messageLines);
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region Private Methods

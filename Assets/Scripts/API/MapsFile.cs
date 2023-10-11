@@ -1050,7 +1050,19 @@ namespace DaggerfallConnect.Arena2
             for (int i = 0; i < regions[region].DFRegion.LocationCount; i++)
             {
                 // Read map name data
-                regions[region].DFRegion.MapNames[i] = FileProxy.ReadCStringSkip(reader, 0, 32);
+                string mapName = FileProxy.ReadCStringSkip(reader, 0, 32);
+
+                // ReadCStringSkip reads to null terminator not stride length
+                // Some map names are exactly 32 bytes and do not have a null terminator
+                // Limit map name to 32 characters to prevent overflow to next name record
+                // There are only two locations with names of exactly 32 bytes in MAPS.BSA:
+                //  - "The Unfortunate Porcupine Hostel" in Bhoraine
+                //  - "The Feather and Barbarian Tavern" in Kambria
+                if (mapName.Length > 32)
+                    mapName = mapName.Substring(0, 32);
+
+                // Store map name in region structure
+                regions[region].DFRegion.MapNames[i] = mapName;
 
                 // Add to dictionary
                 if (!regions[region].DFRegion.MapNameLookup.ContainsKey(regions[region].DFRegion.MapNames[i]))

@@ -165,14 +165,14 @@ namespace DaggerfallWorkshop.Game.Guilds
         public virtual string GetAffiliation()
         {
             FactionFile.FactionData factionData;
-            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(GetFactionId(), out factionData))
+            if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(GetFactionId(), out factionData))
                 return factionData.name;
             return "unknown-guild";
         }
 
         public virtual string GetTitle()
         {
-            return IsMember() ? RankTitles[rank] : "Expelled";
+            return IsMember() ? RankTitles[rank] : GameManager.Instance.PlayerEntity.Name;
         }
 
         #endregion

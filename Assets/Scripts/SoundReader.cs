@@ -60,8 +60,8 @@ namespace DaggerfallWorkshop
         {
             const float divisor = 1.0f / 128.0f;
 
-            // Must be ready and have a valid input index
-            if (!ReadyCheck() || !soundFile.IsValidIndex(soundIndex))
+            // Must be ready
+            if (!ReadyCheck())
                 return null;
 
             // Look for clip in cache
@@ -78,6 +78,10 @@ namespace DaggerfallWorkshop
             }
             else
             {
+                // Must have a valid index
+                if (!soundFile.IsValidIndex(soundIndex))
+                    return null;
+
                 // Get sound data
                 DFSound dfSound;
                 if (!soundFile.GetSound(soundIndex, out dfSound))

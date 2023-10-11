@@ -113,6 +113,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(ClearCrimeCommitted.name, ClearCrimeCommitted.description, ClearCrimeCommitted.usage, ClearCrimeCommitted.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ClearNegativeLegalRep.name, ClearNegativeLegalRep.description, ClearNegativeLegalRep.usage, ClearNegativeLegalRep.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(RefreshBuildingNames.name, RefreshBuildingNames.description, RefreshBuildingNames.usage, RefreshBuildingNames.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(PrintQuests.name, PrintQuests.description, PrintQuests.usage, PrintQuests.Execute);
 
@@ -1700,7 +1701,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "add";
             public static readonly string description = "Adds n inventory items to the character, based on the given keyword. n = 1 by default";
-            public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig|soul|gold|magic|drug|map|torch|potion|painting) [n]";
+            public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig|soul|gold|magic|drug|map|torch|potion|recipe|painting) [n]";
 
             public static string Execute(params string[] args)
             {
@@ -1771,6 +1772,9 @@ namespace Wenzil.Console
                             break;
                         case "potion":
                             newItem = ItemBuilder.CreateRandomPotion();
+                            break;
+                        case "recipe":
+                            newItem = ItemBuilder.CreateRandomRecipe();
                             break;
                         case "painting":
                             newItem = ItemBuilder.CreateItem(ItemGroups.Paintings, (int)Paintings.Painting);
@@ -2615,6 +2619,19 @@ namespace Wenzil.Console
                 }
 
                 return output;
+            }
+        }
+
+        private static class RefreshBuildingNames
+        {
+            public static readonly string name = "refresh_buildingnames";
+            public static readonly string description = "Refresh discovered building names in current location. Used for testing localization and debugging stale discovery data.";
+            public static readonly string usage = "refresh_buildingnames";
+
+            public static string Execute(params string[] args)
+            {
+                GameManager.Instance.PlayerGPS.RefreshBuildingNamesInCurrentLocation();
+                return "Finished";
             }
         }
 

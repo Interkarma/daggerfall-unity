@@ -32,8 +32,8 @@ public class StringTablePatcher : ITablePostprocessor
             return;
 
         // Load table patch data (if present)
-        KeyValuePair<string, string>[] rows = StringTableCSVParser.Load(table.TableCollectionName);
-        if (rows == null || rows.Length == 0)
+        List<KeyValuePair<string, string>> rows = StringTableCSVParser.Load(table.TableCollectionName);
+        if (rows == null || rows.Count == 0)
             return;
 
         // Patch string table from patch data

@@ -581,7 +581,7 @@ namespace DaggerfallWorkshop.Game.Items
                 throw new Exception("CreateRegularMagicItem() failed to create an item.");
 
             // Replace the regular item name with the magic item name
-            newItem.shortName = magicItem.name;
+            newItem.shortName = TextManager.Instance.GetLocalizedMagicItemName((int)magicItem.index, magicItem.name);
 
             // Add the enchantments
             newItem.legacyMagic = new DaggerfallEnchantment[magicItem.enchantments.Length];
@@ -759,6 +759,13 @@ namespace DaggerfallWorkshop.Game.Items
             List<int> recipeKeys = GameManager.Instance.EntityEffectBroker.GetPotionRecipeKeys();
             int recipeIdx = UnityEngine.Random.Range(0, recipeKeys.Count);
             return CreatePotion(recipeKeys[recipeIdx]);
+        }
+
+        public static DaggerfallUnityItem CreateRandomRecipe(int stackSize = 1)
+        {
+            List<int> recipeKeys = GameManager.Instance.EntityEffectBroker.GetPotionRecipeKeys();
+            int recipeIdx = UnityEngine.Random.Range(0, recipeKeys.Count);
+            return new DaggerfallUnityItem(ItemGroups.MiscItems, 4) { PotionRecipeKey = recipeKeys[recipeIdx], stackCount = stackSize };
         }
 
         /// <summary>

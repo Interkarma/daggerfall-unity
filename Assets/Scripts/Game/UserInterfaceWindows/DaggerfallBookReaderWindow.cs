@@ -30,8 +30,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const string nativeImgName = "BOOK00I0.IMG";
         char newline = '\n';
 
-        Vector2 pagePanelPosition = new Vector2(55, 21);
-        Vector2 pagePanelSize = new Vector2(210, 159);
+        Vector2 pagePanelPositionClassic = new Vector2(10, 21);
+        Vector2 pagePanelSizeClassic = new Vector2(300, 159);
+        Vector2 pagePanelPositionSDF = new Vector2(40, 21);
+        Vector2 pagePanelSizeSDF = new Vector2(270, 159);
+        Vector2 pagePanelPosition = Vector2.zero;
+        Vector2 pagePanelSize = Vector2.zero;
 
         Texture2D nativeTexture;
         List<TextLabel> bookLabels = new List<TextLabel>();
@@ -59,10 +63,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Setup native panel background
             NativePanel.BackgroundTexture = nativeTexture;
 
+            // Use smaller margins for SDF book text and wider margins for non-SDF (classic pixel font) text
+            if (DaggerfallUnity.Settings.SDFFontRendering)
+            {
+                pagePanelPosition = pagePanelPositionSDF;
+                pagePanelSize = pagePanelSizeSDF;
+            }
+            else
+            {
+                pagePanelPosition = pagePanelPositionClassic;
+                pagePanelSize = pagePanelSizeClassic;
+            }
+
             // Setup panel to contain text labels
             pagePanel.Position = pagePanelPosition;
             pagePanel.Size = pagePanelSize;
             pagePanel.RectRestrictedRenderArea = new Rect(pagePanel.Position, pagePanel.Size);
+            pagePanel.HorizontalAlignment = HorizontalAlignment.Center;
             NativePanel.Components.Add(pagePanel);
 
             // Add buttons
@@ -137,6 +154,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void OpenBook(string filename)
         {
+            // Book filename cannot be null or empty
+            if (string.IsNullOrEmpty(filename))
+                return;
+
             // Open book file - localized book is first preference with fallback to classic book data from ARENA2 or mods
             LocalizedBook localizedBook = new LocalizedBook();
             if (localizedBook.OpenBookFile(filename))
@@ -263,6 +284,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ImageLabel label = new ImageLabel();
 
             // TODO: Seek book images from mods
+
+            // Image filename cannot be null or empty
+            if (string.IsNullOrEmpty(filename))
+                return label;
 
             // Get path to localized book file and check it exists
             string path = Path.Combine(Application.streamingAssetsPath, textFolderName, bookImagesPath, filename);

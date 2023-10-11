@@ -64,10 +64,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Properties & Data
 
-        static string[] rankTitles = {
-                "Aspirant", "Squire", "Gallant", "Chevalier", "Keeper", "Knight Brother", "Commander", "Marshall", "Seneschal", "Paladin"
-        };
-
         static List<DFCareer.Skills> guildSkills = new List<DFCareer.Skills>() {
                 DFCareer.Skills.Archery,
                 DFCareer.Skills.CriticalStrike,
@@ -78,7 +74,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.Medical,
             };
 
-        public override string[] RankTitles { get { return rankTitles; } }
+        public override string[] RankTitles { get { return TextManager.Instance.GetLocalizedTextList("knightlyOrderRanks"); } }
 
         public override List<DFCareer.Skills> GuildSkills { get { return guildSkills; } }
 
@@ -120,9 +116,9 @@ namespace DaggerfallWorkshop.Game.Guilds
         public override string GetTitle()
         {
             if (GameManager.Instance.PlayerEntity.Gender == Genders.Female && rank == 5)
-                return "Knight Sister";        // Not calling female chars 'Brother'!
+                return TextManager.Instance.GetLocalizedText("knightSister");        // Not calling female chars 'Brother'!
 
-            return IsMember() ? rankTitles[rank] : "non-member";
+            return IsMember() ? RankTitles[rank] : TextManager.Instance.GetLocalizedText("nonMember");
         }
 
         #endregion
@@ -156,7 +152,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 return true;
 
             FactionFile.FactionData factionData;
-            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(GetFactionId(), out factionData)
+            if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(GetFactionId(), out factionData)
                 && GameManager.Instance.PlayerGPS.CurrentLocation.RegionIndex == factionData.region)
                 return true;
 

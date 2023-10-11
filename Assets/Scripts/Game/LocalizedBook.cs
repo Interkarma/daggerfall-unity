@@ -71,6 +71,35 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Checks if a localized book file exists using ID.
+        /// </summary>
+        /// <param name="id">ID of book.</param>
+        /// <returns>True if localized book file exists for this ID.</returns>
+        public static bool Exists(int id)
+        {
+            return Exists(DaggerfallUnity.Instance.ItemHelper.GetBookFileName(id));
+        }
+
+        /// <summary>
+        /// Checks if a localized book file exists using book filename.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns>True if localized book file exists for this filename.</returns>
+        public static bool Exists(string filename)
+        {
+            // Append -LOC if missing from filename
+            string fileNoExt = Path.GetFileNameWithoutExtension(filename);
+            if (!fileNoExt.EndsWith(localizedFilenameSuffix))
+                filename = fileNoExt + localizedFilenameSuffix + fileExtension;
+
+            // TODO: Also seek localized book file from mods
+
+            // Get path to localized book file and check it exists
+            string path = Path.Combine(Application.streamingAssetsPath, textFolderName, booksFolderName, filename);
+            return File.Exists(path);
+        }
+
+        /// <summary>
         /// Opens a classic book file.
         /// Seeks classic book files from ARENA2 and mods.
         /// Formatting of classic books is unreliable and often broken in classic data.
@@ -80,6 +109,10 @@ namespace DaggerfallWorkshop.Game
         /// <returns>True if successful.</returns>
         public bool OpenClassicBookFile(string filename)
         {
+            // Book filename cannot be null or empty
+            if (string.IsNullOrEmpty(filename))
+                return false;
+
             // Try to open book
             BookFile bookFile = new BookFile();
             if (!BookReplacement.TryImportBook(filename, bookFile) &&
@@ -116,6 +149,10 @@ namespace DaggerfallWorkshop.Game
         /// <returns>True if successfull.</returns>
         public bool OpenLocalizedBookFile(string filename)
         {
+            // Book filename cannot be null or empty
+            if (string.IsNullOrEmpty(filename))
+                return false;
+
             // Append -LOC if missing from filename
             string fileNoExt = Path.GetFileNameWithoutExtension(filename);
             if (!fileNoExt.EndsWith(localizedFilenameSuffix))

@@ -247,7 +247,7 @@ Message:  1019
 Message:  1020
 %qdat:
  I am on the trail of the Slayer
- of ___bookstore_. %rt _qgiver_ wants
+ of ___bookstore_. The %rt wants
  the ___bookstore_ Slayer caught in =total_ days
  before the murders inflame the populace
  to riot. _qgiver_ has a scientist
@@ -397,7 +397,7 @@ Item _I.03_ letter used 1014
 -Item _I.04_ dead_body
 Item _reward_ gold
 Item _reward2_ trinket
-Item _I.08_ item class 26 subclass 3
+-Item _I.08_ item class 26 subclass 3
 Item _I.09_ item class 15 subclass 13
 
 Person _qgiver_ group Questor
@@ -418,7 +418,7 @@ Clock _total_ 3.00:00 0 flag 1 range 0 1
 Foe _murder_ is Vampire
 
 --	Quest start-up:
-	place item _I.08_ at _bookstore_ 
+-	place item _I.08_ at _bookstore_ 
 	dialog link for location _ripperhouse_ person _rippername_ 
 	dialog link for person _widow_ 
 	dialog link for person _vamp_ 
@@ -453,10 +453,6 @@ _S.03_ task:
 _vampclicked_ task:
 	clicked npc _vamp_ 
 
-_vampclearclick_ task:
-	when _vampclicked_ and not _S.00_
-	clear _vampclicked_ _vampclearclick_
-
 _qgclicked_ task:
 	clicked npc _qgiver_ 
 
@@ -485,18 +481,24 @@ _S.08_ task:
 	say 1026 
 
 _S.09_ task:
-	toting _I.03_ and _vamp_ clicked 
+	when _hasletter_ and _vampclicked_
 	add dialog for person _widow_ 
 	log 1023 step 3 
 	get item _I.09_ 
 	say 1015 
 
+variable _hasletter_
 _S.10_ task:
 	clicked npc _contact_ 
 	add dialog for person _vamp_ 
 	log 1021 step 1 
 	get item _I.03_
-	say 1010 
+	setvar _hasletter_
+	say 1010
+
+_vampclearclick_ task:
+	when _vampclicked_ and not _S.00_
+	clear _vampclicked_ _vampclearclick_
 
 _S.11_ task:
 	add dialog for person _vamp_ 

@@ -19,6 +19,8 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing.Actions;
 using DaggerfallWorkshop.Game.Serialization;
+using UnityEngine.Localization.Settings;
+using System.Globalization;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -59,6 +61,12 @@ namespace DaggerfallWorkshop.Game.Questing
         const string diseasesTableFileName = "Quests-Diseases";
         const string spellsTableFileName = "Quests-Spells";
 
+        // Localization
+        const string localizedFilenameSuffix = "-LOC";
+        const string fileExtension = ".txt";
+        const string textFolderName = "Text";
+        const string questsFolderName = "Quests";
+
         // Data tables
         Table globalVarsTable;
         Table staticMessagesTable;
@@ -84,6 +92,8 @@ namespace DaggerfallWorkshop.Game.Questing
 
         StaticNPC lastNPCClicked;
         Dictionary<int, IQuestAction> factionListeners = new Dictionary<int, IQuestAction>();
+
+        Dictionary<string, string> localizedQuestNames = new Dictionary<string, string>();
 
         System.Random internalSeed = new System.Random();
 
@@ -662,6 +672,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 Parser parser = new Parser();
                 Quest quest = parser.Parse(questSource, factionId, partialParse);
 
+                // Parse localized version of quest file (if present) and store display name in quest
+                if (ParseLocalizedQuestText(questName))
+                    quest.DisplayName = GetLocalizedQuestDisplayName(questName);
+
                 return quest;
             }
             catch (Exception ex)
@@ -1063,6 +1077,11 @@ namespace DaggerfallWorkshop.Game.Questing
             List<Person> assignedFound = new List<Person>();
             foreach (Quest quest in quests.Values)
             {
+                // Exclude completed quests from active person check
+                // This prevents completed/tombstoned quests from locking out NPC
+                if (quest.QuestComplete)
+                    continue;
+
                 QuestResource[] persons = quest.GetAllResources(typeof(Person));
                 if (persons == null || persons.Length == 0)
                     continue;
@@ -1563,6 +1582,26 @@ namespace DaggerfallWorkshop.Game.Questing
             storedExceptions.AddRange(exceptions);
         }
 
+        /// <summary>
+        /// Gets localized version of a quest display name.
+        /// Name is cached after first read for better performance.
+        /// </summary>
+        /// <param name="questName">Original name of quest. Do not append -LOC.</param>
+        /// <returns>Localized name of quest if found, otherwise string.Empty.</returns>
+        public string GetLocalizedQuestDisplayName(string questName)
+        {
+            // Remove ".txt" file extension from quest name if present
+            if (questName.EndsWith(fileExtension, false, CultureInfo.InvariantCulture))
+                questName = questName.Substring(0, questName.Length - fileExtension.Length);
+
+            // Return quest name if already parsed
+            if (localizedQuestNames.ContainsKey(questName))
+                return localizedQuestNames[questName];
+
+            // Try to parse and return name or empty string on failure
+            return ParseLocalizedQuestText(questName) ? localizedQuestNames[questName] : string.Empty;
+        }
+
         #endregion
 
         #region Private Methods
@@ -1584,6 +1623,88 @@ namespace DaggerfallWorkshop.Game.Questing
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Seeks a partial quest file from StreamingAssets/Text/Quests.
+        /// This file must be called "QuestName-LOC.txt", e.g. "M0B00Y16-LOC.txt".
+        /// Only header and text (QRC) parts of this file will be read. Any logic (QBN) parts will be ignored.
+        /// Returning false is not a fail state. By default no localized files exist in StreamingAssets/Text/Quests.
+        /// Check player log for error messages if localized quest text not displayed in-game.
+        /// </summary>
+        /// <param name="questName">Standard quest name, do NOT append -LOC here.</param>
+        /// <returns>True if localized text was loaded, otherwise false.</returns>
+        bool ParseLocalizedQuestText(string questName)
+        {
+            // Compose filename of localized quest
+            string filename = questName;
+            string fileNoExt = Path.GetFileNameWithoutExtension(filename);
+            if (!fileNoExt.EndsWith(localizedFilenameSuffix))
+                filename = fileNoExt + localizedFilenameSuffix + fileExtension;
+
+            // Do nothing if localized quest has previously been parsed
+            if (localizedQuestNames.ContainsKey(fileNoExt))
+                return true;
+
+            // TODO: Also seek localized quest file from mods
+
+            // Get path to localized quest file and check it exists
+            string path = Path.Combine(Application.streamingAssetsPath, textFolderName, questsFolderName, filename);
+            if (!File.Exists(path))
+                return false;
+
+            // Attempt to load file from StreamingAssets/Text/Quests
+            string[] lines = File.ReadAllLines(path);
+            if (lines == null || lines.Length == 0)
+                return false;
+
+            // Parse localized quest file
+            Parser parser = new Parser();
+            string displayName = string.Empty;
+            Dictionary<int, string> messages = null;
+            try
+            {
+                if (!parser.ParseLocalized(new List<string>(lines), out displayName, out messages))
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogErrorFormat("Parsing localized quest `{0}` FAILED!\r\n{1}", filename, ex.Message);
+            }
+
+            // Validate output
+            if (string.IsNullOrEmpty(displayName))
+            {
+                Debug.LogErrorFormat("Localized quest '{0}' has a null or empty DisplayName: value.", filename);
+                return false;
+            }
+            if (messages == null || messages.Count == 0)
+            {
+                Debug.LogErrorFormat("Localized quest '{0}' parsed no valid messages. Check source file is a valid format.", filename);
+                return false;
+            }
+
+            // Get string database
+            var stringTable = LocalizationSettings.StringDatabase.GetTable(TextManager.Instance.runtimeQuestsStrings);
+            if (stringTable == null)
+            {
+                Debug.LogErrorFormat("ParseLocalizedQuestText() failed to get string table `{0}`.", TextManager.Instance.runtimeQuestsStrings);
+                return false;
+            }
+
+            // Store localized messages to Internal_Quests string table
+            foreach(var item in messages)
+            {
+                string key = fileNoExt + "." + item.Key.ToString();
+                var targetEntry = stringTable.GetEntry(key);
+                if (targetEntry == null)
+                    stringTable.AddEntry(key, item.Value);
+            }
+
+            // Store localized display name
+            localizedQuestNames.Add(fileNoExt, displayName);
+
+            return true;
         }
 
         #endregion

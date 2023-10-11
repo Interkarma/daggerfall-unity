@@ -1017,23 +1017,38 @@ namespace DaggerfallWorkshop.Utility
                 // Female has flat2
                 flatData = FactionFile.GetFlatData(person.FactionData.flat2);
             }
-
-            // Create target GameObject
-            GameObject go = CreateDaggerfallBillboardGameObject(flatData.archive, flatData.record, parent);
-            go.name = string.Format("Quest NPC [{0}]", person.DisplayName);
-
-            // Set position and adjust up by half height if not inside a dungeon
+                        
             Vector3 dungeonBlockPosition = new Vector3(marker.dungeonX * RDBLayout.RDBSide, 0, marker.dungeonZ * RDBLayout.RDBSide);
-            go.transform.localPosition = dungeonBlockPosition + marker.flatPosition;
-            Billboard dfBillboard = go.GetComponent<Billboard>();
-            if (siteType != SiteTypes.Dungeon)
-                go.transform.localPosition += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+            Vector3 targetPosition = dungeonBlockPosition + marker.flatPosition;
+            Billboard dfBillboard;
+            bool inDungeon = siteType == SiteTypes.Dungeon;
 
-            // Align injected NPC with ground
-            GameObjectHelper.AlignBillboardToGround(dfBillboard.gameObject, dfBillboard.Summary.Size, 4);
+            // Import or create target GameObject
+            GameObject go = MeshReplacement.ImportCustomFlatGameobject(flatData.archive, flatData.record, targetPosition, parent, inDungeon);
+            if (go == null)
+            {
+                go = CreateDaggerfallBillboardGameObject(flatData.archive, flatData.record, parent);
+                go.name = string.Format("Quest NPC [{0}]", person.DisplayName);
 
-            // Add people data to billboard
-            dfBillboard.SetRMBPeopleData(person.FactionIndex, person.FactionData.flags);
+                // Set position and adjust up by half height if not inside a dungeon
+                go.transform.localPosition = targetPosition;
+                dfBillboard = go.GetComponent<Billboard>();
+                if (!inDungeon)
+                    go.transform.localPosition += new Vector3(0, dfBillboard.Summary.Size.y / 2, 0);
+
+                // Align injected NPC with ground
+                AlignBillboardToGround(go, dfBillboard.Summary.Size, 4);
+            }
+            else
+            {
+                dfBillboard = go.GetComponent<Billboard>();
+            }            
+            
+            if (dfBillboard != null)
+            {
+                // Add people data to billboard
+                dfBillboard.SetRMBPeopleData(person.FactionIndex, person.FactionData.flags);
+            }
 
             // Add QuestResourceBehaviour to GameObject
             QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();

@@ -29,10 +29,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Properties & Data
 
-        static string[] rankTitles = {
-                "Apprentice", "Journeyman", "Swordsman", "Protector", "Defender", "Warder", "Guardian", "Champion", "Warrior", "Master"
-        };
-
         static List<DFCareer.Skills> guildSkills = new List<DFCareer.Skills>() {
                 DFCareer.Skills.Archery,
                 DFCareer.Skills.Axe,
@@ -57,7 +53,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.Swimming
             };
 
-        public override string[] RankTitles { get { return rankTitles; } }
+        public override string[] RankTitles { get { return TextManager.Instance.GetLocalizedTextList("fightersRanks"); } }
 
         public override List<DFCareer.Skills> GuildSkills { get { return guildSkills; } }
 

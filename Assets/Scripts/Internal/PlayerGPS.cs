@@ -121,6 +121,15 @@ namespace DaggerfallWorkshop
             Animal = 64,
         }
 
+        /// <summary>
+        /// Data used when performing building name refresh.
+        /// </summary>
+        struct BuildingRenameOperation
+        {
+            public int buildingKey;
+            public string displayName;
+        };
+
         #endregion
 
         #region Properties
@@ -154,10 +163,24 @@ namespace DaggerfallWorkshop
         /// </summary>
         public int CurrentRegionIndex
         {
-            get { if (currentPoliticIndex == 64)
-                    return 31; // High Rock sea coast
+            get {
+                // Determine region from current politic index
+                int result = 0;
+                if (currentPoliticIndex == 64)
+                    result = 31; // High Rock sea coast
                   else
-                    return currentPoliticIndex - 128; }
+                    result = currentPoliticIndex - 128;
+
+                // Patch known bad value to Wrothgarian Mountains
+                if (result == 105)
+                    result = 16;
+
+                // Clamp any out of range results to 0
+                if (result < 0 || result >= 62)
+                    result = 0;
+
+                return result;
+            }
         }
 
         /// <summary>
@@ -1103,6 +1126,68 @@ namespace DaggerfallWorkshop
 
             discoveredBuilding.lastLockpickAttempt = skillValue;
             UpdateDiscoveredBuilding(discoveredBuilding);
+        }
+
+        /// <summary>
+        /// Refresh any changed non-residence building names in current location.
+        /// Allows localized or otherwise changed building names to replace previously discovered building names.
+        /// Will change names on buildings with a random NPC name.
+        /// Does not affect player custom names or other properties of discovery data other than display name.
+        /// </summary>
+        public void RefreshBuildingNamesInCurrentLocation()
+        {
+            // Must have a location loaded
+            if (!CurrentLocation.Loaded)
+                return;
+
+            // Get building directory for location
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (!buildingDirectory)
+                return;
+
+            // Get discovered location
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+            DiscoveredLocation dl = discoveredLocations[mapPixelID];
+            if (dl.discoveredBuildings == null || dl.discoveredBuildings.Count == 0)
+                return;
+
+            // Enumerate changed building names
+            List<BuildingRenameOperation> ops = new List<BuildingRenameOperation>();            
+            foreach (DiscoveredBuilding db in dl.discoveredBuildings.Values)
+            {
+                // Get detailed building data from directory
+                BuildingSummary buildingSummary;
+                if (!buildingDirectory.GetBuildingSummary(db.buildingKey, out buildingSummary))
+                    continue;
+
+                // Ignore residences
+                if (RMBLayout.IsResidence(buildingSummary.BuildingType))
+                    continue;
+
+                // Expand building name
+                string displayName = BuildingNames.GetName(
+                    buildingSummary.NameSeed,
+                    buildingSummary.BuildingType,
+                    buildingSummary.FactionId,
+                    buildingDirectory.LocationData.Name,
+                    TextManager.Instance.GetLocalizedRegionName(buildingDirectory.LocationData.RegionIndex));
+
+                // Schedule name change
+                if (!string.Equals(displayName, db.displayName))
+                    ops.Add(new BuildingRenameOperation() { buildingKey = buildingSummary.buildingKey, displayName = displayName });
+            }
+
+            // Update building names
+            foreach (BuildingRenameOperation op in ops)
+            {
+                DiscoveredBuilding discoveredBuilding;
+                if (!GetDiscoveredBuilding(op.buildingKey, out discoveredBuilding))
+                    return;
+
+                Debug.LogFormat("Renaming '{0}' to '{1}'", discoveredBuilding.displayName, op.displayName);
+                discoveredBuilding.displayName = op.displayName;
+                UpdateDiscoveredBuilding(discoveredBuilding);
+            }
         }
 
         /// <summary>

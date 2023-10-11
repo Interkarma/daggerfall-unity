@@ -1,0 +1,114 @@
+Title: Bourn in Wood, Part II
+Author: Lord Woodborne
+IsNaughty: False
+Price: 300
+IsUnique: False
+WhenVarSet: LiftedCurse
+Content:
+
+
+[/font=2]
+
+[/center]Bourn in Wood, Part II
+
+
+[/center]
+[/font=4]by Lord Woodborne
+
+[/center]
+
+[/center]
+
+ Now, my father was old before I was born. In fact on his deathbed, he was a wheezing, wizened husk of a man, who looked at me with a greenish drool on his mouth and his eyes, wondering who I was. My mother was sweet, young, and stupid. She loved us all, even me. When my brother Goriph died, she didn’t even suspect me, despite my lack of tears.
+
+ I did, of course, have another brother in the way of my inheritance. His name was Rothdam and I didn’t know him well. Like most lords of vast estates in Wayrest, he spent his time in either the courts of the capital or in the field of battle. When he’d come by, he was a glamorous figure: tall, handsome, kind, witty, polite, well-read. Of course, I never remember a moment when I hadn’t hated him.
+
+ Not that I saw much of him. At age thirteen, I was banished. Well, that makes it sounds more dramatic than it was. My father had finally died, and since the death of my brother, I was the heir apparent until my brother had children. If the worst happened, I needed some education and experience, so I was sent to my cousin in Daggerfall.
+
+ I’d tell you how we’re related, but it’s too boring. Like most Breton nobility, our mothers and fathers are third cousins already, interbred on both sides. Still, it’s how I met Prince Gothryd.
+
+ If I had never met the current King of Daggerfall, I’m not sure if I would done all the things I’ve done. Granted, I killed one brother out of annoyance over inheritance, but I was just a child then. And as Gothryd told me in one the earliest days of our two summers together, it was unlikely Rothdam would have an heir other than me.
+
+ “He likes boys, not girls,” Gothryd, who was also twelve at the time, told me while we were walking through a field after our tutoring session.
+
+ “How do you know?” I asked.
+
+ “Everyone at court knows,” he replied in his typically supercilious way. Obviously, the implication was that I, a yokel from a far off unimportant part of High Rock wouldn’t know what was being discussed by the elite. I didn’t mind the subtle jab. It was information I was looking for.
+
+ “So he won’t have children,” I must have said aloud.
+
+ Gothryd laughed. “Good, you’re figuring it out. He may be married for political reasons, but he won’t breed, and you will be his heir. Probably sooner than later, if he dies in battle.”
+
+ “I don’t want him to die,” I lied.
+
+ “Good,” said the prince without missing a beat, though I suspect he knew my mind more than I did. “I know a guy named Tharn who can help us. He is close to the emperor, basically his protector. I’ll talk to him about how to keep your brother … safe from harm.”
+
+ “The Imperial Battle Mage Jagar Tharn?” I asked. “I heard he and his apprentice disappeared five years ago.”
+
+ “He’s deep undercover,” Gothryd smirked. “But more influential than ever.”
+
+ I thought about this for a while, as we skirted the edge of river filled with eels and perfumed with sweet jasmine, and then ascended to a hillock overlooking the capital of Gothryd’s future kingdom. Unlike mine, his inheritance was never in doubt.
+
+ “What will Tharn want in return?” I finally asked.
+
+ “Simple allegiance to the Empire,” Gothryd replied, not looking me in the eyes. “By any emperor.”
+
+ I agreed to those term and later obviously, I came to learn what he meant. This battlemage Jagar Tharn was impersonating the Emperor and ruled from the Imperial throne for many years. That was the only conversation we had on that topic in that first summer.
+
+ When I returned home, Woodborne Hall was in a state of ecstatic disarray. Servants running everywhere, and dear, simple mother in tears of pride. Rothdam, Lord Woodborne had been summoned to the city of Torval in southern Elsweyr by order of Emperor Uriel Septim VII. He was to be an official Imperial emissary to the Mane and King Mojtabe. A very great honor.
+
+ And it was. For months, we received letters from Torval, filled with details about the strange, beautiful land and the customs of the Khajiit. Rothdam would touch on diplomatic details lightly, as it was all top secret stuff, but it was evident despite his modesty that he had become a great favorite with both the king and Mane.
+
+ The letters stopped in wintertide the following year. And then we received word about the Slaughter Of Torval, a surprise attack from Valenwood which left thousands dead. Including my brother.
+
+ I was now Lord Woodborne, at age 14. Everyone was in a state of shock but me. It smelled of a trap set up by Gothryd’s friend Tharn from the start, but I certainly knew well enough how to fake grief and take the inheritance with great sobriety.
+
+ It was in a similar vein that I attended my initiation into the Knights of the Rose that summer. As third son of a minor nobleman, I had never been invited to the court of King Eadwyre before. Compared to Woodborne Hall, with its practical ugliness, Castle Wayrest struck me as the pinnacle of opulence. Immediately, I coveted it for my home someday, though of course I had no idea then how to make that dream a reality.
+
+ I was one of several young nobles of Wayrest receiving their investiture and initiation on that day, and the royal retinue did not disappoint with the pomp. White roses were in abundance, their scent redolent in the warm summer air. Lord Darkworth, the head of the Knights of the Rose, greeted us formally and led us in procession up the preposterously long stairs to the throne room. That’s where I saw one familiar face, Prince Gothryd, as part of a contingency representing Daggerfall. Everyone else was new to me, but I came to know them well in the years that followed.
+
+ King Eadwyre stood in the center, of course, in full regalia. A slightly stout middle-aged man who regarded the new members of the knightly order dedicated to his service with a resigned scowl. To his right side was his new queen, the dark elf Barenziah of Morrowind, whose black jewel encrusted gown matched her flesh and hair, making her look like a shimmering shadow. To his left, a fat-faced little girl with uncombed blond hair who when I laid my eyes on her, stuck out her tongue at me. That was Eadwyre’s heir, his only child by his late wife Carolyna, and in ten years’ time, we were bethrothed to be wed. Insane.
+
+ Princess Morgiah, Barenziah’s daughter from her own previous marriage, also failed to impress me. I suppose I could be sympathetic to her past, having recently lost her father and her life in Mournhold, but pity is not in my nature. She struck me as an insecure girl, not yet a woman, unsure of herself and her place in the world. Her brother Prince Helseth by contrast seemed to be overcompensating. His chest puffed out, red eyes glaring defiantly, as if this were the beginning of a battle, not a peaceful ceremony.
+
+ Prince Gothryd, of course, had a prominent place on the dais, better than that of other more minor diplomats and emissaries representing lesser principalities, dukedoms, and baronies of High Rock. He gave me a self-satisfied half smile.
+
+ No need to bore the reader with any other details of the ceremony or the banquet that followed. Most social interchanges were perfunctory: a greeting, a bow, a few words to explain who in blazes someone was and why you should care. Conversations like bubbles that popped and were gone and forgotten.
+
+ Lord Mogref of Betony, for example, was present, as insignificant a man as the island he was representing, making jokes about trouble with piracy in his region. His tune was to change before a few years had passed. He only made an impression in retrospect, as his little problem brought two great nations to war.
+
+ It was my introduction to society after all and I was a stranger, a fact made clear whenever I tried to enter any conversation that seemed interesting. I would hear enough of a whispered discussion about politics and policy to want to learn more, but the moment I stepped up, it would become about fashion or the pleasantness of the weather. What I noticed, however, was the same caution was not done around the servants who waited on the gathered nobles. They didn’t even look into the faces of the valets and maids who brought them drinks, but continued on as if they were invisible. I, however, did look at their faces and noticed something interesting.
+
+ The servants were listening in and exchanging looks one to another. Even more intriguing, they were wordlessly communicating across political lines. A wench giving a drink to a member of the royal family would meet the eyes of a manservant discreetly brushing the dandruff off the shoulders of a dandy representing Camlorn. There was a network at play. A game of espionage. It was an immediate epiphany to me, a realization of how to create a spy network, and I resolved to begin to form one immediately.
+
+ In contrast to the subtlety of the servant spy network, which I came to learn later was part of the Emperor’s Blades (with a few of the Underking’s minions in attendance), was a very blunt exchange I had with Prince Gothryd at the end of the evening.
+
+ It was the end of the banquet and people were saying their goodbyes. As I had no one particularly to say goodbye to, I stepped out onto a balcony to take in the view from the palace I wanted to possess. I had only been there for a moment, admiring the architecture of my future home, when I heard someone clear their throat behind me. It was Gothryd.
+
+ “How did you enjoy your first time in court, my lord?” the Prince grinned.
+
+ “Not very much, thank you, your highness,” I replied, returning an equally insincere smile. “I was surprised to see you gracing us with your presence. I wouldn’t have thought Daggerfall would send anyone to acknowledge investiture of its rival Wayrest, let alone the future king. Was it to see me?”
+
+ “Don’t be tiresome,” Gothryd grumbled. “And don’t try to be charming. It doesn’t suit you. If you’re up for advice.”
+
+ “Always,” I replied, turning back to the view. “Any more free advice?”
+
+ “Yes,” he said. “You don’t need to thank servants, but you do need to thank your social superiors when they deign to help you. I helped you to kill your brother, and that was a mighty fine favor or you wouldn’t be here now.”
+
+ I’m glad to this day that I wasn’t facing him, because I’m sure my face would have betrayed me. At that instant, I thought he was talking about my middle brother Goriph, who I did indeed kill. How could he know that? He couldn’t. He must have been talking about Rothdam.
+
+ “I beg your pardon, your highness,” I said, turning around, my face emotionless. “You must be mistaking me for one of those wood elves who stormed Torval and slaughtered everyone including Rothdam. I assure you, at the moment my brother was stabbed forty times in the chest, head, and buttocks in southern Elsweyr, I was screwing a Nord girl who used to fancy him but gave up because he liked boys, and that fornication took place here in High Rock.”
+
+ Like I’ve said, I’m a liar, but that was literally true.
+
+ Gothryd, however, was not impressed with my defense. He took a step forward so we were practically nose to nose. There was a dangerous gleam in his eyes.
+
+ “Do you think is a court of law?” he asked angrily. “When I ask for ham for breakfast, I am killing the pig. I may not be taking an axe to it myself, but I know I am responsible. Own the murder you have asked to be committed on your behalf, boy.”
+
+ I remember that I only was offended by him calling me “boy,” since we were both 14.
+
+ “Very well,” I replied coolly. “Thank you for helping me kill my brother so I could inherit everything.”
+
+ Gothryd immediately relaxed, and we spent several minutes as old chums, trading jokes, most of them pretty dirty. We had established something, an understanding of sorts.
+
+ So with that in mind, I can say I killed his father King Lysandus. But more on that in the next chapter.

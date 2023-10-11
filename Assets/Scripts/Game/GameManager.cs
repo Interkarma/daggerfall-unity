@@ -625,6 +625,12 @@ namespace DaggerfallWorkshop.Game
                     DaggerfallUI.Instance.DaggerfallHUD.Enabled = true;
                     hudDisabledByPause = false;
                 }
+
+                // IME composition will break game input if still enabled once UI exits or game unpaused
+                // All windows that use IME restore composition state OnPop, but this tries to soft recover from
+                // cases where UI might have crashed or window failed to restore IME state on close
+                if (Input.imeCompositionMode == IMECompositionMode.On)
+                    Input.imeCompositionMode = IMECompositionMode.Auto;
             }
         }
 
@@ -944,7 +950,7 @@ namespace DaggerfallWorkshop.Game
 
             // Game not active when top window is neither null or HUD
             IUserInterfaceWindow topWindow = DaggerfallUI.UIManager.TopWindow;
-            if (topWindow != null && !(topWindow is DaggerfallHUD))
+            if (topWindow != null && !(topWindow is DaggerfallHUD) && topWindow.PauseWhileOpen)
                 return false;
 
             return true;

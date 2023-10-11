@@ -165,6 +165,7 @@ namespace DaggerfallWorkshop.Game.Player
             if (factionDict.ContainsKey(factionID))
             {
                 factionDataOut = factionDict[factionID];
+                factionDataOut.name = TextManager.Instance.GetLocalizedFactionName(factionID, factionDataOut.name);
                 return true;
             }
 
@@ -297,10 +298,11 @@ namespace DaggerfallWorkshop.Game.Player
         /// <returns>Faction name if name found, otherwise an empty string.</returns>
         public string GetFactionName(int id)
         {
+            string name = string.Empty;
             if (factionDict.ContainsKey(id))
-                return factionDict[id].name;
+                name = factionDict[id].name;
 
-            return string.Empty;
+            return TextManager.Instance.GetLocalizedFactionName(id, name);
         }
 
         /// <summary>

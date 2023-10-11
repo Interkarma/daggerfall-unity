@@ -227,7 +227,7 @@ _S.09_ task:
 
 variable _S.10_
 _S.11_ task:
-	when _S.10_ and _accompany_ 
+	when _S.10_ and _accompany_ and not _goout_
 	create foe _monster2_ every 7 minutes 10 times with 20% success 
 	create foe _monster1_ every 5 minutes 10 times with 20% success 
 

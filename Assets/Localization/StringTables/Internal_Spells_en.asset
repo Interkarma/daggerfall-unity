@@ -1,0 +1,374 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Internal_Spells_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: d052c1b9466606e47ad51ffaf80dec95, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 6371669438464
+    m_Localized: Fenrik's Door Jam
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438465
+    m_Localized: Buoyancy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438466
+    m_Localized: Frostbite
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438467
+    m_Localized: Levitate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438468
+    m_Localized: Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438469
+    m_Localized: Invisibility
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438470
+    m_Localized: Wizard's Fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438471
+    m_Localized: Shock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438472
+    m_Localized: Strength Leech
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438473
+    m_Localized: Free Action
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438474
+    m_Localized: Resist Cold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438475
+    m_Localized: Resist Fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438476
+    m_Localized: Resist Shock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438477
+    m_Localized: Fireball
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438478
+    m_Localized: Cure Poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438479
+    m_Localized: Ice Bolt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438480
+    m_Localized: Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438481
+    m_Localized: Open
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438482
+    m_Localized: Wizard Lock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438483
+    m_Localized: Ice Storm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438484
+    m_Localized: Spell Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438485
+    m_Localized: Silence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438486
+    m_Localized: Troll's Blood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438487
+    m_Localized: Fire Storm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438488
+    m_Localized: Resist Poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438489
+    m_Localized: Spell Drain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438490
+    m_Localized: Far Silence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438491
+    m_Localized: Toxic Cloud
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438492
+    m_Localized: Shalidor's Mirror
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438493
+    m_Localized: Lightning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438494
+    m_Localized: Gods' Fire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438495
+    m_Localized: Wildfire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438496
+    m_Localized: Wizard Rend
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438497
+    m_Localized: Medusa's Gaze
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438498
+    m_Localized: Force Bolt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438499
+    m_Localized: Slowfalling
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438500
+    m_Localized: Jumping
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438501
+    m_Localized: Spell Resistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438502
+    m_Localized: Stamina
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438503
+    m_Localized: Water Walking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438504
+    m_Localized: Water Breathing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438505
+    m_Localized: Chameleon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438506
+    m_Localized: Shadow Form
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438507
+    m_Localized: Spell Reflection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438508
+    m_Localized: Spell Absorption
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438509
+    m_Localized: Tongues
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438510
+    m_Localized: Paralysis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438511
+    m_Localized: Sleep
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438512
+    m_Localized: Vampiric Touch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438513
+    m_Localized: Hand of Sleep
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438514
+    m_Localized: Magicka Leech
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438515
+    m_Localized: Sphere of Negation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438516
+    m_Localized: Hand of Decay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438517
+    m_Localized: Banish Daedra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438518
+    m_Localized: Holy Word
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438519
+    m_Localized: Null Magicka
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438520
+    m_Localized: Balyna's Antidote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438521
+    m_Localized: Cure Disease
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438522
+    m_Localized: Soul Trap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438523
+    m_Localized: Heal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438524
+    m_Localized: Spider Touch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438525
+    m_Localized: Energy Leech
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438526
+    m_Localized: Nux Vomica
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438527
+    m_Localized: Arsenic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438528
+    m_Localized: Moonseed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438529
+    m_Localized: Drothweed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438530
+    m_Localized: Somnalius
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438531
+    m_Localized: Pyrrhic Acid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438532
+    m_Localized: Magebane
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438533
+    m_Localized: Thyrwort
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438534
+    m_Localized: Indulcet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438535
+    m_Localized: Sursum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438536
+    m_Localized: Quaesto Vil
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438537
+    m_Localized: Orc Strength
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438538
+    m_Localized: Wisdom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438539
+    m_Localized: Iron Will
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438540
+    m_Localized: Nimbleness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438541
+    m_Localized: Feet of Notorgo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438542
+    m_Localized: Fortitude
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438543
+    m_Localized: Charisma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438544
+    m_Localized: Jack of Trades
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438545
+    m_Localized: Charm Mortal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438546
+    m_Localized: Calm Humanoid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438547
+    m_Localized: Lycanthropy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438548
+    m_Localized: Recall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438549
+    m_Localized: Balyna's Balm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438550
+    m_Localized: Quiet Undead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6371669438551
+    m_Localized: Tame
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1
