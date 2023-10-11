@@ -251,7 +251,8 @@ namespace DaggerfallWorkshop.Game.Items
                     foreach (PotionRecipe.Ingredient ingredient in potionRecipe.Ingredients)
                     {
                         ItemTemplate ingredientTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ingredient.id);
-                        ingredientsTokens.Add(TextFile.CreateTextToken(ingredientTemplate.name));
+                        string ingredientName = TextManager.Instance.GetLocalizedItemName(ingredientTemplate.index, ingredientTemplate.name);
+                        ingredientsTokens.Add(TextFile.CreateTextToken(ingredientName));
                         ingredientsTokens.Add(TextFile.CreateFormatToken(format));
                     }
                 }
