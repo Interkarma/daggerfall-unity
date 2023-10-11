@@ -1,0 +1,13 @@
+Key,Value
+about,This CSV provides text records for the example custom spell MageLight.
+groupName,Mage Light
+subGroupNames,"Inferno
+Rime
+Venom
+Storm
+Arcane"
+effectDescription,Creates a soft light around caster.
+durationSpellMaker,Duration: Rounds you will be illuminated.
+durationSpellBook,Duration: %bdr + %adr per %cld level(s)
+chance,Chance: N/A
+magnitude,Magnitude: N/A
