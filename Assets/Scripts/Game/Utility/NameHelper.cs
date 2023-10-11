@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
@@ -25,6 +26,8 @@ namespace DaggerfallWorkshop.Game.Utility
         #region Fields
 
         const string nameGenFilename = "NameGen";
+        const string textString = "Text";
+        const string txtExt = ".txt";
 
         Dictionary<BankTypes, NameBank> bankDict = null;
 
@@ -370,12 +373,21 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             try
             {
-                TextAsset nameGenText = Resources.Load<TextAsset>(nameGenFilename) as TextAsset;
-                bankDict = SaveLoadManager.Deserialize(typeof(Dictionary<BankTypes, NameBank>), nameGenText.text) as Dictionary<BankTypes, NameBank>;
+                // Load default NameGen asset from Resources
+                TextAsset nameGenAsset = Resources.Load<TextAsset>(nameGenFilename) as TextAsset;
+                string nameGenText = nameGenAsset.text;
+
+                // Look for a replacement NameGen file from StreamingAssets/Text
+                string streamingPath = Path.Combine(Application.streamingAssetsPath, textString, nameGenFilename + txtExt);
+                if (File.Exists(streamingPath))
+                    nameGenText = File.ReadAllText(streamingPath);
+
+                // Deserialize into namebank dictionary
+                bankDict = SaveLoadManager.Deserialize(typeof(Dictionary<BankTypes, NameBank>), nameGenText) as Dictionary<BankTypes, NameBank>;
             }
             catch
             {
-                Debug.Log("Could not load NameGen database from Resources. Check file exists and is in correct format.");
+                Debug.Log("Could not load or deserialize NameGen.txt database from StreamingAssets/Text or internal Resources. Check file exists and is in correct format.");
             }
         }
 
