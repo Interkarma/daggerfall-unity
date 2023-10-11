@@ -76,7 +76,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Random name button
             randomNameButton = DaggerfallUI.AddButton(new Rect(279, 3, 36, 10), NativePanel);
-            randomNameButton.Label.Text = "Random";
+            randomNameButton.Label.Text = TextManager.Instance.GetLocalizedText("random");
             randomNameButton.Label.ShadowColor = Color.black;
             randomNameButton.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
             randomNameButton.OnMouseClick += RandomNameButton_OnMouseClick;
