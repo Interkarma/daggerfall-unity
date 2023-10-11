@@ -195,7 +195,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             myLight = go.AddComponent<Light>();
             myLight.type = LightType.Point;
             myLight.color = variantProperties[currentVariant].effectColor;
-            myLight.range = 14;
+            myLight.range = 18.0f;
+            myLight.intensity = 1.1f;
         }
 
         void EndLight()
