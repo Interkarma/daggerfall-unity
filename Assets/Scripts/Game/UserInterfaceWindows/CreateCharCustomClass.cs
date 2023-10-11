@@ -230,7 +230,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hitPointsUpButton.OnMouseClick += HitPointsUpButton_OnMouseClick;
             hitPointsUpButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
             hitPointsDownButton = DaggerfallUI.AddButton(hitPointsDownButtonRect, NativePanel);
-            hitPointsDownButton.OnMouseUp += HitPointsDownButton_OnMouseClick;
+            hitPointsDownButton.OnMouseClick += HitPointsDownButton_OnMouseClick;
             hitPointsDownButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
 
             // Help topics
