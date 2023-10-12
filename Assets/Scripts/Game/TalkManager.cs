@@ -3696,6 +3696,7 @@ namespace DaggerfallWorkshop.Game
                     catch (Exception ex)
                     {
                         output = string.Format("Command failed. ID {0} is not a talk string.", id);
+                        Debug.LogFormat("talk_print exception: {0}", ex.Message);
                     }
 
                     return output;
