@@ -3951,6 +3951,10 @@ MonoBehaviour:
     m_Key: nordSurnameImmutableSuffix
     m_Metadata:
       m_Items: []
+  - m_Id: 403338205247041536
+    m_Key: confirmDefaultControls
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

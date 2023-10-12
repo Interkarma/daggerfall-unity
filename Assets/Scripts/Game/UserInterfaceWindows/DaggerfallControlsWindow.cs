@@ -52,7 +52,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         string[] actions = Enum.GetNames(typeof(InputManager.Actions));
         const string nativeTextureName = "CNFG00I0.IMG";
         const string mLookAltTextureName = "CNFG00I1.IMG";
-        const string confirmDefaults = "Are you sure you want to set default controls?";
         bool waitingForInput = false;
         bool doUpdateKeybinds = true;
 
@@ -303,6 +302,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (waitingForInput)
                 return;
 
+            string confirmDefaults = TextManager.Instance.GetLocalizedText("confirmDefaultControls");
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             DaggerfallMessageBox confirmDefaultsBox = new DaggerfallMessageBox(uiManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, confirmDefaults, this);
             confirmDefaultsBox.OnButtonClick += ConfirmDefaultsBox_OnButtonClick;

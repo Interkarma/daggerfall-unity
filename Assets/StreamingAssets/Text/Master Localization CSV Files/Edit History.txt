@@ -38,3 +38,4 @@ Internal_Strings
 ------
 Internal_Strings
 * Add nordSurnameImmutableSuffix "sen" > appended manually to every random nord surname.
+* Add confirmDefaultControls > "Are you sure you want to set default controls?"
