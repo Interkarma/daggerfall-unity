@@ -2763,7 +2763,7 @@ namespace DaggerfallWorkshop.Game
                                 buildingSummary.NameSeed,
                                 buildingSummary.BuildingType,
                                 buildingSummary.FactionId,
-                                location.Name,
+                                TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name),
                                 TextManager.Instance.GetLocalizedRegionName(location.RegionIndex));
                             item.buildingKey = buildingSummary.buildingKey;
                             // Compute building position in map coordinate system
@@ -2828,7 +2828,12 @@ namespace DaggerfallWorkshop.Game
                                         {
                                             npc = npcData2,
                                             socialGroup = socialGroup,
-                                            buildingName = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName)
+                                            buildingName = BuildingNames.GetName(
+                                                buildingSummary.NameSeed,
+                                                buildingSummary.BuildingType,
+                                                buildingSummary.FactionId,
+                                                TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name),
+                                                TextManager.Instance.GetLocalizedRegionName(location.RegionIndex))
                                         };
 
                                         if (!RMBLayout.IsNamedBuilding(buildingSummary.BuildingType))
