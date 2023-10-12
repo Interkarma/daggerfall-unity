@@ -243,7 +243,7 @@ namespace DaggerfallWorkshop.Game.Utility
             index = DFRandom.rand() % (uint)partsB.Length;
             string stringB = partsB[index];
 
-            return stringA + stringB + "sen";
+            return stringA + stringB + TextManager.Instance.GetLocalizedText("nordSurnameImmutableSuffix");
         }
 
         // Gets random Redguard name which follows 0+1+2+3(75%) (male), 0+1+2+4 (female) pattern

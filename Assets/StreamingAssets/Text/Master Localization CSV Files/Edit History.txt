@@ -33,3 +33,8 @@ NOTE: Possible issue with Unity CSV export. Need to check this anytime Internal_
 Internal_Strings
 * Localize action type 12 answers (e.g. "yes" guard in Daggerfall Castle, "shutup" banner in Shedungent.
 * Localize "Random" button text when naming character during creation process.
+
+0.16.2
+------
+Internal_Strings
+* Add nordSurnameImmutableSuffix "sen" > appended manually to every random nord surname.
