@@ -14,12 +14,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 
 
@@ -31,6 +26,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     public class DaggerfallControlsWindow : DaggerfallPopupWindow
     {
         #region Fields
+
+        const string textTable = "GameSettings";
 
         Texture2D nativeTexture;
         Texture2D mLookAltTexture;
@@ -139,7 +136,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             currentBindingsButton.Label.ShadowPosition = Vector2.zero;
             currentBindingsButton.Outline.Enabled = true;
             currentBindingsButton.OnMouseClick += CurrentBindingsButton_OnMouseClick;
-            currentBindingsButton.Label.Text = ControlsConfigManager.Instance.UsingPrimary ? "Primary" : "Secondary";
+            currentBindingsButton.Label.Text = ControlsConfigManager.Instance.UsingPrimary ? GetText("primary") : GetText("secondary");
 
             ControlsConfigManager.Instance.ResetUnsavedKeybinds();
             DaggerfallJoystickControlsWindow.ResetUnsavedSettings();
@@ -252,7 +249,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupKeybindButtons(lookKeys, 32, 36, 269, 102, false);
             SetupKeybindButtons(uiKeys, 36, 40, 269, 147, false);
 
-            currentBindingsButton.Label.Text = ControlsConfigManager.Instance.UsingPrimary ? "Primary" : "Secondary";
+            currentBindingsButton.Label.Text = ControlsConfigManager.Instance.UsingPrimary ? GetText("primary") : GetText("secondary");
 
             CheckDuplicates();
         }
@@ -424,6 +421,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 button.Label.Text = currentLabel;
             }
+        }
+
+        private static string GetText(string key)
+        {
+            return TextManager.Instance.GetText(textTable, key);
         }
 
         #endregion

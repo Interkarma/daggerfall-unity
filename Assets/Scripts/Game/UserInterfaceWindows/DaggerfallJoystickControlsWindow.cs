@@ -14,13 +14,8 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -31,6 +26,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region Fields
 
+        const string textTable = "GameSettings";
+
+        // These are key name for bindings - do not translate
         const string rightClickString = "Right-Click";
         const string middleClickString = "Middle-Click";
         const string leftClickString = "Left-Click";
@@ -127,46 +125,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel = new TextLabel();
             titleLabel.ShadowPosition = Vector2.zero;
             titleLabel.Position = new Vector2(4, 4);
-            titleLabel.Text = "Configure Joystick Controls";
+            titleLabel.Text = GetText("configureJoystickControls");
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.Components.Add(titleLabel);
 
             // Continue button
-            continueButton.Label.Text = "CONTINUE";
+            continueButton.Label.Text = GetText("continue");
             continueButton.Size = new Vector2(80, 10);
             continueButton.HorizontalAlignment = HorizontalAlignment.Right;
             continueButton.VerticalAlignment = VerticalAlignment.Bottom;
             SetBackground(continueButton, continueButtonBackgroundColor, "joystickControlsContinueButtonBackgroundColor");
             mainPanel.Components.Add(continueButton);
 
-            enableControllerCheckbox = AddOption(20, 20, "Enable Controller", DaggerfallUnity.Settings.EnableController);
+            enableControllerCheckbox = AddOption(20, 20, GetText("enableController"), DaggerfallUnity.Settings.EnableController);
             enableControllerCheckbox.OnToggleState += EnableControllerCheckbox_OnToggleState;
 
             // keybind buttons
             SetupAxisKeybindButton(movementHorizontalAxisKeybindButton, InputManager.AxisActions.MovementHorizontal, 20, 40);
-            invertMovementHorizontalCheckbox =  AddOption(63, 60, "Invert", InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.MovementHorizontal));
+            invertMovementHorizontalCheckbox =  AddOption(63, 60, GetText("invert"), InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.MovementHorizontal));
             
             SetupAxisKeybindButton(movementVerticalAxisKeybindButton,   InputManager.AxisActions.MovementVertical, 20, 80);
-            invertMovementVerticalCheckbox =    AddOption(63, 100, "Invert", InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.MovementVertical));
+            invertMovementVerticalCheckbox =    AddOption(63, 100, GetText("invert"), InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.MovementVertical));
             
             SetupAxisKeybindButton(lookHorizontalAxisKeybindButton,     InputManager.AxisActions.CameraHorizontal, 115, 40);
-            invertLookHorizontalCheckbox =      AddOption(158, 60, "Invert", InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.CameraHorizontal));
+            invertLookHorizontalCheckbox =      AddOption(158, 60, GetText("invert"), InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.CameraHorizontal));
 
             SetupAxisKeybindButton(lookVerticalAxisKeybindButton,       InputManager.AxisActions.CameraVertical, 115, 80);
-            invertLookVerticalCheckbox =        AddOption(158, 100, "Invert", InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.CameraVertical));
+            invertLookVerticalCheckbox =        AddOption(158, 100, GetText("invert"), InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.CameraVertical));
 
             SetupUIKeybindButton(leftClickKeybindButton, leftClickString, 210, 40);
             SetupUIKeybindButton(middleClickKeybindButton, middleClickString, 210, 60);
             SetupUIKeybindButton(rightClickKeybindButton, rightClickString, 210, 80);
             SetupUIKeybindButton(backKeybindButton, backString, 210, 100);
 
-            joystickCameraSensitivitySlider = CreateSlider("Look Sensitivity", 15, 120, 0.1f, 4.0f, DaggerfallUnity.Settings.JoystickLookSensitivity);
+            joystickCameraSensitivitySlider = CreateSlider(GetText("lookSensitivity"), 15, 120, 0.1f, 4.0f, DaggerfallUnity.Settings.JoystickLookSensitivity);
 
-            joystickUIMouseSensitivitySlider = CreateSlider("UI Mouse Sensitivity", 115, 120, 0.1f, 5.0f, DaggerfallUnity.Settings.JoystickCursorSensitivity);
+            joystickUIMouseSensitivitySlider = CreateSlider(GetText("uiMouseSensitivity"), 115, 120, 0.1f, 5.0f, DaggerfallUnity.Settings.JoystickCursorSensitivity);
 
-            joystickMovementThresholdSlider = CreateSlider("Maximum Movement Threshold", 215, 120, 0.0f, 1.0f, DaggerfallUnity.Settings.JoystickMovementThreshold);
+            joystickMovementThresholdSlider = CreateSlider(GetText("maximumMovementThreshold"), 215, 120, 0.0f, 1.0f, DaggerfallUnity.Settings.JoystickMovementThreshold);
 
-            joystickDeadzoneSlider = CreateSlider("Deadzone", 15, 140, 0.0f, 0.9f, DaggerfallUnity.Settings.JoystickDeadzone);
+            joystickDeadzoneSlider = CreateSlider(GetText("deadzone"), 15, 140, 0.0f, 0.9f, DaggerfallUnity.Settings.JoystickDeadzone);
 
             continueButton.OnMouseClick += ContinueButton_OnMouseClick;
         }
@@ -295,10 +293,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             label.VerticalAlignment = VerticalAlignment.Middle;
             label.ShadowPosition = Vector2.zero;
 
-            label.Text =    action ==  InputManager.AxisActions.MovementHorizontal.ToString() ? "Movement H."
-                            : action == InputManager.AxisActions.MovementVertical.ToString() ? "Movement V."
-                            : action == InputManager.AxisActions.CameraHorizontal.ToString() ? "Camera H."
-                            : action == InputManager.AxisActions.CameraVertical.ToString() ? "Camera V."
+            label.Text =    action ==  InputManager.AxisActions.MovementHorizontal.ToString() ? GetText("movementH")
+                            : action == InputManager.AxisActions.MovementVertical.ToString() ? GetText("movementV")
+                            : action == InputManager.AxisActions.CameraHorizontal.ToString() ? GetText("cameraH")
+                            : action == InputManager.AxisActions.CameraVertical.ToString() ? GetText("cameraV")
+                            : action == rightClickString ? GetText("rightClickString")
+                            : action ==  middleClickString ? GetText("middleClickString")
+                            : action == leftClickString ? GetText("leftClickString")
+                            : action == backString ? GetText("backString")
                             : action;
 
             label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
@@ -597,6 +599,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     button.Label.Text = currentLabel;
                 }
             }
+        }
+
+        private static string GetText(string key)
+        {
+            return TextManager.Instance.GetText(textTable, key);
         }
 
         #endregion
