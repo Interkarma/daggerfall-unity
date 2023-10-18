@@ -687,6 +687,15 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Localized quest messages need to be restored when game is loaded.
+        /// </summary>
+        /// <param name="questName">Name of quest to restore localized messages.</param>
+        public bool RestoreLocalizedQuestMessages(string questName)
+        {
+            return ParseLocalizedQuestText(questName);
+        }
+
+        /// <summary>
         /// Parse and start a quest from quest name.
         /// </summary>
         /// <param name="questName">Quest name.</param>

@@ -2274,6 +2274,7 @@ namespace Wenzil.Console
                 if (quest != null)
                 {
                     QuestMachine.Instance.StartQuest(quest);
+                    QuestMachine.Instance.RestoreLocalizedQuestMessages(quest.QuestName);
                     return "Started quest '" + quest.DisplayName + "'";
                 }
                 else
