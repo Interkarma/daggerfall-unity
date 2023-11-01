@@ -1574,3 +1574,4 @@ yep"
 random,Random
 nordSurnameImmutableSuffix,sen
 confirmDefaultControls,Are you sure you want to set default controls?
+saveLoadPromptFormat,{0} for '{1}'

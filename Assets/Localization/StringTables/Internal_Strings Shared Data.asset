@@ -3955,6 +3955,10 @@ MonoBehaviour:
     m_Key: confirmDefaultControls
     m_Metadata:
       m_Items: []
+  - m_Id: 410605082671312896
+    m_Key: saveLoadPromptFormat
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

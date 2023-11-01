@@ -5215,5 +5215,9 @@ MonoBehaviour:
     m_Localized: Are you sure you want to set default controls?
     m_Metadata:
       m_Items: []
+  - m_Id: 410605082671312896
+    m_Localized: '{0} for ''{1}'''
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

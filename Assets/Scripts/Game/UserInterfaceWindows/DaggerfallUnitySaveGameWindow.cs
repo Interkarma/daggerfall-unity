@@ -366,7 +366,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 promptText = TextManager.Instance.GetLocalizedText("savePrompt");
             else if (mode == Modes.LoadGame)
                 promptText = TextManager.Instance.GetLocalizedText("loadPrompt");
-            promptLabel.Text = string.Format("{0} for '{1}'", promptText, currentPlayerName);
+            promptLabel.Text = string.Format(TextManager.Instance.GetLocalizedText("saveLoadPromptFormat"), promptText, currentPlayerName);
         }
 
         protected virtual void UpdateSelectedSaveInfo()
