@@ -1586,7 +1586,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 while (uiManager.TopWindow != this)
                     uiManager.PopWindow();
                 CloseWindow();
-                chooseOneCallback(item);
+                chooseOneCallback?.Invoke(item);
             }
         }
 
