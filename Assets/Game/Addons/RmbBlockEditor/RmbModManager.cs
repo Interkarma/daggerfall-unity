@@ -324,7 +324,28 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 // Create a game object from the asset
                 var go = Object.Instantiate(asset);
                 go.name = $"Custom DaggerfallMesh [ID={id}]";
-
+                        
+                // RuntimeMaterials do not show up in the editor so we need to apply some normal materials to the renderer
+                var runtimeMaterial = go.GetComponent<RuntimeMaterials>();
+                var renderer = go.GetComponent<Renderer>();
+                if (runtimeMaterial != null)
+                {
+				    // Use reflection to read the private variable 'Materials' from the RuntimeMaterials Component
+                    var materials = typeof(RuntimeMaterials).GetField("Materials", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(runtimeMaterial) as RuntimeMaterial[];
+        
+                    // Iterate through the runtime materials and create normal materials from them
+                    var materialsToApply = new Material[materials.Length];
+                    for (var index = 0; index < materials.Length; index++)
+                    {
+                        var material = materials[index];
+                        var resolvedMaterial = GetMaterialFromRuntimeMaterial(material);
+                        materialsToApply[index] = resolvedMaterial;
+                    }
+        
+                    // Apply the materials to the renderer
+                    renderer.materials = materialsToApply;
+                }
+                        
                 // Unload the bundle and return the game object
                 bundle.Unload(false);
                 return go;
