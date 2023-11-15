@@ -353,7 +353,7 @@ namespace DaggerfallWorkshop.Game.Items
                                 signoff = token.text.Trim() + " " + signoff;
                                 lines++;
                             }
-                            if (lines >= 2)
+                            if (lines >= 1)
                                 return TextManager.Instance.GetLocalizedText("letterPrefix") + signoff;
                         }
                     }
