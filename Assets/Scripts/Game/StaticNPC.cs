@@ -51,7 +51,6 @@ namespace DaggerfallWorkshop.Game
         public NPCData Data
         {
             get { return npcData; }
-            set { npcData = value; }
         }
 
         /// <summary>
@@ -221,16 +220,14 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Sets NPC data directly.
         /// </summary>
-        public void SetLayoutData(int x, int y, int z, Genders gender, int factionID = 0, int nameSeed = -1)
+        public void SetLayoutData(int x, int y, int z, Genders gender, int factionID = 0, int nameSeed = -1, int nameBank = -1)
         {
-            // Store common layout data
-            npcData.hash = GetPositionHash(x, y, z);
-            npcData.flags = (gender == Genders.Male) ? 0 : 32;
-            npcData.factionID = factionID;
-            npcData.nameSeed = (nameSeed == -1) ? npcData.hash : nameSeed;
-            npcData.gender = gender;
-            npcData.race = GetRaceFromFaction(factionID);
-            npcData.context = Context.Custom;
+            SetLayoutData(GetPositionHash(x, y, z), gender, nameBank, factionID, nameSeed);
+        }
+
+        public void SetLayoutData(Genders gender, int factionID = 0, int nameSeed = -1, int nameBank = -1)
+        {
+            SetLayoutData(npcData.hash, gender, nameBank, factionID, nameSeed);
         }
 
         /// <summary>
@@ -345,6 +342,19 @@ namespace DaggerfallWorkshop.Game
             }
 
             return GameManager.Instance.PlayerGPS.GetRaceOfCurrentRegion();
+        }
+
+        private void SetLayoutData(int hash, Genders gender, int nameBank, int factionID, int nameSeed)
+        {
+            // Store common layout data
+            npcData.hash = hash;
+            npcData.flags = (gender == Genders.Male) ? 0 : 32;
+            npcData.factionID = factionID;
+            npcData.nameSeed = (nameSeed == -1) ? npcData.hash : nameSeed;
+            npcData.gender = gender;
+            npcData.race = GetRaceFromFaction(factionID);
+            npcData.nameBank = nameBank == -1 ? npcData.nameBank : (NameHelper.BankTypes)nameBank;
+            npcData.context = Context.Custom;
         }
 
         #endregion
