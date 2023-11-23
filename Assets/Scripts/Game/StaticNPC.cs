@@ -46,7 +46,7 @@ namespace DaggerfallWorkshop.Game
         #region Properties
 
         /// <summary>
-        /// Gets/sets serializable data pack about this NPC.
+        /// Gets serializable data pack about this NPC.
         /// </summary>
         public NPCData Data
         {
