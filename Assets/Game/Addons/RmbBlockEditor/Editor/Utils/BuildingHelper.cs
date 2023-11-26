@@ -96,7 +96,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             return placeholder;
         }
 
-        public static GameObject GetDummyInterior(BuildingReplacementData buildingReplacementData)
+        private static GameObject GetDummyInterior(BuildingReplacementData buildingReplacementData)
         {
             var placeholder = new GameObject();
             if (buildingReplacementData.RmbSubRecord.Interior.Block3dObjectRecords == null)
@@ -138,6 +138,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             }
             catch (Exception e)
             {
+                Debug.Log(e);
                 // The building might not have an Interior
                 return new VisualElement();
             }
@@ -153,6 +154,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             catch (Exception e)
             {
                 // The building might not have an Exterior
+                Debug.Log(e);
                 return new VisualElement();
             }
         }

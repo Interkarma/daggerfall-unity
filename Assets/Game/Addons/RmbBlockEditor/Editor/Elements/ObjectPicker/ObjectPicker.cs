@@ -34,8 +34,6 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private Dictionary<string, HashSet<string>> subcategories;
         private Dictionary<string, HashSet<string>> categories;
 
-        private List<KeyValuePair<string, List<KeyValuePair<string, string>>>> list;
-
         public ObjectPicker(List<CatalogItem> catalog,
             Action<string> onItemSelected, Func<string, VisualElement> getPreview,
             string objectId = "")
@@ -48,7 +46,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             Initialize();
         }
 
-        private void Initialize()
+        private async void Initialize()
         {
             RenderTemplate();
             GenerateDictionaries();
@@ -56,11 +54,11 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             BindIdField();
             RenderSearch();
 
-            if (objectId != "")
+            if (objectId != "" && objectId != null)
             {
                 var objectIdField = visualElement.Query<TextField>("object-id").First();
                 objectIdField.value = objectId;
-                SetNewItemID();
+                await SetNewItemID();
             }
         }
 
@@ -72,7 +70,11 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private void OnSearch(ChangeEvent<string> e)
         {
             search = e.newValue.ToLower();
+            // The following line uses a #pragma directive to suppress the CS4014 warning because we intentionally
+            // do not await the Debounce method call here. The Debounce method handles asynchronous execution itself.
+            #pragma warning disable CS4014
             _debouncer.Debounce(FilterCatalog);
+            #pragma warning restore CS4014
         }
 
         private void OnChangeObjectIdField(ChangeEvent<string> e)
@@ -81,7 +83,11 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             if (objectId == objectIdField.value) return;
 
             objectId = objectIdField.value;
+            // The following line uses a #pragma directive to suppress the CS4014 warning because we intentionally
+            // do not await the Debounce method call here. The Debounce method handles asynchronous execution itself.
+            #pragma warning disable CS4014
             _debouncer.Debounce(SetNewItemID);
+            #pragma warning restore CS4014
         }
 
         private async Task FilterCatalog()
@@ -97,6 +103,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             }).ToList();
             GenerateDictionaries();
             RenderList();
+
+            await Task.CompletedTask; // Return a completed task.
         }
 
         private void RenderTemplate()
@@ -164,10 +172,12 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             catch (Exception err)
             {
                 objectId = "";
+                Debug.Log(err);
             }
             finally
             {
                 RenderPreview();
+                await Task.CompletedTask; // Return a completed task.
             }
         }
 
@@ -233,7 +243,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             });
         }
 
-        private void OnItemClick(string objectId)
+        private async void OnItemClick(string objectId)
         {
             if (objectId == this.objectId)
             {
@@ -245,7 +255,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             var objectIdField = visualElement.Query<TextField>("object-id").First();
             objectIdField.value = objectId;
 
-            SetNewItemID();
+            await SetNewItemID();
         }
 
         private void RenderPreview()

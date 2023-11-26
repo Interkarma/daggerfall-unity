@@ -312,6 +312,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             }
             catch (ArgumentException e)
             {
+                Debug.Log(e);
                 return false;
             }
         }

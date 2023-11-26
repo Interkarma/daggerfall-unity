@@ -7,11 +7,13 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using Unity.Plastic.Newtonsoft.Json;
 using UnityEditor;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
@@ -159,6 +161,26 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             cancelReplaceFromCatalog.clicked += HideReplaceFromCatalog;
         }
 
+        private async Task ScrollToImportFromFile()
+        {
+            // Get reference to importButton and scrollView
+            var importButton = this.Query<Button>("import-from-file").First();
+            var scrollView = importButton.GetFirstAncestorOfType<ScrollView>();
+
+            scrollView.ScrollTo(importButton);
+            await Task.CompletedTask; // Return a completed task.
+        }
+
+        private async Task ScrollToImportFromCatalog()
+        {
+            // Get reference to importButton and scrollView
+            var importButton = this.Query<Button>("import-from-catalog").First();
+            var scrollView = importButton.GetFirstAncestorOfType<ScrollView>();
+
+            scrollView.ScrollTo(importButton);
+            await Task.CompletedTask; // Return a completed task.
+        }
+
         private void ShowReplaceFromFile()
         {
             // Hide the replace from catalog container
@@ -168,12 +190,12 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             var replaceFromFileContainer = this.Query<VisualElement>("replace-from-file-container").First();
             replaceFromFileContainer.RemoveFromClassList("hidden");
 
-            // Get reference to importButton and scrollView
-            var importButton = this.Query<Button>("import-from-file").First();
-            var scrollView = importButton.GetFirstAncestorOfType<ScrollView>();
-
+            // The following line uses a #pragma directive to suppress the CS4014 warning because we intentionally
+            // do not await the Debounce method call here. The Debounce method handles asynchronous execution itself.
+            #pragma warning disable CS4014
             // Give the hidden container time to repaint, so the scrollView can calculate the height correctly
-            _debouncer.Debounce(async () => { scrollView.ScrollTo(importButton); }, 10);
+            _debouncer.Debounce(ScrollToImportFromFile, 10);
+            #pragma warning restore CS4014
         }
 
         private void ShowReplaceFromCatalog()
@@ -192,12 +214,12 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             var pickerObject = new ObjectPicker(catalog, OnCatalogItemSelected, GetPreview);
             objectPickerContainer.Add(pickerObject.visualElement);
 
-            // Get reference to importButton and scrollView
-            var importButton = this.Query<Button>("import-from-catalog").First();
-            var scrollView = importButton.GetFirstAncestorOfType<ScrollView>();
-
+            // The following line uses a #pragma directive to suppress the CS4014 warning because we intentionally
+            // do not await the Debounce method call here. The Debounce method handles asynchronous execution itself.
+            #pragma warning disable CS4014
             // Give the hidden container time to repaint, so the scrollView can calculate the height correctly
-            _debouncer.Debounce(async () => { scrollView.ScrollTo(importButton); }, 10);
+            _debouncer.Debounce(ScrollToImportFromCatalog, 10);
+            #pragma warning restore CS4014
         }
 
         private void HideReplaceFromFile()
@@ -300,6 +322,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             }
             catch (ArgumentException e)
             {
+                Debug.Log(e);
                 return false;
             }
         }

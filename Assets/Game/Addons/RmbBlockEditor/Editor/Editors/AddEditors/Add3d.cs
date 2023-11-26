@@ -97,7 +97,16 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             }
             catch (Exception e)
             {
-                Console.WriteLine("No such Object ID is available.");
+                if (e is IndexOutOfRangeException)
+                {
+                    Debug.Log("No such Object ID is available.");
+                } else if (e is FormatException)
+                {
+                    Debug.Log("Object ID is not in the correct format.");
+                } else
+                {
+                    Debug.Log("An error occurred while adding the 3D model: " + e.Message);
+                }
             }
         }
 

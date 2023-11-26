@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
@@ -186,6 +187,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             }
             catch (ArgumentException e)
             {
+                Debug.Log(e);
                 return false;
             }
         }
