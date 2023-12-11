@@ -1210,6 +1210,7 @@ namespace DaggerfallWorkshop.Game.Questing
                             site.siteType = SiteTypes.Building;
                             site.mapId = location.MapTableData.MapId;
                             site.locationId = location.Exterior.ExteriorData.LocationId;
+                            site.regionIndex = location.RegionIndex;
                             site.regionName = location.RegionName;
                             site.locationName = location.Name;
                             site.buildingKey = buildingSummary[i].buildingKey;
