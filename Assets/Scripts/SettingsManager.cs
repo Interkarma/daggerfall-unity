@@ -737,10 +737,6 @@ namespace DaggerfallWorkshop
         {
             // Load defaults.ini
             TextAsset asset = Resources.Load<TextAsset>(defaultsIniName);
-            MemoryStream stream = new MemoryStream(asset.bytes);
-            StreamReader reader = new StreamReader(stream);
-            defaultIniData = iniParser.ReadData(reader);
-            reader.Close();
 
             // Create file
             File.WriteAllBytes(userIniPath, asset.bytes);
@@ -750,6 +746,14 @@ namespace DaggerfallWorkshop
 
         void ReadSettingsFile()
         {
+            // Load defaults.ini
+            // This is required for fallback sync if everything else goes wrong
+            TextAsset asset = Resources.Load<TextAsset>(defaultsIniName);
+            MemoryStream stream = new MemoryStream(asset.bytes);
+            StreamReader reader = new StreamReader(stream);
+            defaultIniData = iniParser.ReadData(reader);
+            reader.Close();
+
             // Must have settings.ini in persistent data path
             string userIniPath = Path.Combine(PersistentDataPath, SettingsName());
             if (!File.Exists(userIniPath))
