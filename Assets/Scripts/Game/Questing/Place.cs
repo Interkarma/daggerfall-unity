@@ -1293,8 +1293,8 @@ namespace DaggerfallWorkshop.Game.Questing
                     buildingSummary[buildingIndex].NameSeed,
                     buildingSummary[buildingIndex].BuildingType,
                     buildingSummary[buildingIndex].FactionId,
-                    location.Name,
-                    location.RegionName);
+                    TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name),
+                    TextManager.Instance.GetLocalizedRegionName(location.RegionIndex));
             }
 
             return buildingName;

@@ -1319,7 +1319,7 @@ namespace DaggerfallWorkshop
                     buildingSummary.NameSeed,
                     buildingSummary.BuildingType,
                     buildingSummary.FactionId,
-                    buildingDirectory.LocationData.Name,
+                    TextManager.Instance.GetLocalizedLocationName(buildingDirectory.LocationData.MapId, buildingDirectory.LocationData.Name),
                     TextManager.Instance.GetLocalizedRegionName(buildingDirectory.LocationData.RegionIndex));
             }
             buildingDiscoveryData.factionID = buildingSummary.FactionId;
