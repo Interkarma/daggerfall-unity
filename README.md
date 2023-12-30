@@ -82,6 +82,14 @@ From the ashes of Daggerfall's past, experience the world of Daggerfall as origi
 
 [Link to World of Daggerfall Project on Nexus](https://www.nexusmods.com/daggerfallunity/mods/249)
 
+## Finding My Religion
+
+![image](https://github.com/Interkarma/daggerfall-unity/assets/10426244/995ae53d-eb99-451f-942c-931dd31dc85c)
+
+Finding My Religion is a multi-release visual and gameplay overhaul of Daggerfall's religions. The current release is "Detailed Temples", which decorates and redesigns the temples' according to the worshipped deity's sphere of influence. Julianos boasts a bigger library than others, Kynareth has an indoor garden, Mara has a birthing room and more. Each temple have been expanded downwards,  with priests' quarters and additional rooms for all service members. They also feature a crypt where people of importance have been buried.
+
+[Link to Finding My Religion on Nexus](https://www.nexusmods.com/daggerfallunity/mods/344)
+
 ## Physical Combat And Armor Overhaul
 
 ![image](https://github.com/Interkarma/daggerfall-unity/assets/10426244/35bc2fb2-5b3d-401d-b3cb-806a59241014)
