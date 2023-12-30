@@ -2,7 +2,7 @@
 
 # What is Daggerfall Unity?
 
-Daggerfall Unity is an open source recreation of Daggerfall in the Unity engine created by [Daggerfall Workshop](http://www.dfworkshop.net). It requires a free copy of DOS Daggerfall and can import characters from classic saves.
+Daggerfall Unity is an open source recreation of Daggerfall in the Unity engine created by [Daggerfall Workshop](http://www.dfworkshop.net).
 
 Experience the adventure and intrigue of Daggerfall with all of its original charm along with hundreds of fixes, quality of life enhancements, and extensive mod support.
 
@@ -19,7 +19,9 @@ Experience the adventure and intrigue of Daggerfall with all of its original cha
 + Extensive mod support with an active creator community
 + Translation support via community mods
 
-# Where To Get Daggerfall Unity
+# Get Daggerfall Unity
+
+Daggerfall Unity requires a free copy of DOS Daggerfall to run. This provides all necessary game assets such as textures, 3D models, and sound effects.
 
 You can get a free copy of DOS Daggerfall from Steam and a free copy of Daggerfall Unity from the [Releases](https://github.com/Interkarma/daggerfall-unity/releases) page. Then simply unzip the latest version of Daggerfall Unity and point it to the DOS version. Daggerfall Unity will take care of everthing else.
 
@@ -27,6 +29,22 @@ Here are a couple of links with more detailed steps to help you get started usin
 
 + [Using Steam Release of Daggerfall with Daggerfall Unity](https://github.com/Interkarma/daggerfall-unity/wiki/Using-Steam-Release-of-Daggerfall-with-Daggerfall-Unity)
 + [Installing Daggerfall Unity Cross Platform](https://github.com/Interkarma/daggerfall-unity/wiki/Installing-Daggerfall-Unity-Cross-Platform)
+
+# System Requirements
+
+Daggerfall Unity has the following system requirements. Please note that optional mods may substantially increase system requirements or cause game to become less stable.
+
+### Minimum
+* Operating system: Windows, Linux, MacOS
+* Processor: Intel i3 (Skylake) equivalent
+* Graphics: DirectX 11 capable with 1GB video memory and up-to-date drivers
+* Memory: 2GB system RAM
+
+### Recommended
+* Operating system: Windows, Linux, MacOS
+* Processor: Intel i5 (Skylake) equivalent
+* Graphics: GTX 660 with 2GB video memory and up-to-date drivers
+* Memory: 4GB system RAM
 
 # Featured Mods
 
@@ -42,7 +60,7 @@ The Daggerfall Remaster Enchanted Art Mod (DREAM) upgrades game assets including
 
 ## Quest Pack 1
 
-![image](https://github.com/Interkarma/daggerfall-unity/assets/10426244/d59695ec-f6a0-4d9a-b0a4-611f6a0ee9dd)
+![image](https://github.com/Interkarma/daggerfall-unity/assets/10426244/43688bd8-c3b0-42b5-bb64-066d6867ff66)
 
 This quest pack offers 195 original new quests for Daggerfall Unity, mostly for the game's guilds.
 
