@@ -23,7 +23,7 @@ Experience the adventure and intrigue of Daggerfall with all of its original cha
 
 Daggerfall Unity requires a free copy of DOS Daggerfall to run. This provides all necessary game assets such as textures, 3D models, and sound effects.
 
-You can get a free copy of DOS Daggerfall from Steam and a free copy of Daggerfall Unity from the [Releases](https://github.com/Interkarma/daggerfall-unity/releases) page. Then simply unzip the latest version of Daggerfall Unity and point it to the DOS version. Daggerfall Unity will take care of everthing else.
+You can get a free copy of DOS Daggerfall from [Steam](https://store.steampowered.com/app/1812390/The_Elder_Scrolls_II_Daggerfall/) and a free copy of Daggerfall Unity from the [Releases](https://github.com/Interkarma/daggerfall-unity/releases) page. Then simply unzip the latest version of Daggerfall Unity and point it to the DOS version. Daggerfall Unity will take care of everthing else.
 
 Here are a couple of links with more detailed steps to help you get started using either Steam or a cross-platform process.
 
