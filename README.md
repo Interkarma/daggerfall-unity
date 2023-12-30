@@ -11,7 +11,7 @@ Experience the adventure and intrigue of Daggerfall with all of its original cha
 + Cross-platform without emulation (Windows/Linux/Mac)
 + Retro graphics are boosted by modern engine and lighting
 + High resolution widescreen with classic style
-+ Optionally play in retro mode 320x200 with VGA filters
++ Optionally play in retro mode 320x200 or 640x400 with VGA palettes
 + Optionally overhaul the graphics and gameplay with mods
 + Huge draw distances even without mods
 + Smooth first-person controls
@@ -21,7 +21,7 @@ Experience the adventure and intrigue of Daggerfall with all of its original cha
 
 # Where To Get Daggerfall Unity
 
-You can get a free of DOS Daggerfall from Steam and a free copy of Daggerfall Unity from the [Releases](https://github.com/Interkarma/daggerfall-unity/releases) page. Then simply unzip the latest version of Daggerfall Unity and point it to the DOS version. Daggerfall Unity will take care of everthing else.
+You can get a free copy of DOS Daggerfall from Steam and a free copy of Daggerfall Unity from the [Releases](https://github.com/Interkarma/daggerfall-unity/releases) page. Then simply unzip the latest version of Daggerfall Unity and point it to the DOS version. Daggerfall Unity will take care of everthing else.
 
 Here are a couple of links with more detailed steps to help you get started using either Steam or a cross-platform process.
 
