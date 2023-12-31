@@ -31,6 +31,39 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class SettingsManager
     {
+        private static string GetFullPath(string basePath, string path)
+        {
+            if(string.IsNullOrEmpty(path) || Path.IsPathRooted(path))
+            {
+                return path;
+            }
+
+            Uri baseUri = new Uri(basePath);
+            Uri relUri = new Uri(path, UriKind.Relative);
+            Uri fullPath;
+
+            if(Uri.TryCreate(baseUri, relUri, out fullPath))
+            {
+                return fullPath.LocalPath;
+            }
+            else
+            {
+                return "";
+            }
+        }
+        
+        private static string GetRelativePath(string basePath, string path)
+        {
+            if(string.IsNullOrEmpty(path))
+            {
+                return path;
+            }
+            Uri baseUri = new Uri(basePath);
+            Uri relUri = baseUri.MakeRelativeUri(new Uri(path));
+
+            return Uri.UnescapeDataString(relUri.ToString()).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        }
+        
         const string defaultsIniName = "defaults.ini";
         const string settingsIniName = "settings.ini";
         const string settingsBakExt = ".bak";
@@ -55,6 +88,20 @@ namespace DaggerfallWorkshop
 
         string persistentPath = null;
         string distributionSuffix = null;
+        
+        bool? isPortableInstall = null;
+        
+        public bool PortableInstall
+        {
+            get
+            {
+                if(isPortableInstall == null)
+                {
+                    isPortableInstall = File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Portable.txt");
+                }
+                return (bool)isPortableInstall;
+            }
+        }
 
         public string PersistentDataPath
         {
@@ -62,12 +109,20 @@ namespace DaggerfallWorkshop
             {
                 if (string.IsNullOrEmpty(persistentPath))
                 {
+                    if(PortableInstall)
+                    {
+                        persistentPath = AppDomain.CurrentDomain.BaseDirectory + "\\PortableAppdata";
+                        Directory.CreateDirectory(persistentPath);
+                    }
+                    else
+                    {
 #if UNITY_EDITOR && SEPARATE_DEV_PERSISTENT_PATH
-                    persistentPath = String.Concat(Application.persistentDataPath, ".devenv");
-                    Directory.CreateDirectory(persistentPath);
+                        persistentPath = String.Concat(Application.persistentDataPath, ".devenv");
+                        Directory.CreateDirectory(persistentPath);
 #else
-                    persistentPath = Application.persistentDataPath;
+                        persistentPath = Application.persistentDataPath;
 #endif
+                    }
                 }
                 return persistentPath;
             }
@@ -353,6 +408,22 @@ namespace DaggerfallWorkshop
             MyDaggerfallUnitySavePath = GetString(sectionDaggerfall, "MyDaggerfallUnitySavePath");
             MyDaggerfallUnityScreenshotsPath = GetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath");
 
+            if(PortableInstall)
+            {
+                if(!string.IsNullOrEmpty(MyDaggerfallPath))
+                {
+                    MyDaggerfallPath = GetFullPath(AppDomain.CurrentDomain.BaseDirectory + "\\", MyDaggerfallPath);
+                }
+                if(!string.IsNullOrEmpty(MyDaggerfallUnitySavePath))
+                {
+                    MyDaggerfallUnitySavePath = GetFullPath(AppDomain.CurrentDomain.BaseDirectory + "\\", MyDaggerfallUnitySavePath);
+                }
+                if(!string.IsNullOrEmpty(MyDaggerfallUnityScreenshotsPath))
+                {
+                    MyDaggerfallUnityScreenshotsPath = GetFullPath(AppDomain.CurrentDomain.BaseDirectory + "\\", MyDaggerfallUnityScreenshotsPath);
+                }
+            }
+
             ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
             ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
             RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
@@ -536,9 +607,9 @@ namespace DaggerfallWorkshop
         public void SaveSettings()
         {
             // Write property cache to ini data
-            SetString(sectionDaggerfall, "MyDaggerfallPath", MyDaggerfallPath);
-            SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", MyDaggerfallUnitySavePath);
-            SetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath", MyDaggerfallUnityScreenshotsPath);
+            SetString(sectionDaggerfall, "MyDaggerfallPath", PortableInstall ? GetRelativePath(AppDomain.CurrentDomain.BaseDirectory + "\\", MyDaggerfallPath) : MyDaggerfallPath);
+            SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", PortableInstall ? GetRelativePath(AppDomain.CurrentDomain.BaseDirectory + "\\", MyDaggerfallUnitySavePath) : MyDaggerfallUnitySavePath);
+            SetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath", PortableInstall ? GetRelativePath(AppDomain.CurrentDomain.BaseDirectory + "\\", MyDaggerfallUnityScreenshotsPath) : MyDaggerfallUnityScreenshotsPath);
 
             SetInt(sectionVideo, "ResolutionWidth", ResolutionWidth);
             SetInt(sectionVideo, "ResolutionHeight", ResolutionHeight);
