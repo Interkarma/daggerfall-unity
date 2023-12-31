@@ -1007,6 +1007,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 messages.Add(message.ID, message);
             }
 
+            // Restore localized messages
+            QuestMachine.Instance.RestoreLocalizedQuestMessages(questName);
+
             // Restore resources
             resources.Clear();
             foreach(QuestResource.ResourceSaveData_v1 resourceData in data.resources)

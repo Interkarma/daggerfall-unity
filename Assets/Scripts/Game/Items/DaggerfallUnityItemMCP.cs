@@ -46,6 +46,14 @@ namespace DaggerfallWorkshop.Game.Items
                 dataSource.paintingFilename = paintingFileChar + "PAINT.CIF";
 
                 byte[] paintingRecord = DaggerfallUnity.Instance.ContentReader.PaintFileReader.Read(paintingIndex);
+                if (paintingIndex == 70 && // Known buggy paintingRecord
+                    paintingRecord[30] == 0xFF) // not fixed in PAINT.DAT
+                {
+                    paintingRecord[30] = 3; // summer
+                    paintingRecord[31] = 6; // spring
+                    paintingRecord[32] = 8; // afternoon
+                    paintingRecord[33] = 10; // Highrock
+                }
                 Debug.LogFormat("painting file: {0}, index: {1}, cif idx: {2}, record: {3} {4} {5}", dataSource.paintingFilename, paintingIndex, dataSource.paintingFileIdx, paintingRecord[0], paintingRecord[1], paintingRecord[2]);
 
                 dataSource.paintingSub = GetPaintingRecordPart(paintingRecord, 0, 9) + 6100; // for %sub macro
@@ -243,7 +251,8 @@ namespace DaggerfallWorkshop.Game.Items
                     foreach (PotionRecipe.Ingredient ingredient in potionRecipe.Ingredients)
                     {
                         ItemTemplate ingredientTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ingredient.id);
-                        ingredientsTokens.Add(TextFile.CreateTextToken(ingredientTemplate.name));
+                        string ingredientName = TextManager.Instance.GetLocalizedItemName(ingredientTemplate.index, ingredientTemplate.name);
+                        ingredientsTokens.Add(TextFile.CreateTextToken(ingredientName));
                         ingredientsTokens.Add(TextFile.CreateFormatToken(format));
                     }
                 }

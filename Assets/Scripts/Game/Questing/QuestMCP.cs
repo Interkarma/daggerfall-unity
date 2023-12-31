@@ -110,7 +110,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
 
-            // His/Hers
+            // His/Her
             public override string Pronoun3()
             {
                 if (parent.LastResourceReferenced == null)
@@ -123,6 +123,22 @@ namespace DaggerfallWorkshop.Game.Questing
                         return TextManager.Instance.GetLocalizedText("pronounHis");
                     case Game.Entity.Genders.Female:
                         return TextManager.Instance.GetLocalizedText("pronounHer");
+                }
+            }
+
+            // His/Hers
+            public override string Pronoun4()
+            {
+                if (parent.LastResourceReferenced == null)
+                    return TextManager.Instance.GetLocalizedText("pronounHis");
+
+                switch (parent.LastResourceReferenced.Gender)
+                {
+                    default:
+                    case Game.Entity.Genders.Male:
+                        return TextManager.Instance.GetLocalizedText("pronounHis");
+                    case Game.Entity.Genders.Female:
+                        return TextManager.Instance.GetLocalizedText("pronounHers");
                 }
             }
 

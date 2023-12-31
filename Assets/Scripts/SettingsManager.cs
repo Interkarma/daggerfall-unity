@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop
     {
         const string defaultsIniName = "defaults.ini";
         const string settingsIniName = "settings.ini";
+        const string settingsBakExt = ".bak";
         const string settingsDistIniName = "settings-{0}.ini";
 
         const string sectionDaggerfall = "Daggerfall";
@@ -718,15 +719,21 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
-        string SettingsName()
+        string SettingsName(bool isBackup = false)
         {
+            string name;
             if (string.IsNullOrEmpty(DistributionSuffix))
-                return settingsIniName;
+                name = settingsIniName;
             else
-                return string.Format(settingsDistIniName, DistributionSuffix);
+                name = string.Format(settingsDistIniName, DistributionSuffix);
+
+            if (isBackup)
+                name = Path.ChangeExtension(name, settingsBakExt);
+
+            return name;
         }
 
-        void ReadSettingsFile()
+        void CreateDefaultSettingsFile(string userIniPath)
         {
             // Load defaults.ini
             TextAsset asset = Resources.Load<TextAsset>(defaultsIniName);
@@ -735,43 +742,65 @@ namespace DaggerfallWorkshop
             defaultIniData = iniParser.ReadData(reader);
             reader.Close();
 
+            // Create file
+            File.WriteAllBytes(userIniPath, asset.bytes);
+
+            Debug.LogFormat("Creating new '{0}' at path '{1}'", SettingsName(), userIniPath);
+        }
+
+        void ReadSettingsFile()
+        {
             // Must have settings.ini in persistent data path
-            string message;
             string userIniPath = Path.Combine(PersistentDataPath, SettingsName());
             if (!File.Exists(userIniPath))
+                CreateDefaultSettingsFile(userIniPath);
+
+            // Load settings.ini and try to handle exception
+            // Failing to load settings at this stage might cause game to freeze at startup
+            // First try backup from last good startup then fallback to defaults
+            try
             {
-                // Create file
-                message = string.Format("Creating new '{0}' at path '{1}'", SettingsName(), userIniPath);
-                File.WriteAllBytes(userIniPath, asset.bytes);
-                DaggerfallUnity.LogMessage(message);
+                userIniData = iniParser.ReadFile(userIniPath);
+            }
+            catch (Exception)
+            {
+                Debug.Log("Error parsing settings.ini. Trying backup file.");
+                string userIniBakPath = Path.Combine(PersistentDataPath, SettingsName(true));
+                try
+                {
+                    userIniData = iniParser.ReadFile(userIniBakPath);
+                }
+                catch(Exception)
+                {
+                    Debug.Log("Error parsing settings backup. Restoring defaults.");
+                    CreateDefaultSettingsFile(userIniPath);
+                    userIniData = iniParser.ReadFile(userIniPath);
+                }
             }
 
             // Log ini path in use
-            message = string.Format("Using '{0}' at path '{1}'", SettingsName(), userIniPath);
-            DaggerfallUnity.LogMessage(message);
+            Debug.LogFormat("Using '{0}' at path '{1}'", SettingsName(), userIniPath);
 
-            // Load settings.ini or set as read-only
-            userIniData = iniParser.ReadFile(userIniPath);
+            // Create a backup after successfully parsing ini data
+            WriteSettingsFile(true);
 
             // Ensure user ini data in sync with default ini data
             SyncIniData();
         }
 
-        void WriteSettingsFile()
+        void WriteSettingsFile(bool isBackup = false)
         {
+            string name = SettingsName(isBackup);
             if (iniParser != null)
             {
                 try
                 {
-                    string path = Path.Combine(PersistentDataPath, SettingsName());
-                    if (File.Exists(path))
-                    {
-                        iniParser.WriteFile(path, userIniData);
-                    }
+                    string path = Path.Combine(PersistentDataPath, name);
+                    iniParser.WriteFile(path, userIniData);
                 }
                 catch
                 {
-                    DaggerfallUnity.LogMessage("Failed to write settings.ini.");
+                    Debug.LogFormat("Failed to write {0}", name);
                 }
             }
         }

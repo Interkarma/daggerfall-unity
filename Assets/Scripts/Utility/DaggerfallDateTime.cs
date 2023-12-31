@@ -389,7 +389,8 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         public string MidDateTimeString()
         {
-            return string.Format("{0:00}:{1:00}:{2:00} {3:00} {4:00} 3E{5}", Hour, Minute, Second, Day + 1, MonthName, Year);
+            string midDateTimeFormatString = TextManager.Instance.GetLocalizedText("midDateTimeFormatString");
+            return string.Format(midDateTimeFormatString, Hour, Minute, Second, Day + 1, MonthName, Year);
         }
 
         /// <summary>

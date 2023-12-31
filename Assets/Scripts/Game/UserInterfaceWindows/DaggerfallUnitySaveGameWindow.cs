@@ -68,6 +68,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected bool loading = false;
         protected int loadingCountdown = 2;
 
+        IMECompositionMode prevIME;
+
         #endregion
 
         #region Properties
@@ -288,6 +290,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Autoselect save at top of list
             if (mode == Modes.LoadGame && savesList.Count > 0)
                 savesList.SelectIndex(0);
+
+            // Enable IME composition during input
+            prevIME = Input.imeCompositionMode;
+            Input.imeCompositionMode = IMECompositionMode.On;
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            // Restore previous IME composition mode
+            Input.imeCompositionMode = prevIME;
         }
 
         public override void Update()
@@ -352,7 +366,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 promptText = TextManager.Instance.GetLocalizedText("savePrompt");
             else if (mode == Modes.LoadGame)
                 promptText = TextManager.Instance.GetLocalizedText("loadPrompt");
-            promptLabel.Text = string.Format("{0} for '{1}'", promptText, currentPlayerName);
+            promptLabel.Text = string.Format(TextManager.Instance.GetLocalizedText("saveLoadPromptFormat"), promptText, currentPlayerName);
         }
 
         protected virtual void UpdateSelectedSaveInfo()

@@ -17,9 +17,9 @@ PlayerSettings:
   defaultCursor: {fileID: 2800000, guid: 887ec86cd12e1624d8458c8d7950402a, type: 3}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
-  m_ShowUnitySplashScreen: 0
+  m_ShowUnitySplashScreen: 1
   m_ShowUnitySplashLogo: 1
-  m_SplashScreenOverlayOpacity: 1
+  m_SplashScreenOverlayOpacity: 0.5
   m_SplashScreenAnimation: 1
   m_SplashScreenLogoStyle: 1
   m_SplashScreenDrawMode: 0
@@ -40,7 +40,7 @@ PlayerSettings:
     width: 1
     height: 1
   m_SplashScreenLogos:
-  - logo: {fileID: 21300000, guid: 465ee1dfc4b1d4c4cae3e4e5a98d0096, type: 3}
+  - logo: {fileID: 21300000, guid: 42c946665a6b88249a599542edf895c2, type: 3}
     duration: 2
   m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
@@ -132,7 +132,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.15.3
+  bundleVersion: 0.16.2
   preloadedAssets:
   - {fileID: 11400000, guid: b7df2f040b496394c82fa580d167aeb2, type: 2}
   metroInputSource: 0
@@ -284,7 +284,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 553c2e4e7eb0612449b5a11dfae00978, type: 3}
+      m_Icon: {fileID: 2800000, guid: 84d18e60460a4c242a21a4acd5a14403, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
@@ -648,7 +648,7 @@ PlayerSettings:
   ps5SharedBinaryContentLabels: []
   ps5SharedBinarySystemFolders: []
   monoEnv: 
-  splashScreenBackgroundSourceLandscape: {fileID: 21300000, guid: ef21d7e8339bb404bb1b8dcc02cb28a8,
+  splashScreenBackgroundSourceLandscape: {fileID: 21300000, guid: d483b68b21c8b9c4384cf358063d11c4,
     type: 3}
   splashScreenBackgroundSourcePortrait: {fileID: 0}
   blurSplashScreenBackground: 0

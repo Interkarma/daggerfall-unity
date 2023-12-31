@@ -370,6 +370,34 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Gets text value from localized text collection with support for a default fallback string reversion.
+        /// If text not found for live collection then will try to fallback to internal text or reversion.
+        /// If text still not found will return an error string.
+        /// </summary>
+        /// <param name="key">Key of text in table.</param>
+        /// <param name="collection">Enum value to lookup collection name in TextManager.</param>
+        /// <param name="exception">True to throw detailed exception if text not found. False to just return error string.</param>
+        /// <param name="reversion">Revert to a string literal rather than error.</param>
+        /// <returns>Text if found, then fallback if found, then reversion if provided, then exception or error string if nothing found.</returns>
+        public string GetLocalizedTextWithReversion(string key, TextCollections collection = TextCollections.Internal, bool exception = false, string reversion = null)
+        {
+            string localizedText;
+            if (TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedText))
+                return localizedText;
+            else if (TryGetLocalizedText(GetDefaultCollectionName(collection), key, out localizedText))
+                return localizedText;
+            else if (!string.IsNullOrEmpty(reversion))
+                return reversion;
+            else
+            {
+                if (exception)
+                    throw new Exception(string.Format("Localized text not found for collection='{0}', key='{1}'", collection.ToString(), key));
+                else
+                    return localizedTextLookupError;
+            }
+        }
+
+        /// <summary>
         /// Gets array of text from discrete items using a key array.
         /// </summary>
         /// <param name="keyArray">Array of keys to resolve back to text in list.</param>
@@ -538,6 +566,16 @@ namespace DaggerfallWorkshop.Game
         public bool TryGetLocalizedText(TextCollections collection, string key, out string localizedString)
         {
             return TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedString);
+        }
+
+        /// <summary>
+        /// Splits input string into array of strings using newline or return as separator.
+        /// </summary>
+        /// <param name="textList">Input string where each item is separated by newline or return.</param>
+        /// <returns>String array.</returns>
+        public string[] SplitTextList(string textList)
+        {
+            return textList.TrimEnd(trimAtEnd).Split(newlineSequences, StringSplitOptions.None);
         }
 
         #endregion

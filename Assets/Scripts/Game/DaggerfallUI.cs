@@ -392,6 +392,9 @@ namespace DaggerfallWorkshop.Game
                 pixelFontMaterial.EnableKeyword(KeyWords.MacOSX);
                 sdfFontMaterial.EnableKeyword(KeyWords.MacOSX);
             }
+
+            // Reset IME composition mode to default at startup
+            Input.imeCompositionMode = IMECompositionMode.Auto;
         }
 
         void Update()
@@ -452,9 +455,6 @@ namespace DaggerfallWorkshop.Game
 
                 if (Event.current.keyCode != KeyCode.None)
                     lastKeyCode = Event.current.keyCode;
-
-                if (lastCharacterTyped > 255)
-                    lastCharacterTyped = (char)0;
             }
 
             if (processHotkeys)

@@ -198,6 +198,11 @@ namespace DaggerfallWorkshop.Utility
             throw new NotImplementedException();
         }
 
+        public virtual string Pronoun4()
+        {   // %g4
+            throw new NotImplementedException();
+        }
+
         public virtual string Honorific()
         {   // %hnr
             throw new NotImplementedException();

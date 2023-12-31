@@ -1020,7 +1020,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 byte[] bytes = File.ReadAllBytes(path);
                 Vector2Int resolution = FindPngResolution(bytes) ?? throw new Exception($"Failed to find PNG resolution for {path}");
-                TextureFormat textureFormat = resolution.x < retroThreshold && resolution.y < retroThreshold ? TextureFormat.ARGB32 : TextureFormat;
+                TextureFormat textureFormat = resolution.x < retroThreshold || resolution.y < retroThreshold ? TextureFormat.ARGB32 : TextureFormat;
 
                 tex = new Texture2D(4, 4, textureFormat, mipMaps, isLinear);
                 if (!tex.LoadImage(bytes, readOnly))

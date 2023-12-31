@@ -181,6 +181,19 @@ namespace DaggerfallWorkshop.Game
                 }
             }
 
+            // His/Hers
+            public override string Pronoun4()
+            {
+                switch (parent.potentialQuestorGender)
+                {
+                    default:
+                    case Game.Entity.Genders.Male:
+                        return TextManager.Instance.GetLocalizedText("pronounHis");
+                    case Game.Entity.Genders.Female:
+                        return TextManager.Instance.GetLocalizedText("pronounHers");
+                }
+            }
+
             public override string PotentialQuestorName()
             {
                 return TalkManager.Instance.GetQuestorName();

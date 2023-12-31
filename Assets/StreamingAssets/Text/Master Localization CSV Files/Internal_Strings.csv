@@ -1,0 +1,1577 @@
+﻿Key,Value
+about_internal_strings,This string table collection stores text that was hard-coded in FALL.EXE and text unique to Daggerfall Unity.
+pleaseSelectYourHomeProvince,Please select your home province...
+saveGame,Save Game
+loadGame,Load Game
+thingJustDied,%s just died.
+gameSaved,Game saved.
+gameLoaded,Game loaded.
+thisHouseHasNothingOfValue,This house has nothing of value.
+findLocationPrompt,Enter name of place : 
+rightHandEquipped,Right hand equipped.
+leftHandEquipped,Left hand equipped.
+usingRightHand,Using weapon in right hand.
+usingLeftHand,Using weapon in left hand.
+itemHasBroken,%s has broken.
+itemHasBrokenPlural,%s have broken.
+cannotCarryGold,You cannot carry that much gold.
+cannotFloat,You are carrying too much to stay afloat.
+youHaveNoArrows,You have no arrows.
+oldSaveNoTrade,"Old indoor save loaded, trade window will not work please exit and re-enter building."
+theBodyHasNoTreasure,The body has no treasure.
+youAreTooFarAway,You are too far away...
+youSeeAn,You see an %s.
+youSeeA,You see a %s.
+youSeeADeadPerson,You see a dead person.
+youSeeADead,You see a dead %s.
+youCollectArrows,You pluck your arrows out of the corpse.
+loiterHowManyHours,Loiter how many hours : 
+restHowManyHours,Rest how many hours : 
+potionRecipeFor,Recipe for Potion of %po
+potionOf,Potion of %po
+letterPrefix,Letter: 
+multipleAssignments,You have multiple assignments...
+youAreEntering,You are entering %s
+storeClosed,Store is closed. Open from %d1:00 to %d2:00.
+guildClosed,Guild is closed. Open from %d1:00 to %d2:00.
+any,Any %s
+arkayDesc,God of Birth and Death
+zenDesc,God of Work and Commerce
+maraDesc,Goddess of Love
+akatoshDesc,God of Time
+julianosDesc,God of Logic
+dibellaDesc,Goddess of Beauty
+stendarDesc,God of Mercy
+kynarethDesc,Goddess of Air
+interactionIsNowInMode,Interaction is now in %s mode.
+steal,steal
+grab,grab
+info,info
+dialogue,dialogue
+residence,Residence
+youSee,You see %s.
+theNamedResidence,The %s Residence
+playerResidence,%s's house
+materialIneffective,The material of the weapon you are using is ineffective.
+successfulBackstab,Successful backstab!
+languagePacified,Pacified %e using %s skill.
+lockpickingSuccess,The lock clicks open.
+lockpickingFailure,It does not unlock.
+magicLock,This is a magically held lock...
+lockpickChance1,This lock has nothing to fear from you...
+lockpickChance2,It'd be a miracle if you picked this lock...
+lockpickChance3,This lock looks to be beyond your skills...
+buildingNames,"Temple of Akatosh
+Temple of Arkay
+Temple of Dibella
+Temple of Julianos
+Temple of Kynareth
+Temple of Mara
+Temple of Stendarr
+Temple of Zen
+Order of the Raven
+Knights of the Dragon
+Knights of the Owl
+Order of the Candle
+Knights of the Flame
+Host of the Horn
+Knights of the Rose
+Knights of the Wheel
+Order of the Scarab
+Knights of the Hawk
+Mages Guild
+Fighters Guild
+Tavern
+Library
+Weapon Smith
+Armorer
+Alchemist
+Bank
+Bookstore
+Clothing store
+Gem store
+Pawn shop"
+lockpickChance,"You doubt your ability to open this lock...
+This lock looks difficult...
+You would be challenged by this lock...
+This lock would prove a good challenge...
+You think you should be able to pick this lock...
+This lock seems relatively easy...
+You are amused by this lock...
+You laugh at the amateur quality of this lock...
+You see a pathetic excuse for a lock...
+This lock is an insult to your abilities..."
+youPinchedGoldPiece,You pinched 1 gold piece.
+youPinchedGoldPieces,You pinched %d gold pieces.
+youAreNotSuccessful,You are not successful...
+daysUntilFreedom,%d days until freedom.
+skillImprove,Your %s skill has improved.
+mustDistributeBonusPoints,You must distribute all bonus points.
+enterNewName,Enter new name : 
+affiliation,Affiliation
+rank,Rank
+serviceQuests,Get Quest
+serviceSell,Sell
+serviceBanking,Banking
+serviceIdentify,Identify
+serviceBuySpells,Buy Spells
+serviceTraining,Training
+serviceTeleport,Teleportation
+serviceMakeSpells,Make Spells
+serviceBuyMagicItems,Buy Magic Items
+serviceSellMagicItems,Sell Magic Items
+serviceDaedraSummon,Daedra Summoning
+serviceMakeMagicItems,Make Magic Items
+serviceRepairs,Repairs
+serviceDonate,Make Donation
+serviceCure,Cure Disease
+serviceSpymaster,Spymaster
+serviceMakePotions,Make Potions
+serviceBuyPotions,Buy Potions
+serviceBuySoulgems,Buy Soulgems
+serviceReceiveArmor,Receive Armor
+serviceReceiveHouse,Receive House
+serviceReceiveHouseAlready,You have already received your house.
+accessMembersOnly,You need to be a member of sufficient rank to access this.
+serviceCured,You are cured.
+serviceSummonCost1,"%pcn, the cost for me to attempt a"
+serviceSummonCost2,summoning of %dae is 
+serviceSummonCost3, gold.
+roomFreeForKnightSuchAsYou,The room is free for a knight such as you.
+roomFreeDueToHeartsDay,Room is free due to Heart's Day.
+youAreNotHungry,You are not hungry.
+exhaustedInWater,Fatigue overcomes you and sends you to a watery grave....
+youFeelSomewhatBad,You feel somewhat bad.
+avoidDeath,"By the mercy of Stendarr, you survive certain death!"
+pronounHe,he
+pronounShe,she
+pronounHim,him
+pronounHer,her
+pronounHis,his
+pronounHers,hers
+pronounHimself,himself
+pronounHerself,herself
+city,city
+village,village
+hamlet,hamlet
+farm,farm
+shack,shack
+manor,manor
+community,community
+shrine,shrine
+King,King
+Queen,Queen
+Duke,Duke
+Duchess,Duchess
+Marquis,Marquis
+Marquise,Marquise
+Count,Count
+Countess,Countess
+Baron,Baron
+Baroness,Baroness
+Lord,Lord
+Lady,Lady
+revered,revered
+esteemed,esteemed
+honored,honored
+admired,admired
+respected,respected
+dependable,dependable
+aCommonCitizen,a common citizen
+hated,hated
+pondScum,pond scum
+aVillain,a villain
+aCriminal,a criminal
+aScoundrel,a scoundrel
+undependable,undependable
+unknown,unknown
+Broken,Broken
+Useless,Useless
+Battered,Battered
+Worn,Worn
+Used,Used
+SlightlyUsed,Slightly Used
+AlmostNew,Almost New
+New,New
+Nothing,Nothing
+local,local
+tavern,tavern
+Attempted_Breaking_And_Entering,Attempted Breaking and Entering
+Trespassing,Trespassing
+Breaking_And_Entering,Breaking and Entering
+Assault,Assault
+Murder,Murder
+Tax_Evasion,Tax Evasion
+Criminal_Conspiracy,Criminal Conspiracy
+Vagrancy,Vagrancy
+Smuggling,Smuggling
+Piracy,Piracy
+High_Treason,High Treason
+Pickpocketing,Pickpocketing
+Theft,Theft
+Treason,Treason
+Loan_Default,Loan Default
+Regular_Punishment_String,%gtp gold pieces in fines and %dip days in prison
+Banishment,Banishment
+Execution,Execution
+cannotChangeTransportationIndoors,You cannot change transportation indoors.
+cannotTravelWithEnemiesNearby,You cannot travel with enemies nearby.
+cannotTravelIndoors,You cannot travel while indoors.
+powersUnknown,Powers unknown.
+itemPowers,"Cast when used:
+Cast when held:
+Cast when strikes:
+Extra spell pts
+Potent vs
+Regens health
+Vampiric effect
+Increased weight allowance
+Repairs objects
+Absorbs spells
+Enhances skill
+Feather weight
+Strengthens armor
+Improves talents
+Good rep with
+Soul bound
+Item deteriorates
+User takes damage
+Vision problems
+Walking problems
+Low damage vs
+Health leech
+Bad reactions from
+Extra weight
+Weakens armor
+Bad rep with"
+enemyNames,"Rat
+Imp
+Spriggan
+Giant Bat
+Grizzly Bear
+Sabretooth Tiger
+Spider
+Orc
+Centaur
+Werewolf
+Nymph
+Slaughterfish
+Orc Sergeant
+Harpy
+Wereboar
+Skeletal Warrior
+Giant
+Zombie
+Ghost
+Mummy
+Giant Scorpion
+Orc Shaman
+Gargoyle
+Wraith
+Orc Warlord
+Frost Daedra
+Fire Daedra
+Daedroth
+Vampire
+Daedra Seducer
+Ancient Vampire
+Daedra Lord
+Lich
+Ancient Lich
+Dragonling
+Fire Atronach
+Iron Atronach
+Flesh Atronach
+Ice Atronach
+Horse
+Dragonling
+Dreugh
+Lamia
+Mage
+Spellsword
+Battlemage
+Sorcerer
+Healer
+Nightblade
+Bard
+Burglar
+Rogue
+Acrobat
+Thief
+Assassin
+Monk
+Archer
+Ranger
+Barbarian
+Warrior
+Knight
+City Watch"
+extraSpellPtsTimes,"during Winter
+during Spring
+during Summer
+during Fall
+during Full Moon
+during Half Moon
+during New Moon
+near undead
+near daedra
+near humanoids
+near animals"
+regensHealthTimes,"all the time
+in sunlight
+in darkness"
+vampiricEffectRanges,"at range
+when strikes"
+increasedWeightAllowances,"25% additional
+50% additional"
+improvedTalents,"hearing
+athleticism
+adrenaline rush"
+itemDeteriorateLocations,"all the time
+in sunlight
+in holy places"
+userTakesDamageLocations,"in sunlight
+in holy places"
+enemyGroupNames,"undead
+Daedra
+humanoids
+animals"
+healthLeechStopConditions,"whenever used
+unless used daily
+unless used weekly"
+badReactionFromEnemyGroups,"humanoids
+animals
+Daedra"
+repWithGroups,"Commoners
+Merchants
+Scholars
+Nobility
+Underworld
+All"
+youReceiveGoldPieces,You receive %s gold pieces.
+bankPurchasePrice,Price : %s gold
+youHaveRentedRoom,You have a room at %s for %d hours.
+haveNotRentedRoom,You have not rented a room here.
+expiredRentedRoom,Your time for this room has expired.
+tavernAle,Ale (1 gold)
+tavernBeer,Beer (1 gold)
+tavernMead,Mead (2 gold)
+tavernWine,Wine (3 gold)
+tavernBread,Bread (1 gold)
+tavernBroth,Broth (1 gold)
+tavernCheese,Cheese (2 gold)
+tavernFowl,Fowl (3 gold)
+tavernGruel,Gruel (2 gold)
+tavernPie,Pie (2 gold)
+tavernStew,Stew (3 gold)
+pressButtonToFireSpell,Press button to fire spell.
+climbingMode,Climbing mode.
+rappelMode,Rappel mode.
+hangingMode,Hanging Mode
+acuteHearing,Acute Hearing
+adrenalineRush,Adrenaline Rush
+athleticism,Athleticism
+bonusToHit,Bonus to hit
+expertiseIn,Expertise in
+immunity,Immunity
+increasedMagery,Increased Magery
+rapidHealing,Rapid Healing
+regenerateHealth,Regenerate Health
+resistance,Resistance
+spellAbsorption,Spell Absorption
+animals,Animals
+daedra,Daedra
+humanoid,Humanoid
+undead,Undead
+axe,Axe
+bluntWeapon,Blunt Weapon
+handToHand,Hand-to-Hand
+longBlade,Long Blade
+missileWeapon,Missile Weapon
+shortBlade,Short Blade
+toDisease,To Disease
+toFire,To Fire
+toFrost,To Frost
+toMagic,To Magic
+toParalysis,To Paralysis
+toPoison,To Poison
+toShock,To Shock
+intInSpellPoints15,1.5X INT In Spell Points
+intInSpellPoints175,1.75X INT In Spell Points
+intInSpellPoints2,2X INT In Spell Points
+intInSpellPoints3,3X INT In Spell Points
+intInSpellPoints,INT In Spell Points
+general,General
+inDarkness,In Darkness
+inLight,In Light
+whileImmersed,While Immersed In Water
+criticalWeakness,Critical Weakness
+damage,Damage
+darknessPoweredMagery,Darkness-Powered Magery
+forbiddenArmorType,Forbidden Armor Type
+forbiddenMaterial,Forbidden Material
+forbiddenShieldTypes,Forbidden Shield Types
+forbiddenWeaponry,Forbidden Weaponry
+inabilityToRegen,Inability To Regen Spell Points
+lightPoweredMagery,Light-Powered Magery
+lowTolerance,Low Tolerance
+phobia,Phobia
+fromHolyPlaces,From Holy Places
+fromSunlight,From Sunlight
+lowerMagicAbilityDaylight,Lower Magic Ability In Daylight
+unableToUseMagicInDaylight,Unable To Use Magic In Daylight
+chain,Chain
+leather,Leather
+plate,Plate
+adamantium,Adamantium
+daedric,Daedric
+dwarven,Dwarven
+ebony,Ebony
+elven,Elven
+iron,Iron
+mithril,Mithril
+orcish,Orcish
+silver,Silver
+steel,Steel
+buckler,Buckler
+kiteShield,Kite Shield
+roundShield,Round Shield
+towerShield,Tower Shield
+lowerMagicAbilityDarkness,Lower Magic Ability In Darkness
+unableToUseMagicInDarkness,Unable To Use Magic In Darkness
+helpAttributes,Attributes
+helpClassName,Class Name
+helpGeneral,General
+helpReputations,Reputations
+helpSkillAdvancement,Skill Advancement
+helpSkills,Skills
+helpSpecialAdvantages,Special Advantages
+helpSpecialDisadvantages,Special Disadvantages
+lower,Lower
+higher,Higher
+unchanged,Unchanged
+elsweyr,Elsweyr
+blackMarsh,Black Marsh
+hammerfell,Hammerfell
+highRock,High Rock
+morrowind,Morrowind
+skyrim,Skyrim
+sumurset,Sumurset
+valenwood,Valenwood
+rollingHills,rolling hills
+desertLand,desertland
+mountains,mountains
+swamps,swamps
+forests,forests
+shores,shores
+medical,Medical
+etiquette,Etiquette
+streetwise,Streetwise
+jumping,Jumping
+harpy,Harpy
+giantish,Giantish
+dragonish,Dragonish
+nymph,Nymph
+aedric,Daedric
+spriggan,Spriggan
+centaurian,Centaurian
+impish,Impish
+lockpicking,Lockpicking
+mercantile,Mercantile
+pickpocket,Pickpocket
+stealth,Stealth
+swimming,Swimming
+climbing,Climbing
+backstabbing,Backstabbing
+dodging,Dodging
+running,Running
+destruction,Destruction
+restoration,Restoration
+illusion,Illusion
+alteration,Alteration
+thaumaturgy,Thaumaturgy
+mysticism,Mysticism
+archery,Archery
+criticalStrike,Critical Strike
+strength,Strength
+intelligence,Intelligence
+willpower,Willpower
+agility,Agility
+endurance,Endurance
+personality,Personality
+speed,Speed
+luck,Luck
+STR,STR
+INT,INT
+WIL,WIL
+AGI,AGI
+END,END
+PER,PER
+SPD,SPD
+LUC,LUC
+breton,Breton
+redguard,Redguard
+darkElf,Dark Elf
+highElf,High Elf
+woodElf,Wood Elf
+khajiit,Khajiit
+argonian,Argonian
+vampire,Vampire
+werewolf,Werewolf
+wereboar,Wereboar
+vraseth,Vraseth
+haarvenu,Haarvenu
+thrafey,Thrafey
+lyrezi,Lyrezi
+montalion,Montalion
+khulari,Khulari
+garlythi,Garlythi
+anthotis,Anthotis
+selenu,Selenu
+lockedExteriorDoor,Locked.
+canOnlyCastOncePerDay,Can only be cast once per day...
+youNeedToHuntTheInnocent,You feel the need to hunt the innocent...
+youDreamOfTheMoon,"You dream, once again, of the moon..."
+inventoryWhileShapechanged,You cannot access the inventory while shapechanged...
+youGetNoResponse,You get no response.
+copyLogbookInfo,Left-click: toggle copy of selected text. Right-click: copy whole current conversation.
+east,east
+northeast,northeast
+north,north
+northwest,northwest
+west,west
+southwest,southwest
+south,south
+southeast,southeast
+thisPlace,this place
+AnyNews,Any news?
+WhereAmI,Where am I?
+AnswerTextWhereAmI,You are in {0} in {1}.
+YouAreInSameBuilding,You have found {0}. You are in it.
+NpcInSameBuilding,{0} is around here in {1}.
+PreviousList,Previous List
+General,General
+Regional,Regional
+Alchemists,Alchemists
+Armorers,Armorers
+Banks,Banks
+Bookstores,Bookstores
+Clothingstores,Clothing stores
+Gemstores,Gem stores
+Generalstores,General stores
+Guilds,Guilds
+Libraries,Libraries
+Pawnshops,Pawn shops
+Taverns,Taverns
+Weaponsmiths,Weapon smiths
+Localtemples,Local temples
+Sir,Sir
+Ma'am,Ma'am
+oldLeaderFate0,died of heart failure
+oldLeaderFate1,fell and struck his head
+oldLeaderFate2,died of the plague
+oldLeaderFate3,stepped down under pressure
+oldLeaderFate4,was overthrown
+oldLeaderFate5,was found murdered in his bed
+toBeReplacedStringRegional,Any
+replacementStringRegional,any
+comma,",  "
+resolvingError,...never mind...
+chameleon,Chameleon
+charm,Charm
+comprehendLanguages,Comprehend Languages
+continuousDamage,Continuous Damage
+createItem,Create Item
+cure,Cure
+detect,Detect
+disintegrate,Disintegrate
+dispel,Dispel
+drain,Drain
+elementalResistance,Elemental Resistance
+fortifyAttribute,Fortify Attribute
+freeAction,Free Action
+heal,Heal
+identify,Identify
+invisibility,Invisibility
+levitate,Levitate
+light,Light
+lock,Lock
+morphSelf,Morph Self
+open,Open
+pacify,Pacify
+paralyze,Paralyze
+regenerate,Regenerate
+shadow,Shadow
+shield,Shield
+silence,Silence
+slowfall,Slowfall
+soulTrap,Soul Trap
+spellReflection,Spell Reflection
+spellResistance,Spell Resistance
+teleport,Teleport
+transfer,Transfer
+waterBreathing,Water Breathing
+waterWalking,Water Walking
+fire,Fire
+frost,Frost
+magicka,Magicka
+poison,Poison
+shock,Shock
+enemy,Enemy
+magic,Magic
+treasure,Treasure
+fatigue,Fatigue
+health,Health
+spellPoints,Spell Points
+disease,Disease
+paralyzation,Paralyzation
+animal,Animal
+normal,Normal
+TRUE,TRUE
+noName,<no-name>
+youDontHaveTheSpellPoints,You don't have the spell points.
+youAreSilenced,You are silenced.
+youAreParalyzed,You are paralyzed.
+youFeelDrained,You feel drained.
+youAreFortified,You are fortified.
+youAreInvisible,You are invisible.
+youAreLevitating,You are levitating.
+youAreRegenerating,You are regenerating.
+youAreBlending,You are blending.
+youAreAShade,You are a shade.
+slowFallActive,Slow fall active.
+saveVersusSpellMade,Save versus spell made.
+spellEffectFailed,Spell effect failed.
+spellAbsorbed,Spell was absorbed.
+spellReflected,Spell was reflected.
+spellResisted,Spell was resisted.
+readyToLock,Ready to lock.
+readyToOpen,Ready to open.
+doorLocked,Door is now locked.
+doorAlreadyLocked,Door already locked.
+openFailed,Lock is too powerful.
+noSpellbook,You have no spellbook!
+sunlightDamageFastTravelDay,You cannot initiate fast travel during the day.
+trapActive,Trap active.
+trapHumanoid,Trap will not work on humanoids.
+trapSuccess,Trapped soul.
+trapFail,Trap failed.
+trapNoneEmpty,You have no empty soul traps!
+stamina,Stamina
+orcStrength,Orc Strength
+healing,Healing
+restorePower,Restore Power
+resistFire,Resist Fire
+resistFrost,Resist Frost
+resistShock,Resist Shock
+cureDisease,Cure Disease
+slowFalling,Slow Falling
+healTrue,Heal True
+levitation,Levitation
+resistPoison,Resist Poison
+curePoison,Cure Poison
+chameleonForm,Chameleon Form
+shadowForm,Shadow Form
+purification,Purification
+LeatherCuirass,Leather Cuirass
+LeatherGauntlets,Leather Gauntlets
+LeatherGreaves,Leather Greaves
+LeatherLeftPauldron,Leather Left Pauldron
+LeatherRightPauldron,Leather Right Pauldron
+LeatherHelm,Leather Helm
+LeatherBoots,Leather Boots
+ChainCuirass,Chain Cuirass
+ChainGauntlets,Chain Gauntlets
+ChainGreaves,Chain Greaves
+ChainLeftPauldron,Chain Left Pauldron
+ChainRightPauldron,Chain Right Pauldron
+ChainHelm,Chain Helm
+ChainBoots,Chain Boots
+SteelCuirass,Steel Cuirass
+SteelGauntlets,Steel Gauntlets
+SteelGreaves,Steel Greaves
+SteelLeftPauldron,Steel Left Pauldron
+SteelRightPauldron,Steel Right Pauldron
+SteelHelm,Steel Helm
+SteelBoots,Steel Boots
+SteelBuckler,Steel Buckler
+SteelDagger,Steel Dagger
+SteelLongsword,Steel Longsword
+SteelStaff,Steel Staff
+ShortBow,Short Bow
+Arrows,Arrows
+SteelBattleAxe,Steel Battle Axe
+Robes,Robes
+CastWhenUsed,Cast when used:
+CastWhenHeld,Cast when held:
+CastWhenStrikes,Cast when strikes:
+ExtraSpellPts,Extra spell pts
+PotentVs,Potent vs
+RegensHealth,Regens health
+VampiricEffect,Vampiric effect
+IncreasedWeightAllowance,Increased Weight Allowance
+RepairsObjects,Repairs objects
+AbsorbsSpells,Absorbs spells
+EnhancesSkill,Enhances skill
+FeatherWeight,Feather Weight
+StrengthensArmor,Strengthens armor
+ImprovesTalents,Improves talents
+GoodRepWith,Good rep with
+SoulBound,Soul bound
+ItemDeteriorates,Item deteriorates
+UserTakesDamage,User takes damage
+VisionProblems,Vision problems
+WalkingProblems,Walking problems
+LowDamageVs,Low damage vs
+HealthLeech,Health leech
+BadReactionsFrom,Bad reactions from
+ExtraWeight,Extra weight
+WeakensArmor,Weakens armor
+BadRepWith,Bad rep with
+inHolyPlaces,in holy places
+wheneverUsed,whenever used
+unlessUsedDaily,unless used daily
+unlessUsedWeekly,unless used weekly
+fromHumanoids,from humanoids
+fromAnimals,from animals
+fromDaedra,from Daedra
+duringWinter,during Winter
+duringSpring,during Spring
+duringSummer,during Summer
+duringFall,during Fall
+duringFullMoon,during Full Moon
+duringHalfMoon,during Half Moon
+duringNewMoon,during New Moon
+nearUndead,near undead
+nearDaedra,near deadra
+nearHumanoids,near humanoids
+nearAnimals,near animals
+undeadLower,undead
+humanoidLower,humanoid
+animalsLower,animals
+animalsUpper,Animals
+allTheTime,all the time
+inSunlight,in sunlight
+inDarknessLower,in darkness
+atRange,at range
+whenStrikes,when strikes
+add25Percent,25% additional
+add50Percent,50% additional
+hearing,hearing
+athleticismLower,athleticism
+adrenalineRushLower,adrenaline rush
+commoners,Commoners
+merchants,Merchants
+scholars,Scholars
+nobility,Nobility
+underworld,Underworld
+all,All
+noRoomInItem,No room in item...
+noEnchantments,You have not prepared enchantments for this item.
+noMonstersNearby,There are no monsters nearby.
+Fire,Fire
+Frost,Frost
+Poison,Poison
+Shock,Shock
+Magicka,Magicka
+Animal,Animal
+Undead,Undead
+Humanoid,Humanoid
+Daedra,Daedra
+dialogButtonInfo,Switch between: Active Quests; Finished Quests; Notebook; Messages
+activeQuests,Active Quests
+activeQuestsInfo,Click on an active quest that has a target location to initiate travel.
+finishedQuests,Finished Quests
+finishedQuestsInfo,Click on an entry to move it. Right click to delete.
+notebook,Notebook
+notebookInfo,Click a note to move. Right click to delete. Click in-between to add a new note.
+messages,Messages
+messagesInfo,History of messages recently shown on screen
+confirmMoveHead,Move entry
+confirmMove,Do you want to change the position of this entry?
+confirmMove2,(It will be moved to before the next entry clicked)
+confirmRemoveHead,Delete entry
+confirmRemove,Are you sure you want to remove this entry?
+confirmRemove2,(It will be deleted permanently and cannot be restored)
+confirmFindHead,Travel to location
+confirmFind,Do you want to open the world map to travel to:
+confirmFind2,(Note: you can cancel travel from the world map)
+enterNote,Enter your note:
+completedQuest,completed
+endedQuest,ended
+finishQuestHeader,{0} {1} at {2}:
+quest,Quest
+noteHeader,{0} in {1}:
+houseDeed,You obtained the deeds and now own a house in %town of %region.
+levelProgress,Progress made to the next level: {0}%
+readMap,Discovered the location of %map after studying a map.
+readMapTG,The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
+readMapDB,The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
+readMapFail,You have already discovered the location shown by this map.
+howManyItems,Pick how many items (max {0})?
+wagonFullGold,Your wagon could only hold {0} gold pieces.
+itemsIdentified,Items identified.
+repairDone,DONE
+repairDays,%d days
+interruptRepair,Take back that item before it's repaired?
+repairNote,Left my {0} for repair at {1}.
+doesntNeedIdentify,This does not need to be identified.
+goldAmount,{0} gold pieces
+goldWeight,Weight: {0} kg
+letterOfCredit,You are paid with a letter of credit.
+stealSuccess,You are successful.
+stealFailure,You are not successful...
+cannotRemoveItem,You cannot remove this item.
+cannotCarryAnymore,You cannot carry anymore stuff.
+cannotHoldAnymore,Your cart cannot hold anymore stuff.
+cannotUseThis,You cannot use this.
+equippingWeapon,Equipping %s
+lightDouse,You douse the %it.
+lightLight,You light the %it.
+lightDies,Your %it flickers and dies.
+lightEmpty,Your %it has no fuel left.
+lightRefuel,You refuel your %it with a bottle of oil.
+lightFull,Your %it is full.
+kgSrc,kilograms
+kgRep,kg
+damSrc,points of damage
+damRep,damage
+arSrc,armor rating
+arRep,armor
+northern,(northern)
+southern,(southern)
+noWagon,You don't own a wagon.
+exitTooFar,The exit is too far away for you to access your wagon.
+bookUnavailable,The book is ruined and is now unreadable.
+unknownAuthor,unknown author
+cannotDeleteVamp,Cannot delete special vampire spells.
+cannotDeleteWere,Cannot delete special lycanthropy spell.
+noRecipes,You have no recipes.
+potionMixed,Your potion has been mixed.
+potionFailed,Those ingredients did not concoct an effective potion.
+reqIngredients,You do not have the ingredients required.
+region,Region
+account,Account
+loan,Loan
+dueDate,Loan Due Date
+noAccount,None
+loanReminder,You have a loan of {0} gold pieces due in
+loanReminder2,less than {0} months in {1}
+classicIcons,Classic
+suggestedIcons,Suggested
+serviceMembersOnly,My services are reserved for members only.
+serviceDonateHowMuch,Donate how much money : 
+curedDisease,You are cured.
+freeHolidayCuring,You are cured free from cost due to todays' holiday.
+gettingQuests1,"Hmm, let me see what tasks we have available."
+gettingQuests2,"Please have patience and wait here a moment, %pcf."
+illegalRestWarning,It is illegal to camp in or near a city. Continue?
+cannotLoiterMoreThanXHours1,You cannot loiter more
+cannotLoiterMoreThanXHours2,than {0} hours at a time.
+automapToolTipTextGridButton,left click: switch between 2D top view and 3D view (hotkey: {0})\rright click: reset rot. axis to player pos (hotkey: {1})\rmouse wheel up while over btn: inc. perspective (only 3D mode)\rmouse wheel down while over btn: dec. perspective (only 3D mode)
+automapToolTipForwardButton,left click: move viewpoint forward (hotkey: {0})\rright click: move rotation axis forward (hotkey: {1})
+automapToolTipBackwardButton,left click: move viewpoint backwards (hotkey: {0})\rright click: move rotation axis backwards (hotkey: {1})
+automapToolTipLeftButton,left click: move viewpoint to the left (hotkey: {0})\rright click: move rotation axis to the left (hotkey: {1})
+automapToolTipRightButton,left click: move viewpoint to the right (hotkey: {0})\rright click: move rotation axis to the right (hotkey: {1})
+automapToolTipRotateLeftButton,left click: rotate dungeon to the left (hotkey: {0})\rright click: rotate camera to the left (hotkey: {1})
+automapToolTipRotateRightButton,left click: rotate dungeon to the right (hotkey: {0})\rright click: rotate camera to the right (hotkey: {1})
+automapToolTipUpstairsButton,left click: increase viewpoint (hotkey: {0})\rright click: increase slice level (hotkey: {1})\rslice level can also be adjusted by holding down middle mouse btn\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r
+automapToolTipDownstairsButton,left click: decrease viewpoint (hotkey: {0})\rright click: decrease slice level (hotkey: {1})\rslice level can also be adjusted by holding down middle mouse btn\r\rhint: different render modes may show hidden geometry:\rhotkey {2}: cutout mode\rhotkey {3}: wireframe mode\rhotkey {4}: transparent mode\rswitch between modes with return key\r
+automapToolTipPanelCompass,"left click: toggle focus (hotkey: {0})\rbeacons: red ... player, green ... entrance, blue ... rotation axis\r\rright click: reset view (hotkey: {1})\r\rdouble-click left mouse btn in window to create+edit marker note\rdouble-click left mouse btn (+Ctrl key) in window to create marker\rdouble-click left mouse btn on a marker to add/edit a note\rdouble-click right mouse btn on a marker to delete it\rdouble-click right mouse btn in window to position rotation axis\rdouble-click middle mouse btn in window to center view\rdouble-click left mouse btn on discovered portal marker to jump\rto connected teleporter portal"
+automapPlayerPositionBeacon,player position beacon
+automapRotationPivotAxis,rotation pivot axis
+automapEntranceExitPositionBeacon,entrance/exit position beacon
+automapEntranceExit,entrance/exit
+automapPlayerMarker,player marker
+automapTeleporterEntrance,teleporter (entrance)
+automapTeleporterExit,teleporter (exit)
+exteriorAutomapBuildingTypeAlchemist,Alchemist
+exteriorAutomapBuildingTypeArmorer,Armorer
+exteriorAutomapBuildingTypeBank,Bank
+exteriorAutomapBuildingTypeBookseller,Bookseller
+exteriorAutomapBuildingTypeClothingStore,Clothing Store
+exteriorAutomapBuildingTypeFurnitureStore,Furniture Store
+exteriorAutomapBuildingTypeGemStore,Gem Store
+exteriorAutomapBuildingTypeGeneralStore,General Store
+exteriorAutomapBuildingTypeGuildHall,Guild Hall
+exteriorAutomapBuildingTypeHouseForSale,HouseForSale
+exteriorAutomapBuildingTypeLibrary,Library
+exteriorAutomapBuildingTypePalace,Palace
+exteriorAutomapBuildingTypePawnShop,Pawn Shop
+exteriorAutomapBuildingTypeTavern,Tavern
+exteriorAutomapBuildingTypeTemple,Temple
+exteriorAutomapBuildingTypeWeaponSmith,Weapon Smith
+exteriorAutomapBuildingTypeUnknown,Unknown
+exteriorAutomapToolTipTextGridButton,"left click: switch to next view mode (hotkey: {0})\ravailable view modes are:\r- original (hotkey {1})\r- extra: includes extra buildings (hotkey {2})\r- all: includes extra buildings, ground flats (hotkey {3})\rswitch background texture with {4}, {5}, {6}, {7}"
+exteriorAutomapToolTipForwardButton,left click: move up (hotkey: {0})\rright click: move to north location border (hotkey: {1})
+exteriorAutomapToolTipBackwardButton,left click: move down (hotkey: {0})\rright click: move to south location border (hotkey: {1})
+exteriorAutomapToolTipLeftButton,left click: move to the left (hotkey: {0})\rright click: move to west location border (hotkey: {1})
+exteriorAutomapToolTipRightButton,left click: move to the right (hotkey: {0})\rright click: move to east location border (hotkey: {1})
+exteriorAutomapToolTipRotateLeftButton,left click: rotate map to the left (hotkey: {0})\rright click: rotate map around the player position\rto the left  (hotkey: {1})
+exteriorAutomapToolTipRotateRightButton,left click: rotate map to the right (hotkey: {0})\rright click: rotate map around the player position\rto the right (hotkey: {1})
+exteriorAutomapToolTipUpstairsButton,left click: zoom in (hotkey: {0})\rright click: apply maximum zoom)
+exteriorAutomapToolTipDownstairsButton,left click: zoom out (hotkey: {0}\rright click: apply minimum zoom)
+exteriorAutomapToolTipPanelCompass,left click: focus player position (hotkey: {0})\rright click: reset view (hotkey: {1})
+loading,Please wait...
+classicSave,Classic
+cancel,Cancel
+renameSave,Rename
+deleteSave,Delete
+switchChar,Switch Char
+savePrompt,Save Game
+loadPrompt,Load Game
+saveButton,Save
+loadButton,Load
+enterSaveName,Enter save name
+selectSaveName,Select a save
+confirmDeleteSave,Are you sure you want to delete save?
+confirmOverwriteSave,Overwrite this save?
+youMustEnterASaveName,You must enter a save name.
+youMustSelectASaveName,You must select a save name.
+noSavesFound,No saves found. Load a Classic save?
+cannotSaveNow,You cannot save now.
+addEffect,Add effect
+buySpell,Buy spell
+newSpell,New spell
+exit,Exit
+casterOnly,Caster only
+byTouch,By touch
+singleTargetAtRange,Single target at range
+areaAroundCaster,Area around caster
+areaAtRange,Area at range
+fireBased,Fire based
+coldBased,Cold based
+poisonBased,Poison based
+shockBased,Shock based
+magicBased,Magic based
+selectIcon,Select icon
+nextIcon,Next icon
+previousIcon,Previous icon
+nameSpell,Name spell
+enterSpellName,Enter spell name :
+noEffectsError,You must add at least one effect to this spell.
+deleteSpell,Do you want to delete this spell?
+sortSpells,Do you want to sort spells?
+effectNotFoundError,<effect not found>
+noItemToActivate,You have no usable magic item
+Akatosh,Akatosh
+Arkay,Arkay
+Dibella,Dibella
+Julianos,Julianos
+Kynareth,Kynareth
+Mara,Mara
+Stendarr,Stendarr
+Zenithar,Zenithar
+removeKeybind,Are you sure you want to remove the keybind for {0} ('{1}')?
+nord,Nord
+settingsNotApplied,Note: Some changes may not be applied until you restart the game.
+doneButton,Done
+temple,temple
+unknownPowers,Unknown Powers
+cannotBeRepaired,This cannot be repaired.
+youNeverAwaken,You never awaken.
+modSettings,Mod Settings
+gameEffectsSettings,Effect Settings
+antialiasing,Antialiasing
+ambientOcclusion,Ambient Occlusion
+bloom,Bloom
+motionBlur,Motion Blur
+vignette,Vignette
+depthOfField,Depth of Field
+antialiasingTip,Give a smoother appearance
+enable,Enable
+fxaa,FXAA
+smaa,SMAA
+taa,TAA
+none,None
+method,Method
+fxaaFastMode,FXAA Fast Mode
+low,Low
+medium,Medium
+high,High
+smaaQuality,SMAA Quality
+taaSharpness,TAA Sharpness
+disabled,Disabled
+setPageDefaults,Set Page Defaults
+ambientOcclusionTip,Darkens creases and holes
+scalableAmbientObscurance,Scalable Ambient Obscurance
+multiScaleVolumetricObscurance,Multi Scale Volumetric Obscurance
+scalableAmbient,Scalable Ambient
+multiScaleVolumetric,MultiScale Volumetric
+intensity,Intensity
+lowest,Lowest
+ultra,Ultra
+radius,Radius
+quality,Quality
+thickness,Thickness
+bloomTip,Make bright areas glow
+threshold,Threshold
+diffusion,Diffusion
+bloomFastMode,Bloom fast mode
+motionBlurTip,Simulates objects moving faster than camera exposure
+shutterAngle,Shutter Angle
+sampleCount,Sample Count
+vignetteTip,Darken towards the edges of screen
+smoothness,Smoothness
+roundness,Roundness
+rounded,Rounded
+depthOfFieldTip,Simulates focus of camera lens
+focusDistance,Focus Distance
+aperture,Aperture
+focalLength,Focal Length
+maxBlurSize,Max Blur Size
+small,Small
+large,Large
+veryLarge,Very Large
+ditherTip,Apply noise to reduce large-scale patterns like color banding
+dither,Dither
+colorBoost,ColorBoost
+colorBoostTip,Brightens colors near camera
+dungeonScale,Dungeon Scale
+interiorScale,Interior Scale
+exteriorScale,Exterior Scale
+dungeonFalloff,Dungeon Falloff
+retroMode,Retro Mode
+retroModeTip,Renders world at lower resolutions
+mode,Mode
+retroModeOff,Off
+retroMode320x200,320x200
+retroMode640x400,640x400
+off,Off
+posterizationFull,Posterization (full)
+posterizationMinusSky,Posterization (-sky)
+palettizationFull,Palettization (full)
+palettizationMinusSky,Palettization (-sky)
+postProcess,Postprocess
+retroModeAspectCorrection,Aspect Ratio Correction
+FourThree,4:03
+SixteenTen,16:10
+notEnoughSpellpointsLeft,You do not have enough spell points left.
+totalIdentified,{0} out of {1} identified.
+dispelMagicSuccess,Dispel magic was a success...
+dispelMagicFailed,Dispel magic failed...
+smallerDungeonsChanged,Smaller dungeons changed while inside dungeon. Moving player to dungeon exit.
+youNote,You note: 
+customName,Custom name: 
+StoresA,"%ef's
+%cn's Best
+The Essential
+Lord %ef's
+The Adventurer's
+The Odd
+%ef's Finest
+Bargain
+Vintage
+The Emperor's
+%cn
+%ef's General
+The Superior
+%ef's Quality
+First Class
+The %rt's
+The Champion
+Doctor %ef's
+Lady %ef's"
+GeneralStoresB,"Supplies
+Supply Store
+Gear
+Gear Store
+Equipment
+Equipment Store
+Sundries
+Provisions
+Merchandise
+General Store
+Retail Store
+Trading Post
+Market
+Wares
+Warehouse"
+WeaponStoresB,"Weapons
+Weaponry
+Arms
+Armaments
+Arsenal
+Armsmaker
+Blades
+Blacksmith
+Metalsmith
+Weaponsmith"
+ArmorStoresB,"Armory
+Mail
+Shielding
+Armor
+Shields
+Aegis
+Metalworks
+Blacksmith
+Metalsmith
+Armorer
+Smith
+Smithy"
+BookStoresB,"Books
+Bookstore
+Bookshop
+Book Dealer
+Book Center
+Bookseller
+Bookstall
+Incunabula"
+LibraryStoresB,"Library
+Bookroom
+Athenaeum
+Public Library
+Historians
+Bookroom
+Seminary
+Lyceum"
+ClothingStoresB,"Clothing
+Clothes
+Garments
+Apparel
+Costumes
+Vestments
+Attire
+Fashion
+Tailoring
+Outfits
+Finery"
+AlchemyStoresB,"Herbs
+Potherbs
+Spices
+Remedies
+Antidotes
+Physics
+Medicines
+Potions
+Tinctures
+Medicaments
+Elixirs
+Pharmacy
+Apothecary
+Unguents
+Medicinal Agents
+Herb Garden
+Pharmaceuticals
+Chemistry
+Chemicals
+Experiental Products
+Alchemistry
+Alchemical Solutions
+Metallurgy"
+GemStoresB,"Gems
+Gemstones
+Jewelry
+Jewels
+Precious Stones
+Bijoutry
+Jewelers
+Jewel Box
+Jewelry Shop
+Gemcutter"
+PawnStoresB,"Pawnshop
+Pawnbrokers
+Used Supplies
+Used Gear
+Used Equipment
+Used Merchandise
+Hockshop
+Antiquities"
+FurnitureStoresB,"Furniture
+Furnishings
+Interior Design
+Furniture Shop
+Decor
+Carpentry
+Woodworking
+Crafts
+Woodwork"
+LivestockStoresB,"Livestock
+Breeders
+Farm Animals
+Beasts
+Creatures
+Game
+Animalia
+Fauna
+Menagerie"
+TavernsA,"The Queen's
+The King's
+The Dirty
+The Black
+The Mole and
+The Green
+The Red
+The Gold
+The White
+The Silver
+The Crimson
+The Flying
+The Dancing
+The Laughing
+The Restless
+The Thirsty
+The Unfortunate
+The Lucky
+The Devil's
+The Rusty
+The Howling
+The Screaming
+The Bat and
+The Lion and
+The Lynx and
+The Dwarf and
+The Beaver and
+The Fox and
+The Mouse and
+The Pig and
+The Feather and
+The Toad and
+The Rat and
+The Savage
+The Knave and
+The Dead"
+TavernsB,"Chasm
+Mug
+Pit
+Cat
+Dog
+Goblin
+Griffin
+Dragon
+Ogre
+Giant
+Djinn
+Wolf
+Huntsman
+Dagger
+Skull
+Sword
+Guard
+Dungeon
+Helm
+Castle
+Jug
+Bird
+Gnome
+Hedgehog
+Muskrat
+Woodchuck
+Scorpion
+Badger
+Goat
+Porcupine
+Priest
+Fawn
+Stag
+Barbarian
+Rascal
+Fairy"
+houseForSale,House for sale
+theBankOf,The Bank of
+daggerfall,Daggerfall
+wayrest,Wayrest
+sentinel,Sentinel
+palace,Palace
+regionNames,"Alik'r Desert
+Dragontail Mountains
+Glenpoint Foothills
+Daggerfall Bluffs
+Yeorth Burrowland
+Dwynnen
+Ravennian Forest
+Devilrock
+Malekna Forest
+Isle of Balfiera
+Bantha
+Dak'fron
+Islands in the Western Iliac Bay
+Tamarilyn Point
+Lainlyn Cliffs
+Bjoulsae River
+Wrothgarian Mountains
+Daggerfall
+Glenpoint
+Betony
+Sentinel
+Anticlere
+Lainlyn
+Wayrest
+Gen Tem High Rock village
+Gen Rai Hammerfell village
+Orsinium Area
+Skeffington Wood
+Hammerfell bay coast
+Hammerfell sea coast
+High Rock bay coast
+High Rock sea coast
+Northmoor
+Menevia
+Alcaire
+Koegria
+Bhoriane
+Kambria
+Phrygias
+Urvaius
+Ykalon
+Daenia
+Shalgora
+Abibon-Gora
+Kairou
+Pothago
+Myrkwasa
+Ayasofya
+Tigonus
+Kozanset
+Satakalaam
+Totambu
+Mournoth
+Ephesus
+Santaki
+Antiphyllos
+Bergama
+Gavaudon
+Tulune
+Glenumbra Moors
+Ilessan Hills
+Cybiades"
+ocean,Ocean
+unknownUpper,Unknown
+switchToRegion,Switch To: {0} Region
+locationInRegionProvince,{0} in {1} province
+dayNames,"Sundas
+Morndas
+Tirdas
+Middas
+Turdas
+Fredas
+Loredas"
+monthNames,"Morning Star
+Sun's Dawn
+First Seed
+Rain's Hand
+Second Seed
+Midyear
+Sun's Height
+Last Seed
+Hearthfire
+Frostfall
+Sun's Dusk
+Evening Star"
+birthSignNames,"The Ritual
+The Lover
+The Lord
+The Mage
+The Shadow
+The Steed
+The Apprentice
+The Warrior
+The Lady
+The Tower
+The Atronach
+The Thief"
+seasonNames,"Fall
+Spring
+Summer
+Winter"
+longDateTimeFormatString,"{0:00}:{1:00}:{2:00} on {3}, {4}{5} of {6:00}, 3E{7}"
+dateTimeFormatString,"{0:00}:{1:00}:{2:00} on {3}{4} of {5:00}, 3E{6}"
+dateFormatString,{0} the {1}{2} of {3:00}
+ingredientFormatString,{0} {1}
+longWeaponNameFormatString,{0} {1}
+longArmorNameFormatString,{0} {1}
+strRatings,"pathetic
+frail
+weak
+below average
+about average
+fairly strong
+athletic
+very strong
+powerful
+superhuman"
+intRatings,"vegetable-like
+idiotic
+half-witted
+dim
+about average
+cunning
+fairly clever
+very intelligent
+brilliant
+genius"
+wilRatings,"inane
+submissive
+passive
+distracted
+unassertive
+stable
+confident
+strong-willed
+very focused
+enlightened"
+agiRatings,"oafish
+bumbling
+clumsy
+awkward
+about average
+spry
+nimble
+dexterous
+very agile
+acrobatic"
+endRatings,"sickly
+pitiable
+unsteady
+erratic
+about average
+above average
+very healthy
+hardy
+titanic
+immortal"
+perRatings,"abhorrent
+unpopular
+anonymous
+unassuming
+unremarkable
+interesting
+charming
+arresting
+authoritative
+charismatic"
+spdRatings,"inactive
+sluggish
+very slow
+slow
+about average
+above average
+fast
+fleet-footed
+lightning-fast
+meteoric"
+lucRatings,"cursed
+hopeless
+ill-favored
+unfortunate
+about average
+fairly lucky
+lucky
+fortunate
+very auspicious
+divinely favored"
+Mage,Mage
+Spellsword,Spellsword
+Battlemage,Battlemage
+Sorcerer,Sorcerer
+Healer,Healer
+Nightblade,Nightblade
+Bard,Bard
+Burglar,Burglar
+Rogue,Rogue
+Acrobat,Acrobat
+Thief,Thief
+Assassin,Assassin
+Monk,Monk
+Archer,Archer
+Ranger,Ranger
+Barbarian,Barbarian
+Warrior,Warrior
+Knight,Knight
+Custom,Custom
+darkBrotherhoodRanks,"Apprentice
+Journeyman
+Operator
+Slayer
+Executioner
+Punisher
+Terminator
+Assassin
+Dark Brother
+Master Assassin"
+fightersRanks,"Apprentice
+Journeyman
+Swordsman
+Protector
+Defender
+Warder
+Guardian
+Champion
+Warrior
+Master"
+knightlyOrderRanks,"Aspirant
+Squire
+Gallant
+Chevalier
+Keeper
+Knight Brother
+Commander
+Marshall
+Seneschal
+Paladin"
+magesRanks,"Apprentice
+Journeyman
+Evoker
+Conjurer
+Magician
+Enchanter
+Warlock
+Wizard
+Master Wizard
+Archmage"
+templeRanks,"Novice
+Initiate
+Acolyte
+Adept
+Curate
+Disciple
+Brother
+Diviner
+Master
+Patriarch"
+thievesRanks,"Apprentice
+Journeyman
+Filcher
+Crook
+Robber
+Bandit
+Thief
+Ringleader
+Mastermind
+Master Thief"
+darkSister,Dark Sister
+nonMember,non-member
+knightSister,Knight Sister
+matriarch,Matriarch
+sister,Sister
+daedricSkill,Daedric
+orcishSkill,Orcish
+midDateTimeFormatString,{0:00}:{1:00}:{2:00} {3:00} {4:00} 3E{5}
+hthDamageFormatString,{0} dmg: {1}-{2}
+affiliationFormatString,{0} (rep:{1})
+answers_5404,"bow
+bow arrow
+crossbow
+bows
+crossbows"
+answers_5406,"one
+1"
+answers_5423,"benefactor
+the benefactor"
+answers_5424,"shut up
+shutup
+shaddup"
+answers_5464,"yes
+ok
+i agree
+y
+agreed
+done
+fine
+okay
+sure
+yep"
+random,Random
+nordSurnameImmutableSuffix,sen
+confirmDefaultControls,Are you sure you want to set default controls?
+saveLoadPromptFormat,{0} for '{1}'

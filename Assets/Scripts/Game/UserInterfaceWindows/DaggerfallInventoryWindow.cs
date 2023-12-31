@@ -735,8 +735,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem currentRightHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.RightHand);
                 if (currentRightHandWeapon != null)
                 {
+                    string templateName = TextManager.Instance.GetLocalizedItemName(currentRightHandWeapon.ItemTemplate.index, currentRightHandWeapon.ItemTemplate.name);
                     string message = TextManager.Instance.GetLocalizedText("equippingWeapon");
-                    message = message.Replace("%s", currentRightHandWeapon.ItemTemplate.name);
+                    message = message.Replace("%s", templateName);
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
             }
@@ -746,8 +747,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 DaggerfallUnityItem currentLeftHandWeapon = player.ItemEquipTable.GetItem(EquipSlots.LeftHand);
                 if (currentLeftHandWeapon != null)
                 {
+                    string templateName = TextManager.Instance.GetLocalizedItemName(currentLeftHandWeapon.ItemTemplate.index, currentLeftHandWeapon.ItemTemplate.name);
                     string message = TextManager.Instance.GetLocalizedText("equippingWeapon");
-                    message = message.Replace("%s", currentLeftHandWeapon.ItemTemplate.name);
+                    message = message.Replace("%s", templateName);
                     DaggerfallUI.Instance.PopupMessage(message);
                 }
             }
@@ -1584,7 +1586,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 while (uiManager.TopWindow != this)
                     uiManager.PopWindow();
                 CloseWindow();
-                chooseOneCallback(item);
+                chooseOneCallback?.Invoke(item);
             }
         }
 

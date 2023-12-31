@@ -59,6 +59,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         short nobilityRep = 0;
         short underworldRep = 0;
 
+        IMECompositionMode prevIME;
+
         #region Windows
 
         CreateCharReputationWindow createCharReputationWindow;
@@ -195,6 +197,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             IsSetup = true;
         }
 
+        public override void OnPush()
+        {
+            base.OnPush();
+
+            // Enable IME composition during input
+            prevIME = Input.imeCompositionMode;
+            Input.imeCompositionMode = IMECompositionMode.On;
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            // Restore previous IME composition mode
+            Input.imeCompositionMode = prevIME;
+        }
+
         protected void SetupButtons()
         {
             // Add skill selector buttons
@@ -211,7 +230,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hitPointsUpButton.OnMouseClick += HitPointsUpButton_OnMouseClick;
             hitPointsUpButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
             hitPointsDownButton = DaggerfallUI.AddButton(hitPointsDownButtonRect, NativePanel);
-            hitPointsDownButton.OnMouseUp += HitPointsDownButton_OnMouseClick;
+            hitPointsDownButton.OnMouseClick += HitPointsDownButton_OnMouseClick;
             hitPointsDownButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
 
             // Help topics

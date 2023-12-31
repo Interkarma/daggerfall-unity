@@ -10,6 +10,10 @@ namespace DaggerfallWorkshop.Game
         public const float defaultJumpSpeed = 4.5f;
         public const float defaultGravity = 20.0f;
 
+        public float playerJumpSkillMultiplier = 0.5f;      // Jumping skill adds up to +50% force multiplier (i.e skill * 0.5)
+        public float athleticismMultiplier = 0.1f;          // Athleticism adds +10% force multiplier
+        public float improvedAthleticismMultiplier = 0.1f;  // Improved athleticism adds another +10% force multiplier
+        public float jumpSpellMultiplier = 0.6f;            // Jump spell adds +60% force multiplier
         public float jumpSpeed = defaultJumpSpeed;
         public float gravity = defaultGravity;
         public float crouchingJumpDelta = 0.8f;
@@ -82,15 +86,11 @@ namespace DaggerfallWorkshop.Game
                 }
                 else
                 {
-                    const float athleticismMultiplier = 0.1f;           // +10%
-                    const float improvedAthleticismMultiplier = 0.1f;   // +10%
-                    const float jumpSpellMultiplier = 0.6f;             // +60%
-
                     // Baseline jump speed is improved by a percentage equal to JumpingSkill / 2
                     // Jumping in DFU is roughly the same as classic at low skill levels
                     // Jumping in DFU is higher at 100 skill than in classic, but still not so high as pre-beta DFU
                     jumpSpeedMultiplier = 1.0f;
-                    jumpSpeedMultiplier += GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue(DaggerfallConnect.DFCareer.Skills.Jumping) / 2 / 100f;
+                    jumpSpeedMultiplier += GameManager.Instance.PlayerEntity.Skills.GetLiveSkillValue(DaggerfallConnect.DFCareer.Skills.Jumping) * playerJumpSkillMultiplier / 100f;
 
                     // Add Athleticism and Improved Athleticism multipliers (will together make for +20%)
                     if (GameManager.Instance.PlayerEntity.Career.Athleticism)
