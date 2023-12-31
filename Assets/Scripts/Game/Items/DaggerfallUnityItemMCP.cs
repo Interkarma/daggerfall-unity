@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -251,7 +251,8 @@ namespace DaggerfallWorkshop.Game.Items
                     foreach (PotionRecipe.Ingredient ingredient in potionRecipe.Ingredients)
                     {
                         ItemTemplate ingredientTemplate = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ingredient.id);
-                        ingredientsTokens.Add(TextFile.CreateTextToken(ingredientTemplate.name));
+                        string ingredientName = TextManager.Instance.GetLocalizedItemName(ingredientTemplate.index, ingredientTemplate.name);
+                        ingredientsTokens.Add(TextFile.CreateTextToken(ingredientName));
                         ingredientsTokens.Add(TextFile.CreateFormatToken(format));
                     }
                 }

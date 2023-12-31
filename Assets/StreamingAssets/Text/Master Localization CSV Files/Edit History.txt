@@ -32,3 +32,13 @@ Internal_RSC
 NOTE: Possible issue with Unity CSV export. Need to check this anytime Internal_RSC is re-exported.
 Internal_Strings
 * Localize action type 12 answers (e.g. "yes" guard in Daggerfall Castle, "shutup" banner in Shedungent.
+* Localize "Random" button text when naming character during creation process.
+
+0.16.2
+------
+Internal_RSC
+* 5242 > "ofthe" to "of the"
+Internal_Strings
+* Add nordSurnameImmutableSuffix "sen" > appended manually to every random nord surname.
+* Add confirmDefaultControls > "Are you sure you want to set default controls?"
+* Add saveLoadPromptFormat > "{0} for {1}" for save/load UI.

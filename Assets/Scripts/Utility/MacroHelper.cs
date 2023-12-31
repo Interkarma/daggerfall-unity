@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -100,6 +100,7 @@ namespace DaggerfallWorkshop.Utility
             { "%g2", Pronoun2 },  // Him/Her etc...
             { "%g2self", Pronoun2self },// Himself/Herself etc...
             { "%g3", Pronoun3 },  // His/Her
+            { "%g4", Pronoun4 },  // His/Hers
             { "%gii", GoldCarried }, // Amount of gold in hand
             { "%gdd", GodDesc }, // God description i.e. God of Logic
             { "%god", God }, // God of current region or current temple
@@ -1307,6 +1308,12 @@ namespace DaggerfallWorkshop.Utility
         {   // %g3
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().Pronoun3();
+        }
+
+        public static string Pronoun4(IMacroContextProvider mcp)
+        {   // %g4
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Pronoun4();
         }
 
         public static string QuestDate(IMacroContextProvider mcp)

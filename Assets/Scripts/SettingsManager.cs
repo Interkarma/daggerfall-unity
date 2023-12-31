@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -33,6 +33,7 @@ namespace DaggerfallWorkshop
     {
         const string defaultsIniName = "defaults.ini";
         const string settingsIniName = "settings.ini";
+        const string settingsBakExt = ".bak";
         const string settingsDistIniName = "settings-{0}.ini";
 
         const string sectionDaggerfall = "Daggerfall";
@@ -626,7 +627,6 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "EnableModernConversationStyleInTalkWindow", EnableModernConversationStyleInTalkWindow);
             SetString(sectionGUI, "IconsPositioningScheme", IconsPositioningScheme);
             SetInt(sectionGUI, "HelmAndShieldMaterialDisplay", HelmAndShieldMaterialDisplay);
-            SetInt(sectionGUI, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
             SetInt(sectionGUI, "ShopQualityHUDDelay", ShopQualityHUDDelay);
             SetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown", ShowQuestJournalClocksAsCountdown);
@@ -675,6 +675,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionControls, "AllowMagicRepairs", AllowMagicRepairs);
             SetBool(sectionControls, "BowDrawback", BowDrawback);
 
+            SetInt(sectionMap, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetColor(sectionMap, "AutomapTempleColor", AutomapTempleColor);
             SetColor(sectionMap, "AutomapShopColor", AutomapShopColor);
             SetColor(sectionMap, "AutomapTavernColor", AutomapTavernColor);
@@ -718,17 +719,35 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
-        string SettingsName()
+        string SettingsName(bool isBackup = false)
         {
+            string name;
             if (string.IsNullOrEmpty(DistributionSuffix))
-                return settingsIniName;
+                name = settingsIniName;
             else
-                return string.Format(settingsDistIniName, DistributionSuffix);
+                name = string.Format(settingsDistIniName, DistributionSuffix);
+
+            if (isBackup)
+                name = Path.ChangeExtension(name, settingsBakExt);
+
+            return name;
+        }
+
+        void CreateDefaultSettingsFile(string userIniPath)
+        {
+            // Load defaults.ini
+            TextAsset asset = Resources.Load<TextAsset>(defaultsIniName);
+
+            // Create file
+            File.WriteAllBytes(userIniPath, asset.bytes);
+
+            Debug.LogFormat("Creating new '{0}' at path '{1}'", SettingsName(), userIniPath);
         }
 
         void ReadSettingsFile()
         {
             // Load defaults.ini
+            // This is required for fallback sync if everything else goes wrong
             TextAsset asset = Resources.Load<TextAsset>(defaultsIniName);
             MemoryStream stream = new MemoryStream(asset.bytes);
             StreamReader reader = new StreamReader(stream);
@@ -736,42 +755,56 @@ namespace DaggerfallWorkshop
             reader.Close();
 
             // Must have settings.ini in persistent data path
-            string message;
             string userIniPath = Path.Combine(PersistentDataPath, SettingsName());
             if (!File.Exists(userIniPath))
+                CreateDefaultSettingsFile(userIniPath);
+
+            // Load settings.ini and try to handle exception
+            // Failing to load settings at this stage might cause game to freeze at startup
+            // First try backup from last good startup then fallback to defaults
+            try
             {
-                // Create file
-                message = string.Format("Creating new '{0}' at path '{1}'", SettingsName(), userIniPath);
-                File.WriteAllBytes(userIniPath, asset.bytes);
-                DaggerfallUnity.LogMessage(message);
+                userIniData = iniParser.ReadFile(userIniPath);
+            }
+            catch (Exception)
+            {
+                Debug.Log("Error parsing settings.ini. Trying backup file.");
+                string userIniBakPath = Path.Combine(PersistentDataPath, SettingsName(true));
+                try
+                {
+                    userIniData = iniParser.ReadFile(userIniBakPath);
+                }
+                catch(Exception)
+                {
+                    Debug.Log("Error parsing settings backup. Restoring defaults.");
+                    CreateDefaultSettingsFile(userIniPath);
+                    userIniData = iniParser.ReadFile(userIniPath);
+                }
             }
 
             // Log ini path in use
-            message = string.Format("Using '{0}' at path '{1}'", SettingsName(), userIniPath);
-            DaggerfallUnity.LogMessage(message);
+            Debug.LogFormat("Using '{0}' at path '{1}'", SettingsName(), userIniPath);
 
-            // Load settings.ini or set as read-only
-            userIniData = iniParser.ReadFile(userIniPath);
+            // Create a backup after successfully parsing ini data
+            WriteSettingsFile(true);
 
             // Ensure user ini data in sync with default ini data
             SyncIniData();
         }
 
-        void WriteSettingsFile()
+        void WriteSettingsFile(bool isBackup = false)
         {
+            string name = SettingsName(isBackup);
             if (iniParser != null)
             {
                 try
                 {
-                    string path = Path.Combine(PersistentDataPath, SettingsName());
-                    if (File.Exists(path))
-                    {
-                        iniParser.WriteFile(path, userIniData);
-                    }
+                    string path = Path.Combine(PersistentDataPath, name);
+                    iniParser.WriteFile(path, userIniData);
                 }
                 catch
                 {
-                    DaggerfallUnity.LogMessage("Failed to write settings.ini.");
+                    Debug.LogFormat("Failed to write {0}", name);
                 }
             }
         }

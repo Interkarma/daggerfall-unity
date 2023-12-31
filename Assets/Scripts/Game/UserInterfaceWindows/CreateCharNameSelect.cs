@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -77,7 +77,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Random name button
             randomNameButton = DaggerfallUI.AddButton(new Rect(279, 3, 36, 10), NativePanel);
-            randomNameButton.Label.Text = "Random";
+            randomNameButton.Label.Text = TextManager.Instance.GetLocalizedText("random");
             randomNameButton.Label.ShadowColor = Color.black;
             randomNameButton.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
             randomNameButton.OnMouseClick += RandomNameButton_OnMouseClick;

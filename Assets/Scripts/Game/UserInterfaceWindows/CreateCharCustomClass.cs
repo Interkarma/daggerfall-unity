@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -230,7 +230,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hitPointsUpButton.OnMouseClick += HitPointsUpButton_OnMouseClick;
             hitPointsUpButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
             hitPointsDownButton = DaggerfallUI.AddButton(hitPointsDownButtonRect, NativePanel);
-            hitPointsDownButton.OnMouseUp += HitPointsDownButton_OnMouseClick;
+            hitPointsDownButton.OnMouseClick += HitPointsDownButton_OnMouseClick;
             hitPointsDownButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
 
             // Help topics

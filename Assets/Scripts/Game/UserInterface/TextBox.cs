@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -211,8 +211,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             }
 
-            // Process input
-            HandleControlInput();
+            // Process control input
+            // Exit if this input was handled by below call
+            // Otherwise keys like backspace can insert spurious "?" characters on some platforms
+            if (HandleControlInput())
+                return;
+
+            // Process all other input
             HandleCharacterInput();
             UpdateInlineComposition();
 
@@ -346,36 +351,40 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return Text;
         }
 
-        // Handle control input such as for cursor movement, delete/backspace, home/end
-        void HandleControlInput()
+        // Handle control input such as cursor movement, delete/backspace, home/end
+        // Returns true when control input was handled by this method or false when input processing should continue
+        // The caller should stop processing input on this loop when this method returns true
+        // And continue processing input on this loop when this method returns false
+        bool HandleControlInput()
         {
-            // During IME composition these kays are handed over to provider
+            // During IME composition these keys are always handed over to provider
             if (IMECompositionInProgress)
-                return;
+                return false;
 
             // Moving cursor left and right
-            if (DaggerfallUI.Instance.LastKeyCode == KeyCode.LeftArrow)
+            KeyCode lastKeyCode = DaggerfallUI.Instance.LastKeyCode;
+            if (lastKeyCode == KeyCode.LeftArrow)
             {
                 MoveCursorLeft();
-                return;
+                return true;
             }
-            else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.RightArrow)
+            else if (lastKeyCode == KeyCode.RightArrow)
             {
                 MoveCursorRight();
-                return;
+                return true;
             }
 
             // Delete and Backspace
-            if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Delete)
+            if (lastKeyCode == KeyCode.Delete)
             {
                 if (cursorPosition != text.Length)
                 {
                     text = text.Remove(cursorPosition, 1);
                     RaiseOnTypeHandler();
                 }
-                return;
+                return true;
             }
-            else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Backspace)
+            else if (lastKeyCode == KeyCode.Backspace)
             {
                 if (cursorPosition != 0)
                 {
@@ -383,20 +392,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     MoveCursorLeft();
                     RaiseOnTypeHandler();
                 }
-                return;
+                return true;
             }
 
             // Home and End
-            if (DaggerfallUI.Instance.LastKeyCode == KeyCode.Home)
+            if (lastKeyCode == KeyCode.Home)
             {
                 SetCursorPosition(0);
-                return;
+                return true;
             }
-            else if (DaggerfallUI.Instance.LastKeyCode == KeyCode.End)
+            else if (lastKeyCode == KeyCode.End)
             {
                 SetCursorPosition(text.Length);
-                return;
+                return true;
             }
+
+            // Escape - just absorb this so escape does not send spurious input into textbox
+            if (lastKeyCode == KeyCode.Escape)
+                return true;
+
+            return false;
         }
 
         // Handling for basic character input or IME composition insert

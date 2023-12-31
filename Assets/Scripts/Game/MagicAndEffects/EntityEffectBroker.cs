@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -126,6 +126,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Below is an example of how to register a fully custom effect and spell bundle
             // This call should remain commented out except for testing and example purposes
             // Mods would do this kind of work after capturing OnRegisterCustomEffects event
+            // Historical note: The example effect MageLight is retained in spellmaker as this
+            //  has been part of the game during beta for so long and players are using it
             RegisterCustomEffectDemo();
 
             // Raise event for custom effects to register
@@ -150,51 +152,51 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // No need to define settings not used by effect
             // For our custom spell, we're using same Duration settings as Light spell: 1 + 4 per level
             // Note these settings will also control final cost of spell to buy and cast
-            EffectSettings effectSettings = new EffectSettings()
-            {
-                DurationBase = 1,
-                DurationPlus = 4,
-                DurationPerLevel = 1,
-            };
+            //EffectSettings effectSettings = new EffectSettings()
+            //{
+            //    DurationBase = 1,
+            //    DurationPlus = 4,
+            //    DurationPerLevel = 1,
+            //};
 
             // Create an EffectEntry
             // This links the effect key with settings
             // Each effect entry in bundle needs its own settings - most spells only have a single effect
-            EffectEntry effectEntry = new EffectEntry()
-            {
-                Key = templateEffect.Properties.Key,
-                Settings = effectSettings,
-            };
+            //EffectEntry effectEntry = new EffectEntry()
+            //{
+            //    Key = templateEffect.Properties.Key,
+            //    Settings = effectSettings,
+            //};
 
             // Create a custom spell bundle
             // This is a portable version of the spell for other systems
             // For example, every spell in the player's spellbook is a bundle
             // Bundle target and elements settings should follow effect requirements
-            EffectBundleSettings mageLightInferoSpell = new EffectBundleSettings()
-            {
-                Version = CurrentSpellVersion,
-                BundleType = BundleTypes.Spell,
-                TargetType = TargetTypes.CasterOnly,
-                ElementType = ElementTypes.Magic,
-                Name = "Magelight Inferno",
-                IconIndex = 12,
-                Effects = new EffectEntry[] { effectEntry },
-            };
+            //EffectBundleSettings mageLightInferoSpell = new EffectBundleSettings()
+            //{
+            //    Version = CurrentSpellVersion,
+            //    BundleType = BundleTypes.Spell,
+            //    TargetType = TargetTypes.CasterOnly,
+            //    ElementType = ElementTypes.Magic,
+            //    Name = "Magelight Inferno",
+            //    IconIndex = 12,
+            //    Effects = new EffectEntry[] { effectEntry },
+            //};
 
             // Create a custom spell offer
             // This informs other systems if they can use this bundle
-            CustomSpellBundleOffer mageLightInferoOffer = new CustomSpellBundleOffer()
-            {
-                Key = "MageLightInferno-CustomOffer",                           // This key is for the offer itself and must be unique
-                Usage = CustomSpellBundleOfferUsage.SpellsForSale|              // Available in spells for sale
-                        CustomSpellBundleOfferUsage.CastWhenUsedEnchantment|    // Available for "cast on use" enchantments
-                        CustomSpellBundleOfferUsage.CastWhenHeldEnchantment,    // Available for "cast on held" enchantments
-                BundleSetttings = mageLightInferoSpell,                         // The spell bundle created earlier
-                EnchantmentCost = 250,                                          // Cost to use spell at item enchanter if enabled
-            };
+            //CustomSpellBundleOffer mageLightInferoOffer = new CustomSpellBundleOffer()
+            //{
+            //    Key = "MageLightInferno-CustomOffer",                           // This key is for the offer itself and must be unique
+            //    Usage = CustomSpellBundleOfferUsage.SpellsForSale|              // Available in spells for sale
+            //            CustomSpellBundleOfferUsage.CastWhenUsedEnchantment|    // Available for "cast on use" enchantments
+            //            CustomSpellBundleOfferUsage.CastWhenHeldEnchantment,    // Available for "cast on held" enchantments
+            //    BundleSetttings = mageLightInferoSpell,                         // The spell bundle created earlier
+            //    EnchantmentCost = 250,                                          // Cost to use spell at item enchanter if enabled
+            //};
 
             // Register the offer
-            RegisterCustomSpellBundleOffer(mageLightInferoOffer);
+            //RegisterCustomSpellBundleOffer(mageLightInferoOffer);
         }
 
         void Update()

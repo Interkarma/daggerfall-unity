@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -1210,6 +1210,7 @@ namespace DaggerfallWorkshop.Game.Questing
                             site.siteType = SiteTypes.Building;
                             site.mapId = location.MapTableData.MapId;
                             site.locationId = location.Exterior.ExteriorData.LocationId;
+                            site.regionIndex = location.RegionIndex;
                             site.regionName = location.RegionName;
                             site.locationName = location.Name;
                             site.buildingKey = buildingSummary[i].buildingKey;

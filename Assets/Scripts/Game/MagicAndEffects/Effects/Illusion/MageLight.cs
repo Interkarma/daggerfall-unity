@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -14,6 +14,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 {
@@ -38,6 +39,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             new Color32(101, 137, 120, 255)     // Arcane
         };
 
+        Dictionary<string, string> stringTable = null;
         Light myLight = null;
         VariantProperties[] variantProperties = new VariantProperties[totalVariants];
 
@@ -72,6 +74,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
         public override EffectProperties Properties
         {
             get { return variantProperties[currentVariant].effectProperties; }
+        }
+
+        #endregion
+
+        #region Construtors
+
+        public MageLight()
+        {
+            // Attempt to import replacement text from CSV
+            LoadText();
         }
 
         #endregion
@@ -183,7 +195,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             myLight = go.AddComponent<Light>();
             myLight.type = LightType.Point;
             myLight.color = variantProperties[currentVariant].effectColor;
-            myLight.range = 14;
+            myLight.range = 18.0f;
+            myLight.intensity = 1.1f;
         }
 
         void EndLight()
@@ -211,12 +224,53 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         #region Text
 
-        // Text strings are hardcoded in this example effect
-        // They could also be sourced from text tables or any other text API/method accessible to the game/mod
-
-        const string groupName = "Mage Light";
+        // Default strings
+        string groupName = "Mage Light";
         string[] subGroupNames = { "Inferno", "Rime", "Venom", "Storm", "Arcane" };
-        const string effectDescription = "Creates a soft light around caster.";
+        string effectDescription = "Creates a soft light around caster.";
+        string durationSpellMaker = "Duration: Rounds you will be illuminated.";
+        string durationSpellBook = "Duration: %bdr + %adr per %cld level(s)";
+        string chanceText = "Chance: N/A";
+        string magnitudeText = "Magnitude: N/A";
+
+        /// <summary>
+        /// Try to load replacement text from a CSV in StreamingAssets/Text if one is provided.
+        /// Spell templates are read and stored in multiple places so CSV could be loaded multiple times.
+        /// CSV will also be loaded anytime spell is instantiated or text required.
+        /// For a more sophisticated setup use a centralised text database and only load text once.
+        /// </summary>
+        void LoadText()
+        {
+            const string csvFilename = "Example_MageLight.csv";
+
+            if (stringTable != null)
+                return;
+
+            stringTable = StringTableCSVParser.LoadDictionary(csvFilename);
+            if (stringTable == null || stringTable.Count == 0)
+                return;
+
+            if (stringTable.ContainsKey("groupName"))
+                groupName = stringTable["groupName"];
+
+            if (stringTable.ContainsKey("subGroupNames"))
+                subGroupNames = TextManager.Instance.SplitTextList(stringTable["subGroupNames"]);
+
+            if (stringTable.ContainsKey("effectDescription"))
+                effectDescription = stringTable["effectDescription"];
+
+            if (stringTable.ContainsKey("durationSpellMaker"))
+                durationSpellMaker = stringTable["durationSpellMaker"];
+
+            if (stringTable.ContainsKey("durationSpellBook"))
+                durationSpellBook = stringTable["durationSpellBook"];
+
+            if (stringTable.ContainsKey("chance"))
+                chanceText = stringTable["chance"];
+
+            if (stringTable.ContainsKey("magnitude"))
+                magnitudeText = stringTable["magnitude"];
+        }
 
         TextFile.Token[] GetSpellMakerDescription()
         {
@@ -224,9 +278,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 TextFile.Formatting.JustifyCenter,
                 groupName,
                 effectDescription,
-                "Duration: Rounds you will be illuminated.",
-                "Chance: N/A",
-                "Magnitude: N/A");
+                durationSpellMaker,
+                chanceText,
+                magnitudeText);
         }
 
         TextFile.Token[] GetSpellBookDescription()
@@ -234,9 +288,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return DaggerfallUnity.Instance.TextProvider.CreateTokens(
                 TextFile.Formatting.JustifyCenter,
                 groupName,
-                "Duration: %bdr + %adr per %cld level(s)",
-                "Chance: N/A",
-                "Magnitude: N/A",
+                durationSpellBook,
+                chanceText,
+                magnitudeText,
                 effectDescription);
         }
 

@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -486,7 +486,8 @@ namespace DaggerfallWorkshop.Game
                             {
                                 motor.IsHostile = false;
                                 var enemyName = TextManager.Instance.GetLocalizedEnemyName(enemyEntity.MobileEnemy.ID);
-                                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("languagePacified").Replace("%e", enemyName).Replace("%s", languageSkill.ToString()), 5);
+                                var languageSkillName = DaggerfallUnity.Instance.TextProvider.GetSkillName(languageSkill);
+                                DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("languagePacified").Replace("%e", enemyName).Replace("%s", languageSkillName), 5);
                                 player.TallySkill(languageSkill, 3);    // BCHG: increased skill uses from 1 in classic on success to make raising language skills easier
                             }
                             else if (languageSkill != DFCareer.Skills.Etiquette && languageSkill != DFCareer.Skills.Streetwise)

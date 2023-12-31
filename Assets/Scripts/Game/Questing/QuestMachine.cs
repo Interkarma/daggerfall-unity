@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -20,6 +20,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing.Actions;
 using DaggerfallWorkshop.Game.Serialization;
 using UnityEngine.Localization.Settings;
+using System.Globalization;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -59,6 +60,12 @@ namespace DaggerfallWorkshop.Game.Questing
         const string foesTableFileName = "Quests-Foes";
         const string diseasesTableFileName = "Quests-Diseases";
         const string spellsTableFileName = "Quests-Spells";
+
+        // Localization
+        const string localizedFilenameSuffix = "-LOC";
+        const string fileExtension = ".txt";
+        const string textFolderName = "Text";
+        const string questsFolderName = "Quests";
 
         // Data tables
         Table globalVarsTable;
@@ -665,8 +672,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 Parser parser = new Parser();
                 Quest quest = parser.Parse(questSource, factionId, partialParse);
 
-                // Parse localized version of quest file (if present)
-                ParseLocalizedQuestText(questName);
+                // Parse localized version of quest file (if present) and store display name in quest
+                if (ParseLocalizedQuestText(questName))
+                    quest.DisplayName = GetLocalizedQuestDisplayName(questName);
 
                 return quest;
             }
@@ -676,6 +684,15 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Localized quest messages need to be restored when game is loaded.
+        /// </summary>
+        /// <param name="questName">Name of quest to restore localized messages.</param>
+        public bool RestoreLocalizedQuestMessages(string questName)
+        {
+            return ParseLocalizedQuestText(questName);
         }
 
         /// <summary>
@@ -1582,6 +1599,15 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <returns>Localized name of quest if found, otherwise string.Empty.</returns>
         public string GetLocalizedQuestDisplayName(string questName)
         {
+            // Remove ".txt" file extension from quest name if present
+            if (questName.EndsWith(fileExtension, false, CultureInfo.InvariantCulture))
+                questName = questName.Substring(0, questName.Length - fileExtension.Length);
+
+            // Return quest name if already parsed
+            if (localizedQuestNames.ContainsKey(questName))
+                return localizedQuestNames[questName];
+
+            // Try to parse and return name or empty string on failure
             return ParseLocalizedQuestText(questName) ? localizedQuestNames[questName] : string.Empty;
         }
 
@@ -1619,11 +1645,6 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <returns>True if localized text was loaded, otherwise false.</returns>
         bool ParseLocalizedQuestText(string questName)
         {
-            const string localizedFilenameSuffix = "-LOC";
-            const string fileExtension = ".txt";
-            const string textFolderName = "Text";
-            const string questsFolderName = "Quests";
-
             // Compose filename of localized quest
             string filename = questName;
             string fileNoExt = Path.GetFileNameWithoutExtension(filename);

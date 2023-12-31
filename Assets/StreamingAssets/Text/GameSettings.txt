@@ -181,6 +181,28 @@ exteriorLightShadowsInfo,                           Exterior sunlight casts shad
 ambientLitInteriors,                                Simplify Interior Lighting
 ambientLitInteriorsInfo,                            Use less complex lighting for higher performance interiors
 
+- Configure Joystick Controls UI
+
+rightClickString,                                   Right-Click
+middleClickString,                                  Middle-Click
+leftClickString,                                    Left-Click
+backString,                                         Back
+configureJoystickControls,                          Configure Joystick Controls
+continue,                                           CONTINUE
+enableController,                                   Enable Controller
+invert,                                             Invert
+lookSensitivity,                                    Look Sensitivity
+uiMouseSensitivity,                                 UI Mouse Sensitivity
+maximumMovementThreshold,                           Maximum Movement Threshold
+deadzone,                                           Deadzone
+movementH,                                          Movement H.
+movementV,                                          Movement V.
+cameraH,                                            Camera H.
+cameraV,                                            Camera V.
+primary,                                            Primary
+secondary,                                          Secondary
+
+
 - Options shared among sliders. Missing keys use default text.
 
 Off,                                                Off

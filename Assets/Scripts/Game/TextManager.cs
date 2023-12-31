@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -566,6 +566,16 @@ namespace DaggerfallWorkshop.Game
         public bool TryGetLocalizedText(TextCollections collection, string key, out string localizedString)
         {
             return TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedString);
+        }
+
+        /// <summary>
+        /// Splits input string into array of strings using newline or return as separator.
+        /// </summary>
+        /// <param name="textList">Input string where each item is separated by newline or return.</param>
+        /// <returns>String array.</returns>
+        public string[] SplitTextList(string textList)
+        {
+            return textList.TrimEnd(trimAtEnd).Split(newlineSequences, StringSplitOptions.None);
         }
 
         #endregion

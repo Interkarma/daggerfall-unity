@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -377,7 +377,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 promptText = TextManager.Instance.GetLocalizedText("savePrompt");
             else if (mode == Modes.LoadGame)
                 promptText = TextManager.Instance.GetLocalizedText("loadPrompt");
-            promptLabel.Text = string.Format("{0} for '{1}'", promptText, currentPlayerName);
+            promptLabel.Text = string.Format(TextManager.Instance.GetLocalizedText("saveLoadPromptFormat"), promptText, currentPlayerName);
         }
 
         protected virtual void UpdateSelectedSaveInfo()
