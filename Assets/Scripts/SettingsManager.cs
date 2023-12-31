@@ -1,5 +1,5 @@
 // Project:         Daggerfall Unity
-// Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -627,7 +627,6 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "EnableModernConversationStyleInTalkWindow", EnableModernConversationStyleInTalkWindow);
             SetString(sectionGUI, "IconsPositioningScheme", IconsPositioningScheme);
             SetInt(sectionGUI, "HelmAndShieldMaterialDisplay", HelmAndShieldMaterialDisplay);
-            SetInt(sectionGUI, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
             SetInt(sectionGUI, "ShopQualityHUDDelay", ShopQualityHUDDelay);
             SetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown", ShowQuestJournalClocksAsCountdown);
@@ -676,6 +675,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionControls, "AllowMagicRepairs", AllowMagicRepairs);
             SetBool(sectionControls, "BowDrawback", BowDrawback);
 
+            SetInt(sectionMap, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetColor(sectionMap, "AutomapTempleColor", AutomapTempleColor);
             SetColor(sectionMap, "AutomapShopColor", AutomapShopColor);
             SetColor(sectionMap, "AutomapTavernColor", AutomapTavernColor);
@@ -737,10 +737,6 @@ namespace DaggerfallWorkshop
         {
             // Load defaults.ini
             TextAsset asset = Resources.Load<TextAsset>(defaultsIniName);
-            MemoryStream stream = new MemoryStream(asset.bytes);
-            StreamReader reader = new StreamReader(stream);
-            defaultIniData = iniParser.ReadData(reader);
-            reader.Close();
 
             // Create file
             File.WriteAllBytes(userIniPath, asset.bytes);
@@ -750,6 +746,14 @@ namespace DaggerfallWorkshop
 
         void ReadSettingsFile()
         {
+            // Load defaults.ini
+            // This is required for fallback sync if everything else goes wrong
+            TextAsset asset = Resources.Load<TextAsset>(defaultsIniName);
+            MemoryStream stream = new MemoryStream(asset.bytes);
+            StreamReader reader = new StreamReader(stream);
+            defaultIniData = iniParser.ReadData(reader);
+            reader.Close();
+
             // Must have settings.ini in persistent data path
             string userIniPath = Path.Combine(PersistentDataPath, SettingsName());
             if (!File.Exists(userIniPath))
