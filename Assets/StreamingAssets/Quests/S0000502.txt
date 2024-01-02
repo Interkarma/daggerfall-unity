@@ -130,7 +130,7 @@ Item _letter_ letter used 1030
 Item _item_ item class 1 subclass 10
 Item _reward_ item class 4 subclass 3
 
-Person _rebel_ face 1 named Baltham_Greyman gender male
+Person _rebel_ face 1 named Baltham_Greyman
 
 Place _tavern_ remote tavern
 Place _direni1_ permanent DirenniTower2
