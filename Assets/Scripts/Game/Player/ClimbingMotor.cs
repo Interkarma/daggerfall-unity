@@ -299,6 +299,7 @@ namespace DaggerfallWorkshop.Game
             else if (!rappelMotor.IsRappelling)
             {
                 isSlipping = false;
+                overrideSkillCheck = false;
                 atOutsideCorner = false;
                 atInsideCorner = false;
                 showClimbingModeMessage = true;
@@ -686,6 +687,9 @@ namespace DaggerfallWorkshop.Game
 
         public void RestoreSaveData(AdvancedClimbingData_v1 data)
         {
+            // Clear some state on restore or a recent climb in same session might trigger improper movement
+            ClearStateOnRestore();
+
             if (DaggerfallUnity.Settings.AdvancedClimbing && data.isClimbing)
             {
                 isClimbing = data.isClimbing;
@@ -693,9 +697,6 @@ namespace DaggerfallWorkshop.Game
                 climbingContinueTimer = data.climbingContinueTimer;
                 wallDirection = data.wallDirection;
                 myLedgeDirection = data.myLedgeDirection;
-
-                // Clear some state on restore or a recent climb in same session might trigger improper movement
-                ClearStateOnRestore();
 
                 // Show climbing mode message and force enable touching sides until physics reacquires wall contact
                 // Also freeze motor so player doesn't start falling right away
