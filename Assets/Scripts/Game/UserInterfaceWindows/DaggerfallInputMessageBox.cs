@@ -182,6 +182,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             base.OnPop();
+            FreeResources();
 
             if (allowIME)
             {
@@ -301,12 +302,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.timeClosedInputMessageBox = Time.realtimeSinceStartup;
             if (OnGotUserInput != null)
                 OnGotUserInput(sender, userInput);
-        }
-
-        public override void OnPop()
-        {
-            base.OnPop();
-            FreeResources();
         }
     }
 }

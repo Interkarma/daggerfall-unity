@@ -209,6 +209,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             base.OnPop();
+            FreeResources();
 
             // Restore previous IME composition mode
             Input.imeCompositionMode = prevIME;
@@ -459,12 +460,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             CloseWindow();
-        }
-
-        public override void OnPop()
-        {
-            base.OnPop();
-            FreeResources();
         }
 
         #endregion
