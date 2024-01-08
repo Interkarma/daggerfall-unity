@@ -765,6 +765,14 @@ namespace DaggerfallWorkshop.Game
                     if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile || enemyEntity.MobileEnemy.Team == MobileTeams.PlayerAlly) && targetBehaviour == player)
                         continue;
 
+                    //Player allies should not attack pacified enemies.
+                    if (enemyEntity.Team == MobileTeams.PlayerAlly && targetBehaviour != player)
+                    {
+                        EnemyMotor targetMotor = targetBehaviour.GetComponent<EnemyMotor>();
+                        if (targetMotor && !targetMotor.IsHostile)
+                            continue;
+                    }
+
                     // Can't target ally
                     if (targetBehaviour == player && enemyEntity.Team == MobileTeams.PlayerAlly)
                         continue;
