@@ -65,6 +65,8 @@ namespace DaggerfallWorkshop.Game
         public ImageData RidingTexture { get { return ridingTexture; } }
         public int FrameIndex { get { return frameIndex; } }
 
+        public Color Tint { get; set; } = Color.white;
+
         #endregion
 
         #region Public Methods
@@ -310,7 +312,7 @@ namespace DaggerfallWorkshop.Game
                                     screenRect.y + screenRect.height - (ridingTexture.height * horseScaleY) - horseOffsetHeight,
                                     ridingTexture.width * horseScaleX,
                                     ridingTexture.height * horseScaleY);
-                    DaggerfallUI.DrawTexture(pos, ridingTexture.texture);
+                    DaggerfallUI.DrawTexture(pos, ridingTexture.texture, ScaleMode.StretchToFill, true, Tint);
                 }
             }
         }
