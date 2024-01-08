@@ -144,6 +144,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return GetPoisonBundles(); }
         }
 
+        public bool UsePlayerCharacterSkillsForEnemyMagicCost { get; set; } = true;
+
         #endregion
 
         #region Unity
@@ -316,8 +318,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (spell == null || spell.Settings.Version < minAcceptedSpellVersion)
                 return false;
 
+            //By default, enemy spell costs are calculated using player-character skill levels.
+            //Mods can alter this to use enemy skills instead.
+            DaggerfallEntity casterEntity = UsePlayerCharacterSkillsForEnemyMagicCost ? null : entityBehaviour.Entity;
+
             // Get spellpoint costs of this spell
-            (int _, int spellPointCost) = FormulaHelper.CalculateTotalEffectCosts(spell.Settings.Effects, spell.Settings.TargetType, null, spell.Settings.MinimumCastingCost);
+            (int _, int spellPointCost) = FormulaHelper.CalculateTotalEffectCosts(spell.Settings.Effects, spell.Settings.TargetType, casterEntity, spell.Settings.MinimumCastingCost);
             readySpellCastingCost = spellPointCost;
 
             // Allow casting spells of any cost if entity is player and godmode enabled

@@ -14,7 +14,6 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Utility;
 
@@ -184,8 +183,37 @@ namespace DaggerfallWorkshop.Game
             set { targetRateOfApproach = value; }
         }
 
+        public float LastHadLOSTimer
+        {
+            get { return lastHadLOSTimer; }
+            set { lastHadLOSTimer = value; }
+        }
+
+
+
+        //Delegates to allow mods to replace or extend senses logic.
+        //Mods can potentially save the original value before replacing it, if access to default behaviour is still desired.
+        public delegate bool BlockedByIllusionEffectCallback();
+        public BlockedByIllusionEffectCallback BlockedByIllusionEffect { get; set; }
+
+        public delegate bool CanSeeTargetCallback(DaggerfallEntityBehaviour target);
+        public CanSeeTargetCallback CanSeeTarget { get; set; }
+
+        public delegate bool CanHearTargetCallback();
+        public CanHearTargetCallback CanHearTarget { get; set; }
+
+        public delegate bool CanSeePlayerLightCallback();
+        public CanSeePlayerLightCallback CanSeePlayerLight { get; set; }
+
+
         void Start()
         {
+            //Initialize delegates to standard defaults
+            BlockedByIllusionEffect = BlockedByIllusionEffectDefault;
+            CanSeeTarget = CanSeeTargetDefault;
+            CanHearTarget = CanHearTargetDefault;
+            CanSeePlayerLight = delegate () { return false; };
+
             mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             enemyEntity = entityBehaviour.Entity as EnemyEntity;
@@ -389,7 +417,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     distanceToTarget = distanceToPlayer;
                     directionToTarget = toPlayer.normalized;
-                    targetInSight = playerInSight;
+                    targetInSight = CanSeeTarget(player);
                 }
                 else
                 {
@@ -435,6 +463,8 @@ namespace DaggerfallWorkshop.Game
                     if (lastHadLOSTimer <= 0)
                         lastKnownTargetPos = target.transform.position;
                 }
+                else if (target == player && CanSeePlayerLight())
+                    detectedTarget = true;
                 else
                     detectedTarget = false;
 
@@ -503,6 +533,7 @@ namespace DaggerfallWorkshop.Game
             if (Target == GameManager.Instance.PlayerEntityBehaviour && TargetInSight)
                 GameManager.Instance.PlayerEntity.SetEnemyAlert(true);
         }
+
 
         #region Public Methods
 
@@ -624,7 +655,7 @@ namespace DaggerfallWorkshop.Game
             return Dice100.FailedRoll(stealthChance);
         }
 
-        public bool BlockedByIllusionEffect()
+        public bool BlockedByIllusionEffectDefault()
         {
             // In classic if the target is another AI character true is always returned.
 
@@ -819,7 +850,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        bool CanSeeTarget(DaggerfallEntityBehaviour target)
+        bool CanSeeTargetDefault(DaggerfallEntityBehaviour target)
         {
             bool seen = false;
             actionDoor = null;
@@ -869,7 +900,7 @@ namespace DaggerfallWorkshop.Game
             return seen;
         }
 
-        bool CanHearTarget()
+        bool CanHearTargetDefault()
         {
             float hearingScale = 1f;
 
