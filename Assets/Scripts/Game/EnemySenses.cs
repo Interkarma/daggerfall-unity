@@ -202,8 +202,8 @@ namespace DaggerfallWorkshop.Game
         public delegate bool CanHearTargetCallback();
         public CanHearTargetCallback CanHearTarget { get; set; }
 
-        public delegate bool CanDetectPlayerOtherCallback();
-        public CanDetectPlayerOtherCallback CanDetectPlayerOther { get; set; }
+        public delegate bool CanDetectOtherwiseCallback();
+        public CanDetectOtherwiseCallback CanDetectOtherwise { get; set; }
 
 
         void Start()
@@ -212,7 +212,7 @@ namespace DaggerfallWorkshop.Game
             BlockedByIllusionEffect = BlockedByIllusionEffectDefault;
             CanSeeTarget = CanSeeTargetDefault;
             CanHearTarget = CanHearTargetDefault;
-            CanDetectPlayerOther = delegate () { return false; };
+            CanDetectOtherwise = delegate () { return false; };
 
             mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
@@ -463,7 +463,7 @@ namespace DaggerfallWorkshop.Game
                     if (lastHadLOSTimer <= 0)
                         lastKnownTargetPos = target.transform.position;
                 }
-                else if (target == player && CanDetectPlayerOther())
+                else if (CanDetectOtherwise())
                     detectedTarget = true;
                 else
                     detectedTarget = false;
