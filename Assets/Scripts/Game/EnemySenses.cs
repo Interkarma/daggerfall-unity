@@ -194,7 +194,7 @@ namespace DaggerfallWorkshop.Game
         //Delegates to allow mods to replace or extend senses logic.
         //Mods can potentially save the original value before replacing it, if access to default behaviour is still desired.
         public delegate bool BlockedByIllusionEffectCallback();
-        public BlockedByIllusionEffectCallback BlockedByIllusionEffect { get; set; }
+        public BlockedByIllusionEffectCallback BlockedByIllusionEffectHandler { get; set; }
 
         public delegate bool CanSeeTargetCallback(DaggerfallEntityBehaviour target);
         public CanSeeTargetCallback CanSeeTarget { get; set; }
@@ -209,7 +209,7 @@ namespace DaggerfallWorkshop.Game
         void Start()
         {
             //Initialize delegates to standard defaults
-            BlockedByIllusionEffect = BlockedByIllusionEffectDefault;
+            BlockedByIllusionEffectHandler = BlockedByIllusionEffect;
             CanSeeTarget = CanSeeTargetDefault;
             CanHearTarget = CanHearTargetDefault;
             CanDetectOtherwise = delegate (DaggerfallEntityBehaviour target) { return false; };
@@ -442,7 +442,7 @@ namespace DaggerfallWorkshop.Game
                 // to know where the player is.
                 if (GameManager.ClassicUpdate)
                 {
-                    blockedByIllusionEffect = BlockedByIllusionEffect();
+                    blockedByIllusionEffect = BlockedByIllusionEffectHandler();
                     if (lastHadLOSTimer > 0)
                         lastHadLOSTimer--;
                 }
@@ -655,7 +655,7 @@ namespace DaggerfallWorkshop.Game
             return Dice100.FailedRoll(stealthChance);
         }
 
-        public bool BlockedByIllusionEffectDefault()
+        public bool BlockedByIllusionEffect()
         {
             // In classic if the target is another AI character true is always returned.
 
