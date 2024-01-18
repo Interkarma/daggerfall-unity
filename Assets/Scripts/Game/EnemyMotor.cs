@@ -98,7 +98,8 @@ namespace DaggerfallWorkshop.Game
         public float LastGroundedY { get; set; }    // Used for fall damage
         public bool Falls { get; private set; }
 
-        //Delegates to allow mods to extend motor behaviour.
+        //============Delegates to allow mods to extend motor behaviour.
+        //==When setting a new handler, it may be desired to store the original and call it before/after your own logic.
         public delegate void TakeActionCallback();
         public TakeActionCallback TakeActionHandler { get; set; }
 
@@ -1412,12 +1413,11 @@ namespace DaggerfallWorkshop.Game
                 LastGroundedY = transform.position.y;
             }
             // For flying enemies, "lastGroundedY" is really "lastAltitudeControlY"
-            else if (flies && !flyerFalls)
-                LastGroundedY = transform.position.y;
-            else if (IsLevitating || entity.IsSlowFalling)
+            else if ((flies && !flyerFalls) || IsLevitating || entity.IsSlowFalling)
                 LastGroundedY = transform.position.y;
 
         }
+
 
         /// <summary>
         /// Open doors that are in the way.
