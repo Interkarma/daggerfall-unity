@@ -144,6 +144,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             get { return GetPoisonBundles(); }
         }
 
+        //The original Daggerfall apparently did it this way (original bug?)
         public bool UsePlayerCharacterSkillsForEnemyMagicCost { get; set; } = true;
 
         #endregion
