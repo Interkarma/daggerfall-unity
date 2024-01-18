@@ -15,7 +15,6 @@ using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
 using System.Linq;
-using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
