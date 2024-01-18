@@ -1713,7 +1713,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Run all bundles
             activeMagicItemsInRound.Clear();
             uint currentTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
-            foreach (LiveEffectBundle bundle in instancedBundles)
+            var currentInstancedBundles = new List<LiveEffectBundle>(instancedBundles); // use a copy, as ending an effect can add new bundles (ex: wereworlf infection -> werewolf effect)
+            foreach (LiveEffectBundle bundle in currentInstancedBundles)
             {
                 // Run effects for this bundle
                 bool hasRemainingEffectRounds = false;
