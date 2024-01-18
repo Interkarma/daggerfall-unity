@@ -101,13 +101,13 @@ namespace DaggerfallWorkshop.Game
 
         //Delegates to allow mods to extend motor behaviour.
         public delegate void TakeActionCallback();
-        public TakeActionCallback TakeAction { get; set; }
+        public TakeActionCallback TakeActionHandler { get; set; }
 
         public delegate bool CanCastRangedSpellCallback();
-        public CanCastRangedSpellCallback CanCastRangedSpell { get; set; }
+        public CanCastRangedSpellCallback CanCastRangedSpellHandler { get; set; }
 
         public delegate bool CanCastTouchSpellCallback();
-        public CanCastTouchSpellCallback CanCastTouchSpell { get; set; }
+        public CanCastTouchSpellCallback CanCastTouchSpellHandler { get; set; }
 
         #endregion
 
@@ -147,9 +147,9 @@ namespace DaggerfallWorkshop.Game
             // Get original height, before any height adjustments
             originalHeight = controller.height;
 
-            TakeAction = TakeActionDefault;
-            CanCastRangedSpell = CanCastRangedSpellDefault;
-            CanCastTouchSpell = CanCastTouchSpellDefault;
+            TakeActionHandler = TakeAction;
+            CanCastRangedSpellHandler = CanCastRangedSpell;
+            CanCastTouchSpellHandler = CanCastTouchSpell;
         }
 
         void FixedUpdate()
@@ -169,7 +169,7 @@ namespace DaggerfallWorkshop.Game
             HandleBashing();
             UpdateTimers();
             if (CanAct)
-                TakeAction();
+                TakeActionHandler();
             ApplyFallDamage();
             UpdateToIdleOrMoveAnim();
             OpenDoors();
@@ -430,7 +430,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Make decision about what action to take.
         /// </summary>
-        void TakeActionDefault()
+        void TakeAction()
         {
             // Monster speed of movement follows the same formula as for when the player walks
             float moveSpeed = (entity.Stats.LiveSpeed + PlayerSpeedChanger.dfWalkBase) * MeshReader.GlobalScale;
@@ -573,7 +573,7 @@ namespace DaggerfallWorkshop.Game
         bool DoRangedAttack(Vector3 direction, float moveSpeed, float distance, bool isPlayingOneShot)
         {
             bool inRange = senses.DistanceToTarget > EnemyAttack.minRangedDistance && senses.DistanceToTarget < EnemyAttack.maxRangedDistance;
-            if (inRange && senses.TargetInSight && senses.DetectedTarget && (CanShootBow() || CanCastRangedSpell()))
+            if (inRange && senses.TargetInSight && senses.DetectedTarget && (CanShootBow() || CanCastRangedSpellHandler()))
             {
                 if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, destination) && strafeTimer <= 0)
                 {
@@ -623,7 +623,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (senses.TargetInSight && senses.DetectedTarget && attack.MeleeTimer == 0
                 && senses.DistanceToTarget <= attack.MeleeDistance + senses.TargetRateOfApproach
-                && CanCastTouchSpell() && entityEffectManager.SetReadySpell(SelectedSpell))
+                && CanCastTouchSpellHandler() && entityEffectManager.SetReadySpell(SelectedSpell))
             {
                 if (mobile.EnemyState != MobileStates.Spell)
                     mobile.ChangeEnemyState(MobileStates.Spell);
@@ -759,7 +759,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Selects a ranged spell from this enemy's list and returns true if it can be cast.
         /// </summary>
-        bool CanCastRangedSpellDefault()
+        bool CanCastRangedSpell()
         {
             if (entity.CurrentMagicka <= 0)
                 return false;
@@ -794,7 +794,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Selects a touch spell from this enemy's list and returns true if it can be cast.
         /// </summary>
-        bool CanCastTouchSpellDefault()
+        bool CanCastTouchSpell()
         {
             if (entity.CurrentMagicka <= 0)
                 return false;
