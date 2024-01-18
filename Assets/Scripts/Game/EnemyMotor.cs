@@ -325,7 +325,7 @@ namespace DaggerfallWorkshop.Game
         void ApplyGravity()
         {
             // Apply gravity
-            if (entity.IsSlowFalling && !flies && !swims && !controller.isGrounded)
+            if (entity.IsSlowFalling && !flies && !swims && !controller.isGrounded && !IsLevitating)
             {
                 Vector3 velocity = controller.velocity * 0.97f; //gradually slow x/z movement
                 velocity.y = -1; //slow downward fall
@@ -344,10 +344,7 @@ namespace DaggerfallWorkshop.Game
                     CanAct = false;
             }
 
-            if (IsLevitating || entity.IsSlowFalling)
-                LastGroundedY = transform.position.y;
-
-            if (flyerFalls && flies && !IsLevitating)
+            if (flyerFalls && flies && !IsLevitating && !entity.IsSlowFalling)
             {
                 controller.SimpleMove(Vector3.zero);
                 Falls = true;
@@ -1418,6 +1415,9 @@ namespace DaggerfallWorkshop.Game
             // For flying enemies, "lastGroundedY" is really "lastAltitudeControlY"
             else if (flies && !flyerFalls)
                 LastGroundedY = transform.position.y;
+            else if (IsLevitating || entity.IsSlowFalling)
+                LastGroundedY = transform.position.y;
+
         }
 
         /// <summary>
