@@ -1,11 +1,10 @@
 using UnityEngine;
-using System;
-using System.Collections;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Serialization;
-using FullSerializer;
+using Wenzil.Console;
+using DaggerfallWorkshop.Game.UserInterface;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -82,6 +81,8 @@ namespace DaggerfallWorkshop.Game
         // minimum percent chance to grab a wall while falling
         private const int graspWallMinChance = 40;
 
+        private bool perfectClimbing = false;
+
         public bool IsClimbing
         {
             get { return isClimbing; }
@@ -109,6 +110,180 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public bool ClimbQuitMoveUnderToHang { get; private set; }
         public Vector3 WallGrabDirection { get { return myLedgeDirection; } }
+
+        class HUDClimbingDebug : Panel
+        {
+            private ClimbingMotor ClimbingMotor;
+
+            private TextLabel releasedFromCeilingLabel = new TextLabel();
+            private TextLabel overrideSkillCheckLabel = new TextLabel();
+            private TextLabel isClimbingLabel = new TextLabel();
+            private TextLabel wasClimbingLabel = new TextLabel();
+            private TextLabel isSlippingLabel = new TextLabel();
+            private TextLabel atOutsideCornerLabel = new TextLabel();
+            private TextLabel atInsideCornerLabel = new TextLabel();
+            private TextLabel climbingStartTimerLabel = new TextLabel();
+            private TextLabel climbingContinueTimerLabel = new TextLabel();
+            private TextLabel showClimbingModeMessageLabel = new TextLabel();
+            private TextLabel touchingSidesRestoreForceLabel = new TextLabel();
+            private TextLabel lastHorizontalPositionLabel = new TextLabel();
+            private TextLabel myLedgeDirectionLabel = new TextLabel();
+            private TextLabel wallDirectionLabel = new TextLabel();
+            private TextLabel adjacentLedgeDirectionLabel = new TextLabel();
+            private TextLabel myStrafeRayLabel = new TextLabel();
+            private TextLabel adjacentWallRayLabel = new TextLabel();
+            private TextLabel cornerNormalRayLabel = new TextLabel();
+            private TextLabel moveDirectionLabel = new TextLabel();
+            private TextLabel startClimbHorizontalToleranceLabel = new TextLabel();
+            private TextLabel startClimbSkillCheckFrequencyLabel = new TextLabel();
+            private TextLabel perfectClimbingLabel = new TextLabel();
+
+            public HUDClimbingDebug()
+            {
+                ClimbingMotor = GameManager.Instance.ClimbingMotor;
+
+                float yPos = 0;
+
+                void initLabel(TextLabel label, string initialValue)
+                {
+                    label.Text = initialValue;
+                    label.Position = new Vector2(0, yPos);
+                    label.ShadowPosition = new Vector2(0, 0);
+                    Components.Add(label);
+
+                    yPos += 10;
+                }
+
+                initLabel(releasedFromCeilingLabel, $"releasedFromCeiling: {ClimbingMotor.releasedFromCeiling}");
+                initLabel(overrideSkillCheckLabel, $"overrideSkillCheck: {ClimbingMotor.overrideSkillCheck}");
+                initLabel(isClimbingLabel, $"isClimbing: {ClimbingMotor.isClimbing}");
+                initLabel(wasClimbingLabel, $"wasClimbing: {ClimbingMotor.wasClimbing}");
+                initLabel(isSlippingLabel, $"isSlipping: {ClimbingMotor.isSlipping}");
+                initLabel(atOutsideCornerLabel, $"atOutsideCorner: {ClimbingMotor.atOutsideCorner}");
+                initLabel(atInsideCornerLabel, $"atInsideCorner: {ClimbingMotor.atInsideCorner}");
+                initLabel(climbingStartTimerLabel, $"climbingStartTimer: {ClimbingMotor.climbingStartTimer}");
+                initLabel(climbingContinueTimerLabel, $"climbingContinueTimer: {ClimbingMotor.climbingContinueTimer}");
+                initLabel(showClimbingModeMessageLabel, $"showClimbingModeMessage: {ClimbingMotor.showClimbingModeMessage}");
+                initLabel(touchingSidesRestoreForceLabel, $"touchingSidesRestoreForce: {ClimbingMotor.touchingSidesRestoreForce}");
+                initLabel(lastHorizontalPositionLabel, $"lastHorizontalPosition: {ClimbingMotor.lastHorizontalPosition}");
+                initLabel(myLedgeDirectionLabel, $"myLedgeDirection: {ClimbingMotor.myLedgeDirection}");
+                initLabel(wallDirectionLabel, $"wallDirection: {ClimbingMotor.wallDirection}");
+                initLabel(adjacentLedgeDirectionLabel, $"adjacentLedgeDirection: {ClimbingMotor.adjacentLedgeDirection}");
+                initLabel(myStrafeRayLabel, $"myStrafeRay: {ClimbingMotor.myStrafeRay}");
+                initLabel(adjacentWallRayLabel, $"adjacentWallRay: {ClimbingMotor.adjacentWallRay}");
+                initLabel(cornerNormalRayLabel, $"cornerNormalRay: {ClimbingMotor.cornerNormalRay}");
+                initLabel(moveDirectionLabel, $"moveDirection: {ClimbingMotor.moveDirection}");
+                initLabel(startClimbHorizontalToleranceLabel, $"startClimbHorizontalTolerance: {ClimbingMotor.startClimbHorizontalTolerance}");
+                initLabel(startClimbSkillCheckFrequencyLabel, $"startClimbSkillCheckFrequency: {ClimbingMotor.startClimbSkillCheckFrequency}");
+                initLabel(perfectClimbingLabel, $"perfectClimbing: {ClimbingMotor.perfectClimbing}");
+            }
+
+            public override void Update()
+            {
+                base.Update();
+
+                releasedFromCeilingLabel.Text = $"releasedFromCeiling: {ClimbingMotor.releasedFromCeiling}";
+                overrideSkillCheckLabel.Text = $"overrideSkillCheck: {ClimbingMotor.overrideSkillCheck}";
+                isClimbingLabel.Text = $"isClimbing: {ClimbingMotor.isClimbing}";
+                wasClimbingLabel.Text = $"wasClimbing: {ClimbingMotor.wasClimbing}";
+                isSlippingLabel.Text = $"isSlipping: {ClimbingMotor.isSlipping}";
+                atOutsideCornerLabel.Text = $"atOutsideCorner: {ClimbingMotor.atOutsideCorner}";
+                atInsideCornerLabel.Text = $"atInsideCorner: {ClimbingMotor.atInsideCorner}";
+                climbingStartTimerLabel.Text = $"climbingStartTimer: {ClimbingMotor.climbingStartTimer}";
+                climbingContinueTimerLabel.Text = $"climbingContinueTimer: {ClimbingMotor.climbingContinueTimer}";
+                showClimbingModeMessageLabel.Text = $"showClimbingModeMessage: {ClimbingMotor.showClimbingModeMessage}";
+                touchingSidesRestoreForceLabel.Text = $"touchingSidesRestoreForce: {ClimbingMotor.touchingSidesRestoreForce}";
+                lastHorizontalPositionLabel.Text = $"lastHorizontalPosition: {ClimbingMotor.lastHorizontalPosition}";
+                myLedgeDirectionLabel.Text = $"myLedgeDirection: {ClimbingMotor.myLedgeDirection}";
+                wallDirectionLabel.Text = $"wallDirection: {ClimbingMotor.wallDirection}";
+                adjacentLedgeDirectionLabel.Text = $"adjacentLedgeDirection: {ClimbingMotor.adjacentLedgeDirection}";
+                myStrafeRayLabel.Text = $"myStrafeRay: {ClimbingMotor.myStrafeRay}";
+                adjacentWallRayLabel.Text = $"adjacentWallRay: {ClimbingMotor.adjacentWallRay}";
+                cornerNormalRayLabel.Text = $"cornerNormalRay: {ClimbingMotor.cornerNormalRay}";
+                moveDirectionLabel.Text = $"moveDirection: {ClimbingMotor.moveDirection}";
+                startClimbHorizontalToleranceLabel.Text = $"startClimbHorizontalTolerance: {ClimbingMotor.startClimbHorizontalTolerance}";
+                startClimbSkillCheckFrequencyLabel.Text = $"startClimbSkillCheckFrequency: {ClimbingMotor.startClimbSkillCheckFrequency}";
+                perfectClimbingLabel.Text = $"perfectClimbing: {ClimbingMotor.perfectClimbing}";
+            }
+        }
+
+        static class ClimbingCommands
+        {
+            public static readonly string debugName = "debug_climb";
+            public static readonly string debugDescription = "Set the climbing debugging to 1 or 0";
+            public static readonly string debugUsage = "debug_climb <0 or 1>";
+
+            public static readonly string perfectName = "tpc";
+            public static readonly string perfectDescription = "Toggles \"perfect climbing\"";
+            public static readonly string perfectUsage = "tpc";
+
+            public static void RegisterCommands()
+            {
+                try
+                {
+                    ConsoleCommandsDatabase.RegisterCommand(debugName, debugDescription, debugUsage, DebugExecute);
+                    ConsoleCommandsDatabase.RegisterCommand(perfectName, perfectDescription, perfectUsage, PerfectExecute);
+                }
+                catch (System.Exception ex)
+                {
+                    DaggerfallUnity.LogMessage(ex.Message, true);
+                }
+            }
+
+            static string DebugExecute(params string[] args)
+            {
+                var DaggerfallHUD = DaggerfallUI.Instance.DaggerfallHUD;
+                bool Enabled = DaggerfallHUD.DebugPanel != null && DaggerfallHUD.DebugPanel is HUDClimbingDebug;
+
+                if (args.Length == 0)
+                {
+                    if (Enabled)
+                    {
+                        return "Climbing debug is enabled";
+                    }
+                    else
+                    {
+                        return "Climbing debug is not enabled";
+                    }
+                }
+                else
+                {
+                    if (!int.TryParse(args[0], out int value))
+                    {
+                        return "Invalid argument '" + args[0] + "': expected '0' or '1'";
+                    }
+
+                    if (value != 0 && value != 1)
+                    {
+                        return "Invalid argument '" + args[0] + "': expected '0' or '1'";
+                    }
+
+                    if (value == 0 && Enabled)
+                    {
+                        DaggerfallHUD.DebugPanel = null;
+                    }
+                    else if (value == 1 && !Enabled)
+                    {
+
+                        HUDClimbingDebug climbingDebug = new HUDClimbingDebug();
+                        climbingDebug.Size = new Vector2(640, 400);
+                        climbingDebug.AutoSize = AutoSizeModes.ScaleToFit;
+                        climbingDebug.Enabled = true;
+                        DaggerfallHUD.DebugPanel = climbingDebug;
+                    }
+
+                    return "Success";
+                }
+            }
+
+            static string PerfectExecute(params string[] args)
+            {
+                var climbingMotor = GameManager.Instance.ClimbingMotor;
+                GameManager.Instance.ClimbingMotor.perfectClimbing = !GameManager.Instance.ClimbingMotor.perfectClimbing;
+
+                return "Perfect climbing is now " + (climbingMotor.perfectClimbing ? "on" : "off");
+            }
+        }
         void Start()
         {
             player = GameManager.Instance.PlayerEntity;
@@ -122,6 +297,8 @@ namespace DaggerfallWorkshop.Game
             rappelMotor = GetComponent<RappelMotor>();
             //hangingMotor = GetComponent<HangingMotor>();
             moveScanner = GetComponent<PlayerMoveScanner>();
+
+            ClimbingCommands.RegisterCommands();
         }
 
         /// <summary>
@@ -650,7 +827,7 @@ namespace DaggerfallWorkshop.Game
         {
             player.TallySkill(DFCareer.Skills.Climbing, 1);
 
-            if (overrideSkillCheck)
+            if (perfectClimbing || overrideSkillCheck)
                 return true;
 
             int percentSuccess = FormulaHelper.CalculateClimbingChance(player, basePercentSuccess);
