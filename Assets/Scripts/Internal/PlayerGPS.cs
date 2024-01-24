@@ -1169,7 +1169,7 @@ namespace DaggerfallWorkshop
                     buildingSummary.NameSeed,
                     buildingSummary.BuildingType,
                     buildingSummary.FactionId,
-                    buildingDirectory.LocationData.Name,
+                    TextManager.Instance.GetLocalizedLocationName(buildingDirectory.LocationData.MapTableData.MapId, buildingDirectory.LocationData.Name),
                     TextManager.Instance.GetLocalizedRegionName(buildingDirectory.LocationData.RegionIndex));
 
                 // Schedule name change
