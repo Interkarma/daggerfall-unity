@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors:    
+// Contributors:
 
 using System.Collections.Generic;
 using DaggerfallConnect;
@@ -287,7 +287,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
             public override string Dungeon()
             {
-                return parent.revealedDungeon.Name;
+                return TextManager.Instance.GetLocalizedLocationName(parent.revealedDungeon.MapTableData.MapId, parent.revealedDungeon.Name);
             }
         }
 
