@@ -50,18 +50,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        PlayerEntity playerEntity;
-        TextLabel nameLabel = new TextLabel();
-        TextLabel raceLabel = new TextLabel();
-        TextLabel classLabel = new TextLabel();
-        TextLabel levelLabel = new TextLabel();
-        TextLabel goldLabel = new TextLabel();
-        TextLabel fatigueLabel = new TextLabel();
-        TextLabel healthLabel = new TextLabel();
-        TextLabel encumbranceLabel = new TextLabel();
-        Panel[] statPanels = new Panel[DaggerfallStats.Count];
-        TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
-        PaperDoll characterPortrait = new PaperDoll(showArmorValues: false);
+        protected PlayerEntity playerEntity;
+        protected TextLabel nameLabel = new TextLabel();
+        protected TextLabel raceLabel = new TextLabel();
+        protected TextLabel classLabel = new TextLabel();
+        protected TextLabel levelLabel = new TextLabel();
+        protected TextLabel goldLabel = new TextLabel();
+        protected TextLabel fatigueLabel = new TextLabel();
+        protected TextLabel healthLabel = new TextLabel();
+        protected TextLabel encumbranceLabel = new TextLabel();
+        protected Panel[] statPanels = new Panel[DaggerfallStats.Count];
+        protected TextLabel[] statLabels = new TextLabel[DaggerfallStats.Count];
+        protected PaperDoll characterPortrait = new PaperDoll(showArmorValues: false);
 
         #endregion
 
