@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd"
+>
+    <engine:ScrollView>
+        <engine:VisualElement class="row">
+            <engine:VisualElement class="col-4">
+                <engine:Label text="Selection Mode" class="h1 center"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement class="row">
+            <engine:VisualElement class="col-4">
+                <engine:Label text="Select a tile to edit!" class="center"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement class="row pb pl pr">
+            <engine:VisualElement class="col-1">
+                <engine:Button text="↶" class="h1" name="ground-selected-tile-rotate-ccw"/>
+            </engine:VisualElement>
+            <engine:VisualElement class="col-2">
+                <engine:VisualElement class="row">
+                    <engine:VisualElement class="col-4">
+                        <engine:VisualElement name="ground-selected-tile-preview" class="rmb-preview"/>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+                <engine:VisualElement class="row">
+                    <engine:VisualElement class="col-1">
+                        <engine:Button text="←" name="ground-selected-tile-record-decrement"/>
+                    </engine:VisualElement>
+                    <engine:VisualElement class="col-2">
+                        <editor:IntegerField name="ground-selected-tile-record"/>
+                    </engine:VisualElement>
+                    <engine:VisualElement class="col-1">
+                        <engine:Button text="→" name="ground-selected-tile-record-increment"/>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:VisualElement class="col-1">
+                <engine:Button text="↷" class="h1" name="ground-selected-tile-rotate-cw"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <editor:VisualSplitter/>
+
+        <engine:VisualElement class="row center">
+            <engine:Button text="Center Camera" name="center-camera" class="col-1"/>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="row pt">
+            <engine:VisualElement class="col-4">
+                <engine:VisualElement name="terrain-grid" class="rmb-terrain-grid"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:ScrollView>
+</engine:UXML>
