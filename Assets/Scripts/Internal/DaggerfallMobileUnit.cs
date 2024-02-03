@@ -338,7 +338,17 @@ namespace DaggerfallWorkshop
 
             // Change enemy to this orientation
             if (orientation != lastOrientation)
+            {
+                // Different orientations may not have the same amount of frames
+                // For example, archive 288 (Ancient Lich) has 4 frames in six orientations (front, back, front diagonals, sides), but 8 frames for the two back diagonals
+                // If you change orientation from a back diagonal during frame 4, 5, 6, or 7, you overflow the other anims, where only 0 to 3 are valid
+                if (lastOrientation >= 0)
+                {
+                    currentFrame = currentFrame * summary.StateAnims[orientation].NumFrames / summary.StateAnims[lastOrientation].NumFrames;
+                }
+
                 OrientEnemy(orientation);
+            }
         }
 
         /// <summary>
@@ -361,16 +371,7 @@ namespace DaggerfallWorkshop
                 LogMobileError($"Invalid frame '{currentFrame}'");
                 return;
             }
-
-            // Different orientations may not have the same amount of frames
-            // For example, archive 288 (Ancient Lich) has 4 frames in six orientations (front, back, front diagonals, sides), but 8 frames for the two back diagonals
-            // If you change orientation from a back diagonal during frame 4, 5, 6, or 7, you overflow the other anims, where only 0 to 3 are valid
-            // Otherwise, keep the current frame, so animation stays consistent during rotation
-            if (currentFrame >= summary.StateAnims[orientation].NumFrames)
-            {
-                currentFrame = 0;
-            }
-
+            
             // Get mesh filter
             if (meshFilter == null)
                 meshFilter = GetComponent<MeshFilter>();
