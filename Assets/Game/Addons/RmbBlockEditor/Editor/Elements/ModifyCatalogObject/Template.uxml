@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML xmlns:engine="UnityEngine.UIElements">
+    <engine:Box name="options-box" class="ml mb mr mt pt pb pl pr">
+        <engine:VisualElement class="row pr pb center">
+            <engine:Label name="subcategory" class="col-4"/>
+        </engine:VisualElement>
+        <engine:VisualElement class="row pl pr pb center">
+            <engine:Button name="previous" class="col-1" text='←'/>
+            <engine:Label name="item-id-in-subcategory" class="col-2"/>
+            <engine:Button name="next" class="col-1" text="→"/>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="splitter"/>
+
+        <engine:VisualElement class="row pr pb center">
+            <engine:Label text="Choose a new object from the catalog:" class="col-4"/>
+        </engine:VisualElement>
+        <engine:VisualElement class="row pr pb center">
+            <engine:Button name="modify" class="col-1" text="Modify"/>
+        </engine:VisualElement>
+    </engine:Box>
+
+    <engine:VisualElement name="catalog-container" class="hidden">
+        <engine:VisualElement name="object-picker"/>
+        <engine:VisualElement class="row mt mb">
+            <engine:Button name="apply-button" class="col-2" text="Modify"/>
+            <engine:Button name="cancel-button" class="col-2" text="Cancel"/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

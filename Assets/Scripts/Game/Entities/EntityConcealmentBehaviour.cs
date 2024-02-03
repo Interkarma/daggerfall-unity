@@ -53,7 +53,7 @@ namespace DaggerfallWorkshop.Game.Entity
             meshRenderer = GetComponentInChildren<MeshRenderer>();
         }
 
-        protected void MakeConcealed(bool concealed)
+        protected virtual void MakeConcealed(bool concealed)
         {
             if (meshRenderer)
             {

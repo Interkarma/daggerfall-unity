@@ -627,7 +627,6 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "EnableModernConversationStyleInTalkWindow", EnableModernConversationStyleInTalkWindow);
             SetString(sectionGUI, "IconsPositioningScheme", IconsPositioningScheme);
             SetInt(sectionGUI, "HelmAndShieldMaterialDisplay", HelmAndShieldMaterialDisplay);
-            SetInt(sectionGUI, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
             SetInt(sectionGUI, "ShopQualityHUDDelay", ShopQualityHUDDelay);
             SetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown", ShowQuestJournalClocksAsCountdown);
@@ -676,6 +675,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionControls, "AllowMagicRepairs", AllowMagicRepairs);
             SetBool(sectionControls, "BowDrawback", BowDrawback);
 
+            SetInt(sectionMap, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetColor(sectionMap, "AutomapTempleColor", AutomapTempleColor);
             SetColor(sectionMap, "AutomapShopColor", AutomapShopColor);
             SetColor(sectionMap, "AutomapTavernColor", AutomapTavernColor);

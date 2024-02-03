@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd"
+>
+    <engine:VisualElement class="row center">
+        <engine:Label text="Scenery Editor" class="h1"/>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row center">
+        <engine:Image name="scenery-0" class="scenery-cell"/>
+        <engine:Image name="scenery-1" class="scenery-cell"/>
+        <engine:Image name="scenery-2" class="scenery-cell"/>
+        <engine:Image name="scenery-3" class="scenery-cell"/>
+        <engine:Image name="scenery-4" class="scenery-cell"/>
+        <engine:Image name="scenery-5" class="scenery-cell"/>
+        <engine:Image name="scenery-6" class="scenery-cell"/>
+    </engine:VisualElement>
+    <engine:VisualElement class="row center">
+        <engine:Image name="scenery-7" class="scenery-cell"/>
+        <engine:Image name="scenery-8" class="scenery-cell"/>
+        <engine:Image name="scenery-9" class="scenery-cell"/>
+        <engine:Image name="scenery-10" class="scenery-cell"/>
+        <engine:Image name="scenery-11" class="scenery-cell"/>
+        <engine:Image name="scenery-12" class="scenery-cell"/>
+        <engine:Image name="scenery-13" class="scenery-cell"/>
+        <engine:Image name="scenery-14" class="scenery-cell"/>
+    </engine:VisualElement>
+    <engine:VisualElement class="row center">
+        <engine:Image name="scenery-15" class="scenery-cell"/>
+        <engine:Image name="scenery-16" class="scenery-cell"/>
+        <engine:Image name="scenery-17" class="scenery-cell"/>
+        <engine:Image name="scenery-18" class="scenery-cell"/>
+        <engine:Image name="scenery-19" class="scenery-cell"/>
+        <engine:Image name="scenery-20" class="scenery-cell"/>
+        <engine:Image name="scenery-21" class="scenery-cell"/>
+        <engine:Image name="scenery-22" class="scenery-cell"/>
+    </engine:VisualElement>
+    <engine:VisualElement class="row center">
+        <engine:Image name="scenery-23" class="scenery-cell"/>
+        <engine:Image name="scenery-24" class="scenery-cell"/>
+        <engine:Image name="scenery-25" class="scenery-cell"/>
+        <engine:Image name="scenery-26" class="scenery-cell"/>
+        <engine:Image name="scenery-27" class="scenery-cell"/>
+        <engine:Image name="scenery-28" class="scenery-cell"/>
+        <engine:Image name="scenery-29" class="scenery-cell"/>
+        <engine:Image name="scenery-30" class="scenery-cell"/>
+        <engine:Image name="scenery-31" class="scenery-cell"/>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row center">
+        <engine:VisualElement class="col-2">
+            <engine:Button text="Paint" name="paint"/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

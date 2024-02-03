@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd"
+>
+    <editor:Toolbar>
+        <editor:ToolbarMenu text="File" name="rmb-file-menu"/>
+        <editor:ToolbarMenu text="Edit" name="rmb-edit-menu"/>
+        <editor:ToolbarMenu text="Add" name="rmb-add-menu"/>
+    </editor:Toolbar>
+    <engine:ScrollView>
+        <engine:VisualElement class="row">
+            <engine:VisualElement class="col-4">
+                <engine:VisualElement name="content">
+                    <engine:Label text="Please open a file to start editing!"/>
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:ScrollView>
+</engine:UXML>

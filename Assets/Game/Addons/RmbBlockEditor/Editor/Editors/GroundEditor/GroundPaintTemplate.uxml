@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd"
+>
+    <engine:ScrollView>
+        <engine:VisualElement class="row">
+            <engine:VisualElement class="col-4">
+                <engine:Label text="Paint Mode" class="h1 center"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement class="row">
+            <engine:VisualElement class="col-4">
+                <engine:Label text="Select a texture and paint it on the map!" class="center"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement class="row pb">
+            <engine:VisualElement class="col-2">
+                <engine:VisualElement name="ground-paint-palette" class="rmb-palette-grid"/>
+            </engine:VisualElement>
+            <engine:VisualElement class="col-2">
+                <engine:VisualElement class="row">
+                    <engine:VisualElement class="col-4">
+                        <engine:VisualElement name="ground-paint-tile-preview" class="rmb-preview"/>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+                <engine:VisualElement class="row">
+                    <engine:VisualElement class="col-2">
+                        <engine:Button text="↶" name="ground-paint-rotate-ccw" class="h1"/>
+                    </engine:VisualElement>
+                    <engine:VisualElement class="col-2">
+                        <engine:Button text="↷" name="ground-paint-rotate-cw" class="h1"/>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <editor:VisualSplitter/>
+
+        <engine:VisualElement class="row center">
+            <engine:Button text="Center Camera" name="center-camera" class="col-1"/>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="row pt">
+            <engine:VisualElement class="col-4">
+                <engine:VisualElement name="terrain-grid" class="rmb-terrain-grid"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:ScrollView>
+</engine:UXML>

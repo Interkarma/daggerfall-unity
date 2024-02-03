@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML xmlns:engine="UnityEngine.UIElements">
+
+    <engine:Box class="pb pt pl pr">
+        <engine:VisualElement class="row pr pt">
+            <engine:VisualElement class="row flex-grow">
+                <engine:Label name="catalog-title" class="h3"/>
+            </engine:VisualElement>
+            <engine:VisualElement class="row flex-grow right">
+                <engine:Button name="import" tooltip="Import Catalog">
+                    <engine:Image class="import-icon"/>
+                </engine:Button>
+                <engine:Button name="export" tooltip="Export Catalog">
+                    <engine:Image class="export-icon"/>
+                </engine:Button>
+                <engine:Button name="remove-all" tooltip="Remove All Items From The Catalog">
+                    <engine:Image class="remove-icon"/>
+                </engine:Button>
+                <engine:Button name="restore-defaults" tooltip="Restore The Default Catalog">
+                    <engine:Image class="sync-icon"/>
+                </engine:Button>
+                <engine:Button name="scan" tooltip="Scan For Custom Assets">
+                    <engine:Image class="file-search-icon"/>
+                </engine:Button>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:Box>
+
+</engine:UXML>

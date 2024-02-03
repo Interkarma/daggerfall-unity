@@ -1,6 +1,7 @@
 [Daggerfall]
 MyDaggerfallPath=
 MyDaggerfallUnitySavePath=
+MyDaggerfallUnityScreenshotsPath=
 
 [Video]
 ResolutionWidth=1920

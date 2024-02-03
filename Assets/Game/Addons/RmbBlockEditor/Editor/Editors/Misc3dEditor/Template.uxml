@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+>
+    <engine:VisualElement class="row pl pr pt">
+            <engine:Label text="Model ID: " class="col-1"/>
+            <engine:Label name="model-id" class="col-2" />
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pl pr pt">
+        <engine:Label text="ObjectType: " class="col-1"/>
+        <engine:Label name="object-type" class="col-2" />
+    </engine:VisualElement>
+
+    <engine:VisualElement class="splitter" />
+
+    <engine:VisualElement class="row pl pr">
+        <engine:VisualElement class="col-1">
+            <engine:Label text="Position: "/>
+        </engine:VisualElement>
+        <engine:VisualElement class="col-3">
+            <editor:Vector3Field name="pos" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pl pr pb">
+        <engine:VisualElement class="col-1">
+            <engine:Label text="Rotation: "/>
+        </engine:VisualElement>
+        <engine:VisualElement class="col-3">
+            <editor:Vector3Field name="rot"/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pl pr pb">
+        <engine:VisualElement class="col-1">
+            <engine:Label text="Scale: "/>
+        </engine:VisualElement>
+        <engine:VisualElement class="col-1 row center">
+            <engine:Label text="x/y/z:" class="col-1" />
+            <editor:FloatField name="scale" class="col-3" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+</engine:UXML>

@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>Vector3 with the scaling factors</returns>
         public static Vector3 GetModelScaleVector(DFBlock.RmbBlock3dObjectRecord obj)
         {
-            return new Vector3(obj.XScale == 0 ? 1 : obj.XScale, obj.YScale == 0 ? 1 : obj.YScale, obj.ZScale == 0 ? 1 : obj.YScale);
+            return new Vector3(obj.XScale == 0 ? 1 : obj.XScale, obj.YScale == 0 ? 1 : obj.YScale, obj.ZScale == 0 ? 1 : obj.ZScale);
         }
 
         /// <summary>
