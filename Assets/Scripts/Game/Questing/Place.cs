@@ -273,7 +273,9 @@ namespace DaggerfallWorkshop.Game.Questing
                         // Workaround for older saves where regionIndex was not present and will always be 0 in save data (Alik'r Desert)
                         // This can result in improper region name being displayed when loading an older save and quest not actually set in Alik'r Desert.
                         // In these cases display name using the legacy regionName field stored in place data
-                        textOut = siteDetails.regionName;
+                        var index =
+                            DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(siteDetails.regionName);
+                        textOut = TextManager.Instance.GetLocalizedRegionName(index);
                     }
                     else
                     {
