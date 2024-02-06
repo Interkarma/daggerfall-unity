@@ -14,6 +14,7 @@ using System.IO;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using System.Text;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -92,7 +93,11 @@ namespace DaggerfallWorkshop.Game
             if (!fileNoExt.EndsWith(localizedFilenameSuffix))
                 filename = fileNoExt + localizedFilenameSuffix + fileExtension;
 
-            // TODO: Also seek localized book file from mods
+            // Seek localized book file from mods
+            if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(filename, false, out TextAsset _))
+            {
+                return true;
+            }
 
             // Get path to localized book file and check it exists
             string path = Path.Combine(Application.streamingAssetsPath, textFolderName, booksFolderName, filename);
@@ -158,17 +163,29 @@ namespace DaggerfallWorkshop.Game
             if (!fileNoExt.EndsWith(localizedFilenameSuffix))
                 filename = fileNoExt + localizedFilenameSuffix + fileExtension;
 
-            // TODO: Also seek localized book file from mods
+            string[] lines = null;
 
-            // Get path to localized book file and check it exists
-            string path = Path.Combine(Application.streamingAssetsPath, textFolderName, booksFolderName, filename);
-            if (!File.Exists(path))
-                return false;
+            // Seek localized book file from mods
+            if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(filename, false, out TextAsset textAsset))
+            {
+                if (!string.IsNullOrWhiteSpace(textAsset.text))
+                {
+                    lines = textAsset.text.Split('\n');
+                }
+            }
 
-            // Attempt to load file from StreamingAssets/Text/Books
-            string[] lines = File.ReadAllLines(path);
-            if (lines == null || lines.Length == 0)
-                return false;
+            if (lines == null)
+            {
+                // Get path to localized book file and check it exists
+                string path = Path.Combine(Application.streamingAssetsPath, textFolderName, booksFolderName, filename);
+                if (!File.Exists(path))
+                    return false;
+
+                // Attempt to load file from StreamingAssets/Text/Books
+                lines = File.ReadAllLines(path);
+                if (lines == null || lines.Length == 0)
+                    return false;   
+            }
 
             // Read file
             bool readingContent = false;
