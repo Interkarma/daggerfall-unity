@@ -856,13 +856,12 @@ namespace DaggerfallWorkshop.Game.Items
                 return true;
         }
 
-        // TODO: can this be replaced with a new text RSC entry?
         private static TextFile.Token[] GetPotionRecipeTokens()
         {
             TextFile.Token[] tokens = new TextFile.Token[4];
             tokens[0] = TextFile.CreateTextToken(TextManager.Instance.GetLocalizedText("potionRecipeFor"));
             tokens[1] = TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter);
-            tokens[2] = TextFile.CreateTextToken("Weight: %kg kilograms");
+            tokens[2] = TextFile.CreateTextToken(TextManager.Instance.GetLocalizedText("potionRecipeWeight"));
             tokens[3] = TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter);
             return tokens;
         }

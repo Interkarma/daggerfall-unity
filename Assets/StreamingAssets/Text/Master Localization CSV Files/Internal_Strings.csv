@@ -28,6 +28,7 @@ youCollectArrows,You pluck your arrows out of the corpse.
 loiterHowManyHours,Loiter how many hours : 
 restHowManyHours,Rest how many hours : 
 potionRecipeFor,Recipe for Potion of %po
+potionRecipeWeight,Weight: %kg kilograms
 potionOf,Potion of %po
 letterPrefix,Letter: 
 multipleAssignments,You have multiple assignments...
