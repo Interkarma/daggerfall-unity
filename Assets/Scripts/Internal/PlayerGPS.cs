@@ -24,6 +24,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop
 {
@@ -725,6 +726,12 @@ namespace DaggerfallWorkshop
 
             // Do nothing until DaggerfallUnity is ready
             if (!dfUnity.IsReady)
+                return false;
+
+            // When running the game, wait for the mod manager to be initialized
+            // Updating the player location too early causes the region loading to read WorldData
+            // locations from disabled mods
+            if (ModManager.Instance != null && !ModManager.Instance.Initialized)
                 return false;
 
             return true;
