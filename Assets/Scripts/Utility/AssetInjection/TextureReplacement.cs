@@ -157,7 +157,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Seek animated texture from modding locations with all frames.
+        /// Seek animated texture from modding locations with all frames. Gives CPU-accessible textures - use other overload if only GPU textures are needed
         /// </summary>
         /// <param name="archive">Texture archive.</param>
         /// <param name="record">Record index.</param>
@@ -165,11 +165,24 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(int archive, int record, out Texture2D[] texFrames)
         {
-            return TryImportTexture(texturesPath, frame => GetName(archive, record, frame), out texFrames);
+            return TryImportTexture(texturesPath, frame => GetName(archive, record, frame), false, out texFrames);
         }
 
         /// <summary>
-        /// Seek texture from modding locations.
+        /// Seek animated texture from modding locations with all frames
+        /// </summary>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
+        /// <param name="texFrames">Imported texture frames.</param>
+        /// <returns>True if texture imported.</returns>
+        public static bool TryImportTexture(int archive, int record, bool readOnly, out Texture2D[] texFrames)
+        {
+            return TryImportTexture(texturesPath, frame => GetName(archive, record, frame), readOnly, out texFrames);
+        }
+
+        /// <summary>
+        /// Seek texture from modding locations. Gives CPU-accessible textures - use other overload if only GPU textures are needed
         /// </summary>
         /// <param name="archive">Texture archive.</param>
         /// <param name="record">Record index.</param>
@@ -215,7 +228,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Seek texture from modding locations with a specific dye.
+        /// Seek texture from modding locations with a specific dye. Gives CPU-accessible textures - use other overload if only GPU textures are needed
         /// </summary>
         /// <param name="archive">Texture archive.</param>
         /// <param name="record">Record index.</param>
@@ -227,6 +240,22 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, TextureMap textureMap, out Texture2D tex)
         {
             return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap, dye), false, null, out tex);
+        }
+
+        /// <summary>
+        /// Seek texture from modding locations with a specific dye. Gives CPU-accessible textures - use other overload if only GPU textures are needed
+        /// </summary>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Animation frame index</param>
+        /// <param name="dye">Dye colour for armour, weapons, and clothing.</param>
+        /// <param name="textureMap">Texture type.</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
+        /// <param name="tex">Imported texture.</param>
+        /// <returns>True if texture imported.</returns>
+        public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, TextureMap textureMap, bool readOnly, out Texture2D tex)
+        {
+            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap, dye), readOnly, null, out tex);
         }
 
         /// <summary>
@@ -542,7 +571,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 return null;
 
             Texture2D tex, emission;
-            if (importedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, 0, 0, true, true, out tex, out emission))
+            if (importedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, 0, 0, allowEmissionMap: true, readOnly: true, out tex, out emission))
             {
                 string renderMode = null;
 
@@ -563,7 +592,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // If the archive has a Arena2 texture file, use it to get record and frame count
                 string fileName = TextureFile.IndexToFileName(archive);
                 var textureFile = new TextureFile();
-                if (textureFile.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseMemory, true))
+                if (textureFile.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseMemory, readOnly: true))
                 {
                     // Import all textures in this archive
                     importedTextures.Albedo = new Texture2D[textureFile.RecordCount][];
@@ -596,13 +625,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     List<Texture2D[]> allEmission = importedTextures.IsEmissive ? new List<Texture2D[]>() : null;
 
                     int record = 0;
-                    while (TryImportTexture(archive, record, out Texture2D[] currentAlbedo))
+                    while (TryImportTexture(archive, record, readOnly: true, out Texture2D[] currentAlbedo))
                     {
                         allAlbedo.Add(currentAlbedo);
 
                         if (importedTextures.IsEmissive)
                         {
-                            if (TryImportTexture(texturesPath, frame => GetName(archive, record, frame, TextureMap.Emission), out Texture2D[] currentEmissive))
+                            if (TryImportTexture(texturesPath, frame => GetName(archive, record, frame, TextureMap.Emission), readOnly: true, out Texture2D[] currentEmissive))
                             {
                                 allEmission.Add(currentEmissive);
                             }
@@ -982,15 +1011,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="getName">Get name of frame.</param>
         /// <param name="texFrames">Imported texture frames.</param>
         /// <returns>True if texture imported.</returns>
-        private static bool TryImportTexture(string path, Func<int, string> getName, out Texture2D[] texFrames)
+        private static bool TryImportTexture(string path, Func<int, string> getName, bool readOnly, out Texture2D[] texFrames)
         {
             int frame = 0;
             Texture2D tex;
-            if (TryImportTexture(path, getName(frame), false, null, out tex))
+            if (TryImportTexture(path, getName(frame), readOnly, null, out tex))
             {
                 var textures = new List<Texture2D>();
                 do textures.Add(tex);
-                while (TryImportTexture(path, getName(++frame), false, null, out tex));
+                while (TryImportTexture(path, getName(++frame), readOnly, null, out tex));
                 texFrames = textures.ToArray();
                 return true;
             }
