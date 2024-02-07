@@ -1053,7 +1053,7 @@ namespace DaggerfallWorkshop.Game
             clickDelayStartTime = Time.realtimeSinceStartup;
         }
 
-        public bool AttemptStaticDoorBash(RaycastHit hit)
+        public bool AttemptExteriorDoorBash(RaycastHit hit)
         {
             var doors = GetDoors(hit.transform, out Transform doorOwner);
             if (!doors || !doors.HasHit(hit.point, out var door) || !playerEnterExit)
