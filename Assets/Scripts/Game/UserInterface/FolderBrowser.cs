@@ -231,6 +231,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     }
                 }
 
+                // Add return path
+                if (currentPath != drives[driveList.SelectedIndex])
+                    folderList.AddItem("..", 0);
+
                 folderScroller.TotalUnits = folderList.Count;
                 folderScroller.DisplayUnits = folderList.RowsDisplayed;
                 folderScroller.ScrollIndex = 0;
@@ -356,14 +360,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 currentPath = newPath;
                 RefreshFolders();
                 RaisePathChangedEvent();
-
-                // Add return path
-                if (currentPath != drives[driveList.SelectedIndex])
-                    folderList.AddItem("..", 0);
-
-                // Update scroller units
-                folderScroller.TotalUnits = folderList.Count;
-
                 UpdatePathText();
             }
         }
