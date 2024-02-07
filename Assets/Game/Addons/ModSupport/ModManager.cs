@@ -64,6 +64,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public bool LoadVirtualMods = true;
 #endif
 
+        // Returns whether the ModManager has been through Init
+        // Before Initialized is true, disabled mods are not filtered out
+        // Systems that run on launch should ensure this is true before touching systems involving mods
+        public bool Initialized { get { return alreadyStartedInit; } }
+
         #endregion
 
         #region Properties
