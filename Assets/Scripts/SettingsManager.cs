@@ -97,7 +97,7 @@ namespace DaggerfallWorkshop
             {
                 if(isPortableInstall == null)
                 {
-                    isPortableInstall = File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Portable.txt");
+                    isPortableInstall = Application.isEditor ? false : File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\Portable.txt");
                 }
                 return (bool)isPortableInstall;
             }
