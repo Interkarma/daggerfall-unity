@@ -148,7 +148,7 @@ Message:  1042
 <ce>           (Next message when you travel to a city. Press No to end tutorial.)
 
 Message:  1045
-<ce>                           Page 9
+<ce>                           Page 11
 <ce>    
 <ce>    Find a townsperson nearby. Press F4 to set your mode to Dialogue, and then
 <ce>    click on the person. You will enter a conversation window. You can use
@@ -162,7 +162,7 @@ Message:  1045
 <ce>           (Next message in 30 seconds. Press No to end tutorial.)
 
 Message:  1047
-<ce>                          Page 10
+<ce>                          Page 12
 <ce>  
 <ce>    The conversation window also has options for finding people and asking for news,
 <ce>    including for local quests as "Work." Look at the top left corner of the
@@ -171,7 +171,7 @@ Message:  1047
 <ce>           (Next message in 15 seconds. Press No to end tutorial.)
 
 Message:  1048
-<ce>                          Page 11
+<ce>                          Page 13
 <ce>  
 <ce>       If you gained treasure in the starting dungeon, you will want to sell it.
 <ce>       A pawn shop is most useful for this, though general stores and armorsmiths
@@ -188,7 +188,7 @@ Message:  1048
 <ce>           (Next message in 10 seconds. Press No to end tutorial.)
 
 Message:  1050
-<ce>                          Page 12 
+<ce>                          Page 14
 <ce>                                    
 <ce>      Most characters want to join at least one guild.  As you rise in rank
 <ce>        in a guild, you get more benefits. To rise in rank, you
@@ -205,7 +205,7 @@ Message:  1050
 <ce>           (Next message in 10 seconds. Press No to end tutorial.)
 
 Message:  1055
-<ce>                          Page 13
+<ce>                          Page 15
 <ce>                                    
 <ce>        The last task of all is to find a quest. Daggerfall's quests
 <ce>        are radiant, choosing locations around you as places where
