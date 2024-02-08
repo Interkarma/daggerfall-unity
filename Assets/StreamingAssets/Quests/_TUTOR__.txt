@@ -125,6 +125,11 @@ Message:  1040
 
 Message:  1041
 <ce>                           Page 9
+<ce>         
+<ce>         Some objects can be clicked on. In the main hall of this dungeon, you will find
+<ce>         a throne and a lever next to it. When you see the lever, click on it
+<ce>         to raise the throne like an elevator. Other dungeons will have objects
+<ce>         with more effects, such as wheels and secret switches.
 <ce>
 <ce>         To escape this dungeon, you need to look for a dark, stone archway
 <ce>         set into a wall, about the same height as you. When you click on it,
