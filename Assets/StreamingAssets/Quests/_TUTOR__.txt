@@ -9,9 +9,9 @@ Quest: _TUTOR__
 QRC:
 
 RumorsDuringQuest:  [1005]
-I'll give you a hint %ra.  If you want to succeed in magic, join the mages guild.
+I'll give you a hint %ra. If you want to succeed in magic, join the mages guild.
                                      <--->
-A small tip for you. Put your money  in the bank of %reg. Have them give you letters of credit. They hardly weigh a thing.
+A small tip for you. Put your money in the bank of %reg. Have them give you letters of credit. They hardly weigh a thing.
                                      <--->
 Specialty shops are the best place to find unsual items.
                                      <---> 
