@@ -43,7 +43,7 @@ RumorsDuringQuest:  [1005]
 Did you hear? An animal got into a building in town. I hope they kill it soon.
 
 RumorsPostfailure:  [1006]
- hat creature mauled some woman before being chased out of town. What a pity.
+That creature mauled some woman before being chased out of town. What a pity.
 
 RumorsPostsuccess:  [1007]
 The Fighter's Guild killed that bear that got into _house_. It's a good thing we have them around.
