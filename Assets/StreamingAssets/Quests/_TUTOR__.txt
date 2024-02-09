@@ -11,7 +11,7 @@ QRC:
 RumorsDuringQuest:  [1005]
 I'll give you a hint %ra.  If you want to succeed in magic, join the mages guild.
                                      <--->
-A small tip for you. Put your money  in the bank of %reg. Have them give  you letters of credit. They hardly weigh a thing.
+A small tip for you. Put your money  in the bank of %reg. Have them give you letters of credit. They hardly weigh a thing.
                                      <--->
 Specialty shops are the best place to find unsual items.
                                      <---> 
@@ -24,7 +24,7 @@ Things are really heating up in the city of Daggerfall. You should go there if y
                                      <--->
 I've heard that the royalty of Wayrest is stirring things up. It's a great opportunity for anyone with the guts to actually ask the king or queen for work.
                                      <--->
-I've heard that Sentinel is a good place to earn quick gold and the opportunity for a bit of  adventure. The royal family is hiring heroes for dangerous work.
+I've heard that Sentinel is a good place to earn quick gold and the opportunity for a bit of adventure. The royal family is hiring heroes for dangerous work.
 
 QuestLogEntry:  [1010]
 <ce>             Daggerfall Unity has an updated tutorial.
@@ -128,7 +128,7 @@ Message:  1041
 <ce>         
 <ce>         Some objects can be clicked on. In the main hall of this dungeon, you will find
 <ce>         a throne and a lever next to it. When you see the lever, click on it
-<ce>         to raise the throne like an elevator. Other dungeons will have objects
+<ce>       to raise the throne like an elevator. Other dungeons will have objects
 <ce>         with more effects, such as wheels and secret switches.
 <ce>
 <ce>         To escape this dungeon, you need to look for a dark, stone archway
@@ -195,7 +195,7 @@ Message:  1048
 Message:  1050
 <ce>                          Page 14
 <ce>                                    
-<ce>      Most characters want to join at least one guild.  As you rise in rank
+<ce>      Most characters want to join at least one guild. As you rise in rank
 <ce>        in a guild, you get more benefits. To rise in rank, you
 <ce>        must improve skills the guild cares about, and perform
 <ce>       quests on a regular basis to improve your reputation with them.
@@ -290,7 +290,7 @@ _page4_ task:
 	prompt 1025 yes _yes4_ no _no_
 
 _yes4_ task:
-	start timer _page5_  
+	start timer _page5_
 
 _page5_ task:
 	prompt 1030 yes _yes5_ no _no_ 
