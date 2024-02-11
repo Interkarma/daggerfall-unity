@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static bool SetLocationVariant(int regionIndex, int locationIndex, string variant)
         {
             int locationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
-            bool overwrite = !locationVariants.ContainsKey(locationKey);
+            bool overwrite = locationVariants.ContainsKey(locationKey);
             if (variant == NoVariant)
                 locationVariants.Remove(locationKey);
             else
@@ -102,7 +102,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (locationIndex >= 0)
             {
                 int locationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
-                bool overwrite = !locationVariants.ContainsKey(locationKey);
+                bool overwrite = locationVariants.ContainsKey(locationKey);
                 if (variant == NoVariant)
                     locationVariants.Remove(locationKey);
                 else
@@ -129,7 +129,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static bool SetBlockVariant(string blockName, string variant, int locationKey = AnyLocationKey)
         {
             VariantBlockKey blockKey = new VariantBlockKey(locationKey, blockName);
-            bool overwrite = !blockVariants.ContainsKey(blockKey);
+            bool overwrite = blockVariants.ContainsKey(blockKey);
             if (variant == NoVariant)
                 blockVariants.Remove(blockKey);
             else
@@ -150,7 +150,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static bool SetBuildingVariant(string blockName, int recordIndex, string variant, int locationKey = AnyLocationKey)
         {
             VariantBuildingKey buildingKey = new VariantBuildingKey(locationKey, blockName, recordIndex);
-            bool overwrite = !buildingVariants.ContainsKey(buildingKey);
+            bool overwrite = buildingVariants.ContainsKey(buildingKey);
             if (variant == NoVariant)
                 buildingVariants.Remove(buildingKey);
             else
