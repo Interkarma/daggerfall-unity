@@ -468,7 +468,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Check if player hit a static door
-            if (GameManager.Instance.PlayerActivate.AttemptStaticDoorBash(hit))
+            if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
             {
                 return true;
             }
