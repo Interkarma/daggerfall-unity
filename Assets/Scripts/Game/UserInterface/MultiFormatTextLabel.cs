@@ -212,6 +212,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public TextLabel AddTextLabel(string text, DaggerfallFont font, Color color)
         {
             TextLabel textLabel = new TextLabel();
+
+            textLabel.Parent = this; //Establish parent early.
+            _ = textLabel.Rectangle; //Call GetRectangle() early to establish LocalScale, discard return value
+
             textLabel.AutoSize = AutoSizeModes.None;
             textLabel.MinTextureDim = minTextureDimTextLabel;
             textLabel.Font = font;
@@ -224,7 +228,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (maxTextWidth > 0)
                 textLabel.MaxWidth = maxTextWidth;
             textLabel.Text = text;
-            textLabel.Parent = this;
             textLabel.TextColor = color;
             textLabel.ShadowColor = ShadowColor;
             textLabel.ShadowPosition = ShadowPosition;
