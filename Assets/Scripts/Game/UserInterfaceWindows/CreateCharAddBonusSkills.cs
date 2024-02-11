@@ -33,14 +33,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const int strYouMustDistributeYourBonusPoints = 14;
 
         Texture2D nativeTexture;
-        DFCareer dfClass;
         SkillsRollout skillsRollout;
-
-        public DFCareer DFClass
-        {
-            get { return dfClass; }
-            set { SetClass(value); }
-        }
 
         public DaggerfallSkills StartingSkills
         {
@@ -61,6 +54,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public CreateCharAddBonusSkills(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+        }
+
+        public void SetCharacterDocument(CharacterDocument characterDocument, bool isRestored)
+        {
+            Setup();
+            if (isRestored) // Restore points previously set by user.
+            {
+                skillsRollout.SetClassSkills(characterDocument.career, false);
+                skillsRollout.StartingSkills = characterDocument.startingSkills;
+                skillsRollout.WorkingSkills = characterDocument.workingSkills;
+                skillsRollout.SkillBonuses = BiogFile.GetSkillEffects(characterDocument.biographyEffects);
+            }
+            else
+            {
+                skillsRollout.SetClassSkills(characterDocument.career);
+                skillsRollout.SkillBonuses = BiogFile.GetSkillEffects(characterDocument.biographyEffects);
+            }
         }
 
         protected override void Setup()
@@ -98,16 +108,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Draw();
         }
 
-        #region Private Methods
-
-        void SetClass(DFCareer dfClass)
+        public void SetBonusSkillPoints(int primary, int major, int minor)
         {
-            Setup();
-            this.dfClass = dfClass;
-            skillsRollout.SetClassSkills(dfClass);
+            skillsRollout.PrimarySkillBonusPoints = primary;
+            skillsRollout.MajorSkillBonusPoints = major;
+            skillsRollout.MinorSkillBonusPoints = minor;
         }
-
-        #endregion
 
         #region Event Handlers
 

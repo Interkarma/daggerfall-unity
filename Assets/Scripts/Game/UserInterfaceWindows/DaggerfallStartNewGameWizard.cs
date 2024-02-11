@@ -53,6 +53,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         CreateCharReflexSelect createCharReflexSelectWindow;
         CreateCharSummary createCharSummaryWindow;
 
+        bool skillsNeedReroll;
+
         WizardStages WizardStage
         {
             get { return wizardStage; }
@@ -179,6 +181,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             createCharChooseBioWindow.OnClose += CreateCharChooseBioWindow_OnClose;
 
             wizardStage = WizardStages.SelectBiographyMethod;
+            skillsNeedReroll = true;
             uiManager.PushWindow(createCharChooseBioWindow);
         }
 
@@ -248,16 +251,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 createCharAddBonusSkillsWindow = new CreateCharAddBonusSkills(uiManager);
                 createCharAddBonusSkillsWindow.OnClose += AddBonusSkillsWindow_OnClose;
-                createCharAddBonusSkillsWindow.DFClass = characterDocument.career;
-                createCharAddBonusSkillsWindow.SkillBonuses = BiogFile.GetSkillEffects(characterDocument.biographyEffects);
             }
 
-            // Update class if player changes class selection
-            if (createCharAddBonusSkillsWindow.DFClass != characterDocument.career)
-            {
-                createCharAddBonusSkillsWindow.DFClass = characterDocument.career;
-            }
-
+            createCharAddBonusSkillsWindow.SetCharacterDocument(characterDocument, !skillsNeedReroll);
             wizardStage = WizardStages.AddBonusSkills;
             uiManager.PushWindow(createCharAddBonusSkillsWindow);
         }
@@ -514,8 +510,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharAddBonusStatsWindow.Cancelled)
             {
-                characterDocument.startingStats = createCharAddBonusStatsWindow.StartingStats;
-                characterDocument.workingStats = createCharAddBonusStatsWindow.WorkingStats;
+                characterDocument.startingStats.Copy(createCharAddBonusStatsWindow.StartingStats);
+                characterDocument.workingStats.Copy(createCharAddBonusStatsWindow.WorkingStats);
                 SetAddBonusSkillsWindow();
             }
             else
@@ -528,12 +524,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (!createCharAddBonusSkillsWindow.Cancelled)
             {
-                characterDocument.startingSkills = createCharAddBonusSkillsWindow.StartingSkills;
-                characterDocument.workingSkills = createCharAddBonusSkillsWindow.WorkingSkills;
+                characterDocument.startingSkills.Copy(createCharAddBonusSkillsWindow.StartingSkills);
+                characterDocument.workingSkills.Copy(createCharAddBonusSkillsWindow.WorkingSkills);
                 SetSelectReflexesWindow();
+                skillsNeedReroll = false;
             }
             else
             {
+                // Copy current stats to bonus stats window.
+                createCharAddBonusStatsWindow.StartingStats.Copy(characterDocument.startingStats);
+                createCharAddBonusStatsWindow.WorkingStats.Copy(characterDocument.workingStats);
                 SetAddBonusStatsWindow();
             }
         }
@@ -565,6 +565,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
             else
             {
+                // Copy skill and stat changes back to previous screens.
+                characterDocument.startingSkills.Copy(createCharSummaryWindow.StartingSkills);
+                characterDocument.workingSkills.Copy(createCharSummaryWindow.WorkingSkills);
+                characterDocument.startingStats.Copy(createCharSummaryWindow.StartingStats);
+                characterDocument.workingStats.Copy(createCharSummaryWindow.WorkingStats);
+                var bonusSkillPoints = createCharSummaryWindow.BonusSkillPoints;
+                createCharAddBonusSkillsWindow.SetBonusSkillPoints(bonusSkillPoints.Item1, bonusSkillPoints.Item2, bonusSkillPoints.Item3);
+                characterDocument.faceIndex = createCharSummaryWindow.FaceIndex;
                 SetSelectReflexesWindow();
             }
         }
