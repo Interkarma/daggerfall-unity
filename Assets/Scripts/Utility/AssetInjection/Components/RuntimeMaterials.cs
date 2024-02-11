@@ -198,10 +198,28 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             int archive = runtimeMaterial.Archive;
             int record = runtimeMaterial.Record;
 
+            ClimateTextureInfo ci = ClimateSwaps.GetClimateTextureInfo(archive);
             if (dungeonTextureTable != null)
+            {
                 archive = DungeonTextureTables.ApplyTextureTable(archive, dungeonTextureTable, climateBaseType);
+            }
             else if (runtimeMaterial.ApplyClimate)
-                archive = ClimateSwaps.ApplyClimate(archive, record, climate, season);
+            {
+                if (ci.textureSet == DFLocation.ClimateTextureSet.Exterior_Terrain)
+                {
+                    // For exterior terrain, always apply the ground based on climate settings, not climate swap
+                    // Most climates match, except Woodland Hills, which is Temperate with Mountain ground
+                    archive = GameManager.Instance.PlayerGPS.ClimateSettings.GroundArchive;
+                    if (season == ClimateSeason.Winter && ci.supportsWinter)
+                        archive += (int)DFLocation.ClimateWeather.Winter;
+                    else if (season == ClimateSeason.Rain && ci.supportsRain)
+                        archive += (int)DFLocation.ClimateWeather.Rain;
+                }
+                else
+                {
+                    archive = ClimateSwaps.ApplyClimate(archive, record, climate, season);
+                }
+            }
 
             return DaggerfallUnity.Instance.MaterialReader.GetMaterial(archive, record);
         }
