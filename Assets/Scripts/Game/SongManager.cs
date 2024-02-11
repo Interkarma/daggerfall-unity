@@ -40,6 +40,7 @@ namespace DaggerfallWorkshop.Game
         public SongFiles[] RainSongs = _rainSongs;
         public SongFiles[] SnowSongs = _snowSongs;
         public SongFiles[] TempleSongs = _templeSongs;
+        public SongFiles[] KnightSongs = _knightSongs;
         public SongFiles[] TavernSongs = _tavernSongs;
         public SongFiles[] NightSongs = _nightSongs;
         public SongFiles[] ShopSongs = _shopSongs;
@@ -61,11 +62,13 @@ namespace DaggerfallWorkshop.Game
             public PlayerMusicEnvironment environment;
             public PlayerMusicWeather weather;
             public PlayerMusicTime time;
+            public uint factionID;
             public bool arrested;
 
             //minimize GC alloc of struct.Equals(object o) with this method instead
             public bool Equals(PlayerMusicContext pmc) {
-                return  environment == pmc.environment
+                return environment == pmc.environment
+                        && factionID == pmc.factionID
                         && weather == pmc.weather
                         && time == pmc.time
                         && arrested == pmc.arrested;
@@ -92,6 +95,7 @@ namespace DaggerfallWorkshop.Game
             DungeonInterior,
             Graveyard,
             MagesGuild,
+            FighterTrainers,
             Interior,
             Palace,
             Shop,
@@ -165,6 +169,7 @@ namespace DaggerfallWorkshop.Game
                 RainSongs = _weatherRainSongsFM;
                 SnowSongs = _weatherSnowSongsFM;
                 TempleSongs = _templeSongsFM;
+                KnightSongs = _knightSongsFM;
                 TavernSongs = _tavernSongsFM;
                 NightSongs = _nightSongsFM;
                 ShopSongs = _shopSongsFM;
@@ -197,6 +202,7 @@ namespace DaggerfallWorkshop.Game
             // Update current playlist if context changed
             if (!currentContext.Equals(lastContext) || (!songPlayer.IsPlaying && playSong) || forceChange)
             {
+                bool factionChanged = currentContext.factionID != lastContext.factionID;
                 lastContext = currentContext;
 
                 SongFiles[] lastPlaylist = currentPlaylist;
@@ -204,7 +210,8 @@ namespace DaggerfallWorkshop.Game
                 AssignPlaylist();
 
                 // If current playlist is different from last playlist, pick a song from the current playlist
-                if (currentPlaylist != lastPlaylist || forceChange)
+                // For the Temple songs playlist, changing factionID can change the song
+                if (currentPlaylist != lastPlaylist || (currentPlaylist == TempleSongs && factionChanged) || forceChange)
                 {
                     PlayAnotherSong();
                     return;
@@ -282,6 +289,18 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
+        readonly byte[] templeFactions = { 0x52, 0x54, 0x58, 0x5C, 0x5E, 0x62, 0x6A, 0x24 };
+        readonly byte[] godFactions = { 0x15, 0x16, 0x18, 0x1A, 0x1B, 0x1D, 0x21, 0x23 };
+
+        // Returns -1 if not a template/god faction
+        int GetTempleIndex(uint factionId)
+        {
+            int index = Array.IndexOf(templeFactions, (byte)factionId);
+            if (index < 0)
+                index = Array.IndexOf(godFactions, (byte)factionId);
+            return index;
+        }
+
         void SelectCurrentSong()
         {
             if (currentPlaylist == null || currentPlaylist.Length == 0)
@@ -307,14 +326,10 @@ namespace DaggerfallWorkshop.Game
                     index = (int)(random % SnowSongs.Length);
                 else if (currentPlaylist == TempleSongs && playerEnterExit)
                 {
-                    byte[] templeFactions = { 0x52, 0x54, 0x58, 0x5C, 0x5E, 0x62, 0x6A, 0x24 };
                     uint factionOfPlayerEnvironment = playerEnterExit.FactionID;
-                    index = Array.IndexOf(templeFactions, (byte)factionOfPlayerEnvironment);
+                    index = GetTempleIndex(factionOfPlayerEnvironment);
                     if (index < 0)
-                    {
-                        byte[] godFactions = { 0x15, 0x16, 0x18, 0x1A, 0x1B, 0x1D, 0x21, 0x23 };
-                        index = Array.IndexOf(godFactions, (byte)factionOfPlayerEnvironment);
-                    }
+                        index = (int)(random % TempleSongs.Length); // Fallback if someone ever creates a new Temple type
                 }
                 else if (currentPlaylist == TavernSongs)
                 {
@@ -457,7 +472,15 @@ namespace DaggerfallWorkshop.Game
                         currentContext.environment = PlayerMusicEnvironment.Palace;
                         break;
                     case DFLocation.BuildingTypes.Temple:
-                        currentContext.environment = PlayerMusicEnvironment.Temple;
+                        if (playerEnterExit.FactionID == (int)FactionFile.FactionIDs.The_Fighters_Guild)
+                        {
+                            currentContext.environment = PlayerMusicEnvironment.FighterTrainers;
+                        }
+                        else
+                        {
+                            currentContext.environment = PlayerMusicEnvironment.Temple;
+                            currentContext.factionID = playerEnterExit.FactionID; // Faction ID changes temple music
+                        }
                         break;
                     default:
                         currentContext.environment = PlayerMusicEnvironment.Interior;
@@ -568,6 +591,9 @@ namespace DaggerfallWorkshop.Game
                     break;
                 case PlayerMusicEnvironment.MagesGuild:
                     currentPlaylist = MagesGuildSongs;
+                    break;
+                case PlayerMusicEnvironment.FighterTrainers:
+                    currentPlaylist = KnightSongs;
                     break;
                 case PlayerMusicEnvironment.Interior:
                     currentPlaylist = InteriorSongs;
@@ -923,14 +949,14 @@ namespace DaggerfallWorkshop.Game
             SongFiles.song_23fm,
         };
 
-        // Not used in classic. There is unused code to play it in knightly orders
-        static SongFiles[] _unusedKnightSong = new SongFiles[]
+        // Only used in Hammerfell "Temple" Fighter's Guild halls. There is unused code to play it in knightly orders
+        static SongFiles[] _knightSongs = new SongFiles[]
         {  
             SongFiles.song_17,
         };
 
         // FM version of above
-        static SongFiles[] _unusedKnightSongFM = new SongFiles[]
+        static SongFiles[] _knightSongsFM = new SongFiles[]
         {
             SongFiles.song_17fm,
         };
