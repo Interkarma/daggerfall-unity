@@ -90,6 +90,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         internal string[] BooksMapping;
 
         /// <summary>
+        /// Names of additional quest lists to be automatically imported
+        /// </summary>
+        [SerializeField]
+        internal string[] QuestLists;
+
+        /// <summary>
         /// Names of spell icon packs; each name corresponds to a <see cref="Texture2D"/>
         /// asset and a <see cref="TextAsset"/> with `.json` extension.
         /// </summary>

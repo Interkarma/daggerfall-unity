@@ -11,6 +11,7 @@ using System;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.Entity;
@@ -110,6 +111,22 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (string listFile in listFiles)
                 if (!RegisterQuestList(listFile))
                     Debug.LogErrorFormat("QuestList already registered. {0}", listFile);
+
+            if (ModManager.Instance == null)
+            {
+                return;
+            }
+
+            foreach (var mod in ModManager.Instance.GetAllModsWithContributes(x => x.QuestLists != null))
+            {
+                foreach (var questList in mod.ModInfo.Contributes.QuestLists)
+                {
+                    if (!RegisterQuestList(questList))
+                    {
+                        Debug.LogErrorFormat("QuestList {0} is already registered.", questList);
+                    }
+                }
+            }
         }
 
         #endregion
