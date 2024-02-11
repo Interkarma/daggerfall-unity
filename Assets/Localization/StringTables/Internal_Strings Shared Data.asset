@@ -3959,6 +3959,10 @@ MonoBehaviour:
     m_Key: saveLoadPromptFormat
     m_Metadata:
       m_Items: []
+  - m_Id: 445752459137302528
+    m_Key: potionRecipeWeight
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
