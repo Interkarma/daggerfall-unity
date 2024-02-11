@@ -11,7 +11,6 @@ using System;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.Entity;
