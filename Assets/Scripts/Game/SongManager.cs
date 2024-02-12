@@ -65,6 +65,7 @@ namespace DaggerfallWorkshop.Game
             public PlayerMusicWeather weather;
             public PlayerMusicTime time;
             public uint gameDays; // How many days since playthrough started. Each day gives a new song in a playlist
+            public int locationIndex;
             public bool arrested;
 
             //minimize GC alloc of struct.Equals(object o) with this method instead
@@ -73,6 +74,7 @@ namespace DaggerfallWorkshop.Game
                         && weather == pmc.weather
                         && time == pmc.time
                         && gameDays == pmc.gameDays
+                        && locationIndex == pmc.locationIndex
                         && arrested == pmc.arrested;
             }
         }
@@ -207,6 +209,7 @@ namespace DaggerfallWorkshop.Game
             if (!currentContext.Equals(lastContext) || (!songPlayer.IsPlaying && playSong))
             {
                 bool dayChanged = currentContext.gameDays != lastContext.gameDays;
+                bool locationChanged = currentContext.locationIndex != lastContext.locationIndex;
                 lastContext = currentContext;
 
                 SongFiles[] lastPlaylist = currentPlaylist;
@@ -215,7 +218,8 @@ namespace DaggerfallWorkshop.Game
 
                 // If current playlist is different from last playlist, pick a song from the current playlist
                 // For many interiors, changing days will give you a new song
-                if (currentPlaylist != lastPlaylist || dayChanged)
+                // For dungeons, changing locations will give you a new song
+                if (currentPlaylist != lastPlaylist || dayChanged || locationChanged)
                 {
                     PlayAnotherSong();
                     return;
@@ -400,6 +404,8 @@ namespace DaggerfallWorkshop.Game
         {
             if (!playerEnterExit || !LocalPlayerGPS || !dfUnity)
                 return;
+
+            currentContext.locationIndex = LocalPlayerGPS.CurrentLocationIndex; // -1 for "no location"
 
             // Exteriors
             if (!playerEnterExit.IsPlayerInside)
