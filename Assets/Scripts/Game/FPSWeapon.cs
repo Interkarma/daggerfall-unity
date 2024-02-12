@@ -105,6 +105,8 @@ namespace DaggerfallWorkshop.Game
 
         public WeaponStates WeaponState { get { return weaponState; } }
 
+        public Color Tint { get; set; } = Color.white;
+
         #endregion
 
         void Start()
@@ -172,7 +174,8 @@ namespace DaggerfallWorkshop.Game
             if (Event.current.type.Equals(EventType.Repaint) && ShowWeapon)
             {
                 // Draw weapon texture behind other HUD elements
-                DaggerfallUI.DrawTextureWithTexCoords(weaponPosition, curCustomTexture ? curCustomTexture : weaponAtlas.AtlasTexture, curAnimRect);
+                Texture2D tex = curCustomTexture ? curCustomTexture : weaponAtlas.AtlasTexture;
+                DaggerfallUI.DrawTextureWithTexCoords(weaponPosition, tex, curAnimRect, true, Tint);
             }
         }
 

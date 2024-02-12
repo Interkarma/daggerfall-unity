@@ -69,6 +69,14 @@ namespace DaggerfallWorkshop.Game
             get { return IsChildNPCData(Data); }
         }
 
+        /// <summary>
+        /// Sets the NPC name bank for name generation.
+        /// </summary>
+        public NameHelper.BankTypes NameBank
+        {
+            set { npcData.nameBank = value; }
+        }
+
         #endregion
 
         #region Structs & Enums
@@ -222,8 +230,16 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void SetLayoutData(int x, int y, int z, Genders gender, int factionID = 0, int nameSeed = -1)
         {
+            SetLayoutData(GetPositionHash(x, y, z), gender, factionID, nameSeed);
+        }
+
+        /// <summary>
+        /// Sets NPC data directly.
+        /// </summary>
+        public void SetLayoutData(int hash, Genders gender, int factionID = 0, int nameSeed = -1)
+        {
             // Store common layout data
-            npcData.hash = GetPositionHash(x, y, z);
+            npcData.hash = hash;
             npcData.flags = (gender == Genders.Male) ? 0 : 32;
             npcData.factionID = factionID;
             npcData.nameSeed = (nameSeed == -1) ? npcData.hash : nameSeed;

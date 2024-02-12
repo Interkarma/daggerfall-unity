@@ -48,6 +48,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             set { SetCharacterSheet(value); }
         }
 
+        public DaggerfallSkills StartingSkills => skillsRollout.StartingSkills;
+        public DaggerfallSkills WorkingSkills => skillsRollout.WorkingSkills;
+        public DaggerfallStats StartingStats => statsRollout.StartingStats;
+        public DaggerfallStats WorkingStats => statsRollout.WorkingStats;
+        public Tuple<int, int, int> BonusSkillPoints => new Tuple<int, int, int>(skillsRollout.PrimarySkillBonusPoints, skillsRollout.MajorSkillBonusPoints, skillsRollout.MinorSkillBonusPoints);
+        public int FaceIndex => facePicker.FaceIndex;
+
         public CreateCharSummary(IUserInterfaceManager uiManager)
             : base(uiManager)
         {

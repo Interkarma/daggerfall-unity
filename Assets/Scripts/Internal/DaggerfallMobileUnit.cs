@@ -23,6 +23,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop
 {
@@ -161,6 +162,12 @@ namespace DaggerfallWorkshop
             }
         }
 
+        protected void LogMobileError(string  message)
+        {
+            string enemyName = TextManager.Instance.GetLocalizedEnemyName(summary.Enemy.ID);
+            Debug.LogError($"Enemy '{enemyName}' (state={summary.EnemyState}): {message}");
+        }
+
         protected override void ApplyEnemy(DaggerfallUnity dfUnity)
         {
             // Load enemy content
@@ -283,7 +290,7 @@ namespace DaggerfallWorkshop
             if (summary.StateAnims == null)
             {
                 // Log error message
-                DaggerfallUnity.LogMessage(string.Format("DaggerfalMobileUnit: Enemy does not have animation for {0} state. Defaulting to Idle state.", summary.EnemyState.ToString()), true);
+                LogMobileError($"Enemy does not have animation for {summary.EnemyState} state. Defaulting to Idle state.");
 
                 // Set back to idle (which every enemy has in one form or another)
                 summary.EnemyState = MobileStates.Idle;
@@ -331,7 +338,17 @@ namespace DaggerfallWorkshop
 
             // Change enemy to this orientation
             if (orientation != lastOrientation)
+            {
+                // Different orientations may not have the same amount of frames
+                // For example, archive 288 (Ancient Lich) has 4 frames in six orientations (front, back, front diagonals, sides), but 8 frames for the two back diagonals
+                // If you change orientation from a back diagonal during frame 4, 5, 6, or 7, you overflow the other anims, where only 0 to 3 are valid
+                if (lastOrientation >= 0)
+                {
+                    currentFrame = currentFrame * summary.StateAnims[orientation].NumFrames / summary.StateAnims[lastOrientation].NumFrames;
+                }
+
                 OrientEnemy(orientation);
+            }
         }
 
         /// <summary>
@@ -343,17 +360,32 @@ namespace DaggerfallWorkshop
             if (summary.StateAnims == null || summary.StateAnims.Length == 0)
                 return;
 
+            if (orientation < 0 || orientation >= summary.StateAnims.Length)
+            {
+                LogMobileError($"Orientation '{orientation}' was invalid for state anims (length = {summary.StateAnims.Length}))");
+                return;
+            }
+
+            if (currentFrame < 0)
+            {
+                LogMobileError($"Invalid frame '{currentFrame}'");
+                return;
+            }
+            
             // Get mesh filter
             if (meshFilter == null)
                 meshFilter = GetComponent<MeshFilter>();
-
-            // Try to fix if anim array is null
-            if (summary.StateAnims == null)
-                ApplyEnemyState();
             
             // Get enemy size and scale for this state
             int record = summary.StateAnims[orientation].Record;
             summary.AnimStateRecord = record;
+
+            if(record < 0 || record >= summary.RecordSizes.Length)
+            {
+                LogMobileError($"Invalid record '{record}' for state anim '{orientation}' (length = {summary.RecordSizes.Length})");
+                return;
+            }           
+
             Vector2 size = summary.RecordSizes[record];
 
             // Post-fix female texture scale for 475 while casting spells
@@ -387,17 +419,45 @@ namespace DaggerfallWorkshop
             // Scorpion animations need to be inverted
             if (summary.Enemy.ID == (int)MobileTypes.GiantScorpion)
                 flip = !flip;
-
+            
             // Update Record/Frame texture
             if (summary.ImportedTextures.HasImportedTextures)
             {
                 if (meshRenderer == null)
                     meshRenderer = GetComponent<MeshRenderer>();
 
+                // Check that record and frame are valid for albedo
+                if(record >= summary.ImportedTextures.Albedo.Length)
+                {
+                    LogMobileError($"Invalid record '{record}' for imported textures albedo (length = {summary.ImportedTextures.Albedo.Length})");
+                    return;
+                }
+
+                if(currentFrame >= summary.ImportedTextures.Albedo[record].Length)
+                {
+                    LogMobileError($"Invalid frame '{currentFrame}' for imported textures albedo record '{record}' (length = {summary.ImportedTextures.Albedo[record].Length})");
+                    return;
+                }
+
                 // Assign imported texture
                 meshRenderer.material.mainTexture = summary.ImportedTextures.Albedo[record][currentFrame];
                 if (summary.ImportedTextures.IsEmissive)
+                {
+                    // Check that record and frame are valid for emissives
+                    if (record >= summary.ImportedTextures.EmissionMaps.Length)
+                    {
+                        LogMobileError($"Invalid record '{record}' for imported textures emissives (length = {summary.ImportedTextures.EmissionMaps.Length})");
+                        return;
+                    }
+
+                    if (currentFrame >= summary.ImportedTextures.EmissionMaps[record].Length)
+                    {
+                        LogMobileError($"Invalid frame '{currentFrame}' for imported textures emissives record '{record}' (length = {summary.ImportedTextures.EmissionMaps[record].Length})");
+                        return;
+                    }
+
                     meshRenderer.material.SetTexture(Uniforms.EmissionMap, summary.ImportedTextures.EmissionMaps[record][currentFrame]);
+                }
 
                 // Update UVs on mesh
                 Vector2[] uvs = new Vector2[4];
@@ -419,8 +479,23 @@ namespace DaggerfallWorkshop
             }
             else
             {
+                // Check record and "rect index" for atlas
+                if (record >= summary.AtlasIndices.Length)
+                {
+                    LogMobileError($"Invalid record '{record}' for atlas indices (length = {summary.AtlasIndices.Length})");
+                    return;
+                }
+
+                int rectIndex = summary.AtlasIndices[record].startIndex + currentFrame;
+
+                if (rectIndex >= summary.AtlasRects.Length)
+                {
+                    LogMobileError($"Invalid rect index '{rectIndex}' (start={summary.AtlasIndices[record].startIndex}, current={currentFrame}) for atlas rects (length = {summary.AtlasRects.Length})");
+                    return;
+                }
+
                 // Daggerfall Atlas: Update UVs on mesh
-                Rect rect = summary.AtlasRects[summary.AtlasIndices[record].startIndex + currentFrame];
+                Rect rect = summary.AtlasRects[rectIndex];
                 Vector2[] uvs = new Vector2[4];
                 if (flip)
                 {
@@ -631,10 +706,10 @@ namespace DaggerfallWorkshop
 
             // Indices
             int[] indices = new int[6]
-                {
-                    0, 1, 2,
-                    3, 2, 1,
-                };
+            {
+                0, 1, 2,
+                3, 2, 1,
+            };
 
             // Normals
             Vector3 normal = Vector3.Normalize(Vector3.up + Vector3.forward);
@@ -696,7 +771,7 @@ namespace DaggerfallWorkshop
                 }
                 else
                 {
-                    Debug.LogError($"Texture archive {archive} has no valid records");
+                    LogMobileError($"Texture archive {archive} has no valid records");
                 }
             }
 
@@ -778,12 +853,20 @@ namespace DaggerfallWorkshop
                     anims = (summary.Enemy.HasSeducerTransform2) ? (MobileAnimation[])EnemyBasics.SeducerTransform2Anims.Clone() : null;
                     break;
                 default:
+                    LogMobileError($"Invalid mobile state '{state}' in GetStateAnims");
                     return null;
             }
 
             // Assign number of frames per anim
             for (int i = 0; i < anims.Length; i++)
+            {
+                if (anims[i].Record < 0 || anims[i].Record >= summary.RecordFrames.Length)
+                {
+                    LogMobileError($"Invalid record '{anims[i].Record}' for available record frames (length = {summary.RecordFrames.Length})");
+                    return null;
+                }
                 anims[i].NumFrames = summary.RecordFrames[anims[i].Record];
+            }
 
             // If flying, set to faster flying animation speed
             if ((state == MobileStates.Move || state == MobileStates.Idle) && summary.Enemy.Behaviour == MobileBehaviour.Flying)

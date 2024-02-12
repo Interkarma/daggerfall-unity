@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public void SetFaceTextures(RaceTemplate raceTemplate, Genders raceGender)
         {
+            facePicker.FaceIndex = 0;
             facePicker.SetFaceTextures(raceTemplate, raceGender);
         }
 

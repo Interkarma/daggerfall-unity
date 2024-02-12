@@ -27,10 +27,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         Panel mainPanel;
 
-        TextLabel accountAmount;
-        TextLabel inventoryAmount;
-        TextLabel loanAmountDue;
-        TextLabel loanDueBy;
+        protected TextLabel accountAmount;
+        protected TextLabel inventoryAmount;
+        protected TextLabel loanAmountDue;
+        protected TextLabel loanDueBy;
 
         Button depoGoldButton;
         Button drawGoldButton;

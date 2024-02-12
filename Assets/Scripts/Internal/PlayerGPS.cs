@@ -24,6 +24,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop
 {
@@ -727,6 +728,12 @@ namespace DaggerfallWorkshop
             if (!dfUnity.IsReady)
                 return false;
 
+            // When running the game, wait for the mod manager to be initialized
+            // Updating the player location too early causes the region loading to read WorldData
+            // locations from disabled mods
+            if (ModManager.Instance != null && !ModManager.Instance.Initialized)
+                return false;
+
             return true;
         }
 
@@ -1169,7 +1176,7 @@ namespace DaggerfallWorkshop
                     buildingSummary.NameSeed,
                     buildingSummary.BuildingType,
                     buildingSummary.FactionId,
-                    buildingDirectory.LocationData.Name,
+                    TextManager.Instance.GetLocalizedLocationName(buildingDirectory.LocationData.MapTableData.MapId, buildingDirectory.LocationData.Name),
                     TextManager.Instance.GetLocalizedRegionName(buildingDirectory.LocationData.RegionIndex));
 
                 // Schedule name change

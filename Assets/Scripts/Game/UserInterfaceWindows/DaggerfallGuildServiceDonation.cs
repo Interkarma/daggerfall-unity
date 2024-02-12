@@ -105,7 +105,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             public override string God()
             {
-                return Temple.GetDivine(parent.BuildingFactionId).ToString();
+                return Temple.GetDivineLocalized(parent.BuildingFactionId);
             }
 
             public override string GodDesc()

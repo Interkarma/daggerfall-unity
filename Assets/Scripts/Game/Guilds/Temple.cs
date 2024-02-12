@@ -320,6 +320,15 @@ namespace DaggerfallWorkshop.Game.Guilds
             throw new ArgumentOutOfRangeException("There is no Divine that matches the factionId: " + factionId);
         }
 
+        public static string GetDivineLocalized(int factionId)
+        {
+            string god = Temple.GetDivine(factionId).ToString();
+            if (!string.IsNullOrEmpty(god))
+                return TextManager.Instance.GetLocalizedText(god);
+
+            throw new ArgumentOutOfRangeException("There is no Divine that matches the factionId: " + factionId);
+        }
+
         public void Blessing(PlayerEntity playerEntity, int donationAmount)
         {
             int boost = FormulaHelper.CalculateTempleBlessing(donationAmount, GetReputation(playerEntity));
