@@ -544,7 +544,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             TextLabel textLabel = new TextLabel();
 
             textLabel.Parent = this; //Establish parent early.
-            _ = textLabel.Rectangle; //Call GetRectangle() early to establish LocalScale, discard return value
 
             if (UseRestrictedRenderArea)
             {
@@ -586,7 +585,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
 
             textLabel.Parent = this; //Establish parent early.
-            _ = textLabel.Rectangle; //Call GetRectangle() early to establish LocalScale, discard return value
 
             if (UseRestrictedRenderArea)
             {
