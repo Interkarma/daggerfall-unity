@@ -74,11 +74,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="regionIndex">Region index</param>
         /// <param name="locationIndex">Location index</param>
         /// <param name="variant">Variant name</param>
-        /// <returns>True if overwriting an existing variant set for this location</returns>
+        /// <returns>True unless this overwrote an existing variant set for this location</returns>
         public static bool SetLocationVariant(int regionIndex, int locationIndex, string variant)
         {
             int locationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
-            bool overwrite = locationVariants.ContainsKey(locationKey);
+            bool added = locationVariants.ContainsKey(locationKey);
             if (variant == NoVariant)
                 locationVariants.Remove(locationKey);
             else
@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             Debug.LogFormat("Set variant \"{0}\" for the location index \"{1}\" in region {2}", variant, locationIndex, regionIndex);
             RMBLayout.ClearLocationCache();
-            return overwrite;
+            return added;
         }
 
         /// <summary>
