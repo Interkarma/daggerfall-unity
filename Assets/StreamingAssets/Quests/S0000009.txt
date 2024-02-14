@@ -175,8 +175,6 @@ Foe _knights_ is Knight
 	start timer _giveLetter_ 
 	give pc _letter45_ notify 1015 
 	add _elysana_ as questor 
-	start task _spawnBarbarians_
-	start task _spawnKnights_
 
 _npcclicked_ task:
 	clicked npc _contact_ 
@@ -201,6 +199,8 @@ _yes_ task:
 	add _foil_ face 
 	change repute with _elysana_ by -25 
 	unset _clickedElysana_ 
+	start task _spawnBarbarians_
+	start task _spawnKnights_
 
 _no_ task:
 	say RefuseQuest 
