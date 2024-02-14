@@ -45,6 +45,7 @@ missingWoods,               it's missing WOODS.WLD
 missingVideos,              it's missing one or more .VID files
 justNotValid,               it does not appear to be valid
 pathValidated,              Great! This looks like a valid Daggerfall folder :)
+hiddenFolders,              Show Hidden Folders
 testText,                   Test
 okText,                     OK
 keepSetting,                Keep this setting? Changes will revert in 8 seconds.

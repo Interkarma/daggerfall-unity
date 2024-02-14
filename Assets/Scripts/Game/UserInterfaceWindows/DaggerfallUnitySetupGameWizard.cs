@@ -244,7 +244,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add help text
             findArena2Tip = GetText("findArena2Tip");
             pathValidated = GetText("pathValidated");
-            helpLabel.Position = new Vector2(0, 145);
+            helpLabel.Position = new Vector2(0, 150);
             helpLabel.HorizontalAlignment = HorizontalAlignment.Center;
             helpLabel.ShadowPosition = Vector2.zero;
             helpLabel.Text = findArena2Tip;
