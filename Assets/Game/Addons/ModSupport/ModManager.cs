@@ -951,6 +951,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </remarks>
         public static void SeekModContributes(ModInfo modInfo, bool automaticallyRegisterQuestLists = false)
         {
+            // Reset contributions before rebuilding it
+            modInfo.Contributes = null;
+
             List<string> spellIcons = null;
             List<string> booksMapping = null;
             List<string> questLists = null;
@@ -975,10 +978,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (spellIcons == null && booksMapping == null && questLists == null)
                 return;
 
-            var contributes = modInfo.Contributes ?? (modInfo.Contributes = new ModContributes());
-            contributes.SpellIcons = spellIcons?.ToArray();
-            contributes.BooksMapping = booksMapping?.ToArray();
-            contributes.QuestLists = questLists?.ToArray();
+            modInfo.Contributes = new ModContributes
+            {
+                SpellIcons = spellIcons?.ToArray(),
+                BooksMapping = booksMapping?.ToArray(),
+                QuestLists = questLists?.ToArray()
+            };
         }
 
         private static void AddNameToList(ref List<string> names, string path)
