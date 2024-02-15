@@ -942,13 +942,14 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Seeks asset contributes for the target mod, reading the folder name of each asset.
         /// </summary>
         /// <param name="modInfo">Manifest data for a mod, which will be filled with retrieved contributes.</param>
+        /// <param name="automaticallyRegisterQuestLists">Optional parameter that triggers Quest Lists declaration</param>
         /// <remarks>
         /// Assets are imported from loose files according to folder name,
         /// for example all textures inside `SpellIcons` are considered icon atlases.
         /// This method replicates the same behaviour for mods, doing all the hard work at build time.
         /// Results are stored to json manifest file for performant queries at runtime.
         /// </remarks>
-        public static void SeekModContributes(ModInfo modInfo, bool automaticallyRegisterQuestLists)
+        public static void SeekModContributes(ModInfo modInfo, bool automaticallyRegisterQuestLists = false)
         {
             List<string> spellIcons = null;
             List<string> booksMapping = null;
@@ -958,15 +959,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             {
                 var directory = Path.GetDirectoryName(file);
 
-                if (directory != null && directory.EndsWith("SpellIcons"))
+                if (!string.IsNullOrEmpty(directory) && directory.EndsWith("SpellIcons"))
                     AddNameToList(ref spellIcons, file);
-                else if (directory != null && directory.EndsWith("Books/Mapping"))
+                else if (!string.IsNullOrEmpty(directory) && directory.EndsWith("Books/Mapping"))
                     AddNameToList(ref booksMapping, file);
 
                 if (automaticallyRegisterQuestLists)
                 {
                     var name = Path.GetFileNameWithoutExtension(file);
-                    if (name.StartsWith("QuestList-"))
+                    if (!string.IsNullOrEmpty(name) && name.StartsWith("QuestList-"))
                         AddNameToList(ref questLists, name.Substring(10));
                 }
             }
