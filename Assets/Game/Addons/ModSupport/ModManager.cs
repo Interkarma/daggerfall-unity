@@ -948,27 +948,36 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// This method replicates the same behaviour for mods, doing all the hard work at build time.
         /// Results are stored to json manifest file for performant queries at runtime.
         /// </remarks>
-        public static void SeekModContributes(ModInfo modInfo)
+        public static void SeekModContributes(ModInfo modInfo, bool automaticallyRegisterQuestLists)
         {
             List<string> spellIcons = null;
             List<string> booksMapping = null;
+            List<string> questLists = null;
 
-            foreach (string file in modInfo.Files)
+            foreach (var file in modInfo.Files)
             {
-                string directory = Path.GetDirectoryName(file);
+                var directory = Path.GetDirectoryName(file);
 
-                if (directory.EndsWith("SpellIcons"))
+                if (directory != null && directory.EndsWith("SpellIcons"))
                     AddNameToList(ref spellIcons, file);
-                else if (directory.EndsWith("Books/Mapping"))
+                else if (directory != null && directory.EndsWith("Books/Mapping"))
                     AddNameToList(ref booksMapping, file);
+
+                if (automaticallyRegisterQuestLists)
+                {
+                    var name = Path.GetFileNameWithoutExtension(file);
+                    if (name.StartsWith("QuestList-"))
+                        AddNameToList(ref questLists, name.Substring(10));
+                }
             }
 
-            if (spellIcons != null || booksMapping != null)
-            {
-                var contributes = modInfo.Contributes ?? (modInfo.Contributes = new ModContributes());
-                contributes.SpellIcons = spellIcons != null ? spellIcons.ToArray() : null;
-                contributes.BooksMapping = booksMapping != null ? booksMapping.ToArray() : null;
-            }
+            if (spellIcons == null && booksMapping == null && questLists == null)
+                return;
+
+            var contributes = modInfo.Contributes ?? (modInfo.Contributes = new ModContributes());
+            contributes.SpellIcons = spellIcons?.ToArray();
+            contributes.BooksMapping = booksMapping?.ToArray();
+            contributes.QuestLists = questLists?.ToArray();
         }
 
         private static void AddNameToList(ref List<string> names, string path)

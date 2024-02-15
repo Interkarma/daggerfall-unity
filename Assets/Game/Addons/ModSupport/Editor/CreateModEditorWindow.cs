@@ -64,6 +64,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         GUIContent documentationGUIContent;
         GUIContent targetInfoGUIContent;
         bool isSupportedEditorVersion;
+        bool automaticallyRegisterQuestLists;
 
         void OnEnable()
         {
@@ -78,6 +79,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 buildTargetsToggles[i] = EditorPrefs.GetBool($"ModBuildTarget:{buildTargets[i]}", buildTargetsToggles[i]);
 
             modInfo = ReadModInfoFile(currentFilePath);
+            ResetRegisterQuestListsValue();
+
             titleStyle.fontSize = 15;
             fieldStyle.fontSize = 12;
             minSize = new Vector2(1280, 600);
@@ -175,6 +178,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         }
 
                         modInfo = ReadModInfoFile(currentFilePath);
+                        ResetRegisterQuestListsValue();
                         Debug.Log(string.Format("opened mod file for: {0}", modInfo.ModTitle));
 
                     }
@@ -368,6 +372,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             compressionOption = (ModCompressionOptions)EditorGUILayout.EnumPopup("", compressionOption, GUILayout.MaxWidth(125));
             EditorGUILayout.EndVertical();
 
+            EditorGUILayout.BeginVertical();
+            GUILayout.Label("Dependencies:\n", titleStyle);
             if(GUILayout.Button("Collect Dependencies", GUILayout.MaxWidth(200)) && ModInfoReady)
             {
                 foreach(var assetPath in Assets.ToArray())
@@ -379,8 +385,13 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     }
                 }
             }
+            EditorGUILayout.EndVertical();
 
-            GUILayout.Space(100);
+            EditorGUILayout.BeginVertical();
+            GUILayout.Label("\tQuestLists:\n", titleStyle);
+            automaticallyRegisterQuestLists = EditorGUILayout.ToggleLeft(new GUIContent("Automatically Register QuestLists", "Automatically discover Quest Lists and register them in game."), automaticallyRegisterQuestLists, GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndVertical();
+
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space();
             EditorGUILayout.Space();
@@ -436,7 +447,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
         bool SaveModFile(bool supressWindow = false)
         {
-            ModManager.SeekModContributes(modInfo);
+            ModManager.SeekModContributes(modInfo, automaticallyRegisterQuestLists);
 
             string path = currentFilePath;
             fsData fsData;
@@ -516,6 +527,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     }
                 }
             }
+        }
+
+        // Check if there is already added Quest Lists in the ModInfo
+        void ResetRegisterQuestListsValue()
+        {
+            automaticallyRegisterQuestLists = modInfo.Contributes?.QuestLists?.Length > 0;
         }
 
         bool AddAssetToMod(string assetPath)
