@@ -514,56 +514,55 @@ namespace DaggerfallWorkshop.Game
                     GameManager.Instance.PlayerGPS.DiscoverBuilding(building.buildingKey);
 
                     // Handle clicking exterior door with Open spell active
-                    if (HandleOpenEffectOnExteriorDoor(buildingLockValue) && !isBash)
-                        buildingUnlocked = true;
+                    var isBrokenIn = isBash; // Breaking in can be done via unlocking or bashing.
+                    if (!buildingUnlocked && !isBash && HandleOpenEffectOnExteriorDoor(buildingLockValue))
+                        buildingUnlocked = isBrokenIn = true;
 
                     // Handle locked buildings
-                    if (!buildingUnlocked)
+                    if (!buildingUnlocked && !isBash)
                     {
-                        if (!isBash)
+                        if (currentMode != PlayerActivateModes.Steal)
                         {
-                            if (currentMode != PlayerActivateModes.Steal)
+                            DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockedExteriorDoor"));
+                            LookAtInteriorLock(buildingLockValue);
+                            return;
+                        }
+                        else // Breaking into building
+                        {
+                            // Reject if player has already failed this building at current skill level
+                            PlayerEntity player = GameManager.Instance.PlayerEntity;
+                            int skillValue = player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking);
+                            int lastAttempt = GameManager.Instance.PlayerGPS.GetLastLockpickAttempt(building.buildingKey);
+                            if (skillValue <= lastAttempt)
                             {
-                                DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockedExteriorDoor"));
                                 LookAtInteriorLock(buildingLockValue);
                                 return;
                             }
-                            else // Breaking into building
-                            {
-                                // Reject if player has already failed this building at current skill level
-                                PlayerEntity player = GameManager.Instance.PlayerEntity;
-                                int skillValue = player.Skills.GetLiveSkillValue(DFCareer.Skills.Lockpicking);
-                                int lastAttempt = GameManager.Instance.PlayerGPS.GetLastLockpickAttempt(building.buildingKey);
-                                if (skillValue <= lastAttempt)
-                                {
-                                    LookAtInteriorLock(buildingLockValue);
-                                    return;
-                                }
 
-                                // Attempt to unlock building
-                                Random.InitState(Time.frameCount);
-                                player.TallySkill(DFCareer.Skills.Lockpicking, 1);
-                                int chance = FormulaHelper.CalculateExteriorLockpickingChance(buildingLockValue, skillValue);
-                                int roll = Random.Range(1, 101);
-                                Debug.LogFormat("Attempting pick against lock strength {0}. Chance={1}, Roll={2}.", buildingLockValue, chance, roll);
-                                if (chance > roll)
-                                {
-                                    // Show success and play unlock sound
-                                    player.TallyCrimeGuildRequirements(true, 1);
-                                    DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockpickingSuccess"));
-                                    DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
-                                    if (dfAudioSource != null)
-                                        dfAudioSource.PlayOneShot(SoundClips.ActivateLockUnlock);
-                                }
-                                else
-                                {
-                                    // Show failure and record attempt skill level in discovery data
-                                    // Have not been able to create a guard response in classic, even when early morning NPCs are nearby
-                                    // Assuming for now that exterior lockpicking is discrete enough that no response on failure is required
-                                    DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockpickingFailure"));
-                                    GameManager.Instance.PlayerGPS.SetLastLockpickAttempt(building.buildingKey, skillValue);
-                                    return;
-                                }
+                            // Attempt to unlock building
+                            Random.InitState(Time.frameCount);
+                            player.TallySkill(DFCareer.Skills.Lockpicking, 1);
+                            int chance = FormulaHelper.CalculateExteriorLockpickingChance(buildingLockValue, skillValue);
+                            int roll = Random.Range(1, 101);
+                            Debug.LogFormat("Attempting pick against lock strength {0}. Chance={1}, Roll={2}.", buildingLockValue, chance, roll);
+                            if (chance > roll)
+                            {
+                                // Show success and play unlock sound
+                                player.TallyCrimeGuildRequirements(true, 1);
+                                DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockpickingSuccess"));
+                                DaggerfallAudioSource dfAudioSource = GetComponent<DaggerfallAudioSource>();
+                                if (dfAudioSource != null)
+                                    dfAudioSource.PlayOneShot(SoundClips.ActivateLockUnlock);
+                                isBrokenIn = true;
+                            }
+                            else
+                            {
+                                // Show failure and record attempt skill level in discovery data
+                                // Have not been able to create a guard response in classic, even when early morning NPCs are nearby
+                                // Assuming for now that exterior lockpicking is discrete enough that no response on failure is required
+                                DaggerfallUI.Instance.PopupMessage(TextManager.Instance.GetLocalizedText("lockpickingFailure"));
+                                GameManager.Instance.PlayerGPS.SetLastLockpickAttempt(building.buildingKey, skillValue);
+                                return;
                             }
                         }
                     }
@@ -600,7 +599,7 @@ namespace DaggerfallWorkshop.Game
                             buildingData.factionID != (int)FactionFile.FactionIDs.The_Dark_Brotherhood &&
                             !DaggerfallBankManager.IsHouseOwned(building.buildingKey))
                         {
-                            if (!isBash) // Residents don't greet you when you kick in their door.
+                            if (!isBrokenIn)
                             {
                                 string greetingText = DaggerfallUnity.Instance.TextProvider.GetRandomText(houseGreetingsTextId);
                                 mb = DaggerfallUI.MessageBox(greetingText);
