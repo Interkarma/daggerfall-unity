@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 uint dataLocationCount = dfRegion.LocationCount;
                 List<string> mapNames = new List<string>(dfRegion.MapNames);
                 List<DFRegion.RegionMapTable> mapTable = new List<DFRegion.RegionMapTable>(dfRegion.MapTable);
-                bool newBlocksAssigned = false;
+                bool locationAssignmentSuccess = true;
 
                 // Seek from loose files
                 string locationPattern = string.Format("locationnew-*-{0}.json", regionIndex);
@@ -150,8 +150,9 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 {
                     string locationReplacementJson = File.ReadAllText(Path.Combine(worldDataPath, fileName));
                     DFLocation dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJson);
-                    newBlocksAssigned = AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, ref dfLocation);
+                    locationAssignmentSuccess &= AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, ref dfLocation);
                 }
+
                 // Seek from mods
                 string locationExtension = string.Format("-{0}.json", regionIndex);
                 List<TextAsset> assets = ModManager.Instance.FindAssets<TextAsset>(worldData, locationExtension);
@@ -162,10 +163,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         if (locationReplacementJsonAsset.name.StartsWith("locationnew-"))
                         {
                             DFLocation dfLocation = (DFLocation)SaveLoadManager.Deserialize(typeof(DFLocation), locationReplacementJsonAsset.text);
-                            newBlocksAssigned &= AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, ref dfLocation);
+                            locationAssignmentSuccess &= AddLocationToRegion(regionIndex, ref dfRegion, ref mapNames, ref mapTable, ref dfLocation);
                         }
                     }
                 }
+
                 // If found any new locations for this region,
                 if (dfRegion.LocationCount > dataLocationCount)
                 {
@@ -174,11 +176,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     dfRegion.MapTable = mapTable.ToArray();
 
 #if !UNITY_EDITOR  // Cache region data for added locations if new blocks have been assigned indices (unless running in editor)
-                    if (newBlocksAssigned)
+                    if (locationAssignmentSuccess)
                         regions.Add(regionIndex, dfRegion);
 #endif
+
                     Debug.LogFormat("Added {0} new DFLocation's to region {1}, indexes: {2} - {3}",
                         dfRegion.LocationCount - dataLocationCount, regionIndex, dataLocationCount, dfRegion.LocationCount-1);
+
                     return true;
                 }
 
