@@ -236,7 +236,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Gets a variant set for the specified building, based on supplied region and location.
+        /// Gets a variant set for the specified block, based on supplied region and location.
         /// </summary>
         /// <param name="regionIndex">e.g. DFLocation.RegionIndex</param>
         /// <param name="locationIndex">e.g. DFLocation.LocationIndex</param>
