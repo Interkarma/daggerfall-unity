@@ -568,7 +568,7 @@ namespace DaggerfallWorkshop.Game
                     }
 
                     // Attempt to bash the door. Classic makes a roll whether it is locked or not.
-                    if (isBash && Dice100.FailedRoll(25 - buildingLockValue))
+                    if (isBash && !buildingUnlocked && Dice100.FailedRoll(25 - buildingLockValue))
                     {
                         // 10% chance that you are noticed.
                         if (Dice100.SuccessRoll(10))
