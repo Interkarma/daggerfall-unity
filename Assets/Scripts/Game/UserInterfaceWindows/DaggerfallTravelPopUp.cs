@@ -323,9 +323,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // perform fast travel actions
         private void performFastTravel()
         {
-            RaiseOnPreFastTravelEvent();
-
             DeductFastTravelGold();
+
+            RaiseOnPreFastTravelEvent();
 
             // Cache scene first, if fast travelling while on ship.
             if (GameManager.Instance.TransportManager.IsOnShip())
