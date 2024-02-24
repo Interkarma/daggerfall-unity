@@ -748,41 +748,31 @@ namespace DaggerfallWorkshop
         {
             nearbyObjects.Clear();
 
-            // Get entities
-            DaggerfallEntityBehaviour[] entities = FindObjectsOfType<DaggerfallEntityBehaviour>();
-            if (entities != null)
+            // Get enemy and civilian entities
+            foreach (DaggerfallEntityBehaviour entity in ActiveGameObjectDatabase.GetActiveEnemyBehaviours()
+                .Concat(ActiveGameObjectDatabase.GetActiveCivilianMobileBehaviours()))
             {
-                for (int i = 0; i < entities.Length; i++)
+                NearbyObject no = new NearbyObject()
                 {
-                    if (entities[i] == GameManager.Instance.PlayerEntityBehaviour)
-                        continue;
+                    gameObject = entity.gameObject,
+                    distance = Vector3.Distance(transform.position, entity.transform.position),
+                    flags = GetEntityFlags(entity)
+                };
 
-                    NearbyObject no = new NearbyObject()
-                    {
-                        gameObject = entities[i].gameObject,
-                        distance = Vector3.Distance(transform.position, entities[i].transform.position),
-                    };
-
-                    no.flags = GetEntityFlags(entities[i]);
-                    nearbyObjects.Add(no);
-                }
+                nearbyObjects.Add(no);
             }
 
-            // Get treasure - this assumes loot containers will never carry entity component
-            DaggerfallLoot[] lootContainers = FindObjectsOfType<DaggerfallLoot>();
-            if (lootContainers != null)
+            // Get treasure
+            foreach (DaggerfallLoot loot in ActiveGameObjectDatabase.GetActiveLoot())
             {
-                for (int i = 0; i < lootContainers.Length; i++)
+                NearbyObject no = new NearbyObject()
                 {
-                    NearbyObject no = new NearbyObject()
-                    {
-                        gameObject = lootContainers[i].gameObject,
-                        distance = Vector3.Distance(transform.position, lootContainers[i].transform.position),
-                    };
+                    gameObject = loot.gameObject,
+                    distance = Vector3.Distance(transform.position, loot.transform.position),
+                    flags = GetLootFlags(loot)
+                };
 
-                    no.flags = GetLootFlags(lootContainers[i]);
-                    nearbyObjects.Add(no);
-                }
+                nearbyObjects.Add(no);
             }
         }
 

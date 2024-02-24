@@ -121,6 +121,12 @@ namespace DaggerfallWorkshop.Game
 
         #region Unity
 
+        private void Awake()
+        {
+            // Register game object as Static NPC
+            ActiveGameObjectDatabase.RegisterStaticNPC(gameObject);
+        }
+
         private void Start()
         {
             // Get runtime-available data on start
