@@ -29,11 +29,14 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private Billboard dfBillboard;
         private Vector3 flatOffset;
 
-        public void CreateObject(DFBlock.RmbBlockFlatObjectRecord data)
+        public void Awake()
         {
             dfBillboard = GetComponent<Billboard>();
             flatOffset = new Vector3(0, (dfBillboard.Summary.Size.y / 2) - 0.1f, 0);
+        }
 
+        public void CreateObject(DFBlock.RmbBlockFlatObjectRecord data)
+        {
             Position = data.Position;
             TextureArchive = data.TextureArchive;
             TextureRecord = data.TextureRecord;
