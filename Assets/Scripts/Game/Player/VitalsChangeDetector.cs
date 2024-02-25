@@ -18,7 +18,6 @@ namespace DaggerfallWorkshop.Game
 {
     public class VitalsChangeDetector : MonoBehaviour
     {
-        private bool waitingForUnpause = false;
         protected int previousMaxHealth;
         protected int previousMaxFatigue;
         protected int previousMaxMagicka;
@@ -65,15 +64,7 @@ namespace DaggerfallWorkshop.Game
         void Update()
         {
             if (GameManager.IsGamePaused)
-            {
-                waitingForUnpause = true;
                 return;
-            }
-            else if (waitingForUnpause)
-            {
-                waitingForUnpause = false;
-                return;
-            }
 
             // Check max vitals hasn't changed - this can indicate user has loaded a different character
             // or current character has levelled up or changed in some way and the cached vital values need to be refreshed.

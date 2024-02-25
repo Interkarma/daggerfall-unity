@@ -26,6 +26,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int nativeBarHeight = 32;
         public const int borderSize = 10;
 
+        float previousHealth, previousFatigue, previousMagicka;
+
         VitalsChangeDetector vitalsDetector = GameManager.Instance.VitalsChangeDetector;
         VerticalProgressSmoother healthBar = new VerticalProgressSmoother();
         VerticalProgressSmoother fatigueBar = new VerticalProgressSmoother();
@@ -280,7 +282,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             float target;
             // if there's any change in health... Smooth update the Loss bar, and
             // decide if should smooth update or instant update the progress bar
-            if (vitalsDetector.HealthLost != 0)
+            if (vitalsDetector.HealthLost != 0 || previousHealth != Health)
             {
                 if (vitalsDetector.HealthLost > 0)
                     healthBar.Amount -= vitalsDetector.HealthLostPercent;              
@@ -292,7 +294,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 healthBarLoss.BeginSmoothChange(target);
             }
             // if there's any change in fatigue...
-            if (vitalsDetector.FatigueLost != 0)
+            if (vitalsDetector.FatigueLost != 0 || previousFatigue != Fatigue)
             {
                 if (vitalsDetector.FatigueLost > 0)
                     fatigueBar.Amount -= vitalsDetector.FatigueLostPercent;
@@ -304,7 +306,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 fatigueBarLoss.BeginSmoothChange(target);
             }
             // if there's any change in magicka...
-            if (vitalsDetector.MagickaLost != 0)
+            if (vitalsDetector.MagickaLost != 0 || previousMagicka != Magicka)
             {
                 if (vitalsDetector.MagickaLost > 0)
                     magickaBar.Amount -= vitalsDetector.MagickaLostPercent;
@@ -322,6 +324,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             healthBar.Cycle();
             fatigueBar.Cycle();
             magickaBar.Cycle();
+
+            previousHealth = Health;
+            previousFatigue = Fatigue;
+            previousMagicka = Magicka;
         }
 
         private void VitalChangeDetector_OnReset()
