@@ -12,7 +12,6 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using DaggerfallConnect;
-using DaggerfallWorkshop.Game.Utility.ModSupport;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
@@ -39,6 +38,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private ClimateSettingsEditor climateSettingsEditor;
 
         private bool keepViewOnSelectionChange;
+
+        private readonly PositionUpdater positionUpdater = new PositionUpdater();
 
         [MenuItem("Daggerfall Tools/RMB Block Editor")]
         public static void ShowWindow()
@@ -407,6 +408,8 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 loadedBlock.RmbBlock.MiscFlatObjectRecords[i] = record;
             }
 
+            // Flats, People and Doors have a "position" property that needs to be unique in the RMB block.
+            loadedBlock = positionUpdater.UpdateDuplicatedPositions(loadedBlock);
             RmbBlockHelper.SaveBlockFile(loadedBlock, path);
         }
 
