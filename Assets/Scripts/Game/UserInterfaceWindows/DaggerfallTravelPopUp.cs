@@ -323,6 +323,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // perform fast travel actions
         private void performFastTravel()
         {
+            DeductFastTravelGold();
+
             RaiseOnPreFastTravelEvent();
 
             // Cache scene first, if fast travelling while on ship.
@@ -460,13 +462,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 showNotEnoughGoldPopup();
                 return;
             }
-            else
-            {
-                GameManager.Instance.PlayerEntity.GoldPieces -= travelTimeCalculator.PiecesCost;
-                GameManager.Instance.PlayerEntity.DeductGoldAmount(travelTimeCalculator.TotalCost - travelTimeCalculator.PiecesCost);
-            }
-
+            
             doFastTravel = true; // initiate fast travel (Update() function will perform fast travel when this flag is true)
+        }
+
+        private void DeductFastTravelGold()
+        {
+            GameManager.Instance.PlayerEntity.GoldPieces -= travelTimeCalculator.PiecesCost;
+            GameManager.Instance.PlayerEntity.DeductGoldAmount(travelTimeCalculator.TotalCost - travelTimeCalculator.PiecesCost);
         }
 
         public virtual void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)
