@@ -355,7 +355,7 @@ namespace DaggerfallWorkshop
 
             ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
             ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
-            RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
+            RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 7);
             PostProcessingInRetroMode = GetInt(sectionVideo, "PostProcessingInRetroMode");
             UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
             RetroModeAspectCorrection = GetInt(sectionVideo, "RetroModeAspectCorrection", 0, 2);

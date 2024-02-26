@@ -23,7 +23,17 @@ namespace DaggerfallWorkshop.Utility
         public RenderTexture RetroTexture320x200_HUD;
         public RenderTexture RetroTexture640x400;
         public RenderTexture RetroTexture640x400_HUD;
-        public RenderTexture RetroPresentationTarget;
+        public RenderTexture RetroTexture960x540; //16:9, to be scaled from 1152x540
+        public RenderTexture RetroTexture960x540_HUD;
+        public RenderTexture RetroTexture960x600; //16:10, to be scaled from 1152x600
+        public RenderTexture RetroTexture960x600_HUD;
+        public RenderTexture RetroTexture1280x720; //16:9, to be scaled from 1536x720
+        public RenderTexture RetroTexture1280x720_HUD;
+        public RenderTexture RetroTexture1280x800; //16:10, to be scaled from 1536x800
+        public RenderTexture RetroTexture1280x800_HUD;
+        public RenderTexture RetroTexture1440x1080; //4:3, to be scaled from 1728x1080
+        public RenderTexture RetroTexture1440x1080_HUD;
+        public RenderTexture RetroPresentationTarget; //4k, 3840x2160
 
         private const string ExcludeSkyKeyword = "EXCLUDE_SKY";
 
@@ -428,10 +438,25 @@ namespace DaggerfallWorkshop.Utility
                 //  0 = retro rendering off
                 //  1 = retro 320x200 rendering on with docked large HUD
                 //  2 = retro 640x400 rendering on with docked large HUD
+                //  3 = retro 960x540 rendering on with docked large HUD
+                //  4 = retro 960x600 rendering on with docked large HUD
+                //  5 = retro 1280x720 rendering on with docked large HUD
+                //  6 = retro 1280x800 rendering on with docked large HUD
+                //  7 = retro 1440x1080 rendering on with docked large HUD
                 if (retroMode == 1 && RetroTexture320x200)
                     retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture320x200_HUD;
                 else if (retroMode == 2 && RetroTexture640x400)
                     retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture640x400_HUD;
+                else if (retroMode == 3 && RetroTexture960x540)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture960x540_HUD;
+                else if (retroMode == 4 && RetroTexture960x600)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture960x600_HUD;
+                else if (retroMode == 5 && RetroTexture1280x720)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture1280x720_HUD;
+                else if (retroMode == 6 && RetroTexture1280x800)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture1280x800_HUD;
+                else if (retroMode == 7 && RetroTexture1440x1080)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture1440x1080_HUD;
             }
             else
             {
@@ -439,10 +464,25 @@ namespace DaggerfallWorkshop.Utility
                 //  0 = retro rendering off
                 //  1 = retro 320x200 rendering on
                 //  2 = retro 640x400 rendering on
+                //  3 = retro 960x540 rendering on
+                //  4 = retro 960x600 rendering on
+                //  5 = retro 1280x720 rendering on
+                //  6 = retro 1280x800 rendering on
+                //  7 = retro 1440x1080 rendering on
                 if (retroMode == 1 && RetroTexture320x200)
                     retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture320x200;
                 else if (retroMode == 2 && RetroTexture640x400)
                     retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture640x400;
+                else if (retroMode == 3 && RetroTexture960x540)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture960x540;
+                else if (retroMode == 4 && RetroTexture960x600)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture960x600;
+                else if (retroMode == 5 && RetroTexture1280x720)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture1280x720;
+                else if (retroMode == 6 && RetroTexture1280x800)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture1280x800;
+                else if (retroMode == 7 && RetroTexture1440x1080)
+                    retroTexture = GameManager.Instance.MainCamera.targetTexture = RetroTexture1440x1080;
             }
         }
 
