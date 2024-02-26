@@ -1221,7 +1221,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected virtual void UpdateQuestion(int index)
         {
             TalkManager.ListItem listItem;
-            if (selectedTalkCategory == TalkCategory.Work)
+            if (selectedTalkOption == TalkOption.WhereIs && selectedTalkCategory == TalkCategory.Work)
             {
                 listItem = new TalkManager.ListItem();
                 listItem.questionType = TalkManager.QuestionType.Work;
