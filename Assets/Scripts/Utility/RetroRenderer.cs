@@ -538,11 +538,17 @@ namespace DaggerfallWorkshop.Utility
             if (retroMode == 0 || !retroTexture || !RetroPresentationTarget || !postprocessMaterial)
                 return;
 
-            // Blit to presentation rendertexture with postprocess material
-            if (enablePostprocessing)
+            // Blit to presentation rendertexture with postprocess material (if needed).
+            if (enablePostprocessing && DaggerfallUnity.Settings.PostProcessingInRetroMode > 0)
+            {
                 Graphics.Blit(retroTexture, RetroPresentationTarget, postprocessMaterial);
+                retroPresenter.RetroPresentationSource = RetroPresentationTarget;
+            }
             else
-                Graphics.Blit(retroTexture, RetroPresentationTarget);
+            {
+                //Since there is no post-processing needed, we will skip the Graphics.Blit() for better performance.
+                retroPresenter.RetroPresentationSource = retroTexture;
+            }
         }
     }
 }
