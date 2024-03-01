@@ -12,6 +12,8 @@ restart,                    Restart
 restartInfo,                Restart setup from beginning
 exit,                       Exit
 modNote,                    Note: Enabling mods can increase performance requirements
+settingsFolder,             Settings Folder
+settingsFolderInfo,         Double-click to open folder
 
 alwayShowOptions,           Always show this window
 alwayShowOptionsInfo,       Always show this window on startup\rOtherwise use settings.ini to configure
