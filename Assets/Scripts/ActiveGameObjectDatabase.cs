@@ -199,7 +199,7 @@ namespace DaggerfallWorkshop
         static GameObjectCache lootCache = new GameObjectCache("Loot");
         static GameObjectCache foeSpawnerCache = new GameObjectCache("Foe Spawner");
         static GameObjectCache staticNpcCache = new GameObjectCache("Static NPC");
-        static GameObjectCache doorCache = new GameObjectCache("Door");
+        static GameObjectCache actionDoorCache = new GameObjectCache("Action Door");
 
         // Gets all the active enemy GameObjects. Must be registered as Enemy (see below)
         public static IEnumerable<GameObject> GetActiveEnemyObjects()
@@ -303,6 +303,7 @@ namespace DaggerfallWorkshop
             return staticNpcCache.GetActiveComponents<StaticNPC>();
         }
 
+        // Gets all the enabled QuestResourceBehaviour components from active registered static NPCs
         public static IEnumerable<QuestResourceBehaviour> GetActiveStaticNPCQuestResourceBehaviours()
         {
             return staticNpcCache.GetActiveComponents<QuestResourceBehaviour>();
@@ -314,24 +315,26 @@ namespace DaggerfallWorkshop
             staticNpcCache.AddObject(staticNPC);
         }
 
-        // Gets all the active Door GameObjects. Must be registered as Door (see below)
-        public static IEnumerable<GameObject> GetActiveDoorObjects()
+        // Gets all the active Action Door GameObjects. Must be registered as Action Door (see below)
+        public static IEnumerable<GameObject> GetActiveActionDoorObjects()
         {
-            return doorCache.GetActiveObjects();
+            return actionDoorCache.GetActiveObjects();
         }
 
         // Gets all the enabled DaggerfallActionDoor components from active registered doors
         public static IEnumerable<DaggerfallActionDoor> GetActiveActionDoors()
         {
-            return doorCache.GetActiveComponents<DaggerfallActionDoor>();
+            return actionDoorCache.GetActiveComponents<DaggerfallActionDoor>();
         }
 
-        // Registers a Door object to the Door cache. Does not have to be active
-        public static void RegisterDoor(GameObject door)
+        // Registers an Action Door object to the Action Door cache. Does not have to be active
+        // Action Doors are not to be confused with static doors, which exist on RDBs and Interiors on their DaggerfallStaticDoors component
+        public static void RegisterActionDoor(GameObject door)
         {
-            doorCache.AddObject(door);
+            actionDoorCache.AddObject(door);
         }
 
+        // Used for debugging
         public static IEnumerable<string> GetCacheDebugLines()
         {
             yield return enemyCache.GetDebugString();
@@ -339,7 +342,7 @@ namespace DaggerfallWorkshop
             yield return lootCache.GetDebugString();
             yield return foeSpawnerCache.GetDebugString();
             yield return staticNpcCache.GetDebugString();
-            yield return doorCache.GetDebugString();
+            yield return actionDoorCache.GetDebugString();
         }
     }
 }

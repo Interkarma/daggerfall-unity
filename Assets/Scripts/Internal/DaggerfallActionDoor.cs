@@ -113,7 +113,7 @@ namespace DaggerfallWorkshop
                 meshCollider = GetComponent<MeshCollider>();
 
             // Register object as Door
-            ActiveGameObjectDatabase.RegisterDoor(gameObject);
+            ActiveGameObjectDatabase.RegisterActionDoor(gameObject);
         }
 
         void Start()
