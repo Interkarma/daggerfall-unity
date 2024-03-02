@@ -9,8 +9,6 @@
 // Notes:
 //
 
-//#define SEPARATE_DEV_PERSISTENT_PATH
-
 using UnityEngine;
 using System;
 using System.Globalization;
@@ -53,23 +51,14 @@ namespace DaggerfallWorkshop
         IniData defaultIniData = null;
         IniData userIniData = null;
 
-        string persistentPath = null;
         string distributionSuffix = null;
 
+        // Legacy way to get the persistent path. Better to just go through DaggerfallUnityApplication now
         public string PersistentDataPath
         {
             get
             {
-                if (string.IsNullOrEmpty(persistentPath))
-                {
-#if UNITY_EDITOR && SEPARATE_DEV_PERSISTENT_PATH
-                    persistentPath = String.Concat(Application.persistentDataPath, ".devenv");
-                    Directory.CreateDirectory(persistentPath);
-#else
-                    persistentPath = Application.persistentDataPath;
-#endif
-                }
-                return persistentPath;
+                return DaggerfallUnityApplication.PersistentDataPath;
             }
         }
 
