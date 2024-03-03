@@ -427,6 +427,19 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Gets NameHelper.BankType in player's current region.
+        /// In practice this will always be Redguard/Breton.
+        /// Supporting other name banks for possible diversity later.
+        /// </summary>
+        public NameHelper.BankTypes GetNameBankOfRegion(int regionIndex)
+        {
+            if (regionIndex > -1)
+                return (NameHelper.BankTypes) MapsFile.RegionRaces[regionIndex];
+
+            return NameHelper.BankTypes.Breton;
+        }
+
+        /// <summary>
         /// Gets the dominant race in player's current region.
         /// </summary>
         public Races GetRaceOfCurrentRegion()
