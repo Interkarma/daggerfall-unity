@@ -200,6 +200,7 @@ namespace DaggerfallWorkshop
         static GameObjectCache foeSpawnerCache = new GameObjectCache("Foe Spawner");
         static GameObjectCache staticNpcCache = new GameObjectCache("Static NPC");
         static GameObjectCache actionDoorCache = new GameObjectCache("Action Door");
+        static GameObjectCache rdbCache = new GameObjectCache("RDB");
 
         // Gets all the active enemy GameObjects. Must be registered as Enemy (see below)
         public static IEnumerable<GameObject> GetActiveEnemyObjects()
@@ -334,6 +335,24 @@ namespace DaggerfallWorkshop
             actionDoorCache.AddObject(door);
         }
 
+        // Gets all the active RDB GameObjects. Must be registered as RDB (see below)
+        public static IEnumerable<GameObject> GetActiveRDBObjects()
+        {
+            return rdbCache.GetActiveObjects();
+        }
+
+        // Gets all the enabled DaggerfallStaticDoors components from active registered RDBs
+        public static IEnumerable<DaggerfallStaticDoors> GetActiveRDBStaticDoors()
+        {
+            return rdbCache.GetActiveComponents<DaggerfallStaticDoors>();
+        }
+
+        // Registers a Daggerfall dungeon block "RDB" game object to the RDB cache. Does not have to be active
+        public static void RegisterRDB(GameObject rdb)
+        {
+            rdbCache.AddObject(rdb);
+        }
+
         // Used for debugging
         public static IEnumerable<string> GetCacheDebugLines()
         {
@@ -343,6 +362,7 @@ namespace DaggerfallWorkshop
             yield return foeSpawnerCache.GetDebugString();
             yield return staticNpcCache.GetDebugString();
             yield return actionDoorCache.GetDebugString();
+            yield return rdbCache.GetDebugString();
         }
     }
 }
