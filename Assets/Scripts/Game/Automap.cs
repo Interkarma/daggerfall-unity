@@ -1503,7 +1503,6 @@ namespace DaggerfallWorkshop.Game
         {
             if (gameObjectUserNoteMarkers != null)
             {
-                var meshFilters = gameObjectUserNoteMarkers.GetComponentsInChildren<MeshFilter>();
                 foreach (Transform child in gameObjectUserNoteMarkers.transform)
                 {
                     Destroy(child.gameObject);
@@ -1697,7 +1696,6 @@ namespace DaggerfallWorkshop.Game
         {
             if (gameobjectTeleporterMarkers != null)
             {
-                var meshFilters = gameobjectTeleporterMarkers.GetComponentsInChildren<MeshFilter>();
                 foreach (Transform child in gameobjectTeleporterMarkers.transform)
                 {
                     Destroy(child.gameObject);
