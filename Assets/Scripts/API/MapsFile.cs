@@ -17,6 +17,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 #endregion
 
@@ -319,6 +320,19 @@ namespace DaggerfallConnect.Arena2
         #endregion
 
         #region Static Public Methods
+
+        /// <summary>
+        /// Gets NameHelper.BankType in given region.
+        /// In practice this will always be Redguard/Breton.
+        /// Supporting other name banks for possible diversity later.
+        /// </summary>
+        public static NameHelper.BankTypes GetNameBankOfRegion(int regionIndex)
+        {
+            if (regionIndex > -1)
+                return (NameHelper.BankTypes)RegionRaces[regionIndex];
+
+            return NameHelper.BankTypes.Breton;
+        }
 
         /// <summary>
         /// Converts longitude and latitude to map pixel coordinates.
