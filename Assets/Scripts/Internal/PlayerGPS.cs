@@ -427,7 +427,7 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Gets NameHelper.BankType in player's current region.
+        /// Gets NameHelper.BankType in given region.
         /// In practice this will always be Redguard/Breton.
         /// Supporting other name banks for possible diversity later.
         /// </summary>
