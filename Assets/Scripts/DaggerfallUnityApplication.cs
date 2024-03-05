@@ -36,13 +36,13 @@ public static class DaggerfallUnityApplication
 
     public class LogHandler : ILogHandler, IDisposable
     {
-        private FileStream fileStream;
         private StreamWriter streamWriter;
 
         public LogHandler()
         {
             string filePath = Path.Combine(PersistentDataPath, "Player.log");
 
+            string errorMessage = null;
             try
             {
                 if(File.Exists(filePath))
@@ -52,16 +52,23 @@ public static class DaggerfallUnityApplication
                     File.Move(filePath, prevPath);
                 }
             }
-            catch { }
+            catch(Exception e)
+            {
+                errorMessage = $"Could not preserve previous log: {e.Message}";
+            }
+                        
+            streamWriter = File.CreateText(filePath);
+            streamWriter.AutoFlush = true;
 
-            fileStream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite);
-            streamWriter = new StreamWriter(fileStream);
+            if(!string.IsNullOrEmpty(errorMessage))
+            {
+                streamWriter.WriteLine(errorMessage);
+            }
         }
 
         public void LogException(Exception exception, UnityEngine.Object context)
         {
             streamWriter.WriteLine(exception.ToString());
-            streamWriter.Flush();
         }
 
         public void LogFormat(LogType logType, UnityEngine.Object context, string format, params object[] args)
@@ -87,13 +94,11 @@ public static class DaggerfallUnityApplication
             }
 
             streamWriter.WriteLine(prefix + string.Format(format, args));
-            streamWriter.Flush();
         }
 
         public void Dispose()
         {
             streamWriter.Close();
-            fileStream.Close();
         }
     }
 
