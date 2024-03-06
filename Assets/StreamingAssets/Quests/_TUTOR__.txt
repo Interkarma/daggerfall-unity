@@ -38,13 +38,11 @@ Message:  1012
 <ce>           The very first thing you want to do is to check your keybinds.
 <ce>           Press Escape and click on Controls. The most important ones for now are
 <ce>           your movement (WASD) and your Swing Weapon (Mouse1 by default).
-<ce>           Depending on the options you chose in the Daggerfall Unity launch screen,
-<ce>           attacking may involve holding the Swing Weapon button down and moving the mouse;
-<ce>           OR clicking the Swing Weapon button, OR holding it down.
+<ce>           Attacking may involve holding the Swing Weapon button down and moving the mouse;
+<ce>           OR clicking the Swing Weapon button, OR holding it down. This can be changed
+<ce>           in the Advanced section of the Controls screen.
 <ce>           
-<ce>           Make sure your binds are acceptable, and another message will appear in 5 seconds.
-<ce>           
-<ce>           (Next message in 5 seconds. Press No to end tutorial.)
+<ce>           Make sure your binds are acceptable, and another message will appear in 10 seconds.
 
 Message:  1013
 <ce>                           Page 2
@@ -55,7 +53,7 @@ Message:  1013
 <ce>           and/or is a very strong material (ie: Elven, Dwarven).
 <ce>           Without those two advantages, you will almost never hit enemies.
 <ce>           
-<ce>           (Next message in 5 seconds. Press No to end tutorial.)
+<ce>           (Next message in 15 seconds. Press No to end tutorial.)
 
 Message:  1015
 <ce>                           Page 3
@@ -81,7 +79,7 @@ Message:  1025
 <ce>                           Page 5
 <ce>                                    
 <ce>         Characters with magic available can also try casting spells,
-<ce>         though most enemies will resist your spells. Press Backspace
+<ce>         though enemies will often resist your spells. Press Backspace
 <ce>         to open your spellbook, if you are a spellcaster. Double-click
 <ce>         on a spell to ready it.
 <ce>         
@@ -100,10 +98,31 @@ Message:  1030
 <ce>         Controls -> Advanced (at the bottom of the Controls screen)
 <ce>         is something you can also use to save.
 <ce>           
-<ce>           (Next message in 5 seconds. Press No to end tutorial.)
+<ce>           (Next message in 10 seconds. Press No to end tutorial.)
+
+Message:  1031
+<ce>                         Page 7
+<ce>           
+<ce>           Your first step to escape this cave is to exit this room.
+<ce>           Go down the hallway opposite the campfire.
+<ce>           After the turn, you will find a door resembling a brick wall.
+<ce>           Click on the door to open it. Beyond, you will see a small room
+<ce>           with a rat and a treasure pile on an altar.
+<ce>           
+<ce>           Clicking on the treasure pile will open the inventory.
+<ce>           You will see the treasure pile's contents on the right side
+<ce>           of the inventory screen. With the "remove" option highlighted,
+<ce>           click on the items to obtain them for yourself.
+<ce>           
+<ce>           You can also loot enemy corpses after killing them,
+<ce>            but the rat will have no treasure.
+<ce>           
+<ce>           (Next message in 45 seconds. Press No to end tutorial.)
 
 Message:  1035
-<ce>                           Page 7
+<ce>                           Page 8
+<ce>                                    
+<ce>         Continue through the dungeon. You can choose to fight or escape from the enemies.
 <ce>                                    
 <ce>         Some monsters require certain material of weapons to hit.
 <ce>         You will soon meet an imp monster that can't be hurt with
@@ -114,7 +133,7 @@ Message:  1035
 <ce>           (Next message in 5 seconds. Press No to end tutorial.)
 
 Message:  1040
-<ce>                           Page 8
+<ce>                           Page 9
 <ce>                                    
 <ce>         Some monsters are stronger than you. You can escape from them
 <ce>         without consequence. If an enemy is giving you a lot of trouble,
@@ -124,7 +143,7 @@ Message:  1040
 <ce>           (Next message in 5 seconds. Press No to end tutorial.)
 
 Message:  1041
-<ce>                           Page 9
+<ce>                           Page 10
 <ce>         
 <ce>         Some objects can be clicked on. In the main hall of this dungeon, you will find
 <ce>         a throne and a lever next to it. When you see the lever, click on it
@@ -139,11 +158,12 @@ Message:  1041
 <ce>           (Next message when you exit the dungeon. Press No to end tutorial.)
 
 Message:  1042
-<ce>                           Page 10
+<ce>                           Page 11
+<ce>                                    
 <ce>         The world of Daggerfall is immense
 <ce>         and generally can't be traveled in real time.
 <ce>         
-<ce>         Open the travel map with the V key. The region that you are in is highlighted in red.
+<ce>         Open the travel map (normally by pressing V). The region that you are in is highlighted in red.
 <ce>         Click on that region and you get a focused map. Click FIND and type in DAGGERFALL.
 <ce>         
 <ce>           For now, keep the travel settings on CAUTIOUSLY and INNS.
@@ -153,7 +173,7 @@ Message:  1042
 <ce>           (Next message when you travel to a city. Press No to end tutorial.)
 
 Message:  1045
-<ce>                           Page 11
+<ce>                           Page 12
 <ce>    
 <ce>    Find a townsperson nearby. Press F4 to set your mode to Dialogue, and then
 <ce>    click on the person. You will enter a conversation window. You can use
@@ -164,10 +184,10 @@ Message:  1045
 <ce>    the request until they mark it on your map. This is very important for finding
 <ce>    locations easily in a large city like this one.
 <ce>           
-<ce>           (Next message in 30 seconds. Press No to end tutorial.)
+<ce>           (Next message in 45 seconds. Press No to end tutorial.)
 
 Message:  1047
-<ce>                          Page 12
+<ce>                          Page 13
 <ce>  
 <ce>    The conversation window also has options for finding people and asking for news,
 <ce>    including for local quests as "Work." Look at the top left corner of the
@@ -176,7 +196,7 @@ Message:  1047
 <ce>           (Next message in 15 seconds. Press No to end tutorial.)
 
 Message:  1048
-<ce>                          Page 13
+<ce>                          Page 14
 <ce>  
 <ce>       If you gained treasure in the starting dungeon, you will want to sell it.
 <ce>       A pawn shop is most useful for this, though general stores and armorsmiths
@@ -193,7 +213,7 @@ Message:  1048
 <ce>           (Next message in 10 seconds. Press No to end tutorial.)
 
 Message:  1050
-<ce>                          Page 14
+<ce>                          Page 15
 <ce>                                    
 <ce>      Most characters want to join at least one guild. As you rise in rank
 <ce>        in a guild, you get more benefits. To rise in rank, you
@@ -210,7 +230,7 @@ Message:  1050
 <ce>           (Next message in 10 seconds. Press No to end tutorial.)
 
 Message:  1055
-<ce>                          Page 15
+<ce>                          Page 16
 <ce>                                    
 <ce>        The last task of all is to find a quest. Daggerfall's quests
 <ce>        are radiant, choosing locations around you as places where
@@ -221,9 +241,9 @@ Message:  1055
 <ce>           find someone inside the guild building with the button "Get Quest."
 <ce>         Accept or reject the quest you are given. Rejecting a quest has no consequences.
 <ce>  
-<ce>  Many quests will send you to other towns. If they do, enter your journal (l) and click
+<ce>  Many quests will send you to other towns. If they do, enter your journal (normally L) and click
 <ce>  on the quest log entry about that quest. Many times, it will automatically plan
-<ce>  a travel to your quest destination. Otherwise, you can use V to open the travel menu
+<ce>  a travel to your quest destination. Otherwise, you can open the travel screen
 <ce>  and choose the location yourself.
 <ce>  
 <ce>  You can also find quests among random townspeople. Click on people in taverns, who tend to
@@ -244,15 +264,16 @@ QBN:
 
 Place pirateerHold permanent PirateerHold2
 
-Clock _page1_ 00:01
-Clock _page2_ 00:01
+Clock _page1_ 00:02
+Clock _page2_ 00:03
 Clock _page3_ 00:02
 Clock _page4_ 00:01
 Clock _page5_ 00:02
-Clock _page6_ 00:01
+Clock _page6_ 00:03
+Clock _page6a_ 00:09
 Clock _page7_ 00:01
 Clock _page8_ 00:01
-Clock _page11_ 00:06
+Clock _page11_ 00:09
 Clock _page12_ 00:03
 Clock _page13_ 00:02
 Clock _page14_ 00:02
@@ -266,7 +287,11 @@ variable _exitstarter_
 _yes_ task:
 	pc at pirateerHold set _exitstarter_ 
 	start timer _page1_ 
-	say 1012 
+	say 1012
+--no prompt on this one because it is shown immediately after game begin.
+--the purpose of these prompts is to prevent a player from clicking out
+--of a tutorial window when they didn't intend to. This is not a risk
+--on the first window.
 
 _page1_ task:
 	prompt 1013 yes _yes1_ no _no_ 
@@ -299,9 +324,15 @@ _yes5_ task:
 	start timer _page6_ 
 
 _page6_ task:
-	prompt 1035 yes _yes6_ no _no_ 
+	prompt 1031 yes _yes6_ no _no_ 
 
 _yes6_ task:
+	start timer _page6a_ 
+
+_page6a_ task:
+	prompt 1035 yes _yes6a_ no _no_ 
+
+_yes6a_ task:
 	start timer _page7_ 
 
 _page7_ task:
