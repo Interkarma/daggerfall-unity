@@ -475,6 +475,18 @@ namespace DaggerfallWorkshop.Game.Questing
         }
 
         /// <summary>
+        /// Returns the assigned or home symbol.
+        /// </summary>
+        /// <returns>
+        /// If the most recent Place symbol assigned if not null, otherwise returns
+        /// home symbol (which might be null as well).
+        /// </returns>
+        public Symbol GetAssignedOrHomePlaceSymbol()
+        {
+            return lastAssignedPlaceSymbol ?? homePlaceSymbol;
+        }
+
+        /// <summary>
         /// Checks if player in same world cell as Place this Person was assigned to.
         /// Does not care about specific building/dungeon or interior/exterior, just matching location mapID.
         /// Does not care if player actually inside bounds, just if inside same world cell.
