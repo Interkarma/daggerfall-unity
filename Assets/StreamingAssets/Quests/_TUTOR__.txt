@@ -8,7 +8,8 @@ Quest: _TUTOR__
 -- Message panels
 QRC:
 
-RumorsDuringQuest:  [1005]
+
+RumorsPostfailure:  [1006]
 I'll give you a hint %ra. If you want to succeed in magic, join the mages guild.
                                      <--->
 A small tip for you. Put your money in the bank of %reg. Have them give you letters of credit. They hardly weigh a thing.
@@ -18,13 +19,17 @@ Specialty shops are the best place to find unsual items.
 They just passed a vagrancy law. You can't sleep in the streets. The guards even patrol outside the walls. You have to get a room at an Inn.
                                      <--->
 Everyone should join a temple. The only question is what god is best for you? I'd check into them all.
-
-RumorsPostfailure:  [1006]
+                                    <--->
 Things are really heating up in the city of Daggerfall. You should go there if you want adventure.
                                      <--->
 I've heard that the royalty of Wayrest is stirring things up. It's a great opportunity for anyone with the guts to actually ask the king or queen for work.
                                      <--->
 I've heard that Sentinel is a good place to earn quick gold and the opportunity for a bit of adventure. The royal family is hiring heroes for dangerous work.
+
+--the rumors previously placed in "during quest" have been moved to "after quest." The tutorial was way too short for these messages
+--to appear normally, so having them in rumor mill for 7 days after quest ends is an OK window.
+--could theoretically make tutorial extend on much longer in an invisible state and keep rumors
+--present for a long time.
 
 QuestLogEntry:  [1010]
 <ce>             Daggerfall Unity has an updated tutorial.
