@@ -2317,7 +2317,7 @@ namespace DaggerfallWorkshop.Game
 
         public SiteDetails GetPersonSiteDetails(ref Person person)
         {
-            Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
+            Symbol assignedPlaceSymbol = person.GetAssignedOrHomePlaceSymbol();
             if (assignedPlaceSymbol == null)
                 throw new Exception(string.Format("GetBuildingKeyForPersonResource(): Resource is not of type Person but was expected to be"));
 
@@ -3446,7 +3446,7 @@ namespace DaggerfallWorkshop.Game
                             {
                             }*/
 
-                            Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
+                            Symbol assignedPlaceSymbol = person.GetAssignedOrHomePlaceSymbol();
 
                             if (assignedPlaceSymbol != null)
                             {
