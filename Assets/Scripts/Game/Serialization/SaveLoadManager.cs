@@ -342,17 +342,29 @@ namespace DaggerfallWorkshop.Game.Serialization
                     File.Delete(Path.Combine(path, GetModDataFilename(mod)));
             }
 
-            // Attempt to delete path itself
-            // Even if delete fails path should be invalid with save info removed
-            // Folder index will be excluded from enumeration and recycled later
-            try
+            // Check if folder is empty
+            if (!Directory.GetFileSystemEntries(path, "*", SearchOption.AllDirectories).Any())
             {
-                Directory.Delete(path);
+                // Attempt to delete path itself
+                // Even if delete fails path should be invalid with save info removed
+                // Folder index will be excluded from enumeration and recycled later
+                try
+                {
+                    Directory.Delete(path);
+                }
+                catch (Exception ex)
+                {
+                    LogFolderException("save", path, ex);
+
+                    // We could not delete the folder for some reason, attempt to
+                    // make a backup.
+                    TryBackupDeletedSaveFolder(path);
+                }
             }
-            catch(Exception ex)
+            else
             {
-                string message = string.Format("Could not delete save folder '{0}'. Exception message: {1}", path, ex.Message);
-                DaggerfallUnity.LogMessage(message);
+                // Unexpected files in the folder, attempt to make a backup.
+                TryBackupDeletedSaveFolder(path);
             }
 
             // Update saves
@@ -798,6 +810,45 @@ namespace DaggerfallWorkshop.Game.Serialization
         {
             return Directory.Exists(Path.Combine(UnitySavePath, folderName));
         }
+
+        private void TryBackupDeletedSaveFolder(string path)
+        {
+            try
+            {
+                BackupDeletedSaveFolder(path);
+            }
+            catch (Exception ex)
+            {
+                LogFolderException("backup", path, ex);
+            }
+        }
+
+        private void BackupDeletedSaveFolder(string path)
+        {
+            var saveName = Path.GetFileName(path);
+            var basePath = Path.GetDirectoryName(path);
+            var backupBasePath = Path.Combine(basePath, "DELETED");
+
+            if (!Directory.Exists(backupBasePath))
+            {
+                Directory.CreateDirectory(backupBasePath);
+            }
+
+            string dstPath = Path.Combine(backupBasePath, saveName);
+
+            var dstFolderSuffix = 2;
+
+            while (Directory.Exists(dstPath))
+            {
+                dstPath = Path.Combine(backupBasePath, $"{saveName}_{dstFolderSuffix++}");
+            }
+
+            DaggerfallUnity.LogMessage($"Moving '{saveName}' to backup '{dstPath}'.");
+            Directory.Move(path, dstPath);
+        }
+
+        private void LogFolderException(string action, string path, Exception ex) =>
+            DaggerfallUnity.LogMessage($"Could not {action} save folder '{path}'. Exception message: {ex.Message}");
 
         #endregion
 
