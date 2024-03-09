@@ -40,14 +40,17 @@ QuestLogEntry:  [1010]
 Message:  1012
 <ce>                           Page 1
 <ce>                                    
-<ce>           The very first thing you want to do is to check your keybinds.
-<ce>           Press Escape and click on Controls. The most important ones for now are
-<ce>           your movement (WASD) and your Swing Weapon (Mouse1 by default).
-<ce>           Attacking may involve holding the Swing Weapon button down and moving the mouse;
-<ce>           OR clicking the Swing Weapon button, OR holding it down. This can be changed
+<ce>           The very first thing you want to do is to check
+<ce>           your keybinds. Press Escape and click on Controls.
+<ce>           The most important ones for now are your movement (WASD)
+<ce>           and your Swing Weapon (Mouse1 by default). Attacking
+<ce>           may involve holding the Swing Weapon button down
+<ce>           and moving the mouse; OR clicking the Swing Weapon
+<ce>           button, OR holding it down. This can be changed
 <ce>           in the Advanced section of the Controls screen.
 <ce>           
-<ce>           Make sure your binds are acceptable, and another message will appear in 10 seconds.
+<ce>           Make sure your binds are acceptable,
+<ce>           and another message will appear in 10 seconds.
 
 Message:  1013
 <ce>                           Page 2
@@ -65,18 +68,20 @@ Message:  1015
 <ce>                                    
 <ce>        Equipping a weapon requires a short delay. When it's ready,
 <ce>        press Z to bring it out. You can also use your fist if your
-<ce>        Hand-to-Hand skill is high. Practice some attacks with the Swing Weapon button.
+<ce>        Hand-to-Hand skill is high. Practice some attacks with the
+<ce>        Swing Weapon button.
 <ce>           
 <ce>           (Next message in 10 seconds. Press No to end tutorial.)
 
 Message:  1020
 <ce>                           Page 4
 <ce>                                    
-<ce>          Press R to rest when you need to regain health, stamina, or magicka.
-<ce>          Those indicators are at the bottom-left of the screen.
+<ce>          Press R to rest when you need to regain health, stamina,
+<ce>        or magicka. Those indicators are at the bottom-left of the screen.
 <ce>          You don't need to rest right now, but remember it for later.
 <ce>          
-<ce>          Do not attempt to rest inside towns. Use loitering in towns instead.
+<ce>          Do not attempt to rest inside towns.
+<ce>        Use loitering in towns instead.
 <ce>           
 <ce>           (Next message in 5 seconds. Press No to end tutorial.)
 
@@ -127,7 +132,8 @@ Message:  1031
 Message:  1035
 <ce>                           Page 8
 <ce>                                    
-<ce>         Continue through the dungeon. You can choose to fight or escape from the enemies.
+<ce>         Continue through the dungeon. You can choose to fight
+<ce>        or escape from the enemies.
 <ce>                                    
 <ce>         Some monsters require certain material of weapons to hit.
 <ce>         You will soon meet an imp monster that can't be hurt with
@@ -150,15 +156,16 @@ Message:  1040
 Message:  1041
 <ce>                           Page 10
 <ce>         
-<ce>         Some objects can be clicked on. In the main hall of this dungeon, you will find
-<ce>         a throne and a lever next to it. When you see the lever, click on it
-<ce>       to raise the throne like an elevator. Other dungeons will have objects
+<ce>         Some objects can be clicked on. In the main hall of this
+<ce>        dungeon, you will find a throne and a lever next to it.
+<ce>        When you see the lever, click on it to raise the throne
+<ce>        like an elevator. Other dungeons will have objects
 <ce>         with more effects, such as wheels and secret switches.
 <ce>
-<ce>         To escape this dungeon, you need to look for a dark, stone archway
-<ce>         set into a wall, about the same height as you. When you click on it,
-<ce>         you will exit the dungeon and enter the outdoors. The next message will
-<ce>         appear at that time.
+<ce>         To escape this dungeon, you need to look for a dark, stone
+<ce>        archway set into a wall, about the same height as you.
+<ce>        When you click on it, you will exit the dungeon and enter
+<ce>        the outdoors. The next message will appear at that time.
 <ce>           
 <ce>           (Next message when you exit the dungeon. Press No to end tutorial.)
 
@@ -168,8 +175,10 @@ Message:  1042
 <ce>         The world of Daggerfall is immense
 <ce>         and generally can't be traveled in real time.
 <ce>         
-<ce>         Open the travel map (normally by pressing V). The region that you are in is highlighted in red.
-<ce>         Click on that region and you get a focused map. Click FIND and type in DAGGERFALL.
+<ce>         Open the travel map (normally by pressing V).
+<ce>        The region that you are in is highlighted in red.
+<ce>         Click on that region and you get a focused map.
+<ce>        Click FIND and type in DAGGERFALL.
 <ce>         
 <ce>           For now, keep the travel settings on CAUTIOUSLY and INNS.
 <ce>               These settings will ensure you arrive in the morning.
@@ -180,13 +189,15 @@ Message:  1042
 Message:  1045
 <ce>                           Page 12
 <ce>    
-<ce>    Find a townsperson nearby. Press F4 to set your mode to Dialogue, and then
-<ce>    click on the person. You will enter a conversation window. You can use
-<ce>    the window to ask for directions to places. If a person is unfriendly or
+<ce>    Find a townsperson nearby. Press F4 to set your mode
+<ce>        to Dialogue, and then click on the person. You will
+<ce>        enter a conversation window. You can use the window
+<ce>        to ask for directions to places. If a person is unfriendly or
 <ce>    doesn't know, find another peasant.
 <ce>    
-<ce>    Once a peasant tells you what direction a building is in, you can keep repeating
-<ce>    the request until they mark it on your map. This is very important for finding
+<ce>    Once a peasant tells you what direction a building is in,
+<ce>        you can keep repeating the request until they mark it
+<ce>        on your map. This is very important for finding
 <ce>    locations easily in a large city like this one.
 <ce>           
 <ce>           (Next message in 45 seconds. Press No to end tutorial.)
@@ -194,41 +205,49 @@ Message:  1045
 Message:  1047
 <ce>                          Page 13
 <ce>  
-<ce>    The conversation window also has options for finding people and asking for news,
-<ce>    including for local quests as "Work." Look at the top left corner of the
-<ce>    conversation window when it's open to see the different branches you can ask about.
+<ce>    The conversation window also has options for
+<ce>        finding people and asking for news,
+<ce>    including for local quests as "Work." Look atthe top left
+<ce>        corner of the conversation window when it's open to see
+<ce>        the different branches you can ask about.
 <ce>           
 <ce>           (Next message in 15 seconds. Press No to end tutorial.)
 
 Message:  1048
 <ce>                          Page 14
 <ce>  
-<ce>       If you gained treasure in the starting dungeon, you will want to sell it.
-<ce>       A pawn shop is most useful for this, though general stores and armorsmiths
-<ce>       can also buy some kinds of goods. Find one such store somewhere in town.
-<ce>       You can ask peasants for directions to them, or press F3 to change to Info
-<ce>       mode, and click on the buildings to learn what they are from a distance.
+<ce>       If you gained treasure in the starting dungeon,
+<ce>        you will want to sell it. A pawn shop is most useful
+<ce>        for this, though general stores and armorsmiths
+<ce>       can also buy some kinds of goods. Find one such store
+<ce>        somewhere in town. You can ask peasants for directions
+<ce>        to them, or press F3 to change to Info mode, and click
+<ce>        on the buildings to learn what they are from a distance.
 <ce>       
-<ce>       General stores open at 6 AM. Pawn shops and armor smiths open later.
-<ce>       Press 'i' to see the current time in game. If the stores are still closed,
-<ce>       press 'r' to loiter (not rest) until they open.
+<ce>       General stores open at 6 AM. Pawn shops and armor smiths
+<ce>        open later. Check the current time in-game (usually the 'i' key).
+<ce>        If the stores are still closed, press the Rest button
+<ce>        to loiter (not rest) until they open.
 <ce>       
-<ce>       Note that if you loiter right now, the next tutorial message will appear immediately.
+<ce>       Note that if you loiter right now,
+<ce>        the next tutorial message will appear immediately.
 <ce>       
 <ce>           (Next message in 10 seconds. Press No to end tutorial.)
 
 Message:  1050
 <ce>                          Page 15
 <ce>                                    
-<ce>      Most characters want to join at least one guild. As you rise in rank
-<ce>        in a guild, you get more benefits. To rise in rank, you
-<ce>        must improve skills the guild cares about, and perform
-<ce>       quests on a regular basis to improve your reputation with them.
+<ce>      Most characters want to join at least one guild.
+<ce>        As you rise in rank in a guild, you get more benefits.
+<ce>        To rise in rank, you must improve skills the guild
+<ce>        cares about, and perform quests on a regular basis
+<ce>        to improve your reputation with them.
 <ce>                                    
 <ce>        All spellcasters should join the Mages Guild. Fighter type
 <ce>        characters can join the fighter's guild and a knightly order.
 <ce>        
-<ce>        You can also pick a temple to join. However, you can only be a member of one temple. 
+<ce>        You can also pick a temple to join.
+<ce>        However, you can only be a member of one temple. 
 <ce>                                    
 <ce>         There are other hidden guilds in the game as well.
 <ce>           
@@ -237,27 +256,41 @@ Message:  1050
 Message:  1055
 <ce>                          Page 16
 <ce>                                    
-<ce>        The last task of all is to find a quest. Daggerfall's quests
-<ce>        are radiant, choosing locations around you as places where
-<ce>        things will happen.
+<ce>        The last task of all is to find a quest.
+<ce>        Daggerfall's quests are radiant, choosing locations
+<ce>        around you as places where things will happen.
 <ce>  
-<ce>        Doing quests for guilds will help you increase in rank with them,
-<ce>           so they may be a priority for you. After you have joined the guild,
-<ce>           find someone inside the guild building with the button "Get Quest."
-<ce>         Accept or reject the quest you are given. Rejecting a quest has no consequences.
-<ce>  
-<ce>  Many quests will send you to other towns. If they do, enter your journal (normally L) and click
-<ce>  on the quest log entry about that quest. Many times, it will automatically plan
-<ce>  a travel to your quest destination. Otherwise, you can open the travel screen
+<ce>        Doing quests for guilds will help you increase
+<ce>        in rank with them, so they may be a priority for you.
+<ce>        After you have joined the guild, find someone inside the
+<ce>        guild building with the button "Get Quest."
+<ce>         Accept or reject the quest you are given.
+<ce>        Rejecting a quest has no consequences.
+<ce>
+<ce>     (Next message will appear immediately. Press No to end tutorial.)
+
+--had to split page 16 into a new page 17 because it was too large on unilength font
+
+Message:  1056
+<ce>             Page 17
+<ce>
+<ce>  Many quests will send you to other towns.
+<ce>        If they do, enter your journal (normally L) and click
+<ce>  on the quest log entry about that quest.
+<ce>        Many times, it will automatically plan
+<ce>  a travel to your quest destination.
+<ce>        Otherwise, you can open the travel screen
 <ce>  and choose the location yourself.
 <ce>  
-<ce>  You can also find quests among random townspeople. Click on people in taverns, who tend to
-<ce>  have quests. You can also get them from shopkeepers with the "Talk" button.
+<ce>  You can also find quests among random townspeople.
+<ce>        Click on people in taverns, who tend to
+<ce>  have quests. You can also get them from shopkeepers
+<ce>        with the "Talk" button.
 <ce>  Asking for "Any work?" can lead you to possible questgivers.
 <ce>           
 <ce>           (Next message in 10 seconds. Press No to end tutorial.)
 
-Message:  1056
+Message:  1057
 <ce>       This is the end of the tutorial. Daggerfall is a game with many
 <ce>       unique and intricate mechanics, so learn from other players
 <ce>       about the game's quirks. You can also add mods to the game
@@ -388,10 +421,13 @@ _page14_ task:
 	prompt 1055 yes _yes14_ no _no_ 
 
 _yes14_ task:
+	prompt 1056 yes _yes15_ no _no_
+
+_yes15_ task:
 	start timer _page15_ 
 
 _page15_ task:
-	say 1056
+	say 1057
 	start task _no_
 
 _no_ task:
