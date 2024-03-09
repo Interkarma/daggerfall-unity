@@ -31,8 +31,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture;
         TextBox textBox = new TextBox();
-        Button randomNameButton = new Button();
-        Button okButton = new Button();
+        Button randomNameButton;
+        Button okButton;
 
         IMECompositionMode prevIME;
 
@@ -57,6 +57,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public CreateCharNameSelect(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+            Persistent = true;
         }
 
         protected override void Setup()
@@ -132,6 +133,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (Input.GetKeyDown(KeyCode.Return))
                 AcceptName();
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            AssetCleanup.CleanAsset(nativeTexture);
         }
 
         void AcceptName()

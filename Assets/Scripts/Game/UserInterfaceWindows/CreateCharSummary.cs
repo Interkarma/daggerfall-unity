@@ -97,6 +97,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             okButton.OnMouseClick += OkButton_OnMouseClick;
         }
 
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            Utility.AssetCleanup.CleanAsset(nativeTexture);
+        }
+
         public override void OnPush()
         {
             base.OnPush();

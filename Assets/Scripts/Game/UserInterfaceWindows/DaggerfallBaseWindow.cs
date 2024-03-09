@@ -112,5 +112,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         protected abstract void Setup();
+
+        /// <summary>
+        /// Disposes of Unity resources allocated by window class.
+        /// </summary>
+        public virtual void FreeResources()
+        {
+            defaultToolTip.Dispose();
+            ParentPanel.Dispose();
+            NativePanel.Dispose();
+        }
     }
 }

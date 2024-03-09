@@ -4,6 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
+// Contributors:    Numidium
 
 using UnityEngine;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Items;
 using System;
+using UnityEditor;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -508,11 +511,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Texture2D redArrowsTexture = ImageReader.GetTexture(redArrowsTextureName);
                 redUpArrow = ImageReader.GetSubTexture(redArrowsTexture, upArrowRect, arrowsFullSize);
                 redDownArrow = ImageReader.GetSubTexture(redArrowsTexture, downArrowRect, arrowsFullSize);
+                AssetCleanup.CleanAsset(redArrowsTexture);
 
                 // Cut out green up/down arrows
                 Texture2D greenArrowsTexture = ImageReader.GetTexture(greenArrowsTextureName);
                 greenUpArrow = ImageReader.GetSubTexture(greenArrowsTexture, upArrowRect, arrowsFullSize);
                 greenDownArrow = ImageReader.GetSubTexture(greenArrowsTexture, downArrowRect, arrowsFullSize);
+                AssetCleanup.CleanAsset(greenArrowsTexture);
             }
             if (enhanced)
             {
@@ -520,6 +525,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 Texture2D baseInvTexture = ImageReader.GetTexture(baseInvTextureName);
                 for (int i = 0; i < itemCutoutRects16.Length; i++)
                     itemListTextures[i] = ImageReader.GetSubTexture(baseInvTexture, itemCutoutRects16[i], new DFSize(320, 200));
+                AssetCleanup.CleanAsset(baseInvTexture);
             }
         }
 
@@ -621,5 +627,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         #endregion
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (itemListTextures != null)
+                foreach (var texture in itemListTextures)
+                    AssetCleanup.CleanAsset(texture);
+            AssetCleanup.CleanAsset(redUpArrow);
+            AssetCleanup.CleanAsset(greenUpArrow);
+            AssetCleanup.CleanAsset(redDownArrow);
+            AssetCleanup.CleanAsset(greenDownArrow);
+        }
     }
 }

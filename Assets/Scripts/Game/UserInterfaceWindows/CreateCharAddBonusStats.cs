@@ -137,6 +137,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Draw();
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            Utility.AssetCleanup.CleanAsset(nativeTexture);
+        }
+
         #region Public Methods
 
         public void Reroll()

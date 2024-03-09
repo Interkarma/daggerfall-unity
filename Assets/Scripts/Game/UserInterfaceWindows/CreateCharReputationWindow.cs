@@ -138,6 +138,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             IsSetup = true;
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            Utility.AssetCleanup.CleanAsset(nativeTexture);
+        }
+
         #endregion
 
         public override void Update()
@@ -194,6 +200,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 CloseWindow();
             }
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
 
         #endregion

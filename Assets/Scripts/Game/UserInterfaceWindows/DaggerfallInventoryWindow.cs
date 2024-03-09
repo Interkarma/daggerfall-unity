@@ -973,6 +973,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 if (button == null || panel == null)
                     return;
 
+                if (panel.BackgroundTexture)
+                    AssetCleanup.CleanAsset(panel.BackgroundTexture);
+
                 // Get item at this equip index (if any)
                 DaggerfallUnityItem item = PlayerEntity.ItemEquipTable.GetItem((EquipSlots)button.Tag);
                 if (item == null)
@@ -1035,6 +1038,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Cut out info panel texture from item maker
             Texture2D infoBaseTexture = ImageReader.GetTexture(infoTextureName);
             infoTexture = ImageReader.GetSubTexture(infoBaseTexture, infoCutoutRect, baseSize);
+            AssetCleanup.CleanAsset(infoBaseTexture);
 
             // Load coins animation textures
             coinsAnimation = ImageReader.GetImageData(coinsAnimTextureName, 6, 0, true, false, true);
@@ -1042,6 +1046,38 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Load magic item animation textures
             magicAnimation = ImageReader.GetImageData(magicAnimTextureName, 5, 0, true, false, true);
 
+        }
+
+        protected virtual void UnloadTextures()
+        {
+            AssetCleanup.CleanAsset(baseTexture);
+            AssetCleanup.CleanAsset(goldTexture);
+            AssetCleanup.CleanAsset(weaponsAndArmorNotSelected);
+            AssetCleanup.CleanAsset(magicItemsNotSelected);
+            AssetCleanup.CleanAsset(clothingAndMiscNotSelected);
+            AssetCleanup.CleanAsset(ingredientsNotSelected);
+            AssetCleanup.CleanAsset(weaponsAndArmorSelected);
+            AssetCleanup.CleanAsset(magicItemsSelected);
+            AssetCleanup.CleanAsset(clothingAndMiscSelected);
+            AssetCleanup.CleanAsset(ingredientsSelected);
+            AssetCleanup.CleanAsset(wagonNotSelected);
+            AssetCleanup.CleanAsset(infoNotSelected);
+            AssetCleanup.CleanAsset(equipNotSelected);
+            AssetCleanup.CleanAsset(removeNotSelected);
+            AssetCleanup.CleanAsset(useNotSelected);
+            AssetCleanup.CleanAsset(wagonSelected);
+            AssetCleanup.CleanAsset(wagonNotSelected);
+            AssetCleanup.CleanAsset(infoSelected);
+            AssetCleanup.CleanAsset(equipSelected);
+            AssetCleanup.CleanAsset(removeSelected);
+            AssetCleanup.CleanAsset(useSelected);
+            AssetCleanup.CleanAsset(infoTexture);
+            foreach (var texture in coinsAnimation.animatedTextures)
+                AssetCleanup.CleanAsset(texture);
+            foreach (var texture in magicAnimation.animatedTextures)
+                AssetCleanup.CleanAsset(texture);
+            foreach (var panel in accessoryIconPanels)
+                AssetCleanup.CleanAsset(panel.BackgroundTexture);
         }
 
         void ShowWagon(bool show)

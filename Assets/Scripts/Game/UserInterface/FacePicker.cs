@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -76,6 +77,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             this.raceTemplate = raceTemplate;
             this.raceGender = raceGender;
             UpdateFaceTextures();
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            foreach (var imageData in faceTextures)
+                AssetCleanup.CleanAsset(imageData.texture);
         }
 
         #endregion

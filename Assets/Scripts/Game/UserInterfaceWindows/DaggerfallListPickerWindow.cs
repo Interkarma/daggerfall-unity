@@ -20,6 +20,8 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using UnityEditor;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -138,6 +140,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             RaiseOnItemPickedEvent();
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            pickerPanel.Dispose(); // Needed here since panel is instantiated but may not be added to components.
+            AssetCleanup.CleanAsset(nativeTexture);
+        }
+
         #region Event Handlers
 
         public delegate void OnItemPickedEventHandler(int index, string itemString);
@@ -146,6 +155,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             if (OnItemPicked != null)
                 OnItemPicked(listBox.SelectedIndex, listBox.SelectedItem);
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            if (!Persistent)
+                FreeResources();
         }
 
         #endregion

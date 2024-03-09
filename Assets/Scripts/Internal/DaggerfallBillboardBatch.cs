@@ -18,6 +18,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -336,6 +337,7 @@ namespace DaggerfallWorkshop
 
             // Assign renderer properties
             // Turning off receive shadows to prevent self-shadowing
+            Destroy(meshRenderer.sharedMaterial);
             meshRenderer.sharedMaterial = atlasMaterial;
             meshRenderer.receiveShadows = false;
 
@@ -383,6 +385,7 @@ namespace DaggerfallWorkshop
             atlasMaterial.mainTexture = customMaterial.mainTexture;
 
             // Assign renderer properties
+            AssetCleanup.CleanAsset(meshRenderer.sharedMaterial);
             meshRenderer.sharedMaterial = atlasMaterial;
             meshRenderer.receiveShadows = false;
             FramesPerSecond = 0;

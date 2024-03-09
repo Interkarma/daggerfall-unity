@@ -250,6 +250,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            Utility.AssetCleanup.CleanAsset(nativeTexture);
+        }
+
         #region Events
 
         public delegate void OnValueChangedHandler();

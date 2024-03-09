@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -115,7 +115,7 @@ namespace DaggerfallWorkshop.Game.Utility
             // Destroy old output texture
             if (paperDollTexture != null)
             {
-                GameObject.Destroy(paperDollTexture);
+                AssetCleanup.CleanAsset(paperDollTexture);
                 paperDollTexture = null;
             }
 
@@ -348,6 +348,11 @@ namespace DaggerfallWorkshop.Game.Utility
 
             // Blit head
             DrawTexture(head);
+
+            // Release allocated texture assets
+            AssetCleanup.CleanAsset(nudeBody.texture);
+            AssetCleanup.CleanAsset(clothedBody.texture);
+            AssetCleanup.CleanAsset(head.texture);
         }
 
         // Special blit for upper half of player body
@@ -383,6 +388,7 @@ namespace DaggerfallWorkshop.Game.Utility
             {
                 ImageData interior2 = DaggerfallUnity.Instance.ItemHelper.GetCloakInteriorImage(cloak2);
                 DrawTexture(interior2, cloak2);
+                AssetCleanup.CleanAsset(interior2.texture);
                 return;
             }
 
@@ -392,6 +398,7 @@ namespace DaggerfallWorkshop.Game.Utility
             {
                 ImageData interior1 = DaggerfallUnity.Instance.ItemHelper.GetCloakInteriorImage(cloak1);
                 DrawTexture(interior1, cloak1);
+                AssetCleanup.CleanAsset(interior1.texture);
             }
         }
 

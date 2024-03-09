@@ -18,6 +18,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -69,7 +70,10 @@ namespace DaggerfallWorkshop
             // Assign new season
             summary.archive = archive;
             summary.season = season;
-            GetComponent<MeshRenderer>().material = material;
+            var meshRenderer = GetComponent<MeshRenderer>();
+            AssetCleanup.CleanAsset(meshRenderer.material.mainTexture);
+            AssetCleanup.CleanAsset(meshRenderer.material);
+            meshRenderer.material = material;
         }
 
         /// <summary>

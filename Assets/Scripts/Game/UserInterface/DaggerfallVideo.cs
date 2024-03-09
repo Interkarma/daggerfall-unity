@@ -171,6 +171,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Dispose();
             GameObject.Destroy(audioPlayer);
+            GameObject.Destroy(vidTexture);
         }
     }
 }

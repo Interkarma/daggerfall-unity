@@ -23,6 +23,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop
 {
@@ -943,7 +944,17 @@ namespace DaggerfallWorkshop
         internal void PruneCache(float time, float threshold)
         {
             foreach (var item in materialDict.Where(x => time - x.Value.timeStamp > threshold).ToList())
+            {
+                AssetCleanup.CleanAsset(item.Value.albedoMap);
+                AssetCleanup.CleanAsset(item.Value.normalMap);
+                AssetCleanup.CleanAsset(item.Value.emissionMap);
+                if (item.Value.material)
+                {
+                    AssetCleanup.CleanAsset(item.Value.material.mainTexture);
+                    AssetCleanup.CleanAsset(item.Value.material);
+                }
                 materialDict.Remove(item.Key);
+            }
         }
 
         /// <summary>

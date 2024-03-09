@@ -127,6 +127,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
+        }
+
         private void HandleAnswer(QuestMachine.QuestMessages qMessage)
         {
             lastChunk = false;

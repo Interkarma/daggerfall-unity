@@ -63,6 +63,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             DaggerfallUI.DrawTextureWithTexCoords(buttonRect, highlightTexture, highlightRect);
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            Utility.AssetCleanup.CleanAsset(highlightTexture);
+        }
+
         #region Private Methods
 
         void SetupControl()

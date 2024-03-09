@@ -385,6 +385,9 @@ namespace DaggerfallWorkshop
             mesh.triangles = indices;
             mesh.normals = normals;
 
+            // Remove old mesh
+            Destroy(meshFilter.sharedMesh);
+            
             // Assign mesh
             meshFilter.sharedMesh = mesh;
 

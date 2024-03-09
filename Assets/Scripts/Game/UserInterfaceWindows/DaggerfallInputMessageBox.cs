@@ -182,6 +182,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             base.OnPop();
+            FreeResources();
 
             if (allowIME)
             {

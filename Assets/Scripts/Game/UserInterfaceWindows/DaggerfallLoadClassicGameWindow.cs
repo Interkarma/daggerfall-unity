@@ -96,6 +96,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AddControls();
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            Utility.AssetCleanup.CleanAsset(nativeTexture);
+        }
+
         #region Private Methods
 
         void OpenSaveGames()
@@ -227,6 +233,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             SelectSaveGame((int)sender.Tag);
             OpenSelectedSaveGame();
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
 
         //private void QuickLoadButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)

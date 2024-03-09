@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -87,6 +88,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectedRace = null;
             if (promptLabel != null)
                 promptLabel.Enabled = true;
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            AssetCleanup.CleanAsset(nativeTexture);
         }
 
         void ClickHandler(BaseScreenComponent sender, Vector2 position)

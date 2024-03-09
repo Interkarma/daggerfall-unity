@@ -31,10 +31,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Controls
 
         Panel mainPanel = new Panel();
-        Button talkButton = new Button();
-        Button summonButton = new Button();
-        Button questButton = new Button();
-        Button exitButton = new Button();
+        Button talkButton;
+        Button summonButton;
+        Button questButton;
+        Button exitButton;
 
         #endregion
 
@@ -238,6 +238,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 isCloseWindowDeferred = false;
                 CloseWindow();
             }
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
         }
 
         #endregion

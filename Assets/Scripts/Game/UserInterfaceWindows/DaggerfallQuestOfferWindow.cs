@@ -104,5 +104,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         #endregion
+
+        public override void OnPop()
+        {
+            base.OnPop();
+            FreeResources();
+        }
     }
 }

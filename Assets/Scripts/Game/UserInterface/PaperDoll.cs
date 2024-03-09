@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using UnityEditor;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -194,7 +195,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (lastBackgroundName != backgroundName)
             {
                 Texture2D texture = ImageReader.GetTexture(backgroundName, 0, 0, false);
+                AssetCleanup.CleanAsset(backgroundPanel.BackgroundTexture);
                 backgroundPanel.BackgroundTexture = ImageReader.GetSubTexture(texture, backgroundSubRect, backgroundFullSize);
+                AssetCleanup.CleanAsset(texture);
                 backgroundPanel.Size = new Vector2(paperDollWidth, paperDollHeight);
                 lastBackgroundName = backgroundName;
             }
@@ -232,5 +235,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         #endregion
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            AssetCleanup.CleanAsset(backgroundPanel.BackgroundTexture);
+        }
     }
 }

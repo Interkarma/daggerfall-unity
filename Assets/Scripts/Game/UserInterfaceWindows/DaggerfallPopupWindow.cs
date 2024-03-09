@@ -45,6 +45,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return cancelled; }
         }
 
+        /// <summary>
+        /// Determines if certain window's assets are freed on pop.
+        /// </summary>
+        public bool Persistent = false;
+
         public IUserInterfaceWindow PreviousWindow
         {
             get { return previousWindow; }

@@ -108,6 +108,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             base.Draw();
         }
 
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            Utility.AssetCleanup.CleanAsset(nativeTexture);
+        }
+
         public void SetBonusSkillPoints(int primary, int major, int minor)
         {
             skillsRollout.PrimarySkillBonusPoints = primary;

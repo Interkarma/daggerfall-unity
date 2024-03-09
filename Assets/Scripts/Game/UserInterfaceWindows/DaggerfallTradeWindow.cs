@@ -405,6 +405,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             ClearSelectedItems();
+            FreeResources();
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            UnloadTextures();
         }
 
         public override void Refresh(bool refreshPaperDoll = true)
@@ -768,6 +775,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             selectSelected = ImageReader.GetSubTexture(actionButtonsGoldTexture, selectButtonRect, actionButtonsFullSize);
 
             costPanelTexture = ImageReader.GetTexture(costPanelTextureName);
+        }
+
+        protected override void UnloadTextures()
+        {
+            base.UnloadTextures();
+            AssetCleanup.CleanAsset(costPanelTexture);
+            AssetCleanup.CleanAsset(actionButtonsTexture);
+            AssetCleanup.CleanAsset(actionButtonsGoldTexture);
+            AssetCleanup.CleanAsset(selectSelected);
+            AssetCleanup.CleanAsset(selectNotSelected);
         }
 
         #endregion

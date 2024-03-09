@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -129,5 +130,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         #endregion
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            AssetCleanup.CleanAsset(outlineTexture);
+        }
     }
 }

@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
+// Contributors:    Numidium
 // 
 // Notes:
 //
@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -38,6 +39,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         #region UI Controls
 
         protected Panel mainPanel = new Panel();
+        protected Panel namePanel = new Panel();
         protected Panel screenshotPanel = new Panel();
         protected TextBox saveNameTextBox = new TextBox();
         protected TextLabel promptLabel = new TextLabel();
@@ -121,7 +123,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             mainPanel.Components.Add(promptLabel);
 
             // Name panel
-            Panel namePanel = new Panel();
             namePanel.Position = new Vector2(4, 12);
             namePanel.Size = new Vector2(272, 9);
             namePanel.Outline.Enabled = true;
@@ -299,6 +300,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             base.OnPop();
+            FreeResources();
 
             // Restore previous IME composition mode
             Input.imeCompositionMode = prevIME;
@@ -312,6 +314,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 SaveLoadEventHandler(null, Vector2.zero);
             if (loading && --loadingCountdown == 0) // Allow loading text to draw before loading
                 LoadGame();
+        }
+
+        public override void FreeResources()
+        {
+            base.FreeResources();
+            AssetCleanup.CleanAsset(mainPanel.BackgroundTexture);
+            AssetCleanup.CleanAsset(namePanel.BackgroundTexture);
+            AssetCleanup.CleanAsset(savesList.BackgroundTexture);
+            AssetCleanup.CleanAsset(switchCharButton.BackgroundTexture);
+            AssetCleanup.CleanAsset(screenshotPanel.BackgroundTexture);
         }
 
         #endregion
@@ -374,6 +386,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Clear info if no save selected
             if (saveNameTextBox.Text.Length == 0 || savesList.SelectedIndex < 0)
             {
+                GameObject.Destroy(screenshotPanel.BackgroundTexture);
                 screenshotPanel.BackgroundTexture = null;
                 saveVersionLabel.Text = string.Empty;
                 saveFolderLabel.Text = string.Empty;
@@ -392,7 +405,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Destroy old background texture
             if (screenshotPanel.BackgroundTexture)
             {
-                UnityEngine.Object.Destroy(screenshotPanel.BackgroundTexture);
+                AssetCleanup.CleanAsset(screenshotPanel.BackgroundTexture);
                 screenshotPanel.BackgroundTexture = null;
             }
 
@@ -402,6 +415,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             Texture2D saveTexture = GameManager.Instance.SaveLoadManager.GetSaveScreenshot(key);
             if (saveTexture != null)
             {
+                GameObject.Destroy(screenshotPanel.BackgroundTexture);
                 screenshotPanel.BackgroundTexture = saveTexture;
             }
 
