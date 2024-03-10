@@ -41,9 +41,15 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
+            PlayerEnterExit.OnTransitionExterior += OnTransitionToExterior;
             playerEnterExit = GetComponent<PlayerEnterExit>();
             sunlightManager = GameManager.Instance.SunlightManager;
-            StartCoroutine(ManageAmbientLight());
+        }
+        
+        private void OnTransitionToExterior(PlayerEnterExit.TransitionEventArgs args)
+        {
+            sunlightManager.Update(); // Ensure that SunlightManager is in a ready state
+            UpdateAmbientLight();
         }
 
         void Update()
@@ -51,36 +57,36 @@ namespace DaggerfallWorkshop.Game
             if (UnityEngine.RenderSettings.ambientLight != targetAmbientLight && !fadeRunning)
                 StartCoroutine(ChangeAmbientLight());
         }
-
-        // Polls PlayerEnterExit a few times each second to detect if player environment has changed
-        IEnumerator ManageAmbientLight()
+        
+        void LateUpdate()
         {
-            const float pollSpeed = 1f / 3f;
+            UpdateAmbientLight(); // Would be better to call this just prior to world frame rendering
+        }
 
-            while (playerEnterExit)
+        public void UpdateAmbientLight()
+        {
+            if (!playerEnterExit)
+                return;
+
+            if (!playerEnterExit.IsPlayerInside && !playerEnterExit.IsPlayerInsideDungeon)
             {
-                if (!playerEnterExit.IsPlayerInside && !playerEnterExit.IsPlayerInsideDungeon)
-                {
-                    targetAmbientLight = CalcDaytimeAmbientLight();
-                }
-                else if (playerEnterExit.IsPlayerInside && !playerEnterExit.IsPlayerInsideDungeon)
-                {
-                    if (DaggerfallUnity.Instance.WorldTime.Now.IsNight)
-                        targetAmbientLight = (DaggerfallUnity.Settings.AmbientLitInteriors) ? InteriorNightAmbientLight_AmbientOnly : InteriorNightAmbientLight;
-                    else
-                        targetAmbientLight = (DaggerfallUnity.Settings.AmbientLitInteriors) ? InteriorAmbientLight_AmbientOnly : InteriorAmbientLight;
-                }
-                else if (playerEnterExit.IsPlayerInside && playerEnterExit.IsPlayerInsideDungeon)
-                {
-                    if (playerEnterExit.IsPlayerInsideDungeonCastle)
-                        targetAmbientLight = CastleAmbientLight;
-                    else if (playerEnterExit.IsPlayerInsideSpecialArea)
-                        targetAmbientLight = SpecialAreaLight;
-                    else
-                        targetAmbientLight = DungeonAmbientLight * DaggerfallUnity.Settings.DungeonAmbientLightScale;
-                }
-
-                yield return new WaitForSeconds(pollSpeed);
+                targetAmbientLight = CalcDaytimeAmbientLight();
+            }
+            else if (playerEnterExit.IsPlayerInside && !playerEnterExit.IsPlayerInsideDungeon)
+            {
+                if (DaggerfallUnity.Instance.WorldTime.Now.IsNight)
+                    targetAmbientLight = (DaggerfallUnity.Settings.AmbientLitInteriors) ? InteriorNightAmbientLight_AmbientOnly : InteriorNightAmbientLight;
+                else
+                    targetAmbientLight = (DaggerfallUnity.Settings.AmbientLitInteriors) ? InteriorAmbientLight_AmbientOnly : InteriorAmbientLight;
+            }
+            else if (playerEnterExit.IsPlayerInside && playerEnterExit.IsPlayerInsideDungeon)
+            {
+                if (playerEnterExit.IsPlayerInsideDungeonCastle)
+                    targetAmbientLight = CastleAmbientLight;
+                else if (playerEnterExit.IsPlayerInsideSpecialArea)
+                    targetAmbientLight = SpecialAreaLight;
+                else
+                    targetAmbientLight = DungeonAmbientLight * DaggerfallUnity.Settings.DungeonAmbientLightScale;
             }
         }
 

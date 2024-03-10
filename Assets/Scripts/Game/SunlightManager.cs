@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game
                 myLight.shadows = LightShadows.None;
         }
 
-        void Update()
+        public void Update()
         {
             // Do nothing if not ready
             if (!ReadyCheck())
