@@ -767,6 +767,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
         }
 
+        public void SelectIndexSilent(int index)
+        {
+            if (index < 0 || index >= listItems.Count)
+                return;
+
+            if (listItems[index].Enabled)
+            {
+                selectedIndex = index;
+            }
+        }
+
         public void SelectNone()
         {
             selectedIndex = -1;

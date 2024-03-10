@@ -166,7 +166,22 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Setup initial folder conditions
             RefreshDrives();
-            RefreshFolders();
+            
+            if(DaggerfallUnity.Settings.PortableInstall)
+            { // start browsing from exe path for portable installs
+                currentPath = AppDomain.CurrentDomain.BaseDirectory;
+                if(SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows)
+                {
+                    var drive = Path.GetPathRoot(currentPath);
+                    driveList.SelectIndexSilent(drives.FindIndex( d => d == drive ));
+                }
+                UpdatePathText();
+                RefreshFolders();
+            }
+            else
+            {
+                RefreshFolders();
+            }
 
             // Setup events
             confirmButton.OnMouseClick += ConfirmButton_OnMouseClick;
@@ -215,6 +230,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         folderList.AddItem(name);
                     }
                 }
+
+                // Add return path
+                if (currentPath != drives[driveList.SelectedIndex])
+                    folderList.AddItem("..", 0);
 
                 folderScroller.TotalUnits = folderList.Count;
                 folderScroller.DisplayUnits = folderList.RowsDisplayed;
@@ -341,14 +360,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 currentPath = newPath;
                 RefreshFolders();
                 RaisePathChangedEvent();
-
-                // Add return path
-                if (currentPath != drives[driveList.SelectedIndex])
-                    folderList.AddItem("..", 0);
-
-                // Update scroller units
-                folderScroller.TotalUnits = folderList.Count;
-
                 UpdatePathText();
             }
         }
