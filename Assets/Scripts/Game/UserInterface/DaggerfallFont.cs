@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Text;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Utility;
 using TMPro;
 
@@ -265,6 +266,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 Graphics.DrawTexture(targetRect, sdfFontInfo.Value.atlasTexture, glyph.rect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
             }
+
             return GetGlyphWidth(glyph, scale, GlyphSpacing);
         }
 
@@ -640,10 +642,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Replace TMP font asset using a .ttf or .otf font in StreamingAssets/Fonts.
-        /// TODO: Support loading font file from .dfmod.
+        /// Replace TMP font asset using a .ttf or .otf font in StreamingAssets/Fonts or in dfmod asset
         /// </summary>
-        /// <param name="filename">Filename of replacement font including .ttf extension. Font file must be present in StreamingAssets/Fonts to load.</param>
+        /// <param name="filename">Filename of replacement font including .ttf extension. Font file must be present in StreamingAssets/Fonts or in dfmod asset to load.</param>
         /// <param name="source">Source TMP font for initial character table population.</param>
         /// <param name="replacement">Replacement TMP font output.</param>
         /// <returns>True is successfully created replacement TMP font.</returns>
@@ -651,22 +652,48 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             const string ttfExt = ".ttf";
             const string otfExt = ".otf";
+            replacement = null;
+
+            Font otfFontFromMods = null;
+            Font ttfFontFromMods = null;
+
+            // Seek font replacement file from mods
+            if (ModManager.Instance != null)
+            {
+                if (!ModManager.Instance.TryGetAsset(filename + otfExt, false, out otfFontFromMods))
+                {
+                    ModManager.Instance.TryGetAsset(filename + ttfExt, false, out ttfFontFromMods);
+                }
+            }
+
+            if (otfFontFromMods != null)
+            {
+                replacement = TMP_FontAsset.CreateFontAsset(otfFontFromMods, 45, 6, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 4096, 4096, AtlasPopulationMode.Dynamic);
+            }
+            else if (ttfFontFromMods != null)
+            {
+                replacement = TMP_FontAsset.CreateFontAsset(ttfFontFromMods, 45, 6, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 4096, 4096, AtlasPopulationMode.Dynamic);
+            }
 
             // Compose path to font file
-            string path = Path.Combine(Application.streamingAssetsPath, "Fonts", filename);
+            var path = Path.Combine(Application.streamingAssetsPath, "Fonts", filename);
 
-            // Check file exists
-            replacement = null;
-            if (File.Exists(path + ttfExt))
-                path += ttfExt;
-            else if (File.Exists(path + otfExt))
-                path += otfExt;
-            else
-                return false;
+            if (replacement == null)
+            {
+                // Check file exists
+                replacement = null;
+                if (File.Exists(path + ttfExt))
+                    path += ttfExt;
+                else if (File.Exists(path + otfExt))
+                    path += otfExt;
+                else
+                    return false;
 
-            // Create replacement TMP font asset from path
-            Font font = new Font(path);
-            replacement = TMP_FontAsset.CreateFontAsset(font, 45, 6, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 4096, 4096, AtlasPopulationMode.Dynamic);
+                // Create replacement TMP font asset from path
+                Font replacementFont = new Font(path);
+                replacement = TMP_FontAsset.CreateFontAsset(replacementFont, 45, 6, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 4096, 4096, AtlasPopulationMode.Dynamic);
+            }
+
             if (replacement == null)
                 return false;
 
