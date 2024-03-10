@@ -52,7 +52,9 @@ namespace DaggerfallWorkshop
         // 2 : ( 2 * 2 + 1 ) * ( 2 * 2 + 1 ) = 25 tiles
         // 3 : ( 2 * 3 + 1 ) * ( 2 * 3 + 1 ) = 49 tiles
         // 4 : ( 2 * 4 + 1 ) * ( 2 * 4 + 1 ) = 81 tiles
-        [Range(1, 4)]
+        // 5 : ( 2 * 5 + 1 ) * ( 2 * 5 + 1 ) = 121 tiles
+        // 6 : ( 2 * 6 + 1 ) * ( 2 * 6 + 1 ) = 169 tiles
+        [Range(1, 6)]
         public int TerrainDistance = 3;
 
         // This controls central map pixel for streaming world
