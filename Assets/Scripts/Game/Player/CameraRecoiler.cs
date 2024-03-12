@@ -61,6 +61,13 @@ namespace DaggerfallWorkshop.Game
             DaggerfallCourtWindow.OnCourtScreen += DaggerfallCourtWindow_OnCourtScreen;
         }
 
+        void OnDestroy()
+        {
+            StreamingWorld.OnInitWorld -= StreamingWorld_OnInitWorld;
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            DaggerfallCourtWindow.OnCourtScreen -= DaggerfallCourtWindow_OnCourtScreen;
+        }
+
         void Update()
         {
             if (GetRecoilSetting(DaggerfallUnity.Settings.CameraRecoilStrength) == CameraRecoilSetting.Off ||

@@ -365,6 +365,11 @@ namespace DaggerfallWorkshop.Game
             SetupSingleton();
         }
 
+        void OnDestroy()
+        {
+            Questing.Actions.GivePc.OnOfferPending -= GivePc_OnOfferPending;
+        }
+
         void Start()
         {
             // Post start message

@@ -121,6 +121,11 @@ namespace DaggerfallWorkshop.Game.Utility
             SaveLoadManager.OnLoad += SaveLoadManager_OnLoad;
         }
 
+        void OnDestroy()
+        {
+            SaveLoadManager.OnLoad -= SaveLoadManager_OnLoad;
+        }
+
         void Update()
         {
             // Restart game using method provided

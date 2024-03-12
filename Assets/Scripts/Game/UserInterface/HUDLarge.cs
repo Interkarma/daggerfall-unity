@@ -135,6 +135,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Utility.StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            
+            Serialization.SaveLoadManager.OnLoad -= SaveLoadManager_OnLoad;
+            Utility.StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+        }
+
         void LoadAssets()
         {
             // Main large HUD background

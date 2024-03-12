@@ -119,6 +119,11 @@ namespace DaggerfallWorkshop.Game
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
         }
 
+        void OnDestroy()
+        {
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+        }
+
         /// <summary>
         /// Determines what Height-changing action should be taken based on player's input and PlayerMotor.IsRiding
         /// </summary>

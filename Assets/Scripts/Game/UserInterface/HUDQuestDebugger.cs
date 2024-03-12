@@ -129,6 +129,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             QuestMachine.OnTick += QuestMachine_OnTick;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            QuestMachine.OnQuestStarted -= QuestMachine_OnQuestStarted;
+            QuestMachine.OnQuestEnded -= QuestMachine_OnQuestEnded;
+            SaveLoadManager.OnLoad -= SaveLoadManager_OnLoad;
+
+            QuestMachine.OnTick -= QuestMachine_OnTick;
+        }
+
         public override void Update()
         {
             base.Update();

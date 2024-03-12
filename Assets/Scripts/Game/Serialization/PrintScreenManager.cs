@@ -60,6 +60,11 @@ namespace DaggerfallWorkshop.Game.Serialization
             GetPrintScreenKeyBind();
         }
 
+        void OnDestroy()
+        {
+            DaggerfallWorkshop.Game.InputManager.OnSavedKeyBinds -= GetPrintScreenKeyBind;
+        }
+
         void Update ()
         {
             if (DaggerfallUI.Instance.HotkeySequenceProcessed == HotkeySequence.HotkeySequenceProcessStatus.NotFound)

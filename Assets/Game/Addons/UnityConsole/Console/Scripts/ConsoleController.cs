@@ -34,6 +34,11 @@ namespace Wenzil.Console
             DaggerfallWorkshop.Game.InputManager.OnSavedKeyBinds += GetConsoleKeyBind;
         }
 
+        void OnDestroy()
+        {
+            DaggerfallWorkshop.Game.InputManager.OnSavedKeyBinds -= GetConsoleKeyBind;
+        }
+
         void OnEnable()
         {
             DaggerfallWorkshop.Game.InputManager.OnLoadedKeyBinds += GetConsoleKeyBind;

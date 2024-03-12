@@ -179,6 +179,11 @@ namespace DaggerfallWorkshop.Game
             PlayerEnterExit.OnTransitionDungeonInterior += PlayerEnterExit_OnTransitionDungeonInterior;
         }
 
+        void OnDestroy()
+        {
+            PlayerEnterExit.OnTransitionDungeonInterior -= PlayerEnterExit_OnTransitionDungeonInterior;
+        }
+
         void Update()
         {
             UpdateSong(false);

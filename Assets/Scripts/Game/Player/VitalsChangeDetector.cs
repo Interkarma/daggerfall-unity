@@ -61,6 +61,14 @@ namespace DaggerfallWorkshop.Game
             DaggerfallHUD.OnLargeHUDToggle += DaggerfallHUD_OnLargeHUDToggle;
         }
 
+        void OnDestroy()
+        {
+            StreamingWorld.OnInitWorld -= StreamingWorld_OnInitWorld;
+            SaveLoadManager.OnLoad -= SaveLoadManager_OnLoad;
+            DaggerfallCourtWindow.OnCourtScreen -= DaggerfallCourtWindow_OnCourtScreen;
+            DaggerfallHUD.OnLargeHUDToggle -= DaggerfallHUD_OnLargeHUDToggle;
+        }
+
         void Update()
         {
             if (GameManager.IsGamePaused)

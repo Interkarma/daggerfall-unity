@@ -75,6 +75,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
             LoadAssets();
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+        }
+
         public override void Update()
         {
             if (Enabled)

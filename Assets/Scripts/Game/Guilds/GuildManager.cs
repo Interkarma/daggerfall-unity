@@ -50,6 +50,11 @@ namespace DaggerfallWorkshop.Game.Guilds
             GuildConsoleCommands.RegisterCommands();
         }
 
+        ~GuildManager()
+        {
+            QuestMachine.OnQuestEnded -= QuestMachine_OnQuestEnded;
+        }
+
         public void QuestMachine_OnQuestEnded(Quest quest)
         {
             if (quest.QuestSuccess)

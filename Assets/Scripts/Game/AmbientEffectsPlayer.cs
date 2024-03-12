@@ -93,6 +93,15 @@ namespace DaggerfallWorkshop.Game
             DaggerfallVidPlayerWindow.OnVideoEnd += AmbientEffectsPlayer_OnVideoEnd;
         }
 
+        void OnDestroy()
+        {
+            PlayerGPS.OnEnterLocationRect -= PlayerGPS_OnEnterLocationRect;
+            PlayerGPS.OnExitLocationRect -= PlayerGPS_OnExitLocationRect;
+
+            DaggerfallVidPlayerWindow.OnVideoStart -= AmbientEffectsPlayer_OnVideoStart;
+            DaggerfallVidPlayerWindow.OnVideoEnd -= AmbientEffectsPlayer_OnVideoEnd;
+        }
+
         void OnDisable()
         {
             rainLoop = null;

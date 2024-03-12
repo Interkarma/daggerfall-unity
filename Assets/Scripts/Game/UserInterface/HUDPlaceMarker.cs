@@ -46,6 +46,18 @@ namespace DaggerfallWorkshop.Game.UserInterface
             StreamingWorld.OnFloatingOriginChange += StreamingWorld_OnFloatingOriginChange;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            QuestMachine.OnQuestStarted -= QuestMachine_OnQuestStarted;
+            QuestMachine.OnQuestEnded -= QuestMachine_OnQuestEnded;
+            PlayerGPS.OnEnterLocationRect -= PlayerGPS_OnEnterLocationRect;
+            PlayerGPS.OnExitLocationRect -= PlayerGPS_OnExitLocationRect;
+            PlayerGPS.OnMapPixelChanged -= PlayerGPS_OnMapPixelChanged;
+            StreamingWorld.OnFloatingOriginChange -= StreamingWorld_OnFloatingOriginChange;
+        }
+
         public override void Update()
         {
             base.Update();

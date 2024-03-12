@@ -305,6 +305,17 @@ namespace DaggerfallWorkshop
 
         #endregion
 
+        #region Destructors
+
+        ~PlayerGPS()
+        {
+            StartGameBehaviour.OnNewGame -= StartGameBehaviour_OnNewGame;
+            SaveLoadManager.OnStartLoad -= SaveLoadManager_OnStartLoad;
+            DaggerfallTravelPopUp.OnPostFastTravel -= DaggerfallTravelPopUp_OnPostFastTravel;
+        }
+
+        #endregion
+
         #region Unity
 
         void Awake()
