@@ -81,7 +81,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 {
                     // Store values
                     int p1 = Place.CustomParseInt(placesTable.GetValue("p1", name));
-                    if(p1 != 0 && p1 != 1)
+                    if(p1 != 0)
                     {
                         throw new Exception("PcAt: This trigger condition can only be used with building types (p1=0) in Quests-Places table.");
                     }
