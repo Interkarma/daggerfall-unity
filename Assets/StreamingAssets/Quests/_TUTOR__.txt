@@ -244,7 +244,7 @@ Message:  1050
 <ce>        characters can join the Fighters Guild and a knightly order.
 <ce>        You can also pick a temple to join.
 <ce>        
-<ce>        Tou can only be a member of one temple and one knightly order. 
+<ce>        You can only be a member of one temple and one knightly order. 
 <ce>                                    
 <ce>         There are other hidden guilds in the game as well.
 <ce>           
