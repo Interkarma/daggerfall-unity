@@ -57,7 +57,7 @@ Message:  1013
 <ce>                                    
 <ce>          Now press F6 to open your inventory. Equip any armor
 <ce>           available to you, and the best weapon you have.
-<ce>           "Best weapon" refers to a weapon that you have skill in,
+<ce>           "Best weapon" refers to a weapon that your character is skilled in,
 <ce>           and/or is a very strong material (ie: Elven, Dwarven).
 <ce>           Without those two advantages, you will almost never hit enemies.
 <ce>           
@@ -79,9 +79,6 @@ Message:  1020
 <ce>          Press R to rest when you need to regain health, stamina,
 <ce>        or magicka. Those indicators are at the bottom-left of the screen.
 <ce>          You don't need to rest right now, but remember it for later.
-<ce>          
-<ce>          Do not attempt to rest inside towns.
-<ce>        Use loitering in towns instead.
 <ce>           
 <ce>           (Next message in 5 seconds. Press No to end tutorial.)
 
@@ -122,7 +119,7 @@ Message:  1031
 <ce>           Clicking on the treasure pile will open the inventory.
 <ce>           You will see the treasure pile's contents on the right side
 <ce>           of the inventory screen. With the "remove" option highlighted,
-<ce>           click on the items to obtain them for yourself.
+<ce>           click on the items to grab them for yourself.
 <ce>           
 <ce>           You can also loot enemy corpses after killing them,
 <ce>            but the rat will have no treasure.
@@ -135,8 +132,8 @@ Message:  1035
 <ce>         Continue through the dungeon. You can choose to fight
 <ce>        or escape from the enemies.
 <ce>                                    
-<ce>         Some monsters require certain material of weapons to hit.
-<ce>         You will soon meet an imp monster that can't be hurt with
+<ce>         You will need weapons made of stronger materials to hit
+<ce>         some monsters. The upcoming imp monster can't be hurt with
 <ce>         iron weapons. You need steel or stronger to hurt it.
 <ce>         Your fists will also work, but you need
 <ce>         a high Hand-to-Hand skill before it will succeed.
@@ -182,7 +179,7 @@ Message:  1042
 <ce>         
 <ce>           For now, keep the travel settings on CAUTIOUSLY and INNS.
 <ce>               These settings will ensure you arrive in the morning.
-<ce>             You do not want to arrive at Daggerfall City at night.
+<ce>             You do not want to arrive in Daggerfall City at night.
 <ce>           
 <ce>           (Next message when you travel to a city. Press No to end tutorial.)
 
@@ -207,9 +204,9 @@ Message:  1047
 <ce>  
 <ce>    The conversation window also has options for
 <ce>        finding people and asking for news,
-<ce>    including for local quests as "Work." Look atthe top left
+<ce>    including for local quests as "Work." Look at the top left
 <ce>        corner of the conversation window when it's open to see
-<ce>        the different branches you can ask about.
+<ce>        the different topics you can ask about.
 <ce>           
 <ce>           (Next message in 15 seconds. Press No to end tutorial.)
 
@@ -224,7 +221,7 @@ Message:  1048
 <ce>        to them, or press F3 to change to Info mode, and click
 <ce>        on the buildings to learn what they are from a distance.
 <ce>       
-<ce>       General stores open at 6 AM. Pawn shops and armor smiths
+<ce>       General stores open at 6 AM. Pawn shops and armorsmiths
 <ce>        open later. Check the current time in-game (usually the 'i' key).
 <ce>        If the stores are still closed, press the Rest button
 <ce>        to loiter (not rest) until they open.
@@ -244,10 +241,10 @@ Message:  1050
 <ce>        to improve your reputation with them.
 <ce>                                    
 <ce>        All spellcasters should join the Mages Guild. Fighter type
-<ce>        characters can join the fighter's guild and a knightly order.
-<ce>        
+<ce>        characters can join the Fighters Guild and a knightly order.
 <ce>        You can also pick a temple to join.
-<ce>        However, you can only be a member of one temple. 
+<ce>        
+<ce>        Tou can only be a member of one temple and one knightly order. 
 <ce>                                    
 <ce>         There are other hidden guilds in the game as well.
 <ce>           
