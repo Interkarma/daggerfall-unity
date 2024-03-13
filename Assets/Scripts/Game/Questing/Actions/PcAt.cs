@@ -9,13 +9,9 @@
 // Notes:
 //
 
-using UnityEngine;
-using System.Collections;
 using System.Text.RegularExpressions;
 using System;
-using DaggerfallConnect;
 using FullSerializer;
-
 using DaggerfallWorkshop.Utility;
 
 namespace DaggerfallWorkshop.Game.Questing.Actions
@@ -30,6 +26,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         int textId;
         bool textShown;
         // Place type parameters
+        int p1;                     // Parameter 1
         int p2;                     // Parameter 2
         int p3;                     // Parameter 3
 
@@ -80,11 +77,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 if (placesTable.HasValue(name))
                 {
                     // Store values
-                    int p1 = Place.CustomParseInt(placesTable.GetValue("p1", name));
-                    if(p1 != 0)
+                    var p_1 = Place.CustomParseInt(placesTable.GetValue("p1", name));
+                    if(p_1 != 0 && p_1 != 1)
                     {
-                        throw new Exception("PcAt: This trigger condition can only be used with building types (p1=0) in Quests-Places table.");
+                        throw new Exception("PcAt: This trigger condition can only be used with building types (p1=0) and dungeon types (p1=1) in Quests-Places table.");
                     }
+                    pcat.p1 = p_1;
                     pcat.p2 = Place.CustomParseInt(placesTable.GetValue("p2", name));
                     pcat.p3 = Place.CustomParseInt(placesTable.GetValue("p3", name));
                 }
@@ -119,7 +117,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             }
             else
             {
-                result = Place.IsPlayerAtBuildingType(p2, p3);
+                result = p1 == 0 ? Place.IsPlayerAtBuildingType(p2, p3) : Place.IsPlayerAtDungeonType(p2);
             }
 
             // Handle positive check
@@ -145,25 +143,27 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         #region Serialization
 
-        [fsObject("v1")]
-        public struct SaveData_v1
+        [fsObject("v2")]
+        public struct SaveData_v2
         {
             public Symbol placeSymbol;
             public Symbol taskSymbol;
             public int textId;
             public bool textShown;
             // Place type parameters
+            public int p1;
             public int p2;
             public int p3;
         }
 
         public override object GetSaveData()
         {
-            SaveData_v1 data = new SaveData_v1();
+            SaveData_v2 data = new SaveData_v2();
             data.placeSymbol = placeSymbol;
             data.taskSymbol = taskSymbol;
             data.textId = textId;
             data.textShown = textShown;
+            data.p1 = p1;
             data.p2 = p2;
             data.p3 = p3;
 
@@ -175,11 +175,12 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (dataIn == null)
                 return;
 
-            SaveData_v1 data = (SaveData_v1)dataIn;
+            SaveData_v2 data = (SaveData_v2)dataIn;
             placeSymbol = data.placeSymbol;
             taskSymbol = data.taskSymbol;
             textId = data.textId;
             textShown = data.textShown;
+            p1 = data.p1;
             p2 = data.p2;
             p3 = data.p3;
         }
