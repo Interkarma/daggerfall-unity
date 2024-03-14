@@ -117,7 +117,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             }
             else
             {
-                result = p1 == 0 ? Place.IsPlayerAtBuildingType(p2, p3) : Place.IsPlayerAtDungeonType(p2);
+                result = p1 == 1 ? Place.IsPlayerAtDungeonType(p2) : Place.IsPlayerAtBuildingType(p2, p3);
             }
 
             // Handle positive check
@@ -143,8 +143,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         #region Serialization
 
-        [fsObject("v2")]
-        public struct SaveData_v2
+        [fsObject("v1")]
+        public struct SaveData_v1
         {
             public Symbol placeSymbol;
             public Symbol taskSymbol;
@@ -158,7 +158,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
         public override object GetSaveData()
         {
-            SaveData_v2 data = new SaveData_v2();
+            SaveData_v1 data = new SaveData_v1();
             data.placeSymbol = placeSymbol;
             data.taskSymbol = taskSymbol;
             data.textId = textId;
@@ -175,7 +175,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             if (dataIn == null)
                 return;
 
-            SaveData_v2 data = (SaveData_v2)dataIn;
+            SaveData_v1 data = (SaveData_v1)dataIn;
             placeSymbol = data.placeSymbol;
             taskSymbol = data.taskSymbol;
             textId = data.textId;
