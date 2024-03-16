@@ -35,18 +35,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Rects
 
-        Rect costPanelRect = new Rect(49, 13, 111, 9);
+        protected Rect costPanelRect = new Rect(49, 13, 111, 9);
 
-        Rect actionButtonsPanelRect = new Rect(222, 10, 39, 190);
-        new Rect wagonButtonRect = new Rect(4, 4, 31, 14);
-        new Rect infoButtonRect = new Rect(4, 26, 31, 14);
-        Rect selectButtonRect = new Rect(4, 48, 31, 14);
-        Rect stealButtonRect = new Rect(4, 102, 31, 14);
-        Rect modeActionButtonRect = new Rect(4, 124, 31, 14);
-        Rect clearButtonRect = new Rect(4, 146, 31, 14);
+        protected Rect actionButtonsPanelRect = new Rect(222, 10, 39, 190);
+        protected new Rect wagonButtonRect = new Rect(4, 4, 31, 14);
+        protected new Rect infoButtonRect = new Rect(4, 26, 31, 14);
+        protected Rect selectButtonRect = new Rect(4, 48, 31, 14);
+        protected Rect stealButtonRect = new Rect(4, 102, 31, 14);
+        protected Rect modeActionButtonRect = new Rect(4, 124, 31, 14);
+        protected Rect clearButtonRect = new Rect(4, 146, 31, 14);
 
-        new Rect itemInfoPanelRect = new Rect(223, 87, 37, 32);
-        Rect itemBuyInfoPanelRect = new Rect(223, 76, 37, 32);
+        protected new Rect itemInfoPanelRect = new Rect(223, 87, 37, 32);
+        protected Rect itemBuyInfoPanelRect = new Rect(223, 76, 37, 32);
 
         #endregion
 
