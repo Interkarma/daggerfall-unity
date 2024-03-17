@@ -513,6 +513,27 @@ namespace DaggerfallWorkshop.Game.Player
 
         #endregion
 
+        #region Ruler type
+
+        /// <summary>
+        /// Set ruler value. Allows changes of rulers to have appropriate title.
+        /// See MacroHelper.GetRulerTitle() for value mapping.
+        /// </summary>
+        public bool SetRulerType(int factionID, int ruler)
+        {
+            if (factionDict.ContainsKey(factionID))
+            {
+                FactionFile.FactionData factionData = factionDict[factionID];
+                factionData.ruler = ruler;
+                factionDict[factionID] = factionData;
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion
+
         #region Allies and Enemies
 
         /// <summary>
