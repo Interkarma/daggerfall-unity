@@ -18,14 +18,11 @@ MonoBehaviour:
   m_GUID: 807d8709a6932f14cb6475413bf3e04a
   m_SerializeEntries:
   - m_GUID: 6198c0b12813e4f43b6063ad38ec4a20
-    m_Address: English (en)
+    m_Address: English
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale
-    m_mainAssetType: UnityEngine.Localization.Locale, Unity.Localization, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: d18e8e9fddb22f341a7e4df0a26a67e2, type: 2}
   m_SchemaSet:
