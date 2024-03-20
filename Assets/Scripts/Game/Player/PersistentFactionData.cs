@@ -138,13 +138,21 @@ namespace DaggerfallWorkshop.Game.Player
         /// </summary>
         public void AddCustomFactions()
         {
+            bool relink = false;
             foreach (int id in FactionFile.CustomFactions.Keys)
             {
                 if (!factionDict.ContainsKey(id))
                 {
-                    factionDict.Add(id, FactionFile.CustomFactions[id]);
-                    factionNameToIDDict.Add(FactionFile.CustomFactions[id].name, id);
+                    FactionFile.FactionData factionData = FactionFile.CustomFactions[id];
+                    factionDict.Add(id, factionData);
+                    factionNameToIDDict.Add(factionData.name, id);
+                    if (factionData.parent > 0)
+                        relink = true;
                 }
+            }
+            // Relink faction children if any new custom factions with parents were added
+            if (relink) {
+                FactionFile.RelinkChildren(factionDict);
             }
         }
 
