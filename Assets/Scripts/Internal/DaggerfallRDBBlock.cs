@@ -39,6 +39,11 @@ namespace DaggerfallWorkshop
             get { return enterMarkers; }
         }
 
+        private void Awake()
+        {
+            ActiveGameObjectDatabase.RegisterRDB(gameObject);
+        }
+
         public void SetMarkers(GameObject[] startMarkers, GameObject[] enterMarkers)
         {
             this.startMarkers = startMarkers;

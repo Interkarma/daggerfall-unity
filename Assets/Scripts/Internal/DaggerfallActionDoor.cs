@@ -111,6 +111,9 @@ namespace DaggerfallWorkshop
                 boxCollider = GetComponent<BoxCollider>();
             if ((boxCollider?.enabled != true) && (meshCollider == null))
                 meshCollider = GetComponent<MeshCollider>();
+
+            // Register object as Door
+            ActiveGameObjectDatabase.RegisterActionDoor(gameObject);
         }
 
         void Start()

@@ -125,6 +125,14 @@ namespace DaggerfallWorkshop.Game
 
         #endregion
 
+        #region Unity
+        private void Awake()
+        {
+            // Register this object as a Civilian Mobile NPC object
+            ActiveGameObjectDatabase.RegisterCivilianMobile(gameObject);
+        }
+        #endregion
+
         #region Public Methods
 
         /// <summary>

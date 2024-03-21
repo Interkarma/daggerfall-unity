@@ -45,6 +45,9 @@ namespace DaggerfallWorkshop
         private void Awake()
         {
             MobileUnit = FindMobileUnit();
+
+            // Register GameObject as Enemy object
+            ActiveGameObjectDatabase.RegisterEnemy(gameObject);
         }
 
         private void Start()

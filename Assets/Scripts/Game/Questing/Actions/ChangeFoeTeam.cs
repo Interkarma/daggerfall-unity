@@ -74,7 +74,7 @@ namespace DaggerfallWorkshop.Game.Questing
             if (foe == null)
                 return;
 
-            foreach (DaggerfallEnemy enemy in UnityEngine.Object.FindObjectsOfType<DaggerfallEnemy>())
+            foreach (DaggerfallEnemy enemy in ActiveGameObjectDatabase.GetActiveEnemyEntities())
             {
                 if (enemy.QuestSpawn)
                 {

@@ -44,6 +44,12 @@ namespace DaggerfallWorkshop.Game.Utility
         int pendingFoesSpawned = 0;
         bool spawnInProgress = false;
 
+        void Awake()
+        {
+            // Register as Foe Spawner object
+            ActiveGameObjectDatabase.RegisterFoeSpawner(gameObject);
+        }
+
         void Update()
         {
             // Create new foe list when changed in editor

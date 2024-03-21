@@ -59,6 +59,12 @@ namespace DaggerfallWorkshop
             get { return items; }
         }
 
+        public void Awake()
+        {
+            // Register as Loot object
+            ActiveGameObjectDatabase.RegisterLoot(gameObject);
+        }
+
         public static int CreateStockedDate(DaggerfallDateTime date)
         {
             return (date.Year * 1000) + date.DayOfYear;

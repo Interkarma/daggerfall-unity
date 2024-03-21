@@ -481,8 +481,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Dynamically relink individual NPC and associated QuestResourceBehaviour (if any) in current scene
             if (person.IsIndividualNPC)
             {
-                QuestResourceBehaviour[] behaviours = GameObject.FindObjectsOfType<QuestResourceBehaviour>();
-                foreach (var questResourceBehaviour in behaviours)
+                foreach (QuestResourceBehaviour questResourceBehaviour in ActiveGameObjectDatabase.GetActiveStaticNPCQuestResourceBehaviours())
                 {
                     // Get StaticNPC if present
                     StaticNPC npc = questResourceBehaviour.GetComponent<StaticNPC>();
