@@ -21,7 +21,9 @@ Content:
 
 
 
-[/center]    The region of the Iliac Bay has a rich history, and not
+[/center]
+
+    The region of the Iliac Bay has a rich history, and not
 surprisingly, a number of holidays unique to it because of
 this history. The Breton and the Redguard cultures have many
 similarities, but just as many distinctions. An analysis of
@@ -53,7 +55,7 @@ of the Tiger in the Bantha on the 14th of Last Seed was
 probably once a religious holiday to a Tiger God, instead of
 a thanksgiving.
 
-     Other old Redguard holidays have either been acknowledged
+    Other old Redguard holidays have either been acknowledged
 as part of the old culture or adjusted to fit with the
 climate of Hammerfell. The Serpent's Dance, for example, of
 Satakalaam is patently an old festival honoring a Serpent
@@ -65,12 +67,12 @@ the same month, are both New Years festivals. Most likely,
 they have been moved from their original dates to correspond
 with the notion of the year defined in Tamriel.
 
-     The Bretons have been in Tamriel since before recorded
+    The Bretons have been in Tamriel since before recorded
 history. Their holidays have remained almost unchanged since
 primitive times, though new holidays have been created to
 replace those which have lost popularity.
 
-     The oldest holidays still observed in High Rock must
+    The oldest holidays still observed in High Rock must
 include Waking Day, on the 18th of Morning Star, when the
 people of the Yeorth Burrowland wake the spirits of nature
 after the winter, very nearly in the tradition of their more
@@ -85,7 +87,7 @@ of the moons, Secunda, is remembered in the Moon Festival in
 Glenumbra Moors on the 8th of Suns Dusk, just as the nights
 begin to grow longer.
 
-     The more recently created holidays of High Rock are those
+    The more recently created holidays of High Rock are those
 like Tibedetha, "Tibers Day," celebrated every 24th of Mid
 Year in honor of Alcaire's most famous, son, Tiber Septim.
 Likewise, Othroktide on the 5th of Suns Dawn is held in honor of

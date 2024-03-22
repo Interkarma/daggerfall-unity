@@ -23,8 +23,8 @@ Content:
 
 [/center]
 
- "You dance on the edge of a volcano, child," Drelliane scolded, as Barenziah
-admired the emerald ring her lover had given her to
+ "You dance on the edge of a volcano, child," Drelliane scolded,
+as Barenziah admired the emerald ring her lover had given her to
 celebrate their one month anniversary.
 
  "How so? We make one another happy. We harm no one. Symmachus
@@ -53,7 +53,8 @@ them as enemies. Tiber Septim has not long to live. I mean,"
 Drelliane amended quickly, at Barenziah's scowl, "Humans are
 all short-lived. Temporary, as we elves say. They come and
 go as the seasons do, but the families of the powerful live
-on for a time. You must be a family friend if you would see lasting profit from your relationship. Ah, how can I
+on for a time. You must be a family friend if you would see
+lasting profit from your relationship. Ah, how can I
 make you truly see, you who are so young and human-bred as
 well! If you take care you and Mournhold are like to live to
 see the fall of Septim's dynasty, if indeed he has founded

@@ -23,7 +23,9 @@ Content:
 
 [/center]
 
-[/center]     Mysticism is the school of magic least understood by the
+[/center]
+
+     Mysticism is the school of magic least understood by the
 magical community, most difficult to explain to novices
 mages. The spells effects commonly ascribed to the School
 of Mysticism are as wildly disparate as Soul Trap -- the

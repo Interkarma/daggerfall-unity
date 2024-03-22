@@ -83,7 +83,7 @@ contract different from the one to which he had agreed. The
 castle of Reich Gradkeep erupted into bloodbath, and the war
 continued.
 
-     The Battle of Cryngaine Field was the tragic ending of the
+    The Battle of Cryngaine Field was the tragic ending of the
 senseless war of attrition. The Cryngaine Field is located
 in between the Yeorth Burrowland and the Ravennian Forest
 where the armies of Sentinel and Daggerfall respectively
@@ -91,7 +91,8 @@ made camp after the massacre at Reich Gradkeep. As the
 battle began, Daggerfall proved that she had some foul
 daedric magical tricks left by blinding the Redguard army
 with a wall of mist. Lysandus did not have the opportunity
-to gloat over his cozenage for long, for the sure arm of a Sentinel archer struck him in the throat even through the
+to gloat over his cozenage for long, for the sure arm of a
+Sentinel archer struck him in the throat even through the
 thick, swirling fog. Lysandus' son, Gothryd, who had spent
 the battle in lugubrious relaxation, was crowned without
 ceremony, and thereupon demanded a duel with King Camaron.
@@ -103,7 +104,7 @@ dirty trick and black magic, managed to backstab our king
 before the duel ever began. Thus, the victor of Cryngaine
 Field, and the War of Betony, was Daggerfall.
 
-     Daggerfall's wickedness continued even after her
+    Daggerfall's wickedness continued even after her
 inglorious victory. While the widow queen of Sentinel, Her
 Majesty Akorithi, mourned and tried to mend her shattered
 lands, Gothryd demanded the Princess of Sentinel as a

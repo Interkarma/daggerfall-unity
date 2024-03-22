@@ -23,14 +23,24 @@ Content:
 
 [/center] Dramatis Personae
 
- Prologue The Adventurer, A Dark Elf Rascal Komon, A Priest
-of Akatosh Lheban, Another Priest of Akatosh Epilogue Stete, A
-Priest of Julianos Raic, Another Priest of Julianos Shub, A
-Mage Shub, A Different Mage of the Same Name Nephron, A
-Somewhat Sleazy Merchant 5 Armorers Ortho Crunn, Husband of
-Millie A Lusty Contessa Millie, Innkeep and Philosopher
-Gurnsey, Bovine Wench Assorted Wenches and Cads of the
-Taverns Soldiers Dwarves Giants
+ Prologue
+ The Adventurer, A Dark Elf Rascal
+ Komon, A Priest of Akatosh
+ Lheban, Another Priest of Akatosh
+ Epilogue Stete, A Priest of Julianos
+ Raic, Another Priest of Julianos
+ Shub, A Mage
+ Shub, A Different Mage of the Same Name
+ Nephron, A Somewhat Sleazy Merchant
+ 5 Armorers
+ Ortho Crunn, Husband of Millie
+ A Lusty Contessa
+ Millie, Innkeep and Philosopher
+ Gurnsey, Bovine Wench
+ Assorted Wenches and Cads of the Taverns
+ Soldiers
+ Dwarves
+ Giants
 
 
 
@@ -38,8 +48,8 @@ Taverns Soldiers Dwarves Giants
 
  Scene 1: In The Adventurer's suite at the Dead Daedra Inn.
 
- Enter Prologue, the Adventurer, and Ortho. Ortho climbs
-into bed.
+ (Enter Prologue, the Adventurer, and Ortho.) (Ortho climbs
+into bed.)
 
        Prologue: Thank you for allowing us the time to change
 the meager set, while our bard sang that old favorite, "Hail
@@ -76,9 +86,9 @@ from Ortho)
  (The Adventuer steps back, tripping over his trousers
 around his ankles ...)
 
-       Contessa So sorry to surprise you, but I thought that we
+       Contessa: So sorry to surprise you, but I thought that we
 might find something in common ... Oh! You poor man, you
-have a wound!  Here, let me fix that bandage ... it looks
+have a wound! Here, let me fix that bandage ... it looks
 very fresh.
 
  (Fixing bandage, properly this time)
@@ -92,7 +102,7 @@ asking?
        Adventurer: No, not at all. I was ... in a fight,
 earlier. These three crazy people jumped me.
 
-       Contessa: Really?  This cloth looks like part of a Mage's
+       Contessa: Really? This cloth looks like part of a Mage's
 robe.
 
        Adventurer: Well, yes, two of them were Mages.
@@ -128,11 +138,13 @@ time. Maybe my luck has turned.
 right, in fact...
 
        Adventurer: Er...well, Ave - tell me about ... er ...
-yourself.           Contessa: If you want - just for a bit - 
+yourself.
+
+       Contessa: If you want - just for a bit - 
 
        Adventurer: Here, have some wine ...
 
- Enter Prologue
+       (Enter Prologue)
 
        Prologue: Here our worthy playwrite's speech has been
 heavily edited by the Guild of Playwrites, Actors, and
@@ -194,12 +206,12 @@ Floral Theory, so I come down here, do a little ... er ...
 business. I keep all my relations supplied with their
 favourite vices -- so I can blackmail the whole rotten lot.
 
-       Adventurer: But is'nt it dangerous, down here? Did I not
+       Adventurer: But isn't it dangerous, down here? Did I not
 hear that some young Contessa got killed, recently?
 
        Contessa: That little twit was my cousin, and as far as
-I'm concerned, she got what she deserved. She thought  she could
-just borrow a maids dress, muss up her hair, and pass for s
+I'm concerned, she got what she deserved. She thought she could
+just borrow a maids dress, muss up her hair, and pass for a
 commoner. She was spotted the first minute she left the
 Palace gates. Now, I use illusion, craft, guile -- and I
 carry weaponry. By the way, that was a neat scheme you and
@@ -213,8 +225,9 @@ weapon, I mean ...
 
        Adventurer: Oh my, those are nice ... knives...
 
-       Contessa: And there're more ...             Adventurer: Oh yes
-...
+       Contessa: And there're more ...
+
+       Adventurer: Oh yes...
 
        Contessa: But we don't need these silly nasty weapons
 now, do we?
@@ -325,12 +338,12 @@ back and enjoy the show.
 backs of the carts. And there are strange furtive movements
 unnoticed by all, on the high ridges around. When next we see
 our players, they are at Minnie's Inn, home of Minnie and
-Crunn, the philosopher- innkeeps. Imagine, if you will, the
+Crunn, the philosopher-innkeeps. Imagine, if you will, the
 rather dusty dining room of Minnie's Inn.
 
  (Enter Minnie, Crunn, and Gurnsey) (Exit Prologue) (Gurnsey
 goes to Orthos' table with more ale for him. She sits down
-suddenly. She stares into Orthos'  eyes, Ortho stares into
+suddenly. She stares into Orthos' eyes, Ortho stares into
 hers. Mouths drop open.)
 
        Minnie: ... er ... Crunn ...
@@ -389,9 +402,10 @@ long speech, Ortho!
 have been up here before.
 
        Contessa: Oh yes. I often come up here to get away from
-the Palace and talk dwarves with Minnie and Crunn.         
-Adventurer: You mean that these two ancient ... er, Scholar-I
-nnKeeps can actually talk and about dwarves?
+the Palace and talk dwarves with Minnie and Crunn.
+
+       Adventurer: You mean that these two ancient ... er, Scholar-
+InnKeeps can actually talk and about dwarves?
 
  (All but Adventurer, Contessa, Minnie, and Crunn fall
 asleep in their meat pies.)
@@ -402,32 +416,9 @@ over at our other escorts ...
        Adventurer: By the Lady!
 
        Contessa: Minnie was an Alchemist before she met Crunn,
-and knows a lot of old forgotten Dwarvish potions.        
-Adventurer: But what do we do with the bodies?        
+and knows a lot of old forgotten Dwarvish potions.
 
-       Contessa: Wait ...
-
- (Enter Major)
-
-       Contessa: Adventurer, meet Major Bloodnok, head of my
-own ...private little bodyguard. He's been with me since I
-was a mere girl. Served me very well, haven't you, Major?
-
-       Major: We give our all, milady.
-
-nKeeps can actually talk and about dwarves?
-
- (All but Adventurer, Contessa, Minnie, and Crunn fall
-asleep in their meat pies.)
-
-       Contessa: Oh yes, you must just be very patient. But look
-over at our other escorts ...
-
-       Adventurer: By the Lady!
-
-       Contessa: Minnie was an Alchemist before she met Crunn,
-and knows a lot of old forgotten Dwarvish potions.        
-Adventurer: But what do we do with the bodies?        
+       Adventurer: But what do we do with the bodies?        
 
        Contessa: Wait ...
 
@@ -445,7 +436,9 @@ was a mere girl. Served me very well, haven't you, Major?
 
        Adventurer:       (aside) Other men?
 
- (Enter Other Men in Khajiit suits)         Major: All present
+ (Enter Other Men in Khajiit suits)
+
+       Major: All present
 and accounted for, milady. Had a spot of bother with what
 looked like a party of Merchants following you. But they are
 out of the picture now, down a ravine. Only one thing.
@@ -512,7 +505,8 @@ out again before the weather goes bad.
        Adventurer: Can't your Major and his men, handle the
 carts?
 
-       Contessa: Oh, no. They will cover us from all sides and make certain there are no surprises.
+       Contessa: Oh, no. They will cover us from all sides and
+make certain there are no surprises.
 
        Adventurer: Oh well. All good things end, I guess.
 
@@ -563,11 +557,11 @@ you can maybe help us later. I'll try to talk to them.
        Dwarves       (Together): Jjpoo Kalagloo gashnoo bibloo
 franoo Xxnadoo
 
-       Contessa Jnik? Balpo?
+       Contessa: Jnik? Balpo?
 
-       Dwarves       (Together) Gabloo! Wazzikoo! Eppapupu!
+       Dwarves       (Together): Gabloo! Wazzikoo! Eppapupu!
 
-       Contessa Glooky, glooky, glooky.
+       Contessa: Glooky, glooky, glooky.
 
        Adventurer: Ave, whats going on?
 
@@ -590,14 +584,14 @@ alone.
 
        Adventurer: Ah, flog my log.
 
-       Contessa: Well,I told them about all the ale down at
+       Contessa: Well, I told them about all the ale down at
 Minnie's Inn. And about the 2 redheads there. They are going
 there, leaving right now. We may take one empty cart, 2
 horses. And they will keep us guarded all the way there. They
 also said that they will -- I don't know how -- destroy all the
 Fool's Ebony here. It shouldn't be on the surface like this,
-they say.       (aside) Dwarvish is a remarkably compact
-language.
+they say.
+       (aside) Dwarvish is a remarkably compact language.
 
        Adventurer: By the great roaring buttocks of
 Sheogorath! All these blisters and backache for nothing! Ah
@@ -605,7 +599,7 @@ well. At least we are still alive. For now ...
 
  (Exeunt) (Enter Prologue)
 
- Prologue: Farnoo Lickety Kanoo Gadfloo. Oh, I'm terribly
+       Prologue: Farnoo Lickety Kanoo Gadfloo. Oh, I'm terribly
 sorry. As Scene 4 begins, we are back at Minnie's Inn, where
 the dwarves appear to be on holiday.
 
@@ -630,14 +624,14 @@ magical items. And when the ale runs out ...
 Dwarves fashion the ebony, so I guess they can suppress it or
 something. Don't worry - just think, these dwarves have been
 asleep or something for hundreds of years. And Minnie has a
-huge stock of ale. Not many customers  come this way, and she
+huge stock of ale. Not many customers come this way, and she
 knows how to salt the ale just right to keep from spoiling
 for decades.
 
- Adventurer Oh, that's why my tongue always looks like a chunk
+       Adventurer: Oh, that's why my tongue always looks like a chunk
 of leather after a pint or two.
 
-       Contessa Dwarves apparently love ale. I expect them
+       Contessa: Dwarves apparently love ale. I expect them
 all to pass out in an hour or so. 
 
  (Dwarves fall into comas)
@@ -667,7 +661,9 @@ exhausted.
 
        Adventurer: The horses have had it. They can't go another
 step and its going to snow again. No ale left, and just one
-loaf.           Contessa: It will have to do.
+loaf.
+
+       Contessa: It will have to do.
 
  (Suddenly, a party of giants leaps on our hero and
 heroine. But after some quick work with Bracers of Firestorm,
@@ -675,12 +671,13 @@ really dead giants lie around in heaps)
 
        Adventurer: Anything left, Ave?
 
-       Contessa: No, no more fire anything - just my daggers
+       Contessa: No, no more fire anything - just my daggers.
 
        Adventurer: Same here, just a common shortsword. Curse
 Sheogorath for those dwarves!  Those oafs chewed up our
-horses! Do you think the Major made it out?               
-Contessa: If anyone can, it's him.  Guess we'll find out in
+horses! Do you think the Major made it out? 
+
+       Contessa: If anyone can, it's him.  Guess we'll find out in
 town. Interesting thought just occured to me. Don't giants
 hunt in several groups? Is that more I hear?
 
@@ -700,8 +697,7 @@ time for studying anatomy!
 dead giant? My dear Adventurer, I'm a Lady.
 
        Adventurer: It's our only hope! The giant smell will
-hide our scent, and live giants never touch dead ones.
-Quick!
+hide our scent, and live giants never touch dead ones. Quick!
 
  (The Adventurer and the Contessa climb inside the steaming
 giant's body)
@@ -722,7 +718,7 @@ Definitely getting real cold. We better stay here.
        Contessa: It indeed is warm.
 
        Adventurer: It will keep us warm, safe from the storm
-and giants, for a day or soif we can stand the smell. Here,
+and giants, for a day or so if we can stand the smell. Here,
 want some bread?
 
  (The Contessa falls victim to nausea)
@@ -737,7 +733,7 @@ performs the timeless classic "Whither Goest Thou?"
  (Bard plays "Whither Goest Thou?" If the scenarists take too
 long, he also plays "For Further Consideration.")
 
- Prologue: Ah, here we are, back at the Dead Daedra Inn. The
+       Prologue: Ah, here we are, back at the Dead Daedra Inn. The
 Contessa and the Adventurer made it, after all. They had to
 pay three times the normal rate, for they were very dirty and
 stinky. Now poor Prologue will bid you farewell, goodly
@@ -772,7 +768,7 @@ thats so important?
        Adventurer: By the Gods, just look at that!
 
        Contessa: Yes, those dwarves were just loaded with
-ebony. Look. Rings, torcs, bracers, belts, helms All solid
+ebony. Look. Rings, torcs, bracers, belts, helms. All solid
 old ebony.
 
        Adventurer: And this stuff feels just loaded with
@@ -780,12 +776,11 @@ magicka. Why, I bet that this ring alone has a thousand uses
 ... whatever it does.
 
        Contessa: Ooh! Look! Bracers of Extreme Endurance and a
-Belt of Strength! Put them on, Adventurer, let's
-celebrate!
+Belt of Strength! Put them on, Adventurer, let's celebrate!
 
-       Adventurer       (aside) Help!
+       Adventurer:       (aside) Help!
 
- Enter Epilogue
+ (Enter Epilogue)
 
        Epilogue: As I feared, all the loose threads of the play
 were ended by wholesale slaughter. More of the adventures of
@@ -801,92 +796,3 @@ of Luck." Goodnight.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 

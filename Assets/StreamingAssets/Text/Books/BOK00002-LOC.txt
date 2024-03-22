@@ -24,17 +24,19 @@ Content:
 [/center]The Isle of Artaeum (ar-TAY-um)
 
  Artaeum is the third largest island in the Sumurset
-archipelago, located south of the Moridunon village of Potansa and west of the mainland village of
+archipelago, located south of the Moridunon village of Potansa
+and west of the mainland village of
 Runcibae. It is best known for being the home to the Psijic
 Order, perhaps the oldest monastic group in Tamriel.
 
  The earliest written record of Psijics is from the twentieth
-year of the first era and tells the tale of the author, the renowned Breton sage Voernet, travelling
+year of the first era and tells the tale of the author, the
+renowned Breton sage Voernet, travelling
 to the Isle of Artaeum to meet with the Rite Master of the
 Psijics, Iachesis. Even then, the Psijics were the counselors
 of kings and proponents of the "Elder Way," taught to them
 by the original people of Tamriel. The Elder Way is a
-philosophy of  meditation and study said to bind the forces
+philosophy of meditation and study said to bind the forces
 of nature to the individual will. It differs from magicka in
 origin, but the effects are much the same.
 
@@ -48,8 +50,7 @@ this.
 
  Five hundred years passed and Artaeum returned. The Psijics
 on the Isle consisted of persons, mostly elves, who had
-disappeared and were presumed dead over the second
-era.
+disappeared and were presumed dead over the second era.
 They could not or would not offer an explanation for
 Artaeum's wherebouts during that time or the fate of Iachesis
 and the original council of Artaeum.

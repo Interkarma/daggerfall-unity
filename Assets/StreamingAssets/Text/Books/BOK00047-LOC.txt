@@ -178,7 +178,7 @@ remain with us a little longer, that you may prepare
 yourself for the stern task with which I shall charge you."
 Barenziah gazed at him earnestly, heart beating hard. It was
 all working just as Symmachus had said it would. She felt a
-warm flush of gratitude toward him, but was  careful to keep
+warm flush of gratitude toward him, but was careful to keep
 her attention focused on the Emperor. "I am honored,
 Excellency, and wish most earnestly to serve you and this
 great Empire you have forged in any way I can." It was the
@@ -268,4 +268,5 @@ have a duty in Mournhold. I must tend my Empire. Shall we
 share what we may and pray the One forgives us our
 frailty?"
 
- Tiber Septim held out his arms and, wordlessly, Barenziah stepped into his embrace. 
+ Tiber Septim held out his arms and, wordlessly, Barenziah
+stepped into his embrace. 

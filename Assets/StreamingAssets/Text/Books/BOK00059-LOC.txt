@@ -21,7 +21,9 @@ Content:
 
 
 
-[/center]      Late in the Second Era an heir, a girl child, Barenziah,
+[/center]
+
+      Late in the Second Era an heir, a girl child, Barenziah,
 was born to the rulers of Mournhold in Morrowind. She was
 reared in all the luxury and security befitting a royal
 dark elf child until she reached five years of age. At that
@@ -44,7 +46,7 @@ taught the Imperial virtues and piety. In short, she was
 made fit to take her place as a member of the new ruling
 class of Morrowind.
 
-     The girl Barenziah grew in beauty, grace, and
+      The girl Barenziah grew in beauty, grace, and
 intelligence. She was very sweet-tempered, a joy to her
 adoptive parents and their five young sons, who loved her as
 their elder sister. Other than her appearance, she differed
@@ -52,7 +54,7 @@ from young girls of her class only in that she had a strong
 empathy for the woods and fields, and was wont to escape her
 household duties to wander there.
 
-     Barenziah was happy and content until her sixteenth year,
+      Barenziah was happy and content until her sixteenth year,
 when a wicked orphan stable boy whom she had befriended out of
 pity told her that he had overheard a conspiracy of her dear
 guardian. Baron Sven, said the boy, had dealt with a
@@ -61,11 +63,11 @@ Nord or Breton would marry her on account of her black skin,
 and no dark elf would have her because of her foreign
 upbringing.
 
-     "Whatever shall I do?" the poor girl wept, trembling,
+      "Whatever shall I do?" the poor girl wept, trembling,
 for she had been brought up in innocence and trust, and it
 never occured to her that her friend would lie to her.
 
-     The wicked boy, who was called Straw, said she must run
+      The wicked boy, who was called Straw, said she must run
 away if she valued her virtue, but he would come with her and
 protect her. Sorrowfully, Barenziah agreed to this plan
 and that very night, Barenziah disguised herself as a boy and
@@ -78,7 +80,7 @@ until they reached the city of Rifton, where they ceased their
 travels. They felt safe in Rifton, close as they were to the
 Morrowind border so dark elves were commonly seen.
 
-     The story of how Barenziah finally came to the throne of
+      The story of how Barenziah finally came to the throne of
 Mournhold after this fitful start is told in Volume II of
 the Biography of Queen Barenziah.
 

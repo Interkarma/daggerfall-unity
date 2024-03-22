@@ -21,7 +21,9 @@ Content:
 
 
 
-[/center]    The idea of a collection of Mages, Sorcerors, and
+[/center]
+
+    The idea of a collection of Mages, Sorcerors, and
 assorted Mystics pooling their resources and talents for
 the purpose of research and public charity was a
 revolutionary concept in the early years of the 2nd era. The

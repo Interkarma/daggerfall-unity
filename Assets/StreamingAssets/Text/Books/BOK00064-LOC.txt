@@ -23,7 +23,9 @@ Content:
 
 [/center]
 
-[/center]     Wayrest is one of the most glorious cities of western
+[/center]
+
+      Wayrest is one of the most glorious cities of western
 Tamriel: sparkling in her contemporary beauty, lustrous by
 her past. She is prized above all cities in High Rock -- no
 other city has contributed, and continues to contribute so
@@ -37,7 +39,7 @@ a modern city when one visits Wayrest, but there is a magic
 in the air that could only come from thirty-two centuries of
 civilization.
 
-     It is difficult for historians to declare a certain date
+      It is difficult for historians to declare a certain date
 for the foundation of Wayrest. A settlement of some variety
 had been existence where the Bjoulsae River feeds the Iliac
 Bay possibly since the 800th year of the First Era. The

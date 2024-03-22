@@ -1,4 +1,4 @@
-Title: The Legend of Lovers Lament
+Title: The Legend of Lover's Lament
 Author: Croll Baumoval
 IsNaughty: False
 Price: 580
@@ -11,7 +11,7 @@ Content:
 
 [/center]The Legend of
 
-[/center]Lovers Lament
+[/center]Lover's Lament
 
 
 
@@ -21,9 +21,9 @@ Content:
 
  The night is very dark. Wind gently ruffles the willow
 trees. All is quiet, or it so appears, around the shores of
-the small lake. Tamriel's moons reflect in the slightly rippling surface of the water. An owl's questioning
-call echoes. No lights are shining from the castle nearby; it
-appears deserted.
+the small lake. Tamriel's moons reflect in the slightly rippling
+surface of the water. An owl's questioning call echoes. No
+lights are shining from the castle nearby; it appears deserted.
 
  As the night wears on and the planet's satellites moves
 across the heavens, a faint glow appears near the castle.

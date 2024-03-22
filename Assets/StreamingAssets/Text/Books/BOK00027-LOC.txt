@@ -21,7 +21,9 @@ Content:
 
 
 
-[/center] Poppies, both black and white, can be found growing wild in
+[/center]
+
+ Poppies, both black and white, can be found growing wild in
 the mountains of Hammerfell. Their succulent pods are often
 the only nourishment of adventurers who find themselves in
 the wilderness without rations. It is said that the black and
@@ -36,15 +38,16 @@ evergreen foliage and flowers are resistant to the
 conditions of high heat and bright light. A petal from this
 plant placed under an adventurer's tongue will provide
 protection from the heat and fire found in the lava pits and
-streams found around Dagoth-Ur.      Dragon's-Tongue, common
-name for a fern like herb found in Black Marsh. It is
-especially prolific around  the area of Utherus Swamp. It is
-a beautiful wildflower. Its name comes from the fire red
-fronds that protect its golden flower. As pretty as it is,
-it is a deadly poison to most living beings and needs to be
-avoided by adventurers. It is said, however, that Argonians
-can pick the plant and use the sap derived from its roots as
-an enhancement to their endurance. 
+streams found around Dagoth-Ur.
+
+ Dragon's-Tongue, common name for a fern like herb found in
+Black Marsh. It is especially prolific around the area of
+Utherus Swamp. It is a beautiful wildflower. Its name comes
+from the fire red fronds that protect its golden flower. As
+pretty as it is, it is a deadly poison to most living beings
+and needs to be avoided by adventurers. It is said, however,
+that Argonians can pick the plant and use the sap derived from
+its roots as an enhancement to their endurance. 
 
  Domica Redwort is a herb grown by many residents of
 Valenwood for their beautiful and showy flowers. They
@@ -55,7 +58,7 @@ the appearance of anyone who carries or wears one of the
 flowers.
 
  Ironwood Nut, this rare nut comes from the Ironwood trees
-which grow deep in the forests of Skyrim. The  wood from these
+which grow deep in the forests of Skyrim. The wood from these
 trees is as hard as the metal for which they are named. The
 very rare black ironwood tree is said to produce a nut which
 is very succulent and is believed to enhance the strength of

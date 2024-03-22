@@ -23,30 +23,41 @@ Content:
 
 [/center] Dramatis Personae
 
- Prologue The Adventurer, A Dark Elf Rascal Komon, A Priest
-of Akatosh Lheban, Another Priest of Akatosh Epilogue Stete, A
-Priest of Julianos Raic, Another Priest of Julianos Shub, A
-Mage Shub, A Different Mage of the Same Name Nephron, A
-Somewhat Sleazy Merchant 5 Armorers Ortho Crunn, Husband of
-Millie A Lusty Contessa Millie, Innkeep and Philosopher
-Gurnsey, Bovine Wench Assorted Wenches and Cads of the
-Taverns Soldiers Dwarves Giants
+ Prologue
+ The Adventurer, A Dark Elf Rascal
+ Komon, A Priest of Akatosh
+ Lheban, Another Priest of Akatosh
+ Epilogue
+ Stete, A Priest of Julianos
+ Raic, Another Priest of Julianos
+ Shub, A Mage
+ Shub, A Different Mage of the Same Name
+ Nephron, A Somewhat Sleazy Merchant
+ 5 Armorers
+ Ortho Crunn, Husband of Millie
+ A Lusty Contessa
+ Millie, Innkeep and Philosopher
+ Gurnsey, Bovine Wench
+ Assorted Wenches and Cads of the Taverns
+ Soldiers
+ Dwarves
+ Giants
 
 
 
  Daggerfall and Environs in the Doldrums of the 3rd Era
 
- Part The Oneth - Concerning Priests and Nackles       As
-related at length by two Priests of       Akatosh to the
-Adventurer, who at the        time was not having an
-adventure, and       had nothing better to do. In which some     
- (probably unwanted) light is shed upon       the Priesthood
-and its members, and upon       an old peasant myth of some
-significance,       especially common in High Rock. And in      
-which the mysterious Fools' Ebony       appears, that strange
-material that       could bring either drastic cultural
-change       for the many, or just great profit for a       few,
-or death for a bunch, or have no       result whatsoever.
+ Part The Oneth - Concerning Priests and Nackles
+       As related at length by two Priests of Akatosh to the
+Adventurer, who at the time was not having an
+adventure, and had nothing better to do. In which some     
+ (probably unwanted) light is shed upon the Priesthood
+and its members, and upon an old peasant myth of some
+significance, especially common in High Rock. And in      
+which the mysterious Fools' Ebony appears, that strange
+material that could bring either drastic cultural
+change for the many, or just great profit for a few,
+or death for a bunch, or have no result whatsoever.
 
  Early in the month of Frostfall. The Dead Daedra Inn. Enter
 Prologue
@@ -137,22 +148,24 @@ ones...
        Komon: Yes, I guess that the bad ones are into all that
 weapons magicka stuff ... very nasty fellows ...
 
-       Lheban:     (to Komon) Komon! This fellow's got pointy
+       Lheban: (to Komon) Komon! This fellow's got pointy
 ears and red eyes ...
 
        Komon: Pardon me, friend ... it's sort of dark, and I
-didn't ... uh ...          Adventurer: Oh, that's fine. These are
+didn't ... uh ...
+       Adventurer: Oh, that's fine. These are
 strange times. You know, live and let live -- or die -- as the
 case may be.  Now ... suppose you tell me about this Nackles
 myth? Here, let me help you with that bottle ... Ah! Thanks.     
-    Lheban: Er ... sure, if you want to put it that way ...
+      Lheban: Er ... sure, if you want to put it that way ...
 Here, have another swig! Sure, we've got the time, and I
-recall it clearly now.                Komon: Yes, we've a couple
-hours 'til that little blonde shows up at her lamp ...
+recall it clearly now.
+      Komon: Yes, we've a couple hours 'til that little blonde
+shows up at her lamp ...
 
  (Lheban kicks Komon)
 
-      Lheban:      (to Komon) Quiet! Remember, we had to tell the
+       Lheban: (to Komon) Quiet! Remember, we had to tell the
 High Priest her address, so she won't be around for a while!    
  (to all) Very well, here's the story, best as I can recall
 it. This is a tale the peasants up in High Rock tell their kids
@@ -161,7 +174,7 @@ it, let me see ... either on Tales and Tallows, or is it
 Witches' Festival? -- just before the kids are sent out to the
 barn or pigsty to sleep. 
 
-       Komon: Nasty cruel peasants!  But then, I'd send them
+        Komon: Nasty cruel peasants! But then, I'd send them
 all out to the midden ...
 
        Lheban: Really, Komon! Remember, those poor souls need
@@ -198,9 +211,11 @@ mine cart, on old mine tracks ...
        Adventurer: I saw some of those in Fang Lair once, down
 in Hammerfell a long long while ago ...
 
-       Komon:       (to Lheban) What the Sheogorath was he doing in
-Fang Lair!?             Lheban:       (to Komon) Hush! If he's who I
-think he is, you do not want to know!       (to all) Um, yes.
+       Komon: (to Lheban) What the Sheogorath was he doing in
+Fang Lair!?
+       Lheban: (to Komon) Hush! If he's who I
+think he is, you do not want to know!
+ (to all) Um, yes.
 Well, Nackles gets pulled all around these deep tunnels by
 goblins -- not your usual dirty yellow ones, but nasty
 black things. Anyway, they pull Nackles round and through
@@ -238,8 +253,8 @@ so on. All the usual favorite kids things.
        Lheban: Now if that little brat has been very, very bad
 then Nackles grabs the brat. Pops him or her in his dirty
 great sack. Hauls the sack off down the holes and cracks, down
-to his rusty old mine cart!  And away they go!         Komon: Hope
-he leaves some bad little girls behind.
+to his rusty old mine cart!  And away they go!
+       Komon: Hope he leaves some bad little girls behind.
 
  (Lheban kicks Komon)
 

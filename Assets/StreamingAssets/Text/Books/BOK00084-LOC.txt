@@ -21,19 +21,22 @@ Content:
 
 
 
-[/center]    The history of the Iliac Bay, if told in its entirety,
+[/center]
+
+    The history of the Iliac Bay, if told in its entirety,
 would horrify readers more than the most gruesome legend of
 the Underking. In comparison to the wars of the first and
 second era, our most recent appeal to arms, the War of
 Betony pales. The Siege of Orsinium lasted from 1E 950 until
 1E 980 without a pause. A thousand years later, the Thrassian
-Plague coupled with the War of Righteousness slayed over half the population of the Iliac Bay. And yet, the War of
+Plague coupled with the War of Righteousness slayed over half
+the population of the Iliac Bay. And yet, the War of
 Betony fascinates us, and not just because of its immediacy.
 
     Ironically, Lord Mogref of Betony was seeking peace when
 he asked for Daggerfall's protection on the Isle of Betony.
 The island had long been independant, but as the piracy in
-the Bay increased, Mogref truly realized  Betony's
+the Bay increased, Mogref truly realized Betony's
 vulnerability. King Lysandus agreed to be Betony's liege,
 on advice of many, including his archpriest of Kynareth,
 Lord Vanech. While Betony is a prosperous fishing island and
@@ -87,7 +90,7 @@ fled to the Yeorth Burrowland, and the Daggerfall army
 chased them as far as the Ravennian Forest before making
 camp.
 
-     One week later, after each had a chance to send for
+    One week later, after each had a chance to send for
 reinforcements and plan their strategies, the armies met in
 the field that separated them, the flowering meadowland
 called Cryngaine Field. In the heat of the clash, an
@@ -95,7 +98,7 @@ unnatural fog spread over the field, blinding all
 combatants. When the mist finally lifted, King Lysandus'
 body was found, his throat pierced by an unmarked arrow.
 
-     Daggerfall did not waste any time in mourning; young
+    Daggerfall did not waste any time in mourning; young
 prince Gothryd, who had shown great bravery in battle and
 was very popular among the troops, was crowned King of
 Daggerfall just behind the battle lines, and he ordered the
@@ -111,7 +114,7 @@ Sentinel formally surrendered to Daggerfall, giving up
 all rights to Betony officially. He later commited suicide on
 the ship back to Sentinel.
 
-     Peace was a difficult process for the cities and towns on
+    Peace was a difficult process for the cities and towns on
 both sides of the Iliac Bay. As part of the formal peace
 treaty, King Gothryd asked for the hand of Princess Aubk-i,
 only daughter of the late King Camaron and the Queen Regent
@@ -121,7 +124,7 @@ though many in the royal court of Sentinel viewed the
 princess as more a prisoner of war than a bond to
 Daggerfall.
 
-     The only surviving member of the ruling family of Reich
+    The only surviving member of the ruling family of Reich
 Gradkeep was a sickly infant, so the councilors of state
 appealed to Lord Auberon Flyte, a cousin of Lord
 Graddock, to rule the lordship in regency. Lord Flyte
@@ -133,7 +136,7 @@ wife Doryanna and him from regents to rulers, they agreed to
 rename the lordship in his honor. Reich Gradkeep became
 Anticlere, named after his ancestral home.
 
-     The horrors of the War of Betony still live on, even in
+    The horrors of the War of Betony still live on, even in
 Anticlere. Whether Daggerfall and Sentinel will be able to
 use the marriage of King Gothryd and Princess Aubk-i as a
 symbol of peace rather than discord is something that only

@@ -23,7 +23,9 @@ Content:
 
 [/center]
 
-[/center]   There is sufficient archaeological evidence for the modern
+[/center]
+
+   There is sufficient archaeological evidence for the modern
 historian to believe that there has been some variety of
 human settlement in the city-state of Daggerfall starting
 at least a thousand years before recorded history. The first
@@ -36,7 +38,7 @@ of the first civilized acts the Nords performed was a census
 -- the so-called Book of Life. Listed on page 933 of the Book
 is this entry:
 
- "North of the Highest bluffs, south of the moors, west of the
+  "North of the Highest bluffs, south of the moors, west of the
 hills, and east of the sea is called DAGGERFALL. 110 men, 93
 women, 13 children under 8 years of age, 58 cows, 7 bulls,
 63 chickens, 11 cocks, 38 hogs live here."

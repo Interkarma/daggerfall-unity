@@ -21,7 +21,9 @@ Content:
 
 
 
-[/center]     The first volume of this series tells in brief the story of
+[/center]
+
+    The first volume of this series tells in brief the story of
 the succession of the first eight emperors of the Septim
 Dynasty, from Tiber I to Kintyra II. The second volume
 described the War of the Red Diamond and the six emperors
@@ -30,7 +32,7 @@ the end of that volume, I described how the Emperor
 Cassynder's half-brother, Uriel IV assumed the throne of the
 Empire of Tamriel.
 
-     It will be recalled that Uriel IV was not a Septim by
+    It will be recalled that Uriel IV was not a Septim by
 birth. His mother, though she reigned as Emperess for many
 years, was a Dark Elf married to a true Septim Emperor,
 Pelagius III. His father was Katariah I's consort after

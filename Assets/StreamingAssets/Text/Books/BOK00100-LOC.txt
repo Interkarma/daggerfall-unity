@@ -19,14 +19,14 @@ Content:
 
 
 
-[/center]Chapter One:
+[/center]Chapter 1:
 
-Departure from Daggerfall
+[/center]Departure from Daggerfall
 
  Long, long ago, when the world was in its springtime,
 before the Redguards came and the glorious Septim Empire was
 formed, but after the goblins had driven the dwarves out of
-Hammerfell, a son,  Edward, was born to King Corcyr I of
+Hammerfell, a son, Edward, was born to King Corcyr I of
 Daggerfall and his Queen, Aliera of Wayrest.
 
  The young boy lay drowsing in the palace orchard, high on a
