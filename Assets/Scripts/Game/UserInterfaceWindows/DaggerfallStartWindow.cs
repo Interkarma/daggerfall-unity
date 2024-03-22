@@ -24,9 +24,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture;
 
-        private Button loadGameButton;
-        private Button newGameButton;
-        private Button exitButton;
+        protected Button loadGameButton;
+        protected Button newGameButton;
+        protected Button exitButton;
 
         bool isLoadGameDeferred = false;
         bool isNewGameDeferred = false;

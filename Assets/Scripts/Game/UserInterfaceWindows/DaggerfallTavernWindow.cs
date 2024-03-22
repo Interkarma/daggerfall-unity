@@ -20,16 +20,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect roomButtonRect = new Rect(5, 5, 120, 7);
-        Rect talkButtonRect = new Rect(5, 14, 120, 7);
-        Rect foodButtonRect = new Rect(5, 23, 120, 7);
-        Rect exitButtonRect = new Rect(5, 32, 120, 7);
+        protected Rect roomButtonRect = new Rect(5, 5, 120, 7);
+        protected Rect talkButtonRect = new Rect(5, 14, 120, 7);
+        protected Rect foodButtonRect = new Rect(5, 23, 120, 7);
+        protected Rect exitButtonRect = new Rect(5, 32, 120, 7);
 
         #endregion
 
         #region UI Controls
 
-        Panel mainPanel = new Panel();
+        protected Panel mainPanel = new Panel();
         protected Button roomButton;
         protected Button talkButton;
         protected Button foodButton;

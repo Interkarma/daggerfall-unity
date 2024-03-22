@@ -54,12 +54,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected TextLabel titleLabel;
         protected MultiFormatTextLabel questLogLabel;
 
-        Panel mainPanel;
+        protected Panel mainPanel;
 
-        Button dialogButton;
-        Button upArrowButton;
-        Button downArrowButton;
-        Button exitButton;
+        protected Button dialogButton;
+        protected Button upArrowButton;
+        protected Button downArrowButton;
+        protected Button exitButton;
 
         protected bool isCloseWindowDeferred = false;
 

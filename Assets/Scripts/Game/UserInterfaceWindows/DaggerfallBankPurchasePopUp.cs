@@ -31,16 +31,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        Panel mainPanel = new Panel();
+        protected Panel mainPanel = new Panel();
 
-        ListBox priceListBox;
-        Button priceListUpButton;
-        Button priceListDownButton;
-        VerticalScrollBar priceListScrollBar;
+        protected ListBox priceListBox;
+        protected Button priceListUpButton;
+        protected Button priceListDownButton;
+        protected VerticalScrollBar priceListScrollBar;
 
-        Panel displayPanel;
-        Button buyButton;
-        Button exitButton;
+        protected Panel displayPanel;
+        protected Button buyButton;
+        protected Button exitButton;
 
         #endregion
 

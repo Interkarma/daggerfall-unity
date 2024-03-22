@@ -30,11 +30,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        Panel mainPanel = new Panel();
-        Button talkButton = new Button();
-        Button summonButton = new Button();
-        Button questButton = new Button();
-        Button exitButton = new Button();
+        protected Panel mainPanel = new Panel();
+        protected Button talkButton = new Button();
+        protected Button summonButton = new Button();
+        protected Button questButton = new Button();
+        protected Button exitButton = new Button();
 
         #endregion
 

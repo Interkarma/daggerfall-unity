@@ -24,12 +24,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect whileButtonRect = new Rect(4, 13, 48, 24);
-        Rect healedButtonRect = new Rect(53, 13, 48, 24);
-        Rect loiterButtonRect = new Rect(102, 13, 48, 24);
-        Rect counterPanelRect = new Rect(0, 50, 105, 41);
-        Rect counterTextPanelRect = new Rect(4, 10, 16, 8);
-        Rect stopButtonRect = new Rect(33, 26, 40, 10);
+        protected Rect whileButtonRect = new Rect(4, 13, 48, 24);
+        protected Rect healedButtonRect = new Rect(53, 13, 48, 24);
+        protected Rect loiterButtonRect = new Rect(102, 13, 48, 24);
+        protected Rect counterPanelRect = new Rect(0, 50, 105, 41);
+        protected Rect counterTextPanelRect = new Rect(4, 10, 16, 8);
+        protected Rect stopButtonRect = new Rect(33, 26, 40, 10);
 
         #endregion
 
