@@ -62,7 +62,7 @@ QuestLogEntry:  [1010]
  pled with me to rid ___dungeon_
  of a ghost that is haunting
  it. I have =2dung_ days before
- they they need to begin
+ they need to begin
  the reconstruction.
 
 Message:  1011

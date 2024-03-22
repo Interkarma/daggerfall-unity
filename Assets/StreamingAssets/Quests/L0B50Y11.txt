@@ -13,7 +13,7 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                 We have an interesting job available
-<ce>                       to a high ranking member
+<ce>                       to a high-ranking member
 <ce>                  of the Thieves Guild. This will be
 <ce>                     a tough one. Do you want it?
 

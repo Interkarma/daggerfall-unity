@@ -17,7 +17,7 @@ QuestorOffer:  [1000]
 <ce>                          Are you interested?
 
 RefuseQuest:  [1001]
-<ce>                     You must prefer the low risk
+<ce>                     You must prefer the low-risk
 <ce>                       jobs, like hunting rats.
 
 AcceptQuest:  [1002]

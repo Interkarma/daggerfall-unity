@@ -32,7 +32,7 @@ AcceptQuest:  [1002]
 <ce>                  and it's worth _gold_ gold to you.
 
 QuestComplete:  [1004]
-<ce>               Was the old boy as foul smelling as they
+<ce>               Was the old boy as foul-smelling as they
 <ce>                say? Like a drawer of knickers left in
 <ce>                  the rain for a month. Well, here is
 <ce>                            your pay, %pcn.
@@ -44,11 +44,11 @@ RumorsDuringQuest:  [1005]
 
 RumorsPostfailure:  [1006]
 <ce>                 They found a woman dead in her home.
-<ce>                  The rotted corpse of her long dead
+<ce>                  The rotted corpse of her long-dead
 <ce>                    husband was found next to her.
 
 RumorsPostsuccess:  [1007]
-<ce>                 I hear the Fighter's Guild sent some
+<ce>                 I hear the Fighters Guild sent some
 <ce>                tough over to take care of that zombie.
 <ce>                    They're a good lot, the guild.
 

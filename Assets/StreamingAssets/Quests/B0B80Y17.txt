@@ -38,7 +38,7 @@ AcceptQuest:  [1002]
 
 QuestComplete:  [1004]
 <ce>                        Hail to the hero, %pcn!
-<ce>                      Well done! You name will be
+<ce>                      Well done! Your name will be
 <ce>                     recorded in all the histories.
 
 RumorsDuringQuest:  [1005]

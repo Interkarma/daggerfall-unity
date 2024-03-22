@@ -67,7 +67,7 @@ QuestorPostsuccess:  [1008]
 
 QuestorPostfailure:  [1009]
 <ce>                  Failure is not taken lightly in the
-<ce>                Fighter's Guild. If you couldn't handle
+<ce>                Fighters Guild. If you couldn't handle
 <ce>                 a Daedroth, you shouldn't have taken
 <ce>                 the job. I've got better things to do
 <ce>                  than waste my time talking to you.

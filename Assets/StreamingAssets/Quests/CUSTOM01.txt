@@ -9,7 +9,7 @@ QuestorOffer:  [1000]
 <ce>I hope you're not afraid of the dark, %pcn...
 <ce>Some necromancer is raising hordes of zombies
 <ce>and skeletons at ___graveyard_.
-<ce>We have a contract to end this villian's life
+<ce>We have a contract to end this villain's life
 <ce>and put a stop to their evil deeds.
 <ce>There's _reward_ gold in it for you.
 

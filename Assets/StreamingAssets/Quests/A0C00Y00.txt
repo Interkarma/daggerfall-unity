@@ -81,7 +81,7 @@ QuestLogEntry:  [1010]
 Message:  1011
 _npc1_,
     You are a most spiteful man. How could I ever
- have thought that I loved you. Since you caught me
+ have thought that I loved you? Since you caught me
  on the balcony in the arms of _npc2_,
  I can now reveal that we are indeed lovers. %g is
  able to give me everything that you cannot. You made

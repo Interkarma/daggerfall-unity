@@ -69,7 +69,7 @@ I heard a great joke. %jok
 <--->
 %jok Can you explain that to me?
 <--->
-The legal system in %reg has it good points and bad ones.
+The legal system in %reg has its good points and bad ones.
 
 RumorsPostfailure:  [1006]
 __qgiver_ has been cursing the name %pcn.

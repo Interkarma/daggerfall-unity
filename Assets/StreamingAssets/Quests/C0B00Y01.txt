@@ -38,12 +38,12 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                 Good. We have already sent one of the
 <ce>                        Temple, _priest_ to the
-<ce>                    desacrilized ___mondung_, where
+<ce>                    desacralized ___mondung_, where
 <ce>                    _prophet_ asserts that %g first
 <ce>                        witnessed the miracle.
 <ce>                     If _priest_ needs assistance,
 <ce>                I will send for you. In the meanwhile,
-<ce>                 I want you to find some more secular
+<ce>                 I want you to find some more-secular
 <ce>                       information on _prophet_,
 <ce>                   by asking around in %g3 hometown,
 <ce>                          __tavern_. A loyal
@@ -236,7 +236,7 @@ _lover_, My Love,
       First, forgive the silence of your
  love. It was not another attack of brain
  fever. For some months now, I have been
- in spiritual turmoil, unfit to for any
+ in spiritual turmoil, unfit for any
  company, even for the comfort of your
  dulcet fellowship. My days of pain are
  over, but for this -- I can never see you
@@ -295,7 +295,7 @@ Message:  1025
 
 Message:  1026
 <ce>                     You pick up a scrap of flesh,
-<ce>               carefully, even ritually ritualistically
+<ce>                    carefully, even ritualistically
 <ce>                      stripped from a =priest_'s
 <ce>                    hand. This was once a finger of
 <ce>                               _priest_.
@@ -303,7 +303,7 @@ Message:  1026
 Message:  1027
 Truly nauseating.
 <--->
-A hacked off finger.
+A hacked-off finger.
 <--->
 A chunk of somebody's hand.
 <--->
@@ -313,9 +313,9 @@ Not bad with a little salt and honey.
 <--->
 It looks like an old __qgiver_ ceremony. They used to do that to corpses.
 <--->
-When in __qgiver_, _prophet_ used to disect cadavers just that precisely.
+When in __qgiver_, _prophet_ used to dissect cadavers just that precisely.
 <--->
-__qgiver_ abandoned that kind of funereal disection, but _prophet_ espouses it.
+__qgiver_ abandoned that kind of funereal dissection, but _prophet_ espouses it.
 
 Message:  1028
 <ce>                        It was nice of _priest_

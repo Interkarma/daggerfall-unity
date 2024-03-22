@@ -83,7 +83,7 @@ QuestLogEntry:  [1010]
  _qgiver_ of
  __qgiver_, ___qgiver_ has
  sent me to prevent %g3 unloved lover's
- ransom. I can either find and slay this
+ ransom. I can find and slay this
  _victim_, but I have
  no clue of where %g is. Or I can go to
  ___mondung2_, %g3

@@ -42,7 +42,7 @@ AcceptQuest:  [1002]
 QuestFail:  [1003]
 <ce>                    You had best move along, %pcf.
 <ce>                 You do not have very much more time to
-<ce>                        kill that Dragonslayer.
+<ce>                        kill that dragonslayer.
 
 QuestComplete:  [1004]
 <ce>                   I am glad to see you back, %pcf.

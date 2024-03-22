@@ -136,7 +136,7 @@ Message:  1015
 Message:  1017
 %qdt:
  I have bought a Talisman from _healer_ of
- ___healer_ that cures Wizard Fever, the
+ ___healer_ that cures Wizard Bane, the
  disease that is afflicting _cousin_.
 
 Message:  1019

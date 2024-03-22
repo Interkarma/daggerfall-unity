@@ -63,7 +63,7 @@ QuestComplete:  [1004]
 RumorsDuringQuest:  [1005]
 _nobleman_ is a superstitious fool, but %g3 great grandmother was an odd one.
 <--->
-_nobleman_ comes a strange family. Maybe %g3 great grandmother is a zombie.
+_nobleman_ comes from a strange family. Maybe %g3 great grandmother is a zombie.
 
 RumorsPostfailure:  [1006]
 %kno looked into _nobleman_'s story and, I guess, decided it was a hoax.

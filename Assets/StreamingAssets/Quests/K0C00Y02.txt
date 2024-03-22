@@ -61,7 +61,7 @@ The maid at _mansion_ said she saw some undesirables watching the place.
 RumorsPostfailure:  [1006]
 %t %rn seems to think that the head of the smuggling operation is _qgiver_.
 <--->
-_qgiver_ has apparently been smuggling foscarium, pretending its gold.
+_qgiver_ has apparently been smuggling foscarium, pretending it's gold.
 <--->
 _palace_ has cut off relations with _qgiver_ completely, from what I hear.
 <--->

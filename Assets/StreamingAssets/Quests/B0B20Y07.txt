@@ -72,7 +72,7 @@ QuestLogEntry:  [1010]
  ==qgiver_ in ___qgiver_
  gave me the task of wiping
  out an orc band that makes
- it's home in __dungeon_.
+ its home in __dungeon_.
  In particular I must get the
  leader, a certain _monster_.
  I need to get back to %g2

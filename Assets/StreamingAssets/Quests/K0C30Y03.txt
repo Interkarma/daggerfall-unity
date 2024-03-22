@@ -20,7 +20,7 @@ QuestorOffer:  [1000]
 <ce>             the deed to a valuable piece of property. Now
 <ce>                    _patsy_ and the deed have both
 <ce>           vanished. Rumor has it that %g fell on some hard
-<ce>             time financially, but the sum I loaned is not
+<ce>             times financially, but the sum I loaned is not
 <ce>             easily swallowed by my enterprises. Tangling
 <ce>                    with the likes of _patsy_ will
 <ce>              likely be dangerous, but I need a champion.
@@ -99,7 +99,7 @@ Message:  1012
 <ce>            Thank you, sweets. I've heard you're the decent
 <ce>            sort, and I thought I'd give you a break. I was
 <ce>                   hired by _patsy_ a few weeks ago --
-<ce>          not for the reason you're thinkin. All I had to
+<ce>          not for the reason you're thinkin'. All I had to
 <ce>           do was flirt with some old gaffer and get him to
 <ce>          ask me out to dinner on a specific day. I guess to
 <ce>          get him out of his house, because I found out later
@@ -153,7 +153,7 @@ Message:  1016
 <ce>                in the robbery down to the last penny.
 <ce>                    We just want to answer certain
 <ce>                  questions about the robbery itself.
-<ce>                      Things it would be best not
+<ce>                     Things that would be best not
 <ce>                      discussed with a stranger,
 <ce>                            you understand.
 
@@ -357,7 +357,7 @@ Message:  1039
  I have met with _guard_. %g has discovered
  _patsy_'s location in ___mondung2_.
  To distract %g3 soldiers, I
- must drop a letter in %g3 allies
+ must drop a letter in %g3 allies'
  stronghold, ___mondung_, and then meet
  _guard_ at ___mondung2_ to get
  _patsy_.

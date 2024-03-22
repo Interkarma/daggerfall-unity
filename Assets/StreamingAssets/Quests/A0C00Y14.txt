@@ -22,7 +22,7 @@ QuestorOffer:  [1000]
                                      <--->
 <ce>                         Hi, I'm _questgiver_.
 <ce>                     I need someone to drop off an
-<ce>                    item for me. It's a just a short
+<ce>                     item for me. It's just a short
 <ce>                     trip across town, but I'm too
 <ce>                  busy right now. There's _gold_ gold
 <ce>                             in it for ya.

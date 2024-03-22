@@ -27,7 +27,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                    "OK, %pcf. Get over to _house_
 <ce>                 here in town. Get it done in one day.
-<ce>               Nobody wants a animal left roaming around
+<ce>               Nobody wants an animal left roaming around
 <ce>                in their place. Come back here when the
 <ce>                 beast is dead and I'll have your pay
 <ce>                           waiting for you."
@@ -44,12 +44,12 @@ RumorsDuringQuest:  [1005]
 <ce>                    a building in town. I hope they
 <ce>                             kill it soon.
 
-RumorsPostfailure:  [1006]
-<ce>                    The Fighter's Guild killed that
+RumorsPostsuccess:  [1006]
+<ce>                    The Fighters Guild killed that
 <ce>                      bear that got into _house_.
 <ce>                 It's a good thing we have them around.
 
-RumorsPostsuccess:  [1007]
+RumorsPostfailure:  [1007]
 <ce>                That creature mauled some woman before
 <ce>                being chased out of town. What a pity.
 
@@ -66,7 +66,7 @@ QuestLogEntry:  [1010]
 %qdt:
  The Fighters Guild of ___qgiver_
  has asked me to slay a wild beast which
- has gotten into _house_. It's got
+ has gotten into _house_. It's got to
  be done in one day.
 
 Message:  1011
@@ -83,19 +83,19 @@ Message:  1014
 
 Message:  1021
 <ce>                   You hear a voice call out from an
-<ce>                      upper floor, "Its a bear."
+<ce>                      upper floor, "It's a bear."
 
 Message:  1022
 <ce>                   You hear a voice call out from an
-<ce>                      upper floor, "Its a harpy."
+<ce>                      upper floor, "It's a harpy."
 
 Message:  1023
 <ce>                   You hear a voice call out from an
-<ce>                     upper floor, "Its a spider."
+<ce>                     upper floor, "It's a spider."
 
 Message:  1024
 <ce>                   You hear a voice call out from an
-<ce>                      upper floor, "Its a tiger."
+<ce>                      upper floor, "It's a tiger."
 
 Message:  1080
 <ce>                 By the way, since you seemed to have

@@ -32,7 +32,7 @@ QuestorOffer:  [1000]
 RefuseQuest:  [1001]
 <ce>                    A heart of stone, just like The
 <ce>                      Fighters Guild. What is an
-<ce>                  innocent child's life worth anyhow?
+<ce>                  innocent child's life worth, anyhow?
 
 AcceptQuest:  [1002]
 <ce>                   Thank you, thank you. I can give

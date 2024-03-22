@@ -31,7 +31,7 @@ RefuseQuest:  [1001]
 <ce>                            temple leaders.
 
 AcceptQuest:  [1002]
-<ce>                        _cousin_ in ___cousin_
+<ce>                       _cousin_ in ___cousin_ is
 <ce>                  suffering from an unusual disease.
 <ce>                   I was about to dispatch a cleric
 <ce>                   to treat %g2. I will delay them a

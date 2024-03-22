@@ -126,7 +126,7 @@ I heard a great joke. %jok
 The legal system in %reg has its good points and bad ones.
 
 QuestorPostsuccess:  [1008]
-So, you won that which you quested for. What would have now?
+So, you won that which you quested for. What would you have now?
 
 QuestorPostfailure:  [1009]
 I haven't anything to say to you, %pcf.
@@ -135,7 +135,7 @@ I wasted my breath talking to you before.
 
 QuestLogEntry:  [1010]
 %qdt:
- I embarked upon a quest to find a legendary,
+ I embarked upon a quest to find a legendary
  artifact of power. The only clue
  _questgiver_ of __questgiver_
  was able to provide is that a witch hermited
@@ -230,7 +230,7 @@ Message:  1022
 <ce>                             in __palace_.
 
 Message:  1025
-<ce>                      What are you doing! I don't
+<ce>                      What are you doing!? I don't
 <ce>                       want to go with you. Help!
 <ce>                          Mommy, daddy, help!
 
@@ -243,7 +243,7 @@ Message:  1027
 
 Message:  1032
 <ce>                     Ah yes, my heir. What did you
-<ce>                      say it's name was? _child_?
+<ce>                      say its name was? _child_?
 <ce>                         Yes, %g will do fine.
 <ce>                         %pcn, you have earned
 <ce>                  the right to pursue _aurielshield_.
@@ -254,7 +254,7 @@ Message:  1032
 
 Message:  1031
 <ce>                     Ah yes, my heir. What did you
-<ce>                      say it's name was? _child_?
+<ce>                      say its name was? _child_?
 <ce>                         Yes, %g will do fine.
 <ce>                         %pcn, you have earned
 <ce>                   the right to pursue _aurielsbow_.
@@ -265,7 +265,7 @@ Message:  1031
 
 Message:  1033
 <ce>                     Ah yes, my heir. What did you
-<ce>                      say it's name was? _child_?
+<ce>                      say its name was? _child_?
 <ce>                         Yes, %g will do fine.
 <ce>                         %pcn, you have earned
 <ce>                    the right to pursue _lordsmail_.

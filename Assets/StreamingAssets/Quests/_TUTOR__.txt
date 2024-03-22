@@ -12,7 +12,7 @@ QRC:
 RumorsDuringQuest:  [1005]
 <ce>                       I'll give you a hint %ra.
 <ce>                   If you want to succeed in magic,
-<ce>                         join the mages guild.
+<ce>                         join the Mages Guild.
                                      <--->
 <ce>                  A small tip for you. Put your money
 <ce>                  in the bank of %reg. Have them give
@@ -20,7 +20,7 @@ RumorsDuringQuest:  [1005]
 <ce>                            weigh a thing.
                                      <--->
 <ce>                  Specialty shops are the best place
-<ce>                         to find unsual items.
+<ce>                         to find unusual items.
                                      <--->
 <ce>                   They just passed a vagrancy law.
 <ce>                  You can't sleep in the streets. The
@@ -37,7 +37,7 @@ RumorsPostfailure:  [1006]
 <ce>                    go there if you want adventure.
                                      <--->
 <ce>                    I've heard that the royalty of
-<ce>                  Wayrest is stirring things up. Its
+<ce>                  Wayrest is stirring things up. It's
 <ce>                    a great opportunity for anyone
 <ce>                   with the guts to actually ask the
 <ce>                        king or queen for work.
@@ -100,10 +100,10 @@ Message:  1015
 <ce>                        you fight the monsters.
 <ce>                                    
 <ce>         Hint: Moving your mouse in different directions makes
-<ce>        the sword swing differently. Each type of swing affects
+<ce>      melee weapons swing differently. Each type of swing affects
 <ce>      your chances to hit the monster and how much damage you do.
 <ce>                                    
-<ce>        I'll give you a minute to practice swinging the sword.
+<ce>         I'll give you a minute to practice swinging weapons.
 <ce>                                    
 <ce>           Click YES to continue, NO to cancel the tutorial.
 
@@ -125,6 +125,7 @@ Message:  1020
 <ce>              Not all secret doors are this easy to see.
 <ce>                                    
 <ce>       I'll be back in a couple of minutes for the next lesson.
+<ce>
 <ce>           Click YES to continue, NO to cancel the tutorial.
 
 Message:  1025
@@ -145,6 +146,7 @@ Message:  1025
 <ce>            using the INFO mode and then clicking the item.
 <ce>                                    
 <ce>          I'll be back in one minute for a save game lesson.
+<ce>
 <ce>           Click YES to continue, NO to cancel the tutorial.
 
 Message:  1030
@@ -158,21 +160,22 @@ Message:  1030
 <ce>       that saved game without having to create a new character.
 <ce>                                    
 <ce>        Hint: You can also use F9 to quicksave and
-<ce>            F12 to quickload.
+<ce>                           F12 to quickload.
 <ce>                                    
 <ce>         I'll leave you for several minutes now. Go ahead and
-<ce>           explore the dungeon. Click YES to continue, NO to
-<ce>                         cancel the tutorial.
+<ce>                         explore the dungeon.
+<ce>
+<ce>           Click YES to continue, NO to cancel the tutorial.
 
 Message:  1035
 <ce>                           Tutorial Lesson 7
 <ce>                                    
-<ce>          If you have a spell casting character, try using a
+<ce>           If you have a spellcasting character, try using a
 <ce>                    spell against the next monster.
 <ce>                                    
 <ce>          Press the BACKSPACE key to pull up the spells menu.
-<ce>        select SHOCK by double clicking on it. This spell will
-<ce>        only work if you are close enough to touch the monster
+<ce>        Select SHOCK by double clicking on it. This spell will
+<ce>        only work if you are close enough to touch the monster.
 <ce>            To cast the spell, press the left mouse button;
 <ce>        spells are always fired at the center of the screen.
 <ce>                                    
@@ -186,15 +189,15 @@ Message:  1040
 <ce>                      dungeon, Privateer's Hold.
 <ce>         I bet you are wondering what to do now? What you need
 <ce>           is a town. Towns have the services you will need
-<ce>             throughout the game. Lets fast travel to one.
+<ce>             throughout the game. Let's fast travel to one.
 <ce>                                    
 <ce>                            (continued...)
 
 Message:  1041
 <ce>         Fast travel is done by pressing the V key. The region
 <ce>          that you are in (Daggerfall) is highlighted in red.
-<ce>         Click on that region and you get a blow up map. There
-<ce>        are a lot of places on this map! Lets find the city of
+<ce>         Click on that region and you get a blown-up map. There
+<ce>        are a lot of places on this map! Let's find the city of
 <ce>            Daggerfall. Click FIND and type in DAGGERFALL.
 <ce>           The most convenient way to travel is by clicking
 <ce>          CAUTIOUSLY and INNS, both of which are the default
@@ -210,7 +213,7 @@ QuestTimeLapse:  [1045]
 <ce>                           Tutorial Lesson 9
 <ce>                                    
 <ce>         Ah, the sights and sounds of the city! Did you arrive
-<ce>        at night or try to rest? If so, the guards will not let
+<ce>        at night and try to rest? If so, the guards will not let
 <ce>         anyone sleep in the streets or even too close to the
 <ce>           walls. You can only rest in Taverns, if you have
 <ce>                        purchased a room there.
@@ -235,7 +238,7 @@ Message:  1046
 <ce>        to tell where the building is from that. All shops have
 <ce>       signs out front. Learn the signs and you will be able to
 <ce>        get around much easier. You will need a tavern to rest.
-<ce>                     look for the mug of ale sign.
+<ce>                     Look for the mug of ale sign.
 <ce>                                    
 <ce>       Hint: Pressing F3 switchs you to INFO mode. You can click
 <ce>      on buildings to learn what they are. Some shops don't open
@@ -257,7 +260,7 @@ Message:  1050
 <ce>        All spellcasters should join the Mages Guild. Everyone
 <ce>        should pick a temple to join. However, pick carefully.
 <ce>         You can only be a member of one temple. Fighter type
-<ce>        characters should join either the fighter's guild or a
+<ce>        characters should join either the Fighters Guild or a
 <ce>                            knightly order.
 <ce>                                    
 <ce>         Hint: Thieves and murderers, just do your thing. The

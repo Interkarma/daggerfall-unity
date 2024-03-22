@@ -28,7 +28,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                  Great. _competitor_ has a store in
 <ce>                 __storehouse_ called _storehouse_ and
-<ce>                   in it is a _mitem_ that I want you
+<ce>                  in it is a _mitem_ that I want you to
 <ce>            liberate. And, on your way out, please drop this
 <ce>            note off anywhere in the store. I can't resist.
 <ce>                 _competitor_ is going to pass that
@@ -64,7 +64,7 @@ Turns out that _competitor_ is a tougher merchant than _qgiver_ could dream of.
 RumorsPostsuccess:  [1007]
 _competitor_ has lost that contract %g worked so hard to get from _qgiver_.
 <--->
-_qgiver_ has %g3 old contract back and is happy as a well fed harpy.
+_qgiver_ has %g3 old contract back and is happy as a well-fed harpy.
 
 QuestorPostsuccess:  [1008]
 Well, you got me the _mitem_, so what can I do for you?
@@ -86,7 +86,7 @@ Message:  1011
  _competitor_,
  
  
- Fine security for your security.
+ Find security for your security.
  
  
  

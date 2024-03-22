@@ -30,18 +30,18 @@ QuestComplete:  [1004]
 <ce>                        right before your eyes.
 
 RumorsDuringQuest:  [1005]
-<ce>   _hunter_ is coming to %reg to clean out the werebeast infection.
+<ce>   _hunter_ is coming to %reg to clean out the werebeast infestation.
 <ce> Maybe then we'll be able to walk the streets at night again without fear.
 
 RumorsPostfailure:  [1006]
-<ce>_hunter_ and %g3 men killed a lot of loops in %reg, but I'll be hanged
+<ce>_hunter_ and %g3 men killed a lot of loups in %reg, but I'll be hanged
 <ce>                          if they got 'em all.
                                      <--->
 <ce> _hunter_ should have left well enough alone.  %g3 crusades just send
 <ce>                  the werecreatures into greater fury.
 
 RumorsPostsuccess:  [1007]
-<ce>_hunter_ and %g3 men killed a lot of loops in %reg, but I'll be hanged
+<ce>_hunter_ and %g3 men killed a lot of loups in %reg, but I'll be hanged
 <ce>                          if they got 'em all.
                                      <--->
 <ce> _hunter_ should have left well enough alone.  %g3 crusades just send
@@ -120,7 +120,7 @@ Message:  1021
 <ce>           can be lifted, although I hesitate to speak of it,
 <ce>          as the cure may be worse than the disease.  We must
 <ce>              lower our voices.  You may not be aware that
-<ce>           lycanthropy is an hereditary condition, passed on
+<ce>           lycanthropy is a hereditary condition, passed on
 <ce>            in certain families, although it can lie dormant
 <ce>            for generations before reappearing.  This is why
 <ce>          the great crusades against lycanthropes led by those

@@ -34,11 +34,13 @@ AcceptQuest:  [1002]
 <ce>                           waiting for you.
 
 QuestFail:  [1003]
+<ce>                       
+
+QuestComplete:  [1004]
 <ce>                       The spriggan is kindling?
 <ce>                      You are proving yourself to
 <ce>                       be quite reliable, %pct.
 
-QuestComplete:  [1004]
 <ce>                       Here is your _gold_ gold
 <ce>                             as promised.
 
@@ -62,7 +64,7 @@ QuestorPostsuccess:  [1008]
 
 QuestorPostfailure:  [1009]
 <ce>                    Spriggans aren't so tough. What
-<ce>                   happened? You get scared and hid?
+<ce>                   happened? You got scared and hid?
 
 QuestLogEntry:  [1010]
 On %qdt,

@@ -36,7 +36,7 @@ RumorsDuringQuest:  [1005]
                                      <--->
 <ce>                    I feel sorry for _qgiver_. %g3
 <ce>                    _house_ has been virtually taken
-<ce>                over by 12 foot long rats with poisonous
+<ce>                over by 12-foot-long rats with poisonous
 <ce>                stingers. I hear they can turn a man to
 <ce>                      stone with a single glance!
 

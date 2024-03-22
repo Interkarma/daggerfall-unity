@@ -24,7 +24,7 @@ RefuseQuest:  [1001]
 <ce>                  I understand.  A lich is a fearsome
 <ce>                   opponent for one of your youth and
 <ce>                     inexperience.  Perhaps as you
-<ce>                      mature you will take up this
+<ce>                      mature you will take this up
 <ce>                       again.  %god go with you.
 
 AcceptQuest:  [1002]

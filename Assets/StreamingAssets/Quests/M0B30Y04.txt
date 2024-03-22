@@ -69,7 +69,7 @@ I lost money betting against that %ra that went to kill that lich.
 
 QuestorPostsuccess:  [1008]
 <ce>                  The lich slayer has returned! What
-<ce>                   will it be now? Dragons? Daedras?
+<ce>                   will it be now? Dragons? Daedra?
 
 QuestorPostfailure:  [1009]
 <ce>                 I wouldn't have taken a job to face a
@@ -90,7 +90,7 @@ Message:  1030
  The Fighters Guild
  of ___questgiver_ has hired me to
  slay a lich in =1stparton_ days or less.
- The liches' lair is a place called
+ The lich's lair is a place called
  ___mondung_.
 
 Message:  1080

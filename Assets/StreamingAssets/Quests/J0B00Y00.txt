@@ -27,7 +27,7 @@ AcceptQuest:  [1002]
 <ce>                   affairs, but in this case, we feel
 <ce>                 justified. This thief, you see, stole
 <ce>                 directly from one of our caravans and
-<ce>                is ransoming us for use of the highway.
+<ce>                is extorting us for use of the highway.
 <ce>               Such nerve. You will find the little thug
 <ce>                    in a hideout called ___mondung_.
 <ce>                      Be back in =1stparton_ days.
@@ -46,8 +46,7 @@ QuestComplete:  [1004]
 RumorsDuringQuest:  [1005]
 That footpad is single-handedly ruining the economy.
 <--->
-<ce>         They think that highwayman is a thief, but the crook
-<ce>                    is highly trained with a blade.
+They think that highwayman is a thief, but the crook is highly trained with a blade.
 
 RumorsPostfailure:  [1006]
 That robber moved to a different hideout, but the roads still aren't safe.
@@ -69,7 +68,7 @@ Message:  1020
 <ce>                   You must be from the Resolution.
 <ce>                     Prepare to die, bounty hunter!
 
-Message:  1030
+QuestLogEntry:  1030
 %qdt:
  The Resolution of Zenithar
  has sent me to kill a thief who has been ransacking

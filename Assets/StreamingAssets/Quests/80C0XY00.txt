@@ -41,7 +41,7 @@ AcceptQuest:  [1002]
 <ce>             meet you at the palace there for convenience.
 <ce>               I don't think the whole affair should take
 <ce>                 more than =1stparton_ days if done as
-<ce>               efficiently as it should. Go then into the
+<ce>               efficiently as it should be. Go then into the
 <ce>                     world and do my bidding, %pcn.
 
 QuestFail:  [1003]
@@ -54,7 +54,7 @@ QuestComplete:  [1004]
 <ce>                     old =monster_. She just didn't
 <ce>               know how to keep her mouth shut, you know?
 <ce>                  Anyhow, here's the _artifact_. Not a
-<ce>             halfbad smasher. And who knows? You might have
+<ce>             half-bad smasher. And who knows? You might have
 <ce>                 to use it on Malacath himself one day.
 <ce>                             I'm joking ...
 <ce>                               of course.
@@ -123,7 +123,7 @@ Message:  1030
 Message:  1040
 <ce>                     %oth!  _qgfriend_ was behind
 <ce>                    _murder_'s death?  And involved
-<ce>                   in a daedra plot as well?  We may
+<ce>                   in a daedric plot as well?  We may
 <ce>                 never have solved this murder without
 <ce>                   your help, %pcn.  Your loyalty to
 <ce>                     the %rt will not be forgotten.

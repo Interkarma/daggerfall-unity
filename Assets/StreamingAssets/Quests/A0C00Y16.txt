@@ -137,7 +137,7 @@ Message:  1034
 Message:  1040
 <ce>                      What are you doing here? I
 <ce>                         don't ever want to see
-<ce>                      _questgiver_ again. Hey! let
+<ce>                      _questgiver_ again. Hey! Let
 <ce>                     me go! You can't just drag me
 <ce>                      through the streets to %g2.
 

@@ -51,7 +51,7 @@ QuestComplete:  [1004]
 <ce>                           -- you deserve it.
 
 RumorsDuringQuest:  [1005]
-That ___mondung_ has always been creepy. Now it supposed to be haunted.
+That ___mondung_ has always been creepy. Now it's supposed to be haunted.
 <--->
 As far as I'm concerned, leave the haunt alone. No one goes near it anyway.
 
@@ -79,7 +79,7 @@ QuestLogEntry:  [1010]
  place for the Benevolence of Mara,
  of a haunting spirit of some sort.
  I have =1stparton_ days to cleanse
- ___mondung_ of it's haunt.
+ ___mondung_ of its haunt.
 
 Message:  1020
 <ce>                  "My spirit will now rest at peace."

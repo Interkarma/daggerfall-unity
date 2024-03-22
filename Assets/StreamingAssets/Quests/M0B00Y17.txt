@@ -54,7 +54,7 @@ QuestComplete:  [1004]
 <ce>                    at heart, wouldn't hurt a fly.
 <ce>                  Here's your _gold_ gold, just like
 <ce>                   I promised that nice _questgiver_
-<ce>                        at the Fighter's Guild.
+<ce>                        at the Fighters Guild.
 
 RumorsDuringQuest:  [1005]
 <ce>     Did you hear that _dummy_'s tiger escaped again?  Killed and
@@ -64,7 +64,7 @@ RumorsPostfailure:  [1006]
 <ce>    _dummy_'s tiger seems to have disappeared for good. Thank %god!
 
 RumorsPostsuccess:  [1007]
-<ce>     _dummy_ actually hired someone from the Fighter's Guild to go
+<ce>     _dummy_ actually hired someone from the Fighters Guild to go
 <ce>fetch %g3 pet tiger for %g2. What sap would take a silly job like that?
 
 QuestorPostsuccess:  [1008]

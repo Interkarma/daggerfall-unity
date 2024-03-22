@@ -83,7 +83,7 @@ Message:  1011
 <ce>                              _evilitem_.
 
 Message:  1012
-<ce>            The evil _evilitem_, sparks and disintegrates.
+<ce>            The evil _evilitem_ sparks and disintegrates.
 <ce>                      You suddenly feel very sick.
 
 

@@ -62,7 +62,7 @@ I can't trust anyone at the Mages Guild, knowing =monster_ is a member.
 <--->
 Mages say =monster_ is hiding from Oblivion's wrath at ___fakedung_.
 <--->
-Mage's are gathering to scour ___fakedung_ for that scoundrel =monster_.
+Mages are gathering to scour ___fakedung_ for that scoundrel =monster_.
 <--->
 I saw a bunch of mages heading out to ___fakedung_.
 <--->
@@ -99,7 +99,7 @@ The _artifact_ can open any lock.
 Message:  1015
 Mages say =monster_ is hiding from Oblivion's wrath at ___fakedung_.
 <--->
-Mage's are gathering to scour ___fakedung_ for that scoundrel =monster_.
+Mages are gathering to scour ___fakedung_ for that scoundrel =monster_.
 <--->
 I saw a bunch of mages heading out to ___fakedung_.
 <--->
@@ -108,7 +108,7 @@ I heard that traitor =monster_ is now hiding out in ___fakedung_.
 Message:  1016
 <ce>                           %oth!  =monster_,
 <ce>                     Oblivion's agent is upon us!
-<ce>               I've moved the most valuable reagents to
+<ce>                 I've moved the most valuable reagents
 <ce>                          to ___fakedung_ and
 <ce>                  plan to meet you there after you've
 <ce>                      dealt with that pesky %ra.

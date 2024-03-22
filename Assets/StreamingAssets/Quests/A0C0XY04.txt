@@ -13,7 +13,7 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                         My name is _agent_. I
-<ce>                    represent a someone that needs
+<ce>                     represent someone that needs
 <ce>                   to... acquire something. Whoever
 <ce>                     delivers it will be rewarded
 <ce>                          with _artifact_. I
@@ -125,7 +125,7 @@ Message:  1015
 <ce>                       as %g is known to %g3 own
 <ce>                       people, has earned you a
 <ce>                        reward. Members of the
-<ce>                      Mage's Guild now trust you
+<ce>                      Mages Guild now trust you
 <ce>                        far more than before."
 
 Message:  1020

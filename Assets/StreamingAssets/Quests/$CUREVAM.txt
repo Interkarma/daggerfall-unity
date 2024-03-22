@@ -35,14 +35,14 @@ RumorsPostfailure:  [1006]
 <ce>                             got them all.
                                      <--->
 <ce> _hunter_ should have left well enough alone.  %g3 crusades just send
-<ce> the vampires into hiding, and when %g leaves, they come back stronger than  ever.
+<ce> the vampires into hiding, and when %g leaves, they come back stronger than ever.
 
 RumorsPostsuccess:  [1007]
 <ce>_hunter_ and %g3 men killed a lot of vampires in %reg, but I doubt they
 <ce>                             got them all.
                                      <--->
 <ce> _hunter_ should have left well enough alone.  %g3 crusades just send
-<ce> the vampires into hiding, and when %g leaves, they come back stronger than  ever.
+<ce> the vampires into hiding, and when %g leaves, they come back stronger than ever.
 
 QuestorPostsuccess:  [1008]
 Error -- 1008 called

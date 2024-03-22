@@ -126,7 +126,7 @@ _priest_ has risen above the scandals that plagued %g3 early days in ==priest_.
 <--->
 _priest_ usually can be found in meditation at _priesthome_, __priesthome_ right about now.
 <--->
-Most everyone in __priesthome_, except _noble_, greatly respect _priest_.
+Most everyone in __priesthome_, except _noble_, greatly respects _priest_.
 <--->
 The only person _priest_ obviously dislikes is that =merchant_, _merchant_.
 
@@ -504,7 +504,7 @@ Message:  1040
 <ce>                      beyond suspicion -- _noble_
 <ce>               of the royal house of %reg. You're going
 <ce>             to need some evidence to prove it and I'm not
-<ce>             going to stick my neck out anymore. The only
+<ce>             going to stick my neck out any more. The only
 <ce>            other thing I can tell you is that, during the
 <ce>                       weekends, _noble_ spends
 <ce>                      %g3 time at ___mondung_ and
@@ -515,7 +515,7 @@ Message:  1040
 Message:  1041
 <ce>                   Hi, %pcf. I couldn't talk to you
 <ce>             at the tavern -- it was too public. I really
-<ce>              was a witness at the burglary at __qgiver_.
+<ce>              was a witness of the burglary at __qgiver_.
 <ce>           In fact, I did it. But the one who paid me to do
 <ce>           it and the one who said I should blame a stranger
 <ce>                        for it was _priest_, a
@@ -574,7 +574,7 @@ QuestTimeLapse:  [1045]
 %qdt:
  _witness_
  confessed that %g knew who committed the
- burglary and it isn't me. On the other
+ burglary and that it wasn't me. On the other
  hand, _priest_, the true
  engineer behind it, will be difficult to
  convict. The two places where I might find
@@ -590,7 +590,7 @@ Message:  1046
  which I've been framed, at least, according
  to _witness_. Further,
  %g says, _thief_ is now
- so well respected, I'll need hard evidence
+ so well-respected, I'll need hard evidence
  to convict %g2. I might be able to find
  this evidence in _thiefhouse_
  or ___mondung_, or both places.
@@ -656,7 +656,7 @@ _priest_
  
  Dear _priest_,
  
-      Ignore my last letter when I applauded you
+      Ignore my last letter where I applauded you
  for your enormous contribution to ==priest_.
  That _gem_ that you said was a donation
  was stolen from _qgiver_. If
@@ -743,7 +743,7 @@ Message:  1056
 <ce>                      cell in _thiefhouse_? %oth,
 <ce>                  it's priceless! Quickly, now, %pcf,
 <ce>                      get that _gem_ to _qgiver_
-<ce>               and I'll make spread the word around that
+<ce>                 and I'll spread the word around that
 <ce>                      the true thief of __qgiver_
 <ce>                       is a priest of ==priest_!
 
@@ -766,8 +766,8 @@ Message:  1058
 <ce>                        a scapegoat? _guard4_!
                                      <--->
 <ce>                       Why couldn't you just get
-<ce>                    out of %reg and left everything
-<ce>                           along, %ra? %oth,
+<ce>                 out of %reg and have left everything
+<ce>                           alone, %ra? %oth,
 <ce>                         you'll wish you had!
 
 Message:  1059

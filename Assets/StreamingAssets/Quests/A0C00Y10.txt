@@ -30,7 +30,7 @@ RefuseQuest:  [1001]
                                      <--->
 <ce>            I didn't think so. Go on with whatever you do.
                                      <--->
-<ce>                Didn't think you would say yes anyway.
+<ce>                Didn't think you would say yes, anyway.
 <ce>                       Now begone with yourself.
 
 AcceptQuest:  [1002]
@@ -88,7 +88,7 @@ QuestorPostsuccess:  [1008]
 QuestorPostfailure:  [1009]
 <ce>                  Hah! You didn't even bother to show
 <ce>                  up for the duel. Thought I wouldn't
-<ce>                    remember eh? Shove off, coward!
+<ce>                    remember, eh? Shove off, coward!
 
 Message:  1016
 <ce>                     Oh, smelly one. 'Tis not your
