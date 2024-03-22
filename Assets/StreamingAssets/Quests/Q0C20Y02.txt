@@ -42,7 +42,7 @@ QuestFail:  [1003]
 
 QuestComplete:  [1004]
 <ce>                    Ah, there is the _magicitem_ we
-<ce>                  need for our spell. Quickly, sisters
+<ce>                 need for our spell. Quickly, sisters,
 <ce>                   rend it and rip it and boil it in
 <ce>                     a covered tub. Here have we a
 <ce>                       lump of _reward_ for thee,

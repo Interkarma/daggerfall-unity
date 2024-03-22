@@ -18,7 +18,7 @@ QuestorOffer:  [1000]
 <ce>                 our coven. I know wherein this packet
 <ce>                  of printed lies has been placed, but
 <ce>                   we need someone like thee to fight
-<ce>                   its guardian and bring it us. Wilt
+<ce>                 its guardian and bring it to us. Wilt
 <ce>                      thou assist ==qgiver_ thus?
 
 RefuseQuest:  [1001]

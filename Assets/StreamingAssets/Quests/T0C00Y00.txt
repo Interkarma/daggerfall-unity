@@ -79,7 +79,7 @@ RumorsPostfailure:  [1006]
 RumorsPostsuccess:  [1007]
 It's not a real tragedy about =monster_ -- I mean, %g was a real goody-goody.
 <--->
-<ce>I'm not glad =monster_'s dead, but %g3 message was ... well, rather extreme
+<ce>I'm not glad =monster_'s dead, but %g3 message was ... well, rather extreme,
  don't you think?
 
 Message:  1011

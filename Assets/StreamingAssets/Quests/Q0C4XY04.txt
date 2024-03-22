@@ -36,7 +36,7 @@ AcceptQuest:  [1002]
 QuestFail:  [1003]
 <ce>                           The heart, %pcn,
 <ce>                           is in ___mondung_
-<ce>                       in the breast of a daedra
+<ce>                       in the breast of a daedra.
 <ce>                         Look not for it here.
 
 QuestComplete:  [1004]

@@ -17,8 +17,8 @@ QuestorOffer:  [1000]
 <ce>                    delivered such a letter to me.
 <ce>                                    
 <ce>                 I would like you to investigate this
-<ce>                      further, %pcn. It could be
-<ce>                 dangerous to poke into the affairs of
+<ce>                 further, %pcn. It could be dangerously
+<ce>                 difficult to poke into the affairs of
 <ce>                 Aubk-i without enraging King Gothryd,
 <ce>                     even though he is my own son.
 <ce>                           Are you willing?
@@ -38,7 +38,7 @@ AcceptQuest:  [1002]
 <ce>             soul, died at Cryngaine, as did King Camaron.
 <ce>              Lysandus' body was not recovered, so he has
 <ce>              a monument erected there rather than a true
-<ce>                      tomb. Ah...my mind wanders.
+<ce>                      tomb. Ah... my mind wanders.
 <ce>                                    
 <ce>                  The emperor uses _messenger_ as his
 <ce>             messenger in Daggerfall. %g could be anywhere
@@ -87,10 +87,10 @@ Message:  1011
  Mynisera's signet ring bought the trust of
  _dispatcher_. %g told me that _messenger_
  would be in __palace_ at
- _palace_ in =2palace_ days time.
+ _palace_ in =2palace_ days' time.
 
 Message:  1015
-<ce>              The letter from the Emperor? Actually %pcf
+<ce>              The letter from the Emperor? Actually, %pcf,
 <ce>              this is rather embarrassing. The letter was
 <ce>             stolen from me the same day I received it. I
 <ce>              never did read it. I have been hoping that
@@ -120,7 +120,7 @@ Message:  1020
 <ce>              I would not normally tell anyone who is not
 <ce>           a Knight of the Dragon where to find _messenger_.
 <ce>             However, I am loyal to Queen Mynisera. I also
-<ce>                   know that _messenger_ disembowled
+<ce>                   know that _messenger_ disemboweled
 <ce>               the last person that tried to ambush %g2.
 <ce>             In =2palace_ days %g is due to be at _palace_
 <ce>                     in __palace_. Try %g2 there.

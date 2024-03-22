@@ -37,11 +37,11 @@ AcceptQuest:  [1002]
 QuestComplete:  [1004]
 <ce>                      Boy, some guys are hard ta
 <ce>                      figure out. Can you believe
-<ce>                      he paid to have this lifted
+<ce>                      he paid to have this lifted?
 <ce>                      Wasn't as if there was some
 <ce>                      "hideous guardian" stoppin'
 <ce>                      from doin' it himself. Huh?
-<ce>                       There was! Maybe he wasn't
+<ce>                      There was?! Maybe he wasn't
 <ce>                       so screwy. Here's yer fee
 <ce>                           %pcf. Good workin'
 <ce>                                with ya.

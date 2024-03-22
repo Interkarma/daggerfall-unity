@@ -80,7 +80,7 @@ QuestorPostfailure:  [1009]
 
 QuestLogEntry:  [1010]
 <ce>                   Thank %god you've arrived, %pcf.
-<ce>               Give me the diamond quick. Now take this
+<ce>               Give me the diamond, quick. Now take this
 <ce>                        _item2_ and bring it to
 <ce>                       _npc2_ over in __npc2_ --
 <ce>                       that's in ___npc2_. Once

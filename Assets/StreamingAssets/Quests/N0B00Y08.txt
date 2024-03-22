@@ -59,7 +59,7 @@ QuestComplete:  [1004]
 <ce>                             gold pieces.
 
 RumorsDuringQuest:  [1005]
-Poor _warrior_ has been awake for days. I think %g2 sanity is going.
+Poor _warrior_ has been awake for days. I think %g3 sanity is going.
 <--->
 The witch who cursed _warrior_ with sleeplessness really did a job on %g2.
 
@@ -69,7 +69,7 @@ _warrior_ and the Mages Guild are at odds. They couldn't help %g2.
 _warrior_ made peace with the witches, but hasn't forgiven the Mages Guild.
 
 RumorsPostsuccess:  [1007]
-_warrior_ is still sleeping I hear. Now they're afraid %g'll never wake up.
+_warrior_ is still sleeping, I hear. Now they're afraid %g'll never wake up.
 <--->
 The witch who cursed _warrior_ has vowed vengeance on the man who cured %g2.
 

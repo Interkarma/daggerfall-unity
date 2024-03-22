@@ -30,12 +30,12 @@ QuestorOffer:  [1000]
 <ce>                           of Tiber Septim?
 
 RefuseQuest:  [1001]
-<ce>                These are dark times indeed. If Gothryd
+<ce>                These are dark times, indeed. If Gothryd
 <ce>                gets the Mantella as well, Tamriel will
 <ce>                      be thrown into a civil war.
 
 AcceptQuest:  [1002]
-<ce>                   I knew I could count on you %pcf.
+<ce>                   I knew I could count on you, %pcf.
 <ce>              The Totem is most likely in the Daggerfall
 <ce>                  treasury. It is a huge room, quite
 <ce>                unmistakable. I am leaving in a couple
@@ -132,7 +132,7 @@ Message:  1022
  will bring them to equal standing with the
  other races of Tamriel. To do this I must
  have the Totem of Tiber Septim. I will not
- insult you by promises that no blood will
+ insult you by promising that no blood will
  be shed. I do swear by my crown and by my
  heirs I shall not attempt to hold sway
  beyond the borders of Orsinium. My goal is
@@ -148,7 +148,7 @@ Message:  1023
 %pcn,
  
  You will soon have the Totem of Tiber Septim
- in your hands. It is forseen in the stars,
+ in your hands. It is foreseen in the stars,
  and I have read them. Know you this. All of
  mortal stature are filled with pride and greed.
  To give the Totem to any of them is to let
@@ -182,7 +182,7 @@ Message:  1024
  I have won and lost an empire. I have no desire
  to tamper further with mortal affairs. I have in
  my possession the _artifact2_, one of the
- world's greatest artifacts. You may have it in
+ world's greatest artifacts. You may have it
  in exchange for the Totem.
  
  My most loyal agent will await your arrival in
@@ -213,7 +213,7 @@ Message:  1031
 <ce>             a word. He leaves as silently as he arrived.
 
 Message:  1032
-<ce>             A heavily cloaked figure shuffles toward you.
+<ce>             A heavily-cloaked figure shuffles toward you.
 <ce>             As you prepare to defend yourself, a gnarled
 <ce>            green hand shoots forth with a letter. Stunned,
 <ce>              you do nothing as the figure shuffles away.
@@ -222,8 +222,8 @@ Message:  1033
 <ce>            A hand grips your wrist from behind. Spinning,
 <ce>             you open your mouth to shout for the guards.
 <ce>           A skeletal hand stuffs a letter into your mouth.
-<ce>            The heavily robed skeleton releases your wrist
-<ce>             and turns away, unnoticed by other passerby.
+<ce>            The heavily-robed skeleton releases your wrist
+<ce>             and turns away, unnoticed by other passersby.
 
 Message:  1034
 <ce>              A letter floats through the air toward you.
@@ -244,15 +244,15 @@ Message:  1042
 <ce>                           whoever that is.
 
 Message:  1043
-<ce>               You don't even have it! Now I'm going to
+<ce>               You don't even have it?! Now I'm going to
 <ce>                   kill you just for the fun of it.
 
 Message:  1050
 <ce>             The Totem of Tiber Septim! It is a priceless
 <ce>             artifact. I shall guard it well and keep the
 <ce>              rebellious powers of Daggerfall and Wayrest
-<ce>                 in check. Take your reward %pcf. You
-<ce>              have earned it ten fold. You must keep your
+<ce>                 in check. Take your reward, %pcf. You
+<ce>              have earned it tenfold. You must keep your
 <ce>              keen eyes open for the Mantella. Any rumors
 <ce>              must be hunted down with vigor. Without the
 <ce>                    Mantella, the Totem is useless.
@@ -271,7 +271,7 @@ Message:  1052
 Message:  1053
 <ce>             I see you have come to your senses. I should
 <ce>           have you slain, but I have more honor than that.
-<ce>           Instead I shall reward you. Here take _goldgoth_
+<ce>           Instead I shall reward you. Here, take _goldgoth_
 <ce>            gold pieces for your turnabout loyalty. Deliver
 <ce>             the Mantella to me, and my trust in you will
 <ce>                        be once again restored.
@@ -286,7 +286,7 @@ Message:  1054
 
 Message:  1055
 <ce>                The Underking will be most pleased. He
-<ce>              has searched many life times for this lost
+<ce>              has searched many lifetimes for this lost
 <ce>             item. I have been instructed to give you this
 <ce>             object. Use it wisely. Should you ever locate
 <ce>               the Mantella, the Underking would be most

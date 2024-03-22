@@ -33,7 +33,7 @@ AcceptQuest:  [1002]
 <ce>                 Wilt thou truly? If thou wilt, a fine
 <ce>                        _mitem_ will be crafted
 <ce>                for thee. Now, journey thou to farthest
-<ce>                     __tavern_ and seek the one who has
+<ce>                     __tavern_ and seek he who has
 <ce>                    betrayed us, a villainous =man_
 <ce>                       who calls %g2-self _man_.
 <ce>                Give to %g2 this _jewelry_, tell %g2 it
@@ -57,7 +57,7 @@ QuestComplete:  [1004]
 <ce>                      before %g is put to death.
 
 RumorsDuringQuest:  [1005]
-_man_ is a true example of self-made =man_. A marvel to behold.
+_man_ is a true example of a self-made =man_. A marvel to behold.
 <--->
 ==qgiver_ can be extremely vengeful.
 

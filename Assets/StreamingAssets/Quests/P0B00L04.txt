@@ -22,7 +22,7 @@ Error: Questtext 1002 called.
 QuestComplete:  [1004]
 <ce>                Is that a hint of sorrow on your brow,
 <ce>                       %pcf? I quite understand.
-<ce>                 I have on more than on occasion had to
+<ce>                I have on more than one occasion had to
 <ce>                slay an offspring of mine. You must try
 <ce>                to rise above this mawkish mortal regard
 <ce>                 for propagation. What you have had to
@@ -92,7 +92,7 @@ I heard a great joke. %jok
 <--->
 %jok Can you explain that to me?
 <--->
-The legal system in %reg has it good points and bad ones.
+The legal system in %reg has its good points and bad ones.
 
 QuestorPostsuccess:  [1008]
 Error: Questtext 1008 Called

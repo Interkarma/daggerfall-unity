@@ -7,7 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 52
 Quest: N0B00Y16
-DisplayName: Open a chest
+DisplayName: Open a Chest
 -- Message panels
 QRC:
 
@@ -95,7 +95,7 @@ Message:  1030
 <ce>                   I knew my old friend _questgiver_
 <ce>                   wouldn't let me down.  Here is the
 <ce>                   box.  I hope you have some idea of
-<ce>                  how to open it.  I'm at my wits end.
+<ce>                  how to open it.  I'm at my wit's end.
 
 Message:  1040
 <ce>                  As you cast Open on the chest, the
@@ -134,7 +134,7 @@ Message:  1043
 
 Message:  1050
 <ce>                    Tell _questgiver_ I appreciate
-<ce>                   %g2 sending you to help...I guess.
+<ce>                   %g2 sending you to help... I guess.
 <ce>                     Of course, if I had known what
 <ce>                      was inside, I might not have
 <ce>                       been so eager to open it!

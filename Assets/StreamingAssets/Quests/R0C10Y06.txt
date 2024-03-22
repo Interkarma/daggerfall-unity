@@ -20,7 +20,7 @@ QuestorOffer:  [1000]
 <ce>                 outrage. On the other hand, I will pay
 <ce>              the full amount of the ransom, _reward_ gold
 <ce>                 pieces to you if you would go to their
-<ce>                   holdout and steal the _item_ back.
+<ce>                   hideout and steal the _item_ back.
 <ce>                               Will you?
 
 RefuseQuest:  [1001]
@@ -64,7 +64,7 @@ RumorsPostsuccess:  [1007]
 <ce>                 A bunch of orcs are complaining that
 <ce>                 _questgiver_ stole a relic of theirs.
                                      <--->
-<ce>              ___itemdung_ is apparently as not as secure
+<ce>               ___itemdung_ is apparently not as secure
 <ce>                   a hiding spot as one might think.
 
 QuestorPostsuccess:  [1008]

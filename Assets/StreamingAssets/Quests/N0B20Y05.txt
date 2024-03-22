@@ -25,8 +25,8 @@ QuestorOffer:  [1000]
 <ce>                        The people of %reg have
 <ce>                been demanding that the Mages Guild take
 <ce>                 a stand against the mad wizard who has
-<ce>                been terrorizing the land for some time
-<ce>                 now. Now, by order of the Archmagister
+<ce>                been terrorizing the land for some time.
+<ce>                   Now, by order of the Archmagister
 <ce>                himself, we are doing just that. I know
 <ce>                 it's hardly the assignment a scholarly
 <ce>                 institution should give, but would you

@@ -61,7 +61,7 @@ RumorsPostsuccess:  [1007]
 Some =qgfriend_ was just here, waving around some _item_.
 <--->
 <ce>             I guess _questgiver_ didn't steal that _item_
-<ce>                      after all or else %g ate it.
+<ce>                      after all, or else %g ate it.
 
 QuestorPostsuccess:  [1008]
 I recognize those sturdy young legs. How are you, my old courier?
@@ -75,7 +75,7 @@ QuestorPostfailure:  [1009]
 <ce>                         have no time for you.
 
 Message:  1011
-%g's a thoroughly respectable ruler, with kleptomanic tendencies.
+%g's a thoroughly-respectable ruler, with kleptomaniac tendencies.
 <--->
 A big-time jewelry smuggler, from what I hear.
 

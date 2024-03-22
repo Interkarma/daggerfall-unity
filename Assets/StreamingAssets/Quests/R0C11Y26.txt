@@ -24,7 +24,7 @@ QuestorOffer:  [1000]
 RefuseQuest:  [1001]
 <ce>                 Not an uncommon response. Then I have
 <ce>                 little choice, but to call on some of
-<ce>                 my less savoury contacts for help --
+<ce>                 my less-savoury contacts for help --
 <ce>                   an option I was hoping to avoid.
 
 AcceptQuest:  [1002]
@@ -157,7 +157,7 @@ Message:  1015
 <ce>                 %g2, mostly I was afraid of %g2 so I
 <ce>              guess I let %g2 think I liked %g2. 'Course
 <ce>              now I'm getting letters like this. I think
-<ce>                   %g's very much could be the ____qgiver_
+<ce>                   %g very much could be the ____qgiver_
 <ce>                 Ripper. He lives at _ripperhouse_ if
 <ce>                 you want to go see %g2 for real life.
 
@@ -216,7 +216,7 @@ Message:  1024
  came calling before I did. In %g2
  house I did find a letter from someone named
  _rippername_. Sounded skittish
- enough to be our Ripper. Worth investigating
+ enough to be our Ripper. Worth investigating,
  anyhow.
 
 Message:  1025

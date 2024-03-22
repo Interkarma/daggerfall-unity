@@ -40,7 +40,7 @@ AcceptQuest:  [1002]
 <ce>                      tale few mortals have heard.
 
 QuestComplete:  [1004]
-<ce>                     Well done %pcf. I am sure the
+<ce>                     Well done, %pcf. I am sure the
 <ce>                prince will be most cooperative. Please
 <ce>                       accept this _magicitem_ as
 <ce>                a token of my appreciation. In addition,

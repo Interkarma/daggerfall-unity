@@ -14,7 +14,7 @@ QuestorOffer:  [1000]
 <ce>                Power, hah! Would a Mundus-crawling %ra
 <ce>             know what to do with real power? You mean you
 <ce>              want to be able to bully a few other mortals
-<ce>             around, don't you? Well that can be arranged.
+<ce>             around, don't you? Well, that can be arranged.
 <ce>              I want you to show me you have the mettle to
 <ce>              actually use what I give you. Will you kill
 <ce>                            someone for it?
@@ -29,7 +29,7 @@ AcceptQuest:  [1002]
 <ce>             anyhow. The spellsword I have in mind for you
 <ce>                   to butcher for power is =monster_,
 <ce>             a perfectly charming and charitable ass who's
-<ce>              been annoying the hell out me for years. You
+<ce>            been annoying the hell out of me for years. You
 <ce>             will find %g2 at %g3 fortress, a place called
 <ce>                     ___mondung_. Now, don't think
 <ce>                     that just because =monster_ is
@@ -89,7 +89,7 @@ Boethiah is the Daedra Prince of Cruelty and Torture. Not a nice lady.
 She's a Prince of Oblivion, one of the Daedric Regents, and a real killer.
 
 Message:  1014
-_artifact_ protects it's wearer from many kinds of harm. Fire and life draining are the two commonly known.
+_artifact_ protects its wearer from many kinds of harm. Fire and life-draining are the two commonly known.
 
 QuestLogEntry:  [1010]
 %qdt:

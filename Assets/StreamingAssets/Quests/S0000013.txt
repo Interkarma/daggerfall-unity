@@ -13,7 +13,7 @@ QuestorOffer:  [1000]
 <ce>               me on your ancestors' honor that you will
 <ce>              do what you can to help me and never breathe
 <ce>                of what I say or what you see to anyone
-<ce>                   else anywhere. Will you so swear?
+<ce>                   else, anywhere. Will you so swear?
 
 RefuseQuest:  [1001]
 <ce>               It would be worse, I suppose, for you to
@@ -55,7 +55,7 @@ QuestComplete:  [1004]
 <ce>                 Poor Mynisera. Everyone at court knows
 <ce>               that her husband, the late King Lysandus,
 <ce>              preferred the face and form of another woman
-<ce>               to her, but she still attempts to hide all
+<ce>               to hers, but she still attempts to hide all
 <ce>               evidence of it. Her loyalty to Lysandus is
 <ce>               almost as great as his foolish loyalty to
 <ce>                              the emperor.

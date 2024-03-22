@@ -53,7 +53,7 @@ The thieves have been threatening to steal the Mages Guild's _treasure_.
 RumorsPostfailure:  [1006]
 The thieves finally got that _treasure_ after all.
 <--->
-The Mages Guild should've got real guards. That's why they lost the _treasure_
+The Mages Guild should've got real guards. That's why they lost the _treasure_.
 
 RumorsPostsuccess:  [1007]
 Those thieves aren't going to try to get that _treasure_ again, I bet.
@@ -88,12 +88,12 @@ Message:  1011
  be after me for sure.
 
 Message:  1012
-<ce>                      Lookee here boys. A guard.
+<ce>                      Lookee here, boys. A guard.
 <ce>                        Gee, I'm all scared and
-<ce>                        shaking. Lets leave the
+<ce>                        shaking. Let's leave the
 <ce>                        tongue on the door as a
 <ce>                        warning not to mess with
-<ce>                      the thieves guild. Get him!
+<ce>                      the Thieves Guild. Get him!
 
 Message:  1013
 <ce>                      I claim bounty on the thief

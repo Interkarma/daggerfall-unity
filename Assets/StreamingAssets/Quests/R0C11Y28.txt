@@ -28,11 +28,11 @@ QuestorOffer:  [1000]
 RefuseQuest:  [1001]
 <ce>                 Not an uncommon response. Then I have
 <ce>                 little choice, but to call on some of
-<ce>                 my less savoury contacts for help --
+<ce>                 my less-savoury contacts for help --
 <ce>                   an option I was hoping to avoid.
 
 AcceptQuest:  [1002]
-<ce>                      Thank %god for that anyway.
+<ce>                      Thank %god for that, anyway.
 <ce>                    The people of %reg are becoming
 <ce>               anxious about the lack of progress in the
 <ce>                official investigations. I fear that we
@@ -100,7 +100,7 @@ QuestLogEntry:  [1010]
 <ce>              doubtless been told that I've become a bit
 <ce>               of a hermit ever since I began receiving
 <ce>                those letters threatening my life if I
-<ce>              did not abandoned my investigations. Well,
+<ce>               did not abandon my investigations. Well,
 <ce>               now I have an old colleague in town with
 <ce>                whose assistance I may be able to solve
 <ce>               these murders. I would like you to bring
@@ -121,7 +121,7 @@ _contact_,
  blindly into an inferno.
  
  If you continue, you will die before your
- studies are finished. Consider this this a
+ studies are finished. Consider this a
  serious warning.
  
 <ce>                             A Well-Wisher
@@ -188,12 +188,12 @@ Autopsy report for %fn:
  interesting case he reported at last year's
  Conclave). Bruising indicates some time
  between attack and death? (Could be unrelated
- to attack? Check on background of victim)
+ to attack? Check on background of victim).
 
 Message:  1015
 <ce>                    So, for all the days _contact_
 <ce>                has spent with those flyblown cadavers
-<ce>                       and all %g comes up with
+<ce>                         all %g comes up with
 <ce>                     is this. %god, with this as a
 <ce>                      start, _contact_ won't get
 <ce>                an intimation of the Slayer's identity
@@ -220,7 +220,7 @@ _vamp_ is one of the %vcn, sent to ___bookstore_ to eliminate the mad Slayer.
 _vamp_ is a %vcn vampire here to stop the risk to %g3 security, the Slayer.
 
 Message:  1018
-Poor _widow_ stays at _widowhouse_ every since the Slayer got %g3 brother.
+Poor _widow_ stays at _widowhouse_ ever since the Slayer got %g3 brother.
 <--->
 The %reg Slayer killed _widow_'s brother, and now %g never leaves _widowhouse_.
 
@@ -268,7 +268,7 @@ Message:  1021
 Message:  1022
 %qdat:
  I got to _bookstore_ too late.
- Apparently _contact_'s death
+ Apparently, _contact_'s death
  threats were very real. Among the letters
  I found was one from a colleague interested in
  meeting with _contact_, someone

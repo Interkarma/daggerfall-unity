@@ -68,7 +68,7 @@ QuestComplete:  [1004]
 <ce>                               enjoyed.
 
 RumorsDuringQuest:  [1005]
-Daedras seem to be attracted to ___mondung_. Must be some spiritual about it.
+Daedra seem to be attracted to ___mondung_. Must be something spiritual about it.
 <--->
 <ce>      Old _qgiver_ is forever summoning things up and
 <ce>                           getting %g2-self in trouble.
@@ -77,7 +77,7 @@ RumorsPostfailure:  [1006]
 The daedric stars last night shone particularly bright.
 
 RumorsPostsuccess:  [1007]
-_qgiver_'s daedra is gone for now. But daedras have a habit of returning.
+_qgiver_'s daedra is gone for now. But daedra have a habit of returning.
 <--->
 ___mondung_ is relatively purged of daedric influence, at least for now.
 

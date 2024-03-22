@@ -90,7 +90,7 @@ Message:  1043
 <ce>                        again sometime.  Ta ta!
 
 Message:  1050
-<ce>                       Take that! and that! you
+<ce>                       Take that! And that! You
 <ce>                           moldy old thing!
 
 Message:  1051

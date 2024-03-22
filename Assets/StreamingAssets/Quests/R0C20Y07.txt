@@ -46,7 +46,7 @@ QuestFail:  [1003]
 QuestComplete:  [1004]
 <ce>                     Oh, %pcf, you don't know how
 <ce>              relieved I am that you found that sapphire.
-<ce>               I don't even want to think about it if you
+<ce>             I wouldn't even want to think about it if you
 <ce>              hadn't. Here's the finest reward I can give
 <ce>                   you, a _reward_. Please accept it,
 <ce>                        with my sincere thanks.
@@ -74,8 +74,8 @@ I'm glad to see you again. My friend appreciated the little blue gift.
 QuestorPostfailure:  [1009]
 <ce>                     I'm impressed by your nerve,
 <ce>                          %pcn. You failed the
-<ce>                      quest and yet return with no
-<ce>                               sapphire.
+<ce>                      quest to retrieve the sapphire,
+<ce>                          and yet you return.
 
 QuestLogEntry:  [1010]
 %qdt:

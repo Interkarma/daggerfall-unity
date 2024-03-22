@@ -13,15 +13,15 @@ QuestorOffer:  [1000]
 <ce>                Lysandus will I do this. The Dust can be
 <ce>                       found in ___crypt_ on her
 <ce>               own island. Tell Medora that the price is
-<ce>                 her support of my claim to the heart.
+<ce>               her support of my claim to Tiber's heart.
 <ce>                       She'll know what it means.
 
 QuestLogEntry:  [1010]
 %qdt:
  Medora came to me in a vision and told me
- that Lysandus ghost could be soothed if I
- can convince Gortwog, Lord of the Orcs in
- Orsinium, to tell me where it is.
+ that Lysandus' ghost could be soothed if I
+ can convince Gortwog, Warlord of the Orcs
+ in Orsinium, to tell me where it is.
 
 Message:  1011
 %qdt:
@@ -53,7 +53,7 @@ Message:  1015
 <ce>                            other folks do.
 
 Message:  1016
-A packet of midnight black powder.
+A packet of midnight-black powder.
 
 Message:  1020
 <ce>               This parchment was used as a wrap for the

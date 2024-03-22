@@ -54,7 +54,7 @@ QuestComplete:  [1004]
 <ce>                               job, %pct.
 
 RumorsDuringQuest:  [1005]
-Maybe that _scholar_ is a celebrity to scholar types, but %g's just a =scholar_
+Maybe that _scholar_ is a celebrity to scholar types, but %g's just a =scholar_.
 <--->
 It's an honor for ___scholar_ to host the renowned _scholar_'s visit to %reg.
 
@@ -184,19 +184,19 @@ When white light is passed through a gas
  evidence, essense, morality, and extraction.
 
 Message:  1017
-_scholar_ is only one of the most respected scholars in Tamriel
+_scholar_ is only one of the most-respected scholars in Tamriel.
 <--->
-_scholar_ is a =scholar_, a very well-respected scholar
+_scholar_ is a =scholar_, a very well-respected scholar.
 <--->
-_scholar_ is only going to be visiting %reg for a short time
+_scholar_ is only going to be visiting %reg for a short time.
 <--->
-One of the finest minds of the third era, so they say
+One of the finest minds of the third era, so they say.
 <--->
-_scholar_ would definitely agree that %g's a genius
+_scholar_ would definitely agree that %g's a genius.
 <--->
-_scholar_ is a typical intellectual. No idea of what's going on
+_scholar_ is a typical intellectual: no idea of what's going on.
 <--->
-_scholar_'s very clever, but %g3 brains sometimes go to %g3 head
+_scholar_'s very clever, but %g3 brains sometimes go to %g3 head.
 <--->
 Talk to _db_ over in ___db_ -- %g's been asking about _scholar_ too.
 <--->
@@ -217,7 +217,7 @@ Message:  1019
 <ce>                little something I whipped together that
 <ce>                should keep you from getting in trouble
 <ce>                      with _qgiver_ and the other
-<ce>                 Mages Guildmembers. All research notes
+<ce>                 Mages Guild members. All research notes
 <ce>                look alike anyhow. When they don't yield
 <ce>                results, the Guild will just throw more
 <ce>                assistants at it or give up the project

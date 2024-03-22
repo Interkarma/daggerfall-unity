@@ -12,7 +12,7 @@ QuestorOffer:  [1000]
 <ce>                  I trust you have had a comfortable
 <ce>                 stay so far. Let me get right to the
 <ce>                  point. My son, Prince Lhotun, says
-<ce>                 you are a well respected and trusted
+<ce>                 you are a well-respected and trusted
 <ce>                    %ra. I have need of your sort.
 <ce>                  I am willing to pay you _gold_ gold
 <ce>                   to infiltrate Castle Wayrest and
@@ -24,15 +24,15 @@ RefuseQuest:  [1001]
 <ce>                        standing in this court.
 
 AcceptQuest:  [1002]
-<ce>                   What Bounty! There is an item, a
+<ce>                   What bounty! There is an item, a
 <ce>                  painting, that is hidden somewhere
 <ce>                    within Castle Wayrest. I desire
 <ce>                  this item for reasons you need not
 <ce>                   worry about. Bring it to me and I
-<ce>                      will pay your _gold_ gold.
+<ce>                      will pay you _gold_ gold.
 
 QuestComplete:  [1004]
-<ce>                    Here is your _gold_ gold %pcf.
+<ce>                    Here is your _gold_ gold, %pcf.
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -55,7 +55,7 @@ Dear %pcn,
 
 Message:  1012
 <ce>               A page girl bearing the crest of Sentinel
-<ce>                stiffly presents you a crisply pressed
+<ce>                stiffly presents you a crisply-pressed
 <ce>              envelope. Ignoring your queries, she turns
 <ce>                            and walks away.
 
@@ -87,7 +87,7 @@ Message:  1021
 <ce>                  not only loyal, but also obedient.
 
 Message:  1022
-<ce>                        You presume much %pcn.
+<ce>                        You presume much, %pcn.
 <ce>                  What you saw is not for the prying
 <ce>                    eyes of the masses. It concerns
 <ce>                 matters of royalty and will be dealt

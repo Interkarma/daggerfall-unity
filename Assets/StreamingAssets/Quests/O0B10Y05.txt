@@ -14,7 +14,7 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                            Ho there %pcf!
 <ce>                       You remember me, _qgiver_?
-<ce>                         Are up for a guild job
+<ce>                       Are you up for a guild job
 <ce>                       today? I got one here that
 <ce>                       seems right up your alley.
 

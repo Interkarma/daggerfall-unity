@@ -76,10 +76,10 @@ I heard a great joke. %jok
 <--->
 %jok Can you explain that to me?
 <--->
-The legal system in %reg has good points and bad ones.
+The legal system in %reg has its good points and bad ones.
 
 RumorsPostfailure:  [1006]
-_qgiver_ has been complaining about the quality of Mages Guildmembers.
+_qgiver_ has been complaining about the quality of Mages Guild members.
 
 RumorsPostsuccess:  [1007]
 I got a boil the other day ... but it healed.

@@ -23,20 +23,20 @@ RefuseQuest:  [1001]
 <ce>                        Nothing personal, %pcf.
 
 AcceptQuest:  [1002]
-<ce>                Well, that's good anyway. Not long ago,
+<ce>                Well, that's good, anyway. Not long ago,
 <ce>                during a time of financial stagnancy, I
 <ce>                pawned a ring given to me by the Emperor
 <ce>                  himself. I figured that Uriel Septim
 <ce>                 never makes it down to this corner of
 <ce>               the Empire, but now I hear his agents are
-<ce>               in the area, and I must have to have that
+<ce>                   in the area, and I must have that
 <ce>                  ring back. _contact_, of __contact_
 <ce>           in ___contact_, will only hold it for =1stparton_
 <ce>            more days.  Here's the gold to pay for the ring.
 <ce>                 Good luck and %god speed your journey.
 
 QuestFail:  [1003]
-<ce>                        My ring, %pcf? The %god
+<ce>                        My ring, %pcf? The %god-
 <ce>                    forsaken ring I sent you to get?
 <ce>                    Where is it? If you've lost it,
 <ce>                    I'll have your rotten %ra hide!
@@ -64,9 +64,9 @@ _questgiver_ entertained the Imperial statesmen in great style, I understand.
 The Imperial statesmen were apparently very satisfied with their visit.
 
 QuestorPostsuccess:  [1008]
-Ah, hello, ring bearer. What can I do for you?
+Ah, hello, ring-bearer. What can I do for you?
 <--->
-You helped keep me in good standing with the Empire. Now, what I can do for you?
+You helped keep me in good standing with the Empire. Now, what can I do for you?
 
 QuestorPostfailure:  [1009]
 <ce>                    The Imperial emissaries didn't
@@ -82,7 +82,7 @@ QuestLogEntry:  [1010]
 <ce>                         _questgiver_ wants the
 <ce>                   ring before the Imperial statesmen
 <ce>                   arrive, you better be on your way.
-<ce>                   You only have a very little time.
+<ce>                      You only have a little time.
 
 Message:  1015
 %qdt:

@@ -63,13 +63,13 @@ QuestComplete:  [1004]
 <ce>                here it is.  Well, as it happens, while
 <ce>               you were gone, I had quite a breakthrough
 <ce>                in my research.  You see, it wasn't the
-<ce>                 azimuth vectors at all, the key to the
+<ce>                azimuthal vectors at all, the key to the
 <ce>                whole problem is actually ... well, the
 <ce>                 point is, I no longer need the _item_.
 <ce>                It is a beautiful piece of work, though,
 <ce>                isn't it?  Why don't you keep it, since
 <ce>                  you went to all the trouble to find
-<ce>                  it for me.  Now if you'll excuse me,
+<ce>                  it for me?  Now if you'll excuse me,
 <ce>                        I must get back to work.
 
 RumorsDuringQuest:  [1005]
@@ -243,7 +243,7 @@ Message:  1044
 <ce>               "Charge to my account", ha!  That's rich.
 <ce>                 Listen, I'll give you the _ingredient_
 <ce>                %g asked for, but the rest will have to
-<ce>               be special ordered, and I'm not doing that
+<ce>               be special-ordered, and I'm not doing that
 <ce>                  until %g pays me for everything else
 <ce>                I've sent to %g2.  I'm sorry, but that's
 <ce>                           the best I can do.

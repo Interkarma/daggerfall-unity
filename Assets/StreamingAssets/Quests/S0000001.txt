@@ -46,7 +46,7 @@ QuestComplete:  [1004]
 <ce>                     as the dowager Queen mother.
 <ce>                                    
 <ce>              I don't know where Medora went, but I know
-<ce>              she has an enormous castle somewhere on the
+<ce>              she has an enormous tower somewhere on the
 <ce>              Isle of Balfiera. But I also heard there is
 <ce>             some kind of curse on her, and she can never
 <ce>              leave. I don't know if that helps you, but
@@ -156,7 +156,7 @@ QuestLogEntry:  [1010]
  
  But I did not study magic. I studied history, so I
  leave this letter -- not to revenge myself, but as
- an historic document.
+ a historic document.
 
 Message:  1011
 <ce>            A thin, rail of a woman steps forward and hands
@@ -196,8 +196,8 @@ Message:  1014
  Dear %pcn,
  
      You do not know me but I know you. I know that you were
- shipwrecked. I know that you are trying to dispell the ghost
- of King Lisandus. If you want, I can tell you what I know,
+ shipwrecked. I know that you are trying to dispel the ghost
+ of King Lysandus. If you want, I can tell you what I know,
  but I need your help in return.
      If you want to talk, my name is Prince Lhotun and I live
  in Sentinel at Samaruik, which is usually called Castle
@@ -210,7 +210,7 @@ Message:  1014
 <ce>                          Prince of Sentinel
 
 Message:  1015
-___ukcrypt_ used to be the Underking's crypt, but now it's a Sentilian prison.
+___ukcrypt_ used to be the Underking's crypt, but now it's a Sentinelian prison.
 <--->
 ___ukcrypt_ is just %di of here. Some say it's still a crypt of the Underking.
 

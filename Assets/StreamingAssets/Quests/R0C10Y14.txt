@@ -25,7 +25,7 @@ AcceptQuest:  [1002]
 <ce>                     mine who left on an assignment
 <ce>                          without %g3 _item_.
 <ce>                    I need it rushed to ___contact_
-<ce>                    straight-away. There's a little
+<ce>                    straight away. There's a little
 <ce>                     place there called __contact_
 <ce>                     where you can find a =contact_
 <ce>                            named _contact_.
@@ -61,7 +61,7 @@ That =contact_ has been moping around __contact_ for days now.
 RumorsPostfailure:  [1006]
 Poor _contact_ -- %g3 delivery never came and %g had to leave without it.
 <--->
-I wonder what _contact_ was waiting for anyhow. Some kind of miracle?
+I wonder what _contact_ was waiting for, anyhow. Some kind of miracle?
 
 RumorsPostsuccess:  [1007]
 _contact_ left __contact_ happy as a harpy. Guess %g got what %g needed.
