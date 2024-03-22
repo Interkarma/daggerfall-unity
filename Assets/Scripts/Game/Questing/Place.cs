@@ -15,15 +15,13 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Guilds;
-using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -1284,8 +1282,13 @@ namespace DaggerfallWorkshop.Game.Questing
             if (RMBLayout.IsResidence(buildingType))
             {
                 // Generate a random surname for this residence
-                //DFRandom.srand(Time.renderedFrameCount);
-                string surname = DaggerfallUnity.Instance.NameHelper.Surname(Utility.NameHelper.BankTypes.Breton);
+                string surname = DaggerfallUnity.Instance.NameHelper.Surname(MapsFile.GetNameBankOfRegion(location.RegionIndex));
+                if (string.IsNullOrEmpty(surname))
+                {
+                    // Redguards have just a single name
+                    surname = DaggerfallUnity.Instance.NameHelper.FirstName(MapsFile.GetNameBankOfRegion(location.RegionIndex), (Genders)UnityEngine.Random.Range(0, 1));
+                }
+
                 buildingName = TextManager.Instance.GetLocalizedText("theNamedResidence").Replace("%s", surname);
             }
             else
