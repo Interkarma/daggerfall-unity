@@ -542,6 +542,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 font = DaggerfallUI.DefaultFont;
 
             TextLabel textLabel = new TextLabel();
+
+            textLabel.Parent = this; //Establish parent early.
+
             if (UseRestrictedRenderArea)
             {
                 textLabel.RectRestrictedRenderArea = RectRestrictedRenderArea;
@@ -558,7 +561,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             textLabel.MaxCharacters = maxCharacters;
             textLabel.Text = text;
             textLabel.TextScale = textScale;
-            textLabel.Parent = this;
             textLabel.WrapText = wrapTextItems;
             textLabel.WrapWords = wrapWords;
 
@@ -582,6 +584,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             }
 
+            textLabel.Parent = this; //Establish parent early.
+
             if (UseRestrictedRenderArea)
             {
                 textLabel.RectRestrictedRenderArea = RectRestrictedRenderArea;
@@ -592,7 +596,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 textLabel.MaxWidth = (int)Size.x;
             else if (horizontalScrollMode == HorizontalScrollModes.PixelWise)
                 textLabel.MaxWidth = -1;
-            textLabel.Parent = this;
             textLabel.WrapText = wrapTextItems;
             textLabel.WrapWords = wrapWords;
 
