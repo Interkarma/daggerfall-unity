@@ -40,27 +40,19 @@ QuestComplete:  [1004]
 <ce>                       Here's your _gold_ gold.
 
 RumorsDuringQuest:  [1005]
-<ce>                   Did you hear? An animal got into
-<ce>                    a building in town. I hope they
-<ce>                             kill it soon.
+Did you hear? An animal got into a building in town. I hope they kill it soon.
 
 RumorsPostfailure:  [1006]
-<ce>                    The Fighter's Guild killed that
-<ce>                      bear that got into _house_.
-<ce>                 It's a good thing we have them around.
+That creature mauled some woman before being chased out of town. What a pity.
 
 RumorsPostsuccess:  [1007]
-<ce>                That creature mauled some woman before
-<ce>                being chased out of town. What a pity.
+The Fighter's Guild killed that bear that got into _house_. It's a good thing we have them around.
 
 QuestorPostsuccess:  [1008]
-<ce>                     Good job killin' that beast.
-<ce>                        What can I do for you?
+Good job killin' that beast. What can I do for you?
 
 QuestorPostfailure:  [1009]
-<ce>                   I hear that a critter ate the guy
-<ce>                    that owned the house. Gave us a
-<ce>                 bad rep. Try to do better next time.
+I hear that a critter ate the guy that owned the house. Gave us a bad rep. Try to do better next time.
 
 QuestLogEntry:  [1010]
 %qdt:

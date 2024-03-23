@@ -30,7 +30,8 @@ AcceptQuest:  [1002]
 <ce>                          when you get there.
 
 QuestFail:  [1003]
-<ce>                That's all I know.  Better get movin'.
+<ce>                Dead? That's bad. You've got to get to the bottom
+<ce>                   of this one way or another, so stick with it.
 
 QuestComplete:  [1004]
 <ce>                 I don't know how I can thank you for
@@ -73,6 +74,7 @@ Message:  1021
  I was too late.  I surprised the
  assassins at _victimhouse_, but
  _victim_ was already dead.
+ 
 
 Message:  1022
 %qdt:
@@ -89,6 +91,11 @@ Message:  1023
  I fought my way free, and am now
  on my way to _safehouse_ in
  __safehouse_ with _daughter_.
+
+Message:  1024
+%qdt:
+ _victim_ was slain by the Dark Brotherhood.
+ The trail has gone cold for now.
 
 Message:  1030
 This is what happens
@@ -164,32 +171,6 @@ Message:  1071
 <ce>                       Thank you for your help,
 <ce>                    but I'll go on my own from here.
 
-
--- Symbols used in the QRC file:
---
---                %g occurs 3 times.
---               %g2 occurs 5 times.
---               %g3 occurs 1 time.
---              %god occurs 1 time.
---              %pcf occurs 1 time.
---              %pcn occurs 4 times.
---              %qdt occurs 4 times.
---               %ra occurs 5 times.
---              %reg occurs 2 times.
---                 _ occurs 1 time.
---         ___darkb_ occurs 7 times.
---    ___questgiver_ occurs 1 time.
---          __darkb_ occurs 3 times.
---  __daughterhouse_ occurs 2 times.
---      __safehouse_ occurs 2 times.
---           _darkb_ occurs 4 times.
---        _daughter_ occurs 6 times.
---   _daughterhouse_ occurs 2 times.
---          _reward_ occurs 1 time.
---       _safehouse_ occurs 2 times.
---          _victim_ occurs 15 times.
---     _victimhouse_ occurs 3 times.
-
 QBN:
 Item _note_ letter used 1030
 Item _reward_ magic_item
@@ -204,10 +185,11 @@ Person _darkb_ faction The_Dark_Brotherhood remote anyInfo 1015 rumors 1016
 Place _victimhouse_ local house4
 Place _daughterhouse_ remote house4
 Place _safehouse_ remote house3
-Place aide remote dungeon
 
 Clock _qtime_ 00:00 0 flag 1 range 2 5
-Clock _S.03_ 10.00:00 20.20:00
+Clock _S.03_ 3.00:00 5.00:00
+--shortened S.03 from 3 weeks to 3 days. this quest should not
+--drag on endlessly for no reason.
 Clock _S.04_ 00:00 0 flag 1 range 0 5
 
 Foe _enemy_ is Assassin
@@ -250,7 +232,7 @@ _insidespawn_ task:
 	create foe _enemy_ every 0 minutes 4 times with 100% success 
 	place item _I.02_ at _victimhouse_ 
 	place item _note_ at _victimhouse_ 
-	--sped up spawn rate. very slow for an ambush 
+--sped up spawn rate. very slow for an ambush 
 	log 1021 step 1 
 	rumor mill 1040 
 	hide npc _victim_ 
@@ -267,10 +249,13 @@ _S.06_ task:
 	--reduced spawn time to instant
 	hide npc _darkb_ 
 	say 1050 
+	start timer _S.03_ 
+--moving the S.03 timer here because the player may not always kill F.01, which was the previous
+--trigger for S.03. Now the quest will always be completeable.
+	log 1024 step 1
 
 _S.07_ task:
 	killed 1 _F.01_ 
-	start timer _S.03_ 
 	rumor mill 1041 
 	change repute with _daughter_ by +10 
 	change repute with _darkb_ by -15 
@@ -279,14 +264,14 @@ _S.08_ task:
 	clicked npc _daughter_ 
 	pc at _daughterhouse_ set _S.12_ 
 	create foe _F.02_ every 0 minutes 1 times with 100% success 
-	--reduced spawn time to instant
+--reduced spawn time to instant
 	say 1051 
 	add _daughter_ face 
 	hide npc _daughter_
-	--using hide NPC rather than transfer
+--using hide NPC rather than transfer
 
 _readletter_ task:
-	log 1022 step 2 
+	log 1022 step 1
 
 _S.10_ task:
 	when _qtime_ and not _S.07_ 
@@ -300,8 +285,10 @@ variable _S.12_
 _S.13_ task:
 	pc at _safehouse_ set _S.14_ 
 	when _S.08_ and not _S.12_ 
-	log 1023 step 3 
+	log 1023 step 1
 	say 1052
+--set msgs 1022 and 1023 to step 1. There's no need to keep each log entry in the journal.
+--they will now replace each other as they happen.
 
 _S.14_ task:
 	give pc _reward_ 
@@ -310,3 +297,14 @@ _S.14_ task:
 _S.15_ task:
 	when _S.04_ and not _S.14_ 
 	say 1071 
+
+_qgclicked_ task:
+	clicked npc _questgiver_
+
+_clearclick_ task:
+	when _qgclicked_ and not _insidespawn_
+	clear _qgclicked_ _clearclick_
+
+_feedback_ task:
+	when _qgclicked_ and _insidespawn_
+	say 1003

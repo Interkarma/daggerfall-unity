@@ -160,7 +160,12 @@ QuestTimeLapse:  [1045]
 --          _reward_ occurs 1 time.
 
 QBN:
-Item WoodborneDiary letter anyInfo 1010 used 1011
+Item WoodborneDiary letter used 1011
+--removed an AnyInfo entry here, which would make
+--peasants describe Woodborne's journal for no reason.
+--had no place in this quest to begin with.
+--added a grabdiary action below as what
+--the original developers meant to do.
 Item _reward_ gold range 10000 to 20000
 Item _gold_ gold
 
@@ -189,6 +194,10 @@ Foe _F.01_ is Spellsword
 	reveal WoodbourneHall1 in province 23 at 194859 
 	WoodborneDiary used do _S.01_ 
 	place foe Woodborne at WoodbourneHall1 marker 2
+
+_grabdiary_ task:
+	clicked item WoodborneDiary
+	say 1010
 
 _S.00_ task:
 	killed 1 Woodborne 
