@@ -18,10 +18,21 @@ using UnityEngine;
 public static class DaggerfallUnityApplication
 {
     static string persistentDataPath;
-    public static string PersistentDataPath { get { return persistentDataPath; } }
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    static void SubsystemInit()
+    public static string PersistentDataPath
+    {
+        get
+        {
+            if (persistentDataPath == null)
+            {
+                InitializePersistentPath();
+            }
+
+            return persistentDataPath;
+        }
+    }
+
+    private static void InitializePersistentPath()
     {
 #if UNITY_EDITOR && SEPARATE_DEV_PERSISTENT_PATH
         persistentDataPath = String.Concat(Application.persistentDataPath, ".devenv");
@@ -29,7 +40,15 @@ public static class DaggerfallUnityApplication
 #else
         persistentDataPath = Application.persistentDataPath;
 #endif
+    }
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void SubsystemInit()
+    {
+        if (persistentDataPath == null)
+        {
+            InitializePersistentPath();
+        }
         InitLog();
     }
 
@@ -40,14 +59,14 @@ public static class DaggerfallUnityApplication
 
         public LogHandler()
         {
-            string filePath = Path.Combine(PersistentDataPath, "Player.log");
+            string filePath = Path.Combine(persistentDataPath, "Player.log");
 
             string errorMessage = null;
             try
             {
                 if(File.Exists(filePath))
                 {
-                    string prevPath = Path.Combine(PersistentDataPath, "Player-prev.log");
+                    string prevPath = Path.Combine(persistentDataPath, "Player-prev.log");
                     File.Delete(prevPath);
                     File.Move(filePath, prevPath);
                 }
