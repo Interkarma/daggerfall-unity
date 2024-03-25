@@ -119,6 +119,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Components.Add(magickaBar);
 
             VitalsChangeDetector.OnReset += VitalChangeDetector_OnReset;
+            vitalsDetector.HealthChanged += VitalsDetector_HealthChanged;
+            vitalsDetector.FatigueChanged += VitalsDetector_FatigueChanged;
+            vitalsDetector.MagickaChanged += VitalsDetector_MagickaChanged;
         }
 
         public void SetAllHorizontalAlignment(HorizontalAlignment alignment)
@@ -276,21 +279,47 @@ namespace DaggerfallWorkshop.Game.UserInterface
             healthBarGain.Amount = playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
             fatigueBarGain.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
             magickaBarGain.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
+            healthBarLoss.Cycle();
+            fatigueBarLoss.Cycle();
+            magickaBarLoss.Cycle();
+            healthBar.Cycle();
+            fatigueBar.Cycle();
+            magickaBar.Cycle();
+        }
 
-            float target;
+        private void VitalsDetector_HealthChanged(object sender, System.EventArgs e)
+        {
+            if (!DaggerfallUnity.Settings.EnableVitalsIndicators)
+            {
+                return;
+            }
+
+            healthBarGain.Amount = playerEntity.CurrentHealth / (float)playerEntity.MaxHealth;
+
             // if there's any change in health... Smooth update the Loss bar, and
             // decide if should smooth update or instant update the progress bar
             if (vitalsDetector.HealthLost != 0)
             {
                 if (vitalsDetector.HealthLost > 0)
-                    healthBar.Amount -= vitalsDetector.HealthLostPercent;              
+                    healthBar.Amount -= vitalsDetector.HealthLostPercent;
                 else // assumed gaining health
                     healthBarLoss.Amount += vitalsDetector.HealthGainPercent;
 
-                target = healthBarGain.Amount;
+                var target = healthBarGain.Amount;
                 healthBar.BeginSmoothChange(target);
                 healthBarLoss.BeginSmoothChange(target);
             }
+        }
+
+        private void VitalsDetector_FatigueChanged(object sender, System.EventArgs e)
+        {
+            if (!DaggerfallUnity.Settings.EnableVitalsIndicators)
+            {
+                return;
+            }
+
+            fatigueBar.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
+
             // if there's any change in fatigue...
             if (vitalsDetector.FatigueLost != 0)
             {
@@ -299,10 +328,21 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 else // assumed gaining health
                     fatigueBarLoss.Amount += vitalsDetector.FatigueGainPercent;
 
-                target = fatigueBarGain.Amount;
+                var target = fatigueBarGain.Amount;
                 fatigueBar.BeginSmoothChange(target);
                 fatigueBarLoss.BeginSmoothChange(target);
             }
+        }
+
+        private void VitalsDetector_MagickaChanged(object sender, System.EventArgs e)
+        {
+            if (!DaggerfallUnity.Settings.EnableVitalsIndicators)
+            {
+                return;
+            }
+
+            magickaBarGain.Amount = playerEntity.CurrentMagicka / (float)playerEntity.MaxMagicka;
+
             // if there's any change in magicka...
             if (vitalsDetector.MagickaLost != 0)
             {
@@ -311,17 +351,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 else // assumed gaining health
                     magickaBarLoss.Amount += vitalsDetector.MagickaGainPercent;
 
-                target = magickaBarGain.Amount;
+                var target = magickaBarGain.Amount;
                 magickaBar.BeginSmoothChange(target);
                 magickaBarLoss.BeginSmoothChange(target);
             }
-
-            healthBarLoss.Cycle();
-            fatigueBarLoss.Cycle();
-            magickaBarLoss.Cycle();
-            healthBar.Cycle();
-            fatigueBar.Cycle();
-            magickaBar.Cycle();
         }
 
         private void VitalChangeDetector_OnReset()
