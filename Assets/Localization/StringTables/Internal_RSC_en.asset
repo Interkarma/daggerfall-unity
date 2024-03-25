@@ -27,7 +27,7 @@ MonoBehaviour:
       the ease of increasing strength-related skills.[/left]
 
       With your strength
-      of %str, you are considered %ark[/left]
+      of %str, you are considered %ark.[/left]
 
       [/pos:x=20,y=0]%dam [/pos:x=40,y=0]modifier
       is factored into your[/left]
@@ -228,7 +228,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 21
-    m_Localized: You cannot train a skill that above 50%.[/end]
+    m_Localized: You cannot train a skill that''s above 50%.[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 22
@@ -329,7 +329,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 35
-    m_Localized: 'Your reputation have changed as follows:[/left]
+    m_Localized: 'Your reputations have changed as follows:[/left]
 
       [/left]
 
@@ -733,7 +733,7 @@ MonoBehaviour:
       lacks in intelligence, he makes up for in stupidity.[/record]
 
       I won''t
-      eat anything that has intelligent life, but I will happily eat a politician
+      eat anything that has intelligence, but I will happily eat a politician
       or a %ra.[/end]'
     m_Metadata:
       m_Items: []
@@ -855,7 +855,7 @@ MonoBehaviour:
       Spirits
       of High Rock[/record]
 
-      By the ArchDruid[/record]
+      By the Archdruid[/record]
 
       By Pelagius[/record]
 
@@ -2024,8 +2024,8 @@ MonoBehaviour:
   - m_Id: 123
     m_Localized: 'You have not earned a house, %pcn.[/center]
 
-      Only the highest
-      ranking members of the[/center]
+      Only the highest-ranking
+      members of the[/center]
 
       guild are awarded houses.[/center]
 
@@ -2589,7 +2589,7 @@ MonoBehaviour:
       in any of the guild skills.[/center]
 
       Later, you will become eligible
-      use the library,[/center]
+      to use the library,[/center]
 
       buy magical items, and even make your own.[/center]
 
@@ -2828,7 +2828,7 @@ MonoBehaviour:
       of gold coin, it''s the guild for
       you. It''s far[/center]
 
-      better than some Knightly order. Did you you[/center]
+      better than some Knightly order. Did you[/center]
 
       know
       that they don''t even get paid?[/center]
@@ -2947,7 +2947,7 @@ MonoBehaviour:
 
       [/record]
 
-      Certainly
+      Certainly the
       %gdd accepts all donations,[/center]
 
       but do not expect miracles. That
@@ -3457,7 +3457,7 @@ MonoBehaviour:
       to join.[/record]
 
       In practically every borough, hamlet, and city-state
-      in Tamriel, the professional criminals have bounded together for mutual protection.
+      in Tamriel, the professional criminals have bound together for mutual protection.
       That''s the Thieves Guild for you.[/record]
 
       The Thieves Guild is just
@@ -3676,10 +3676,10 @@ MonoBehaviour:
       popular.[/record]
 
       The Temple of Kynareth worships the Goddess of the
-      Air, the spirit who supposed first gave Morihaus the Lord''s Mail.[/record]
+      Air, the spirit who supposedly first gave Morihaus the Lord''s Mail.[/record]
 
       The
-      priests and priestesses of the Goddess of the Air gather their to pray to their
+      priests and priestesses of the Goddess of the Air gather there to pray to their
       patroness.[/end]'
     m_Metadata:
       m_Items: []
@@ -3917,7 +3917,7 @@ MonoBehaviour:
   - m_Id: 247
     m_Localized: 'O where have you been?[/record]
 
-      The knives edge is keen[/record]
+      The knife''s edge is keen[/record]
 
       Let
       me sharpen my skean[/record]
@@ -3956,7 +3956,7 @@ MonoBehaviour:
       Be not, my friend, a sycophant![/record]
 
       Come,
-      my love, lets gallivant![/record]
+      my love, let''s gallivant![/record]
 
       An actor filled with his talent[/record]
 
@@ -4013,7 +4013,7 @@ MonoBehaviour:
   - m_Id: 250
     m_Localized: 'It was at Mid Year time[/record]
 
-      Up the tree, my dear, lets
+      Up the tree, my dear, let''s
       climb[/record]
 
       Lizards crawling from the slime[/record]
@@ -4026,7 +4026,7 @@ MonoBehaviour:
       White
       hands in blackest grime[/record]
 
-      To die, alas, in ones prime[/record]
+      To die, alas, in one''s prime[/record]
 
       Could
       it be more sublime?[/record]
@@ -4149,7 +4149,7 @@ MonoBehaviour:
       To
       thee, let me raise my glass[/record]
 
-      In a wildy mountain pass[/record]
+      In a windy mountain pass[/record]
 
       Eyes
       as green as springtime grass[/record]
@@ -4268,7 +4268,7 @@ MonoBehaviour:
       Love me dear, she doth entreat[/record]
 
       But
-      lovers heart brim with deceit[/record]
+      lover''s heart brims with deceit[/record]
 
       Is not such science made obsolete?[/record]
 
@@ -4372,7 +4372,7 @@ MonoBehaviour:
       I fear, my love, thou doth condescend[/record]
 
       The
-      villian the knight shall apprehend[/record]
+      villain the knight shall apprehend[/record]
 
       Love, can this thou comprehend?[/record]
 
@@ -4407,9 +4407,9 @@ MonoBehaviour:
       Thou may find thou gets what thou need[/record]
 
       Come
-      water of Rains Hand, come with speed[/record]
+      water of Rain''s Hand, come with speed[/record]
 
-      Thou noblest specie, thou
+      Thou noblest species, thou
       finest breed[/record]
 
       Love is my religion, but sorrow my creed[/record]
@@ -4450,7 +4450,7 @@ MonoBehaviour:
       And
       how, my love, doth thou fare?[/record]
 
-      Sunshine in Mid Year shines your
+      Sunshine in Mid Year shines in your
       hair[/record]
 
       He was her stallion, she his mare[/record]
@@ -5034,10 +5034,10 @@ MonoBehaviour:
       per %clm level(s)[/center]
 
       "Causes
-      target''s health to be damaged.[/center]
+      target''s Health to be damaged.[/center]
 
       Target will lose %1bm to %2bm
-      points of health[/center]
+      points of Health[/center]
 
       every round, plus %1am to %2am points for
       every %clm level(s)[/center]
@@ -5061,10 +5061,10 @@ MonoBehaviour:
       per %clm level(s)[/center]
 
       "Causes
-      target''s health to be damaged.[/center]
+      target''s Health to be damaged.[/center]
 
       Target will lose %1bm to %2bm
-      points of health[/center]
+      points of Health[/center]
 
       every round, plus %1am to %2am points for
       every %clm level(s)[/center]
@@ -7198,7 +7198,7 @@ MonoBehaviour:
       %ach for every
       %clc level(s) of the caster.[/center]
 
-      Dimunization will last for %bdr
+      Diminution will last for %bdr
       round(s),[/center]
 
       plus %adr round(s) for every %cld level(s) of caster."[/center]
@@ -7357,7 +7357,7 @@ MonoBehaviour:
       per %clm level(s)[/center]
 
       "Creates shield around
-      caster that absorbs the  equivalent[/center]
+      caster that absorbs the equivalent[/center]
 
       of %1bm - %2bm Health Points,
       plus %1am - %2am Health[/center]
@@ -7390,7 +7390,7 @@ MonoBehaviour:
       per %clm level(s)[/center]
 
       "Creates shield around
-      caster that absorbs the  equivalent[/center]
+      caster that absorbs the equivalent[/center]
 
       of %1bm - %2bm Health Points,
       plus %1am - %2am Health[/center]
@@ -7423,7 +7423,7 @@ MonoBehaviour:
       per %clm level(s)[/center]
 
       "Creates shield around
-      caster that absorbs the  equivalent[/center]
+      caster that absorbs the equivalent[/center]
 
       of %1bm - %2bm Health Points,
       plus %1am - %2am Health[/center]
@@ -7456,7 +7456,7 @@ MonoBehaviour:
       per %clm level(s)[/center]
 
       "Creates shield around
-      caster that absorbs the  equivalent[/center]
+      caster that absorbs the equivalent[/center]
 
       of %1bm - %2bm Health Points,
       plus %1am - %2am Health[/center]
@@ -7720,7 +7720,7 @@ MonoBehaviour:
       Magnitude: N/A + N/A per N/A
       level(s)[/center]
 
-      "After death, target''s spell becomes trapped in any[/center]
+      "After death, spell''s target becomes trapped in any[/center]
 
       receptacle
       of the caster indefinitely. Target''s body must[/center]
@@ -7967,7 +7967,7 @@ MonoBehaviour:
 
       advantage or disadvantage[/center]
 
-      than
+      that
       conflicts with this one.[/center]
 
       [/end]'
@@ -8073,7 +8073,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 407
-    m_Localized: 'Critical Striking is a skill checked whenever[/center]
+    m_Localized: 'Critical Strike is a skill checked whenever[/center]
 
       one
       has successfully struck a target. A target[/center]
@@ -8127,7 +8127,7 @@ MonoBehaviour:
       one attempts either to infiltrate a[/center]
 
       hostile environment or
-      to secrete items away[/center]
+      to secret items away[/center]
 
       from prying eyes.[/center]
 
@@ -8144,7 +8144,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 412
-    m_Localized: 'Dragon is a language skill checked[/center]
+    m_Localized: 'Dragonish is a language skill checked[/center]
 
       whenever one
       attempts to speak with[/center]
@@ -8550,7 +8550,7 @@ MonoBehaviour:
       %ol1. But now %fl1 is in charge of %fx1.[/record]
 
       It''s all over town.
-      %ol1 %olf. Can believe that %fl1 is filling those boots?[/end]'
+      %ol1 %olf. Can you believe that %fl1 is filling those boots?[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 444
@@ -8589,7 +8589,7 @@ MonoBehaviour:
       They just take anything they want.[/record]
 
       They killed %n in broad
-      daylight. The guards didn''t even do anything. What is this place coming to.[/end]'
+      daylight. The guards didn''t even do anything. What is this place coming to?[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 448
@@ -8599,7 +8599,7 @@ MonoBehaviour:
       you ready for %hol? Don''t wait too long.[/record]
 
       %hol is almost here.
-      I wouldn''t wait to the last minute to get ready.[/end]'
+      I wouldn''t wait til the last minute to get ready.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 449
@@ -8675,7 +8675,7 @@ MonoBehaviour:
       Now all the merchants have lowered their prices to compete.[/record]
 
       I''m
-      on my way to buy new clothes. Price on everything are so low, I want to buy
+      on my way to buy new clothes. Prices on everything are so low, I want to buy
       now before they go up again.[/end]'
     m_Metadata:
       m_Items: []
@@ -8697,7 +8697,7 @@ MonoBehaviour:
   - m_Id: 457
     m_Localized: '%n died last night. The body was completely drained of blood![/record]
 
-      The
+      They
       found poor %n, with two puncture wounds in the neck. Not a drop of blood was
       left in the body.[/record]
 
@@ -8705,23 +8705,23 @@ MonoBehaviour:
       The clans meet in secret and plot to control all of mankind![/record]
 
       The
-      dirty blood suckers are running this place. Vampires, of course. I mean the
+      dirty blood-suckers are running this place. Vampires, of course. I mean the
       vampire clans.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 458
     m_Localized: '%n, a mage''s apprentice, was telling me that there are powerful
-      beings called Daedras living in a place called Oblivion. They can grant a man
+      beings called Daedra living in a place called Oblivion. They can grant a man
       powerful magical items called artifacts. I''m sure it''s just a story.[/record]
 
       Be
-      good to your fellow man, or the Daedra''s will take you away to Oblivion.[/record]
+      good to your fellow man, or the Daedra will take you away to Oblivion.[/record]
 
-      Daedras
+      Daedra
       can actually be summoned. I hear the witches and Mages Guild do it all the
       time.[/record]
 
-      Only the temples can summon Daedras safely. The priests
+      Only the temples can summon Daedra safely. The priests
       can force them to reveal the secret location of powerful artifacts.[/end]'
     m_Metadata:
       m_Items: []
@@ -8765,7 +8765,7 @@ MonoBehaviour:
     m_Localized: 'You should know that the thieves have a secret guild, led by a
       mysterious master.[/record]
 
-      The Thieves Guild is not just a legend it''s
+      The Thieves Guild is not just a legend, it''s
       real. I cannot tell you how I know, or they will kill me.[/record]
 
       Although
@@ -8778,7 +8778,7 @@ MonoBehaviour:
       are professional assassins.[/record]
 
       There is such a thing as an assassins
-      guild, which calls itself the Dark Brotherhood. They recruit the most cold
+      guild, which calls itself the Dark Brotherhood. They recruit the most cold-
       blooded killers they can find.[/record]
 
       The Dark Brotherhood is quite
@@ -8908,7 +8908,7 @@ MonoBehaviour:
 
       burned. -- %nrn[/record]
 
-      Bewarned all
+      Be warned, all
       visitors. Our fair[/center]
 
       town is beset by the plague.[/center]
@@ -9851,7 +9851,7 @@ MonoBehaviour:
   - m_Id: 522
     m_Localized: 'Transfer Strength[/center]
 
-      Transfers target Strength Points
+      Transfers target''s Strength Points
       to caster.[/center]
 
       Duration: Instantaneous.[/center]
@@ -9867,7 +9867,7 @@ MonoBehaviour:
   - m_Id: 523
     m_Localized: 'Transfer Intelligence[/center]
 
-      Transfers target Intelligence
+      Transfers target''s Intelligence
       Points to caster.[/center]
 
       Duration: Instantaneous.[/center]
@@ -9883,7 +9883,7 @@ MonoBehaviour:
   - m_Id: 524
     m_Localized: 'Transfer Willpower[/center]
 
-      Transfers target Willpower Points
+      Transfers target''s Willpower Points
       to caster.[/center]
 
       Duration: Instantaneous.[/center]
@@ -9899,7 +9899,7 @@ MonoBehaviour:
   - m_Id: 525
     m_Localized: 'Transfer Agility[/center]
 
-      Transfers target Agility Points
+      Transfers target''s Agility Points
       to caster.[/center]
 
       Duration: Instantaneous.[/center]
@@ -9915,7 +9915,7 @@ MonoBehaviour:
   - m_Id: 526
     m_Localized: 'Transfer Endurance[/center]
 
-      Transfers target Endurance Points
+      Transfers target''s Endurance Points
       to caster.[/center]
 
       Duration: Instantaneous.[/center]
@@ -9931,7 +9931,7 @@ MonoBehaviour:
   - m_Id: 527
     m_Localized: 'Transfer Personality[/center]
 
-      Transfers target Personality
+      Transfers target''s Personality
       Points to caster.[/center]
 
       Duration: Instantaneous.[/center]
@@ -9947,7 +9947,7 @@ MonoBehaviour:
   - m_Id: 528
     m_Localized: 'Transfer Speed[/center]
 
-      Transfers target Speed Points to
+      Transfers target''s Speed Points to
       caster.[/center]
 
       Duration: Instantaneous.[/center]
@@ -9963,7 +9963,7 @@ MonoBehaviour:
   - m_Id: 529
     m_Localized: 'Transfer Luck[/center]
 
-      Transfers target Luck Points to caster.[/center]
+      Transfers target''s Luck Points to caster.[/center]
 
       Duration:
       Instantaneous.[/center]
@@ -9979,7 +9979,7 @@ MonoBehaviour:
   - m_Id: 530
     m_Localized: 'Transfer Health[/center]
 
-      Transfers target Health Points
+      Transfers target''s Health Points
       to caster.[/center]
 
       Duration: Instantaneous.[/center]
@@ -9995,7 +9995,7 @@ MonoBehaviour:
   - m_Id: 531
     m_Localized: 'Transfer Fatigue[/center]
 
-      Transfers target Fatigue Points
+      Transfers target''s Fatigue Points
       to caster.[/center]
 
       Duration: Instantaneous.[/center]
@@ -10770,12 +10770,12 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 576
-    m_Localized: 'Telekenesis[/center]
+    m_Localized: 'Telekinesis[/center]
 
       Allows caster to move objects with
       mental powers.[/center]
 
-      Duration: How long caster can use Telekenesis.[/center]
+      Duration: How long caster can use Telekinesis.[/center]
 
       Chance:
       N/A[/center]
@@ -11037,7 +11037,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 610
-    m_Localized: Save versus magicka[/end]
+    m_Localized: Save versus magic[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 611
@@ -11195,12 +11195,12 @@ MonoBehaviour:
       reptilian nature, Argonians do not tire[/center]
 
       easily when swimming.
-      While many Argonians have[/center]
+      Many Argonians have[/center]
 
       successfully mastered the arts of
       thievery and[/center]
 
-      spellcasting, there are some regarded well as
+      spellcasting, and some are regarded well as
       warriors.[/center]
 
       Is your character to be an Argonian?[/center]
@@ -11365,7 +11365,7 @@ MonoBehaviour:
       [/center]
 
       Our
-      priests and priestess here have a variety of[/center]
+      priests and priestesses here have a variety of[/center]
 
       other skills and
       services available for members[/center]
@@ -11480,7 +11480,7 @@ MonoBehaviour:
       charge of uniting
       all creatures as brethren,[/center]
 
-      childer of Mara. We are intolerant
+      children of Mara. We are intolerant
       only of those[/center]
 
       who show intolerance; we hate only those who
@@ -11600,7 +11600,7 @@ MonoBehaviour:
       Goddess of Air,
       the Pure One. It was She who gave[/center]
 
-      the Lords Mail to the Warrior
+      the Lord''s Mail to the Warrior
       Lord Morihaus to[/center]
 
       combat the unclean Daedric spirits.[/center]
@@ -12270,7 +12270,7 @@ MonoBehaviour:
       honors bountiful. An initiate
       in our Order[/center]
 
-      have the same rights and honors of an[/center]
+      has the same rights and honors as an[/center]
 
       initiate
       in the Chantry.[/center]
@@ -12305,7 +12305,7 @@ MonoBehaviour:
       military skill and demonstrated loyalty[/center]
 
       to
-      the School and God Julianos are[/center]
+      the School and the God Julianos are[/center]
 
       considered for membership into
       the[/center]
@@ -12364,7 +12364,7 @@ MonoBehaviour:
       our sacred duty to protect the Temple[/center]
 
       and
-      fights its battles. While we firmly[/center]
+      fight its battles. While we firmly[/center]
 
       espouse the Temple''s philosophy
       of[/center]
@@ -12442,7 +12442,7 @@ MonoBehaviour:
       mage can be a deadly force to reckon with. The skills[/center]
 
       most
-      important to a Mage are: All Schools  of Magicka --[/center]
+      important to a Mage are: All Schools of Magicka --[/center]
 
       Mysticism,
       Alteration, Thaumaturgy,[/center]
@@ -12680,7 +12680,7 @@ MonoBehaviour:
       stay the Assassin''s blade.
       The most important Assassin[/center]
 
-      skills are: Critical Striking,
+      skills are: Critical Strike,
       Backstabbing, Stealth,[/center]
 
       Short Blade, Long Blade, and Blunt Weapon.[/center]
@@ -12701,7 +12701,7 @@ MonoBehaviour:
       a lethal machine. The skills most[/center]
 
       important to a Monk are:
-      Hand-to-Hand, Critical Striking,[/center]
+      Hand-to-Hand, Critical Strike,[/center]
 
       Dodging, Swimming, Medical,
       and Blunt Weapon.[/center]
@@ -12720,7 +12720,7 @@ MonoBehaviour:
       Archery,
       Hand-to-Hand, Dodging[/center]
 
-      Axe, Blunt Weapon, and Critical Striking.[/center]
+      Axe, Blunt Weapon, and Critical Strike.[/center]
 
       Do
       you wish your character to be an Archer?[/center]
@@ -12740,7 +12740,7 @@ MonoBehaviour:
       Long Blade, Axe, Climbing,
       Swimming,[/center]
 
-      Archery, and Critical Striking.[/center]
+      Archery, and Critical Strike.[/center]
 
       Do
       you wish your character to be a Ranger?[/center]
@@ -12752,7 +12752,7 @@ MonoBehaviour:
     m_Localized: 'Barbarians are warriors that hail from the harsh[/center]
 
       lands
-      that fringe more civilized areas. They make excellent[/center]
+      that fringe more-civilized areas. They make excellent[/center]
 
       fighters,
       well-suited to survival under the worst conditions.[/center]
@@ -13021,7 +13021,7 @@ MonoBehaviour:
   - m_Id: 682
     m_Localized: 'Help - Reputations[/center]
 
-      Editing Reputations is a optional
+      Editing Reputations is an optional
       class creation[/left]
 
       feature which allows you to help determine how[/left]
@@ -13086,7 +13086,7 @@ MonoBehaviour:
       Adding disadvantages or lowering the health point[/left]
 
       bonuses
-      makes it easier or you to learn skills.[/left]
+      makes it easier for you to learn skills.[/left]
 
       For reference, a true
       warrior learns skills at[/left]
@@ -13233,7 +13233,7 @@ MonoBehaviour:
     m_Localized: 'No? If you change your mind, return to[/center]
 
       me tonight.
-      Tomorrow portents will not[/center]
+      Tomorrow, portents will not[/center]
 
       allow me to complete this summoning.[/center]
 
@@ -13310,7 +13310,7 @@ MonoBehaviour:
     m_Localized: 'Congratulations, %pcn,[/center]
 
       You are now a Master of
-      %ski[/center]
+      %ski,[/center]
 
       One of the Finest Practitioners[/center]
 
@@ -13878,7 +13878,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 724
-    m_Localized: 'Your earliest memories of your homelife are of an ongoing[/left]
+    m_Localized: 'Your earliest memories of your home life are of an ongoing[/left]
 
       turmoil
       -- visitors continually arriving and leaving, and your[/left]
@@ -13951,7 +13951,7 @@ MonoBehaviour:
       mother gave you %q4 and your father gave
       you[/left]
 
-      a very unusual staff, then you were sent you on your way
+      a very unusual staff, then you were sent on your way
       to[/left]
 
       the Imperial City and the celebration.[/left]
@@ -14127,7 +14127,7 @@ MonoBehaviour:
       mother gave you %q4 and your father
       gave you[/left]
 
-      a very unusual staff, then you were sent you on your
+      a very unusual staff, then you were sent on your
       way to[/left]
 
       the Imperial City and the celebration.[/left]
@@ -14220,7 +14220,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 726
-    m_Localized: 'Your parents complimented one another, both as sorcerers as[/left]
+    m_Localized: 'Your parents complemented one another, both as sorcerers as[/left]
 
       well
       as educators. Your mother was most attentive in teaching[/left]
@@ -14676,7 +14676,7 @@ MonoBehaviour:
       %q8 named %bn who was supposed
       to[/left]
 
-      have been allied with the imperial traitor Jagar Tharn.[/left]
+      have been allied with the Imperial traitor Jagar Tharn.[/left]
 
       The
       Emperor dared not act against %bn[/left]
@@ -15008,7 +15008,7 @@ MonoBehaviour:
       The procession was very
       splendid indeed, but a nearby[/left]
 
-      rustle drew your attention. A black
+      rustle drew your attention. A black-
       clad man was[/left]
 
       crouching on a limb ten feet beneath you. You gasped[/left]
@@ -15033,7 +15033,7 @@ MonoBehaviour:
       seized you roughly. You felt dizzy and a trail[/left]
 
       of fire burned
-      along your left arm. Poison! Then a white[/left]
+      along your left arm. Poison! Then a white-[/left]
 
       robed elf muttered
       an incantation over you. Your arm[/left]
@@ -15104,7 +15104,7 @@ MonoBehaviour:
       One night, you witnessed a ragged boy being pursued by[/left]
 
       a dozen
-      blackclad agents of Jagar Tharn. You took a shortcut[/left]
+      black-clad agents of Jagar Tharn. You took a shortcut[/left]
 
       through
       the alleys to meet the boy, and it took little effort[/left]
@@ -15136,7 +15136,7 @@ MonoBehaviour:
       he was telling the truth. You told him the best way
       out of the[/left]
 
-      village, avoiding the areas frequented by the blackclad
+      village, avoiding the areas frequented by the black-clad
       ones,[/left]
 
       and he told you that when he saw his father again, you
@@ -15166,7 +15166,7 @@ MonoBehaviour:
       You were also given a simple,
       unpretentious letter inviting[/left]
 
-      you the Imperial City for an audience
+      you to the Imperial City for an audience
       with the Emperor. You[/left]
 
       had your eyes set on a bigger fishpond
@@ -15179,7 +15179,7 @@ MonoBehaviour:
     m_Localized: 'You grew up on a farm and became quite agile from[/left]
 
       continually
-      rounding up wandering sheep. One Merchants[/left]
+      rounding up wandering sheep. One Merchants''[/left]
 
       Festival, while visiting
       the village with your family, you[/left]
@@ -15240,7 +15240,7 @@ MonoBehaviour:
       One night, you witnessed a ragged boy being pursued by[/left]
 
       a dozen
-      blackclad agents of Jagar Tharn. You took a shortcut[/left]
+      black-clad agents of Jagar Tharn. You took a shortcut[/left]
 
       through
       the alleys to meet the boy, and it took little effort[/left]
@@ -15272,7 +15272,7 @@ MonoBehaviour:
       he was telling the truth. You told him the best way
       out of the[/left]
 
-      village, avoiding the areas frequented by the blackclad
+      village, avoiding the areas frequented by the black-clad
       ones,[/left]
 
       and he told you that when he saw his father again, you
@@ -15302,7 +15302,7 @@ MonoBehaviour:
       You were also given a simple,
       unpretentious letter inviting[/left]
 
-      you the Imperial City for an audience
+      you to the Imperial City for an audience
       with the Emperor. You[/left]
 
       had your eyes set on a bigger fishpond
@@ -15368,7 +15368,7 @@ MonoBehaviour:
       you knew that you needed the society of other %ra[/left]
 
       people,
-      so when the opportunity rose, you escaped.[/left]
+      so when the opportunity arose, you escaped.[/left]
 
       [/left]
 
@@ -15466,7 +15466,7 @@ MonoBehaviour:
       One night, you witnessed a ragged boy being pursued by[/left]
 
       a dozen
-      blackclad agents of Jagar Tharn. You took a shortcut[/left]
+      black-clad agents of Jagar Tharn. You took a shortcut[/left]
 
       through
       the alleys to meet the boy, and it took little effort[/left]
@@ -15498,7 +15498,7 @@ MonoBehaviour:
       he was telling the truth. You told him the best way
       out of the[/left]
 
-      village, avoiding the areas frequented by the blackclad
+      village, avoiding the areas frequented by the black-clad
       ones,[/left]
 
       and he told you that when he saw his father again, you
@@ -15528,7 +15528,7 @@ MonoBehaviour:
       You were also given a simple,
       unpretentious letter inviting[/left]
 
-      you the Imperial City for an audience
+      you to the Imperial City for an audience
       with the Emperor. You[/left]
 
       had your eyes set on a bigger fishpond
@@ -15784,7 +15784,7 @@ MonoBehaviour:
       you were often used by your masters as the
       model for[/left]
 
-      less adept students. In a few years time, you became[/left]
+      less-adept students. In a few years'' time, you became[/left]
 
       a
       master yourself.[/left]
@@ -15908,10 +15908,10 @@ MonoBehaviour:
       and your %q1a. You wandered the %hpw[/left]
 
       paths
-      and amusing yourself by pursuing your childhood fantasy[/left]
+      and amused yourself by pursuing your childhood fantasy[/left]
 
-      to detect
-      and track one of those remarkable creatures.[/left]
+      of detecting
+      and tracking one of those remarkable creatures.[/left]
 
       [/left]
 
@@ -15971,7 +15971,7 @@ MonoBehaviour:
       discovered
       a cave where the cannibal had kept the bones of[/left]
 
-      several less
+      several less-
       fortunate rangers. You also found a ragged young[/left]
 
       boy in chains,
@@ -16091,7 +16091,7 @@ MonoBehaviour:
       opportunities for you to polish your skills.[/left]
 
       You also became
-      friends with an classmate named[/left]
+      friends with a classmate named[/left]
 
       %fn. When %fn completed[/left]
 
@@ -16191,7 +16191,7 @@ MonoBehaviour:
       scenes from your childhood.
       One of the more vivid ones[/left]
 
-      were finding %q10 on a corpse in[/left]
+      was finding %q10 on a corpse in[/left]
 
       an
       alley. Much of your childhood was a daily struggle[/left]
@@ -16480,7 +16480,7 @@ MonoBehaviour:
       summoned before the Emperor.[/left]
 
       Dressed in borrowed armor, not quite
-      the right size you[/left]
+      the right size, you[/left]
 
       walked into the throne room, dwarfed by its
       size. Bowing[/left]
@@ -16649,7 +16649,7 @@ MonoBehaviour:
       if he did consider you a friend, the Emperor''s
       word was[/left]
 
-      law, and you boarded a ship that very night for[/left]
+      law, and you boarded a ship the very next day for[/left]
 
       Daggerfall.[/left]
 
@@ -16663,7 +16663,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 743
-    m_Localized: finding a wounded butterfly and send it flying again[/end]
+    m_Localized: finding a wounded butterfly and sending it flying again[/end]
     m_Metadata:
       m_Items: []
   - m_Id: 744
@@ -18138,7 +18138,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1014
-    m_Localized: speak the Harpies tongue[/end]
+    m_Localized: 'speak the Harpies'' tongue[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1015
@@ -18220,7 +18220,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030
-    m_Localized: 'Happy Heart''s Day, %ra. As traditional, you[/center]
+    m_Localized: 'Happy Heart''s Day, %ra. As is tradition, you[/center]
 
       have
       a free room for the day. If you want to rent[/center]
@@ -18422,7 +18422,7 @@ MonoBehaviour:
       archives
       -- the largest selection of magical[/center]
 
-      esoteria in %reg. Most
+      esoterica in %reg. Most
       all items[/center]
 
       are available for purchase, and our keeper is[/center]
@@ -18435,7 +18435,7 @@ MonoBehaviour:
 
       find this honor useful. Once again, I do[/center]
 
-      respectively
+      respectfully
       offer my congratulations.[/center]
 
       [/end]'
@@ -18461,7 +18461,7 @@ MonoBehaviour:
       enchanting any items you desire. If I may[/center]
 
       be
-      so bold, I offer you my personal[/center]
+      so bold, I offer my personal[/center]
 
       congratulations to you,[/center]
 
@@ -18472,7 +18472,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1041
-    m_Localized: 'On this day, by near unanimous vote of[/center]
+    m_Localized: 'On this day, by near-unanimous vote of[/center]
 
       Archmagister
       and Council, your title within[/center]
@@ -18642,7 +18642,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1045
-    m_Localized: 'For meritous service and unswerving loyalty[/center]
+    m_Localized: 'For meritorious service and unswerving loyalty[/center]
 
       to
       the ideals of %fon, you[/center]
@@ -18664,7 +18664,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1046
-    m_Localized: 'For meritous service and unswerving loyalty[/center]
+    m_Localized: 'For meritorious service and unswerving loyalty[/center]
 
       to
       the ideals of %fon, you[/center]
@@ -18696,7 +18696,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1047
-    m_Localized: 'For meritous service and unswerving loyalty[/center]
+    m_Localized: 'For meritorious service and unswerving loyalty[/center]
 
       to
       the ideals of %fon, you[/center]
@@ -18881,7 +18881,7 @@ MonoBehaviour:
       School
       of Julianos, in cognizance of all of[/center]
 
-      your ministant, ah, endeavors
+      your ministrant, ah, endeavors
       and aggrandizing,[/center]
 
       dare I say piquant, erudition, ah, do bequeath[/center]
@@ -19784,9 +19784,9 @@ MonoBehaviour:
 
       Field[/record]
 
-      FIelds[/record]
+      Fields[/record]
 
-      FIelds[/record]
+      Fields[/record]
 
       Clearing[/record]
 
@@ -20698,7 +20698,7 @@ MonoBehaviour:
       at Dusk[/record]
 
       at
-      Nightime[/record]
+      Nighttime[/record]
 
       at Nightfall[/record]
 
@@ -20981,7 +20981,7 @@ MonoBehaviour:
       any title either, my friend, but the rank[/center]
 
       by
-      which you have the right to use temple''s[/center]
+      which you have the right to use the temple''s[/center]
 
       Spellmaker. It''s
       a terribly complicated,[/center]
@@ -21016,10 +21016,10 @@ MonoBehaviour:
       grand enough, the practical side is
       that you[/center]
 
-      can now rummage through the temple''s hordish[/center]
+      can now rummage through the temple''s hoardish[/center]
 
       supply
-      of esoteria, instruments, ballyhock,[/center]
+      of esoterica, instruments, ballyhock,[/center]
 
       and phantasmagoria --
       all for sale at very[/center]
@@ -21806,7 +21806,7 @@ MonoBehaviour:
       %pcn. I wouldn''t tell ya ''bout %key even if I did know.[/record]
 
       Go
-      on and find a friend or someone who knows somethin''. I''m  ain''t either.[/record]
+      on and find a friend or someone who knows somethin''. I''m ain''t either.[/record]
 
       Why
       would I wanna help you?[/record]
@@ -21870,7 +21870,7 @@ MonoBehaviour:
       %ra knew how to read, you could find the answer yourself. I certainly don''t
       have time to look it up.[/record]
 
-      That is are certainly none of your
+      That is certainly none of your
       concern. Now leave me, %pcf.[/record]
 
       Why should I tell you? Go bother
@@ -21878,7 +21878,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1190
-    m_Localized: 'How droll. I only help to people of importance, those who have
+    m_Localized: 'How droll. I only help people of importance, those who have
       titles and lands. Now go away.[/record]
 
       I am a personal friend of %t
@@ -21913,7 +21913,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1192
-    m_Localized: 'Wouldn''t you like to know.[/record]
+    m_Localized: 'Wouldn''t you like to know?[/record]
 
       %key? That''s not rare
       information. Ask someone else about %key.[/record]
@@ -21941,7 +21941,7 @@ MonoBehaviour:
       yer pardon, but that''s such a stupid question, I don''t think I should haveta
       answer.[/record]
 
-      I reckin'' a little more wanderin'' around will make
+      I reckon a little more wanderin'' around will make
       a right good improvement in yer manners.[/record]
 
       ''Course I know where
@@ -21957,10 +21957,10 @@ MonoBehaviour:
       I want to give you directions %pcf?[/record]
 
       Listen, I ain''t got time
-      for this. Why don''t you just kiss off, %pcf.[/record]
+      for this. Why don''t you just kiss off, %pcf?[/record]
 
       Don''t know,
-      don''t care, and don''t wanna to talk to ya anymore. Goodbye.[/record]
+      don''t care, and don''t wanna talk to ya anymore. Goodbye.[/record]
 
       Why
       don''t you try asking me like a normal human being would?[/record]
@@ -22013,7 +22013,7 @@ MonoBehaviour:
   - m_Id: 1196
     m_Localized: 'Last bloke that asked how to get to %key wound up dead.[/record]
 
-      Howd''
+      How''d
       ya like a knife in yer gut? Thought so.[/record]
 
       You lookin'' to find
@@ -22355,10 +22355,10 @@ MonoBehaviour:
       Hmm. I recall being
       instructed that %key is %hnt.[/record]
 
-      %pcn is it? I do not mind reveal
+      %pcn is it? I do not mind revealing
       that %key is %hnt.[/record]
 
-      Directionally challenged %pcf? Try %hnt.[/record]
+      Directionally challenged, %pcf? Try %hnt.[/record]
 
       Go
       %hnt.[/end]'
@@ -22373,7 +22373,7 @@ MonoBehaviour:
       Lets see, the palace is over there...%key
       is %hnt.[/record]
 
-      My personal scrivner assures me %key is %hnt.[/record]
+      My personal scrivener assures me %key is %hnt.[/record]
 
       Try
       %hnt. That''s how my carriage driver goes.[/end]'
@@ -22535,7 +22535,7 @@ MonoBehaviour:
       I would sell the Underking''s skivvies for you
       %pcf, but forgive me. I just don''t know.[/record]
 
-      I pains me to admit
+      It pains me to admit
       this, especially to you, but I haven''t got a clue.[/record]
 
       Please
@@ -22569,7 +22569,7 @@ MonoBehaviour:
       am a fount of information %pcf. Sadly I lack any shred of data about %key.[/record]
 
       You
-      are congnizant that I would answer if I could. %key is an enigma to me.[/record]
+      are cognizant that I would answer if I could. %key is an enigma to me.[/record]
 
       You
       are my loyal comrade, but none of these tomes have references to %key.[/record]
@@ -22588,7 +22588,7 @@ MonoBehaviour:
       %key? I haven''t the foggiest
       dear %pcf.[/record]
 
-      I heard about %key once, but I forgotten what it
+      I heard about %key once, but I''ve forgotten what it
       was.[/record]
 
       I trust you implicitly, so I hope you understand when
@@ -22794,7 +22794,7 @@ MonoBehaviour:
       Fer me drinkin'' buddy,
       of course. %hnt2[/record]
 
-      . %hnt2 At least that what the Thieves Guild
+      %hnt2 At least that what the Thieves Guild
       says.[/record]
 
       %hnt2 It''s all over the Dark Brotherhood.[/end]'
@@ -22853,7 +22853,7 @@ MonoBehaviour:
     m_Localized: 'A bored guard says "Only castle staff and[/center]
 
       trusted
-      guests are allow beyond those doors."[/center]
+      guests are allowed beyond those doors."[/center]
 
       [/end]'
     m_Metadata:
@@ -22862,7 +22862,7 @@ MonoBehaviour:
     m_Localized: 'A bored guard says "Only castle staff and[/center]
 
       trusted
-      guests are allow beyond those doors."[/center]
+      guests are allowed beyond those doors."[/center]
 
       [/end]'
     m_Metadata:
@@ -22871,7 +22871,7 @@ MonoBehaviour:
     m_Localized: 'A bored guard says "Only castle staff and[/center]
 
       trusted
-      guests are allow beyond those doors."[/center]
+      guests are allowed beyond those doors."[/center]
 
       [/end]'
     m_Metadata:
@@ -22880,7 +22880,7 @@ MonoBehaviour:
     m_Localized: 'A bored guard says "Only castle staff and[/center]
 
       trusted
-      guests are allow beyond those doors."[/center]
+      guests are allowed beyond those doors."[/center]
 
       [/end]'
     m_Metadata:
@@ -22916,10 +22916,10 @@ MonoBehaviour:
       devoid of
       even the chittering of small[/left]
 
-      insects. You hear Popudax say  Our
+      insects. You hear Popudax say "Our
       storeroom[/left]
 
-      is only open to those whom I trust.[/left]
+      is only open to those whom I trust."[/left]
 
       [/end]'
     m_Metadata:
@@ -23015,7 +23015,7 @@ MonoBehaviour:
   - m_Id: 1250
     m_Localized: 'Do you wish to wait the %dip days[/center]
 
-      until the day
+      until
       you are to be released?[/center]
 
       [/end]'
@@ -23241,7 +23241,7 @@ MonoBehaviour:
       The Grave of %vn[/record]
 
       The
-      Masoleum of %vn[/record]
+      Mausoleum of %vn[/record]
 
       The Sepulcher of %vn[/record]
 
@@ -23684,7 +23684,7 @@ MonoBehaviour:
       a few will be judged worthy of this
       service, but[/center]
 
-      few can afford the temples usual price...[/center]
+      few can afford the temples'' usual price...[/center]
 
       [/end]'
     m_Metadata:
@@ -23791,13 +23791,13 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1289
-    m_Localized: 'Perserverance Day is quite a party in Ykalon. It was[/center]
+    m_Localized: 'Perseverance Day is quite a party in Ykalon. It was[/center]
 
       originally
       held as a solemn memorial to those killed[/center]
 
       in battle, resisting
-      the Camaron Usurper, but has[/center]
+      the Camoron Usurper, but has[/center]
 
       since become a boisterous festival.[/center]
 
@@ -24043,7 +24043,7 @@ MonoBehaviour:
       who
       live off the bounty of the Iliac Bay. They are[/center]
 
-      not a usually
+      not usually a
       flamboyant people, but on Fishing[/center]
 
       Day, they make so much noise,
@@ -24172,7 +24172,7 @@ MonoBehaviour:
     m_Localized: 'During Divat Etep''t, the people of Antiphyllos[/center]
 
       mourn
-      the death of the one of the greatest of the[/center]
+      the death of one of the greatest of the[/center]
 
       early Redguard
       heroes, Divat, son of Frandar of[/center]
@@ -24203,7 +24203,7 @@ MonoBehaviour:
       the %ct are still open their regular[/center]
 
       hours,
-      but most citizens chose to devote this day[/center]
+      but most citizens choose to devote this day[/center]
 
       to relaxation, not
       commerce or prayer. This is not[/center]
@@ -24545,13 +24545,13 @@ MonoBehaviour:
       %cn and longer still since a[/center]
 
       %t
-      of the %ct sponsered a Goblin Chase.[/center]
+      of the %ct sponsored a Goblin Chase.[/center]
 
       [/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1324
-    m_Localized: 'The Serpents Dance in Satakalaam may or may not[/center]
+    m_Localized: 'The Serpent''s Dance in Satakalaam may or may not[/center]
 
       have
       begun as a serious religious holiday[/center]
@@ -24565,7 +24565,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1325
-    m_Localized: 'On the 8th of Suns Dusk, the Bretons of Glenumbra[/center]
+    m_Localized: 'On the 8th of Sun''s Dusk, the Bretons of Glenumbra[/center]
 
       Moors
       hold the Moon Festival, a joyous holiday[/center]
@@ -24605,7 +24605,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1327
-    m_Localized: 'Today is the 20th of Sun''s Dusk, the Warriors[/center]
+    m_Localized: 'Today is the 20th of Sun''s Dusk, the Warriors''[/center]
 
       Festival
       in %cn. Most all the[/center]
@@ -24652,15 +24652,15 @@ MonoBehaviour:
       this one, the harvest was not particularly[/center]
 
       good and the winter
-      unseasonally harsh in[/center]
+      unseasonably harsh in[/center]
 
       %cn, but as the %t is fond of saying,[/center]
 
       "It
       could be much worse." The temples offer all[/center]
 
-      their services
-      blessing, curing, healing for[/center]
+      their services,
+      blessing, curing, and healing, for[/center]
 
       half the donation usually requested.[/center]
 
@@ -24716,7 +24716,7 @@ MonoBehaviour:
       on the 25th of Evening
       Star. Originally a[/center]
 
-      holiday for a long forgotten god of debauchery,[/center]
+      holiday for a long-forgotten god of debauchery,[/center]
 
       it
       has become a time of gift giving, parties,[/center]
@@ -24739,9 +24739,9 @@ MonoBehaviour:
       on their past. Some go for more than[/center]
 
       this, for it is rumored
-      that priests will as the[/center]
+      that priests will, as the[/center]
 
-      last act of the year perform resurrections
+      last act of the year, perform resurrections
       on[/center]
 
       beloved friends and family members free of the[/center]
@@ -24752,7 +24752,7 @@ MonoBehaviour:
       expect this philanthropy,
       but they arrive in a[/center]
 
-      macabre procession with the recently deceased[/center]
+      macabre procession with the recently deceased,[/center]
 
       nevertheless.[/center]
 
@@ -24943,7 +24943,7 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 1344
     m_Localized: 'the day the temples and Mages Guild vie for attention. Guess whose
-      side I''m on.[/record]
+      side I''m on?[/record]
 
       when you can get any item evaluated for mystic
       potential at the Mages Guild for free.[/record]
@@ -24955,7 +24955,7 @@ MonoBehaviour:
       day to buy a cheap spell scroll at the Mages Guild if you get there early.[/record]
 
       when
-      every temples in Tamriel is open all night long to combat evil.[/end]'
+      every temple in Tamriel is open all night long to combat evil.[/end]'
     m_Metadata:
       m_Items: []
   - m_Id: 1345
@@ -25000,7 +25000,7 @@ MonoBehaviour:
       a
       day of thanksgiving.[/record]
 
-      when the temple ask only half the usual
+      when the temple asks only half the usual
       donation for any of the services there.[/record]
 
       a pretty good time
@@ -25168,7 +25168,7 @@ MonoBehaviour:
       [/record]
 
       As
-      a member of %fnpc, it behooves me to help a well respected member of %fpc such
+      a member of %fnpc, it behooves me to help a well-respected member of %fpc such
       as yourself.[/center]
 
       [/record]
@@ -25185,7 +25185,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1356
-    m_Localized: '%fnpc and %fpc are allies. Of course I ll help you.[/center]
+    m_Localized: '%fnpc and %fpc are allies. Of course I''ll help you.[/center]
 
       [/record]
 
@@ -25214,7 +25214,7 @@ MonoBehaviour:
       [/record]
 
       Our factions may be allied,
-      but I ve heard[/center]
+      but I''ve heard[/center]
 
       about you %pcn. Don''t think that entitles you[/center]
 
@@ -25287,7 +25287,7 @@ MonoBehaviour:
       [/record]
 
       %fpc?
-      I wouldn t help you cross the street.[/center]
+      I wouldn''t help you cross the street.[/center]
 
       [/record]
 
@@ -25308,7 +25308,7 @@ MonoBehaviour:
       [/record]
 
       I
-      despise %fe, and so does %fpc. Sure I ll help you.[/center]
+      despise %fe, and so does %fpc. Sure I''ll help you.[/center]
 
       [/record]
 
@@ -25632,7 +25632,7 @@ MonoBehaviour:
       pass through the
       door at the back of the hall[/center]
 
-      on the right hand side."[/center]
+      on the right-hand side."[/center]
 
       [/end]'
     m_Metadata:
@@ -25736,7 +25736,7 @@ MonoBehaviour:
       personality,
       the larger the bonus. The[/left]
 
-      best known story of the masque tells
+      best-known story of the masque tells
       the[/left]
 
       tale of Avalea, a noblewoman of some[/left]
@@ -25791,7 +25791,7 @@ MonoBehaviour:
       [/left]
 
       The Dark
-      Brotherhood has covetted this[/left]
+      Brotherhood has coveted this[/left]
 
       ebony dagger for generations. This[/left]
 
@@ -25806,7 +25806,7 @@ MonoBehaviour:
       History
       does not record any bearers of[/left]
 
-      Mehrunes  Razor. However, eighty
+      Mehrunes'' Razor. However, eighty
       years[/left]
 
       ago the Dark Brotherhood was decimated[/left]
@@ -25884,10 +25884,10 @@ MonoBehaviour:
 
       advantages. The incredible strength, speed,[/left]
 
-      ferocity
-      of a werebeast make it a fearsome[/left]
+      and ferocity
+      of a werebeast make it a[/left]
 
-      opponent. There are, of course,[/left]
+      fearsome opponent. There are, of course,[/left]
 
       disadvantages.
       The bearer of the Hircine[/left]
@@ -25972,7 +25972,7 @@ MonoBehaviour:
       the artifact which can be manipulated to[/left]
 
       raise
-      one s abilities to near demi-god[/left]
+      one''s abilities to near demi-god[/left]
 
       proportions. Once used, legend
       has it,[/left]
@@ -26071,7 +26071,7 @@ MonoBehaviour:
       Spriggans take no damage, being creatures[/left]
 
       of
-      natures. Daedric beings only take half[/left]
+      nature. Daedric beings only take half[/left]
 
       the damage they do, being
       supernatural[/left]
@@ -26186,7 +26186,7 @@ MonoBehaviour:
       already carries a soul, nothing happens.[/left]
 
       Using
-      Azura s Star empties it, freeing[/left]
+      Azura''s Star empties it, freeing[/left]
 
       the trapped soul to make its
       journey to[/left]
@@ -26205,7 +26205,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1392
-    m_Localized: '(1 target at touch, save versus magic)[/left]
+    m_Localized: '(1 target at touch, save vs. magic)[/left]
 
       [/left]
 
@@ -26215,7 +26215,7 @@ MonoBehaviour:
       to have been created by the
       Dwarves of[/left]
 
-      the now abandoned clan of Rourken,[/left]
+      the now-abandoned clan of Rourken,[/left]
 
       hundreds
       of years before they disappeared[/left]
@@ -26228,7 +26228,7 @@ MonoBehaviour:
       but
       it is best known for the paralyzing[/left]
 
-      and strength leeching effects
+      and strength-leeching effects
       it has when[/left]
 
       cast at an enemy. Like the Dwarves who[/left]
@@ -26254,7 +26254,7 @@ MonoBehaviour:
 
       [/left]
 
-      The Warlock s Ring of
+      The Warlock''s Ring of
       the Arch-Mage[/left]
 
       Syrabane is one of the most popular[/left]
@@ -26284,7 +26284,7 @@ MonoBehaviour:
       may have additional powers. No adventurer[/left]
 
       can
-      wear the Warlock s Ring for long,[/left]
+      wear the Warlock''s Ring for long,[/left]
 
       for it is said the Ring is
       Syrabane''s[/left]
@@ -26302,7 +26302,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1394
-    m_Localized: '(1 target at range, save versus magic)[/left]
+    m_Localized: '(1 target at range, save vs. magic)[/left]
 
       [/left]
 
@@ -26382,7 +26382,7 @@ MonoBehaviour:
       the one flaw of the Amulet that it is[/left]
 
       unstable
-      in this world forever doomed to[/left]
+      in this world, forever doomed to[/left]
 
       fade in and out of existence,
       reappearing[/left]
@@ -26418,7 +26418,7 @@ MonoBehaviour:
       protects him or her from fire, and reflects[/left]
 
       any
-      deletory spells cast against the[/left]
+      deleterious spells cast against the[/left]
 
       wielder back to the caster.
       Seldom has[/left]
@@ -26495,7 +26495,7 @@ MonoBehaviour:
       Arch-Mage Magnus. When used, it[/left]
 
       regenerates
-      the wielder s health at[/left]
+      the wielder''s health at[/left]
 
       remarkable rates. In time, the Staff
       will[/left]
@@ -26539,9 +26539,9 @@ MonoBehaviour:
       Using the Ring he became the most[/left]
 
       successful
-      burglar in Elsweyr s history.[/left]
+      burglar in Elsweyr''s history.[/left]
 
-      Rajhin s eventual fate is a mystery,
+      Rajhin''s eventual fate is a mystery,
       but[/left]
 
       according to legend, the Ring rebelled[/left]
@@ -26619,7 +26619,7 @@ MonoBehaviour:
       mythical
       Elvish deity Auriel, can make[/left]
 
-      its wielder nigh invulnerable.
+      its wielder nigh-invulnerable.
       In its[/left]
 
       resistance to fire and magic, Auriel''s[/left]
@@ -26762,7 +26762,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1404
-    m_Localized: '(1 target at range, save versus magic)[/left]
+    m_Localized: '(1 target at range, save vs. magic)[/left]
 
       [/left]
 
@@ -26808,7 +26808,7 @@ MonoBehaviour:
       [/left]
 
       Spells:
-      Far silence, Vampiric Touch,[/left]
+      Far Silence, Vampiric Touch,[/left]
 
       and Energy Leech[/left]
 
@@ -26834,7 +26834,7 @@ MonoBehaviour:
       your victim was carrying a dead rat around.[/record]
 
       There were a few
-      pieces of glass in your victim''s pocket with which you almost cut yourself.[/record]
+      pieces of glass in your victim''s pocket on which you almost cut yourself.[/record]
 
       You
       have pilfered a small piece of cloth, speckled with blood.[/record]
@@ -27016,7 +27016,7 @@ MonoBehaviour:
       cleaver in his hands. You know[/left]\n    that the boy must be hungry, but
       the town is suffering[/left]\n    from a drought, which has made food valuable.
       Do you:[/left]\n a) Side with justice and urge your father to stop the boy?[/left]\n
-      b) Help the poor waif by running into the baker's way?[/left]\n c) Stand out
+       b) Help the poor waif by running into the baker's way?[/left]\n c) Stand out
       of the way and wait to see what your father[/left]\n    decides, trusting his
       experience?[/left]"
     m_Metadata:
@@ -27077,7 +27077,7 @@ MonoBehaviour:
     m_Localized: "8.   Your mother asks you to help fix the stove. While[/left]\n    
       you are working, a very hot pipe slips its moorings[/left]\n     and falls
       towards her. Do you:[/left]\n a) Push your mother out of the way?[/left]\n
-      b) Grab the hot pipe and try and push it away?[/left]\n c) Position yourself
+       b) Grab the hot pipe and try and push it away?[/left]\n c) Position yourself
       between the pipe and your mother?[/left]"
     m_Metadata:
       m_Items: []
@@ -27097,9 +27097,9 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 45335265940733960
     m_Localized: "10.    Entering town you find that you are witness to a[/left]\n    
-      very well dressed man running from a crowd. He screams[/left]\n     to you
+      very well-dressed man running from a crowd. He screams[/left]\n     to you
       for help. The crowd behind him seems very[/left]\n     angry. Do you:[/left]\n
-      a)  Rush to the man's aid immediately, despite your lack[/left]\n     of knowledge
+       a)  Rush to the man's aid immediately, despite your lack[/left]\n     of knowledge
       of the circumstances?[/left]\n b)  Rush to the town's aid immediately, despite
       your lack[/left]\n     of knowledge of the circumstances?[/left]\n c)  Stand
       aside and allow the man and mob to pass,[/left]\n     realizing that it is
@@ -27116,10 +27116,10 @@ MonoBehaviour:
       his weapon for him while he runs an[/left]\n     errand. Do you:[/left]\n a) 
       Wait for your friend's return then point out the flaw[/left]\n     in your
       dagger and return to the weapons shop to[/left]\n     demand a refund.[/left]\n
-      b)  Switch the daggers, rationalizing that since you paid[/left]\n     for
+       b)  Switch the daggers, rationalizing that since you paid[/left]\n     for
       them you should get the first choice, and that if[/left]\n     your friend
       ever notices the notch, you could always[/left]\n     take him back to the
-      weapon shop and get a refund?[/left]\n c)  Keep his dagger safe until his return,
+      weapons shop and get a refund?[/left]\n c)  Keep his dagger safe until his return,
       then switch the[/left]\n     daggers with your best friend's knowledge, justifying[/left]\n    
       it with the fact that you paid for them, and then[/left]\n     offer to accompany
       him back to the weapons shop?[/left]"
@@ -27135,22 +27135,22 @@ MonoBehaviour:
       fast enough so that he can block[/left]\n     it, knowing that it is more important
       to allow the[/left]\n     master to retain dignity, regardless of your personal[/left]\n    
       feelings?[/left]\n b)  Attack him at full speed, knowing that you could[/left]\n    
-      probably score the hit and justify his unfair[/left]\n     treatment of you
+      probably score the hit and counter his unfair[/left]\n     treatment of you
       by showing the class that you were[/left]\n     actually doing it right?[/left]\n
-      c)  Refuse and leave practice, unable to compromise your[/left]\n     anger
+       c)  Refuse and leave practice, unable to compromise your[/left]\n     anger
       with his dignity, and realizing that whatever[/left]\n     course you choose
       would cause you to lose respect for[/left]\n     either him or for yourself?[/left]"
     m_Metadata:
       m_Items: []
   - m_Id: 45335265940733963
-    m_Localized: "13.    While throwing a ball to you your friend breaks a[/left]\n    
+    m_Localized: "13.    While throwing a ball to you, your friend breaks a[/left]\n    
       window on his house. His father rushes out and demands[/left]\n     to know
       who broke the window. You know that your[/left]\n     friend's father is a
       strict disciplinarian and will[/left]\n     punish your friend severely if
       he takes the blame. You[/left]\n     on the other hand, not being his son,
       could get away[/left]\n     virtually unscathed. Do you:[/left]\n a)  Raise
       your hand and take the blame before your friend[/left]\n     can answer?[/left]\n
-      b)  Remain silent and not get involved?[/left]\n c)  Point at your friend,
+       b)  Remain silent and not get involved?[/left]\n c)  Point at your friend,
       knowing that anything else would[/left]\n     probably delay the inevitable
       and make things just[/left]\n     that much worse for him?[/left]"
     m_Metadata:
@@ -27158,7 +27158,7 @@ MonoBehaviour:
   - m_Id: 45335265940733964
     m_Localized: "14.    Your Armsmaster during a lesson on strategy[/left]\n    
       remarks, 'The best victory is to completely and[/left]\n     totally humiliate
-      your opponent'. He then turns to you[/left]\n     and asks you if you agree
+      your opponent'. He then turns to you[/left]\n     and asks if you agree
       with him. You know the[/left]\n     Armsmaster has been in numerous life and
       death[/left]\n     conflicts and has the experience of a seasoned[/left]\n    
       warrior. Do you:[/left]\n a)  Agree with his remark, knowing that at this moment[/left]\n    
@@ -27166,7 +27166,7 @@ MonoBehaviour:
       agreement with whatever your Armsmaster[/left]\n     says, a man who has dedicated
       his life to strategy?[/left]\n b)  Disagree with his remark, reasoning that
       it must be[/left]\n     some type of test, and that the truth will only come[/left]\n    
-      from opposition with his opinion, and not sheep-like[/left]\n     agreement?[/left]\nc) 
+      from opposition with his opinion, and not sheep-like[/left]\n     agreement?[/left]\n c) 
       Refuse to answer the question, choosing to withhold an[/left]\n     opinion
       until you have more experience and can[/left]\n     converse on the subject
       in an intelligent manner with[/left]\n     him?[/left]"
@@ -27176,13 +27176,13 @@ MonoBehaviour:
     m_Localized: "15.    The senior student in your weapons class has[/left]\n    
       trounced you unmercifully for the past several years.[/left]\n     Today is
       the Tournament of Students and you find with[/left]\n     dismay that you are
-      paired against him for your first[/left]\n     match. As you prepare your friend
+      paired against him for your first[/left]\n     match. As you prepare, your friend
       approaches and[/left]\n     offers to tell you of an injury the senior student[/left]\n    
       suffered in yesterday's sparring class, which you[/left]\n     missed. Do you:[/left]\n
-      a)  Accept the offer, knowing that it would allow you to[/left]\n     concentrate
+       a)  Accept the offer, knowing that it would allow you to[/left]\n     concentrate
       on the injured area and greatly increase[/left]\n     your chances of beating
       him?[/left]\n b)  Refuse the offer, knowing that win or lose you would[/left]\n    
-      rather do it through your own skill and not some extra[/left]\n     knowledge
+      rather do it through your own skill and not some extra[/left]\n     knowledge,
       in what should be a fair and honorable[/left]\n     fight?[/left]\n c)  Accept
       the offer, reasoning that it is better to have[/left]\n     the knowledge in
       case you need it, and realizing that[/left]\n     having the knowledge does
@@ -27210,7 +27210,7 @@ MonoBehaviour:
     m_Localized: "17.    While fishing one sunny afternoon you find that the[/left]\n    
       boots which you discarded are now full of ants who are[/left]\n     busily
       making their way from a piece of bread you[/left]\n     dropped to their anthill.
-      Do you:[/left]\n a)  Pick up the boots wash all the ants off now, even[/left]\n    
+      Do you:[/left]\n a)  Pick up the boots and wash all the ants off now, even[/left]\n    
       though you are not leaving until dusk?[/left]\n b)  Watch the ants, curious
       as to how they work so[/left]\n     efficiently, and content to live and let
       live?[/left]\n c)  Make boats out of leaves and then send each ant down[/left]\n    
@@ -27220,7 +27220,7 @@ MonoBehaviour:
   - m_Id: 45335265940733968
     m_Localized: "18.    You hear the Armsmaster remark during weapons[/left]\n    
       class, 'The intent of your opponent can be seen in his[/left]\n     blade'.
-      Many of the students scoff at this, though not[/left]\n     openly. Do you:[/left]\na) 
+      Many of the students scoff at this, though not[/left]\n     openly. Do you:[/left]\n a) 
       Feel that the disrespect the students show at this[/left]\n     points to something
       which they do not understand, and[/left]\n     therefore causes you to focus
       your efforts on[/left]\n     understanding it all the more?[/left]\n b)  Feel
@@ -27246,14 +27246,14 @@ MonoBehaviour:
     m_Localized: "20.    Your Armsmaster poses a question one day to his[/left]\n    
       class. A company of 100 men is attempting to flee from[/left]\n     the enemy.
       There are two paths out of the broken[/left]\n     stronghold. One path will
-      kill half the men under the[/left]\n     officers command, but the other half
+      kill half the men under the[/left]\n     officer's command, but the other half
       would survive. The[/left]\n     other path has a fifty percent chance that
       everyone[/left]\n     would die, but also a fifty percent chance that[/left]\n    
       everyone would survive. As the commanding officer,[/left]\n     would you:[/left]\n
-      a)  Choose the path that would guarantee half your men[/left]\n     would survive?[/left]\n
-      b)  Choose the path that has a fifty percent chance that[/left]\n     all would
+       a)  Choose the path that would guarantee half your men[/left]\n     would survive?[/left]\n
+       b)  Choose the path that has a fifty percent chance that[/left]\n     all would
       survive, and a fifty percent chance that all[/left]\n     would perish?[/left]\n
-      c)  Turn the choice over to the men and let them decide by[/left]\n     majority
+       c)  Turn the choice over to the men and let them decide by[/left]\n     majority
       vote which path they should commit[/left]\n     themselves to?[/left]"
     m_Metadata:
       m_Items: []
@@ -27267,7 +27267,7 @@ MonoBehaviour:
       wealth. Living in luxury for a few weeks[/left]\n     could not only be enlightening,
       it could also be very[/left]\n     interesting.[/left]\n b)  Live with your
       great uncle -- a sick old man who has[/left]\n     always been something of
-      a stranger to you. A few[/left]\n     weeks with him may be ardorous, but he
+      a stranger to you. A few[/left]\n     weeks with him may be arduous, but he
       is in more need[/left]\n     of your help than your great aunt.[/left]\n c) 
       Think of a way to divide your time between your great[/left]\n     aunt and
       great uncle. Perhaps you will not be able to[/left]\n     spend as much time
@@ -27276,7 +27276,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 45335265940733972
-    m_Localized: "22.    A friend has on several occassions made remarks[/left]\n    
+    m_Localized: "22.    A friend has on several occasions made remarks[/left]\n    
       about how much he likes a particular gold ring of[/left]\n     yours. One day
       you discover that this ring is missing[/left]\n     and after making a thorough
       search, find it in a coat[/left]\n     your friend had left in your pantry.
@@ -27286,7 +27286,7 @@ MonoBehaviour:
       him with his theft. You know that there is no[/left]\n     way the ring just
       fell into his pocket by accident,[/left]\n     and therefore he is nothing
       but a common thief who[/left]\n     would betray you for material gain.[/left]\n
-      c)  Say nothing, deciding instead to wait and see what[/left]\n     your friend
+       c)  Say nothing, deciding instead to wait and see what[/left]\n     your friend
       does. If he is innocent or guilty, you[/left]\n     will know by whatever actions
       he takes. At that time,[/left]\n     you can confront him with the truth.[/left]"
     m_Metadata:
@@ -27301,19 +27301,19 @@ MonoBehaviour:
       Find out more about this girl using any contact he can[/left]\n     find in
       her village. He will not be so shy if he knows[/left]\n     something about
       her, and may even find out she is not[/left]\n     the right girl for him.[/left]\n
-      c)  Let you help him write anonymous love letters and[/left]\n     poems to
+       c)  Let you help him write anonymous love letters and[/left]\n     poems to
       see her reaction without needing to face her[/left]\n     directly. If the
       reaction is favorable, he can talk to[/left]\n     her friends in the village
       and arrange an \"accidental\"[/left]\n     meeting.[/left]"
     m_Metadata:
       m_Items: []
   - m_Id: 45335265940733974
-    m_Localized: "24.    Your Armmaster is relating the story of a great[/left]\n    
+    m_Localized: "24.    Your Armsmaster is relating the story of a great[/left]\n    
       king he knew in a faraway land whose inventors created[/left]\n     a wondrous
       balloon of such size, it could transport[/left]\n     dozens of people through
       the air to any place they[/left]\n     chose. If you were this king, he asks
       you, how would[/left]\n     you use this remarkable balloon? Would you:[/left]\n
-      a)  Explore regions previously impossible or extremely[/left]\n     dangerous
+       a)  Explore regions previously impossible or extremely[/left]\n     dangerous
       to visit by land.[/left]\n b)  Keep the balloon a secret, saving it for surprise[/left]\n    
       attacks or defense in a time of war.[/left]\n c)  Commission the inventor to
       create dozens of these[/left]\n     'balloons' in hopes of making a travel
@@ -27347,7 +27347,7 @@ MonoBehaviour:
       lord should let him go[/left]\n     free.[/left]\n b)  Even as you sympathize
       with the young man, vigilante[/left]\n     law cannot be tolerated if there
       is to be peace.[/left]\n c)  The young man's only mistake was getting caught
-      while[/left]\n     exacting vengance. For that, he now must accept[/left]\n    
+      while[/left]\n     exacting vengeance. For that, he now must accept[/left]\n    
       whatever fate has in store for him.[/left]"
     m_Metadata:
       m_Items: []
@@ -27356,10 +27356,10 @@ MonoBehaviour:
       young man you know from class. You defend yourself[/left]\n     ably and knock
       him unconscious. While he is out, you:[/left]\n a)  Tie him up, intending to
       interrogate him later when he[/left]\n     wakes up. You want to know why he
-      attacked you. You[/left]\n     can then turn him into the Armsmaster at your
+      attacked you. You[/left]\n     can then turn him in to the Armsmaster at your
       leisure.[/left]\n b)  Slit his throat. You know him from class, and think he[/left]\n    
       would have done the same had your positions been[/left]\n     reversed.[/left]\n
-      c)  Leave him with a visible scar, the knowledge of his[/left]\n     defeat
+       c)  Leave him with a visible scar, the knowledge of his[/left]\n     defeat
       at your hands and the visible reminder[/left]\n     punishment enough for one
       who has resorted to such[/left]\n     dishonorable tactics.[/left]"
     m_Metadata:
@@ -27373,7 +27373,7 @@ MonoBehaviour:
       hundreds of villagers. You tell your father:[/left]\n a)  You do not believe
       in any such Volcano God. Civilized[/left]\n     men should intervene, find
       the natural cause behind[/left]\n     the eruptions, and stop the sacrifices.[/left]\n
-      b)  The God Arius must be evil to demand child sacrifice.[/left]\n     The
+       b)  The God Arius must be evil to demand child sacrifice.[/left]\n     The
       villagers should find some way to combat this God,[/left]\n     instead of
       just giving in to his demands.[/left]\n c)  It is tragic, but the death of
       one small child is[/left]\n     preferable to that of many villagers. If it
@@ -27387,7 +27387,7 @@ MonoBehaviour:
       any natural talent at all. The class is[/left]\n     divided into two sides
       for a mock battle and, as one of[/left]\n     the 'generals', you are to assign
       your soldiers. Tys[/left]\n     is one of your men. You decide to:[/left]\n
-      a)  Put Tys at the frontline with the other fighters,[/left]\n     rationalizing
+       a)  Put Tys at the frontline with the other fighters,[/left]\n     rationalizing
       that in any realistic battle, he would[/left]\n     probably be a casualty
       anyway, and that there must be[/left]\n     some sacrifices.[/left]\n b)  Use
       Tys as a scout, rationalizing that because of his[/left]\n     small size he
@@ -27400,11 +27400,11 @@ MonoBehaviour:
   - m_Id: 45335265940733980
     m_Localized: "30.    Your mother is terribly ill and you have been sent[/left]\n    
       with a few gold pieces to buy some rare, medicinal[/left]\n     herbs for her.
-      As you reach the door to the[/left]\n     apothecary's, you realize there is
+      As you reach the door to the[/left]\n     apothecary, you realize there is
       a hole in your purse[/left]\n     and all the gold has fallen out. Do you:[/left]\n
-      a)  Enter the store, tell the apothecary your dilemma, and[/left]\n     promise
+       a)  Enter the store, tell the apothecary your dilemma, and[/left]\n     promise
       on your honor to pay him back for the herbs[/left]\n     your mother so desperately
-      needs.[/left]\n b)  Attempt to steal the herbs from the apothecary's. You[/left]\n    
+      needs.[/left]\n b)  Attempt to steal the herbs from the apothecary. You[/left]\n    
       know the old man who works in the store will not be[/left]\n     able to catch
       you, and your mother lies sick.[/left]\n c)  Run back home and admit the loss,
       hoping that your[/left]\n     father will have more gold. You know you'll be[/left]\n    
@@ -27435,27 +27435,27 @@ MonoBehaviour:
       arrive. Do you:[/left]\n a)  Claim to have fired the arrow that hit the stag,
       thus[/left]\n     gaining the honor for the kill?[/left]\n b)  Show the others
       the arrow and proclaim your friend the[/left]\n     archer of the day?[/left]\n
-      c)  Suggest dividing the prize, reasoning that although[/left]\n     your friend's
+       c)  Suggest dividing the prize, reasoning that although[/left]\n     your friend's
       arrow brought down the hart, all of you[/left]\n     were instrumental in the
       tracking and the kill?[/left]"
     m_Metadata:
       m_Items: []
   - m_Id: 45335265940733983
     m_Localized: "33.    One night after Tales and Tallows, you look at the[/left]\n    
-      horde of treats you have collected and find lots of[/left]\n     brandied plums,
+      hoard of treats you have collected and find lots of[/left]\n     brandied plums,
       a treat you particularly dislike. You[/left]\n     know your younger cousin
       likes them. Do you:[/left]\n a)  Give her all your brandied plums?[/left]\n
-      b)  Trade the brandied plums for something she does not[/left]\n     really
+       b)  Trade the brandied plums for something she does not[/left]\n     really
       like but you do?[/left]\n c)  Pretend that they are excellent brandied plums
       and see[/left]\n     if she will give up something really good in exchange?[/left]"
     m_Metadata:
       m_Items: []
   - m_Id: 45335265940733984
-    m_Localized: "34.    Your cousin has given you a very embarassing[/left]\n    
+    m_Localized: "34.    Your cousin has given you a very embarrassing[/left]\n    
       nickname and, even worse, likes to call you it in front[/left]\n     of your
       friends. You have asked him to stop, but he[/left]\n     finds it very amusing
-      to watch you blush. What do you     do?:[/left]\n a)  Make up an even more
-      embarassing nickname for him and[/left]\n     use it constantly until he learns
+      to watch you blush. Do you:[/left]\n a)  Make up an even more
+      embarrassing nickname for him and[/left]\n     use it constantly until he learns
       his lesson.[/left]\n b)  Make up a story that makes your nickname a badge of[/left]\n    
       honor instead of something humiliating.[/left]\n c)  Beat up your cousin, then
       tell him that if he ever[/left]\n     calls you that nickname again, you will
@@ -27484,7 +27484,7 @@ MonoBehaviour:
       him that your parents can help him if[/left]\n     his family is in trouble,
       but he should not resort [/left]\n     to stealing.[/left]\n b)  Close the
       door behind you and say nothing. Your family[/left]\n     can live without
-      the candlestick, but your cousin's[/left]\n     family obviously cannot.[/left]\nc) 
+      the candlestick, but your cousin's[/left]\n     family obviously cannot.[/left]\n c) 
       Treat him like any other burgler. Lock him in the room[/left]\n     and call
       for your father. If he chooses to be merciful[/left]\n     because of your
       cousin's poverty, that is his decision.[/left]\n     It is your father's candlestick,
@@ -27499,7 +27499,7 @@ MonoBehaviour:
       shelves. Geotina, who thinks you a cowardly sort,[/left]\n     suggests breaking
       into the shack and exploring. Another[/left]\n     fighter named Hunard suggests
       going to town to find out[/left]\n     more information. You advise:[/left]\n
-      a)  Going into town. They are more familiar with the area[/left]\n     and
+       a)  Going into town. They are more familiar with the area[/left]\n     and
       may have important information about this hut and[/left]\n     the surrounding
       area.[/left]\n b)  Breaking into the shack, but leaving one person on[/left]\n    
       the outside in case something goes wrong. You should[/left]\n     investigate
@@ -27545,7 +27545,7 @@ MonoBehaviour:
     m_Localized: "40.    Practicing alone, you develop a new fighting style[/left]\n    
       you are very excited about. When you mention it to your[/left]\n     Armsmaster,
       he tells you it would never work in[/left]\n     practical combat. Do you:[/left]\n
-      a)  Use the new style in the middle of a class spar.[/left]\n     When it works,
+       a)  Use the new style in the middle of a class spar.[/left]\n     When it works,
       he will be forced to admit its[/left]\n     practicality or give a reason for
       not accepting it.[/left]\n b)  Keep asking him questions about it, focusing
       on[/left]\n     details of the form to find his objection. Eventually[/left]\n    

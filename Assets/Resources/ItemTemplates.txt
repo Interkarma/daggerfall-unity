@@ -2341,7 +2341,7 @@
     },
     {
         "index": 117,
-        "name": "Wakazashi",
+        "name": "Wakizashi",
         "baseWeight": 2.0,
         "hitPoints": 200,
         "capacityOrTarget": 0,
@@ -5004,7 +5004,7 @@
     },
     {
         "index": 250,
-        "name": "Shubbery",
+        "name": "Shrubbery",
         "baseWeight": 25.0,
         "hitPoints": 70,
         "capacityOrTarget": 0,
