@@ -395,7 +395,7 @@ namespace DaggerfallWorkshop.Utility
         #region Macro Expansion Code
 
         // Any non-alpha characters that can be on the end of a macro symbol need adding here.
-        static readonly char[] MACRO_TERMINATORS = { ' ', '%', '.', ',', '\'', '?', '!', '/', '(', ')', '{', '}', '[', ']', '\"', ';', ':' };
+        static readonly char[] MACRO_TERMINATORS = { ' ', '%', '.', ',', '\'', '?', '!', '/', '(', ')', '{', '}', '[', ']', '\"', ';', ':', '|' };
 
         /// <summary>
         /// Expands any macros in the textfile tokens.
@@ -453,6 +453,11 @@ namespace DaggerfallWorkshop.Utility
 
                             // Iterate from macro end
                             currentPos = endPos;
+
+                            // "Eating" the | terminator (for postfixes purpose)
+                            // Example: '%di|ern' => 'southern'
+                            if (currentPos < tokenText.Length && tokenText[currentPos] == '|')
+                                currentPos++;                        
                         }
 
                         // Add the rest of the text
