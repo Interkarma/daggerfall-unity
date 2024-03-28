@@ -791,7 +791,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected virtual void SetRemoteItemsAnimation()
         {
             // Add animation handler for shop shelf stealing
-            if (shopShelfStealing)
+            if (shopShelfStealing && !usingWagon)
             {
                 remoteItemListScroller.BackgroundAnimationHandler = StealItemBackgroundAnimationHandler;
                 remoteItemListScroller.BackgroundAnimationDelay = coinsAnimationDelay;
@@ -1074,6 +1074,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
 
             usingWagon = show;
+            SetRemoteItemsAnimation();
             remoteItemListScroller.ResetScroll();
             Refresh(false);
         }
