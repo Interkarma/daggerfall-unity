@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         const int startX                            = 10;
         const int startY                            = 15;
         const int columnWidth                       = 140;
+        const int columnHeight                      = 165;
         const int columnsOffset                     = columnWidth + startX * 2;
 
         const KeyCode nextPageKey                   = KeyCode.PageDown;
@@ -63,7 +64,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         readonly Mod mod;
         readonly ModSettingsData settings;
         readonly bool liveChange;
-        readonly int columnHeight;
 
         int x = startX;
         int y = startY;
@@ -104,9 +104,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             this.mod = mod;
             this.liveChange = liveChange;
 
-            // Make room for warning label about applying settings during runtime
-            columnHeight = liveChange ? 155 : 165;
-
             settings = ModSettingsData.Make(mod);
             settings.SaveDefaults();
             settings.LoadLocalValues();
@@ -141,7 +138,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                 // Add warning label that some settings may not be applied while game is running
                 TextLabel warningLabel = new TextLabel(DaggerfallUI.DefaultFont);
                 warningLabel.Text = TextManager.Instance.GetLocalizedText("settingsNotApplied");
-                warningLabel.Position = new Vector2(0, columnHeight + 1);
+                warningLabel.Position = new Vector2(0, columnHeight + 12);
                 warningLabel.TextScale = 0.85f;
                 warningLabel.HorizontalAlignment = HorizontalAlignment.Center;
                 warningLabel.ShadowPosition = Vector2.zero;
