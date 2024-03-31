@@ -28,6 +28,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// </summary>
     public class FolderBrowser : Panel
     {
+        private const string parentDirectory = "..";
+
         int confirmButtonWidth = 35;
         int drivePanelWidth = 40;
         int pathPanelHeight = 12;
@@ -209,6 +211,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             folders.Clear();
             folderList.ClearItems();
+
+            // Add return path
+            if (currentPath != drives[driveList.SelectedIndex])
+                folderList.AddItem(parentDirectory);
+
             try
             {
                 string[] directoryList = Directory.GetDirectories(currentPath);
@@ -332,7 +339,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Get new path
             string newPath = string.Empty;
-            if (folderList.SelectedItem == "..")
+            if (folderList.SelectedItem == parentDirectory)
             {
                 // Handle return path
                 DirectoryInfo info = new DirectoryInfo(currentPath);
@@ -351,13 +358,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 currentPath = newPath;
                 RefreshFolders();
                 RaisePathChangedEvent();
-
-                // Add return path
-                if (currentPath != drives[driveList.SelectedIndex])
-                    folderList.AddItem("..", 0);
-
-                // Update scroller units
-                folderScroller.TotalUnits = folderList.Count;
 
                 UpdatePathText();
             }
