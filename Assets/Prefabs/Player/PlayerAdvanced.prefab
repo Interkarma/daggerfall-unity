@@ -45,6 +45,8 @@ GameObject:
   - component: {fileID: 114397629012878356}
   - component: {fileID: 114025923971531530}
   - component: {fileID: 114374011142275900}
+  - component: {fileID: 4787465822592269963}
+  - component: {fileID: 7941766574065467489}
   m_Layer: 13
   m_Name: PlayerAdvanced
   m_TagString: Player
@@ -620,6 +622,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36bb43919da808741adb733009f14b91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerJumpSkillMultiplier: 0.5
+  athleticismMultiplier: 0.1
+  improvedAthleticismMultiplier: 0.1
+  jumpSpellMultiplier: 0.6
   jumpSpeed: 4.5
   gravity: 20
   crouchingJumpDelta: 0.8
@@ -685,6 +691,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89997fcd6fd7870439147bc0e133e2e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4787465822592269963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d22b9e2f9de34074af0beaa0b4cd6204, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!136 &7941766574065467489
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &100002
 GameObject:
   m_ObjectHideFlags: 0

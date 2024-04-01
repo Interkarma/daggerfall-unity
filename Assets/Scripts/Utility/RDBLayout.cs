@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Lypyl (lypyl@dfworkshop.net)
-// 
+//
 // Notes:
 //
 
@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Utility
         const float torchMaxDistance = 5f;
         const float torchVolume = 0.7f;
 
+        private static bool isPetCreated;
         #region Structs & Enums
 
         /// <summary>
@@ -341,7 +342,7 @@ namespace DaggerfallWorkshop.Utility
                         // Store editor objects and start markers
                         int archive = obj.Resources.FlatResource.TextureArchive;
                         int record = obj.Resources.FlatResource.TextureRecord;
-                        
+
                         // Add animal sound
                         // This was specifically added to accommodate the cat in
                         // Direnni Tower. This should also enable animals added
@@ -461,10 +462,26 @@ namespace DaggerfallWorkshop.Utility
             // Iterate editor flats for enemies
             for (int i = 0; i < editorObjects.Length; i++)
             {
-                // Add fixed enemy objects
-                if (editorObjects[i].Resources.FlatResource.TextureRecord == fixedMonsterFlatIndex)
-                    AddFixedRDBEnemy(editorObjects[i], fixedEnemiesNode.transform, ref blockData, startMarkers, serialize);
+                MobileTypes type;
+                DFBlock.RdbObject obj = editorObjects[i];
+                if (!obj.Resources.FlatResource.IsCustomData)
+                    type = (MobileTypes)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
+                else
+                    type = (MobileTypes)obj.Resources.FlatResource.FactionOrMobileId;
+
+                if (type == MobileTypes.GiantBat && !isPetCreated)
+                {
+                    AddFixedEnemyObject(obj, ref blockData, startMarkers, serialize, fixedMonsterFlatIndex, fixedEnemiesNode);
+                }
+                AddFixedEnemyObject(obj, ref blockData, startMarkers, serialize, fixedMonsterFlatIndex, fixedEnemiesNode);
             }
+        }
+
+        private static void AddFixedEnemyObject(DFBlock.RdbObject obj, ref DFBlock blockData, GameObject[] startMarkers,
+            bool serialize, int fixedMonsterFlatIndex, GameObject fixedEnemiesNode)
+        {
+            if (obj.Resources.FlatResource.TextureRecord == fixedMonsterFlatIndex)
+                AddFixedRDBEnemy(obj, fixedEnemiesNode.transform, ref blockData, startMarkers, serialize);
         }
 
         /// <summary>
@@ -1556,6 +1573,11 @@ namespace DaggerfallWorkshop.Utility
 
             GameManager.Instance?.RaiseOnEnemySpawnEvent(go);
 
+            if (type == MobileTypes.GiantBat && !isPetCreated)
+            {
+                isPetCreated = true;
+                GameManager.Instance?.RaiseOnPetSpawnEvent(go);
+            }
         }
 
         private static DaggerfallLoot AddRandomTreasure(

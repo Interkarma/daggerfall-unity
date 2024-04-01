@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Guilds;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using Game.Player.PlayerPet;
 using UnityEngine.Rendering.PostProcessing;
 
 namespace DaggerfallWorkshop.Game
@@ -230,7 +231,7 @@ namespace DaggerfallWorkshop.Game
             set { weaponManager = value; }
         }
 
-        public GameObject MainCameraObject 
+        public GameObject MainCameraObject
         {
             get { return (mainCameraObject) ? mainCameraObject : mainCameraObject = GetGameObjectWithTag("MainCamera") ; }
             set { mainCameraObject = value; }
@@ -270,7 +271,7 @@ namespace DaggerfallWorkshop.Game
             get { return (saveLoadManager) ? saveLoadManager : saveLoadManager = GetMonoBehaviour<SaveLoadManager>(); }
             set { saveLoadManager = value; }
         }
-        
+
         public PlayerSpeedChanger SpeedChanger
         {
             get { return (speedChanger) ? speedChanger : speedChanger = GetComponentFromObject<PlayerSpeedChanger>(PlayerObject); }
@@ -402,7 +403,7 @@ namespace DaggerfallWorkshop.Game
             get { return IsHUDTopWindow(); }
         }
 
-        public bool IsPlayerInside 
+        public bool IsPlayerInside
         {
             get { return PlayerEnterExit.IsPlayerInside;}
         }
@@ -1022,7 +1023,7 @@ namespace DaggerfallWorkshop.Game
         /// <returns></returns>
         public static T GetComponentFromObject<T>(GameObject obj, string tag = null) where T : Component
         {
-            T result = default(T);    
+            T result = default(T);
             if(obj == null && !string.IsNullOrEmpty(tag))
             {
                 obj = GetGameObjectWithTag(tag);
@@ -1033,7 +1034,7 @@ namespace DaggerfallWorkshop.Game
                 Debug.LogError(errorText);
                 throw new Exception(errorText);
             }
-            
+
             if(obj != null)
             {
                 result = obj.GetComponent<T>();
@@ -1136,7 +1137,7 @@ namespace DaggerfallWorkshop.Game
         public delegate void OnEnemySpawnHandler(GameObject enemy);
         /// <summary>
         /// Raised when a foe gameobject is instantiated. The gameobject is passed to event handlers.
-        /// Use <see cref="OnEncounter"/> to detect when enemies are spawned near player. 
+        /// Use <see cref="OnEncounter"/> to detect when enemies are spawned near player.
         /// </summary>
         public static event OnEnemySpawnHandler OnEnemySpawn;
 
@@ -1144,6 +1145,15 @@ namespace DaggerfallWorkshop.Game
         {
             if (OnEnemySpawn != null)
                 OnEnemySpawn(enemy);
+        }
+
+        /// <summary>
+        /// Raised when a pet gameobject is instantiated. The gameobject is passed to event handlers.
+        /// </summary>
+
+        public virtual void RaiseOnPetSpawnEvent(GameObject pet)
+        {
+            pet.AddComponent<DaggerfallPet>();
         }
 
         #endregion
