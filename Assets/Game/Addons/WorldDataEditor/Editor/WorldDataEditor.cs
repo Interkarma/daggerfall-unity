@@ -1301,14 +1301,21 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                 DestroyImmediate(root.gameObject);
         }
 
-        private void OpenBuildingFile()
+        public void OpenBuildingFile(string path = null)
         {
-            string path = EditorUtility.OpenFilePanel("Open Building Override File", WorldDataFolder, "json");
+            // If no path is provided, show the file dialog to the user
+            if (string.IsNullOrEmpty(path))
+            {
+                path = EditorUtility.OpenFilePanel("Open Building Override File", WorldDataFolder, "json");
+            }
 
-            if (WorldDataEditorBuildingHelper.LoadBuildingFile(path, out buildingData))
+            // Proceed only if a valid path is obtained or provided
+            if (!string.IsNullOrEmpty(path) && WorldDataEditorBuildingHelper.LoadBuildingFile(path, out buildingData))
             {
                 if (root != null)
+                {
                     DestroyImmediate(root);
+                }
 
                 positionIds.Clear();
                 dataMode = DataMode.Building;
@@ -1321,10 +1328,11 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
             }
             else
             {
-                path = "";
+                // If called programmatically and fails, consider logging an error or handling this case appropriately
+                Debug.LogError("Failed to open the building file at " + path);
             }
 
-            //We clear the Undo
+            // Clear the Undo stack to avoid any unintended actions being undone in the editor
             Undo.ClearAll();
         }
 
