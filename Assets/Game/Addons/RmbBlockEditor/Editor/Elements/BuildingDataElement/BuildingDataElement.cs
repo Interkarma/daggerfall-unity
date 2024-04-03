@@ -15,6 +15,7 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using DaggerfallWorkshop.Game.Utility.WorldDataEditor;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
 {
@@ -119,6 +120,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             var qualityField = this.Query<IntegerField>("quality-input").First();
             var replaceFromFileButton = this.Query<Button>("replace-from-file-button").First();
             var importFromFile = this.Query<Button>("import-from-file").First();
+            var importFromWDE = this.Query<Button>("import-from-WDE").First();
             var cancelReplaceFromFile = this.Query<Button>("cancel-replace-from-file").First();
             var replaceFromCatalogButton = this.Query<Button>("replace-from-catalog-button").First();
             var importFromCatalog = this.Query<Button>("import-from-catalog").First();
@@ -158,6 +160,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             importFromFile.clicked += OnImportFromFile;
             cancelReplaceFromFile.clicked += HideReplaceFromFile;
             importFromCatalog.clicked += OnImportFromCatalog;
+            importFromWDE.clicked += ImportFromWorldDataEditor;
             cancelReplaceFromCatalog.clicked += HideReplaceFromCatalog;
         }
 
@@ -259,7 +262,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             Import(buildingData, importProps.value, importExterior.value, importInterior.value);
         }
 
-        private void Import(BuildingReplacementData replacementData, bool importProps, bool importExterior,
+        public void Import(BuildingReplacementData replacementData, bool importProps, bool importExterior,
             bool importInterior)
         {
             if (!importProps && !importExterior && !importInterior)
@@ -305,15 +308,19 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             return BuildingHelper.GetPreview(templates[buildingId]);
         }
 
-        private Boolean LoadBuildingFile(ref BuildingReplacementData buildingData)
+        public bool LoadBuildingFile(ref BuildingReplacementData buildingData, string path = null)
         {
-            var path = EditorUtility.OpenFilePanel("Import buildings", WorldDataFolder, "json");
-
-            if (String.IsNullOrEmpty(path) || !File.Exists(path))
+            if (string.IsNullOrEmpty(path))
             {
-                return false;
+                path = EditorUtility.OpenFilePanel("Import buildings", WorldDataFolder, "json");
             }
 
+            if (!File.Exists(path))
+            {
+                Debug.LogError($"File does not exist: {path}");
+                return false;
+            }
+            
             try
             {
                 var buildingJson = File.ReadAllText(path);
@@ -327,6 +334,45 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             }
         }
 
+        private void ImportFromWorldDataEditor()
+        {
+            Debug.Log("ImportFromWorldDataEditor is being called.");
+
+            // Attempt to get an open instance of the WorldDataEditor window
+            WorldDataEditor worldDataEditor = (WorldDataEditor)EditorWindow.GetWindow(typeof(WorldDataEditor), false, "WorldData Editor", false);
+            if (worldDataEditor != null)
+            {
+                // Ensure to update building data before saving
+                worldDataEditor.UpdateBuildingWorldData();
+
+                // Generate a temporary file path
+                string tempDirectory = Path.Combine(Application.temporaryCachePath, "Temp"); // Using temporaryCachePath for temporary files
+                Directory.CreateDirectory(tempDirectory); // CreateDirectory checks for existence internally
+
+                var index = 0; // Assuming you have a way to get 'index'
+                var rmbBlockName = "Example"; // Assuming you have a way to get 'rmbBlockName'
+                var fileName = $"temp_{rmbBlockName}-{index}-building.json";
+                var path = Path.Combine(tempDirectory, fileName);
+
+                // Access the buildingData from the WorldDataEditor instance to save it
+                BuildingReplacementData buildingData = worldDataEditor.buildingData;
+                WorldDataEditorBuildingHelper.SaveBuildingFile(buildingData, path);
+                Debug.Log($"Building data saved to temporary file: {path}");
+
+                var loadedData = new BuildingReplacementData();
+                var success = LoadBuildingFile(ref loadedData, path);
+                if (!success) return;
+
+                Import(loadedData, true, true, true);
+
+                Debug.Log("Building data successfully imported from WorldDataEditor.");
+            }
+            else
+            {
+                Debug.LogError("WorldDataEditor is not open or accessible.");
+            }
+        }
+
         private void UnregisterCallbacks()
         {
             changeBuildingData = null;
@@ -335,6 +381,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             var replaceFromFileButton = this.Query<Button>("replace-from-file-button").First();
             var replaceFromCatalogButton = this.Query<Button>("replace-from-catalog-button").First();
             var importFromFile = this.Query<Button>("import-from-file").First();
+            var importFromWDE = this.Query<Button>("import-from-WDE").First();
             var cancelReplaceFromFile = this.Query<Button>("cancel-replace-from-file").First();
             var importFromCatalog = this.Query<Button>("import-from-catalog").First();
             var cancelReplaceFromCatalog = this.Query<Button>("cancel-replace-from-catalog").First();
@@ -342,6 +389,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             replaceFromFileButton.clicked -= ShowReplaceFromFile;
             replaceFromCatalogButton.clicked -= ShowReplaceFromCatalog;
             importFromFile.clicked -= OnImportFromFile;
+            importFromWDE.clicked -= ImportFromWorldDataEditor;
             cancelReplaceFromFile.clicked -= HideReplaceFromFile;
             importFromCatalog.clicked -= OnImportFromCatalog;
             cancelReplaceFromCatalog.clicked -= HideReplaceFromCatalog;
