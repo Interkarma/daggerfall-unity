@@ -11,7 +11,7 @@
             <engine:Image class="export-icon"/>
         </engine:Button>
         <engine:Button name="open-in-world-data-editor" tooltip="Open Building in World Data Editor">
-            <engine:Image class="sync-icon"/> <!-- Add an appropriate icon here if desired -->
+            <engine:Image class="wde-icon"/> <!-- Add an appropriate icon here if desired -->
         </engine:Button>
     </engine:VisualElement>
 
