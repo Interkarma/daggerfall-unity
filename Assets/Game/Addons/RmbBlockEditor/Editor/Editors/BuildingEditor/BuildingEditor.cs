@@ -72,6 +72,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         {
             var exportButton = this.Query<Button>("export-building").First();
             var openInWorldDataEditorButton = this.Query<Button>("open-in-world-data-editor").First();
+            var importFromWorldDataEditorButton = this.Query<Button>("import-from-world-data-editor").First();
             var xPosField = this.Query<IntegerField>("building-x").First();
             var zPosField = this.Query<IntegerField>("building-z").First();
             var yPosField = this.Query<IntegerField>("building-y").First();
@@ -107,6 +108,11 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             buildingDataField.changedBuildingData += HandleBuildingDataChange;
             buildingDataField.changedSubRecord += HandleSubRecordChange;
             exportButton.clicked += ExportToFile;
+
+            if (importFromWorldDataEditorButton != null)
+            {
+                importFromWorldDataEditorButton.clicked += ImportFromWorldDataEditor; // Make sure your method has the correct signature
+            }
 
             if (openInWorldDataEditorButton != null)
             {
@@ -172,15 +178,52 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             }
         }
 
+        private void ImportFromWorldDataEditor()
+        {
+            Debug.Log("ImportFromWorldDataEditor is being called.");
+
+            // Attempt to get an open instance of the WorldDataEditor window
+            WorldDataEditor worldDataEditor = (WorldDataEditor)EditorWindow.GetWindow(typeof(WorldDataEditor), false, "WorldData Editor", false);
+            if (worldDataEditor != null)
+            {
+                // Generate a temporary file path
+                string tempDirectory = Path.Combine(Application.dataPath, "Temp");
+                if (!Directory.Exists(tempDirectory))
+                {
+                    Directory.CreateDirectory(tempDirectory);
+                }
+                
+                // Assuming 'building' is accessible here and it's what you want to save
+                var index = building.transform.GetSiblingIndex();
+                var rmbBlock = building.transform.GetComponentInParent<RmbBlockObject>();
+                var fileName = string.Format("temp_{0}-{1}-building{2}.json", rmbBlock.Name, rmbBlock.Index, index);
+                var path = Path.Combine(tempDirectory, fileName);
+
+                // Ensure to update building data before saving
+                worldDataEditor.UpdateBuildingWorldData();
+
+                // Now access the buildingData from the WorldDataEditor instance to save it
+                BuildingReplacementData buildingData = worldDataEditor.buildingData;
+                WorldDataEditorBuildingHelper.SaveBuildingFile(buildingData, path);
+                Debug.Log($"Building data saved to temporary file: {path}");
+            }
+            else
+            {
+                Debug.LogError("World Data Editor is not currently open.");
+            }
+        }
+
         private void UnregisterCallbacks()
         {
             var exportButton = this.Query<Button>("export-building").First();
             var openInWorldDataEditorButton = this.Query<Button>("open-in-world-data-editor").First();
+            var importFromWorldDataEditorButton = this.Query<Button>("import-from-world-data-editor").First();
             var buildingDataField = this.Query<BuildingDataElement>("building-data-element").First();
 
             // Detach the event handlers
             exportButton.clicked -= ExportToFile;
             openInWorldDataEditorButton.clicked -= OpenInWorldDataEditor; // Detach the new button's click event
+            importFromWorldDataEditorButton.clicked -= ImportFromWorldDataEditor; // Detach the new button's click event
 
             buildingDataField.changedBuildingData -= HandleBuildingDataChange;
             buildingDataField.changedSubRecord -= HandleSubRecordChange;

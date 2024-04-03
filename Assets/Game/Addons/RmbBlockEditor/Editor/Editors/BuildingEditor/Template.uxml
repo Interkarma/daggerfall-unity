@@ -13,6 +13,9 @@
         <engine:Button name="open-in-world-data-editor" text="Open in World Data Editor" tooltip="Open Building in World Data Editor">
             <engine:Image class="open-icon"/> <!-- Add an appropriate icon here if desired -->
         </engine:Button>
+        <engine:Button name="import-from-world-data-editor" text="Import from World Data Editor" tooltip="Import Building from World Data Editor">
+            <engine:Image class="open-icon"/> <!-- Add an appropriate icon here if desired -->
+        </engine:Button>
     </engine:VisualElement>
 
     <engine:VisualElement class="row pl pr mb">

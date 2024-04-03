@@ -63,7 +63,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
         private GameObject root, interior, exterior, groundPlane, previewGO;
         string previewModelId;
 
-        private BuildingReplacementData buildingData;
+        public BuildingReplacementData buildingData;
 
         private DFBlock dungeonData;
         private const int RDB_ObjLists = 10;    // Number of RDB object lists to support
@@ -1545,7 +1545,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
             }
         }
 
-        private void UpdateBuildingWorldData()
+        public void UpdateBuildingWorldData()
         {
             ArrayUtility.Clear(ref buildingData.RmbSubRecord.Exterior.Block3dObjectRecords);
             ArrayUtility.Clear(ref buildingData.RmbSubRecord.Interior.Block3dObjectRecords);
