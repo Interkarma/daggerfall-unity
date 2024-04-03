@@ -342,30 +342,38 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             WorldDataEditor worldDataEditor = (WorldDataEditor)EditorWindow.GetWindow(typeof(WorldDataEditor), false, "WorldData Editor", false);
             if (worldDataEditor != null)
             {
-                // Ensure to update building data before saving
-                worldDataEditor.UpdateBuildingWorldData();
-
-                // Generate a temporary file path
-                string tempDirectory = Path.Combine(Application.temporaryCachePath, "Temp"); // Using temporaryCachePath for temporary files
+                // Generate a temporary file path using temporaryCachePath for temporary files
+                string tempDirectory = Path.Combine(Application.temporaryCachePath, "Temp");
                 Directory.CreateDirectory(tempDirectory); // CreateDirectory checks for existence internally
 
-                var index = 0; // Assuming you have a way to get 'index'
-                var rmbBlockName = "Example"; // Assuming you have a way to get 'rmbBlockName'
-                var fileName = $"temp_{rmbBlockName}-{index}-building.json";
+                var fileName = $"temp_building.json";
                 var path = Path.Combine(tempDirectory, fileName);
 
-                // Access the buildingData from the WorldDataEditor instance to save it
-                BuildingReplacementData buildingData = worldDataEditor.buildingData;
-                WorldDataEditorBuildingHelper.SaveBuildingFile(buildingData, path);
-                Debug.Log($"Building data saved to temporary file: {path}");
+                try
+                {
+                    // Ensure to update building data before saving
+                    worldDataEditor.UpdateBuildingWorldData();
 
-                var loadedData = new BuildingReplacementData();
-                var success = LoadBuildingFile(ref loadedData, path);
-                if (!success) return;
+                    // Access the buildingData from the WorldDataEditor instance to save it
+                    BuildingReplacementData buildingData = worldDataEditor.buildingData;
+                    WorldDataEditorBuildingHelper.SaveBuildingFile(buildingData, path);
 
-                Import(loadedData, true, true, true);
+                    // Attempt to load the building data from the temporary file
+                    var loadedData = new BuildingReplacementData();
+                    var success = LoadBuildingFile(ref loadedData, path);
+                    if (!success) return;
 
-                Debug.Log("Building data successfully imported from WorldDataEditor.");
+                    // Import the loaded data
+                    Import(loadedData, true, true, true);
+                }
+                finally
+                {
+                    // Ensure the temporary file is deleted after use
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
+                }
             }
             else
             {

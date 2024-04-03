@@ -141,7 +141,6 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
         private void OpenInWorldDataEditor()
         {
-            Debug.Log("OpenInWorldDataEditor is being called.");
             // Generate a temporary file path
             string tempDirectory = Path.Combine(Application.dataPath, "Temp");
             if (!Directory.Exists(tempDirectory))
@@ -155,21 +154,31 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
             // Use the same method to get building data as in ExportToFile
             var buildingDataField = this.Query<BuildingDataElement>("building-data-element").First();
-            BuildingReplacementData buildingData = buildingDataField.GetData(); // Assuming this method correctly gathers all data
+            BuildingReplacementData buildingData = buildingDataField.GetData();
 
             // Use RmbBlockHelper to save the file, ensuring all necessary data is serialized
             RmbBlockHelper.SaveBuildingFile(buildingData, path);
-            Debug.Log($"Building data saved to temporary file: {path}");
 
-            // Attempt to open the saved file with the World Data Editor
-            WorldDataEditor worldDataEditorWindow = (WorldDataEditor)EditorWindow.GetWindow(typeof(WorldDataEditor), true, "WorldData Editor");
-            if (worldDataEditorWindow != null)
+            try
             {
-                worldDataEditorWindow.OpenBuildingFile(path);
+                // Attempt to open the saved file with the World Data Editor
+                WorldDataEditor worldDataEditorWindow = (WorldDataEditor)EditorWindow.GetWindow(typeof(WorldDataEditor), true, "WorldData Editor");
+                if (worldDataEditorWindow != null)
+                {
+                    worldDataEditorWindow.OpenBuildingFile(path);
+                }
+                else
+                {
+                    Debug.LogError("Failed to open the World Data Editor.");
+                }
             }
-            else
+            finally
             {
-                Debug.LogError("Failed to open the World Data Editor.");
+                // Ensure the temporary file is deleted after opening it
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
             }
         }
 
