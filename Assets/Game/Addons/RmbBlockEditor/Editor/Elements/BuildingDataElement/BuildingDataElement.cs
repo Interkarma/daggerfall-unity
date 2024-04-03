@@ -262,7 +262,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             Import(buildingData, importProps.value, importExterior.value, importInterior.value);
         }
 
-        public void Import(BuildingReplacementData replacementData, bool importProps, bool importExterior,
+        private void Import(BuildingReplacementData replacementData, bool importProps, bool importExterior,
             bool importInterior)
         {
             if (!importProps && !importExterior && !importInterior)
@@ -308,7 +308,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             return BuildingHelper.GetPreview(templates[buildingId]);
         }
 
-        public bool LoadBuildingFile(ref BuildingReplacementData buildingData, string path = null)
+        private bool LoadBuildingFile(ref BuildingReplacementData buildingData, string path = null)
         {
             if (string.IsNullOrEmpty(path))
             {
