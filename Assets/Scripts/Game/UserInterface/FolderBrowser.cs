@@ -28,6 +28,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
     /// </summary>
     public class FolderBrowser : Panel
     {
+        private const string parentDirectory = "..";
+
         int confirmButtonWidth = 35;
         int drivePanelWidth = 40;
         int pathPanelHeight = 12;
@@ -45,6 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         VerticalScrollBar folderScroller = new VerticalScrollBar();
         TextLabel pathLabel = new TextLabel();
         Button confirmButton = new Button();
+        Checkbox showHiddenFilesCheck = new Checkbox();
         Vector2 lastSize;
 
         Color unselectedColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
@@ -136,6 +139,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Components.Add(folderPanel);
             Components.Add(pathPanel);
             Components.Add(confirmButton);
+            Components.Add(showHiddenFilesCheck);
             AdjustPanels();
 
             // Setup drive list
@@ -163,6 +167,12 @@ namespace DaggerfallWorkshop.Game.UserInterface
             folderScroller.OnScroll += FolderScroller_OnScroll;
             //folderScroller.OnScrollUp += FolderScroller_OnScrollUp;
             //folderScroller.OnScrollDown += FolderScroller_OnScrollDown;
+
+            showHiddenFilesCheck.Label.Text = TextManager.Instance.GetText("MainMenu", "hiddenFolders");
+            showHiddenFilesCheck.Label.TextColor = unselectedColor;
+            showHiddenFilesCheck.CheckBoxColor = unselectedColor;
+            showHiddenFilesCheck.IsChecked = false;
+            showHiddenFilesCheck.OnToggleState += HiddenFileCheck_OnToggleState;
 
             // Setup initial folder conditions
             RefreshDrives();
@@ -201,6 +211,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             folders.Clear();
             folderList.ClearItems();
+
+            // Add return path
+            if (currentPath != drives[driveList.SelectedIndex])
+                folderList.AddItem(parentDirectory);
+
             try
             {
                 string[] directoryList = Directory.GetDirectories(currentPath);
@@ -208,7 +223,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 foreach (var directory in directoryList)
                 {
                     DirectoryInfo info = new DirectoryInfo(directory);
-                    if ((info.Attributes & FileAttributes.Hidden) == 0)
+                    if (showHiddenFilesCheck.IsChecked || (info.Attributes & FileAttributes.Hidden) == 0)
                     {
                         string name = Path.GetFileName(directory);
                         folders.Add(name);
@@ -280,6 +295,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             confirmButton.Outline.Enabled = true;
             confirmButton.Label.Text = confirmButtonText;
             //confirmButton.Label.ShadowPosition = Vector2.zero;
+
+            showHiddenFilesCheck.Position = new Vector2(pathPanel.Position.x, pathPanel.Position.y + pathPanel.Size.y + 4);
         }
 
         void UpdatePathText()
@@ -322,7 +339,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Get new path
             string newPath = string.Empty;
-            if (folderList.SelectedItem == "..")
+            if (folderList.SelectedItem == parentDirectory)
             {
                 // Handle return path
                 DirectoryInfo info = new DirectoryInfo(currentPath);
@@ -341,13 +358,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 currentPath = newPath;
                 RefreshFolders();
                 RaisePathChangedEvent();
-
-                // Add return path
-                if (currentPath != drives[driveList.SelectedIndex])
-                    folderList.AddItem("..", 0);
-
-                // Update scroller units
-                folderScroller.TotalUnits = folderList.Count;
 
                 UpdatePathText();
             }
@@ -369,6 +379,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 RaiseOnConfirmPathEvent();
             else
                 FolderList_OnUseSelectedItem();
+        }
+
+        private void HiddenFileCheck_OnToggleState()
+        {
+            RefreshFolders();
         }
 
         #endregion
