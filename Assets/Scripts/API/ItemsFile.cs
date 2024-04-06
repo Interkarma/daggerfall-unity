@@ -66,6 +66,7 @@ namespace DaggerfallConnect.FallExe
 
         // DFU extension fields
         public bool isNotRepairable;                // Defaults to false if not specified
+        public bool hasNoEncumbrance;               // Indicates an items weight doesn't count for encumbrance, defaults to false
     }
 
     /// <summary>
