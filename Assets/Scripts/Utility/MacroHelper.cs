@@ -101,6 +101,12 @@ namespace DaggerfallWorkshop.Utility
             { "%g2self", Pronoun2self },// Himself/Herself etc...
             { "%g3", Pronoun3 },  // His/Her
             { "%g4", Pronoun4 },  // His/Hers
+            { "%G", PronounCap }, // He/She, first letter capitalized
+            { "%G1", PronounCap }, // He/She, first letter capitalized
+            { "%G2", Pronoun2Cap }, // Him/Her, first letter capitalized
+            { "%G2self", Pronoun2selfCap }, // Himself/Herself, first letter capitalized
+            { "%G3", Pronoun3Cap }, // His/Her, first letter capitalized
+            { "%G4", Pronoun4Cap }, // His/Hers, first letter capitalized
             { "%gii", GoldCarried }, // Amount of gold in hand
             { "%gdd", GodDesc }, // God description i.e. God of Logic
             { "%god", God }, // God of current region or current temple
@@ -1309,13 +1315,42 @@ namespace DaggerfallWorkshop.Utility
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().Pronoun3();
         }
-
         public static string Pronoun4(IMacroContextProvider mcp)
         {   // %g4
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().Pronoun4();
         }
-
+        public static string PronounCap(IMacroContextProvider mcp)
+        {   // %G & %G1
+            if (mcp == null) return null;
+            string tmpPronoun = mcp.GetMacroDataSource().Pronoun();
+            return tmpPronoun.Substring(0, 1).ToUpper() + tmpPronoun.Substring(1);
+        }
+        public static string Pronoun2Cap(IMacroContextProvider mcp)
+        {   // %G2
+            if (mcp == null) return null;
+            string tmpPronoun = mcp.GetMacroDataSource().Pronoun2();
+            return tmpPronoun.Substring(0, 1).ToUpper() + tmpPronoun.Substring(1);
+        }
+        public static string Pronoun2selfCap(IMacroContextProvider mcp)
+        {   // %G2self
+            if (mcp == null) return null;
+            string tmpPronoun = mcp.GetMacroDataSource().Pronoun2self();
+            return tmpPronoun.Substring(0, 1).ToUpper() + tmpPronoun.Substring(1);
+        }
+        public static string Pronoun3Cap(IMacroContextProvider mcp)
+        {   // %G3
+            if (mcp == null) return null;
+            string tmpPronoun = mcp.GetMacroDataSource().Pronoun3();
+            return tmpPronoun.Substring(0, 1).ToUpper() + tmpPronoun.Substring(1);
+        }
+        public static string Pronoun4Cap(IMacroContextProvider mcp)
+        {   // %G4
+            if (mcp == null) return null;
+            string tmpPronoun = mcp.GetMacroDataSource().Pronoun4();
+            return tmpPronoun.Substring(0, 1).ToUpper() + tmpPronoun.Substring(1);
+        }
+        
         public static string QuestDate(IMacroContextProvider mcp)
         {   // %qdt
             if (mcp == null) return null;
