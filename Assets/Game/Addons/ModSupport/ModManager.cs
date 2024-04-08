@@ -963,15 +963,29 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 var directory = Path.GetDirectoryName(file);
 
                 if (!string.IsNullOrEmpty(directory) && directory.EndsWith("SpellIcons"))
+                {
                     AddNameToList(ref spellIcons, file);
-                else if (!string.IsNullOrEmpty(directory) && directory.EndsWith("Books/Mapping"))
-                    AddNameToList(ref booksMapping, file);
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(directory) && directory.EndsWith("Mapping"))
+                {
+                    var parentDirectory = Path.GetDirectoryName(directory);
+                    if (!string.IsNullOrEmpty(parentDirectory) && parentDirectory.EndsWith("Books"))
+                    {
+                        AddNameToList(ref booksMapping, file);
+                        continue;
+                    }
+                }
 
                 if (automaticallyRegisterQuestLists)
                 {
                     var name = Path.GetFileNameWithoutExtension(file);
                     if (!string.IsNullOrEmpty(name) && name.StartsWith("QuestList-"))
+                    {
                         AddNameToList(ref questLists, name.Substring(10));
+                        continue;
+                    }
                 }
             }
 
