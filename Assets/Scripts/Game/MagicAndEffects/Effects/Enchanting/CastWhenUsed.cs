@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     ClassicType = EnchantmentTypes.CastWhenUsed,
                     ClassicParam = id,
                     PrimaryDisplayName = GroupName,
-                    SecondaryDisplayName = spellRecord.spellName,
+                    SecondaryDisplayName = TextManager.Instance.GetLocalizedSpellName(id),
                     EnchantCost = classicSpellCosts[i],
                 };
 

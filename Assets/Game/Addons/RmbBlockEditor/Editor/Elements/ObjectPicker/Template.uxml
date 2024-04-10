@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd"
+>
+    <engine:VisualElement class="row pl pr">
+        <engine:Box class="col-2">
+            <engine:VisualElement class="row pl pr pt pb">
+                <engine:Label text="Object ID: " class="flex-shrink"/>
+                <engine:TextField name="object-id" class="flex-grow"/>
+            </engine:VisualElement>
+            <engine:VisualElement class="row pl pr pt pb">
+                <engine:Label text="Search:    " class="flex-shrink"/>
+                <engine:TextField name="search" class="flex-grow"/>
+            </engine:VisualElement>
+            <engine:ScrollView name="list-container" class="pl height-400"/>
+        </engine:Box>
+        <engine:Box class="col-2 height-425 mr overflow-hidden">
+            <engine:VisualElement name="preview"/>
+        </engine:Box>
+    </engine:VisualElement>
+
+
+</engine:UXML>

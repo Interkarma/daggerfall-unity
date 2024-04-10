@@ -253,8 +253,20 @@ namespace DaggerfallWorkshop
             {
                 if (db.Summary.FlatType == FlatTypes.Nature)
                 {
+                    // Billboard is already aligned to base
+                    // But we're potentially changing the archive
+                    // Because the summary size can change, we have to cancel
+                    // the "base" alignment and reapply it after
+                    Vector3 offset = Vector3.zero;
+                    offset.y = (db.Summary.Size.y / 2);
+                    db.transform.position -= offset;
+
                     // Apply recalculated nature archive
                     db.SetMaterial(natureArchive, db.Summary.Record);
+
+                    // Re-align to base
+                    offset.y = (db.Summary.Size.y / 2);
+                    db.transform.position += offset;
                 }
                 else
                 {

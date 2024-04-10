@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing.Actions;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 using UnityEngine.Localization.Settings;
 using System.Globalization;
 
@@ -1655,17 +1656,29 @@ namespace DaggerfallWorkshop.Game.Questing
             if (localizedQuestNames.ContainsKey(fileNoExt))
                 return true;
 
-            // TODO: Also seek localized quest file from mods
+            string[] lines = null;
 
-            // Get path to localized quest file and check it exists
-            string path = Path.Combine(Application.streamingAssetsPath, textFolderName, questsFolderName, filename);
-            if (!File.Exists(path))
-                return false;
+            // Seek localized quest file from mods
+            if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(filename, false, out TextAsset textAsset))
+            {
+                if (!string.IsNullOrWhiteSpace(textAsset.text))
+                {
+                    lines = textAsset.text.Split('\n');
+                }
+            }
 
-            // Attempt to load file from StreamingAssets/Text/Quests
-            string[] lines = File.ReadAllLines(path);
-            if (lines == null || lines.Length == 0)
-                return false;
+            if (lines == null)
+            {
+                // Get path to localized quest file and check it exists
+                string path = Path.Combine(Application.streamingAssetsPath, textFolderName, questsFolderName, filename);
+                if (!File.Exists(path))
+                    return false;
+
+                // Attempt to load file from StreamingAssets/Text/Quests
+                lines = File.ReadAllLines(path);
+                if (lines == null || lines.Length == 0)
+                    return false;
+            }
 
             // Parse localized quest file
             Parser parser = new Parser();

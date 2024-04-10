@@ -55,8 +55,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Automatic asset injections defined by manifest .json file.
         /// These values are not available for edits from mods at runtime.
         /// </summary>
-        [SerializeField]
-        internal ModContributes Contributes;
+        public ModContributes Contributes { get; internal set; }
 #pragma warning restore 649
 
         /// <summary>
@@ -81,20 +80,23 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     /// This class can be expanded over time as necessary but breaking changes should be avoided.
     /// <remarks/>
     [Serializable]
-    internal sealed class ModContributes
+    public sealed class ModContributes
     {
         /// <summary>
         /// Look-up maps that announce additional books to be imported.
         /// </summary>
-        [SerializeField]
-        internal string[] BooksMapping;
+        public string[] BooksMapping { get; internal set; }
+
+        /// <summary>
+        /// Names of additional quest lists to be automatically imported
+        /// </summary>
+        public string[] QuestLists { get; internal set; }
 
         /// <summary>
         /// Names of spell icon packs; each name corresponds to a <see cref="Texture2D"/>
         /// asset and a <see cref="TextAsset"/> with `.json` extension.
         /// </summary>
-        [SerializeField]
-        internal string[] SpellIcons;
+        public string[] SpellIcons { get; internal set; }
     }
 
     /// <summary>

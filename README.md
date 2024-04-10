@@ -101,7 +101,7 @@ Instead of increasing chance to avoid an attack completely, armor now reduces th
 ## Links
 
 + [Daggerfall Unity Nexus](https://www.nexusmods.com/daggerfallunity) - *Discover more mods for Daggerfall Unity*
-+ [Lysandus' Tomb Discord](https://discord.gg/YS8zvwJS) - *Join an active growing community*
++ [Lysandus' Tomb Discord](https://discord.gg/rn95kxPGpg) - *Join an active growing community*
 + [Daggerfall Workshop](http://www.dfworkshop.net/) - *Follow the development of Daggerfall Unity*
 + [Workshop Forums](http://forums.dfworkshop.net/) - *Join the forum community*
 + [Reddit](https://www.reddit.com/r/daggerfallunity) - *Join the Daggerfall Unity subreddit*

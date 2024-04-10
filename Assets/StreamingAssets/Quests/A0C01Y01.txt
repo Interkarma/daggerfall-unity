@@ -120,7 +120,7 @@ _S.00_ task:
 
 _S.01_ task:
 	daily from 21:00 to 22:59
-	--changed 24:00 to 23:59. 24:00 shouldn't exist.
+	--changed 24:00 to 23:59. 24:00 shouldn't exist. Goes to 11 PM due to "latehour" task added below.
 	place npc _qgiver_ at _qgiverhome_ 
 
 _S.02_ task:

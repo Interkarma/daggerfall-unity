@@ -244,7 +244,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add help text
             findArena2Tip = GetText("findArena2Tip");
             pathValidated = GetText("pathValidated");
-            helpLabel.Position = new Vector2(0, 145);
+            helpLabel.Position = new Vector2(0, 150);
             helpLabel.HorizontalAlignment = HorizontalAlignment.Center;
             helpLabel.ShadowPosition = Vector2.zero;
             helpLabel.Text = findArena2Tip;
@@ -486,8 +486,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             optionsPanel.BackgroundColor = backgroundColor;
             optionsPanel.HorizontalAlignment = HorizontalAlignment.Center;
             //optionsPanel.VerticalAlignment = VerticalAlignment.Middle;
-            optionsPanel.Position = new Vector2(0, 8);
-            optionsPanel.Size = new Vector2(318, 165);
+            optionsPanel.Position = new Vector2(0, 4);
+            optionsPanel.Size = new Vector2(318, 180);
             NativePanel.Components.Add(optionsPanel);
 
             // Add title text
@@ -509,17 +509,34 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             optionsPanel.Components.Add(versionLabel);
 
             // Add settings path text
-            TextLabel settingsPathLabel = new TextLabel();
             if (!DaggerfallUnity.Settings.HideLoginName)
             {
-                settingsPathLabel.Text = DaggerfallUnity.Settings.PersistentDataPath;
+                Panel settingsPanel = new Panel();
+                settingsPanel.Position = new Vector2(0, 130);
+                settingsPanel.Size = new Vector2(318, 16);
+                settingsPanel.HorizontalAlignment = HorizontalAlignment.Center;
+
+                {
+                    TextLabel settingsPathHeaderLabel = new TextLabel();
+                    settingsPathHeaderLabel.Text = GetText("settingsFolder");
+                    settingsPathHeaderLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+                    TextLabel settingsPathLabel = new TextLabel();
+                    settingsPathLabel.Position = new Vector2(0, 8);
+                    settingsPathLabel.Text = DaggerfallUnity.Settings.PersistentDataPath;
+                    settingsPathLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                    settingsPathLabel.ToolTip = defaultToolTip;
+                    settingsPathLabel.ToolTipText = GetText("settingsFolderInfo");
+                    settingsPathLabel.OnMouseDoubleClick += SettingsPathLabel_OnMouseClick;
+                    settingsPathLabel.ShadowPosition = Vector2.zero;
+                    settingsPathLabel.TextColor = secondaryTextColor;
+
+                    settingsPanel.Components.Add(settingsPathHeaderLabel);
+                    settingsPanel.Components.Add(settingsPathLabel);
+                }
+
+                optionsPanel.Components.Add(settingsPanel);
             }
-            settingsPathLabel.Position = new Vector2(0, 170);
-            settingsPathLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            settingsPathLabel.ShadowPosition = Vector2.zero;
-            settingsPathLabel.TextColor = secondaryTextColor;
-            settingsPathLabel.BackgroundColor = backgroundColor;
-            optionsPanel.Components.Add(settingsPathLabel);
 
             // Setup options checkboxes
             float x = 8;
@@ -545,12 +562,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             enableController.OnToggleState += EnableController_OnToggleState;
 
             weaponSwingMode = AddSlider(x, "weaponSwingMode", "weaponSwingModeInfo", DaggerfallUnity.Settings.WeaponSwingMode, TextManager.Instance.GetLocalizedTextList("weaponSwingModes", TextCollections.TextSettings));
-
-            // Add mod note
-            TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(0, 130), GetText("modNote"), optionsPanel);
-            modNoteLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            modNoteLabel.ShadowPosition = Vector2.zero;
-
+                        
             // Confirm button
             Button optionsConfirmButton = new Button();
             optionsConfirmButton.Position = new Vector2(0, optionsPanel.InteriorHeight - 15);
@@ -566,7 +578,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Restart button
             Button restartButton = new Button();
             restartButton.Size = new Vector2(45, 12);
-            restartButton.Label.Text = string.Format("< {0}", GetText("restart"));
+            restartButton.Label.Text = string.Format(" < {0}", GetText("restart"));
             restartButton.Label.ShadowPosition = DaggerfallUI.DaggerfallDefaultShadowPos;
             restartButton.Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
             restartButton.Label.HorizontalAlignment = HorizontalAlignment.Left;
@@ -586,6 +598,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             if (DaggerfallUnity.Settings.LypyL_ModSystem)
             {
+                // Add mod note
+                TextLabel modNoteLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(4, optionsPanel.InteriorHeight - 24), GetText("modNote"), optionsPanel);
+                modNoteLabel.ShadowPosition = Vector2.zero;
+
+                // Mod button
                 Button ShowModsButton = new Button();
                 ShowModsButton.Label.Text = GetText("mods");
                 ShowModsButton.Position = new Vector2(3, optionsConfirmButton.Position.y);
@@ -610,6 +627,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             AdvancedSettingsButton.OnMouseClick += AdvancedSettingsButton_OnOnMouseBlick;
             AdvancedSettingsButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.GameSetupAdvancedSettings);
 
+        }
+
+        private void SettingsPathLabel_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+        {
+            // Open the persistent data path
+            System.Diagnostics.Process.Start(DaggerfallUnity.Settings.PersistentDataPath);
         }
 
         private void SDFFontRendering_OnToggleState()

@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xsi:schemaLocation="DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements"
+    xmlns:rbe="DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements"
+>
+
+    <engine:Box class="ml mb mr mt pt pb pl pr">
+        <engine:VisualElement class="row pr pt">
+            <engine:VisualElement class="row flex-grow">
+                <engine:Label text="Buildings Catalog" class="h3"/>
+            </engine:VisualElement>
+            <engine:VisualElement class="row flex-grow right">
+                <engine:Button name="import" tooltip="Import Catalog">
+                    <engine:Image class="import-icon"/>
+                </engine:Button>
+                <engine:Button name="export" tooltip="Export Catalog">
+                    <engine:Image class="export-icon"/>
+                </engine:Button>
+                <engine:Button name="remove-all" tooltip="Remove All Buildings From The Catalog">
+                    <engine:Image class="remove-icon"/>
+                </engine:Button>
+                <engine:Button name="restore-defaults" tooltip="Restore The Default Catalog">
+                    <engine:Image class="sync-icon"/>
+                </engine:Button>
+                <engine:Button name="add-new" tooltip="Add A New Building To The Catalog">
+                    <engine:Image class="add-icon"/>
+                </engine:Button>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:Box>
+
+    <engine:VisualElement name="object-picker" usage-hints="GroupTransform" class="pb"/>
+
+    <engine:VisualElement name="options-box" class="hidden">
+        <engine:Box class="ml mr pl pr pt pb">
+            <rbe:CatalogItemElement name="catalog-item-element"/>
+            <engine:VisualElement class="splitter"/>
+            <rbe:BuildingDataElement name="building-data-element"/>
+        </engine:Box>
+    </engine:VisualElement>
+</engine:UXML>

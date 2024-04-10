@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd"
+    xsi:schemaLocation="UnityEngine.UIElements file:/D:/workspace/unity/daggerfall/fork/daggerfall-unity/UIElementsSchema/UnityEngine.UIElements.xsd">
+
+    <engine:Box class="ml mb mr">
+        <engine:Label text="Paint options" class="h3"/>
+        <engine:VisualElement class="row ml pt pb">
+            <engine:Toggle name="snap" text="Snap to Surface" class="col-2"/>
+            <engine:Toggle name="align" text="Align With Surface" class="col-2 hidden"/>
+        </engine:VisualElement>
+        <engine:VisualElement class="row ml pt pb mr">
+            <editor:Vector3Field name="paint-position-offset" label="Position Offset" class="col-4"/>
+        </engine:VisualElement>
+        <engine:VisualElement class="row ml pt pb mr hidden" name="paint-rotation-vector-container">
+            <editor:Vector3Field name="paint-rotation-offset" label="Rotation Offset" class="col-4"/>
+        </engine:VisualElement>
+        <engine:VisualElement class="row ml pt pb mr hidden" name="paint-rotation-y-container">
+            <engine:Label text="Rotation" class="col-1"/>
+            <editor:IntegerField name="paint-y-rotation-offset" label="Y" class="col-3  align-right"/>
+        </engine:VisualElement>
+
+        <engine:Box class="ml mb mr mt pb hidden" name="info">
+            <engine:VisualElement class="row ml pt pb">
+                <engine:Label text="Click"/>
+                <engine:Label text=" LMB " class=" bold"/>
+                <engine:Label text="to to place. Click"/>
+                <engine:Label text=" RMB " class=" bold"/>
+                <engine:Label text="to cancel."/>
+            </engine:VisualElement>
+            <engine:VisualElement class="row ml pt pb">
+                <engine:Label text="Drag"/>
+                <engine:Label text=" LMB " class=" bold"/>
+                <engine:Label text="to rotate. Only for Models: hold"/>
+                <engine:Label text=" CTRL " class=" bold"/>
+                <engine:Label text="and drag"/>
+                <engine:Label text=" LMB " class=" bold"/>
+                <engine:Label text="to scale."/>
+            </engine:VisualElement>
+        </engine:Box>
+
+        <engine:VisualElement class="row pl pr pt pb">
+            <engine:Toggle name="paint" text="Paint" class="col-4 toggle-button"/>
+        </engine:VisualElement>
+    </engine:Box>
+
+    <engine:Box class="ml mt mr">
+        <engine:Label text="Placement options" class="h3"/>
+
+        <engine:VisualElement class="row ml pt pb mr">
+            <editor:Vector3Field name="placement-position" label="Position" class="col-4"/>
+        </engine:VisualElement>
+        <engine:VisualElement class="row ml pt pb mr hidden" name="placement-rotation-vector-container">
+            <editor:Vector3Field name="placement-rotation" label="Rotation" class="col-4"/>
+        </engine:VisualElement>
+        <engine:VisualElement class="row ml pt pb mr hidden" name="placement-scale-vector-container">
+            <editor:FloatField name="placement-scale" label="Scale" class="col-4"/>
+        </engine:VisualElement>
+        <engine:VisualElement class="row ml pt pb mr hidden" name="placement-rotation-y-container">
+            <engine:Label text="Rotation" class="col-1"/>
+            <editor:IntegerField name="placement-y-rotation" label="Y" class="col-3  align-right"/>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="row pl pr pt pb">
+            <engine:Button name="place" text="Place in scene" class="col-4"/>
+        </engine:VisualElement>
+    </engine:Box>
+
+</engine:UXML>

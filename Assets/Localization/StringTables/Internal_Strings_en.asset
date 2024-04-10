@@ -5219,5 +5219,9 @@ MonoBehaviour:
     m_Localized: '{0} for ''{1}'''
     m_Metadata:
       m_Items: []
+  - m_Id: 445752459137302528
+    m_Localized: 'Weight: %kg kilograms'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

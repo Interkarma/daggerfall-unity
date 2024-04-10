@@ -110,6 +110,22 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (string listFile in listFiles)
                 if (!RegisterQuestList(listFile))
                     Debug.LogErrorFormat("QuestList already registered. {0}", listFile);
+
+            if (ModManager.Instance == null)
+            {
+                return;
+            }
+
+            foreach (var mod in ModManager.Instance.GetAllModsWithContributes(x => x.QuestLists != null))
+            {
+                foreach (var questList in mod.ModInfo.Contributes.QuestLists)
+                {
+                    if (!RegisterQuestList(questList))
+                    {
+                        Debug.LogErrorFormat("QuestList {0} is already registered.", questList);
+                    }
+                }
+            }
         }
 
         #endregion

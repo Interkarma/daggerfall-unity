@@ -14,9 +14,9 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Utility;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -184,8 +184,37 @@ namespace DaggerfallWorkshop.Game
             set { targetRateOfApproach = value; }
         }
 
+        public float LastHadLOSTimer
+        {
+            get { return lastHadLOSTimer; }
+            set { lastHadLOSTimer = value; }
+        }
+
+
+
+        //Delegates to allow mods to replace or extend senses logic.
+        //Mods can potentially save the original value before replacing it, if access to default behaviour is still desired.
+        public delegate bool BlockedByIllusionEffectCallback();
+        public BlockedByIllusionEffectCallback BlockedByIllusionEffectHandler { get; set; }
+
+        public delegate bool CanSeeTargetCallback(DaggerfallEntityBehaviour target);
+        public CanSeeTargetCallback CanSeeTargetHandler { get; set; }
+
+        public delegate bool CanHearTargetCallback();
+        public CanHearTargetCallback CanHearTargetHandler { get; set; }
+
+        public delegate bool CanDetectOtherwiseCallback(DaggerfallEntityBehaviour target);
+        public CanDetectOtherwiseCallback CanDetectOtherwiseHandler { get; set; }
+
+
         void Start()
         {
+            //Initialize delegates to standard defaults
+            BlockedByIllusionEffectHandler = BlockedByIllusionEffect;
+            CanSeeTargetHandler = CanSeeTarget;
+            CanHearTargetHandler = CanHearTarget;
+            CanDetectOtherwiseHandler = delegate (DaggerfallEntityBehaviour target) { return false; };
+
             mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
             enemyEntity = entityBehaviour.Entity as EnemyEntity;
@@ -353,7 +382,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     distanceToTarget = distanceToPlayer;
                     directionToTarget = toPlayer.normalized;
-                    playerInSight = CanSeeTarget(player);
+                    playerInSight = CanSeeTargetHandler(player);
                 }
 
                 if (classicTargetUpdateTimer > 5)
@@ -389,20 +418,20 @@ namespace DaggerfallWorkshop.Game
                 {
                     distanceToTarget = distanceToPlayer;
                     directionToTarget = toPlayer.normalized;
-                    targetInSight = playerInSight;
+                    targetInSight = CanSeeTargetHandler(player);
                 }
                 else
                 {
                     Vector3 toTarget = target.transform.position - transform.position;
                     distanceToTarget = toTarget.magnitude;
                     directionToTarget = toTarget.normalized;
-                    targetInSight = CanSeeTarget(target);
+                    targetInSight = CanSeeTargetHandler(target);
                 }
 
                 // Classic stealth mechanics would be interfered with by hearing, so only enable
                 // hearing if the enemy has detected the target. If target is visible we can omit hearing.
                 if (detectedTarget && !targetInSight)
-                    targetInEarshot = CanHearTarget();
+                    targetInEarshot = CanHearTargetHandler();
                 else
                     targetInEarshot = false;
 
@@ -414,7 +443,7 @@ namespace DaggerfallWorkshop.Game
                 // to know where the player is.
                 if (GameManager.ClassicUpdate)
                 {
-                    blockedByIllusionEffect = BlockedByIllusionEffect();
+                    blockedByIllusionEffect = BlockedByIllusionEffectHandler();
                     if (lastHadLOSTimer > 0)
                         lastHadLOSTimer--;
                 }
@@ -435,6 +464,8 @@ namespace DaggerfallWorkshop.Game
                     if (lastHadLOSTimer <= 0)
                         lastKnownTargetPos = target.transform.position;
                 }
+                else if (CanDetectOtherwiseHandler(target))
+                    detectedTarget = true;
                 else
                     detectedTarget = false;
 
@@ -503,6 +534,7 @@ namespace DaggerfallWorkshop.Game
             if (Target == GameManager.Instance.PlayerEntityBehaviour && TargetInSight)
                 GameManager.Instance.PlayerEntity.SetEnemyAlert(true);
         }
+
 
         #region Public Methods
 
@@ -704,6 +736,18 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
+        // Enemies consider only other enemies and the player
+        // Civilian Mobile NPCs are not handled here
+        IEnumerable<DaggerfallEntityBehaviour> GetActiveTargetEntityBehaviours()
+        {
+            foreach(DaggerfallEntityBehaviour behaviour in ActiveGameObjectDatabase.GetActiveEnemyBehaviours())
+            {
+                yield return behaviour;
+            }
+
+            yield return player;
+        }
+
         void GetTargets()
         {
             DaggerfallEntityBehaviour highestPriorityTarget = null;
@@ -714,10 +758,8 @@ namespace DaggerfallWorkshop.Game
             Vector3 directionToTargetHolder = directionToTarget;
             float distanceToTargetHolder = distanceToTarget;
 
-            DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
-            for (int i = 0; i < entityBehaviours.Length; i++)
+            foreach (DaggerfallEntityBehaviour targetBehaviour in GetActiveTargetEntityBehaviours())
             {
-                DaggerfallEntityBehaviour targetBehaviour = entityBehaviours[i];
                 EnemyEntity targetEntity = null;
                 if (targetBehaviour != player)
                     targetEntity = targetBehaviour.Entity as EnemyEntity;
@@ -733,6 +775,18 @@ namespace DaggerfallWorkshop.Game
                     // NoTarget mode
                     if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile || enemyEntity.MobileEnemy.Team == MobileTeams.PlayerAlly) && targetBehaviour == player)
                         continue;
+
+                    //Pacified enemies should not attack player allies.
+                    if (!motor.IsHostile && targetEntity != null && targetEntity.Team == MobileTeams.PlayerAlly)
+                        continue;
+
+                    //Player allies should not attack pacified enemies.
+                    if (enemyEntity.Team == MobileTeams.PlayerAlly && targetBehaviour != player)
+                    {
+                        EnemyMotor targetMotor = targetBehaviour.GetComponent<EnemyMotor>();
+                        if (targetMotor && !targetMotor.IsHostile)
+                            continue;
+                    }
 
                     // Can't target ally
                     if (targetBehaviour == player && enemyEntity.Team == MobileTeams.PlayerAlly)
@@ -764,7 +818,7 @@ namespace DaggerfallWorkshop.Game
                     directionToTarget = toTarget.normalized;
                     distanceToTarget = toTarget.magnitude;
 
-                    bool see = CanSeeTarget(targetBehaviour);
+                    bool see = CanSeeTargetHandler(targetBehaviour);
 
                     // Is potential target neither visible nor in area around player? If so, reject as target.
                     if (targetSenses && !targetSenses.WouldBeSpawnedInClassic && !see)

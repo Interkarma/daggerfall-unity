@@ -64,6 +64,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public bool LoadVirtualMods = true;
 #endif
 
+        // Returns whether the ModManager has been through Init
+        // Before Initialized is true, disabled mods are not filtered out
+        // Systems that run on launch should ensure this is true before touching systems involving mods
+        public bool Initialized { get { return alreadyStartedInit; } }
+
         #endregion
 
         #region Properties
@@ -937,33 +942,62 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Seeks asset contributes for the target mod, reading the folder name of each asset.
         /// </summary>
         /// <param name="modInfo">Manifest data for a mod, which will be filled with retrieved contributes.</param>
+        /// <param name="automaticallyRegisterQuestLists">Optional parameter that triggers Quest Lists declaration</param>
         /// <remarks>
         /// Assets are imported from loose files according to folder name,
         /// for example all textures inside `SpellIcons` are considered icon atlases.
         /// This method replicates the same behaviour for mods, doing all the hard work at build time.
         /// Results are stored to json manifest file for performant queries at runtime.
         /// </remarks>
-        public static void SeekModContributes(ModInfo modInfo)
+        public static void SeekModContributes(ModInfo modInfo, bool automaticallyRegisterQuestLists = false)
         {
+            // Reset contributions before rebuilding it
+            modInfo.Contributes = null;
+
             List<string> spellIcons = null;
             List<string> booksMapping = null;
+            List<string> questLists = null;
 
-            foreach (string file in modInfo.Files)
+            foreach (var file in modInfo.Files)
             {
-                string directory = Path.GetDirectoryName(file);
+                var directory = Path.GetDirectoryName(file);
 
-                if (directory.EndsWith("SpellIcons"))
+                if (!string.IsNullOrEmpty(directory) && directory.EndsWith("SpellIcons"))
+                {
                     AddNameToList(ref spellIcons, file);
-                else if (directory.EndsWith("Books/Mapping"))
-                    AddNameToList(ref booksMapping, file);
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(directory) && directory.EndsWith("Mapping"))
+                {
+                    var parentDirectory = Path.GetDirectoryName(directory);
+                    if (!string.IsNullOrEmpty(parentDirectory) && parentDirectory.EndsWith("Books"))
+                    {
+                        AddNameToList(ref booksMapping, file);
+                        continue;
+                    }
+                }
+
+                if (automaticallyRegisterQuestLists)
+                {
+                    var name = Path.GetFileNameWithoutExtension(file);
+                    if (!string.IsNullOrEmpty(name) && name.StartsWith("QuestList-"))
+                    {
+                        AddNameToList(ref questLists, name.Substring(10));
+                        continue;
+                    }
+                }
             }
 
-            if (spellIcons != null || booksMapping != null)
+            if (spellIcons == null && booksMapping == null && questLists == null)
+                return;
+
+            modInfo.Contributes = new ModContributes
             {
-                var contributes = modInfo.Contributes ?? (modInfo.Contributes = new ModContributes());
-                contributes.SpellIcons = spellIcons != null ? spellIcons.ToArray() : null;
-                contributes.BooksMapping = booksMapping != null ? booksMapping.ToArray() : null;
-            }
+                SpellIcons = spellIcons?.ToArray(),
+                BooksMapping = booksMapping?.ToArray(),
+                QuestLists = questLists?.ToArray()
+            };
         }
 
         private static void AddNameToList(ref List<string> names, string path)

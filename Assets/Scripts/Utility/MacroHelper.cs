@@ -843,7 +843,7 @@ namespace DaggerfallWorkshop.Utility
                 buildingData.NameSeed,
                 buildingData.BuildingType,
                 buildingData.FactionId,
-                location.Name,
+                TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name),
                 TextManager.Instance.GetLocalizedRegionName(location.RegionIndex));
         }
 

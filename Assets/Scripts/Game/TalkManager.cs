@@ -1859,7 +1859,7 @@ namespace DaggerfallWorkshop.Game
             DFLocation location = new DFLocation();
             if (GetLocationWithRegionalBuilding(lookUpIndexes[listItem.index], FactionsAndBuildings[listItem.index], ref location))
             {
-                LocationOfRegionalBuilding = location.Name;
+                LocationOfRegionalBuilding = TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name);
                 return true;
             }
 

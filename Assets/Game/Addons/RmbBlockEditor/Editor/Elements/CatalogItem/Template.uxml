@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML xmlns:engine="UnityEngine.UIElements">
+    <engine:VisualElement class="row pb right">
+        <engine:Button name="save-item" tooltip="Save The Item">
+            <engine:Image class="save-icon"/>
+        </engine:Button>
+        <engine:Button name="remove-item" tooltip="Remove This Item">
+            <engine:Image class="remove-icon"/>
+        </engine:Button>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pr pb">
+        <engine:TextField readonly="true" label="ID" name="id" class="col-4"/>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pr pb">
+        <engine:TextField label="Label" name="label" class="col-4"/>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pr pb">
+        <engine:TextField label="Category" name="category" class="col-4"/>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pr pb">
+        <engine:TextField label="Subcategory" name="subcategory" class="col-4"/>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pr pb">
+        <engine:TextField label="Tags" name="tags" class="col-4"/>
+    </engine:VisualElement>
+</engine:UXML>
