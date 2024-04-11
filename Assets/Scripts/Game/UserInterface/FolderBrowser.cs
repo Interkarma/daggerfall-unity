@@ -176,9 +176,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Setup initial folder conditions
             RefreshDrives();
-            
-            if(DaggerfallUnity.Settings.PortableInstall)
-            { 
+
+            if(DaggerfallUnityApplication.IsPortableInstall)
+            {
 				// start browsing from exe path for portable installs
                 currentPath = AppDomain.CurrentDomain.BaseDirectory;
                 if(SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows)
