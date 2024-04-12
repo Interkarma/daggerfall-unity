@@ -135,7 +135,10 @@ namespace DaggerfallWorkshop.Game.Items
                     foreach (EquipSlots slotToCheck in Enum.GetValues(typeof(EquipSlots)))
                     {
                         if (player.ItemEquipTable.GetItem(slotToCheck) == item)
+                        {
                             player.ItemEquipTable.UnequipItem(slotToCheck);
+                            player.UpdateEquippedArmorValues(item, false);
+                        }
                     }
                     itemsToRemove.Add(item);
                 }
