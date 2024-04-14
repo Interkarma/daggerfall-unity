@@ -40,7 +40,9 @@ namespace DaggerfallWorkshop
             return Path.GetFullPath(Path.Combine(basePath, path));
         }
 
-        private static string GetRelativePath(string basePath, string path)
+        // Returns a relative path if embedded within the base path,
+        // returns the full path as is if outside the base path
+        private static string GetPortablePath(string basePath, string path)
         {
             if(string.IsNullOrEmpty(path))
             {
@@ -56,7 +58,13 @@ namespace DaggerfallWorkshop
             Uri baseUri = new Uri(basePath);
             Uri relUri = baseUri.MakeRelativeUri(new Uri(path));
 
-            return Uri.UnescapeDataString(relUri.ToString()).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            string relativePath = Uri.UnescapeDataString(relUri.ToString()).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            if (relativePath.StartsWith(".." + Path.DirectorySeparatorChar))
+            {
+                return path;
+            }
+
+            return relativePath;
         }
 
         const string defaultsIniName = "defaults.ini";
@@ -576,9 +584,9 @@ namespace DaggerfallWorkshop
             if (DaggerfallUnityApplication.IsPortableInstall)
             {
                 // Save relative paths
-                SetString(sectionDaggerfall, "MyDaggerfallPath", GetRelativePath(AppDomain.CurrentDomain.BaseDirectory, MyDaggerfallPath));
-                SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", GetRelativePath(AppDomain.CurrentDomain.BaseDirectory, MyDaggerfallUnitySavePath));
-                SetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath", GetRelativePath(AppDomain.CurrentDomain.BaseDirectory,MyDaggerfallUnityScreenshotsPath));
+                SetString(sectionDaggerfall, "MyDaggerfallPath", GetPortablePath(AppDomain.CurrentDomain.BaseDirectory, MyDaggerfallPath));
+                SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", GetPortablePath(AppDomain.CurrentDomain.BaseDirectory, MyDaggerfallUnitySavePath));
+                SetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath", GetPortablePath(AppDomain.CurrentDomain.BaseDirectory,MyDaggerfallUnityScreenshotsPath));
             }
             else
             {
