@@ -18,7 +18,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     /// Defines a custom door for a building imported by Asset-Injection framework.
     /// </summary>
     [ExecuteInEditMode]
-    //[RequireComponent(typeof(BoxCollider))]
+    [RequireComponent(typeof(BoxCollider))]
     public class CustomDoor : MonoBehaviour
     {
         private StaticDoor? staticDoor;
