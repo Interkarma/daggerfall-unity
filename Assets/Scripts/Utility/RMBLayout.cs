@@ -840,7 +840,7 @@ namespace DaggerfallWorkshop.Utility
 
                     // Get model data
                     ModelData modelData;
-                    dfUnity.MeshReader.GetModelData(obj.ModelIdNum, out modelData);
+                    bool hasModelData = dfUnity.MeshReader.GetModelData(obj.ModelIdNum, out modelData);
 
                     // Does this Daggerfall model have any static doors?
                     StaticDoor[] staticDoors = null;
@@ -851,10 +851,14 @@ namespace DaggerfallWorkshop.Utility
                     GameObject go;
                     if (!(go = MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, parent, modelMatrix)))
                     {
-                        if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum))
+                        if (!hasModelData) {
+                            Debug.LogError($"Could not load model '{obj.ModelIdNum}' in block '{blockData.Name}'");
+                            continue;
+                        } else if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum)) {
                             AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
-                        else
+                        } else {
                             combiner.Add(ref modelData, modelMatrix);
+                        }
                     }
 
                     // Store building information for first model of record
