@@ -874,7 +874,6 @@ namespace DaggerfallWorkshop.Utility
                             staticBuilding.size = new Vector3(modelData.DFMesh.Size.X, modelData.DFMesh.Size.Y, modelData.DFMesh.Size.Z) * MeshReader.GlobalScale;
                         } else {
                             Renderer goRenderer = go.GetComponent<Renderer>();
-                            //staticBuilding.centre = new Vector3(goRenderer.bounds.center.x, goRenderer.bounds.center.y, goRenderer.bounds.center.z);
                             staticBuilding.size = new Vector3(goRenderer.bounds.size.x, goRenderer.bounds.size.y, goRenderer.bounds.size.z);
                             staticBuilding.centre = staticBuilding.size / 2;    // Seems to replicate DFMesh.Centre whereas goRenderer.bounds.center.z gives position.z for some reason.
                         }
