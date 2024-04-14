@@ -43,16 +43,32 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             DoorTrigger.enabled = (StaticDoorCopied == -1) ? false : true;
         }
 
+
         /// <summary>
-        /// Set static door data to all doors in the given building gameobject.
+        /// Initialise all interior custom doors found on the given building interior gameobject.
         /// </summary>
         /// <param name="building">The imported gameobject which provides building and doors.</param>
         /// <param name="staticDoors">A list of static doors for the vanilla building for copying, if available.</param>
-        /// <param name="buildingKey">The key of the building that owns the doors.</param>
         /// <param name="blockIndex">Block index for RMB doors.</param>
         /// <param name="recordIndex">Record index of interior.</param>
         /// <param name="buildingMatrix">Individual building matrix.</param>
-        /// <param name="disableClassicDoors">If true, at least one custom door component has disabled classic doors for all models for this building.</param>
+        /// <param name="disableClassicDoors">If true, at least one custom door component has requested suppression of all classic doors for this model.</param>
+        /// <returns>List of StaticDoor data for any custom doors that don't copy a DF model StaticDoor.</returns>
+        public static List<StaticDoor> InitDoorsInterior(GameObject building, StaticDoor[] staticDoors, int blockIndex, int recordIndex, Matrix4x4 buildingMatrix, out bool disableClassicDoors)
+        {
+            return InitDoors(building, staticDoors, -1, blockIndex, recordIndex, buildingMatrix, out disableClassicDoors);
+        }
+
+        /// <summary>
+        /// Initialise all custom doors found on the given building gameobject.
+        /// </summary>
+        /// <param name="building">The imported gameobject which provides building and doors.</param>
+        /// <param name="staticDoors">A list of static doors for the vanilla building for copying, if available.</param>
+        /// <param name="buildingKey">The key of the building that owns the exterior doors, -1 for interior doors.</param>
+        /// <param name="blockIndex">Block index for RMB doors.</param>
+        /// <param name="recordIndex">Record index of interior.</param>
+        /// <param name="buildingMatrix">Individual building matrix.</param>
+        /// <param name="disableClassicDoors">If true, at least one custom door component has requested suppression of all classic doors for this model.</param>
         /// <returns>List of StaticDoor data for any custom doors that don't copy a DF model StaticDoor.</returns>
         public static List<StaticDoor> InitDoors(GameObject building, StaticDoor[] staticDoors, int buildingKey, int blockIndex, int recordIndex, Matrix4x4 buildingMatrix, out bool disableClassicDoors)
         {
@@ -68,7 +84,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // If no static doors available (i.e. not replacing a DF model with door data) or not configured to copy one
                 if (allCustomDoors[i].StaticDoorCopied == -1 || staticDoors == null || staticDoors.Length == 0)
                 {
-                    // Calculate the door normal (note only works for X & Z, so no trapdoors)
+                    // Calculate the door normal
                     Vector3 doorCenter = allCustomDoors[i].DoorTrigger.center;
                     Vector3 doorSize = allCustomDoors[i].DoorTrigger.size;
                     Vector3 doorNormal = new Vector3();
@@ -78,6 +94,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         doorNormal.z = Mathf.Sign(doorCenter.z);
                     else if (doorSize.y < doorSize.x && doorSize.y < doorSize.z)
                         doorNormal.y = Mathf.Sign(doorCenter.y);
+
+                    // Invert normal for interior doors (building key = -1)
+                    if (buildingKey < 0) {
+                        doorNormal.x = -doorNormal.x;
+                        doorNormal.y = -doorNormal.y;
+                        doorNormal.z = -doorNormal.z;
+                    }
 
                     // Construct new StaticDoor data for this custom door and add it to list
                     StaticDoor staticDoor = new StaticDoor

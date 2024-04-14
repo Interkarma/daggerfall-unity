@@ -842,7 +842,7 @@ namespace DaggerfallWorkshop.Utility
                     ModelData modelData;
                     dfUnity.MeshReader.GetModelData(obj.ModelIdNum, out modelData);
 
-                    // Does this model have doors?
+                    // Does this Daggerfall model have any static doors?
                     StaticDoor[] staticDoors = null;
                     if (modelData.Doors != null)
                         staticDoors = GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix);
