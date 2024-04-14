@@ -176,7 +176,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Setup initial folder conditions
             RefreshDrives();
-			RefreshFolders();
+            RefreshFolders();
 
             // Setup events
             confirmButton.OnMouseClick += ConfirmButton_OnMouseClick;
