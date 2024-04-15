@@ -134,9 +134,6 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             if (string.IsNullOrEmpty(ModDirectory))
                 ModDirectory = Path.Combine(Application.streamingAssetsPath, "Mods");
 
-            // Rest of the logic is moved from Start() method.
-            // There's nothing we cannot initialize right away.
-
             SetupSingleton();
 
             if (Instance == this)
