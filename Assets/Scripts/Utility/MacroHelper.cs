@@ -235,6 +235,7 @@ namespace DaggerfallWorkshop.Utility
             { "%pg2", PlayerPronoun2 }, // Him/Her (player)
             { "%pg2self", PlayerPronoun2self },// Himself/Herself (player)
             { "%pg3", PlayerPronoun3 },  // His/Her (player)
+            { "%pg4", PlayerPronoun4 },  // His/Hers (player)
             { "%hrn", HomeRegion },  // Home region (of person)
             { "%pcl", PlayerLastname }, // Character's last name
             { "%day", DayNum }, // Current day of the month (ex: 1, 2, ..., 30)
@@ -862,6 +863,10 @@ namespace DaggerfallWorkshop.Utility
         private static string PlayerPronoun3(IMacroContextProvider mcp)
         {   // %pg3
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHis");
+        }
+        private static string PlayerPronoun4(IMacroContextProvider mcp)
+        {   // %pg4
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHers") : TextManager.Instance.GetLocalizedText("pronounHis");
         }
 
         private static string Honorific(IMacroContextProvider mcp)
