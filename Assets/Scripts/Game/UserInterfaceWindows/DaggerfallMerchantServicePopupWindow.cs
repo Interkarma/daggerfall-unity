@@ -19,9 +19,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect talkButtonRect = new Rect(5, 5, 120, 7);
-        Rect serviceButtonRect = new Rect(5, 14, 120, 7);
-        Rect exitButtonRect = new Rect(44, 24, 43, 15);
+        protected Rect talkButtonRect = new Rect(5, 5, 120, 7);
+        protected Rect serviceButtonRect = new Rect(5, 14, 120, 7);
+        protected Rect exitButtonRect = new Rect(44, 24, 43, 15);
 
         #endregion
 
