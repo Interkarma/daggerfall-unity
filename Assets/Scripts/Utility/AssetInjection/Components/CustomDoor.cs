@@ -84,16 +84,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // If no static doors available (i.e. not replacing a DF model with door data) or not configured to copy one
                 if (allCustomDoors[i].StaticDoorCopied == -1 || staticDoors == null || staticDoors.Length == 0)
                 {
-                    // Calculate the door normal
+                    // Calculate the door normal using smallest dimension as direction
                     Vector3 doorCenter = allCustomDoors[i].DoorTrigger.center;
                     Vector3 doorSize = allCustomDoors[i].DoorTrigger.size;
                     Vector3 doorNormal = new Vector3();
-                    if (doorSize.x < doorSize.z && doorSize.x < doorSize.y)
+                    if (doorSize.x < doorSize.z && doorSize.x < doorSize.y) {
                         doorNormal.x = Mathf.Sign(doorCenter.x);
-                    else if (doorSize.z < doorSize.x && doorSize.z < doorSize.y)
+                        doorSize.x = doorSize.z;    // Set x=z so static door hit detection works
+                    } else if (doorSize.z < doorSize.x && doorSize.z < doorSize.y) {
                         doorNormal.z = Mathf.Sign(doorCenter.z);
-                    else if (doorSize.y < doorSize.x && doorSize.y < doorSize.z)
+                        doorSize.z = doorSize.x;    // Set z=x so static door hit detection works
+                    }
+                    else if (doorSize.y < doorSize.x && doorSize.y < doorSize.z) {
                         doorNormal.y = Mathf.Sign(doorCenter.y);
+                    }
 
                     // Invert normal for interior doors (building key = -1)
                     if (buildingKey < 0) {

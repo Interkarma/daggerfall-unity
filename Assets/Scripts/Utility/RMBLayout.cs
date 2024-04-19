@@ -870,12 +870,12 @@ namespace DaggerfallWorkshop.Utility
                         staticBuilding.modelMatrix = modelMatrix;
                         staticBuilding.recordIndex = recordCount;
                         if (go == null || modelData.Indices != null) {
-                            staticBuilding.centre = new Vector3(modelData.DFMesh.Centre.X, modelData.DFMesh.Centre.Y, modelData.DFMesh.Centre.Z) * MeshReader.GlobalScale;
                             staticBuilding.size = new Vector3(modelData.DFMesh.Size.X, modelData.DFMesh.Size.Y, modelData.DFMesh.Size.Z) * MeshReader.GlobalScale;
+                            staticBuilding.centre = new Vector3(0, modelData.DFMesh.Size.Y / 2, 0) * MeshReader.GlobalScale; // All DF meshes are already centred on X & Z, moved this assumption to here from DaggerfallStaticBuildings.hasHit()
                         } else {
                             Renderer goRenderer = go.GetComponent<Renderer>();
+                            staticBuilding.centre = new Vector3(goRenderer.bounds.center.x, goRenderer.bounds.center.y, goRenderer.bounds.center.z) - go.transform.position;
                             staticBuilding.size = new Vector3(goRenderer.bounds.size.x, goRenderer.bounds.size.y, goRenderer.bounds.size.z);
-                            staticBuilding.centre = staticBuilding.size / 2;    // Seems to replicate DFMesh.Centre whereas goRenderer.bounds.center.z gives position.z for some reason.
                         }
                         buildingsOut.Add(staticBuilding);
                         firstModel = false;

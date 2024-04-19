@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -74,7 +74,7 @@ namespace DaggerfallWorkshop
                 go.transform.position = Buildings[i].modelMatrix.GetColumn(3);
                 go.transform.position += transform.position;
                 go.transform.rotation = Quaternion.LookRotation(Buildings[i].modelMatrix.GetColumn(2), Buildings[i].modelMatrix.GetColumn(1));
-                c.center = new Vector3(0, Buildings[i].size.y / 2, 0);
+                c.center = Buildings[i].centre;
                 c.size = Buildings[i].size * 1.01f;
 
                 // Check if hit was inside trigger
