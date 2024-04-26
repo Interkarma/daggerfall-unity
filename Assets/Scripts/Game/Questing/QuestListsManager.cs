@@ -278,19 +278,25 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         public Quest GetQuest(string questName, int factionId = 0)
         {
-            // First check QuestSourceFolder containing classic quests and mods.
-            Quest quest = LoadQuest(questName, QuestMachine.QuestSourceFolder, factionId);
-            if (quest != null)
-                return quest;
-
+            // First check QuestSourceFolder containing classic quests.
             string questFileName = questName + QExt;
+            string questFile = Path.Combine(QuestMachine.QuestSourceFolder, questFileName);
+            if (File.Exists(questFile))
+                return LoadQuest(questName, QuestMachine.QuestSourceFolder, factionId);
+            
+            // Then check if we can override or load this quest from any mod.
+            if (ModManager.Instance.AnyModContainsQuest(questName))
+            {
+                return LoadQuest(questName, "", factionId);
+            }
+
             // Check each registered init quest & containing folder.
             foreach (QuestData questData in init)
             {
                 if (questData.name == questName)
                     return LoadQuest(questData, factionId);
 
-                string questFile = Path.Combine(questData.path, questFileName);
+                questFile = Path.Combine(questData.path, questFileName);
                 if (File.Exists(questFile))
                     return LoadQuest(questName, questData.path, factionId);
             }

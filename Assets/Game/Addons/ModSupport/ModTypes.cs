@@ -93,6 +93,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         public string[] QuestLists { get; internal set; }
 
         /// <summary>
+        /// Names of all quests added with quest lists
+        /// </summary>
+        public string[] LooseQuestsList { get; internal set; }
+
+        /// <summary>
         /// Names of spell icon packs; each name corresponds to a <see cref="Texture2D"/>
         /// asset and a <see cref="TextAsset"/> with `.json` extension.
         /// </summary>
