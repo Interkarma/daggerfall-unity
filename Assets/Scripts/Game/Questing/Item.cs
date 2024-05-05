@@ -176,7 +176,7 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Item subclass value
                 Group itemSubClassGroup = match.Groups["itemSubClass"];
-                if (itemClassGroup.Success)
+                if (itemSubClassGroup.Success)
                     itemSubClass = Parser.ParseInt(itemSubClassGroup.Value);
 
                 // Item template value
