@@ -18,6 +18,20 @@ using UnityEngine;
 public static class DaggerfallUnityApplication
 {
     static string persistentDataPath;
+    private static bool? isPortableInstall;
+
+    public static bool IsPortableInstall
+    {
+        get
+        {
+            if (isPortableInstall == null)
+            {
+                isPortableInstall = !Application.isEditor && File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Portable.txt"));
+            }
+
+            return isPortableInstall.Value;
+        }
+    }
 
     public static string PersistentDataPath
     {
@@ -38,7 +52,15 @@ public static class DaggerfallUnityApplication
         persistentDataPath = String.Concat(Application.persistentDataPath, ".devenv");
         Directory.CreateDirectory(persistentDataPath);
 #else
-        persistentDataPath = Application.persistentDataPath;
+        if (IsPortableInstall)
+        {
+            persistentDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "PortableAppdata");
+            Directory.CreateDirectory(persistentDataPath);
+        }
+        else
+        {
+            persistentDataPath = Application.persistentDataPath;
+        }
 #endif
     }
 
