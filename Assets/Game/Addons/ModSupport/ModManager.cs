@@ -133,10 +133,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         {
             if (string.IsNullOrEmpty(ModDirectory))
                 ModDirectory = Path.Combine(Application.streamingAssetsPath, "Mods");
-        }
 
-        void Start()
-        {
             SetupSingleton();
 
             if (Instance == this)
