@@ -106,6 +106,7 @@ namespace DaggerfallWorkshop.Game
         public WeaponStates WeaponState { get { return weaponState; } }
 
         public Color Tint { get; set; } = Color.white;
+        public Vector2 Offset { get; set; } = Vector2.zero;
 
         #endregion
 
@@ -175,8 +176,23 @@ namespace DaggerfallWorkshop.Game
             {
                 // Draw weapon texture behind other HUD elements
                 Texture2D tex = curCustomTexture ? curCustomTexture : weaponAtlas.AtlasTexture;
-                DaggerfallUI.DrawTextureWithTexCoords(weaponPosition, tex, curAnimRect, true, Tint);
+                DaggerfallUI.DrawTextureWithTexCoords(GetWeaponPosition(), tex, curAnimRect, true, Tint);
             }
+        }
+
+        public Rect GetWeaponPosition()
+        {
+            if (Offset != Vector2.zero)
+            {
+                Rect weaponPositionOffset = weaponPosition;
+
+                weaponPositionOffset.x += Offset.x;
+                weaponPositionOffset.y += Offset.y;
+
+                return weaponPositionOffset;
+
+            } else
+                return weaponPosition;
         }
 
         public void OnAttackDirection(WeaponManager.MouseDirections direction)
