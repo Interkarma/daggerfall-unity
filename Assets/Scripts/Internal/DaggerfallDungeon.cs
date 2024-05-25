@@ -21,6 +21,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game;
+using Unity.Profiling;
 
 namespace DaggerfallWorkshop
 {
@@ -42,6 +43,8 @@ namespace DaggerfallWorkshop
         GameObject startMarker = null;
         GameObject enterMarker = null;
         List<Vector3> debuggerMarkerPositions = null;
+
+        static readonly ProfilerMarker s_LayoutDungeonMarker = new ProfilerMarker("Daggerfall.LayoutDungeon");
 
         /// <summary>
         /// Gets the scene name for the dungeon at the given location.
@@ -287,46 +290,49 @@ namespace DaggerfallWorkshop
             System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
             long startTime = stopwatch.ElapsedMilliseconds;
 #endif
-
-            // Get player level - use level 1 if game not running (e.g. importing in editor mode)
-            float playerLevel = 1;
-            if (Application.isPlaying)
-                playerLevel = GameManager.Instance.PlayerEntity.Level;
-
-            // Calculate monster power - this is a clamped 0-1 value based on player's level from 1-20
-            float monsterPower = Mathf.Clamp01(playerLevel / 20f);
-
-            // Create dungeon layout
-            for (int i = 0; i < summary.LocationData.Dungeon.Blocks.Length; i++)
+            using (s_LayoutDungeonMarker.Auto())
             {
-                DFLocation.DungeonBlock block = summary.LocationData.Dungeon.Blocks[i];
-                GameObject go = GameObjectHelper.CreateRDBBlockGameObject(
-                    block.BlockName,
-                    DungeonTextureTable,
-                    block.IsStartingBlock,
-                    Summary.DungeonType,
-                    monsterPower,
-                    RandomMonsterVariance,
-                    (int)DateTime.Now.Ticks/*Summary.ID*/,      // TODO: Add more options for seed
-                    dfUnity.Option_DungeonBlockPrefab,
-                    importEnemies);
-                go.transform.parent = this.transform;
-                go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
 
-                DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
-                if (block.IsStartingBlock)
-                    FindMarkers(daggerfallBlock, ref block, true); // Assign start marker and enter marker
-                else
-                    FindMarkers(daggerfallBlock, ref block, false); // Only find water level and palaceblock info from start marker
+                // Get player level - use level 1 if game not running (e.g. importing in editor mode)
+                float playerLevel = 1;
+                if (Application.isPlaying)
+                    playerLevel = GameManager.Instance.PlayerEntity.Level;
 
-                summary.LocationData.Dungeon.Blocks[i].WaterLevel = block.WaterLevel;
-                summary.LocationData.Dungeon.Blocks[i].CastleBlock = block.CastleBlock;
+                // Calculate monster power - this is a clamped 0-1 value based on player's level from 1-20
+                float monsterPower = Mathf.Clamp01(playerLevel / 20f);
 
-                // Add water blocks
-                RDBLayout.AddWater(go, go.transform.position, block.WaterLevel);
+                // Create dungeon layout
+                for (int i = 0; i < summary.LocationData.Dungeon.Blocks.Length; i++)
+                {
+                    DFLocation.DungeonBlock block = summary.LocationData.Dungeon.Blocks[i];
+                    GameObject go = GameObjectHelper.CreateRDBBlockGameObject(
+                        block.BlockName,
+                        DungeonTextureTable,
+                        block.IsStartingBlock,
+                        Summary.DungeonType,
+                        monsterPower,
+                        RandomMonsterVariance,
+                        (int)DateTime.Now.Ticks/*Summary.ID*/,      // TODO: Add more options for seed
+                        dfUnity.Option_DungeonBlockPrefab,
+                        importEnemies);
+                    go.transform.parent = this.transform;
+                    go.transform.position = new Vector3(block.X * RDBLayout.RDBSide, 0, block.Z * RDBLayout.RDBSide);
+
+                    DaggerfallRDBBlock daggerfallBlock = go.GetComponent<DaggerfallRDBBlock>();
+                    if (block.IsStartingBlock)
+                        FindMarkers(daggerfallBlock, ref block, true); // Assign start marker and enter marker
+                    else
+                        FindMarkers(daggerfallBlock, ref block, false); // Only find water level and palaceblock info from start marker
+
+                    summary.LocationData.Dungeon.Blocks[i].WaterLevel = block.WaterLevel;
+                    summary.LocationData.Dungeon.Blocks[i].CastleBlock = block.CastleBlock;
+
+                    // Add water blocks
+                    RDBLayout.AddWater(go, go.transform.position, block.WaterLevel);
+                }
+
+                RemoveOverlappingDoors();
             }
-
-            RemoveOverlappingDoors();
 
 #if SHOW_LAYOUT_TIMES
             // Show timer

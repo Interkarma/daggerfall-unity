@@ -1806,6 +1806,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             lastSpell = null;
             readySpell = null;
             readySpellDoesNotCostSpellPoints = false;
+            castInProgress = false;
         }
 
         public int GetCastSoundID(ElementTypes elementType)

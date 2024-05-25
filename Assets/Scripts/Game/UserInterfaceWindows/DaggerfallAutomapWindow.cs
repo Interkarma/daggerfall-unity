@@ -55,18 +55,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float cameraBackwardDistance = 20.0f; // initial camera distance "backwards" in 3D mode
 
         // button definitions
-        Button gridButton;
-        Button forwardButton;
-        Button backwardButton;
-        Button leftButton;
-        Button rightButton;
-        Button rotateLeftButton;
-        Button rotateRightButton;
-        Button upstairsButton;
-        Button downstairsButton;
+        protected Button gridButton;
+        protected Button forwardButton;
+        protected Button backwardButton;
+        protected Button leftButton;
+        protected Button rightButton;
+        protected Button rotateLeftButton;
+        protected Button rotateRightButton;
+        protected Button upstairsButton;
+        protected Button downstairsButton;
 
         // hover text label in status bar
-        TextLabel labelHoverText;
+        protected TextLabel labelHoverText;
 
         // Handle toggle closing
         KeyCode automapBinding = KeyCode.None;

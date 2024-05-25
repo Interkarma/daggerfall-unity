@@ -74,11 +74,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="regionIndex">Region index</param>
         /// <param name="locationIndex">Location index</param>
         /// <param name="variant">Variant name</param>
-        /// <returns>True if overwriting an existing variant set for this location</returns>
+        /// <returns>True unless this overwrote an existing variant set for this location</returns>
         public static bool SetLocationVariant(int regionIndex, int locationIndex, string variant)
         {
             int locationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
-            bool overwrite = !locationVariants.ContainsKey(locationKey);
+            bool added = locationVariants.ContainsKey(locationKey);
             if (variant == NoVariant)
                 locationVariants.Remove(locationKey);
             else
@@ -86,7 +86,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             Debug.LogFormat("Set variant \"{0}\" for the location index \"{1}\" in region {2}", variant, locationIndex, regionIndex);
             RMBLayout.ClearLocationCache();
-            return overwrite;
+            return added;
         }
 
         /// <summary>
@@ -95,14 +95,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="regionIndex">Region index</param>
         /// <param name="locationName">Location name (as index is assigned at runtime)</param>
         /// <param name="variant">Variant name</param>
-        /// <returns>True if overwriting an existing variant set for this location</returns>
+        /// <returns>True unless this overwrote an existing variant set for this location</returns>
         public static bool SetNewLocationVariant(int regionIndex, string locationName, string variant)
         {
             int locationIndex = WorldDataReplacement.GetNewDFLocationIndex(regionIndex, locationName);
             if (locationIndex >= 0)
             {
                 int locationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
-                bool overwrite = !locationVariants.ContainsKey(locationKey);
+                bool added = !locationVariants.ContainsKey(locationKey);
                 if (variant == NoVariant)
                     locationVariants.Remove(locationKey);
                 else
@@ -113,10 +113,10 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
                 Debug.LogFormat("Set variant \"{0}\" for the new location \"{1}\" in region {2}", variant, locationName, regionIndex);
                 RMBLayout.ClearLocationCache();
-                return overwrite;
+                return added;
             }
             DaggerfallUnity.LogMessage("Failed to set a new location variant.", true);
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -125,11 +125,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="blockName">Block name</param>
         /// <param name="variant">Variant name</param>
         /// <param name="locationKey">Location key if the variant is only for a specific location</param>
-        /// <returns>True if overwriting an existing variant set for this location</returns>
+        /// <returns>True unless this overwrote an existing block variant set for this location</returns>
         public static bool SetBlockVariant(string blockName, string variant, int locationKey = AnyLocationKey)
         {
             VariantBlockKey blockKey = new VariantBlockKey(locationKey, blockName);
-            bool overwrite = !blockVariants.ContainsKey(blockKey);
+            bool added = !blockVariants.ContainsKey(blockKey);
             if (variant == NoVariant)
                 blockVariants.Remove(blockKey);
             else
@@ -137,7 +137,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             Debug.LogFormat("Set variant \"{0}\" for the block {1} at locationKey {2}", variant, blockName, locationKey);
             RMBLayout.ClearLocationCache();
-            return overwrite;
+            return added;
         }
 
         /// <summary>
@@ -146,11 +146,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="blockName">Block name</param>
         /// <param name="variant">Variant name</param>
         /// <param name="locationKey">Location key if the variant is only for a specific location</param>
-        /// <returns>True if overwriting an existing variant set for this location</returns>
+        /// <returns>True unless this overwrote an existing building variant set for this location</returns>
         public static bool SetBuildingVariant(string blockName, int recordIndex, string variant, int locationKey = AnyLocationKey)
         {
             VariantBuildingKey buildingKey = new VariantBuildingKey(locationKey, blockName, recordIndex);
-            bool overwrite = !buildingVariants.ContainsKey(buildingKey);
+            bool added = !buildingVariants.ContainsKey(buildingKey);
             if (variant == NoVariant)
                 buildingVariants.Remove(buildingKey);
             else
@@ -158,13 +158,19 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
             Debug.LogFormat("Set variant \"{0}\" for building {2} of {1} at locationKey {3}", variant, blockName, recordIndex, locationKey);
             RMBLayout.ClearLocationCache();
-            return overwrite;
+            return added;
         }
 
         #endregion
 
         #region Getters for variants set for the current play session
 
+        /// <summary>
+        /// Gets a variant set for the specified location. Sets the last location checked.
+        /// </summary>
+        /// <param name="locationKey">Location key if the variant is only for a specific location</param>
+        /// <param name="newLocation">True if this variant is for a new location (i.e. not vanilla)</param>
+        /// <returns>The variant string if found, else WorldDataVariants.NoVariant (empty string)</returns>
         public static string GetLocationVariant(int locationKey, out bool newLocation)
         {
             lastLocationKey = locationKey;
@@ -176,6 +182,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return result;
         }
 
+        /// <summary>
+        /// Gets a variant set for the specified block, based on the last location variant checked using GetLocationVariant().
+        /// </summary>
+        /// <param name="blockName">Block name</param>
+        /// <returns>The variant string if found, else WorldDataVariants.NoVariant (empty string)</returns>
         public static string GetBlockVariant(string blockName)
         {
             if (lastLocationKey >= 0)
@@ -193,6 +204,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return NoVariant;
         }
 
+        /// <summary>
+        /// Gets a variant set for the specified building, based on last location variant checked using GetLocationVariant().
+        /// </summary>
+        /// <param name="blockRecordKey">Block record key with the record index to use</param>
+        /// <param name="blockName">Block name</param>
+        /// <returns>The variant string if found, else WorldDataVariants.NoVariant (empty string)</returns>
         public static string GetBuildingVariant(ref BlockRecordKey blockRecordKey, string blockName)
         {
             if (blockRecordKey.variant == NoVariant)
@@ -218,6 +235,28 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return NoVariant;
         }
 
+        /// <summary>
+        /// Gets a variant set for the specified block, based on supplied region and location.
+        /// </summary>
+        /// <param name="regionIndex">e.g. DFLocation.RegionIndex</param>
+        /// <param name="locationIndex">e.g. DFLocation.LocationIndex</param>
+        /// <param name="blockName">Block name</param>
+        /// <returns>The variant string if found, or null</returns>
+        public static string GetBlockVariant(int regionIndex, int locationIndex, string blockName)
+        {
+            int locationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);
+            VariantBlockKey blockKey = new VariantBlockKey(locationKey, blockName);
+            return blockVariants.ContainsKey(blockKey) ? blockVariants[blockKey] : null;
+        }
+
+        /// <summary>
+        /// Gets a variant set for the specified building, based on supplied region and location.
+        /// </summary>
+        /// <param name="regionIndex">e.g. DFLocation.RegionIndex</param>
+        /// <param name="locationIndex">e.g. DFLocation.LocationIndex</param>
+        /// <param name="blockName">Block name</param>
+        /// <param name="recordIndex">Building record index</param>
+        /// <returns>The variant string if found, or null</returns>
         public static string GetBuildingVariant(int regionIndex, int locationIndex, string blockName, int recordIndex)
         {
             int locationKey = WorldDataReplacement.MakeLocationKey(regionIndex, locationIndex);

@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Utility
 
                 // Offset loaded enemies
                 // Not that many in DFU, but it happens in mods
-                foreach (EnemyMotor enemy in FindObjectsOfType<EnemyMotor>())
+                foreach (EnemyMotor enemy in ActiveGameObjectDatabase.GetActiveEnemyMotors())
                     enemy.AdjustLastGrounded(offset.y);
 
                 // Raise event

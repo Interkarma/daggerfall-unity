@@ -295,7 +295,7 @@ Message:  1025
 
 Message:  1026
 <ce>                     You pick up a scrap of flesh,
-<ce>               carefully, even ritually ritualistically
+<ce>               carefully, even ritualistically
 <ce>                      stripped from a =priest_'s
 <ce>                    hand. This was once a finger of
 <ce>                               _priest_.

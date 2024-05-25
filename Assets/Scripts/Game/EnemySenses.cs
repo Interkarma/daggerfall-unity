@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Utility;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -735,6 +736,18 @@ namespace DaggerfallWorkshop.Game
 
         #region Private Methods
 
+        // Enemies consider only other enemies and the player
+        // Civilian Mobile NPCs are not handled here
+        IEnumerable<DaggerfallEntityBehaviour> GetActiveTargetEntityBehaviours()
+        {
+            foreach(DaggerfallEntityBehaviour behaviour in ActiveGameObjectDatabase.GetActiveEnemyBehaviours())
+            {
+                yield return behaviour;
+            }
+
+            yield return player;
+        }
+
         void GetTargets()
         {
             DaggerfallEntityBehaviour highestPriorityTarget = null;
@@ -745,10 +758,8 @@ namespace DaggerfallWorkshop.Game
             Vector3 directionToTargetHolder = directionToTarget;
             float distanceToTargetHolder = distanceToTarget;
 
-            DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
-            for (int i = 0; i < entityBehaviours.Length; i++)
+            foreach (DaggerfallEntityBehaviour targetBehaviour in GetActiveTargetEntityBehaviours())
             {
-                DaggerfallEntityBehaviour targetBehaviour = entityBehaviours[i];
                 EnemyEntity targetEntity = null;
                 if (targetBehaviour != player)
                     targetEntity = targetBehaviour.Entity as EnemyEntity;
@@ -763,6 +774,10 @@ namespace DaggerfallWorkshop.Game
                 {
                     // NoTarget mode
                     if ((GameManager.Instance.PlayerEntity.NoTargetMode || !motor.IsHostile || enemyEntity.MobileEnemy.Team == MobileTeams.PlayerAlly) && targetBehaviour == player)
+                        continue;
+
+                    //Pacified enemies should not attack player allies.
+                    if (!motor.IsHostile && targetEntity != null && targetEntity.Team == MobileTeams.PlayerAlly)
                         continue;
 
                     //Player allies should not attack pacified enemies.

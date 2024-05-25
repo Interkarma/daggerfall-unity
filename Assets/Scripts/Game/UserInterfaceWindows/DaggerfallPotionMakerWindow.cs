@@ -22,12 +22,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect recipesButtonRect = new Rect(169, 26, 36, 16);
-        Rect mixButtonRect = new Rect(169, 42, 36, 16);
-        Rect exitButtonRect = new Rect(290, 178, 24, 16);
+        protected Rect recipesButtonRect = new Rect(169, 26, 36, 16);
+        protected Rect mixButtonRect = new Rect(169, 42, 36, 16);
+        protected Rect exitButtonRect = new Rect(290, 178, 24, 16);
 
-        Rect ingredientsListScrollerRect = new Rect(5, 30, 151, 142);
-        Rect ingredientsListRect = new Rect(11, 0, 140, 142);
+        protected Rect ingredientsListScrollerRect = new Rect(5, 30, 151, 142);
+        protected Rect ingredientsListRect = new Rect(11, 0, 140, 142);
 
         static readonly Rect[] ingredientButtonRects = new Rect[]
         {
@@ -37,8 +37,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new Rect(0, 114, 28, 28),   new Rect(56, 114, 28, 28),  new Rect(112, 114, 28, 28)
         };
 
-        Rect cauldronListScrollerRect = new Rect(221, 30, 84, 142);
-        Rect cauldronListRect = new Rect(0, 0, 84, 142);
+        protected Rect cauldronListScrollerRect = new Rect(221, 30, 84, 142);
+        protected Rect cauldronListRect = new Rect(0, 0, 84, 142);
 
         static readonly Rect[] cauldronButtonRects = new Rect[]
         {
@@ -53,18 +53,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        TextLabel nameLabel = new TextLabel();
+        protected TextLabel nameLabel = new TextLabel();
         //TextLabel costLabel = new TextLabel();
-        TextLabel goldLabel = new TextLabel();
+        protected TextLabel goldLabel = new TextLabel();
 
-        Button recipesButton;
-        Button mixButton;
-        Button exitButton;
+        protected Button recipesButton;
+        protected Button mixButton;
+        protected Button exitButton;
 
-        ItemListScroller ingredientsListScroller;
-        ItemListScroller cauldronListScroller;
+        protected ItemListScroller ingredientsListScroller;
+        protected ItemListScroller cauldronListScroller;
 
-        DaggerfallListPickerWindow recipePicker;
+        protected DaggerfallListPickerWindow recipePicker;
 
         #endregion
 

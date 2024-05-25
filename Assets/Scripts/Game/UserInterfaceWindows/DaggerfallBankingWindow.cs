@@ -25,26 +25,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         const string IMGNAME    = "BANK00I0.IMG";
 
-        Panel mainPanel;
+        protected Panel mainPanel;
 
         protected TextLabel accountAmount;
         protected TextLabel inventoryAmount;
         protected TextLabel loanAmountDue;
         protected TextLabel loanDueBy;
 
-        Button depoGoldButton;
-        Button drawGoldButton;
-        Button depoLOCButton;
-        Button drawLOCButton;
-        Button loanRepayButton;
-        Button loanBorrowButton;
-        Button buyHouseButton;
-        Button sellHouseButton;
-        Button buyShipButton;
-        Button sellShipButton;
-        Button exitButton;
+        protected Button depoGoldButton;
+        protected Button drawGoldButton;
+        protected Button depoLOCButton;
+        protected Button drawLOCButton;
+        protected Button loanRepayButton;
+        protected Button loanBorrowButton;
+        protected Button buyHouseButton;
+        protected Button sellHouseButton;
+        protected Button buyShipButton;
+        protected Button sellShipButton;
+        protected Button exitButton;
 
-        TextBox transactionInput;
+        protected TextBox transactionInput;
 
         PlayerEntity playerEntity;
         TransactionType transactionType = TransactionType.None;

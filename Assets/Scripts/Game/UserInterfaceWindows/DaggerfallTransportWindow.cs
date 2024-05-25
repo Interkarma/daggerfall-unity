@@ -17,27 +17,27 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect footButtonRect = new Rect(5, 5, 120, 7);
-        Rect horseButtonRect = new Rect(5, 14, 120, 7);
-        Rect cartButtonRect = new Rect(5, 23, 120, 7);
-        Rect shipButtonRect = new Rect(5, 32, 120, 7);
-        Rect exitButtonRect = new Rect(44, 42, 43, 15);
+        protected Rect footButtonRect = new Rect(5, 5, 120, 7);
+        protected Rect horseButtonRect = new Rect(5, 14, 120, 7);
+        protected Rect cartButtonRect = new Rect(5, 23, 120, 7);
+        protected Rect shipButtonRect = new Rect(5, 32, 120, 7);
+        protected Rect exitButtonRect = new Rect(44, 42, 43, 15);
 
 //		Rect footDisabledRect = new Rect(1, 1, 120, 7);     // Can foot option ever be disabled?
-        Rect horseDisabledRect = new Rect(1, 10, 120, 7);
-        Rect cartDisabledRect = new Rect(1, 19, 120, 7);
-        Rect shipDisabledRect = new Rect(1, 28, 120, 7);
+        protected Rect horseDisabledRect = new Rect(1, 10, 120, 7);
+        protected Rect cartDisabledRect = new Rect(1, 19, 120, 7);
+        protected Rect shipDisabledRect = new Rect(1, 28, 120, 7);
 
         #endregion
 
         #region UI Controls
 
-        Panel mainPanel = new Panel();
-        Button footButton;
-        Button horseButton;
-        Button cartButton;
-        Button shipButton;
-        Button exitButton;
+        protected Panel mainPanel = new Panel();
+        protected Button footButton;
+        protected Button horseButton;
+        protected Button cartButton;
+        protected Button shipButton;
+        protected Button exitButton;
 
         #endregion
 

@@ -28,20 +28,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect weaponsAndArmorRect = new Rect(175, 6, 81, 9);
-        Rect magicItemsRect = new Rect(175, 15, 81, 9);
-        Rect clothingAndMiscRect = new Rect(175, 24, 81, 9);
-        Rect ingredientsRect = new Rect(175, 33, 81, 9);
+        protected Rect weaponsAndArmorRect = new Rect(175, 6, 81, 9);
+        protected Rect magicItemsRect = new Rect(175, 15, 81, 9);
+        protected Rect clothingAndMiscRect = new Rect(175, 24, 81, 9);
+        protected Rect ingredientsRect = new Rect(175, 33, 81, 9);
 
-        Rect powersButtonRect = new Rect(8, 183, 77, 10);
-        Rect sideEffectsButtonRect = new Rect(106, 183, 77, 10);
-        Rect exitButtonRect = new Rect(202, 176, 39, 22);
+        protected Rect powersButtonRect = new Rect(8, 183, 77, 10);
+        protected Rect sideEffectsButtonRect = new Rect(106, 183, 77, 10);
+        protected Rect exitButtonRect = new Rect(202, 176, 39, 22);
 
-        Rect enchantButtonRect = new Rect(200, 115, 43, 15);
-        Rect selectedItemRect = new Rect(196, 68, 50, 37);
+        protected Rect enchantButtonRect = new Rect(200, 115, 43, 15);
+        protected Rect selectedItemRect = new Rect(196, 68, 50, 37);
 
-        Rect itemListScrollerRect = new Rect(253, 49, 60, 148);
-        Rect itemListPanelRect = new Rect(10, 0, 50, 148);
+        protected Rect itemListScrollerRect = new Rect(253, 49, 60, 148);
+        protected Rect itemListPanelRect = new Rect(10, 0, 50, 148);
         readonly Rect[] itemButtonRects = new Rect[]
         {
             new Rect(0, 0, 50, 37),
@@ -50,38 +50,38 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             new Rect(0, 111, 50, 37)
         };
 
-        Rect powersListRect = new Rect(10, 58, 75, 120);
-        Rect sideEffectsListRect = new Rect(108, 58, 75, 120);
-        Rect nameItemButtonRect = new Rect(4, 2, 157, 7);
+        protected Rect powersListRect = new Rect(10, 58, 75, 120);
+        protected Rect sideEffectsListRect = new Rect(108, 58, 75, 120);
+        protected Rect nameItemButtonRect = new Rect(4, 2, 157, 7);
 
         #endregion
 
         #region UI Controls
 
-        TextLabel itemNameLabel = new TextLabel();
-        TextLabel availableGoldLabel = new TextLabel();
-        TextLabel goldCostLabel = new TextLabel();
-        TextLabel enchantmentCostLabel = new TextLabel();
+        protected TextLabel itemNameLabel = new TextLabel();
+        protected TextLabel availableGoldLabel = new TextLabel();
+        protected TextLabel goldCostLabel = new TextLabel();
+        protected TextLabel enchantmentCostLabel = new TextLabel();
 
-        Button weaponsAndArmorButton;
-        Button magicItemsButton;
-        Button clothingAndMiscButton;
-        Button ingredientsButton;
+        protected Button weaponsAndArmorButton;
+        protected Button magicItemsButton;
+        protected Button clothingAndMiscButton;
+        protected Button ingredientsButton;
 
-        Button powersButton;
-        Button sideEffectsButton;
-        Button exitButton;
+        protected Button powersButton;
+        protected Button sideEffectsButton;
+        protected Button exitButton;
 
-        Button enchantButton;
-        Button selectedItemButton;
-        Panel selectedItemPanel;
+        protected Button enchantButton;
+        protected Button selectedItemButton;
+        protected Panel selectedItemPanel;
 
-        ItemListScroller itemsListScroller;
-        EnchantmentListPicker powersList;
-        EnchantmentListPicker sideEffectsList;
+        protected ItemListScroller itemsListScroller;
+        protected EnchantmentListPicker powersList;
+        protected EnchantmentListPicker sideEffectsList;
 
-        DaggerfallListPickerWindow enchantmentPrimaryPicker;
-        DaggerfallListPickerWindow enchantmentSecondaryPicker;
+        protected DaggerfallListPickerWindow enchantmentPrimaryPicker;
+        protected DaggerfallListPickerWindow enchantmentSecondaryPicker;
 
         #endregion
 
