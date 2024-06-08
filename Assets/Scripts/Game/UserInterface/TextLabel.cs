@@ -460,6 +460,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Start a new layout
             glyphLayout.Clear();
 
+            if (Parent != null)
+                _ = Rectangle; //Calling GetRectangle() to establish LocalScale; discarding return value
+
             // Set a local maxWidth that compensates for textScale
             int maxWidth = (int)(this.maxWidth / textScale);
 
