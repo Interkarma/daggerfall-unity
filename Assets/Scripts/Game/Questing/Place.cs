@@ -669,6 +669,25 @@ namespace DaggerfallWorkshop.Game.Questing
             }
         }
 
+        /// For dungeon types check StreamingAssets\Tables\Quests-Places.txt
+        public static bool IsPlayerAtDungeonType(int p2)
+        {
+            // Get component handling player world status and transitions
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            if (!playerEnterExit)
+                return false;
+
+            // Only dungeons
+            if (!playerEnterExit.IsPlayerInsideDungeon)
+                return false;
+
+            // Any dungeon will do
+            if (p2 == -1)
+                return true;
+
+            return p2 == (int)GameManager.Instance.PlayerEnterExit.Dungeon.Summary.DungeonType;
+        }
+
         #endregion
 
         #region Local Site Methods
