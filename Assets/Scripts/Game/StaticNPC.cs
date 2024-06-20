@@ -188,7 +188,11 @@ namespace DaggerfallWorkshop.Game
             int flatID = FlatsFile.GetFlatID(obj.TextureArchive, obj.TextureRecord);
             if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(flatID, out FlatsFile.FlatData flatCFG))
             {
-                if (flatCFG.gender.Contains("2"))
+                // We've had null reference exceptions in this function,
+                // which could only possibly be this gender field
+                if (flatCFG.gender == null)
+                    Debug.LogError($"Flat '{obj.TextureArchive}_{obj.TextureRecord}' has invalid gender in FLATS.CFG");
+                else if (flatCFG.gender.Contains("2"))
                     obj.Flags |= 32;
                 else
                     obj.Flags &= 223;
