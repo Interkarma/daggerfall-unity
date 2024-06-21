@@ -20,6 +20,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Player;
+using GrammarModule;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -59,12 +60,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void MaleButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectedGender = Genders.Male;
+            GrammarManager.grammarProcessor.SetGenreHero("M");
             CloseWindow();
         }
 
         void FemaleButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectedGender = Genders.Female;
+            GrammarManager.grammarProcessor.SetGenreHero("F");
             CloseWindow();
         }
 

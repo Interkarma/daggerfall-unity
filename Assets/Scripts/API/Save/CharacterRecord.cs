@@ -18,6 +18,7 @@ using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop;
+using GrammarModule;
 
 namespace DaggerfallConnect.Save
 {
@@ -174,6 +175,8 @@ namespace DaggerfallConnect.Save
             parsedData.currentStats = ReadStats(reader);
             parsedData.baseStats = ReadStats(reader);
             parsedData.gender = ReadGender(reader);
+            if (parsedData.gender == Genders.Male) GrammarManager.grammarProcessor.SetGenreHero("M");
+            else GrammarManager.grammarProcessor.SetGenreHero("F");
             parsedData.transportationFlags = ReadTransportationFlags(reader);
             parsedData.minMetalToHit = reader.ReadByte();
             parsedData.race = ReadRace(reader);
