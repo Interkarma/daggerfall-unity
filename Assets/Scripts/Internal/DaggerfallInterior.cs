@@ -482,7 +482,7 @@ namespace DaggerfallWorkshop
 
                 // Add any DF model static doors unless suppressed
                 if (modelData.Doors != null && !disableClassicDoors)
-                    doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
+                    doors.AddRange(staticDoors);
 
 
                 if ((modelGO != null) && (isAutomapRun))
