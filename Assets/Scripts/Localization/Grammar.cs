@@ -14,6 +14,7 @@ namespace GrammarModule
     {
         public abstract string ProcessGrammar(string text);
         public abstract void SetGenreHero(string Genre);
+        public abstract void SetGenreNPC(string Genre);
     }
 
     public static class GrammarManager
