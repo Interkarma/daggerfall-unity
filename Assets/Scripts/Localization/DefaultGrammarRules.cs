@@ -15,12 +15,20 @@ namespace GrammarModule.LanguageRules
 			// Process the grammar tokens
 			return text;
 		}
-		public override void SetGenreHero(string Genre)
+
+        public override void SetGenreHero(string Genre)
 		{
 			// Locally store the genre of the hero so that it can be used
             // by the grammar tokens
 
 		}
-	}
+
+		public override void SetGenreNPC(string Genre)
+		{
+			// Locally store the genre of a NPC so that it can be used
+            // by the grammar tokens
+
+		}
+     }
 }
 
