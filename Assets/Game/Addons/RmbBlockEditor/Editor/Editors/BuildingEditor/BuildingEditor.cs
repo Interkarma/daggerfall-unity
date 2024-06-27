@@ -5,12 +5,16 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Podleron (podleron@gmail.com)
 
+using System;
+using System.IO;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using UnityEngine;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
+using DaggerfallWorkshop.Game.Utility.WorldDataEditor;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 {
@@ -68,6 +72,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
         private void RegisterCallbacks()
         {
             var exportButton = this.Query<Button>("export-building").First();
+            var openInWorldDataEditorButton = this.Query<Button>("open-in-world-data-editor").First();
             var xPosField = this.Query<IntegerField>("building-x").First();
             var zPosField = this.Query<IntegerField>("building-z").First();
             var yPosField = this.Query<IntegerField>("building-y").First();
@@ -103,6 +108,11 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             buildingDataField.changedBuildingData += HandleBuildingDataChange;
             buildingDataField.changedSubRecord += HandleSubRecordChange;
             exportButton.clicked += ExportToFile;
+
+            if (openInWorldDataEditorButton != null)
+            {
+                openInWorldDataEditorButton.clicked += OpenInWorldDataEditor; // Make sure your method has the correct signature
+            }
         }
 
         private void HandleBuildingDataChange(BuildingReplacementData newData)
@@ -129,13 +139,61 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             RmbBlockHelper.SaveBuildingFile(buildingDataField.GetData(), path);
         }
 
+        private void OpenInWorldDataEditor()
+        {
+            // Generate a temporary file path
+            string tempDirectory = Path.Combine(Application.dataPath, "Temp");
+            if (!Directory.Exists(tempDirectory))
+            {
+                Directory.CreateDirectory(tempDirectory);
+            }
+            var index = building.transform.GetSiblingIndex();
+            var rmbBlock = building.transform.GetComponentInParent<RmbBlockObject>();
+            var fileName = string.Format("temp_{0}-{1}-building{2}.json", rmbBlock.Name, rmbBlock.Index, index);
+            var path = Path.Combine(tempDirectory, fileName);
+
+            // Use the same method to get building data as in ExportToFile
+            var buildingDataField = this.Query<BuildingDataElement>("building-data-element").First();
+            BuildingReplacementData buildingData = buildingDataField.GetData();
+
+            // Use RmbBlockHelper to save the file, ensuring all necessary data is serialized
+            RmbBlockHelper.SaveBuildingFile(buildingData, path);
+
+            try
+            {
+                // Attempt to open the saved file with the World Data Editor
+                WorldDataEditor worldDataEditorWindow = (WorldDataEditor)EditorWindow.GetWindow(typeof(WorldDataEditor), true, "WorldData Editor");
+                if (worldDataEditorWindow != null)
+                {
+                    worldDataEditorWindow.OpenBuildingFile(path);
+                }
+                else
+                {
+                    Debug.LogError("Failed to open the World Data Editor.");
+                }
+            }
+            finally
+            {
+                // Ensure the temporary file is deleted after opening it
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+        }
+
         private void UnregisterCallbacks()
         {
             var exportButton = this.Query<Button>("export-building").First();
+            var openInWorldDataEditorButton = this.Query<Button>("open-in-world-data-editor").First();
             var buildingDataField = this.Query<BuildingDataElement>("building-data-element").First();
+
+            // Detach the event handlers
+            exportButton.clicked -= ExportToFile;
+            openInWorldDataEditorButton.clicked -= OpenInWorldDataEditor; // Detach the new button's click event
+
             buildingDataField.changedBuildingData -= HandleBuildingDataChange;
             buildingDataField.changedSubRecord -= HandleSubRecordChange;
-            exportButton.clicked -= ExportToFile;
         }
 
         private void OnRemovedFromHierarchy()

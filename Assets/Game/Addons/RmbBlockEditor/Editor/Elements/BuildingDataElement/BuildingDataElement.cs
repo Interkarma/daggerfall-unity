@@ -15,6 +15,7 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using DaggerfallWorkshop.Game.Utility.WorldDataEditor;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
 {
@@ -119,6 +120,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             var qualityField = this.Query<IntegerField>("quality-input").First();
             var replaceFromFileButton = this.Query<Button>("replace-from-file-button").First();
             var importFromFile = this.Query<Button>("import-from-file").First();
+            var importFromWDE = this.Query<Button>("import-from-WDE").First();
             var cancelReplaceFromFile = this.Query<Button>("cancel-replace-from-file").First();
             var replaceFromCatalogButton = this.Query<Button>("replace-from-catalog-button").First();
             var importFromCatalog = this.Query<Button>("import-from-catalog").First();
@@ -158,6 +160,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             importFromFile.clicked += OnImportFromFile;
             cancelReplaceFromFile.clicked += HideReplaceFromFile;
             importFromCatalog.clicked += OnImportFromCatalog;
+            importFromWDE.clicked += ImportFromWorldDataEditor;
             cancelReplaceFromCatalog.clicked += HideReplaceFromCatalog;
         }
 
@@ -305,15 +308,19 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             return BuildingHelper.GetPreview(templates[buildingId]);
         }
 
-        private Boolean LoadBuildingFile(ref BuildingReplacementData buildingData)
+        private bool LoadBuildingFile(ref BuildingReplacementData buildingData, string path = null)
         {
-            var path = EditorUtility.OpenFilePanel("Import buildings", WorldDataFolder, "json");
-
-            if (String.IsNullOrEmpty(path) || !File.Exists(path))
+            if (string.IsNullOrEmpty(path))
             {
-                return false;
+                path = EditorUtility.OpenFilePanel("Import buildings", WorldDataFolder, "json");
             }
 
+            if (!File.Exists(path))
+            {
+                Debug.LogError($"File does not exist: {path}");
+                return false;
+            }
+            
             try
             {
                 var buildingJson = File.ReadAllText(path);
@@ -327,6 +334,53 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             }
         }
 
+        private void ImportFromWorldDataEditor()
+        {
+            Debug.Log("ImportFromWorldDataEditor is being called.");
+
+            // Attempt to get an open instance of the WorldDataEditor window
+            WorldDataEditor worldDataEditor = (WorldDataEditor)EditorWindow.GetWindow(typeof(WorldDataEditor), false, "WorldData Editor", false);
+            if (worldDataEditor != null)
+            {
+                // Generate a temporary file path using temporaryCachePath for temporary files
+                string tempDirectory = Path.Combine(Application.temporaryCachePath, "Temp");
+                Directory.CreateDirectory(tempDirectory); // CreateDirectory checks for existence internally
+
+                var fileName = $"temp_building.json";
+                var path = Path.Combine(tempDirectory, fileName);
+
+                try
+                {
+                    // Ensure to update building data before saving
+                    worldDataEditor.UpdateBuildingWorldData();
+
+                    // Access the buildingData from the WorldDataEditor instance to save it
+                    BuildingReplacementData buildingData = worldDataEditor.buildingData;
+                    WorldDataEditorBuildingHelper.SaveBuildingFile(buildingData, path);
+
+                    // Attempt to load the building data from the temporary file
+                    var loadedData = new BuildingReplacementData();
+                    var success = LoadBuildingFile(ref loadedData, path);
+                    if (!success) return;
+
+                    // Import the loaded data
+                    Import(loadedData, true, true, true);
+                }
+                finally
+                {
+                    // Ensure the temporary file is deleted after use
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("WorldDataEditor is not open or accessible.");
+            }
+        }
+
         private void UnregisterCallbacks()
         {
             changeBuildingData = null;
@@ -335,6 +389,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             var replaceFromFileButton = this.Query<Button>("replace-from-file-button").First();
             var replaceFromCatalogButton = this.Query<Button>("replace-from-catalog-button").First();
             var importFromFile = this.Query<Button>("import-from-file").First();
+            var importFromWDE = this.Query<Button>("import-from-WDE").First();
             var cancelReplaceFromFile = this.Query<Button>("cancel-replace-from-file").First();
             var importFromCatalog = this.Query<Button>("import-from-catalog").First();
             var cancelReplaceFromCatalog = this.Query<Button>("cancel-replace-from-catalog").First();
@@ -342,6 +397,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements
             replaceFromFileButton.clicked -= ShowReplaceFromFile;
             replaceFromCatalogButton.clicked -= ShowReplaceFromCatalog;
             importFromFile.clicked -= OnImportFromFile;
+            importFromWDE.clicked -= ImportFromWorldDataEditor;
             cancelReplaceFromFile.clicked -= HideReplaceFromFile;
             importFromCatalog.clicked -= OnImportFromCatalog;
             cancelReplaceFromCatalog.clicked -= HideReplaceFromCatalog;

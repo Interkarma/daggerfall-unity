@@ -45,8 +45,9 @@
                 <engine:Label text="Choose a new building:" class="col-4"/>
             </engine:VisualElement>
             <engine:VisualElement class="row mt center">
-                <engine:Button name="replace-from-catalog-button" text="Import From Catalog" class="col-2"/>
-                <engine:Button name="replace-from-file-button" text="Import From File" class="col-2"/>
+                <engine:Button name="replace-from-catalog-button" text="Import From Catalog" class="col-1"/>
+                <engine:Button name="replace-from-file-button" text="Import From File" class="col-1"/>
+                <engine:Button name="import-from-WDE" text="Import From WDE" class="col-1"/>
             </engine:VisualElement>
         </engine:VisualElement>
 
