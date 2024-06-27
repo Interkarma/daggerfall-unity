@@ -612,7 +612,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         if (assets == null)
             return;
 
-        string path = Path.Combine(Application.persistentDataPath, "Mods", "ExtractedFiles", mod.FileName);
+        string path = Path.Combine(DaggerfallUnityApplication.PersistentDataPath, "Mods", "ExtractedFiles", mod.FileName);
         Directory.CreateDirectory(path);
 
         for (int i = 0; i < assets.Length; i++)
