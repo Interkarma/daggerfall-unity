@@ -529,6 +529,35 @@ namespace DaggerfallWorkshop
         /// <returns>True if model should be filtered out from this specific interior.</returns>
         bool IsBadInteriorModel(uint modelID)
         {
+            // ARMRGL01.RMB (Index 51), BuildingRecord 1
+            if (EntryDoor.blockIndex == 51 && EntryDoor.recordIndex == 1)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // GENRGM00.RMB (Index 84), BuildingRecord 8, 9, 10, 11
+            if (EntryDoor.blockIndex == 84 && (EntryDoor.recordIndex == 8 ||
+                                               EntryDoor.recordIndex == 9 ||
+                                               EntryDoor.recordIndex == 10 ||
+                                               EntryDoor.recordIndex == 11))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // GENRGL01.RMB (Index 88), BuildingRecord 2, 3, 4
+            if (EntryDoor.blockIndex == 88 && (EntryDoor.recordIndex == 2 ||
+                                               EntryDoor.recordIndex == 3 ||
+                                               EntryDoor.recordIndex == 4))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
             // TVRNGL04.RMB (Index 96), BuildingRecord 2, 5, 6
             if (EntryDoor.blockIndex == 96 && (EntryDoor.recordIndex == 2 ||
                                                EntryDoor.recordIndex == 5 ||
@@ -557,6 +586,17 @@ namespace DaggerfallWorkshop
                     return true;
             }
 
+            // RESIGL04.RMB (Index 155), BuildingRecord 0, 1, 2, 3
+            if (EntryDoor.blockIndex == 155 && (EntryDoor.recordIndex == 0 ||
+                                                EntryDoor.recordIndex == 1 ||
+                                                EntryDoor.recordIndex == 2 ||
+                                                EntryDoor.recordIndex == 3))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
             // RESIGL03.RMB (Index 156), BuildingRecord 0, 1
             if (EntryDoor.blockIndex == 156 && (EntryDoor.recordIndex == 0 ||
                                                 EntryDoor.recordIndex == 1))
@@ -566,6 +606,30 @@ namespace DaggerfallWorkshop
                     return true;
             }
 
+            // RESIGM01.RMB (Index 158), BuildingRecord 6, 7
+            if (EntryDoor.blockIndex == 158 && (EntryDoor.recordIndex == 6 ||
+                                                EntryDoor.recordIndex == 7))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+            // RENRGS00.RMB (Index 159), BuildingRecord 0
+            if (EntryDoor.blockIndex == 159 && EntryDoor.recordIndex == 0)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // TVRNGL02.RMB (Index 169), BuildingRecord 5, 8
+            if (EntryDoor.blockIndex == 169 && (EntryDoor.recordIndex == 5 ||
+                                                EntryDoor.recordIndex == 8))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
             // GENRBM00.RMB (Index 388), BuildingRecord 2, 3, 4, 5
             if (EntryDoor.blockIndex == 388 && (EntryDoor.recordIndex == 2 ||
                                                 EntryDoor.recordIndex == 3 ||
@@ -650,6 +714,15 @@ namespace DaggerfallWorkshop
             // RESIBM01.RMB (Index 601), BuildingRecord 6, 7
             if (EntryDoor.blockIndex == 601 && (EntryDoor.recordIndex == 6 ||
                                                 EntryDoor.recordIndex == 7))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // RESIGL02.RMB (Index 680), BuildingRecord 7, 8
+            if (EntryDoor.blockIndex == 680 && (EntryDoor.recordIndex == 7 ||
+                                                EntryDoor.recordIndex == 8))
             {
                 // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
                 if (modelID == 31000)
