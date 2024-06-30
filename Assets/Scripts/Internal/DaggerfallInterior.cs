@@ -529,16 +529,31 @@ namespace DaggerfallWorkshop
         /// <returns>True if model should be filtered out from this specific interior.</returns>
         bool IsBadInteriorModel(uint modelID)
         {
-            // RESIBM01.RMB (Index 601), BuildingRecord 7
-            if (EntryDoor.blockIndex == 601 && EntryDoor.recordIndex == 7)
+            // GENRBM00.RMB (Index 388), BuildingRecord 2, 3, 4, 5
+            if (EntryDoor.blockIndex == 388 && (EntryDoor.recordIndex == 2 ||
+                                                EntryDoor.recordIndex == 3 ||
+                                                EntryDoor.recordIndex == 4 ||
+                                                EntryDoor.recordIndex == 5))
             {
                 // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
                 if (modelID == 31000)
                     return true;
             }
 
-            // CUSTAA02.RMB (Index 697), BuildingRecord 1
-            if (EntryDoor.blockIndex == 697 && EntryDoor.recordIndex == 1)
+            // RESIBM01.RMB (Index 601), BuildingRecord 6, 7
+            if (EntryDoor.blockIndex == 601 && (EntryDoor.recordIndex == 6 ||
+                                                EntryDoor.recordIndex == 7))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // CUSTAA02.RMB (Index 697), BuildingRecord 0, 1, 2, 3
+            if (EntryDoor.blockIndex == 697 && (EntryDoor.recordIndex == 0 ||
+                                                EntryDoor.recordIndex == 1 ||
+                                                EntryDoor.recordIndex == 2 ||
+                                                EntryDoor.recordIndex == 3))
             {
                 // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
                 if (modelID == 31000)
