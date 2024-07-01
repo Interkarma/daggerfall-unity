@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.Serialization
 {
@@ -274,6 +275,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             PlayerEntity entity = playerEntityBehaviour.Entity as PlayerEntity;
 
             entity.Gender = data.playerEntity.gender;
+            GrammarManager.grammarProcessor.SetHeroGender(entity.Gender);
             entity.BirthRaceTemplate = data.playerEntity.raceTemplate;
             entity.FaceIndex = data.playerEntity.faceIndex;
             entity.Reflexes = data.playerEntity.reflexes;
