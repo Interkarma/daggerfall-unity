@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using DaggerfallConnect.Arena2;
-using GrammarModule;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {

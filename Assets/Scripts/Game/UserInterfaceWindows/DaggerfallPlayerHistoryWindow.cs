@@ -17,7 +17,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Items;
 using System.IO;
 using System.Text.RegularExpressions;
-using GrammarModule;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {

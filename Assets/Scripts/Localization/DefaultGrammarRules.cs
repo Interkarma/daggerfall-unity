@@ -6,7 +6,9 @@
 // Original Author: Daneel53
 // 
 
-namespace GrammarModule.LanguageRules
+using DaggerfallWorkshop.Game.Entity;
+
+namespace DaggerfallWorkshop.Localization.LanguageRules
 {
 	public class DefaultGrammarRules : GrammarRules
 	{
@@ -16,19 +18,19 @@ namespace GrammarModule.LanguageRules
 			return text;
 		}
 
-        public override void SetGenreHero(string Genre)
+		public override void SetHeroGender(Genders Gender)
 		{
 			// Locally store the genre of the hero so that it can be used
             // by the grammar tokens
 
 		}
 
-		public override void SetGenreNPC(string Genre)
+		public override void SetNPCGender(Genders Gender)
 		{
 			// Locally store the genre of a NPC so that it can be used
             // by the grammar tokens
 
 		}
-     }
+	}
 }
 

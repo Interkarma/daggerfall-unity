@@ -26,7 +26,7 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
-using GrammarModule;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game
 {

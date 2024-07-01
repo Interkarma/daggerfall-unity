@@ -12,7 +12,7 @@
 using UnityEngine;
 using System;
 using DaggerfallWorkshop.Game.UserInterface;
-using GrammarModule;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {

@@ -6,15 +6,16 @@
 // Original Author: Daneel53
 // 
 
-using GrammarModule.LanguageRules;
+using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Localization.LanguageRules;
 
-namespace GrammarModule
+namespace DaggerfallWorkshop.Localization
 {
     public abstract class GrammarRules
     {
         public abstract string ProcessGrammar(string text);
-        public abstract void SetGenreHero(string Genre);
-        public abstract void SetGenreNPC(string Genre);
+        public abstract void SetHeroGender(Genders Gender);
+        public abstract void SetNPCGender(Genders Gender);
     }
 
     public static class GrammarManager
