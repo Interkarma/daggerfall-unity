@@ -21,6 +21,7 @@ using DaggerfallConnect.Arena2;
 using FullSerializer;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -292,6 +293,11 @@ namespace DaggerfallWorkshop.Game.Questing
             // Store this person in quest as last Person encountered
             // This will be used for subsequent pronoun macros, etc.
             ParentQuest.LastResourceReferenced = this;
+
+            // Send the person's genre to grammar processor
+            if (ParentQuest.LastResourceReferenced == null)
+                GrammarManager.grammarProcessor.SetNPCGender(Genders.Male);
+            else GrammarManager.grammarProcessor.SetNPCGender(ParentQuest.LastResourceReferenced.Gender);
 
             Place dialogPlace = GetDialogPlace();
             if (dialogPlace != null)
