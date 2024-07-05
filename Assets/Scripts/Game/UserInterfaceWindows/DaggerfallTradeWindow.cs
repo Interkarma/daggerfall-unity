@@ -1116,7 +1116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         msgOffset = 1;
                 }
                 if (WindowMode == WindowModes.Sell || WindowMode == WindowModes.SellMagic)
-                    msgOffset += 3;
+                    msgOffset = 5 - msgOffset;
 
                 DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TradeMessageBaseId + msgOffset);
