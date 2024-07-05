@@ -401,7 +401,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void CastReadySpell()
         {
             // Do nothing if silenced
-            if (SilenceCheck())
+            if (SilenceCheck() && !readySpellDoesNotCostSpellPoints)
                 return;
 
             // Must have a ready spell and a previous cast must not be in progress
