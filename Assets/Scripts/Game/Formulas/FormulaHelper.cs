@@ -1514,7 +1514,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             var raceTemplate = playerEntity.GetLiveRaceTemplate();
             if ((elementType == DFCareer.Elements.Fire && (raceTemplate.ResistanceFlags & DFCareer.EffectFlags.Fire) != 0) ||
                 (elementType == DFCareer.Elements.Frost && (raceTemplate.ResistanceFlags & DFCareer.EffectFlags.Frost) != 0) ||
-                (elementType == DFCareer.Elements.DiseaseOrPoison && (raceTemplate.ResistanceFlags & (DFCareer.EffectFlags.Disease | DFCareer.EffectFlags.Poison)) != 0) ||
+                (elementType == DFCareer.Elements.DiseaseOrPoison && (raceTemplate.ResistanceFlags & effectFlags & (DFCareer.EffectFlags.Disease | DFCareer.EffectFlags.Poison)) != 0) ||
                 (elementType == DFCareer.Elements.Shock && (raceTemplate.ResistanceFlags & DFCareer.EffectFlags.Shock) != 0) ||
                 (elementType == DFCareer.Elements.Magic && (raceTemplate.ResistanceFlags & DFCareer.EffectFlags.Magic) != 0))
                 savingThrow += 30;
