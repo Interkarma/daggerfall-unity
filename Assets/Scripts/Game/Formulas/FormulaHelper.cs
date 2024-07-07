@@ -1509,10 +1509,18 @@ namespace DaggerfallWorkshop.Game.Formulas
                 savingThrow += 25;
 
             savingThrow += biographyMod + modifier;
-            if (elementType == DFCareer.Elements.Frost && target == playerEntity && playerEntity.Race == Races.Nord)
-                savingThrow += 30;
-            else if (elementType == DFCareer.Elements.Magic && target == playerEntity && playerEntity.Race == Races.Breton)
-                savingThrow += 30;
+
+            // Apply player racial resistances
+            if (target == playerEntity)
+            {
+                var raceTemplate = playerEntity.GetLiveRaceTemplate();
+                if ((elementType == DFCareer.Elements.Fire && (raceTemplate.ResistanceFlags & DFCareer.EffectFlags.Fire) != 0) ||
+                    (elementType == DFCareer.Elements.Frost && (raceTemplate.ResistanceFlags & DFCareer.EffectFlags.Frost) != 0) ||
+                    (elementType == DFCareer.Elements.DiseaseOrPoison && (raceTemplate.ResistanceFlags & effectFlags & (DFCareer.EffectFlags.Disease | DFCareer.EffectFlags.Poison)) != 0) ||
+                    (elementType == DFCareer.Elements.Shock && (raceTemplate.ResistanceFlags & DFCareer.EffectFlags.Shock) != 0) ||
+                    (elementType == DFCareer.Elements.Magic && (raceTemplate.ResistanceFlags & DFCareer.EffectFlags.Magic) != 0))
+                    savingThrow += 30;
+            }
 
             // Handle perfect immunity of 100% or greater
             // Otherwise clamping to 5-95 allows a perfectly immune character to sometimes receive incoming payload

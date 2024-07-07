@@ -187,6 +187,8 @@ namespace DaggerfallWorkshop.Game.Entity
 
             PaperDollHeadsMale = "FACE00I0.CIF";
             PaperDollHeadsFemale = "FACE10I0.CIF";
+
+            ResistanceFlags = DFCareer.EffectFlags.Magic;
         }
     }
 
