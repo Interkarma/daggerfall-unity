@@ -471,7 +471,7 @@ namespace DaggerfallWorkshop
             // Find court in current region
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
                 (int)FactionFile.FactionTypes.Courts,
-                (int)FactionFile.SocialGroups.Nobility,
+                -1,
                 (int)FactionFile.GuildGroups.Region,
                 CurrentRegionIndex);
 
