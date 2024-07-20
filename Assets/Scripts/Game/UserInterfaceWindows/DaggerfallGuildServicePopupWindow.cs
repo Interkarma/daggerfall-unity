@@ -563,7 +563,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Set up a pool of available quests.
             QuestListsManager questListsManager = GameManager.Instance.QuestListsManager;
-            questPool = questListsManager.GetGuildQuestPool(guildGroup, status, factionId, guild.GetReputation(playerEntity), guild.Rank);
+            questPool = questListsManager.GetGuildQuestPool(guildGroup, status, factionId, guild.GetReputation(playerEntity), guild.Rank, GameManager.Instance.PlayerEntity.Level);
 
             // Show the quest selection list if that feature has been enabled.
             if (DaggerfallUnity.Settings.GuildQuestListBox)

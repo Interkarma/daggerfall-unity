@@ -239,6 +239,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     // Get the regional vampire clan faction id for affecting reputation on success/failure, and current rep
                     int factionId = (int)vampireClan;
                     int reputation = GameManager.Instance.PlayerEntity.FactionData.GetReputation(factionId);
+                    int rank = GameManager.Instance.PlayerEntity.Level; // questByRankOrLevel flag should make that redundant, but only if FactionData.txt is up-to-date
+                    int level = GameManager.Instance.PlayerEntity.Level;
 
                     // Select a quest at random from appropriate pool
                     Quest offeredQuest = GameManager.Instance.QuestListsManager.GetGuildQuest(
@@ -246,7 +248,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                         MembershipStatus.Member,
                         factionId,
                         reputation,
-                        GameManager.Instance.PlayerEntity.Level);
+                        rank,
+                        level);
                     if (offeredQuest != null)
                         QuestMachine.Instance.StartQuest(offeredQuest);
                 }

@@ -630,6 +630,7 @@ namespace DaggerfallConnect.Arena2
         {
             RulerImmune = 0x10,
             Summoned = 0x40,
+            questByRankOrLevel = 0x100, // Not in classic
         }
 
         #endregion
