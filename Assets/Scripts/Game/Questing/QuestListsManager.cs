@@ -319,16 +319,22 @@ namespace DaggerfallWorkshop.Game.Questing
         /// <summary>
         /// Get a random quest for a guild from appropriate subset.
         /// </summary>
+        public Quest GetGuildQuest(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep, int rank, int level)
+        {
+            List<QuestData> pool = GetGuildQuestPool(guildGroup, status, factionId, rep, rank, level);
+            return SelectQuest(pool, factionId);
+        }
+
+        // For mods backward compatibility
         public Quest GetGuildQuest(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep, int rank)
         {
-            List<QuestData> pool = GetGuildQuestPool(guildGroup, status, factionId, rep, rank);
-            return SelectQuest(pool, factionId);
+            return GetGuildQuest(guildGroup, status, factionId, rep, rank, GameManager.Instance.PlayerEntity.Level);
         }
 
         /// <summary>
         /// Gets a pool of elligible quests for a guild to offer.
         /// </summary>
-        public List<QuestData> GetGuildQuestPool(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep, int rank)
+        public List<QuestData> GetGuildQuestPool(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep, int rank, int level)
         {
 #if UNITY_EDITOR    // Reload every time when in editor
             LoadQuestLists();
@@ -344,11 +350,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Modifications for Temple dual membership status
                 MembershipStatus tplMemb = (guildGroup == FactionFile.GuildGroups.HolyOrder && status != MembershipStatus.Nonmember) ? MembershipStatus.Member : status;
 
+                int rankOrLevel = GameManager.Instance.PlayerEntity.FactionData.GetFlag(factionId, FactionFile.Flags.questByRankOrLevel) ? Math.Max(rank, level) : rank;
+
                 List<QuestData> pool = new List<QuestData>();
                 foreach (QuestData quest in guildQuests)
                 {
                     if ((status == (MembershipStatus)quest.membership || tplMemb == (MembershipStatus)quest.membership) &&
-                        ((status == MembershipStatus.Nonmember && quest.minReq == 0) || (quest.minReq < 10 && quest.minReq <= rank) || (quest.minReq >= 10 && quest.minReq <= rep)))
+                        ((status == MembershipStatus.Nonmember && quest.minReq == 0) || (quest.minReq < 10 && quest.minReq <= rankOrLevel) || (quest.minReq >= 10 && quest.minReq <= rep)))
                     {
                         if ((!quest.adult || DaggerfallUnity.Settings.PlayerNudity) && !(quest.oneTime && oneTimeQuestsAccepted.Contains(quest.name)))
                             pool.Add(quest);
@@ -357,6 +365,12 @@ namespace DaggerfallWorkshop.Game.Questing
                 return pool;
             }
             return null;
+        }
+
+        // For mods backward compatiblity
+        public List<QuestData> GetGuildQuestPool(FactionFile.GuildGroups guildGroup, MembershipStatus status, int factionId, int rep, int rank)
+        {
+            return GetGuildQuestPool(guildGroup, status, factionId, rep, GameManager.Instance.PlayerEntity.Level);
         }
 
         public Quest GetSocialQuest(FactionFile.SocialGroups socialGroup, int factionId, Genders gender, int rep, int level)

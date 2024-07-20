@@ -649,7 +649,7 @@ maxf: 90
 		summon: -1
 		region: -1
 		power: 25
-		flags: 0
+		flags: 256
 		face: -1
 		race: -1
 		flat: 183 3
@@ -786,7 +786,7 @@ maxf: 90
 		summon: -1
 		region: -1
 		power: 20
-		flags: 0
+		flags: 256
 		face: -1
 		race: -1
 		flat: 183 2
@@ -1677,7 +1677,7 @@ rep: 0
 summon: -1
 region: -1
 power: 60
-flags: 0
+flags: 256
 face: -1
 race: -1
 flat: 177 0
@@ -2608,6 +2608,7 @@ vam: 152
 	summon: -1
 	region: 6
 	power: 25
+	flags: 256
 	face: -1
 	race: 3
 	flat: 183 3
@@ -2848,7 +2849,7 @@ vam: 150
 		summon: -1
 		region: 18
 		power: 20
-		flags: 0
+		flags: 256
 		ally: 371
 		face: -1
 		race: 3
@@ -3038,7 +3039,7 @@ vam: 150
 	summon: -1
 	region: 19
 	power: 15
-	flags: 0
+	flags: 256
 	face: -1
 	race: 3
 	flat: 183 3
@@ -3277,7 +3278,7 @@ vam: 151
 		summon: -1
 		region: 22
 		power: 20
-		flags: 0
+		flags: 256
 		ally: 400
 		face: -1
 		race: 3
@@ -3415,7 +3416,7 @@ vam: 154
 		summon: -1
 		region: 23
 		power: 25
-		flags: 0
+		flags: 256
 		face: -1
 		race: 2
 		flat: 183 2
@@ -3642,7 +3643,7 @@ vam: 154
 		summon: -1
 		region: 24
 		power: 20
-		flags: 0
+		flags: 256
 		ally: 390
 		enemy: 357
 		face: -1
@@ -4348,7 +4349,7 @@ vam: 158
 	summon: -1
 	region: 44
 	power: 20
-	flags: 0
+	flags: 256
 	face: -1
 	race: 2
 	flat: 183 3
@@ -4790,7 +4791,7 @@ vam: 155
 	summon: -1
 	region: 52
 	power: 17
-	flags: 0
+	flags: 256
 	face: -1
 	race: 2
 	flat: 183 3
@@ -5019,7 +5020,7 @@ vam: 157
 	summon: -1
 	region: 56
 	power: 25
-	flags: 0
+	flags: 256
 	face: -1
 	race: 2
 	flat: 183 2
