@@ -5724,7 +5724,7 @@ rep: 0
 summon: 4
 region: 19
 power: 25
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 184 8
@@ -5740,7 +5740,7 @@ rep: 0
 summon: 17
 region: 56
 power: 25
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 179 2
@@ -5756,7 +5756,7 @@ rep: 0
 summon: 17
 region: 2
 power: 25
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 179 4
@@ -5772,7 +5772,7 @@ rep: 0
 summon: 17
 region: 34
 power: 25
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 184 8
@@ -5788,7 +5788,7 @@ rep: 0
 summon: 17
 region: 18
 power: 15
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 179 2
@@ -5804,7 +5804,7 @@ rep: 0
 summon: 17
 region: 17
 power: 25
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 179 4
@@ -5820,7 +5820,7 @@ rep: 0
 summon: 17
 region: 41
 power: 30
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 184 8
@@ -5836,7 +5836,7 @@ rep: 0
 summon: 17
 region: 49
 power: 20
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 179 2
@@ -5852,7 +5852,7 @@ rep: 0
 summon: 17
 region: 2
 power: 25
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 179 4
@@ -5868,7 +5868,7 @@ rep: 0
 summon: 17
 region: 18
 power: 20
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 184 8
@@ -5884,7 +5884,7 @@ rep: 0
 summon: 17
 region: 33
 power: 25
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 179 2
@@ -5900,7 +5900,7 @@ rep: 0
 summon: 17
 region: 12
 power: 20
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 179 4
@@ -5916,7 +5916,7 @@ rep: 0
 summon: 17
 region: 52
 power: 15
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 184 8
@@ -5932,7 +5932,7 @@ rep: 0
 summon: 17
 region: 35
 power: 10
-flags: 1
+flags: 257
 face: -1
 race: -1
 flat: 179 2
