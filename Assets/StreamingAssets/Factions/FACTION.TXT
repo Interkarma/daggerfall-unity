@@ -2055,7 +2055,7 @@ rep: 0
 summon: -1
 region: 63
 power: 50
-flags: 1
+flags: 257
 ally: 152
 enemy: 62
 face: -1
@@ -2074,7 +2074,7 @@ rep: 0
 summon: -1
 region: 64
 power: 50
-flags: 1
+flags: 257
 enemy: 154
 face: -1
 race: 18
@@ -2092,7 +2092,7 @@ rep: 0
 summon: -1
 region: 65
 power: 50
-flags: 1
+flags: 257
 ally: 150
 enemy: 157
 face: -1
@@ -2111,7 +2111,7 @@ rep: 0
 summon: -1
 region: 66
 power: 50
-flags: 1
+flags: 257
 enemy: 156
 face: -1
 race: 18
@@ -2129,7 +2129,7 @@ rep: 0
 summon: -1
 region: 67
 power: 50
-flags: 1
+flags: 257
 enemy: 158
 face: -1
 race: 18
@@ -2147,7 +2147,7 @@ rep: 0
 summon: -1
 region: 68
 power: 50
-flags: 1
+flags: 257
 enemy: 157
 face: -1
 race: 18
@@ -2165,7 +2165,7 @@ rep: 0
 summon: -1
 region: 69
 power: 50
-flags: 1
+flags: 257
 enemy: 158
 enemy: 153
 face: -1
@@ -2184,7 +2184,7 @@ rep: 0
 summon: -1
 region: 70
 power: 50
-flags: 1
+flags: 257
 enemy: 152
 face: -1
 race: 18
@@ -2202,7 +2202,7 @@ rep: 0
 summon: -1
 region: 71
 power: 50
-flags: 1
+flags: 257
 enemy: 154
 enemy: 150
 face: -1
