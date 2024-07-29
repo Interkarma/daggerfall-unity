@@ -122,7 +122,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     case Game.Entity.Genders.Male:
                         return TextManager.Instance.GetLocalizedText("pronounHis");
                     case Game.Entity.Genders.Female:
-                        return TextManager.Instance.GetLocalizedText("pronounHer");
+                        return TextManager.Instance.GetLocalizedText("pronounHer2");
                 }
             }
 
@@ -136,7 +136,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     default:
                     case Game.Entity.Genders.Male:
-                        return TextManager.Instance.GetLocalizedText("pronounHis");
+                        return TextManager.Instance.GetLocalizedText("pronounHis2");
                     case Game.Entity.Genders.Female:
                         return TextManager.Instance.GetLocalizedText("pronounHers");
                 }

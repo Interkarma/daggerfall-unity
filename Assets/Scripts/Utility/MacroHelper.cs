@@ -867,11 +867,11 @@ namespace DaggerfallWorkshop.Utility
         }
         private static string PlayerPronoun3(IMacroContextProvider mcp)
         {   // %pg3
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHis");
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer2") : TextManager.Instance.GetLocalizedText("pronounHis");
         }
         private static string PlayerPronoun4(IMacroContextProvider mcp)
         {   // %pg4
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHers") : TextManager.Instance.GetLocalizedText("pronounHis");
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHers") : TextManager.Instance.GetLocalizedText("pronounHis2");
         }
 
         private static string Honorific(IMacroContextProvider mcp)
