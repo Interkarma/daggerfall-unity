@@ -9,6 +9,7 @@
 // Notes:
 //
 
+using System;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
@@ -24,6 +25,7 @@ namespace DaggerfallWorkshop.Game
         protected int previousHealth;
         protected int previousFatigue;
         protected int previousMagicka;
+        public event EventHandler HealthChanged, FatigueChanged, MagickaChanged;
         public float HealthLostPercent { get; private set; }
         public float FatigueLostPercent { get; private set; }
         public float MagickaLostPercent { get; private set; }
@@ -96,6 +98,23 @@ namespace DaggerfallWorkshop.Game
 
             MagickaLost = previousMagicka - currentMagicka;
             MagickaLostPercent = (float)MagickaLost / maxMagicka;
+
+            // Invoking these events after values are set to ensure
+            // subscribers see the changes in a synchronized manner.
+            if (HealthLost != 0 && HealthChanged != null)
+            {
+                HealthChanged(this, EventArgs.Empty);
+            }
+
+            if (FatigueLost != 0 && FatigueChanged != null)
+            {
+                FatigueChanged(this , EventArgs.Empty);
+            }
+
+            if (MagickaLost != 0 && MagickaChanged != null)
+            {
+                MagickaChanged(this, EventArgs.Empty);
+            }
 
             // reset previous health to detect next health loss
             previousHealth = currentHealth;

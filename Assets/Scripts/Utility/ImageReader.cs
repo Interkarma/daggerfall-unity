@@ -292,7 +292,7 @@ namespace DaggerfallWorkshop.Utility
                     int archive = AssetInjection.TextureReplacement.FileNameToArchive(filename);
                     if (createTexture && AssetInjection.TextureReplacement.TryImportTexture(archive, record, frame, out imageData.texture))
                         createTexture = false;
-                    if (createAllFrameTextures && frameCount > 1 && AssetInjection.TextureReplacement.TryImportTexture(archive, record, out imageData.animatedTextures))
+                    if (createAllFrameTextures && AssetInjection.TextureReplacement.TryImportTexture(archive, record, out imageData.animatedTextures))
                         createAllFrameTextures = false;
 
                     break;

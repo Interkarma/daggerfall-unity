@@ -13,6 +13,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Items;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -67,6 +68,9 @@ namespace DaggerfallWorkshop.Game
 
         public Color Tint { get; set; } = Color.white;
 
+        public void AddHorseItemIndex(int index) { horseItemIndexes.Add(index); }
+        List<int> horseItemIndexes = new List<int>() { (int)Transportation.Horse };
+
         #endregion
 
         #region Public Methods
@@ -82,7 +86,6 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// True when player owns a cart
         /// </summary>
-        /// <returns></returns>
         public bool HasCart()
         {
             ItemCollection inventory = GameManager.Instance.PlayerEntity.Items;
@@ -93,12 +96,15 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// True when player owns a horse
         /// </summary>
-        /// <returns></returns>
         public bool HasHorse()
         {
             ItemCollection inventory = GameManager.Instance.PlayerEntity.Items;
 
-            return inventory.Contains(ItemGroups.Transportation, (int)Transportation.Horse);
+            foreach (int horseItemIndex in horseItemIndexes)
+                if (inventory.Contains(ItemGroups.Transportation, horseItemIndex))
+                    return true;
+
+            return false;
         }
 
         /// <summary>

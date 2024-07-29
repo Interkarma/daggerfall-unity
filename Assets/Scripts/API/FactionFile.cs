@@ -593,6 +593,12 @@ namespace DaggerfallConnect.Arena2
             Witches = 22,
             Vampires = 23,
             Orsinium = 24,
+            GGroup25 = 25,
+            GGroup26 = 26,
+            GGroup27 = 27,
+            GGroup28 = 28,
+            GGroup29 = 29,
+            GGroup30 = 30,
         }
 
         /// <summary>

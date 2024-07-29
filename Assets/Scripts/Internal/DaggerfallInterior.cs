@@ -444,9 +444,11 @@ namespace DaggerfallWorkshop
                 Vector3 modelScale = RMBLayout.GetModelScaleVector(obj);
                 Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), modelScale);
 
-                // Does this model have doors?
+                // Does this Daggerfall model have any static doors?
+                bool disableClassicDoors = false;
+                StaticDoor[] staticDoors = null;
                 if (modelData.Doors != null)
-                    doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
+                    staticDoors = GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix);
 
                 // Inject custom GameObject if available
                 GameObject modelGO = MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, node.transform, modelMatrix);
@@ -471,6 +473,17 @@ namespace DaggerfallWorkshop
                         dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
                     }
                 }
+                else
+                {
+                    // For a custom model initialise any custom doors
+                    List<StaticDoor> customStaticDoors = CustomDoor.InitDoorsInterior(modelGO, staticDoors, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix, out disableClassicDoors);
+                    doors.AddRange(customStaticDoors);
+                }
+
+                // Add any DF model static doors unless suppressed
+                if (modelData.Doors != null && !disableClassicDoors)
+                    doors.AddRange(staticDoors);
+
 
                 if ((modelGO != null) && (isAutomapRun))
                     modelGO.AddComponent<AutomapModel>();
