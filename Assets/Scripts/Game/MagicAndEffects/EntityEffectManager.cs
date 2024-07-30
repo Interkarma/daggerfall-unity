@@ -2131,6 +2131,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 lastSpell = readySpell;
                 lastReadySpellCastingCost = readySpellCastingCost;
             }
+            else
+            {
+                lastReadySpellCastingCost = 0;
+            }
             readySpell = null;
             readySpellCastingCost = 0;
             instantCast = false;
