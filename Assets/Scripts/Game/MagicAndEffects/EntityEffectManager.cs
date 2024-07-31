@@ -2126,14 +2126,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Clear ready spell and reset casting - do not update last spell if casting from item
             RaiseOnCastReadySpell(readySpell);
-            if (!readySpellDoesNotCostSpellPoints)
+            if (readySpellDoesNotCostSpellPoints)
             {
-                lastSpell = readySpell;
-                lastReadySpellCastingCost = readySpellCastingCost;
+                lastReadySpellCastingCost = 0;
             }
             else
             {
-                lastReadySpellCastingCost = 0;
+                lastSpell = readySpell;
+                lastReadySpellCastingCost = readySpellCastingCost;
             }
             readySpell = null;
             readySpellCastingCost = 0;
