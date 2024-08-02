@@ -923,24 +923,30 @@ namespace DaggerfallWorkshop.Game
             return seen;
         }
 
+        readonly int defaultLayerOnlyMask = 1 << LayerMask.NameToLayer("Default");
+
         bool CanHearTarget()
         {
             float hearingScale = 1f;
 
-            // If something is between enemy and target then return false (was reduce hearingScale by half), to minimize
-            // enemies walking against walls.
-            // Hearing is not impeded by doors or other non-static objects
-            RaycastHit hit;
-            Ray ray = new Ray(transform.position, directionToTarget);
-            if (Physics.Raycast(ray, out hit))
+            // TODO: Modify this by how much noise the target is making
+            if (distanceToTarget < (HearingRadius * hearingScale) + mobile.Enemy.HearingModifier)
             {
-                //DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
-                if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
-                    return false;
+                // If something is between enemy and target then return false (was reduce hearingScale by half), to minimize
+                // enemies walking against walls.
+                // Hearing is not impeded by doors or other non-static objects
+                Ray ray = new Ray(transform.position, directionToTarget);
+                RaycastHit[] hits = Physics.RaycastAll(ray, distanceToTarget); // , defaultLayerOnlyMask 
+                foreach (RaycastHit hit in hits)
+                {
+                    //DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
+                    if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
+                        return false;
+                }
+                return true;
             }
 
-            // TODO: Modify this by how much noise the target is making
-            return distanceToTarget < (HearingRadius * hearingScale) + mobile.Enemy.HearingModifier;
+            return false;
         }
 
         #endregion
