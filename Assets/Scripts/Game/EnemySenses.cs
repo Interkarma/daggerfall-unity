@@ -923,7 +923,8 @@ namespace DaggerfallWorkshop.Game
             return seen;
         }
 
-        int defaultLayerOnlyMask = 0;
+        private static int defaultLayerOnlyMask = 0;
+        private static RaycastHit[] hitsBuffer = new RaycastHit[4];
 
         bool CanHearTarget()
         {
@@ -939,11 +940,18 @@ namespace DaggerfallWorkshop.Game
                 // enemies walking against walls.
                 // Hearing is not impeded by doors or other non-static objects
                 Ray ray = new Ray(transform.position, directionToTarget);
-                RaycastHit[] hits = Physics.RaycastAll(ray, distanceToTarget, defaultLayerOnlyMask);
-                foreach (RaycastHit hit in hits)
+                int nhits;
+                while (true) {
+                    nhits = Physics.RaycastNonAlloc(ray, hitsBuffer, distanceToTarget, defaultLayerOnlyMask);
+                    if (nhits < hitsBuffer.Length)
+                        break;
+                    // hitsBuffer may have overflowed, retry with a larger buffer
+                    hitsBuffer = new RaycastHit[nhits + 1];
+                };
+                for (int i = 0; i < nhits; i++)
                 {
                     //DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
-                    if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
+                    if (GameObjectHelper.IsStaticGeometry(hitsBuffer[i].transform.gameObject))
                         return false;
                 }
                 return true;
