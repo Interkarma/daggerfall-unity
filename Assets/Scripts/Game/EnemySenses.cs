@@ -923,11 +923,14 @@ namespace DaggerfallWorkshop.Game
             return seen;
         }
 
-        readonly int defaultLayerOnlyMask = 1 << LayerMask.NameToLayer("Default");
+        int defaultLayerOnlyMask = 0;
 
         bool CanHearTarget()
         {
             float hearingScale = 1f;
+
+            if (defaultLayerOnlyMask == 0)
+                defaultLayerOnlyMask = 1 << LayerMask.NameToLayer("Default");
 
             // TODO: Modify this by how much noise the target is making
             if (distanceToTarget < (HearingRadius * hearingScale) + mobile.Enemy.HearingModifier)
@@ -936,7 +939,7 @@ namespace DaggerfallWorkshop.Game
                 // enemies walking against walls.
                 // Hearing is not impeded by doors or other non-static objects
                 Ray ray = new Ray(transform.position, directionToTarget);
-                RaycastHit[] hits = Physics.RaycastAll(ray, distanceToTarget); // , defaultLayerOnlyMask 
+                RaycastHit[] hits = Physics.RaycastAll(ray, distanceToTarget, defaultLayerOnlyMask);
                 foreach (RaycastHit hit in hits)
                 {
                     //DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
