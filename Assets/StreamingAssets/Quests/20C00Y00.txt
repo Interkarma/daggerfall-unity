@@ -137,7 +137,7 @@ Person _dummy_ face 1 group Spellcaster remote
 
 Place _mondung_ remote dungeon9
 Place _tavern_ remote tavern
-Place _hideout_ remote dungeon11
+Place _hideout_ remote dungeon11,dungeon2
 
 Clock _1stparton_ 00:00 0 flag 1 range 0 5
 Clock _S.08_ 00:01 00:04

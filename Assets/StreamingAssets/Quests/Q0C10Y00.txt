@@ -140,7 +140,7 @@ Item _reward3_ jade
 
 Person _qgiver_ group Questor anyInfo 1011
 
-Place _dungeon1_ remote dungeon6
+Place _dungeon1_ remote dungeon6,dungeon5
 Place _dungeon2_ remote dungeon12
 Place _dungeon3_ remote dungeon10
 

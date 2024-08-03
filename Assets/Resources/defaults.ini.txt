@@ -170,7 +170,8 @@ TerrainDistance=3
 TerrainHeightmapPixelError=5
 SmallerDungeons=False
 CustomBooksImport=True
-AssetCacheThreshold = 25
+AssetCacheThreshold=25
+DungeonsPoolSizeTarget=3
 
 [Enhancements]
 LypyL_GameConsole=True

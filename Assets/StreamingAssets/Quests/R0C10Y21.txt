@@ -120,7 +120,7 @@ Person _questgiver_ face 112 group Questor
 Person _qgfriend_ group Noble remote anyInfo 1011
 Person _dummyorc_ faction Orsinium remote
 
-Place _mondung_ remote dungeon4
+Place _mondung_ remote dungeon4,dungeon7
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 

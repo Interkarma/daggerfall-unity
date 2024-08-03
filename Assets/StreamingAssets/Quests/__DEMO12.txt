@@ -141,7 +141,7 @@ Item _gold_ gold
 
 Person _qgiver_ group Questor male
 
-Place _mondung_ remote dungeon0
+Place _mondung_ remote dungeon0,dungeon8
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 

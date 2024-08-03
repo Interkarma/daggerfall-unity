@@ -338,7 +338,7 @@ Person _enemy_ face 1 group Resident2 remote
 Person _traitor_ face 1 named Lord_K'avar
 
 Place _L.00_ remote dungeon
-Place _stronghold_ remote dungeon2
+Place _stronghold_ remote dungeon2,dungeon15
 Place _tavern_ local tavern
 Place _targethouse_ local house2
 Place _palace_ remote palace
