@@ -1265,7 +1265,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 textLabelQuestion.textLabel.MaxWidth = (int)(textLabelQuestion.textLabel.MaxWidth * textBlockSizeModernConversationStyle);
                 textLabelQuestion.textLabel.BackgroundColor = textcolorQuestionBackgroundModernConversationStyle;
             }
-           listboxConversation.AddItem(GrammarManager.grammarProcessor.ProcessGrammar(answer), out textLabelAnswer);
+            listboxConversation.AddItem(GrammarManager.grammarProcessor.ProcessGrammar(answer), out textLabelAnswer);
             textLabelAnswer.selectedTextColor = textcolorHighlighted;            
             textLabelAnswer.textLabel.HorizontalAlignment = HorizontalAlignment.Left;
             textLabelAnswer.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;

@@ -25,6 +25,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.Utility
 {
@@ -141,6 +142,9 @@ namespace DaggerfallWorkshop.Game.Utility
             // Disable parent GameObjects - the appropriate parent GameObject will be re-enabled by following startup process
             // This mainly just prevents all SongPlayers from starting at once
             GameManager.Instance.PlayerEnterExit.DisableAllParents();
+
+            // Provide hero's gender to the grammar processor
+            GrammarManager.grammarProcessor.SetHeroGenderGetter(() => GameManager.Instance.PlayerEntity.Gender);
 
             switch (StartMethod)
             {

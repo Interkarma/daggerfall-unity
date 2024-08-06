@@ -7,6 +7,7 @@
 // 
 
 using DaggerfallWorkshop.Game.Entity;
+using System;
 
 namespace DaggerfallWorkshop.Localization.LanguageRules
 {
@@ -17,20 +18,18 @@ namespace DaggerfallWorkshop.Localization.LanguageRules
 			// Process the grammar tokens
 			return text;
 		}
-
-		public override void SetHeroGender(Genders Gender)
-		{
-			// Locally store the genre of the hero so that it can be used
+        public override void SetHeroGenderGetter(Func<Genders> HeroGenderGetter)
+        {
+			// Provide access to the genre of the hero so that it can be used
             // by the grammar tokens
 
 		}
-
-		public override void SetNPCGender(Genders Gender)
-		{
-			// Locally store the genre of a NPC so that it can be used
+		public override void SetNPCGenderGetter(Func<Genders> NPCGenderGetter)
+        {
+            // Provide access to the genre of a NPC so that it can be used
             // by the grammar tokens
 
-		}
-	}
+        }
+    }
 }
 

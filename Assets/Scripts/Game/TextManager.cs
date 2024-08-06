@@ -357,11 +357,9 @@ namespace DaggerfallWorkshop.Game
         public string GetLocalizedText(string key, TextCollections collection = TextCollections.Internal, bool exception = false)
         {
             string localizedText;
-            string processedLocalizedText;
             if (TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedText))
             {
-                processedLocalizedText = GrammarManager.grammarProcessor.ProcessGrammar(localizedText);
-                return processedLocalizedText;
+                return GrammarManager.grammarProcessor.ProcessGrammar(localizedText);
             }
             else if (TryGetLocalizedText(GetDefaultCollectionName(collection), key, out localizedText))
                 return localizedText;

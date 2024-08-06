@@ -230,7 +230,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (careerAllianceGroup.Success)
                         careerAllianceName = careerAllianceGroup.Value;
 
-                    // Gender
+                    // GenderNums
                     Group genderGroup = option.Groups["gender"];
                     if (genderGroup.Success)
                         genderName = genderGroup.Value;
@@ -294,10 +294,8 @@ namespace DaggerfallWorkshop.Game.Questing
             // This will be used for subsequent pronoun macros, etc.
             ParentQuest.LastResourceReferenced = this;
 
-            // Send the person's genre to grammar processor
-            if (ParentQuest.LastResourceReferenced == null)
-                GrammarManager.grammarProcessor.SetNPCGender(Genders.Male);
-            else GrammarManager.grammarProcessor.SetNPCGender(ParentQuest.LastResourceReferenced.Gender);
+            // Send the person's gender to the grammar processor
+            GrammarManager.grammarProcessor.SetNPCGenderGetter(() => ParentQuest.LastResourceReferenced?.Gender ?? Genders.Male);
 
             Place dialogPlace = GetDialogPlace();
             if (dialogPlace != null)

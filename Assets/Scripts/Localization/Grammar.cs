@@ -8,19 +8,20 @@
 
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Localization.LanguageRules;
+using System;
 
 namespace DaggerfallWorkshop.Localization
 {
     public abstract class GrammarRules
     {
         public abstract string ProcessGrammar(string text);
-        public abstract void SetHeroGender(Genders Gender);
-        public abstract void SetNPCGender(Genders Gender);
+        public abstract void SetHeroGenderGetter(Func<Genders> HeroGenderGetter);
+        public abstract void SetNPCGenderGetter(Func<Genders> NPCGenderGetter);
     }
 
     public static class GrammarManager
     {
-        public static GrammarRules grammarProcessor = (GrammarRules) new DefaultGrammarRules();
+        public static GrammarRules grammarProcessor = new DefaultGrammarRules();
     }
 }
 
