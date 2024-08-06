@@ -1112,7 +1112,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (WindowMode == WindowModes.Sell || WindowMode == WindowModes.SellMagic)
                 msgOffset += 3;
 
-            DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
             TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(TradeMessageBaseId + msgOffset);
             if (WindowMode != WindowModes.Sell && WindowMode != WindowModes.SellMagic && PlayerEntity.GetGoldAmount() < tradePrice)
             {
@@ -1121,14 +1120,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 combineTokens.AddRange(tokens);
                 combineTokens.Add(new TextFile.Token(TextFile.Formatting.NewLineOffset, null));
                 combineTokens.AddRange(notEnoughGoldTokens);
-                messageBox.SetTextTokens(combineTokens.ToArray(), this);
-                messageBox.ClickAnywhereToClose = true;
-                messageBox.Show();
+                DaggerfallUI.MessageBox(combineTokens.ToArray(), this);
             }
             else
             {
+                DaggerfallMessageBox messageBox = new DaggerfallMessageBox(uiManager, this);
                 messageBox.SetTextTokens(tokens, this);
-                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+                messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes, true);
                 messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                 messageBox.OnButtonClick += ConfirmTrade_OnButtonClick;
                 uiManager.PushWindow(messageBox);
