@@ -5223,5 +5223,13 @@ MonoBehaviour:
     m_Localized: 'Weight: %kg kilograms'
     m_Metadata:
       m_Items: []
+  - m_Id: 508799883300020224
+    m_Localized: her
+    m_Metadata:
+      m_Items: []
+  - m_Id: 508800047171477504
+    m_Localized: his
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
