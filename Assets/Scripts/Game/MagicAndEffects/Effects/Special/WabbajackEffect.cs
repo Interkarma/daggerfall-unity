@@ -69,16 +69,17 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 if (enemy == null || enemy.WabbajackActive)
                     return null;
 
-                // Get new enemy career and transform
-                MobileTypes enemyType = careerIDs[Random.Range(0, careerIDs.Length)];
-                if ((int)enemyType == enemy.CareerIndex)
-                    enemyType = (MobileTypes)(((int)enemyType + 1) % careerIDs.Length);
-                Transform parentTransform = targetEntity.gameObject.transform.parent;
-
                 // Do not disable enemy if in use by the quest system
                 QuestResourceBehaviour questResourceBehaviour = targetEntity.GetComponent<QuestResourceBehaviour>();
                 if (questResourceBehaviour && !questResourceBehaviour.IsFoeDead)
                     return null;
+
+                // Get new enemy career and transform
+                MobileTypes enemyType;
+                do {
+                    enemyType = careerIDs[Random.Range(0, careerIDs.Length)];
+                } while ((int)enemyType == enemy.CareerIndex);
+                Transform parentTransform = targetEntity.gameObject.transform.parent;
 
                 string[] enemyNames = TextManager.Instance.GetLocalizedTextList("enemyNames");
                 if (enemyNames == null)
@@ -87,6 +88,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 // Switch entity
                 targetEntity.gameObject.SetActive(false);
                 GameObject gameObject = GameObjectHelper.CreateEnemy(enemyNames[(int)enemyType], enemyType, targetEntity.transform.localPosition, MobileGender.Unspecified, parentTransform);
+                gameObject.transform.localRotation = targetEntity.gameObject.transform.localRotation;
                 DaggerfallEntityBehaviour newEnemyBehaviour = gameObject.GetComponent<DaggerfallEntityBehaviour>();
                 EnemyEntity newEnemy = (EnemyEntity)newEnemyBehaviour.Entity;
                 newEnemy.WabbajackActive = true;
