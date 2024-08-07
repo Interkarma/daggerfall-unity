@@ -24,6 +24,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -638,7 +639,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 listboxConversation.ClearItems();
 
                 ListBox.ListItem textLabelNPCGreeting;
-                listboxConversation.AddItem(TalkManager.Instance.NPCGreetingText, out textLabelNPCGreeting);
+                listboxConversation.AddItem(GrammarManager.grammarProcessor.ProcessGrammar(TalkManager.Instance.NPCGreetingText), out textLabelNPCGreeting);
                 textLabelNPCGreeting.selectedTextColor = textcolorHighlighted;
                 textLabelNPCGreeting.textLabel.HorizontalAlignment = HorizontalAlignment.Left;
                 textLabelNPCGreeting.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;
@@ -869,7 +870,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     item.caption = TextManager.Instance.GetLocalizedText("resolvingError");
                 }
-                listboxTopic.AddItem(item.caption, out listboxItem);
+                listboxTopic.AddItem(GrammarManager.grammarProcessor.ProcessGrammar(item.caption), out listboxItem);
                 if (item.type == TalkManager.ListItemType.NavigationBack)
                 {
                     listboxItem.textColor = textcolorCaptionGotoParentList;
@@ -1096,7 +1097,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             TalkManager.ListItem listItem = new TalkManager.ListItem();
             listItem.questionType = TalkManager.QuestionType.Work;
             currentQuestion = TalkManager.Instance.GetQuestionText(listItem, selectedTalkTone);
-            textlabelPlayerSays.Text = currentQuestion;
+            textlabelPlayerSays.Text = GrammarManager.grammarProcessor.ProcessGrammar(currentQuestion);
         }
 
         /// <summary>
@@ -1244,7 +1245,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
                 currentQuestion = "";
 
-            textlabelPlayerSays.Text = currentQuestion;
+            textlabelPlayerSays.Text = GrammarManager.grammarProcessor.ProcessGrammar(currentQuestion);
         }
 
         protected virtual void SetQuestionAnswerPairInConversationListbox(string question, string answer)
@@ -1252,7 +1253,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
             ListBox.ListItem textLabelQuestion;
             ListBox.ListItem textLabelAnswer;
-            listboxConversation.AddItem(question, out textLabelQuestion);
+            listboxConversation.AddItem(GrammarManager.grammarProcessor.ProcessGrammar(question), out textLabelQuestion);
             textLabelQuestion.textColor = DaggerfallUI.DaggerfallQuestionTextColor;
             textLabelQuestion.selectedTextColor = textcolorHighlighted; // textcolorQuestionHighlighted            
             textLabelQuestion.textLabel.HorizontalAlignment = HorizontalAlignment.Right;
@@ -1264,7 +1265,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 textLabelQuestion.textLabel.MaxWidth = (int)(textLabelQuestion.textLabel.MaxWidth * textBlockSizeModernConversationStyle);
                 textLabelQuestion.textLabel.BackgroundColor = textcolorQuestionBackgroundModernConversationStyle;
             }
-            listboxConversation.AddItem(answer, out textLabelAnswer);
+            listboxConversation.AddItem(GrammarManager.grammarProcessor.ProcessGrammar(answer), out textLabelAnswer);
             textLabelAnswer.selectedTextColor = textcolorHighlighted;            
             textLabelAnswer.textLabel.HorizontalAlignment = HorizontalAlignment.Left;
             textLabelAnswer.textLabel.HorizontalTextAlignment = TextLabel.HorizontalTextAlignmentSetting.Left;
