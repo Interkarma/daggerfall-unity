@@ -107,6 +107,10 @@ namespace DaggerfallWorkshop.Game
 
         public Color Tint { get; set; } = Color.white;
 
+        public Vector2 Position { get; set; } = Vector2.zero;   //Moves the sprite in screen distance
+        public Vector2 Scale { get; set; } = Vector2.one;
+        public Vector2 Offset { get; set; } = Vector2.zero;     //Moves the sprite relative to its own dimensions ("Offset.x = 0.5f" will move "sprite.width * 0.5f"). Applied after Scale.
+
         #endregion
 
         void Start()
@@ -175,8 +179,42 @@ namespace DaggerfallWorkshop.Game
             {
                 // Draw weapon texture behind other HUD elements
                 Texture2D tex = curCustomTexture ? curCustomTexture : weaponAtlas.AtlasTexture;
-                DaggerfallUI.DrawTextureWithTexCoords(weaponPosition, tex, curAnimRect, true, Tint);
+                DaggerfallUI.DrawTextureWithTexCoords(GetWeaponRect(), tex, curAnimRect, true, Tint);
             }
+        }
+
+        private void LateUpdate()
+        {
+            if (Position != Vector2.zero)
+                Position = Vector2.zero;
+            if (Scale != Vector2.one)
+                Scale = Vector2.one;
+            if (Offset != Vector2.zero)
+                Offset = Vector2.zero;
+        }
+
+        //Combines the base WeaponPosition Rect with Position, Scale and Offset
+        public Rect GetWeaponRect()
+        {
+            if (Position != Vector2.zero || Scale != Vector2.one || Offset != Vector2.zero)
+            {
+                Rect weaponPositionOffset = weaponPosition;
+
+                //Adds the Position to the Rect's position
+                weaponPositionOffset.x += Position.x;      
+                weaponPositionOffset.y += Position.y;
+
+                weaponPositionOffset.width *= Scale.x;
+                weaponPositionOffset.height *= Scale.y;
+
+                //Adds the Offset to the Rect's position
+                weaponPositionOffset.x += weaponPositionOffset.width * Offset.x;
+                weaponPositionOffset.y += weaponPositionOffset.height * Offset.y;
+
+                return weaponPositionOffset;
+
+            } else
+                return weaponPosition;
         }
 
         public void OnAttackDirection(WeaponManager.MouseDirections direction)
