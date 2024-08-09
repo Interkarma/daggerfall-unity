@@ -131,7 +131,7 @@ Item _artifact_ artifact Sanguine_Rose anyInfo 1014
 Person _questgiver_ face 112 named Sanguine anyInfo 1011
 Person _contact_ face 232 faction The_Cabal remote anyInfo 1012
 
-Place _mondung_ remote dungeon4
+Place _mondung_ remote dungeon4,dungeon7
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 

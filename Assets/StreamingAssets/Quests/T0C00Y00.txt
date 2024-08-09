@@ -140,7 +140,7 @@ Item _artifact_ artifact Azuras_Star anyInfo 1014
 Person _questgiver_ face 112 named Azura anyInfo 1013
 Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
 
-Place _mondung_ remote dungeon4
+Place _mondung_ remote dungeon4,dungeon7
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 

@@ -241,7 +241,7 @@ Person _vamp2_ face 4 factiontype Vampire_Clan male remote
 Person _hunter_ face 1 factiontype Knightly_Guard remote anyInfo 1011 rumors 1012
 
 Place _fatherdung_ remote dungeon8
-Place _wrongdung_ remote dungeon5
+Place _wrongdung_ remote dungeon5,dungeon6
 
 Clock _S.10_ 1.00:00 2.22:00
 Clock _S.13_ 7.00:00 27.23:40
