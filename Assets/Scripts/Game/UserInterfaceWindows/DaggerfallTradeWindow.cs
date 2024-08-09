@@ -1120,6 +1120,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 combineTokens.AddRange(tokens);
                 combineTokens.Add(new TextFile.Token(TextFile.Formatting.NewLineOffset, null));
                 combineTokens.AddRange(notEnoughGoldTokens);
+                combineTokens.Add(TextFile.CreateFormatToken(TextFile.Formatting.JustifyCenter));
                 DaggerfallUI.MessageBox(combineTokens.ToArray(), this);
             }
             else
