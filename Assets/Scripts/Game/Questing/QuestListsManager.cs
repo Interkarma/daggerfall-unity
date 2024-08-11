@@ -350,7 +350,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Modifications for Temple dual membership status
                 MembershipStatus tplMemb = (guildGroup == FactionFile.GuildGroups.HolyOrder && status != MembershipStatus.Nonmember) ? MembershipStatus.Member : status;
 
-                int rankOrLevel = GameManager.Instance.PlayerEntity.FactionData.GetFlag(factionId, FactionFile.Flags.questByRankOrLevel) ? Math.Max(rank, level) : rank;
+                int rankOrLevel = GameManager.Instance.PlayerEntity.FactionData.GetFlag(factionId, FactionFile.Flags.QuestByRankOrLevel) ? Math.Max(rank, level) : rank;
 
                 List<QuestData> pool = new List<QuestData>();
                 foreach (QuestData quest in guildQuests)
