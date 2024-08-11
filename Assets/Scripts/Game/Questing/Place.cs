@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int p1;                     // Parameter 1
         int p2;                     // Parameter 2
         int p3;                     // Parameter 3
+        int[] alternateDungeonTypeIndices; // DFU extension for remote dungeons
 
         SiteDetails siteDetails;    // Site found using inputs
 
@@ -143,8 +144,7 @@ namespace DaggerfallWorkshop.Game.Questing
             base.SetResource(line);
 
             // Match string for Place variants
-            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent) (?<siteName>\w+)|" +
-                              @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>randompermanent) (?<siteList>[a-zA-Z0-9_.,]+)";
+            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent|randompermanent) (?<siteList>[a-zA-Z0-9_.,]+)";
 
             // Try to match source line with pattern
             bool randomSiteList = false;
@@ -183,20 +183,21 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
 
                 // Get place name for parameter lookup
-                name = match.Groups["siteName"].Value;
-                if (string.IsNullOrEmpty(name) && !randomSiteList)
-                {
-                    throw new Exception(string.Format("Place site name empty for source: '{0}'", line));
-                }
+                string srcSiteList = match.Groups["siteList"].Value;
+                string[] siteNames = srcSiteList.Split(',');
 
                 // Pick one permanent place from random site list
                 if (randomSiteList)
                 {
-                    string srcSiteList = match.Groups["siteList"].Value;
-                    string[] siteNames = srcSiteList.Split(',');
                     if (siteNames == null || siteNames.Length == 0)
                         throw new Exception(string.Format("Place randompermanent must have at least one site name in source: '{0}'", line));
                     name = siteNames[UnityEngine.Random.Range(0, siteNames.Length)];
+                }
+                else // !randomSiteList
+                {
+                    if (siteNames == null || siteNames.Length == 0)
+                        throw new Exception(string.Format("Place site name empty for source: '{0}'", line));
+                    name = siteNames[0];
                 }
 
                 // Try to read place variables from data table
@@ -211,6 +212,24 @@ namespace DaggerfallWorkshop.Game.Questing
                 else
                 {
                     throw new Exception(string.Format("Could not find place name in data table: '{0}'", name));
+                }
+
+                // Alternate places (used for remote dungeon types)
+                if (siteNames.Length > 1)
+                {
+                    alternateDungeonTypeIndices = new int[siteNames.Length - 1];
+                    for (int i = 1; i < siteNames.Length; i++)
+                    {
+                        if (placesTable.HasValue(siteNames[i]))
+                        {
+                            // Store value
+                            alternateDungeonTypeIndices[i - 1] = CustomParseInt(placesTable.GetValue("p2", siteNames[i]));
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("Could not find place name in data table: '{0}'", siteNames[i]));
+                        }
+                    }
                 }
 
                 // Handle place by scope
@@ -761,7 +780,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     result = SelectRemoteTownSite((DFLocation.BuildingTypes)p2);
                     break;
                 case 1:
-                    result = SelectRemoteDungeonSite(p2);
+                    result = SelectRemoteDungeonSite(p2, alternateDungeonTypeIndices);
                     break;
                 case 2:
                     result = SelectRemoteLocationExteriorSite(p2);
@@ -769,10 +788,6 @@ namespace DaggerfallWorkshop.Game.Questing
                 default:
                     throw new Exception(string.Format("An unknown P1 value of {0} was encountered for Place {1}", p1, Symbol.Original));
             }
-
-            // If searching for a dungeon and first numbered choice not found, then try again with any random dungeon type
-            if (!result && p1 == 1)
-                result = SelectRemoteDungeonSite(-1);
 
             // Throw exception when remote place could not be selected, e.g. a dungeon of that type does not exist in this region
             if (!result)
@@ -878,7 +893,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// This is probably because types 17-18 don't seem to contain quest markers.
         /// Warning: Not all dungeon types are available in all regions. http://en.uesp.net/wiki/Daggerfall:Dungeons#Overview_of_Dungeon_Locations
         /// </summary>
-        bool SelectRemoteDungeonSite(int dungeonTypeIndex)
+        bool SelectRemoteDungeonSite(int dungeonTypeIndex, int[] alternateDungeonTypeIndices)
         {
             // Get player region
             int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
@@ -893,13 +908,34 @@ namespace DaggerfallWorkshop.Game.Questing
 
             // Get indices for all dungeons of this type
             int[] foundIndices = CollectDungeonIndicesOfType(regionData, dungeonTypeIndex);
+
+            //Debug.LogFormat("Found a total of {0} possible dungeons of type {1} in {2}", foundIndices == null ? 0 : foundIndices.Length, dungeonTypeIndex, regionData.Name);
+
+            // Add equivalence(s) if too few dungeons to select from
+            if (dungeonTypeIndex >= 0 && alternateDungeonTypeIndices != null)
+            {
+                int equivalentIndex = 0;
+                if (foundIndices == null)
+                {
+                    foundIndices = new int[] {};
+                }
+                while (foundIndices.Length < DaggerfallUnity.Settings.DungeonsPoolSizeTarget && alternateDungeonTypeIndices.Length > equivalentIndex)
+                {
+                    int[] equivalentIndices = CollectDungeonIndicesOfType(regionData, alternateDungeonTypeIndices[equivalentIndex]);
+                    if (equivalentIndices != null && equivalentIndices.Length > 0)
+                    {
+                        // Debug.LogFormat("Adding {0} possible dungeons of type {1} by equivalence", equivalentIndices.Length, alternateDungeonTypeIndices[equivalentIndex]);
+                        foundIndices = foundIndices.Concat(equivalentIndices).ToArray();
+                    }
+                    equivalentIndex++;
+                }
+            }
+
             if (foundIndices == null || foundIndices.Length == 0)
             {
                 Debug.LogFormat("Could not find any random dungeons of type {0} in {1}", dungeonTypeIndex, regionData.Name);
                 return false;
             }
-
-            //Debug.LogFormat("Found a total of {0} possible dungeons of type {1} in {2}", foundIndices.Length, dungeonTypeIndex, regionData.Name);
 
             // Select a random dungeon location index from available list
             int index = UnityEngine.Random.Range(0, foundIndices.Length);

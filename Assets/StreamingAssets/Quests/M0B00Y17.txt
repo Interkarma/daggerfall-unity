@@ -208,7 +208,7 @@ Person _victim_ face 1 group Group_6.0 remote
 Person _love_ face 1 group Group_7.0 remote
 Person _dummy_ group Noble local
 
-Place _mondung_ remote dungeon6
+Place _mondung_ remote dungeon6,dungeon5
 Place _newdung_ remote dungeon
 --unneeded dungeon variable
 Place _lovehouse_ local house2

@@ -137,7 +137,7 @@ Item _I.07_ gold
 Person _qgiver_ group Questor
 
 Place _depository_ remote bank
-Place _mondung_ remote dungeon2
+Place _mondung_ remote dungeon2,dungeon15
 Place _palace_ remote palace
 Place _mansion_ remote house1
 

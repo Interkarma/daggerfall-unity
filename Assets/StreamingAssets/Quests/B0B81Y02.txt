@@ -228,7 +228,7 @@ Person _wizard_ face 1 group Spellcaster remote
 Place _dungeon_ remote dungeon
 Place _dungeon2_ remote dungeon
 Place _mageguild_ remote magery
-Place _dungeon3_ remote dungeon0
+Place _dungeon3_ remote dungeon0,dungeon11
 
 Clock _2dung_ 00:00 0 flag 17 range 0 2
 Clock _S.30_ 180.13:20 0 flag 1 range 0 1
