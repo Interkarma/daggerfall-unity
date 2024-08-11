@@ -26,6 +26,7 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -468,7 +469,7 @@ namespace DaggerfallWorkshop.Game
                 if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(building.buildingKey, out db))
                 {
                     // Check against quest system for an overriding quest-assigned display name for this building
-                    DaggerfallUI.AddHUDText(db.displayName);
+                    DaggerfallUI.AddHUDText(GrammarManager.grammarProcessor.ProcessGrammar(db.displayName));
 
                     if (!buildingUnlocked && buildingType < DFLocation.BuildingTypes.Temple
                         && buildingType != DFLocation.BuildingTypes.HouseForSale)
