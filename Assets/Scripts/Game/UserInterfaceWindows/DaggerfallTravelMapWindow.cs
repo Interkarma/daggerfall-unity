@@ -216,7 +216,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             gotoPlace = place;
         }
 
-        public int LocationPickerMaxCharacters { get; set; }
+        protected virtual int LocationPickerMaxCharacters
+        {
+            get => DaggerfallUnity.Settings.SDFFontRendering ? 50 : 29;
+        }
 
         #endregion
 
@@ -340,8 +343,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             locationDotsOutlineTexture.filterMode = FilterMode.Point;
             locationDotsTexture = new Texture2D((int)regionTextureOverlayPanelRect.width, (int)regionTextureOverlayPanelRect.height, TextureFormat.ARGB32, false);
             locationDotsTexture.filterMode = FilterMode.Point;
-
-            LocationPickerMaxCharacters = DaggerfallUnity.Settings.SDFFontRendering ? 50 : 29;
 
             // Load map names for player region
             selectedRegionMapNames = GetRegionMapNames(GetPlayerRegion());
