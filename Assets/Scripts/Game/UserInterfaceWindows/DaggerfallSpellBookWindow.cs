@@ -347,7 +347,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellsListBox.Position = new Vector2(spellsListBoxRect.x, spellsListBoxRect.y);
             spellsListBox.Size = new Vector2(spellsListBoxRect.width, spellsListBoxRect.height);
             spellsListBox.RowsDisplayed = 16;
-            spellsListBox.MaxCharacters = 22;
+            spellsListBox.RectRestrictedRenderArea = new Rect(spellsListBox.Position, spellsListBox.Size);
+            spellsListBox.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
             spellsListBox.OnSelectItem += SpellsListBox_OnSelectItem;
             if (buyMode)
                 spellsListBox.OnMouseDoubleClick += BuyButton_OnMouseClick;

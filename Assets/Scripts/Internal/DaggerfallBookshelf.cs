@@ -38,6 +38,24 @@ namespace DaggerfallWorkshop
             }
         }
 
+        private class DaggerfallBooksListPickerWindow : DaggerfallListPickerWindow
+        {
+            private List<string> bookNames;
+
+            public DaggerfallBooksListPickerWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previous, List<string> bookNames) : base(uiManager, previous)
+            {
+                this.bookNames = bookNames;
+            }
+
+            protected override void Setup()
+            {
+                base.Setup();
+                listBox.RectRestrictedRenderArea = new Rect(listBox.Position, listBox.Size);
+                listBox.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
+                listBox.AddItems(bookNames);
+            }
+        }
+
         public void ReadBook()
         {
             // Check permission to access bookshelf if inside a guild or temple
@@ -53,18 +71,18 @@ namespace DaggerfallWorkshop
             }
             else
             {
-                // Show book picker loaded with list of books on this shelf
-                IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
-                DaggerfallListPickerWindow bookPicker = new DaggerfallListPickerWindow(uiManager, uiManager.TopWindow);
-                bookPicker.OnItemPicked += BookShelf_OnItemPicked;
-
+                List<string> bookNames = new List<string>();
                 foreach (int bookNum in books)
                 {
                     string bookName = DaggerfallUnity.Instance.ItemHelper.GetBookTitle(bookNum, string.Empty);
                     if (bookName != string.Empty)
-                        bookPicker.ListBox.AddItem(bookName);
+                        bookNames.Add(bookName);
                 }
 
+                // Show book picker loaded with list of books on this shelf
+                IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
+                DaggerfallListPickerWindow bookPicker = new DaggerfallBooksListPickerWindow(uiManager, uiManager.TopWindow, bookNames);
+                bookPicker.OnItemPicked += BookShelf_OnItemPicked;
                 uiManager.PushWindow(bookPicker);
             }
         }
