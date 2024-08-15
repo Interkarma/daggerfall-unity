@@ -347,7 +347,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellsListBox.Position = new Vector2(spellsListBoxRect.x, spellsListBoxRect.y);
             spellsListBox.Size = new Vector2(spellsListBoxRect.width, spellsListBoxRect.height);
             spellsListBox.RowsDisplayed = 16;
-            spellsListBox.RectRestrictedRenderArea = new Rect(spellsListBox.Position, spellsListBox.Size);
+            spellsListBox.RectRestrictedRenderArea = spellsListBoxRect;
             spellsListBox.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
             spellsListBox.OnSelectItem += SpellsListBox_OnSelectItem;
             if (buyMode)
@@ -460,7 +460,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Spell name
             spellNameLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, spellNameLabelPos, string.Empty, mainPanel);
             spellNameLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
-            spellNameLabel.MaxCharacters = 18;
+            spellNameLabel.RectRestrictedRenderArea = new Rect(spellNameLabelPos, new Vector2(110, 10));
+            spellNameLabel.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
             spellNameLabel.OnMouseClick += SpellNameLabel_OnMouseClick;
 
             // Spell cost
