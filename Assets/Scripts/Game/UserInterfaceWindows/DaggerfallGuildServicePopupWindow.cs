@@ -563,7 +563,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Set the effective guild rank, player level can override for some guilds. (e.g. Mages/Knights)
             int rank = guild.Rank;
-            if (guild.IsAllowLevelQuests() && playerEntity.Level > rank)
+            if (guild.IsSatisfyQuestReqByLevel() && playerEntity.Level > rank)
                 rank = playerEntity.Level;
 
             // Set up a pool of available quests.

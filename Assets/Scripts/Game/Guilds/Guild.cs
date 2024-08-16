@@ -48,7 +48,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public abstract List<DFCareer.Skills> TrainingSkills { get; }
 
-        public virtual bool IsAllowLevelQuests()
+        public virtual bool IsSatisfyQuestReqByLevel()
         {
             return false;
         }
