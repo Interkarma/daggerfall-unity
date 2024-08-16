@@ -64,6 +64,11 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override List<DFCareer.Skills> TrainingSkills { get { return trainingSkills; } }
 
+        public override bool IsAllowLevelQuests()
+        {
+            return true;
+        }
+
         #endregion
 
         #region Guild Membership and Faction

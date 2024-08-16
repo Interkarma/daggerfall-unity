@@ -30,6 +30,8 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         List<DFCareer.Skills> TrainingSkills { get; }
 
+        bool IsAllowLevelQuests();
+
         #endregion
 
         #region Guild Ranks
