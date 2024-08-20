@@ -77,17 +77,19 @@ namespace DaggerfallWorkshop.Game.Banking
 
     public static class DaggerfallBankManager
     {
-        private static float cachedGoldUnitWeightInKg = -1.0f;
-        public static float goldUnitWeightInKg
+        private static float cachedGoldItemWeightInKg = -1.0f;
+        // Returns the weight of a single gold coin based on the item template
+        public static float goldItemWeightInKg
         {
             get
             {
-                if (cachedGoldUnitWeightInKg == -1.0f)
-                    cachedGoldUnitWeightInKg = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ItemGroups.Currency, 0).baseWeight;
-                return cachedGoldUnitWeightInKg;
+                if (cachedGoldItemWeightInKg == -1.0f)
+                    cachedGoldItemWeightInKg = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ItemGroups.Currency, 0).baseWeight;
+                return cachedGoldItemWeightInKg;
             }
         }
-        
+
+        [Obsolete("Replace with 'goldItemWeightInKg'")] public const float goldUnitWeightInKg = 0.0025f;
         private const float deedSellMult = 0.85f;
         private const float housePriceMult = 1280f;
         private const uint loanRepayMinutes = DaggerfallDateTime.DaysPerYear * DaggerfallDateTime.MinutesPerDay;
