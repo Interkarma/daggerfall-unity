@@ -493,7 +493,8 @@ _S.27_ task:
 _S.28_ task:
 	when _S.27_ and _S.25_ 
 	start task _S.31_ 
-	give item _totem_ to _F.00_ 
+--	give item _totem_ to _F.00_ 
+--  This dummied action task caused duplicate totems to be given to all spawned knights in this quest. No alternate handling available.
 	say 1042 
 	restrain foe _F.00_ 
 
