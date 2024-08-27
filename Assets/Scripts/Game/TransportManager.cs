@@ -199,7 +199,8 @@ namespace DaggerfallWorkshop.Game
             neighClip = dfAudioSource.GetAudioClip((int)horseSound);
 
             // Init event listener for transitions.
-            PlayerEnterExit.OnPreTransition += new PlayerEnterExit.OnPreTransitionEventHandler(HandleTransition);
+            PlayerEnterExit.OnTransitionInterior += HandleTransition;
+            PlayerEnterExit.OnTransitionDungeonInterior += HandleTransition;
         }
 
         // Handle interior/exterior transition events by setting transport mode to Foot.
