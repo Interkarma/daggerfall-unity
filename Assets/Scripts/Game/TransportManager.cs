@@ -325,6 +325,47 @@ namespace DaggerfallWorkshop.Game
 
         #endregion
 
+        #region Event Arguments
+
+        /// <summary>
+        /// Types of ship transition encountered by TransportManager.
+        /// </summary>
+        public enum TransportShipType
+        {
+            ToShip,
+            FropShip,
+        }
+        #endregion
+
+        #region Events
+
+        // OnTransportModeChanged
+        public delegate void OnTransportModeChangedEventHandler(TransportModes TransportMode);
+        /// <summary>
+        /// An event that is raised when the transport mode is changed.
+        /// </summary>
+        public static event OnTransportModeChangedEventHandler OnTransportModeChanged;
+        protected virtual void RaiseOnTransportModeChangedEvent(TransportModes TransportMode)
+        {
+            if (OnTransportModeChanged != null){
+                OnTransportModeChanged(TransportMode);
+            }
+        }
+
+        // OnTransportModeShipChanged
+        public delegate void OnTransportModeShipChangedEventHandler(TransportShipType transportShipType);
+        /// <summary>
+        /// An event that is raised when the transport mode is changed to or from ship.
+        /// </summary>
+        public static event OnTransportModeShipChangedEventHandler OnTransportModeShipChanged;
+        protected virtual void RaiseOnTransportModeShipChangedEvent(TransportShipType transportShipType)
+        {
+            if (OnTransportModeShipChanged != null){
+                OnTransportModeShipChanged(transportShipType);
+            }
+        }
+        #endregion
+
         #region Private Methods
 
         private void UpdateMode(TransportModes transportMode)
@@ -366,6 +407,10 @@ namespace DaggerfallWorkshop.Game
                 StreamingWorld world = GameManager.Instance.StreamingWorld;
                 DFPosition shipCoords = DaggerfallBankManager.GetShipCoords();
 
+                // Raise change event for ship before setting to foot.
+                RaiseOnTransportModeChangedEvent(mode);
+                mode = TransportModes.Foot;
+
                 // Is there recorded position before boarding and is player on the ship?
                 if (IsOnShip())
                 {
@@ -386,6 +431,8 @@ namespace DaggerfallWorkshop.Game
                     boardShipPosition = null;
                     // Restore cached scene (ship is special case, cache will not be cleared)
                     SaveLoadManager.RestoreCachedScene(world.SceneName);
+                    // Raise ship event
+                    RaiseOnTransportModeShipChangedEvent(TransportShipType.FropShip);
                 }
                 else
                 {
@@ -395,10 +442,12 @@ namespace DaggerfallWorkshop.Game
                     // Teleport to the players ship, restoring cached scene.
                     world.TeleportToCoordinates(shipCoords.X, shipCoords.Y, StreamingWorld.RepositionMethods.RandomStartMarker);
                     SaveLoadManager.RestoreCachedScene(world.SceneName);
+                    // Raise ship event
+                    RaiseOnTransportModeShipChangedEvent(TransportShipType.ToShip);
                 }
                 DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
-                mode = TransportModes.Foot;
             }
+            RaiseOnTransportModeChangedEvent(mode);
         } 
         #endregion
     }
