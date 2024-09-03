@@ -50,6 +50,10 @@ namespace DaggerfallWorkshop.Game
             get { return mode; }
             set { UpdateMode(value); }
         }
+        public TransportModes PreviousTransportMode
+        {
+            get { return previousTransportMode; }
+        }
 
         /// <summary>True when player is on foot.</summary>
         public bool IsOnFoot
@@ -142,6 +146,9 @@ namespace DaggerfallWorkshop.Game
         #region Private Fields
 
         private TransportModes mode = TransportModes.Foot;
+
+        private TransportModes previousTransportMode = TransportModes.Foot;
+
         private PlayerPositionData_v1 boardShipPosition;    // Holds the player position from before boarding a ship.
 
 
@@ -199,8 +206,7 @@ namespace DaggerfallWorkshop.Game
             neighClip = dfAudioSource.GetAudioClip((int)horseSound);
 
             // Init event listener for transitions.
-            PlayerEnterExit.OnTransitionInterior += HandleTransition;
-            PlayerEnterExit.OnTransitionDungeonInterior += HandleTransition;
+            PlayerEnterExit.OnPreTransition += new PlayerEnterExit.OnPreTransitionEventHandler(HandleTransition);
         }
 
         // Handle interior/exterior transition events by setting transport mode to Foot.
@@ -331,6 +337,7 @@ namespace DaggerfallWorkshop.Game
         private void UpdateMode(TransportModes transportMode)
         {
             // Update the transport mode and stop any riding sounds playing.
+            previousTransportMode = mode;
             mode = transportMode;
             if (ridingAudioSource.isPlaying)
                 ridingAudioSource.Stop();
