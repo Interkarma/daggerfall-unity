@@ -642,6 +642,28 @@ namespace DaggerfallWorkshop.Utility
                     for (int i = 0; i < block.RmbBlock.SubRecords.Length; i++)
                     {
                         ref DFLocation.BuildingData building = ref block.RmbBlock.FldHeader.BuildingDataList[i];
+
+                        // Check for replacement building data and use it if found
+                        if (WorldDataReplacement.GetBuildingReplacementData(blockName, block.Index, i, out buildingReplacementData))
+                        {
+                            // Replace the entire SubRecord (contains both exterior and interior data)
+                            block.RmbBlock.SubRecords[i] = buildingReplacementData.RmbSubRecord;
+
+                            // Use replacement metadata (FactionId, NameSeed, Quality, etc.)
+                            if (buildingReplacementData.FactionId > 0)
+                                building.FactionId = buildingReplacementData.FactionId;
+                            if (buildingReplacementData.Quality > 0)
+                                building.Quality = buildingReplacementData.Quality;
+                            building.NameSeed = buildingReplacementData.NameSeed;
+                            building.BuildingType = (DFLocation.BuildingTypes)buildingReplacementData.BuildingType;
+
+                            // Check for and replace AutoMap data
+                            if (buildingReplacementData.AutoMapData != null && buildingReplacementData.AutoMapData.Length == 64 * 64)
+                            {
+                                block.RmbBlock.FldHeader.AutoMapData = buildingReplacementData.AutoMapData;
+                            }
+                        }
+
                         if (IsNamedBuilding(building.BuildingType))
                         {
                             // Try to find next building and merge data
