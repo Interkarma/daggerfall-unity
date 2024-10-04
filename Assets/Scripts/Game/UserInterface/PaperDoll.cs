@@ -156,20 +156,29 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!showArmorLabels)
                 return;
 
+            // "Increased" armor value modifier is negative or 0
+            // "Decreased" armor value modifier is positive or 0
+            // They are applied directly as a hit malus/bonus when an enemy attacks
+
+            // For the purpose of UI, we invert this logic
+            // We show bonuses as bigger numbers and maluses as small numbers
+            // Also, 1 AC = 5 hit modifier
+            // Therefore, a -5 "Increase" armor value gives +1 AC
+            // and a +5 "Decrease" armopr values gives -1 AC
+
+            int avMod = playerEntity.IncreasedArmorValueModifier + playerEntity.DecreasedArmorValueModifier;
+            Color textColor = DaggerfallUI.DaggerfallDefaultTextColor;
+            if (avMod > 0)
+                textColor = DaggerfallUI.DaggerfallUnityStatDrainedTextColor;
+            else if (avMod < 0)
+                textColor = DaggerfallUI.DaggerfallUnityStatIncreasedTextColor;
+
             for (int bpIdx = 0; bpIdx < DaggerfallEntity.NumberBodyParts; bpIdx++)
             {
-                int armorMod = playerEntity.DecreasedArmorValueModifier - playerEntity.IncreasedArmorValueModifier;
-
                 sbyte av = playerEntity.ArmorValues[bpIdx];
-                int bpAv = (100 - av) / 5 + armorMod;
-                armourLabels[bpIdx].Text = (!suppress) ? bpAv.ToString() : string.Empty;
-
-                if (armorMod < 0)
-                    armourLabels[bpIdx].TextColor = DaggerfallUI.DaggerfallUnityStatDrainedTextColor;
-                else if (armorMod > 0)
-                    armourLabels[bpIdx].TextColor = DaggerfallUI.DaggerfallUnityStatIncreasedTextColor;
-                else
-                    armourLabels[bpIdx].TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
+                int ac = (100 - (av + avMod)) / 5;
+                armourLabels[bpIdx].Text = (!suppress) ? ac.ToString() : string.Empty;
+                armourLabels[bpIdx].TextColor = textColor;
             }
         }
 
