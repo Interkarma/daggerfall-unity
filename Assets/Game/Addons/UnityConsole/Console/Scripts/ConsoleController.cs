@@ -55,8 +55,8 @@ namespace Wenzil.Console
         {
             if (DaggerfallWorkshop.Game.InputManager.Instance.GetKeyDown(toggleKey))
                 ui.ToggleConsole();
-            else if (DaggerfallWorkshop.Game.InputManager.Instance.GetBackButtonDown() && closeOnEscape)
-                ui.CloseConsole();
+            else if (closeOnEscape && ui.isConsoleOpen && DaggerfallWorkshop.Game.InputManager.Instance.GetBackButtonUp())
+                ui.ToggleConsole();
             else if (Input.GetKeyDown(KeyCode.UpArrow))
                 NavigateInputHistory(true);
             else if (Input.GetKeyDown(KeyCode.DownArrow))
