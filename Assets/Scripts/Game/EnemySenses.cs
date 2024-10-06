@@ -946,7 +946,7 @@ namespace DaggerfallWorkshop.Game
                     if (nhits < hitsBuffer.Length)
                         break;
                     // hitsBuffer may have overflowed, retry with a larger buffer
-                    hitsBuffer = new RaycastHit[nhits + 1];
+                    hitsBuffer = new RaycastHit[hitsBuffer.Length * 2];
                 };
                 for (int i = 0; i < nhits; i++)
                 {
