@@ -1074,6 +1074,33 @@ namespace DaggerfallWorkshop.Game.Formulas
             return damage;
         }
 
+        public static bool AlterPlayerVsMonsterPhysicalAttackAction(DaggerfallUnityItem weapon, bool arrowHit, bool arrowSummoned, Transform hitTransform, Vector3 impactPosition, Vector3 direction)
+        {
+            Func<DaggerfallUnityItem, bool, bool, Transform, Vector3, Vector3, bool> del;
+            if (TryGetOverride("AlterPlayerVsMonsterPhysicalAttackAction", out del))
+                return del(weapon, arrowHit, arrowSummoned, hitTransform, impactPosition, direction);
+
+            return false;
+        }
+
+        public static bool AlterMonsterVsPlayerPhysicalAttackAction(DaggerfallUnityItem weapon, DaggerfallEntityBehaviour entityBehaviour)
+        {
+            Func<DaggerfallUnityItem, DaggerfallEntityBehaviour, bool> del;
+            if (TryGetOverride("AlterMonsterVsPlayerPhysicalAttackAction", out del))
+                return del(weapon, entityBehaviour);
+
+            return false;
+        }
+
+        public static bool AlterMonsterVsMonsterPhysicalAttackAction(DaggerfallUnityItem weapon, DaggerfallEntityBehaviour entityBehaviour, EnemySenses senses, Vector3 direction, bool bowAttack)
+        {
+            Func<DaggerfallUnityItem, DaggerfallEntityBehaviour, EnemySenses, Vector3, bool, bool> del;
+            if (TryGetOverride("AlterMonsterVsMonsterPhysicalAttackAction", out del))
+                return del(weapon, entityBehaviour, senses, direction, bowAttack);
+
+            return false;
+        }
+
         /// <summary>
         /// Allocate any equipment damage from a strike, and reduce item condition.
         /// </summary>
