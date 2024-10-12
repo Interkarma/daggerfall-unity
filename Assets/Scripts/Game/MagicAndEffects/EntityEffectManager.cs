@@ -2097,6 +2097,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void PlayerSpellCasting_OnReleaseFrame()
         {
+            castInProgress = false;
+
             // Must have a ready spell
             if (readySpell == null)
                 return;
@@ -2138,7 +2140,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             readySpell = null;
             readySpellCastingCost = 0;
             instantCast = false;
-            castInProgress = false;
             readySpellDoesNotCostSpellPoints = false;
         }
 
