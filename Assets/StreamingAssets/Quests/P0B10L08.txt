@@ -194,7 +194,7 @@ Item _gem_ gem
 Person _vamp_ factiontype Vampire_Clan local
 Person _daedra_ face 1 factiontype Daedra remote
 
-Place _mondung_ remote dungeon7
+Place _mondung_ remote dungeon7,dungeon4
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 

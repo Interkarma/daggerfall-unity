@@ -146,7 +146,7 @@ Item _I.00_ item class 10 subclass 4
 Person _questgiver_ group Questor
 Person _priest_ group Cleric remote
 
-Place _mondung_ remote dungeon4
+Place _mondung_ remote dungeon4,dungeon7
 
 Clock _qtime_ 00:00 0 flag 17 range 1 5
 
