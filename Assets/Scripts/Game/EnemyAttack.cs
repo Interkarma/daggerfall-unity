@@ -246,6 +246,12 @@ namespace DaggerfallWorkshop.Game
         {
             const int doYouSurrenderToGuardsTextID = 15;
 
+            if (GameManager.Instance.WeaponManager.moddedPhysicalAttackBehaviorEnabled)
+            {
+                if (FormulaHelper.AlterMonsterVsPlayerPhysicalAttackAction(weapon, entityBehaviour))
+                    return 0;
+            }
+
             EnemyEntity entity = entityBehaviour.Entity as EnemyEntity;
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
@@ -302,6 +308,12 @@ namespace DaggerfallWorkshop.Game
 
         private int ApplyDamageToNonPlayer(Items.DaggerfallUnityItem weapon, Vector3 direction, bool bowAttack = false)
         {
+            if (GameManager.Instance.WeaponManager.moddedPhysicalAttackBehaviorEnabled)
+            {
+                if (FormulaHelper.AlterMonsterVsMonsterPhysicalAttackAction(weapon, entityBehaviour, senses, direction, bowAttack))
+                    return 0;
+            }
+
             if (senses.Target == null)
                 return 0;
             // TODO: Merge with hit code in WeaponManager to eliminate duplicate code
