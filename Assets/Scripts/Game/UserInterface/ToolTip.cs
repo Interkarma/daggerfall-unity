@@ -44,9 +44,24 @@ namespace DaggerfallWorkshop.Game.UserInterface
         string lastText = string.Empty;
         bool previousSDFState;
 
+        float textScale = 1.0f; // scale text
+
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Set text scale factor - 1.0f is default value, 0.5f is half sized text, 2.0f double sized text and so on
+        /// </summary>
+        public float TextScale
+        {
+            get { return textScale; }
+            set
+            {
+                textScale = Math.Max(0.1f, value);
+                // Draw();
+            }
+        }
 
         /// <summary>
         /// Gets or sets font used inside tooltip.
@@ -141,8 +156,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Set tooltip size
             Size = new Vector2(
-                widestRow + LeftMargin + RightMargin,
-                font.GlyphHeight * textRows.Length + TopMargin + BottomMargin - 1);
+                (widestRow + LeftMargin + RightMargin) * textScale,
+                (font.GlyphHeight * textScale) * textRows.Length + TopMargin + BottomMargin - 1);
 
             // Set tooltip position
             Position = Parent.ScaledMousePosition + MouseOffset;
@@ -151,13 +166,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect rect = Rectangle;
             if (rect.xMax > Screen.width)
             {
-                float difference = (rect.xMax - Screen.width) * 1f / LocalScale.x;
+                float difference = (rect.xMax - Screen.width) * 1f / LocalScale.x * textScale;
                 Vector2 newPosition = new Vector2(Position.x - difference, Position.y);
                 Position = newPosition;
             }
             if (rect.yMax > Screen.height)
             {
-                float difference = (rect.yMax - Screen.height) * 1f / LocalScale.y;
+                float difference = (rect.yMax - Screen.height) * 1f / LocalScale.y * textScale;
                 Vector2 newPosition = new Vector2(Position.x, Position.y - difference);
                 Position = newPosition;
             }
@@ -187,16 +202,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Determine text position
                 Rect rect = Rectangle;
                 Vector2 textPos = new Vector2(
-                    rect.x + LeftMargin * LocalScale.x,
-                    rect.y + TopMargin * LocalScale.y);
+                    rect.x + LeftMargin * (LocalScale.x * textScale),
+                    rect.y + TopMargin * (LocalScale.y * textScale)
+                );
 
                 //if (rect.xMax > Screen.width) textPos.x -= (rect.xMax - Screen.width);
 
                 // Draw tooltip text
                 for (int i = 0; i < textRows.Length; i++)
                 {
-                    font.DrawText(textRows[i], textPos, LocalScale, textColor);
-                    textPos.y += font.GlyphHeight * LocalScale.y;
+                    font.DrawText(textRows[i], textPos, (LocalScale * textScale), textColor);
+                    textPos.y += font.GlyphHeight * (LocalScale.y * textScale);
                 }
 
                 // Lower flag
@@ -241,7 +257,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             widestRow = 0;
             for (int i = 0; i < textRows.Length; i++)
             {
-                float width = font.CalculateTextWidth(textRows[i], LocalScale);
+                float width = font.CalculateTextWidth(textRows[i], LocalScale * textScale);
                 if (width > widestRow)
                     widestRow = width;
             }
