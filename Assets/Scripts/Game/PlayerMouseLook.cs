@@ -66,7 +66,6 @@ namespace DaggerfallWorkshop.Game
             get { return cameraPitch * Mathf.Rad2Deg; }
             set
             {
-                value = Mathf.Clamp(value, pitchMin, pitchMax);
                 cameraPitch = value * Mathf.Deg2Rad;
                 if (cameraPitch > piover2 * .99f)
                     cameraPitch = piover2 * .99f;
