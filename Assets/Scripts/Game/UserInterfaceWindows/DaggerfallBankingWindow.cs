@@ -88,7 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             inventoryAmount.Position        = new Vector2(156, 24);
             inventoryAmount.Size            = new Vector2(64, 13);
             inventoryAmount.Name            = "inv_total_label";
-            inventoryAmount.MaxCharacters   = 11;
+            inventoryAmount.MaxCharacters   = 20;
             mainPanel.Components.Add(inventoryAmount);
 
             loanAmountDue               = new TextLabel();

@@ -38,6 +38,30 @@ namespace DaggerfallWorkshop
             }
         }
 
+        // Subclass DaggerfallListPickerWindow to delay calls to listBox.AddItem() after its setup
+        // Otherwise, added items do not inherit the restricted area from the ListBox
+        private class DaggerfallBooksListPickerWindow : DaggerfallListPickerWindow
+        {
+            private List<int> books;
+
+            public DaggerfallBooksListPickerWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previous, List<int> books) : base(uiManager, previous)
+            {
+                this.books = books;
+            }
+
+            protected override void Setup()
+            {
+                base.Setup();
+                listBox.RectRestrictedRenderArea = new Rect(listBox.Position, listBox.Size);
+                listBox.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
+                foreach (int bookNum in books)
+                {
+                    string bookName = DaggerfallUnity.Instance.ItemHelper.GetBookTitle(bookNum, string.Empty);
+                    listBox.AddItem(bookName);
+                }
+            }
+        }
+
         public void ReadBook()
         {
             // Check permission to access bookshelf if inside a guild or temple
@@ -55,16 +79,8 @@ namespace DaggerfallWorkshop
             {
                 // Show book picker loaded with list of books on this shelf
                 IUserInterfaceManager uiManager = DaggerfallUI.UIManager;
-                DaggerfallListPickerWindow bookPicker = new DaggerfallListPickerWindow(uiManager, uiManager.TopWindow);
+                DaggerfallListPickerWindow bookPicker = new DaggerfallBooksListPickerWindow(uiManager, uiManager.TopWindow, books);
                 bookPicker.OnItemPicked += BookShelf_OnItemPicked;
-
-                foreach (int bookNum in books)
-                {
-                    string bookName = DaggerfallUnity.Instance.ItemHelper.GetBookTitle(bookNum, string.Empty);
-                    if (bookName != string.Empty)
-                        bookPicker.ListBox.AddItem(bookName);
-                }
-
                 uiManager.PushWindow(bookPicker);
             }
         }

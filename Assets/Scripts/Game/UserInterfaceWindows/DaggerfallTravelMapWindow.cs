@@ -1554,14 +1554,31 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        // Subclass DaggerfallListPickerWindow to delay calls to listBox.AddItem() after its setup
+        // Otherwise, added items do not inherit the restricted area from the ListBox
+        protected class DaggerfallLocationsListPickerWindow : DaggerfallListPickerWindow
+        {
+            private List<string> locations;
+
+            public DaggerfallLocationsListPickerWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previous, List<string> locations) : base(uiManager, previous)
+            {
+                this.locations = locations;
+            }
+
+            protected override void Setup()
+            {
+                base.Setup();
+                listBox.RectRestrictedRenderArea = new Rect(listBox.Position, listBox.Size);
+                listBox.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
+                listBox.AddItems(locations);
+            }
+        }
+
         // Creates a ListPickerWindow with a list of locations from current region
         // Locations displayed will be filtered out depending on the dungeon / town / temple / home button settings
         private void ShowLocationPicker(string[] locations, bool applyFilters)
         {
-            DaggerfallListPickerWindow locationPicker = new DaggerfallListPickerWindow(uiManager, this);
-            locationPicker.OnItemPicked += HandleLocationPickEvent;
-            locationPicker.ListBox.MaxCharacters = 29;
-
+            List<string> filteredLocations = new List<string>();
             for (int i = 0; i < locations.Length; i++)
             {
                 if (applyFilters)
@@ -1571,9 +1588,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     if (GetPixelColorIndex(currentDFRegion.MapTable[index].LocationType) == -1)
                         continue;
                 }
-                locationPicker.ListBox.AddItem(locations[i]);
+                filteredLocations.Add(locations[i]);
             }
 
+            DaggerfallListPickerWindow locationPicker = new DaggerfallLocationsListPickerWindow(uiManager, this, filteredLocations);
+            locationPicker.OnItemPicked += HandleLocationPickEvent;
             uiManager.PushWindow(locationPicker);
         }
 
