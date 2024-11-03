@@ -166,13 +166,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect rect = Rectangle;
             if (rect.xMax > Screen.width)
             {
-                float difference = (rect.xMax - Screen.width) * 1f / LocalScale.x * textScale;
+                float difference = (rect.xMax - Screen.width) * 1f / LocalScale.x;
                 Vector2 newPosition = new Vector2(Position.x - difference, Position.y);
                 Position = newPosition;
             }
             if (rect.yMax > Screen.height)
             {
-                float difference = (rect.yMax - Screen.height) * 1f / LocalScale.y * textScale;
+                float difference = (rect.yMax - Screen.height) * 1f / LocalScale.y;
                 Vector2 newPosition = new Vector2(Position.x, Position.y - difference);
                 Position = newPosition;
             }
@@ -202,8 +202,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Determine text position
                 Rect rect = Rectangle;
                 Vector2 textPos = new Vector2(
-                    rect.x + LeftMargin * (LocalScale.x * textScale),
-                    rect.y + TopMargin * (LocalScale.y * textScale)
+                    rect.x + LeftMargin * LocalScale.x,
+                    rect.y + TopMargin * LocalScale.y
                 );
 
                 //if (rect.xMax > Screen.width) textPos.x -= (rect.xMax - Screen.width);
@@ -257,7 +257,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             widestRow = 0;
             for (int i = 0; i < textRows.Length; i++)
             {
-                float width = font.CalculateTextWidth(textRows[i], LocalScale * textScale);
+                float width = font.CalculateTextWidth(textRows[i], LocalScale);
                 if (width > widestRow)
                     widestRow = width;
             }
