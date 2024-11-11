@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
+using System.Text;
 
 public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
 {
@@ -52,6 +53,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
     readonly Button refreshButton            = new Button();
     readonly Button enableAllButton          = new Button();
     readonly Button disableAllButton         = new Button();
+    readonly Button copyToClipboardButton    = new Button();
     readonly Button saveAndCloseButton       = new Button();
     readonly Button extractFilesButton       = new Button();
     readonly Button showModDescriptionButton = new Button();
@@ -147,7 +149,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         ModListPanel.Components.Add(backButton);
 
         increaseLoadOrderButton.Size = new Vector2(40, 12);
-        increaseLoadOrderButton.Position = new Vector2(62, 150);
+        increaseLoadOrderButton.Position = new Vector2(42, 150);
         increaseLoadOrderButton.Outline.Enabled = true;
         increaseLoadOrderButton.BackgroundColor = textColor;
         increaseLoadOrderButton.Label.Text = ModManager.GetText("increase");
@@ -155,7 +157,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         ModListPanel.Components.Add(increaseLoadOrderButton);
 
         decreaseLoadOrderButton.Size = new Vector2(40, 12);
-        decreaseLoadOrderButton.Position = new Vector2(21, 150);
+        decreaseLoadOrderButton.Position = new Vector2(1, 150);
         decreaseLoadOrderButton.Outline.Enabled = true;
         decreaseLoadOrderButton.BackgroundColor = textColor;
         decreaseLoadOrderButton.Label.Text = ModManager.GetText("lower");
@@ -163,7 +165,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         ModListPanel.Components.Add(decreaseLoadOrderButton);
 
         enableAllButton.Size = new Vector2(40, 12);
-        enableAllButton.Position = new Vector2(21, 163);
+        enableAllButton.Position = new Vector2(1, 163);
         enableAllButton.Outline.Enabled = true;
         enableAllButton.BackgroundColor = textColor;
         enableAllButton.VerticalAlignment = VerticalAlignment.Bottom;
@@ -173,7 +175,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         ModListPanel.Components.Add(enableAllButton);
 
         disableAllButton.Size = new Vector2(40, 12);
-        disableAllButton.Position = new Vector2(62, 163);
+        disableAllButton.Position = new Vector2(42, 163);
         disableAllButton.Outline.Enabled = true;
         disableAllButton.BackgroundColor = textColor;
         disableAllButton.VerticalAlignment = VerticalAlignment.Bottom;
@@ -181,6 +183,16 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         disableAllButton.ToolTipText = ModManager.GetText("disableAllInfo");
         disableAllButton.OnMouseClick += DisableAllButton_OnMouseClick;
         ModListPanel.Components.Add(disableAllButton);
+
+        copyToClipboardButton.Size = new Vector2(36, 12);
+        copyToClipboardButton.Position = new Vector2(83, 163);
+        copyToClipboardButton.Outline.Enabled = true;
+        copyToClipboardButton.BackgroundColor = textColor;
+        disableAllButton.VerticalAlignment = VerticalAlignment.Bottom;
+        copyToClipboardButton.Label.Text = ModManager.GetText("copyToClipboard");
+        copyToClipboardButton.ToolTipText = ModManager.GetText("copyToClipboardInfo");
+        copyToClipboardButton.OnMouseClick += CopyToClipboardButton_OnMouseClick;
+        ModListPanel.Components.Add(copyToClipboardButton);
 
         //Add main mod panel
         ModPanel.Outline.Enabled = true;
@@ -680,6 +692,27 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         }
 
         UpdateModPanel();
+    }
+
+    private void CopyToClipboardButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
+    {
+        StringBuilder text = new StringBuilder();
+        text.Append(String.Format("{0} {1} {2}\r\n", VersionInfo.DaggerfallUnityProductName, VersionInfo.DaggerfallUnityStatus, VersionInfo.DaggerfallUnityVersion));
+        for (int i = 0; i < modSettings.Length; i++)
+        {
+            text.Append(String.Format("[{0}] {1} ({2})\r\n", modSettings[i].enabled ? 'x' : ' ', modSettings[i].modInfo.ModTitle, modSettings[i].modInfo.ModVersion));
+        }
+        UnityEngine.TextEditor textEditor = new UnityEngine.TextEditor();
+        textEditor.text = text.ToString();
+        textEditor.SelectAll();
+        textEditor.Copy();
+
+        DaggerfallMessageBox CopiedToClipboardMessageBox = new DaggerfallMessageBox(uiManager, this, true);
+        CopiedToClipboardMessageBox.ClickAnywhereToClose = true;
+        CopiedToClipboardMessageBox.ParentPanel.BackgroundTexture = null;
+
+        CopiedToClipboardMessageBox.SetText(ModManager.GetText("modsCopiedToClipboard"));
+        uiManager.PushWindow(CopiedToClipboardMessageBox);
     }
 
     void ShowModDescriptionPopUp_OnMouseClick(BaseScreenComponent sender, Vector2 position)
