@@ -49,6 +49,8 @@ cleanConfigurationDir,      Found configuration files for unknown or uninstalled
 backToOptions,              Options
 backToOptionsInfo,          Back to options without saving changes
 modsFound,                  Mods Found
+modsSearch,                 Search
+modsNoMatching,             No matching mod found
 settings,                   Settings
 settingsInfo,               Change mod settings
 presets,                    Presets
