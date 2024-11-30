@@ -21,6 +21,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using UnityEngine.Localization.Tables;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -357,7 +358,9 @@ namespace DaggerfallWorkshop.Game
         {
             string localizedText;
             if (TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedText))
-                return localizedText;
+            {
+                return GrammarManager.grammarProcessor.ProcessGrammar(localizedText);
+            }
             else if (TryGetLocalizedText(GetDefaultCollectionName(collection), key, out localizedText))
                 return localizedText;
             else

@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -20,6 +20,7 @@ using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -59,12 +60,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         void MaleButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectedGender = Genders.Male;
+            GrammarManager.grammarProcessor.SetHeroGenderGetter(() => Genders.Male);
             CloseWindow();
         }
 
         void FemaleButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             SelectedGender = Genders.Female;
+            GrammarManager.grammarProcessor.SetHeroGenderGetter(() => Genders.Female);
             CloseWindow();
         }
 
