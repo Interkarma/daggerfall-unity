@@ -149,7 +149,7 @@ Item _letter_ letter used 1011
 Person _qgiver_ face 110 group Questor
 
 Place _mondung_ remote dungeon
-Place _stronghold_ remote dungeon2
+Place _stronghold_ remote dungeon2,dungeon15
 
 Clock _queston_ 00:00 0 flag 17 range 0 5
 
