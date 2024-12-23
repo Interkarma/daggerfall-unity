@@ -376,6 +376,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 }
                 dfBlock.Index = block;
 
+                // For RMB blocks, check for individual building overrides and replace those records.
                 if (blockName.EndsWith(".RMB"))
                     ReplaceRmbBlockBuildingData(blockName, block, ref dfBlock);
 
@@ -390,7 +391,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Replace overridden RMB block data with any record specific building data.
+        /// Replaces overridden RMB block data records with specific building data, if found.
         /// </summary>
         /// <param name="blockName">Block name</param>
         /// <param name="blockIndex">Block index</param>
