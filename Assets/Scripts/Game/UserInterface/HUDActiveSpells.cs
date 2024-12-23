@@ -189,49 +189,52 @@ namespace DaggerfallWorkshop.Game.UserInterface
             return false;
         }
 
+        // For positions, negative X means "relative to right margin" (starting with -1)
+        //            and negative Y means "relative to bottom margin" (starting with -1)
         void InitIcons()
         {
             switch (DaggerfallUnity.Settings.IconsPositioningScheme.ToLower())
             {
                 case "classic":
                     // row of big buff icons at the top, wrapping downward, row of debuffs at the bottom, wrapping upward
+                    // Debuffs start slightly to the right of buffs, which is a nice coincidence because it prevents overlap with action mode icon
                     selfIconsPositioning = new IconsPositioning(new Vector2(16, 16), new Vector2(27, 16), new Vector2(24, 0), new Vector2(0, 24), 12);
-                    otherIconsPositioning = new IconsPositioning(new Vector2(16, 16), new Vector2(27, 177), new Vector2(24, 0), new Vector2(0, -24), 12);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(16, 16), new Vector2(51, -8), new Vector2(24, 0), new Vector2(0, -24), 8);
                     break;
                 case "medium":
                     // same as classic, slightly smaller icons
                     selfIconsPositioning = new IconsPositioning(new Vector2(12, 12), new Vector2(27, 16), new Vector2(16, 0), new Vector2(0, 16), 16);
-                    otherIconsPositioning = new IconsPositioning(new Vector2(12, 12), new Vector2(27, 177), new Vector2(16, 0), new Vector2(0, -16), 16);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(12, 12), new Vector2(51, -8), new Vector2(16, 0), new Vector2(0, -16), 12);
                     break;
                 case "small":
                     // same as classic, even smaller icons, wrapped to stays on left side of screen
                     selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 16), new Vector2(10, 0), new Vector2(0, 10), 6);
-                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 177), new Vector2(10, 0), new Vector2(0, -10), 6);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(51, -8), new Vector2(10, 0), new Vector2(0, -10), 6);
                     break;
                 case "smalldeckleft":
                     // same as small, but slightly slanted toward the center of the screen
                     selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 28), new Vector2(10, -2), new Vector2(0, 10), 6);
-                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 165), new Vector2(10, 2), new Vector2(0, -10), 6);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(51, -28), new Vector2(10, 2), new Vector2(0, -10), 6);
                     break;
                 case "smalldeckright":
                     // same as smalldeckleft, but on the right side of screen
-                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 28), new Vector2(-10, -2), new Vector2(0, 10), 6);
-                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 165), new Vector2(-10, 2), new Vector2(0, -10), 6);
+                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(-25, 28), new Vector2(-10, -2), new Vector2(0, 10), 6);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(-25, -28), new Vector2(-10, 2), new Vector2(0, -10), 6);
                     break;
                 case "smallvertleft":
                     // Two aligned columns on the left, buffs going downward, debuffs going upward
                     selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 16), new Vector2(0, 10), new Vector2(10, 0), 10);
-                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 177), new Vector2(0, -10), new Vector2(10, 0), 4);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(51, -16), new Vector2(0, -10), new Vector2(10, 0), 4);
                     break;
                 case "smallvertright":
                     // Two aligned columns on the right, buffs going downward, debuffs going upward
-                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 16), new Vector2(0, 10), new Vector2(-10, 0), 10);
-                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(296, 177), new Vector2(0, -10), new Vector2(-10, 0), 4);
+                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(-25, 16), new Vector2(0, 10), new Vector2(-10, 0), 10);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(-25, -28), new Vector2(0, -10), new Vector2(-10, 0), 4);
                     break;
                 case "smallhorzbottom":
                     // No wrapping, two rows at the bottom of screen, debuffs above buffs
-                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 177), new Vector2(10, 0), new Vector2(0, 0), 0);
-                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(27, 167), new Vector2(10, 0), new Vector2(0, 0), 0);
+                    selfIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(51, -18), new Vector2(10, 0), new Vector2(0, 0), 0);
+                    otherIconsPositioning = new IconsPositioning(new Vector2(8, 8), new Vector2(51, -8), new Vector2(10, 0), new Vector2(0, 0), 0);
                     break;
             }
 
@@ -292,7 +295,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 LiveEffectBundle bundle = effectBundles[i];
 
-                // Don't add effect icon for instant spells, must have at least 1 round remaining or be from an equipped item
+                // Don't add effect icon for instant spells, must have non-negative round remaining or be from an equipped item
                 if (!ShowIcon(bundle))
                     continue;
 
@@ -322,6 +325,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             Vector2 rowOrigin = iconsPositioning.origin;
             Vector2 position = rowOrigin;
+
+            float effectiveScreenRightX = Screen.width / LocalScale.x + 1; // + 1 so that -1 means right margin
+            float effectiveScreenBottomY = Screen.height;
+            if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Enabled)
+            {
+                effectiveScreenBottomY -= (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.ScreenHeight;
+            }
+            effectiveScreenBottomY = effectiveScreenBottomY / LocalScale.y + 1; // + 1 so that -1 means bottom margin
             int column = 0;
             foreach (ActiveSpellIcon spell in icons)
             {
@@ -330,9 +341,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     Panel icon = iconPool[spell.poolIndex];
                     icon.Enabled = true;
                     icon.BackgroundTexture = DaggerfallUI.Instance.SpellIconCollection.GetSpellIcon(spell.icon);
-                    icon.Position = position;
-                    AdjustIconPositionForLargeHUD(icon);
+                    Vector2 positionEffective = position;
                     icon.Size = iconsPositioning.iconSize;
+                    if (positionEffective.x < 0)
+                        positionEffective.x += effectiveScreenRightX - icon.Size.x;
+                    if (positionEffective.y < 0)
+                        positionEffective.y += effectiveScreenBottomY - icon.Size.y;
+                    icon.Position = positionEffective;
                     icon.ToolTipText = spell.displayName;
                     if (++column == iconsPositioning.iconColumns)
                     {
@@ -345,20 +360,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
                         position += iconsPositioning.columnStep;
                     }
                 }
-            }
-        }
-
-        void AdjustIconPositionForLargeHUD(Panel icon)
-        {
-            // Adjust position for variable sized large HUD
-            // Icon will remain in default position unless it needs to avoid being drawn under HUD
-            if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Enabled)
-            {
-                float startY = icon.Position.y;
-                float offset = Screen.height - (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Rectangle.height;
-                float localY = (offset / LocalScale.y) - 18;
-                if (localY < startY)
-                    icon.Position = new Vector2(icon.Position.x, (int)localY);
             }
         }
 
