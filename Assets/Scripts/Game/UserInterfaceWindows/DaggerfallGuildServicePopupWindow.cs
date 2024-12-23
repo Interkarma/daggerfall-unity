@@ -561,9 +561,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Get the faction id for affecting reputation on success/failure
             int factionId = GetFactionIdForGuild();
 
+            // Set the effective guild rank, player level can override for some guilds. (e.g. Mages/Knights)
+            int rank = guild.Rank;
+            if (guild.IsSatisfyQuestReqByLevel() && playerEntity.Level > rank)
+                rank = playerEntity.Level;
+
             // Set up a pool of available quests.
             QuestListsManager questListsManager = GameManager.Instance.QuestListsManager;
-            questPool = questListsManager.GetGuildQuestPool(guildGroup, status, factionId, guild.GetReputation(playerEntity), guild.Rank);
+            questPool = questListsManager.GetGuildQuestPool(guildGroup, status, factionId, guild.GetReputation(playerEntity), rank);
 
             // Show the quest selection list if that feature has been enabled.
             if (DaggerfallUnity.Settings.GuildQuestListBox)
