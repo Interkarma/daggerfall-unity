@@ -1,7 +1,3 @@
--- Quest: C:\QUESTS\WORKING\S0000008.Qbn.
--- Main story quest.
--- QuestId: 8
-Messages: 71
 Quest: S0000008
 DisplayName: Who Gets the Totem
 -- Message panels
@@ -199,8 +195,8 @@ Message:  1025
  Castle Daggerfall. I am in __newplace_,
  of ____newplace_ at _newplace_.
  Bring the Totem there as soon as possible.
- 
-<ce>                           -- Lady Brisienna
+<ce> 
+                      -- Lady Brisienna
 
 Message:  1030
 <ce>            A page dressed in the livery of Sentinel hands
@@ -300,6 +296,10 @@ Message:  1056
 <ce>             Mantella. Free the Mantella, and the Emperor
 <ce>              controls Great Numidium through the Totem.
 
+Message:  1057
+<ce>   You check among your belongings
+<ce>   and find that the Totem is gone.
+
 Message:  1060
 <ce>               The unmistakable voice of Nulfaga speaks
 <ce>              softly in your head, "I see that the Totem
@@ -308,29 +308,17 @@ Message:  1060
 <ce>               paid me another visit here in Shedungent
 <ce>                   %pcn. Your work is not yet done."
 
+Message:  1061
+%qdt:
+ _nulfaga_ has summoned me to ___shedungent_
+ in the ____shedungent_
+ regarding the matter of the Totem.
+
+--this log replaces the Totem one after the totem is given
+--to a person in the MQ
 Message:  1070
 <ce>               A cheerful young woman hands you a letter
 <ce>                    and then walks away, whistling.
-
-
--- Symbols used in the QRC file:
---
---              %pcf occurs 7 times.
---              %pcn occurs 9 times.
---              %qdt occurs 2 times.
---               %ra occurs 2 times.
---     ____newplace_ occurs 1 time.
---       ____tavern_ occurs 1 time.
---       ____temple_ occurs 6 times.
---       __newplace_ occurs 1 time.
---         __tavern_ occurs 1 time.
---         __temple_ occurs 1 time.
---       _artifact2_ occurs 1 time.
---       _artifact4_ occurs 1 time.
---        _goldgoth_ occurs 1 time.
---        _newplace_ occurs 1 time.
---          _tavern_ occurs 1 time.
---          _temple_ occurs 6 times.
 
 QBN:
 Item _letter_ letter used 1011
@@ -357,147 +345,151 @@ Person _Akorithi_ named Queen_Akorithi atHome
 Person Gortwog named Gortwog atHome
 Person _Underking_ face 1 faction Agents_of_The_Underking remote
 Person _Kingoworms_ named King_of_Worms atHome
+Person _nulfaga_ named Nulfaga atHome
 
 Place _daggerfall_ permanent DaggerfallCastle2
 Place _tavern_ remote tavern
 Place _temple_ remote temple
 Place _newplace_ remote house2
+Place _shedungent_ permanent Shedungent2
 
-Clock _2letter_ 7.00:00 14.00:00
+Clock _brisiennafirstletter_ 7.00:00 14.00:00
 Clock _delay_ 00:02 0 flag 1 range 0 1
-Clock _S.08_ 366.00:00 0 flag 1 range 0 1
-Clock _S.10_ 7.00:00 14.00:00
-Clock _S.13_ 7.00:00 14.00:00
-Clock _S.18_ 3.00:00 9.00:00
-Clock _S.19_ 7.00:00 14.00:00
-Clock _S.20_ 3.00:00 7.00:00
-Clock _S.38_ 7.00:00 14.00:00
+Clock _oneyear_ 366.00:00
+Clock _akorithiletter_ 7.00:00 14.00:00
+Clock _eadwyreletter_ 7.00:00 14.00:00
+Clock _orcletter_ 3.00:00 9.00:00
+Clock _kowletter_ 7.00:00 14.00:00
+Clock _underkingletter_ 3.00:00 7.00:00
+Clock _brisiennasecondletter_ 7.00:00 14.00:00
 
-Foe _F.00_ is 3 Knight
-Foe _F.01_ is Battle_mage
+Foe _knights_ is 3 Knight
+Foe _mage_ is Battle_mage
 
 --	Quest start-up:
-	start timer _2letter_ 
+	start timer _brisiennafirstletter_ 
+	have _totem_ set _holdtotem_ 
+	pc at _daggerfall_ set _indaggerfall_ 
 
-_2letter_ task:
+_brisiennafirstletter_ task:
 	give pc _letter_ notify 1070 
 	place npc Brisienna at _tavern_ 
 
 _meetladyb_ task:
 	clicked npc Brisienna 
-	prompt QuestorOffer yes yes no _no_ 
+	prompt QuestorOffer yes _brisyes_ no _brisno_ 
 
-yes task:
+_brisyes_ task:
 	place item _totem_ at _daggerfall_ marker 5
 	log 1010 step 0 
 	say AcceptQuest 
 	add Brisienna as questor 
 
-_no_ task:
+_brisno_ task:
 	say RefuseQuest 
 	end quest 
 
-_S.04_ task:
+_clicktotem_ task:
 	clicked item _totem_ 
-	pc at _daggerfall_ set _S.06_ 
 	start timer _delay_ 
 
 _delay_ task:
-	start timer _S.08_ 
+	start timer _oneyear_ 
 	log 1017 step 1 
 	say 1015 
 
-variable _S.06_
-_S.07_ task:
-	when not _S.06_ and _S.04_ 
-	create foe _F.00_ every 1300 minutes 100 times with 10% success 
-	start timer _S.38_ 
-	repute with _Akorithi_ exceeds 5 do _S.09_ 
-	repute with Eadwyre exceeds 15 do _S.12_ 
-	repute with Gortwog exceeds 10 do _S.15_ 
-	repute with _Underking_ exceeds 0 do _S.16_ 
-	repute with _Kingoworms_ exceeds 0 do _S.17_ 
-	have _totem_ set _S.27_ 
+variable _indaggerfall_
+_activatechoice_ task:
+	when not _indaggerfall_ and _clicktotem_ 
+	create foe _knights_ every 1300 minutes 100 times with 100% success 
+	start timer _brisiennasecondletter_ 
+	repute with _Akorithi_ exceeds 5 do _happyakor_ 
+	repute with Eadwyre exceeds 15 do _happyead_ 
+	repute with Gortwog exceeds 10 do _happywog_ 
+	repute with _Underking_ exceeds 0 do _happyunk_ 
+	repute with _Kingoworms_ exceeds 0 do _happykow_ 
 	add Gortwog as questor 
 	add _Akorithi_ as questor 
 	add _Gothryd_ as questor 
 	add Eadwyre as questor 
 	place npc Brisienna at _newplace_ 
 
-_S.08_ task:
+_oneyear_ task:
 	take _totem_ from pc 
+	say 1057
 
-_S.09_ task:
-	start timer _S.10_ 
+_happyakor_ task:
+	start timer _akorithiletter_ 
 
-_S.10_ task:
+_akorithiletter_ task:
 	give pc totemLetter1 notify 1030 
 
-_S.11_ task:
-	when not _S.09_ and _S.07_ 
+_akorithirevenge_ task:
+	when not _happyakor_ and _activatechoice_ 
 	start quest 100 100 
 
-_S.12_ task:
-	start timer _S.13_ 
+_happyead_ task:
+	start timer _eadwyreletter_ 
 
-_S.13_ task:
+_eadwyreletter_ task:
 	give pc totemLetter5 notify 1031 
 
-_S.14_ task:
-	when not _S.12_ and _S.07_ 
+_eadwyrerevenge_ task:
+	when not _happyead_ and _activatechoice_ 
 	start quest 101 101 
 
-_S.15_ task:
-	start timer _S.18_ 
+_happywog_ task:
+	start timer _orcletter_ 
 
-_S.16_ task:
-	start timer _S.20_ 
+_happyunk_ task:
+	start timer _underkingletter_ 
 
-_S.17_ task:
-	start timer _S.19_ 
+_happykow_ task:
+	start timer _kowletter_ 
 
-_S.18_ task:
+_orcletter_ task:
 	give pc _letter4_ notify 1032 
 
-_S.19_ task:
+_kowletter_ task:
 	give pc totemLetter4 notify 1033 
 
-_S.20_ task:
+_underkingletter_ task:
 	give pc totemLetter3 notify 1034 
 	place npc _Underking_ at _temple_ 
 
-_S.21_ task:
-	when not _S.15_ and _S.07_ 
+_gortwogrevenge_ task:
+	when not _happywog_ and _activatechoice_ 
 	start quest 102 102 
 
-_S.22_ task:
-	injured _F.00_ 
-	prompt 1040 yes _S.25_ no _S.26_ 
-	clear _S.22_ _S.26_ _S.28_ _S.29_ 
+_injknight_ task:
+	injured _knights_ 
+	prompt 1040 yes _surrenderchoice_ no _resistsurrender_  
 
-_S.23_ task:
-	when not _S.17_ and _S.07_ 
+_kowrevenge_ task:
+	when not _happykow_ and _activatechoice_ 
 	start quest 103 103 
 
-_S.24_ task:
-	when not _S.16_ and _S.07_ 
+_underkingrevenge_ task:
+	when not _happyunk_ and _activatechoice_ 
 	start quest 104 104 
 
-variable _S.25_
-_S.26_ task:
+variable _surrenderchoice_
+_resistsurrender_ task:
 	say 1041 
 
-_S.27_ task:
-	clear _S.31_ 
+variable _holdtotem_
 
-_S.28_ task:
-	when _S.27_ and _S.25_ 
+_completesurrender_ task:
+	when _holdtotem_ and _surrenderchoice_ 
+	start task _giventodaggerfall_
 	start task _S.31_ 
-	give item _totem_ to _F.00_ 
-	say 1042 
-	restrain foe _F.00_ 
+	take _totem_ from pc
+	say 1042
 
-_S.29_ task:
+variable _giventodaggerfall_
+
+_invalidsurrender_ task:
+	when _surrenderchoice_ and not _holdtotem_ and not _giventodaggerfall_
 	say 1043 
 
 AkorithiGotTotem _S.30_
@@ -538,34 +530,45 @@ UnderkingGotTotem _S.35_
 
 EadwyreGotTotem _S.36_
 	toting _totem_ and Eadwyre clicked 
-	create foe _F.01_ every 1 minutes 5 times with 100% success 
+	create foe _mage_ every 0 minutes 5 times with 100% success 
 	say 1051 
 
-_S.38_ task:
+-- every 1 minutes was too slow, took 25 seconds to spawn them all
+
+_brisiennasecondletter_ task:
 	give pc totemLetter6 notify 1070 
 
-_S.39_ task:
-	when Nulfaga is available 
+_deliveredtotem_ task:
+	when _S.30_ or _S.31_ or _S.32_ or _S.33_ or _S.34_ or _S.35_ or _S.36_
+	clear _holdtotem_
+	stop timer _oneyear_
+	remove foe _knights_
+-- the "remove foe" action here will prevent any further knights from spawning, which is reasonable.
+-- this was previously "restrain foe" which allow more spawned knights, perhaps not pacified, which is strange.
+-- this whole task will remove the totem and the knights, which was probably the original intention.
+-- note that the Sx100 quests will stop when the totem is given, and this is consistent with them.
 
-_S.40_ task:
-	when _S.43_ or _S.44_ 
-
-_S.41_ task:
-	when _S.39_ and _S.40_ and _S.07_ 
+_advancequest_ task:
+	when _deliveredtotem_ and _activatechoice_ and _clicknulfaga_
 	start quest 16 16 
+-- changed "nulfaga available" to "clicked nulfaga."
+-- much more sensible, doesn't cause problems in testing
 
-_S.42_ task:
-	when _S.40_ and _S.07_ 
+_clicknulfaga_ task:
+	clicked npc _nulfaga_
+
+_clearnulfaga_ task:
+	when _clicknulfaga_ and not _deliveredtotem_
+	clear _clicknulfaga_ _clearnulfaga_
+
+_totemspeaks_ task:
+	when _deliveredtotem_ and _activatechoice_ 
 	say 1060 
+	log 1061 step 1
+	reveal _shedungent_
 
-_S.43_ task:
-	when _S.28_ or _S.35_ or _S.36_ or _S.46_ 
-
-_S.44_ task:
-	when _S.30_ or _S.32_ or _S.33_ or _S.34_ 
-
-_S.45_ task:
-	when _S.08_ or _S.41_ 
+_questcleanup_ task:
+	when _oneyear_ or _advancequest_ 
 	drop _Akorithi_ as questor 
 	drop Brisienna as questor 
 	drop Eadwyre as questor 
@@ -573,9 +576,9 @@ _S.45_ task:
 	drop _Gothryd_ as questor 
 	end quest 
 
-_S.46_ task:
+_givetogothryd_ task:
 	toting _totem_ and _Gothryd_ clicked
-    get item _goldgoth_ from _Gothryd_ 
+    get item _goldgoth_
     say 1053 
     make _goldgoth_ permanent  
 	start task _S.31_ 
