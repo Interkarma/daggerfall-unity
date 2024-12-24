@@ -42,6 +42,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
     {
         #region Fields & Constants
 
+        public const int AutoMapDataSize = 64 * 64;
         const int noReplacementIndicator = -1;
         const string worldData = "WorldData";
         static readonly string worldDataPath = Path.Combine(Application.streamingAssetsPath, worldData);
@@ -413,8 +414,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                         dfBlock.RmbBlock.FldHeader.BuildingDataList[i].Quality = buildingReplacementData.Quality;
                     if (buildingReplacementData.NameSeed > 0)
                         dfBlock.RmbBlock.FldHeader.BuildingDataList[i].NameSeed = buildingReplacementData.NameSeed;
-                    if (buildingReplacementData.AutoMapData != null && buildingReplacementData.AutoMapData.Length == 64 * 64)
-                        dfBlock.RmbBlock.FldHeader.AutoMapData = buildingReplacementData.AutoMapData;
+
+                    ApplyBuildingReplacementAutoMapData(buildingReplacementData, ref dfBlock.RmbBlock.FldHeader.AutoMapData);
                 }
             }
         }
@@ -479,6 +480,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static int MakeLocationKey(int regionIndex, int locationIndex)
         {
             return (locationIndex * 100) + regionIndex;
+        }
+
+        /// <summary>
+        /// Applies automap data from that defined in building replacement data. Values of '30' will be ignored allowing only the relevant parts to be modified.
+        /// </summary>
+        /// <param name="buildingData">BuildingReplacementData input</param>
+        /// <param name="blockAutoMapData">A reference to the block automap data byte array to merge into</param>
+        public static void ApplyBuildingReplacementAutoMapData(BuildingReplacementData buildingData, ref byte[] blockAutoMapData)
+        {
+            if (buildingData.AutoMapData != null && buildingData.AutoMapData.Length == AutoMapDataSize)
+            {
+                for (int i = 0; i < AutoMapDataSize; i++)
+                {
+                    if (buildingData.AutoMapData[i] != 30)
+                        blockAutoMapData[i] = buildingData.AutoMapData[i];
+                }
+            }
         }
 
         #endregion
