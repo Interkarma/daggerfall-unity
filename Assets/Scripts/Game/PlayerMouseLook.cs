@@ -66,7 +66,7 @@ namespace DaggerfallWorkshop.Game
             get { return cameraPitch * Mathf.Rad2Deg; }
             set
             {
-                value = Mathf.Clamp(value, pitchMin, pitchMax);
+                value = Mathf.Clamp(value, -pitchMax, -pitchMin);
                 cameraPitch = value * Mathf.Deg2Rad;
                 if (cameraPitch > piover2 * .99f)
                     cameraPitch = piover2 * .99f;
@@ -127,7 +127,7 @@ namespace DaggerfallWorkshop.Game
                 sensitivityY = sensitivity.y * sensitivityScale;
             }
 
-            Vector2 rawMouseDelta = new Vector2(InputManager.Instance.LookX, InputManager.Instance.LookY);
+            Vector2 rawMouseDelta = new Vector2(InputManager.Instance.LookX, -InputManager.Instance.LookY);
 
             lookTarget += Vector2.Scale(rawMouseDelta, new Vector2(sensitivityX, sensitivityY * (invertMouseY ? -1 : 1)));
 
@@ -141,12 +141,11 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Clamp target look pitch to range of straight down to straight up
-            lookTarget.y = Mathf.Clamp(lookTarget.y, pitchMin, pitchMax);
-
+            lookTarget.y = Mathf.Clamp(lookTarget.y, -pitchMax, -pitchMin);
             ApplySmoothing();
 
             Yaw = lookCurrent.x;
-            Pitch = -lookCurrent.y;
+            Pitch = lookCurrent.y;
         }
 
         // Updates lookCurrent by moving it a fraction towards lookTarget
