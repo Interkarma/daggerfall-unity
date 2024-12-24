@@ -25,7 +25,7 @@ Message:  1012
 <ce>                                    
 <ce>          I do not know who of these seven is most worthy of
 <ce>          the Power, for too long have I let my passions make
-<ce>           me mad. Sometimes the fate of a world hang on the
+<ce>           me mad. Sometimes the fate of a world hangs on the
 <ce>           decision of one person. You have chosen who will
 <ce>          command great Numidium. You bear the burden for the
 <ce>                             consequences.
