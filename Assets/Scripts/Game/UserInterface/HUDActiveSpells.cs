@@ -330,7 +330,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             float effectiveScreenBottomY = Screen.height;
             if (DaggerfallUI.Instance.DaggerfallHUD != null && DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Enabled)
             {
-                effectiveScreenBottomY -= (int)DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Rectangle.height;
+                effectiveScreenBottomY -= DaggerfallUI.Instance.DaggerfallHUD.LargeHUD.Rectangle.height;
             }
             effectiveScreenBottomY = effectiveScreenBottomY / LocalScale.y + 1; // + 1 so that -1 means bottom margin
             int column = 0;
