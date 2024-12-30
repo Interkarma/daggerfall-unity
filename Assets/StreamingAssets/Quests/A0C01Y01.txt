@@ -1,11 +1,3 @@
--- Quest: C:\QUESTS\WORKING\A0C01Y01.Qbn.
--- StartsBy: NPC
--- Questee: anyone
--- Questor: peasant
--- Repute: 01
--- QuestId: 1
--- Edited for Daggerfall Unity by Jay_H
-Messages: 14
 Quest: A0C01Y01
 DisplayName: The Bodyguard
 -- Message panels
@@ -80,22 +72,6 @@ Message:  1013
 <ce>                  This must be the place. It fits the
 <ce>                     description _qgiver_ gave you.
 
-
--- Symbols used in the QRC file:
---
---               %cn occurs 1 time.
---                %g occurs 1 time.
---               %g2 occurs 4 times.
---              %pcf occurs 2 times.
---              %pcn occurs 2 times.
---              %qdt occurs 1 time.
---               %ra occurs 2 times.
---        ___qgiver_ occurs 1 time.
---            _gold_ occurs 2 times.
---          _qgiver_ occurs 9 times.
---      _qgiverhome_ occurs 3 times.
---        _villains_ occurs 2 times.
-
 QBN:
 Item _gold_ gold
 
@@ -103,64 +79,47 @@ Person _qgiver_ face 1 group Questor
 
 Place _qgiverhome_ local house2
 
-Clock _S.00_ 1.03:00
+Clock _timer_ 1.03:00
 --removed flags to make time limit exact
 
 Foe _villains_ is 2 Assassin
 
 --	Quest start-up:
-	start timer _S.00_ 
+	start timer _timer_ 
 	log 1010 step 0 
-	pc at _qgiverhome_ set _S.05_
+	pc at _qgiverhome_ set _inside_
 	---removed "saying" as unacceptable argument. moved to S.05
-	create npc at _qgiverhome_ 
 
-_S.00_ task:
+_timer_ task:
 	end quest 
 
-_S.01_ task:
-	daily from 21:00 to 22:59
-	--changed 24:00 to 23:59. 24:00 shouldn't exist. Goes to 11 PM due to "latehour" task added below.
+_nighttime_ task:
+	daily from 21:00 to 23:59
+	--changed 24:00 to 23:59. 24:00 shouldn't exist.
 	place npc _qgiver_ at _qgiverhome_ 
 
-_S.02_ task:
+_slain_ task:
 	killed 2 _villains_ 
 
 _questdone_ task:
-	when _S.04_ and _S.02_ 
+	when _clickqgiver_ and _slain_ 
 	give pc _gold_ 
 
-_S.04_ task:
+_clickqgiver_ task:
 	clicked npc _qgiver_ 
 
-_S.05_ task:
+_inside_ task:
 	say 1013
 
-_S.06_ task:
+_inj_ task:
 	injured _villains_ saying 1011 
 
 _clearclick_ task:
-	when not _S.02_ and _S.04_ 
-	clear _S.04_ _clearclick_ 
+	when not _slain_ and _clickqgiver_ 
+	clear _clickqgiver_ _clearclick_ 
 
-_S.08_ task:
-	when _S.05_ and _S.01_ and not _S.06_
-	create foe _villains_ every 10 minutes 1 times with 25% success 
---added "not S06" to prevent multiple spawns
-
-_mmap_ task:
-	when _questdone_ and not _S.05_ 
-	end quest 
-
---on rare occasions, the enemies still would not spawn with the above logic.
---A new back-up logic starting from 11PM is given below, to force an enemy
---spawn if none has been injured by 11PM. If there's a better way to ensure
---the enemies haven't spawned than with "injured," it would be preferable.
-
-_latehour_ task:
-	daily from 23:00 to 23:59
-	place npc _qgiver_ at _qgiverhome_ 
-
-_backupspawn_ task:
-	when _S.05_ and _latehour_ and not _S.06_
-	create foe _villains_ every 0 minutes 1 times with 100% success
+_spawnenemy_ task:
+	when _inside_ and _nighttime_
+	create foe _villains_ every 10 minutes 1 times with 100% success 
+-- even with the previous fix, people are still suffering from impossible quest.
+-- making it 100% spawn chance, no delayed nonsense.
