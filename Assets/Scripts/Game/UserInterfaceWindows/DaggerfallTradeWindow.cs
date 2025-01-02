@@ -1035,7 +1035,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     case WindowModes.Sell:
                     case WindowModes.SellMagic:
-                        float goldWeight = tradePrice * DaggerfallBankManager.goldUnitWeightInKg;
+                        float goldWeight = tradePrice * DaggerfallBankManager.goldPieceWeightInKg;
                         if (PlayerEntity.CarriedWeight + goldWeight <= PlayerEntity.MaxEncumbrance)
                         {
                             PlayerEntity.GoldPieces += tradePrice;
