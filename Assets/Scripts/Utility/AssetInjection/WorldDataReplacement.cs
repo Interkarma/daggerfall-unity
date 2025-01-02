@@ -504,7 +504,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
-        private static void AssignNextIndex(string blockName)
+        public static void AssignNextIndex(string blockName)
         {
             newBlockNames[nextBlockIndex] = blockName;
             newBlockIndices[blockName] = nextBlockIndex;
