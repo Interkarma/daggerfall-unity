@@ -55,9 +55,6 @@ namespace DaggerfallWorkshop.Game
         public float ChanceToBeParried = 0.1f;      // Example: Chance for player hit to be parried
         public DaggerfallMissile ArrowMissilePrefab;
 
-        // Allows a mod to specify whether to skip over certain vanilla behavior related to physical attack logic, so it can do its own behavior
-        public bool moddedPhysicalAttackBehaviorEnabled = false;
-
         //float weaponSensitivity = 1.0f;             // Sensitivity of weapon swings to mouse movements
         private Gesture _gesture;
         private int _longestDim;                    // Longest screen dimension, used to compare gestures for attack
@@ -489,12 +486,6 @@ namespace DaggerfallWorkshop.Game
         // Returns true if hit an enemy entity
         public bool WeaponDamage(DaggerfallUnityItem strikingWeapon, bool arrowHit, bool arrowSummoned, Transform hitTransform, Vector3 impactPosition, Vector3 direction)
         {
-            if (moddedPhysicalAttackBehaviorEnabled)
-            {
-                if (FormulaHelper.AlterPlayerVsMonsterPhysicalAttackAction(strikingWeapon, arrowHit, arrowSummoned, hitTransform, impactPosition, direction))
-                    return false;
-            }
-
             DaggerfallEntityBehaviour entityBehaviour = hitTransform.GetComponent<DaggerfallEntityBehaviour>();
             var entityMobileUnit = hitTransform.GetComponentInChildren<MobileUnit>();
             EnemyMotor enemyMotor = hitTransform.GetComponent<EnemyMotor>();
