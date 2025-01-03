@@ -38,6 +38,12 @@ namespace DaggerfallWorkshop.Game
         MobileUnit mobile;
         DaggerfallEntityBehaviour entityBehaviour;
         int damage = 0;
+        
+        public delegate int ApplyDamageToPlayerCallback(Items.DaggerfallUnityItem weapon);
+        public delegate int ApplyDamageToNonPlayerCallback(Items.DaggerfallUnityItem weapon, Vector3 direction, bool bowAttack = false);
+
+        public ApplyDamageToPlayerCallback ApplyDamageToPlayer { get; set; }
+        public ApplyDamageToNonPlayerCallback ApplyDamageToNonPlayer { get; set; }
 
         void Start()
         {
@@ -46,6 +52,9 @@ namespace DaggerfallWorkshop.Game
             sounds = GetComponent<EnemySounds>();
             mobile = GetComponent<DaggerfallEnemy>().MobileUnit;
             entityBehaviour = GetComponent<DaggerfallEntityBehaviour>();
+            
+            ApplyDamageToPlayer = DefaultApplyDamageToPlayer;
+            ApplyDamageToNonPlayer = DefaultApplyDamageToNonPlayer;
         }
 
         void FixedUpdate()
@@ -242,7 +251,7 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
-        private int ApplyDamageToPlayer(Items.DaggerfallUnityItem weapon)
+        private int DefaultApplyDamageToPlayer(Items.DaggerfallUnityItem weapon)
         {
             const int doYouSurrenderToGuardsTextID = 15;
 
@@ -300,7 +309,7 @@ namespace DaggerfallWorkshop.Game
             return damage;
         }
 
-        private int ApplyDamageToNonPlayer(Items.DaggerfallUnityItem weapon, Vector3 direction, bool bowAttack = false)
+        private int DefaultApplyDamageToNonPlayer(Items.DaggerfallUnityItem weapon, Vector3 direction, bool bowAttack = false)
         {
             if (senses.Target == null)
                 return 0;

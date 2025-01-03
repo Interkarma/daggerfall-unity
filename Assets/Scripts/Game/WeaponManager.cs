@@ -79,6 +79,9 @@ namespace DaggerfallWorkshop.Game
 
         public float EquipCountdownRightHand;
         public float EquipCountdownLeftHand;
+        
+        public delegate bool WeaponDamageCallback(DaggerfallUnityItem strikingWeapon, bool arrowHit, bool arrowSummoned, Transform hitTransform, Vector3 impactPosition, Vector3 direction);
+        public WeaponDamageCallback WeaponDamage { get; set; }
 
         #region Properties
 
@@ -200,6 +203,8 @@ namespace DaggerfallWorkshop.Game
             _gesture = new Gesture();
             _longestDim = Math.Max(Screen.width, Screen.height);
             SetMelee(ScreenWeapon);
+            
+            WeaponDamage = DefaultWeaponDamage;
         }
 
         void Update()
@@ -484,7 +489,7 @@ namespace DaggerfallWorkshop.Game
         }
 
         // Returns true if hit an enemy entity
-        public bool WeaponDamage(DaggerfallUnityItem strikingWeapon, bool arrowHit, bool arrowSummoned, Transform hitTransform, Vector3 impactPosition, Vector3 direction)
+        public bool DefaultWeaponDamage(DaggerfallUnityItem strikingWeapon, bool arrowHit, bool arrowSummoned, Transform hitTransform, Vector3 impactPosition, Vector3 direction)
         {
             DaggerfallEntityBehaviour entityBehaviour = hitTransform.GetComponent<DaggerfallEntityBehaviour>();
             var entityMobileUnit = hitTransform.GetComponentInChildren<MobileUnit>();
