@@ -219,15 +219,16 @@ _target_ task:
 --log message would stay in journal without this
 
 variable _firstbalthamtimer_
-_stuntimer_ task:
-	say 1044 
-	restrain foe _guards_ 
 
 _clickmap_ task:
 	clicked item _map_ 
 	create foe _guards_ every 0 minutes 1 times with 100% success 
 	start timer _stuntimer_ 
 	say 1043 
+
+_stuntimer_ task:
+	say 1044 
+	restrain foe _guards_ 
 
 variable _inmagery_
 
@@ -239,6 +240,7 @@ _offersidequest_ task:
 	change repute with _dummy_ by -15 
 	stop timer _firstbalthamtimer_
 	stop timer _stuntimer_
+--added stop stuntimer here, otherwise it could trigger when irrelevant
 
 _keytime_ task:
 	start timer _sixdays_ 
