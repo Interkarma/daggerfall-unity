@@ -164,6 +164,7 @@ Clock _stuntimer_ 00:01
 Clock _keytime_ 00:00 0 flag 1 range 0 5
 Clock _sixdays_ 6.22:40 0 flag 1 range 0 1
 Clock _secondbalthamtimer_ 00:00 0 flag 17 range 0 2
+Clock _deathtimer_ 0:10
 
 Foe _guards_ is 3 Mage
 Foe _guardian_ is Battle_mage
@@ -222,9 +223,13 @@ variable _firstbalthamtimer_
 
 _clickmap_ task:
 	clicked item _map_ 
-	create foe _guards_ every 0 minutes 1 times with 100% success 
 	start timer _stuntimer_ 
 	say 1043 
+
+_spawnguards_ task:
+	when _clickmap_ and _inmagery_
+	create foe _guards_ every 0 minutes 1 times with 100% success 
+-- ensures guards can only spawn inside the guild
 
 _stuntimer_ task:
 	say 1044 
@@ -313,6 +318,10 @@ _finaldecision_ task:
 	when _takemageitem_ and not _indungeon_ 
 	prompt 1054 yes _removefirstreward_ no _defendfirstreward_ 
 	drop _rebel_ face 
+	remove log step 0
+	remove log step 1
+	remove log step 2
+-- needed to add remove-log actions due to new deathtimer task, see below
 
 variable _secondbalthamtimer_
 
@@ -332,4 +341,9 @@ _endofbaltham_ task:
 	make _goldreward_ permanent 
 	make _magicreward2_ permanent 
 	make _magicreward1_ permanent 
+	start timer _deathtimer_
+
+_deathtimer_ task:
 	end quest
+-- this is necessary due to a change near DFU 1.0 to make corpses disappear at quest end.
+-- this delay allows player to loot corpse.
