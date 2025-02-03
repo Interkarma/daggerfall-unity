@@ -405,7 +405,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // Check for replacement building data and use it if found
                 if (GetBuildingReplacementData(blockName, blockIndex, i, out buildingReplacementData))
                 {
-                    dfBlock.RmbBlock.SubRecords[i] = buildingReplacementData.RmbSubRecord;
+                    // Only replace the Exterior and Interior parts of the subrecord, leaving building coordinates and rotation as specified by the override RMB
+                    dfBlock.RmbBlock.SubRecords[i].Exterior = buildingReplacementData.RmbSubRecord.Exterior;
+                    dfBlock.RmbBlock.SubRecords[i].Interior = buildingReplacementData.RmbSubRecord.Interior;
+
+                    // Update the corresponding entry in the building data list where appropriate
                     if (buildingReplacementData.FactionId > 0)
                         dfBlock.RmbBlock.FldHeader.BuildingDataList[i].FactionId = buildingReplacementData.FactionId;
                     dfBlock.RmbBlock.FldHeader.BuildingDataList[i].BuildingType = (DFLocation.BuildingTypes)buildingReplacementData.BuildingType;
