@@ -398,7 +398,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="dfBlock">DFBlock data to modify</param>
         private static void ReplaceRmbBlockBuildingData(string blockName, int blockIndex, ref DFBlock dfBlock)
         {
-            int recordCount = dfBlock.RmbBlock.FldHeader.NumBlockDataRecords;
+            int recordCount = dfBlock.RmbBlock.SubRecords.Length;
             BuildingReplacementData buildingReplacementData;
             for (int i = 0; i < recordCount; i++)
             {
