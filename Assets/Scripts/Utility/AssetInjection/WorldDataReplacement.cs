@@ -525,19 +525,34 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             // Ensure blockData was successfully assigned
-            if (!dfBlock.HasValue) // Check if blockData has a value
+            if (!dfBlock.HasValue)
             {
                 Debug.LogError($"Failed to load block data for blockName: {blockName}");
                 throw new System.Exception($"Block {blockName} does not have a valid Index in its JSON file.");
             }
 
             // Check for the "Index" field and assign its value
-            jsonBlockIndex = dfBlock.Value.Index; // Use .Value to access the DFBlock inside the nullable
+            jsonBlockIndex = dfBlock.Value.Index;
+
+            // If jsonBlockIndex is invalid (less than or equal to blocksFile.BsaFile.Count), use fallback method
+            if (jsonBlockIndex <= blocksFile.BsaFile.Count)
+            {
+                AssignNextIndex(blockName);
+                return;
+            }
 
             // Add to cache
             newBlockNames[jsonBlockIndex] = blockName;
             newBlockIndices[blockName] = jsonBlockIndex;
             Debug.LogFormat("Found a new DFBlock: {0}, (assigned index: {1})", blockName, jsonBlockIndex);
+        }
+
+        private static void AssignNextIndex(string blockName)
+        {
+            newBlockNames[nextBlockIndex] = blockName;
+            newBlockIndices[blockName] = nextBlockIndex;
+            Debug.LogFormat("Found a new DFBlock: {0}, (assigned index: {1})", blockName, nextBlockIndex);
+            nextBlockIndex++;
         }
 
         #endregion
