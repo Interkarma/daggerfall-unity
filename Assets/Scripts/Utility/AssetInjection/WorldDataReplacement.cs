@@ -375,6 +375,11 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     return false;
                 }
                 dfBlock.Index = block;
+
+                // For RMB blocks, check for individual building overrides and replace those records.
+                if (blockName.EndsWith(".RMB"))
+                    ReplaceRmbBlockBuildingData(blockName, block, ref dfBlock);
+
 #if !UNITY_EDITOR   // Cache block data for added/replaced blocks (unless running in editor)
                 blocks.Add(blockKey, dfBlock);
 #endif
@@ -383,6 +388,39 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
             dfBlock = noReplacementBlock;
             return false;
+        }
+
+        /// <summary>
+        /// Replaces overridden RMB block data records with specific building data, if found.
+        /// </summary>
+        /// <param name="blockName">Block name</param>
+        /// <param name="blockIndex">Block index</param>
+        /// <param name="dfBlock">DFBlock data to modify</param>
+        private static void ReplaceRmbBlockBuildingData(string blockName, int blockIndex, ref DFBlock dfBlock)
+        {
+            int recordCount = dfBlock.RmbBlock.SubRecords.Length;
+            BuildingReplacementData buildingReplacementData;
+            for (int i = 0; i < recordCount; i++)
+            {
+                // Check for replacement building data and use it if found
+                if (GetBuildingReplacementData(blockName, blockIndex, i, out buildingReplacementData))
+                {
+                    // Only replace the Exterior and Interior parts of the subrecord, leaving building coordinates and rotation as specified by the override RMB
+                    dfBlock.RmbBlock.SubRecords[i].Exterior = buildingReplacementData.RmbSubRecord.Exterior;
+                    dfBlock.RmbBlock.SubRecords[i].Interior = buildingReplacementData.RmbSubRecord.Interior;
+
+                    // Update the corresponding entry in the building data list where appropriate
+                    if (buildingReplacementData.FactionId > 0)
+                        dfBlock.RmbBlock.FldHeader.BuildingDataList[i].FactionId = buildingReplacementData.FactionId;
+                    dfBlock.RmbBlock.FldHeader.BuildingDataList[i].BuildingType = (DFLocation.BuildingTypes)buildingReplacementData.BuildingType;
+                    if (buildingReplacementData.Quality > 0)
+                        dfBlock.RmbBlock.FldHeader.BuildingDataList[i].Quality = buildingReplacementData.Quality;
+                    if (buildingReplacementData.NameSeed > 0)
+                        dfBlock.RmbBlock.FldHeader.BuildingDataList[i].NameSeed = buildingReplacementData.NameSeed;
+                    if (buildingReplacementData.AutoMapData != null && buildingReplacementData.AutoMapData.Length == 64 * 64)
+                        dfBlock.RmbBlock.FldHeader.AutoMapData = buildingReplacementData.AutoMapData;
+                }
+            }
         }
 
         /// <summary>
