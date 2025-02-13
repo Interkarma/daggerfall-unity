@@ -52,15 +52,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        Panel costPanel;
-        TextLabel costLabel;
-        TextLabel goldLabel;
+        protected Panel costPanel;
+        protected TextLabel costLabel;
+        protected TextLabel goldLabel;
 
-        Panel actionButtonsPanel;
-        Button selectButton;
-        Button stealButton;
-        Button modeActionButton;
-        Button clearButton;
+        protected Panel actionButtonsPanel;
+        protected Button selectButton;
+        protected Button stealButton;
+        protected Button modeActionButton;
+        protected Button clearButton;
 
         #endregion
 
