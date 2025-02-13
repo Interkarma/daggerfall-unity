@@ -243,6 +243,7 @@ namespace DaggerfallWorkshop.Game
         int idOfUserMarkerNoteToBeChanged; // used to identify id of last double-clicked user note marker when changing note text
         DaggerfallInputMessageBox messageboxUserNote;
         GameObject gameObjectUserNoteMarkers = null; // container object for custom user notes markers
+        GameObject customGameObjectUserNoteMarker = null;
 
 
         /// <summary>
@@ -366,6 +367,18 @@ namespace DaggerfallWorkshop.Game
         public static bool IsCreatingDungeonAutomapBaseGameObjects
         {
             get { return isCreatingDungeonAutomapBaseGameObjects; }
+        }
+
+        /// <summary>
+        /// Used to overwrite the gameObjectUserNoteMarker to a custom prefab.
+        /// Only overwrites if not null.
+        /// Default: null.
+        /// Note: The Prefab must contain at least 1 collider for it to be edited/removed.
+        /// </summary>
+        public GameObject CustomGameObjectUserNoteMarker
+        {
+            set { customGameObjectUserNoteMarker = value; }
+            get { return customGameObjectUserNoteMarker; }
         }
 
         #endregion
@@ -811,11 +824,16 @@ namespace DaggerfallWorkshop.Game
             if (nearestHit.HasValue)
             {
                 if (nearestHit.Value.transform.name.StartsWith(NameGameobjectUserNoteMarkerSubStringStart)) // if user note marker was hit
-                {                    
+                {   
                     int id = System.Convert.ToInt32(nearestHit.Value.transform.name.Replace(NameGameobjectUserNoteMarkerSubStringStart, ""));
                     if (listUserNoteMarkers.ContainsKey(id))
                         listUserNoteMarkers.Remove(id); // remove it from list
-                    GameObject.Destroy(nearestHit.Value.transform.gameObject); // and destroy gameobject
+
+                    if (customGameObjectUserNoteMarker == null){
+                        GameObject.Destroy(nearestHit.Value.transform.gameObject); // and destroy gameobject                
+                    } else {
+                        GameObject.Destroy(GetHighestAncestorBelowAncestor(nearestHit.Value.transform.gameObject, NameGameobjectUserMarkerNotes));
+                    }
                     return true;
                 }
             }
@@ -1574,15 +1592,24 @@ namespace DaggerfallWorkshop.Game
                 gameObjectUserNoteMarkers.transform.SetParent(gameobjectAutomap.transform);
                 gameObjectUserNoteMarkers.layer = layerAutomap;
             }
-            GameObject gameObjectUserNoteMarker = CreateDiamondShapePrimitive();
+
+            GameObject gameObjectUserNoteMarker;
+            if (customGameObjectUserNoteMarker == null){
+                gameObjectUserNoteMarker = CreateDiamondShapePrimitive();
+                gameObjectUserNoteMarker.name = NameGameobjectUserNoteMarkerSubStringStart + id;
+                gameObjectUserNoteMarker.layer = layerAutomap;
+                Material materialUserNoteMarker = new Material(Shader.Find("Standard"));
+                materialUserNoteMarker.color = new Color(1.0f, 0.55f, 0.0f);
+                gameObjectUserNoteMarker.GetComponent<MeshRenderer>().material = materialUserNoteMarker;
+                gameObjectUserNoteMarker.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+            }else{
+                gameObjectUserNoteMarker = Instantiate(customGameObjectUserNoteMarker);
+                SetLayerRecursively(gameObjectUserNoteMarker, layerAutomap);
+                SetNameRecursively(gameObjectUserNoteMarker, NameGameobjectUserNoteMarkerSubStringStart + id);
+            }
+            
             gameObjectUserNoteMarker.transform.SetParent(gameObjectUserNoteMarkers.transform);
             gameObjectUserNoteMarker.transform.position = spawningPosition;
-            gameObjectUserNoteMarker.name = NameGameobjectUserNoteMarkerSubStringStart + id;
-            Material materialUserNoteMarker = new Material(Shader.Find("Standard"));
-            materialUserNoteMarker.color = new Color(1.0f, 0.55f, 0.0f);
-            gameObjectUserNoteMarker.GetComponent<MeshRenderer>().material = materialUserNoteMarker;
-            gameObjectUserNoteMarker.layer = layerAutomap;
-            gameObjectUserNoteMarker.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
             return gameObjectUserNoteMarker;
         }
 
@@ -1714,6 +1741,39 @@ namespace DaggerfallWorkshop.Game
             {
                 SetLayerRecursively(child.gameObject, layer);
             }
+        }
+
+        /// <summary>
+        /// sets name of a GameObject and all of its childs recursively
+        /// </summary>
+        /// <param name="obj"> the target GameObject </param>
+        /// <param name="name"> the name to be set </param>
+        private static void SetNameRecursively(GameObject obj, string name)
+        {
+            obj.name = name;
+
+            foreach (Transform child in obj.transform)
+            {
+                SetNameRecursively(child.gameObject, name);
+            }
+        }
+
+        /// <summary>
+        /// Gets the highest ancestor which is below a specified ancestor.
+        /// Returns null if specified ancestor cannot be found.
+        /// </summary>
+        /// <param name="child"> the child from which the search begins </param>
+        /// <param name="name"> the name of the ancestor </param>
+        private static GameObject GetHighestAncestorBelowAncestor(GameObject child, string name){
+            if (child.transform.parent == null){
+                return null;
+            }
+
+            if (child.transform.parent.name == name){
+                return child.transform.gameObject;
+            }
+
+            return GetHighestAncestorBelowAncestor(child.transform.parent.gameObject, name);
         }
 
         /// <summary>
