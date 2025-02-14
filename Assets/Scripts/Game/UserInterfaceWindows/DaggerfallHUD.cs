@@ -138,8 +138,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         }
 
         public DaggerfallHUD(IUserInterfaceManager uiManager)
-            :base(uiManager)
+            :base(uiManager, 320, 240)
         {
+            NativePanel.VerticalAlignment = VerticalAlignment.Top;
             interactionModeIcon = new HUDInteractionModeIcon(crosshair);
             parentPanel.BackgroundColor = Color.clear;
             ShowPopupText = true;
