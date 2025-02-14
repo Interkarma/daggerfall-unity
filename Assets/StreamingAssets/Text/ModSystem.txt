@@ -26,6 +26,9 @@ enableAll,                  ALL ON
 enableAllInfo,              Enable All Mods
 disableAll,                 ALL OFF
 disableAllInfo,             Disable All Mods
+copyToClipboard,            ->Clipboard
+copyToClipboardInfo,        Copy the list of mods to the host clipboard
+modsCopiedToClipboard,      List of mods copied to clipboard
 enabled,                    Enabled
 enabledInfo,                Toggle Mod
 refresh,                    Refresh
