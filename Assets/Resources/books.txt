@@ -93,7 +93,7 @@
     },
     {
         "id": 35,
-        "title": "The Legend of Lovers Lament"
+        "title": "The Legend of Lover's Lament"
     },
     {
         "id": 36,
@@ -317,7 +317,7 @@
     },
     {
         "id": 101,
-        "title": "King Edward, Part 2"
+        "title": "King Edward, Part II"
     },
     {
         "id": 102,
