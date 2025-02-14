@@ -322,6 +322,7 @@ namespace DaggerfallWorkshop
         public float TerrainHeightmapPixelError { get; set; }
         public bool SmallerDungeons { get; set; }
         public int AssetCacheThreshold { get; set; }
+        public int DungeonsPoolSizeTarget { get; set; }
 
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
@@ -555,6 +556,7 @@ namespace DaggerfallWorkshop
             TerrainHeightmapPixelError = GetFloat(sectionExperimental, "TerrainHeightmapPixelError", 1, 10);
             SmallerDungeons = GetBool(sectionExperimental, "SmallerDungeons");
             AssetCacheThreshold = GetInt(sectionExperimental, "AssetCacheThreshold", 0, 120);
+            DungeonsPoolSizeTarget = GetInt(sectionExperimental, "DungeonsPoolSizeTarget", 0, 999);
 
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
@@ -747,6 +749,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionExperimental, "TerrainHeightmapPixelError", TerrainHeightmapPixelError);
             SetBool(sectionExperimental, "SmallerDungeons", SmallerDungeons);
             SetInt(sectionExperimental, "AssetCacheThreshold", AssetCacheThreshold);
+            SetInt(sectionExperimental, "DungeonsPoolSizeTarget", DungeonsPoolSizeTarget);
 
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);

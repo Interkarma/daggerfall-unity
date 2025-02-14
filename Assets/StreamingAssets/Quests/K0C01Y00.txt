@@ -194,7 +194,7 @@ Person _victim_ face 1 group Group_7.0
 Person _tg_ faction The_Thieves_Guild local
 
 Place _mondung_ remote dungeon
-Place _mondung2_ remote dungeon2
+Place _mondung2_ remote dungeon2,dungeon15
 
 Clock _queston1_ 00:00 0 flag 17 range 0 2
 Clock _S.05_ 08:20 3.11:20

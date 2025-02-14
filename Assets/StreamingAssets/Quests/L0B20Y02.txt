@@ -111,7 +111,7 @@ Item _reward_ gold
 Person _questgiver_ face 112 group Questor
 Person _damsel_ face 2 group Group_6.0 female local
 
-Place _mondung_ remote dungeon2
+Place _mondung_ remote dungeon2,dungeon15
 
 Clock _1stparton_ 00:00 0 flag 18 range 0 2
 

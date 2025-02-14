@@ -176,8 +176,8 @@ Person _questgiver_ face 112 named Boethiah anyInfo 1013
 Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
 Person _mfriend_ group Local_4.0 remote
 
-Place _mondung_ remote dungeon2
-Place _hideout_ remote dungeon6
+Place _mondung_ remote dungeon2,dungeon15
+Place _hideout_ remote dungeon6,dungeon5
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 Clock _escapetime_ 00:00 0 flag 1 range 2 3

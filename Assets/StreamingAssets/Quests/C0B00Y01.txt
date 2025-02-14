@@ -471,7 +471,7 @@ Person _prophet_ face 1 group Local_4.0 anyInfo 1038
 Person _replace_ face 3 factiontype Temple female anyInfo 1023
 Person _lover_ face 104 group Group_7.0 remote anyInfo 1017
 
-Place _mondung_ remote dungeon4
+Place _mondung_ remote dungeon4,dungeon7
 Place _tavern_ remote tavern
 Place _prophouse_ remote tavern
 
