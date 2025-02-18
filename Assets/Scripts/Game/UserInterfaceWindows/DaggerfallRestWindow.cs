@@ -133,7 +133,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             LoadTextures();
 
             // Hide world while resting
-            ParentPanel.BackgroundColor = Color.black;
+            ParentPanel.BackgroundColor = new Color(0, 0, 0, DaggerfallUnity.Settings.DimAlphaStrength);
 
             // Create interface panel
             mainPanel.HorizontalAlignment = HorizontalAlignment.Center;

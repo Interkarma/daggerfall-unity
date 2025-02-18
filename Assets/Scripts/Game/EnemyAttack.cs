@@ -278,7 +278,7 @@ namespace DaggerfallWorkshop.Game
 
                         DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager);
                         messageBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRSCTokens(doYouSurrenderToGuardsTextID));
-                        messageBox.ParentPanel.BackgroundColor = Color.clear;
+                        messageBox.ParentPanel.BackgroundColor = new Color(0, 0, 0, DaggerfallUnity.Settings.DimAlphaStrength);
                         messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
                         messageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
                         messageBox.OnButtonClick += SurrenderToGuardsDialogue_OnButtonClick;

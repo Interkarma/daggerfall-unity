@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             : base(uiManager, screenWidth, screenHeight)
         {
             this.previousWindow = previousWindow;
-            this.screenDimColor.a = 0; //DaggerfallUnity.Settings.DimAlphaStrength;
+            this.screenDimColor = new Color(0, 0, 0, DaggerfallUnity.Settings.DimAlphaStrength);
         }
 
         protected override void Setup()

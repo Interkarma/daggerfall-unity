@@ -66,7 +66,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             : base(uiManager)
         {
             // Clear background
-            ParentPanel.BackgroundColor = Color.clear;
+            ParentPanel.BackgroundColor = new Color(0, 0, 0, DaggerfallUnity.Settings.DimAlphaStrength);
             // Prevent duplicate close calls with base class's exitKey (Escape)
             AllowCancel = false;
         }

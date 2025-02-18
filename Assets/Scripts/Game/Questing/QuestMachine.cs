@@ -904,7 +904,7 @@ namespace DaggerfallWorkshop.Game.Questing
             DaggerfallMessageBox messageBox = new DaggerfallMessageBox(DaggerfallUI.UIManager, DaggerfallMessageBox.CommonMessageBoxButtons.YesNo, tokens);
             messageBox.ClickAnywhereToClose = false;
             messageBox.AllowCancel = false;
-            messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.ParentPanel.BackgroundColor = new Color(0, 0, 0, DaggerfallUnity.Settings.DimAlphaStrength);
 
             return messageBox;
         }

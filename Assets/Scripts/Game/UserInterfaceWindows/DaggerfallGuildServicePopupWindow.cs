@@ -96,7 +96,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             guild = guildManager.GetGuild(guildGroup, buildingFactionId);
 
             // Clear background
-            ParentPanel.BackgroundColor = Color.clear;
+            ParentPanel.BackgroundColor = new Color(0, 0, 0, DaggerfallUnity.Settings.DimAlphaStrength);
         }
 
         #endregion

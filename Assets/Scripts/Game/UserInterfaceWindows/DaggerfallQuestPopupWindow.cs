@@ -116,7 +116,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             messageBox.SetTextTokens(tokens, this.offeredQuest.ExternalMCP);
             messageBox.ClickAnywhereToClose = true;
             messageBox.AllowCancel = true;
-            messageBox.ParentPanel.BackgroundColor = Color.clear;
+            messageBox.ParentPanel.BackgroundColor = new Color(0, 0, 0, DaggerfallUnity.Settings.DimAlphaStrength);
 
             // Exit menu on close if requested
             if (exitOnClose)
